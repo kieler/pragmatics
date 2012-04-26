@@ -743,7 +743,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		}
 		// add the edge intersections with the nodes bounding box as bend points
 		LGA->addNodeCenter2Bends(1);
-		// perform the label layout
+		// perform the label layout -- TODO make label processing optional
 		LI = new LabelInterface(*LGA);
 		TransferLabels(G, *LGA, *LI, information);
 		ELabelPosSimple simpleLabelLayout;

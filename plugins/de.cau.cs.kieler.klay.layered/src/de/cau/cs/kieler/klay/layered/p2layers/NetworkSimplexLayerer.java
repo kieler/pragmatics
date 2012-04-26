@@ -603,7 +603,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#revLayer revLayer
      */
     private void layeringDFS(final LNode node, final boolean reverse) {
-
         LNode target = null;
         if (reverse) {
             for (LPort port : node.getPorts()) {

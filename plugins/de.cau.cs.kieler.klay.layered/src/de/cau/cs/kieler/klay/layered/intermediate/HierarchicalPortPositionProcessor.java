@@ -1,5 +1,5 @@
 /*
-looks  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
@@ -17,6 +17,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -58,8 +59,13 @@ public class HierarchicalPortPositionProcessor extends AbstractAlgorithm impleme
         
         List<Layer> layers = layeredGraph.getLayers();
         
-        if (!layers.isEmpty()) {
+        // We're interested in EAST and WEST external port dummies only; since they can only be in
+        // the first or last layer, only fix coordinates of nodes in those two layers
+        if (layers.size() > 0) {
             fixCoordinates(layers.get(0), layeredGraph);
+        }
+        
+        if (layers.size() > 1) {
             fixCoordinates(layers.get(layers.size() - 1), layeredGraph);
         }
         
@@ -83,20 +89,27 @@ public class HierarchicalPortPositionProcessor extends AbstractAlgorithm impleme
         
         double graphHeight = layeredGraph.getActualSize().y;
         
-        // Iterate over external port dummies
+        // Iterate over the layer's nodes
         for (LNode node : layer) {
+            // We only care about external port dummies...
             if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
+                continue;
+            }
+            
+            // ...representing eastern or western ports.
+            PortSide extPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
+            if (extPortSide != PortSide.EAST && extPortSide != PortSide.WEST) {
                 continue;
             }
             
             double finalYCoordinate = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
             
-            // Depending on the port constraints applying to external ports, the coordinate
-            // needs some fixing up
             if (portConstraints == PortConstraints.FIXED_RATIO) {
+                // finalYCoordinate is a ratio that must be multiplied with the graph's height
                 finalYCoordinate *= graphHeight;
             }
-            
+
+            // Apply the node's new Y coordinate
             node.getPosition().y = finalYCoordinate;
             node.borderToContentAreaCoordinates(false, true);
         }

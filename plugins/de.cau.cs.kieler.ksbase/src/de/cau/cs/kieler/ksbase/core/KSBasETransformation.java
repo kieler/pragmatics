@@ -298,19 +298,36 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
         return validation;
     }
 
+    /**
+     * Gets the transformation class of this transformation.
+     * @return the transformation class this this transformation belongs to. May be null 
+     * if this is no xtend2 transformation.
+     */
     public Object getTransformationClass() {
         return this.transformationClass;
     }
     
-    public void setTransformationClass(Object transformationClass) {
+    /**
+     * Sets the transformation class for this transformation.
+     * @param transformationClass the transformation class this this transformation belongs to.
+     */
+    public void setTransformationClass(final Object transformationClass) {
         this.transformationClass = transformationClass;
     }
     
+    /**
+     * The id of this transformations command.
+     * @return the id of this transformations command.
+     */
     public String getCommandId() {
         return this.commandId;
     }
     
-    public void setCommandId(String id) {
+    /**
+     * Sets the id of this transformations command.
+     * @param id the id of this transformations command.
+     */
+    public void setCommandId(final String id) {
         this.commandId = id;
     }
     

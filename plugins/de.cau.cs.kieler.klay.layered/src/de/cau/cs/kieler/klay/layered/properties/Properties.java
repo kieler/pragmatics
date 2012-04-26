@@ -143,6 +143,12 @@ public final class Properties {
      */
     public static final IProperty<PortSide> EXT_PORT_SIDE = new Property<PortSide>(
             "externalPortSide", PortSide.UNDEFINED);
+    
+    /**
+     * Original size of the external port a dummy node was created for.
+     */
+    public static final IProperty<KVector> EXT_PORT_SIZE = new Property<KVector>(
+            "externalPortSize", new KVector());
 
     /**
      * The original position or position-to-node-size ratio of an external port. This is a property

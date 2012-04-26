@@ -60,13 +60,13 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import de.cau.cs.kieler.core.ui.util.DragDropScrollHandler;
+import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
 
 // CHECKSTYLEOFF MagicNumber
 
 /**
  * The debug window houses controls that allow the user to inspect the debug output
- * produced by Klay Layered. This could at some point also support zooming, but that's
- * not implemented yet.
+ * produced by Klay Layered.
  * 
  * @author cds
  */
@@ -257,16 +257,6 @@ public class DebugWindow extends Window {
      * A hundred percent.
      */
     private static final float HUNDRED_PERCENT = 100.0f;
-    
-    /**
-     * Default locations of Graphviz dot.
-     */
-    private static final String[] DEFAULT_DOT_LOCS = {
-        "/opt/local/bin/", //$NON-NLS-1$
-        "/usr/local/bin/", //$NON-NLS-1$
-        "/usr/bin/", //$NON-NLS-1$
-        "/bin/" //$NON-NLS-1$
-    };
     
     // UI CONTROLS
     private ToolBar toolBar = null;
@@ -476,25 +466,8 @@ public class DebugWindow extends Window {
      * @return {@code true} if the image file was successfully created.
      */
     private boolean createImage(final File modelFile, final File imageFile) {
-        // Find the dot executable. This could at some point be bound to the preference store
-        // and use the functionality provided by kieler.kiml.graphviz.layouter, but then again
-        // this is only a debug tool used by local developers, so what the hell...
-        String dotExecutable = "dot"; //$NON-NLS-1$
-        
-        if (!new File(dotExecutable).exists()) {
-            boolean foundExec = false;
-            for (String location : DEFAULT_DOT_LOCS) {
-                dotExecutable = location + "dot"; //$NON-NLS-1$
-                if (new File(dotExecutable).exists()) {
-                    foundExec = true;
-                    break;
-                }
-            }
-            if (!foundExec) {
-                throw new RuntimeException(
-                        "Graphviz dot not found in the default locations."); //$NON-NLS-1$
-            }
-        }
+        // Find the dot executable
+        String dotExecutable = GraphvizTool.getDotExecutable();
         
         try {
             String[] cmdLine = new String[] {
@@ -676,7 +649,7 @@ public class DebugWindow extends Window {
         
         // Browser
         colorKeyBrowser = new Browser(sashForm, SWT.BORDER);
-        colorKeyBrowser.setText(ColorKeyPage.getColorKeyText(colorKeyBrowser));
+        colorKeyBrowser.setText(LegendPage.getColorKeyText(colorKeyBrowser));
         
         // Set sash form weights
         sashForm.setWeights(new int[] {30, 50, 30});

@@ -21,13 +21,17 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
@@ -54,154 +58,189 @@ import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
  */
 public class QuickStartAction implements IIntroAction {
 
-	/**
-	 * executes a quick start. Filters from the given parameters the sourcetype
-	 * and prompt depending on that a import. The welcomepage will closed
-	 * automatically.
-	 * 
-	 * @param site
-	 *            , {@link IIntroSite}
-	 * @param params
-	 *            , {@link Properties}
-	 */
-	@SuppressWarnings("restriction")
-	public final void run(final IIntroSite site, final Properties params) {
+    /**
+     * Executes a quick start. Filters from the given parameters the sourcetype
+     * and prompt depending on that a import. The welcomepage will closed
+     * automatically.
+     * 
+     * @param site
+     *            , {@link IIntroSite}
+     * @param params
+     *            , {@link Properties}
+     */
+    @SuppressWarnings("restriction")
+    public final void run(final IIntroSite site, final Properties params) {
+        String sourceType = params.getProperty("sourceType");
+        SourceType sourcetype = null;
+        try {
+            sourcetype = SourceType.valueOf(sourceType);
+        } catch (IllegalArgumentException i) {
+            showError("Could not identify sourcetype.", i.getMessage());
+            return;
+        }
+        if (sourceType == null) {
+            showError("Introtag Error", "Missing property sourceType.");
+            return;
+        }
 
-		String sourceType = params.getProperty("sourceType");
-		SourceType sourcetype = null;
-		try {
-			sourcetype = SourceType.valueOf(sourceType);
-		} catch (IllegalArgumentException i) {
-			showError("Could not identify sourcetype.", i.getMessage());
-			return;
-		}
-		if (sourceType == null) {
-			showError("Introtag Error", "Missing property sourceType.");
-			return;
-		}
+        String exampleId = params.getProperty("exampleId");
+        if (exampleId == null) {
+            showError("Introtag Error", "Missing property exampleTitle.");
+            return;
+        }
 
-		String exampleId = params.getProperty("exampleId");
-		if (exampleId == null) {
-			showError("Introtag Error", "Missing property exampleTitle.");
-			return;
-		}
+        String projectName = params.getProperty("projectName");
+        if (projectName == null) {
+            showError("Introtag Error", "Missing property projectName.");
+        }
 
-		String projectName = params.getProperty("projectName");
-		if (projectName == null) {
-			showError("Introtag Error", "Missing property projectName.");
-		}
+        if (projectName == null) {
+            showError("Introtag Error", "Missing property projectName.");
+        }
 
-		if (projectName == null) {
-			showError("Introtag Error", "Missing property projectName.");
-		}
+        Example quickStarter = null;
+        try {
+            quickStarter = ExampleManager.get().getExample(sourcetype, exampleId);
+        } catch (RuntimeException e) {
+            showError("Example loading error", e.getMessage());
+            return;
+        }
+        if (quickStarter == null) {
+            showError("Example loading error", "Could not find example with id " + exampleId);
+            return;
+        }
+        ArrayList<Example> examples = new ArrayList<Example>();
+        examples.add(quickStarter);
 
-		Example quickStarter = null;
-		try {
-			quickStarter = ExampleManager.get().getExample(sourcetype,
-					exampleId);
-		} catch (RuntimeException e) {
-			showError("Example loading error", e.getMessage());
-			return;
-		}
-		if (quickStarter == null) {
-			showError("Example loading error",
-					"Could not find example with id " + exampleId);
-			return;
-		}
-		ArrayList<Example> examples = new ArrayList<Example>();
-		examples.add(quickStarter);
+        IPath projectPath = getUniqueProjectPath(projectName, site.getShell());
+        if (projectPath == null) {
+            return;
+        }
+        
+        ExampleManager.get().generateProject(projectPath);
+        IntroPlugin.closeIntro();
+        try {
+            List<String> directOpens = ExampleManager.get().importExamples(projectPath, examples, false);
+            postfix(directOpens, params.getProperty("autoLayout") != null);
+        } catch (Exception e) {
+            StatusManager.getManager().handle(
+                    new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID, "Problem at importing example", e),
+                    StatusManager.SHOW);
+        }
+    }
+    
+    /**
+     * Takes the given project name and turns it into a project path, making sure that the resulting
+     * path does not exist yet. If it does, the user is asked to provide another name.
+     * 
+     * @param projectName the project name.
+     * @param shell the window to use as parent for dialogs.
+     * @return the unique project path or {@code null} if the path already exists and the user decided
+     *         to cancel.
+     */
+    private IPath getUniqueProjectPath(final String projectName, final Shell shell) {
+        String currentProjectName = projectName;
+        IPath projectPath = Path.fromPortableString(currentProjectName);
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        
+        while (root.exists(projectPath)) {
+            // Prompt the user for a new path
+            InputDialog dialog = new InputDialog(
+                    shell,
+                    "Project Exists",
+                    "A project with this name already exists. Please enter a new name or cancel.",
+                    currentProjectName,
+                    null);
+            
+            if (dialog.open() == Dialog.OK) {
+                // Choose the user's project name
+                currentProjectName = dialog.getValue();
+                projectPath = Path.fromPortableString(currentProjectName);
+            } else {
+                // Cancel
+                return null;
+            }
+        }
+        
+        return projectPath;
+    }
 
-		IPath projectPath = Path.fromPortableString(projectName);
-		ExampleManager.get().generateProject(projectPath);
-		IntroPlugin.closeIntro();
-		try {
-			List<String> directOpens = ExampleManager.get().importExamples(
-					projectPath, examples, false);
-			postfix(directOpens, params.getProperty("autoLayout") != null);
-		} catch (Exception e) {
-			StatusManager.getManager().handle(
-					new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
-							"Problem at importing example", e),
-					StatusManager.SHOW);
-		}
-	}
+    /**
+     * Opens up a error dialog with given title and message.
+     * 
+     * @param title
+     *            , String
+     * @param message
+     *            , String
+     */
+    private void showError(final String title, final String message) {
+        IWorkbench wb = PlatformUI.getWorkbench();
+        IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+        MessageDialog.openError(win.getShell(), title, message);
+    }
 
-	/**
-	 * Opens up a error dialog with given title and message.
-	 * 
-	 * @param title
-	 *            , String
-	 * @param message
-	 *            , String
-	 */
-	private void showError(final String title, final String message) {
-		IWorkbench wb = PlatformUI.getWorkbench();
-		IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-		MessageDialog.openError(win.getShell(), title, message);
-	}
+    /**
+     * Refreshes the workspace and opens up the direct open files with an
+     * editor.
+     * 
+     * @param directOpens
+     * @param autoLayout
+     *            , set if direct opening models should be layout.
+     */
+    private void postfix(final List<String> directOpens,
+            final boolean autoLayout) {
+        // refresh workspace
+        IContainer element = ResourcesPlugin.getWorkspace().getRoot();
+        try {
+            if (element != null) {
+                element.refreshLocal(IContainer.DEPTH_INFINITE, null);
+            }
+        } catch (CoreException e1) {
+            // do nothing
+        }
 
-	/**
-	 * Refreshes the workspace and opens up the direct open files with an
-	 * editor.
-	 * 
-	 * @param directOpens
-	 * @param autoLayout
-	 *            , set if direct opening models should be layout.
-	 */
-	private void postfix(final List<String> directOpens,
-			final boolean autoLayout) {
-		// refresh workspace
-		IContainer element = ResourcesPlugin.getWorkspace().getRoot();
-		try {
-			if (element != null) {
-				element.refreshLocal(IContainer.DEPTH_INFINITE, null);
-			}
-		} catch (CoreException e1) {
-			// do nothing
-		}
+        // open directopen files in editor.
+        if (directOpens != null) {
+            IWorkbenchWindow win = PlatformUI.getWorkbench()
+                    .getActiveWorkbenchWindow();
+            IWorkbenchPage page = win.getActivePage();
+            for (String path : directOpens) {
+                IFile[] files = ResourcesPlugin
+                        .getWorkspace()
+                        .getRoot()
+                        .findFilesForLocationURI(URIUtil.toURI(path),
+                                IResource.FILE);
+                if (files.length == 1) {
+                    IEditorDescriptor defaultEditor = PlatformUI.getWorkbench()
+                            .getEditorRegistry()
+                            .getDefaultEditor(files[0].getName());
+                    if (defaultEditor == null) {
+                        defaultEditor = PlatformUI
+                                .getWorkbench()
+                                .getEditorRegistry()
+                                .findEditor(
+                                        IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+                    }
+                    try {
+                        page.openEditor(new FileEditorInput(files[0]),
+                                defaultEditor.getId());
+                        if (autoLayout) {
+                            DiagramLayoutEngine.INSTANCE.layout(PlatformUI
+                                    .getWorkbench().getActiveWorkbenchWindow()
+                                    .getPartService().getActivePart(), null,
+                                    false, true, false, true);
+                        }
+                    } catch (PartInitException e) {
+                        IStatus status = new Status(IStatus.WARNING,
+                                KEXUIPlugin.PLUGIN_ID,
+                                "Could not open editor.", e);
+                        StatusManager.getManager().handle(status,
+                                StatusManager.SHOW);
+                        continue;
+                    }
+                }
+            }
+        }
 
-		// open directopen files in editor.
-		if (directOpens != null) {
-			IWorkbenchWindow win = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow();
-			IWorkbenchPage page = win.getActivePage();
-			for (String path : directOpens) {
-				IFile[] files = ResourcesPlugin
-						.getWorkspace()
-						.getRoot()
-						.findFilesForLocationURI(URIUtil.toURI(path),
-								IResource.FILE);
-				if (files.length == 1) {
-					IEditorDescriptor defaultEditor = PlatformUI.getWorkbench()
-							.getEditorRegistry()
-							.getDefaultEditor(files[0].getName());
-					if (defaultEditor == null) {
-						defaultEditor = PlatformUI
-								.getWorkbench()
-								.getEditorRegistry()
-								.findEditor(
-										IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-					}
-					try {
-						page.openEditor(new FileEditorInput(files[0]),
-								defaultEditor.getId());
-						if (autoLayout) {
-							DiagramLayoutEngine.INSTANCE.layout(PlatformUI
-									.getWorkbench().getActiveWorkbenchWindow()
-									.getPartService().getActivePart(), null,
-									false, true, false, true);
-						}
-					} catch (PartInitException e) {
-						IStatus status = new Status(IStatus.WARNING,
-								KEXUIPlugin.PLUGIN_ID,
-								"Could not open editor.", e);
-						StatusManager.getManager().handle(status,
-								StatusManager.SHOW);
-						continue;
-					}
-				}
-			}
-		}
-
-	}
+    }
 }

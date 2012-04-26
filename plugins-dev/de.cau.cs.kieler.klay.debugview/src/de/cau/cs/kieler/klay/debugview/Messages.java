@@ -61,6 +61,12 @@ public final class Messages extends NLS {
     public static String DebugWindow_ZoomMenu_OriginalSize;
 
     public static String DebugWindow_ZoomMenu_ZoomToFit;
+
+    public static String LegendPage_NodeLabels_Heading;
+
+    public static String LegendPage_NodeLabels_Pattern;
+
+    public static String LegendPage_NodeLabels_Text;
     
     static {
         // initialize resource bundle

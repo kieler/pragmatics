@@ -43,8 +43,8 @@ import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 import de.cau.cs.kieler.ksbase.ui.utils.TransformationUtils;
 
 /**
- * Transformation-UI manager. Handles creation and execution of commands and
- * notify of transformationEvent listeners
+ * Transformation-UI manager. Handles creation and execution of commands and notify of
+ * transformationEvent listeners
  * 
  * @author mim
  * 
@@ -56,8 +56,7 @@ public final class TransformationUIManager {
     public static final TransformationUIManager INSTANCE = new TransformationUIManager();
 
     /**
-     * The list of listeners to notify before and after transformation has been
-     * executed.
+     * The list of listeners to notify before and after transformation has been executed.
      **/
     private LinkedList<ITransformationEventListener> transformationEventListeners;
 
@@ -78,8 +77,7 @@ public final class TransformationUIManager {
      * @param listener
      *            The listener to add
      */
-    public void addTransformationListener(
-            final ITransformationEventListener listener) {
+    public void addTransformationListener(final ITransformationEventListener listener) {
         transformationEventListeners.add(listener);
     }
 
@@ -89,8 +87,7 @@ public final class TransformationUIManager {
      * @param listener
      *            The listener to remove.
      */
-    public void removeTransformationListener(
-            final ITransformationEventListener listener) {
+    public void removeTransformationListener(final ITransformationEventListener listener) {
         transformationEventListeners.remove(listener);
     }
 
@@ -104,37 +101,34 @@ public final class TransformationUIManager {
     }
 
     /**
-     * Creates and executes a transformation command by creating a request and
-     * execute the resulting command on the diagram command stack.
+     * Creates and executes a transformation command by creating a request and execute the resulting
+     * command on the diagram command stack.
      * 
      * @param editorSettings
      *            The editor for which this transformation is
      * @param transformation
      *            The transformation that should be executed
      * @param selection
-     *            A selection containing the edit parts that should be used.
-     *            This may also be null, which indicates that the elements are
-     *            selected automatically
+     *            A selection containing the edit parts that should be used. This may also be null,
+     *            which indicates that the elements are selected automatically
      */
     public void createAndExecuteTransformationCommand(
             final EditorTransformationSettings editorSettings,
-            final KSBasETransformation transformation,
-            final List<EObject> selection) {
+            final KSBasETransformation transformation, final List<EObject> selection) {
         // Notify event listeners:
         for (ITransformationEventListener te : transformationEventListeners) {
             te.transformationAboutToExecute(new Object[] {});
         }
 
-        IEditorPart activeEditor = PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+        IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getActivePage().getActiveEditor();
         EditPart selectedEditPart = null;
         if (selection != null) {
             selectedEditPart = GmfModelingUtil.getEditPart(selection.get(0));
         } else {
             // retrieve selection:
-            ISelection sel = PlatformUI.getWorkbench()
-                    .getActiveWorkbenchWindow().getSelectionService()
-                    .getSelection();
+            ISelection sel = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                    .getSelectionService().getSelection();
             if (sel instanceof StructuredSelection) {
                 Object selObj = ((StructuredSelection) sel).getFirstElement();
                 if (selObj instanceof EditPart) {
@@ -157,18 +151,13 @@ public final class TransformationUIManager {
         if (selection == null) {
             if (transformation.getParameterList().size() == 0) {
                 KSBasEUIPlugin.getDefault().logError(
-                        "The Transformation "
-                                + transformation.getTransformation()
+                        "The Transformation " + transformation.getTransformation()
                                 + " does not have any parameters");
             } else {
-                for (List<String> parameters : transformation
-                        .getParameterList()) {
+                for (List<String> parameters : transformation.getParameterList()) {
                     selectionMapping = TransformationFrameworkFactory
-                            .getDefaultTransformationFramework()
-                            .createParameterMapping(
-                                    null,
-                                    parameters.toArray(new String[parameters
-                                            .size()]));
+                            .getDefaultTransformationFramework().createParameterMapping(null,
+                                    parameters.toArray(new String[parameters.size()]));
                     if (selectionMapping != null) {
                         break;
                     }
@@ -180,11 +169,9 @@ public final class TransformationUIManager {
             selectionMapping.addAll(selection);
         }
 
-        ExecuteTransformationRequest request = new ExecuteTransformationRequest(
-                activeEditor, transformation.getTransformation(),
-                editorSettings.getTransformationFile(), selectionMapping,
-                editorSettings.getModelPackages(),
-                editorSettings.getFramework());
+        ExecuteTransformationRequest request = new ExecuteTransformationRequest(activeEditor,
+                transformation.getTransformation(), editorSettings.getTransformationFile(),
+                selectionMapping, editorSettings.getModelPackages(), editorSettings.getFramework());
         Command transformationCommand = selectedEditPart.getCommand(request);
 
         // gets a command stack to execute the command
@@ -204,15 +191,13 @@ public final class TransformationUIManager {
         // transformation.
 
         if (activeEditor instanceof IDiagramWorkbenchPart) {
-            EObject obj = ((View) ((IDiagramWorkbenchPart) activeEditor)
-                    .getDiagramEditPart().getModel()).getElement();
+            EObject obj = ((View) ((IDiagramWorkbenchPart) activeEditor).getDiagramEditPart()
+                    .getModel()).getElement();
 
-            List<?> editPolicies = CanonicalEditPolicy
-                    .getRegisteredEditPolicies(obj);
+            List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
             for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
 
-                CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
-                        .next();
+                CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
 
                 nextEditPolicy.refresh();
             }
@@ -226,8 +211,10 @@ public final class TransformationUIManager {
                 te.transformationExecuted(new Object[] { obj, activeEditor });
             }
 
-            //do a layout in the end
-            LayoutEffect effect = new LayoutEffect(activeEditor, (EObject)((IDiagramWorkbenchPart) activeEditor).getDiagramEditPart().getModel(), false);
+            // do a layout in the end
+            LayoutEffect effect = new LayoutEffect(activeEditor,
+                    (EObject) ((IDiagramWorkbenchPart) activeEditor).getDiagramEditPart()
+                            .getModel(), false);
             effect.schedule();
         }
     }

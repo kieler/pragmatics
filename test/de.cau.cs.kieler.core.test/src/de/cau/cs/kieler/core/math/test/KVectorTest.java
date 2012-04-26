@@ -191,7 +191,7 @@ public class KVectorTest {
      */
     @Test
     public void testApplyBounds() {
-        /**
+        /*
          * 
          * test if vt.x > lowx and vt.y > lowy (the result must be the same vt)
          * 
@@ -207,7 +207,7 @@ public class KVectorTest {
         // test if vt.x > lowx (the result must be the same vt)
         vt.applyBounds(v_lower_bound.x, v_lower_bound.y, v_upper_bound.x, v_upper_bound.y);
         assertTrue(vt.equals(v));
-        /**
+        /*
          * 
          * test if vt.x < lowx and vt.y < lowy (the result must be the vt(lowx,lowy))
          * 
@@ -221,7 +221,7 @@ public class KVectorTest {
         // test if vt.x < lowx and vt.y < lowy (the result must be the vt(lowx,lowy))
         vt.applyBounds(v_lower_bound.x, v_lower_bound.y, v_upper_bound.x, v_upper_bound.y);
         assertTrue(vt.equals(v_lower_bound));
-        /**
+        /*
          * 
          * test if vt.x > highx and vt.y > highy (the result must be the vt(highx,highy))
          * 

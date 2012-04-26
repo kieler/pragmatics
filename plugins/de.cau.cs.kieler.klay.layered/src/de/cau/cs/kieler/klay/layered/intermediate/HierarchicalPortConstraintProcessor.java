@@ -16,11 +16,13 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.Alignment;
@@ -97,6 +99,18 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
             }
         }
     }
+    
+    
+    // CONSTANTS
+    /**
+     * Index of the input port in the list of ports of newly created north / south port dummy nodes.
+     */
+    private static final int DUMMY_INPUT_PORT = 0;
+
+    /**
+     * Index of the output port in the list of ports of newly created north / south port dummy nodes.
+     */
+    private static final int DUMMY_OUTPUT_PORT = 1;
     
 
     /**
@@ -185,33 +199,61 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
             return;
         }
         
-        // If the port order is not fixed, we don't need to insert a hierarchical port dummy
-        // after every node that's connected to a hierarchical port. Instead, we just replace
-        // the original dummy
-        boolean onlyReplaceOriginalDummy = !portConstraints.isOrderFixed();
+        List<Layer> layers = layeredGraph.getLayers();
+        int layerCount = layers.size();
         
-        Map<Object, LNode> nextLayerNodesToAdd = new HashMap<Object, LNode>();
-        Set<LNode> externalNodeDummies = new HashSet<LNode>();
+        // For each layer, we keep a map of dummy nodes created for a given original external port
+        // dummy. The list holds layerCount + 2 elements because we might have to add a new first and
+        // last layer, even though that shouldn't normally happen
+        List<Map<Object, LNode>> newDummyNodes = Lists.newArrayListWithExpectedSize(layerCount + 2);
+        
+        // Add a map of dummy nodes for a new first layer that might have to be created as well as for
+        // the current first layer. A map for the next layer is added on each iteration of the for loop
+        newDummyNodes.add(new HashMap<Object, LNode>());
+        newDummyNodes.add(new HashMap<Object, LNode>());
+        
+        // We remember each original external port dummy we encounter (they must be removed from
+        // the layers later)
+        Set<LNode> originalExternalPortDummies = Sets.newHashSet();
         
         // Iterate through each layer
-        ListIterator<Layer> layerIterator = layeredGraph.getLayers().listIterator();
-        
-        while (layerIterator.hasNext()) {
-            Layer currentLayer = layerIterator.next();
+        for (int currLayerIdx = 0; currLayerIdx < layerCount; currLayerIdx++) {
+            Layer currentLayer = layers.get(currLayerIdx);
             
-            // See if any nodes must be added to this layer
-            if (!nextLayerNodesToAdd.isEmpty()) {
-                for (LNode dummy : nextLayerNodesToAdd.values()) {
-                    dummy.setLayer(currentLayer);
-                }
-                
-                nextLayerNodesToAdd.clear();
-            }
+            // Dummy node maps for the next and previous layer
+            Map<Object, LNode> newPrevLayerNodes = newDummyNodes.get(currLayerIdx);
+            Map<Object, LNode> newNextLayerNodes = Maps.newHashMap();
+            newDummyNodes.add(newNextLayerNodes);
             
             // Iterate through the layer's nodes, looking for normal nodes connected to
             // northern / southern hierarchical port dummies
             for (LNode currentNode : currentLayer) {
-                // Iterate through the node's outgoing edges
+                // Iterate over the node's incoming edges
+                for (LEdge edge : currentNode.getIncomingEdges()) {
+                    LNode sourceNode = edge.getSource().getNode();
+                    
+                    // Check if it's a northern / southern dummy node
+                    if (!isNorthernSouthernDummy(sourceNode)) {
+                        continue;
+                    }
+                    originalExternalPortDummies.add(sourceNode);
+                    
+                    // See if a dummy has already been created for the previous layer
+                    LNode prevLayerDummy = newPrevLayerNodes.get(
+                            sourceNode.getProperty(Properties.ORIGIN));
+                    
+                    if (prevLayerDummy == null) {
+                        // No. Create one.
+                        prevLayerDummy = createDummy(sourceNode);
+                        newPrevLayerNodes.put(
+                                sourceNode.getProperty(Properties.ORIGIN), prevLayerDummy);
+                    }
+                    
+                    // Reroute the edge
+                    edge.setSource(prevLayerDummy.getPorts().get(DUMMY_OUTPUT_PORT));
+                }
+                
+                // Iterate over the node's outgoing edges
                 for (LEdge edge : currentNode.getOutgoingEdges()) {
                     LNode targetNode = edge.getTarget().getNode();
                     
@@ -219,59 +261,54 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
                     if (!isNorthernSouthernDummy(targetNode)) {
                         continue;
                     }
-                    externalNodeDummies.add(targetNode);
+                    originalExternalPortDummies.add(targetNode);
                     
-                    // If only the original dummy should be replaced by a new one, we'll
-                    // do that below, after the for loop
-                    if (!onlyReplaceOriginalDummy) {
-                        // See if a dummy has already been created for the next layer
-                        LNode nextLayerDummy = nextLayerNodesToAdd.get(
-                                targetNode.getProperty(Properties.ORIGIN));
-                        
-                        if (nextLayerDummy == null) {
-                            // No. Create one.
-                            nextLayerDummy = createDummy(targetNode);
-                            nextLayerNodesToAdd.put(
-                                    targetNode.getProperty(Properties.ORIGIN), nextLayerDummy);
-                        }
-                        
-                        // Reroute the edge
-                        edge.setTarget(nextLayerDummy.getPorts().get(0));
+                    // See if a dummy has already been created for the next layer
+                    LNode nextLayerDummy = newNextLayerNodes.get(
+                            targetNode.getProperty(Properties.ORIGIN));
+                    
+                    if (nextLayerDummy == null) {
+                        // No. Create one.
+                        nextLayerDummy = createDummy(targetNode);
+                        newNextLayerNodes.put(
+                                targetNode.getProperty(Properties.ORIGIN), nextLayerDummy);
                     }
+                    
+                    // Reroute the edge
+                    edge.setTarget(nextLayerDummy.getPorts().get(DUMMY_INPUT_PORT));
                 }
             }
         }
         
-        // See if there are nodes that have to be added to a new last layer (this actually shouldn't
-        // happen, but as the old saying I just invented goes: when in doubt, opt for the safe side!)
-        if (!nextLayerNodesToAdd.isEmpty()) {
-            Layer newLastLayer = new Layer(layeredGraph);
-            layeredGraph.getLayers().add(newLastLayer);
-
-            for (LNode dummy : nextLayerNodesToAdd.values()) {
-                dummy.setLayer(newLastLayer);
-            }
-        }
-        
-        // Iterate through the hierarchical port dummies
-        for (LNode originalDummy : externalNodeDummies) {
-            if (onlyReplaceOriginalDummy) {
-                // Create a new dummy node and replace the original dummy with it. This simplifies
-                // handling them when routing hierarchical port edges.
-                LNode newDummy = createDummy(originalDummy);
-                newDummy.setLayer(originalDummy.getLayer());
-                
-                // Reroute all incident edges; this assumes that the original dummy only has
-                // one port, with only incoming edges
-                LPort originalPort = originalDummy.getPorts().get(0);
-                LPort newPort = newDummy.getPorts().get(0);
-                
-                LEdge[] edges = originalPort.getIncomingEdges().toArray(new LEdge[0]);
-                for (LEdge edge : edges) {
-                    edge.setTarget(newPort);
-                }
+        // Add the newly created dummy nodes
+        for (int i = 0; i < newDummyNodes.size(); i++) {
+            Map<Object, LNode> nodeMap = newDummyNodes.get(i);
+            if (nodeMap.isEmpty()) {
+                // No dummy nodes, so just move on
+                continue;
             }
             
+            // Find the layer the dummy nodes should be added to
+            Layer layer = null;
+            if (i == 0) {
+                // A new first layer must be created
+                layer = new Layer(layeredGraph);
+                layers.add(0, layer);
+            } else if (i == newDummyNodes.size() - 1) {
+                // A new layer layer must be created
+                layer = new Layer(layeredGraph);
+                layers.add(layer);
+            } else {
+                layer = layers.get(i - 1);
+            }
+            
+            for (LNode dummy : nodeMap.values()) {
+                dummy.setLayer(layer);
+            }
+        }
+        
+        // Iterate through the hierarchical port dummies and remove them
+        for (LNode originalDummy : originalExternalPortDummies) {
             // Remove the original dummy; new dummy nodes have already been created for it
             originalDummy.setLayer(null);
         }
@@ -314,6 +351,10 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
         LPort inputPort = new LPort();
         inputPort.setNode(newDummy);
         inputPort.setSide(PortSide.WEST);
+        
+        LPort outputPort = new LPort();
+        outputPort.setNode(newDummy);
+        outputPort.setSide(PortSide.EAST);
         
         return newDummy;
     }
