@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered.p4nodes;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import java.util.List;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -37,8 +40,10 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
+    /** List of edges involved in type 1 conflicts (see above). */
     private List<LEdge> markedEdges;
 
+    /** Basic spacing between nodes, determined by layout options. */
     private float normalSpacing;
 
     /**
@@ -48,32 +53,74 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         getMonitor().begin("BK node placement", 1);
         markedEdges = new LinkedList<LEdge>();
 
+        // Determine overall node count for an optimal initialization of maps.
         int nodeCount = 0;
         for (Layer layer : layeredGraph) {
             nodeCount += layer.getNodes().size();
         }
 
-        BKAlignedLayout lefttop = new BKAlignedLayout(nodeCount);
-        BKAlignedLayout righttop = new BKAlignedLayout(nodeCount);
-        BKAlignedLayout leftbottom = new BKAlignedLayout(nodeCount);
-        BKAlignedLayout rightbottom = new BKAlignedLayout(nodeCount);
+        // Initialize four layouts which result from the two possible directions respectively.
+        BKAlignedLayout lefttop = new BKAlignedLayout(nodeCount, VDirection.LEFT, HDirection.TOP);
+        BKAlignedLayout righttop = new BKAlignedLayout(nodeCount, VDirection.RIGHT, HDirection.TOP);
+        BKAlignedLayout leftbottom = new BKAlignedLayout(nodeCount, VDirection.LEFT,
+                HDirection.BOTTOM);
+        BKAlignedLayout rightbottom = new BKAlignedLayout(nodeCount, VDirection.RIGHT,
+                HDirection.BOTTOM);
 
+        // Initialize spacing value from layout options.
         normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
 
-        // directions?!?
+        // Phase which marks type 1 conflicts, no difference between the directions so only
+        // one run is required.
         markConflicts(layeredGraph);
 
-        verticalAlignmentLeftTop(layeredGraph, lefttop);
+        // Phase which determines the nodes' memberships in blocks. This happens in four different
+        // ways, either from processing the nodes from the first layer to the last or vice versa. 
+        //TODO more doc!!! 
+        verticalAlignment(layeredGraph, lefttop);
+        verticalAlignment(layeredGraph, righttop);
+        verticalAlignment(layeredGraph, leftbottom);
+        verticalAlignment(layeredGraph, rightbottom);
 
-        horizontalCompactionLeftTop(layeredGraph, lefttop);
+        horizontalCompaction(layeredGraph, lefttop);
+        horizontalCompaction(layeredGraph, righttop);
+        horizontalCompaction(layeredGraph, leftbottom);
+        horizontalCompaction(layeredGraph, rightbottom);
+        
+        BKAlignedLayout chosenLayout = lefttop;
+        System.out.println("lefttop size is " + lefttop.layoutSize());
+        System.out.println("righttop size is " + righttop.layoutSize());
+        System.out.println("leftbottom size is " + leftbottom.layoutSize());
+        System.out.println("rightbottom size is " + rightbottom.layoutSize());
+        
+        LinkedList<BKAlignedLayout> layouts = new LinkedList<BKAlignedLayout>();
+        layouts.add(righttop);
+        layouts.add(leftbottom);
+        layouts.add(rightbottom);
+        for (BKAlignedLayout bal : layouts) {
+            if (bal.layoutSize() < chosenLayout.layoutSize()) {
+                chosenLayout = bal;
+            }
+        }
 
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                System.out.println("Set position of " + node.toString()
-                        + " to " + lefttop.getY().get(node));
-                node.getPosition().y = lefttop.getY().get(node);
+//                System.out.println("Set position of " + node.toString() + " to "
+//                        + chosenLayout.getY().get(node));
+                node.getPosition().y = chosenLayout.getY().get(node);
+
+                if (!node.getProperty(LayoutOptions.HYPERNODE)) {
+                    layer.getSize().x = Math.max(layer.getSize().x,
+                            node.getSize().x + node.getMargin().left + node.getMargin().right);
+                }
             }
         }
+        
+        System.out.println(getBlocks(chosenLayout));
+
+        // Phase for postprocessing steps:
+        // - move dummy nodes to the height of respective ports
+        postProcess(chosenLayout);
 
         getMonitor().done();
     }
@@ -105,7 +152,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         }
     }
 
-    private void verticalAlignmentLeftTop(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
+    private void verticalAlignment(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
         // Initialize root and align maps
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode v : layer.getNodes()) {
@@ -114,12 +161,32 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             }
         }
 
-        for (Layer layer : layeredGraph.getLayers()) {
+        List<Layer> layers = layeredGraph.getLayers();
+        if (bal.getHDir() == HDirection.BOTTOM) {
+            layers = Arrays.asList(new Layer[layeredGraph.getLayers().size()]);
+            Collections.copy(layers, layeredGraph.getLayers());
+            Collections.reverse(layers);
+        }
+
+        for (Layer layer : layers) {
             // r denotes the position in layer order where the last block was found
             // It is initialized with -1, since nothing is found and the ordering starts with 0
             int r = -1;
-            for (LNode vik : layer.getNodes()) {
-                List<LNode> neighbors = allUpperNeighbors(vik);
+            List<LNode> nodes = layer.getNodes();
+            if (bal.getVDir() == VDirection.RIGHT) {
+                r = Integer.MAX_VALUE;
+                nodes = Arrays.asList(new LNode[layer.getNodes().size()]);
+                Collections.copy(nodes, layer.getNodes());
+                Collections.reverse(nodes);
+            }
+            for (LNode vik : nodes) {
+                List<LNode> neighbors = null;
+                if (bal.getHDir() == HDirection.BOTTOM) {
+                    neighbors = allLowerNeighbors(vik);
+                } else {
+                    neighbors = allUpperNeighbors(vik);
+                }
+
                 if (neighbors.size() > 0) {
 
                     // When a node has many upper neighbors, consider only the (two) nodes in the
@@ -127,59 +194,33 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                     int d = neighbors.size();
                     int low = ((int) Math.floor(((d + 1.0) / 2.0))) - 1;
                     int high = ((int) Math.ceil(((d + 1.0) / 2.0))) - 1;
+                    System.out.println("d " + d + " High " + high + " Low " + low);
 
-                    // Check, whether vik can be added to a block of its upper neighbor(s)
-                    for (int m = low; m <= high; m++) {
-                        if (bal.getAlign().get(vik).equals(vik)) {
-                            LNode um = neighbors.get(m);
-                            if (!markedEdges.contains(getEdge(um, vik)) && r < um.getIndex()) {
-                                bal.getAlign().put(um, vik);
-                                bal.getRoot().put(vik, bal.getRoot().get(um));
-                                bal.getAlign().put(vik, bal.getRoot().get(vik));
-                                r = um.getIndex();
+                    if (bal.getVDir() == VDirection.RIGHT) {
+                        // Check, whether vik can be added to a block of its upper/lower neighbor(s)
+                        for (int m = high; m >= low; m--) {
+                            System.out.println("m " + m);
+                            if (bal.getAlign().get(vik).equals(vik)) {
+                                LNode um = neighbors.get(m);
+                                if (!markedEdges.contains(getEdge(um, vik)) && r > um.getIndex()) {
+                                    bal.getAlign().put(um, vik);
+                                    bal.getRoot().put(vik, bal.getRoot().get(um));
+                                    bal.getAlign().put(vik, bal.getRoot().get(vik));
+                                    r = um.getIndex();
+                                }
                             }
                         }
-                    }
-                }
-            }
-        }
-    }
-    
-    private void verticalAlignmentRightTop(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
-        // Initialize root and align maps
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode v : layer.getNodes()) {
-                bal.getRoot().put(v, v);
-                bal.getAlign().put(v, v);
-            }
-        }
-
-        for (Layer layer : layeredGraph.getLayers()) {
-            // r denotes the position in layer order where the last block was found
-            // It is initialized with MAX, since nothing is found and the ordering starts with
-            // the highest number. This is, because its from right to left this time
-            
-            //TODO continue here ... should be better to use numbers instead of iterators here!
-            int r = Integer.MAX_VALUE;
-            for (LNode vik : layer.getNodes()) {
-                List<LNode> neighbors = allUpperNeighbors(vik);
-                if (neighbors.size() > 0) {
-
-                    // When a node has many upper neighbors, consider only the (two) nodes in the
-                    // middle
-                    int d = neighbors.size();
-                    int low = ((int) Math.floor(((d + 1.0) / 2.0))) - 1;
-                    int high = ((int) Math.ceil(((d + 1.0) / 2.0))) - 1;
-
-                    // Check, whether vik can be added to a block of its upper neighbor(s)
-                    for (int m = low; m <= high; m++) {
-                        if (bal.getAlign().get(vik).equals(vik)) {
-                            LNode um = neighbors.get(m);
-                            if (!markedEdges.contains(getEdge(um, vik)) && r < um.getIndex()) {
-                                bal.getAlign().put(um, vik);
-                                bal.getRoot().put(vik, bal.getRoot().get(um));
-                                bal.getAlign().put(vik, bal.getRoot().get(vik));
-                                r = um.getIndex();
+                    } else {
+                        // Check, whether vik can be added to a block of its upper/lower neighbor(s)
+                        for (int m = low; m <= high; m++) {
+                            if (bal.getAlign().get(vik).equals(vik)) {
+                                LNode um = neighbors.get(m);
+                                if (!markedEdges.contains(getEdge(um, vik)) && r < um.getIndex()) {
+                                    bal.getAlign().put(um, vik);
+                                    bal.getRoot().put(vik, bal.getRoot().get(um));
+                                    bal.getAlign().put(vik, bal.getRoot().get(vik));
+                                    r = um.getIndex();
+                                }
                             }
                         }
                     }
@@ -188,17 +229,22 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         }
     }
 
-    private void horizontalCompactionLeftTop(final LayeredGraph layeredGraph,
-            final BKAlignedLayout bal) {
+    private void horizontalCompaction(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 bal.getSink().put(node, node);
                 bal.getShift().put(node, Double.POSITIVE_INFINITY);
             }
         }
-
+        
         for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode v : layer.getNodes()) {
+            
+            List<LNode> nodes = layer.getNodes();
+//            if (bal.getVDir() == VDirection.RIGHT) {
+//                Collections.copy(nodes, layer.getNodes());
+//                Collections.reverse(nodes);
+//            }
+            for (LNode v : nodes) {
                 if (bal.getRoot().get(v).equals(v)) {
                     placeBlock(v, bal);
                 }
@@ -206,10 +252,18 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         }
 
         for (Layer layer : layeredGraph.getLayers()) {
+            
+            // Switching layer or node order here seems to have no effect
+            List<LNode> nodes = layer.getNodes();
+            if (bal.getVDir() == VDirection.RIGHT) {
+                nodes = Arrays.asList(new LNode[layer.getNodes().size()]);
+                Collections.copy(nodes, layer.getNodes());
+                Collections.reverse(nodes);
+            }
+            
             for (LNode v : layer.getNodes()) {
                 bal.getY().put(v, bal.getY().get(bal.getRoot().get(v)));
-                if (bal.getShift().get(bal.getSink().get(bal.getRoot().get(v)))
-                        < Double.POSITIVE_INFINITY) {
+                if (bal.getShift().get(bal.getSink().get(bal.getRoot().get(v))) < Double.POSITIVE_INFINITY) {
                     bal.getY().put(
                             v,
                             bal.getY().get(v)
@@ -225,8 +279,17 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             bal.getY().put(v, 0.0);
             LNode w = v;
             do {
-                if (w.getIndex() > 0) {
-                    LNode u = bal.getRoot().get(w.getLayer().getNodes().get(w.getIndex() - 1));
+                if ((bal.getVDir() == VDirection.LEFT && w.getIndex() > 0)
+                        || (bal.getVDir() == VDirection.RIGHT
+                        && w.getIndex() < (w.getLayer().getNodes().size() - 1))) {
+                    
+                    LNode u = null;
+                    if (bal.getVDir() == VDirection.RIGHT) {
+                        u = bal.getRoot().get(w.getLayer().getNodes().get(w.getIndex() + 1));
+                    } else {
+                        u = bal.getRoot().get(w.getLayer().getNodes().get(w.getIndex() - 1));
+                    }
+                    
                     placeBlock(u, bal);
                     if (bal.getSink().get(v).equals(v)) {
                         bal.getSink().put(v, bal.getSink().get(u));
@@ -237,13 +300,59 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                                 Math.min(bal.getShift().get(bal.getSink().get(u)), bal.getY()
                                         .get(u) - bal.getY().get(v) + normalSpacing));
                     } else {
-                        bal.getY().put(v,
-                                Math.max(bal.getY().get(v), bal.getY().get(u) + normalSpacing));
+                        if (bal.getVDir() == VDirection.RIGHT) {
+                            bal.getY().put(v,
+                                    Math.min(bal.getY().get(v), bal.getY().get(u) - normalSpacing));
+                        } else {
+                            bal.getY().put(v,
+                                    Math.max(bal.getY().get(v), bal.getY().get(u) + normalSpacing));
+                        }
                     }
                 }
                 w = bal.getAlign().get(w);
             } while (w != v);
         }
+    }
+
+    private void postProcess(final BKAlignedLayout bal) {
+        HashMap<LNode, List<LNode>> blocks = getBlocks(bal);
+
+        for (List<LNode> block : blocks.values()) {
+            int layer = Integer.MAX_VALUE;
+            double portOffset = 0.0;
+
+            // Check block for none dummy nodes and determine port height
+            for (LNode node : block) {
+                if (node.getProperty(Properties.NODE_TYPE) != NodeType.LONG_EDGE) {
+                    if (node.getLayer().getIndex() < layer) {
+                        // TODO consider treating left and right nodes differently
+                        // to align them correctly if left side and right side ports
+                        // have different positions
+                        for (LEdge edge : node.getIncomingEdges()) {
+                            if (block.contains(edge.getSource().getNode())) {
+                                portOffset = edge.getTarget().getPosition().y;
+                            }
+                        }
+                        // To favor alignment to source nodes, their port offset is checked and
+                        // applied second
+                        for (LEdge edge : node.getOutgoingEdges()) {
+                            if (block.contains(edge.getTarget().getNode())) {
+                                portOffset = edge.getSource().getPosition().y + 1.0;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Move dummy nodes to previously determined port height
+            for (LNode node : block) {
+                if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
+                    node.getPosition().y += portOffset;
+                    System.out.println("Offsetting " + node.toString() + " by " + portOffset);
+                }
+            }
+        }
+
     }
 
     private int layerSize(final LayeredGraph layeredGraph, final int layer) {
@@ -297,6 +406,15 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         return result;
     }
 
+    private List<LNode> allLowerNeighbors(final LNode node) {
+        List<LNode> result = new LinkedList<LNode>();
+        for (LEdge edge : node.getOutgoingEdges()) {
+            result.add(edge.getTarget().getNode());
+        }
+        Collections.sort(result, new NeighborComparator());
+        return result;
+    }
+
     private LEdge getEdge(final LNode source, final LNode target) {
         for (LEdge edge : source.getConnectedEdges()) {
             if (edge.getTarget().getNode().equals(target)
@@ -305,6 +423,10 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             }
         }
         return null;
+    }
+    
+    private double getPortYDifference(LEdge e) {
+        return e.getTarget().getPosition().y - e.getSource().getPosition().y;
     }
 
     private HashMap<LNode, List<LNode>> getBlocks(final BKAlignedLayout bal) {
@@ -356,15 +478,21 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
         private HashMap<LNode, Double> y;
 
+        private VDirection vdir;
+
+        private HDirection hdir;
+
         /**
          * 
          */
-        public BKAlignedLayout(int nodeCount) {
+        public BKAlignedLayout(final int nodeCount, final VDirection vdir, final HDirection hdir) {
             root = Maps.newHashMapWithExpectedSize(nodeCount);
             align = Maps.newHashMapWithExpectedSize(nodeCount);
             sink = Maps.newHashMapWithExpectedSize(nodeCount);
             shift = Maps.newHashMapWithExpectedSize(nodeCount);
             y = Maps.newHashMapWithExpectedSize(nodeCount);
+            this.vdir = vdir;
+            this.hdir = hdir;
         }
 
         /**
@@ -401,6 +529,47 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         public HashMap<LNode, Double> getY() {
             return y;
         }
+
+        /**
+         * @return the vdir
+         */
+        public VDirection getVDir() {
+            return vdir;
+        }
+
+        /**
+         * @return the hdir
+         */
+        public HDirection getHDir() {
+            return hdir;
+        }
+        
+        public double layoutSize() {
+            double min = Double.POSITIVE_INFINITY;
+            double max = Double.NEGATIVE_INFINITY;
+            for (double i : y.values()) {
+                double j = Math.abs(i);
+                if (j < min) {
+                    min = j;
+                }
+                if (j > max) {
+                    max = j;
+                }
+            }
+            return max - min;
+        }
+
+    }
+
+    private enum VDirection {
+
+        LEFT, RIGHT;
+
+    }
+
+    private enum HDirection {
+
+        TOP, BOTTOM;
 
     }
 
