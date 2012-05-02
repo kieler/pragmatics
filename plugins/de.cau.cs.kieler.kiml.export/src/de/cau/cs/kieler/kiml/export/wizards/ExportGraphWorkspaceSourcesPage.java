@@ -73,6 +73,10 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      * The number of columns used to lay out the default target groups.
      */
     private static final int DEFAULT_TARGET_GROUP_MARGIN_TOP = 20;
+    /**
+     * The graph files extension able to be converted
+     */
+    private static final String[] GRAPH_FILE_EXTENSIONS = { "kegdi", "kaod", "kids" };
 
     /**
      * Constructs a new instance.
@@ -81,7 +85,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      *            the selection the wizard was called on.
      */
     public ExportGraphWorkspaceSourcesPage(final IStructuredSelection selection) {
-        super(PAGE_NAME, true, getGraphFileExtensions(), selection);
+        super(PAGE_NAME, true, GRAPH_FILE_EXTENSIONS, selection);
         this.setTitle(Messages.ExportGraphWizard_title);
         this.setDescription(Messages.ExportGraphWizard_Exporting_workspace_task);
         this.setMessage(Messages.ExportGraphWizard_Exporting_workspace_task);
@@ -110,14 +114,19 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
             fileFormatCombo.setItems(formatNames);
             // get last exporter from preference store
             String lastFormatName = preferenceStore.getString(PREFERENCE_EXPORTER);
+            fileFormatCombo.select(0);
             if (lastFormatName.length() > 0) {
-                fileFormatCombo.setText(lastFormatName);
-            } else {
-                fileFormatCombo.setText(formatNames[0]);
+                // fileFormatCombo.setText(lastFormatName);
+                for (int i = 0; i < formatNames.length; i++) {
+                    if (formatNames[i] == lastFormatName) {
+                        fileFormatCombo.select(i);
+                    }
+                }
             }
         } else {
             fileFormatCombo.setEnabled(false);
         }
+
         return targetGroup;
     }
 
@@ -189,7 +198,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         if (!super.doValidate()) {
             return false;
         }
-        //check if selected extension
+        // check if selected extension
         if (!(getTargetFormat().length() > 0)) {
             return false;
         }

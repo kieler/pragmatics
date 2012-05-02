@@ -26,6 +26,8 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
+import de.cau.cs.kieler.kiml.export.handlers.GraphFileHandler;
+
 /**
  * A wizard for Exporting graphs from workspace.
  * 
@@ -37,6 +39,8 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
     private ExportGraphWorkspaceSourcesPage workspaceSourcesPage;
     /** the selection the import wizard was called on. */
     private IStructuredSelection selection;
+
+
 
     /**
      * Constructs a graph Export wizard.
@@ -99,13 +103,16 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
         for (File sourceFile : workspaceSourcesPage.getSourceFiles(null)) {
             // get the target format selected from the user
             String targetFormat = workspaceSourcesPage.getTargetFormat();
-            // get the target file
-            File targetFile = toTargetFile(sourceFile, targetFormat);
-            if (ResourcesPlugin.getWorkspace().getRoot().getLocation()
-                    .append(targetFile.toString()).toFile().exists()) {
+
+            GraphFileHandler graphFileHandler = new GraphFileHandler(sourceFile, targetFormat,
+                    workspaceSourcesPage.getTargetWorksapceDirectory());
+
+            if (graphFileHandler.getAbsoluteTargetFile().exists()) {
+
                 String[] dialogButtonLabels = { "Ignore", "Replace", "Cancel" };
                 MessageDialog msgd = new MessageDialog(null, "Confirm", null, "A file named '"
-                        + targetFile.getName() + "' already exists in '"
+                        + graphFileHandler.getWorkspaceTargetFile().getName()
+                        + "' already exists in '"
                         + workspaceSourcesPage.getTargetWorksapceDirectory()
                         + "'. Do you want to replace it?", 0, dialogButtonLabels, 0);
 
@@ -114,14 +121,15 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
                     return false;
 
                 case 1:// Replace
-                    exportGraph(sourceFile, targetFile, targetFormat);
+                    exportGraph(graphFileHandler);
                     break;
 
-                default:;// Ignore;
-                    
+                default:
+                    ;// Ignore;
+
                 }
             } else {
-                exportGraph(sourceFile, targetFile, targetFormat);
+                exportGraph(graphFileHandler);
             }
         }
         return true;
@@ -134,34 +142,18 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
      * @param targetFile
      * @param targetFormat
      */
-    private void exportGraph(final File sourceFile, final File targetFile, final String targetFormat) {
+    private void exportGraph(final GraphFileHandler graphFileHandler) {
         // TODO read source file
         try {
+            graphFileHandler.getKGraph();
             // TODO if source format equal to target format then copy file else convert
-            Writer writer = new FileWriter(ResourcesPlugin.getWorkspace().getRoot().getLocation()
-                    .append(targetFile.toString()).toFile());
+            Writer writer = new FileWriter(graphFileHandler.getAbsoluteTargetFile());
             writer.write("test graph");
             writer.close();
         } catch (Throwable exception) {
             // TODO Auto-generated catch block
             exception.printStackTrace();
         }
-    }
-
-    /**
-     * change the file directory and extension name.
-     * 
-     * 
-     * @param extension
-     * @param file
-     * @return the new file with the new extension
-     */
-    private File toTargetFile(final File file, final String extension) {
-        // get the last dot position
-        int dotPos = file.getName().lastIndexOf(".");
-        // replace the file extension with the new one
-        return workspaceSourcesPage.getTargetWorksapceDirectory()
-                .append(file.getName().substring(0, dotPos).concat(".").concat(extension)).toFile();
     }
 
     /**
@@ -199,4 +191,6 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
                 .append(workspaceSourcesPage.getTargetWorksapceDirectory());
         return new File(targetPath.toString()).mkdirs();
     }
+
+    
 }
