@@ -66,7 +66,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.diagram.GefDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -100,6 +99,23 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      */
     public boolean supports(final Object object) {
         return object instanceof DiagramEditor || object instanceof IPictogramElementEditPart;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("rawtypes")
+    public Object getAdapter(final Object adaptableObject, final Class adapterType) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Class<?>[] getAdapterList() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /**
@@ -596,6 +612,14 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         insets.setTop(top);
         insets.setBottom(bottom);
         return insets;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getAdapter(Object adaptableObject, String adapterTypeName) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
 }

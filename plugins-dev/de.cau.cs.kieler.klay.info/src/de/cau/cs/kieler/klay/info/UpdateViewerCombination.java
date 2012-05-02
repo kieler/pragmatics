@@ -14,8 +14,8 @@
 package de.cau.cs.kieler.klay.info;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
+import de.cau.cs.kieler.kiml.kivi.LayoutEffect;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutEffect;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**

@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.kiml.ui.diagram;
+package de.cau.cs.kieler.kiml.gmf;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -80,10 +80,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.diagram.ApplyLayoutRequest;
-import de.cau.cs.kieler.kiml.ui.diagram.GefDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
-import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -122,12 +119,111 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
     /** the volatile layout config for static properties such as minimal node sizes. */
     public static final IProperty<VolatileLayoutConfig> STATIC_CONFIG
             = new Property<VolatileLayoutConfig>("gmf.staticLayoutConfig");
+    
+    /**
+     * Determines the insets for a parent figure, relative to the given child.
+     * 
+     * @param parent the figure of a parent edit part
+     * @param child the figure of a child edit part
+     * @return the insets to add to the relative coordinates of the child
+     */
+    public static Insets calcInsets(final IFigure parent, final IFigure child) {
+        Insets result = new Insets(0);
+        IFigure currentChild = child;
+        IFigure currentParent = child.getParent();
+        Point coordsToAdd = null;
+        boolean isRelative = false;
+        while (currentChild != parent && currentParent != null) {
+            if (currentParent.isCoordinateSystem()) {
+                isRelative = true;
+                result.add(currentParent.getInsets());
+                if (coordsToAdd != null) {
+                    result.left += coordsToAdd.x;
+                    result.top += coordsToAdd.y;
+                }
+                coordsToAdd = currentParent.getBounds().getLocation();
+            } else if (currentParent == parent && coordsToAdd != null) {
+                Point parentCoords = parent.getBounds().getLocation();
+                result.left += coordsToAdd.x - parentCoords.x;
+                result.top += coordsToAdd.y - parentCoords.y;
+            }
+            currentChild = currentParent;
+            currentParent = currentChild.getParent();
+        }
+        if (!isRelative) {
+            Rectangle parentBounds = parent.getBounds();
+            currentParent = child.getParent();
+            Rectangle containerBounds = currentParent.getBounds();
+            result.left = containerBounds.x - parentBounds.x;
+            result.top = containerBounds.y - parentBounds.y;
+        }
+        // FIXME in theory it would be better to get the bottom and right insets from the size;
+        // however, due to the inpredictability of Draw2D layout managers, this leads to
+        // bad results in many cases, so a fixed insets value is more stable
+        result.right = result.left;
+        result.bottom = result.left;
+        return result;
+    }
+    
+    /**
+     * Calculates the absolute bounds of the given figure.
+     * 
+     * @param figure a figure
+     * @return the absolute bounds
+     */
+    public static Rectangle getAbsoluteBounds(final IFigure figure) {
+        Rectangle bounds = new Rectangle(figure.getBounds()) {
+            static final long serialVersionUID = 1;
+            @Override
+            public void performScale(final double factor) {
+                // don't perform any scaling to avoid distortion by the zoom level
+            }
+        };
+        figure.translateToAbsolute(bounds);
+        return bounds;
+    }
+    
+    /**
+     * Calculates an absolute position for one of the bend points of the given connection.
+     * 
+     * @param connection a connection figure
+     * @param index the index in the point list
+     * @return the absolute point
+     */
+    public static Point getAbsolutePoint(final Connection connection, final int index) {
+        Point point = new Point(connection.getPoints().getPoint(index)) {
+            static final long serialVersionUID = 1;
+            @Override
+            public void performScale(final double factor) {
+                // don't perform any scaling to avoid distortion by the zoom level
+            }
+        };
+        connection.translateToAbsolute(point);
+        return point;
+    }
 
     /**
      * {@inheritDoc}
      */
     public boolean supports(final Object object) {
         return object instanceof DiagramEditor || object instanceof IGraphicalEditPart;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("rawtypes")
+    public Object getAdapter(final Object adaptableObject, final Class adapterType) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Class<?>[] getAdapterList() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /**
@@ -387,8 +483,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         KNode childLayoutNode = KimlUtil.createInitializedNode();
 
         // set location and size
-        Rectangle childBounds = KimlUiUtil.getAbsoluteBounds(nodeFigure);
-        Rectangle containerBounds = KimlUiUtil.getAbsoluteBounds(nodeFigure.getParent());
+        Rectangle childBounds = getAbsoluteBounds(nodeFigure);
+        Rectangle containerBounds = getAbsoluteBounds(nodeFigure.getParent());
         KShapeLayout nodeLayout = childLayoutNode.getData(KShapeLayout.class);
         nodeLayout.setXpos(childBounds.x - containerBounds.x);
         nodeLayout.setYpos(childBounds.y - containerBounds.y);
@@ -411,7 +507,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         // set insets if not yet defined
         if (kinsets.get() == null) {
             KInsets ki = parentKNode.getData(KShapeLayout.class).getInsets();
-            Insets insets = KimlUiUtil.calcInsets(parentEditPart.getFigure(), nodeFigure);
+            Insets insets = calcInsets(parentEditPart.getFigure(), nodeFigure);
             ki.setLeft(insets.left);
             ki.setTop(insets.top);
             ki.setRight(insets.right);
@@ -450,8 +546,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
 
         // set the port's layout, relative to the node position
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
-        Rectangle portBounds = KimlUiUtil.getAbsoluteBounds(portEditPart.getFigure());
-        Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(nodeEditPart.getFigure());
+        Rectangle portBounds = getAbsoluteBounds(portEditPart.getFigure());
+        Rectangle nodeBounds = getAbsoluteBounds(nodeEditPart.getFigure());
         float xpos = portBounds.x - nodeBounds.x;
         float ypos = portBounds.y - nodeBounds.y;
         portLayout.setPos(xpos, ypos);
@@ -480,7 +576,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     mapping.getGraphMap().put(portLabel, (IGraphicalEditPart) portChildObj);
                     // set the port label's layout
                     KShapeLayout labelLayout = portLabel.getData(KShapeLayout.class);
-                    Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
+                    Rectangle labelBounds = getAbsoluteBounds(labelFigure);
                     labelLayout.setXpos(labelBounds.x - portBounds.x);
                     labelLayout.setYpos(labelBounds.y - portBounds.y);
                     try {
@@ -529,8 +625,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             label.setText(text);
             mapping.getGraphMap().put(label, labelEditPart);
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
-            Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(nodeEditPart.getFigure());
+            Rectangle labelBounds = getAbsoluteBounds(labelFigure);
+            Rectangle nodeBounds = getAbsoluteBounds(nodeEditPart.getFigure());
             labelLayout.setXpos(labelBounds.x - nodeBounds.x);
             labelLayout.setYpos(labelBounds.y - nodeBounds.y);
             try {
@@ -698,19 +794,19 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         PointList pointList = figure.getPoints();
 
         KPoint sourcePoint = edgeLayout.getSourcePoint();
-        Point firstPoint = KimlUiUtil.getAbsolutePoint(figure, 0);
+        Point firstPoint = getAbsolutePoint(figure, 0);
         sourcePoint.setX(firstPoint.x - (float) offset.x);
         sourcePoint.setY(firstPoint.y - (float) offset.y);
 
         for (int i = 1; i < pointList.size() - 1; i++) {
-            Point point = KimlUiUtil.getAbsolutePoint(figure, i);
+            Point point = getAbsolutePoint(figure, i);
             KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
             kpoint.setX(point.x - (float) offset.x);
             kpoint.setY(point.y - (float) offset.y);
             edgeLayout.getBendPoints().add(kpoint);
         }
         KPoint targetPoint = edgeLayout.getTargetPoint();
-        Point lastPoint = KimlUiUtil.getAbsolutePoint(figure, pointList.size() - 1);
+        Point lastPoint = getAbsolutePoint(figure, pointList.size() - 1);
         targetPoint.setX(lastPoint.x - (float) offset.x);
         targetPoint.setY(lastPoint.y - (float) offset.y);
         
@@ -752,7 +848,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     continue;
                 }
                 
-                Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
+                Rectangle labelBounds = getAbsoluteBounds(labelFigure);
                 String labelText = null;
                 Dimension iconBounds = null;
                 

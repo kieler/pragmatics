@@ -19,8 +19,8 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
+import de.cau.cs.kieler.kiml.kivi.LayoutEffect;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutEffect;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
