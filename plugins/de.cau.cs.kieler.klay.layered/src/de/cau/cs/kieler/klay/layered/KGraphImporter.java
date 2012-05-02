@@ -210,12 +210,21 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         }
 
         // Create dummy
-        PortSide portSide = KimlUtil.calcPortSide(kport, direction);
-        LNode dummy = createExternalPortDummy(kport,
-                graphLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS), portSide, inEdges
-                        - outEdges, layoutNodeSize, kportPosition,
-                        new KVector(kportLayout.getWidth(), kportLayout.getHeight()));
-        dummy.setProperty(LayoutOptions.OFFSET, KimlUtil.calcPortOffset(kport, portSide));
+        KShapeLayout portLayout = kport.getData(KShapeLayout.class);
+        PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+        Float offset = portLayout.getProperty(LayoutOptions.OFFSET);
+        PortConstraints portConstraints = graphLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+        if (portSide == PortSide.UNDEFINED) {
+            portSide = KimlUtil.calcPortSide(kport, direction);
+            portLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
+        }
+        if (offset == null) {
+            offset = KimlUtil.calcPortOffset(kport, portSide);
+            portLayout.setProperty(LayoutOptions.OFFSET, offset);
+        }
+        LNode dummy = createExternalPortDummy(kport, portConstraints, portSide,
+                inEdges - outEdges, layoutNodeSize, kportPosition,
+                new KVector(kportLayout.getWidth(), kportLayout.getHeight()));
         layeredNodes.add(dummy);
         elemMap.put(kport, dummy);
     }
@@ -322,7 +331,10 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             }
 
             PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
-            float offset = KimlUtil.calcPortOffset(kport, portSide);
+            Float offset = portLayout.getProperty(LayoutOptions.OFFSET);
+            if (offset == null) {
+                offset = KimlUtil.calcPortOffset(kport, portSide);
+            }
             newPort.setSide(portSide);
             newPort.setProperty(LayoutOptions.OFFSET, offset);
 

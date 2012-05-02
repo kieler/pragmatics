@@ -13,7 +13,9 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -87,7 +89,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
      *                 to zero.
      * @return a dummy node representing the external port.
      */
-    protected LNode createExternalPortDummy(final Object port, final PortConstraints portConstraints,
+    protected LNode createExternalPortDummy(final KPort port, final PortConstraints portConstraints,
             final PortSide portSide, final int netFlow, final KVector portNodeSize,
             final KVector portPosition, final KVector portSize) {
         
@@ -99,6 +101,8 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         dummy.setProperty(Properties.ORIGIN, port);
         dummy.setProperty(Properties.EXT_PORT_SIZE, portSize);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        dummy.setProperty(Properties.OFFSET, port.getData(KShapeLayout.class)
+                .getProperty(LayoutOptions.OFFSET));
         
         LPort dummyPort = new LPort();
         dummyPort.setNode(dummy);
