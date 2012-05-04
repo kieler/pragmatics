@@ -15,7 +15,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.datatypes.IDimension;
@@ -55,7 +57,6 @@ import de.cau.cs.kieler.core.model.graphiti.GraphitiUtil;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutContext;
-import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -100,13 +101,52 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     public boolean supports(final Object object) {
         return object instanceof DiagramEditor || object instanceof IPictogramElementEditPart;
     }
+    
+    /** the cached layout configuration for Graphiti. */
+    private GraphitiLayoutConfig layoutConfig = new GraphitiLayoutConfig();
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("rawtypes")
-    public Object getAdapter(final Object adaptableObject, final Class adapterType) {
-        // TODO Auto-generated method stub
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public Object getAdapter(final Object object, final Class adapterType) {
+        if (adapterType.isAssignableFrom(GraphitiLayoutConfig.class)) {
+            return layoutConfig;
+        } else if (adapterType.isAssignableFrom(IPictogramElementEditPart.class)) {
+            if (object instanceof IPictogramElementEditPart) {
+                return (EditPart) object;
+            } else if (object instanceof DiagramEditor) {
+                return ((DiagramEditor) object).getGraphicalViewer().getContents();
+            } else if (object instanceof IAdaptable) {
+                IAdaptable adaptable = (IAdaptable) object;
+                return (EditPart) adaptable.getAdapter(EditPart.class);
+            }
+        } else if (adapterType.isAssignableFrom(PictogramElement.class)) {
+            if (object instanceof IPictogramElementEditPart) {
+                return ((IPictogramElementEditPart) object).getPictogramElement();
+            }
+        } else if (adapterType.isAssignableFrom(EObject.class)) {
+            if (object instanceof IPictogramElementEditPart) {
+                PictogramElement pe = ((IPictogramElementEditPart) object).getPictogramElement();
+                if (pe.getLink() != null) {
+                    List<EObject> businessObjects = pe.getLink().getBusinessObjects();
+                    if (!businessObjects.isEmpty()) {
+                        return businessObjects.get(0);
+                    }
+                }
+            } else if (object instanceof PictogramElement) {
+                PictogramElement pe = (PictogramElement) object;
+                if (pe.getLink() != null) {
+                    List<EObject> businessObjects = pe.getLink().getBusinessObjects();
+                    if (!businessObjects.isEmpty()) {
+                        return businessObjects.get(0);
+                    }
+                }
+            }
+        }
+        if (object instanceof IAdaptable) {
+            return ((IAdaptable) object).getAdapter(adapterType);
+        }
         return null;
     }
 
@@ -114,8 +154,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * {@inheritDoc}
      */
     public Class<?>[] getAdapterList() {
-        // TODO Auto-generated method stub
-        return null;
+        return new Class<?>[] { PictogramElement.class };
     }
 
     /**
@@ -167,7 +206,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         
         // create a layout configuration
         mapping.getLayoutConfigs().add(mapping.getProperty(STATIC_CONFIG));
-        mapping.getLayoutConfigs().add(getLayoutConfig());
+        mapping.getLayoutConfigs().add(layoutConfig);
 
         return mapping;
     }
@@ -194,16 +233,6 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         TransactionalEditingDomain editingDomain = mapping.getProperty(DIAGRAM_EDITOR)
                 .getEditingDomain();
         editingDomain.getCommandStack().execute(mapping.getProperty(LAYOUT_COMMAND));
-    }
-    
-    /** the cached layout configuration for Graphiti. */
-    private GraphitiLayoutConfig layoutConfig = new GraphitiLayoutConfig();
-
-    /**
-     * {@inheritDoc}
-     */
-    public IMutableLayoutConfig getLayoutConfig() {
-        return layoutConfig;
     }
 
     /** the fixed minimal size of shapes. */

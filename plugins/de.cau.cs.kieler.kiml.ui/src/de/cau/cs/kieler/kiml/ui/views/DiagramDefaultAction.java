@@ -15,14 +15,11 @@ package de.cau.cs.kieler.kiml.ui.views;
 
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gef.EditPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
@@ -68,26 +65,23 @@ public class DiagramDefaultAction extends Action {
     @Override
     public void run() {
         IWorkbenchPart workbenchPart = layoutView.getCurrentPart();
-        IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(
-                workbenchPart);
-        if (bridge != null) {
-            EditPart diagram = bridge.getEditPart(workbenchPart);
-            if (diagram != null) {
-                IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
-                        .getManager(workbenchPart, diagram);
-                if (manager != null) {
-                    final IMutableLayoutConfig layoutConfig = manager.getLayoutConfig();
-                    if (layoutConfig != null) {
-                        // build a layout context for setting the option
-                        final LayoutContext context = new LayoutContext();
-                        context.setProperty(LayoutContext.DIAGRAM_PART, diagram);
-                        context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
-                        layoutConfig.enrich(context);
-                        
-                        EditingDomain editingDomain = bridge.getEditingDomain(diagram);
-                        for (IPropertySheetEntry entry : layoutView.getSelection()) {
-                            applyOption(editingDomain, layoutConfig, context, entry);
-                        }
+        IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
+                .getManager(workbenchPart, null);
+        if (manager != null) {
+            Object diagramPart = manager.getAdapter(workbenchPart, manager.getAdapterList()[0]);
+            if (manager != null) {
+                final IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(
+                        null, IMutableLayoutConfig.class);
+                if (layoutConfig != null) {
+                    // build a layout context for setting the option
+                    final LayoutContext context = new LayoutContext();
+                    context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
+                    context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
+                    layoutConfig.enrich(context);
+                    
+                    EditingDomain editingDomain = bridge.getEditingDomain(diagramPart);
+                    for (IPropertySheetEntry entry : layoutView.getSelection()) {
+                        applyOption(editingDomain, layoutConfig, context, entry);
                     }
                 }
             }

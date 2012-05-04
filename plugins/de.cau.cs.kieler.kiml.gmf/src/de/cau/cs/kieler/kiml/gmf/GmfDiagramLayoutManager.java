@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.ConnectionLocator;
@@ -41,6 +42,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ResizableCompartmentEditPart;
@@ -50,6 +52,7 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
+import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IWorkbenchPart;
@@ -69,7 +72,6 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutContext;
-import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -209,12 +211,39 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         return object instanceof DiagramEditor || object instanceof IGraphicalEditPart;
     }
 
+    /** the cached layout configuration for GMF. */
+    private GmfLayoutConfig layoutConfig = new GmfLayoutConfig();
+
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("rawtypes")
-    public Object getAdapter(final Object adaptableObject, final Class adapterType) {
-        // TODO Auto-generated method stub
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public Object getAdapter(final Object object, final Class adapterType) {
+        if (adapterType.isAssignableFrom(GmfLayoutConfig.class)) {
+            return layoutConfig;
+        } else if (adapterType.isAssignableFrom(IGraphicalEditPart.class)) {
+            if (object instanceof CompartmentEditPart) {
+                return ((CompartmentEditPart) object).getParent();
+            } else if (object instanceof IGraphicalEditPart) {
+                return (IGraphicalEditPart) object;
+            } else if (object instanceof DiagramEditor) {
+                return ((DiagramEditor) object).getDiagramEditPart();
+            } else if (object instanceof DiagramRootEditPart) {
+                return ((DiagramRootEditPart) object).getContents();
+            } else if (object instanceof IAdaptable) {
+                IAdaptable adaptable = (IAdaptable) object;
+                return (EditPart) adaptable.getAdapter(EditPart.class);
+            }
+        } else if (adapterType.isAssignableFrom(EObject.class)) {
+            if (object instanceof IGraphicalEditPart) {
+                return ((IGraphicalEditPart) object).getNotationView().getElement();
+            } else if (object instanceof View) {
+                return ((View) object).getElement();
+            }
+        }
+        if (object instanceof IAdaptable) {
+            return ((IAdaptable) object).getAdapter(adapterType);
+        }
         return null;
     }
 
@@ -222,8 +251,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * {@inheritDoc}
      */
     public Class<?>[] getAdapterList() {
-        // TODO Auto-generated method stub
-        return null;
+        return new Class<?>[] { IGraphicalEditPart.class };
     }
 
     /**
@@ -267,7 +295,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         
         // create a layout configuration
         mapping.getLayoutConfigs().add(mapping.getProperty(STATIC_CONFIG));
-        mapping.getLayoutConfigs().add(getLayoutConfig());
+        mapping.getLayoutConfigs().add(layoutConfig);
 
         return mapping;
     }
@@ -381,16 +409,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         } catch (ExecutionException e) {
             throw new WrappedException(e);
         }
-    }
-
-    /** the cached layout configuration for GMF. */
-    private GmfLayoutConfig layoutConfig = new GmfLayoutConfig();
-
-    /**
-     * {@inheritDoc}
-     */
-    public IMutableLayoutConfig getLayoutConfig() {
-        return layoutConfig;
     }
 
     /**
