@@ -16,10 +16,7 @@ package de.cau.cs.kieler.ksbase.ui.handler;
 import java.net.URL;
 import java.util.List;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.gef.DragTracker;
@@ -32,15 +29,12 @@ import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocument
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.emf.type.core.edithelper.IEditHelper;
 import org.eclipse.gmf.runtime.emf.type.core.requests.IEditCommandRequest;
-import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.model.gmf.policies.BalloonMouseListener;
 import de.cau.cs.kieler.core.model.gmf.policies.DiagramPopupBarPolicy;
 import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
-import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
  * Policy for displaying balloons.

@@ -15,14 +15,20 @@ package de.cau.cs.kieler.klay.layered.test;
 
 import static org.junit.Assert.*;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
@@ -35,6 +41,8 @@ import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
  * @author msp
  */
 public class OverallLayoutTest {
+    
+    // TODO: Add a test to check whether node sizes suffice to hold their ports.
     
     /**
      * Create a simple test graph. The graph has at least two nodes and an edge, the nodes have
@@ -82,6 +90,10 @@ public class OverallLayoutTest {
         layoutProvider.doLayout(simpleGraph, simpleMonitor);
     }
 
+    /**
+     * Tests if the coordinates of the graph's nodes are positive. Doesn't work for hierarchical
+     * graphs. 
+     */
     @Test
     public void testNodeCoordinates() {
         for (KNode node : simpleGraph.getChildren()) {
@@ -91,6 +103,10 @@ public class OverallLayoutTest {
         }
     }
     
+    /**
+     * Tests if the source and target coordinates of all edges are > 0. Doesn't work for
+     * hierarchical graphs.
+     */
     @Test
     public void testEdgeCoordinates() {
         for (KNode node : simpleGraph.getChildren()) {
@@ -104,11 +120,56 @@ public class OverallLayoutTest {
         }
     }
     
+    /**
+     * Tests if the graph size is positive.
+     */
     @Test
     public void testGraphSize() {
         KShapeLayout parentLayout = simpleGraph.getData(KShapeLayout.class);
         assertTrue(parentLayout.getWidth() > 0);
         assertTrue(parentLayout.getHeight() > 0);
+    }
+    
+    /**
+     * Tests if the edge routing produced perfectly orthogonal edges. This test only makes sense
+     * if the orthogonal edge router is used.
+     */
+    @Test
+    public void testEdgeOrthogonality() {
+        LinkedList<KNode> nodes = Lists.newLinkedList();
+        nodes.add(simpleGraph);
+        
+        while (!nodes.isEmpty()) {
+            KNode currentNode = nodes.removeFirst();
+            
+            // Add all of the node's children to be processed later
+            nodes.addAll(currentNode.getChildren());
+            
+            // Iterate over the edges
+            for (KEdge edge : currentNode.getOutgoingEdges()) {
+                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                int numberOfBendPoints = edgeLayout.getBendPoints().size() + 2;
+                
+                // Assemble the list of bend points, including source and target point
+                List<KPoint> bendPoints = Lists.newArrayListWithCapacity(numberOfBendPoints);
+                bendPoints.add(edgeLayout.getSourcePoint());
+                bendPoints.addAll(edgeLayout.getBendPoints());
+                bendPoints.add(edgeLayout.getTargetPoint());
+                
+                // Iterate over the edge's bend points, remembering the previous one to compare the
+                // current one to
+                KPoint prevBendPoint = bendPoints.get(0);
+                for (int i = 1; i < numberOfBendPoints; i++) {
+                    KPoint currBendPoint = bendPoints.get(i);
+                    
+                    // Either x or y coordinates of the last two bend points must match
+                    assertTrue(prevBendPoint.getX() == currBendPoint.getX()
+                            || prevBendPoint.getY() == currBendPoint.getY());
+                    
+                    prevBendPoint = currBendPoint;
+                }
+            }
+        }
     }
 
 }

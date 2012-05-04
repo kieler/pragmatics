@@ -93,7 +93,7 @@ public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
     
     /**
      * Returns the graph's size including any borders. If the graph represents a
-     * hierarchical node, the returned size represents the node's size. The resturned
+     * hierarchical node, the returned size represents the node's size. The returned
      * size can be modified at will without having any influence on the graph's size
      * or the actual size returned on the next method call.
      * 
@@ -224,7 +224,7 @@ public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
         for (LNode node : nodes) {
             nodeNumber++;
             
-            // Output the node name
+            // The node's name in the output is its hash code (unique!)
             writer.write("        " + node.hashCode());
             
             // Options time!
@@ -232,8 +232,18 @@ public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
             
             // Label
             options.append("label=\"");
-            if (node.getName() != null) {
-                options.append(node.getName().replace("\"", "\\\"") + " ");
+            if (node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
+                // Normal nodes display their name, if any
+                if (node.getName() != null) {
+                    options.append(node.getName().replace("\"", "\\\"") + " ");
+                }
+            } else {
+                // Dummy nodes show their name (if set), or their node ID
+                if (node.getName() != null) {
+                    options.append(node.getName().replace("\"", "\\\"") + " ");
+                } else {
+                    options.append("n_" + node.id + " ");
+                }
             }
             options.append("(" + layerNumber + "," + nodeNumber + ")\",");
             

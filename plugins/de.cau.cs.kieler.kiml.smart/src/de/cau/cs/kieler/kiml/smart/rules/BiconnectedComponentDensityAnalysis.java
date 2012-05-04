@@ -36,6 +36,9 @@ public class BiconnectedComponentDensityAnalysis implements IAnalysis {
     
     /** the identifier of the biconnected component density analysis. */
     public static final String ID = "de.cau.cs.kieler.kiml.smart.biconnectedComponentsDensity";
+    
+    /** the density value for components of size 2. */
+    private static final double TWO_COMPONENT_DENS = 0.4;
 
     /**
      * {@inheritDoc}
@@ -64,7 +67,7 @@ public class BiconnectedComponentDensityAnalysis implements IAnalysis {
         for (Set<KNode> component : components) {
             int componentSize = component.size();
             if (componentSize <= 2) {
-                density += 1;
+                density += TWO_COMPONENT_DENS;
             } else {
                 int edgeCount = 0;
                 for (KNode node : component) {

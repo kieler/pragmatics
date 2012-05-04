@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.core.kivi.internal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -276,8 +277,9 @@ public class KiviContributionItem extends CompoundContributionItem implements
                             (BindingService) Workbench.getInstance().getService(IBindingService.class);
                     ParameterizedCommand pc = ((CommandContributionItem) item).getCommand();
                     if (config.getShortcutContext() == null) {
-                        TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc.getId());
-                        if (oldBindings != null && oldBindings.length == 0) {
+                        //TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc);
+                        //if (oldBindings != null && oldBindings.length == 0) {
+                            if (bindingService.getConflictsFor(config.getKeySequence()) == null) {
                             bindingService.addBinding(new KeyBinding(
                                     config.getKeySequence(),
                                     pc,
@@ -289,8 +291,9 @@ public class KiviContributionItem extends CompoundContributionItem implements
                                     Binding.USER));
                         }
                     } else {
-                        TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc.getId());
-                        if (oldBindings != null && oldBindings.length == 0) {
+                        //TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc);
+                        //if (oldBindings != null && oldBindings.length == 0) {
+                        if (bindingService.getConflictsFor(config.getKeySequence()) == null) {
                             bindingService.addBinding(new KeyBinding(
                                     config.getKeySequence(),
                                     pc,

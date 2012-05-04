@@ -13,7 +13,9 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -46,24 +48,33 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
     
     /**
      * Creates a dummy for an external port. The dummy will have just one port. The port is on
-     * the eastern side for western external ports, and on the western side for all other ports.
+     * the eastern side for western external ports, on the western side for eastern external ports,
+     * on the southern side for northern external ports, and on the northern side for southern
+     * external ports.
      * 
-     * <p>The returned dummy node is decorated with some properties. Its {@link Properties#NODE_TYPE}
-     * is set to {@link NodeType#EXTERNAL_PORT}. Its {@link Properties#ORIGIN} is set
-     * to the external port object. The {@link LayoutOptions#PORT_CONSTRAINTS} are set to
-     * {@link PortConstraints#FIXED_POS}. For western and eastern port dummies, the
-     * {@link Properties#LAYER_CONSTRAINT} is set to{@link LayerConstraint#FIRST_SEPARATE}
-     * and {@link LayerConstraint#LAST_SEPARATE}, respectively. For northern and southern
-     * port dummies, the {@link Properties#IN_LAYER_CONSTRAINT} is set to
-     * {@link InLayerConstraint#TOP} and {@link InLayerConstraint#BOTTOM},
-     * respectively. For eastern dummies, the {@link Properties#EDGE_CONSTRAINT} is set to
-     * {@link EdgeConstraint#OUTGOING_ONLY}; for all other dummies, it is set to
-     * {@link EdgeConstraint#INCOMING_ONLY}. {@link Properties#EXT_PORT_SIDE} is
-     * set to the side of the external port represented. If the port constraints of the original
-     * port's node are set to {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS},
-     * the dummy node's {@link Properties#EXT_PORT_RATIO_OR_POSITION} property is set to the port's
-     * original position, defined relative to the original node's origin. (as opposed to relative to
-     * the node's content area)</p>
+     * <p>The returned dummy node is decorated with some properties:</p>
+     * <ul>
+     *   <li>Its {@link Properties#NODE_TYPE} is set to {@link NodeType#EXTERNAL_PORT}.</li>
+     *   <li>Its {@link Properties#ORIGIN} is set to the external port object.</li>
+     *   <li>The {@link LayoutOptions#PORT_CONSTRAINTS} are set to
+     *     {@link PortConstraints#FIXED_POS}.</li>
+     *   <li>For western and eastern port dummies, the {@link Properties#LAYER_CONSTRAINT} is set to
+     *     {@link LayerConstraint#FIRST_SEPARATE} and {@link LayerConstraint#LAST_SEPARATE},
+     *     respectively.</li>
+     *   <li>For northern and southern port dummies, the {@link Properties#IN_LAYER_CONSTRAINT} is set to
+     *     {@link InLayerConstraint#TOP} and {@link InLayerConstraint#BOTTOM}, respectively.</li>
+     *   <li>For eastern dummies, the {@link Properties#EDGE_CONSTRAINT} is set to
+     *     {@link EdgeConstraint#OUTGOING_ONLY}; for western dummies, it is set to
+     *     {@link EdgeConstraint#INCOMING_ONLY}; for all other dummies, it is left unset.</li>
+     *   <li>{@link Properties#EXT_PORT_SIDE} is set to the side of the external port represented.</li>
+     *   <li>If the port constraints of the original port's node are set to
+     *     {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}, the dummy node's
+     *     {@link Properties#EXT_PORT_RATIO_OR_POSITION} property is set to the port's original position,
+     *     defined relative to the original node's origin. (as opposed to relative to the node's content
+     *     area)</li>
+     *   <li>The {@link Properties#EXT_PORT_SIZE} property is set to the size of the external port the
+     *     the dummy represents, while the size of the dummy itself is set to {@code (0, 0)}.</li>
+     * </ul>
      * 
      * @param port the port object the dummy will represent.
      * @param portConstraints constraints for external ports.
@@ -78,7 +89,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
      *                 to zero.
      * @return a dummy node representing the external port.
      */
-    protected LNode createExternalPortDummy(final Object port, final PortConstraints portConstraints,
+    protected LNode createExternalPortDummy(final KPort port, final PortConstraints portConstraints,
             final PortSide portSide, final int netFlow, final KVector portNodeSize,
             final KVector portPosition, final KVector portSize) {
         
@@ -88,7 +99,10 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         LNode dummy = new LNode();
         dummy.setProperty(Properties.NODE_TYPE, NodeType.EXTERNAL_PORT);
         dummy.setProperty(Properties.ORIGIN, port);
+        dummy.setProperty(Properties.EXT_PORT_SIZE, portSize);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        dummy.setProperty(Properties.OFFSET, port.getData(KShapeLayout.class)
+                .getProperty(LayoutOptions.OFFSET));
         
         LPort dummyPort = new LPort();
         dummyPort.setNode(dummy);
@@ -123,7 +137,6 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         
         case NORTH:
             dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.TOP);
-            dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
             dummy.getSize().x = portSize.x;
             dummyPort.setSide(PortSide.SOUTH);
             dummyPort.getPosition().x = portSize.x / 2.0;
@@ -131,7 +144,6 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         
         case SOUTH:
             dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.BOTTOM);
-            dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
             dummy.getSize().x = portSize.x;
             dummyPort.setSide(PortSide.NORTH);
             dummyPort.getPosition().x = portSize.x / 2.0;

@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.IContributor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.model.xtend.transformation.AbstractTransformation;
 import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
@@ -84,7 +87,7 @@ public class EditorTransformationSettings implements Serializable {
      * xtend2 transformation classes.
      */
     private LinkedList<Object> transformationClasses = new LinkedList<Object>();
-    
+
     /**
      * Creates a new transformation setting with the given fully qualified editor name.
      * 
@@ -162,7 +165,7 @@ public class EditorTransformationSettings implements Serializable {
      * @param contribution
      *            The contribution to append to the list of menu contributions.
      */
-    public final void addMenuContribution(final KSBasEMenuContribution contribution) {
+    public final void addMenuContribution(final KSBasEMenuContribution contribution) { // NO_UCD
         if (contribution != null) {
             this.menuContributions.add(contribution);
         }
@@ -215,8 +218,8 @@ public class EditorTransformationSettings implements Serializable {
     public final KSBasETransformation getTransformationByName(final String transformation) {
         if (transformation != null) {
             for (KSBasETransformation t : inplaceTransformations.values()) {
-                if (t.getTransformation().toLowerCase(Locale.getDefault()).equals(
-                        transformation.toLowerCase(Locale.getDefault()))) {
+                if (t.getTransformation().toLowerCase(Locale.getDefault())
+                        .equals(transformation.toLowerCase(Locale.getDefault()))) {
                     return t;
                 }
             }
@@ -234,8 +237,8 @@ public class EditorTransformationSettings implements Serializable {
     public final AbstractTransformation getOutPlaceTransformationByName(final String transformation) {
         if (transformation != null) {
             for (AbstractTransformation t : outplaceTransformations.values()) {
-                if (t.getTransformation().toLowerCase(Locale.getDefault()).equals(
-                        transformation.toLowerCase(Locale.getDefault()))) {
+                if (t.getTransformation().toLowerCase(Locale.getDefault())
+                        .equals(transformation.toLowerCase(Locale.getDefault()))) {
                     return t;
                 }
             }
@@ -420,15 +423,13 @@ public class EditorTransformationSettings implements Serializable {
         if (framework != null) {
             List<AbstractTransformation> parseTransformations = null;
             if (fileURL != null) {
-            // Parse transformations with the framework
-                parseTransformations = framework.parseTransformations(
-                    fileURL, true);
+                // Parse transformations with the framework
+                parseTransformations = framework.parseTransformations(fileURL, true);
                 if (parseTransformations == null) {
                     KSBasEPlugin.getDefault().logError(
-                                    "Could not parse extensions for editor "
-                                            + editorId
-                                            + ". Developer hint: make sure that the .ext file's containing"
-                                            + "folder is part of the binary build (build.properties)");
+                            "Could not parse extensions for editor " + editorId
+                                    + ". Developer hint: make sure that the .ext file's containing"
+                                    + "folder is part of the binary build (build.properties)");
                     return;
                 }
             } else {
@@ -437,8 +438,7 @@ public class EditorTransformationSettings implements Serializable {
             // If we have any invalid transformations, i.e.
             // the transformation defined here has no transformation
             // match in the transformation file, we want to remove them.
-            LinkedList<KSBasETransformation> cachedTransformations = 
-                new LinkedList<KSBasETransformation>();
+            LinkedList<KSBasETransformation> cachedTransformations = new LinkedList<KSBasETransformation>();
 
             for (AbstractTransformation t : parseTransformations) {
                 KSBasETransformation transformation = getTransformationByName(t.getTransformation());
@@ -451,8 +451,8 @@ public class EditorTransformationSettings implements Serializable {
                     cachedTransformations.add(transformation.clone());
                 } else if (createTransformations) {
                     // Create new transformation:
-                    transformation = new KSBasETransformation(t.getTransformation(), t
-                            .getTransformation());
+                    transformation = new KSBasETransformation(t.getTransformation(),
+                            t.getTransformation());
                     // set parameters
                     transformation.setParameters(t.getParameterList());
                     // Create a default transformation id
@@ -460,7 +460,7 @@ public class EditorTransformationSettings implements Serializable {
                     cachedTransformations.add(transformation);
                 }
             }
-            
+
             for (Object transformationClass : this.transformationClasses) {
                 for (KSBasETransformation t : inplaceTransformations.values()) {
                     Method[] methods = transformationClass.getClass().getMethods();
@@ -474,7 +474,16 @@ public class EditorTransformationSettings implements Serializable {
                     }
                 }
             }
-            
+
+            for (KSBasETransformation t : inplaceTransformations.values()) {
+                if (!cachedTransformations.contains(t)) {
+                    Status myStatus = new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                            "The transformation" + t.getName() + "could not be parsed correctly",
+                            null);
+                    StatusManager.getManager().handle(myStatus, StatusManager.LOG);
+                }
+            }
+
             // Adding all transformations. By clearing the
             // transformations first, we ensure that no illegal
             // transformations are included.
@@ -501,7 +510,7 @@ public class EditorTransformationSettings implements Serializable {
                             + "No TransformationFramework has been set."); //$NON-NLS-1$
         }
     }
-    
+
     /**
      * Two editor settings are the same if they have the same target editor and the same source
      * contributor. So we will have an implicit distinction between extension point and user defined
@@ -538,16 +547,15 @@ public class EditorTransformationSettings implements Serializable {
         }
         return hash;
     }
-    
-    
-    public void addTransformationClass(Object classObject) {
-        
+
+    public void addTransformationClass(final Object classObject) {
+       transformationClasses.add(classObject);
     }
-    
+
     /**
      * 
-     * @return A list of transformation classes. This will likely be generated
-     * xtend2 transformation classes.
+     * @return A list of transformation classes. This will likely be generated xtend2 transformation
+     *         classes.
      */
     public List<Object> getTransformationClasses() {
         return transformationClasses;

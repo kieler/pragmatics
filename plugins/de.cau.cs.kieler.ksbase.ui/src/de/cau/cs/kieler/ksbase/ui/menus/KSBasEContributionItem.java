@@ -116,7 +116,7 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
             = new HashMap<IContributionItem, ButtonHandler>();
     private static Map<IContributionItem, ButtonHandler> oldButtonsHandlerMap;
     private static List<IContributionItem> buttons = new ArrayList<IContributionItem>();
-
+    private static Map<String, KeyBinding> bindings = new HashMap<String, KeyBinding>();
     // CHECKSTYLEON MaximumLineLength
 
     /**
@@ -271,9 +271,11 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
                             (BindingService) Workbench.getInstance().getService(IBindingService.class);
                     ParameterizedCommand pc = ((CommandContributionItem) item).getCommand();
                     if (config.getShortcutContext() == null) {
-                        TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc.getId());
-                        if (oldBindings != null && oldBindings.length == 0) {
-                            bindingService.addBinding(new KeyBinding(
+                        //TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc);
+                        //if (oldBindings != null && oldBindings.length == 0) {
+                            if (bindingService.getConflictsFor(config.getKeySequence()) == null
+                                    && !bindings.containsKey(item.getId())) {
+                            KeyBinding binding = new KeyBinding(
                                     config.getKeySequence(),
                                     pc,
                                     bindingService.getActiveScheme().getId(),
@@ -281,12 +283,16 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
                                     null,
                                     null,
                                     null,
-                                    Binding.USER));
+                                    Binding.USER);
+                            bindingService.addBinding(binding);
+                            bindings.put(item.getId(), binding);
                         }
                     } else {
-                        TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc.getId());
-                        if (oldBindings != null && oldBindings.length == 0) {
-                            bindingService.addBinding(new KeyBinding(
+                        //TriggerSequence[] oldBindings = bindingService.getActiveBindingsFor(pc);
+                        //if (oldBindings != null && oldBindings.length == 0) {
+                        if (bindingService.getConflictsFor(config.getKeySequence()) == null 
+                                && !bindings.containsKey(item.getId())) {
+                            KeyBinding binding = new KeyBinding(
                                     config.getKeySequence(),
                                     pc,
                                     bindingService.getActiveScheme().getId(),
@@ -294,7 +300,9 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
                                     null,
                                     null,
                                     null,
-                                    Binding.USER));
+                                    Binding.USER);
+                            bindingService.addBinding(binding);
+                            bindings.put(item.getId(), binding);
                         }
                     }
                 }
@@ -409,10 +417,10 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
             IContributionItem item = items[i];
             int oldItemCount = parent.getItemCount();
             if (item.isVisible()) {
-                try{
-                	item.fill(parent, myIndex);
-                }catch(java.lang.RuntimeException e){
-                	System.out.println(e.getMessage());
+                try {
+                    item.fill(parent, myIndex);
+                } catch (java.lang.RuntimeException e) {
+                    System.out.println(e.getMessage());
                 }
             }
             int newItemCount = parent.getItemCount();
@@ -423,8 +431,13 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
     
     private static boolean softUpdate = false;
     
-    public static void setSoftUpdate(boolean _softUpdate) {
-        softUpdate = _softUpdate;
+    /**
+     * Activate or deactivate soft update.
+     * 
+     * @param softUpdate whether soft update is active
+     */
+    public static void setSoftUpdate(final boolean softUpdate) {
+        KSBasEContributionItem.softUpdate = softUpdate;
     }
 
 }

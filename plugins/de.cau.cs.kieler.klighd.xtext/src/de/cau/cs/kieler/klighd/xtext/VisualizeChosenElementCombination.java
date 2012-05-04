@@ -110,6 +110,16 @@ public abstract class VisualizeChosenElementCombination extends AbstractCombinat
                 this.schedule(new KlighdDiagramEffect(visibilityExpression.getEditorInputPath()
                         .toOSString().replace(":", ""), visibilityExpression.getEditorInputPath()
                         .lastSegment(), visibilityExpression.getElement()));
+            } else {
+                // this case is needed if the buttonSate was fired by an Xtext quickfix provider
+                if (buttonState.getEditor() != null
+                        && buttonState.getParameters().get("element") != null) {
+                    IPath editorInputPath = ((FileEditorInput) buttonState.getEditor()
+                            .getEditorInput()).getPath();
+                    this.schedule(new KlighdDiagramEffect(editorInputPath.toOSString().replace(":",
+                            ""), editorInputPath.lastSegment(), (EObject) buttonState
+                            .getParameters().get("element")));
+                }
             }
         }
     }
@@ -166,9 +176,13 @@ public abstract class VisualizeChosenElementCombination extends AbstractCombinat
                     public Boolean exec(final XtextResource state) throws Exception {
                         ILeafNode leaf = NodeModelUtils.findLeafNodeAtOffset(state.getParseResult()
                                 .getRootNode(), selection.getOffset());
-                        EObject o = leaf.getSemanticElement();
-                        setElement(o);
-                        return ModelExpression.this.clazz.isInstance(o);
+                        if (leaf == null) {
+                            return false;
+                        } else {
+                            EObject o = leaf.getSemanticElement();
+                            setElement(o);
+                            return ModelExpression.this.clazz.isInstance(o);
+                        }
                     }
                 });
             } catch (ClassCastException e) {

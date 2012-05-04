@@ -22,6 +22,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Determines the actual positions of ports for nodes whose port positions are
@@ -103,7 +104,7 @@ public class PortPositionProcessor extends AbstractAlgorithm implements ILayoutP
         
         // Arrange the ports
         for (LPort port : node.getPorts()) {
-            float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            float portOffset = port.getProperty(Properties.OFFSET);
             switch (port.getSide()) {
             case NORTH:
                 port.getPosition().x = northX;

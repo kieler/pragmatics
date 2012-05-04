@@ -58,7 +58,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class CompoundKGraphImporter extends KGraphImporter {
 
-    // maximal depth of the imported graph - to be updated during import.
+    /**
+     * Maximal depth of the imported graph - to be updated during import.
+     */
     private int maximalDepth;
 
     /**

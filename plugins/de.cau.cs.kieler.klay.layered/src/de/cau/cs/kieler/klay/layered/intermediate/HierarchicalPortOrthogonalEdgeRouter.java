@@ -75,6 +75,24 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutProcessor {
     
+    // VARIABLES
+    
+    /**
+     * The amount of space necessary to accomodate northern external port edge routing.
+     */
+    private double northernExtPortEdgeRoutingHeight = 0.0;
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset() {
+        super.reset();
+        
+        northernExtPortEdgeRoutingHeight = 0.0;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -91,7 +109,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
          * Calculate coordinates for the north / south port dummies. Coordinates for the
          * east / west port dummies have already been calculated prior to this processor's
          * execution. The coordinates are relative to the node's content area, just like
-         * normal node coordinates. (the content area is the node size minues insets minus
+         * normal node coordinates. (the content area is the node size minus insets minus
          * border spacing minus offset)
          */
         setNorthSouthDummyCoordinates(layeredGraph, northSouthDummies);
@@ -259,9 +277,6 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             switch (constraints) {
             case FREE:
             case FIXED_SIDE:
-                calculateNorthSouthDummyPositions(dummy);
-                break;
-                
             case FIXED_ORDER:
                 calculateNorthSouthDummyPositions(dummy);
                 break;
@@ -519,8 +534,10 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             
             // If anything was routed, adjust the graph's offset and height
             if (slots > 0) {
-                layeredGraph.getOffset().y += nodeSpacing + (slots - 1) * edgeSpacing;
-                layeredGraph.getSize().y += layeredGraph.getOffset().y;
+                northernExtPortEdgeRoutingHeight = nodeSpacing + (slots - 1) * edgeSpacing;
+
+                layeredGraph.getOffset().y += northernExtPortEdgeRoutingHeight;
+                layeredGraph.getSize().y += northernExtPortEdgeRoutingHeight;
             }
         }
         
@@ -551,7 +568,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
     // STEP 4: REMOVE TEMPORARY DUMMIES
     
     /**
-     * Removes the temporary hierarchical port dummies, reconnecting their incoming
+     * Removes the temporary hierarchical port dummies, reconnecting their incoming and outgoing
      * edges to the original dummies and setting the appropriate bend points.
      * 
      * @param layeredGraph the layered graph.
@@ -572,21 +589,53 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     continue;
                 }
                 
-                // There must be a port where all edges come in, and a port with an edge connecting
-                // node and origin
-                LPort nodeInPort = node.getPorts().get(0);
-                LPort nodeOutPort = node.getPorts().get(1);
+                System.out.println("Node " + node.hashCode() + " position: " + node.getPosition());
                 
-                LEdge nodeToOriginEdge = nodeOutPort.getOutgoingEdges().get(0);
+                // There must be a port where all edges come in, another port where edges go out, and
+                // a port with an edge connecting node and origin (that one was added previously by
+                // this processor)
+                LPort nodeInPort = null;
+                LPort nodeOutPort = null;
+                LPort nodeOriginPort = null;
                 
-                // Retrieve the edge connecting node and origin, and get its list of bend points
-                KVectorChain bendPoints = new KVectorChain();
+                for (LPort port : node.getPorts()) {
+                    switch (port.getSide()) {
+                    case WEST:
+                        nodeInPort = port;
+                        break;
+                    
+                    case EAST:
+                        nodeOutPort = port;
+                        break;
+                        
+                    default:
+                        nodeOriginPort = port;
+                    }
+                }
+                
+                // Find the edge connecting this dummy to the original external port dummy that we
+                // restored just a while ago
+                LEdge nodeToOriginEdge = nodeOriginPort.getOutgoingEdges().get(0);
+                
+                // If we have a northern port dummy, we must apply the graph offset
+                if (node.getProperty(Properties.EXT_PORT_SIDE) == PortSide.NORTH) {
+                    nodeToOriginEdge.getBendPoints().translate(0.0, -northernExtPortEdgeRoutingHeight);
+                }
+                
+                // Compute bend points for incoming edges
+                KVectorChain incomingEdgeBendPoints = new KVectorChain(nodeToOriginEdge.getBendPoints());
                 
                 KVector firstBendPoint = new KVector(nodeInPort.getPosition());
                 firstBendPoint.add(node.getPosition());
-                bendPoints.add(firstBendPoint);
+                incomingEdgeBendPoints.add(0, firstBendPoint);
                 
-                bendPoints.addAll(nodeToOriginEdge.getBendPoints());
+                // Compute bend points for outgoing edges
+                KVectorChain outgoingEdgeBendPoints = KVectorChain.reverse(
+                        nodeToOriginEdge.getBendPoints());
+                
+                KVector lastBendPoint = new KVector(nodeOutPort.getPosition());
+                lastBendPoint.add(node.getPosition());
+                outgoingEdgeBendPoints.add(lastBendPoint);
                 
                 // Retrieve the original hierarchical port dummy
                 LNode replacedDummy = (LNode) node.getProperty(Properties.EXT_PORT_REPLACED_DUMMY);
@@ -597,7 +646,15 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                 
                 for (LEdge edge : edges) {
                     edge.setTarget(replacedDummyPort);
-                    edge.getBendPoints().addAll(bendPoints);
+                    edge.getBendPoints().addAll(incomingEdgeBendPoints);
+                }
+                
+                // Reroute all the output port's edges
+                edges = nodeOutPort.getOutgoingEdges().toArray(new LEdge[0]);
+                
+                for (LEdge edge : edges) {
+                    edge.setSource(replacedDummyPort);
+                    edge.getBendPoints().addAll(0, outgoingEdgeBendPoints);
                 }
                 
                 // Remove connection between node and original hierarchical port dummy
@@ -658,6 +715,10 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         KVector offset = graph.getOffset();
         KVector graphActualSize = graph.getActualSize();
         
+        double newActualGraphHeight = graphActualSize.y;
+        
+        // During the first iteration, EAST and WEST dummy nodes are fixed. This may change the height
+        // of the graph, so we're setting y coordinates of NORTH and SOUTH dummies in a second iteration
         for (LNode node : layer) {
             if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                 // We're only looking for hierarchical port dummies
@@ -665,6 +726,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             }
             
             PortSide extPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
+            KVector extPortSize = node.getProperty(Properties.EXT_PORT_SIZE);
             KVector nodePosition = node.getPosition();
             
             // Set x coordinate
@@ -679,19 +741,42 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             }
             
             // Set y coordinate
+            double requiredActualGraphHeight = 0.0;
+            
             switch (extPortSide) {
             case EAST:
             case WEST:
-                if (constraints.isRatioFixed()) {
+                if (constraints == PortConstraints.FIXED_RATIO) {
                     double ratio = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
                     nodePosition.y = graphActualSize.y * ratio;
+                    requiredActualGraphHeight = nodePosition.y + extPortSize.y;
                     node.borderToContentAreaCoordinates(false, true);
-                } else if (constraints.isPosFixed()) {
+                } else if (constraints == PortConstraints.FIXED_POS) {
                     nodePosition.y = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+                    requiredActualGraphHeight = nodePosition.y + extPortSize.y;
                     node.borderToContentAreaCoordinates(false, true);
                 }
                 break;
+            }
             
+            newActualGraphHeight = Math.max(newActualGraphHeight, requiredActualGraphHeight);
+        }
+        
+        // Make the graph larger, if necessary
+        graph.getSize().y += newActualGraphHeight - graphActualSize.y;
+        
+        // Iterate over NORTH and SOUTH dummies now that the graph's height is fixed
+        for (LNode node : layer) {
+            if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
+                // We're only looking for hierarchical port dummies
+                continue;
+            }
+            
+            PortSide extPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
+            KVector nodePosition = node.getPosition();
+            
+            // Set y coordinate
+            switch (extPortSide) {
             case NORTH:
                 nodePosition.y = -offset.y - borderSpacing - insets.top;
                 break;

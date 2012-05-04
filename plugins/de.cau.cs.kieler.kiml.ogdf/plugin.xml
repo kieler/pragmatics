@@ -71,6 +71,9 @@
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -133,6 +136,9 @@
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -174,6 +180,9 @@
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -214,6 +223,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -262,6 +274,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -320,7 +335,7 @@
                option="de.cau.cs.kieler.kiml.ogdf.option.gravitationalConstant">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance.">
+               option="de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.rotationAngle">
@@ -342,6 +357,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -391,6 +409,9 @@
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -439,6 +460,9 @@
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -473,6 +497,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -512,6 +539,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -742,7 +772,7 @@
             appliesTo="parents"
             default="0.0"
             description="The maximal disturbance."
-            id="de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance."
+            id="de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance"
             name="Maximal Disturbance"
             type="float">
       </layoutOption>
@@ -771,6 +801,14 @@
             description="If set to true, small random perturbations are performed"
             id="de.cau.cs.kieler.kiml.ogdf.option.noise"
             name="Noise"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="true"
+            description="Whether edge labels shall be processed"
+            id="de.cau.cs.kieler.kiml.ogdf.option.placeLabels"
+            name="Place Labels"
             type="boolean">
       </layoutOption>
    </extension>

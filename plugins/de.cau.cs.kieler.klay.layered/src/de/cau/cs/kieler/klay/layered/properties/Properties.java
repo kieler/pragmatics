@@ -57,6 +57,13 @@ public final class Properties {
             NodeType.NORMAL);
     
     /**
+     * Offset of port position to the node border. An offset of 0 means that the port touches
+     * its parent node on the outside, positive offsets move the port away from the node,
+     * and negative offset move the port towards the inside.
+     */
+    public static final IProperty<Float> OFFSET = new Property<Float>(LayoutOptions.OFFSET, 0.0f);
+    
+    /**
      * The original bend points.
      */
     public static final IProperty<KVectorChain> ORIGINAL_BENDPOINTS = new Property<KVectorChain>(
@@ -143,6 +150,12 @@ public final class Properties {
      */
     public static final IProperty<PortSide> EXT_PORT_SIDE = new Property<PortSide>(
             "externalPortSide", PortSide.UNDEFINED);
+    
+    /**
+     * Original size of the external port a dummy node was created for.
+     */
+    public static final IProperty<KVector> EXT_PORT_SIZE = new Property<KVector>(
+            "externalPortSize", new KVector());
 
     /**
      * The original position or position-to-node-size ratio of an external port. This is a property
@@ -161,6 +174,15 @@ public final class Properties {
      */
     public static final IProperty<LNode> EXT_PORT_REPLACED_DUMMY = new Property<LNode>(
             "externalPortReplacedDummy", null);
+    
+    /**
+     * The port sides of external ports a connected component connects to. This property is set
+     * on the layered graph that represents a connected component and defaults to no connections.
+     * If a connected component connects to an external port on the EAST side and to another external
+     * port on the NORTH side, this enumeration will list both sides.
+     */
+    public static final IProperty<Set<PortSide>> EXT_PORT_CONNECTIONS = new Property<Set<PortSide>>(
+            "externalPortConnections", EnumSet.noneOf(PortSide.class));
 
     /**
      * A list of nodes whose barycenters should go into the barycenter calculation of the node this

@@ -33,11 +33,12 @@ public class GmfDomainModelTransformation extends AbstractTransformation<EObject
     /** the last diagram model requested for a domain model. */
     private Diagram lastDiagramModel = null;
 
+
     /**
      * {@inheritDoc}
      */
     public Diagram transform(final EObject model,
-            final TransformationContext<EObject, Diagram> transformationContext) {
+            final TransformationContext<EObject, Diagram> context) {
         return createDiagram(model);
     }
     

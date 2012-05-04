@@ -161,5 +161,14 @@ public final class SmartLayoutService {
     public Collection<SmartRuleData> getSmartRules() {
         return Collections.unmodifiableCollection(smartRules);
     }
+    
+    /**
+     * Returns the log for the smart layout plugin.
+     * 
+     * @return the log
+     */
+    public ILog getLog() {
+        return log;
+    }
 
 }

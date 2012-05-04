@@ -142,10 +142,10 @@ public class KiViCoreTest {
     @Test
     public void TestSpammerSynchronized() throws InterruptedException {
         KiVi.getInstance().registerCombination(new TestCombinationSpammerSynchronized(), true);
-        Thread.sleep(3000);
+        Thread.sleep(5000);
         int size = KiVi.getInstance().getEffectsQueueSize();
-        assertTrue("Effects queue will overflow. After 3s " + size + " effects on queue.",
-                size < 3);
+        assertTrue("Effects queue will overflow. After 5s " + size + " effects on queue.",
+                size < 50);
     }
     
     /**
