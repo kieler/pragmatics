@@ -99,7 +99,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * {@inheritDoc}
      */
     public boolean supports(final Object object) {
-        return object instanceof DiagramEditor || object instanceof IPictogramElementEditPart;
+        return object instanceof DiagramEditor || object instanceof IPictogramElementEditPart
+                || object instanceof PictogramElement;
     }
     
     /** the cached layout configuration for Graphiti. */
@@ -117,13 +118,6 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                 return object;
             } else if (object instanceof DiagramEditor) {
                 return ((DiagramEditor) object).getGraphicalViewer().getContents();
-            } else if (object instanceof IAdaptable) {
-                IAdaptable adaptable = (IAdaptable) object;
-                return adaptable.getAdapter(EditPart.class);
-            }
-        } else if (adapterType.isAssignableFrom(PictogramElement.class)) {
-            if (object instanceof IPictogramElementEditPart) {
-                return ((IPictogramElementEditPart) object).getPictogramElement();
             }
         } else if (adapterType.isAssignableFrom(EObject.class)) {
             if (object instanceof IPictogramElementEditPart) {
@@ -143,8 +137,21 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                     }
                 }
             }
+        } else if (adapterType.isAssignableFrom(PictogramElement.class)) {
+            if (object instanceof PictogramElement) {
+                return object;
+            } else if (object instanceof IPictogramElementEditPart) {
+                return ((IPictogramElementEditPart) object).getPictogramElement();
+            } else if (object instanceof DiagramEditor) {
+                EditPart contents = ((DiagramEditor) object).getGraphicalViewer().getContents();
+                if (contents instanceof IPictogramElementEditPart) {
+                    return ((IPictogramElementEditPart) contents).getPictogramElement();
+                }
+            }
         } else if (adapterType.isAssignableFrom(TransactionalEditingDomain.class)) {
-            if (object instanceof IPictogramElementEditPart) {
+            if (object instanceof DiagramEditor) {
+                return ((DiagramEditor) object).getEditingDomain();
+            } else if (object instanceof IPictogramElementEditPart) {
                 return ((IPictogramElementEditPart) object).getConfigurationProvider()
                         .getDiagramEditor().getEditingDomain();
             }
@@ -646,14 +653,6 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         insets.setTop(top);
         insets.setBottom(bottom);
         return insets;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object getAdapter(Object adaptableObject, String adapterTypeName) {
-        // TODO Auto-generated method stub
-        return null;
     }
     
 }

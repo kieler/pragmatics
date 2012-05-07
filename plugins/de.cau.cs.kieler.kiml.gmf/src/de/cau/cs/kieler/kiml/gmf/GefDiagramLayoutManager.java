@@ -35,18 +35,6 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
  * @author msp
  */
 public abstract class GefDiagramLayoutManager<T> implements IDiagramLayoutManager<T> {
-    
-    /**
-     * {@inheritDoc}
-     */
-    public Object getAdapter(final Object adaptableObject, final String adapterTypeName) {
-        try {
-            Class<?> adapterType = Class.forName(adapterTypeName);
-            return getAdapter(adaptableObject, adapterType);
-        } catch (ClassNotFoundException e) {
-            return null;
-        }
-    }
 
     /** the animation time used for layout. */
     public static final IProperty<Integer> ANIMATION_TIME = new Property<Integer>(

@@ -67,7 +67,7 @@ public class RemoveOptionsAction extends Action {
                 context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
                 layoutConfig.enrich(context);
                 
-                EditingDomain editingDomain = (EditingDomain) manager.getAdapter(diagramPart,
+                EditingDomain editingDomain = (EditingDomain) manager.getAdapter(workbenchPart,
                         EditingDomain.class);
                 removeOptions(workbenchPart.getTitle(), layoutConfig, context, editingDomain);
             }

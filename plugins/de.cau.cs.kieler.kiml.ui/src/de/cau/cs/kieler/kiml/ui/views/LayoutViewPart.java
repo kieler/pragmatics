@@ -327,7 +327,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         final IAction applyOptionAction = new DiagramDefaultAction(this, applyOptionString);
         final String setDefaultString = Messages.getString("kiml.ui.16"); //$NON-NLS-1$
         final String setAllDefaultString = Messages.getString("kiml.ui.34"); //$NON-NLS-1$
-        final IAction editPartDefaultAction = new DiagramPartDefaultAction(this,
+        final IAction diagramPartDefaultAction = new DiagramPartDefaultAction(this,
                 setDefaultString, false);
         final IAction modelDefaultAction = new DiagramPartDefaultAction(this,
                 setAllDefaultString, true);
@@ -337,14 +337,14 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         menu.addMenuListener(new MenuAdapter() {
             public void menuShown(final MenuEvent event) {
                 MenuItem applyOptionItem = null, diagramTypeDefaultItem = null,
-                        editPartDefaultItem = null, modelDefaultItem = null;
+                        diagramPartDefaultItem = null, modelDefaultItem = null;
                 for (MenuItem item : menu.getItems()) {
                     if (item.getData() instanceof IContributionItem) {
                         String itemId = ((IContributionItem) item.getData()).getId();
                         if (DiagramDefaultAction.ACTION_ID.equals(itemId)) {
                             applyOptionItem = item;
                         } else if (DiagramPartDefaultAction.EDIT_PART_ACTION_ID.equals(itemId)) {
-                            editPartDefaultItem = item;
+                            diagramPartDefaultItem = item;
                         } else if (DiagramPartDefaultAction.MODEL_ACTION_ID.equals(itemId)) {
                             modelDefaultItem = item;
                         } else if (DiagramTypeDefaultAction.ACTION_ID.equals(itemId)) {
@@ -360,25 +360,25 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                     contributionItem.fill(menu, -1);
                 }
                 if (!propSourceProvider.hasContent()) {
-                    if (editPartDefaultItem != null) {
-                        editPartDefaultItem.setEnabled(false);
+                    if (diagramPartDefaultItem != null) {
+                        diagramPartDefaultItem.setEnabled(false);
                     }
                     if (modelDefaultItem != null) {
                         modelDefaultItem.setEnabled(false);
                     }
                 } else {
-                    // add the "set as default for edit part" action
-                    String editPartName = getReadableName(false, true);
-                    if (editPartName != null) {
-                        if (editPartDefaultItem == null) {
-                            editPartDefaultAction.setText(setDefaultString + " " + editPartName);
+                    // add the "set as default for diagram part" action
+                    String diagramPartName = getReadableName(false, true);
+                    if (diagramPartName != null) {
+                        if (diagramPartDefaultItem == null) {
+                            diagramPartDefaultAction.setText(setDefaultString + " " + diagramPartName);
                             ContributionItem contributionItem = new ActionContributionItem(
-                                    editPartDefaultAction);
+                                    diagramPartDefaultAction);
                             contributionItem.setId(DiagramPartDefaultAction.EDIT_PART_ACTION_ID);
                             contributionItem.fill(menu, -1);
                         } else {
-                            editPartDefaultItem.setEnabled(true);
-                            editPartDefaultItem.setText(setDefaultString + " " + editPartName);
+                            diagramPartDefaultItem.setEnabled(true);
+                            diagramPartDefaultItem.setText(setDefaultString + " " + diagramPartName);
                         }
                         // add the "set as default for model element" action
                         String modelName = getReadableName(true, true);

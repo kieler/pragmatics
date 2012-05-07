@@ -35,7 +35,7 @@
          point="org.eclipse.ui.commands">
       <command
             categoryId="de.cau.cs.kieler"
-            defaultHandler="de.cau.cs.kieler.core.kivi.menu.ButtonHandler"
+            defaultHandler="de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler"
             id="de.cau.cs.kieler.kiml.ui.command.layout"
             name="%command.name.0">
          <commandParameter

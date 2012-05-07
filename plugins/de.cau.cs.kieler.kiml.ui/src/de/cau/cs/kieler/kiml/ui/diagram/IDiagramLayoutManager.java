@@ -24,18 +24,6 @@ import org.eclipse.ui.IWorkbenchPart;
  * @author msp
  */
 public interface IDiagramLayoutManager<T> extends IAdapterFactory {
-    
-    /**
-     * Returns an object which is an instance of the given class name
-     * associated with the given object. Returns {@code null} if
-     * no such object can be found.
-     *
-     * @param adaptableObject the adaptable object being queried
-     * @param adapterTypeName the type name of adapter to look up
-     * @return a object castable to the given adapter type, or {@code null} if this adapter factory 
-     *    does not have an adapter of the given type for the given object
-     */
-    Object getAdapter(Object adaptableObject, String adapterTypeName);
 
     /**
      * Determine whether this layout manager is able to perform layout for the given object.

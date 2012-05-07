@@ -78,7 +78,7 @@ public class DiagramDefaultAction extends Action {
                 context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
                 layoutConfig.enrich(context);
                 
-                EditingDomain editingDomain = (EditingDomain) manager.getAdapter(diagramPart,
+                EditingDomain editingDomain = (EditingDomain) manager.getAdapter(workbenchPart,
                         EditingDomain.class);
                 for (IPropertySheetEntry entry : layoutView.getSelection()) {
                     applyOption(editingDomain, layoutConfig, context, entry);

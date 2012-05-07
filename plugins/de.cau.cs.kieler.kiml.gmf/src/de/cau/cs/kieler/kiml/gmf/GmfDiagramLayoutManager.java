@@ -239,7 +239,9 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 return ((View) object).getElement();
             }
         } else if (adapterType.isAssignableFrom(TransactionalEditingDomain.class)) {
-            if (object instanceof IGraphicalEditPart) {
+            if (object instanceof DiagramEditor) {
+                return ((DiagramEditor) object).getEditingDomain();
+            } else if (object instanceof IGraphicalEditPart) {
                 return ((IGraphicalEditPart) object).getEditingDomain();
             }
         }
