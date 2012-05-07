@@ -96,7 +96,8 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
         if (pictogramElem != null) {
             // add pictogram element and domain model element to the context
             context.setProperty(PICTO_ELEM, pictogramElem);
-            if (pictogramElem.getLink() != null
+            if (context.getProperty(LayoutContext.DOMAIN_MODEL) == null
+                    && pictogramElem.getLink() != null
                     && pictogramElem.getLink().getBusinessObjects().size() > 0) {
                 context.setProperty(LayoutContext.DOMAIN_MODEL,
                         pictogramElem.getLink().getBusinessObjects().get(0));

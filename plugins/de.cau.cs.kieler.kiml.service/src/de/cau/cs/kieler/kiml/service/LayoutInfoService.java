@@ -25,6 +25,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.EClass;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
@@ -145,16 +150,13 @@ public abstract class LayoutInfoService {
     }
     
     /** mapping of diagram type identifiers to their names. */
-    private Map<String, String> diagramTypeMap
-            = new LinkedHashMap<String, String>();
+    private Map<String, String> diagramTypeMap = Maps.newLinkedHashMap();
     /** mapping of object identifiers to associated options. */
-    private Map<String, Map<String, Object>> id2OptionsMap
-            = new HashMap<String, Map<String, Object>>();
+    private Map<String, Map<String, Object>> id2OptionsMap = Maps.newHashMap();
     /** mapping of domain class names to semantic layout configurations. */
-    private Map<String, SemanticLayoutConfig> semanticConfigMap 
-            = new HashMap<String, SemanticLayoutConfig>();
+    private Multimap<String, SemanticLayoutConfig> semanticConfigMap = HashMultimap.create();
     /** list of general layout configurations. */
-    private List<ConfigData> configData = new LinkedList<ConfigData>();
+    private List<ConfigData> configData = Lists.newLinkedList();
     /** property map for activation of registered layout configurations. */
     private MapPropertyHolder configProperties = new MapPropertyHolder();
     
@@ -451,9 +453,8 @@ public abstract class LayoutInfoService {
             classes.add(clazz);
             do {
                 EClass c = classes.removeFirst();
-                SemanticLayoutConfig config = semanticConfigMap.get(c.getInstanceTypeName());
-                if (config != null) {
-                    configs.add(config);
+                if (semanticConfigMap.containsKey(c.getInstanceTypeName())) {
+                    configs.addAll(semanticConfigMap.get(c.getInstanceTypeName()));
                 }
                 classes.addAll(c.getESuperTypes());
             } while (!classes.isEmpty());

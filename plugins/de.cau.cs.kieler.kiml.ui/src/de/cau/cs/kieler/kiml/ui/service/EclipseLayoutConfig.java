@@ -116,13 +116,11 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         // get main edit part and domain model element
         Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         EObject domainElem = context.getProperty(LayoutContext.DOMAIN_MODEL);
-        /* Don't try to find the domain model element here, since another layout config
-         * could have disabled it on purpose.
-         */
 
         // set diagram type for the content of the main edit part
-        String diagramType = (String) getOption(diagPart, domainElem, LayoutOptions.DIAGRAM_TYPE);
-        if (diagramType != null) {
+        String diagramType = context.getProperty(DefaultLayoutConfig.CONTENT_DIAGT);
+        if (diagramType == null) {
+            diagramType = (String) getOption(diagPart, domainElem, LayoutOptions.DIAGRAM_TYPE);
             context.setProperty(DefaultLayoutConfig.CONTENT_DIAGT, diagramType);
         }
         
@@ -144,9 +142,10 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             }
             
             // set diagram type for the container of the main edit part
-            String containerDiagramType = (String) getOption(containerDiagPart, containerDomainElem,
-                    LayoutOptions.DIAGRAM_TYPE);
-            if (containerDiagramType != null) {
+            String containerDiagramType = context.getProperty(DefaultLayoutConfig.CONTAINER_DIAGT);
+            if (containerDiagramType == null) {
+                containerDiagramType = (String) getOption(containerDiagPart, containerDomainElem,
+                        LayoutOptions.DIAGRAM_TYPE);
                 context.setProperty(DefaultLayoutConfig.CONTAINER_DIAGT, containerDiagramType);
             }
             

@@ -77,8 +77,7 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
             if (manager != null) {
                 EObject domainElement = (EObject) manager.getAdapter(object, EObject.class);
                 LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
-                ILayoutConfig elc = (ILayoutConfig) manager.getAdapter(null,
-                        ILayoutConfig.class);
+                ILayoutConfig elc = (ILayoutConfig) manager.getAdapter(null, ILayoutConfig.class);
                 IMutableLayoutConfig layoutConfig;
                 if (elc == null) {
                     layoutConfig = optionManager.createConfig(domainElement);

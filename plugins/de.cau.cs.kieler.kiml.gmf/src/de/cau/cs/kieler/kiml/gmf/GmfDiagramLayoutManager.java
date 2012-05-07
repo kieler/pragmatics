@@ -313,7 +313,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      */
     protected LayoutMapping<IGraphicalEditPart> buildLayoutGraph(
             final IGraphicalEditPart layoutRootPart) {
-        LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>();
+        LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>(this);
         mapping.setProperty(CONNECTIONS, new LinkedList<ConnectionEditPart>());
         mapping.setProperty(STATIC_CONFIG, new VolatileLayoutConfig());
 

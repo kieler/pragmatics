@@ -174,7 +174,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      */
     public LayoutMapping<PictogramElement> buildLayoutGraph(final IWorkbenchPart workbenchPart,
             final Object diagramPart) {
-        LayoutMapping<PictogramElement> mapping = new LayoutMapping<PictogramElement>();
+        LayoutMapping<PictogramElement> mapping = new LayoutMapping<PictogramElement>(this);
         mapping.setProperty(CONNECTIONS, new LinkedList<Connection>());
         mapping.setProperty(STATIC_CONFIG, new VolatileLayoutConfig());
 

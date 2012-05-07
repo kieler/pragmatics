@@ -56,12 +56,15 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
@@ -331,8 +334,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                 setDefaultString, false);
         final IAction modelDefaultAction = new DiagramPartDefaultAction(this,
                 setAllDefaultString, true);
-        final IAction diagramTypeDefaultAction = new DiagramTypeDefaultAction(this,
-                setAllDefaultString);
+        final DiagramTypeDefaultAction diagramTypeDefaultAction
+                = new DiagramTypeDefaultAction(this, "");
         // dirty hack to add actions to an existing menu without having the menu manager
         menu.addMenuListener(new MenuAdapter() {
             public void menuShown(final MenuEvent event) {
@@ -395,11 +398,12 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                     }
                 }
                 // add the "set as default for diagram type" action
+                LayoutOptionData<?> diagramTypeOption = LayoutDataService.getInstance().getOptionData(
+                        LayoutOptions.DIAGRAM_TYPE.getId());
                 LayoutContext context = propSourceProvider.getContext();
-                String diagramType = (String) EclipseLayoutConfig.getOption(
-                        context.getProperty(LayoutContext.DIAGRAM_PART),
-                        context.getProperty(LayoutContext.DOMAIN_MODEL),
-                        LayoutOptions.DIAGRAM_TYPE);
+                ILayoutConfig config = DiagramLayoutEngine.INSTANCE.getOptionManager().createConfig(
+                        context.getProperty(LayoutContext.DOMAIN_MODEL));
+                String diagramType = (String) config.getValue(diagramTypeOption, context);
                 if (diagramType == null) {
                     if (diagramTypeDefaultItem != null) {
                         diagramTypeDefaultItem.setEnabled(false);
@@ -412,16 +416,15 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                             diagramTypeName += "s";
                         }
                         if (diagramTypeDefaultItem == null) {
-                            diagramTypeDefaultAction.setText(setAllDefaultString
-                                    + " " + diagramTypeName);
                             ContributionItem contributionItem = new ActionContributionItem(
                                     diagramTypeDefaultAction);
                             contributionItem.setId(DiagramTypeDefaultAction.ACTION_ID);
                             contributionItem.fill(menu, -1);
                         } else {
                             diagramTypeDefaultItem.setEnabled(true);
-                            diagramTypeDefaultItem.setText(setAllDefaultString + " " + diagramTypeName);
                         }
+                        diagramTypeDefaultAction.setDiagramType(diagramType);
+                        diagramTypeDefaultItem.setText(setAllDefaultString + " " + diagramTypeName);
                     }
                 }
             }

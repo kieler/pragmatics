@@ -54,7 +54,6 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
 import de.cau.cs.kieler.kiml.LayoutContext;
-import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.gmf.ApplyLayoutRequest;
 import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
@@ -83,6 +82,21 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
     public boolean supports(final Object object) {
         return object instanceof BlockDiagramEditor || object instanceof ComponentEditPart;
     }
+
+    /** the cached layout configuration for Damos. */
+    private DamosLayoutConfig layoutConfig = new DamosLayoutConfig();
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public Object getAdapter(final Object object, final Class adapterType) {
+        if (adapterType.isAssignableFrom(DamosLayoutConfig.class)) {
+            return layoutConfig;
+        }
+        return super.getAdapter(object, adapterType);
+    }
     
     /**
      * {@inheritDoc}
@@ -90,7 +104,7 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
     @Override
     protected LayoutMapping<IGraphicalEditPart> buildLayoutGraph(
             final IGraphicalEditPart layoutRootPart) {
-        LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>();
+        LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>(this);
         mapping.setProperty(CONNECTIONS, new LinkedList<ConnectionEditPart>());
         mapping.setProperty(STATIC_CONFIG, new VolatileLayoutConfig());
 
@@ -150,17 +164,6 @@ public class DamosLayoutManager extends GmfDiagramLayoutManager {
         // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
         Command applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
         mapping.setProperty(LAYOUT_COMMAND, applyLayoutCommand);
-    }
-
-    /** the cached layout configuration for Damos. */
-    private DamosLayoutConfig layoutConfig = new DamosLayoutConfig();
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IMutableLayoutConfig getLayoutConfig() {
-        return layoutConfig;
     }
     
     /**
