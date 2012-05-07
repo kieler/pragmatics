@@ -59,7 +59,7 @@ public class DiagramTypeDefaultAction extends Action {
      */
     @Override
     public void run() {
-        Object diagramPart = layoutView.getCurrentEditPart();
+        Object diagramPart = layoutView.getCurrentDiagramPart();
         if (diagramPart != null) {
             String diagramType = (String) EclipseLayoutConfig.getOption(diagramPart,
                     LayoutOptions.DIAGRAM_TYPE);

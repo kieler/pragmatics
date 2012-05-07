@@ -114,12 +114,12 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             return layoutConfig;
         } else if (adapterType.isAssignableFrom(IPictogramElementEditPart.class)) {
             if (object instanceof IPictogramElementEditPart) {
-                return (EditPart) object;
+                return object;
             } else if (object instanceof DiagramEditor) {
                 return ((DiagramEditor) object).getGraphicalViewer().getContents();
             } else if (object instanceof IAdaptable) {
                 IAdaptable adaptable = (IAdaptable) object;
-                return (EditPart) adaptable.getAdapter(EditPart.class);
+                return adaptable.getAdapter(EditPart.class);
             }
         } else if (adapterType.isAssignableFrom(PictogramElement.class)) {
             if (object instanceof IPictogramElementEditPart) {
@@ -142,6 +142,11 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                         return businessObjects.get(0);
                     }
                 }
+            }
+        } else if (adapterType.isAssignableFrom(TransactionalEditingDomain.class)) {
+            if (object instanceof IPictogramElementEditPart) {
+                return ((IPictogramElementEditPart) object).getConfigurationProvider()
+                        .getDiagramEditor().getEditingDomain();
             }
         }
         if (object instanceof IAdaptable) {

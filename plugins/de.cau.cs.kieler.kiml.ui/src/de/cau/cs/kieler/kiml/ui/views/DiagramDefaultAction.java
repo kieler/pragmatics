@@ -64,25 +64,24 @@ public class DiagramDefaultAction extends Action {
      */
     @Override
     public void run() {
-        IWorkbenchPart workbenchPart = layoutView.getCurrentPart();
+        IWorkbenchPart workbenchPart = layoutView.getCurrentWorkbenchPart();
         IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
                 .getManager(workbenchPart, null);
         if (manager != null) {
             Object diagramPart = manager.getAdapter(workbenchPart, manager.getAdapterList()[0]);
-            if (manager != null) {
-                final IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(
-                        null, IMutableLayoutConfig.class);
-                if (layoutConfig != null) {
-                    // build a layout context for setting the option
-                    final LayoutContext context = new LayoutContext();
-                    context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-                    context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
-                    layoutConfig.enrich(context);
-                    
-                    EditingDomain editingDomain = bridge.getEditingDomain(diagramPart);
-                    for (IPropertySheetEntry entry : layoutView.getSelection()) {
-                        applyOption(editingDomain, layoutConfig, context, entry);
-                    }
+            final IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(
+                    null, IMutableLayoutConfig.class);
+            if (diagramPart != null && layoutConfig != null) {
+                // build a layout context for setting the option
+                final LayoutContext context = new LayoutContext();
+                context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
+                context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
+                layoutConfig.enrich(context);
+                
+                EditingDomain editingDomain = (EditingDomain) manager.getAdapter(diagramPart,
+                        EditingDomain.class);
+                for (IPropertySheetEntry entry : layoutView.getSelection()) {
+                    applyOption(editingDomain, layoutConfig, context, entry);
                 }
             }
         }

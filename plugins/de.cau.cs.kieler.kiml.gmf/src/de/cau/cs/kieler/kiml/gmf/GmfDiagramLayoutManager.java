@@ -35,6 +35,7 @@ import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
@@ -225,20 +226,21 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             if (object instanceof CompartmentEditPart) {
                 return ((CompartmentEditPart) object).getParent();
             } else if (object instanceof IGraphicalEditPart) {
-                return (IGraphicalEditPart) object;
+                return object;
             } else if (object instanceof DiagramEditor) {
                 return ((DiagramEditor) object).getDiagramEditPart();
             } else if (object instanceof DiagramRootEditPart) {
                 return ((DiagramRootEditPart) object).getContents();
-            } else if (object instanceof IAdaptable) {
-                IAdaptable adaptable = (IAdaptable) object;
-                return (EditPart) adaptable.getAdapter(EditPart.class);
             }
         } else if (adapterType.isAssignableFrom(EObject.class)) {
             if (object instanceof IGraphicalEditPart) {
                 return ((IGraphicalEditPart) object).getNotationView().getElement();
             } else if (object instanceof View) {
                 return ((View) object).getElement();
+            }
+        } else if (adapterType.isAssignableFrom(TransactionalEditingDomain.class)) {
+            if (object instanceof IGraphicalEditPart) {
+                return ((IGraphicalEditPart) object).getEditingDomain();
             }
         }
         if (object instanceof IAdaptable) {
