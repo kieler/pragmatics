@@ -53,7 +53,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.core.model.graphiti.GraphitiUtil;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutContext;
@@ -634,7 +633,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * @return the insets
      */
     public static KInsets calcInsets(final GraphicsAlgorithm graphicsAlgorithm) {
-        GraphicsAlgorithm visibleGa = GraphitiUtil.findVisibleGa(graphicsAlgorithm);
+        GraphicsAlgorithm visibleGa = findVisibleGa(graphicsAlgorithm);
         int left = 0;
         int top = 0;
         int right = 0;
@@ -653,6 +652,26 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         insets.setTop(top);
         insets.setBottom(bottom);
         return insets;
+    }
+
+    /**
+     * Given a graphics algorithm, find the first child that is not invisible. If the GA itself
+     * is visible, it is returned.
+     * 
+     * @param graphicsAlgorithm the parent graphics algorithm
+     * @return a visible graphics algorithm
+     */
+    public static GraphicsAlgorithm findVisibleGa(final GraphicsAlgorithm graphicsAlgorithm) {
+        if (graphicsAlgorithm.getLineVisible() || graphicsAlgorithm.getFilled()) {
+            return graphicsAlgorithm;
+        }
+        for (GraphicsAlgorithm ga : graphicsAlgorithm.getGraphicsAlgorithmChildren()) {
+            GraphicsAlgorithm result = findVisibleGa(ga);
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
     }
     
 }

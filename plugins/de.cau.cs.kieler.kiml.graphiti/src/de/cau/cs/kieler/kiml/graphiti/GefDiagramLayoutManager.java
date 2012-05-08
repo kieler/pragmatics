@@ -17,11 +17,12 @@ import org.eclipse.draw2d.Animation;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.editparts.ZoomManager;
+import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
+import org.eclipse.graphiti.ui.internal.util.gef.ScalableRootEditPartAnimated;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -30,10 +31,12 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
  * An abstract diagram layout manager for GEF-based implementations.
+ * This variant is tuned for Graphiti diagram editors.
  *
  * @param <T> the type of diagram part that is handled by this diagram layout manager
  * @author msp
  */
+@SuppressWarnings("restriction")
 public abstract class GefDiagramLayoutManager<T> implements IDiagramLayoutManager<T> {
 
     /** the animation time used for layout. */
@@ -49,9 +52,10 @@ public abstract class GefDiagramLayoutManager<T> implements IDiagramLayoutManage
         Object layoutGraphObj = mapping.getParentElement();
         if (zoomToFit && layoutGraphObj instanceof EditPart) {
             // determine pre- or post-layout zoom
-            IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
-                    .getBridge(layoutGraphObj);
-            final ZoomManager zoomManager = bridge.getZoomManager((EditPart) layoutGraphObj);
+            GraphicalViewer viewer = ((IPictogramElementEditPart) layoutGraphObj)
+                    .getConfigurationProvider().getDiagramEditor().getGraphicalViewer();
+            ZoomManager zoomManager = ((ScalableRootEditPartAnimated) viewer.getRootEditPart())
+                    .getZoomManager();
             KNode parentNode = mapping.getLayoutGraph();
             KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
             Dimension available = zoomManager.getViewport().getClientArea().getSize();

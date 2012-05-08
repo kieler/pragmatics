@@ -37,6 +37,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
@@ -68,7 +69,6 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
@@ -206,6 +206,30 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
     }
 
     /**
+     * Finds the diagram edit part of an edit part.
+     * 
+     * @param editPart an edit part
+     * @return the diagram edit part, or {@code null} if there is no containing diagram
+     *     edit part
+     */
+    public static DiagramEditPart getDiagramEditPart(final EditPart editPart) {
+        EditPart ep = editPart;
+        while (ep != null && !(ep instanceof DiagramEditPart) && !(ep instanceof RootEditPart)) {
+            ep = ep.getParent();
+        }
+        if (ep instanceof RootEditPart) {
+            RootEditPart root = (RootEditPart) ep;
+            ep = null;
+            for (Object child : root.getChildren()) {
+                if (child instanceof DiagramEditPart) {
+                    ep = (EditPart) child;
+                }
+            }
+        }
+        return (DiagramEditPart) ep;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public boolean supports(final Object object) {
@@ -321,8 +345,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         mapping.setParentElement(layoutRootPart);
 
         // find the diagram edit part
-        mapping.setProperty(DIAGRAM_EDIT_PART,
-                GmfFrameworkBridge.getDiagramEditPart(layoutRootPart));
+        mapping.setProperty(DIAGRAM_EDIT_PART, getDiagramEditPart(layoutRootPart));
 
         KNode topNode = KimlUtil.createInitializedNode();
         KShapeLayout shapeLayout = topNode.getData(KShapeLayout.class);

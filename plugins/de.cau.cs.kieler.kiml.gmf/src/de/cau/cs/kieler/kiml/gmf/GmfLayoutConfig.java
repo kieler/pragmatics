@@ -34,7 +34,6 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Point;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
-import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
@@ -140,7 +139,8 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             }
             
             if (context.getProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS)) {
-                DiagramEditPart diagramEditPart = GmfFrameworkBridge.getDiagramEditPart(focusEditPart);
+                DiagramEditPart diagramEditPart = GmfDiagramLayoutManager.getDiagramEditPart(
+                        focusEditPart);
                 @SuppressWarnings("unchecked")
                 LayoutOptionData<String> algorithmOptionData = (LayoutOptionData<String>)
                         LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM.getId());
@@ -290,7 +290,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
         // check default option of diagram edit part
         Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         if (editPart instanceof EditPart) {
-            IGraphicalEditPart diagramEditPart = GmfFrameworkBridge.getDiagramEditPart(
+            IGraphicalEditPart diagramEditPart = GmfDiagramLayoutManager.getDiagramEditPart(
                     (EditPart) editPart);
             if (diagramEditPart != null) {
                 return getValue(optionData, DEF_PREFIX, diagramEditPart.getNotationView());
@@ -332,7 +332,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
         Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         if (editPart instanceof IGraphicalEditPart) {
             // add user defined global layout options
-            DiagramEditPart diagramEditPart = GmfFrameworkBridge.getDiagramEditPart(
+            DiagramEditPart diagramEditPart = GmfDiagramLayoutManager.getDiagramEditPart(
                     (EditPart) editPart);
             if (diagramEditPart != null) {
                 transferValues(graphData, DEF_PREFIX, diagramEditPart.getNotationView());

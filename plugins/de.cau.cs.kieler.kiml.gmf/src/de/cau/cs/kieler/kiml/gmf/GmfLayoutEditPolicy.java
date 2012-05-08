@@ -47,6 +47,7 @@ import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
@@ -54,8 +55,8 @@ import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
-import de.cau.cs.kieler.core.model.gmf.util.SplineUtilities;
+import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -443,39 +444,63 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         PointList pointList = pointListMap.get(edgeLayout);
         if (pointList == null) {
-            KPoint sourcePoint = edgeLayout.getSourcePoint();
-            KPoint targetPoint = edgeLayout.getTargetPoint();
-            List<KPoint> bendPoints = edgeLayout.getBendPoints();
-
-            pointList = new PointList(bendPoints.size() + 2);
-            pointList.addPoint((int) (sourcePoint.getX() * scale), (int) (sourcePoint.getY() * scale));
-            for (KPoint bendPoint : bendPoints) {
-                pointList.addPoint((int) (bendPoint.getX() * scale), (int) (bendPoint.getY() * scale));
-            }
-            pointList.addPoint((int) (targetPoint.getX() * scale), (int) (targetPoint.getY() * scale));
+            KVectorChain bendPoints = edgeLayout.createVectorChain();
 
             // for connections that support splines the control points are passed without change
-            EdgeRouting edgeRouting = edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
-            if (edgeRouting == EdgeRouting.SPLINES) {
-                if (edgeFigure instanceof SplineConnection) {
-                    SplineConnection connection = (SplineConnection) edgeFigure;
-                    if (connection.getSplineMode() == SplineConnection.SPLINE_OFF) {
-                        connection.setSplineMode(SplineConnection.SPLINE_CUBIC);
-                    }
-                } else if (bendPoints.size() >= 1) {
-                    // treat the edge points as control points for splines
-                    pointList = SplineUtilities.approximateSpline(pointList);
-                }
-            } else if (edgeFigure instanceof SplineConnection) {
-                SplineConnection connection = (SplineConnection) edgeFigure;
-                if (connection.getSplineMode() != SplineConnection.SPLINE_OFF) {
-                    connection.setSplineMode(SplineConnection.SPLINE_OFF);
-                }
+            boolean approx = handleSplineConnection(edgeFigure, edgeLayout.getProperty(
+                    LayoutOptions.EDGE_ROUTING));
+            // in other cases an approximation is used
+            if (approx && bendPoints.size() >= 1) {
+                KielerMath.appoximateSpline(bendPoints);
+            }
+
+            bendPoints.scale(scale);
+            pointList = new PointList(bendPoints.size() + 2);
+            for (KVector bendPoint : bendPoints) {
+                pointList.addPoint((int) bendPoint.x, (int) bendPoint.y);
             }
 
             pointListMap.put(edgeLayout, pointList);
         }
         return pointList;
+    }
+    
+    /** class name of the KIELER SplineConnection. */
+    private static final String SPLINE_CONNECTION
+            = "de.cau.cs.kieler.core.model.gmf.figures.SplineConnection";
+    
+    /**
+     * Handle the KIELER SplineConnection class without a direct reference to it.
+     * Reflection is used to avoid a dependency to its containing plugin.
+     * 
+     * @param edgeFigure the edge figure instance
+     * @param edgeRouting the edge routing returned by the layout algorithm
+     * @return {@code true} if an approximation should be used to represent the spline
+     */
+    private static boolean handleSplineConnection(final IFigure edgeFigure,
+            final EdgeRouting edgeRouting) {
+        boolean isSC;
+        Class<?> clazz = edgeFigure.getClass();
+        do {
+            isSC = clazz.getCanonicalName().equals(SPLINE_CONNECTION);
+            clazz = clazz.getSuperclass();
+        } while (!isSC && clazz != null);
+        if (isSC) {
+            clazz = edgeFigure.getClass();
+            try {
+                if (edgeRouting == EdgeRouting.SPLINES) {
+                    // SplineConnection.SPLINE_CUBIC
+                    clazz.getMethod("setSplineMode", int.class).invoke(edgeFigure, 1);
+                } else {
+                    // SplineConnection.SPLINE_OFF
+                    clazz.getMethod("setSplineMode", int.class).invoke(edgeFigure, 0);
+                }
+            } catch (Exception exception) {
+                throw new WrappedException(exception);
+            }
+        }
+        // no spline connection class, but spline representation is requested
+        return edgeRouting == EdgeRouting.SPLINES;
     }
 
     /**

@@ -250,20 +250,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.core.kivi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.model"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.core.ui"
          download-size="0"
          install-size="0"
@@ -293,13 +279,6 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.klay.layered"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.model.gmf"
          download-size="0"
          install-size="0"
          version="0.0.0"

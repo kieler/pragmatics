@@ -18,10 +18,10 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editparts.ZoomManager;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.render.editparts.RenderedDiagramRootEditPart;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -30,6 +30,7 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
  * An abstract diagram layout manager for GEF-based implementations.
+ * This variant is tuned for GMF diagram editors.
  *
  * @param <T> the type of diagram part that is handled by this diagram layout manager
  * @author msp
@@ -49,9 +50,10 @@ public abstract class GefDiagramLayoutManager<T> implements IDiagramLayoutManage
         Object layoutGraphObj = mapping.getParentElement();
         if (zoomToFit && layoutGraphObj instanceof EditPart) {
             // determine pre- or post-layout zoom
-            IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
-                    .getBridge(layoutGraphObj);
-            final ZoomManager zoomManager = bridge.getZoomManager((EditPart) layoutGraphObj);
+            DiagramEditPart diagramEditPart = GmfDiagramLayoutManager.getDiagramEditPart(
+                    (EditPart) layoutGraphObj);
+            ZoomManager zoomManager = ((RenderedDiagramRootEditPart) diagramEditPart.getRoot())
+                    .getZoomManager();
             KNode parentNode = mapping.getLayoutGraph();
             KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
             Dimension available = zoomManager.getViewport().getClientArea().getSize();
