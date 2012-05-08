@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.diagram;
+package de.cau.cs.kieler.kiml.kivi;
 
 import java.util.Collections;
 import java.util.Map;
@@ -29,8 +29,10 @@ import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
@@ -87,7 +89,8 @@ public class SetOptionsEffect extends AbstractEffect {
             IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
                     .getManager(workbenchPart, editPart);
             if (manager != null) {
-                final IMutableLayoutConfig layoutConfig = manager.getLayoutConfig();
+                final IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(
+                        null, ILayoutConfig.class);
                 if (layoutConfig != null) {
                     // build a layout context for setting the option
                     final LayoutContext context = new LayoutContext();

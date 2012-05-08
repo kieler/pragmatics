@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.gmf.combinations;
+package de.cau.cs.kieler.kiml.kivi;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.model.gmf.triggers.ModelChangeTrigger.DiagramChangeState;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutEffect;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
 
 /**
  * Applies automatic layout after the collapsed state of a compartment of a 
@@ -33,13 +33,6 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutEffect;
  * @author haf
  */
 public class LayoutAfterCollapseExpandCombination extends AbstractCombination {
-
-    /** parameter id for animation. */
-    private static final String ANIMATE = "de.cau.cs.kieler.kiml.animate";
-    /** parameter id for zoom to fit. */
-    private static final String ZOOM_TO_FIT = "de.cau.cs.kieler.kiml.zoomToFit";
-    /** parameter id for progress bar. */
-    private static final String PROGRESS_BAR = "de.cau.cs.kieler.kiml.progressBar";
 
     /** filter for collapse / expand notifications. */
     private NotificationFilter diagramFilter = NotificationFilter
@@ -53,9 +46,10 @@ public class LayoutAfterCollapseExpandCombination extends AbstractCombination {
      */
     public void execute(final DiagramChangeState diagramState) {
         IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
-        boolean animate = preferenceStore.getBoolean(ANIMATE);
-        boolean zoom = preferenceStore.getBoolean(ZOOM_TO_FIT);
-        boolean progressBar = preferenceStore.getBoolean(PROGRESS_BAR);
+        boolean animation = preferenceStore.getBoolean(LayoutHandler.PREF_ANIMATION);
+        boolean zoomToFit = preferenceStore.getBoolean(LayoutHandler.PREF_ZOOM);
+        boolean progressDialog = preferenceStore.getBoolean(LayoutHandler.PREF_PROGRESS);
+        
         // Create a copy of the notifications list, since the transaction could still be active,
         // which could lead to concurrent modification exceptions.
         List<Notification> list = diagramState.getChange().getNotifications();
@@ -64,7 +58,8 @@ public class LayoutAfterCollapseExpandCombination extends AbstractCombination {
             if (diagramFilter.matches(notification)
                     && notification.getNotifier() instanceof EObject) {
                 schedule(new LayoutEffect(diagramState.getWorkbenchPart(),
-                        (EObject) notification.getNotifier(), zoom, progressBar, true, animate));
+                        (EObject) notification.getNotifier(), zoomToFit, progressDialog, true,
+                        animation));
             }
         }
     }

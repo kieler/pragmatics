@@ -12,8 +12,9 @@ Require-Bundle: com.google.guava;bundle-version="10.0.0",
  de.cau.cs.kieler.core.ui,
  de.cau.cs.kieler.core.model,
  de.cau.cs.kieler.kiml,
- de.cau.cs.kieler.kiml.ui,
  de.cau.cs.kieler.kiml.smart,
+ de.cau.cs.kieler.kiml.kivi,
+ de.cau.cs.kieler.kiml.ui,
  de.cau.cs.kieler.core.kivi,
  de.cau.cs.kieler.core.kgraph
 Bundle-ActivationPolicy: lazy

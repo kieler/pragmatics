@@ -24,8 +24,6 @@ import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
@@ -179,6 +177,7 @@ public class DiagramLayoutEngine {
             protected IStatus execute(final IProgressMonitor monitor) {
                 IStatus status;
                 if (layoutMapping.get() == null) {
+                    // an error has occured while building the layout graph
                     status = new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
                             Messages.getString("kiml.ui.62")); 
                 } else {
@@ -188,7 +187,11 @@ public class DiagramLayoutEngine {
                     } else {
                         kielerMonitor = new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS);
                     }
-                    status = layout(layoutMapping.get(), diagramPart, kielerMonitor,
+                    // translate the diagram part into one that is understood by the layout manager
+                    Object transDiagPart = layoutManager.getAdapter(diagramPart,
+                            layoutManager.getAdapterList()[0]);
+                    // perform the actual layout
+                    status = layout(layoutMapping.get(), transDiagPart, kielerMonitor,
                             extraLayoutConfigs, layoutAncestors);
                     kielerMonitor.done();
                 }
@@ -301,10 +304,13 @@ public class DiagramLayoutEngine {
         IKielerProgressMonitor submon1 = progressMonitor.subTask(1);
         submon1.begin("Build layout graph", 1);
         LayoutMapping<T> mapping = layoutManager.buildLayoutGraph(workbenchPart, diagramPart);
-        submon1.done();
         
-        // perform layout
-        IStatus status = layout(mapping, diagramPart, progressMonitor.subTask(1), null, false);
+        // translate the diagram part into one that is understood by the layout manager
+        Object transDiagPart = layoutManager.getAdapter(diagramPart,
+                layoutManager.getAdapterList()[0]);
+        submon1.done();
+        // perform the actual layout
+        IStatus status = layout(mapping, transDiagPart, progressMonitor.subTask(1), null, false);
         
         // apply the layout to the diagram
         IKielerProgressMonitor submon3 = progressMonitor.subTask(1);
@@ -356,10 +362,7 @@ public class DiagramLayoutEngine {
         if (layoutAncestors) {
             // mark all parallel areas for exclusion from layout
             try {
-                IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(
-                        diagramPart);
-                KGraphElement graphElem = mapping.getGraphMap().inverse().get(bridge.getEditPart(
-                        diagramPart));
+                KGraphElement graphElem = mapping.getGraphMap().inverse().get(diagramPart);
                 if (graphElem instanceof KNode && ((KNode) graphElem).getParent() != null) {
                     KNode node = (KNode) graphElem;
                     VolatileLayoutConfig vlc = new VolatileLayoutConfig();

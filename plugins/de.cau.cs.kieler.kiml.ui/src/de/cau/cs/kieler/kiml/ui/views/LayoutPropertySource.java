@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.ui.views;
 
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -80,9 +81,12 @@ public class LayoutPropertySource implements IPropertySource {
             layoutConfig.enrich(layoutContext);
             List<LayoutOptionData<?>> optionData = layoutContext.getProperty(
                     DefaultLayoutConfig.OPTIONS);
+            
             propertyDescriptors = new IPropertyDescriptor[optionData.size()];
-            for (int i = 0; i < propertyDescriptors.length; i++) {
-                propertyDescriptors[i] = new LayoutPropertyDescriptor(optionData.get(i));
+            ListIterator<LayoutOptionData<?>> optionIter = optionData.listIterator();
+            while (optionIter.hasNext()) {
+                LayoutOptionData<?> data = optionIter.next();
+                propertyDescriptors[optionIter.previousIndex()] = new LayoutPropertyDescriptor(data);
             }
         }
         return propertyDescriptors;

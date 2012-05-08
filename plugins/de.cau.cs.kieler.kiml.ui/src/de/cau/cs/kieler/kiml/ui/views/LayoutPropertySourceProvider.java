@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -25,10 +24,9 @@ import org.eclipse.ui.views.properties.IPropertySourceProvider;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
@@ -74,24 +72,28 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
             return propertySources.get(object);
         }
         try {
-            IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
-                    .getBridge(object);
             IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
                     workbenchPart, object);
             if (manager != null) {
-                EObject domainElement = bridge.getElement(object);
+                EObject domainElement = (EObject) manager.getAdapter(object, EObject.class);
                 LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
-                IMutableLayoutConfig layoutConfig = optionManager.createConfig(domainElement,
-                        manager.getLayoutConfig());
-                EditingDomain editingDomain = bridge.getEditingDomain(object);
-                if (editingDomain instanceof TransactionalEditingDomain) {
+                ILayoutConfig elc = (ILayoutConfig) manager.getAdapter(null, ILayoutConfig.class);
+                IMutableLayoutConfig layoutConfig;
+                if (elc == null) {
+                    layoutConfig = optionManager.createConfig(domainElement);
+                } else {
+                    layoutConfig = optionManager.createConfig(domainElement, elc);
+                }
+                TransactionalEditingDomain editingDomain = (TransactionalEditingDomain)
+                        manager.getAdapter(object, TransactionalEditingDomain.class);
+                if (editingDomain != null) {
                     LayoutContext context = new LayoutContext();
                     context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
                     context.setProperty(LayoutContext.DOMAIN_MODEL, domainElement);
                     context.setProperty(LayoutContext.DIAGRAM_PART,
-                            bridge.getEditPart(object));
+                            manager.getAdapter(object, manager.getAdapterList()[0]));
                     LayoutPropertySource propSource = new LayoutPropertySource(layoutConfig, context,
-                            (TransactionalEditingDomain) editingDomain);
+                            editingDomain);
                     propertySources.put(object, propSource);
                     return propSource;
                 }
