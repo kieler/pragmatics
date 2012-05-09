@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kiml.debug.views.LayoutGraphView"
+            icon="icons/graph.gif"
+            id="de.cau.cs.kieler.kiml.debug.layoutGraph"
+            name="Layout Graph"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kiml.debug.views.ExecutionView"
+            icon="icons/clock.gif"
+            id="de.cau.cs.kieler.kiml.debug.execution"
+            name="Layout Time"
+            restorable="true">
+      </view>
+      <view
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kiml.debug.views.SmartLayoutView"
+            icon="icons/smart.gif"
+            id="de.cau.cs.kieler.kiml.debug.smart"
+            name="Smart Layout"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.core.kivi.combinations">
+      <combination
+            active="true"
+            class="de.cau.cs.kieler.kiml.debug.UpdateViewerCombination"
+            description="Shows a finished layout graph in the KLay Info view"
+            name="Show Layout Graph in Viewer">
+      </combination>
+   </extension>
+
+</plugin>
