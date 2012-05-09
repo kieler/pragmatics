@@ -156,6 +156,9 @@ public class LayoutPropertySource implements IPropertySource {
      * {@inheritDoc}
      */
     public void setPropertyValue(final Object id, final Object thevalue) {
+        if (editingDomain == null) {
+            throw new UnsupportedOperationException(Messages.getString("kiml.ui.67"));
+        }
         Runnable modelChange = new Runnable() {
             public void run() {
                 Object value = thevalue;
@@ -209,6 +212,9 @@ public class LayoutPropertySource implements IPropertySource {
      * {@inheritDoc}
      */
     public void resetPropertyValue(final Object id) {
+        if (editingDomain == null) {
+            throw new UnsupportedOperationException(Messages.getString("kiml.ui.67"));
+        }
         final LayoutOptionData<?> optionData = LayoutDataService.getInstance()
                 .getOptionData((String) id);
         Runnable modelChange = new Runnable() {

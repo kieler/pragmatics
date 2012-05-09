@@ -75,25 +75,27 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
             IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
                     workbenchPart, object);
             if (manager != null) {
-                EObject domainElement = (EObject) manager.getAdapter(object, EObject.class);
                 LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
+                Object diagramPart = manager.getAdapter(object, manager.getAdapterList()[0]);
+                EObject domainElement = (EObject) manager.getAdapter(object, EObject.class);
                 ILayoutConfig elc = (ILayoutConfig) manager.getAdapter(null, ILayoutConfig.class);
-                IMutableLayoutConfig layoutConfig;
-                if (elc == null) {
-                    layoutConfig = optionManager.createConfig(domainElement);
-                } else {
-                    layoutConfig = optionManager.createConfig(domainElement, elc);
-                }
                 TransactionalEditingDomain editingDomain = (TransactionalEditingDomain)
                         manager.getAdapter(object, TransactionalEditingDomain.class);
-                if (editingDomain != null) {
+                if (diagramPart != null) {
+                    IMutableLayoutConfig layoutConfig;
+                    if (elc == null) {
+                        layoutConfig = optionManager.createConfig(domainElement);
+                    } else {
+                        layoutConfig = optionManager.createConfig(domainElement, elc);
+                    }
+                    
                     LayoutContext context = new LayoutContext();
                     context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
                     context.setProperty(LayoutContext.DOMAIN_MODEL, domainElement);
-                    context.setProperty(LayoutContext.DIAGRAM_PART,
-                            manager.getAdapter(object, manager.getAdapterList()[0]));
+                    context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
                     LayoutPropertySource propSource = new LayoutPropertySource(layoutConfig, context,
                             editingDomain);
+                    
                     propertySources.put(object, propSource);
                     return propSource;
                 }

@@ -69,17 +69,17 @@ public class DiagramDefaultAction extends Action {
                 .getManager(workbenchPart, null);
         if (manager != null) {
             Object diagramPart = manager.getAdapter(workbenchPart, manager.getAdapterList()[0]);
-            final IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(
+            IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(
                     null, IMutableLayoutConfig.class);
-            if (diagramPart != null && layoutConfig != null) {
+            EditingDomain editingDomain = (EditingDomain) manager.getAdapter(workbenchPart,
+                    EditingDomain.class);
+            if (diagramPart != null && layoutConfig != null && editingDomain != null) {
                 // build a layout context for setting the option
                 final LayoutContext context = new LayoutContext();
                 context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
                 context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
                 layoutConfig.enrich(context);
                 
-                EditingDomain editingDomain = (EditingDomain) manager.getAdapter(workbenchPart,
-                        EditingDomain.class);
                 for (IPropertySheetEntry entry : layoutView.getSelection()) {
                     applyOption(editingDomain, layoutConfig, context, entry);
                 }
