@@ -167,7 +167,7 @@
             type="html">
       </visualizationMethod>
       <visualizationMethod
-            class="de.cau.cs.kieler.kiml.grana.ui.ViewVisualizationMethod"
+            class="de.cau.cs.kieler.kiml.grana.views.ViewVisualizationMethod"
             default="true"
             silent="true"
             type="html">

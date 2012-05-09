@@ -16,10 +16,15 @@ package de.cau.cs.kieler.kiml.debug;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kivi.KiVi;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+
 /**
  * The activator class controls the plug-in life cycle.
  * 
- * @author <a href="msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class KimlViewerPlugin extends AbstractUIPlugin {
 
@@ -42,6 +47,12 @@ public class KimlViewerPlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
+        // register a listener for layout
+        DiagramLayoutEngine.INSTANCE.addListener(new DiagramLayoutEngine.IListener() {
+            public void layoutDone(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
+                KiVi.getInstance().executeEffect(new UpdateViewerEffect(layoutGraph, monitor));
+            }
+        });
     }
 
     /**

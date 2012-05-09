@@ -22,5 +22,5 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: de.cau.cs.kieler.kiml.grana.util,
  de.cau.cs.kieler.kiml.grana.visualization
-Bundle-Activator: de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin
+Bundle-Activator: de.cau.cs.kieler.kiml.grana.GranaPlugin
 Import-Package: org.eclipse.ui.dialogs

@@ -40,8 +40,7 @@ import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
 public class AnalysisResultViewPart extends ViewPart {
 
     /** the view identifier. */
-    public static final String VIEW_ID =
-            "de.cau.cs.kieler.kiml.grana.views.analysisResults";
+    public static final String VIEW_ID = "de.cau.cs.kieler.kiml.grana.views.analysisResults";
 
     /** the displayed html. */
     private String html;
@@ -54,8 +53,7 @@ public class AnalysisResultViewPart extends ViewPart {
      * @return the active analysis result view, or {@code null} if there is none
      */
     public static AnalysisResultViewPart findView() {
-        IWorkbenchWindow activeWindow =
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         if (activeWindow != null) {
             IWorkbenchPage activePage = activeWindow.getActivePage();
             if (activePage != null) {
@@ -74,9 +72,8 @@ public class AnalysisResultViewPart extends ViewPart {
             browser.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         } catch (SWTError e) {
-            IStatus status =
-                    new Status(IStatus.ERROR, CoreUIPlugin.PLUGIN_ID,
-                            "Could not instantiate Browser.", e);
+            IStatus status = new Status(IStatus.ERROR, CoreUIPlugin.PLUGIN_ID,
+                    "Could not instantiate Browser.", e);
             StatusManager.getManager().handle(status, StatusManager.LOG);
         }
     }
@@ -93,8 +90,7 @@ public class AnalysisResultViewPart extends ViewPart {
      * @param boundVisualizations
      *            the visualizations
      */
-    public void setAnalysisResults(
-            final List<BoundVisualization> boundVisualizations) {
+    public void setAnalysisResults(final List<BoundVisualization> boundVisualizations) {
         html = HtmlResultGenerator.generate(boundVisualizations);
         if (html != null && browser != null) {
             browser.setText(html);

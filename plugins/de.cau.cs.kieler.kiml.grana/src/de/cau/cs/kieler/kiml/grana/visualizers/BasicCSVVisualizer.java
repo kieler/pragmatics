@@ -15,7 +15,7 @@ package de.cau.cs.kieler.kiml.grana.visualizers;
 
 import de.cau.cs.kieler.kiml.grana.visualization.AbstractSimpleVisualizer;
 import de.cau.cs.kieler.kiml.grana.visualization.Visualization;
-import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
+import de.cau.cs.kieler.kiml.grana.visualization.VisualizationService;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
@@ -53,7 +53,7 @@ public class BasicCSVVisualizer extends AbstractSimpleVisualizer<String> {
                         str += ";";
                     }
                     Visualization visualization =
-                            VisualizationServices.getInstance()
+                            VisualizationService.getInstance()
                                     .getVisualization("text", results[i]);
                     if (visualization == null) {
                         str += results[i].toString();
@@ -75,7 +75,7 @@ public class BasicCSVVisualizer extends AbstractSimpleVisualizer<String> {
                 }
             } else {
                 Visualization visualization =
-                        VisualizationServices.getInstance().getVisualization(
+                        VisualizationService.getInstance().getVisualization(
                                 "text", result);
                 if (visualization == null) {
                     str = result.toString();

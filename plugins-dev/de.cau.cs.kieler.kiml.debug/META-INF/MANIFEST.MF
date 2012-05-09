@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KIELER KIML Viewer
+Bundle-Name: KIELER Debug Tools for Layout
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.debug;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.kiml.debug.KimlViewerPlugin

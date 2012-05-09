@@ -30,14 +30,5 @@
             restorable="true">
       </view>
    </extension>
-   <extension
-         point="de.cau.cs.kieler.core.kivi.combinations">
-      <combination
-            active="true"
-            class="de.cau.cs.kieler.kiml.debug.UpdateViewerCombination"
-            description="Shows a finished layout graph in the KLay Info view"
-            name="Show Layout Graph in Viewer">
-      </combination>
-   </extension>
 
 </plugin>

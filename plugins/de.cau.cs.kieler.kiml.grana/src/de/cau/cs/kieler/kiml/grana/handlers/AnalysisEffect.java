@@ -19,7 +19,7 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
+import de.cau.cs.kieler.kiml.grana.visualization.VisualizationService;
 import de.cau.cs.kieler.kiml.service.AnalysisService;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
@@ -57,7 +57,7 @@ public class AnalysisEffect extends AbstractEffect {
         final Map<String, Object> results = AnalysisService.getInstance().analyze(parentNode, analyses,
                 new BasicProgressMonitor(0));
         // visualize the results using silent methods
-        VisualizationServices.getInstance().visualize(analyses, results, true);
+        VisualizationService.getInstance().visualize(analyses, results, true);
     }
 
 }

@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ui.diagram;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -340,7 +341,8 @@ public class DiagramLayoutEngine {
     /**
      * Perform layout on the given layout graph mapping. If zero or one layout configuration is
      * passed, the layout engine is executed exactly once. If multiple layout configurations are
-     * passed, the layout engine is executed accordingly often.
+     * passed, the layout engine is executed accordingly often. Layout listeners are notified after
+     * the layout has been computed.
      * 
      * @param mapping
      *            a mapping for the layout graph
@@ -391,29 +393,34 @@ public class DiagramLayoutEngine {
         }
         
         mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
+        IStatus status = null;
         if (extraLayoutConfigs == null || extraLayoutConfigs.isEmpty()) {
             // perform layout without any extra configuration
-            return layout(mapping, progressMonitor);
+            status = layout(mapping, progressMonitor);
         } else if (extraLayoutConfigs.size() == 1) {
             // perform layout once with an extra configuration
             mapping.getLayoutConfigs().add(extraLayoutConfigs.get(0));
-            return layout(mapping, progressMonitor);
+            status = layout(mapping, progressMonitor);
         } else {
             // perform layout multiple times with different configurations
             progressMonitor.begin(Messages.getString("kiml.ui.63"),
                     TOTAL_WORK * extraLayoutConfigs.size());
-            IStatus status = null;
             for (ILayoutConfig config : extraLayoutConfigs) {
                 mapping.getLayoutConfigs().add(config);
                 status = layout(mapping, progressMonitor);
                 if (!status.isOK()) {
-                    return status;
+                    break;
                 }
                 mapping.getLayoutConfigs().remove(config);
             }
             progressMonitor.done();
-            return status;
         }
+
+        // notify listeners of the executed layout
+        for (IListener listener : layoutListeners) {
+            listener.layoutDone(mapping.getLayoutGraph(), progressMonitor);
+        }
+        return status;
     }
     
     private static final float CONFIGURE_WORK = 1;
@@ -421,12 +428,14 @@ public class DiagramLayoutEngine {
     private static final float TOTAL_WORK = CONFIGURE_WORK + LAYOUT_WORK;
     
     /**
-     * Perform layout on the given layout graph mapping.
+     * Perform layout on the given layout graph mapping. Layout listeners are <em>not</em> notified
+     * in this method.
      * 
      * @param mapping
      *            a mapping for the layout graph
      * @param progressMonitor
-     *            a progress monitor to which progress of the layout algorithm is reported
+     *            a progress monitor to which progress of the layout algorithm is reported; if the
+     *            given monitor is not yet started, it is started in this method
      * @return a status indicating success or failure
      */
     public IStatus layout(final LayoutMapping<?> mapping,
@@ -459,6 +468,32 @@ public class DiagramLayoutEngine {
             return new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
                     Messages.getString("kiml.ui.1"), exception);
         }
+    }
+    
+    /**
+     * Listener interface for graph layout. Implementations must not modify the graph in any way
+     * and should execute as quickly as possible.
+     */
+    public interface IListener {
+        /**
+         * Called when layout has been done on a graph.
+         * 
+         * @param layoutGraph the parent node of the graph
+         * @param monitor the progress monitor with information on the executed layout
+         */
+        void layoutDone(KNode layoutGraph, IKielerProgressMonitor monitor);
+    }
+    
+    /** list of registered layout listeners. */
+    private List<IListener> layoutListeners = new LinkedList<IListener>();
+    
+    /**
+     * Add the given object to the list of layout listeners.
+     * 
+     * @param listener a listener
+     */
+    public void addListener(final IListener listener) {
+        layoutListeners.add(listener);
     }
 
 }
