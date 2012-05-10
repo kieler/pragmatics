@@ -820,7 +820,7 @@ public final class EvolUtil {
         // UI thread).
         LayoutViewPart layoutViewPart = LayoutViewPart.findView();
         if (layoutViewPart != null) {
-            IWorkbenchPart editor = layoutViewPart.getCurrentPart();
+            IWorkbenchPart editor = layoutViewPart.getCurrentWorkbenchPart();
             if (editor instanceof IEditorPart) {
                 return (IEditorPart) editor;
             }
@@ -923,7 +923,7 @@ public final class EvolUtil {
             context.setProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS, true);
             LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
             IMutableLayoutConfig layoutConfig = optionManager.createConfig(bridge.getElement(editPart),
-                    manager.getLayoutConfig());
+                    (ILayoutConfig) manager.getAdapter(null, ILayoutConfig.class));
             layoutConfig.enrich(context);
             return context.getProperty(DefaultLayoutConfig.CONTENT_ALGO);
         }
@@ -1112,7 +1112,7 @@ public final class EvolUtil {
 
             LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
             IMutableLayoutConfig layoutConfig = optionManager.createConfig(diagramElement,
-                    manager.getLayoutConfig());
+                    (ILayoutConfig) manager.getAdapter(null, ILayoutConfig.class));
             context.setProperty(LAYOUT_CONFIG, layoutConfig);
 
             context.setProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS, true);

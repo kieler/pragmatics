@@ -18,7 +18,12 @@ import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 
 /**
- * Layout option configuration interface.
+ * Layout option configurator interface. Implementations are used to determine the
+ * <em>abstract layout</em>, which consists of a mapping of layout options to specific values for
+ * each graph element. The available layout configurators are managed by
+ * {@link de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager}. There the available configurators
+ * are first used to <em>enrich</em> the context of a graph element with required information,
+ * then the actual layout option values are transferred to the graph element data holder.
  *
  * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
@@ -26,7 +31,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 public interface ILayoutConfig {
     
     /**
-     * Return the priority of this layout configuration, which is relevant when multiple configurations
+     * Return the priority of this layout configurator, which is relevant when multiple configurators
      * are applied.
      * 
      * @return the priority

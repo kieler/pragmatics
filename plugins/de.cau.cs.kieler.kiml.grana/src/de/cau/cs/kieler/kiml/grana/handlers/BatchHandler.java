@@ -38,13 +38,13 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
+import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 import de.cau.cs.kieler.kiml.grana.batch.Batch;
 import de.cau.cs.kieler.kiml.grana.batch.BatchJob;
 import de.cau.cs.kieler.kiml.grana.batch.BatchResult;
 import de.cau.cs.kieler.kiml.grana.batch.CSVResultSerializer;
 import de.cau.cs.kieler.kiml.grana.batch.DiagramKGraphProvider;
 import de.cau.cs.kieler.kiml.grana.batch.IBatchResultSerializer;
-import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
 import de.cau.cs.kieler.kiml.grana.ui.BatchWizard;
 
 /**
