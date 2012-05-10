@@ -309,11 +309,50 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             // create layered port, copying its position
             LPort newPort = new LPort();
             newPort.setProperty(Properties.ORIGIN, kport);
-            newPort.getSize().x = portLayout.getWidth();
-            newPort.getSize().y = portLayout.getHeight();
-            newPort.getPosition().x = portLayout.getXpos() + portLayout.getWidth() / 2;
-            newPort.getPosition().y = portLayout.getYpos() + portLayout.getHeight() / 2;
+            KVector portSize = newPort.getSize();
+            portSize.x = portLayout.getWidth();
+            portSize.y = portLayout.getHeight();
+            KVector portPos = newPort.getPosition();
+            portPos.x = portLayout.getXpos();
+            portPos.y = portLayout.getYpos();
             newPort.setNode(newNode);
+
+            PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+            Float offset = portLayout.getProperty(LayoutOptions.OFFSET);
+            if (offset == null) {
+                offset = KimlUtil.calcPortOffset(kport, portSide);
+            }
+            newPort.setSide(portSide);
+            newPort.setProperty(LayoutOptions.OFFSET, offset);
+            
+            // if the port anchor property is set, use it as anchor point
+            KVector anchorPos = portLayout.getProperty(Properties.PORT_ANCHOR);
+            if (anchorPos != null) {
+                newPort.getAnchor().x = anchorPos.x;
+                newPort.getAnchor().y = anchorPos.y;
+            } else if (portConstraints.isSideFixed()) {
+                // set the anchor point according to the port side
+                switch (portSide) {
+                case NORTH:
+                    newPort.getAnchor().x = portSize.x / 2;
+                    break;
+                case EAST:
+                    newPort.getAnchor().x = portSize.x;
+                    newPort.getAnchor().y = portSize.y / 2;
+                    break;
+                case SOUTH:
+                    newPort.getAnchor().x = portSize.x / 2;
+                    newPort.getAnchor().y = portSize.y;
+                    break;
+                case WEST:
+                    newPort.getAnchor().y = portSize.y / 2;
+                    break;
+                }
+            } else {
+                // the port side will be decided later, so set the anchor to the center point
+                newPort.getAnchor().x = portSize.x / 2;
+                newPort.getAnchor().y = portSize.y / 2;
+            }
 
             elemMap.put(kport, newPort);
 
@@ -325,18 +364,10 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 newLabel.setProperty(Properties.ORIGIN, klabel);
                 newLabel.getSize().x = labelLayout.getWidth();
                 newLabel.getSize().y = labelLayout.getHeight();
-                newLabel.getPosition().x = labelLayout.getXpos() - portLayout.getWidth() / 2;
-                newLabel.getPosition().y = labelLayout.getYpos() - portLayout.getHeight() / 2;
+                newLabel.getPosition().x = labelLayout.getXpos();
+                newLabel.getPosition().y = labelLayout.getYpos();
                 newPort.getLabels().add(newLabel);
             }
-
-            PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
-            Float offset = portLayout.getProperty(LayoutOptions.OFFSET);
-            if (offset == null) {
-                offset = KimlUtil.calcPortOffset(kport, portSide);
-            }
-            newPort.setSide(portSide);
-            newPort.setProperty(LayoutOptions.OFFSET, offset);
 
             switch (direction) {
             case LEFT:
@@ -582,8 +613,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             pos.y = endPoint.getY() - node.getPosition().y;
             KVector resizeRatio = node.getProperty(Properties.RESIZE_RATIO);
             if (resizeRatio != null) {
-                pos.x *= resizeRatio.x;
-                pos.y *= resizeRatio.y;
+                pos.scale(resizeRatio.x, resizeRatio.y);
             }
             pos.applyBounds(0, 0, node.getSize().x, node.getSize().y);
             
@@ -679,10 +709,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                         if (origin instanceof KPort) {
                             KPort kport = (KPort) origin;
                             KShapeLayout portLayout = kport.getData(KShapeLayout.class);
-                            portLayout.setXpos((float)
-                                    (lport.getPosition().x - lport.getSize().x / 2.0));
-                            portLayout.setYpos((float)
-                                    (lport.getPosition().y - lport.getSize().y / 2.0));
+                            portLayout.applyVector(lport.getPosition());
                         }
                     }
                 }
@@ -692,9 +719,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 KShapeLayout portLayout = kport.getData(KShapeLayout.class);
                 KVector portPosition = getExternalPortPosition(layeredGraph, lnode,
                         portLayout.getWidth(), portLayout.getHeight());
-
-                portLayout.setXpos((float) portPosition.x);
-                portLayout.setYpos((float) portPosition.y);
+                portLayout.applyVector(portPosition);
             }
 
             // collect edges
@@ -714,22 +739,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             KVectorChain bendPoints = ledge.getBendPoints();
 
             // add the source port and target port positions to the vector chain
-            LPort sourcePort = ledge.getSource();
-            KVector sourcePoint = KVector.add(sourcePort.getPosition(),
-                    sourcePort.getNode().getPosition());
-            bendPoints.addFirst(sourcePoint);
-            LPort targetPort = ledge.getTarget();
-            KVector targetPoint = KVector.add(targetPort.getPosition(),
-                    targetPort.getNode().getPosition());
-            bendPoints.addLast(targetPoint);
-            
-            // clip the endpoints at the port border
-            if (sourcePort.getProperty(Properties.ORIGIN) != null) {
-                clip(sourcePoint, sourcePort.getSize(), bendPoints.get(1));
-            }
-            if (targetPort.getProperty(Properties.ORIGIN) != null) {
-                clip(targetPoint, targetPort.getSize(), bendPoints.get(bendPoints.size() - 2));
-            }
+            bendPoints.addFirst(ledge.getSource().getAbsoluteAnchor());
+            bendPoints.addLast(ledge.getTarget().getAbsoluteAnchor());
 
             // translate the bend points by the offset and apply the bend points
             bendPoints.translate(offset);
@@ -740,12 +751,9 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
                 KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
 
-                KVector labelPos = new KVector(ledge.getSource().getPosition().x, ledge.getSource()
-                        .getPosition().y);
-                labelPos.add(ledge.getSource().getNode().getPosition());
-                labelPos.add(label.getPosition());
-                klabelLayout.setXpos((float) (labelPos.x + offset.x));
-                klabelLayout.setYpos((float) (labelPos.y + offset.y));
+                KVector labelPos = KVector.sum(ledge.getSource().getNode().getPosition(),
+                        ledge.getSource().getPosition(), label.getPosition(), offset);
+                klabelLayout.applyVector(labelPos);
             }
 
             // set spline option
@@ -770,31 +778,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         } else {
             // ports have not been positioned yet - leave this for next layouter
             KimlUtil.resizeNode(parentNode, width, height, true);
-        }
-    }
-    
-    /**
-     * KLay Layered aligns ports at their center. Incident edges must be clipped on the port's border.
-     * 
-     * @param endpoint an endpoint of an edge
-     * @param portSize the size of the corresponding port
-     * @param next the next point on the edge's path
-     */
-    protected void clip(final KVector endpoint, final KVector portSize, final KVector next) {
-        double xdiff = Math.abs(next.x - endpoint.x);
-        double ydiff = Math.abs(next.y - endpoint.y);
-        if (xdiff >= ydiff) {
-            if (next.x > endpoint.x) {
-                endpoint.x += portSize.x / 2;
-            } else if (next.x < endpoint.x) {
-                endpoint.x -= portSize.x / 2;
-            }
-        } else {
-            if (next.y > endpoint.y) {
-                endpoint.y += portSize.y / 2;
-            } else if (next.y < endpoint.y) {
-                endpoint.y -= portSize.y / 2;
-            }
         }
     }
 

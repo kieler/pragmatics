@@ -129,16 +129,12 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
         if (minimalAngle != 0) {
             for (LEdge edge : shortEdges) {
                 LPort start = edge.getSource();
-                LNode startNode = start.getNode();
                 LPort end = edge.getTarget();
-                LNode endNode = end.getNode();
-                KVector startVec = new KVector(startNode.getPosition().x + start.getPosition().x,
-                        startNode.getPosition().y + start.getPosition().y);
-                KVector endVec = new KVector(endNode.getPosition().x + end.getPosition().x,
-                        endNode.getPosition().y + end.getPosition().y);
+                KVector startVec = start.getAbsoluteAnchor();
+                KVector endVec = end.getAbsoluteAnchor();
 
                 // it is enough to check one vector, as the angle at the other node is the same
-                KVector startToEnd = KVector.sub(endVec, startVec);
+                KVector startToEnd = KVector.diff(endVec, startVec);
                 double degrees = startToEnd.toDegrees();
 
                 // if the minimalAngle criteria is not met, create a short spline
@@ -235,9 +231,9 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
             if (bendLeft == null) {
                 test = bendRight.clone();
             }
-            KVector startTangent = KVector.sub((bendLeft == null) ? test : bendLeft, start)
+            KVector startTangent = KVector.diff((bendLeft == null) ? test : bendLeft, start)
                     .normalize();
-            KVector endTangent = KVector.sub(bendRight, end).normalize().negate();
+            KVector endTangent = KVector.diff(bendRight, end).normalize().negate();
 
             return splineGen.generateSpline(newPoints, startTangent, endTangent);
 

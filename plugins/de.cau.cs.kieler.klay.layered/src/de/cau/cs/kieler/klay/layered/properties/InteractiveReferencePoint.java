@@ -14,13 +14,16 @@
 package de.cau.cs.kieler.klay.layered.properties;
 
 /**
- * Describes where an anchor point lies relative to a node.
+ * Describes what interactive layout phases should take as reference point for comparison
+ * of node positions.
  * 
  * @author cds
  */
-public enum AnchorPoint {
-    /** the center of the node. */
+public enum InteractiveReferencePoint {
+    
+    /** the node's center point. */
     CENTER,
     /** the node's top left corner. */
     TOP_LEFT;
+    
 }

@@ -92,7 +92,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
     protected LNode createExternalPortDummy(final KPort port, final PortConstraints portConstraints,
             final PortSide portSide, final int netFlow, final KVector portNodeSize,
             final KVector portPosition, final KVector portSize) {
-        
+        KShapeLayout portLayout = port.getData(KShapeLayout.class);
         PortSide finalExternalPortSide = portSide;
         
         // Create the dummy with one port
@@ -101,8 +101,14 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         dummy.setProperty(Properties.ORIGIN, port);
         dummy.setProperty(Properties.EXT_PORT_SIZE, portSize);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-        dummy.setProperty(Properties.OFFSET, port.getData(KShapeLayout.class)
-                .getProperty(LayoutOptions.OFFSET));
+        dummy.setProperty(Properties.OFFSET, portLayout.getProperty(LayoutOptions.OFFSET));
+        
+        // set the anchor point
+        KVector anchor = portLayout.getProperty(Properties.PORT_ANCHOR);
+        if (anchor == null) {
+            anchor = new KVector(portSize.x / 2, portSize.y / 2);
+        }
+        dummy.setProperty(Properties.PORT_ANCHOR, anchor);
         
         LPort dummyPort = new LPort();
         dummyPort.setNode(dummy);
@@ -124,7 +130,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
             dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.OUTGOING_ONLY);
             dummy.getSize().y = portSize.y;
             dummyPort.setSide(PortSide.EAST);
-            dummyPort.getPosition().y = portSize.y / 2.0;
+            dummyPort.getPosition().y = anchor.y;
             break;
         
         case EAST:
@@ -132,21 +138,21 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
             dummy.setProperty(Properties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
             dummy.getSize().y = portSize.y;
             dummyPort.setSide(PortSide.WEST);
-            dummyPort.getPosition().y = portSize.y / 2.0;
+            dummyPort.getPosition().y = anchor.y;
             break;
         
         case NORTH:
             dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.TOP);
             dummy.getSize().x = portSize.x;
             dummyPort.setSide(PortSide.SOUTH);
-            dummyPort.getPosition().x = portSize.x / 2.0;
+            dummyPort.getPosition().x = anchor.x;
             break;
         
         case SOUTH:
             dummy.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.BOTTOM);
             dummy.getSize().x = portSize.x;
             dummyPort.setSide(PortSide.NORTH);
-            dummyPort.getPosition().x = portSize.x / 2.0;
+            dummyPort.getPosition().x = anchor.x;
             break;
         
         default:
