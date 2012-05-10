@@ -295,6 +295,12 @@ public final class Properties {
     public static final IProperty<Boolean> CYCLIC = new Property<Boolean>(
             "cyclic", false);
     
+    /**
+     * The offset to the port position where connections shall be attached.
+     */
+    public static final IProperty<KVector> PORT_ANCHOR = new Property<KVector>(
+            "de.cau.cs.kieler.klay.layered.portAnchor");
+    
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS

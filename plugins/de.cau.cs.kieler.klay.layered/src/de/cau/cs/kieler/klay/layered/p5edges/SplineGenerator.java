@@ -102,16 +102,16 @@ public class SplineGenerator {
             double distSnd = KVector.distance(curve.end, curve.sndControlPnt);
             // scale fst ctr point and therefore snd of next curve
             if (distFst > dist * MAX_DISTANCE) {
-                KVector v = KVector.sub(curve.fstControlPnt, curve.start);
+                KVector v = KVector.diff(curve.fstControlPnt, curve.start);
                 v.scaleToLength(dist * SMOOTHNESS_FACTOR);
-                curve.fstControlPnt = KVector.add(curve.start, v);
+                curve.fstControlPnt = KVector.sum(curve.start, v);
                 if (listIt.hasPrevious()) {
                     listIt.previous();
                     if (listIt.hasPrevious()) {
                         BezierCurve tempCurve = listIt.previous();
-                        KVector v1 = KVector.sub(tempCurve.sndControlPnt, tempCurve.end);
+                        KVector v1 = KVector.diff(tempCurve.sndControlPnt, tempCurve.end);
                         v1.scaleToLength(dist * SMOOTHNESS_FACTOR);
-                        tempCurve.sndControlPnt = KVector.add(tempCurve.end, v1);
+                        tempCurve.sndControlPnt = KVector.sum(tempCurve.end, v1);
                         listIt.next();
                     }
                     listIt.next();
@@ -119,14 +119,14 @@ public class SplineGenerator {
             }
             // scale snd ctr point and therefore first of next curve
             if (distSnd > dist * MAX_DISTANCE) {
-                KVector v = KVector.sub(curve.sndControlPnt, curve.end);
+                KVector v = KVector.diff(curve.sndControlPnt, curve.end);
                 v.scaleToLength(dist * SMOOTHNESS_FACTOR);
-                curve.sndControlPnt = KVector.add(curve.end, v);
+                curve.sndControlPnt = KVector.sum(curve.end, v);
                 if (listIt.hasNext()) {
                     BezierCurve tempCurve = listIt.next();
-                    KVector v1 = KVector.sub(tempCurve.fstControlPnt, tempCurve.start);
+                    KVector v1 = KVector.diff(tempCurve.fstControlPnt, tempCurve.start);
                     v1.scaleToLength(dist * SMOOTHNESS_FACTOR);
-                    tempCurve.fstControlPnt = KVector.add(tempCurve.start, v1);
+                    tempCurve.fstControlPnt = KVector.sum(tempCurve.start, v1);
                     listIt.previous();
                 }
             }
@@ -183,8 +183,8 @@ public class SplineGenerator {
             final Curvature mode) {
 
         for (BezierCurve curve : ospline.getCurves()) {
-            KVector fstdir = KVector.sub(curve.fstControlPnt, curve.start).normalize();
-            KVector snddir = KVector.sub(curve.sndControlPnt, curve.end).normalize();
+            KVector fstdir = KVector.diff(curve.fstControlPnt, curve.start).normalize();
+            KVector snddir = KVector.diff(curve.sndControlPnt, curve.end).normalize();
             double dist = KVector.distance(curve.start, curve.fstControlPnt);
             double dist2 = KVector.distance(curve.end, curve.sndControlPnt);
             switch (mode) {
@@ -218,8 +218,8 @@ public class SplineGenerator {
         }
         BezierCurve curve = spline.getCurves().getFirst();
 
-        KVector fstdir = KVector.sub(curve.fstControlPnt, curve.start).scale(STRAIGHTENING_FACTOR);
-        KVector snddir = KVector.sub(curve.sndControlPnt, curve.end).scale(STRAIGHTENING_FACTOR);
+        KVector fstdir = KVector.diff(curve.fstControlPnt, curve.start).scale(STRAIGHTENING_FACTOR);
+        KVector snddir = KVector.diff(curve.sndControlPnt, curve.end).scale(STRAIGHTENING_FACTOR);
 
         curve.fstControlPnt.sub(fstdir);
         curve.sndControlPnt.sub(snddir);

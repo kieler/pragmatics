@@ -205,6 +205,14 @@
             name="Interactive Layout Anchor"
             type="enum">
       </layoutOption>
+      <layoutOption
+            advanced="true"
+            class="de.cau.cs.kieler.core.math.KVector"
+            description="The offset to the port position where connections shall be attached (programmatically set)."
+            id="de.cau.cs.kieler.klay.layered.portAnchor"
+            name="Port Anchor Offset"
+            type="object">
+      </layoutOption>
    </extension>
 
 </plugin>

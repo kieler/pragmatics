@@ -96,7 +96,8 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         
         // Calculate the bend point
         KVector bendPoint = new KVector(inputPort.getNode().getPosition());
-        bendPoint.x = originPort.getNode().getPosition().x + originPort.getPosition().x;
+        bendPoint.x = originPort.getNode().getPosition().x + originPort.getPosition().x
+                + originPort.getAnchor().x;
         
         // Reroute the edges, inserting a new bend point at the position of
         // the dummy node
@@ -119,7 +120,8 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         
         // Calculate the bend point
         KVector bendPoint = new KVector(outputPort.getNode().getPosition());
-        bendPoint.x = originPort.getNode().getPosition().x + originPort.getPosition().x;
+        bendPoint.x = originPort.getNode().getPosition().x + originPort.getPosition().x
+                + originPort.getAnchor().x;
         
         // Reroute the edges, inserting a new bend point at the position of
         // the dummy node
@@ -149,11 +151,13 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         
         // Add two bend points
         KVector bendPoint = new KVector(outputPort.getNode().getPosition());
-        bendPoint.x = originOutputPort.getNode().getPosition().x + originOutputPort.getPosition().x;
+        bendPoint.x = originOutputPort.getNode().getPosition().x + originOutputPort.getPosition().x
+                + originOutputPort.getAnchor().x;
         selfLoop.getBendPoints().add(bendPoint);
         
         bendPoint = new KVector(inputPort.getNode().getPosition());
-        bendPoint.x = originInputPort.getNode().getPosition().x + originInputPort.getPosition().x;
+        bendPoint.x = originInputPort.getNode().getPosition().x + originInputPort.getPosition().x
+                + originInputPort.getAnchor().x;
         selfLoop.getBendPoints().add(bendPoint);
     }
 }
