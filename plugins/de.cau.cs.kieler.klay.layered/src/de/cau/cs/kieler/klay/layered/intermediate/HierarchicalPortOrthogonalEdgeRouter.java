@@ -169,9 +169,8 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     continue;
                 }
                 
-                if (node.getProperty(Properties.EXT_PORT_REPLACED_DUMMY) != null) {
-                    LNode replacedDummy = (LNode) node.getProperty(Properties.EXT_PORT_REPLACED_DUMMY);
-                    
+                LNode replacedDummy = (LNode) node.getProperty(Properties.EXT_PORT_REPLACED_DUMMY);
+                if (replacedDummy != null) {
                     // The origin should be a hierarchical port dummy. Better check that
                     if (replacedDummy.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
                         continue;
@@ -345,11 +344,14 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         double posSum = 0.0;
         
         for (LPort connectedPort : dummyInPort.getConnectedPorts()) {
-            posSum += connectedPort.getPosition().x + connectedPort.getNode().getPosition().x;
+            posSum += connectedPort.getNode().getPosition().x + connectedPort.getPosition().x
+                    + connectedPort.getAnchor().x;
         }
         
         // Assign the dummy's x coordinate
-        dummy.getPosition().x = posSum / dummyInPort.getDegree() - dummy.getSize().x / 2.0;
+        KVector anchor = dummy.getProperty(Properties.PORT_ANCHOR);
+        double offset = anchor == null ? 0 : anchor.x;
+        dummy.getPosition().x = posSum / dummyInPort.getDegree() - offset;
     }
     
     /**
@@ -359,8 +361,10 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param width the graph width.
      */
     private void applyNorthSouthDummyRatio(final LNode dummy, final double width) {
+        KVector anchor = dummy.getProperty(Properties.PORT_ANCHOR);
+        double offset = anchor == null ? 0 : anchor.x;
         dummy.getPosition().x = width * dummy.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION)
-                - dummy.getSize().x / 2.0;
+                - offset;
     }
     
     /**
@@ -369,8 +373,9 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param dummy the dummy.
      */
     private void applyNorthSouthDummyPosition(final LNode dummy) {
-        dummy.getPosition().x = dummy.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION)
-                - dummy.getSize().x / 2.0;
+        KVector anchor = dummy.getProperty(Properties.PORT_ANCHOR);
+        double offset = anchor == null ? 0 : anchor.x;
+        dummy.getPosition().x = dummy.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION) - offset;
     }
     
     /**
@@ -835,7 +840,8 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     KVector firstBendPoint = bendPoints.getFirst();
                     
                     if (sourcePort.getNode() == node) {
-                        firstBendPoint.y = node.getPosition().y + sourcePort.getPosition().y;
+                        firstBendPoint.y = node.getPosition().y + sourcePort.getPosition().y
+                                + sourcePort.getAnchor().y;
                     }
                     
                     // Correct a slanted segment connected to the target port if it belongs to our node
@@ -843,7 +849,8 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     KVector lastBendPoint = bendPoints.getLast();
                     
                     if (targetPort.getNode() == node) {
-                        lastBendPoint.y = node.getPosition().y + targetPort.getPosition().y;
+                        lastBendPoint.y = node.getPosition().y + targetPort.getPosition().y
+                                + targetPort.getAnchor().y;
                     }
                 }
             }

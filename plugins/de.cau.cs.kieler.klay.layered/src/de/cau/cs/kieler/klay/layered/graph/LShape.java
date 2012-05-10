@@ -29,8 +29,8 @@ public abstract class LShape extends LGraphElement {
 
 
     /**
-     * Returns the element's current position. Unless noted otherwise, this is the coordinate
-     * of the element's upper left corner. May be modified.
+     * Returns the element's current position. This is the coordinate of the element's upper
+     * left corner. May be modified.
      * 
      * @return the position
      */

@@ -105,7 +105,8 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements ILayoutPhas
             
             for (LPort connectedPort : connectedPorts) {
                 LNode otherNode = connectedPort.getNode();
-                double otherPos = otherNode.getPosition().y + connectedPort.getPosition().y;
+                double otherPos = otherNode.getPosition().y + connectedPort.getPosition().y
+                        + connectedPort.getAnchor().y;
                 if (Math.abs(otherPos - bendPos) > 1) {
                     return true;
                 }

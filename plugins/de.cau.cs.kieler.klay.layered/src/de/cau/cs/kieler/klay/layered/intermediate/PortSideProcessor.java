@@ -66,7 +66,15 @@ public class PortSideProcessor extends AbstractAlgorithm implements ILayoutProce
      */
     private void distributePorts(final LNode node) {
         for (LPort port : node.getPorts()) {
-            port.setSide(port.getNetFlow() < 0 ? PortSide.EAST : PortSide.WEST);
+            if (port.getNetFlow() < 0) {
+                port.setSide(PortSide.EAST);
+                // adapt the anchor so outgoing edges are attached right
+                port.getAnchor().x = port.getSize().x;
+            } else {
+                port.setSide(PortSide.WEST);
+                // adapt the anchor so incoming edges are attached left
+                port.getAnchor().x = 0;
+            }
         }
     }
 
