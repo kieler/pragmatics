@@ -31,6 +31,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.ui.CoreUIPlugin;
 import de.cau.cs.kieler.kiml.grana.ui.HtmlResultGenerator;
 import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
+import de.cau.cs.kieler.kiml.grana.visualization.VisualizationService;
 
 /**
  * A view that is an alternative way to display analysis results.
@@ -71,11 +72,22 @@ public class AnalysisResultViewPart extends ViewPart {
             browser = new Browser(parent, SWT.NONE);
             browser.setLayoutData(new GridData(GridData.FILL_BOTH));
 
+            // activate the view visualization method
+            VisualizationService.getInstance().setActive(ViewVisualizationMethod.class, true);
         } catch (SWTError e) {
             IStatus status = new Status(IStatus.ERROR, CoreUIPlugin.PLUGIN_ID,
                     "Could not instantiate Browser.", e);
             StatusManager.getManager().handle(status, StatusManager.LOG);
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void dispose() {
+        VisualizationService.getInstance().setActive(ViewVisualizationMethod.class, false);
+        super.dispose();
     }
 
     /**

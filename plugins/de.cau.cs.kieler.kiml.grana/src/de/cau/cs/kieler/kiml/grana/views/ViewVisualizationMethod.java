@@ -15,7 +15,8 @@ package de.cau.cs.kieler.kiml.grana.views;
 
 import java.util.List;
 
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import org.eclipse.ui.PlatformUI;
+
 import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
 import de.cau.cs.kieler.kiml.grana.visualization.IVisualizationMethod;
 
@@ -31,7 +32,7 @@ public class ViewVisualizationMethod implements IVisualizationMethod {
      */
     public void visualize(final String type,
             final List<BoundVisualization> visualizations) {
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
             public void run() {
                 // refresh the result view
                 AnalysisResultViewPart view = AnalysisResultViewPart.findView();
@@ -39,7 +40,7 @@ public class ViewVisualizationMethod implements IVisualizationMethod {
                     view.setAnalysisResults(visualizations);
                 }
             }
-        }, false);
+        });
     }
 
 }

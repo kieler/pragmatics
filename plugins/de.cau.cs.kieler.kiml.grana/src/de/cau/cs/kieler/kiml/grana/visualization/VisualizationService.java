@@ -46,6 +46,8 @@ public final class VisualizationService {
     private static final String ELEMENT_VISUALIZER = "visualizer";
     /** name of the 'visualizationMethod' element. */
     private static final String ELEMENT_VISUALIZATION_METHOD = "visualizationMethod";
+    /** name of the 'default' attribute in the extension points. */
+    private static final String ATTRIBUTE_DEFAULT = "default";
     /** name of the 'name' attribute in the extension points. */
     private static final String ATTRIBUTE_NAME = "name";
     /** name of the 'type' attribute in the extension points. */
@@ -66,8 +68,8 @@ public final class VisualizationService {
     private Map<IVisualizer<Object, Object>, Integer> visualizerPriorityMapping
             = new HashMap<IVisualizer<Object, Object>, Integer>();
     /** the visualization methods. */
-    private List<InfoVisualizationMethod> visualizationMethods
-            = new LinkedList<InfoVisualizationMethod>();
+    private List<VisualizationMethodData> visualizationMethods
+            = new LinkedList<VisualizationMethodData>();
 
     /**
      * Returns the singleton instance.
@@ -175,9 +177,14 @@ public final class VisualizationService {
                         } else {
                             boolean silent = Boolean.parseBoolean(element
                                     .getAttribute(ATTRIBUTE_SILENT));
-                            InfoVisualizationMethod infoVisualizationMethod
-                                    = new InfoVisualizationMethod(visualizationMethod, silent);
-                            infoVisualizationMethod.setType(type);
+                            boolean active = true;
+                            String activeString = element.getAttribute(ATTRIBUTE_DEFAULT);
+                            if (activeString != null && activeString.length() > 0) {
+                                active = Boolean.parseBoolean(activeString);
+                            }
+                            VisualizationMethodData infoVisualizationMethod
+                                    = new VisualizationMethodData(visualizationMethod, silent, active,
+                                            type);
                             visualizationMethods.add(infoVisualizationMethod);
                         }
                     }
@@ -187,10 +194,10 @@ public final class VisualizationService {
             }
         }
         // resolve visualization method types
-        List<InfoVisualizationMethod> invalidVisualizationMethods
-                = new LinkedList<InfoVisualizationMethod>();
-        for (InfoVisualizationMethod method : visualizationMethods) {
-            if (!visualizationTypes.contains(method.getType())) {
+        List<VisualizationMethodData> invalidVisualizationMethods
+                = new LinkedList<VisualizationMethodData>();
+        for (VisualizationMethodData method : visualizationMethods) {
+            if (!visualizationTypes.contains(method.type)) {
                 invalidVisualizationMethods.add(method);
             }
         }
@@ -200,7 +207,7 @@ public final class VisualizationService {
             Collections.sort(visualizers, new VisualizerComparator());
         }
         // sort the visualization methods so silent ones come first
-        Collections.sort(visualizationMethods, new InfoVisualizationMethodComparator());
+        Collections.sort(visualizationMethods, new VisualizationMethodComparator());
     }
 
     /**
@@ -225,9 +232,42 @@ public final class VisualizationService {
         }
         return null;
     }
+    
+    /**
+     * Activates or deactivates a given visualization method.
+     * 
+     * @param methodClass
+     *            the class that represents the registered visualization method
+     * @param active
+     *            whether the method shall be activated or deactivated
+     */
+    public void setActive(final Class<? extends IVisualizationMethod> methodClass,
+            final boolean active) {
+        for (VisualizationMethodData methodData : visualizationMethods) {
+            if (methodClass.isInstance(methodData.method)) {
+                methodData.active = active;
+            }
+        }
+    }
+    
+    /**
+     * Determine whether there is an active visualization method that would process analysis results.
+     * 
+     * @param silent
+     *            true if only silent visualization methods should be used
+     * @return {@code true} if there is an active visualization method
+     */
+    public boolean findActiveMethod(final boolean silent) {
+        for (VisualizationMethodData methodData : visualizationMethods) {
+            if (methodData.active && (!silent || methodData.silent)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
-     * Visualizes the analyses results using all registered visualization methods.
+     * Visualize the analyses results using all registered visualization methods.
      * 
      * @param analyses
      *            the analyses
@@ -240,16 +280,16 @@ public final class VisualizationService {
             final boolean silent) {
         Map<String, List<BoundVisualization>> typeBoundVisualizationsMap
                 = new HashMap<String, List<BoundVisualization>>();
-        for (InfoVisualizationMethod method : visualizationMethods) {
-            if (!silent || method.isSilent()) {
+        for (VisualizationMethodData methodData : visualizationMethods) {
+            if (methodData.active && (!silent || methodData.silent)) {
                 List<BoundVisualization> boundVisualizations = typeBoundVisualizationsMap
-                        .get(method.getType());
+                        .get(methodData.type);
                 if (boundVisualizations == null) {
                     boundVisualizations = new LinkedList<BoundVisualization>();
-                    typeBoundVisualizationsMap.put(method.getType(), boundVisualizations);
+                    typeBoundVisualizationsMap.put(methodData.type, boundVisualizations);
                     for (AnalysisData analysis : analyses) {
                         Object result = results.get(analysis.getId());
-                        Visualization visualization = getVisualization(method.getType(), result);
+                        Visualization visualization = getVisualization(methodData.type, result);
                         if (visualization != null) {
                             boundVisualizations.add(new BoundVisualization(analysis, result,
                                     visualization));
@@ -257,7 +297,7 @@ public final class VisualizationService {
                     }
                 }
 
-                method.visualize(method.getType(), boundVisualizations);
+                methodData.method.visualize(methodData.type, boundVisualizations);
             }
         }
     }
@@ -265,7 +305,7 @@ public final class VisualizationService {
     /**
      * Wrapper class for visualization methods.
      */
-    private static class InfoVisualizationMethod implements IVisualizationMethod {
+    private static class VisualizationMethodData {
 
         /** the visualization type. */
         private String type;
@@ -273,54 +313,29 @@ public final class VisualizationService {
         private IVisualizationMethod method;
         /** is the visualization method silent? */
         private boolean silent;
+        /** is the visualization method active? */
+        private boolean active;
 
         /**
-         * Constructs an InfoVisualizationMethod.
+         * Constructs an VisualizationMethodData.
          * 
          * @param theMethod
          *            the visualization method
          * @param isSilent
          *            whether the visualization method is silent
-         */
-        public InfoVisualizationMethod(final IVisualizationMethod theMethod, final boolean isSilent) {
-            method = theMethod;
-            silent = isSilent;
-        }
-
-        /**
-         * Returns the visualization type.
-         * 
-         * @return the visualization type
-         */
-        public String getType() {
-            return type;
-        }
-
-        /**
-         * Sets the visualization type.
-         * 
+         * @param isActive
+         *            whether the visualization method is initially active
          * @param theType
          *            the visualization type
          */
-        public void setType(final String theType) {
-            type = theType;
+        public VisualizationMethodData(final IVisualizationMethod theMethod, final boolean isSilent,
+                final boolean isActive, final String theType) {
+            this.method = theMethod;
+            this.silent = isSilent;
+            this.type = theType;
+            this.active = isActive;
         }
 
-        /**
-         * Returns whether the visualization method is silent.
-         * 
-         * @return true if the visualization method is silent, false else
-         */
-        public boolean isSilent() {
-            return silent;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void visualize(final String theType, final List<BoundVisualization> visualizations) {
-            method.visualize(theType, visualizations);
-        }
     }
 
     /**
@@ -342,15 +357,15 @@ public final class VisualizationService {
     /**
      * Helper class for comparing info visualization methods.
      */
-    private class InfoVisualizationMethodComparator implements Comparator<InfoVisualizationMethod> {
+    private class VisualizationMethodComparator implements Comparator<VisualizationMethodData> {
 
         /**
          * {@inheritDoc}
          */
-        public int compare(final InfoVisualizationMethod visualizationMethod1,
-                final InfoVisualizationMethod visualizationMethod2) {
-            return (visualizationMethod2.isSilent() ? 1 : 0)
-                    - (visualizationMethod1.isSilent() ? 1 : 0);
+        public int compare(final VisualizationMethodData visualizationMethod1,
+                final VisualizationMethodData visualizationMethod2) {
+            return (visualizationMethod2.silent ? 1 : 0)
+                    - (visualizationMethod1.silent ? 1 : 0);
         }
 
     }
