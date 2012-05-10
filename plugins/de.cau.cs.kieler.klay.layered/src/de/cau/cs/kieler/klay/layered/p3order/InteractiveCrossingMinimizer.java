@@ -181,7 +181,7 @@ public class InteractiveCrossingMinimizer extends AbstractCrossingMinimizer {
         }
         
         // the fallback solution is to take the previous position of the node's anchor point
-        return node.getAnchorPointPosition(graph).y;
+        return node.getInteractiveReferencePoint(graph).y;
     }
 
 }
