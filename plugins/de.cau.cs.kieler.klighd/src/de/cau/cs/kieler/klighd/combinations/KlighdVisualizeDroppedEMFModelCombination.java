@@ -20,16 +20,15 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gmf.runtime.diagram.core.DiagramEditingDomainFactory;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 import de.cau.cs.kieler.klighd.triggers.KlighdResourceDropTrigger.KlighdResourceDropState;
 
 /**
- * A view management combination which EMF resources which are dropped on KLighD views and updates
- * the view with the model loaded from the resource.
+ * A view management combination which loads EMF resources which have been dropped on KLighD views
+ * and updates the view with the model loaded from the resource.
  * 
  * @author mri
  */
@@ -63,13 +62,12 @@ public class KlighdVisualizeDroppedEMFModelCombination extends AbstractCombinati
      */
     private Object loadModel(final IFile file) {
         // TransactionalEditingDomain.Factory factory = TransactionalEditingDomain.Factory.INSTANCE;
-        TransactionalEditingDomain transactionalEditingDomain =
-                DiagramEditingDomainFactory.INSTANCE.createEditingDomain();
+//        TransactionalEditingDomain transactionalEditingDomain = DiagramEditingDomainFactory.INSTANCE
+//                .createEditingDomain();
         // factory.createEditingDomain();
-        ResourceSet resourceSet = transactionalEditingDomain.getResourceSet();
-        Resource resource =
-                resourceSet.createResource(URI.createPlatformResourceURI(file.getFullPath()
-                        .toOSString(), true));
+        ResourceSet resourceSet = new ResourceSetImpl();
+        Resource resource = resourceSet.createResource(URI.createPlatformResourceURI(file
+                .getFullPath().toOSString(), true));
         try {
             resource.load(null);
         } catch (IOException e) {

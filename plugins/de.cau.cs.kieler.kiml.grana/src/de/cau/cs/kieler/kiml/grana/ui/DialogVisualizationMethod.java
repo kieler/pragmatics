@@ -15,7 +15,8 @@ package de.cau.cs.kieler.kiml.grana.ui;
 
 import java.util.List;
 
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import org.eclipse.ui.PlatformUI;
+
 import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
 import de.cau.cs.kieler.kiml.grana.visualization.IVisualizationMethod;
 
@@ -31,7 +32,7 @@ public class DialogVisualizationMethod implements IVisualizationMethod {
      */
     public void visualize(final String type,
             final List<BoundVisualization> visualizations) {
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
             public void run() {
                 // prepare the result dialog
                 AnalysisResultDialog resultDialog =
@@ -42,7 +43,7 @@ public class DialogVisualizationMethod implements IVisualizationMethod {
                     resultDialog.open();
                 }
             }
-        }, false);
+        });
     }
 
 }

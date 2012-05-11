@@ -218,6 +218,10 @@ litigation.
       <update label="KIELER Nightly Builds" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"/>
    </url>
 
+   <includes
+         id="org.ptolemy.feature"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="org.apache.commons.logging"/>
       <import plugin="org.antlr.runtime"/>
@@ -241,10 +245,6 @@ litigation.
       <import feature="org.eclipse.xtext.runtime" version="2.1.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.xtext.ui" version="2.1.0" match="greaterOrEqual"/>
    </requires>
-
-   <includes
-         id="org.ptolemy.feature"
-         version="0.0.0"/>
 
    <plugin
          id="de.cau.cs.kieler.core"
@@ -565,5 +565,12 @@ litigation.
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.kivi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

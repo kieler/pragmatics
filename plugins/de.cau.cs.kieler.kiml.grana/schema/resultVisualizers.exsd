@@ -6,7 +6,7 @@
          <meta.schema plugin="de.cau.cs.kieler.kiml.grana" id="resultVisualizers" name="ResultVisualizers"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         Extension point for graph analysis result visualization. Visualization methods can be defined to display the results of a graph analysis in some way.
       </documentation>
    </annotation>
 
@@ -50,11 +50,16 @@
    </element>
 
    <element name="type">
+      <annotation>
+         <documentation>
+            A visualization type describes the format in which visualization results are displayed.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The name used to identify the output format.
                </documentation>
             </annotation>
          </attribute>
@@ -62,11 +67,16 @@
    </element>
 
    <element name="visualizer">
+      <annotation>
+         <documentation>
+            Visualizers transform the results computed by graph analysis into known visualization formats, which are identified by type.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The type identifier of the visualization format.
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.grana.resultVisualizers/type/@name"/>
@@ -76,7 +86,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The implementation class of the result visualizer.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.grana.visualization.IVisualizer"/>
@@ -86,7 +96,7 @@
          <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The priority of the result visualizer.
                </documentation>
             </annotation>
          </attribute>
@@ -94,11 +104,16 @@
    </element>
 
    <element name="visualizationMethod">
+      <annotation>
+         <documentation>
+            Visualization methods embed visualizers so they can be displayed to the user.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The type identifier of the visualization format.
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.grana.resultVisualizers/type/@name"/>
@@ -108,24 +123,24 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The implementing class of the visualization method.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.grana.visualization.IVisualizationMethod"/>
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="default" type="boolean" use="required">
+         <attribute name="default" type="boolean">
             <annotation>
                <documentation>
-                  
+                  Whether the visualization method shall be active by default. If not specified, &lt;code&gt;true&lt;/code&gt; is assumed.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="silent" type="boolean" use="required">
+         <attribute name="silent" type="boolean">
             <annotation>
                <documentation>
-                  
+                  Silent visualization methods can display analysis results without opening any user interface element that needs to be confirmed by the user. In some cases it is better to use only silent methods in order to be minimally invasive towards the user. The default is &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -137,36 +152,24 @@
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         0.1.0
       </documentation>
    </annotation>
+
+
+
 
    <annotation>
       <appinfo>
-         <meta.section type="examples"/>
+         <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         [Enter extension point usage example here.]
+         Copyright 2010 by&lt;br&gt;
+&amp;nbsp;+ Christian-Albrechts-University of Kiel&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;+ Department of Computer Science&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;+ Real-Time and Embedded Systems Group&lt;br&gt;
+This program and the accompanying materials are made available under the terms of the Eclipse Public License (EPL) which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;.
       </documentation>
    </annotation>
-
-   <annotation>
-      <appinfo>
-         <meta.section type="apiinfo"/>
-      </appinfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appinfo>
-         <meta.section type="implementation"/>
-      </appinfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
-      </documentation>
-   </annotation>
-
 
 </schema>

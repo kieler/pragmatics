@@ -111,7 +111,7 @@
                option="de.cau.cs.kieler.klay.layered.mergePorts">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.interactiveLayoutAnchor">
+               option="de.cau.cs.kieler.klay.layered.interactiveReferencePoint">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -198,12 +198,20 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            class="de.cau.cs.kieler.klay.layered.properties.AnchorPoint"
+            class="de.cau.cs.kieler.klay.layered.properties.InteractiveReferencePoint"
             default="CENTER"
             description="Determines which point of a node is considered by interactive layout phases."
-            id="de.cau.cs.kieler.klay.layered.interactiveLayoutAnchor"
-            name="Interactive Layout Anchor"
+            id="de.cau.cs.kieler.klay.layered.interactiveReferencePoint"
+            name="Interactive Reference Point"
             type="enum">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            class="de.cau.cs.kieler.core.math.KVector"
+            description="The offset to the port position where connections shall be attached (programmatically set)."
+            id="de.cau.cs.kieler.klay.layered.portAnchor"
+            name="Port Anchor Offset"
+            type="object">
       </layoutOption>
    </extension>
 

@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kiml.grana.visualizers;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.visualization.IVisualizer;
 import de.cau.cs.kieler.kiml.grana.visualization.Visualization;
-import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
+import de.cau.cs.kieler.kiml.grana.visualization.VisualizationService;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
@@ -69,7 +69,7 @@ public class BasicHtmlVisualizer implements IVisualizer<String, Object> {
             } else {
                 // Let the text visualizer visualize the result
                 Visualization visualization =
-                    VisualizationServices.getInstance().getVisualization(
+                    VisualizationService.getInstance().getVisualization(
                             "text", result);
                 
                 if (visualization == null) {
@@ -109,7 +109,7 @@ public class BasicHtmlVisualizer implements IVisualizer<String, Object> {
             // Component results
             for (int i = 0; i < analysis.getComponents().size(); i++) {
                 Visualization visualization =
-                    VisualizationServices.getInstance().getVisualization("text", results[i]);
+                    VisualizationService.getInstance().getVisualization("text", results[i]);
                 
                 if (visualization == null) {
                     builder.append("<td>" + results[i].toString() + "</td>");
@@ -131,7 +131,7 @@ public class BasicHtmlVisualizer implements IVisualizer<String, Object> {
                 
                 // Visualization result
                 Visualization visualization =
-                    VisualizationServices.getInstance().getVisualization("text", results[i]);
+                    VisualizationService.getInstance().getVisualization("text", results[i]);
                 
                 if (visualization == null) {
                     builder.append(

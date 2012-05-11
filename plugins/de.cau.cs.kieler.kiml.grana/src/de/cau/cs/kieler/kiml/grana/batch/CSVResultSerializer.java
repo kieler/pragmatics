@@ -20,7 +20,7 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.visualization.Visualization;
-import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
+import de.cau.cs.kieler.kiml.grana.visualization.VisualizationService;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
@@ -63,7 +63,7 @@ public class CSVResultSerializer implements IBatchResultSerializer {
             for (AnalysisData analysis : batchResult.getAnalyses()) {
                 Object result = results.get(analysis.getId());
                 Visualization visualization =
-                        VisualizationServices.getInstance().getVisualization(
+                        VisualizationService.getInstance().getVisualization(
                                 VISUALIZATION_TYPE, result);
                 String s = visualization.get(analysis, result);
                 writer.write(";" + s);

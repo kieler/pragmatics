@@ -20,7 +20,8 @@ import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 
 /**
  * A view management effect for updating a KLighD view. When performing a model update, the new
- * model has to be of the same type as the previous model or the update fails.
+ * model has to be of the same type as the previous model or the update fails.<br>
+ * If the targeted view does not exist the effect opens it.
  * 
  * @author mri
  */
@@ -85,15 +86,21 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
         final IPropertyHolder propertyHolder = this;
         MonitoredOperation.runInUI(new Runnable() {
             public void run() {
-                DiagramViewPart view =
-                        DiagramViewManager.getInstance().updateView(getId(), getName(), getModel(),
-                                propertyHolder);
+                DiagramViewPart view;
+                if (DiagramViewManager.getInstance().getView(getId()) == null) {
+                    view = DiagramViewManager.getInstance().createView(getId(), getName(),
+                            getModel(), propertyHolder);
+                } else {
+                    view = DiagramViewManager.getInstance().updateView(getId(), getName(),
+                            getModel(), propertyHolder);
+                }
+
                 setView(view);
                 if (view != null) {
-                    setViewer(view.getViewer().getActiveViewer());
+                    setViewer(view.getContextViewer().getActiveViewer());
                 }
             }
         }, true);
     }
-    
+
 }

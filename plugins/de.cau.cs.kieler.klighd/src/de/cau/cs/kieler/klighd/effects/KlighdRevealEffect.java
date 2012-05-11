@@ -64,11 +64,11 @@ public class KlighdRevealEffect extends AbstractEffect {
             if (isDiagramElement) {
                 theElement = element;
             } else {
-                theElement = view.getViewer().getCurrentViewContext().getTargetElement(element);
+                theElement = view.getContextViewer().getCurrentViewContext().getTargetElement(element);
             }
             // reveal the element
             if (theElement != null) {
-                view.getViewer().reveal(theElement, duration);
+                view.getContextViewer().reveal(theElement, duration);
             }
         }
     }

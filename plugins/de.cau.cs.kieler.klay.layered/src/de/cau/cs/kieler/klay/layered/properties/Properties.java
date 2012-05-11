@@ -295,6 +295,12 @@ public final class Properties {
     public static final IProperty<Boolean> CYCLIC = new Property<Boolean>(
             "cyclic", false);
     
+    /**
+     * The offset to the port position where connections shall be attached.
+     */
+    public static final IProperty<KVector> PORT_ANCHOR = new Property<KVector>(
+            "de.cau.cs.kieler.klay.layered.portAnchor");
+    
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
@@ -357,8 +363,9 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.mergePorts", false);
     
     /** property that determines which point in a node determines the result of interactive phases. */
-    public static final IProperty<AnchorPoint> INTERACTIVE_LAYOUT_ANCHOR = new Property<AnchorPoint>(
-            "de.cau.cs.kieler.klay.layered.interactiveLayoutAnchor", AnchorPoint.CENTER);
+    public static final IProperty<InteractiveReferencePoint> INTERACTIVE_REFERENCE_POINT
+            = new Property<InteractiveReferencePoint>(
+            "de.cau.cs.kieler.klay.layered.interactiveReferencePoint", InteractiveReferencePoint.CENTER);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

@@ -19,7 +19,6 @@ import java.util.Set;
 
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.IViewerEventListener;
-import de.cau.cs.kieler.klighd.util.KlighdColor;
 
 /**
  * An abstract base class for viewers which provides an implementation for the handling of listeners
@@ -34,20 +33,12 @@ public abstract class AbstractViewer<T> implements IViewer<T> {
 
     /** the listeners registered on this viewer. */
     private Set<IViewerEventListener> listeners = new LinkedHashSet<IViewerEventListener>();
-
+    
     /**
      * {@inheritDoc}
      */
-    public void setHighlight(final Object[] diagramElements, final KlighdColor foreground,
-            final KlighdColor background, final float lineWidthFactor) {
-        // do nothing
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void removeHighlight(final Object[] diagramElements) {
-        // do nothing
+    public void setModel(final T model) {
+        setModel(model, false);
     }
 
     /**
@@ -128,9 +119,33 @@ public abstract class AbstractViewer<T> implements IViewer<T> {
      */
     protected void notifyListenersSelection(final Collection<?> selectedElements) {
         for (IViewerEventListener listener : listeners) {
-            listener.selected(this, selectedElements);
+            listener.selection(this, selectedElements);
         }
     }
 
+    /**
+     * Notifies the registered listeners about the occurrence of a selected event.
+     * 
+     * @param selectedElement
+     *            the selected element
+     */
+    protected void notifyListenersSelected(final Object selectedElement) {
+        for (IViewerEventListener listener : listeners) {
+            listener.selected(this, selectedElement);
+        }
+    }
+    
+    /**
+     * Notifies the registered listeners about the occurrence of a unselected event.
+     * 
+     * @param unselectedElement
+     *            the selected element
+     */
+    protected void notifyListenersUnselected(final Object unselectedElement) {
+        for (IViewerEventListener listener : listeners) {
+            listener.unselected(this, unselectedElement);
+        }
+    }
+    
 }
 

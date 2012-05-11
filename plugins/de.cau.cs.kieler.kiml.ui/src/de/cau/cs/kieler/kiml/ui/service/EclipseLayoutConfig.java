@@ -21,8 +21,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutContext;
@@ -58,21 +56,18 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             "context.aspectRatio");
 
     /**
-     * Retrieves a layout option from the given edit part by using the framework bridge
-     * associated with the edit part type.
+     * Retrieves a layout option from the given diagram part by using the layout manager
+     * associated with the diagram part type.
      * 
      * @param diagramPart a diagram part such as an edit part
      * @param optionData layout option data
      * @return the current value for the given option, or {@code null}
      */
     public static Object getOption(final Object diagramPart, final IProperty<?> optionData) {
-        IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.
-                getInstance().getBridge(diagramPart);
-        if (bridge != null) {
-            return getOption(bridge.getEditPart(diagramPart),
-                    bridge.getElement(diagramPart), optionData);
-        }
-        return null;
+        EclipseLayoutInfoService infoService = EclipseLayoutInfoService.getInstance();
+        Object relevantPart = infoService.getAdapter(diagramPart, null);
+        EObject domainModel = (EObject) infoService.getAdapter(diagramPart, EObject.class);
+        return getOption(relevantPart, domainModel, optionData);
     }
     
     /**
@@ -121,13 +116,11 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         // get main edit part and domain model element
         Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         EObject domainElem = context.getProperty(LayoutContext.DOMAIN_MODEL);
-        /* Don't try to find the domain model element here, since another layout config
-         * could have disabled it on purpose.
-         */
 
         // set diagram type for the content of the main edit part
-        String diagramType = (String) getOption(diagPart, domainElem, LayoutOptions.DIAGRAM_TYPE);
-        if (diagramType != null) {
+        String diagramType = context.getProperty(DefaultLayoutConfig.CONTENT_DIAGT);
+        if (diagramType == null) {
+            diagramType = (String) getOption(diagPart, domainElem, LayoutOptions.DIAGRAM_TYPE);
             context.setProperty(DefaultLayoutConfig.CONTENT_DIAGT, diagramType);
         }
         
@@ -143,16 +136,16 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             Object containerDiagPart = context.getProperty(LayoutContext.CONTAINER_DIAGRAM_PART);
             EObject containerDomainElem = context.getProperty(LayoutContext.CONTAINER_DOMAIN_MODEL);
             if (containerDomainElem == null && containerDiagPart != null) {
-                IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
-                        .getBridge(containerDiagPart);
-                containerDomainElem = bridge.getElement(containerDiagPart);
+                containerDomainElem = (EObject) EclipseLayoutInfoService.getInstance().getAdapter(
+                        containerDiagPart, EObject.class);
                 context.setProperty(LayoutContext.CONTAINER_DOMAIN_MODEL, containerDomainElem);
             }
             
             // set diagram type for the container of the main edit part
-            String containerDiagramType = (String) getOption(containerDiagPart, containerDomainElem,
-                    LayoutOptions.DIAGRAM_TYPE);
-            if (containerDiagramType != null) {
+            String containerDiagramType = context.getProperty(DefaultLayoutConfig.CONTAINER_DIAGT);
+            if (containerDiagramType == null) {
+                containerDiagramType = (String) getOption(containerDiagPart, containerDomainElem,
+                        LayoutOptions.DIAGRAM_TYPE);
                 context.setProperty(DefaultLayoutConfig.CONTAINER_DIAGT, containerDiagramType);
             }
             

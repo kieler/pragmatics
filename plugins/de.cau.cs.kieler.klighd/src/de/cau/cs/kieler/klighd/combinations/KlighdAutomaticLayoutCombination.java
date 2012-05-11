@@ -17,7 +17,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutCombination;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
 import de.cau.cs.kieler.klighd.effects.KlighdLayoutEffect;
 import de.cau.cs.kieler.klighd.triggers.KlighdStatusTrigger.KlighdStatusState;
 import de.cau.cs.kieler.klighd.triggers.KlighdStatusTrigger.KlighdStatusState.Status;
@@ -36,24 +36,15 @@ public class KlighdAutomaticLayoutCombination extends AbstractCombination {
      *            the KLighD status state
      */
     public void execute(final KlighdStatusState state) {
-        if (state.getStatus() == Status.CREATE_SUCCESS) {
-            // schedule the layout effect
-            IPreferenceStore preferenceStore = getPreferenceStore();
-            boolean animate = preferenceStore.getBoolean(LayoutCombination.ANIMATE);
-            boolean zoom = preferenceStore.getBoolean(LayoutCombination.ZOOM_TO_FIT);
-            boolean progressBar = preferenceStore.getBoolean(LayoutCombination.PROGRESS_BAR);
-            schedule(new KlighdLayoutEffect(state.getViewId(), state.getViewer(), zoom,
-                    progressBar, false, animate));
+        if (state.getStatus() == Status.CREATE_SUCCESS || state.getStatus() == Status.UPDATE) {
+            IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+            boolean animation = preferenceStore.getBoolean(LayoutHandler.PREF_ANIMATION);
+            boolean zoomToFit = preferenceStore.getBoolean(LayoutHandler.PREF_ZOOM);
+            boolean progressDialog = preferenceStore.getBoolean(LayoutHandler.PREF_PROGRESS);
+            
+            schedule(new KlighdLayoutEffect(state.getViewId(), state.getViewer(), zoomToFit,
+                    progressDialog, false, animation));
         }
-    }
-
-    /**
-     * Return the preference store for the KIML UI plugin.
-     * 
-     * @return the preference store
-     */
-    private static IPreferenceStore getPreferenceStore() {
-        return KimlUiPlugin.getDefault().getPreferenceStore();
     }
 
 }

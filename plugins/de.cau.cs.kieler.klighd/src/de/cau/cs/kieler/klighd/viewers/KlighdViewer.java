@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Control;
 
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
-import de.cau.cs.kieler.klighd.util.KlighdColor;
 
 /**
  * The KLighD viewer can be embedded into a SWT component and is able to accept any type of input
@@ -43,6 +42,15 @@ public class KlighdViewer extends AbstractViewer<Object> {
     }
 
     /**
+     * Returns the context viewer utilized by this viewer.
+     * 
+     * @return the context viewer.
+     */
+    public ContextViewer getContextViewer() {
+        return contextViewer;
+    }
+    
+    /**
      * {@inheritDoc}
      */
     public Control getControl() {
@@ -52,32 +60,30 @@ public class KlighdViewer extends AbstractViewer<Object> {
     /**
      * {@inheritDoc}
      */
-    public void setModel(final Object model) {
+    public void setModel(final Object model, final boolean sync) {
         ViewContext viewContext = LightDiagramServices.getInstance().createViewContext(model);
         if (viewContext != null) {
             contextViewer.setModel(viewContext);
         } else {
-            contextViewer.setModel("Could not find a visualization for the model.");
+            contextViewer.setModel("Could not find a visualization for the model.", false);
         }
+        LightDiagramServices.getInstance().updateViewContext(viewContext, model);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object getModel() {
+        return contextViewer.getModel();
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void setHighlight(final Object[] diagramElements, final KlighdColor foreground,
-            final KlighdColor background, final float lineWidthFactor) {
-        contextViewer.setHighlight(diagramElements, foreground, background, lineWidthFactor);
+    public void setRecording(final boolean recording) {
+        contextViewer.setRecording(recording);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void removeHighlight(final Object[] diagramElements) {
-        contextViewer.removeHighlight(diagramElements);
-    }
-
+    
     /**
      * {@inheritDoc}
      */

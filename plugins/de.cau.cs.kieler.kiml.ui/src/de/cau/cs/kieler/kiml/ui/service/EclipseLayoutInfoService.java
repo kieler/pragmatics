@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ui.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -22,12 +23,12 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gef.EditPart;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -39,8 +40,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
@@ -55,7 +54,7 @@ import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
  *
  * @author msp
  */
-public final class EclipseLayoutInfoService extends LayoutInfoService {
+public final class EclipseLayoutInfoService extends LayoutInfoService implements IAdapterFactory {
     
     /** identifier of the extension point for layout managers. */
     public static final String EXTP_ID_LAYOUT_MANAGERS = "de.cau.cs.kieler.kiml.ui.layoutManagers";
@@ -158,6 +157,56 @@ public final class EclipseLayoutInfoService extends LayoutInfoService {
         }
         return null;
     }
+
+    /**
+     * Query the registered layout managers for an adapter of given type. The manager of highest
+     * priority that supports the given adaptable object is called. If the adapter type is
+     * {@code null}, the layout manager's default diagram part type is taken.
+     * 
+     * @param adaptableObject an object that is supported by one of the layout managers,
+     *          typically a diagram part
+     * @param adapterType expected type of return value, or {@code null} if the default type
+     *          shall be used
+     * @return a object castable to the given adapter type, or {@code null}
+     */
+    @SuppressWarnings("rawtypes")
+    public Object getAdapter(final Object adaptableObject, final Class adapterType) {
+        IDiagramLayoutManager<?> manager = null;
+        for (Pair<Integer, IDiagramLayoutManager<?>> entry : managers) {
+            if (entry.getSecond().supports(adaptableObject)) {
+                manager = entry.getSecond();
+                break;
+            }
+        }
+        if (manager != null) {
+            if (adapterType == null) {
+                // use the layout manager's diagram part type as adapter type
+                return manager.getAdapter(adaptableObject, manager.getAdapterList()[0]);
+            } else {
+                // use the adapter type given as parameter
+                return manager.getAdapter(adaptableObject, adapterType);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Compute an array of all adapter types supported by registered layout managers.
+     * These are typically the diagram part types that are used for mapping diagrams to
+     * layout graph elements.
+     * 
+     * @return adapter types supported by registered layout managers
+     */
+    public Class<?>[] getAdapterList() {
+        ArrayList<Class<?>> resultList = new ArrayList<Class<?>>();
+        for (Pair<Integer, IDiagramLayoutManager<?>> entry : managers) {
+            IDiagramLayoutManager<?> manager = entry.getSecond();
+            for (Class<?> adapterType : manager.getAdapterList()) {
+                resultList.add(adapterType);
+            }
+        }
+        return resultList.toArray(new Class<?>[resultList.size()]);
+    }
     
     /**
      * Returns the active graph layout engine with highest priority.
@@ -205,23 +254,22 @@ public final class EclipseLayoutInfoService extends LayoutInfoService {
     /**
      * Stores the layout option with given value for the edit part.
      * 
-     * @param editPart an edit part
+     * @param diagramPart a diagram part
      * @param optionData a layout option data
      * @param valueString the value to store for the edit part and option
      * @param storeDomainModel if true, the option is stored for the domain model element
      *     associated with the edit part, else for the edit part itself
      */
-    public void storeOption(final EditPart editPart, final LayoutOptionData<?> optionData,
+    public void storeOption(final Object diagramPart, final LayoutOptionData<?> optionData,
             final String valueString, final boolean storeDomainModel) {
         Object value = optionData.parseValue(valueString);
-        IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(editPart);
-        if (value != null && bridge != null) {
+        if (value != null) {
             String clazzName;
             if (storeDomainModel) {
-                EObject model = bridge.getElement(editPart);
+                EObject model = (EObject) getAdapter(diagramPart, EObject.class);
                 clazzName = model == null ? null : model.eClass().getInstanceTypeName();
             } else {
-                EditPart relevantPart = bridge.getEditPart(editPart);
+                Object relevantPart = getAdapter(diagramPart, null);
                 clazzName = relevantPart == null ? null : relevantPart.getClass().getName();
             }
             if (clazzName != null) {

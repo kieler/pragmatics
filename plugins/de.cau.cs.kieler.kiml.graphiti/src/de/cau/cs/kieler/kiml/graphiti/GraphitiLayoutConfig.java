@@ -96,7 +96,8 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
         if (pictogramElem != null) {
             // add pictogram element and domain model element to the context
             context.setProperty(PICTO_ELEM, pictogramElem);
-            if (pictogramElem.getLink() != null
+            if (context.getProperty(LayoutContext.DOMAIN_MODEL) == null
+                    && pictogramElem.getLink() != null
                     && pictogramElem.getLink().getBusinessObjects().size() > 0) {
                 context.setProperty(LayoutContext.DOMAIN_MODEL,
                         pictogramElem.getLink().getBusinessObjects().get(0));
@@ -253,16 +254,14 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
             if (result != null) {
                 return result;
             }
+            
+            // check default option of diagram
+            PictogramElement parent = pe;
+            while (parent.eContainer() instanceof PictogramElement) {
+                parent = (PictogramElement) parent.eContainer();
+            }
+            return getValue(optionData, DEF_PREFIX, parent);
         }
-
-        // check default option of diagram edit part
-        Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-        if (editPart instanceof IPictogramElementEditPart) {
-            IPictogramElementEditPart pePart = (IPictogramElementEditPart) editPart;
-            Diagram diagram = pePart.getConfigurationProvider().getDiagram();
-            return getValue(optionData, DEF_PREFIX, diagram);
-        }
-        
         return null;
     }
 
@@ -297,18 +296,16 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      * {@inheritDoc}
      */
     public void transferValues(final KGraphData graphData, final LayoutContext context) {
-        Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-        if (editPart instanceof IPictogramElementEditPart) {
-            IPictogramElementEditPart pePart = (IPictogramElementEditPart) editPart;
+        PictogramElement pe = context.getProperty(PICTO_ELEM);
+        if (pe != null) {
             // add user defined global layout options
-            transferValues(graphData, DEF_PREFIX, pePart.getConfigurationProvider().getDiagram());
-            // add user defined local layout options
-            transferValues(graphData, PREFIX, pePart.getPictogramElement());
-        } else {
-            PictogramElement pe = context.getProperty(PICTO_ELEM);
-            if (pe != null) {
-                transferValues(graphData, PREFIX, pe);
+            PictogramElement parent = pe;
+            while (parent.eContainer() instanceof PictogramElement) {
+                parent = (PictogramElement) parent.eContainer();
             }
+            transferValues(graphData, DEF_PREFIX, parent);
+            // add user defined local layout options
+            transferValues(graphData, PREFIX, pe);
         }
     }
 

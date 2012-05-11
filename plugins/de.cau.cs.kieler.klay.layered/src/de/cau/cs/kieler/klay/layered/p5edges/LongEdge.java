@@ -17,7 +17,6 @@ import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
-import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -25,9 +24,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 /**
  * Class for convenient use of "long edges", this are edges covering more than one layer. In the
  * base LGraph data structure it is not possible to access the target of such an edge directly. This
- * class also supplies two tangents for the endpoints, each heading to the adjacent dummynode.
+ * class also supplies two tangents for the endpoints, each heading to the adjacent dummy node.
  * 
- * It is necessary to call {@code initialize()} prior usage!
+ * It is necessary to call {@link #initialize()} prior usage!
  * 
  * @author uru
  */
@@ -49,7 +48,7 @@ public class LongEdge {
     private LinkedList<KVector> points = new LinkedList<KVector>();
 
     /**
-     * default constructor. One also need to call {@code initalize()} to initialize all values
+     * default constructor. One also needs to call {@link #initialize()} to initialize all values
      * stored for this long edge.
      * 
      * @param newEdge
@@ -63,33 +62,23 @@ public class LongEdge {
      * calculates the target port/node, and the start/end tangents.
      */
     public void initialize() {
-        // calc startTangent
+        // calculate start tangent
         LPort start = edge.getSource();
-        LNode startNode = start.getNode();
         LPort end = edge.getTarget();
-        LNode endNode = end.getNode();
 
-        startPoint = new KVector((startNode.getPosition().x + start.getPosition().x),
-                (startNode.getPosition().y + start.getPosition().y));
-        startTangent = new KVector(
-                (endNode.getPosition().x + end.getPosition().x)
-                - (startNode.getPosition().x + start.getPosition().x),
-                (endNode.getPosition().y + end.getPosition().y)
-                - (startNode.getPosition().y + start.getPosition().y));
+        startPoint = start.getAbsoluteAnchor();
+        startTangent = end.getAbsoluteAnchor().sub(startPoint);
         startTangent.normalize();
 
-        // calc endTangent
+        // calculate end tangent
         LEdge intermediateEdge = edge;
-        LNode currentTarget = edge.getSource().getNode();
         LPort port = edge.getSource();
-        points.add(new KVector(currentTarget.getPosition().x + port.getPosition().x,
-                currentTarget.getPosition().y + port.getPosition().y));
+        points.add(port.getAbsoluteAnchor());
         // run along the edge till end point is found
         do {
-            // currently doesnt handle hypergraphs here
+            // currently doesn't handle hypergraphs here
             port = intermediateEdge.getTarget();
-            currentTarget = port.getNode();
-            for (LPort iterPort : currentTarget.getPorts()) {
+            for (LPort iterPort : port.getNode().getPorts()) {
                 for (LEdge iterEdge : iterPort.getOutgoingEdges()) {
                     if (iterEdge.getProperty(Properties.ORIGIN) != null) {
                         intermediateEdge = iterEdge;
@@ -98,31 +87,18 @@ public class LongEdge {
                 }
                 break;
             }
-            points.add(new KVector(currentTarget.getPosition().x + port.getPosition().x, currentTarget
-                    .getPosition().y
-                    + port.getPosition().y));
+            points.add(port.getAbsoluteAnchor());
         } while (intermediateEdge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
                 == NodeType.LONG_EDGE);
 
         start = intermediateEdge.getSource();
-        startNode = start.getNode();
         end = intermediateEdge.getTarget();
-        endNode = end.getNode();
-        endPoint = new KVector(
-                (endNode.getPosition().x + end.getPosition().x),
-                (endNode.getPosition().y + end.getPosition().y));
-        endTangent = new KVector(
-                (startNode.getPosition().x + start.getPosition().x)
-                - (endNode.getPosition().x + end.getPosition().x),
-                (startNode.getPosition().y + start.getPosition().y)
-                - (endNode.getPosition().y + end.getPosition().y));
+        endPoint = end.getAbsoluteAnchor();
+        endTangent = start.getAbsoluteAnchor().sub(endPoint);
         endTangent.normalize();
         target = end;
 
-        currentTarget = end.getNode();
-        points.add(new KVector(
-                currentTarget.getPosition().x + end.getPosition().x,
-                currentTarget.getPosition().y + end.getPosition().y));
+        points.add(end.getAbsoluteAnchor());
     }
 
     /**
