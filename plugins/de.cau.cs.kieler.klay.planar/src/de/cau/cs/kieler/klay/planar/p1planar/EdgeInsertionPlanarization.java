@@ -16,7 +16,6 @@ package de.cau.cs.kieler.klay.planar.p1planar;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,7 +27,6 @@ import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
-import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.pathfinding.AbstractPathFinder;
 import de.cau.cs.kieler.klay.planar.pathfinding.DijkstraPathFinder;
 import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
@@ -36,15 +34,11 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
  * Inserts an edge in a planar graph by building the dual graph. How the dual graph is build,
- * depends on the given graph. If this graph is a hyper graph the dual graph contains more edges,
- * which depends on the hypernode. In this graph shortest path is determined. To get the shortest
- * path we test different start- and target faces. The algorithm follow this path with the faces in
- * the given graph and splits up every edge to cross with a new node. Then these nodes get connected
- * and build a path which presents the given insertion edge. So the graph is still planar. A special
- * case is, when a hyperedge is crossed. In this case the new edge is layed through the hypernode of
- * this hyperedge. Then the hypernode is split up in 2 hypernodes. Now we have the edge between
- * these 2 new hypernodes. This edge is now crossed as usual, by adding a new node and connect the
- * new edge to this.
+ * depends on the given graph. In this graph shortest path is determined. To get the shortest path
+ * we test different start- and target faces. The algorithm follow this path with the faces in the
+ * given graph and splits up every edge to cross with a new node. Then these nodes get connected and
+ * build a path which presents the given insertion edge. So the graph is still planar. This edge is
+ * now crossed as usual, by adding a new node and connect the new edge to this.
  * 
  * @author cku
  * @author pkl
@@ -57,40 +51,6 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
      */
     public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph graph) {
         return null;
-    }
-
-    /**
-     * add edges for faces laying at the same hypernode in dualgraph.
-     * 
-     * @param graph
-     *            , the given graph
-     * @param dualGraph
-     *            , the dual graph of the given graph + 2 nodes
-     */
-    private void extendDualGraph(final PGraph graph, final PGraph dualGraph) {
-        for (PNode node : graph.getNodes()) {
-            if (node.getType() == NodeType.HYPER) {
-                LinkedHashSet<PNode> dualNodes = new LinkedHashSet<PNode>();
-                PFace face = null;
-                for (PEdge edge : node.adjacentEdges()) {
-                    if (node == edge.getSource()) {
-                        face = edge.getRightFace();
-                    } else {
-                        face = edge.getLeftFace();
-                    }
-                    PNode dualNode = (PNode) face.getProperty(Properties.TODUALGRAPH);
-                    dualNodes.add(dualNode);
-                }
-                for (PNode pnode : dualNodes) {
-                    for (PNode pnode2 : dualNodes) {
-                        if (pnode != pnode2) {
-                            dualGraph.addEdge(pnode, pnode2, false);
-                        }
-                    }
-                }
-            }
-        }
-
     }
 
     /**
@@ -111,20 +71,9 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
         ArrayList<PNode> path = new ArrayList<PNode>();
         path.add(source);
         for (PEdge crossingEdge : crossingBorders) {
-
-            if (crossingEdge.getSource().getType() == NodeType.HYPER) {
-                // crossing a edge has hypernode as source
-                path.add(crossingEdge.getSource());
-            }
-
-            if (crossingEdge.getTarget().getType() == NodeType.HYPER) {
-                // crossing a edge has hypernode as target
-                path.add(crossingEdge.getTarget());
-            } else {
-                // crossing a normal edge
-                PNode newNode = graph.addNode(crossingEdge).getFirst();
-                path.add(newNode);
-            }
+            // crossing a normal edge
+            PNode newNode = graph.addNode(crossingEdge).getFirst();
+            path.add(newNode);
         }
         path.add(target);
         return path;
@@ -150,50 +99,6 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
 
         }
         return crossingBorders;
-    }
-
-    /**
-     * splits a hypernode in 2 hypernodes and inserts a new node on the egde between the hypernodes.
-     * 
-     * @param path
-     *            , a path of nodes for the new edge
-     * @param graph
-     *            , the given graph
-     * @param pathNodeCounter
-     *            , the position on the path
-     */
-    private void splitUpHypernodes(final ArrayList<PNode> path, final PGraph graph,
-            final int pathNodeCounter) {
-
-        int counter = pathNodeCounter;
-        PNode oldHyperNode = path.get(counter);
-
-        // create new hypernode and connect this with the old one
-        PNode newHyperNode = graph.addNode();
-        PEdge newHyperEdge = graph.addEdge(oldHyperNode, newHyperNode);
-
-        // bring edge in right order
-        PEdge preEdgeA = this.findFirstFaceEdge(newHyperEdge, oldHyperNode);
-        reinsertEdges(newHyperEdge, preEdgeA, oldHyperNode);
-
-        // move half of the edges to new hypernode
-        PEdge next = getNextClockwiseEdge(oldHyperNode, newHyperEdge);
-        for (int x = 0; x < oldHyperNode.getAdjacentEdgeCount() / 2; x++) {
-            next.move(oldHyperNode, newHyperNode);
-            next = getNextClockwiseEdge(oldHyperNode, next);
-        }
-
-        // split up the new edge
-        PNode midNode = graph.addNode(newHyperEdge).getFirst();
-
-        // connect the new node
-        PEdge newEdge = graph.addEdge(midNode, path.get(counter + 1));
-
-        // bring new edges at new node in right order
-        PEdge preEdgeB = this.findFirstFaceEdge(newEdge, midNode);
-        reinsertEdges(newEdge, preEdgeB, midNode);
-        counter++;
-
     }
 
     /**
@@ -376,12 +281,12 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
      *            , the given node
      * @return edge, the clockwise first edge at this node
      */
-    private PEdge findFirstFaceEdge(final PEdge PEdge, final PNode node) {
+    private PEdge findFirstFaceEdge(final PEdge pEdge, final PNode node) {
         // node is target of edge
-        PFace face = PEdge.getRightFace();
+        PFace face = pEdge.getRightFace();
         // node is source of edge
-        if (PEdge.getSource() == node) {
-            face = PEdge.getLeftFace();
+        if (pEdge.getSource() == node) {
+            face = pEdge.getLeftFace();
         }
         for (PEdge edge : node.adjacentEdges()) {
             if (edge.getRightFace() == face || edge.getLeftFace() == face) {
@@ -412,35 +317,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
     }
 
     /**
-     * merges hypernodes to get a point-based approach from a tree-based approach.
-     * 
-     * @param graph
-     *            , the given graph
-     */
-    private void mergeHyperNodes(final PGraph graph) {
-        for (PNode node : graph.getNodes()) {
-            if (node.getType() == NodeType.HYPER) {
-                for (PNode PNode : node.adjacentNodes()) {
-                    if (PNode.getType() == NodeType.HYPER) {
-
-                        // remove edges which connect hypernodes
-                        graph.removeEdge(node.getEdge(PNode));
-
-                        // connect all edges with 1 hypernode
-                        for (PEdge edge : PNode.adjacentEdges()) {
-                            edge.move(PNode, node);
-                        }
-
-                        // remove all unneeded hypernodes
-                        graph.removeNode(PNode);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Inserts a list of given pairs of nodes (that presemt edges) into a given planar embedding of
+     * Inserts a list of given pairs of nodes (that present edges) into a given planar embedding of
      * a graph.
      * 
      * Takes a planar graph and adds some more edges to the graph. These missing edges would make
@@ -454,8 +331,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
     public void process(final PGraph graph) {
         List<PEdge> edges = graph.getProperty(Properties.INSERTABLE_EDGES);
         if (edges != null) {
-            // bring graph in point-based standard
-            mergeHyperNodes(graph);
+
             // initialize path finder
             AbstractPathFinder dijkstra = new DijkstraPathFinder();
 
@@ -489,9 +365,6 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
                     newDualEdge.setProperty(IPathFinder.PATHCOST, 0);
                 }
 
-                // add edges for faces laying at the same hypernode in dualgraph
-                extendDualGraph(graph, dualGraph);
-
                 // find the shortest path through dual graph via dijkstra
                 List<PEdge> dualEdgePath = dijkstra.findPath(dualStartNode, dualTargetNode);
 
@@ -511,22 +384,16 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
                 List<PEdge> targetPreEdges = getTargetPreEdges(path, shortestFacePath);
 
                 while (pathNodeCounter < path.size() - 1) {
+                    // connecting new normal nodes
+                    PNode src = path.get(pathNodeCounter);
+                    PNode dst = path.get(pathNodeCounter + 1);
 
-                    // split up the crossed hypernodes
-                    if (path.get(pathNodeCounter).getType() == NodeType.HYPER) {
-                        splitUpHypernodes(path, graph, pathNodeCounter);
-                    } else {
-                        // connecting new normal nodes
-                        PNode src = path.get(pathNodeCounter);
-                        PNode dst = path.get(pathNodeCounter + 1);
+                    PEdge newEdge = graph.addEdge(src, dst);
 
-                        PEdge newEdge = graph.addEdge(src, dst);
-
-                        // bring new edges in right order
-                        reinsertEdges(newEdge, sourcePreEdges.get(pathNodeCounter), src);
-                        reinsertEdges(newEdge, targetPreEdges.get(pathNodeCounter), dst);
-                        pathNodeCounter++;
-                    }
+                    // bring new edges in right order
+                    reinsertEdges(newEdge, sourcePreEdges.get(pathNodeCounter), src);
+                    reinsertEdges(newEdge, targetPreEdges.get(pathNodeCounter), dst);
+                    pathNodeCounter++;
                 }
             }
         }

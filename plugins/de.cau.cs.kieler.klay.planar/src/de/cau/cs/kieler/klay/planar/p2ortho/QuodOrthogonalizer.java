@@ -40,8 +40,8 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements ILayoutPhas
 
     /**
      * A cage in the working graph. Since the underlying flow network can only solve
-     * orthogonalization problems with a maximum node degree of 4, evey node with a higher degree is
-     * replaced by a cage. A cage consists of a face replacing the original node, surrounded by a
+     * orthogonalization problems with a maximum node degree of 4, every node with a higher degree
+     * is replaced by a cage. A cage consists of a face replacing the original node, surrounded by a
      * ring with a node for every edge the original node was adjacent to. This cage class is used to
      * keep track of a cage in the graph for a clean transformation.
      */
@@ -149,7 +149,7 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public void process(PGraph graph) {
+    public void process(final PGraph graph) {
         // Replace high-degree nodes with cages
         LinkedList<Cage> cages = new LinkedList<Cage>();
         for (PNode node : graph.getNodes()) {
@@ -173,8 +173,7 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(PGraph graph) {
-        // TODO Auto-generated method stub
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph pGraph) {
         return null;
     }
 

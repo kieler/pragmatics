@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.planar.graph;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -42,6 +43,7 @@ public class PNode extends PShape implements Serializable {
      * nodes.
      * 
      * @author ocl
+     * @author pkl
      */
     public enum NodeType {
         /**
@@ -50,10 +52,9 @@ public class PNode extends PShape implements Serializable {
         NORMAL,
 
         /**
-         * Hyper nodes. Hyper nodes are used in hyper graphs, to connect more than two normal nodes
-         * with one edge.
+         * A node that represents a face, normally used in network graphs.
          */
-        HYPER,
+        FACE,
 
         /**
          * Compound nodes. Compound nodes are nodes that again represent graphs. They contain nodes
@@ -62,8 +63,7 @@ public class PNode extends PShape implements Serializable {
         COMPOUND
     }
 
-    // ======================== Attributes
-    // =========================================================
+    // ======================== Attributes ===================================================
 
     /** The type of the node. */
     private NodeType type;
@@ -74,8 +74,7 @@ public class PNode extends PShape implements Serializable {
     /** The list of edges adjacent to the node. */
     private LinkedList<PEdge> edges;
 
-    // ======================== Constructor
-    // ========================================================
+    // ======================== Constructor ===================================================
 
     /**
      * Default Constructor. Creates a new normal node.
@@ -103,7 +102,7 @@ public class PNode extends PShape implements Serializable {
         super(id, parent);
         this.type = t;
         this.constraint = null;
-        this.edges = new LinkedList<PEdge>();
+        this.setEdges(new LinkedList<PEdge>());
     }
 
     // ======================== Getters and Setters ==============================
@@ -153,6 +152,9 @@ public class PNode extends PShape implements Serializable {
      * @param edge
      *            the edge that connects the nodes
      * @return the adjacent node of this node regarding edge {@code edge}
+     * 
+     * @throws IllegalArgumentException
+     *             if the parameter edge isn't connected to the node.
      */
     public PNode getAdjacentNode(final PEdge edge) {
         if (edge.getSource() == this) {
@@ -172,6 +174,9 @@ public class PNode extends PShape implements Serializable {
      * @param node
      *            the adjacent node
      * @return the edge that connects this node to {@code node}
+     * 
+     * @throws IllegalArgumentException
+     *             if there is no edge to the parameter node
      */
     public PEdge getEdge(final PNode node) { // TODO O(n)
         for (PEdge e : this.edges) {
@@ -181,6 +186,24 @@ public class PNode extends PShape implements Serializable {
         }
         throw new IllegalArgumentException("The node (" + node.id
                 + ") is not adjacent to the node (" + this.id + ").");
+    }
+
+    /**
+     * Gives the edge for a edgeId.
+     * 
+     * @param id
+     *            , edgeId
+     * @return {@link PEdge}, returns the found edge.
+     * @throws IllegalArgumentException
+     *             if there is no edge for the given id.
+     */
+    public PEdge getEdge(final int id) {
+        for (PEdge e : this.edges) {
+            if (e.id == id) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("The edge with id " + this.id + " does not exist.");
     }
 
     /**
@@ -240,7 +263,7 @@ public class PNode extends PShape implements Serializable {
         return this.constraint;
     }
 
-    // ======================== Iterators ==================================================
+    // ======================== Iterators =================================================
 
     /**
      * Iterate over all edges that are part of the adjacency list.
@@ -285,7 +308,7 @@ public class PNode extends PShape implements Serializable {
      * edges whose source is the node this list belongs to. Undirected edge are neither incoming nor
      * outgoing edges.
      * 
-     * @return iterable object containing outgoing edges
+     * @return {@link Iterable}, iterable object containing outgoing edges
      */
     public Iterable<PEdge> outgoingEdges() {
         final PNode instance = this;
@@ -296,7 +319,7 @@ public class PNode extends PShape implements Serializable {
         });
     }
 
-    // ======================== Miscellaneous Functions ============================================
+    // ======================== Miscellaneous Functions ==========================================
 
     /**
      * Mirror the adjacency list.
@@ -306,7 +329,7 @@ public class PNode extends PShape implements Serializable {
         for (PEdge edge : this.edges) {
             reversed.addFirst(edge);
         }
-        this.edges = reversed;
+        this.setEdges(reversed);
     }
 
     /**
@@ -331,8 +354,6 @@ public class PNode extends PShape implements Serializable {
      * @param ascending
      *            specifies if the list is sorted in ascending or descending order
      */
-    // Unchecked cast used to create array of linked lists
-    @SuppressWarnings("unchecked")
     public void sort(final IFunction<PEdge, Integer> func, final boolean ascending) {
         if (this.edges.size() <= 1) {
             return;
@@ -348,6 +369,7 @@ public class PNode extends PShape implements Serializable {
         }
 
         // Sort by Bucket Sort
+        @SuppressWarnings("unchecked")
         LinkedList<PEdge>[] buckets = new LinkedList[max - min + 1];
         for (PEdge edge : this.edges) {
             int value = func.evaluate(edge) - min;
@@ -356,7 +378,7 @@ public class PNode extends PShape implements Serializable {
             }
             buckets[value].add(edge);
         }
-        this.edges.clear();
+        this.getEdges().clear();
         for (int i = 0; i < buckets.length; i++) {
             if (buckets[i] != null && !buckets[i].isEmpty()) {
                 if (ascending) {
@@ -417,6 +439,21 @@ public class PNode extends PShape implements Serializable {
             res += "\t" + edge.toString() + "\n";
         }
         return res;
+    }
+
+    /**
+     * @return the edges
+     */
+    public Collection<PEdge> getEdges() {
+        return edges;
+    }
+
+    /**
+     * @param edges
+     *            the edges to set
+     */
+    public void setEdges(final LinkedList<PEdge> edges) {
+        this.edges = edges;
     }
 
 }

@@ -33,10 +33,6 @@ public enum GraphProperties {
     EXTERNAL_PORTS,
     /** The graph is a flattened hierarchical graph. */
     FLAT_HIERARCHICAL,
-    /** The graph contains hyperedges. */
-    HYPEREDGES,
-    /** The graph contains hypernodes (nodes that are marked as such). */
-    HYPERNODES,
     /** The graph contains ports that are not free for positioning. */
     NON_FREE_PORTS,
     /** The graph contains ports on the northern or southern side. */

@@ -60,7 +60,6 @@ public class PGraph extends PNode implements Serializable {
     // Initialize the node-type-to-color-map
     static {
         NODE_TYPE_COLORS.put(NodeType.NORMAL, "#000000");
-        NODE_TYPE_COLORS.put(NodeType.HYPER, "#cc99cc");
     }
 
     /** Set of nodes in the graph. */
@@ -189,6 +188,9 @@ public class PGraph extends PNode implements Serializable {
         PNode node;
         if (type == NodeType.COMPOUND) {
             node = new PGraph(this.nodeIndex++, this);
+            this.nodes.add(node);
+        } else if (type == NodeType.FACE) {
+            node = new PNode(this.nodeIndex++, this, type);
             this.nodes.add(node);
         } else {
             node = new PNode(this.nodeIndex++, this, type);
@@ -431,9 +433,8 @@ public class PGraph extends PNode implements Serializable {
         // Reset changed faces flag
         if (!this.changedFaces) {
             return;
-        } else {
-            this.changedFaces = false;
         }
+        this.changedFaces = false;
 
         // Clear old face data
         this.faces.clear();
@@ -635,7 +636,9 @@ public class PGraph extends PNode implements Serializable {
             options.append("\",");
 
             // Node type
-            if (node.getProperty(Properties.NODE_TYPE).equals(NodeType.NORMAL)) {
+            if (node.getType().equals(NodeType.NORMAL)) {
+                options.append("shape=circle,");
+            } else if (node.getType().equals(NodeType.FACE)) {
                 options.append("shape=box,");
             } else {
                 options.append("shape=circle,style=filled,");

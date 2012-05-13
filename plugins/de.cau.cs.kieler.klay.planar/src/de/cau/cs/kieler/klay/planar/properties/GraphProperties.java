@@ -14,33 +14,30 @@
 package de.cau.cs.kieler.klay.planar.properties;
 
 /**
- * An enumeration of properties a graph may have. These can be used as part of an
- * {@code EnumSet} to base decisions on graph properties. For example, self-loop
- * processing may be skipped if the graph doesn't contain self-loops in the first
- * place.
+ * An enumeration of properties a graph may have. These can be used as part of an {@code EnumSet} to
+ * base decisions on graph properties. For example, self-loop processing may be skipped if the graph
+ * doesn't contain self-loops in the first place.
  * 
- * <p>An {@code EnumSet} for this enumeration can be attached to a graph via the
- * {@link Properties#GRAPH_PROPERTIES} property.</p>
+ * <p>
+ * An {@code EnumSet} for this enumeration can be attached to a graph via the
+ * {@link Properties#GRAPH_PROPERTIES} property.
+ * </p>
  * 
  * @author cds
  */
 public enum GraphProperties {
-    
+
     /** The graph contains comment boxes. */
     COMMENTS,
     /** The graph contains dummy nodes representing external ports. */
     EXTERNAL_PORTS,
-    /** The graph is a flattened hierarchical graph. */ 
+    /** The graph is a flattened hierarchical graph. */
     FLAT_HIERARCHICAL,
-    /** The graph contains hyperedges. */
-    HYPEREDGES,
-    /** The graph contains hypernodes (nodes that are marked as such). */
-    HYPERNODES,
     /** The graph contains ports that are not free for positioning. */
     NON_FREE_PORTS,
     /** The graph contains ports on the northern or southern side. */
     NORTH_SOUTH_PORTS,
     /** The graph contains self-loops. */
     SELF_LOOPS;
-    
+
 }

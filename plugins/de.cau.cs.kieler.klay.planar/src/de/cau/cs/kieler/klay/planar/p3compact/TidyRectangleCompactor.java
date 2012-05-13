@@ -28,7 +28,6 @@ import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.flownetwork.SuccessiveShortestPathFlowSolver;
-import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -44,9 +43,11 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * A compaction algorithm that minimizes the length of horizontal and vertical edge segments
  * separately. It only works on simple orthogonal representations, i.e. orthogonal representation
  * where every face is represented as a rectangle. General orthogonal representations have to
- * reduced to a simple one prior to performing this algorithm.
+ * reduced to a simple one prior to performing this algorithm. These compaction step results from
+ * the chapter 5.4 of the Graph Drawing book of Di Battista, Eades, Tamassia and Tollis.
  * 
  * @author ocl
+ * @author pkl
  */
 public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayoutPhase {
 
@@ -84,26 +85,12 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
         this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
 
         // Create networks and solve
-        Pair<PGraph, PGraph> networks = this.createFlowNetworks();
+        Pair<PGraph, PGraph> networks = createFlowNetworks();
         IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
         solver.findFlow(networks.getFirst());
         solver.findFlow(networks.getSecond());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void compact(final PGraph g, final OrthogonalRepresentation o) {
-        this.graph = g;
-        this.orthogonal = o;
-
-        // Create networks and solve
-        Pair<PGraph, PGraph> networks = this.createFlowNetworks();
-        IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
-        solver.findFlow(networks.getFirst());
-        solver.findFlow(networks.getSecond());
-
         // TODO Assign coordinates based on flow
+
     }
 
     /**
@@ -112,9 +99,11 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
      * @return the flow network
      */
     private Pair<PGraph, PGraph> createFlowNetworks() {
-        IGraphFactory factory = new PGraphFactory();
+        PGraphFactory factory = new PGraphFactory();
         PGraph vertical = factory.createEmptyGraph();
         PGraph horizontal = factory.createEmptyGraph();
+
+        // Face-map to store all nodes of a face.
         Map<PFace, PNode> verticalMap = new HashMap<PFace, PNode>();
         Map<PFace, PNode> horizontalMap = new HashMap<PFace, PNode>();
 

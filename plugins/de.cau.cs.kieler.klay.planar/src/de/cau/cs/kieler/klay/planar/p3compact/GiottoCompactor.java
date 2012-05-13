@@ -66,7 +66,7 @@ public class GiottoCompactor extends AbstractAlgorithm implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph graph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph pGraph) {
         IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy();
         strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_4,
                 IntermediateLayoutProcessor.DUMMYNODE_REMOVING_PROCESSOR);
@@ -89,7 +89,7 @@ public class GiottoCompactor extends AbstractAlgorithm implements ILayoutPhase {
             edges.add(edge);
         }
         for (PEdge edge : edges) {
-            this.addBends(edge);
+            addBends(edge);
         }
 
         // Decompose faces into rectangles
@@ -98,44 +98,13 @@ public class GiottoCompactor extends AbstractAlgorithm implements ILayoutPhase {
             edges.add(edge);
         }
         for (PEdge edge : edges) {
-            this.addVirtuals(edge, edge.getSource());
-            this.addVirtuals(edge, edge.getTarget());
+            addVirtuals(edge, edge.getSource());
+            addVirtuals(edge, edge.getTarget());
         }
 
         // Compact reduced orthogonal representation
-        // this.compactor.compact(g, orthogonal);
+        this.compactor.process(this.graph);
 
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void compact(final PGraph g, final OrthogonalRepresentation o) {
-        this.graph = g;
-        this.orthogonal = o;
-        List<PEdge> edges;
-
-        // Add a node for every bend in the orthogonal representation
-        edges = new LinkedList<PEdge>();
-        for (PEdge edge : g.getEdges()) {
-            edges.add(edge);
-        }
-        for (PEdge edge : edges) {
-            this.addBends(edge);
-        }
-
-        // Decompose faces into rectangles
-        edges = new LinkedList<PEdge>();
-        for (PEdge edge : g.getEdges()) {
-            edges.add(edge);
-        }
-        for (PEdge edge : edges) {
-            this.addVirtuals(edge, edge.getSource());
-            this.addVirtuals(edge, edge.getTarget());
-        }
-
-        // Compact reduced orthogonal representation
-        // this.compactor.compact(g, orthogonal);
     }
 
     private void addBends(final PEdge edge) {

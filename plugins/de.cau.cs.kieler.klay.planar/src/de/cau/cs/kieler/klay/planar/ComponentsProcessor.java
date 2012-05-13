@@ -109,11 +109,14 @@ public class ComponentsProcessor extends AbstractAlgorithm {
             visited = null;
 
             // redistribute identifier numbers to each component
+            // TODO Problem: Id of nodes can be n1,n2,n3,n5,n4, then n5 gets a smaller id than n4.
+            // that does not work for the boyer myrvold algorithm.
             if (components.size() > 1) {
                 for (PGraph comp : components) {
                     int id = 0;
+                    // sort the components by their priority and size
                     for (PNode node : comp.getNodes()) {
-                        node.id = id++;
+                        node.id += id++;
                     }
                 }
             }

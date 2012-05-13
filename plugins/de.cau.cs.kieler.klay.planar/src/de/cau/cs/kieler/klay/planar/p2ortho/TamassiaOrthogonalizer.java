@@ -23,10 +23,8 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
-import de.cau.cs.kieler.klay.planar.Util;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.flownetwork.SuccessiveShortestPathFlowSolver;
-import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
@@ -34,6 +32,7 @@ import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
+import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
@@ -109,8 +108,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
      * @return the flow network to compute the minimal number of bends
      */
     private PGraph createFlowNetwork() {
-        IGraphFactory factory = new PGraphFactory();
-        PGraph network = factory.createEmptyGraph();
+        PGraph network = new PGraphFactory().createEmptyGraph();
         HashMap<PNode, PNode> nodes = new HashMap<PNode, PNode>();
         HashMap<PFace, PNode> faces = new HashMap<PFace, PNode>();
         this.nodeArcs = new LinkedList<PEdge>();
@@ -126,7 +124,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                         + ") has a higher degree than the maximal allowed " + MAXDEGREE);
             }
 
-            PNode newnode = network.addNode();
+            PNode newnode = network.addNode(NodeType.NORMAL);
             newnode.setProperty(NETWORKTOGRAPH, node);
             newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply);
             nodes.put(node, newnode);
@@ -134,7 +132,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
         // Creating sink nodes for every graph face
         boolean internal = false;
-        for (PFace face : this.graph.getFaces()) {
+        Iterable<PFace> faces2 = this.graph.getFaces();
+        for (PFace face : faces2) {
             int supply = -1 * face.getAdjacentNodeCount();
             if (internal) {
                 supply += MAXDEGREE;
@@ -143,14 +142,15 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                 supply -= MAXDEGREE;
             }
 
-            PNode newnode = network.addNode();
+            PNode newnode = network.addNode(NodeType.FACE);
             newnode.setProperty(NETWORKTOGRAPH, face);
             newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply);
             faces.put(face, newnode);
         }
 
         // Creating arcs for every node adjacent to the face
-        for (PFace face : this.graph.getFaces()) {
+        Iterable<PFace> faces3 = this.graph.getFaces();
+        for (PFace face : faces3) {
             for (PNode node : face.adjacentNodes()) {
                 if (!nodes.containsKey(node)) {
                     throw new InconsistentGraphModelException(
@@ -292,7 +292,6 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                 }
             }
         }
-
         return orthogonal;
     }
 
@@ -307,17 +306,16 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
         // Solve flow network and compute orthogonal representation
         PGraph network = this.createFlowNetwork();
-        Util.storeGraph(network, 20, true);
         IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
         solver.findFlow(network);
-        pgraph.setProperty(Properties.ORTHO_REPRESENTATION, this.computeAngles(network));
+        pgraph.setProperty(Properties.ORTHO_REPRESENTATION, computeAngles(network));
         getMonitor().done();
     }
 
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph graph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph pgraph) {
         // TODO Auto-generated method stub
         return null;
     }

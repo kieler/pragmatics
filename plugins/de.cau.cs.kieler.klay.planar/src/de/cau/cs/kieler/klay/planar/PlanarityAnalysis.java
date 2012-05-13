@@ -18,7 +18,6 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
-import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
 import de.cau.cs.kieler.klay.planar.p1planar.BoyerMyrvoldPlanarSubgraphBuilder;
@@ -33,15 +32,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  */
 public class PlanarityAnalysis implements IAnalysis {
 
-    // ======================== Attributes =========================================================
-
-    /** Graph factory. */
-    private IGraphFactory factory = new PGraphFactory();
-
-    /** Algorithm for planar testing. */
-    private ILayoutPhase tester = new BoyerMyrvoldPlanarSubgraphBuilder();
-
-    // ======================== Analysis ===========================================================
+    // ======================== Analysis ====================================================
 
     /**
      * {@inheritDoc}
@@ -51,7 +42,9 @@ public class PlanarityAnalysis implements IAnalysis {
         progressMonitor.begin("Planarity testing", 1);
 
         // KGraph -> PGraph conversion
-        PGraph graph = factory.createGraphFromKGraph(parentNode);
+        PGraph graph = new PGraphFactory().createGraphFromKGraph(parentNode);
+
+        ILayoutPhase tester = new BoyerMyrvoldPlanarSubgraphBuilder();
 
         // Planarity Testing
         tester.reset();

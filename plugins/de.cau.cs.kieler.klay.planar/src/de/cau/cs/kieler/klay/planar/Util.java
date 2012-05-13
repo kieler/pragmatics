@@ -20,6 +20,7 @@ import java.io.IOException;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 
 /**
+ * provides some methods to debug the graph.
  * 
  * @author pkl
  */

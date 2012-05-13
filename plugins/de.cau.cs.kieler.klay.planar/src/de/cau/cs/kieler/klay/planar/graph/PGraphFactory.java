@@ -31,25 +31,32 @@ import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
- * An instance of a graph factory for {@code PGraph} creation. This class implements the factory
- * method design pattern to create instances of graphs.
+ * This factory provides some methods to create a {@code PGraph}.
  * 
  * @see de.cau.cs.kieler.klay.planar.graph.PGraph {@code PGraph}
  * 
  * @author ocl
  * @author pkl
  */
-public class PGraphFactory implements IGraphFactory {
+public class PGraphFactory {
 
     /**
-     * {@inheritDoc}
+     * Create an empty graph instance. The resulting graph will not contain any edges or nodes.
+     * 
+     * @return an empty graph
      */
+
     public PGraph createEmptyGraph() {
         return new PGraph();
     }
 
     /**
-     * {@inheritDoc}
+     * Create a full graph. In a full graph, every node is connected to every other node via an
+     * edge.
+     * 
+     * @param nodes
+     *            the number of nodes in the graph
+     * @return a full graph with the given number of nodes
      */
     public PGraph createFullGraph(final int nodes) {
         PGraph graph = new PGraph();
@@ -70,7 +77,13 @@ public class PGraphFactory implements IGraphFactory {
     }
 
     /**
-     * {@inheritDoc}
+     * Create a random graph with a given number of nodes and edges.
+     * 
+     * @param nodes
+     *            the number of nodes in the random graph
+     * @param edges
+     *            the number of edges in the random graph
+     * @return a random graph
      */
     public PGraph createRandomGraph(final int nodes, final int edges) {
         PGraph graph = new PGraph();
@@ -91,7 +104,12 @@ public class PGraphFactory implements IGraphFactory {
     }
 
     /**
-     * {@inheritDoc}
+     * Create a graph base on an existing graph. This method does not guarantee an exact copy of the
+     * graph (e.g. indices may be different), but the embedding should be equal.
+     * 
+     * @param graph
+     *            the graph to copy
+     * @return a copy of the given graph
      */
     public PGraph createGraphCopy(final PGraph graph) {
         // TODO check for embedding constraints (ports)
@@ -118,7 +136,12 @@ public class PGraphFactory implements IGraphFactory {
     }
 
     /**
-     * {@inheritDoc}
+     * Generate the dual graph of another graph. The dual graph is a graph, that has a node for
+     * every face in the original graph, and edges between neighboring faces.
+     * 
+     * @param graph
+     *            the graph to create the dual graph of
+     * @return the dual graph to this graph
      */
     public PGraph createDualGraph(final PGraph graph) {
         HashMap<PFace, PNode> map = new HashMap<PFace, PNode>(graph.getFaceCount() * 2);
@@ -145,16 +168,23 @@ public class PGraphFactory implements IGraphFactory {
     }
 
     /**
-     * {@inheritDoc}
+     * Create a graph from a {@code KGraph} instance.
+     * 
+     * @param kgraph
+     *            a {@code KNode} to base the graph upon
+     * @return a graph corresponding to {@code kgraph}
      */
     public PGraph createGraphFromKGraph(final KNode kgraph) {
-        // TODO check for hyper nodes
         // TODO check for directed/undirected edges
         // TODO check for embedding constraints (ports)
         // TODO recurse over children in compound nodes
         PGraph graph = new PGraph();
         HashMap<KNode, PNode> map = new HashMap<KNode, PNode>(kgraph.getChildren().size() * 2);
         graph.setProperty(Properties.ORIGIN, kgraph);
+
+        // Adding all user properties to the graph
+        graph.copyProperties(kgraph.getData(KShapeLayout.class));
+
         // Adding Nodes
         for (KNode knode : kgraph.getChildren()) {
             PNode node = null;
@@ -188,7 +218,13 @@ public class PGraphFactory implements IGraphFactory {
     }
 
     /**
-     * {@inheritDoc}
+     * Create a graph based on a file in the DIMACS format.
+     * 
+     * @param dimacs
+     *            the file containing the graph info
+     * @return a graph based on the DIMACS file
+     * @throws IOException
+     *             if problems during file reading occur
      */
     public PGraph createGraphFromDIMACS(final File dimacs) throws IOException {
         BufferedReader input = new BufferedReader(new FileReader(dimacs));
@@ -249,7 +285,8 @@ public class PGraphFactory implements IGraphFactory {
         pgraph.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
 
         // calculate the offset from border spacing and node distribution
-        double minXPos = Integer.MAX_VALUE, minYPos = Integer.MAX_VALUE, maxXPos = Integer.MIN_VALUE, maxYPos = Integer.MIN_VALUE;
+        double minXPos = Integer.MAX_VALUE, minYPos = Integer.MAX_VALUE;
+        double maxXPos = Integer.MIN_VALUE, maxYPos = Integer.MIN_VALUE;
         for (PNode node : pgraph.getNodes()) {
             KVector pos = node.getPosition();
             KVector size = node.getSize();

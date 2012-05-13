@@ -54,8 +54,10 @@ import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.ManualIterator;
  */
 public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayoutPhase {
 
-    // ======================== Attributes
-    // =========================================================
+    // ======================== Attributes =============================
+
+    // /** Minimum number of needed graph-nodes to process the algorithm. */
+    // private static final int MINIMUM_NODE_COUNT = 3;
 
     /** The work graph. */
     private PGraph graph;
@@ -177,15 +179,18 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph graph) {
-        // TODO Auto-generated method stub
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph pGraph) {
         return null;
     }
 
     // ======================== Algorithm ==========================================
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} * Determines a planar embedding of the graph. If the Graph is fully planar,
+     * this algorithm computes a complete planar embedding of the graph. If the graph is not planar,
+     * it determines a planar embedding of a maximal planar subgraph and returns a list of edges,
+     * whose addition will cause non-planarity and therefore could not be inserted.This guarantees
+     * to find a planar embedding for a subgraph in time linear to the number of nodes in the graph.
      */
     public void process(final PGraph thegraph) {
         getMonitor().begin("Planar Subgraph Building", 1);
@@ -213,26 +218,6 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
         return this.planar;
     }
 
-    /**
-     * Determines a planar embedding of the graph. If the Graph is fully planar, this algorithm
-     * computes a complete planar embedding of the graph. If the graph is not planar, it determines
-     * a planar embedding of a maximal planar subgraph and returns a list of edges, whose addition
-     * will cause non-planarity and therefore could not be inserted.This guarantees to find a planar
-     * embedding for a subgraph in time linear to the number of nodes in the graph.
-     * 
-     * @param g
-     *            the graph to determine its planar embedding
-     * @return a list that the missing edges
-     * 
-     */
-    public List<PEdge> planarSubgraph(final PGraph g) {
-        getMonitor().begin("Planar Subgraph Building", 1);
-        this.graph = g;
-        this.planarity();
-        getMonitor().done();
-        return this.missingEdges;
-    }
-
     // ======================== Boyer-Myrvold-Algorithm ============================================
 
     /**
@@ -253,12 +238,11 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
      * nodes according to the information from {@code walkdown} and removes any leftover virtual
      * roots from the graph.
      * 
-     * @param inputGraph
-     *            the input graph to build a planar subgraph]
      */
     // Initialization of arrays for node properties require unchecked casts
     @SuppressWarnings("unchecked")
     private void planarity() {
+
         this.missingEdges.clear();
         this.reversedNodes.clear();
         this.externalFace = new ManuallyIterable<PNode>(this.graph.getNodeCount());
@@ -286,7 +270,7 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
         for (PNode root : this.graph.getNodes()) {
             if (this.visited[root.id] == null) {
                 dfsRoots.add(root);
-                this.findRoots(root);
+                findRoots(root);
             }
         }
         Arrays.fill(this.visited, null);
@@ -295,7 +279,7 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
         List<PNode>[] buckets = new LinkedList[size];
         int index = 0;
         for (PNode root : dfsRoots) {
-            index = this.preProcessing(root, null, index + 1, buckets);
+            index = preProcessing(root, null, index + 1, buckets);
         }
 
         // Sort child lists with bucket sort
@@ -312,26 +296,26 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
 
         // Traverse nodes in reversed DFI order
         for (PNode node : this.reversedNodes) {
-            int PNode = node.id;
+            int nodeId = node.id;
 
-            // Find pertinent Nodes for all back edges
-            for (PEdge backedge : this.backedges[PNode]) {
+            // Find pertinent nodes for all back edges
+            for (PEdge backedge : this.backedges[nodeId]) {
                 PNode neighbor = node.getAdjacentNode(backedge);
-                if (this.dfi[neighbor.id] > this.dfi[PNode]) {
+                if (this.dfi[neighbor.id] > this.dfi[nodeId]) {
                     this.pertinentBackedges[neighbor.id].add(backedge);
-                    this.walkup(node, neighbor);
+                    walkup(node, neighbor);
                 }
             }
 
             // Embed back edges
-            for (PNode root : this.roots[PNode]) {
-                if (this.walkdown(root, Direction.FWD)) {
-                    this.walkdown(root, Direction.REV);
+            for (PNode root : this.roots[nodeId]) {
+                if (walkdown(root, Direction.FWD)) {
+                    walkdown(root, Direction.REV);
                 }
             }
 
             // Check if all edges are embedded
-            for (PEdge backedge : this.backedges[PNode]) {
+            for (PEdge backedge : this.backedges[nodeId]) {
                 PNode neighbor = node.getAdjacentNode(backedge);
                 LinkedList<PEdge> missing = this.pertinentBackedges[neighbor.id];
                 for (PEdge e : missing) {
@@ -348,6 +332,7 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
         for (PNode root : dfsRoots) {
             this.postProcessing(root, null, false);
         }
+
     }
 
     /**
@@ -386,21 +371,21 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
     private int preProcessing(final PNode node, final PNode parentNode, final int i,
             final List<PNode>[] buckets) {
         int index = i;
-        int PNode = node.id;
+        int pNode = node.id;
         this.reversedNodes.addFirst(node);
 
         // Initialize node properties
-        this.dfi[PNode] = index;
-        this.lowpoint[PNode] = index;
-        this.ancestor[PNode] = index;
-        this.isVirtual[PNode] = false;
-        this.parent[PNode] = parentNode;
-        this.separatedChildren[PNode] = new LinkedHashSet<PNode>();
-        this.children[PNode] = new LinkedList<PNode>();
-        this.backedges[PNode] = new LinkedList<PEdge>();
-        this.pertinentBackedges[PNode] = new LinkedList<PEdge>();
-        this.roots[PNode] = new LinkedHashSet<PNode>();
-        this.pertinentRoots[PNode] = new LinkedList<PNode>();
+        this.dfi[pNode] = index;
+        this.lowpoint[pNode] = index;
+        this.ancestor[pNode] = index;
+        this.isVirtual[pNode] = false;
+        this.parent[pNode] = parentNode;
+        this.separatedChildren[pNode] = new LinkedHashSet<PNode>();
+        this.children[pNode] = new LinkedList<PNode>();
+        this.backedges[pNode] = new LinkedList<PEdge>();
+        this.pertinentBackedges[pNode] = new LinkedList<PEdge>();
+        this.roots[pNode] = new LinkedHashSet<PNode>();
+        this.pertinentRoots[pNode] = new LinkedList<PNode>();
 
         // Recurse over all adjacent nodes
         LinkedList<Pair<PEdge, PNode>> tomove = new LinkedList<Pair<PEdge, PNode>>();
@@ -418,23 +403,23 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
 
             } else if (this.children[iChild] != null) {
                 // Found already visited node: mark for back edge
-                this.backedges[PNode].add(edge);
+                this.backedges[pNode].add(edge);
 
                 // Re-Calculate the least ancestor and lowpoint
-                if (this.dfi[iChild] < this.ancestor[PNode]) {
-                    this.ancestor[PNode] = this.dfi[iChild];
+                if (this.dfi[iChild] < this.ancestor[pNode]) {
+                    this.ancestor[pNode] = this.dfi[iChild];
                 }
-                if (this.lowpoint[iChild] < this.lowpoint[PNode]) {
-                    this.lowpoint[PNode] = this.lowpoint[iChild];
+                if (this.lowpoint[iChild] < this.lowpoint[pNode]) {
+                    this.lowpoint[pNode] = this.lowpoint[iChild];
                 }
 
             } else {
                 // Found new child node: add virtual root node and recurse
                 PNode bicomp = this.graph.addNode();
                 int iBicomp = bicomp.id;
-                this.dfi[iBicomp] = this.dfi[PNode];
-                this.lowpoint[iBicomp] = this.lowpoint[PNode];
-                this.ancestor[iBicomp] = this.ancestor[PNode];
+                this.dfi[iBicomp] = this.dfi[pNode];
+                this.lowpoint[iBicomp] = this.lowpoint[pNode];
+                this.ancestor[iBicomp] = this.ancestor[pNode];
                 this.isVirtual[iBicomp] = true;
                 this.parent[iBicomp] = node;
                 this.children[iBicomp] = new LinkedList<PNode>();
@@ -446,16 +431,16 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
                 this.externalFace.setSuccessor(bicomp, child, Direction.FWD);
                 this.externalFace.setSuccessor(bicomp, child, Direction.REV);
 
-                this.children[PNode].add(child);
-                this.children[iBicomp].addFirst(node);
-                this.roots[PNode].add(bicomp);
+                this.children[pNode].add(child);
+                this.children[iBicomp].addFirst(child);
+                this.roots[pNode].add(bicomp);
 
-                index = this.preProcessing(child, node, index + 1, buckets);
+                index = preProcessing(child, node, index + 1, buckets);
                 tomove.add(new Pair<PEdge, PNode>(edge, bicomp));
 
                 // Re-Calculate the lowpoint
-                if (this.lowpoint[iChild] < this.lowpoint[PNode]) {
-                    this.lowpoint[PNode] = this.lowpoint[iChild];
+                if (this.lowpoint[iChild] < this.lowpoint[pNode]) {
+                    this.lowpoint[pNode] = this.lowpoint[iChild];
                 }
             }
         }
@@ -464,16 +449,16 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
         }
 
         // Add node to lowpoint bucket for later sorting
-        if (buckets[this.lowpoint[PNode]] == null) {
-            buckets[this.lowpoint[PNode]] = new LinkedList<PNode>();
+        if (buckets[this.lowpoint[pNode]] == null) {
+            buckets[this.lowpoint[pNode]] = new LinkedList<PNode>();
         }
-        buckets[this.lowpoint[PNode]].add(node);
+        buckets[this.lowpoint[pNode]].add(node);
 
         // Copy least ancestor and lowpoint values to virtual roots
-        for (PNode root : this.roots[PNode]) {
+        for (PNode root : this.roots[pNode]) {
             int iRoot = root.id;
-            this.ancestor[iRoot] = this.ancestor[PNode];
-            this.lowpoint[iRoot] = this.lowpoint[PNode];
+            this.ancestor[iRoot] = this.ancestor[pNode];
+            this.lowpoint[iRoot] = this.lowpoint[pNode];
         }
 
         return index;
@@ -481,7 +466,7 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
 
     /**
      * Determine the pertinent subgraph. The {@code walkup} starts at a node that is the endpoint of
-     * a backedge flag to the currently processd node in the main algorithm. It traverses the
+     * a backedge flag to the currently processed node in the main algorithm. It traverses the
      * external face up to that node, and registers all virtual root nodes it encounters on the way
      * in the pertinent root list of their parent node. This way, only nodes pertinent to the
      * currently processed nodes have to be traversed in later steps of the main algorithm.
@@ -566,9 +551,9 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
         // Traverse external face of biconnected component
         ManualIterator<PNode> iter = this.externalFace.iterator(root, direction);
         iter.next();
+
         while (iter.hasNext()) {
             int iIter = iter.getCurrent().id;
-
             // Back edge node found, merge
             if (!this.pertinentBackedges[iIter].isEmpty()) {
                 this.mergeBicomp(merge);
@@ -592,7 +577,7 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
                 this.externalFace.setSuccessor(root, iter.getCurrent(), direction);
                 this.externalFace.setSuccessor(iter.getCurrent(), root, opp);
 
-            } else if (this.isPertinent(iter.getCurrent(), node)) {
+            } else if (isPertinent(iter.getCurrent(), node)) {
                 // Found a new pertinent biconnected component, jump there
                 merge.push(iter);
 
@@ -636,8 +621,8 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
 
                 merge.push(temp);
 
-            } else if (!this.isPertinent(iter.getCurrent(), root)
-                    && !this.isExternallyActive(iter.getCurrent(), node)) {
+            } else if (!isPertinent(iter.getCurrent(), root)
+                    && !isExternallyActive(iter.getCurrent(), node)) {
                 // Traverse to next vertex
                 iter.next();
 
@@ -675,7 +660,7 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
             int iRoot = root.getCurrent().id;
             // The pertinent node on the external face
             ManualIterator<PNode> node = stack.pop();
-            int PNode = node.getCurrent().id;
+            int pNode = node.getCurrent().id;
 
             // Flipping
             if (root.getDirection() == node.getDirection()) {
@@ -718,9 +703,9 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
                 }
             }
             this.graph.removeNode(root.getCurrent());
-            this.separatedChildren[PNode].remove(this.children[iRoot].getFirst());
-            this.roots[PNode].remove(root.getCurrent());
-            for (Iterator<PNode> rs = this.pertinentRoots[PNode].iterator(); rs.hasNext();) {
+            this.separatedChildren[pNode].remove(this.children[iRoot].getFirst());
+            this.roots[pNode].remove(root.getCurrent());
+            for (Iterator<PNode> rs = this.pertinentRoots[pNode].iterator(); rs.hasNext();) {
                 if (rs.next() == root.getCurrent()) {
                     rs.remove();
                 }
