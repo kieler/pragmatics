@@ -311,10 +311,16 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                 double difference = 0.0;
                 if (bal.getHDir() == HDirection.BOTTOM) {
                     difference = edge.getTarget().getPosition().y
-                            - edge.getSource().getPosition().y + bal.getInnerShift().get(current);
+                            + edge.getTarget().getAnchor().y
+                            - edge.getSource().getPosition().y
+                            - edge.getSource().getAnchor().y
+                            + bal.getInnerShift().get(current);
                 } else {
                     difference = edge.getSource().getPosition().y
-                            - edge.getTarget().getPosition().y + bal.getInnerShift().get(current);
+                            + edge.getSource().getAnchor().y
+                            - edge.getTarget().getPosition().y
+                            - edge.getTarget().getAnchor().y
+                            + bal.getInnerShift().get(current);
                 }
 //                System.out.println(current + " " + next + " " + difference);
                 bal.getInnerShift().put(next, difference);
