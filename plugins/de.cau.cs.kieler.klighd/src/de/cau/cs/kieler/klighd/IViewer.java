@@ -15,10 +15,10 @@ package de.cau.cs.kieler.klighd;
 
 import org.eclipse.swt.widgets.Control;
 
-import de.cau.cs.kieler.klighd.util.KlighdColor;
-
 /**
- * The interface for viewers on unrestricted models.
+ * The interface for viewers on incrementally updated models.<br>
+ * <br>
+ * All method calls on this interface have to be made from the UI thread.
  * 
  * @author mri
  * 
@@ -43,28 +43,36 @@ public interface IViewer<T> {
     void setModel(T model);
 
     /**
-     * Sets a highlighting effect on the given diagram elements using the specified foreground and
-     * background color and factor for the line width.
+     * Sets the input model for this viewer.<br>
+     * <br>
+     * If synchronization is enabled his model is incrementally updated by KLighD. The
+     * implementation of the viewer should utilize a listener mechanic on the model to keep the
+     * visualization in sync.
      * 
-     * @param diagramElements
-     *            the diagram elements
-     * @param foreground
-     *            the foreground color or null for no change
-     * @param background
-     *            the background color or null for no change
-     * @param lineWidthFactor
-     *            the factor the line width is increased by (1.0f for no change)
+     * @param model
+     *            the input model
+     * @param sync
+     *            true if the viewer should synchronize the visualization with the model; false else
      */
-    void setHighlight(Object[] diagramElements, KlighdColor foreground, KlighdColor background,
-            float lineWidthFactor);
+    void setModel(T model, boolean sync);
 
     /**
-     * Removes the highlighting effect from the given diagram elements if any.
+     * Returns the input model currently set for this viewer.
      * 
-     * @param diagramElements
-     *            the diagram elements
+     * @return the input model or null if no input model is set
      */
-    void removeHighlight(Object[] diagramElements);
+    T getModel();
+
+    /**
+     * Sets whether to record layout changes in the model instead of instantly applying them to the
+     * visualization.<br>
+     * <br>
+     * Setting the recording status to {@code false} applies all recorded layout changes.
+     * 
+     * @param recording
+     *            true if layout changes should be recorded; false else
+     */
+    void setRecording(final boolean recording);
 
     /**
      * Sets the given selection of diagram elements as current selection.

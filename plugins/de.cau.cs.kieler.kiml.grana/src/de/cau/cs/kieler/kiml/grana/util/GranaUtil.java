@@ -18,7 +18,7 @@ import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
+import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 import de.cau.cs.kieler.kiml.service.AnalysisService;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 

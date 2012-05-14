@@ -127,7 +127,7 @@ public class OrthogonalRoutingGenerator {
          * {@inheritDoc}
          */
         public double getPortPositionOnHyperNode(final LPort port) {
-            return port.getNode().getPosition().y + port.getPosition().y;
+            return port.getNode().getPosition().y + port.getPosition().y + port.getAnchor().y;
         }
 
         /**
@@ -154,11 +154,13 @@ public class OrthogonalRoutingGenerator {
             double x = startPos + hyperNode.rank * edgeSpacing;
             
             for (LPort port : hyperNode.ports) {
-                double sourcey = port.getNode().getPosition().y + port.getPosition().y;
+                double sourcey = port.getNode().getPosition().y + port.getPosition().y
+                        + port.getAnchor().y;
                 
                 for (LEdge edge : port.getOutgoingEdges()) {
-                    double targety = edge.getTarget().getNode().getPosition().y
-                            + edge.getTarget().getPosition().y;
+                    LPort target = edge.getTarget();
+                    double targety = target.getNode().getPosition().y + target.getPosition().y
+                            + target.getAnchor().y;
                     if (Math.abs(sourcey - targety) > edgeSpacing / STRAIGHT_TOLERANCE) {
                         KVector point1 = new KVector(x, sourcey);
                         edge.getBendPoints().add(point1);
@@ -182,7 +184,7 @@ public class OrthogonalRoutingGenerator {
          * {@inheritDoc}
          */
         public double getPortPositionOnHyperNode(final LPort port) {
-            return port.getNode().getPosition().x + port.getPosition().x;
+            return port.getNode().getPosition().x + port.getPosition().x + port.getAnchor().x;
         }
 
         /**
@@ -209,11 +211,13 @@ public class OrthogonalRoutingGenerator {
             double y = startPos + hyperNode.rank * edgeSpacing;
             
             for (LPort port : hyperNode.ports) {
-                double sourcex = port.getNode().getPosition().x + port.getPosition().x;
+                double sourcex = port.getNode().getPosition().x + port.getPosition().x
+                        + port.getAnchor().x;
                 
                 for (LEdge edge : port.getOutgoingEdges()) {
-                    double targetx = edge.getTarget().getNode().getPosition().x
-                            + edge.getTarget().getPosition().x;
+                    LPort target = edge.getTarget();
+                    double targetx = target.getNode().getPosition().x + target.getPosition().x
+                            + target.getAnchor().x;
                     if (Math.abs(sourcex - targetx) > edgeSpacing / STRAIGHT_TOLERANCE) {
                         KVector point1 = new KVector(sourcex, y);
                         edge.getBendPoints().add(point1);
@@ -237,7 +241,7 @@ public class OrthogonalRoutingGenerator {
          * {@inheritDoc}
          */
         public double getPortPositionOnHyperNode(final LPort port) {
-            return port.getNode().getPosition().x + port.getPosition().x;
+            return port.getNode().getPosition().x + port.getPosition().x + port.getAnchor().x;
         }
 
         /**
@@ -264,11 +268,13 @@ public class OrthogonalRoutingGenerator {
             double y = startPos - hyperNode.rank * edgeSpacing;
             
             for (LPort port : hyperNode.ports) {
-                double sourcex = port.getNode().getPosition().x + port.getPosition().x;
+                double sourcex = port.getNode().getPosition().x + port.getPosition().x
+                        + port.getAnchor().x;
                 
                 for (LEdge edge : port.getOutgoingEdges()) {
-                    double targetx = edge.getTarget().getNode().getPosition().x
-                            + edge.getTarget().getPosition().x;
+                    LPort target = edge.getTarget();
+                    double targetx = target.getNode().getPosition().x + target.getPosition().x
+                            + target.getAnchor().x;
                     if (Math.abs(sourcex - targetx) > edgeSpacing / STRAIGHT_TOLERANCE) {
                         KVector point1 = new KVector(sourcex, y);
                         edge.getBendPoints().add(point1);
@@ -482,10 +488,10 @@ public class OrthogonalRoutingGenerator {
         
         // create hypernodes for eastern output ports of the left layer and for western
         // output ports of the right layer
-        createHyperNodes(
-                sourceLayerNodes, routingStrategy.getSourcePortSide(), hyperNodes, portToHyperNodeMap);
-        createHyperNodes(
-                targetLayerNodes, routingStrategy.getTargetPortSide(), hyperNodes, portToHyperNodeMap);
+        createHyperNodes(sourceLayerNodes, routingStrategy.getSourcePortSide(), hyperNodes,
+                portToHyperNodeMap);
+        createHyperNodes(targetLayerNodes, routingStrategy.getTargetPortSide(), hyperNodes,
+                portToHyperNodeMap);
         
         // create dependencies for the hypernode ordering graph
         ListIterator<HyperNode> iter1 = hyperNodes.listIterator();

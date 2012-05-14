@@ -87,6 +87,8 @@ public class PSWTText extends PNode {
 
     /** Translation offset Y. */
     protected double translateY = 0.0;
+    
+    protected boolean empty = true;
 
     /** Default constructor for PSWTTest. */
     public PSWTText() {
@@ -170,6 +172,25 @@ public class PSWTText extends PNode {
         super.setPaint(color);
     }
 
+    /**
+     * Returns the current greek color.
+     * 
+     * @return the current greek color
+     */
+    public Color getGreekColor() {
+        return greekColor;
+    }
+    
+    /**
+     * Sets the current greek color.
+     * 
+     * @param color
+     *            use this color
+     */
+    public void setGreekColor(final Color color) {
+        greekColor = color;
+    }
+    
     /**
      * Sets whether the text should be drawn in transparent mode, i.e., whether
      * the background should be drawn or not.
@@ -285,7 +306,9 @@ public class PSWTText extends PNode {
                 pos = index + 1;
             }
         } while (!done);
-
+        
+        empty = lines.size() == 0 || ((String) lines.get(0)).length() == 0;
+        
         recomputeBounds();
     }
 
@@ -405,11 +428,13 @@ public class PSWTText extends PNode {
      * @param ppc The graphics context to paint into.
      */
     public void paintAsGreek(final PPaintContext ppc) {
-        final Graphics2D g2 = ppc.getGraphics();
+        if (!empty) {
+            final Graphics2D g2 = ppc.getGraphics();
 
-        if (greekColor != null) {
-            g2.setBackground(greekColor);
-            ((SWTGraphics2D) g2).fillRect(0, 0, getWidth(), getHeight());
+            if (greekColor != null) {
+                g2.setBackground(greekColor);
+                ((SWTGraphics2D) g2).fillRect(0, 0, getWidth(), getHeight());
+            }
         }
     }
 

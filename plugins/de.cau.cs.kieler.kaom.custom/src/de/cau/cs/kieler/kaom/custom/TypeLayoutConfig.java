@@ -29,6 +29,16 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * @author ckru
  */
 public class TypeLayoutConfig extends SemanticLayoutConfig {
+    
+    /** the priority for this semantic layout configuration. */
+    private static final int PRIORITY = 11;
+    
+    /**
+     * {@inheritDoc}
+     */
+    public int getPriority() {
+        return PRIORITY;
+    }
 
     /**
      * {@inheritDoc}

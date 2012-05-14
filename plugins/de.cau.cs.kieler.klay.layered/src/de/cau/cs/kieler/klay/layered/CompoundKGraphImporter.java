@@ -58,7 +58,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class CompoundKGraphImporter extends KGraphImporter {
 
-    // maximal depth of the imported graph - to be updated during import.
+    /**
+     * Maximal depth of the imported graph - to be updated during import.
+     */
     private int maximalDepth;
 
     /**
@@ -879,13 +881,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
         // determine, if edge establishes adjacency between a node and one of its descendants
         boolean descendantEdge = KimlUtil.isDescendant(kTargetNode, kSourceNode);
 
-        // get position of the source port (LPort)
         LPort sourcePort = ledge.getSource();
-        KVector sourcePortPosition = sourcePort.getPosition();
-
-        // get position of the target port (LPort)
         LPort targetPort = ledge.getTarget();
-        KVector targetPortPosition = targetPort.getPosition();
 
         // adjust bendpoint-positions
         // respect graph's border spacing
@@ -916,10 +913,10 @@ public class CompoundKGraphImporter extends KGraphImporter {
                 && !(sourcePort.getProperty(Properties.ORIGIN) instanceof KPort)) {
             // edges starting at an UPPER_COMPOUND_BORDER node (in the original import) need special
             // treatment, because their source node has been repositioned after edge routing.
-            edgeStart.add(sourcePortPosition);
+            edgeStart.add(sourcePort.getPosition()).add(sourcePort.getAnchor());
             edgeStart.y += sourcePort.getNode().getProperty(Properties.POSITION_DIFFERENCE).y;
         } else {
-            edgeStart.add(sourcePortPosition);
+            edgeStart.add(sourcePort.getPosition()).add(sourcePort.getAnchor());
         }
         if (descendantEdge) {
             edgeStart.x -= kSourceNodeLayout.getInsets().getLeft();
@@ -946,10 +943,10 @@ public class CompoundKGraphImporter extends KGraphImporter {
                 && !(targetPort.getProperty(Properties.ORIGIN) instanceof KPort)) {
             // edges ending at an UPPER_COMPOUND_BORDER (in the original import) node need special
             // treatment, because their target node has been repositioned after edge routing.
-            edgeEnd.add(targetPortPosition);
+            edgeEnd.add(targetPort.getPosition()).add(targetPort.getAnchor());
             edgeEnd.y += targetPort.getNode().getProperty(Properties.POSITION_DIFFERENCE).y;
         } else {
-            edgeEnd.add(targetPortPosition);
+            edgeEnd.add(targetPort.getPosition()).add(targetPort.getAnchor());
         }
         if (kSourceNode.getParent() == kTargetNode.getParent()) {
             edgeEnd.add(kTargetNodePosition);
@@ -966,14 +963,6 @@ public class CompoundKGraphImporter extends KGraphImporter {
         // add starting- and endpoint of edge to bendpoints
         bendPoints.addFirst(edgeStart);
         bendPoints.addLast(edgeEnd);
-        
-        // clip the endpoints at the port border
-        if (sourcePort.getProperty(Properties.ORIGIN) != null) {
-            clip(edgeStart, sourcePort.getSize(), bendPoints.get(1));
-        }
-        if (targetPort.getProperty(Properties.ORIGIN) != null) {
-            clip(edgeEnd, targetPort.getSize(), bendPoints.get(bendPoints.size() - 2));
-        }
 
         // transfer the bend points and end points to the edge layout
         edgeLayout.applyVectorChain(bendPoints);
@@ -1075,7 +1064,6 @@ public class CompoundKGraphImporter extends KGraphImporter {
      */
     private void applyPortLayout(final KNode kNode, final LayeredGraph layeredGraph,
             final LNode representative) {
-
         KShapeLayout nodeLayout = kNode.getData(KShapeLayout.class);
 
         // set port positions
@@ -1084,8 +1072,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
                 Object origin = lport.getProperty(Properties.ORIGIN);
                 if (origin instanceof KPort) {
                     KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
-                    portLayout.setXpos((float) (lport.getPosition().x - lport.getSize().x / 2.0));
-                    portLayout.setYpos((float) (lport.getPosition().y - lport.getSize().y / 2.0));
+                    portLayout.applyVector(lport.getPosition());
                 }
             }
         }

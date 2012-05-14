@@ -38,7 +38,7 @@ public class SimpleLabelPlacer {
      */
     public void placeLabels(final LayeredGraph thelayeredGraph) {
         
-        //Iterate over all layers
+        // Iterate over all layers
         for (Layer layer : thelayeredGraph) {
             for (LNode node : layer) {
                 for (LPort port : node.getPorts()) {
@@ -46,49 +46,34 @@ public class SimpleLabelPlacer {
                         for (LLabel label : edge.getLabels()) {
                             
                             LongEdge longEdge = null;
-                            //Check whether edge is spline or short edge
+                            // Check whether edge is spline or short edge
                             if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE)
                                     == NodeType.LONG_EDGE) {
                                 longEdge = new LongEdge(edge);
                                 longEdge.initialize();
                             }
                             
-                            //Get source port position
-                            KVector source = new KVector(edge.getSource().getPosition().x,
-                                    edge.getSource().getPosition().y);
+                            // Get source port position
+                            KVector source = edge.getSource().getAbsoluteAnchor();
                             
-                            //Get target port position, distinguish between short edge or spline target
+                            // Get target port position, distinguish between short edge or spline target
                             KVector target;
                             if (longEdge == null) {
-                                target = new KVector(edge.getTarget().getPosition().x, edge.getTarget()
-                                        .getPosition().y);
+                                target = edge.getTarget().getAbsoluteAnchor();
                             } else {
-                                target = new KVector(longEdge.getTarget().getPosition().x, longEdge
-                                        .getTarget().getPosition().y);
+                                target = longEdge.getTarget().getAbsoluteAnchor();
                             }
                             
-                            //Get source port absolute position
-                            source = source.add(edge.getSource().getNode().getPosition());
-                            
-                            //Get target port absolute position
-                            if (longEdge == null) {
-                                target = target.add(edge.getTarget().getNode().getPosition());
-                            } else {
-                                target = target.add(longEdge.getTarget().getNode().getPosition());
-                            }
-                            
-                            //Compute new horizontal position for label
+                            // Compute new horizontal position for label
                             label.getPosition().x = Math.abs(source.x - target.x) / 2;
                             
-                            //Compute new vertcial position for label
+                            // Compute new vertcial position for label
                             if (longEdge == null) {
                                 label.getPosition().y = (target.y - source.y) / 2;
                             } else {
-                                //Or compute label position on a spline by using bend points
-                                //Therefore, find bendpoint with max distance to source AND target node
-                                KVector portPosition = new KVector(edge.getSource().getPosition().x,
-                                        edge.getSource().getPosition().y);
-                                portPosition.add(edge.getSource().getNode().getPosition());
+                                // Or compute label position on a spline by using bend points
+                                // Therefore, find bendpoint with max distance to source AND target node
+                                KVector portPosition = edge.getSource().getAbsoluteAnchor();
                                 double minDistanceDifference = Float.POSITIVE_INFINITY;
                                 KVector middlePoint = null;
                                 for (KVector bPoint : longEdge.getEdge().getBendPoints()) {
@@ -108,7 +93,7 @@ public class SimpleLabelPlacer {
                                 label.getPosition().y = middlePoint.y - portPosition.y;
                             }
                             
-                            //Move label horizontally to put the middle of the label on the computed spot
+                            // Move label horiz. to put the middle of the label on the computed spot
                             label.getPosition().x -= label.getSize().x / 2;
                         }
                     }

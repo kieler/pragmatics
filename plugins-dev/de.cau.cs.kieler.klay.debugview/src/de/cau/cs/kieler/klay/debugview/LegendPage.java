@@ -67,7 +67,7 @@ public final class LegendPage {
         StringBuilder sb = new StringBuilder(STRING_BUILDER_CAPACITY);
         
         // Find the system font name
-        String defaultFont = control.getDisplay().getSystemFont().getFontData()[0].name;
+        String defaultFont = control.getDisplay().getSystemFont().getFontData()[0].getName();
         
         // Header
         sb.append("<html><head><style type='text/css'><!-- "); //$NON-NLS-1$

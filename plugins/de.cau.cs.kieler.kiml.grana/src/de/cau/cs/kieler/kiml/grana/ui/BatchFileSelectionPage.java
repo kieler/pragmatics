@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.dialogs.WizardExportResourcesPage;
 
-import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
+import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 
 /**
  * This page displays the workspace contents and lets the user select diagram

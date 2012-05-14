@@ -13,18 +13,31 @@
  */
 package de.cau.cs.kieler.kiml.ui.diagram;
 
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.IWorkbenchPart;
 
-import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
-
 /**
- * Interface for managers of diagram layout.
+ * Interface for managers of diagram layout. A diagram layout manager is responsible for transforming
+ * the diagram contained in a workbench part into a layout graph, which is an instance of the
+ * KGraph meta model. Furthermore it must handle the transfer of concrete layout data from the
+ * layout graph back to the diagram after a layout has been computed.
+ * <p>
+ * The {@code IAdapterFactory} interface is used to access specific elements:
+ * <ul>
+ *   <li>Implementations of {@link de.cau.cs.kieler.kiml.config.IMutableLayoutConfig} for reading
+ *     and writing layout options in a specific diagram</li>
+ *   <li>Diagram parts such as GEF edit parts</li>
+ *   <li>Domain model elements: {@link org.eclipse.emf.ecore.EObject}</li>
+ *   <li>Editing domains: {@link org.eclipse.emf.transaction.TransactionalEditingDomain}
+ * </ul>
+ * The {@link #getAdapterList()} method should return exactly one element, namely the type of
+ * diagram part, which should also match the generic type of the implementation.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @param <T> the type of diagram part that is handled by this diagram layout manager
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public interface IDiagramLayoutManager<T> {
+public interface IDiagramLayoutManager<T> extends IAdapterFactory {
 
     /**
      * Determine whether this layout manager is able to perform layout for the given object.
@@ -40,6 +53,10 @@ public interface IDiagramLayoutManager<T> {
      * {@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout KShapeLayouts} or
      * {@link de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout KEdgeLayouts} attached,
      * and their modification flags must be set to {@code false}.
+     * <p>
+     * Layout options should not be directly set for any graph elements, since they would be
+     * cleared later. Instead the {@link LayoutMapping#getLayoutConfigs()} list should be augmented
+     * with according layout configurators.
      * 
      * @param workbenchPart
      *            the workbench part for which layout is performed
@@ -70,12 +87,5 @@ public interface IDiagramLayoutManager<T> {
      * @param mapping a layout mapping that was created by this layout manager
      */
     void undoLayout(LayoutMapping<T> mapping);
-    
-    /**
-     * Return a framework-specific layout configuration.
-     * 
-     * @return a layout configuration for this diagram layout manager
-     */
-    IMutableLayoutConfig getLayoutConfig();
 
 }

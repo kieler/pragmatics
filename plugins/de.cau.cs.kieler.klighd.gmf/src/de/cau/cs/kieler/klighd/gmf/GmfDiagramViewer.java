@@ -51,7 +51,7 @@ public class GmfDiagramViewer extends AbstractViewer<Diagram> {
     /**
      * {@inheritDoc}
      */
-    public void setModel(final Diagram model) {
+    public void setModel(final Diagram model, final boolean sync) {
         // configure the viewer
         RootEditPart rootEditPart = EditPartService.getInstance().createRootEditPart(model);
         graphicalViewer.setRootEditPart(rootEditPart);
@@ -59,6 +59,20 @@ public class GmfDiagramViewer extends AbstractViewer<Diagram> {
         graphicalViewer.setContents(model);
         // TODO disable the edit mode in general, only enable for layout
         // ((DiagramEditPart) graphicalViewer.getContents()).disableEditMode();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Diagram getModel() {
+        return null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void setRecording(final boolean recording) {
+        // TODO Auto-generated method stub
     }
 
     /**

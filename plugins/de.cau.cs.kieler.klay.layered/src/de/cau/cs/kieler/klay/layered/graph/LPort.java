@@ -19,6 +19,7 @@ import java.util.List;
 
 import com.google.common.collect.Iterables;
 
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
@@ -43,6 +44,8 @@ public class LPort extends LShape {
     private LNode owner;
     /** the port side. */
     private PortSide side = PortSide.UNDEFINED;
+    /** the anchor point position. */
+    private KVector anchor = new KVector();
     /** this port's labels. */
     private List<LLabel> labels = new LinkedList<LLabel>();
     /** the edges going into the port. */
@@ -159,6 +162,27 @@ public class LPort extends LShape {
      */
     public void setSide(final PortSide theside) {
         this.side = theside;
+    }
+    
+    /**
+     * Returns the anchor position of the port. This is the point where edges should be attached,
+     * relative to the port's position. Should only be modified when the port position is changed.
+     * 
+     * @return the anchor position
+     */
+    public KVector getAnchor() {
+        return anchor;
+    }
+    
+    /**
+     * Returns the absolute anchor position of the port. This is the point where edges should be
+     * attached, relative to the containing graph. This method creates a new vector, so modifying
+     * the result will not affect this port in any way.
+     * 
+     * @return a new vector with the absolute anchor position
+     */
+    public KVector getAbsoluteAnchor() {
+        return KVector.sum(owner.getPosition(), this.getPosition(), anchor);
     }
     
     /**

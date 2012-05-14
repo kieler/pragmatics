@@ -21,6 +21,10 @@ package de.cau.cs.kieler.core.annotations.text.ui;
 public class AnnotationsUiModule extends
         de.cau.cs.kieler.core.annotations.text.ui.AbstractAnnotationsUiModule {
 
+    //CHECKSTYLEOFF Parameter
+    //CHECKSTYLEOFF JavadocMethod
+    //CHECKSTYLEOFF LineLength
+    
     public AnnotationsUiModule(org.eclipse.ui.plugin.AbstractUIPlugin plugin) {
         super(plugin);
     }
@@ -39,4 +43,8 @@ public class AnnotationsUiModule extends
     public Class<? extends org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
         return AnnotationsSemanticHighlightingCalculator.class;
     }
+    
+    //CHECKSTYLEON Parameter
+    //CHECKSTYLEON JavadocMethod
+    //CHECKSTYLEON LineLength
 }

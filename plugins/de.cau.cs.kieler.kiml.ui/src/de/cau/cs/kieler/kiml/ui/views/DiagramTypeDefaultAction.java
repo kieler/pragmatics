@@ -20,7 +20,6 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
@@ -42,6 +41,8 @@ public class DiagramTypeDefaultAction extends Action {
 
     /** the layout view that created this action. */
     private LayoutViewPart layoutView;
+    /** the current diagram type, injected by the layout view. */
+    private String diagramType;
     
     /**
      * Creates a diagram type default action.
@@ -55,18 +56,23 @@ public class DiagramTypeDefaultAction extends Action {
     }
     
     /**
+     * Set the diagram type to affect when the action is run.
+     * 
+     * @param thediagramType the diagram type
+     */
+    public void setDiagramType(final String thediagramType) {
+        this.diagramType = thediagramType;
+    }
+    
+    /**
      * {@inheritDoc}
      */
     @Override
     public void run() {
-        Object diagramPart = layoutView.getCurrentEditPart();
-        if (diagramPart != null) {
-            String diagramType = (String) EclipseLayoutConfig.getOption(diagramPart,
-                    LayoutOptions.DIAGRAM_TYPE);
-            if (diagramType != null) {
-                for (IPropertySheetEntry entry : layoutView.getSelection()) {
-                    setDefault(diagramType, entry);
-                }
+        Object diagramPart = layoutView.getCurrentDiagramPart();
+        if (diagramPart != null && diagramType != null) {
+            for (IPropertySheetEntry entry : layoutView.getSelection()) {
+                setDefault(entry);
             }
         }
     }
@@ -78,7 +84,7 @@ public class DiagramTypeDefaultAction extends Action {
      * @param diagramType a diagram type identifier
      * @param entry a property sheet entry
      */
-    private void setDefault(final String diagramType, final IPropertySheetEntry entry) {
+    private void setDefault(final IPropertySheetEntry entry) {
         LayoutOptionData<?> optionData = KimlUiUtil.getOptionData(
                 layoutView.getCurrentLayouterData(), entry.getDisplayName());
         

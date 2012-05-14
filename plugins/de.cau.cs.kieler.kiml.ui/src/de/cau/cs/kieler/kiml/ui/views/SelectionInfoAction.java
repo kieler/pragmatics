@@ -34,14 +34,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
-import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -163,27 +162,23 @@ public class SelectionInfoAction extends Action {
         StringBuilder builder = new StringBuilder();
         
         // display editor part
-        IWorkbenchPart workbenchPart = layoutView.getCurrentPart();
+        IWorkbenchPart workbenchPart = layoutView.getCurrentWorkbenchPart();
         if (workbenchPart != null) {
             builder.append("<b>Workbench part class</b><ul><li>"
                     + workbenchPart.getClass().getName() + "</li></ul>");
         }
         
         // display edit part and domain model class
-        Object diagramPart = layoutView.getCurrentEditPart();
+        Object diagramPart = layoutView.getCurrentDiagramPart();
         if (diagramPart != null) {
-            builder.append("<b>Edit part class</b><ul><li>"
+            builder.append("<b>Diagram part class</b><ul><li>"
                     + diagramPart.getClass().getName() + "</li></ul>");
-            try {
-                IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(
-                        diagramPart);
-                EObject model = bridge.getElement(diagramPart);
-                if (model != null) {
-                    builder.append("<b>Domain model class</b><ul><li>"
-                            + model.eClass().getInstanceTypeName() + "</li></ul>");
-                }
-            } catch (UnsupportedPartException exception) {
-                // ignore exception
+            IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
+                    null, diagramPart);
+            EObject model = (EObject) manager.getAdapter(diagramPart, EObject.class);
+            if (model != null) {
+                builder.append("<b>Domain model class</b><ul><li>"
+                        + model.eClass().getInstanceTypeName() + "</li></ul>");
             }
         }
         

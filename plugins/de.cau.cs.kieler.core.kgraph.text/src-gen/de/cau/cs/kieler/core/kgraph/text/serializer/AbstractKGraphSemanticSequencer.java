@@ -502,7 +502,7 @@ public class AbstractKGraphSemanticSequencer extends AbstractSemanticSequencer {
 	/**
 	 * Constraint:
 	 *     (
-	 *         relative?='relative' 
+	 *         relative?='relative'? 
 	 *         location=EFloat 
 	 *         xOffset=EFloat? 
 	 *         yOffset=EFloat? 
@@ -618,7 +618,14 @@ public class AbstractKGraphSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (widthHint=EFloat heightHint=EFloat horizontalIndent=EFloat verticalIndent=EFloat)
+	 *     (
+	 *         widthHint=EFloat 
+	 *         heightHint=EFloat 
+	 *         insetRight=EFloat 
+	 *         insetBottom=EFloat 
+	 *         insetLeft=EFloat 
+	 *         insetTop=EFloat
+	 *     )
 	 */
 	protected void sequence_KGridPlacementData(EObject context, KGridPlacementData semanticObject) {
 		superSequencer.createSequence(context, semanticObject);

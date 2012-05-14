@@ -26,23 +26,6 @@
       </option>
  </extension>
   <extension
-        point="de.cau.cs.kieler.core.kivi.combinations">
-     <combination
-            active="true"
-            class="de.cau.cs.kieler.kiml.gmf.combinations.LayoutAfterCollapseExpandCombination"
-            description="Call automatic layout after the collapsed state of a compartment has been changed."
-            name="Layout after Collapse/Expand">
-      </combination>
-  </extension>
- <extension
-       point="org.eclipse.emf.ecore.generated_package">
-    <package
-          class="de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackage"
-          genModel="model/layoutoptions.genmodel"
-          uri="http://kieler.cs.cau.de/LayoutOptions">
-    </package>
- </extension>
-  <extension
        point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
     <editpolicyProvider
           class="de.cau.cs.kieler.kiml.gmf.LayoutEditPolicyProvider">
@@ -60,5 +43,38 @@
            name="Layout Diagram File">
      </command>
   </extension>
+ <extension
+       point="de.cau.cs.kieler.kiml.layoutProviders">
+    <layoutAlgorithm
+          class="de.cau.cs.kieler.kiml.gmf.layouter.Draw2DLayoutProvider"
+          description="&quot;Directed Graph Layout&quot; provided by the Draw2D framework. This is the same algorithm that is used by the standard layout button of GMF diagrams."
+          id="de.cau.cs.kieler.draw2d"
+          name="Draw2D Layout"
+          preview="images/draw2d.png"
+          type="de.cau.cs.kieler.type.layered">
+       <supportedDiagram
+             priority="1"
+             type="de.cau.cs.kieler.layout.diagrams.general">
+       </supportedDiagram>
+       <supportedFeature
+             feature="MULTI_EDGES">
+       </supportedFeature>
+       <knownOption
+             default="16"
+             option="de.cau.cs.kieler.spacing">
+       </knownOption>
+       <knownOption
+             default="16"
+             option="de.cau.cs.kieler.borderSpacing">
+       </knownOption>
+       <knownOption
+             default="RIGHT"
+             option="de.cau.cs.kieler.direction">
+       </knownOption>
+       <knownOption
+             option="de.cau.cs.kieler.sizeConstraint">
+       </knownOption>
+    </layoutAlgorithm>
+ </extension>
 
 </plugin>

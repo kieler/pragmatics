@@ -103,6 +103,7 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
             KVector nodeSize = node.getSize();
             for (LPort port : node.getPorts()) {
                 mirror(port.getPosition(), nodeSize.x);
+                mirror(port.getAnchor(), port.getSize().x);
                 mirrorPortSide(port);
                 for (LEdge edge : port.getOutgoingEdges()) {
                     for (KVector bendPoint : edge.getBendPoints()) {
@@ -168,6 +169,7 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
             transpose(node.getSize());
             for (LPort port : node.getPorts()) {
                 transpose(port.getPosition());
+                transpose(port.getAnchor());
                 transpose(port.getSize());
                 transposePortSide(port);
                 for (LEdge edge : port.getOutgoingEdges()) {

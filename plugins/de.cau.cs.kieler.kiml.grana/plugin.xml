@@ -167,19 +167,11 @@
             type="html">
       </visualizationMethod>
       <visualizationMethod
-            class="de.cau.cs.kieler.kiml.grana.ui.ViewVisualizationMethod"
-            default="true"
+            class="de.cau.cs.kieler.kiml.grana.views.ViewVisualizationMethod"
+            default="false"
             silent="true"
             type="html">
       </visualizationMethod>
-   </extension>
-   <extension
-         point="de.cau.cs.kieler.core.kivi.combinations">
-      <combination
-            class="de.cau.cs.kieler.kiml.grana.handlers.LayoutAnalysisCombination"
-            description="Perform automatic graph analysis after a layout has been calculated"
-            name="Analysis after Layout">
-      </combination>
    </extension>
 
 </plugin>
