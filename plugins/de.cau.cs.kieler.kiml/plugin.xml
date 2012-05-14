@@ -355,7 +355,6 @@
      </layoutOption>
      <layoutOption
            advanced="true"
-           default="0"
            description="The offset of ports on the node border"
            id="de.cau.cs.kieler.offset"
            name="Port Offset (programmatic)"

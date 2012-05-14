@@ -688,7 +688,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
 
             // Calculate force for every port/edge
             for (LPort port : node.getPorts()) {
-                double portpos = node.getPosition().y + port.getPosition().y;
+                double portpos = node.getPosition().y + port.getPosition().y + port.getAnchor().y;
                 if (outgoing) {
                     for (LEdge edge : port.getOutgoingEdges()) {
                         LPort otherPort = edge.getTarget();
@@ -699,7 +699,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                             int prio = edge.getProperty(Properties.PRIORITY);
                             if (prio >= minPrio && prio >= otherPrio) {
                                 nodeDeflection += otherNode.getPosition().y
-                                        + otherPort.getPosition().y - portpos;
+                                        + otherPort.getPosition().y + otherPort.getAnchor().y
+                                        - portpos;
                                 edgeWeightSum++;
                             }
                         }
@@ -716,7 +717,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                             int prio = edge.getProperty(Properties.PRIORITY);
                             if (prio >= minPrio && prio >= otherPrio) {
                                 nodeDeflection += otherNode.getPosition().y
-                                        + otherPort.getPosition().y - portpos;
+                                        + otherPort.getPosition().y + otherPort.getAnchor().y
+                                        - portpos;
                                 edgeWeightSum++;
                             }
                         }
@@ -829,8 +831,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     boolean isNeighborNormal = neighbor.getProperty(Properties.NODE_TYPE) 
                         == NodeType.NORMAL;
                     float spacing = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
-                    roomAbove = node.getPosition().y
-                            - node.getMargin().top
+                    roomAbove = node.getPosition().y - node.getMargin().top
                             - (neighbor.getPosition().y + neighbor.getSize().y
                                     + neighbor.getMargin().bottom + spacing);
                 } else {
@@ -845,10 +846,9 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     boolean isNeighborNormal = neighbor.getProperty(Properties.NODE_TYPE) 
                         == NodeType.NORMAL;
                     float spacing = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
-                    roomBelow = neighbor.getPosition().y
-                            - neighbor.getMargin().top
-                            - (node.getPosition().y 
-                                    + node.getSize().y + node.getMargin().bottom + spacing);
+                    roomBelow = neighbor.getPosition().y - neighbor.getMargin().top
+                            - (node.getPosition().y + node.getSize().y
+                                    + node.getMargin().bottom + spacing);
                 } else {
                     roomBelow = 2 * node.getPosition().y;
                 }
@@ -861,10 +861,11 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             // determine the minimal displacement that would make one incoming edge straight
             LNode firstNode = segment.nodes.get(0);
             for (LPort target : firstNode.getPorts()) {
-                double pos = firstNode.getPosition().y + target.getPosition().y;
+                double pos = firstNode.getPosition().y + target.getPosition().y + target.getAnchor().y;
                 for (LEdge edge : target.getIncomingEdges()) {
                     LPort source = edge.getSource();
-                    double d = source.getNode().getPosition().y + source.getPosition().y - pos;
+                    double d = source.getNode().getPosition().y + source.getPosition().y
+                            + source.getAnchor().y - pos;
                     if (Math.abs(d) < Math.abs(minDisplacement)
                             && Math.abs(d) < (d < 0 ? minRoomAbove : minRoomBelow)) {
                         minDisplacement = d;
@@ -876,10 +877,11 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             // determine the minimal displacement that would make one outgoing edge straight
             LNode lastNode = segment.nodes.get(segment.nodes.size() - 1);
             for (LPort source : lastNode.getPorts()) {
-                double pos = lastNode.getPosition().y + source.getPosition().y;
+                double pos = lastNode.getPosition().y + source.getPosition().y + source.getAnchor().y;
                 for (LEdge edge : source.getOutgoingEdges()) {
                     LPort target = edge.getTarget();
-                    double d = target.getNode().getPosition().y + target.getPosition().y - pos;
+                    double d = target.getNode().getPosition().y + target.getPosition().y
+                            + target.getAnchor().y - pos;
                     if (Math.abs(d) < Math.abs(minDisplacement)
                             && Math.abs(d) < (d < 0 ? minRoomAbove : minRoomBelow)) {
                         minDisplacement = d;

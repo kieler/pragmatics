@@ -15,7 +15,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.datatypes.IDimension;
@@ -51,11 +53,9 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.core.model.graphiti.GraphitiUtil;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutContext;
-import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -66,7 +66,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.diagram.GefDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -99,7 +98,74 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * {@inheritDoc}
      */
     public boolean supports(final Object object) {
-        return object instanceof DiagramEditor || object instanceof IPictogramElementEditPart;
+        return object instanceof DiagramEditor || object instanceof IPictogramElementEditPart
+                || object instanceof PictogramElement;
+    }
+    
+    /** the cached layout configuration for Graphiti. */
+    private GraphitiLayoutConfig layoutConfig = new GraphitiLayoutConfig();
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public Object getAdapter(final Object object, final Class adapterType) {
+        if (adapterType.isAssignableFrom(GraphitiLayoutConfig.class)) {
+            return layoutConfig;
+        } else if (adapterType.isAssignableFrom(IPictogramElementEditPart.class)) {
+            if (object instanceof IPictogramElementEditPart) {
+                return object;
+            } else if (object instanceof DiagramEditor) {
+                return ((DiagramEditor) object).getGraphicalViewer().getContents();
+            }
+        } else if (adapterType.isAssignableFrom(EObject.class)) {
+            if (object instanceof IPictogramElementEditPart) {
+                PictogramElement pe = ((IPictogramElementEditPart) object).getPictogramElement();
+                if (pe.getLink() != null) {
+                    List<EObject> businessObjects = pe.getLink().getBusinessObjects();
+                    if (!businessObjects.isEmpty()) {
+                        return businessObjects.get(0);
+                    }
+                }
+            } else if (object instanceof PictogramElement) {
+                PictogramElement pe = (PictogramElement) object;
+                if (pe.getLink() != null) {
+                    List<EObject> businessObjects = pe.getLink().getBusinessObjects();
+                    if (!businessObjects.isEmpty()) {
+                        return businessObjects.get(0);
+                    }
+                }
+            }
+        } else if (adapterType.isAssignableFrom(PictogramElement.class)) {
+            if (object instanceof PictogramElement) {
+                return object;
+            } else if (object instanceof IPictogramElementEditPart) {
+                return ((IPictogramElementEditPart) object).getPictogramElement();
+            } else if (object instanceof DiagramEditor) {
+                EditPart contents = ((DiagramEditor) object).getGraphicalViewer().getContents();
+                if (contents instanceof IPictogramElementEditPart) {
+                    return ((IPictogramElementEditPart) contents).getPictogramElement();
+                }
+            }
+        } else if (adapterType.isAssignableFrom(TransactionalEditingDomain.class)) {
+            if (object instanceof DiagramEditor) {
+                return ((DiagramEditor) object).getEditingDomain();
+            } else if (object instanceof IPictogramElementEditPart) {
+                return ((IPictogramElementEditPart) object).getConfigurationProvider()
+                        .getDiagramEditor().getEditingDomain();
+            }
+        }
+        if (object instanceof IAdaptable) {
+            return ((IAdaptable) object).getAdapter(adapterType);
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Class<?>[] getAdapterList() {
+        return new Class<?>[] { PictogramElement.class };
     }
 
     /**
@@ -107,7 +173,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      */
     public LayoutMapping<PictogramElement> buildLayoutGraph(final IWorkbenchPart workbenchPart,
             final Object diagramPart) {
-        LayoutMapping<PictogramElement> mapping = new LayoutMapping<PictogramElement>();
+        LayoutMapping<PictogramElement> mapping = new LayoutMapping<PictogramElement>(this);
         mapping.setProperty(CONNECTIONS, new LinkedList<Connection>());
         mapping.setProperty(STATIC_CONFIG, new VolatileLayoutConfig());
 
@@ -151,7 +217,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         
         // create a layout configuration
         mapping.getLayoutConfigs().add(mapping.getProperty(STATIC_CONFIG));
-        mapping.getLayoutConfigs().add(getLayoutConfig());
+        mapping.getLayoutConfigs().add(layoutConfig);
 
         return mapping;
     }
@@ -178,16 +244,6 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         TransactionalEditingDomain editingDomain = mapping.getProperty(DIAGRAM_EDITOR)
                 .getEditingDomain();
         editingDomain.getCommandStack().execute(mapping.getProperty(LAYOUT_COMMAND));
-    }
-    
-    /** the cached layout configuration for Graphiti. */
-    private GraphitiLayoutConfig layoutConfig = new GraphitiLayoutConfig();
-
-    /**
-     * {@inheritDoc}
-     */
-    public IMutableLayoutConfig getLayoutConfig() {
-        return layoutConfig;
     }
 
     /** the fixed minimal size of shapes. */
@@ -577,7 +633,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * @return the insets
      */
     public static KInsets calcInsets(final GraphicsAlgorithm graphicsAlgorithm) {
-        GraphicsAlgorithm visibleGa = GraphitiUtil.findVisibleGa(graphicsAlgorithm);
+        GraphicsAlgorithm visibleGa = findVisibleGa(graphicsAlgorithm);
         int left = 0;
         int top = 0;
         int right = 0;
@@ -596,6 +652,26 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         insets.setTop(top);
         insets.setBottom(bottom);
         return insets;
+    }
+
+    /**
+     * Given a graphics algorithm, find the first child that is not invisible. If the GA itself
+     * is visible, it is returned.
+     * 
+     * @param graphicsAlgorithm the parent graphics algorithm
+     * @return a visible graphics algorithm
+     */
+    public static GraphicsAlgorithm findVisibleGa(final GraphicsAlgorithm graphicsAlgorithm) {
+        if (graphicsAlgorithm.getLineVisible() || graphicsAlgorithm.getFilled()) {
+            return graphicsAlgorithm;
+        }
+        for (GraphicsAlgorithm ga : graphicsAlgorithm.getGraphicsAlgorithmChildren()) {
+            GraphicsAlgorithm result = findVisibleGa(ga);
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
     }
     
 }

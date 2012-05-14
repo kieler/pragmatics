@@ -22,6 +22,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Determines the actual positions of ports for nodes whose port positions are
@@ -103,26 +104,26 @@ public class PortPositionProcessor extends AbstractAlgorithm implements ILayoutP
         
         // Arrange the ports
         for (LPort port : node.getPorts()) {
-            float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            float portOffset = port.getProperty(Properties.OFFSET);
             switch (port.getSide()) {
             case NORTH:
-                port.getPosition().x = northX;
-                port.getPosition().y = -port.getSize().y / 2 - portOffset;
+                port.getPosition().x = northX - port.getAnchor().x;
+                port.getPosition().y = -port.getSize().y - portOffset;
                 northX += northDelta;
                 break;
             case EAST:
-                port.getPosition().x = nodeSize.x + port.getSize().x / 2 + portOffset;
-                port.getPosition().y = eastY;
+                port.getPosition().x = nodeSize.x + portOffset;
+                port.getPosition().y = eastY - port.getAnchor().y;
                 eastY += eastDelta;
                 break;
             case SOUTH:
-                port.getPosition().x = southX;
-                port.getPosition().y = nodeSize.y + port.getSize().y / 2 + portOffset;
+                port.getPosition().x = southX - port.getAnchor().x;
+                port.getPosition().y = nodeSize.y + portOffset;
                 southX -= southDelta;
                 break;
             case WEST:
-                port.getPosition().x = -port.getSize().x / 2 - portOffset;
-                port.getPosition().y = westY;
+                port.getPosition().x = -port.getSize().x - portOffset;
+                port.getPosition().y = westY - port.getAnchor().y;
                 westY -= westDelta;
                 break;
             }

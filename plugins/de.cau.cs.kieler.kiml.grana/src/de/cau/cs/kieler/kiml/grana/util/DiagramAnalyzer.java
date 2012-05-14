@@ -31,7 +31,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
+import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 import de.cau.cs.kieler.kiml.service.AnalysisService;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;

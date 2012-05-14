@@ -154,7 +154,7 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
                 KVector first, second;
                 if (right) {
                     first = edge.getBendPoints().removeFirst();
-                    second = edge.getBendPoints().isEmpty() ? edge.getTargetPoint()
+                    second = edge.getBendPoints().isEmpty() ? edge.getTarget().getAbsoluteAnchor()
                             : edge.getBendPoints().getFirst();
                     if (second.y >= first.y) {
                         edge.setSource(southPort);
@@ -163,7 +163,7 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
                     }
                 } else {
                     first = edge.getBendPoints().removeLast();
-                    second = edge.getBendPoints().isEmpty() ? edge.getSourcePoint()
+                    second = edge.getBendPoints().isEmpty() ? edge.getSource().getAbsoluteAnchor()
                             : edge.getBendPoints().getLast();
                     if (second.y >= first.y) {
                         edge.setTarget(southPort);

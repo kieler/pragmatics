@@ -58,6 +58,13 @@ public final class Properties {
             NodeType.NORMAL);
     
     /**
+     * Offset of port position to the node border. An offset of 0 means that the port touches
+     * its parent node on the outside, positive offsets move the port away from the node,
+     * and negative offset move the port towards the inside.
+     */
+    public static final IProperty<Float> OFFSET = new Property<Float>(LayoutOptions.OFFSET, 0.0f);
+    
+    /**
      * The original bend points.
      */
     public static final IProperty<KVectorChain> ORIGINAL_BENDPOINTS = new Property<KVectorChain>(
@@ -289,6 +296,12 @@ public final class Properties {
     public static final IProperty<Boolean> CYCLIC = new Property<Boolean>(
             "cyclic", false);
     
+    /**
+     * The offset to the port position where connections shall be attached.
+     */
+    public static final IProperty<KVector> PORT_ANCHOR = new Property<KVector>(
+            "de.cau.cs.kieler.klay.layered.portAnchor");
+    
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
@@ -356,8 +369,9 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.mergePorts", false);
     
     /** property that determines which point in a node determines the result of interactive phases. */
-    public static final IProperty<AnchorPoint> INTERACTIVE_LAYOUT_ANCHOR = new Property<AnchorPoint>(
-            "de.cau.cs.kieler.klay.layered.interactiveLayoutAnchor", AnchorPoint.CENTER);
+    public static final IProperty<InteractiveReferencePoint> INTERACTIVE_REFERENCE_POINT
+            = new Property<InteractiveReferencePoint>(
+            "de.cau.cs.kieler.klay.layered.interactiveReferencePoint", InteractiveReferencePoint.CENTER);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

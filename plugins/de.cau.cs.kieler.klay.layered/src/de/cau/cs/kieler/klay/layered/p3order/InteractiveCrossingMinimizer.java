@@ -136,13 +136,13 @@ public class InteractiveCrossingMinimizer extends AbstractCrossingMinimizer {
                 bendpoints = KVectorChain.reverse(bendpoints);
             }
             LPort source = node.getProperty(Properties.LONG_EDGE_SOURCE);
-            KVector sourcePoint = source.getPosition().sumCreate(source.getNode().getPosition());
+            KVector sourcePoint = source.getAbsoluteAnchor();
             if (horizPos <= sourcePoint.x) {
                 return sourcePoint.y;
             }
             bendpoints.addFirst(sourcePoint);
             LPort target = node.getProperty(Properties.LONG_EDGE_TARGET);
-            KVector targetPoint = target.getPosition().sumCreate(target.getNode().getPosition());
+            KVector targetPoint = target.getAbsoluteAnchor();
             if (targetPoint.x <= horizPos) {
                 return targetPoint.y;
             }
@@ -181,7 +181,7 @@ public class InteractiveCrossingMinimizer extends AbstractCrossingMinimizer {
         }
         
         // the fallback solution is to take the previous position of the node's anchor point
-        return node.getAnchorPointPosition(graph).y;
+        return node.getInteractiveReferencePoint(graph).y;
     }
 
 }

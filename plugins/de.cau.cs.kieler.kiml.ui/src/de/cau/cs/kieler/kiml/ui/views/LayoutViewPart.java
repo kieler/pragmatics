@@ -56,12 +56,15 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
@@ -327,22 +330,25 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         final IAction applyOptionAction = new DiagramDefaultAction(this, applyOptionString);
         final String setDefaultString = Messages.getString("kiml.ui.16"); //$NON-NLS-1$
         final String setAllDefaultString = Messages.getString("kiml.ui.34"); //$NON-NLS-1$
-        final IAction editPartDefaultAction = new EditPartDefaultAction(this, setDefaultString, false);
-        final IAction modelDefaultAction = new EditPartDefaultAction(this, setAllDefaultString, true);
-        final IAction diagramTypeDefaultAction = new DiagramTypeDefaultAction(this, setAllDefaultString);
+        final IAction diagramPartDefaultAction = new DiagramPartDefaultAction(this,
+                setDefaultString, false);
+        final IAction modelDefaultAction = new DiagramPartDefaultAction(this,
+                setAllDefaultString, true);
+        final DiagramTypeDefaultAction diagramTypeDefaultAction
+                = new DiagramTypeDefaultAction(this, "");
         // dirty hack to add actions to an existing menu without having the menu manager
         menu.addMenuListener(new MenuAdapter() {
             public void menuShown(final MenuEvent event) {
                 MenuItem applyOptionItem = null, diagramTypeDefaultItem = null,
-                        editPartDefaultItem = null, modelDefaultItem = null;
+                        diagramPartDefaultItem = null, modelDefaultItem = null;
                 for (MenuItem item : menu.getItems()) {
                     if (item.getData() instanceof IContributionItem) {
                         String itemId = ((IContributionItem) item.getData()).getId();
                         if (DiagramDefaultAction.ACTION_ID.equals(itemId)) {
                             applyOptionItem = item;
-                        } else if (EditPartDefaultAction.EDIT_PART_ACTION_ID.equals(itemId)) {
-                            editPartDefaultItem = item;
-                        } else if (EditPartDefaultAction.MODEL_ACTION_ID.equals(itemId)) {
+                        } else if (DiagramPartDefaultAction.EDIT_PART_ACTION_ID.equals(itemId)) {
+                            diagramPartDefaultItem = item;
+                        } else if (DiagramPartDefaultAction.MODEL_ACTION_ID.equals(itemId)) {
                             modelDefaultItem = item;
                         } else if (DiagramTypeDefaultAction.ACTION_ID.equals(itemId)) {
                             diagramTypeDefaultItem = item;
@@ -357,25 +363,25 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                     contributionItem.fill(menu, -1);
                 }
                 if (!propSourceProvider.hasContent()) {
-                    if (editPartDefaultItem != null) {
-                        editPartDefaultItem.setEnabled(false);
+                    if (diagramPartDefaultItem != null) {
+                        diagramPartDefaultItem.setEnabled(false);
                     }
                     if (modelDefaultItem != null) {
                         modelDefaultItem.setEnabled(false);
                     }
                 } else {
-                    // add the "set as default for edit part" action
-                    String editPartName = getReadableName(false, true);
-                    if (editPartName != null) {
-                        if (editPartDefaultItem == null) {
-                            editPartDefaultAction.setText(setDefaultString + " " + editPartName);
+                    // add the "set as default for diagram part" action
+                    String diagramPartName = getReadableName(false, true);
+                    if (diagramPartName != null) {
+                        if (diagramPartDefaultItem == null) {
+                            diagramPartDefaultAction.setText(setDefaultString + " " + diagramPartName);
                             ContributionItem contributionItem = new ActionContributionItem(
-                                    editPartDefaultAction);
-                            contributionItem.setId(EditPartDefaultAction.EDIT_PART_ACTION_ID);
+                                    diagramPartDefaultAction);
+                            contributionItem.setId(DiagramPartDefaultAction.EDIT_PART_ACTION_ID);
                             contributionItem.fill(menu, -1);
                         } else {
-                            editPartDefaultItem.setEnabled(true);
-                            editPartDefaultItem.setText(setDefaultString + " " + editPartName);
+                            diagramPartDefaultItem.setEnabled(true);
+                            diagramPartDefaultItem.setText(setDefaultString + " " + diagramPartName);
                         }
                         // add the "set as default for model element" action
                         String modelName = getReadableName(true, true);
@@ -383,7 +389,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                             modelDefaultAction.setText(setAllDefaultString + " " + modelName);
                             ContributionItem contributionItem = new ActionContributionItem(
                                     modelDefaultAction);
-                            contributionItem.setId(EditPartDefaultAction.MODEL_ACTION_ID);
+                            contributionItem.setId(DiagramPartDefaultAction.MODEL_ACTION_ID);
                             contributionItem.fill(menu, -1);
                         } else {
                             modelDefaultItem.setEnabled(true);
@@ -392,11 +398,12 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                     }
                 }
                 // add the "set as default for diagram type" action
+                LayoutOptionData<?> diagramTypeOption = LayoutDataService.getInstance().getOptionData(
+                        LayoutOptions.DIAGRAM_TYPE.getId());
                 LayoutContext context = propSourceProvider.getContext();
-                String diagramType = (String) EclipseLayoutConfig.getOption(
-                        context.getProperty(LayoutContext.DIAGRAM_PART),
-                        context.getProperty(LayoutContext.DOMAIN_MODEL),
-                        LayoutOptions.DIAGRAM_TYPE);
+                ILayoutConfig config = DiagramLayoutEngine.INSTANCE.getOptionManager().createConfig(
+                        context.getProperty(LayoutContext.DOMAIN_MODEL));
+                String diagramType = (String) config.getValue(diagramTypeOption, context);
                 if (diagramType == null) {
                     if (diagramTypeDefaultItem != null) {
                         diagramTypeDefaultItem.setEnabled(false);
@@ -409,16 +416,15 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                             diagramTypeName += "s";
                         }
                         if (diagramTypeDefaultItem == null) {
-                            diagramTypeDefaultAction.setText(setAllDefaultString
-                                    + " " + diagramTypeName);
                             ContributionItem contributionItem = new ActionContributionItem(
                                     diagramTypeDefaultAction);
                             contributionItem.setId(DiagramTypeDefaultAction.ACTION_ID);
                             contributionItem.fill(menu, -1);
                         } else {
                             diagramTypeDefaultItem.setEnabled(true);
-                            diagramTypeDefaultItem.setText(setAllDefaultString + " " + diagramTypeName);
                         }
+                        diagramTypeDefaultAction.setDiagramType(diagramType);
+                        diagramTypeDefaultItem.setText(setAllDefaultString + " " + diagramTypeName);
                     }
                 }
             }
@@ -479,11 +485,11 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     }
 
     /**
-     * Returns the first edit part in the current selection for which options are shown.
+     * Returns the first diagram part in the current selection for which options are shown.
      * 
-     * @return the selected edit part, or {@code null} if there is none
+     * @return the selected diagram part, or {@code null} if there is none
      */
-    public Object getCurrentEditPart() {
+    public Object getCurrentDiagramPart() {
         if (propSourceProvider.hasContent()) {
             return propSourceProvider.getContext().getProperty(LayoutContext.DIAGRAM_PART);
         }
@@ -495,7 +501,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      * 
      * @return the current workbench part, or {@code null} if there is none
      */
-    public IWorkbenchPart getCurrentPart() {
+    public IWorkbenchPart getCurrentWorkbenchPart() {
         return propSourceProvider.getWorkbenchPart();
     }
 

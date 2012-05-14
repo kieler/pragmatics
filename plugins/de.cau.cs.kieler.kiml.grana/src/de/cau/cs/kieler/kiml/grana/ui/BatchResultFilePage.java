@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
-import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
+import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 
 /**
  * This page lets the user select a file for the results of the batch.

@@ -108,11 +108,11 @@ public class CommentPostprocessor extends AbstractAlgorithm implements ILayoutPr
                 x += box.getSize().x + spacing / 2;
                 // set source and target point for the connecting edge
                 LPort boxPort = getBoxPort(box);
-                boxPort.getPosition().x = box.getSize().x / 2;
+                boxPort.getPosition().x = box.getSize().x / 2 - boxPort.getAnchor().x;
                 boxPort.getPosition().y = box.getSize().y;
                 LPort nodePort = box.getProperty(Properties.COMMENT_CONN_PORT);
                 if (nodePort.getDegree() == 1) {
-                    nodePort.getPosition().x = anchorX;
+                    nodePort.getPosition().x = anchorX - nodePort.getAnchor().x;
                     nodePort.getPosition().y = 0;
                     nodePort.setNode(node);
                 }
@@ -139,11 +139,11 @@ public class CommentPostprocessor extends AbstractAlgorithm implements ILayoutPr
                 x += box.getSize().x + spacing / 2;
                 // set source and target point for the connecting edge
                 LPort boxPort = getBoxPort(box);
-                boxPort.getPosition().x = box.getSize().x / 2;
+                boxPort.getPosition().x = box.getSize().x / 2 - boxPort.getAnchor().x;
                 boxPort.getPosition().y = 0;
                 LPort nodePort = box.getProperty(Properties.COMMENT_CONN_PORT);
                 if (nodePort.getDegree() == 1) {
-                    nodePort.getPosition().x = anchorX;
+                    nodePort.getPosition().x = anchorX - nodePort.getAnchor().x;
                     nodePort.getPosition().y = nodeSize.y;
                     nodePort.setNode(node);
                 }

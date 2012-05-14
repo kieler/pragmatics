@@ -15,13 +15,10 @@ package de.cau.cs.kieler.kiml.ui.views;
 
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gef.EditPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchPart;
 
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -56,27 +53,23 @@ public class RemoveOptionsAction extends Action {
      */
     @Override
     public void run() {
-        IWorkbenchPart workbenchPart = layoutView.getCurrentPart();
-        IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance().getBridge(
-                workbenchPart);
-        if (bridge != null) {
-            EditPart diagram = bridge.getEditPart(workbenchPart);
-            if (diagram != null) {
-                IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
-                        .getManager(workbenchPart, diagram);
-                if (manager != null) {
-                    final IMutableLayoutConfig layoutConfig = manager.getLayoutConfig();
-                    if (layoutConfig != null) {
-                        // build a layout context for setting the option
-                        final LayoutContext context = new LayoutContext();
-                        context.setProperty(LayoutContext.DIAGRAM_PART, diagram);
-                        context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
-                        layoutConfig.enrich(context);
-                        
-                        removeOptions(workbenchPart.getTitle(), layoutConfig, context,
-                                bridge.getEditingDomain(diagram));
-                    }
-                }
+        IWorkbenchPart workbenchPart = layoutView.getCurrentWorkbenchPart();
+        IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
+                .getManager(workbenchPart, null);
+        if (manager != null) {
+            Object diagramPart = manager.getAdapter(workbenchPart, manager.getAdapterList()[0]);
+            IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(
+                    null, IMutableLayoutConfig.class);
+            EditingDomain editingDomain = (EditingDomain) manager.getAdapter(workbenchPart,
+                    EditingDomain.class);
+            if (diagramPart != null && layoutConfig != null && editingDomain != null) {
+                // build a layout context for setting the option
+                final LayoutContext context = new LayoutContext();
+                context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
+                context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
+                layoutConfig.enrich(context);
+                
+                removeOptions(workbenchPart.getTitle(), layoutConfig, context, editingDomain);
             }
         }
     }

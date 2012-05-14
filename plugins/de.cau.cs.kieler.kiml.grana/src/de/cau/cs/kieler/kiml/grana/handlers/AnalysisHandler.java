@@ -27,7 +27,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import de.cau.cs.kieler.kiml.grana.ui.GranaUIUtil;
 import de.cau.cs.kieler.kiml.grana.util.DiagramAnalyzer;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
-import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
+import de.cau.cs.kieler.kiml.grana.visualization.VisualizationService;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
@@ -58,7 +58,7 @@ public class AnalysisHandler extends AbstractHandler {
             // perform the analyses on the active diagram
             Map<String, Object> results = DiagramAnalyzer.analyze(editorPart, null, analyses, true);
             // visualize the results
-            VisualizationServices.getInstance().visualize(analyses, results, false);
+            VisualizationService.getInstance().visualize(analyses, results, false);
         }
         return null;
     }

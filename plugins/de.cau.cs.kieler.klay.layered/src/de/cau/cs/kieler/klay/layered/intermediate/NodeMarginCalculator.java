@@ -81,8 +81,8 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
                 // Do the same for ports and their labels
                 for (LPort port : node.getPorts()) {
                     // Calculate the port's upper left corner's x and y coordinate
-                    double portX = port.getPosition().x - port.getSize().x / 2.0 + node.getPosition().x;
-                    double portY = port.getPosition().y - port.getSize().y / 2.0 + node.getPosition().y;
+                    double portX = port.getPosition().x + node.getPosition().x;
+                    double portY = port.getPosition().y + node.getPosition().y;
                     
                     // The port itself
                     elementBox.x = portX;

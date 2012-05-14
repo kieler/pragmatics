@@ -403,13 +403,14 @@ class DiagramUtil {
     def ConnectionDecorator addConnectionArrow(Connection connection, int scale, boolean toHead) {
         val decorator = PictogramsFactory::eINSTANCE.createConnectionDecorator;
         val figure = AlgorithmsFactory::eINSTANCE.createPolygon;
+        val actualScale = Math::sqrt(3*scale).intValue;
         if (toHead) {
             figure.points.addAll(newArrayList(
-        	    createPoint(scale*-8,scale*3), createPoint(scale*-6,0), createPoint(scale*-8,scale*-3), createPoint(0,0)
+        	    createPoint(actualScale*-8,actualScale*3), createPoint(actualScale*-6,0), createPoint(actualScale*-8,actualScale*-3), createPoint(0,0)
             ));
         } else {
             figure.points.addAll(newArrayList(
-        	    createPoint(scale* 8,scale*3), createPoint(scale* 6,0), createPoint(scale* 8,scale*-3), createPoint(0,0)
+        	    createPoint(actualScale* 8,actualScale*3), createPoint(actualScale* 6,0), createPoint(actualScale* 8,actualScale*-3), createPoint(0,0)
             ));
         }
         figure.setForeground(connection.graphicsAlgorithm.foreground);

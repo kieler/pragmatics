@@ -189,6 +189,10 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         if (!super.doValidate()) {
             return false;
         }
+        //check if selected extension
+        if (!(getTargetFormat().length() > 0)) {
+            return false;
+        }
         // return false if no files in grayedTreeItems are selected
         if (!(getSourceFiles(null).size() > 0)) {
             return false;
@@ -224,10 +228,10 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         return false;
     }
 
-    
     public String getTargetFormat() {
-        return fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex());
+        return fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex()).toLowerCase();
     }
+
     /**
      * actions to do when closing the window.
      * 

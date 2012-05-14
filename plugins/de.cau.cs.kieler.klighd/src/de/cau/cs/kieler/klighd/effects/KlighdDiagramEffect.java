@@ -13,12 +13,15 @@
  */
 package de.cau.cs.kieler.klighd.effects;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.klighd.IViewer;
+import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 
@@ -125,7 +128,7 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
             public void run() {
                 view = DiagramViewManager.getInstance().createView(id, name, model, propertyHolder);
                 if (view != null) {
-                    viewer = view.getViewer().getActiveViewer();
+                    viewer = view.getContextViewer().getActiveViewer();
                 }
             }
         }, true);
@@ -176,6 +179,43 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      */
     public IViewer<?> getViewer() {
         return viewer;
+    }
+
+    /**
+     * Sets the request for a viewer by identifier.
+     * 
+     * @param viewerProviderId
+     *            the viewer provider identifier
+     * @return this effect for chaining method calls
+     */
+    public KlighdDiagramEffect usingViewer(final String viewerProviderId) {
+        setProperty(LightDiagramServices.REQUESTED_VIEWER_PROVIDER, viewerProviderId);
+        return this;
+    }
+
+    /**
+     * Sets the request for a number of transformations by identifier.
+     * 
+     * @param transformationIds
+     *            the transformations identifiers
+     * @return this effect for chaining method calls
+     */
+    public KlighdDiagramEffect usingTransformations(final String... transformationIds) {
+        setProperty(LightDiagramServices.REQUESTED_TRANSFORMATIONS,
+                Lists.newArrayList(transformationIds));
+        return this;
+    }
+
+    /**
+     * Sets the request for an update strategy by identifier.
+     * 
+     * @param updateStrategyId
+     *            the update strategy identifier
+     * @return this effect for chaining method calls
+     */
+    public KlighdDiagramEffect usingUpdateStrategy(final String updateStrategyId) {
+        setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY, updateStrategyId);
+        return this;
     }
 
     /**
@@ -234,4 +274,3 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
     }
 
 }
-

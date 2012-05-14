@@ -31,6 +31,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.ui.CoreUIPlugin;
 import de.cau.cs.kieler.kiml.grana.ui.HtmlResultGenerator;
 import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
+import de.cau.cs.kieler.kiml.grana.visualization.VisualizationService;
 
 /**
  * A view that is an alternative way to display analysis results.
@@ -40,8 +41,7 @@ import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
 public class AnalysisResultViewPart extends ViewPart {
 
     /** the view identifier. */
-    public static final String VIEW_ID =
-            "de.cau.cs.kieler.kiml.grana.views.analysisResults";
+    public static final String VIEW_ID = "de.cau.cs.kieler.kiml.grana.views.analysisResults";
 
     /** the displayed html. */
     private String html;
@@ -54,8 +54,7 @@ public class AnalysisResultViewPart extends ViewPart {
      * @return the active analysis result view, or {@code null} if there is none
      */
     public static AnalysisResultViewPart findView() {
-        IWorkbenchWindow activeWindow =
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         if (activeWindow != null) {
             IWorkbenchPage activePage = activeWindow.getActivePage();
             if (activePage != null) {
@@ -73,12 +72,22 @@ public class AnalysisResultViewPart extends ViewPart {
             browser = new Browser(parent, SWT.NONE);
             browser.setLayoutData(new GridData(GridData.FILL_BOTH));
 
+            // activate the view visualization method
+            VisualizationService.getInstance().setActive(ViewVisualizationMethod.class, true);
         } catch (SWTError e) {
-            IStatus status =
-                    new Status(IStatus.ERROR, CoreUIPlugin.PLUGIN_ID,
-                            "Could not instantiate Browser.", e);
+            IStatus status = new Status(IStatus.ERROR, CoreUIPlugin.PLUGIN_ID,
+                    "Could not instantiate Browser.", e);
             StatusManager.getManager().handle(status, StatusManager.LOG);
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void dispose() {
+        VisualizationService.getInstance().setActive(ViewVisualizationMethod.class, false);
+        super.dispose();
     }
 
     /**
@@ -93,8 +102,7 @@ public class AnalysisResultViewPart extends ViewPart {
      * @param boundVisualizations
      *            the visualizations
      */
-    public void setAnalysisResults(
-            final List<BoundVisualization> boundVisualizations) {
+    public void setAnalysisResults(final List<BoundVisualization> boundVisualizations) {
         html = HtmlResultGenerator.generate(boundVisualizations);
         if (html != null && browser != null) {
             browser.setText(html);

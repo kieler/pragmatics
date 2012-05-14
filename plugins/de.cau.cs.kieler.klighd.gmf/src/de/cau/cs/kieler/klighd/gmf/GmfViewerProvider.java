@@ -29,12 +29,12 @@ import de.cau.cs.kieler.klighd.IViewerProvider;
  * 
  * @author mri
  */
-public class GmfViewerProvider implements IViewerProvider {
+public class GmfViewerProvider implements IViewerProvider<Diagram> {
 
     /**
      * {@inheritDoc}
      */
-    public IViewer<?> createViewer(final Composite parent) {
+    public IViewer<Diagram> createViewer(final Composite parent) {
         DefaultEditDomain editDomain = new DefaultEditDomain(null);
         DiagramGraphicalViewer graphicalViewer = new DiagramGraphicalViewer();
         graphicalViewer.createControl(parent);
@@ -54,7 +54,7 @@ public class GmfViewerProvider implements IViewerProvider {
     /**
      * {@inheritDoc}
      */
-    public Class<?> getModelClass() {
+    public Class<Diagram> getModelClass() {
         return Diagram.class;
     }
 

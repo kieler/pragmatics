@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Control;
 
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.IViewerEventListener;
-import de.cau.cs.kieler.klighd.util.KlighdColor;
 
 /**
  * A viewer for string messages.
@@ -65,6 +64,20 @@ public class StringViewer implements IViewer<String> {
      * {@inheritDoc}
      */
     public void setModel(final String model) {
+        setModel(model, false);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getModel() {
+        return message;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void setModel(final String model, final boolean sync) {
         if (model == null) {
             return;
         }
@@ -72,19 +85,11 @@ public class StringViewer implements IViewer<String> {
             message = model;
         }
     }
-
+    
     /**
      * {@inheritDoc}
      */
-    public void setHighlight(final Object[] diagramElements, final KlighdColor foreground,
-            final KlighdColor background, final float lineWidthFactor) {
-        // do nothing
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void removeHighlight(final Object[] diagramElements) {
+    public void setRecording(final boolean recording) {
         // do nothing
     }
     

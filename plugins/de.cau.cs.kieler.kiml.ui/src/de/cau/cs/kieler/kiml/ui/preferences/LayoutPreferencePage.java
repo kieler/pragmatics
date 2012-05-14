@@ -49,6 +49,7 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.LayoutOptionValidator;
 import de.cau.cs.kieler.kiml.ui.LayouterHintDialog;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
@@ -60,6 +61,12 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
  */
 public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
+    /** checkbox for animation. */
+    private Button animationCheckBox;
+    /** checkbox for zoom-to-fit. */
+    private Button zoomCheckBox;
+    /** checkbox for progress dialog. */
+    private Button progressCheckBox;
     /** checkbox for edge routing style. */
     private Button obliqueCheckBox;
     /** list of layout option entries. */
@@ -104,13 +111,28 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         Group generalGroup = new Group(parent, SWT.NONE);
         generalGroup.setText(Messages.getString("kiml.ui.35")); //$NON-NLS-1$
         
+        // add checkbox for animation
+        animationCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
+        animationCheckBox.setText(Messages.getString("kiml.ui.64")); //$NON-NLS-1$
+        animationCheckBox.setSelection(getPreferenceStore().getBoolean(LayoutHandler.PREF_ANIMATION));
+        
+        // add checkbox for zoom-to-fit
+        zoomCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
+        zoomCheckBox.setText(Messages.getString("kiml.ui.65")); //$NON-NLS-1$
+        zoomCheckBox.setSelection(getPreferenceStore().getBoolean(LayoutHandler.PREF_ZOOM));
+        
+        // add checkbox for progress dialog
+        progressCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
+        progressCheckBox.setText(Messages.getString("kiml.ui.66")); //$NON-NLS-1$
+        progressCheckBox.setSelection(getPreferenceStore().getBoolean(LayoutHandler.PREF_PROGRESS));
+        
         // add checkbox for oblique routing
         obliqueCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
         obliqueCheckBox.setText(Messages.getString("kiml.ui.36")); //$NON-NLS-1$
         obliqueCheckBox.setSelection(getPreferenceStore().getBoolean(
                 EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE));
         
-        FillLayout layout = new FillLayout();
+        FillLayout layout = new FillLayout(SWT.VERTICAL);
         layout.marginWidth = MARGIN_WIDTH;
         layout.marginHeight = MARGIN_HEIGHT;
         generalGroup.setLayout(layout);
@@ -404,8 +426,13 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     @Override
     protected void performDefaults() {
         super.performDefaults();
+        IPreferenceStore preferenceStore = getPreferenceStore();
+        
         // set default values for the general options
-        obliqueCheckBox.setSelection(getPreferenceStore().getDefaultBoolean(
+        animationCheckBox.setSelection(preferenceStore.getDefaultBoolean(LayoutHandler.PREF_ANIMATION));
+        zoomCheckBox.setSelection(preferenceStore.getDefaultBoolean(LayoutHandler.PREF_ZOOM));
+        progressCheckBox.setSelection(preferenceStore.getDefaultBoolean(LayoutHandler.PREF_PROGRESS));
+        obliqueCheckBox.setSelection(preferenceStore.getDefaultBoolean(
                 EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE));
         
         // clear the layout options table
@@ -421,8 +448,13 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     @Override
     public boolean performOk() {
         EclipseLayoutInfoService infoService = EclipseLayoutInfoService.getInstance();
+        IPreferenceStore preferenceStore = getPreferenceStore();
+        
         // set new values for the general options
-        getPreferenceStore().setValue(EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE,
+        preferenceStore.setValue(LayoutHandler.PREF_ANIMATION, animationCheckBox.getSelection());
+        preferenceStore.setValue(LayoutHandler.PREF_ZOOM, zoomCheckBox.getSelection());
+        preferenceStore.setValue(LayoutHandler.PREF_PROGRESS, progressCheckBox.getSelection());
+        preferenceStore.setValue(EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE,
                 obliqueCheckBox.getSelection());
         
         // store data for the diagram element and diagram type options
@@ -436,12 +468,12 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                 if (newValue == null) {
                     infoService.removeOptionValue(entry.getElementId(),
                             entry.getOptionData().getId());
-                    getPreferenceStore().setToDefault(preference);
+                    preferenceStore.setToDefault(preference);
                     infoService.getRegisteredElements().remove(entry.getElementId());
                 } else {
                     infoService.addOptionValue(entry.getElementId(),
                             entry.getOptionData().getId(), newValue);
-                    getPreferenceStore().setValue(preference, newValue.toString());
+                    preferenceStore.setValue(preference, newValue.toString());
                     if (entry.getType() != ElementType.DIAG_TYPE) {
                         infoService.getRegisteredElements().add(entry.getElementId());
                     }

@@ -152,27 +152,24 @@ public class LayoutOptionManager {
         // create a layout context for the current graph element
         LayoutContext context = new LayoutContext();
         context.setProperty(LayoutContext.GRAPH_ELEM, graphElement);
-        context.setProperty(LayoutContext.DIAGRAM_PART,
-                layoutMapping.getGraphMap().get(graphElement));
+        Object diagramPart = layoutMapping.getGraphMap().get(graphElement);
+        context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
+        EObject modelElement = (EObject) layoutMapping.getAdapterFactory().getAdapter(
+                diagramPart, EObject.class);
+        context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
         IWorkbenchPart workbenchPart = layoutMapping.getProperty(IWorkbenchPart.class);
-        if (workbenchPart != null) {
-            context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
-        }
+        context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
+        
+        // add semantic configurations from the extension point
+        List<ILayoutConfig> semanticConfigs = getSemanticConfigs(modelElement);
+        config.addAll(semanticConfigs);
 
         // enrich the layout context using the basic configuration
         config.enrich(context);
 
-        // add semantic configurations from the extension point
-        EObject modelElement = context.getProperty(LayoutContext.DOMAIN_MODEL);
-        List<ILayoutConfig> semanticConfigs = getSemanticConfigs(modelElement);
-        for (ILayoutConfig sc : semanticConfigs) {
-            sc.enrich(context);
-            config.add(sc);
-        }
-
         // clear the previous configuration
-        KGraphData graphData = graphElement
-                .getData(graphElement instanceof KEdge ? KEdgeLayout.class : KShapeLayout.class);
+        KGraphData graphData = graphElement.getData(
+                graphElement instanceof KEdge ? KEdgeLayout.class : KShapeLayout.class);
         graphData.getProperties().clear();
         
         // transfer the options from the layout configuration

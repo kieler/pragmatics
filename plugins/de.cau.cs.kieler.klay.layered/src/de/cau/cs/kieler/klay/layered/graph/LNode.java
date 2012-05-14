@@ -284,14 +284,15 @@ public class LNode extends LShape {
     }
 
     /**
-     * Returns the position of this node's anchor point. This position depends on the graph's
-     * {@link de.cau.cs.kieler.klay.layered.properties.Properties#INTERACTIVE_LAYOUT_ANCHOR} property.
+     * Returns the position of this node's interactive reference point. This position depends on the
+     * graph's {@link Properties#INTERACTIVE_REFERENCE_POINT} property. It determines on which
+     * basis node positions are compared with each other in interactive layout phases.
      * 
      * @param graph the layered graph.
-     * @return the anchor point position.
+     * @return the node's anchor point position.
      */
-    public KVector getAnchorPointPosition(final LayeredGraph graph) {
-        switch (graph.getProperty(Properties.INTERACTIVE_LAYOUT_ANCHOR)) {
+    public KVector getInteractiveReferencePoint(final LayeredGraph graph) {
+        switch (graph.getProperty(Properties.INTERACTIVE_REFERENCE_POINT)) {
         case CENTER:
             KVector nodePos = getPosition();
             KVector nodeSize = getSize();

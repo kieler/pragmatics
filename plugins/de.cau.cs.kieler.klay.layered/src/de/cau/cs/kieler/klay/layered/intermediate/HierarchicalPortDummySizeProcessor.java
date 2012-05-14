@@ -20,6 +20,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
@@ -105,6 +106,12 @@ public class HierarchicalPortDummySizeProcessor extends AbstractAlgorithm implem
         
         for (LNode node : nodes) {
             node.getSize().x = currentWidth;
+            
+            // Move eastern ports to the node's right border
+            for (LPort port : node.getPorts(PortSide.EAST)) {
+                port.getPosition().x = currentWidth;
+            }
+            
             currentWidth += step;
         }
     }

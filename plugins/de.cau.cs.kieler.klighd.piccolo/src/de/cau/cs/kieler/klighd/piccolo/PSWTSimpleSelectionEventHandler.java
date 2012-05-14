@@ -23,6 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath;
 
 import edu.umd.cs.piccolo.PCamera;
@@ -38,8 +40,7 @@ import edu.umd.cs.piccolo.util.PNodeFilter;
  * This handler provides simple interaction for node selection. Clicking selects the object under
  * the cursor and dragging with control pressed offers marquee selection. This handler does not
  * modify the selected nodes in any way, it just provides selection functionality. Much of the
- * implementation is based on {@code PSelectionEventHandler}.<br> <br>
- * The selection is visualized by applying a highlighting effect using {@code HighlightUtil}.
+ * implementation is based on {@code PSelectionEventHandler}.
  * 
  * @author mri
  */
@@ -92,11 +93,7 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
      * @return true if the node was newly added to the selection; false else
      */
     public boolean select(final PNode node) {
-        if (internalSelect(node)) {
-            notifyListeners();
-            return true;
-        }
-        return false;
+        return internalSelect(node);
     }
 
     private boolean internalSelect(final PNode node) {
@@ -104,7 +101,7 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
             return false;
         }
         if (selectedNodes.add(node)) {
-            HighlightUtil.setSelectionHighlight(node);
+            notifyListenersSelected(node);
             return true;
         }
         return false;
@@ -117,14 +114,14 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
      *            the nodes
      */
     public void select(final Collection<PNode> nodes) {
-        boolean unselected = false;
+        boolean selected = false;
         for (PNode node : nodes) {
             if (internalSelect(node)) {
-                unselected = true;
+                selected = true;
             }
         }
-        if (unselected) {
-            notifyListeners();
+        if (selected) {
+            notifyListenersSelection();
         }
     }
 
@@ -136,16 +133,12 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
      * @return true if the node has been removed from the selection; false else
      */
     public boolean unselect(final PNode node) {
-        if (internalUnselect(node)) {
-            notifyListeners();
-            return true;
-        }
-        return false;
+        return internalUnselect(node);
     }
 
     private boolean internalUnselect(final PNode node) {
         if (selectedNodes.remove(node)) {
-            HighlightUtil.removeSelectionHighlight(node);
+            notifyListenersUnselected(node);
             return true;
         }
         return false;
@@ -165,7 +158,7 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
             }
         }
         if (unselected) {
-            notifyListeners();
+            notifyListenersSelection();
         }
     }
 
@@ -173,14 +166,7 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
      * Removes all nodes from the selection.
      */
     public void unselectAll() {
-        for (PNode node : selectedNodes) {
-            HighlightUtil.removeSelectionHighlight(node);
-        }
-        boolean unselected = selectedNodes.size() > 0;
-        selectedNodes.clear();
-        if (unselected) {
-            notifyListeners();
-        }
+        unselect(getSelection());
     }
 
     /**
@@ -194,6 +180,15 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
         return node != null && selectedNodes.contains(node);
     }
 
+    /**
+     * Returns a copy of the current selection.
+     * 
+     * @return the current selection
+     */
+    public Set<PNode> getSelection() {
+        return Sets.newLinkedHashSet(selectedNodes);
+    }
+    
     /**
      * Returns the current selection.
      * 
@@ -223,12 +218,24 @@ public class PSWTSimpleSelectionEventHandler extends PDragSequenceEventHandler {
         listeners.remove(listener);
     }
 
-    private void notifyListeners() {
+    private void notifyListenersSelection() {
         for (INodeSelectionListener listener : listeners) {
-            listener.selected(this, getSelectionReference());
+            listener.selection(this, getSelection());
+        }
+    }
+    
+    private void notifyListenersSelected(final PNode selectedNode) {
+        for (INodeSelectionListener listener : listeners) {
+            listener.selected(this, selectedNode);
         }
     }
 
+    private void notifyListenersUnselected(final PNode unselectedNode) {
+        for (INodeSelectionListener listener : listeners) {
+            listener.unselected(this, unselectedNode);
+        }
+    }
+    
     /**
      * {@inheritDoc}
      */

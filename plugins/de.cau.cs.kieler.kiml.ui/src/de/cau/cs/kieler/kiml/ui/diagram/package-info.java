@@ -14,7 +14,6 @@
 
 /**
  * Generic API for layout of graphical diagrams. Use {@link DiagramLayoutEngine} to
- * perform layout on a diagram, or {@link LayoutEffect} to do this from the
- * KIELER View Management.
+ * perform layout on a diagram.
  */
 package de.cau.cs.kieler.kiml.ui.diagram;

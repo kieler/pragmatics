@@ -15,13 +15,12 @@ package de.cau.cs.kieler.kiml;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
@@ -63,33 +62,27 @@ public class LayoutDataService {
     /** the instance of the registry class. */
     private Registry registry = null;
     /** mapping of layout provider identifiers to their data instances. */
-    private final Map<String, LayoutAlgorithmData> layoutAlgorithmMap
-            = new LinkedHashMap<String, LayoutAlgorithmData>();
+    private final Map<String, LayoutAlgorithmData> layoutAlgorithmMap = Maps.newLinkedHashMap();
     /** mapping of layout option identifiers to their data instances. */
-    private final Map<String, LayoutOptionData<?>> layoutOptionMap
-            = new LinkedHashMap<String, LayoutOptionData<?>>();
+    private final Map<String, LayoutOptionData<?>> layoutOptionMap = Maps.newLinkedHashMap();
     /** mapping of layout type identifiers to their data instances. */
-    private final Map<String, LayoutTypeData> layoutTypeMap
-            = new LinkedHashMap<String, LayoutTypeData>();
+    private final Map<String, LayoutTypeData> layoutTypeMap = Maps.newLinkedHashMap();
     /** mapping of category identifiers to their names. */
-    private final Map<String, String> categoryMap = new HashMap<String, String>();
+    private final Map<String, String> categoryMap = Maps.newHashMap();
     
     /** additional map of layout algorithm suffixes to data instances. */
-    private final Map<String, LayoutAlgorithmData> algorithmSuffixMap
-            = new HashMap<String, LayoutAlgorithmData>();
+    private final Map<String, LayoutAlgorithmData> algorithmSuffixMap = Maps.newHashMap();
     /** additional map of layout option suffixes to data instances. */
-    private final Map<String, LayoutOptionData<?>> optionSuffixMap
-            = new HashMap<String, LayoutOptionData<?>>();
+    private final Map<String, LayoutOptionData<?>> optionSuffixMap = Maps.newHashMap();
     /** additional map of layout type suffixes to data instances. */
-    private final Map<String, LayoutTypeData> typeSuffixMap
-            = new HashMap<String, LayoutTypeData>();
+    private final Map<String, LayoutTypeData> typeSuffixMap = Maps.newHashMap();
 
     /** The list of valid layout data service identifiers. */
     private static List<String> validDataServices = Lists.newArrayList(ECLIPSEDATASERVICE,
             REMOTEDATASERVICE, SERVICEDATASERVICE);
 
     /** Map of registered data services indexed by class name. */
-    private static Map<String, LayoutDataService> instances = new HashMap<String, LayoutDataService>();
+    private static Map<String, LayoutDataService> instances = Maps.newHashMap();
 
     /** the the currently used layout data service. */
     private static LayoutDataService current;

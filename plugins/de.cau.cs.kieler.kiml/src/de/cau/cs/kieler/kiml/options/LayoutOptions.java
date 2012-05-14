@@ -107,7 +107,7 @@ public final class LayoutOptions {
      * offset the port is moved towards the inside. [programmatically set]
      */
     public static final IProperty<Float> OFFSET = new Property<Float>(
-            "de.cau.cs.kieler.offset", 0f);
+            "de.cau.cs.kieler.offset");
     
     /**
      * On which side of its corresponding node a port is situated. [programmatically set]
