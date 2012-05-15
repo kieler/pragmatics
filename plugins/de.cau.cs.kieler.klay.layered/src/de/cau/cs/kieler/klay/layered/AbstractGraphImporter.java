@@ -120,6 +120,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
             } else {
                 finalExternalPortSide = PortSide.WEST;
             }
+            portLayout.setProperty(LayoutOptions.PORT_SIDE, finalExternalPortSide);
         }
         
         // With the port side at hand, set the necessary properties and place the dummy's port
