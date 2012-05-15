@@ -47,18 +47,16 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  */
 public class KGraphRenderer {
     
-    /** default alpha value for nodes. */
-    private static final int NODE_ALPHA = 100;
     /** default font size for nodes. */
     private static final int NODE_FONT_SIZE = 9;
     /** default font size for ports. */
-    private static final int PORT_FONT_SIZE = 5;
+    private static final int PORT_FONT_SIZE = 6;
     /** default font size for edges. */
     private static final int EDGE_FONT_SIZE = 8;
     /** default length of edge arrows. */
-    private static final double ARROW_LENGTH = 7.0f;
+    private static final double ARROW_LENGTH = 8.0f;
     /** default width of edge arrows. */
-    private static final double ARROW_WIDTH = 5.0f;
+    private static final double ARROW_WIDTH = 7.0f;
     
     /** mapping of each layout graph element to its computed bounds. */
     private Map<Object, PaintRectangle> boundsMap = new LinkedHashMap<Object, PaintRectangle>();
@@ -138,10 +136,8 @@ public class KGraphRenderer {
         /**
          * Creates a paint rectangle from a shape layout object.
          * 
-         * @param shapeLayout
-         *            shape layout from which values shall be taken
-         * @param offset
-         *            offset to be added to coordinate values
+         * @param shapeLayout shape layout from which values shall be taken
+         * @param offset offset to be added to coordinate values
          */
         PaintRectangle(final KShapeLayout shapeLayout, final KVector offset) {
             this.x = (int) Math.round(shapeLayout.getXpos() + offset.x);
@@ -153,10 +149,8 @@ public class KGraphRenderer {
         /**
          * Creates a paint rectangle from an edge layout object.
          * 
-         * @param edgeLayout
-         *            edge layout from which the values shall be determined
-         * @param offset
-         *            offset to be added to coordinate values
+         * @param edgeLayout edge layout from which the values shall be determined
+         * @param offset offset to be added to coordinate values
          */
         PaintRectangle(final KEdgeLayout edgeLayout, final KVector offset) {
             float minX = edgeLayout.getSourcePoint().getX(), minY = edgeLayout.getSourcePoint()
@@ -181,8 +175,7 @@ public class KGraphRenderer {
         /**
          * Determines whether the given rectangle intersects with the receiver.
          * 
-         * @param other
-         *            the rectangle to check for intersection
+         * @param other the rectangle to check for intersection
          * @return true if the other rectangle intersects with this one
          */
         public boolean intersects(final Rectangle other) {
@@ -199,21 +192,41 @@ public class KGraphRenderer {
      * @param area the area to fill
      */
     public void render(final KNode parentNode, final GC graphics, final Rectangle area) {
-        // determine an overall alpha value for nodes
-        int maxDepth = 0;
+        // determine an overall alpha value for nodes, depending on the maximal node depth
+        int maxDepth = Math.max(maxDepth(parentNode), 1);
+        int nodeAlpha = 200 / maxDepth + 55;
         
+        // render the nodes and ports
         KVector offset = new KVector();
         KimlUtil.toAbsolute(offset, parentNode);
         Set<KEdge> edgeSet = new HashSet<KEdge>();
-        renderNode(parentNode, graphics, area, offset, edgeSet);
+        renderNode(parentNode, graphics, area, offset, edgeSet, nodeAlpha);
         
+        // render the edges
         graphics.setForeground(edgeColor);
         graphics.setBackground(edgeColor);
-        graphics.setAlpha(0);
+        graphics.setAlpha(255);
         graphics.setFont(edgeFont);
         for (KEdge edge : edgeSet) {
             renderEdge(edge, graphics, area);
         }
+    }
+    
+    /**
+     * Determine the maximal depth of the given graph.
+     * 
+     * @param parent the parent node of the graph
+     * @return the maximal depth of contained nodes
+     */
+    private int maxDepth(final KNode parent) {
+        int maxDepth = 0;
+        for (KNode child : parent.getChildren()) {
+            int depth = maxDepth(child) + 1;
+            if (depth > maxDepth) {
+                maxDepth = depth;
+            }
+        }
+        return maxDepth;
     }
 
     /**
@@ -235,30 +248,31 @@ public class KGraphRenderer {
                 boundsMap.put(child, rect);
             }
             KVector childOffset = new KVector(rect.x, rect.y);
-
-            // render ports
-            for (KPort port : node.getPorts()) {
-                renderPort(port, graphics, area, childOffset);
-            }
-
+            
+            // render the child node and its content
             graphics.setForeground(nodeBorderColor);
             graphics.setBackground(nodeFillColor);
-            graphics.setAlpha(0);
+            if (!rect.painted && rect.intersects(area)) {
+                graphics.setAlpha(nodeAlpha);
+                graphics.fillRectangle(rect.x, rect.y, rect.width, rect.height);
+                graphics.drawRectangle(rect.x, rect.y, rect.width, rect.height);
+                rect.painted = true;
+                KVector contentOffset = new KVector(childOffset);
+                KInsets insets = child.getData(KShapeLayout.class).getInsets();
+                contentOffset.translate(insets.getLeft(), insets.getTop());
+                renderNode(child, graphics, area, contentOffset, edgeSet, nodeAlpha);
+            }
+
+            graphics.setAlpha(255);
             graphics.setFont(nodeFont);
             // render node labels
             for (KLabel label : child.getLabels()) {
                 renderLabel(label, graphics, area, childOffset);
             }
-            
-            if (!rect.painted && rect.intersects(area)) {
-                // render the child node and its content
-                graphics.setAlpha(NODE_ALPHA);
-                graphics.fillRectangle(rect.x, rect.y, rect.width, rect.height);
-                graphics.drawRectangle(rect.x, rect.y, rect.width, rect.height);
-                rect.painted = true;
-                KInsets insets = child.getData(KShapeLayout.class).getInsets();
-                childOffset.translate(insets.getLeft(), insets.getTop());
-                renderNode(child, graphics, area, childOffset, edgeSet, nodeAlpha);
+
+            // render ports
+            for (KPort port : child.getPorts()) {
+                renderPort(port, graphics, area, childOffset);
             }
 
             // store all incident edges to render them later
@@ -285,7 +299,7 @@ public class KGraphRenderer {
         }
         if (!rect.painted && rect.intersects(area)) {
             String text = label.getText();
-            if (text != null) {
+            if (text != null && text.length() > 0) {
                 graphics.drawString(text, rect.x, rect.y, true);
             }
             rect.painted = true;
@@ -305,7 +319,7 @@ public class KGraphRenderer {
         graphics.setForeground(portColor);
         graphics.setBackground(portColor);
         graphics.setFont(portFont);
-        graphics.setAlpha(0);
+        graphics.setAlpha(255);
         PaintRectangle rect = boundsMap.get(port);
         if (rect == null) {
             rect = new PaintRectangle(port.getData(KShapeLayout.class), offset);
