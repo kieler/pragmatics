@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -107,7 +108,7 @@ public class DiagramLayoutEngine {
      * @param zoom
      *            if true, automatic zoom-to-fit is activated
      * @param extraLayoutConfigs
-     *            list of additional layout configurations to use
+     *            list of additional layout configurations to use, or {@code null}
      * @return the layout mapping used in this session
      */
     public LayoutMapping<?> layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
@@ -118,12 +119,16 @@ public class DiagramLayoutEngine {
         if (layoutManager != null) {
             LayoutMapping<?> mapping = layout(layoutManager, workbenchPart, diagramPart, animate,
                     progressBar, layoutAncestors, zoom, extraLayoutConfigs);
-            mapping.setProperty(DIAGRAM_LM, layoutManager);
+            if (mapping != null) {
+                mapping.setProperty(DIAGRAM_LM, layoutManager);
+            }
             return mapping;
         } else {
-            throw new UnsupportedOperationException(workbenchPart == null
+            IStatus status = new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID, workbenchPart == null
                     ? Messages.getString("kiml.ui.17")
                     : Messages.getString("kiml.ui.15") + workbenchPart.getTitle() + ".");
+            StatusManager.getManager().handle(status, StatusManager.SHOW);
+            return null;
         }
     }
 
@@ -153,7 +158,7 @@ public class DiagramLayoutEngine {
      * @param zoom
      *            if true, automatic zoom-to-fit is activated
      * @param extraLayoutConfigs
-     *            list of additional layout configurations to use
+     *            list of additional layout configurations to use, or {@code null}
      * @return the layout mapping used in this session
      */
     protected <T> LayoutMapping<T> layout(final IDiagramLayoutManager<T> layoutManager,
@@ -166,8 +171,9 @@ public class DiagramLayoutEngine {
             // first phase: build the layout graph
             @Override
             protected void preUIexec() {
-                if (workbenchPart != null
-                        && workbenchPart.getSite().getPage().isPartVisible(workbenchPart)) {
+                // check for visibility of the given workbench part
+                if (workbenchPart == null
+                        || workbenchPart.getSite().getPage().isPartVisible(workbenchPart)) {
                     layoutMapping.set(layoutManager.buildLayoutGraph(workbenchPart,
                             layoutAncestors ? null : diagramPart));
                 }
@@ -178,9 +184,9 @@ public class DiagramLayoutEngine {
             protected IStatus execute(final IProgressMonitor monitor) {
                 IStatus status;
                 if (layoutMapping.get() == null) {
-                    // an error has occured while building the layout graph
-                    status = new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
-                            Messages.getString("kiml.ui.62")); 
+                    // the given workbench part is not visible; return silently in this case
+                    System.out.println("silent return");
+                    return null;
                 } else {
                     IKielerProgressMonitor kielerMonitor;
                     if (monitor == null) {
@@ -195,15 +201,17 @@ public class DiagramLayoutEngine {
                     status = layout(layoutMapping.get(), transDiagPart, kielerMonitor,
                             extraLayoutConfigs, layoutAncestors);
                     kielerMonitor.done();
+                    return status;
                 }
-                return status;
             }
 
             // third phase: apply layout with animation
             @Override
             protected void postUIexec() {
-                int animationTime = calcAnimationTime(layoutMapping.get(), animate);
-                layoutManager.applyLayout(layoutMapping.get(), zoom, animationTime);
+                if (layoutMapping.get() != null) {
+                    int animationTime = calcAnimationTime(layoutMapping.get(), animate);
+                    layoutManager.applyLayout(layoutMapping.get(), zoom, animationTime);
+                }
             }
         };
 
@@ -275,7 +283,7 @@ public class DiagramLayoutEngine {
         if (layoutManager != null) {
             return layout(layoutManager, workbenchPart, diagramPart, progressMonitor);
         } else {
-            throw new UnsupportedOperationException(Messages.getString("kiml.ui.17"));
+            return new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID, Messages.getString("kiml.ui.17"));
         }
     }
     
@@ -458,11 +466,11 @@ public class DiagramLayoutEngine {
                 progressMonitor.done();
             }
             if (progressMonitor.isCanceled()) {
-                return new Status(IStatus.CANCEL, KimlUiPlugin.PLUGIN_ID,  null);
+                return Status.CANCEL_STATUS;
             }
             
             // return a positive status
-            return new Status(IStatus.OK, KimlUiPlugin.PLUGIN_ID, null);
+            return Status.OK_STATUS;
             
         } catch (Throwable exception) {
             return new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
