@@ -185,7 +185,6 @@ public class DiagramLayoutEngine {
                 IStatus status;
                 if (layoutMapping.get() == null) {
                     // the given workbench part is not visible; return silently in this case
-                    System.out.println("silent return");
                     return null;
                 } else {
                     IKielerProgressMonitor kielerMonitor;
