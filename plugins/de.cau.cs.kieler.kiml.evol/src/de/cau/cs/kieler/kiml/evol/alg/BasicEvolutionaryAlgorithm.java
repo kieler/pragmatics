@@ -20,7 +20,6 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  * Implementation of an evolutionary algorithm.
  *
  * @author bdu
- *
  */
 public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
 
@@ -38,7 +37,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         population.addAll(0, thePopulation.getGenomes());
 
         setSelectionOperation(new SelectionOperation());
-        setCrossOverOperation(new CrossOverOperation());
+        setCrossoverOperation(new CrossOverOperation());
         setMutationOperation(new MutationOperation());
         setSurvivalOperation(new SurvivalOperation());
         setEvaluationOperation(new EvaluationOperation());
@@ -46,30 +45,13 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         reset();
     }
 
-
-    @Override
-    public final void reset() {
-        System.out.println("*** initialize");
-        super.reset();
-        // obtain more initial diversity by performing some mutations
-        final int some = 20;
-        for (int i = 0; i < some; i++) {
-            mutate();
-        }
-        System.out.println("  population: " + getPopulation());
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final boolean isDone() {
-        // no stop criterion here -- algorithm shall run forever
+        // no stop criterion here -- algorithm shall be able run forever
         return false;
     }
-
-
-    // To obtain a constant population size, the following condition must hold:
-    // ((POP_SIZE * SURV_R + (POP_SIZE * SEL_R * CRO_R)) * SURV_R) == POP_SIZE
-    // private double surv() {
-    // return (1 / (1 + (SELECTION_RATIO * CROSS_OVER_RATIO)));
-    // }
 
 }

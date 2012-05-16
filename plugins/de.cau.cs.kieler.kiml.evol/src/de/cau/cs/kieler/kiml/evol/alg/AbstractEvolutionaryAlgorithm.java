@@ -26,6 +26,40 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  * @author bdu
  */
 public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
+    
+    /**
+     * Null Operation: leaves the given {@link Population} unaltered. Use this as
+     * dummy if you don't want an operation to be done.
+     */
+    private static class NullOperation implements IEvolutionaryOperation {
+        /**
+         * {@inheritDoc}
+         */
+        public void process(final Population population) {
+            // Intentionally left empty.
+        }
+    }
+
+    /** The number of the current generation. */
+    private int generationNumber = 0;
+
+    /** The current population. */
+    private final Population population = new Population();
+
+    /** The selection operation. */
+    private IEvolutionaryOperation selectionOperation = new NullOperation();
+
+    /** The mutation operation. */
+    private IEvolutionaryOperation mutationOperation = new NullOperation();
+
+    /** The cross over operation. */
+    private IEvolutionaryOperation crossoverOperation = new NullOperation();
+
+    /** The survival operation. */
+    private IEvolutionaryOperation survivalOperation = new NullOperation();
+
+    /** The evaluation operation. */
+    private IEvolutionaryOperation evaluationOperation = new NullOperation();
 
     /**
      * Returns the generation number. The generation number is initially
@@ -35,7 +69,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      * @return the generation number
      */
     public final int getGenerationNumber() {
-        return this.generationNumber;
+        return generationNumber;
     }
 
     /**
@@ -53,10 +87,10 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
                     "No further steps may be performed after the stop criterion has been satisfied.");
         }
 
-        if (this.generationNumber > 0) {
+        if (generationNumber > 0) {
             survive();
         }
-        this.generationNumber++;
+        generationNumber++;
         select();
         crossOver();
         mutate();
@@ -69,36 +103,43 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      *
      * @return A boolean value that indicates if stop criterion is satisfied.
      *
-     * **/
+     */
     public abstract boolean isDone();
 
     /**
      * Initializes the population. Extending classes that wish to call
      * {@link #step()} must ensure that this method is called exactly once
      * before.
-     **/
+     */
     @Override
     public void reset() {
         super.reset();
-        this.generationNumber = 0;
+        generationNumber = 0;
     }
 
-    /** Determines fitness values for all individuals. **/
+    /**
+     * Returns the collection of individuals.
+     *
+     * @return population
+     */
+    public final Population getPopulation() {
+        return population;
+    }
+
+    /**
+     * Determines fitness values for all individuals.
+     */
     protected final void determineFitness() {
-        System.out.println("*** determineFitness");
-        // presumes evaluationOperation != null
-        this.evaluationOperation.process(this.population);
+        evaluationOperation.process(population);
     }
 
     /**
      * Selects parent individuals for recombination, depending on some strategy
      * for parent selection. This can be the entire current population or a
      * subset thereof.
-     **/
+     */
     protected final void select() {
-        System.out.println("*** select");
-        // presumes selectionOperation != null
-        this.selectionOperation.process(this.population);
+        selectionOperation.process(population);
     }
 
     /**
@@ -109,24 +150,18 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      * single one. The genetic material of two or more parent individuals is put
      * together to produce one or more offspring. How this is done may vary
      * widely among different implementations.
-     *
-     **/
+     */
     protected final void crossOver() {
-        System.out.println("*** cross over");
-        // presumes crossOverOperation != null
-        this.crossOverOperation.process(this.population);
+        crossoverOperation.process(population);
     }
 
     /**
      * Mutates offspring, depending on some mutation strategy. The mutation
      * operation serves to introduce new genetic material into the population by
      * altering the existing material in a random fashion.
-     *
-     **/
+     */
     protected final void mutate() {
-        System.out.println("*** mutate");
-        // presumes mutationOperation != null
-        this.mutationOperation.process(this.population);
+        mutationOperation.process(population);
     }
 
     /**
@@ -136,119 +171,104 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      * strategy, only newly generated individuals or also parent individuals may
      * be considered for survival. The fitness of an individual should have a
      * major influence on its chance for survival.
-     *
-     **/
+     */
     protected final void survive() {
-        System.out.println("*** survive");
-        // presumes survivalOperation != null
-        this.survivalOperation.process(this.population);
+        survivalOperation.process(population);
     }
 
     /**
-     * @return the survivalOperation
+     * Returns the survival operation, which is used for {@link #survive()}.
+     * 
+     * @return the survival operation
      */
     protected final IEvolutionaryOperation getSurvivalOperation() {
         return this.survivalOperation;
     }
 
     /**
+     * Sets the survival operation, which is used for {@link #survive()}.
+     * 
      * @param theSurvivalOperation
-     *            the survivalOperation to set
+     *            the survival operation to set
      */
     protected final void setSurvivalOperation(final IEvolutionaryOperation theSurvivalOperation) {
         this.survivalOperation = theSurvivalOperation;
     }
 
     /**
-     * Returns the collection of individuals.
-     *
-     * @return population
-     */
-    public final Population getPopulation() {
-        return this.population;
-    }
-
-    /**
-     * @return the selectionOperation
+     * Returns the selection operation, which is used for {@link #select()}.
+     * 
+     * @return the selection operation
      */
     protected final IEvolutionaryOperation getSelectionOperation() {
         return this.selectionOperation;
     }
 
     /**
+     * Sets the selection operation, which is used for {@link #select()}.
+     * 
      * @param theSelectionOperation
-     *            the selectionOperation to set
+     *            the selection operation to set
      */
     protected final void setSelectionOperation(final IEvolutionaryOperation theSelectionOperation) {
         this.selectionOperation = theSelectionOperation;
     }
 
     /**
-     * @return the mutationOperation
+     * Returns the mutation operation, which is used for {@link #mutate()}.
+     * 
+     * @return the mutation operation
      */
     protected final IEvolutionaryOperation getMutationOperation() {
         return this.mutationOperation;
     }
 
     /**
+     * Sets the mutation operation, which is used for {@link #mutate()}.
+     * 
      * @param theMutationOperation
-     *            the mutationOperation to set
+     *            the mutation operation to set
      */
     protected final void setMutationOperation(final IEvolutionaryOperation theMutationOperation) {
         this.mutationOperation = theMutationOperation;
     }
 
     /**
-     * @return the crossoverOperation
+     * Returns the crossover operation, which is used for {@link #crossOver()}.
+     * 
+     * @return the crossover operation
      */
-    protected final IEvolutionaryOperation getCrossOverOperation() {
-        return this.crossOverOperation;
+    protected final IEvolutionaryOperation getCrossoverOperation() {
+        return this.crossoverOperation;
     }
 
     /**
-     * @param theCrossOverOperation
-     *            the crossoverOperation to set
+     * Sets the crossover operation, which is used for {@link #crossOver()}.
+     * 
+     * @param theCrossoverOperation
+     *            the crossover operation to set
      */
-    protected final void setCrossOverOperation(final IEvolutionaryOperation theCrossOverOperation) {
-        this.crossOverOperation = theCrossOverOperation;
+    protected final void setCrossoverOperation(final IEvolutionaryOperation theCrossoverOperation) {
+        this.crossoverOperation = theCrossoverOperation;
     }
 
     /**
-     * @return the evaluationOperation
+     * Returns the evaluation operation, which is used for {@link #determineFitness()}.
+     * 
+     * @return the evaluation operation
      */
     protected final IEvolutionaryOperation getEvaluationOperation() {
         return this.evaluationOperation;
     }
 
     /**
+     * Sets the evaluation operation, which is used for {@link #determineFitness()}.
+     * 
      * @param theEvaluationOperation
-     *            the evaluationOperation to set
+     *            the evaluation operation to set
      */
-    protected final void setEvaluationOperation(
-            final IEvolutionaryOperation theEvaluationOperation) {
+    protected final void setEvaluationOperation(final IEvolutionaryOperation theEvaluationOperation) {
         this.evaluationOperation = theEvaluationOperation;
     }
-
-    // private fields
-    /** The number of the current generation. */
-    private int generationNumber = 0;
-
-    /** The current population. */
-    private final Population population = new Population();
-
-    /** The selection operation. */
-    private IEvolutionaryOperation selectionOperation = new NullOperation();
-
-    /** The mutation operation. */
-    private IEvolutionaryOperation mutationOperation = new NullOperation();
-
-    /** The cross over operation. */
-    private IEvolutionaryOperation crossOverOperation = new NullOperation();
-
-    /** The survival operation. */
-    private IEvolutionaryOperation survivalOperation = new NullOperation();
-
-    /** The evaluation operation. */
-    private IEvolutionaryOperation evaluationOperation = new NullOperation();
 
 }

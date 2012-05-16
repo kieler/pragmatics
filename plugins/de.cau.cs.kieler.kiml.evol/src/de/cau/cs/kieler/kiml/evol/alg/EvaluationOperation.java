@@ -20,7 +20,6 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
  * @author bdu
- *
  */
 public class EvaluationOperation implements IEvolutionaryOperation {
 
@@ -29,7 +28,8 @@ public class EvaluationOperation implements IEvolutionaryOperation {
      */
     public final void process(final Population population) {
         // fitness is determined by the rating value.
-        System.out.println(population.getDetails());
+
+        // FIXME what is this? implement me!
     }
 
 }
