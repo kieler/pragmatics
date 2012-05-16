@@ -14,27 +14,31 @@
 package de.cau.cs.kieler.kiml.export.handlers;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.gmf.runtime.diagram.ui.OffscreenEditPartFactory;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
+import org.eclipse.gmf.runtime.notation.Diagram;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.kiml.service.TransformationService;
+import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
-import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
@@ -43,31 +47,20 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
  * 
  */
 public class GraphFileHandler {
-
     private File sourceFile;
     private String targetFormat;
     private IPath targetDirectory;
 
     private IPath workspacePath = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 
-    /** the last exception thrown inside the UI thread. */
-    private Throwable lastException;
-
-    /** the message for a missing eclipse editor. */
-    private static final String MESSAGE_NO_EDITOR = "The diagram file could not be opened in an eclipse editor.";
-
-    /** the message for an unsupported diagram editor. */
-    private static final String MESSAGE_NO_MANAGER = "The editor for the diagram file is not supported by KIML.";
-
-    /** the 'layout before analysis' option. */
-    private boolean layoutBeforeAnalysis;
-    /** the last created kgraph instance. */
-    private KNode graph;
-
     /**
+     * 
      * @param sourceFile
+     *            the source file
      * @param targetFormat
+     *            the target format(extension)
      * @param targetDirectory
+     *            the target directory
      */
     public GraphFileHandler(final File sourceFile, final String targetFormat,
             final IPath targetDirectory) {
@@ -78,10 +71,17 @@ public class GraphFileHandler {
     }
 
     /**
-     * @return the workspace sourceFile
+     * @return the Absolute sourceFile
      */
     public File getAbsoluteSourceFile() {
         return sourceFile;
+    }
+
+    /**
+     * @return the Workspace sourceFile
+     */
+    public File getWorkspaceSourceFile() {
+        return new File(sourceFile.toString().replaceFirst(workspacePath.toString(), "/"));
     }
 
     /**
@@ -129,11 +129,12 @@ public class GraphFileHandler {
     }
 
     /**
-     * @param targetDirectory
+     * @param tarDirectory 
      *            the targetDirectory to set
+     *            
      */
-    public void setDirectory(IPath targetDirectory) {
-        this.targetDirectory = targetDirectory;
+    public void setDirectory(final IPath tarDirectory) {
+        this.targetDirectory = tarDirectory;
     }
 
     /**
@@ -169,71 +170,85 @@ public class GraphFileHandler {
     }
 
     /**
-     * {@inheritDoc}
+     * @return the KGraph
      */
     public KNode getKGraph() {
+        // load the notation diagram element
+        URI uri = URI.createPlatformResourceURI(this.getWorkspaceSourceFile().toString(), true);
+        ResourceSet resourceSet = new ResourceSetImpl();
+        final Resource resource = resourceSet.createResource(uri);
+        try {
+            resource.load(Collections.emptyMap());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (resource.getContents().isEmpty() || !(resource.getContents().get(0) instanceof Diagram)) {
+            throw new IllegalArgumentException("The selected file does not contain a diagram.");
+        }
 
-        // get the diagram file
-        final IFile diagramFile = (IFile) this.getAbsoluteSourceFile();
-        lastException = null;
-        MonitoredOperation.runInUI(new Runnable() {
+        // create a diagram edit part
+        TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain(resourceSet);
+        final Maybe<DiagramEditPart> editPart = new Maybe<DiagramEditPart>();
+        final Maybe<RuntimeException> wrappedException = new Maybe<RuntimeException>();
+        Display.getDefault().syncExec(new Runnable() {
             public void run() {
-                IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                        .getActivePage();
-                // remember the initially opened editors
-                Set<IEditorPart> initialEditors = new HashSet<IEditorPart>();
-                for (IEditorReference editorReference : page.getEditorReferences()) {
-                    IEditorPart editor = editorReference.getEditor(false);
-                    if (editor != null) {
-                        initialEditors.add(editor);
-                    }
-                }
-                // open the diagram file in an editor
-                IEditorDescriptor editorDescriptor = IDE.getDefaultEditor(diagramFile);
-                if (editorDescriptor == null || editorDescriptor.isOpenExternal()) {
-                    // FIXME throw a more specific exception
-                    throw new RuntimeException(MESSAGE_NO_EDITOR);
-                }
-                IEditorPart editorPart;
                 try {
-                    editorPart = IDE.openEditor(page, diagramFile, editorDescriptor.getId(), true);
-                } catch (PartInitException e) {
-                    lastException = e;
-                    return;
-                }
-                // get the layout manager for the editor
-                IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance()
-                        .getManager(editorPart, null);
-                if (layoutManager == null) {
-                    if (!initialEditors.contains(editorPart)) {
-                        page.closeEditor(editorPart, false);
-                    }
-                    // FIXME throw a more specific exception
-                    lastException = new RuntimeException(MESSAGE_NO_MANAGER);
-                    return;
-                }
-                // build the graph
-                LayoutMapping<?> mapping = layoutManager.buildLayoutGraph(editorPart, null);
-                graph = mapping.getLayoutGraph();
-                // layout if the option is set
-                if (!initialEditors.contains(editorPart)) {
-                    page.closeEditor(editorPart, false);
+                    Diagram diagram = (Diagram) resource.getContents().get(0);
+                    OffscreenEditPartFactory offscreenFactory = OffscreenEditPartFactory
+                            .getInstance();
+                    editPart.set(offscreenFactory.createDiagramEditPart(diagram, new Shell()));
+                } catch (RuntimeException re) {
+                    wrappedException.set(re);
                 }
             }
-        }, true);
-        // throw any exceptions that occurred inside the UI thread
-        if (lastException != null) {
-            throw new RuntimeException(lastException);
+        });
+        if (wrappedException.get() != null) {
+            throw wrappedException.get();
         }
-        return graph;
+
+        // retrieve a kgraph representation of the diagram
+        LayoutMapping<?> mapping = EclipseLayoutInfoService.getInstance()
+                .getManager(null, editPart.get()).buildLayoutGraph(null, editPart.get());
+        KNode inputGraph = mapping.getLayoutGraph();
+
+        return inputGraph;
     }
 
-    private <T> String performExport(final KNode graph, final ITransformationHandler<T> transHandler) {
+    /**
+     * {@inheritDoc}
+     */
+    public <T> String performExport(final KNode kgraph, final ITransformationHandler<T> transHandler) {
         TransformationData<KNode, T> transData = new TransformationData<KNode, T>();
-        transData.setSourceGraph(graph);
+        transData.setSourceGraph(kgraph);
         IGraphTransformer<KNode, T> transformer = transHandler.getExporter();
         transformer.transform(transData);
         return transHandler.serialize(transData.getTargetGraphs().get(0));
+    }
+
+    /**
+     * Call the performExport() method and return the string value from the graph.
+     * 
+     * @return the string value from the converted graph
+     */
+    public String graphToString() {
+        // get the selected configuration
+        return performExport(getKGraph(), getGraphFormatData().getHandler());
+    }
+
+    /**
+     * function to return the selected GraphFormatData.
+     * 
+     * @return a GraphFormatData
+     */
+    public GraphFormatData getGraphFormatData() {
+        Collection<GraphFormatData> formatData = TransformationService.getInstance()
+                .getFormatData();
+        for (GraphFormatData gfd : formatData) {
+            if (gfd.getName().toLowerCase().equals(targetFormat)) {
+                return gfd;
+            }
+        }
+        return null;
     }
 
 }

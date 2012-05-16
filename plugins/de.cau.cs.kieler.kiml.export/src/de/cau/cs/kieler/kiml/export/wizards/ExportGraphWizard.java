@@ -40,8 +40,6 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
     /** the selection the import wizard was called on. */
     private IStructuredSelection selection;
 
-
-
     /**
      * Constructs a graph Export wizard.
      */
@@ -69,9 +67,9 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
     /**
      * {@inheritDoc}
      */
-    public void init(IWorkbench workbench, IStructuredSelection selection) {
+    public void init(final IWorkbench workbench, final IStructuredSelection select) {
         setWindowTitle(Messages.ExportGraphWizard_title);
-        this.selection = selection;
+        this.selection = select;
         setNeedsProgressMonitor(true);
 
     }
@@ -124,9 +122,6 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
                     exportGraph(graphFileHandler);
                     break;
 
-                default:
-                    ;// Ignore;
-
                 }
             } else {
                 exportGraph(graphFileHandler);
@@ -143,15 +138,11 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
      * @param targetFormat
      */
     private void exportGraph(final GraphFileHandler graphFileHandler) {
-        // TODO read source file
         try {
-            graphFileHandler.getKGraph();
-            // TODO if source format equal to target format then copy file else convert
             Writer writer = new FileWriter(graphFileHandler.getAbsoluteTargetFile());
-            writer.write("test graph");
+            writer.write(graphFileHandler.graphToString());
             writer.close();
         } catch (Throwable exception) {
-            // TODO Auto-generated catch block
             exception.printStackTrace();
         }
     }
@@ -192,5 +183,4 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
         return new File(targetPath.toString()).mkdirs();
     }
 
-    
 }
