@@ -177,10 +177,9 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         intermediateProcessingStrategy
                 .addAll(subgraphBuilder.getIntermediateProcessingStrategy(graph))
                 .addAll(edgeInserter.getIntermediateProcessingStrategy(graph))
-                .addAll(orthogonalizer.getIntermediateProcessingStrategy(graph));
-        // TODO implement compactor
-        // .addAll(compactor.getIntermediateProcessingStrategy(graph));
-        // .addAll(this.getIntermediateProcessingStrategy(graph))
+                .addAll(orthogonalizer.getIntermediateProcessingStrategy(graph))
+                .addAll(compactor.getIntermediateProcessingStrategy(graph))
+                .addAll(this.getIntermediateProcessingStrategy(graph));
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
@@ -193,12 +192,11 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         algorithm
                 .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_3));
         algorithm.add(orthogonalizer);
-        // TODO implement compactor
-        // algorithm
-        // .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_4));
-        // algorithm.add(compactor);
-        // algorithm
-        // .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.AFTER_PHASE_4));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_4));
+        algorithm.add(compactor);
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.AFTER_PHASE_4));
     }
 
     // ======================================= Layout ===============================

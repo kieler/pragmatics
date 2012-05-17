@@ -90,7 +90,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         this.graph = g;
 
         // Solve flow network and compute orthogonal representation
-        PGraph network = this.createFlowNetwork();
+        PGraph network = createFlowNetwork();
         IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
         solver.findFlow(network);
         OrthogonalRepresentation orthogonal = this.computeAngles(network);

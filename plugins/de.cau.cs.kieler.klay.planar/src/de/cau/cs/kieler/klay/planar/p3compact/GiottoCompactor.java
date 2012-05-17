@@ -131,6 +131,12 @@ public class GiottoCompactor extends AbstractAlgorithm implements ILayoutPhase {
         this.orthogonal.setBends(edge, new OrthogonalAngle[0]);
     }
 
+    /**
+     * adds
+     * 
+     * @param edge
+     * @param node
+     */
     private void addVirtuals(final PEdge edge, final PNode node) {
         PEdge nextEdge = edge;
         PNode nextNode = node;

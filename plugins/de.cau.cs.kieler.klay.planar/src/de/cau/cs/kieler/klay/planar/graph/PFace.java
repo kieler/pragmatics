@@ -73,6 +73,22 @@ public class PFace extends PGraphElement implements Serializable {
     }
 
     /**
+     * Checks if a given edge is in the surrounding edge set of the face.
+     * 
+     * @param edge
+     *            , for which it has to search for.
+     * @return true if found otherwise false.
+     */
+    public boolean isAdjacent(final PEdge edge) {
+        for (PEdge e : this.edges) {
+            if (e.equals(edge)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Check if a face is adjacent to this face (i.e. an edge exists that connects the two faces).
      * 
      * @param face

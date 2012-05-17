@@ -50,29 +50,25 @@ public final class Properties {
     public static final Property<PGraphElement> TODUALGRAPH = new Property<PGraphElement>(
             "de.cau.cs.kieler.klay.planar.properties.todualgraph");
 
-    /**
-     * A property assigning a coordinates to a node.
-     */
+    /** A property assigning a coordinates to a node. */
     public static final Property<Pair<Integer, Integer>> COORDINATES = new Property<Pair<Integer, Integer>>(
             "de.cau.cs.kieler.klay.planar.properties.coordinates", new Pair<Integer, Integer>(0, 0));
 
-    /**
-     * A property assigning the insertables edges of a graph.
-     */
+    /** A property assigning the insertables edges of a graph. */
     public static final Property<List<PEdge>> INSERTABLE_EDGES = new Property<List<PEdge>>(
             "de.cau.cs.kieler.klay.planar.properties.insertable_edges", new ArrayList<PEdge>());
 
-    /**
-     * Node type.
-     */
+    /** Node type. */
     public static final IProperty<NodeType> NODE_TYPE = new Property<NodeType>("nodeType",
             NodeType.NORMAL);
 
-    /**
-     * Edge type.
-     */
+    /** Edge type. */
     public static final IProperty<EdgeType> EDGE_TYPE = new Property<EdgeType>("edgeType",
             EdgeType.NONE);
+
+    /** Facesides, contains the bounding edges with respect to their side. */
+    @SuppressWarnings("rawtypes")
+    public static final IProperty<ArrayList[]> FACESIDES = new Property<ArrayList[]>("faceSides");
 
     /** priority of nodes or edges. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
