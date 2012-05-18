@@ -98,7 +98,7 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
      */
     private boolean targetFilesHandler() {
         // for all selected files
-        for (File sourceFile : workspaceSourcesPage.getSourceFiles(null)) {
+        for (IPath sourceFile : workspaceSourcesPage.getSourceFiles(null)) {
             // get the target format selected from the user
             String targetFormat = workspaceSourcesPage.getTargetFormat();
 

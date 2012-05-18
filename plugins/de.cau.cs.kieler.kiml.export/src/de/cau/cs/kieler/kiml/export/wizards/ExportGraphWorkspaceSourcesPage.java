@@ -14,7 +14,6 @@
 
 package de.cau.cs.kieler.kiml.export.wizards;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,7 +25,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -145,17 +143,15 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      *            progress monitor.
      * @return list of selected source files.
      */
-    public List<File> getSourceFiles(final IProgressMonitor monitor) {
+    public List<IPath> getSourceFiles(final IProgressMonitor monitor) {
         List<IResource> selectedResources = this.getResources(monitor);
-        List<File> files = new ArrayList<File>();
+        List<IPath> files = new ArrayList<IPath>();
 
         for (IResource resource : selectedResources) {
             if (resource instanceof IFile) {
-                
                 IFile iFile = (IFile) resource;
-                files.add(iFile.getLocation().toFile());
-                //files.add(resource.getProjectRelativePath().toFile());
-                
+                //files.add(iFile.getLocation().toFile());
+                files.add(iFile.getFullPath());
             }
         }
 
@@ -260,6 +256,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
     @Override
     public void saveDialogSettings() {
        super.saveDialogSettings();
+       //TODO use the IDialogSettings to save the preference
     }
 
     /**
