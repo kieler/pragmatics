@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.evol.alg;
 
+import java.util.Random;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
@@ -31,14 +33,20 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      * Null Operation: leaves the given {@link Population} unaltered. Use this as
      * dummy if you don't want an operation to be done.
      */
-    private static class NullOperation implements IEvolutionaryOperation {
-        /**
-         * {@inheritDoc}
-         */
-        public void process(final Population population) {
-            // Intentionally left empty.
-        }
-    }
+    private static final IEvolutionaryOperation NULL_OPERATION = new IEvolutionaryOperation() {
+            /**
+             * {@inheritDoc}
+             */
+            public void process(final Population thepopulation) {
+                // Intentionally left empty.
+            }
+    
+            /**
+             * {@inheritDoc}
+             */
+            public void setRandom(final Random random) {
+            }
+    };
 
     /** The number of the current generation. */
     private int generationNumber = 0;
@@ -47,19 +55,19 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     private final Population population = new Population();
 
     /** The selection operation. */
-    private IEvolutionaryOperation selectionOperation = new NullOperation();
+    private IEvolutionaryOperation selectionOperation = NULL_OPERATION;
 
     /** The mutation operation. */
-    private IEvolutionaryOperation mutationOperation = new NullOperation();
+    private IEvolutionaryOperation mutationOperation = NULL_OPERATION;
 
     /** The cross over operation. */
-    private IEvolutionaryOperation crossoverOperation = new NullOperation();
+    private IEvolutionaryOperation crossoverOperation = NULL_OPERATION;
 
     /** The survival operation. */
-    private IEvolutionaryOperation survivalOperation = new NullOperation();
+    private IEvolutionaryOperation survivalOperation = NULL_OPERATION;
 
     /** The evaluation operation. */
-    private IEvolutionaryOperation evaluationOperation = new NullOperation();
+    private IEvolutionaryOperation evaluationOperation = NULL_OPERATION;
 
     /**
      * Returns the generation number. The generation number is initially

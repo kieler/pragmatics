@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
@@ -121,12 +122,14 @@ public class Population extends MapPropertyHolder implements Iterable<Genome> {
     /**
      * Randomly chooses one of the individuals in the list.
      *
+     * @param random
+     *            a random number generator
      * @return an individual that is in the list, or {@code null} if the list is empty.
      */
-    public final Genome pick() {
+    public final Genome pick(final Random random) {
         Genome result = null;
         if (genomes.size() > 0) {
-            int pos = (int) (Math.random() * genomes.size());
+            int pos = random.nextInt(genomes.size());
             result = genomes.get(pos);
         }
         return result;

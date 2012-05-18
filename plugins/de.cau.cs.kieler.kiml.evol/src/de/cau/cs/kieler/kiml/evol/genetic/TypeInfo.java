@@ -162,19 +162,6 @@ public class TypeInfo<T extends Comparable<? super T>> {
     }
 
     /**
-     * Return true iff the given value is within the valid range.
-     *
-     * @param theValue
-     *            a values
-     * @return true iff the given value is within the valid range
-     */
-    public boolean isWithinBounds(final T theValue) {
-        boolean result = (lowerBound.compareTo(theValue) <= 0)
-                && (upperBound.compareTo(theValue) > 0);
-        return result;
-    }
-
-    /**
      * Returns the type parameter associated with the gene type. For most genes this is the
      * class object of the corresponding values.
      *

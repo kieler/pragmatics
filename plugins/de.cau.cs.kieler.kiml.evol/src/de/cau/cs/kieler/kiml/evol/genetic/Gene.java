@@ -22,7 +22,7 @@ package de.cau.cs.kieler.kiml.evol.genetic;
  * @author bdu
  * @author msp
  */
-public class Gene<T extends Comparable<? super T>> {
+public final class Gene<T extends Comparable<? super T>> {
 
     /** The id of this gene. */
     private final String id;
@@ -32,28 +32,58 @@ public class Gene<T extends Comparable<? super T>> {
     private final TypeInfo<T> typeInfo;
     
     /**
+     * Creates a new gene.
+     * 
+     * @param id
+     *            the identifier
+     * @param value
+     *            the value
+     * @param typeInfo
+     *            the type information
+     * @param <S> type of contained values
+     * @return a new gene
+     */
+    @SuppressWarnings("unchecked")
+    public static <S extends Comparable<? super S>> Gene<S> create(final String id, final S value,
+            final TypeInfo<?> typeInfo) {
+        return new Gene<S>(id, value, (TypeInfo<S>) typeInfo);
+    }
+    
+    /**
+     * Creates a new gene from an existing one.
+     * 
+     * @param gene
+     *            the gene from which properties shall be copied
+     * @param <S> type of contained values
+     * @return a new gene
+     */
+    public static <S extends Comparable<? super S>> Gene<S> create(final Gene<S> gene) {
+        return new Gene<S>(gene.id, gene.value, gene.typeInfo);
+    }
+    
+    /**
      * Creates a new abstract gene instance.
      *
      * @param theId
-     *            the ID
+     *            the identifier
      * @param theValue
      *            the value
      * @param theTypeInfo
-     *            the type info
+     *            the type information
      */
-    Gene(final String theId, final T theValue, final TypeInfo<T> theTypeInfo) {
+    private Gene(final String theId, final T theValue, final TypeInfo<T> theTypeInfo) {
         if (theId == null || theValue == null || theTypeInfo == null) {
             throw new NullPointerException();
-        }
-
-        // is the value within bounds?
-        if (!theTypeInfo.isWithinBounds(theValue)) {
-            throw new IllegalArgumentException("Value out of bounds: " + theValue);
         }
 
         this.id = theId;
         this.value = theValue;
         this.typeInfo = theTypeInfo;
+
+        // is the value within bounds?
+        if (!isWithinBounds()) {
+            throw new IllegalArgumentException("Value out of bounds: " + theValue);
+        }
     }
     
     /**
@@ -89,7 +119,7 @@ public class Gene<T extends Comparable<? super T>> {
      *
      * @return the identifier
      */
-    public final String getId() {
+    public String getId() {
         return id;
     }
 
@@ -98,7 +128,7 @@ public class Gene<T extends Comparable<? super T>> {
      *
      * @return the value
      */
-    public final T getValue() {
+    public T getValue() {
         return value;
     }
     
@@ -119,11 +149,21 @@ public class Gene<T extends Comparable<? super T>> {
     }
 
     /**
+     * Return true if the value is within the valid range.
+     *
+     * @return true if the value is within the valid range
+     */
+    public boolean isWithinBounds() {
+        return typeInfo.getLowerBound().compareTo(value) <= 0
+                && typeInfo.getUpperBound().compareTo(value) > 0;
+    }
+
+    /**
      * Returns the type info that is attached to this gene.
      *
      * @return the type info
      */
-    public final TypeInfo<T> getTypeInfo() {
+    public TypeInfo<T> getTypeInfo() {
         return typeInfo;
     }
     

@@ -14,6 +14,8 @@
 
 package de.cau.cs.kieler.kiml.evol.alg;
 
+import java.util.Random;
+
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
@@ -33,14 +35,20 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     public BasicEvolutionaryAlgorithm(final Population thePopulation) {
         Population population = getPopulation();
 
-        population.clear();
-        population.addAll(0, thePopulation.getGenomes());
+        population.getGenomes().clear();
+        population.getGenomes().addAll(0, thePopulation.getGenomes());
 
+        Random random = new Random();
         setSelectionOperation(new SelectionOperation());
-        setCrossoverOperation(new CrossOverOperation());
+        getSelectionOperation().setRandom(random);
+        setCrossoverOperation(new CrossoverOperation());
+        getCrossoverOperation().setRandom(random);
         setMutationOperation(new MutationOperation());
+        getMutationOperation().setRandom(random);
         setSurvivalOperation(new SurvivalOperation());
+        getSurvivalOperation().setRandom(random);
         setEvaluationOperation(new EvaluationOperation());
+        getEvaluationOperation().setRandom(random);
 
         reset();
     }
