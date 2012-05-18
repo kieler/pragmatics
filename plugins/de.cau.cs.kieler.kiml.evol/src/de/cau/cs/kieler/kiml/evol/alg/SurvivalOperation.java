@@ -54,7 +54,7 @@ public class SurvivalOperation implements IEvolutionaryOperation {
         // only some survive
         int keep = KielerMath.limit(Math.round(count * SURVIVAL_RATIO), MIN_SURVIVORS, MAX_SURVIVORS);
         assert keep > 0;
-        double minDist = individuals[0].size() * 0.2;
+        double minDist = individuals[0].getSize() * 0.2;
         Population survivors = new Population();
         Population victims = new Population(population);
 

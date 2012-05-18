@@ -266,7 +266,9 @@ final class GenomeFactory {
             } else {
                 value = 0;
             }
-            result = new EnumGene(theId, value.intValue(), enumClass, theMutationProbability);
+            result = new Gene(theId, value, new TypeInfo<Integer>(0, Integer.valueOf(0),
+                    Integer.valueOf(enumClass.getEnumConstants().length - 1),
+                    enumClass, theMutationProbability, Distribution.UNIFORM);
             EvolPlugin.logStatus("Enum " + enumClass.getSimpleName() + "(" + choicesCount + "): "
                     + enumClass.getEnumConstants()[value.intValue()] + " (" + value + ")");
             return result;
@@ -335,7 +337,7 @@ final class GenomeFactory {
             value = sanitize(value, lowerBound, upperBound, (String) theId);
 
             TypeInfo<Float> typeInfo =
-                    new FloatTypeInfo(value, lowerBound, upperBound, formatter, Float.class);
+                    new TypeInfo(value, lowerBound, upperBound, formatter, Float.class);
 
             MutationInfo mutationInfo =
                     new MutationInfo(theMutationProbability, variance, distr);
@@ -396,7 +398,7 @@ final class GenomeFactory {
                             upperBound.floatValue(), (String) theId).intValue();
 
             TypeInfo<Float> typeInfo =
-                    new FloatTypeInfo(value.floatValue(), lowerBound.floatValue(),
+                    new TypeInfo(value.floatValue(), lowerBound.floatValue(),
                             upperBound.floatValue(), formatter, Integer.class);
 
             MutationInfo mutationInfo =
@@ -464,8 +466,7 @@ final class GenomeFactory {
                 final double variance = 0.2;
 
                 TypeInfo<Float> typeInfo =
-                        new FloatTypeInfo(defaultValue, lowerBound, upperBound,
-                                UniversalNumberGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
+                        new TypeInfo(defaultValue, lowerBound, upperBound, Float.class);
                 MutationInfo mutationInfo =
                         new MutationInfo(theMutationProb, variance, Distribution.GAUSSIAN);
 
@@ -476,11 +477,7 @@ final class GenomeFactory {
             public IGene<?> newGene(
                     final String theId, final Object theValue, final TypeInfo<?> theTypeInfo,
                     final MutationInfo theMutationInfo) {
-                if (!(theTypeInfo instanceof FloatTypeInfo)) {
-                    throw new IllegalArgumentException();
-                }
-
-                return new UniversalNumberGene(theId, (Float) theValue, (FloatTypeInfo) theTypeInfo,
+                return new UniversalNumberGene(theId, (Float) theValue, theTypeInfo,
                         theMutationInfo);
             }
         };
@@ -616,12 +613,13 @@ final class GenomeFactory {
             throw new IllegalArgumentException("Index out of range: " + defaultEntry);
         }
 
-        ListItemTypeInfo typeInfo = new ListItemTypeInfo(defaultEntry, algorithmIds);
+        TypeInfo typeInfo = new TypeInfo(defaultEntry, Integer.valueOf(0),
+                Integer.valueOf(algorithmIds.size() - 1), algorithmIds.getClass());
         double prob = DEFAULT_LAYOUT_HINT_GENE_MUTATION_PROBABILITY;
         MutationInfo mutationInfo = new MutationInfo(prob);
 
         ListItemGene hintGene =
-                new ListItemGene(LayoutOptions.ALGORITHM.getId(), defaultEntry, typeInfo,
+                new ListItemGene(LayoutOptions.ALGORITHM.getId(), defaultEntry, algorithmIds, typeInfo,
                         mutationInfo);
         return hintGene;
     }
@@ -798,7 +796,7 @@ final class GenomeFactory {
             }
         }
 
-        assert presentLearnables.size() == result.size() :
+        assert presentLearnables.size() == result.getSize() :
                 "The number of genes does not have the predicted count of "
                 + presentLearnables.size();
 
@@ -846,7 +844,7 @@ final class GenomeFactory {
             throw new WrappedException(exception, "Genome could not be created.");
         }
 
-        EvolPlugin.logStatus("Created genome: " + result.size() + " genes.");
+        EvolPlugin.logStatus("Created genome: " + result.getSize() + " genes.");
 
         return result;
     }

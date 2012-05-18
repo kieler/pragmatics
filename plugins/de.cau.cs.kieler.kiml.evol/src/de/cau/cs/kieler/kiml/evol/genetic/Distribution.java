@@ -17,12 +17,13 @@ package de.cau.cs.kieler.kiml.evol.genetic;
  * Probability distribution to specify how mutated values are generated.
  *
  * @author bdu
- *
  */
 public enum Distribution {
+    
     /** Normal distribution (Gaussian). **/
     GAUSSIAN,
 
     /** Uniform distribution (does not regard previous values). **/
-    UNIFORM
+    UNIFORM;
+    
 }
