@@ -16,10 +16,8 @@ package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Random;
 
-import de.cau.cs.kieler.kiml.evol.genetic.Population;
-
 /**
- * Implementation of an evolutionary algorithm.
+ * Implementation of an evolutionary algorithm with standard operations.
  *
  * @author bdu
  * @author msp
@@ -27,18 +25,9 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
 public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
 
     /**
-     * Constructor for an evolutionary algorithm with the given initial
-     * population. Creates and initializes the algorithm instance.
-     *
-     * @param thePopulation
-     *            initial population
+     * Constructs an evolutionary algorithm with standard operations.
      */
-    public BasicEvolutionaryAlgorithm(final Population thePopulation) {
-        Population population = getPopulation();
-
-        population.getGenomes().clear();
-        population.getGenomes().addAll(0, thePopulation.getGenomes());
-
+    public BasicEvolutionaryAlgorithm() {
         Random random = new Random();
         setSelectionOperation(new SelectionOperation());
         getSelectionOperation().setRandom(random);
@@ -50,8 +39,6 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         getSurvivalOperation().setRandom(random);
         setEvaluationOperation(new EvaluationOperation());
         getEvaluationOperation().setRandom(random);
-
-        reset();
     }
 
     /**

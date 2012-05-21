@@ -86,7 +86,7 @@ public class Genome extends MapPropertyHolder {
      * @return a gene with the given ID, or {@code null} if none can be found
      */
     public Gene<?> find(final String theId) {
-        for (final Gene<?> gene : genes) {
+        for (Gene<?> gene : genes) {
             if (gene.getId().equals(theId)) {
                 return gene;
             }
@@ -104,19 +104,6 @@ public class Genome extends MapPropertyHolder {
     }
 
     /**
-     * Create a list of gene identifiers.
-     * 
-     * @return a list of the identifiers occurring in this genome.
-     */
-    public List<String> getGeneIds() {
-        List<String> result = new ArrayList<String>(genes.size());
-        for (final Gene<?> gene : genes) {
-            result.add(gene.getId());
-        }
-        return result;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -124,7 +111,7 @@ public class Genome extends MapPropertyHolder {
         StringBuilder result = new StringBuilder();
         result.append(getProperty(GEN_NUMBER)).append(".").append(getId());
         result.append(" (").append(getProperty(USER_RATING)).append(")");
-        for (final Gene<?> gene : genes) {
+        for (Gene<?> gene : genes) {
             result.append(" - ");
             result.append(gene.toString());
         }

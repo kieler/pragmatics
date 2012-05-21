@@ -46,6 +46,9 @@ public final class Gene<T extends Comparable<? super T>> {
     @SuppressWarnings("unchecked")
     public static <S extends Comparable<? super S>> Gene<S> create(final String id, final S value,
             final TypeInfo<?> typeInfo) {
+        if (id == null || value == null || typeInfo == null) {
+            throw new NullPointerException();
+        }
         return new Gene<S>(id, value, (TypeInfo<S>) typeInfo);
     }
     
@@ -72,10 +75,6 @@ public final class Gene<T extends Comparable<? super T>> {
      *            the type information
      */
     private Gene(final String theId, final T theValue, final TypeInfo<T> theTypeInfo) {
-        if (theId == null || theValue == null || theTypeInfo == null) {
-            throw new NullPointerException();
-        }
-
         this.id = theId;
         this.value = theValue;
         this.typeInfo = theTypeInfo;

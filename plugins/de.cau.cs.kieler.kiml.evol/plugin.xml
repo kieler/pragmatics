@@ -3,16 +3,13 @@
 <plugin>
    <extension-point id="evolutionData" name="Evolution Data" schema="schema/evolutionData.exsd"/>
    <extension
-         point="org.eclipse.ui.views">
-      <view
-            allowMultiple="false"
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.kiml.evol.ui.EvolView"
-            icon="icons/gazelle16.png"
-            id="de.cau.cs.kieler.kiml.evol.evolView"
-            name="Evolution"
-            restorable="true">
-      </view>
+         point="de.cau.cs.kieler.kiml.layoutInfo">
+      <config
+            activation="de.cau.cs.kieler.kiml.evol"
+            activationText="Activate Evolutionary Layout"
+            class="de.cau.cs.kieler.kiml.evol.LayoutConfig1"
+            default="false">
+      </config>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.evol.evolutionData">
@@ -363,137 +360,39 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.AutoRateAllHandler"
-            description="computes automatic rating for all individuals"
-            id="de.cau.cs.kieler.kiml.evol.command.autoRateAll"
-            name="Auto-rate All">
-      </command>
-      <command
-            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.EvolveHandler"
-            description="proceeds to the next generation"
-            id="de.cau.cs.kieler.kiml.evol.evolve"
-            name="Evolve">
-         <commandParameter
-               id="de.cau.cs.kieler.kiml.evol.steps"
-               name="Steps"
-               optional="true">
-         </commandParameter>
-         <commandParameter
-               id="de.cau.cs.kieler.kiml.evol.stepsBeforeAutoRating"
-               name="Steps before Auto-rating"
-               optional="true">
-         </commandParameter>
-      </command>
-      <command
-            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.ResetHandler"
-            description="restarts with a new population"
-            id="de.cau.cs.kieler.kiml.evol.reset"
-            name="Reset">
-      </command>
-      <command
-            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.ChangeRatingHandler"
-            description="changes the rating of the current individual"
-            id="de.cau.cs.kieler.kiml.evol.changeRating"
-            name="Change Rating">
-         <commandParameter
-               id="de.cau.cs.kieler.kiml.evol.amount"
-               name="Amount"
-               optional="false">
-         </commandParameter>
-      </command>
-      <command
-            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.InfoHandler"
-            description="Display detailed information about the population."
-            id="de.cau.cs.kieler.kiml.evol.info"
-            name="Info">
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.kiml.evol.ui.ShowEvolutionHandler"
+            id="de.cau.cs.kieler.kiml.evol.showEvolution"
+            name="Show Evolution">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="toolbar:de.cau.cs.kieler.kiml.evol.evolView">
+            locationURI="toolbar:de.cau.cs.kieler.kiml.views.layout">
          <command
-               commandId="de.cau.cs.kieler.kiml.evol.evolve"
-               icon="icons/step16.png"
-               label="Evolve 1"
-               style="push"
-               tooltip="Proceed to the next generation.">
-            <parameter
-                  name="de.cau.cs.kieler.kiml.evol.steps"
-                  value="1">
-            </parameter>
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.changeRating"
-               icon="icons/thumbsup16.png"
-               label="Favor"
-               style="push"
-               tooltip="Promote the selected individual.">
-            <parameter
-                  name="de.cau.cs.kieler.kiml.evol.amount"
-                  value="0.06">
-            </parameter>
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.changeRating"
-               icon="icons/thumbsdn16.png"
-               label="Disregard"
-               style="push"
-               tooltip="Demote the selected individual.">
-            <parameter
-                  name="de.cau.cs.kieler.kiml.evol.amount"
-                  value="-0.06">
-            </parameter>
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.command.autoRateAll"
-               icon="icons/autorate16.png"
-               label="Auto-rate all"
-               style="push"
-               tooltip="Auto-rate all individuals.">
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.reset"
-               icon="icons/reset16.png"
-               label="Reset"
-               style="push"
-               tooltip="Restart with a new population.">
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.info"
-               icon="icons/info16.png"
-               label="Info"
-               style="push"
-               tooltip="Display detailed information about the population.">
+               commandId="de.cau.cs.kieler.kiml.evol.showEvolution"
+               icon="icons/bacterium16.gif"
+               label="Evolve Layout"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <test
+                     property="de.cau.cs.kieler.kiml.evol.activeTester">
+               </test>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.kiml.evol.ui.EvolPreferencePage"
-            id="de.cau.cs.kieler.kiml.evol.preferences.evol"
-            name="KIML Evolutionary">
-      </page>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="de.cau.cs.kieler.kiml.evol.EvolPreferenceInitializer">
-      </initializer>
-   </extension>
-   <extension
-         point="org.eclipse.core.expressions.definitions">
-      <definition
-            id="de.cau.cs.kieler.kiml.evol.elementSelected">
-         <with
-               variable="selection">
-            <count
-                  value="1">
-            </count>
-         </with>
-      </definition>
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="de.cau.cs.kieler.kiml.evol.ui.ActiveTester"
+            id="de.cau.cs.kieler.kiml.evol.activeTester"
+            namespace="de.cau.cs.kieler.kiml.evol"
+            properties="evolActive"
+            type="java.lang.Object">
+      </propertyTester>
    </extension>
 
 </plugin>
