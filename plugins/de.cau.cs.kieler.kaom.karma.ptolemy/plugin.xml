@@ -421,7 +421,7 @@
          point="de.cau.cs.kieler.klighd.modelTransformations">
       <transformation
             class="de.cau.cs.kieler.kaom.karma.ptolemy.krendering.KaomKrenderingTransformation"
-            id="de.cau.cs.kieler.kaom.karma.ptolemy.transformation2">
+            id="de.cau.cs.kieler.kaom.karma.ptolemy.kaomklighdtransformation">
       </transformation>
    </extension>
    <extension

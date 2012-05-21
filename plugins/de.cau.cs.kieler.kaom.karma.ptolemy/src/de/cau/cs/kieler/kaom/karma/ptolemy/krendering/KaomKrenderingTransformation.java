@@ -65,9 +65,11 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
      */
     public KNode transform(final Entity model,
             final TransformationContext<Entity, KNode> transformationContext) {
+        map.clear();
         KNode parent = KimlUtil.createInitializedNode();
         map.put(model, parent);
         KNode k = transformationhelper(model, parent);
+        k = addConnections(model, parent);
         return k;
     }
 
@@ -165,11 +167,11 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
                     if (ren.getPlacementData() != null && ren.getPlacementData() instanceof KGridPlacementData) {
                         lay.setHeight(((KGridPlacementData) ren.getPlacementData()).getHeightHint());
                         lay.setWidth(((KGridPlacementData) ren.getPlacementData()).getWidthHint());
-                    } else {
-                        lay.setHeight(50);
-                        lay.setWidth(50);
                     }
                 }
+            } else {
+                lay.setHeight(50);
+                lay.setWidth(50);
             }
             map.put(e, n);
             parent.getChildren().add(transformationhelper(e, n));
@@ -192,6 +194,12 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             }
             
         }
+        
+        return parent;
+    }
+    
+    private KNode addConnections(final Entity element, final KNode parent) {
+        KRenderingFactory factory = KRenderingFactory.eINSTANCE;
         for (Link l : element.getChildLinks()) {
             KEdge edge = KimlUtil.createInitializedEdge();
             KRendering edgeRendering = factory.createKPolyline();
@@ -215,10 +223,11 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             Linkable target = l.getTarget();
             KGraphElement ksource = map.get(source);
             KGraphElement ktarget = map.get(target);
-            
             if (ksource instanceof KNode) {
                 edge.setSource((KNode) ksource);
             } else if (ksource instanceof KPort) {
+                KNode sourceNode = (KNode)ksource.eContainer();
+                edge.setSource(sourceNode);
                 edge.setSourcePort((KPort) ksource);
                 ((KPort) ksource).getEdges().add(edge);
             }
@@ -226,24 +235,20 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             if (ktarget instanceof KNode) {
                 edge.setTarget((KNode) ktarget);
             } else if (ktarget instanceof KPort) {
+                KNode targetNode = (KNode)ktarget.eContainer();
+                edge.setTarget(targetNode);
                 edge.setTargetPort((KPort) ktarget);
                 ((KPort) ktarget).getEdges().add(edge);
             }
             int x = 25;
-            /*
-            if (el != null) {
-                KShapeLayout ksl = ksource.getData(KShapeLayout.class);
-                el.getSourcePoint().setX(ksl.getXpos());
-                el.getSourcePoint().setY(ksl.getYpos());
-                ksl = ktarget.getData(KShapeLayout.class);
-                el.getTargetPoint().setX(ksl.getXpos());
-                el.getTargetPoint().setY(ksl.getYpos());
+        }
+        if (!element.getChildEntities().isEmpty()) {
+            for (Entity e : element.getChildEntities()) {
+                addConnections(e, (KNode)map.get(e));
             }
-            */
         }
         return parent;
     }
-    
     
     private static KColor lookupColor(final String color, final KColor kcolor) {
         String s = color.toLowerCase();
