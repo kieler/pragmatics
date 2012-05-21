@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Arrays;
+import java.util.Random;
 
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
@@ -23,6 +24,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  * Operation to select parent individuals for recombination.
  *
  * @author bdu
+ * @author msp
  */
 public final class SelectionOperation implements IEvolutionaryOperation {
 
@@ -42,26 +44,32 @@ public final class SelectionOperation implements IEvolutionaryOperation {
      * {@inheritDoc}
      */
     public void process(final Population population) {
-
-        Population selection = new Population();
-        int count = population.size();
+        int count = population.getSize();
         Genome[] candidates = new Genome[count];
-        population.toArray(candidates);
+        population.getGenomes().toArray(candidates);
         Arrays.sort(candidates, Genome.DESCENDING_RATING_COMPARATOR);
 
-        // Only some are allowed to generate offspring
-        // These are selected by truncation.
+        // Only some are allowed to generate offspring - these are selected by truncation
 
         int select = KielerMath.limit(Math.round(candidates.length * SELECTION_RATIO),
                 MIN_SELECT, MAX_SELECT);
 
+        int selected = 0;
         for (final Genome candidate : candidates) {
-            if (selection.size() < select) {
-                selection.add(candidate);
+            if (selected < select) {
                 candidate.setProperty(Population.SELECTED, true);
+                selected++;
             } else {
                 break;
             }
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setRandom(final Random random) {
+        // no random number generator required in this operation
+    }
+    
 }

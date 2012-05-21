@@ -34,6 +34,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
  * more offspring.
  *
  * @author bdu
+ * @author msp
  */
 public class CrossoverOperation implements IEvolutionaryOperation {
 

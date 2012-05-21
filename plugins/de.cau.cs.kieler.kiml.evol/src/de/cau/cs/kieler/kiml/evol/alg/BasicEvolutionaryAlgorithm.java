@@ -22,6 +22,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  * Implementation of an evolutionary algorithm.
  *
  * @author bdu
+ * @author msp
  */
 public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
 

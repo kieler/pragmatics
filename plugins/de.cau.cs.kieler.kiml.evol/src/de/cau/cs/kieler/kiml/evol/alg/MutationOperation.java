@@ -30,6 +30,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
  * Operation for mutation of individuals.
  * 
  * @author bdu
+ * @author msp
  */
 public class MutationOperation implements IEvolutionaryOperation {
 
