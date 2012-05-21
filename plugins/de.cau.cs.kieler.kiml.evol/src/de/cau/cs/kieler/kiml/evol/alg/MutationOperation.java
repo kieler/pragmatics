@@ -18,17 +18,13 @@ package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Random;
 
+import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.evol.genetic.Distribution;
-import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
-import de.cau.cs.kieler.kiml.evol.genetic.EnumTypeInfo;
+import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
-import de.cau.cs.kieler.kiml.evol.genetic.IGene;
-import de.cau.cs.kieler.kiml.evol.genetic.ListItemGene;
-import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
-import de.cau.cs.kieler.kiml.evol.genetic.MutationOperation;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
-import de.cau.cs.kieler.kiml.evol.genetic.UniversalNumberGene;
+import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
 
 /**
  * Operation for mutation of individuals.
@@ -42,248 +38,128 @@ public class MutationOperation implements IEvolutionaryOperation {
      * individual to be subject to mutation.
      */
     private static final double MUTATION_APPLICATION_PROBABILITY = 0.6;
+    
+    /**
+     * Factor by which the user rating fades after a mutation has been performed.
+     */
+    private static final double USER_RATING_FADE = 0.9;
 
+    /** the random number generator. */
+    private Random random;
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setRandom(final Random therandom) {
+        this.random = therandom;
+    }
+    
     /**
      * {@inheritDoc}
      */
     public final void process(final Population population) {
         Population mutations = new Population();
-        for (final Genome ind : population) {
-            Genome mutation = ind.newMutation(MUTATION_APPLICATION_PROBABILITY);
-            if (mutation != null) {
-                // individual has mutated --> rating is outdated
-                mutation.fadeUserRating();
-                mutations.add(mutation);
+        for (Genome ind : population) {
+            if (random.nextDouble() < MUTATION_APPLICATION_PROBABILITY) {
+                Genome mutation = mutate(ind);
+                // individual has mutated -- rating is outdated
+                mutation.setProperty(Genome.USER_RATING, ind.getProperty(Genome.USER_RATING)
+                        * USER_RATING_FADE);
+                mutations.getGenomes().add(mutation);
             } else {
-                mutations.add(ind);
+                mutations.getGenomes().add(ind);
             }
         }
-        population.clear();
-
-        population.addAll(0, mutations.getGenomes());
+        population.getGenomes().clear();
+        population.getGenomes().addAll(mutations.getGenomes());
     }
 
     /**
-     * Performs a mutation step with the given probability. If a mutation step
-     * is performed, this does not necessarily mean that any values are changed.
+     * Mutate the genes of the given individual.
      *
-     * @param prob
-     *            Probability for the application of mutation.
-     *
-     * @return {@code true} if the mutation step was performed, {@code false} if
-     *         the step was skipped.
-     * @deprecated
+     * @param genome a genome
+     * @return mutated copy of the given genome
      */
-    @Deprecated
-    public Genome newMutation(final double prob) {
-        if (Math.random() < prob) {
-            return newMutation();
-        }
-        System.out.println("-- skipped mutation for " + toString());
-        return null;
-    }
-
-    /**
-     * Mutate the genes of the individual. Every gene is asked to provide a
-     * mutated version of itself.
-     *
-     * @return mutated copy of this genome
-     * @deprecated TODO move this into {@link MutationOperation}
-     */
-    @Deprecated
-    private Genome newMutation() {
-        Genome newGenome = new Genome(this.generationNumber);
-        for (final IGene<?> gene : this.getGenes()) {
-            // presuming gene != null
-            IGene<?> newGene = gene.newMutation();
-            assert newGene != null : "Invalid mutation of " + gene;
+    public Genome mutate(final Genome genome) {
+        Genome newGenome = new Genome();
+        for (final Gene<?> gene : genome.getGenes()) {
+            Gene<?> newGene = mutate(gene);
             newGenome.getGenes().add(newGene);
         }
-        newGenome.setUserRating(this.userRating);
-
         return newGenome;
     }
 
     /**
-     * LIST ITEM
-     *
-     * @deprecated
+     * Mutate a single gene.
+     * 
+     * @param gene a gene
+     * @return a new mutated gene
      */
-    @Deprecated
-    public IGene<Integer> newMutation() {
-        ListItemGene result;
-
-        Random random = this.getRandomGenerator();
-        MutationInfo mutationInfo = this.getMutationInfo();
-        double prob = mutationInfo.getProbability();
-
-        // must be uniform distribution
-        Distribution distr = mutationInfo.getDistr();
-        assert distr == Distribution.UNIFORM;
-
-        TypeInfo<Integer> typeInfo = this.getTypeInfo();
-        Comparable<Integer> lowerBound = typeInfo.getLowerBound();
-        Comparable<Integer> upperBound = typeInfo.getUpperBound();
-
-        Integer value = this.getValue().intValue();
-        int newInt = value.intValue();
-        if (random.nextDouble() < prob) {
-            // FIXME need values of bounds
-            // newInt = random.nextInt((upperBound - lowerBound) + 1) +
-            // lowerBound;
+    public Gene<?> mutate(final Gene<?> gene) {
+        TypeInfo<?> typeInfo = gene.getTypeInfo();
+        if (random.nextDouble() >= typeInfo.getProbability()) {
+            // mutation probability has not passed - do not mutate
+            return Gene.create(gene);
         }
-
-        result =
-                new ListItemGene(this.getId(), newInt, this.getTypeInfo(), this.getMutationInfo());
-
-        return result;
-    }
-    
-    // BOOLEAN
-    public IGene<Float> newMutation(
-            final UniversalNumberGene template, final MutationInfo mutationInfo) {
-
-        if ((template == null) || (mutationInfo == null)) {
-            throw new IllegalArgumentException();
+        
+        GeneType geneType = typeInfo.getGeneType();
+        Integer intValue = 0;
+        switch (geneType) {
+        case LIST_ITEM:
+        case BOOLEAN:
+        case ENUM:
+        {
+            assert typeInfo.getDistr() == Distribution.UNIFORM;
+            // assign a random value index (may be the same as before)
+            int lowerBound = (Integer) typeInfo.getLowerBound();
+            int upperBound = (Integer) typeInfo.getUpperBound();
+            intValue = random.nextInt((upperBound - lowerBound) + 1) + lowerBound;
+            return Gene.create(gene.getId(), intValue, typeInfo);
         }
-
-        TypeInfo<Float> typeInfo = template.getTypeInfo();
-        assert typeInfo != null;
-
-        Random random = template.getRandomGenerator();
-        assert random != null;
-
-        // get mutation parameters
-        double prob = mutationInfo.getProbability();
-
-        Distribution distr = mutationInfo.getDistr();
-        assert distr == Distribution.UNIFORM;
-
-        Float newValue;
-        if (random.nextDouble() < prob) {
-            // assign a random boolean value (may be the same as before)
-            newValue =
-                    Float.valueOf(random.nextDouble() < PROBABILITY_FOR_TRUE ? 1.0f : 0.0f);
-
-        } else {
-            newValue = template.getValue();
-        }
-        return new UniversalNumberGene(template.getId(), newValue, typeInfo, mutationInfo);
-    }
-    
-    // ENUM
-    public static EnumGene newMutation(
-            final EnumGene template, final MutationInfo mutationInfo) {
-        if ((template == null) || (mutationInfo == null)) {
-            throw new IllegalArgumentException();
-        }
-
-        EnumTypeInfo typeInfo = template.getTypeInfo();
-        assert typeInfo != null;
-
-        Random random = template.getRandomGenerator();
-        assert random != null;
-
-        double prob = mutationInfo.getProbability();
-
-        Distribution distr = mutationInfo.getDistr();
-        assert distr == Distribution.UNIFORM;
-
-        Class<? extends Enum<?>> enumClass = typeInfo.getTypeClass();
-        Comparable<Integer> lowerBound = typeInfo.getLowerBound();
-        Comparable<Integer> upperBound = typeInfo.getUpperBound();
-        Integer value = template.getValue();
-
-        int newInt = value.intValue();
-        if (random.nextDouble() < prob) {
-            // Uniform distribution
-            // FIXME need values of bounds
-            // int lim = upperBound - lowerBound + 1;
-            // newInt = random.nextInt(lim) + lowerBound;
-        }
-        return new EnumGene(template.getId(), newInt, enumClass, prob);
-    }
-    
-    // FLOAT
-    public IGene<Float> newMutation(
-            final UniversalNumberGene template, final MutationInfo mutationInfo) {
-
-        if ((template == null) || (mutationInfo == null)) {
-            throw new IllegalArgumentException();
-        }
-
-        Random random = template.getRandomGenerator();
-        assert random != null;
-
-        TypeInfo<Float> typeInfo = template.getTypeInfo();
-        assert typeInfo != null;
-
-        double prob = mutationInfo.getProbability();
-        double var = mutationInfo.getVariance();
-        Distribution distr = mutationInfo.getDistr();
-        assert distr == Distribution.GAUSSIAN;
-
-        Float value = template.getValue();
-        Float newValue = value;
-        if (Math.random() < prob) {
+            
+        case INTEGER:
+        {
             // produce a new value within the valid bounds.
-            do {
-                double gauss = random.nextGaussian() * Math.sqrt(var);
-                newValue = Float.valueOf((float) (value.doubleValue() + gauss));
-            } while (!typeInfo.isValueWithinBounds(newValue));
-        }
-        return new UniversalNumberGene(template.getId(), newValue, typeInfo, mutationInfo);
-    }
-    
-    // INTEGER
-    public IGene<Float> newMutation(
-            final UniversalNumberGene template, final MutationInfo mutationInfo) {
-
-        if ((template == null) || (mutationInfo == null)) {
-            throw new IllegalArgumentException();
-        }
-
-        TypeInfo<Float> typeInfo = template.getTypeInfo();
-        assert typeInfo != null;
-
-        Random random = template.getRandomGenerator();
-        assert random != null;
-
-        double prob = mutationInfo.getProbability();
-        double var = mutationInfo.getVariance();
-        Distribution distr = mutationInfo.getDistr();
-        Comparable<Float> lowerBound = typeInfo.getLowerBound();
-        Comparable<Float> upperBound = typeInfo.getUpperBound();
-
-        Integer value = Integer.valueOf(template.getValue().intValue());
-        Integer newInt = value;
-        if (random.nextDouble() < prob) {
-            switch (distr) {
+            int lowerBound = (Integer) typeInfo.getLowerBound();
+            int upperBound = (Integer) typeInfo.getUpperBound();
+            switch (typeInfo.getDistr()) {
             case GAUSSIAN:
-                // produce a new value within the valid bounds.
+                double variance = typeInfo.getVariance();
+                double value = gene.floatValue();
                 do {
-                    double gauss = random.nextGaussian() * Math.sqrt(var);
-                    double newValue = value.doubleValue() + gauss;
-                    newInt = Integer.valueOf((int) Math.round(newValue));
-                } while (!typeInfo.isValueWithinBounds(Float.valueOf(newInt.floatValue())));
+                    value = KielerMath.limit(value, lowerBound, upperBound);
+                    value += random.nextGaussian() * Math.sqrt(variance);
+                } while (value < lowerBound || value > upperBound);
+                intValue = (int) Math.round(value);
                 break;
             case UNIFORM:
-                do {
-                    // produce a new value within the valid bounds.
-                    // FIXME: need to get the values of the bounds to do
-                    // <code>newInt = random.nextInt(upperBound - lowerBound +
-                    // 1) +
-                    // lowerBound;</code>
-                    newInt = random.nextInt();
-                } while (!typeInfo.isValueWithinBounds(Float.valueOf(newInt.floatValue())));
+                intValue = random.nextInt((upperBound - lowerBound) + 1) + lowerBound;
                 break;
-            default:
-                // execution should never reach this line.
-                throw new AssertionError("Unknown distribution in switch: " + distr);
             }
+            return Gene.create(gene.getId(), intValue, typeInfo);
         }
-        return new UniversalNumberGene(template.getId(), newInt.floatValue(),
-                typeInfo, mutationInfo);
+            
+        case FLOAT:
+        {
+            assert typeInfo.getDistr() == Distribution.GAUSSIAN;
+            Float floatValue;
+            // produce a new value within the valid bounds.
+            float lowerBound = (Float) typeInfo.getLowerBound();
+            float upperBound = (Float) typeInfo.getUpperBound();
+            double variance = typeInfo.getVariance();
+            double value = gene.floatValue();
+            do {
+                value = KielerMath.limit(value, lowerBound, upperBound);
+                value += random.nextGaussian() * Math.sqrt(variance);
+            } while (value < lowerBound || value > upperBound);
+            floatValue = (float) value;
+            return Gene.create(gene.getId(), floatValue, typeInfo);
+        }
+            
+        default:
+            return null;
+        }
     }
 
 }

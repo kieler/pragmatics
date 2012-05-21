@@ -196,9 +196,10 @@ public class CrossoverOperation implements IEvolutionaryOperation {
             int count = genes.length;
             float average = sum / count;
             if (geneType == GeneType.INTEGER) {
-                average = Math.round(average);
+                return Gene.create(oldGene.getId(), Math.round(average), oldGene.getTypeInfo());
+            } else {
+                return Gene.create(oldGene.getId(), average, oldGene.getTypeInfo());
             }
-            return Gene.create(oldGene.getId(), Float.valueOf(average), oldGene.getTypeInfo());
             
         default:
             int pos = random.nextInt(genes.length);

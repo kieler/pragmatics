@@ -34,8 +34,7 @@ import de.cau.cs.kieler.core.util.ICondition;
 public class Population extends MapPropertyHolder implements Iterable<Genome> {
     
     /** Property to mark individuals as selected. */
-    public static final IProperty<Boolean> SELECTED = new Property<Boolean>("evol.selected",
-            Boolean.FALSE);
+    public static final IProperty<Boolean> SELECTED = new Property<Boolean>("evol.selected", false);
 
     /** the genomes that constitute this population. */
     private final List<Genome> genomes;

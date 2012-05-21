@@ -16,6 +16,8 @@
  */
 package de.cau.cs.kieler.kiml.evol.alg;
 
+import java.util.Random;
+
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
@@ -30,6 +32,13 @@ public class EvaluationOperation implements IEvolutionaryOperation {
         // fitness is determined by the rating value.
 
         // FIXME what is this? implement me!
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setRandom(final Random random) {
+        // TODO Auto-generated method stub
     }
 
 }
