@@ -13,29 +13,28 @@
  */
 package de.cau.cs.kieler.kiml.evol.metrics;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed.Type;
+import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeLengthAnalysis;
 
 /**
  * A layout metric that computes the edge length uniformity of the graph layout.
  * The returned Object is a float value within the range of 0.0 to 1.0, where a
  * higher value means more edge length uniformity.
  *
- * NOTE: This implementation is experimental. It depends only on the values
- * returned by the edge length analysis.
- *
  * @author bdu
- *
+ * @author msp
  */
 public class EdgeUniformityMetric implements IAnalysis {
-
-    /** Identifier for "edge length". */
-    private static final String GRANA_EDGE_LENGTH = "de.cau.cs.kieler.kiml.grana.edgeLength";
 
     /**
      * {@inheritDoc}
@@ -43,45 +42,57 @@ public class EdgeUniformityMetric implements IAnalysis {
     public Object doAnalysis(
             final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-
         progressMonitor.begin("Edge length uniformity analysis", 1);
+        float result;
 
-        Float result = null;
+        int numberOfEdges = (Integer) results.get(EdgeCountAnalysis.ID);
+        if (numberOfEdges > 0) {
+            boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+                    AnalysisOptions.ANALYZE_HIERARCHY);
 
-        try {
-            Object edgeLengthResult = results.get(GRANA_EDGE_LENGTH);
-
-            if (!(edgeLengthResult instanceof Object[])) {
-                return new AnalysisFailed(Type.Dependency);
+            // determine all individual edge lengths and their sum
+            float[] individualLengths = new float[numberOfEdges];
+            int index = 0;
+            float average = 0;
+            List<KNode> nodeQueue = new LinkedList<KNode>();
+            nodeQueue.addAll(parentNode.getChildren());
+            while (nodeQueue.size() > 0) {
+                // pop first element
+                KNode node = nodeQueue.remove(0);
+                
+                // compute edge length for all outgoing edges
+                for (KEdge edge : node.getOutgoingEdges()) {
+                    if (!hierarchy && edge.getTarget().getParent() != parentNode) {
+                        continue;
+                    }
+                    float edgeLength = EdgeLengthAnalysis.computeEdgeLength(edge);
+                    average += edgeLength;
+                    individualLengths[index++] = edgeLength;
+                }
+                
+                if (hierarchy) {
+                    nodeQueue.addAll(node.getChildren());
+                }
             }
-
-            Object[] mmr = (Object[]) edgeLengthResult;
-            Float min = (Float) mmr[0];
-            Float avg = (Float) mmr[1];
-            Float max = (Float) mmr[2];
-
-            float range = max - min;
-
-            float rangeToAverageRatio = range / avg;
-
-            final float half = 0.5f;
-            // FIXME this correlates with the layout size?
-            if (rangeToAverageRatio < 1.0f) {
-                // relatively small range
-                result = 1.0f - (rangeToAverageRatio * half);
-            } else {
-                // relatively big range
-                result = (1.0f / rangeToAverageRatio) * half;
+            average /= numberOfEdges;
+            
+            // compute standard deviation of edge length
+            double deviation = 0;
+            for (int i = 0; i < index; i++) {
+                double diff = individualLengths[i] - average;
+                deviation += diff * diff;
             }
+            deviation = Math.sqrt(deviation / numberOfEdges);
+            
+            // the higher the standard deviation, the more the result goes to zero
+            result = 1.0f / ((float) deviation + 1);
 
-            assert (0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f) : "Metric result out of bounds: "
-                    + result;
-
-        } finally {
-            // We must close the monitor.
-            progressMonitor.done();
+            assert result >= 0 && result <= 1;
+        } else {
+            result = 1.0f;
         }
 
+        progressMonitor.done();
         return result;
     }
 }

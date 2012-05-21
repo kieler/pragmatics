@@ -34,6 +34,11 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * @author mri
  */
 public class EdgeLengthAnalysis implements IAnalysis {
+    
+    /**
+     * Identifier of the edge length analysis.
+     */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.edgeLength";
 
     /**
      * Computes the length of the given edge.
@@ -42,7 +47,7 @@ public class EdgeLengthAnalysis implements IAnalysis {
      *            the edge
      * @return the length
      */
-    private static float computeEdgeLength(final KEdge edge) {
+    public static float computeEdgeLength(final KEdge edge) {
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         float edgeLength = 0;
         KPoint current = edgeLayout.getSourcePoint();
@@ -80,12 +85,12 @@ public class EdgeLengthAnalysis implements IAnalysis {
             KNode node = nodeQueue.remove(0);
             
             // compute edge length for all outgoing edges
-            numberOfEdges += node.getOutgoingEdges().size();
             for (KEdge edge : node.getOutgoingEdges()) {
                 if (!hierarchy && edge.getTarget().getParent() != parentNode) {
                     continue;
                 }
                 
+                numberOfEdges++;
                 float edgeLength = computeEdgeLength(edge);
                 overallEdgeLength += edgeLength;
                 // min edge length

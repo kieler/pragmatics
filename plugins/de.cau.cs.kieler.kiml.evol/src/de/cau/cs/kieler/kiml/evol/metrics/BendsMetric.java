@@ -16,10 +16,12 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.BendsAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
 
 /**
- * Calculates a metric for the number of bends in the graph. This depends on
- * Grana edgeCount and Grana bendpointCount that care for hierarchies.
+ * Calculates a metric for the number of bends in the graph. This depends on the
+ * edge count analysis and the bend point count analysis that care for hierarchies.
  *
  * @author mri
  * @author bdu
@@ -27,55 +29,31 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 public class BendsMetric implements IAnalysis {
 
     /**
-     * Identifier for "bend point count".
-     */
-    private static final String GRANA_BENDPOINT_COUNT =
-            "de.cau.cs.kieler.kiml.grana.bendpointCount";
-    /**
-     * Identifier for "edge count".
-     */
-    private static final String GRANA_EDGE_COUNT = "de.cau.cs.kieler.kiml.grana.edgeCount";
-
-    /**
      * {@inheritDoc}
      */
     public Object doAnalysis(
             final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-
         progressMonitor.begin("Bend metric analysis", 1);
+        // load numbers from analyses
+        Object edgesResult = results.get(EdgeCountAnalysis.ID);
+        Object[] bendsResult = (Object[]) results.get(BendsAnalysis.ID);
 
-        Float result;
-        try {
-            // load numbers from analyses
-            Object edgesResult = results.get(GRANA_EDGE_COUNT);
-            Object[] bendsResult = (Object[]) results.get(GRANA_BENDPOINT_COUNT);
+        // bendsResult is Object[] {min, avg, max, sum}
 
-            // bendsResult is Object[] {min, avg, max, sum}
+        int edgesCount = (Integer) edgesResult;
+        int bendsCount = (Integer) bendsResult[3]; // SUPPRESS CHECKSTYLE MagicNumber
 
-            int edgesCount = (Integer) edgesResult;
-            int bendsCount = (Integer) bendsResult[3];
-
-            // FIXME: For some reason, the bends count in the layout graph may
-            // be reduced after the layout is applied. This means the result
-            // that is produced by auto-rating differs from the information
-            // shown in the Grana dialog. However, this seems to happen only for
-            // graphs that contain self-loops.
-
-            // normalize
-            if (edgesCount + bendsCount > 0) {
-                result = 1.0f - (float) bendsCount / (float) (edgesCount + bendsCount);
-            } else {
-                result = 1.0f;
-            }
-            assert (0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f) : "Metric result out of bounds: "
-                    + result;
-
-        } finally {
-            // We must close the monitor.
-            progressMonitor.done();
+        // normalize
+        float result;
+        if (edgesCount + bendsCount > 0) {
+            result = 1.0f - (float) bendsCount / (float) (edgesCount + bendsCount);
+        } else {
+            result = 1.0f;
         }
+        assert result >= 0 && result <= 1;
 
+        progressMonitor.done();
         return result;
     }
 
