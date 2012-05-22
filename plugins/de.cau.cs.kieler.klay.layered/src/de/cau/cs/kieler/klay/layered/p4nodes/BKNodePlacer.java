@@ -83,25 +83,25 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         // Phase which determines the nodes' memberships in blocks. This happens in four different
         // ways, either from processing the nodes from the first layer to the last or vice versa.
         // TODO more doc!!!
-        verticalAlignment(layeredGraph, lefttop);
-//        verticalAlignment(layeredGraph, righttop);
+//        verticalAlignment(layeredGraph, lefttop);
+        verticalAlignment(layeredGraph, righttop);
 //        verticalAlignment(layeredGraph, leftbottom);
 //        verticalAlignment(layeredGraph, rightbottom);
 
         // Additional phase which is not included in the original Brandes-Koepf Algorithm.
         // It makes sure that the connected ports within a block are aligned to avoid unnecessary
         // bend points.
-        insideBlockShift(layeredGraph, lefttop);
-//        insideBlockShift(layeredGraph, righttop);
+//        insideBlockShift(layeredGraph, lefttop);
+        insideBlockShift(layeredGraph, righttop);
 //        insideBlockShift(layeredGraph, leftbottom);
 //        insideBlockShift(layeredGraph, rightbottom);
 
-        horizontalCompaction(layeredGraph, lefttop);
-//        horizontalCompaction(layeredGraph, righttop);
+//        horizontalCompaction(layeredGraph, lefttop);
+        horizontalCompaction(layeredGraph, righttop);
 //        horizontalCompaction(layeredGraph, leftbottom);
 //        horizontalCompaction(layeredGraph, rightbottom);
 
-        BKAlignedLayout chosenLayout = lefttop;
+        BKAlignedLayout chosenLayout = righttop;
         System.out.println("lefttop size is " + lefttop.layoutSize());
         System.out.println("righttop size is " + righttop.layoutSize());
         System.out.println("leftbottom size is " + leftbottom.layoutSize());
@@ -111,11 +111,11 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 //        layouts.add(righttop);
 //        layouts.add(leftbottom);
 //        layouts.add(rightbottom);
-        for (BKAlignedLayout bal : layouts) {
-            if (bal.layoutSize() < chosenLayout.layoutSize()) {
-                chosenLayout = bal;
-            }
-        }
+//        for (BKAlignedLayout bal : layouts) {
+//            if (bal.layoutSize() < chosenLayout.layoutSize()) {
+//                chosenLayout = bal;
+//            }
+//        }
         
         for (LNode root : getBlocks(chosenLayout).keySet()) {
             System.out.println("block pos " + " " + root + " " + chosenLayout.getY().get(root));
@@ -338,6 +338,10 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                     if (difference < postShift) {
                         postShift = difference;
                     }
+                } else {
+                    if (difference > postShift) {
+                        postShift = difference;
+                    }
                 }
 
                 double width = next.getSize().y + Math.abs(difference);
@@ -478,7 +482,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                                     v,
                                     Math.min(bal.getY().get(v), bal.getY().get(u) - spacing
                                             - bal.getBlockSize().get(v)
-                                            + (bal.getBlockSize().get(v) - v.getSize().y)));
+                                            ));
                         } else {
                             bal.getY().put(
                                     v,
