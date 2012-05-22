@@ -132,7 +132,8 @@ public class GiottoCompactor extends AbstractAlgorithm implements ILayoutPhase {
     }
 
     /**
-     * adds
+     * Adds virtual nodes to the graph. That nodes are dummy nodes to bring the faces in rectangular
+     * shape.
      * 
      * @param edge
      * @param node
