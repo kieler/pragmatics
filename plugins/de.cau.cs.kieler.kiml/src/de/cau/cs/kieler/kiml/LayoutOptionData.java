@@ -120,6 +120,14 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         /** labels target. */
         LABELS;
     }
+    
+    /** probability distribution types for option values. */
+    public static enum Distribution {
+        /** uniform distribution. */
+        UNIFORM,
+        /** Gaussian distribution. */
+        GAUSSIAN;
+    }
 
     /** identifier of the layout option. */
     private String id = "";
@@ -139,9 +147,14 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     private String[] choices;
     /** whether the option should be shown in advanced mode only. */
     private boolean advanced;
-    /** Whether this layout option is visible to the user. Options are visible by default. */
-    private boolean visible 
-        = true;
+    /** the lower bound for option values. */
+    private T lowerBound;
+    /** the upper bound for option values. */
+    private T upperBound;
+    /** the probability distibution for option values. */
+    private Distribution distribution;
+    /** the variance for option values. */
+    private float variance;
     
     /**
      * Checks whether the enumeration class is set correctly. This method must
@@ -288,10 +301,20 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         case ENUM:
             try {
                 checkEnumClass();
-                @SuppressWarnings({ "rawtypes" })
+                @SuppressWarnings("rawtypes")
                 Enum<?> value = Enum.valueOf((Class<? extends Enum>) clazz, valueString);
                 return (T) value;
             } catch (IllegalArgumentException exception) {
+                // the value could not be parsed as enumeration constant, try as integer
+                try {
+                    int index = Integer.parseInt(valueString);
+                    Object[] constants = clazz.getEnumConstants();
+                    if (index >= 0 && index < constants.length) {
+                        return (T) constants[index];
+                    }
+                } catch (NumberFormatException e) {
+                    // ignore exception and return null
+                }
                 return null;
             }
         case OBJECT:
@@ -594,7 +617,19 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      */
     @SuppressWarnings("unchecked")
     public Comparable<T> getLowerBound() {
+        if (lowerBound instanceof Comparable<?>) {
+            return (Comparable<T>) lowerBound;
+        }
         return (Comparable<T>) Property.NEGATIVE_INFINITY;
+    }
+
+    /**
+     * Sets the lower bound for layout option values.
+     * 
+     * @param lowerBound the lowerBound to set
+     */
+    public void setLowerBound(final T lowerBound) {
+        this.lowerBound = lowerBound;
     }
 
     /**
@@ -602,7 +637,19 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      */
     @SuppressWarnings("unchecked")
     public Comparable<T> getUpperBound() {
+        if (upperBound instanceof Comparable<?>) {
+            return (Comparable<T>) upperBound;
+        }
         return (Comparable<T>) Property.POSITIVE_INFINITY;
+    }
+
+    /**
+     * Sets the upper bound for layout option values.
+     * 
+     * @param upperBound the upperBound to set
+     */
+    public void setUpperBound(final T upperBound) {
+        this.upperBound = upperBound;
     }
     
     /**
@@ -651,22 +698,39 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     }
 
     /**
-     * Returns whether this option is visible to users, e.g. should be displayed in GUI elements..
+     * Returns the probability distribution for layout option values.
      * 
-     * @return true if the option is visible
+     * @return the distribution
      */
-    public boolean isVisible() {
-        return visible;
+    public Distribution getDistribution() {
+        return distribution;
     }
 
     /**
-     * Sets whether this option is visible to users, e.g. should be displayed in GUI elements.
+     * Sets the probability distribution for layout option values.
      * 
-     * @param thevisible whether this option is visible to users, e.g. should be displayed in
-     *          GUI elements
+     * @param distribution the distribution to set
      */
-    public void setVisible(final boolean thevisible) {
-        this.visible = thevisible;
+    public void setDistribution(final Distribution distribution) {
+        this.distribution = distribution;
+    }
+
+    /**
+     * Returns the variance for layout option values.
+     * 
+     * @return the variance
+     */
+    public float getVariance() {
+        return variance;
+    }
+
+    /**
+     * Sets the variance for layout option values.
+     * 
+     * @param variance the variance to set
+     */
+    public void setVariance(final float variance) {
+        this.variance = variance;
     }
 
 }

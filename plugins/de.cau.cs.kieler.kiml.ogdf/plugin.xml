@@ -549,25 +549,35 @@
             appliesTo="parents"
             default="400"
             description="The number of iterations performed by the algorithm"
+            distribution="gaussian"
             id="de.cau.cs.kieler.kiml.ogdf.option.iterations"
+            lowerBound="1"
             name="Iterations"
-            type="int">
+            type="int"
+            upperBound="10000"
+            variance="100.0">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
             default="15"
             description="Distance of edge labels to the nodes"
             id="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance"
+            lowerBound="0"
             name="Label Distance"
-            type="float">
+            type="float"
+            upperBound="1000"
+            variance="2.0">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
             default="15"
             description="Spacing of labels to the edges"
             id="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance"
+            lowerBound="0"
             name="Label Spacing"
-            type="float">
+            type="float"
+            upperBound="1000"
+            variance="2.0">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -585,8 +595,11 @@
             default="4"
             description="The number of times that the number of crossings may not decrease after a complete top-down bottom-up traversal, before a run is terminated."
             id="de.cau.cs.kieler.kiml.ogdf.option.fails"
+            lowerBound="1"
             name="Fails"
-            type="int">
+            type="int"
+            upperBound="100"
+            variance="1.0">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -594,8 +607,11 @@
             default="0.51"
             description="The fineness option used in the algorithm"
             id="de.cau.cs.kieler.kiml.ogdf.option.fineness"
+            lowerBound="0.1"
             name="Fineness"
-            type="float">
+            type="float"
+            upperBound="1.0"
+            variance="0.1">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -603,8 +619,11 @@
             default="10.0"
             description="The initial temperature"
             id="de.cau.cs.kieler.kiml.ogdf.option.initialTemperature"
+            lowerBound="0.1"
             name="Initial Temperature"
-            type="float">
+            type="float"
+            upperBound="100.0"
+            variance="2.0">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -612,8 +631,15 @@
             default="10"
             description="If preprocessing of cliques is enabled, this option determines the minimal size of cliques to search for"
             id="de.cau.cs.kieler.kiml.ogdf.option.minCliqueSize"
+            lowerBound="3"
             name="Minimum Clique Size"
-            type="int">
+            type="int"
+            upperBound="100"
+            variance="2.0">
+         <dependency
+               option="de.cau.cs.kieler.kiml.ogdf.option.preprocessCliques"
+               value="true">
+         </dependency>
       </layoutOption>
       <layoutOption
             appliesTo="parents"
@@ -647,8 +673,11 @@
             default="1.0"
             description="Factor for the spacing between connected components"
             id="de.cau.cs.kieler.kiml.ogdf.option.minDistCC"
+            lowerBound="0.01"
             name="Component Spacing Factor"
-            type="float">
+            type="float"
+            upperBound="100"
+            variance="0.5">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -656,8 +685,11 @@
             default="1"
             description="Defines the costs for an association edge"
             id="de.cau.cs.kieler.kiml.ogdf.option.costAssoc"
+            lowerBound="1"
             name="Cost for Association Edges"
-            type="int">
+            type="int"
+            upperBound="100"
+            variance="4.0">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -665,8 +697,11 @@
             default="4"
             description="Defines the costs for generalization edges"
             id="de.cau.cs.kieler.kiml.ogdf.option.costGen"
+            lowerBound="1"
             name="Cost for Generalization Edges"
-            type="int">
+            type="int"
+            upperBound="100"
+            variance="4.0">
       </layoutOption>
             <layoutOption
             advanced="true"
@@ -674,8 +709,11 @@
             default="15"
             description="Determines how many times the crossing minimization is repeated. Each repetition (except for the first) starts with randomly permuted nodes on each layer. Deterministic behaviour can be achieved by setting runs to 1"
             id="de.cau.cs.kieler.kiml.ogdf.option.runs"
+            lowerBound="1"
             name="Runs"
-            type="int">
+            type="int"
+            upperBound="1000"
+            variance="4.0">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
@@ -689,11 +727,14 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="0.33"
-            description="The opening angle for rotations (in PI)"
+            default="1.047"
+            description="The opening angle for rotations"
             id="de.cau.cs.kieler.kiml.ogdf.option.rotationAngle"
+            lowerBound="0.0"
             name="Rotation Angle"
-            type="float">
+            type="float"
+            upperBound="3.14"
+            variance="0.3">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -701,8 +742,11 @@
             default="0.01"
             description="The rotation sensitivity"
             id="de.cau.cs.kieler.kiml.ogdf.option.rotationSensitivity"
+            lowerBound="0.00001"
             name="Rotation Sensitivity"
-            type="float">
+            type="float"
+            upperBound="1.0"
+            variance="0.01">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -728,8 +772,11 @@
             default="1.0"
             description="Factor for the minimal distance between father and child components"
             id="de.cau.cs.kieler.kiml.ogdf.option.minDistLevel"
+            lowerBound="0.01"
             name="Level Spacing Factor"
-            type="float">
+            type="float"
+            upperBound="100"
+            variance="0.5">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -737,17 +784,23 @@
             default="20000"
             description="The maximal number of rounds per node"
             id="de.cau.cs.kieler.kiml.ogdf.option.numberOfRounds"
+            lowerBound="1"
             name="Number Of Rounds"
-            type="int">
+            type="int"
+            upperBound="50000"
+            variance="2000">
       </layoutOption>
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="0.5"
+            default="1.571"
             description="The opening angle for oscillations (in PI)"
             id="de.cau.cs.kieler.kiml.ogdf.option.oscillationAngle"
+            lowerBound="0.0"
             name="Oscillation Angle"
-            type="float">
+            type="float"
+            upperBound="3.14"
+            variance="0.3">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -764,8 +817,11 @@
             default="0.005"
             description="The minimal temperature"
             id="de.cau.cs.kieler.kiml.ogdf.option.minimalTemperature"
+            lowerBound="0.00001"
             name="Minimal Temperature"
-            type="float">
+            type="float"
+            upperBound="1.0"
+            variance="0.005">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -773,8 +829,11 @@
             default="0.0"
             description="The maximal disturbance."
             id="de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance"
+            lowerBound="0.0"
             name="Maximal Disturbance"
-            type="float">
+            type="float"
+            upperBound="1.0"
+            variance="0.1">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -782,8 +841,11 @@
             default="0.0625"
             description="The gravitational constant"
             id="de.cau.cs.kieler.kiml.ogdf.option.gravitationalConstant"
+            lowerBound="0.00001"
             name="Gravitational Constant"
-            type="float">
+            type="float"
+            upperBound="1.0"
+            variance="0.05">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -791,8 +853,11 @@
             default="1.0"
             description="Factor for the horizontal spacing between adjacent subtrees"
             id="de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance"
+            lowerBound="0.01"
             name="Subtree Spacing Factor"
-            type="float">
+            type="float"
+            upperBound="100.0"
+            variance="0.5">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -809,7 +874,8 @@
             description="Whether edge labels shall be processed"
             id="de.cau.cs.kieler.kiml.ogdf.option.placeLabels"
             name="Place Labels"
-            type="boolean">
+            type="boolean"
+            variance="0">
       </layoutOption>
    </extension>
 

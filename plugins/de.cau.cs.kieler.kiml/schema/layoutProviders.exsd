@@ -208,6 +208,9 @@ Apart from a set of default layout types offered by KIML, new layout providers a
          </documentation>
       </annotation>
       <complexType>
+         <sequence minOccurs="0" maxOccurs="1">
+            <element ref="dependency"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -270,6 +273,61 @@ Apart from a set of default layout types offered by KIML, new layout providers a
             <annotation>
                <documentation>
                   Whether the option should only be shown in advanced mode; default is false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="lowerBound" type="string">
+            <annotation>
+               <documentation>
+                  An optional lower bound on the values of this layout option. This is used when a layout configuration is determined automatically.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="upperBound" type="string">
+            <annotation>
+               <documentation>
+                  An optional upper bound on the values of this layout option. This is used when a layout configuration is determined automatically.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="variance" type="string">
+            <annotation>
+               <documentation>
+                  An optional variance for values of this layout option. This is used when a layout configuration is determined automatically. The variance is taken as multiplier for Gaussian distributions when new values are determined. Options with uniform distibution, such as Boolean or enumeration types, do not need a variance value, since all values have equal probability. A variance of 0 implies that the option shall not be used in automatic configuration, regardless of its type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="distribution" type="string">
+            <annotation>
+               <documentation>
+                  Either &lt;code&gt;uniform&lt;/code&gt; or &lt;code&gt;gaussian&lt;/code&gt;. This is used when a layout configuration is determined automatically. With a uniform distribution all values have equal probability, while with a Gaussian distribution values around the default value have higher probability. Float and integer valued options have Gaussian distribution as default, while other types have uniform distribution as default.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="dependency">
+      <annotation>
+         <documentation>
+            A layout option that depends on another one is only visible when the specified condition is met. This is useful when an option makes only sense if another option has been set to a specific value.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="option" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Identifier of a layout option, which can be defined using the &lt;code&gt;layoutOption&lt;/code&gt; element.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layoutProviders/layoutOption/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The expected value of the referenced option. The containing option will only be visible if the referenced option is set to this value.
                </documentation>
             </annotation>
          </attribute>
