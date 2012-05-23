@@ -54,9 +54,6 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     /** The current population. */
     private final Population population = new Population();
 
-    /** The selection operation. */
-    private IEvolutionaryOperation selectionOperation = NULL_OPERATION;
-
     /** The mutation operation. */
     private IEvolutionaryOperation mutationOperation = NULL_OPERATION;
 
@@ -89,20 +86,16 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      *             if called after the stop criterion has been satisfied.
      */
     public final void step() {
-
         if (isDone()) {
             throw new IllegalStateException(
                     "No further steps may be performed after the stop criterion has been satisfied.");
         }
 
-        if (generationNumber > 0) {
-            survive();
-        }
         generationNumber++;
-        select();
-        crossOver();
+        crossover();
         mutate();
-        determineFitness();
+        evaluate();
+        survive();
     }
 
     /**
@@ -135,19 +128,11 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     }
 
     /**
-     * Determines fitness values for all individuals.
+     * Determines fitness values for all individuals and sorts the individuals by this fitness,
+     * with highest fitness first.
      */
-    protected final void determineFitness() {
+    protected final void evaluate() {
         evaluationOperation.process(population);
-    }
-
-    /**
-     * Selects parent individuals for recombination, depending on some strategy
-     * for parent selection. This can be the entire current population or a
-     * subset thereof.
-     */
-    protected final void select() {
-        selectionOperation.process(population);
     }
 
     /**
@@ -159,7 +144,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      * together to produce one or more offspring. How this is done may vary
      * widely among different implementations.
      */
-    protected final void crossOver() {
+    protected final void crossover() {
         crossoverOperation.process(population);
     }
 
@@ -204,25 +189,6 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     }
 
     /**
-     * Returns the selection operation, which is used for {@link #select()}.
-     * 
-     * @return the selection operation
-     */
-    protected final IEvolutionaryOperation getSelectionOperation() {
-        return this.selectionOperation;
-    }
-
-    /**
-     * Sets the selection operation, which is used for {@link #select()}.
-     * 
-     * @param theSelectionOperation
-     *            the selection operation to set
-     */
-    protected final void setSelectionOperation(final IEvolutionaryOperation theSelectionOperation) {
-        this.selectionOperation = theSelectionOperation;
-    }
-
-    /**
      * Returns the mutation operation, which is used for {@link #mutate()}.
      * 
      * @return the mutation operation
@@ -242,7 +208,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     }
 
     /**
-     * Returns the crossover operation, which is used for {@link #crossOver()}.
+     * Returns the crossover operation, which is used for {@link #crossover()}.
      * 
      * @return the crossover operation
      */
@@ -251,7 +217,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     }
 
     /**
-     * Sets the crossover operation, which is used for {@link #crossOver()}.
+     * Sets the crossover operation, which is used for {@link #crossover()}.
      * 
      * @param theCrossoverOperation
      *            the crossover operation to set
@@ -261,7 +227,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     }
 
     /**
-     * Returns the evaluation operation, which is used for {@link #determineFitness()}.
+     * Returns the evaluation operation, which is used for {@link #evaluate()}.
      * 
      * @return the evaluation operation
      */
@@ -270,7 +236,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     }
 
     /**
-     * Sets the evaluation operation, which is used for {@link #determineFitness()}.
+     * Sets the evaluation operation, which is used for {@link #evaluate()}.
      * 
      * @param theEvaluationOperation
      *            the evaluation operation to set

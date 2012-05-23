@@ -16,6 +16,8 @@
  */
 package de.cau.cs.kieler.kiml.evol.alg;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import de.cau.cs.kieler.core.math.KielerMath;
@@ -60,20 +62,20 @@ public class MutationOperation implements IEvolutionaryOperation {
      * {@inheritDoc}
      */
     public final void process(final Population population) {
-        Population mutations = new Population();
+        List<Genome> mutations = new LinkedList<Genome>();
         for (Genome ind : population) {
             if (random.nextDouble() < MUTATION_APPLICATION_PROBABILITY) {
                 Genome mutation = mutate(ind);
                 // individual has mutated -- rating is outdated
                 mutation.setProperty(Genome.USER_RATING, ind.getProperty(Genome.USER_RATING)
                         * USER_RATING_FADE);
-                mutations.getGenomes().add(mutation);
+                mutations.add(mutation);
             } else {
-                mutations.getGenomes().add(ind);
+                mutations.add(ind);
             }
         }
         population.getGenomes().clear();
-        population.getGenomes().addAll(mutations.getGenomes());
+        population.getGenomes().addAll(mutations);
     }
 
     /**

@@ -15,13 +15,10 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.core.util.ICondition;
 
@@ -32,9 +29,6 @@ import de.cau.cs.kieler.core.util.ICondition;
  * @author msp
  */
 public class Population extends MapPropertyHolder implements Iterable<Genome> {
-    
-    /** Property to mark individuals as selected. */
-    public static final IProperty<Boolean> SELECTED = new Property<Boolean>("evol.selected", false);
 
     /** the genomes that constitute this population. */
     private final List<Genome> genomes;
@@ -43,7 +37,7 @@ public class Population extends MapPropertyHolder implements Iterable<Genome> {
      * Constructs an empty population.
      */
     public Population() {
-        genomes = new LinkedList<Genome>();
+        genomes = new ArrayList<Genome>();
     }
 
     /**
@@ -115,22 +109,6 @@ public class Population extends MapPropertyHolder implements Iterable<Genome> {
     public FilteredIterator<Genome> filteredIterator(final ICondition<Genome> filter) {
         FilteredIterator<Genome> result =
                 new FilteredIterator<Genome>(this.getGenomes().listIterator(), filter);
-        return result;
-    }
-
-    /**
-     * Randomly chooses one of the individuals in the list.
-     *
-     * @param random
-     *            a random number generator
-     * @return an individual that is in the list, or {@code null} if the list is empty.
-     */
-    public final Genome pick(final Random random) {
-        Genome result = null;
-        if (genomes.size() > 0) {
-            int pos = random.nextInt(genomes.size());
-            result = genomes.get(pos);
-        }
         return result;
     }
 

@@ -33,10 +33,10 @@ import de.cau.cs.kieler.core.properties.Property;
  */
 public class Genome extends MapPropertyHolder {
 
-    /** Property for the user defined rating. */
-    public static final IProperty<Double> USER_RATING = new Property<Double>("evol.userRating");
-    /** Property for the generation number. */
-    public static final IProperty<Integer> GEN_NUMBER = new Property<Integer>("evol.generationNumber");
+    /** property for the user defined rating value. */
+    public static final IProperty<Double> USER_RATING = new Property<Double>("evol.userRating", 0.5);
+    /** property for the weight of the user rating. */
+    public static final IProperty<Double> USER_WEIGHT = new Property<Double>("evol.userWeight", 0.0);
 
     /** The genes of this genome. */
     private final List<Gene<?>> genes;
@@ -109,8 +109,8 @@ public class Genome extends MapPropertyHolder {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        result.append(getProperty(GEN_NUMBER)).append(".").append(getId());
-        result.append(" (").append(getProperty(USER_RATING)).append(")");
+        result.append(getId()).append(" (");
+        result.append(getProperty(USER_RATING) * getProperty(USER_WEIGHT)).append(")");
         for (Gene<?> gene : genes) {
             result.append(" - ");
             result.append(gene.toString());

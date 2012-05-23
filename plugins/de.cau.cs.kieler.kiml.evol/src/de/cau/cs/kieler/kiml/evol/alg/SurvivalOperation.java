@@ -16,7 +16,7 @@
  */
 package de.cau.cs.kieler.kiml.evol.alg;
 
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Random;
 
 import de.cau.cs.kieler.core.math.KielerMath;
@@ -57,42 +57,47 @@ public class SurvivalOperation implements IEvolutionaryOperation {
      * {@inheritDoc}
      */
     public final void process(final Population population) {
-        int count = population.getSize();
-        assert count > 0;
-        Genome[] individuals = new Genome[count];
-        population.getGenomes().toArray(individuals);
-        Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
-
         // only some survive
-        int keep = KielerMath.limit(Math.round(count * SURVIVAL_RATIO), MIN_SURVIVORS, MAX_SURVIVORS);
-        double minDist = individuals[0].getSize() * MIN_DIST_FACTOR;
-        Population survivors = new Population();
+        int surviveCount = KielerMath.limit(Math.round(population.getSize() * SURVIVAL_RATIO),
+                MIN_SURVIVORS, MAX_SURVIVORS);
 
-        for (final Genome ind : individuals) {
-            // prevent too similar genomes from surviving
-            if (survivors.getSize() == 0) {
-                survivors.getGenomes().add(ind);
-            } else if (survivors.getSize() < keep) {
+        Genome[] survivors = new Genome[surviveCount];
+        Iterator<Genome> genomeIter = population.iterator();
+        survivors[0] = genomeIter.next();
+        double minDist = survivors[0].getSize() * MIN_DIST_FACTOR;
+        for (int i = 1; i < surviveCount; i++) {
+            Genome individual = null;
+            int sampleCount = (int) Math.log(i) + 1;
+            while (genomeIter.hasNext()) {
+                Genome genome = genomeIter.next();
                 // compare individual to random samples from other survivors
-                Genome sample1 = survivors.pick(random);
-                Genome sample2 = survivors.pick(random);
-
-                double dist1 = Genome.distance(ind, sample1);
-                double dist2 = dist1;
-                if (sample1 != sample2) {
-                    dist2 = Genome.distance(ind, sample2);
+                boolean distinct = true;
+                for (int j = 0; j < sampleCount; j++) {
+                    Genome sample = survivors[random.nextInt(i)];
+                    double distance = Genome.distance(genome, sample);
+                    if (distance < minDist) {
+                        distinct = false;
+                        break;
+                    }
                 }
-
-                if ((dist1 > minDist) && ((dist2 > minDist))) {
-                    survivors.getGenomes().add(ind);
+                if (distinct) {
+                    individual = genome;
+                    break;
                 }
-            } else {
+            }
+
+            if (individual == null) {
+                surviveCount = i + 1;
                 break;
+            } else {
+                survivors[i] = individual;
             }
         }
 
         population.getGenomes().clear();
-        population.getGenomes().addAll(survivors.getGenomes());
+        for (int i = 0; i < surviveCount; i++) {
+            population.getGenomes().add(survivors[i]);
+        }
     }
 
 }

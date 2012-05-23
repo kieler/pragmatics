@@ -16,13 +16,9 @@
  */
 package de.cau.cs.kieler.kiml.evol.alg;
 
-import java.util.Iterator;
 import java.util.Random;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-
 import de.cau.cs.kieler.core.math.KielerMath;
-import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -39,33 +35,27 @@ import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
 public class CrossoverOperation implements IEvolutionaryOperation {
 
     /**
+     * The selection ratio. Indicates the ratio of the population that shall be
+     * selected for recombination.
+     */
+    private static final float SELECTION_RATIO = 0.70f;
+    /** Minimum number of individuals to select. */
+    private static final int MIN_SELECT = 2;
+    /** Maximum number of individuals to select. */
+    private static final int MAX_SELECT = 1000;
+    
+    /**
      * The cross over ratio. Indicates how many offspring individuals shall be
      * created per selected individual.
      */
     private static final float CROSS_OVER_RATIO = 1.2f;
-
     /** Minimum number of individuals to create by cross over. */
     private static final int MIN_CROSS_OVERS = 1;
-
     /** Maximum number of individuals to create by cross over. */
     private static final int MAX_CROSS_OVERS = 1000;
 
-    /**
-     * Indicates whether parthenogenesis (reproduction from only one parent) may
-     * take place.
-     */
-    private final boolean isParthenogenesisAllowed;
     /** the random number generator. */
     private Random random;
-
-    /**
-     * Creates a new crossover operation.
-     */
-    public CrossoverOperation() {
-        IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
-        this.isParthenogenesisAllowed =
-                store.getBoolean(EvolPlugin.PREF_IS_PARTHENOGENESIS_ALLOWED);
-    }
 
     /**
      * {@inheritDoc}
@@ -78,62 +68,32 @@ public class CrossoverOperation implements IEvolutionaryOperation {
      * {@inheritDoc}
      */
     public final void process(final Population population) {
-
-        Population selection = selected(population);
-
-        if (!selection.getGenomes().isEmpty()) {
-            // TODO: ensure minimum population is preserved
-
-            int crossOvers = KielerMath.limit(Math.round(selection.getSize() * CROSS_OVER_RATIO),
-                    MIN_CROSS_OVERS, MAX_CROSS_OVERS);
-
-            Population offspring = new Population();
-
-            for (int i = 0; i < crossOvers; i++) {
-                if ((selection.getSize() < 2) && !isParthenogenesisAllowed) {
-                    // Selection too small -- No crossover possible.
-                    break;
-                }
-
-                Genome parent1;
-                Genome parent2;
-                do {
-                    parent1 = selection.pick(random);
-                    parent2 = selection.pick(random);
-                    // If parthenogenesis is allowed, it is not guaranteed that
-                    // both parents are different.
-                } while ((parent1 == parent2) && !isParthenogenesisAllowed);
-
-                Genome newGenome = recombine(parent1, parent2);
-                newGenome.setProperty(Genome.USER_RATING, null);
-
-                offspring.getGenomes().add(new Genome(newGenome));
-            }
-
-            // deselect all
-            for (Genome genome : selection) {
-                genome.setProperty(Population.SELECTED, Boolean.FALSE);
-            }
-
-            // add offspring to current population (old survivors)
-            population.getGenomes().addAll(0, offspring.getGenomes());
+        // We need a minimal number of individuals to do crossovers
+        if (population.getSize() < MIN_SELECT) {
+            return;
         }
-    }
+        
+        // Only some are allowed to generate offspring - these are selected by truncation
+        int selectCount = KielerMath.limit(Math.round(population.getSize() * SELECTION_RATIO),
+                MIN_SELECT, MAX_SELECT);
+        int crossoverCount = KielerMath.limit(Math.round(selectCount * CROSS_OVER_RATIO),
+                MIN_CROSS_OVERS, MAX_CROSS_OVERS);
 
-    /**
-     * Filter the genomes that are marked as selected.
-     *
-     * @param population
-     *            the population
-     * @return selected genomes
-     */
-    private Population selected(final Population population) {
-        Iterator<Genome> iter = population.filteredIterator(Population.SELECTED_FILTER);
-        Population selection = new Population();
-        while (iter.hasNext()) {
-            selection.getGenomes().add(iter.next());
+        Genome[] offspring = new Genome[crossoverCount];
+        for (int i = 0; i < crossoverCount; i++) {
+            Genome parent1 = population.getGenomes().get(random.nextInt(selectCount));
+            Genome parent2;
+            do {
+                parent2 = population.getGenomes().get(random.nextInt(selectCount));
+            } while (parent1 == parent2);
+
+            offspring[i] = recombine(parent1, parent2);
         }
-        return selection;
+
+        // add offspring to current population (old survivors)
+        for (int i = 0; i < crossoverCount; i++) {
+            population.getGenomes().add(offspring[i]);
+        }
     }
 
     /**
