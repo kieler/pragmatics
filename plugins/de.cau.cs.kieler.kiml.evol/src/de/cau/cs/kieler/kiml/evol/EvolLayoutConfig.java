@@ -13,10 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
-import java.util.List;
-
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.ILayoutData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -99,15 +98,13 @@ public class EvolLayoutConfig implements ILayoutConfig {
     private Object translateValue(final Gene<?> gene) {
         GeneType geneType = gene.getTypeInfo().getGeneType();
         switch (geneType) {
-        case LIST_ITEM:
-            List<?> list = (List<?>) gene.getTypeInfo().getTypeParam();
-            return list.get((Integer) gene.getValue());
+        case LAYOUT_ALGO:
+        case LAYOUT_TYPE:
+            return ((ILayoutData) gene.listValue()).getId();
         case BOOLEAN:
             return (Integer) gene.getValue() != 0;
         case ENUM:
-            Class<?> enumClass = (Class<?>) gene.getTypeInfo().getTypeParam();
-            Object[] constants = enumClass.getEnumConstants();
-            return constants[(Integer) gene.getValue()];
+            return gene.enumValue();
         default:
             return gene.getValue();
         }

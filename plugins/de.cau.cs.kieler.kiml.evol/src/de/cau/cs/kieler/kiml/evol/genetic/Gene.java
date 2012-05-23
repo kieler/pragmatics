@@ -13,6 +13,10 @@
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
+import java.util.List;
+
+import de.cau.cs.kieler.kiml.LayoutOptionData;
+
 /**
  * A gene is an immutable value container that is able to provide similar
  * versions of itself via mutation and recombination. It carries information
@@ -30,9 +34,11 @@ public final class Gene<T extends Comparable<? super T>> {
     private final T value;
     /** The type info for this gene. */
     private final TypeInfo<T> typeInfo;
+    /** Whether the gene is active or not. */
+    private boolean active;
     
     /**
-     * Creates a new gene.
+     * Creates a new gene. The gene is initially active.
      * 
      * @param id
      *            the identifier
@@ -46,10 +52,12 @@ public final class Gene<T extends Comparable<? super T>> {
     @SuppressWarnings("unchecked")
     public static <S extends Comparable<? super S>> Gene<S> create(final String id, final S value,
             final TypeInfo<?> typeInfo) {
-        if (id == null || value == null || typeInfo == null) {
+        if (id == null || typeInfo == null) {
             throw new NullPointerException();
         }
-        return new Gene<S>(id, value, (TypeInfo<S>) typeInfo);
+        Gene<S> newGene = new Gene<S>(id, value, (TypeInfo<S>) typeInfo);
+        newGene.active = true;
+        return newGene;
     }
     
     /**
@@ -61,7 +69,9 @@ public final class Gene<T extends Comparable<? super T>> {
      * @return a new gene
      */
     public static <S extends Comparable<? super S>> Gene<S> create(final Gene<S> gene) {
-        return new Gene<S>(gene.id, gene.value, gene.typeInfo);
+        Gene<S> newGene = new Gene<S>(gene.id, gene.value, gene.typeInfo);
+        newGene.active = gene.active;
+        return newGene;
     }
     
     /**
@@ -123,7 +133,8 @@ public final class Gene<T extends Comparable<? super T>> {
     }
 
     /**
-     * Returns the value that is encoded in the gene.
+     * Returns the value that is encoded in the gene. If the gene is inactive the value may
+     * be {@code null}.
      *
      * @return the value
      */
@@ -146,6 +157,28 @@ public final class Gene<T extends Comparable<? super T>> {
         }
         return 0;
     }
+    
+    /**
+     * Returns the value of the gene interpreted as list index. This is only applicable to
+     * the gene types {@code LAYOUT_TYPE} and {@code LAYOUT_ALGO}.
+     * 
+     * @return the value as list item
+     */
+    public Object listValue() {
+        List<?> list = (List<?>) typeInfo.getTypeParam();
+        return list.get((Integer) value);
+    }
+    
+    /**
+     * Returns the value of the gene interpreted as enumeration constant. This is only
+     * applicable to the gene type {@code ENUM}.
+     * 
+     * @return the value as enumeration constant
+     */
+    public Enum<?> enumValue() {
+        LayoutOptionData<?> optionData = (LayoutOptionData<?>) typeInfo.getTypeParam();
+        return optionData.getEnumValue((Integer) value);
+    }
 
     /**
      * Return true if the value is within the valid range.
@@ -164,6 +197,24 @@ public final class Gene<T extends Comparable<? super T>> {
      */
     public TypeInfo<T> getTypeInfo() {
         return typeInfo;
+    }
+    
+    /**
+     * Returns whether this gene is currently active. Inactive genes may have {@code null} values.
+     * 
+     * @return true if the gene is active
+     */
+    public boolean isActive() {
+        return active;
+    }
+    
+    /**
+     * Sets the active status.
+     * 
+     * @param theActive the new active status 
+     */
+    public void setActive(final boolean theActive) {
+        this.active = theActive;
     }
     
 }

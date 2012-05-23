@@ -29,8 +29,6 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
      */
     public BasicEvolutionaryAlgorithm() {
         Random random = new Random();
-        setSelectionOperation(new SelectionOperation());
-        getSelectionOperation().setRandom(random);
         setCrossoverOperation(new CrossoverOperation());
         getCrossoverOperation().setRandom(random);
         setMutationOperation(new MutationOperation());

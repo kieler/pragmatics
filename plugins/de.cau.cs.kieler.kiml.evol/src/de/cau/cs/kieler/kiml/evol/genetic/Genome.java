@@ -14,9 +14,7 @@
 package de.cau.cs.kieler.kiml.evol.genetic;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -37,6 +35,8 @@ public class Genome extends MapPropertyHolder {
     public static final IProperty<Double> USER_RATING = new Property<Double>("evol.userRating", 0.5);
     /** property for the weight of the user rating. */
     public static final IProperty<Double> USER_WEIGHT = new Property<Double>("evol.userWeight", 0.0);
+    /** property for the automatically determined rating value. */
+    public static final IProperty<Double> AUTO_RATING = new Property<Double>("evol.autoRating");
 
     /** The genes of this genome. */
     private final List<Gene<?>> genes;
@@ -61,9 +61,12 @@ public class Genome extends MapPropertyHolder {
 
     /**
      * Constructs an empty genome.
+     * 
+     * @param size
+     *            the expected number of genes that will be added
      */
-    public Genome() {
-        genes = new LinkedList<Gene<?>>();
+    public Genome(final int size) {
+        genes = new ArrayList<Gene<?>>(size);
     }
 
     /**
@@ -95,9 +98,9 @@ public class Genome extends MapPropertyHolder {
     }
 
     /**
-     * Returns the id of the individual.
+     * Generate an identifier string for the individual.
      *
-     * @return the id
+     * @return an identifier
      */
     public String getId() {
         return Integer.toHexString(this.hashCode());
@@ -118,8 +121,10 @@ public class Genome extends MapPropertyHolder {
         return result.toString();
     }
 
-    /** Default distance for list item genes. */
-    private static final double LIST_ITEM_GENE_DISTANCE = 2.5;
+    /** Default distance for layout type genes. */
+    private static final double TYPE_GENE_DISTANCE = 7;
+    /** Default distance for layout algorithm genes. */
+    private static final double ALGO_GENE_DISTANCE = 2.5;
     /** Default gene distance. */
     private static final double DEFAULT_GENE_DISTANCE = 1.0;
     /** Scaling factor for float gene distances. */
@@ -136,9 +141,7 @@ public class Genome extends MapPropertyHolder {
      * @return the distance between the genomes
      */
     public static double distance(final Genome genome0, final Genome genome1) {
-        if (genome0.genes.size() != genome1.genes.size()) {
-            throw new IllegalArgumentException();
-        }
+        assert genome0.genes.size() == genome1.genes.size();
 
         Iterator<?> iter0 = genome0.getGenes().iterator();
         Iterator<?> iter1 = genome1.getGenes().iterator();
@@ -147,10 +150,13 @@ public class Genome extends MapPropertyHolder {
             Gene<?> gene0 = (Gene<?>) iter0.next();
             Gene<?> gene1 = (Gene<?>) iter1.next();
 
-            if (!gene0.equals(gene1)) {
+            if (gene0.isActive() && gene1.isActive() && !gene0.equals(gene1)) {
                 switch (gene0.getTypeInfo().getGeneType()) {
-                case LIST_ITEM:
-                    dist += LIST_ITEM_GENE_DISTANCE;
+                case LAYOUT_TYPE:
+                    dist += TYPE_GENE_DISTANCE;
+                    break;
+                case LAYOUT_ALGO:
+                    dist += ALGO_GENE_DISTANCE;
                     break;
                 case FLOAT:
                 case INTEGER:
@@ -160,7 +166,7 @@ public class Genome extends MapPropertyHolder {
                     double var1 = gene1.getTypeInfo().getVariance();
                     double var = (var0 + var1) / 2;
                     float absDiff = Math.abs(gene0.floatValue() - gene1.floatValue());
-                    dist += (absDiff * FLOAT_GENE_SCALE) / var;
+                    dist += absDiff * FLOAT_GENE_SCALE / var;
                     break;
                 default:
                     dist += DEFAULT_GENE_DISTANCE;
@@ -169,29 +175,5 @@ public class Genome extends MapPropertyHolder {
         }
         return dist;
     }
-
-    /**
-     * Descending rating comparator.
-     */
-    public static final Comparator<Genome> DESCENDING_RATING_COMPARATOR = new Comparator<Genome>() {
-                /**
-                 * Small value for floating-point comparison.
-                 */
-                private static final double EPSILON = 1.0E-6;
-
-                public int compare(final Genome ind0, final Genome ind1) {
-                    Double rating0 = ind0.getProperty(USER_RATING);
-                    Double rating1 = ind1.getProperty(USER_RATING);
-                    double v0 = rating0 == null ? 0.0 : rating0;
-                    double v1 = rating1 == null ? 0.0 : rating1;
-
-                    if (Math.abs(v0 - v1) < EPSILON) {
-                        return 0;
-                    } else if (v0 < v1) {
-                        return 1;
-                    }
-                    return -1;
-                }
-            };
     
 }

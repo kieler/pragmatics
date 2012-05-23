@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.util.FilteredIterator;
@@ -131,32 +130,5 @@ public class Population extends MapPropertyHolder implements Iterable<Genome> {
     public Iterator<Genome> iterator() {
         return genomes.iterator();
     }
-
-    /**
-     * Filter for rated individuals.
-     */
-    public static final ICondition<Genome> RATED_FILTER = new ICondition<Genome>() {
-        public boolean evaluate(final Genome genome) {
-            return genome.getProperty(Genome.USER_RATING) != null;
-        }
-    };
-
-    /**
-     * Filter for unrated individuals.
-     */
-    public static final ICondition<Genome> UNRATED_FILTER = new ICondition<Genome>() {
-        public boolean evaluate(final Genome genome) {
-            return genome.getProperty(Genome.USER_RATING) == null;
-        }
-    };
-
-    /**
-     * Filter for selected individuals.
-     */
-    public static final ICondition<Genome> SELECTED_FILTER = new ICondition<Genome>() {
-        public boolean evaluate(final Genome genome) {
-            return genome.getProperty(SELECTED);
-        }
-    };
     
 }

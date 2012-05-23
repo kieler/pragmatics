@@ -118,10 +118,12 @@ public class LayoutAlgorithmData implements ILayoutData {
      * Returns the layout algorithm's default value for the given option.
      * 
      * @param optionData layout option data
+     * @param <T> the layout option type
      * @return the associated default value, or {@code null} if there is none
      */
-    public Object getDefaultValue(final LayoutOptionData<?> optionData) {
-        return knownOptions.get(optionData);
+    @SuppressWarnings("unchecked")
+    public <T> T getDefaultValue(final LayoutOptionData<T> optionData) {
+        return (T) knownOptions.get(optionData);
     }
     
     /**

@@ -16,12 +16,14 @@
  */
 package de.cau.cs.kieler.kiml.evol.alg;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ListIterator;
 import java.util.Random;
 
 import de.cau.cs.kieler.core.math.KielerMath;
-import de.cau.cs.kieler.kiml.evol.genetic.Distribution;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.LayoutTypeData;
+import de.cau.cs.kieler.kiml.evol.GenomeFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -41,15 +43,13 @@ public class MutationOperation implements IEvolutionaryOperation {
      * individual to be subject to mutation.
      */
     private static final double MUTATION_APPLICATION_PROBABILITY = 0.6;
-    
     /**
-     * Factor by which the user rating fades after a mutation has been performed.
+     * Factor by which the user rating weight fades after a mutation has been performed.
      */
-    private static final double USER_RATING_FADE = 0.9;
+    private static final double USER_WEIGHT_FADE = 0.9;
 
     /** the random number generator. */
     private Random random;
-
 
     /**
      * {@inheritDoc}
@@ -62,32 +62,77 @@ public class MutationOperation implements IEvolutionaryOperation {
      * {@inheritDoc}
      */
     public final void process(final Population population) {
-        List<Genome> mutations = new LinkedList<Genome>();
-        for (Genome ind : population) {
+        ListIterator<Genome> genomeIter = population.getGenomes().listIterator();
+        while (genomeIter.hasNext()) {
+            Genome individual = genomeIter.next();
             if (random.nextDouble() < MUTATION_APPLICATION_PROBABILITY) {
-                Genome mutation = mutate(ind);
-                // individual has mutated -- rating is outdated
-                mutation.setProperty(Genome.USER_RATING, ind.getProperty(Genome.USER_RATING)
-                        * USER_RATING_FADE);
-                mutations.add(mutation);
-            } else {
-                mutations.add(ind);
+                Genome mutation = mutate(individual);
+                // individual has mutated -- the user rating is outdated
+                mutation.setProperty(Genome.USER_WEIGHT, individual.getProperty(Genome.USER_WEIGHT)
+                        * USER_WEIGHT_FADE);
+                genomeIter.set(mutation);
             }
         }
-        population.getGenomes().clear();
-        population.getGenomes().addAll(mutations);
     }
 
     /**
      * Mutate the genes of the given individual.
+     * <p>
+     * NOTE: This implementation relies on the correct ordering of genes in the given genome.
+     * If a layout type gene is present, it must precede all other genes, and if a layout
+     * algorithm gene is present, it must precede all genes except the layout type gene.
      *
      * @param genome a genome
      * @return mutated copy of the given genome
      */
     public Genome mutate(final Genome genome) {
-        Genome newGenome = new Genome();
+        LayoutTypeData newLayoutType = null;
+        LayoutAlgorithmData newLayoutAlgo = null;
+        Genome newGenome = new Genome(genome.getSize());
         for (final Gene<?> gene : genome.getGenes()) {
-            Gene<?> newGene = mutate(gene);
+            Gene<?> newGene;
+            GeneType geneType = gene.getTypeInfo().getGeneType();
+            if (newLayoutType != null && geneType == GeneType.LAYOUT_ALGO) {
+                
+                // the layout type has changed, so we are forced to choose a different algorithm
+                newGene = GenomeFactory.createAlgorithmGene(newLayoutType, random);
+                newLayoutAlgo = (LayoutAlgorithmData) newGene.listValue();
+                
+            } else if (newLayoutAlgo != null) {
+                // we mutated the layout algorithm, so all other genes must be validated
+                LayoutOptionData<?> optionData = (LayoutOptionData<?>) gene.getTypeInfo()
+                        .getTypeParam();
+                if (newLayoutAlgo.knowsOption(optionData)) {
+                    if (gene.getValue() != null) {
+                        newGene = mutate(gene);
+                    } else  {
+                        // the gene previously had no assigned value - generate one
+                        newGene = GenomeFactory.createDefaultGene(newLayoutAlgo, optionData,
+                                gene.getTypeInfo());
+                    }
+                    newGene.setActive(true);
+                } else {
+                    newGene = Gene.create(gene);
+                    newGene.setActive(false);
+                }
+                
+            } else if (gene.getValue() != null) {
+                newGene = mutate(gene);
+                
+                if (geneType == GeneType.LAYOUT_TYPE) {
+                    // check whether we mutated the layout type 
+                    if (!gene.equals(newGene)) {
+                        newLayoutType = (LayoutTypeData) newGene.listValue();
+                    }
+                } else if (geneType == GeneType.LAYOUT_ALGO) {
+                    // check whether we mutated the layout algorithm
+                    if (!gene.equals(newGene)) {
+                        newLayoutAlgo = (LayoutAlgorithmData) newGene.listValue();
+                    }
+                }
+            } else {
+                newGene = Gene.create(gene);
+            }
             newGenome.getGenes().add(newGene);
         }
         return newGenome;
@@ -109,45 +154,25 @@ public class MutationOperation implements IEvolutionaryOperation {
         GeneType geneType = typeInfo.getGeneType();
         Integer intValue = 0;
         switch (geneType) {
-        case LIST_ITEM:
-        case BOOLEAN:
-        case ENUM:
-        {
-            assert typeInfo.getDistr() == Distribution.UNIFORM;
-            // assign a random value index (may be the same as before)
-            int lowerBound = (Integer) typeInfo.getLowerBound();
-            int upperBound = (Integer) typeInfo.getUpperBound();
-            intValue = random.nextInt((upperBound - lowerBound) + 1) + lowerBound;
-            return Gene.create(gene.getId(), intValue, typeInfo);
-        }
-            
         case INTEGER:
         {
-            // produce a new value within the valid bounds.
+            // produce a new integer value within the valid bounds
             int lowerBound = (Integer) typeInfo.getLowerBound();
             int upperBound = (Integer) typeInfo.getUpperBound();
-            switch (typeInfo.getDistr()) {
-            case GAUSSIAN:
-                double variance = typeInfo.getVariance();
-                double value = gene.floatValue();
-                do {
-                    value = KielerMath.limit(value, lowerBound, upperBound);
-                    value += random.nextGaussian() * Math.sqrt(variance);
-                } while (value < lowerBound || value > upperBound);
-                intValue = (int) Math.round(value);
-                break;
-            case UNIFORM:
-                intValue = random.nextInt((upperBound - lowerBound) + 1) + lowerBound;
-                break;
-            }
+            double variance = typeInfo.getVariance();
+            double value = gene.floatValue();
+            do {
+                value = KielerMath.limit(value, lowerBound, upperBound);
+                value += random.nextGaussian() * Math.sqrt(variance);
+            } while (value < lowerBound || value > upperBound);
+            intValue = (int) Math.round(value);
             return Gene.create(gene.getId(), intValue, typeInfo);
         }
             
         case FLOAT:
         {
-            assert typeInfo.getDistr() == Distribution.GAUSSIAN;
             Float floatValue;
-            // produce a new value within the valid bounds.
+            // produce a new floating point value within the valid bounds
             float lowerBound = (Float) typeInfo.getLowerBound();
             float upperBound = (Float) typeInfo.getUpperBound();
             double variance = typeInfo.getVariance();
@@ -161,7 +186,11 @@ public class MutationOperation implements IEvolutionaryOperation {
         }
             
         default:
-            return null;
+            // assign a random value index (may be the same as before)
+            int lowerBound = (Integer) typeInfo.getLowerBound();
+            int upperBound = (Integer) typeInfo.getUpperBound();
+            intValue = random.nextInt((upperBound - lowerBound) + 1) + lowerBound;
+            return Gene.create(gene.getId(), intValue, typeInfo);
         }
     }
 

@@ -34,8 +34,10 @@ public class TypeInfo<T extends Comparable<? super T>> {
         ENUM,
         /** boolean value genes. */
         BOOLEAN,
-        /** list item genes. */
-        LIST_ITEM;
+        /** layout type genes: choose from a list of defined layout types. */
+        LAYOUT_TYPE,
+        /** layout algorithm genes: choose from a list of available layout algorithms. */
+        LAYOUT_ALGO;
     }
     
     /** The gene type. */
@@ -50,8 +52,6 @@ public class TypeInfo<T extends Comparable<? super T>> {
     private final Object typeParameter;
     /** The mutation application probability. */
     private final double probability;
-    /** The probability distribution for mutation. */
-    private final Distribution distribution;
     /** The mutation variance, used for Gaussian distribution. */
     private final double variance;
     
@@ -70,14 +70,12 @@ public class TypeInfo<T extends Comparable<? super T>> {
     *            the class of the value
     * @param prob
     *            the probability that a mutation occurs. Must be within the
-    *            interval of {@code 0.0} and {@code 1.0}.
-    * @param distr
-    *            the probability distribution.
+    *            interval of 0.0 and 1.0.
     */
    public TypeInfo(final GeneType theGeneType, final T theDefaultValue,
            final Comparable<T> theLowerBound, final Comparable<T> theUpperBound,
-           final Class<?> theClass, final double prob, final Distribution distr) {
-       this(theGeneType, theDefaultValue, theLowerBound, theUpperBound, theClass, prob, distr, 1.0);
+           final Class<?> theClass, final double prob) {
+       this(theGeneType, theDefaultValue, theLowerBound, theUpperBound, theClass, prob, 1.0);
    }
     
     /**
@@ -95,17 +93,15 @@ public class TypeInfo<T extends Comparable<? super T>> {
      *            the type parameter
      * @param prob
      *            the probability that a mutation occurs. Must be within the
-     *            interval of {@code 0.0} and {@code 1.0}.
+     *            interval of 0.0 and 1.0.
      * @param var
      *            the variance (used for Gaussian distribution); must be >= 0.0
-     * @param distr
-     *            the probability distribution.
      */
     public TypeInfo(final GeneType theGeneType, final T theDefaultValue,
             final Comparable<T> theLowerBound, final Comparable<T> theUpperBound,
-            final Object theParam, final double prob, final Distribution distr, final double var) {
+            final Object theParam, final double prob, final double var) {
         if (theGeneType == null || theDefaultValue == null || theLowerBound == null
-                || theUpperBound == null || distr == null || prob < 0.0 || prob > 1.0 || var < 0.0) {
+                || theUpperBound == null || prob < 0.0 || prob > 1.0 || var < 0.0) {
             throw new IllegalArgumentException();
         }
 
@@ -122,7 +118,6 @@ public class TypeInfo<T extends Comparable<? super T>> {
         this.typeParameter = theParam;
         this.probability = prob;
         this.variance = var;
-        this.distribution = distr;
     }
     
     /**
@@ -163,7 +158,8 @@ public class TypeInfo<T extends Comparable<? super T>> {
 
     /**
      * Returns the type parameter associated with the gene type. For most genes this is the
-     * class object of the corresponding values.
+     * layout option data element from the KIML layout data service. For {@link GeneType#LAYOUT_ALGO}
+     * and {@link GeneType#LAYOUT_TYPE} it is the list of available algorithms or types, respectively.
      *
      * @return the type parameter
      */
@@ -178,15 +174,6 @@ public class TypeInfo<T extends Comparable<? super T>> {
      */
     public double getProbability() {
         return probability;
-    }
-
-    /**
-     * Returns the probability distribution for mutation.
-     *
-     * @return the distribution
-     */
-    public Distribution getDistr() {
-        return distribution;
     }
 
     /**

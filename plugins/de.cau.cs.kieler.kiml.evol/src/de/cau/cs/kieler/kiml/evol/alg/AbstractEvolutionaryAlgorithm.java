@@ -52,7 +52,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     private int generationNumber = 0;
 
     /** The current population. */
-    private final Population population = new Population();
+    private Population population;
 
     /** The mutation operation. */
     private IEvolutionaryOperation mutationOperation = NULL_OPERATION;
@@ -108,14 +108,14 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     public abstract boolean isDone();
 
     /**
-     * Initializes the population. Extending classes that wish to call
-     * {@link #step()} must ensure that this method is called exactly once
-     * before.
+     * Initializes the population. Extending classes that wish to call {@link #step()} must
+     * ensure that this method is called exactly once before.
      */
     @Override
     public void reset() {
         super.reset();
         generationNumber = 0;
+        evaluate();
     }
 
     /**
@@ -125,6 +125,15 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      */
     public final Population getPopulation() {
         return population;
+    }
+    
+    /**
+     * Sets the population.
+     * 
+     * @param p the population
+     */
+    public final void setPopulation(final Population p) {
+        this.population = p;
     }
 
     /**

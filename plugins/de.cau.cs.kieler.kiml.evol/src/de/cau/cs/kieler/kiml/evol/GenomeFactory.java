@@ -21,45 +21,91 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import de.cau.cs.kieler.core.WrappedException;
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
-import de.cau.cs.kieler.kiml.evol.genetic.Distribution;
-import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
-import de.cau.cs.kieler.kiml.evol.genetic.FloatTypeInfo;
+import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
-import de.cau.cs.kieler.kiml.evol.genetic.IGene;
-import de.cau.cs.kieler.kiml.evol.genetic.IGeneFactory;
-import de.cau.cs.kieler.kiml.evol.genetic.IValueFormatter;
-import de.cau.cs.kieler.kiml.evol.genetic.ListItemGene;
-import de.cau.cs.kieler.kiml.evol.genetic.ListItemTypeInfo;
-import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
-import de.cau.cs.kieler.kiml.evol.genetic.UniversalNumberGene;
+import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 
 /**
- * A factory for genomes.
+ * A factory for genes and genomes.
  *
  * @author bdu
- *
+ * @author msp
  */
-final class GenomeFactory {
+public final class GenomeFactory {
+    
+    private static final double P_ALGO_MUTATION = 0.05;
+    
+    public static final Gene<Integer> createAlgorithmGene(final LayoutTypeData layoutType,
+            final Random random) {
+        List<LayoutAlgorithmData> algoList = layoutType.getLayouters(); 
+        TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(GeneType.LAYOUT_ALGO, 0, 0,
+                algoList.size() - 1, algoList, P_ALGO_MUTATION, 1);
+        int randomAlgoIndex = random.nextInt(algoList.size());
+        return Gene.create(LayoutOptions.ALGORITHM.getId(), randomAlgoIndex, typeInfo);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <To,Tg extends Comparable<? super Tg>> Gene<Tg> createDefaultGene(
+            final LayoutAlgorithmData algoData, final LayoutOptionData<To> optionData,
+            final TypeInfo<Tg> typeInfo) {
+        To value = algoData.getDefaultValue(optionData);
+        if (value == null) {
+            value = optionData.getDefault();
+            if (value == null) {
+                value = optionData.getDefaultDefault();
+            }
+        }
+        Comparable<To> lowerBound = optionData.getLowerBound();
+        if (lowerBound.compareTo(value) > 0) {
+            value = (To) lowerBound;
+        }
+        Comparable<To> upperBound = optionData.getUpperBound();
+        if (upperBound.compareTo(value) < 0) {
+            value = (To) upperBound;
+        }
+        return Gene.create(optionData.getId(), translateToGene(value, typeInfo), typeInfo);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <T extends Comparable<? super T>> T translateToGene(final Object value,
+            final TypeInfo<T> typeInfo) {
+        switch (typeInfo.getGeneType()) {
+        case LAYOUT_ALGO:
+            LayoutAlgorithmData algoData = LayoutDataService.getInstance().getAlgorithmData(
+                    (String) value);
+            int algoIndex = ((List<?>) typeInfo.getTypeParam()).indexOf(algoData);
+            return (T) Integer.valueOf(algoIndex);
+        case LAYOUT_TYPE:
+            LayoutTypeData typeData = LayoutDataService.getInstance().getTypeData((String) value);
+            int typeIndex = ((List<?>) typeInfo.getTypeParam()).indexOf(typeData);
+            return (T) Integer.valueOf(typeIndex);
+        case BOOLEAN:
+            return (T) Integer.valueOf((((Boolean) value) ? 1 : 0));
+        case ENUM:
+            return (T) Integer.valueOf(((Enum<?>) value).ordinal());
+        default:
+            return (T) value;
+        }
+    }
 
+    
     /**
      * A factory for genes, used to create genes that encode layout option.
      *
