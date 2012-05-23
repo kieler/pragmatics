@@ -60,7 +60,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
 
     /** the preference key for the selected exporter. */
     private static final String PREFERENCE_EXPORTER = "exportDialog.exporter"; //$NON-NLS-1$
-
+    
     /**
      * The number of columns used to lay out the default target groups.
      */
@@ -70,9 +70,11 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      */
     private static final int DEFAULT_TARGET_GROUP_MARGIN_TOP = 20;
     /**
-     * The graph files extension able to be converted
+     * The graph files extension able to be converted.
      */
     private static final String[] GRAPH_FILE_EXTENSIONS = { "kegdi", "kaod", "kids" };
+
+    private String lastFormatName = "";
 
     /**
      * Constructs a new instance.
@@ -108,12 +110,9 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         String[] formatNames = getGraphFileExtensions();
         if (formatNames.length > 0) {
             fileFormatCombo.setItems(formatNames);
-            // get last exporter from preference store
-            String lastFormatName = preferenceStore.getString(PREFERENCE_EXPORTER);
-            
+            fileFormatCombo.setText(lastFormatName);
             fileFormatCombo.select(0);
             if (lastFormatName.length() > 0) {
-                // fileFormatCombo.setText(lastFormatName);
                 for (int i = 0; i < formatNames.length; i++) {
                     if (formatNames[i].toLowerCase().equals(lastFormatName)) {
                         fileFormatCombo.select(i);
@@ -150,14 +149,14 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         for (IResource resource : selectedResources) {
             if (resource instanceof IFile) {
                 IFile iFile = (IFile) resource;
-                //files.add(iFile.getLocation().toFile());
+                // files.add(iFile.getLocation().toFile());
                 files.add(iFile.getFullPath());
             }
         }
 
         return files;
     }
-    
+
     /**
      * returns the Graph files Possible extensions.
      * 
@@ -236,7 +235,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
     }
 
     /**
-     *  
+     * 
      * @return the selected target format
      */
     public String getTargetFormat() {
@@ -250,13 +249,13 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      */
     public void close() {
         // save settings to preference store
-        preferenceStore.setValue(PREFERENCE_EXPORTER, getTargetFormat());
+        // preferenceStore.setValue(PREFERENCE_EXPORTER, getTargetFormat());
     }
-    
+
     @Override
     public void saveDialogSettings() {
-       super.saveDialogSettings();
-       //TODO use the IDialogSettings to save the preference
+        super.saveDialogSettings();
+        preferenceStore.setValue(PREFERENCE_EXPORTER, getTargetFormat()); 
     }
 
     /**
@@ -265,5 +264,8 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
     @Override
     protected void restoreDialogSettings() {
         super.restoreDialogSettings();
+        // get last exporter from preference store
+        lastFormatName = preferenceStore.getString(PREFERENCE_EXPORTER);
+       
     }
 }
