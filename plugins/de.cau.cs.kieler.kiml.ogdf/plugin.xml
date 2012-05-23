@@ -549,7 +549,6 @@
             appliesTo="parents"
             default="400"
             description="The number of iterations performed by the algorithm"
-            distribution="gaussian"
             id="de.cau.cs.kieler.kiml.ogdf.option.iterations"
             lowerBound="1"
             name="Iterations"

@@ -96,17 +96,6 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         }
     }
 
-    /** literal value constant for diagram target. */
-    public static final String PARENTS_LITERAL = "parents";
-    /** literal value constant for nodes target. */
-    public static final String NODES_LITERAL = "nodes";
-    /** literal value constant for edges target. */
-    public static final String EDGES_LITERAL = "edges";
-    /** literal value constant for ports target. */
-    public static final String PORTS_LITERAL = "ports";
-    /** literal value constant for labels target. */
-    public static final String LABELS_LITERAL = "labels";
-
     /** option target enumeration. */
     public static enum Target {
         /** parents target (hierarchical nodes). */
@@ -119,14 +108,6 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         PORTS,
         /** labels target. */
         LABELS;
-    }
-    
-    /** probability distribution types for option values. */
-    public static enum Distribution {
-        /** uniform distribution. */
-        UNIFORM,
-        /** Gaussian distribution. */
-        GAUSSIAN;
     }
 
     /** identifier of the layout option. */
@@ -151,8 +132,6 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     private T lowerBound;
     /** the upper bound for option values. */
     private T upperBound;
-    /** the probability distibution for option values. */
-    private Distribution distribution;
     /** the variance for option values. */
     private float variance;
     
@@ -439,7 +418,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     }
 
     /**
-     * Sets the targets property of this layout option data.
+     * Sets the layout option targets from a serialized definition. The input is expected to be
+     * a comma separated list of target literals.
      * 
      * @param targetsString comma separated list of targets
      */
@@ -449,15 +429,15 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             StringTokenizer tokenizer = new StringTokenizer(targetsString, ", \t");
             while (tokenizer.hasMoreTokens()) {
                 String token = tokenizer.nextToken();
-                if (token.equalsIgnoreCase(PARENTS_LITERAL)) {
+                if (token.equalsIgnoreCase(Target.PARENTS.toString())) {
                     targets.add(Target.PARENTS);
-                } else if (token.equalsIgnoreCase(NODES_LITERAL)) {
+                } else if (token.equalsIgnoreCase(Target.NODES.toString())) {
                     targets.add(Target.NODES);
-                } else if (token.equalsIgnoreCase(EDGES_LITERAL)) {
+                } else if (token.equalsIgnoreCase(Target.EDGES.toString())) {
                     targets.add(Target.EDGES);
-                } else if (token.equalsIgnoreCase(PORTS_LITERAL)) {
+                } else if (token.equalsIgnoreCase(Target.PORTS.toString())) {
                     targets.add(Target.PORTS);
-                } else if (token.equalsIgnoreCase(LABELS_LITERAL)) {
+                } else if (token.equalsIgnoreCase(Target.LABELS.toString())) {
                     targets.add(Target.LABELS);
                 }
             }
@@ -465,13 +445,13 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     }
 
     /**
-     * Checks whether the given target is active for this layout option.
+     * Returns the set of layout option targets, which determine the types of graph elements
+     * the option can be related to.
      * 
-     * @param target a layout option target
-     * @return true if the target is active
+     * @return the layout option targets
      */
-    public boolean hasTarget(final Target target) {
-        return targets.contains(target);
+    public Set<Target> getTargets() {
+        return targets;
     }
 
     /**
@@ -695,24 +675,6 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      */
     public void setAdvanced(final boolean theadvanced) {
         this.advanced = theadvanced;
-    }
-
-    /**
-     * Returns the probability distribution for layout option values.
-     * 
-     * @return the distribution
-     */
-    public Distribution getDistribution() {
-        return distribution;
-    }
-
-    /**
-     * Sets the probability distribution for layout option values.
-     * 
-     * @param distribution the distribution to set
-     */
-    public void setDistribution(final Distribution distribution) {
-        this.distribution = distribution;
     }
 
     /**

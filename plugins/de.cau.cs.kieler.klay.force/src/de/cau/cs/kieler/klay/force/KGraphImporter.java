@@ -165,7 +165,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         KShapeLayout parentLayout = kgraph.getData(KShapeLayout.class);
         float borderSpacing = fgraph.getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
-            borderSpacing = Properties.DEF_SPACING;
+            borderSpacing = Properties.SPACING.getDefault();
         }
         fgraph.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
         

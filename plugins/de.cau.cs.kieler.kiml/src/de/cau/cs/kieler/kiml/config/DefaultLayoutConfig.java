@@ -179,7 +179,8 @@ public class DefaultLayoutConfig implements ILayoutConfig {
         
         // check default value of the content layout algorithm
         LayoutAlgorithmData contentAlgoData = context.getProperty(CONTENT_ALGO);
-        if (contentAlgoData != null && optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
+        if (contentAlgoData != null && optionData.getTargets().contains(
+                LayoutOptionData.Target.PARENTS)) {
             result = contentAlgoData.getDefaultValue(optionData);
             if (result != null) {
                 return result;

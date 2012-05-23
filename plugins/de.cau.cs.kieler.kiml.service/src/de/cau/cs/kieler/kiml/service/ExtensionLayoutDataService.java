@@ -28,7 +28,6 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutOptionData.Distribution;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.GraphFeature;
 
@@ -67,8 +66,6 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     public static final String ATTRIBUTE_DEFAULT = "default";
     /** name of the 'description' attribute in the extension points. */
     public static final String ATTRIBUTE_DESCRIPTION = "description";
-    /** name of the 'distribution' attribute in the extension points. */
-    public static final String ATTRIBUTE_DISTRIBUTION = "distribution";
     /** name of the 'enumValues' attribute used in doing remote layout. */
     public static final String ATTRIBUTE_ENUMVALUES = "enumValues";
     /** name of the 'feature' attribute in the extension points. */
@@ -411,15 +408,6 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
             }
         } catch (NumberFormatException exception) {
             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_VARIANCE, exception);
-        }
-        // get probability distribution for automatic configuration
-        try {
-            String distrString = element.getAttribute(ATTRIBUTE_DISTRIBUTION);
-            if (distrString != null) {
-                optionData.setDistribution(Distribution.valueOf(distrString.toUpperCase()));
-            }
-        } catch (IllegalArgumentException exception) {
-            reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_DISTRIBUTION, exception);
         }
         getRegistry().addLayoutOption(optionData);
     }

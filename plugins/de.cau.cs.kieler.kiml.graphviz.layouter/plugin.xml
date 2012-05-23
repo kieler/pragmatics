@@ -385,10 +385,13 @@
       <layoutOption
             appliesTo="edges"
             default="1.0"
-            description="Distance of head / tail positioned edge labels to the source or target node"
+            description="Distance of head / tail positioned edge labels to the source or target node."
             id="de.cau.cs.kieler.graphviz.labelDistance"
+            lowerBound="0"
             name="Label Distance"
-            type="float">
+            type="float"
+            upperBound="100"
+            variance="1.0">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -396,8 +399,11 @@
             default="-25.0"
             description="Angle between head / tail positioned edge labels and the corresponding edge."
             id="de.cau.cs.kieler.graphviz.labelAngle"
+            lowerBound="-90"
             name="Label Angle"
-            type="float">
+            type="float"
+            upperBound="90"
+            variance="5.0">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -413,8 +419,11 @@
             default="-1"
             description="Terminating condition. If the length squared of all energy gradients are &lt; epsilon, the algorithm stops."
             id="de.cau.cs.kieler.graphviz.epsilon"
+            lowerBound="0.00001"
             name="Epsilon"
-            type="float">
+            type="float"
+            upperBound="10.0"
+            variance="0.0001">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -422,8 +431,11 @@
             default="-1"
             description="The maximum number of iterations."
             id="de.cau.cs.kieler.graphviz.maxiter"
+            lowerBound="1"
             name="Max. Iterations"
-            type="int">
+            type="int"
+            upperBound="10000"
+            variance="100">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -431,8 +443,11 @@
             default="-1.0"
             description="Multiplicative scale factor for the maximal number of iterations used during crossing minimization, node ranking, and node positioning."
             id="de.cau.cs.kieler.graphviz.iterationsLimit"
+            lowerBound="0.01"
             name="Iterations Factor"
-            type="float">
+            type="float"
+            upperBound="100.0"
+            variance="0.3">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -457,10 +472,13 @@
             advanced="true"
             appliesTo="parents"
             default="1.0"
-            description="Factor for the spacing of different layers (ranks)"
+            description="Factor for the spacing of different layers (ranks)."
             id="de.cau.cs.kieler.graphviz.layerSpacingFactor"
+            lowerBound="0.01"
             name="Layer Spacing Factor"
-            type="float">
+            type="float"
+            upperBound="100.0"
+            variance="0.5">
       </layoutOption>
    </extension>
 

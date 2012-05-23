@@ -253,7 +253,6 @@
       <layoutOption
             appliesTo="nodes,edges"
             description="Defines the priority of an object; its meaning depends on the specific layout algorithm"
-            distribution="gaussian"
             id="de.cau.cs.kieler.priority"
             name="Priority"
             type="int"
@@ -262,7 +261,6 @@
       <layoutOption
             appliesTo="parents"
             description="Seed used for pseudo-random number generators to control the layout algorithm; 0 means a new seed is generated"
-            distribution="gaussian"
             id="de.cau.cs.kieler.randomSeed"
             name="Randomization Seed"
             type="int"
