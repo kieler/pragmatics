@@ -24,8 +24,13 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.PolygonShape;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.PointList;
+import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.draw2d.ui.internal.figures.ImageFigureEx;
@@ -70,6 +75,8 @@ import diva.canvas.toolbox.ImageFigure;
 
 public class FigureProviderKRendering {
 
+    private KRenderingFactory factory = KRenderingFactoryImpl.eINSTANCE;
+    
     /**
      * Creates a draw2d ImageFigure out of an ptolemy EditorIcon.
      * 
@@ -78,7 +85,6 @@ public class FigureProviderKRendering {
      * @return draw2d Figure representing the EditorIcon
      */
     public KRendering createFigureFromIcon(final EditorIcon icon) {
-        KRenderingFactory factory = KRenderingFactoryImpl.eINSTANCE;
         Figure shape = icon.createBackgroundFigure();
         Image img;
         img = getImageFromFigure(shape);
@@ -102,7 +108,7 @@ public class FigureProviderKRendering {
         fig.getBounds().setSize(size.getCopy());
         fig.setSize(size.getCopy());
         */
-        KRendering figure = factory.createKImage();
+        KRendering figure = this.getDefaultFigure();//factory.createKImage();
         return figure;
     }
 
@@ -112,7 +118,6 @@ public class FigureProviderKRendering {
      * @return the input port figure
      */
     public KRendering createInputPort() {
-        KRenderingFactory factory = KRenderingFactoryImpl.eINSTANCE;
         KPolygon figure = factory.createKPolygon();
 
         KPolylinePlacementData placement = factory.createKPolylinePlacementData();
@@ -130,7 +135,7 @@ public class FigureProviderKRendering {
         // CHECKSTYLEON MagicNumber
         
         KBackgroundColor background = factory.createKBackgroundColor();
-        figure.getStyles().add((KBackgroundColor) lookupColor("black", background));
+        figure.getStyles().add((KBackgroundColor) FigureParserKRendering.lookupColor("black", background));
         return figure;
         // return this.getDefaultFigure();
     }
@@ -141,7 +146,6 @@ public class FigureProviderKRendering {
      * @return the output port figure
      */
     public KRendering createOutputPort() {
-        KRenderingFactory factory = KRenderingFactoryImpl.eINSTANCE;
         KPolygon figure = factory.createKPolygon();
 
         KPolylinePlacementData placement = factory.createKPolylinePlacementData();
@@ -159,7 +163,7 @@ public class FigureProviderKRendering {
         figure.setPlacementData(placement);
 
         KBackgroundColor background = factory.createKBackgroundColor();
-        figure.getStyles().add((KBackgroundColor) lookupColor("black", background));
+        figure.getStyles().add((KBackgroundColor) FigureParserKRendering.lookupColor("black", background));
         return figure;
     }
 
@@ -176,7 +180,6 @@ public class FigureProviderKRendering {
     }
 
     private KPosition makeBottomRightKPosition(final float x, final float y) {
-        KRenderingFactory factory = KRenderingFactoryImpl.eINSTANCE;
         KPosition p = factory.createKPosition();
         KXPosition xp = factory.createKRightPosition();
         xp.setRelative(x);
@@ -205,13 +208,12 @@ public class FigureProviderKRendering {
      * @return the default figure
      */
     public KRendering getDefaultFigure() {
-        KRenderingFactory factory = KRenderingFactoryImpl.eINSTANCE;
         KRectangle figure = factory.createKRectangle();
 
         KBackgroundColor fill = factory.createKBackgroundColor();
         KForegroundColor stroke = factory.createKForegroundColor();
-        figure.getStyles().add((KBackgroundColor) lookupColor("white", fill));
-        figure.getStyles().add((KForegroundColor) lookupColor("black", stroke));
+        figure.getStyles().add((KBackgroundColor) FigureParserKRendering.lookupColor("white", fill));
+        figure.getStyles().add((KForegroundColor) FigureParserKRendering.lookupColor("black", stroke));
         KLineWidth strokeWidth = factory.createKLineWidth();
         strokeWidth.setLineWidth(1);
         figure.getStyles().add(strokeWidth);
@@ -285,13 +287,12 @@ public class FigureProviderKRendering {
      * @return a figure represention an director
      */
     public KRendering createDirector() {
-        KRenderingFactory factory = KRenderingFactoryImpl.eINSTANCE;
         KRectangle figure = factory.createKRectangle();
 
         KBackgroundColor fill = factory.createKBackgroundColor();
         KForegroundColor stroke = factory.createKForegroundColor();
-        figure.getStyles().add((KBackgroundColor) lookupColor("green", fill));
-        figure.getStyles().add((KForegroundColor) lookupColor("black", stroke));
+        figure.getStyles().add((KBackgroundColor) FigureParserKRendering.lookupColor("green", fill));
+        figure.getStyles().add((KForegroundColor) FigureParserKRendering.lookupColor("black", stroke));
 
         KDirectPlacementData placement = factory.createKDirectPlacementData();
 
@@ -332,14 +333,13 @@ public class FigureProviderKRendering {
      */
     public KRendering createMonitorValue(final EObject object) {
         MonitorValueFigure monitor = new MonitorValueFigure(object);
-        KRenderingFactory factory = KRenderingFactoryImpl.eINSTANCE;
         KLineWidth strokeWidth = factory.createKLineWidth();
         strokeWidth.setLineWidth(1);
         monitor.getStyles().add(strokeWidth);
         KBackgroundColor fill = factory.createKBackgroundColor();
         KForegroundColor stroke = factory.createKForegroundColor();
-        monitor.getStyles().add((KBackgroundColor) lookupColor("white", fill));
-        monitor.getStyles().add((KForegroundColor) lookupColor("black", stroke));
+        monitor.getStyles().add((KBackgroundColor) FigureParserKRendering.lookupColor("white", fill));
+        monitor.getStyles().add((KForegroundColor) FigureParserKRendering.lookupColor("black", stroke));
         return monitor;
     }
 
@@ -368,7 +368,6 @@ public class FigureProviderKRendering {
          */
         public MonitorValueFigure(final EObject object) {
             super();
-            KRenderingFactory factory = KRenderingFactoryImpl.eINSTANCE;
 
             value = factory.createKText();
 
@@ -434,7 +433,6 @@ public class FigureProviderKRendering {
      */
     public KRendering createValueFigure(final EObject object, final String valueAttribute,
             final EditPart part) {
-        KRenderingFactory factory = KRenderingFactoryImpl.eINSTANCE;
         KRectangle constFigure = (KRectangle) getDefaultFigure();
         if (object instanceof Annotatable) {
             KText valueLabel = factory.createKText();
@@ -494,13 +492,13 @@ public class FigureProviderKRendering {
      * @return a red box with a questionmark in it
      */
     public KRendering getErrorFigure() {
-        KRenderingFactory factory = KRenderingFactoryImpl.eINSTANCE;
+        
         KRectangle errorFigure = factory.createKRectangle();
 
         KBackgroundColor fill = factory.createKBackgroundColor();
         KForegroundColor stroke = factory.createKForegroundColor();
-        errorFigure.getStyles().add((KBackgroundColor) lookupColor("red", fill));
-        errorFigure.getStyles().add((KForegroundColor) lookupColor("black", stroke));
+        errorFigure.getStyles().add((KBackgroundColor) FigureParserKRendering.lookupColor("red", fill));
+        errorFigure.getStyles().add((KForegroundColor) FigureParserKRendering.lookupColor("black", stroke));
 
         KDirectPlacementData placement = factory.createKDirectPlacementData();
 
@@ -529,76 +527,58 @@ public class FigureProviderKRendering {
         return errorFigure;
     }
 
-    /**
-     * Make a KRendering KColor object out of a color name.
-     * 
-     * @param color
-     *            string representation of a color
-     * @return the color described by the string. black if not found.
-     */
-    private static KColor lookupColor(final String color, final KColor kcolor) {
-        String s = color.toLowerCase();
-        if (s.equals("black")) {
-            kcolor.setBlue(ColorConstants.black.getBlue());
-            kcolor.setRed(ColorConstants.black.getRed());
-            kcolor.setGreen(ColorConstants.black.getGreen());
-            return kcolor;
-        } else if (s.equals("blue")) {
-            kcolor.setBlue(ColorConstants.blue.getBlue());
-            kcolor.setRed(ColorConstants.blue.getRed());
-            kcolor.setGreen(ColorConstants.blue.getGreen());
-            return kcolor;
-        } else if (s.equals("cyan")) {
-            kcolor.setBlue(ColorConstants.cyan.getBlue());
-            kcolor.setRed(ColorConstants.cyan.getRed());
-            kcolor.setGreen(ColorConstants.cyan.getGreen());
-            return kcolor;
-        } else if (s.equals("darkgray") || s.equals("darkgrey")) {
-            kcolor.setBlue(ColorConstants.darkGray.getBlue());
-            kcolor.setRed(ColorConstants.darkGray.getRed());
-            kcolor.setGreen(ColorConstants.darkGray.getGreen());
-            return kcolor;
-        } else if (s.equals("lightgray") || s.equals("lightgrey")) {
-            kcolor.setBlue(ColorConstants.lightGray.getBlue());
-            kcolor.setRed(ColorConstants.lightGray.getRed());
-            kcolor.setGreen(ColorConstants.lightGray.getGreen());
-            return kcolor;
-        } else if (s.equals("gray") || s.equals("grey")) {
-            kcolor.setBlue(ColorConstants.gray.getBlue());
-            kcolor.setRed(ColorConstants.gray.getRed());
-            kcolor.setGreen(ColorConstants.gray.getGreen());
-            return kcolor;
-        } else if (s.equals("green")) {
-            kcolor.setBlue(ColorConstants.green.getBlue());
-            kcolor.setRed(ColorConstants.green.getRed());
-            kcolor.setGreen(ColorConstants.green.getGreen());
-            return kcolor;
-        } else if (s.equals("orange")) {
-            kcolor.setBlue(ColorConstants.orange.getBlue());
-            kcolor.setRed(ColorConstants.orange.getRed());
-            kcolor.setGreen(ColorConstants.orange.getGreen());
-            return kcolor;
-        } else if (s.equals("red")) {
-            kcolor.setBlue(ColorConstants.red.getBlue());
-            kcolor.setRed(ColorConstants.red.getRed());
-            kcolor.setGreen(ColorConstants.red.getGreen());
-            return kcolor;
-        } else if (s.equals("white")) {
-            kcolor.setBlue(ColorConstants.white.getBlue());
-            kcolor.setRed(ColorConstants.white.getRed());
-            kcolor.setGreen(ColorConstants.white.getGreen());
-            return kcolor;
-        } else if (s.equals("yellow")) {
-            kcolor.setBlue(ColorConstants.yellow.getBlue());
-            kcolor.setRed(ColorConstants.yellow.getRed());
-            kcolor.setGreen(ColorConstants.yellow.getGreen());
-            return kcolor;
-        } else {
-            kcolor.setBlue(ColorConstants.black.getBlue());
-            kcolor.setRed(ColorConstants.black.getRed());
-            kcolor.setGreen(ColorConstants.black.getGreen());
-            return kcolor;
-        }
+    
+    
+    
+    private static final float PORT_SIZE_LONG_SIDE = 7;
+    private static final float PORT_SIZE_SHORT_SIDE = 3.5f;
+    //private static final int PORT_SIZE_BOUNDS = 8;
+    
+    public KRendering getPortKRendering(final KBackgroundColor color, float xoffset, float yoffset) {
+        KPolylinePlacementData placement = factory.createKPolylinePlacementData();
+        
+        placement.getPoints().add(createKPosition(0 + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
+        placement.getPoints().add(createKPosition(0 + xoffset, 0 + yoffset));
+        placement.getPoints().add(createKPosition(PORT_SIZE_LONG_SIDE + xoffset, PORT_SIZE_SHORT_SIDE + yoffset));
+        placement.getPoints().add(createKPosition(0 + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
+        
+        KPolygon figure = factory.createKPolygon();
+
+        figure.setPlacementData(placement);
+        
+        KForegroundColor stroke = factory.createKForegroundColor();
+        figure.getStyles().add(color);
+        figure.getStyles().add((KForegroundColor) FigureParserKRendering.lookupColor("black", stroke));
+        
+        //figure.setLineWidth(1);
+        //figure.getBounds().setSize(PORT_SIZE_BOUNDS, PORT_SIZE_BOUNDS);
+        return figure;
     }
 
+    private KPosition createKPosition(final float x,final float y) {
+        KPosition position = factory.createKPosition();
+        KXPosition xp = factory.createKLeftPosition();
+        xp.setAbsolute(x);
+        KYPosition yp = factory.createKTopPosition();
+        yp.setAbsolute(y);
+        position.setX(xp);
+        position.setY(yp);
+        return position;
+    }
+    
+    public KRendering createRelation() {
+        KPolylinePlacementData placement = factory.createKPolylinePlacementData();
+        placement.getPoints().add(createKPosition(5, 0));
+        placement.getPoints().add(createKPosition(10, 5));
+        placement.getPoints().add(createKPosition(5, 10));
+        placement.getPoints().add(createKPosition(0, 5));
+        placement.getPoints().add(createKPosition(5, 0));
+        
+        KPolygon relation = factory.createKPolygon();
+        relation.setPlacementData(placement);
+        
+        return relation;
+        
+    }
+    
 }

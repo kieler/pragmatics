@@ -18,7 +18,6 @@ import de.cau.cs.kieler.core.krendering.KEllipse;
 import de.cau.cs.kieler.core.krendering.KFontSize;
 import de.cau.cs.kieler.core.krendering.KForegroundColor;
 import de.cau.cs.kieler.core.krendering.KGridPlacementData;
-import de.cau.cs.kieler.core.krendering.KImage;
 import de.cau.cs.kieler.core.krendering.KLineWidth;
 import de.cau.cs.kieler.core.krendering.KPolygon;
 import de.cau.cs.kieler.core.krendering.KPolyline;
@@ -56,7 +55,7 @@ public class FigureParserKRendering {
         // Make an invisible container to hold the visible figures because we don't know the
         // structure of the svg.
         KContainerRendering rootFigure = factory.createKRectangle();
-        /*
+        
         KVisibility backgroundVisibility = factory.createKBackgroundVisibility();
         backgroundVisibility.setVisible(false);
         KVisibility foregroundVisibility = factory.createKForegroundVisibility();
@@ -64,7 +63,7 @@ public class FigureParserKRendering {
         
         rootFigure.getStyles().add(backgroundVisibility);
         rootFigure.getStyles().add(foregroundVisibility);
-        */
+        
         // IFigure rootFigure = new Panel();
         KGridPlacementData placement = factory.createKGridPlacementData();
         placement.setHeightHint(Float.parseFloat(svgElement.getAttribute("height")));
@@ -354,11 +353,11 @@ public class FigureParserKRendering {
                         }
                     }
                     // Image img = null;
-                    KImage figure = null;
+                    KRectangle figure = null;
                     // try {
                     // img = new Image(null, url.openStream());
-                    figure = factory.createKImage();
-                    figure.setImagePath(url.getPath());
+                    figure = factory.createKRectangle();//factory.createKImage();
+                    //figure.setImagePath(url.getPath());
                     // } catch (IOException e) {
                     
                     // e.printStackTrace();
@@ -376,7 +375,9 @@ public class FigureParserKRendering {
                     
                     figure.setPlacementData(placement);
                     
+                    /*
                     applyStyle(figure, style);
+                    */
                     parentFigure.getChildren().add(buildFigure(childElement, figure));
 
                 }
@@ -447,10 +448,12 @@ public class FigureParserKRendering {
                     figure.getStyles().add(lookupColor(value, fill));
                     // some hacked size stuff without having a fitting font.
                 } else if (name.equals("font-size")) {
+                    /*
                     int size = Integer.parseInt(value);
                     KFontSize fontSize = factory.createKFontSize();
                     fontSize.setSize(size);
                     figure.getStyles().add(fontSize);
+                    */
                     /*
                      * if (figure instanceof Label) { FontData[] fonts =
                      * PlatformUI.getWorkbench().getDisplay() .getFontList("arial", true); FontData

@@ -427,10 +427,10 @@
    <extension
          point="de.cau.cs.kieler.core.kivi.combinations">
       <combination
-            active="true"
+            active="false"
             class="de.cau.cs.kieler.kaom.karma.ptolemy.krendering.KaomKlighdCombination"
-            description="describe me"
-            name="kaomklight">
+            description="every time a kaom diagram is opened a corresponding klighd view is opened as well"
+            name="kaom klight debug">
       </combination>
    </extension>
 

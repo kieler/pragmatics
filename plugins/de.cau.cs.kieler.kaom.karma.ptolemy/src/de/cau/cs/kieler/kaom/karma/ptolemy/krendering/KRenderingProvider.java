@@ -1,29 +1,44 @@
 package de.cau.cs.kieler.kaom.karma.ptolemy.krendering;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.EditPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.w3c.dom.Document;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
+import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.vergil.icon.EditorIcon;
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.core.krendering.KBackgroundColor;
+import de.cau.cs.kieler.core.krendering.KForegroundColor;
 import de.cau.cs.kieler.core.krendering.KGridPlacementData;
 import de.cau.cs.kieler.core.krendering.KRectangle;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
+import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.kaom.Entity;
+import de.cau.cs.kieler.kaom.Port;
+import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.PtolemyInterface;
 import de.cau.cs.kieler.kaom.karma.ptolemy.Activator;
 import de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation.PtolemyFetcher;
 
 public class KRenderingProvider {
 
+    private static FigureProviderKRendering figureProvider = new FigureProviderKRendering();
+    
     public static KRendering getKNodeRendering(Annotatable annotatable) {
         StringAnnotation language = (StringAnnotation) annotatable.getAnnotation("language");
         if (language != null && language.getValue().equals("ptolemy") ) {
@@ -39,13 +54,111 @@ public class KRenderingProvider {
         return null;
     }
     
+    public static KRendering getKPortRendering(Annotatable annotatable) {
+        
+        KBackgroundColor color = KRenderingFactory.eINSTANCE.createKBackgroundColor();
+        String input = "WEST";
+        
+        StringAnnotation cardinal = (StringAnnotation)annotatable.getAnnotation("_cardinal");
+
+        if(cardinal != null && cardinal.getValue() != null) {
+            input = cardinal.getValue();
+        } else {
+            Annotation inputAnn = annotatable.getAnnotation("input");
+            Annotation outputAnn = annotatable.getAnnotation("output");
+            Annotation inoutAnn = annotatable.getAnnotation("inputoutput");
+            if (inputAnn != null) {
+                input = "WEST";
+            } else if (outputAnn != null) {
+                input = "EAST";
+            } else if (inoutAnn != null) {
+                input = "SOUTH";
+            }
+            
+        }
+        
+        
+        EObject parentObject = annotatable.eContainer();
+        if (parentObject instanceof Annotatable) {
+            Annotatable myAnnotatable = (Annotatable) parentObject;
+            Annotation annotation = myAnnotatable.getAnnotation("ptolemyClass");
+            if (annotation != null && annotation instanceof StringAnnotation) {
+                String ptolemyClassString = ((StringAnnotation) annotation).getValue();
+                try {
+                    ptolemy.kernel.Entity entity = getPtolemyEntity(ptolemyClassString);
+                    if (entity == null) {
+                        return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, 0);
+                    }
+                    if (annotatable instanceof Port) {
+                        // we fetch a ptolemy instance of this port by its name to get some
+                        // informations of its former nature.
+                        Port port = (Port) annotatable;
+                        String name = port.getName();
+                        ptolemy.kernel.Port ptolemyPort = entity.getPort(name);
+                        // parameterports are gray
+                        if (ptolemyPort instanceof ptolemy.actor.parameters.ParameterPort) {
+                            if (input.equals("SOUTH")) {
+                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 4, 0);
+                            } else if (input.equals("NORTH")) {
+                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 4, 0);
+                            } else if (input.equals("EAST")){
+                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("gray", color), 4, 0);
+                            } else {
+                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("gray", color), -4, 0);
+                            }
+                        } else if (ptolemyPort instanceof ptolemy.actor.IOPort) {
+                            // io multiports are white
+                            if (((ptolemy.actor.IOPort) (ptolemyPort)).isMultiport()) {
+                                if (input.equals("UP")) {
+                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 4, 0);
+                                } else if (input.equals("DOWN")) {
+                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 4, 0);
+                                } else if (input.equals("EAST")){
+                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("white", color), 4, 0);
+                                } else {
+                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("white", color), -4, 0);
+                                }
+                            } else {
+                                // other io ports are black
+                                if (input.equals("UP")) {
+                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 4, 0);
+                                } else if (input.equals("DOWN")) {
+                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 4, 0);
+                                } else if (input.equals("EAST")){
+                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 4, 0);
+                                } else {
+                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), -4, 0);
+                                }
+                            }
+                        } else {
+                            // all other ports are painted black
+                            if (input.equals("UP")) {
+                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 4, 0);
+                            } else if (input.equals("DOWN")) {
+                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 4, 0);
+                            } else if (input.equals("EAST")){
+                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, 0);
+                            } else {
+                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, 0);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, 0);
+    }
+    
     
     public static KRendering getPtolemySvgRendering(Annotatable annotatable) {
         NamedObj nObj = PtolemyFetcher.getPtolemyInstance(annotatable);
         if (nObj == null) {
             return null;//figureProvider.getErrorFigure();
         } else {
-            FigureProviderKRendering figureProvider = new FigureProviderKRendering();
             // get all icons for this element
             List<EditorIcon> icons = PtolemyFetcher.fetchIcons(nObj);
             // if there is none use svg description
@@ -92,5 +205,47 @@ public class KRenderingProvider {
         
         return rectangle;
     }
+    
+    
+    /**
+     * Loads the given Ptolemy entity.
+     * 
+     * @param className
+     *            the entity's class name.
+     * @return the loaded entity.
+     * @throws Exception
+     *             various exceptions can occurr.
+     */
+    private static ptolemy.kernel.Entity getPtolemyEntity(final String className) throws Exception {
+        try {
+            Class<?> ptolemy = Class.forName(className);
+            Constructor<?> constr = ptolemy.getConstructor(CompositeEntity.class, String.class);
+            Object obj = constr.newInstance(new CompositeEntity(), "cache");
+            ptolemy.kernel.Entity entity = (ptolemy.kernel.Entity) obj;
+            return entity;
+        } catch (ClassNotFoundException e) {
+            // Not a class actor, continue below
+        } catch (NoClassDefFoundError er) {
+            // er.printStackTrace();
+            return null;
+        }
+        // Use Ptolemy to load the actor
+        Injector injector = Guice.createInjector();
+        PtolemyInterface ptolemy = injector.getInstance(PtolemyInterface.class);
+
+        NamedObj nObj = null;
+        try {
+            nObj = ptolemy.instantiatePtolemyActor(className, "actor");
+        } catch (Exception e) {
+            ;
+            return null;
+        }
+        if (nObj instanceof ptolemy.kernel.Entity) {
+            return (ptolemy.kernel.Entity) nObj;
+        } else {
+            throw new Exception("Couldn't load Ptolemy Entity '" + className + "'.");
+        }
+    }
+
     
 }

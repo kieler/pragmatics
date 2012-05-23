@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.krendering.KBackgroundColor;
@@ -47,6 +48,8 @@ import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.Relation;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klighd.TransformationContext;
 import de.cau.cs.kieler.klighd.transformations.AbstractTransformation;
@@ -69,6 +72,11 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
         KNode parent = KimlUtil.createInitializedNode();
         map.put(model, parent);
         KNode k = transformationhelper(model, parent);
+        KShapeLayout layout = k.getData(KShapeLayout.class);
+        if (layout != null) {
+            layout.setProperty(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.klay.layered");
+            layout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
+        }
         k = addConnections(model, parent);
         return k;
     }
@@ -154,9 +162,17 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
         KRenderingFactory factory = KRenderingFactory.eINSTANCE;
         for (Entity e : element.getChildEntities()) {
             KNode n = KimlUtil.createInitializedNode();
+            if (e.getName() != null) {
+                KLabel l = KimlUtil.createInitializedLabel(n);
+                l.setText(e.getName());
+            }
             KRendering ren = KRenderingProvider.getKNodeRendering(e);
             KRendering topRen = getKRendering(n);
             KShapeLayout lay = getKLayout(n);
+            if (lay != null) {
+                lay.setProperty(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.klay.layered");
+                lay.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
+            }
             if (ren != null) {
                 if (topRen != null) {
                     getKRendering(n).getChildren().add(ren);
@@ -185,12 +201,24 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             KPort port = KimlUtil.createInitializedPort();
             map.put(p, port);
             parent.getPorts().add(port);
-            
-            KRectangle rec = factory.createKRectangle();
+            KRendering topRen = getKRendering(port);
+            KRendering ren = KRenderingProvider.getKPortRendering(p);
             KShapeLayout lay = getKLayout(port);
+            
+            if (p.getName() != null) {
+                KLabel l = KimlUtil.createInitializedLabel(port);
+                l.setText(p.getName());
+            }
+            
+            if (topRen != null) {
+                getKRendering(port).getChildren().add(ren);
+            } else {
+                port.getData().add(ren);
+            }
+            
             if (lay != null) {
-                lay.setHeight(7);
-                lay.setWidth(7);
+                lay.setHeight(8);
+                lay.setWidth(8);
             }
             
         }
@@ -202,6 +230,10 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
         KRenderingFactory factory = KRenderingFactory.eINSTANCE;
         for (Link l : element.getChildLinks()) {
             KEdge edge = KimlUtil.createInitializedEdge();
+            if (l.getName() != null) {
+                KLabel label = KimlUtil.createInitializedLabel(edge);
+                label.setText(l.getName());
+            }
             KRendering edgeRendering = factory.createKPolyline();
             KEdgeLayout el = null;
             EList<KGraphData> data = edge.getData();
