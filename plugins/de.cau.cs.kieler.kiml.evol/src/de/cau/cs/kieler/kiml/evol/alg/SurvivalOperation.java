@@ -49,14 +49,14 @@ public class SurvivalOperation implements IEvolutionaryOperation {
     /**
      * {@inheritDoc}
      */
-    public void setRandom(final Random therandom) {
+    public final void setRandom(final Random therandom) {
         this.random = therandom;
     }
     
     /**
      * {@inheritDoc}
      */
-    public final void process(final Population population) {
+    public void process(final Population population) {
         // only some survive
         int surviveCount = KielerMath.limit(Math.round(population.getSize() * SURVIVAL_RATIO),
                 MIN_SURVIVORS, MAX_SURVIVORS);

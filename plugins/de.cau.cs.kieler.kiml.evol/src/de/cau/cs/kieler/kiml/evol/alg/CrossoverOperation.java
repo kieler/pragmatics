@@ -62,14 +62,14 @@ public class CrossoverOperation implements IEvolutionaryOperation {
     /**
      * {@inheritDoc}
      */
-    public void setRandom(final Random therandom) {
+    public final void setRandom(final Random therandom) {
         this.random = therandom;
     }
 
     /**
      * {@inheritDoc}
      */
-    public final void process(final Population population) {
+    public void process(final Population population) {
         // We need a minimal number of individuals to do crossovers
         if (population.getSize() < MIN_SELECT) {
             return;

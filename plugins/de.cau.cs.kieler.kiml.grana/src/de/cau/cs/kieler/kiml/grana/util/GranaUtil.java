@@ -69,7 +69,7 @@ public final class GranaUtil {
         String[] analysesIds = analysesIdsSerialized.split(";");
         for (String analysisId : analysesIds) {
             AnalysisData analysis =
-                    AnalysisService.getInstance().getAnalysisById(
+                    AnalysisService.getInstance().getAnalysis(
                             analysisId.trim());
             if (analysis != null) {
                 result.add(analysis);

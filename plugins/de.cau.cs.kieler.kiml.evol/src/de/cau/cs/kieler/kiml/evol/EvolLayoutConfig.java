@@ -15,13 +15,11 @@ package de.cau.cs.kieler.kiml.evol;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.ILayoutData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
-import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
 
 /**
  * Evolutionary layout configurator. Uses evolutionary algorithms together with graph drawing
@@ -67,7 +65,7 @@ public class EvolLayoutConfig implements ILayoutConfig {
         if (model != null) {
             Gene<?> gene = model.getSelected().find(optionData.getId());
             if (gene != null) {
-                return translateValue(gene);
+                return GenomeFactory.translateFromGene(gene);
             }
         }
         return null;
@@ -83,30 +81,9 @@ public class EvolLayoutConfig implements ILayoutConfig {
             for (Gene<?> gene : model.getSelected().getGenes()) {
                 LayoutOptionData<?> optionData = dataService.getOptionData(gene.getId());
                 if (optionData != null) {
-                    graphData.setProperty(optionData, translateValue(gene));
+                    graphData.setProperty(optionData, GenomeFactory.translateFromGene(gene));
                 }
             }
-        }
-    }
-    
-    /**
-     * Translate a gene value into a type understood by meta layout.
-     * 
-     * @param gene a gene
-     * @return the translated gene value
-     */
-    private Object translateValue(final Gene<?> gene) {
-        GeneType geneType = gene.getTypeInfo().getGeneType();
-        switch (geneType) {
-        case LAYOUT_ALGO:
-        case LAYOUT_TYPE:
-            return ((ILayoutData) gene.listValue()).getId();
-        case BOOLEAN:
-            return (Integer) gene.getValue() != 0;
-        case ENUM:
-            return gene.enumValue();
-        default:
-            return gene.getValue();
         }
     }
 

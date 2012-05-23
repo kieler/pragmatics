@@ -188,7 +188,7 @@ public final class EvolutionServices {
 
         // get the metrics via the respective analysis category
         AnalysisCategory metricsCategory =
-                AnalysisService.getInstance().getCategoryById(METRICS_CATEGORY);
+                AnalysisService.getInstance().getCategory(METRICS_CATEGORY);
         List<AnalysisData> metrics = metricsCategory.getAnalyses();
         assert metrics != null;
         List<String> metricIds = new ArrayList<String>(metrics.size());

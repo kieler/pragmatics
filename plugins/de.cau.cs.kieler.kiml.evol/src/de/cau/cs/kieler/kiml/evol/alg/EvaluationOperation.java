@@ -16,55 +16,117 @@
  */
 package de.cau.cs.kieler.kiml.evol.alg;
 
-import java.util.Comparator;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Random;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.evol.GenomeFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
+import de.cau.cs.kieler.kiml.service.AnalysisService;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisCategory;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
- * @author bdu
+ * Operation that evaluates individuals to determine their fitness.
+ * 
+ * @author msp
  */
 public class EvaluationOperation implements IEvolutionaryOperation {
+    
+    /** identifier for the metric category. */
+    public static final String METRIC_CATEGORY = "de.cau.cs.kieler.kiml.evol.metricCategory";
+    
+    /** genome property for the layout graph created from the individual. */
+    public static final IProperty<KNode> LAYOUT_GRAPH = new Property<KNode>("evol.layoutGraph");
 
-    /**
-     * {@inheritDoc}
-     */
-    public final void process(final Population population) {
-        // fitness is determined by the rating value.
-
-        // FIXME what is this? implement me!
-    }
-
+    /** the graph used for evaluation of individuals. */
+    private KNode testGraph;
+    /** the graph layout engine used for executing configured layout on the evaluation graph. */
+    private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();
+    
     /**
      * {@inheritDoc}
      */
     public void setRandom(final Random random) {
-        // TODO Auto-generated method stub
+        // no random number generator is required
+    }
+    
+    /**
+     * Sets the graph used for evaluation. This must be called before any population can be processed.
+     * 
+     * @param theGraph the parent node of the evaluation graph
+     */
+    public void setGraph(final KNode theGraph) {
+        this.testGraph = theGraph;
     }
 
     /**
-     * Descending rating comparator.
+     * {@inheritDoc}
      */
-    public static final Comparator<Genome> DESCENDING_RATING_COMPARATOR = new Comparator<Genome>() {
-                /**
-                 * Small value for floating-point comparison.
-                 */
-                private static final double EPSILON = 1.0E-6;
-
-                public int compare(final Genome ind0, final Genome ind1) {
-                    Double rating0 = ind0.getProperty(USER_RATING);
-                    Double rating1 = ind1.getProperty(USER_RATING);
-                    double v0 = rating0 == null ? 0.0 : rating0;
-                    double v1 = rating1 == null ? 0.0 : rating1;
-
-                    if (Math.abs(v0 - v1) < EPSILON) {
-                        return 0;
-                    } else if (v0 < v1) {
-                        return 1;
-                    }
-                    return -1;
+    public void process(final Population population) {
+        assert testGraph != null;
+        
+        // determine fitness value for individuals that do not have one yet
+        for (Genome genome : population) {
+            Double fitness = genome.getProperty(Genome.FITNESS);
+            if (fitness == null) {
+                Double autoRating = genome.getProperty(Genome.AUTO_RATING);
+                if (autoRating == null) {
+                    autoRating = autoRate(genome, new BasicProgressMonitor());
+                    genome.setProperty(Genome.AUTO_RATING, autoRating);
                 }
-            };
+                double userRating = genome.getProperty(Genome.USER_RATING);
+                double userWeight = genome.getProperty(Genome.USER_WEIGHT);
+                fitness = userRating * userWeight + autoRating * (1 - userWeight);
+                genome.setProperty(Genome.FITNESS, fitness);
+            }
+        }
+        
+        // sort the individuals by descending fitness
+        Collections.sort(population.getGenomes());
+    }
+    
+    /**
+     * Compute an automatic rating for the given individual.
+     * 
+     * @param genome an individual
+     * @param progressMonitor a progress monitor
+     * @return the automatic rating value
+     */
+    public double autoRate(final Genome genome, final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Evaluation", 2);
+
+        // perform layout on the evaluation graph
+        KNode graph = EcoreUtil.copy(testGraph);
+        GenomeFactory.configureGraph(graph, genome);
+        graphLayoutEngine.layout(graph, progressMonitor.subTask(1));
+        genome.setProperty(LAYOUT_GRAPH, graph);
+        
+        // perform analysis on the evaluation graph
+        AnalysisService analysisService = AnalysisService.getInstance();
+        AnalysisCategory category = analysisService.getCategory(METRIC_CATEGORY);
+        Map<String, Object> results = analysisService.analyze(graph, category.getAnalyses(),
+                progressMonitor.subTask(1));
+        
+        // determine the weighted mean of the analysis results
+        float rating = 0;
+        float totalWeight = category.getAnalyses().size();
+        for (AnalysisData analysisData : category.getAnalyses()) {
+            rating += (Float) results.get(analysisData.getId());
+        }
+        
+        progressMonitor.done();
+        return rating / totalWeight;
+    }
 
 }

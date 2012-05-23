@@ -27,6 +27,8 @@ import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 import de.cau.cs.kieler.core.WrappedException;
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.ILayoutData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -39,6 +41,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 
@@ -102,6 +105,45 @@ public final class GenomeFactory {
             return (T) Integer.valueOf(((Enum<?>) value).ordinal());
         default:
             return (T) value;
+        }
+    }
+    
+    /**
+     * Translate a gene value into a type understood by meta layout.
+     * 
+     * @param gene a gene
+     * @return the translated gene value
+     */
+    public static Object translateFromGene(final Gene<?> gene) {
+        GeneType geneType = gene.getTypeInfo().getGeneType();
+        switch (geneType) {
+        case LAYOUT_ALGO:
+        case LAYOUT_TYPE:
+            return ((ILayoutData) gene.listValue()).getId();
+        case BOOLEAN:
+            return (Integer) gene.getValue() != 0;
+        case ENUM:
+            return gene.enumValue();
+        default:
+            return gene.getValue();
+        }
+    }
+    
+    public static void configureGraph(final KNode parentNode, final Genome genome) {
+        LayoutDataService dataService = LayoutDataService.getInstance();
+        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+        for (Gene<?> gene : genome.getGenes()) {
+            if (gene.getValue() != null) {
+                LayoutOptionData<?> optionData = dataService.getOptionData(gene.getId());
+                if (optionData != null) {
+                    parentLayout.setProperty(optionData, translateFromGene(gene));
+                }
+            }
+        }
+        for (KNode child : parentNode.getChildren()) {
+            if (!child.getChildren().isEmpty()) {
+                configureGraph(child, genome);
+            }
         }
     }
 

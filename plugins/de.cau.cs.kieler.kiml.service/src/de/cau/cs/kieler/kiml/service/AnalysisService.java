@@ -323,7 +323,7 @@ public abstract class AnalysisService {
      *            the id
      * @return the category or null if it does not exist
      */
-    public AnalysisCategory getCategoryById(final String id) {
+    public AnalysisCategory getCategory(final String id) {
         return categoryIdMapping.get(id);
     }
 
@@ -334,7 +334,7 @@ public abstract class AnalysisService {
      *            the id
      * @return the analysis or null if it does not exist
      */
-    public AnalysisData getAnalysisById(final String id) {
+    public AnalysisData getAnalysis(final String id) {
         return analysisIdMapping.get(id);
     }
     

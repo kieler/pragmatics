@@ -54,14 +54,14 @@ public class MutationOperation implements IEvolutionaryOperation {
     /**
      * {@inheritDoc}
      */
-    public void setRandom(final Random therandom) {
+    public final void setRandom(final Random therandom) {
         this.random = therandom;
     }
     
     /**
      * {@inheritDoc}
      */
-    public final void process(final Population population) {
+    public void process(final Population population) {
         ListIterator<Genome> genomeIter = population.getGenomes().listIterator();
         while (genomeIter.hasNext()) {
             Genome individual = genomeIter.next();

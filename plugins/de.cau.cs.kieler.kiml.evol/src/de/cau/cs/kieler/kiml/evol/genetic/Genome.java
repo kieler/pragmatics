@@ -29,7 +29,7 @@ import de.cau.cs.kieler.core.properties.Property;
  * @author bdu
  * @author msp
  */
-public class Genome extends MapPropertyHolder {
+public class Genome extends MapPropertyHolder implements Comparable<Genome> {
 
     /** property for the user defined rating value. */
     public static final IProperty<Double> USER_RATING = new Property<Double>("evol.userRating", 0.5);
@@ -37,6 +37,8 @@ public class Genome extends MapPropertyHolder {
     public static final IProperty<Double> USER_WEIGHT = new Property<Double>("evol.userWeight", 0.0);
     /** property for the automatically determined rating value. */
     public static final IProperty<Double> AUTO_RATING = new Property<Double>("evol.autoRating");
+    /** property for the overall fitness composed of user rating and auto rating. */
+    public static final IProperty<Double> FITNESS = new Property<Double>("evol.fitness");
 
     /** The genes of this genome. */
     private final List<Gene<?>> genes;
@@ -119,6 +121,22 @@ public class Genome extends MapPropertyHolder {
             result.append(gene.toString());
         }
         return result.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int compareTo(final Genome other) {
+        Double fitness1 = this.getProperty(FITNESS);
+        Double fitness2 = other.getProperty(FITNESS);
+        if (fitness1 != null && fitness2 != null) {
+            return fitness2.compareTo(fitness1);
+        } else if (fitness1 != null) {
+            return -1;
+        } else if (fitness2 != null) {
+            return 1;
+        }
+        return 0;
     }
 
     /** Default distance for layout type genes. */
