@@ -53,6 +53,7 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
      */
     public void addPages() {
         workspaceSourcesPage = new ExportGraphWorkspaceSourcesPage(selection);
+        workspaceSourcesPage.restoreDialogSettings();
         addPage(workspaceSourcesPage);
     }
 
@@ -71,13 +72,13 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
         setWindowTitle(Messages.ExportGraphWizard_title);
         this.selection = select;
         setNeedsProgressMonitor(true);
-
     }
 
     /**
      * {@inheritDoc}
      */
     public boolean performFinish() {
+
         if (!checkTargetDirectory()) {
             return false;
         }
@@ -85,7 +86,9 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
         if (!targetFilesHandler()) {
             return false;
         }
-
+        
+        // Save dialog settings
+        workspaceSourcesPage.saveDialogSettings();
         workspaceSourcesPage.close();
 
         return true;
@@ -98,7 +101,7 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
      */
     private boolean targetFilesHandler() {
         // for all selected files
-        for (File sourceFile : workspaceSourcesPage.getSourceFiles(null)) {
+        for (IPath sourceFile : workspaceSourcesPage.getSourceFiles(null)) {
             // get the target format selected from the user
             String targetFormat = workspaceSourcesPage.getTargetFormat();
 
