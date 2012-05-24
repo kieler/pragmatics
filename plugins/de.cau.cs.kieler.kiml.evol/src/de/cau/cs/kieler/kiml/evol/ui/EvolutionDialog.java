@@ -73,7 +73,7 @@ public class EvolutionDialog extends Dialog {
     
     private EvolutionModel initializeContent() {
         EvolutionModel evolutionModel = EvolutionModel.getInstance();
-        if (evolutionModel.getPopulation().getSize() == 0) {
+        if (evolutionModel.getPopulation().size() == 0) {
             evolutionModel.initializePopulation(layoutMapping);
         }
         return evolutionModel;

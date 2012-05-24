@@ -63,7 +63,7 @@ public class MutationOperation implements IEvolutionaryOperation {
      * {@inheritDoc}
      */
     public void process(final Population population) {
-        ListIterator<Genome> genomeIter = population.getGenomes().listIterator();
+        ListIterator<Genome> genomeIter = population.listIterator();
         while (genomeIter.hasNext()) {
             Genome individual = genomeIter.next();
             if (random.nextDouble() < MUTATION_APPLICATION_PROBABILITY) {

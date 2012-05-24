@@ -71,22 +71,22 @@ public class CrossoverOperation implements IEvolutionaryOperation {
      */
     public void process(final Population population) {
         // We need a minimal number of individuals to do crossovers
-        if (population.getSize() < MIN_SELECT) {
+        if (population.size() < MIN_SELECT) {
             return;
         }
         
         // Only some are allowed to generate offspring - these are selected by truncation
-        int selectCount = KielerMath.limit(Math.round(population.getSize() * SELECTION_RATIO),
+        int selectCount = KielerMath.limit(Math.round(population.size() * SELECTION_RATIO),
                 MIN_SELECT, MAX_SELECT);
         int crossoverCount = KielerMath.limit(Math.round(selectCount * CROSS_OVER_RATIO),
                 MIN_CROSS_OVERS, MAX_CROSS_OVERS);
 
         Genome[] offspring = new Genome[crossoverCount];
         for (int i = 0; i < crossoverCount; i++) {
-            Genome parent1 = population.getGenomes().get(random.nextInt(selectCount));
+            Genome parent1 = population.get(random.nextInt(selectCount));
             Genome parent2;
             do {
-                parent2 = population.getGenomes().get(random.nextInt(selectCount));
+                parent2 = population.get(random.nextInt(selectCount));
             } while (parent1 == parent2);
 
             offspring[i] = recombine(parent1, parent2);
@@ -94,7 +94,7 @@ public class CrossoverOperation implements IEvolutionaryOperation {
 
         // add offspring to current population (old survivors)
         for (int i = 0; i < crossoverCount; i++) {
-            population.getGenomes().add(offspring[i]);
+            population.add(offspring[i]);
         }
     }
 

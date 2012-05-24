@@ -19,6 +19,7 @@ import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.alg.EvaluationOperation;
+import de.cau.cs.kieler.kiml.evol.alg.MutationOperation;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
@@ -33,6 +34,9 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
  * @author msp
  */
 public final class EvolutionModel extends BasicEvolutionaryAlgorithm {
+    
+    /** the initial number of individuals to create. */
+    private static final int INITIAL_POPULATION = 20;
     
     /** the singleton instance. */
     private static EvolutionModel instance = new EvolutionModel();
@@ -82,17 +86,22 @@ public final class EvolutionModel extends BasicEvolutionaryAlgorithm {
      * @param layoutMapping a layout mapping from which to derive an initial configuration
      */
     public void initializePopulation(final LayoutMapping<?> layoutMapping) {
-        Population population = getPopulation();
-        if (population.getSize() > 0) {
-            population.getGenomes().clear();
-        }
+        Population population = new Population(2 * INITIAL_POPULATION);
+        setPopulation(population);
         KNode graph = layoutMapping.getLayoutGraph();
         ((EvaluationOperation) getEvaluationOperation()).setGraph(graph);
         
         // create an initial gene, the patriarch
         configPair = GenomeFactory.createConfig(layoutMapping);
         Genome patriarch = GenomeFactory.createInitialGenome(layoutMapping, configPair);
-        population.getGenomes().add(patriarch);
+        population.add(patriarch);
+        
+        // mutate the patriarch to create an initial population
+        MutationOperation mutationOperation = (MutationOperation) getMutationOperation();
+        for (int i = 1; i < INITIAL_POPULATION; i++) {
+            Genome mutation = mutationOperation.mutate(patriarch);
+            population.add(mutation);
+        }
     }
 
 }

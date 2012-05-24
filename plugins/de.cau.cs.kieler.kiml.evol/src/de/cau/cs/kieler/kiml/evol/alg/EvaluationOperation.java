@@ -94,7 +94,7 @@ public class EvaluationOperation implements IEvolutionaryOperation {
         }
         
         // sort the individuals by descending fitness
-        Collections.sort(population.getGenomes());
+        Collections.sort(population);
     }
     
     /**
