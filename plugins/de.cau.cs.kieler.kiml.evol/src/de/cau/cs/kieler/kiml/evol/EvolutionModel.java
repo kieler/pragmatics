@@ -16,15 +16,11 @@ package de.cau.cs.kieler.kiml.evol;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutContext;
-import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
-import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.alg.EvaluationOperation;
-import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
-import de.cau.cs.kieler.kiml.service.LayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**

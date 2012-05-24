@@ -23,6 +23,7 @@ import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
+import de.cau.cs.kieler.kiml.evol.EvolutionModel;
 import de.cau.cs.kieler.kiml.evol.GenomeFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
@@ -108,7 +109,7 @@ public class MutationOperation implements IEvolutionaryOperation {
                     } else  {
                         // the gene previously had no assigned value - generate one
                         newGene = GenomeFactory.createDefaultGene(newLayoutAlgo, optionData,
-                                gene.getTypeInfo());
+                                gene.getTypeInfo(), EvolutionModel.getInstance().getConfigPair());
                     }
                     newGene.setActive(true);
                 } else {

@@ -29,6 +29,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.evol.EvolutionModel;
 import de.cau.cs.kieler.kiml.evol.GenomeFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -108,7 +109,7 @@ public class EvaluationOperation implements IEvolutionaryOperation {
 
         // perform layout on the evaluation graph
         KNode graph = EcoreUtil.copy(testGraph);
-        GenomeFactory.configureGraph(graph, genome);
+        GenomeFactory.configureGraph(graph, genome, EvolutionModel.getInstance().getConfigPair());
         graphLayoutEngine.layout(graph, progressMonitor.subTask(1));
         genome.setProperty(LAYOUT_GRAPH, graph);
         
