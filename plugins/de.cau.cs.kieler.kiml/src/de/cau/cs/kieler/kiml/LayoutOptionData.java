@@ -133,7 +133,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     /** the upper bound for option values. */
     private T upperBound;
     /** the variance for option values. */
-    private float variance;
+    private float variance = 1.0f;
     
     /**
      * Checks whether the enumeration class is set correctly. This method must
@@ -410,7 +410,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         case ENUM:
             checkEnumClass();
             @SuppressWarnings({ "unchecked", "rawtypes" })
-            Enum<?>[] enums = ((Class<Enum>) clazz).getEnumConstants();
+            Enum<?>[] enums = ((Class<? extends Enum>) clazz).getEnumConstants();
             return enums[intValue]; 
         default:
             return null;
@@ -678,7 +678,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     }
 
     /**
-     * Returns the variance for layout option values.
+     * Returns the variance for layout option values. If not given explicitly, the default
+     * value is 1.
      * 
      * @return the variance
      */

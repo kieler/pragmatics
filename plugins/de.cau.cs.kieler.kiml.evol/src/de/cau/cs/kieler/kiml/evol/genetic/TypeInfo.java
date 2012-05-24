@@ -42,8 +42,6 @@ public class TypeInfo<T extends Comparable<? super T>> {
     
     /** The gene type. */
     private GeneType geneType;
-    /** The default value. */
-    private final T defaultValue;
     /** The lower bound. */
     private final Comparable<T> lowerBound;
     /** The upper bound. */
@@ -55,36 +53,11 @@ public class TypeInfo<T extends Comparable<? super T>> {
     /** The mutation variance, used for Gaussian distribution. */
     private final double variance;
     
-   /**
-    * Constructor for a type info without variance.
-    *
-    * @param theGeneType
-    *            the gene type 
-    * @param theDefaultValue
-    *            the default value
-    * @param theLowerBound
-    *            the lower bound
-    * @param theUpperBound
-    *            the upper bound
-    * @param theClass
-    *            the class of the value
-    * @param prob
-    *            the probability that a mutation occurs. Must be within the
-    *            interval of 0.0 and 1.0.
-    */
-   public TypeInfo(final GeneType theGeneType, final T theDefaultValue,
-           final Comparable<T> theLowerBound, final Comparable<T> theUpperBound,
-           final Class<?> theClass, final double prob) {
-       this(theGeneType, theDefaultValue, theLowerBound, theUpperBound, theClass, prob, 1.0);
-   }
-    
     /**
      * Constructor for a type info.
      *
      * @param theGeneType
      *            the gene type 
-     * @param theDefaultValue
-     *            the default value
      * @param theLowerBound
      *            the lower bound
      * @param theUpperBound
@@ -97,22 +70,15 @@ public class TypeInfo<T extends Comparable<? super T>> {
      * @param var
      *            the variance (used for Gaussian distribution); must be >= 0.0
      */
-    public TypeInfo(final GeneType theGeneType, final T theDefaultValue,
-            final Comparable<T> theLowerBound, final Comparable<T> theUpperBound,
-            final Object theParam, final double prob, final double var) {
-        if (theGeneType == null || theDefaultValue == null || theLowerBound == null
-                || theUpperBound == null || prob < 0.0 || prob > 1.0 || var < 0.0) {
+    public TypeInfo(final GeneType theGeneType, final Comparable<T> theLowerBound,
+            final Comparable<T> theUpperBound, final Object theParam, final double prob,
+            final double var) {
+        if (theGeneType == null || theLowerBound == null || theUpperBound == null
+                || prob < 0.0 || prob > 1.0 || var < 0.0) {
             throw new IllegalArgumentException();
         }
 
-        if (theLowerBound.compareTo(theDefaultValue) > 0) {
-            throw new IllegalArgumentException("Default value < lower bound");
-        } else if (theUpperBound.compareTo(theDefaultValue) <= 0) {
-            throw new IllegalArgumentException("Default value > upper bound");
-        }
-
         this.geneType = theGeneType;
-        this.defaultValue = theDefaultValue;
         this.lowerBound = theLowerBound;
         this.upperBound = theUpperBound;
         this.typeParameter = theParam;
@@ -127,15 +93,6 @@ public class TypeInfo<T extends Comparable<? super T>> {
      */
     public GeneType getGeneType() {
         return geneType;
-    }
-
-    /**
-     * Returns the default value for the gene type.
-     * 
-     * @return the default value
-     */
-    public T getDefault() {
-        return defaultValue;
     }
 
     /**

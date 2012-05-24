@@ -14,9 +14,18 @@
 package de.cau.cs.kieler.kiml.evol;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
+import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
+import de.cau.cs.kieler.kiml.evol.alg.EvaluationOperation;
+import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
+import de.cau.cs.kieler.kiml.service.LayoutInfoService;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
  * The main class for access to evolutionary meta layout.
@@ -43,6 +52,8 @@ public final class EvolutionModel extends BasicEvolutionaryAlgorithm {
     
     /** the individual that was selected for meta layout. */
     private Genome selectedIndividual;
+    /** the layout configuration used for obtaining default values. */
+    private Pair<ILayoutConfig, LayoutContext> configPair;
     
     /**
      * Hidden constructor to prevent instantiation from outside this class.
@@ -60,11 +71,32 @@ public final class EvolutionModel extends BasicEvolutionaryAlgorithm {
         return selectedIndividual;
     }
     
-    public void initializePopulation(final KNode parentNode) {
+    /**
+     * Returns the layout configuration and context used for obtaining default values.
+     * 
+     * @return a pair with layout configuration and layout context
+     */
+    public Pair<ILayoutConfig, LayoutContext> getConfigPair() {
+        return configPair;
+    }
+    
+    /**
+     * Initialize the population of the evolution model.
+     * 
+     * @param layoutMapping a layout mapping from which to derive an initial configuration
+     */
+    public void initializePopulation(final LayoutMapping<?> layoutMapping) {
         Population population = getPopulation();
         if (population.getSize() > 0) {
             population.getGenomes().clear();
         }
+        KNode graph = layoutMapping.getLayoutGraph();
+        ((EvaluationOperation) getEvaluationOperation()).setGraph(graph);
+        
+        // create an initial gene, the patriarch
+        configPair = GenomeFactory.createConfig(layoutMapping);
+        Genome patriarch = GenomeFactory.createInitialGenome(layoutMapping, configPair);
+        population.getGenomes().add(patriarch);
     }
 
 }

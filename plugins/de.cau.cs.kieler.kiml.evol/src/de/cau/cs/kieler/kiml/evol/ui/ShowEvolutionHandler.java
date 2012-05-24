@@ -42,7 +42,7 @@ public class ShowEvolutionHandler extends AbstractHandler {
             LayoutMapping<?> layoutMapping = layoutManager.buildLayoutGraph(editorPart, null);
             if (layoutMapping != null) {
                 EvolutionDialog dialog = new EvolutionDialog(HandlerUtil.getActiveShell(event),
-                        layoutMapping.getLayoutGraph());
+                        layoutMapping);
                 if (dialog.open() == EvolutionDialog.OK) {
                     new LayoutHandler().execute(event);
                 }

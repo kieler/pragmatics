@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,9 +26,14 @@ import java.util.Random;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.WrappedException;
+import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
@@ -35,14 +41,20 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
+import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.LayoutInfoService;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 
 /**
@@ -52,36 +64,160 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
  * @author msp
  */
 public final class GenomeFactory {
+
+    public static final String LAYOUT_TYPE_ID = "de.cau.cs.kieler.kiml.evol.layoutType";
+
+    public static Genome createInitialGenome(final LayoutMapping<?> layoutMapping,
+            final Pair<ILayoutConfig, LayoutContext> configPair) {
+        LayoutDataService dataService = LayoutDataService.getInstance();
+        ILayoutConfig config = configPair.getFirst();
+        LayoutContext context = configPair.getSecond();
+        LayoutOptionData<?> algoOptionData = dataService.getOptionData(LayoutOptions.ALGORITHM.getId());
+        String algorithmId = (String) config.getValue(algoOptionData, context);
+        LayoutAlgorithmData algorithmData = dataService.getAlgorithmData(algorithmId);
+        
+        Genome genome = new Genome(dataService.getOptionData().size());
+        
+        // create gene for the layout type
+        LayoutTypeData typeData = dataService.getTypeData(algorithmData.getType());
+        genome.getGenes().add(createLayoutTypeGene(typeData));
+        
+        // create gene for the layout algorithm
+        genome.getGenes().add(createAlgorithmGene(typeData, algorithmData));
+        
+        // create genes for the other layout options
+        for (LayoutOptionData<?> optionData : dataService.getOptionData()) {
+            if (optionData.getTargets().contains(LayoutOptionData.Target.PARENTS)
+                    && optionData.getVariance() > 0) {
+                Object value = config.getValue(optionData, context);
+                Gene<?> gene = createGene(optionData, value);
+                if (gene != null) {
+                    genome.getGenes().add(gene);
+                }
+            }
+        }
+        return genome;
+    }
     
-    private static final double P_ALGO_MUTATION = 0.05;
+    private static final double P_LAYOUT_TYPE_MUTATION = 0.04;
+    
+    public static Gene<Integer> createLayoutTypeGene(final LayoutTypeData typeData) {
+        List<LayoutTypeData> typeList = new ArrayList<LayoutTypeData>(LayoutDataService.getInstance()
+                .getTypeData());
+        int index = typeList.indexOf(typeData);
+        TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(GeneType.LAYOUT_TYPE, 0,
+                typeList.size() - 1, typeList, P_LAYOUT_TYPE_MUTATION, 1);
+        return Gene.create(LAYOUT_TYPE_ID, index, typeInfo);
+    }
+    
+    private static final double P_LAYOUT_ALGO_MUTATION = 0.08;
+    
+    public static final Gene<Integer> createAlgorithmGene(final LayoutTypeData layoutType,
+            final LayoutAlgorithmData algoData) {
+        List<LayoutAlgorithmData> algoList = layoutType.getLayouters();
+        int index = algoList.indexOf(algoData);
+        TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(GeneType.LAYOUT_ALGO, 0,
+                algoList.size() - 1, algoList, P_LAYOUT_ALGO_MUTATION, 1);
+        return Gene.create(LayoutOptions.ALGORITHM.getId(), index, typeInfo);
+    }
     
     public static final Gene<Integer> createAlgorithmGene(final LayoutTypeData layoutType,
             final Random random) {
         List<LayoutAlgorithmData> algoList = layoutType.getLayouters(); 
-        TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(GeneType.LAYOUT_ALGO, 0, 0,
-                algoList.size() - 1, algoList, P_ALGO_MUTATION, 1);
+        TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(GeneType.LAYOUT_ALGO, 0,
+                algoList.size() - 1, algoList, P_LAYOUT_ALGO_MUTATION, 1);
         int randomAlgoIndex = random.nextInt(algoList.size());
         return Gene.create(LayoutOptions.ALGORITHM.getId(), randomAlgoIndex, typeInfo);
     }
     
+    private static final double P_BOOLEAN_MUTATION = 0.1;
+    private static final double P_ENUM_MUTATION = 0.12;
+    private static final double P_INT_MUTATION = 0.15;
+    private static final double P_FLOAT_MUTATION = 0.2;
+    
     @SuppressWarnings("unchecked")
-    public static <To,Tg extends Comparable<? super Tg>> Gene<Tg> createDefaultGene(
-            final LayoutAlgorithmData algoData, final LayoutOptionData<To> optionData,
-            final TypeInfo<Tg> typeInfo) {
-        To value = algoData.getDefaultValue(optionData);
-        if (value == null) {
-            value = optionData.getDefault();
-            if (value == null) {
-                value = optionData.getDefaultDefault();
+    public static final Gene<?> createGene(final LayoutOptionData<?> optionData, final Object value) {
+        TypeInfo<?> typeInfo;
+        switch (optionData.getType()) {
+        case BOOLEAN:
+            typeInfo = new TypeInfo<Integer>(GeneType.BOOLEAN, 0, 1, optionData, P_BOOLEAN_MUTATION, 1);
+            break;
+        case ENUM:
+            typeInfo = new TypeInfo<Integer>(GeneType.ENUM, 0,
+                    optionData.getOptionClass().getEnumConstants().length - 1,
+                    optionData, P_ENUM_MUTATION, 1);
+            break;
+        case INT:
+            typeInfo = new TypeInfo<Integer>(GeneType.INTEGER,
+                    (Comparable<Integer>) optionData.getLowerBound(),
+                    (Comparable<Integer>) optionData.getUpperBound(),
+                    optionData, P_INT_MUTATION, optionData.getVariance());
+            break;
+        case FLOAT:
+            typeInfo = new TypeInfo<Float>(GeneType.FLOAT,
+                    (Comparable<Float>) optionData.getLowerBound(),
+                    (Comparable<Float>) optionData.getUpperBound(),
+                    optionData, P_FLOAT_MUTATION, optionData.getVariance());
+            break;
+        default:
+            return null;
+        }
+        return Gene.create(optionData.getId(), translateToGene(value, typeInfo), typeInfo);
+    }
+    
+    public static Pair<ILayoutConfig, LayoutContext> createConfig(
+            final LayoutMapping<?> layoutMapping) {
+        // create basic layout configuration
+        CompoundLayoutConfig clc = new CompoundLayoutConfig();
+        clc.add(new DefaultLayoutConfig());
+        for (ILayoutConfig config : LayoutInfoService.getInstance().getActiveConfigs()) {
+            if (!(config instanceof EvolLayoutConfig)) {
+                clc.add(config);
             }
         }
-        Comparable<To> lowerBound = optionData.getLowerBound();
-        if (lowerBound.compareTo(value) > 0) {
-            value = (To) lowerBound;
+        clc.addAll(layoutMapping.getLayoutConfigs());
+        
+        // create a layout context for the given layout graph
+        LayoutContext context = new LayoutContext();
+        context.setProperty(LayoutContext.GRAPH_ELEM, layoutMapping.getLayoutGraph());
+        Object diagramPart = layoutMapping.getGraphMap().get(layoutMapping.getLayoutGraph());
+        context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
+        EObject modelElement = (EObject) layoutMapping.getAdapterFactory().getAdapter(
+                diagramPart, EObject.class);
+        context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
+        IWorkbenchPart workbenchPart = layoutMapping.getProperty(IWorkbenchPart.class);
+        context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
+        
+        // add semantic configurations from the extension point
+        if (modelElement != null) {
+            List<ILayoutConfig> semanticConfigs = EclipseLayoutInfoService.getInstance()
+                    .getSemanticConfigs(modelElement.eClass());
+            clc.addAll(semanticConfigs);
         }
-        Comparable<To> upperBound = optionData.getUpperBound();
+
+        // enrich the layout context using the basic configuration
+        clc.enrich(context);
+
+        return new Pair<ILayoutConfig, LayoutContext>(clc, context);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <T extends Comparable<? super T>> Gene<T> createDefaultGene(
+            final LayoutAlgorithmData algoData, final LayoutOptionData<?> optionData,
+            final TypeInfo<T> typeInfo) {
+        Pair<ILayoutConfig, LayoutContext> configPair = EvolutionModel.getInstance().getConfigPair();
+        if (configPair == null) {
+            throw new IllegalStateException("The evolution model has not been initialized yet.");
+        }
+        Object value = configPair.getFirst().getValue(optionData, configPair.getSecond());
+        
+        Comparable<Object> lowerBound = (Comparable<Object>) optionData.getLowerBound();
+        if (lowerBound.compareTo(value) > 0) {
+            value = lowerBound;
+        }
+        Comparable<Object> upperBound = (Comparable<Object>) optionData.getUpperBound();
         if (upperBound.compareTo(value) < 0) {
-            value = (To) upperBound;
+            value = upperBound;
         }
         return Gene.create(optionData.getId(), translateToGene(value, typeInfo), typeInfo);
     }

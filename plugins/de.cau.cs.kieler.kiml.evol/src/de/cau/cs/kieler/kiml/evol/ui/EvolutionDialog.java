@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.evol.EvolutionModel;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
  * The main user interface for evolutionary meta layout.
@@ -28,18 +28,18 @@ import de.cau.cs.kieler.kiml.evol.EvolutionModel;
  */
 public class EvolutionDialog extends Dialog {
     
-    /** the graph taken for preview. */
-    private KNode previewGraph;
+    /** the layout mapping for the graph taken for preview. */
+    private LayoutMapping<?> layoutMapping;
     
     /**
      * Creates an evolution dialog.
      * 
      * @param parentShell the parent shell
-     * @param theGraph the parent node of the graph to display as preview
+     * @param theLayoutMapping mapping for the graph to display as preview
      */
-    public EvolutionDialog(final Shell parentShell, final KNode theGraph) {
+    public EvolutionDialog(final Shell parentShell, final LayoutMapping<?> theLayoutMapping) {
         super(parentShell);
-        this.previewGraph = theGraph;
+        this.layoutMapping = theLayoutMapping;
     }
     
     /**
@@ -74,7 +74,7 @@ public class EvolutionDialog extends Dialog {
     private EvolutionModel initializeContent() {
         EvolutionModel evolutionModel = EvolutionModel.getInstance();
         if (evolutionModel.getPopulation().getSize() == 0) {
-            evolutionModel.initializePopulation(previewGraph);
+            evolutionModel.initializePopulation(layoutMapping);
         }
         return evolutionModel;
     }
