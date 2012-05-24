@@ -83,31 +83,31 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         // Phase which determines the nodes' memberships in blocks. This happens in four different
         // ways, either from processing the nodes from the first layer to the last or vice versa.
         // TODO more doc!!!
-//        verticalAlignment(layeredGraph, lefttop);
-        verticalAlignment(layeredGraph, righttop);
+        verticalAlignment(layeredGraph, lefttop);
+//        verticalAlignment(layeredGraph, righttop);
 //        verticalAlignment(layeredGraph, leftbottom);
 //        verticalAlignment(layeredGraph, rightbottom);
 
         // Additional phase which is not included in the original Brandes-Koepf Algorithm.
         // It makes sure that the connected ports within a block are aligned to avoid unnecessary
         // bend points.
-//        insideBlockShift(layeredGraph, lefttop);
-        insideBlockShift(layeredGraph, righttop);
+        insideBlockShift(layeredGraph, lefttop);
+//        insideBlockShift(layeredGraph, righttop);
 //        insideBlockShift(layeredGraph, leftbottom);
 //        insideBlockShift(layeredGraph, rightbottom);
 
-//        horizontalCompaction(layeredGraph, lefttop);
-        horizontalCompaction(layeredGraph, righttop);
+        horizontalCompaction(layeredGraph, lefttop);
+//        horizontalCompaction(layeredGraph, righttop);
 //        horizontalCompaction(layeredGraph, leftbottom);
 //        horizontalCompaction(layeredGraph, rightbottom);
 
-        BKAlignedLayout chosenLayout = righttop;
+        BKAlignedLayout chosenLayout = lefttop;
         System.out.println("lefttop size is " + lefttop.layoutSize());
         System.out.println("righttop size is " + righttop.layoutSize());
         System.out.println("leftbottom size is " + leftbottom.layoutSize());
         System.out.println("rightbottom size is " + rightbottom.layoutSize());
 
-        LinkedList<BKAlignedLayout> layouts = new LinkedList<BKAlignedLayout>();
+//        LinkedList<BKAlignedLayout> layouts = new LinkedList<BKAlignedLayout>();
 //        layouts.add(righttop);
 //        layouts.add(leftbottom);
 //        layouts.add(rightbottom);
@@ -123,8 +123,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-//                 System.out.println("Set position of " + node.toString() + " to "
-//                 + chosenLayout.getY().get(node));
+                 System.out.println("Set position of " + node.toString() + " to "
+                 + (chosenLayout.getY().get(node) + chosenLayout.getInnerShift().get(node)));
                 node.getPosition().y = chosenLayout.getY().get(node) + chosenLayout.getInnerShift().get(node);
 
                 if (!node.getProperty(LayoutOptions.HYPERNODE)) {
@@ -306,6 +306,10 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         for (LNode root : blocks.keySet()) {
 //            double maximumNodeSize = Math.max(root.getSize().y, smallSpacing);
             double maximumNodeSize = root.getSize().y;
+            double lowerBound = 0.0;
+            double upperBound = root.getSize().y;
+            double rootLowerBound = 0.0;
+            double rootUpperBound = root.getSize().y;
             double postShift = 0.0;
             if (root.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
                 maximumNodeSize = smallSpacing;
@@ -317,41 +321,77 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             while (next != root) {
                 LEdge edge = getEdge(current, next);
                 double difference = 0.0;
+                double currentLowerBound = 0.0;
+                double currentUpperBound = 0.0;
                 if (bal.getHDir() == HDirection.BOTTOM) {
-                    difference = edge.getTarget().getPosition().y
+                    double portPos = edge.getSource().getPosition().y + edge.getSource().getAnchor().y;
+                    difference = edge.getTarget().getPosition().y 
                             + edge.getTarget().getAnchor().y
                             - edge.getSource().getPosition().y
                             - edge.getSource().getAnchor().y
                             + bal.getInnerShift().get(current);
+                    currentLowerBound = (-1) * portPos;
+                    currentUpperBound = edge.getSource().getNode().getSize().y - portPos;
+                    if (current == root) {
+                        double rootPortPos = edge.getTarget().getPosition().y
+                                + edge.getTarget().getAnchor().y;
+                        rootLowerBound = (-1) * rootPortPos;
+                        rootUpperBound = edge.getTarget().getNode().getSize().y - rootPortPos;
+                    }
                 } else {
+                    double portPos = edge.getTarget().getPosition().y + edge.getTarget().getAnchor().y;
                     difference = edge.getSource().getPosition().y
                             + edge.getSource().getAnchor().y
                             - edge.getTarget().getPosition().y
                             - edge.getTarget().getAnchor().y
                             + bal.getInnerShift().get(current);
+                    currentLowerBound = (-1) * portPos;
+                    currentUpperBound = edge.getTarget().getNode().getSize().y - portPos;
+                    if (current == root) {
+                        double rootPortPos = edge.getSource().getPosition().y
+                                + edge.getSource().getAnchor().y;
+                        rootLowerBound = (-1) * rootPortPos;
+                        rootUpperBound = edge.getSource().getNode().getSize().y - rootPortPos;
+                    }
                 }
 //                System.out.println(current + " " + next + " " + difference);
                 bal.getInnerShift().put(next, difference);
                 
-                //TODO check if postshift is necessary with RIGHT directions
-                if (bal.getVDir() == VDirection.LEFT) {
-                    if (difference < postShift) {
-                        postShift = difference;
-                    }
-                } else {
-                    if (difference > postShift) {
-                        postShift = difference;
-                    }
-                }
+//                if (bal.getVDir() == VDirection.LEFT) {
+//                    if (difference < postShift) {
+//                        postShift = difference;
+//                    }
+//                } else {
+//                    if (difference > postShift) {
+//                        postShift = difference;
+//                    }
+//                }
 
-                double width = next.getSize().y + Math.abs(difference);
-                if (width > maximumNodeSize) {
-                    maximumNodeSize = width;
+                if (currentLowerBound < lowerBound) {
+                    lowerBound = currentLowerBound;
                 }
+                if (currentUpperBound > upperBound) {
+                    upperBound = currentUpperBound;
+                }
+//                double width = next.getSize().y + Math.abs(difference);
+//                if (width > maximumNodeSize) {
+//                    maximumNodeSize = width;
+//                }
 
                 current = next;
                 next = bal.getAlign().get(next);
             }
+            
+            maximumNodeSize = Math.abs(upperBound) + Math.abs(lowerBound);
+            if (bal.vdir == VDirection.RIGHT) {
+                postShift = Math.min(0.0, lowerBound - rootLowerBound);
+            } else {
+                postShift = lowerBound;
+            }
+            
+//            if (bal.getVDir() == VDirection.RIGHT) {
+//                postShift = maximumNodeSize - Math.abs(upperBound);
+//            }
             
             bal.getInnerShift().put(root, bal.getInnerShift().get(root) + Math.abs(postShift));
             
@@ -427,12 +467,14 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             for (LNode v : layer.getNodes()) {
                 bal.getY()
                         .put(v, bal.getY().get(bal.getRoot().get(v)));
-                if (bal.getShift().get(bal.getSink().get(bal.getRoot().get(v))) < Double.POSITIVE_INFINITY) {
+                if (v.equals(bal.getRoot().get(v))
+                        && bal.getShift().get(bal.getSink().get(v)) < Double.POSITIVE_INFINITY) {
                     bal.getY().put(
                             v,
                             bal.getY().get(v)
-                                + bal.getShift().get(bal.getSink().get(bal.getRoot().get(v)))
-                                + bal.getBlockSize().get(bal.getSink().get(bal.getRoot().get(v))));
+                                + bal.getShift().get(bal.getSink().get(v))
+//                                + bal.getBlockSize().get(bal.getSink().get(bal.getRoot().get(v)))
+                                );
                 }
             }
         }
@@ -470,19 +512,22 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                         bal.getShift().put(
                                 bal.getSink().get(u),
                                 Math.min(bal.getShift().get(bal.getSink().get(u)), bal.getY()
-                                        .get(v) - bal.getY().get(u) + spacing
-                                        + bal.getBlockSize().get(u)));
+                                        .get(v) - bal.getY().get(u) + spacing));
                     } else {
                         double spacing = normalSpacing;
                         if (bal.getBlockSize().get(v) == 0.0 || bal.getBlockSize().get(u) == 0.0) {
                             spacing = smallSpacing;
                         }
                         if (bal.getVDir() == VDirection.RIGHT) {
+                            //FIXME it seems that blocksize is applied twice or more in some cases
+                            //possible solution: store if blocksize was considered when comparing to
+                            //certain block
                             bal.getY().put(
                                     v,
                                     Math.min(bal.getY().get(v), bal.getY().get(u) - spacing
                                             - bal.getBlockSize().get(v)
                                             ));
+                            
                         } else {
                             bal.getY().put(
                                     v,
@@ -677,7 +722,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         private HashMap<LNode, LNode> root;
 
         private HashMap<LNode, Double> blockSize;
-
+        
         private HashMap<LNode, LNode> align;
 
         private HashMap<LNode, Double> innerShift;
@@ -720,7 +765,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         public HashMap<LNode, Double> getBlockSize() {
             return blockSize;
         }
-
+        
         /**
          * @return the align
          */
