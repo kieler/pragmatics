@@ -79,7 +79,7 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric.UpMetric"
+            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$UpMetric"
             description="Measures the fraction of upward edges."
             id="de.cau.cs.kieler.kiml.evol.upwardnessMetric"
             name="Upwardness Metric">
@@ -92,7 +92,7 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric.DownMetric"
+            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$DownMetric"
             description="Measures the fraction of downward edges."
             id="de.cau.cs.kieler.kiml.evol.downwardnessMetric"
             name="Downwardness Metric">
@@ -105,7 +105,7 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric.LeftMetric"
+            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$LeftMetric"
             description="Measures the fraction of leftward edges."
             id="de.cau.cs.kieler.kiml.evol.leftwardnessMetric"
             name="Leftwardness Metric">
@@ -118,7 +118,7 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric.RightMetric"
+            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$RightMetric"
             description="Measures the fraction of rightward edges."
             id="de.cau.cs.kieler.kiml.evol.rightwardnessMetric"
             name="Rightwardness Metric">

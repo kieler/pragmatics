@@ -59,17 +59,17 @@ public final class GenomeFactory {
     public static final String LAYOUT_TYPE_ID = "de.cau.cs.kieler.kiml.evol.layoutType";
 
     /** probability for mutation of layout type genes. */
-    private static final double P_LAYOUT_TYPE_MUTATION = 0.04;
+    private static final double P_LAYOUT_TYPE_MUTATION = 0.06;
     /** probability for mutation of layout algorithm genes. */
-    private static final double P_LAYOUT_ALGO_MUTATION = 0.08;
+    private static final double P_LAYOUT_ALGO_MUTATION = 0.10;
     /** probability for mutation of boolean type genes. */
-    private static final double P_BOOLEAN_MUTATION = 0.1;
+    private static final double P_BOOLEAN_MUTATION = 0.15;
     /** probability for mutation of enumeration type genes. */
-    private static final double P_ENUM_MUTATION = 0.12;
+    private static final double P_ENUM_MUTATION = 0.15;
     /** probability for mutation of integer type genes. */
-    private static final double P_INT_MUTATION = 0.15;
+    private static final double P_INT_MUTATION = 0.25;
     /** probability for mutation of floating point type genes. */
-    private static final double P_FLOAT_MUTATION = 0.2;
+    private static final double P_FLOAT_MUTATION = 0.30;
     
     /**
      * Create a genome with default values from the given layout mapping.
@@ -82,9 +82,14 @@ public final class GenomeFactory {
     public static Genome createInitialGenome(final LayoutMapping<?> layoutMapping,
             final ILayoutConfig config, final LayoutContext context) {
         LayoutDataService dataService = LayoutDataService.getInstance();
-        LayoutOptionData<?> algoOptionData = dataService.getOptionData(LayoutOptions.ALGORITHM.getId());
+        LayoutOptionData<?> algoOptionData = dataService.getOptionData(
+                LayoutOptions.ALGORITHM.getId());
         String algorithmId = (String) config.getValue(algoOptionData, context);
-        LayoutAlgorithmData algorithmData = dataService.getAlgorithmData(algorithmId);
+        LayoutOptionData<?> diagTypeData = dataService.getOptionData(
+                LayoutOptions.DIAGRAM_TYPE.getId());
+        String diagramType = (String) config.getValue(diagTypeData, context);
+        LayoutAlgorithmData algorithmData = DefaultLayoutConfig.getLayouterData(
+                algorithmId, diagramType);
         
         Genome genome = new Genome(dataService.getOptionData().size());
         
@@ -252,10 +257,11 @@ public final class GenomeFactory {
         Comparable<T> lowerBound = typeInfo.getLowerBound();
         if (lowerBound.compareTo(value) > 0) {
             value = (T) lowerBound;
-        }
-        Comparable<T> upperBound = typeInfo.getUpperBound();
-        if (upperBound.compareTo(value) < 0) {
-            value = (T) upperBound;
+        } else {
+            Comparable<T> upperBound = typeInfo.getUpperBound();
+            if (upperBound.compareTo(value) < 0) {
+                value = (T) upperBound;
+            }
         }
         return Gene.create(optionData.getId(), value, typeInfo);
     }

@@ -88,11 +88,6 @@ public final class Gene<T extends Comparable<? super T>> {
         this.id = theId;
         this.value = theValue;
         this.typeInfo = theTypeInfo;
-
-        // is the value within bounds?
-        if (!isWithinBounds()) {
-            throw new IllegalArgumentException("Value out of bounds: " + theValue);
-        }
     }
     
     /**
@@ -178,16 +173,6 @@ public final class Gene<T extends Comparable<? super T>> {
     public Enum<?> enumValue() {
         LayoutOptionData<?> optionData = (LayoutOptionData<?>) typeInfo.getTypeParam();
         return optionData.getEnumValue((Integer) value);
-    }
-
-    /**
-     * Return true if the value is within the valid range.
-     *
-     * @return true if the value is within the valid range
-     */
-    public boolean isWithinBounds() {
-        return typeInfo.getLowerBound().compareTo(value) <= 0
-                && typeInfo.getUpperBound().compareTo(value) > 0;
     }
 
     /**

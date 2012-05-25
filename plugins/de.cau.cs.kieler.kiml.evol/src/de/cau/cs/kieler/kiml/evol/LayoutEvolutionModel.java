@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
+import java.util.Random;
+
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutContext;
@@ -63,6 +65,7 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
         setMutationOperation(new MutationOperation());
         setSurvivalOperation(new SurvivalOperation());
         setEvaluationOperation(new EvaluationOperation());
+        setRandom(new Random());
     }
     
     /**

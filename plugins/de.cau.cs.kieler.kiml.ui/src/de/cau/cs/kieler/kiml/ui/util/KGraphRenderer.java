@@ -100,6 +100,7 @@ public class KGraphRenderer {
      */
     public KGraphRenderer(final Display display, final double thescale, final KVector thebaseOffset) {
         this.scale = thescale;
+        this.baseOffset = thebaseOffset;
 
         nodeBorderColor = new Color(display, 2, 15, 3);
         nodeFillColor = new Color(display, 87, 197, 133);
@@ -220,7 +221,7 @@ public class KGraphRenderer {
         
         // render the nodes and ports
         Set<KEdge> edgeSet = new HashSet<KEdge>();
-        renderNode(parentNode, graphics, area, new KVector(baseOffset), edgeSet, nodeAlpha);
+        renderNode(parentNode, graphics, area, baseOffset, edgeSet, nodeAlpha);
         
         // render the edges
         graphics.setForeground(edgeColor);
@@ -228,7 +229,7 @@ public class KGraphRenderer {
         graphics.setAlpha(255);
         graphics.setFont(edgeFont);
         for (KEdge edge : edgeSet) {
-            renderEdge(edge, graphics, area);
+            renderEdge(parentNode, edge, graphics, area);
         }
     }
     
@@ -361,18 +362,33 @@ public class KGraphRenderer {
     /**
      * Paints an edge for the given dirty area.
      * 
+     * @param graph the top-level node of the graph
      * @param edge the edge to paint
      * @param graphics the graphics context used to paint
      * @param area dirty area that needs painting
      */
-    private void renderEdge(final KEdge edge, final GC graphics, final Rectangle area) {
+    private void renderEdge(final KNode graph, final KEdge edge, final GC graphics,
+            final Rectangle area) {
+        if (!KimlUtil.isDescendant(edge.getSource(), graph)
+                || !KimlUtil.isDescendant(edge.getTarget(), graph)) {
+            // the edge points to some node outside of the rendered subgraph
+            return;
+        }
+        
         // calculate an offset for edge coordinates
-        KVector offset = new KVector();
         KNode parent = edge.getSource();
         if (!KimlUtil.isDescendant(edge.getTarget(), parent)) {
             parent = parent.getParent();
         }
-        KimlUtil.toAbsolute(offset, parent);
+        KNode node = parent;
+        KVector offset = new KVector(baseOffset);
+        while (node != graph) {
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            KInsets insets = nodeLayout.getInsets();
+            offset.translate(nodeLayout.getXpos() + insets.getLeft(),
+                    nodeLayout.getYpos() + insets.getTop());
+            node = node.getParent();
+        }
         
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         PaintRectangle rect = boundsMap.get(edge);

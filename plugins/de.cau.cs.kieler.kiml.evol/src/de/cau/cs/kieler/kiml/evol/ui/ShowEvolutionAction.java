@@ -13,14 +13,18 @@
  */
 package de.cau.cs.kieler.kiml.evol.ui;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.kiml.evol.EvolLayoutConfig;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
@@ -76,7 +80,7 @@ public class ShowEvolutionAction extends Action {
         super("Evolve Layout", ICON);
         setId(ACTION_ID);
         setToolTipText(
-                "Open a dialog for finding a layout configuration using evolutionary algorithms.");
+                "Open a dialog for finding a layout configuration using evolutionary algorithms");
     }
 
     /**
@@ -96,7 +100,17 @@ public class ShowEvolutionAction extends Action {
                     if (layoutMapping != null) {
                         
                         EvolutionDialog dialog = new EvolutionDialog(window.getShell(), layoutMapping);
-                        if (dialog.open() == EvolutionDialog.OK) {
+                        int result;
+                        try {
+                            result = dialog.open();
+                        } catch (Throwable throwable) {
+                            IStatus status = new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID,
+                                    "Error while initializing evolution dialog.", throwable);
+                            StatusManager.getManager().handle(status,
+                                    StatusManager.SHOW | StatusManager.LOG);
+                            result = EvolutionDialog.CANCEL;
+                        }
+                        if (result == EvolutionDialog.OK) {
                             IPreferenceStore preferenceStore = KimlUiPlugin.getDefault()
                                     .getPreferenceStore();
                             boolean animation = preferenceStore.getBoolean(
@@ -109,6 +123,9 @@ public class ShowEvolutionAction extends Action {
                                     progressDialog, false, zoomToFit);
                         }
                         
+                    } else {
+                        MessageDialog.openError(window.getShell(), "No active diagram",
+                                "The evolutionary configurator is unable to acquire a diagram.");
                     }
                 }
             }

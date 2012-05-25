@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
 
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -31,6 +33,7 @@ import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.GenomeFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -107,8 +110,14 @@ public class EvaluationOperation implements IEvolutionaryOperation {
         // perform layout on the evaluation graph
         KNode graph = EcoreUtil.copy(testGraph);
         GenomeFactory.configureGraph(graph, genome, layoutConfig, layoutContext);
-        graphLayoutEngine.layout(graph, progressMonitor.subTask(1));
         genome.setProperty(LAYOUT_GRAPH, graph);
+        try {
+            // TODO consider execution time
+            graphLayoutEngine.layout(graph, progressMonitor.subTask(1));
+        } catch (Throwable throwable) {
+            // automatic layout led to an error - give the genome a bad rating!
+            return 0;
+        }
         
         // perform analysis on the evaluation graph
         AnalysisService analysisService = AnalysisService.getInstance();
@@ -118,11 +127,18 @@ public class EvaluationOperation implements IEvolutionaryOperation {
         
         // determine the weighted mean of the analysis results
         float rating = 0;
-        float totalWeight = category.getAnalyses().size();
+        float totalWeight = 0;
         for (AnalysisData analysisData : category.getAnalyses()) {
-            rating += (Float) results.get(analysisData.getId());
+            Object result = results.get(analysisData.getId());
+            if (result instanceof Float) {
+                rating += (Float) result;
+                totalWeight += 1;
+            } else {
+                StatusManager.getManager().handle(new Status(Status.ERROR, EvolPlugin.PLUGIN_ID,
+                        "Analysis \"" + analysisData.getName() + "\" failed: " + result));
+            }
         }
-        
+            
         progressMonitor.done();
         return rating / totalWeight;
     }

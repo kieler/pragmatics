@@ -152,6 +152,7 @@ public class MutationOperation implements IEvolutionaryOperation {
      * @param gene a gene
      * @return a new mutated gene
      */
+    @SuppressWarnings("unchecked")
     public Gene<?> mutate(final Gene<?> gene) {
         TypeInfo<?> typeInfo = gene.getTypeInfo();
         if (random.nextDouble() >= typeInfo.getProbability()) {
@@ -165,14 +166,21 @@ public class MutationOperation implements IEvolutionaryOperation {
         case INTEGER:
         {
             // produce a new integer value within the valid bounds
-            int lowerBound = (Integer) typeInfo.getLowerBound();
-            int upperBound = (Integer) typeInfo.getUpperBound();
+            Comparable<Integer> lowerBound = (Comparable<Integer>) typeInfo.getLowerBound();
+            Comparable<Integer> upperBound = (Comparable<Integer>) typeInfo.getUpperBound();
             double variance = typeInfo.getVariance();
             double value = gene.floatValue();
+            boolean inBounds = false;
             do {
-                value = KielerMath.limit(value, lowerBound, upperBound);
                 value += random.nextGaussian() * Math.sqrt(variance);
-            } while (value < lowerBound || value > upperBound);
+                if (lowerBound.compareTo((int) Math.floor(value)) > 0) {
+                    value = (Integer) lowerBound;
+                } else  if (upperBound.compareTo((int) Math.ceil(value)) < 0) {
+                    value = (Integer) upperBound;
+                } else {
+                    inBounds = true;
+                }
+            } while (!inBounds);
             intValue = (int) Math.round(value);
             return Gene.create(gene.getId(), intValue, typeInfo);
         }
@@ -181,14 +189,21 @@ public class MutationOperation implements IEvolutionaryOperation {
         {
             Float floatValue;
             // produce a new floating point value within the valid bounds
-            float lowerBound = (Float) typeInfo.getLowerBound();
-            float upperBound = (Float) typeInfo.getUpperBound();
+            Comparable<Float> lowerBound = (Comparable<Float>) typeInfo.getLowerBound();
+            Comparable<Float> upperBound = (Comparable<Float>) typeInfo.getUpperBound();
             double variance = typeInfo.getVariance();
             double value = gene.floatValue();
+            boolean inBounds = false;
             do {
-                value = KielerMath.limit(value, lowerBound, upperBound);
                 value += random.nextGaussian() * Math.sqrt(variance);
-            } while (value < lowerBound || value > upperBound);
+                if (lowerBound.compareTo((float) value) > 0) {
+                    value = (Float) lowerBound;
+                } else if (upperBound.compareTo((float) value) < 0) {
+                    value = (Float) upperBound;
+                } else {
+                    inBounds = true;
+                }
+            } while (!inBounds);
             floatValue = (float) value;
             return Gene.create(gene.getId(), floatValue, typeInfo);
         }

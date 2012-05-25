@@ -104,7 +104,7 @@ public class EvolutionDialog extends Dialog {
         Population population = evolutionModel.getPopulation();
         for (int i = 0; i < Math.min(population.size(), INDIVIDUALS_DISPLAY); i++) {
             Genome genome = population.get(i);
-            createPreview(parent, genome);
+            createPreview(composite, genome);
         }
         
         return composite;
@@ -141,6 +141,9 @@ public class EvolutionDialog extends Dialog {
         Image previewImage = genome.getProperty(PREVIEW_IMAGE);
         if (previewImage == null) {
             KNode graph = genome.getProperty(EvaluationOperation.LAYOUT_GRAPH);
+            if (graph == null) {
+                throw new IllegalStateException("Missing evaluation graph for genome preview.");
+            }
             KShapeLayout graphSize = graph.getData(KShapeLayout.class);
             double scale;
             KVector offset = new KVector();
