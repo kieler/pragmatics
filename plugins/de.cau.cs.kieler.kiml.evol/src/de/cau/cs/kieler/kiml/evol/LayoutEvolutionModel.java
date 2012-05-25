@@ -78,6 +78,15 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
     }
     
     /**
+     * Sets the individual with given index as selected for meta layout.
+     * 
+     * @param index a genome index
+     */
+    public void setSelected(final int index) {
+        selectedIndividual = getPopulation().get(index);
+    }
+    
+    /**
      * Initialize the population of the evolution model.
      * 
      * @param layoutMapping a layout mapping from which to derive an initial configuration

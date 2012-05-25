@@ -13,14 +13,19 @@
  */
 package de.cau.cs.kieler.kiml.evol.ui;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.graphics.Resource;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -30,6 +35,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.LayoutEvolutionModel;
 import de.cau.cs.kieler.kiml.evol.alg.EvaluationOperation;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
@@ -57,6 +63,12 @@ public class EvolutionDialog extends Dialog {
     
     /** the layout mapping for the graph taken for preview. */
     private LayoutMapping<?> layoutMapping;
+    /** the resources that need to be disposed. */
+    private List<Resource> resources = new LinkedList<Resource>();
+    /** the "thumbs up" image. */
+    private Image thumbsupImage;
+    /** the buttons for selection of individuals. */
+    private Button[] selectionButtons;
     
     /**
      * Creates an evolution dialog.
@@ -67,6 +79,8 @@ public class EvolutionDialog extends Dialog {
     public EvolutionDialog(final Shell parentShell, final LayoutMapping<?> theLayoutMapping) {
         super(parentShell);
         this.layoutMapping = theLayoutMapping;
+        thumbsupImage = EvolPlugin.getImageDescriptor("icons/thumbsup16.gif").createImage();
+        resources.add(thumbsupImage);
     }
     
     /**
@@ -83,10 +97,14 @@ public class EvolutionDialog extends Dialog {
      */
     @Override
     public boolean close() {
-        if (getReturnCode() == Dialog.OK) {
-            
+        boolean result = super.close();
+        if (result) {
+            for (Resource res : resources) {
+                res.dispose();
+            }
+            resources.clear();
         }
-        return super.close();
+        return result;
     }
     
     /**
@@ -102,9 +120,12 @@ public class EvolutionDialog extends Dialog {
         ((GridLayout) composite.getLayout()).numColumns = (int) Math.sqrt(INDIVIDUALS_DISPLAY);
         
         Population population = evolutionModel.getPopulation();
-        for (int i = 0; i < Math.min(population.size(), INDIVIDUALS_DISPLAY); i++) {
+        int individualsCount = Math.min(population.size(), INDIVIDUALS_DISPLAY);
+        selectionButtons = new Button[individualsCount];
+        for (int i = 0; i < individualsCount; i++) {
             Genome genome = population.get(i);
-            createPreview(composite, genome);
+            Button button = createPreview(composite, genome);
+            selectionButtons[i] = button;
         }
         
         return composite;
@@ -125,7 +146,19 @@ public class EvolutionDialog extends Dialog {
      */
     @Override
     protected void buttonPressed(final int buttonId) {
-        super.buttonPressed(buttonId);
+        switch (buttonId) {
+        case IDialogConstants.OK_ID:
+            applyUserRating();
+            okPressed();
+            break;
+        case IDialogConstants.CANCEL_ID:
+            cancelPressed();
+            break;
+        case IDialogConstants.NEXT_ID:
+            applyUserRating();
+            // TODO evolve the population
+            break;
+        }
     }
     
     /**
@@ -133,10 +166,11 @@ public class EvolutionDialog extends Dialog {
      * 
      * @param parent the parent composite
      * @param genome the genome for which to create the preview
+     * @return the button for selection of the given genome
      */
-    private void createPreview(final Composite parent, final Genome genome) {
+    private Button createPreview(final Composite parent, final Genome genome) {
         Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new FillLayout(SWT.VERTICAL));
+        composite.setLayout(new GridLayout());
         
         Image previewImage = genome.getProperty(PREVIEW_IMAGE);
         if (previewImage == null) {
@@ -157,13 +191,44 @@ public class EvolutionDialog extends Dialog {
             
             Rectangle area = new Rectangle(0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT);
             previewImage = new Image(getShell().getDisplay(), area.width, area.height);
+            resources.add(previewImage);
             KGraphRenderer renderer = new KGraphRenderer(getShell().getDisplay(), scale, offset);
             renderer.render(graph, new GC(previewImage), area);
             genome.setProperty(PREVIEW_IMAGE, previewImage);
         }
-        
-        Label previewLabel = new Label(composite, SWT.NONE);
+
+        Label previewLabel = new Label(composite, SWT.BORDER);
         previewLabel.setImage(previewImage);
+        previewLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+        
+        Button ratingButton = new Button(composite, SWT.CHECK);
+        ratingButton.setImage(thumbsupImage);
+        ratingButton.setToolTipText("Select this layout and promote it for the next evolutions.");
+        ratingButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+        return ratingButton;
+    }
+    
+    /**
+     * Apply user rating to all individuals.
+     */
+    private void applyUserRating() {
+        LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+        boolean selectedFound = false;
+        for (int i = 0; i < selectionButtons.length; i++) {
+            if (selectionButtons[i].getSelection()) {
+                Genome genome = evolutionModel.getPopulation().get(i);
+                genome.setProperty(Genome.USER_RATING, 1.0);
+                genome.setProperty(Genome.USER_WEIGHT, 1.0);
+                if (!selectedFound) {
+                    selectedFound = true;
+                    evolutionModel.setSelected(i);
+                }
+            }
+        }
+        // if no individual was selected, mark the first individual for meta layout
+        if (!selectedFound) {
+            evolutionModel.setSelected(0);
+        }
     }
 
 }

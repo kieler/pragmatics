@@ -124,7 +124,7 @@ public class ShowEvolutionAction extends Action {
                         }
                         
                     } else {
-                        MessageDialog.openError(window.getShell(), "No active diagram",
+                        MessageDialog.openError(window.getShell(), "No Active Diagram",
                                 "The evolutionary configurator is unable to acquire a diagram.");
                     }
                 }

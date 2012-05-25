@@ -32,7 +32,7 @@ import de.cau.cs.kieler.core.properties.Property;
 public class Genome extends MapPropertyHolder implements Comparable<Genome> {
 
     /** property for the user defined rating value. */
-    public static final IProperty<Double> USER_RATING = new Property<Double>("evol.userRating", 0.5);
+    public static final IProperty<Double> USER_RATING = new Property<Double>("evol.userRating", 0.0);
     /** property for the weight of the user rating. */
     public static final IProperty<Double> USER_WEIGHT = new Property<Double>("evol.userWeight", 0.0);
     /** property for the automatically determined rating value. */

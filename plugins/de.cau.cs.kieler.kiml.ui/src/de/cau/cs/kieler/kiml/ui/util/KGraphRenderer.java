@@ -215,6 +215,9 @@ public class KGraphRenderer {
      * @param area the area to fill
      */
     public void render(final KNode parentNode, final GC graphics, final Rectangle area) {
+        // activate interpolation
+        graphics.setInterpolation(SWT.HIGH);
+        
         // determine an overall alpha value for nodes, depending on the maximal node depth
         int maxDepth = Math.max(maxDepth(parentNode), 1);
         int nodeAlpha = 200 / maxDepth + 55;
