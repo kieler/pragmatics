@@ -26,6 +26,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
+import de.cau.cs.kieler.kiml.export.ExportPlugin;
 import de.cau.cs.kieler.kiml.export.handlers.GraphFileHandler;
 
 /**
@@ -45,6 +46,8 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
      */
     public ExportGraphWizard() {
         super();
+        
+        setDialogSettings(ExportPlugin.getDefault().getDialogSettings());
 
     }
 
