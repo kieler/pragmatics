@@ -25,7 +25,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import de.cau.cs.kieler.core.ui.wizards.WorkspaceResourcesPage;
-import de.cau.cs.kieler.kiml.export.ExportPlugin;
 import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.ui.service.EclipseTransformationService;
 
@@ -53,14 +52,11 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      */
     private static final String PAGE_NAME = "exportDiagramsWorkspaceSourcesPage"; //$NON-NLS-1$
 
-    /** the preference store. */
-    private IPreferenceStore preferenceStore = null;
-
     private Combo fileFormatCombo;
 
     /** the preference key for the selected exporter. */
     private static final String PREFERENCE_EXPORTER = "exportDialog.exporter"; //$NON-NLS-1$
-    
+
     /**
      * The number of columns used to lay out the default target groups.
      */
@@ -74,8 +70,6 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      */
     private static final String[] GRAPH_FILE_EXTENSIONS = { "kegdi", "kaod", "kids" };
 
-    private String lastFormatName = "";
-
     /**
      * Constructs a new instance.
      * 
@@ -87,7 +81,6 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         this.setTitle(Messages.ExportGraphWizard_title);
         this.setDescription(Messages.ExportGraphWizard_Exporting_workspace_task);
         this.setMessage(Messages.ExportGraphWizard_Exporting_workspace_task);
-        preferenceStore = ExportPlugin.getDefault().getPreferenceStore();
     }
 
     /**
@@ -107,18 +100,11 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         // Combo
         fileFormatCombo = new Combo(targetGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
         fileFormatCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        //fill the Combo with all possible export formats
         String[] formatNames = getGraphFileExtensions();
         if (formatNames.length > 0) {
             fileFormatCombo.setItems(formatNames);
-            fileFormatCombo.setText(lastFormatName);
             fileFormatCombo.select(0);
-            if (lastFormatName.length() > 0) {
-                for (int i = 0; i < formatNames.length; i++) {
-                    if (formatNames[i].toLowerCase().equals(lastFormatName)) {
-                        fileFormatCombo.select(i);
-                    }
-                }
-            }
         } else {
             fileFormatCombo.setEnabled(false);
         }
@@ -255,7 +241,14 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
     @Override
     public void saveDialogSettings() {
         super.saveDialogSettings();
-        preferenceStore.setValue(PREFERENCE_EXPORTER, getTargetFormat()); 
+
+        // save the last export format in dialogSettings
+        IDialogSettings dialogSettings = getDialogSettings();
+        if (dialogSettings == null) {
+            // The dialog settings have not been set on the wizard
+            return;
+        }
+        dialogSettings.put(getName() + PREFERENCE_EXPORTER, getTargetFormat());
     }
 
     /**
@@ -264,8 +257,21 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
     @Override
     protected void restoreDialogSettings() {
         super.restoreDialogSettings();
-        // get last exporter from preference store
-        lastFormatName = preferenceStore.getString(PREFERENCE_EXPORTER);
-       
+        
+        // get the last export format from dialogSettings
+        IDialogSettings dialogSettings = getDialogSettings();
+        if (dialogSettings == null) {
+            // The dialog settings have not been set on the wizard
+            return;
+        }
+        //set the target format combo selection to the restored format 
+        String targetFormatName = dialogSettings.get(getName() + PREFERENCE_EXPORTER);
+        if (fileFormatCombo.getItemCount() > 0) {
+            for (int i = 0; i < fileFormatCombo.getItemCount(); i++) {
+                if (fileFormatCombo.getItem(i).toLowerCase().equals(targetFormatName)) {
+                    fileFormatCombo.select(i);
+                }
+            }
+        }
     }
 }
