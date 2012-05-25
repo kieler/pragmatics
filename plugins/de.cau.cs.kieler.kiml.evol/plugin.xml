@@ -5,6 +5,7 @@
          point="de.cau.cs.kieler.kiml.layoutInfo">
       <config
             activation="de.cau.cs.kieler.kiml.evol"
+            activationAction="de.cau.cs.kieler.kiml.evol.ui.ShowEvolutionAction$Activator"
             activationText="Activate Evolutionary Layout"
             class="de.cau.cs.kieler.kiml.evol.EvolLayoutConfig"
             default="false">
@@ -128,43 +129,6 @@
                analysis="de.cau.cs.kieler.kiml.grana.edgeDirections">
          </dependency>
       </analysis>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">
-      <command
-            categoryId="de.cau.cs.kieler"
-            defaultHandler="de.cau.cs.kieler.kiml.evol.ui.ShowEvolutionHandler"
-            id="de.cau.cs.kieler.kiml.evol.showEvolution"
-            name="Show Evolution">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="toolbar:de.cau.cs.kieler.kiml.views.layout">
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.showEvolution"
-               icon="icons/bacterium16.gif"
-               label="Evolve Layout"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <test
-                     property="de.cau.cs.kieler.kiml.evol.activeTester">
-               </test>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-   </extension>
-   <extension
-         point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            class="de.cau.cs.kieler.kiml.evol.ui.ActiveTester"
-            id="de.cau.cs.kieler.kiml.evol.activeTester"
-            namespace="de.cau.cs.kieler.kiml.evol"
-            properties="evolActive"
-            type="java.lang.Object">
-      </propertyTester>
    </extension>
 
 </plugin>
