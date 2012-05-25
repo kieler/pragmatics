@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import de.cau.cs.kieler.kiml.evol.EvolutionModel;
+import de.cau.cs.kieler.kiml.evol.LayoutEvolutionModel;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
@@ -67,13 +67,13 @@ public class EvolutionDialog extends Dialog {
      */
     @Override
     protected Control createDialogArea(final Composite parent) {
-        EvolutionModel evolutionModel = initializeContent();
+        LayoutEvolutionModel evolutionModel = initializeContent();
         return null;
     }
     
-    private EvolutionModel initializeContent() {
-        EvolutionModel evolutionModel = EvolutionModel.getInstance();
-        if (evolutionModel.getPopulation().size() == 0) {
+    private LayoutEvolutionModel initializeContent() {
+        LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+        if (evolutionModel.getPopulation() == null) {
             evolutionModel.initializePopulation(layoutMapping);
         }
         return evolutionModel;

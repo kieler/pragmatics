@@ -37,7 +37,7 @@ public class EvolLayoutConfig implements ILayoutConfig {
             "de.cau.cs.kieler.kiml.evol", false);
     
     /** property for the evolution model stored in the layout context. */
-    private static final Property<EvolutionModel> EVOL_MODEL = new Property<EvolutionModel>(
+    private static final Property<LayoutEvolutionModel> EVOL_MODEL = new Property<LayoutEvolutionModel>(
             "evol.model");
 
     /**
@@ -51,7 +51,7 @@ public class EvolLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public void enrich(final LayoutContext context) {
-        EvolutionModel model = EvolutionModel.getInstance();
+        LayoutEvolutionModel model = LayoutEvolutionModel.getInstance();
         if (model.getSelected() != null) {
             context.setProperty(EVOL_MODEL, model);
         }
@@ -61,7 +61,7 @@ public class EvolLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
-        EvolutionModel model = context.getProperty(EVOL_MODEL);
+        LayoutEvolutionModel model = context.getProperty(EVOL_MODEL);
         if (model != null) {
             Gene<?> gene = model.getSelected().find(optionData.getId());
             if (gene != null) {
@@ -75,7 +75,7 @@ public class EvolLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public void transferValues(final KGraphData graphData, final LayoutContext context) {
-        EvolutionModel model = context.getProperty(EVOL_MODEL);
+        LayoutEvolutionModel model = context.getProperty(EVOL_MODEL);
         if (model != null) {
             LayoutDataService dataService = LayoutDataService.getInstance();
             for (Gene<?> gene : model.getSelected().getGenes()) {

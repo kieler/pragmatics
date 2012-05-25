@@ -75,14 +75,13 @@ public final class GenomeFactory {
      * Create a genome with default values from the given layout mapping.
      * 
      * @param layoutMapping a layout mapping
-     * @param configPair a layout configurator and context for obtaining default values
+     * @param config a layout configurator for obtaining default values
+     * @param context a layout context for obtaining default value
      * @return a genome filled with genes
      */
     public static Genome createInitialGenome(final LayoutMapping<?> layoutMapping,
-            final Pair<ILayoutConfig, LayoutContext> configPair) {
+            final ILayoutConfig config, final LayoutContext context) {
         LayoutDataService dataService = LayoutDataService.getInstance();
-        ILayoutConfig config = configPair.getFirst();
-        LayoutContext context = configPair.getSecond();
         LayoutOptionData<?> algoOptionData = dataService.getOptionData(LayoutOptions.ALGORITHM.getId());
         String algorithmId = (String) config.getValue(algoOptionData, context);
         LayoutAlgorithmData algorithmData = dataService.getAlgorithmData(algorithmId);
@@ -102,7 +101,8 @@ public final class GenomeFactory {
                     && optionData.getVariance() > 0) {
                 TypeInfo<?> typeInfo = createTypeInfo(optionData);
                 if (typeInfo != null) {
-                    Gene<?> gene = createDefaultGene(algorithmData, optionData, typeInfo, configPair);
+                    Gene<?> gene = createDefaultGene(algorithmData, optionData, typeInfo,
+                            config, context);
                     genome.getGenes().add(gene);
                 }
             }
@@ -237,16 +237,15 @@ public final class GenomeFactory {
      * @param algoData the active layout algorithm
      * @param optionData the layout option for which to create the gene
      * @param typeInfo type information for the layout option
-     * @param configPair a layout configurator and context for obtaining default values
+     * @param config a layout configurator for obtaining default values
+     * @param context a layout context for obtaining default value
      * @param <T> value type of the gene to create
      * @return a new gene with the obtained default value
      */
     @SuppressWarnings("unchecked")
     public static <T extends Comparable<? super T>> Gene<T> createDefaultGene(
             final LayoutAlgorithmData algoData, final LayoutOptionData<?> optionData,
-            final TypeInfo<T> typeInfo, final Pair<ILayoutConfig, LayoutContext> configPair) {
-        ILayoutConfig config = configPair.getFirst();
-        LayoutContext context = configPair.getSecond();
+            final TypeInfo<T> typeInfo, final ILayoutConfig config, final LayoutContext context) {
         context.setProperty(DefaultLayoutConfig.CONTENT_ALGO, algoData);
         T value = translateToGene(config.getValue(optionData, context), typeInfo);
         
@@ -317,14 +316,15 @@ public final class GenomeFactory {
      * 
      * @param parentNode the node to configure
      * @param genome the genome holding layout option values
-     * @param configPair a layout configurator and context for obtaining default values
+     * @param config a layout configurator for obtaining default values
+     * @param context a layout context for obtaining default value
      */
     public static void configureGraph(final KNode parentNode, final Genome genome,
-            final Pair<ILayoutConfig, LayoutContext> configPair) {
+            final ILayoutConfig config, final LayoutContext context) {
         LayoutDataService dataService = LayoutDataService.getInstance();
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         // first transfer values from the layout configurator
-        configPair.getFirst().transferValues(parentLayout, configPair.getSecond());
+        config.transferValues(parentLayout, context);
         
         // then transfer values from the given genome, overriding values of the configurator
         for (Gene<?> gene : genome.getGenes()) {
@@ -339,7 +339,7 @@ public final class GenomeFactory {
         // do the same for non-empty child nodes
         for (KNode child : parentNode.getChildren()) {
             if (!child.getChildren().isEmpty()) {
-                configureGraph(child, genome, configPair);
+                configureGraph(child, genome, config, context);
             }
         }
     }

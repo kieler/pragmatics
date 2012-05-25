@@ -21,9 +21,10 @@ import java.util.Random;
 
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
-import de.cau.cs.kieler.kiml.evol.EvolutionModel;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.GenomeFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
@@ -63,11 +64,14 @@ public class MutationOperation implements IEvolutionaryOperation {
      * {@inheritDoc}
      */
     public void process(final Population population) {
+        ILayoutConfig layoutConfig = population.getProperty(Population.DEFAULT_CONFIG);
+        LayoutContext layoutContext = population.getProperty(Population.DEFAULT_CONTEXT);
+        
         ListIterator<Genome> genomeIter = population.listIterator();
         while (genomeIter.hasNext()) {
             Genome individual = genomeIter.next();
             if (random.nextDouble() < MUTATION_APPLICATION_PROBABILITY) {
-                Genome mutation = mutate(individual);
+                Genome mutation = mutate(individual, layoutConfig, layoutContext);
                 // individual has mutated -- the user rating is outdated
                 mutation.setProperty(Genome.USER_WEIGHT, individual.getProperty(Genome.USER_WEIGHT)
                         * USER_WEIGHT_FADE);
@@ -84,9 +88,12 @@ public class MutationOperation implements IEvolutionaryOperation {
      * algorithm gene is present, it must precede all genes except the layout type gene.
      *
      * @param genome a genome
+     * @param layoutConfig the layout configuration used to obtain default values
+     * @param layoutContext the layout context used to obtain default values
      * @return mutated copy of the given genome
      */
-    public Genome mutate(final Genome genome) {
+    public Genome mutate(final Genome genome, final ILayoutConfig layoutConfig,
+            final LayoutContext layoutContext) {
         LayoutTypeData newLayoutType = null;
         LayoutAlgorithmData newLayoutAlgo = null;
         Genome newGenome = new Genome(genome.getSize());
@@ -109,7 +116,7 @@ public class MutationOperation implements IEvolutionaryOperation {
                     } else  {
                         // the gene previously had no assigned value - generate one
                         newGene = GenomeFactory.createDefaultGene(newLayoutAlgo, optionData,
-                                gene.getTypeInfo(), EvolutionModel.getInstance().getConfigPair());
+                                gene.getTypeInfo(), layoutConfig, layoutContext);
                     }
                     newGene.setActive(true);
                 } else {

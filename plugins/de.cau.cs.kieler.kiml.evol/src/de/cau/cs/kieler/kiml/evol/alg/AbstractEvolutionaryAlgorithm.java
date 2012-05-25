@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Random;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
@@ -27,7 +26,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  * @kieler.rating 2011-07-08 yellow reviewed by swe, ima, msp
  * @author bdu
  */
-public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
+public abstract class AbstractEvolutionaryAlgorithm {
     
     /**
      * Null Operation: leaves the given {@link Population} unaltered. Use this as
@@ -78,44 +77,17 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     }
 
     /**
-     * Performs a single step of the algorithm by proceeding to the next
-     * generation. The algorithm must be initialized before by calling
-     * {@link #reset()}.
-     *
-     * @throws IllegalStateException
-     *             if called after the stop criterion has been satisfied.
+     * Performs a single step of the algorithm by proceeding to the next generation.
+     * Before a step can be performed, a population must be set using
+     * {@link #setPopulation(Population)}. Furthermore, a random number generator needs
+     * to be set using {@link #setRandom(Random)}.
      */
     public final void step() {
-        if (isDone()) {
-            throw new IllegalStateException(
-                    "No further steps may be performed after the stop criterion has been satisfied.");
-        }
-
         generationNumber++;
         crossover();
         mutate();
         evaluate();
         survive();
-    }
-
-    /**
-     * Returns {@code true} if a stop criterion is satisfied, else returns
-     * {@code false}.
-     *
-     * @return A boolean value that indicates if stop criterion is satisfied.
-     *
-     */
-    public abstract boolean isDone();
-
-    /**
-     * Initializes the population. Extending classes that wish to call {@link #step()} must
-     * ensure that this method is called exactly once before.
-     */
-    @Override
-    public void reset() {
-        super.reset();
-        generationNumber = 0;
-        evaluate();
     }
 
     /**
@@ -128,12 +100,14 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     }
     
     /**
-     * Sets the population.
+     * Sets the population, evaluates it, and resets the generation number.
      * 
      * @param p the population
      */
     public final void setPopulation(final Population p) {
+        generationNumber = 0;
         this.population = p;
+        evaluate();
     }
 
     /**
@@ -252,6 +226,18 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
      */
     protected final void setEvaluationOperation(final IEvolutionaryOperation theEvaluationOperation) {
         this.evaluationOperation = theEvaluationOperation;
+    }
+    
+    /**
+     * Set the given random number generator for the contained evolutionary operations.
+     * 
+     * @param random a random number generator
+     */
+    public void setRandom(final Random random) {
+        getCrossoverOperation().setRandom(random);
+        getMutationOperation().setRandom(random);
+        getEvaluationOperation().setRandom(random);
+        getSurvivalOperation().setRandom(random);
     }
 
 }

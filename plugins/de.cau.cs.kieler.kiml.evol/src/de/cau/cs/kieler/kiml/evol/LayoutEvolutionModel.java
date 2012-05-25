@@ -17,9 +17,11 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
-import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
+import de.cau.cs.kieler.kiml.evol.alg.AbstractEvolutionaryAlgorithm;
+import de.cau.cs.kieler.kiml.evol.alg.CrossoverOperation;
 import de.cau.cs.kieler.kiml.evol.alg.EvaluationOperation;
 import de.cau.cs.kieler.kiml.evol.alg.MutationOperation;
+import de.cau.cs.kieler.kiml.evol.alg.SurvivalOperation;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
@@ -33,33 +35,34 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
  *
  * @author msp
  */
-public final class EvolutionModel extends BasicEvolutionaryAlgorithm {
+public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
     
     /** the initial number of individuals to create. */
     private static final int INITIAL_POPULATION = 20;
     
     /** the singleton instance. */
-    private static EvolutionModel instance = new EvolutionModel();
+    private static LayoutEvolutionModel instance = new LayoutEvolutionModel();
     
     /**
      * Returns the active evolution model instance.
      * 
      * @return the active instance
      */
-    public static EvolutionModel getInstance() {
+    public static LayoutEvolutionModel getInstance() {
         return instance;
     }
     
     /** the individual that was selected for meta layout. */
     private Genome selectedIndividual;
-    /** the layout configuration used for obtaining default values. */
-    private Pair<ILayoutConfig, LayoutContext> configPair;
     
     /**
      * Hidden constructor to prevent instantiation from outside this class.
      */
-    private EvolutionModel() {
-        super();
+    private LayoutEvolutionModel() {
+        setCrossoverOperation(new CrossoverOperation());
+        setMutationOperation(new MutationOperation());
+        setSurvivalOperation(new SurvivalOperation());
+        setEvaluationOperation(new EvaluationOperation());
     }
     
     /**
@@ -72,36 +75,33 @@ public final class EvolutionModel extends BasicEvolutionaryAlgorithm {
     }
     
     /**
-     * Returns the layout configuration and context used for obtaining default values.
-     * 
-     * @return a pair with layout configuration and layout context
-     */
-    public Pair<ILayoutConfig, LayoutContext> getConfigPair() {
-        return configPair;
-    }
-    
-    /**
      * Initialize the population of the evolution model.
      * 
      * @param layoutMapping a layout mapping from which to derive an initial configuration
      */
     public void initializePopulation(final LayoutMapping<?> layoutMapping) {
         Population population = new Population(2 * INITIAL_POPULATION);
-        setPopulation(population);
         KNode graph = layoutMapping.getLayoutGraph();
-        ((EvaluationOperation) getEvaluationOperation()).setGraph(graph);
+        population.setProperty(Population.EVALUATION_GRAPH, graph);
         
         // create an initial gene, the patriarch
-        configPair = GenomeFactory.createConfig(layoutMapping);
-        Genome patriarch = GenomeFactory.createInitialGenome(layoutMapping, configPair);
+        Pair<ILayoutConfig, LayoutContext> configPair = GenomeFactory.createConfig(layoutMapping);
+        population.setProperty(Population.DEFAULT_CONFIG, configPair.getFirst());
+        population.setProperty(Population.DEFAULT_CONTEXT, configPair.getSecond());
+        Genome patriarch = GenomeFactory.createInitialGenome(layoutMapping, configPair.getFirst(),
+                configPair.getSecond());
         population.add(patriarch);
         
         // mutate the patriarch to create an initial population
         MutationOperation mutationOperation = (MutationOperation) getMutationOperation();
         for (int i = 1; i < INITIAL_POPULATION; i++) {
-            Genome mutation = mutationOperation.mutate(patriarch);
+            Genome mutation = mutationOperation.mutate(patriarch, configPair.getFirst(),
+                    configPair.getSecond());
             population.add(mutation);
         }
+        
+        // reset and evaluate the population
+        setPopulation(population);
     }
 
 }

@@ -28,8 +28,9 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.evol.EvolutionModel;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.GenomeFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -50,8 +51,6 @@ public class EvaluationOperation implements IEvolutionaryOperation {
     /** genome property for the layout graph created from the individual. */
     public static final IProperty<KNode> LAYOUT_GRAPH = new Property<KNode>("evol.layoutGraph");
 
-    /** the graph used for evaluation of individuals. */
-    private KNode testGraph;
     /** the graph layout engine used for executing configured layout on the evaluation graph. */
     private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();
     
@@ -61,21 +60,14 @@ public class EvaluationOperation implements IEvolutionaryOperation {
     public void setRandom(final Random random) {
         // no random number generator is required
     }
-    
-    /**
-     * Sets the graph used for evaluation. This must be called before any population can be processed.
-     * 
-     * @param theGraph the parent node of the evaluation graph
-     */
-    public void setGraph(final KNode theGraph) {
-        this.testGraph = theGraph;
-    }
 
     /**
      * {@inheritDoc}
      */
     public void process(final Population population) {
-        assert testGraph != null;
+        KNode testGraph = population.getProperty(Population.EVALUATION_GRAPH);
+        ILayoutConfig layoutConfig = population.getProperty(Population.DEFAULT_CONFIG);
+        LayoutContext layoutContext = population.getProperty(Population.DEFAULT_CONTEXT);
         
         // determine fitness value for individuals that do not have one yet
         for (Genome genome : population) {
@@ -83,7 +75,8 @@ public class EvaluationOperation implements IEvolutionaryOperation {
             if (fitness == null) {
                 Double autoRating = genome.getProperty(Genome.AUTO_RATING);
                 if (autoRating == null) {
-                    autoRating = autoRate(genome, new BasicProgressMonitor());
+                    autoRating = autoRate(genome, testGraph, layoutConfig, layoutContext,
+                            new BasicProgressMonitor());
                     genome.setProperty(Genome.AUTO_RATING, autoRating);
                 }
                 double userRating = genome.getProperty(Genome.USER_RATING);
@@ -101,15 +94,19 @@ public class EvaluationOperation implements IEvolutionaryOperation {
      * Compute an automatic rating for the given individual.
      * 
      * @param genome an individual
+     * @param testGraph the graph used for evaluation
+     * @param layoutConfig the layout configuration used to obtain default values
+     * @param layoutContext the layout context used to obtain default values
      * @param progressMonitor a progress monitor
      * @return the automatic rating value
      */
-    public double autoRate(final Genome genome, final IKielerProgressMonitor progressMonitor) {
+    public double autoRate(final Genome genome, final KNode testGraph, final ILayoutConfig layoutConfig,
+            final LayoutContext layoutContext, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Evaluation", 2);
 
         // perform layout on the evaluation graph
         KNode graph = EcoreUtil.copy(testGraph);
-        GenomeFactory.configureGraph(graph, genome, EvolutionModel.getInstance().getConfigPair());
+        GenomeFactory.configureGraph(graph, genome, layoutConfig, layoutContext);
         graphLayoutEngine.layout(graph, progressMonitor.subTask(1));
         genome.setProperty(LAYOUT_GRAPH, graph);
         
