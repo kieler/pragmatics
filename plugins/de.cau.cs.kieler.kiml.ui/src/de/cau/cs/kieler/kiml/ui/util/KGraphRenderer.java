@@ -75,6 +75,11 @@ public class KGraphRenderer {
     /** font used for edge labels. */
     private Font edgeFont;
     
+    /** the scale factor for all coordinates. */
+    private double scale;
+    /** the base offset for all coordinates. */
+    private KVector baseOffset;
+    
     // CHECKSTYLEOFF MagicNumber
     
     /**
@@ -83,13 +88,29 @@ public class KGraphRenderer {
      * @param display the display for which to create colors and fonts
      */
     public KGraphRenderer(final Display display) {
+        this(display, 1.0, new KVector());
+    }
+    
+    /**
+     * Creates a KGraph renderer with scaling.
+     * 
+     * @param display the display for which to create colors and fonts
+     * @param thescale the scale factor for all coordinates
+     * @param thebaseOffset the base offset for all coordinates
+     */
+    public KGraphRenderer(final Display display, final double thescale, final KVector thebaseOffset) {
+        this.scale = thescale;
+
         nodeBorderColor = new Color(display, 2, 15, 3);
         nodeFillColor = new Color(display, 87, 197, 133);
-        nodeFont = new Font(display, "sans", NODE_FONT_SIZE, SWT.NORMAL);
+        int nodeFontSize = Math.max((int) Math.round(NODE_FONT_SIZE * thescale), 2);
+        nodeFont = new Font(display, "sans", nodeFontSize, SWT.NORMAL);
         portColor = new Color(display, 2, 9, 40);
-        portFont = new Font(display, "sans", PORT_FONT_SIZE, SWT.NORMAL);
+        int portFontSize = Math.max((int) Math.round(PORT_FONT_SIZE * thescale), 2);
+        portFont = new Font(display, "sans", portFontSize, SWT.NORMAL);
         edgeColor = new Color(display, 23, 36, 54);
-        edgeFont = new Font(display, "sans", EDGE_FONT_SIZE, SWT.NORMAL);
+        int edgeFontSize = Math.max((int) Math.round(EDGE_FONT_SIZE * thescale), 2);
+        edgeFont = new Font(display, "sans", edgeFontSize, SWT.NORMAL);
     }
 
     /**
@@ -139,11 +160,11 @@ public class KGraphRenderer {
          * @param shapeLayout shape layout from which values shall be taken
          * @param offset offset to be added to coordinate values
          */
-        PaintRectangle(final KShapeLayout shapeLayout, final KVector offset) {
-            this.x = (int) Math.round(shapeLayout.getXpos() + offset.x);
-            this.y = (int) Math.round(shapeLayout.getYpos() + offset.y);
-            this.width = Math.max(Math.round(shapeLayout.getWidth()), 3);
-            this.height = Math.max(Math.round(shapeLayout.getHeight()), 3);
+        PaintRectangle(final KShapeLayout shapeLayout, final KVector offset, final double scale) {
+            this.x = (int) Math.round(shapeLayout.getXpos() * scale + offset.x);
+            this.y = (int) Math.round(shapeLayout.getYpos() * scale + offset.y);
+            this.width = Math.max((int) Math.round(shapeLayout.getWidth() * scale), 1);
+            this.height = Math.max((int) Math.round(shapeLayout.getHeight() * scale), 1);
         }
 
         /**
@@ -151,8 +172,9 @@ public class KGraphRenderer {
          * 
          * @param edgeLayout edge layout from which the values shall be determined
          * @param offset offset to be added to coordinate values
+         * @param scale the scale to apply to all coordinates
          */
-        PaintRectangle(final KEdgeLayout edgeLayout, final KVector offset) {
+        PaintRectangle(final KEdgeLayout edgeLayout, final KVector offset, final double scale) {
             float minX = edgeLayout.getSourcePoint().getX(), minY = edgeLayout.getSourcePoint()
                     .getY();
             float maxX = minX, maxY = minY;
@@ -166,10 +188,10 @@ public class KGraphRenderer {
             minY = Math.min(minY, edgeLayout.getTargetPoint().getY());
             maxX = Math.max(maxX, edgeLayout.getTargetPoint().getX());
             maxY = Math.max(maxY, edgeLayout.getTargetPoint().getY());
-            this.x = (int) Math.round(minX + offset.x);
-            this.y = (int) Math.round(minY + offset.y);
-            this.width = Math.round(maxX - minX);
-            this.height = Math.round(maxY - minY);
+            this.x = (int) Math.round(minX * scale + offset.x);
+            this.y = (int) Math.round(minY * scale + offset.y);
+            this.width = (int) Math.round((maxX - minX) * scale);
+            this.height = (int) Math.round((maxY - minY) * scale);
         }
         
         /**
@@ -197,10 +219,8 @@ public class KGraphRenderer {
         int nodeAlpha = 200 / maxDepth + 55;
         
         // render the nodes and ports
-        KVector offset = new KVector();
-        KimlUtil.toAbsolute(offset, parentNode);
         Set<KEdge> edgeSet = new HashSet<KEdge>();
-        renderNode(parentNode, graphics, area, offset, edgeSet, nodeAlpha);
+        renderNode(parentNode, graphics, area, new KVector(baseOffset), edgeSet, nodeAlpha);
         
         // render the edges
         graphics.setForeground(edgeColor);
@@ -244,7 +264,7 @@ public class KGraphRenderer {
         for (KNode child : node.getChildren()) {
             PaintRectangle rect = boundsMap.get(child);
             if (rect == null) {
-                rect = new PaintRectangle(child.getData(KShapeLayout.class), offset);
+                rect = new PaintRectangle(child.getData(KShapeLayout.class), offset, scale);
                 boundsMap.put(child, rect);
             }
             KVector childOffset = new KVector(rect.x, rect.y);
@@ -259,7 +279,7 @@ public class KGraphRenderer {
                 rect.painted = true;
                 KVector contentOffset = new KVector(childOffset);
                 KInsets insets = child.getData(KShapeLayout.class).getInsets();
-                contentOffset.translate(insets.getLeft(), insets.getTop());
+                contentOffset.translate(insets.getLeft() * scale, insets.getTop() * scale);
                 renderNode(child, graphics, area, contentOffset, edgeSet, nodeAlpha);
             }
 
@@ -294,7 +314,7 @@ public class KGraphRenderer {
         PaintRectangle rect = boundsMap.get(label);
         KShapeLayout labelLayout = label.getData(KShapeLayout.class);
         if (rect == null) {
-            rect = new PaintRectangle(labelLayout, offset);
+            rect = new PaintRectangle(labelLayout, offset, scale);
             boundsMap.put(label, rect);
         }
         if (!rect.painted && rect.intersects(area)) {
@@ -322,7 +342,7 @@ public class KGraphRenderer {
         graphics.setAlpha(255);
         PaintRectangle rect = boundsMap.get(port);
         if (rect == null) {
-            rect = new PaintRectangle(port.getData(KShapeLayout.class), offset);
+            rect = new PaintRectangle(port.getData(KShapeLayout.class), offset, scale);
             boundsMap.put(port, rect);
         }
         if (!rect.painted && rect.intersects(area)) {
@@ -357,7 +377,7 @@ public class KGraphRenderer {
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         PaintRectangle rect = boundsMap.get(edge);
         if (rect == null) {
-            rect = new PaintRectangle(edgeLayout, offset);
+            rect = new PaintRectangle(edgeLayout, offset, scale);
             boundsMap.put(edge, rect);
         }
         if (!rect.painted && rect.intersects(area)) {
@@ -365,6 +385,7 @@ public class KGraphRenderer {
             if (edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
                 bendPoints = KielerMath.appoximateSpline(bendPoints);
             }
+            bendPoints.scale(scale);
             KVector point1 = bendPoints.getFirst();
             for (KVector point2 : bendPoints) {
                 graphics.drawLine((int) Math.round(point1.x + offset.x),
@@ -391,17 +412,14 @@ public class KGraphRenderer {
     /**
      * Constructs a polygon that forms an arrow.
      * 
-     * @param point1
-     *            source point
-     * @param point2
-     *            target point
-     * @param offset
-     *            offset value to be added to coordinates
+     * @param point1 source point
+     * @param point2 target point
+     * @param offset offset value to be added to coordinates
      * @return array of coordinates for the arrow polygon, or null if the given source and target
      *         points are equal
      */
     private int[] makeArrow(final KVector point1, final KVector point2, final KVector offset) {
-        if (!(point1.x == point2.x && point1.y == point2.y)) {
+        if (!(point1.x == point2.x && point1.y == point2.y) && ARROW_WIDTH * scale >= 2) {
             int[] arrow = new int[6];
             arrow[0] = (int) Math.round(point2.x + offset.x);
             arrow[1] = (int) Math.round(point2.y + offset.y);
@@ -411,8 +429,8 @@ public class KGraphRenderer {
             double length = Math.sqrt(vectX * vectX + vectY * vectY);
             double normX = vectX / length;
             double normY = vectY / length;
-            double neckX = point2.x + ARROW_LENGTH * normX;
-            double neckY = point2.y + ARROW_LENGTH * normY;
+            double neckX = point2.x + ARROW_LENGTH * normX * scale;
+            double neckY = point2.y + ARROW_LENGTH * normY * scale;
             double orthX = normY * ARROW_WIDTH / 2;
             double orthY = -normX * ARROW_WIDTH / 2;
 
