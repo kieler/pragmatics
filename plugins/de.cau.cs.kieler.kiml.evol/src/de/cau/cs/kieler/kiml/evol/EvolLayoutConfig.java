@@ -18,8 +18,10 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * Evolutionary layout configurator. Uses evolutionary algorithms together with graph drawing
@@ -54,6 +56,22 @@ public class EvolLayoutConfig implements ILayoutConfig {
         LayoutEvolutionModel model = LayoutEvolutionModel.getInstance();
         if (model.getSelected() != null) {
             context.setProperty(EVOL_MODEL, model);
+            if (context.getProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS)) {
+                Gene<?> algorithmGene = model.getSelected().find(LayoutOptions.ALGORITHM.getId());
+                if (algorithmGene != null) {
+                    String algorithm = (String) GenomeFactory.translateFromGene(algorithmGene);
+                    
+                    // set layout algorithm identifier for the content
+                    if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null) {
+                        context.setProperty(DefaultLayoutConfig.CONTENT_HINT, algorithm);
+                    }
+                    
+                    // set layout algorithm identifier for the container
+                    if (context.getProperty(DefaultLayoutConfig.CONTAINER_HINT) == null) {
+                        context.setProperty(DefaultLayoutConfig.CONTAINER_HINT, algorithm);
+                    }
+                }
+            }
         }
     }
 

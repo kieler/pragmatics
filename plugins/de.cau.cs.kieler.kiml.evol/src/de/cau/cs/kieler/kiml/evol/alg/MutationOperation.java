@@ -19,7 +19,6 @@ package de.cau.cs.kieler.kiml.evol.alg;
 import java.util.ListIterator;
 import java.util.Random;
 
-import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;

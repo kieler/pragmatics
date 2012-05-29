@@ -13,11 +13,14 @@
  */
 package de.cau.cs.kieler.kiml.evol.ui;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -30,7 +33,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -57,6 +62,8 @@ public class EvolutionDialog extends Dialog {
     private static final int PREVIEW_WIDTH = 240;
     /** the height of each preview image. */
     private static final int PREVIEW_HEIGHT = 150;
+    /** the number of evolution steps to perform when the "Evolve" button is pressed. */
+    private static final int EVOLVE_STEPS = 10;
     
     /** property for the preview image of an individual. */
     private static final IProperty<Image> PREVIEW_IMAGE = new Property<Image>("evol.previewImage");
@@ -69,6 +76,8 @@ public class EvolutionDialog extends Dialog {
     private Image thumbsupImage;
     /** the buttons for selection of individuals. */
     private Button[] selectionButtons;
+    /** the labels for displaying individuals. */
+    private Label[] previewLabels;
     
     /**
      * Creates an evolution dialog.
@@ -112,20 +121,37 @@ public class EvolutionDialog extends Dialog {
      */
     @Override
     protected Control createDialogArea(final Composite parent) {
-        LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+        final LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
         if (evolutionModel.getPopulation() == null) {
-            evolutionModel.initializePopulation(layoutMapping);
+            try {
+                PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
+                        new IRunnableWithProgress() {
+                    public void run(final IProgressMonitor monitor) throws InvocationTargetException,
+                            InterruptedException {
+                        monitor.beginTask("Initialize Evolution", 1);
+                        evolutionModel.initializePopulation(layoutMapping);
+                        monitor.done();
+                    }
+                });
+            } catch (Exception exception) {
+                throw new WrappedException(exception);
+            }
         }
+        
         Composite composite = (Composite) super.createDialogArea(parent);
         ((GridLayout) composite.getLayout()).numColumns = (int) Math.sqrt(INDIVIDUALS_DISPLAY);
+        selectionButtons = new Button[INDIVIDUALS_DISPLAY];
+        previewLabels = new Label[INDIVIDUALS_DISPLAY];
         
         Population population = evolutionModel.getPopulation();
-        int individualsCount = Math.min(population.size(), INDIVIDUALS_DISPLAY);
-        selectionButtons = new Button[individualsCount];
-        for (int i = 0; i < individualsCount; i++) {
-            Genome genome = population.get(i);
-            Button button = createPreview(composite, genome);
-            selectionButtons[i] = button;
+        for (int i = 0; i < INDIVIDUALS_DISPLAY; i++) {
+            createPreviewArea(composite, i);
+            if (i < population.size()) {
+                Image image = createPreviewImage(population.get(i));
+                previewLabels[i].setImage(image);
+            } else {
+                selectionButtons[i].setEnabled(false);
+            }
         }
         
         return composite;
@@ -156,24 +182,41 @@ public class EvolutionDialog extends Dialog {
             break;
         case IDialogConstants.NEXT_ID:
             applyUserRating();
-            // TODO evolve the population
+            evolve();
             break;
         }
     }
     
     /**
-     * Create a preview widget for the given genome.
+     * Create a preview area for displaying an individual.
      * 
      * @param parent the parent composite
-     * @param genome the genome for which to create the preview
-     * @return the button for selection of the given genome
+     * @param index the index of the individual
      */
-    private Button createPreview(final Composite parent, final Genome genome) {
+    private void createPreviewArea(final Composite parent, final int index) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
         
+        Label previewLabel = new Label(composite, SWT.BORDER);
+        previewLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+        previewLabels[index] = previewLabel;
+        
+        Button selButton = new Button(composite, SWT.CHECK);
+        selButton.setImage(thumbsupImage);
+        selButton.setToolTipText("Select this layout and promote it for the next evolutions.");
+        selButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+        selectionButtons[index] = selButton;
+    }
+    
+    /**
+     * Create a preview image for the given individual.
+     * 
+     * @param genome an individual
+     * @return a preview image for the individual
+     */
+    private Image createPreviewImage(final Genome genome) {
         Image previewImage = genome.getProperty(PREVIEW_IMAGE);
-        if (previewImage == null) {
+        if (previewImage == null || previewImage.isDisposed()) {
             KNode graph = genome.getProperty(EvaluationOperation.LAYOUT_GRAPH);
             if (graph == null) {
                 throw new IllegalStateException("Missing evaluation graph for genome preview.");
@@ -196,16 +239,7 @@ public class EvolutionDialog extends Dialog {
             renderer.render(graph, new GC(previewImage), area);
             genome.setProperty(PREVIEW_IMAGE, previewImage);
         }
-
-        Label previewLabel = new Label(composite, SWT.BORDER);
-        previewLabel.setImage(previewImage);
-        previewLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-        
-        Button ratingButton = new Button(composite, SWT.CHECK);
-        ratingButton.setImage(thumbsupImage);
-        ratingButton.setToolTipText("Select this layout and promote it for the next evolutions.");
-        ratingButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-        return ratingButton;
+        return previewImage;
     }
     
     /**
@@ -215,7 +249,7 @@ public class EvolutionDialog extends Dialog {
         LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
         boolean selectedFound = false;
         for (int i = 0; i < selectionButtons.length; i++) {
-            if (selectionButtons[i].getSelection()) {
+            if (selectionButtons[i] != null && selectionButtons[i].getSelection()) {
                 Genome genome = evolutionModel.getPopulation().get(i);
                 genome.setProperty(Genome.USER_RATING, 1.0);
                 genome.setProperty(Genome.USER_WEIGHT, 1.0);
@@ -228,6 +262,44 @@ public class EvolutionDialog extends Dialog {
         // if no individual was selected, mark the first individual for meta layout
         if (!selectedFound) {
             evolutionModel.setSelected(0);
+        }
+    }
+    
+    /**
+     * Evolve the current population.
+     */
+    private void evolve() {
+        final LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+        
+        // perform some steps of the evolution
+        try {
+            PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
+                    new IRunnableWithProgress() {
+                public void run(final IProgressMonitor monitor) throws InvocationTargetException,
+                        InterruptedException {
+                    monitor.beginTask("Evolve", EVOLVE_STEPS);
+                    for (int i = 0; i < EVOLVE_STEPS; i++) {
+                        evolutionModel.step();
+                        monitor.worked(1);
+                    }
+                    monitor.done();
+                }
+            });
+        } catch (Exception exception) {
+            throw new WrappedException(exception);
+        }
+
+        // replace the current preview images by the new population
+        Population population = evolutionModel.getPopulation();
+        for (int i = 0; i < INDIVIDUALS_DISPLAY; i++) {
+            if (i < population.size()) {
+                Image image = createPreviewImage(population.get(i));
+                previewLabels[i].setImage(image);
+                selectionButtons[i].setEnabled(true);
+            } else {
+                previewLabels[i].setImage(null);
+                selectionButtons[i].setEnabled(false);
+            }
         }
     }
 
