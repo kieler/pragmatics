@@ -554,6 +554,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             newLabel.getSize().x = labelLayout.getWidth();
             newLabel.getSize().y = labelLayout.getHeight();
             newLabel.setProperty(Properties.ORIGIN, klabel);
+            newLabel.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                    labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT));
             newEdge.getLabels().add(newLabel);
         }
         
