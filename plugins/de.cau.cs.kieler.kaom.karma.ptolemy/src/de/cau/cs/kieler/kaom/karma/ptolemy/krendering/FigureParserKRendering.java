@@ -232,9 +232,11 @@ public class FigureParserKRendering {
 
                     placement.getPoints().add(p1);
                     placement.getPoints().add(p2);
-
+                    
                     figure.setPlacementData(placement);
                     applyStyle(figure, style);
+                    
+                    
                     parentFigure.getChildren().add(buildFigure(childElement, figure));
                     // make a PolylineShape from a polyline element.
                 } else if (tag.equals("polyline")) {

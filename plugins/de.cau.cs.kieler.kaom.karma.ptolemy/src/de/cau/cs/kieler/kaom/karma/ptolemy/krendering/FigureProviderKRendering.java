@@ -577,6 +577,9 @@ public class FigureProviderKRendering {
         KPolygon relation = factory.createKPolygon();
         relation.setPlacementData(placement);
         
+        KBackgroundColor fill = factory.createKBackgroundColor();
+        relation.getStyles().add((KBackgroundColor) FigureParserKRendering.lookupColor("black", fill));
+        
         return relation;
         
     }

@@ -19,7 +19,6 @@ import java.util.HashMap;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -27,20 +26,12 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.krendering.KBackgroundColor;
-import de.cau.cs.kieler.core.krendering.KChildArea;
 import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KContainerRendering;
-import de.cau.cs.kieler.core.krendering.KDirectPlacementData;
-import de.cau.cs.kieler.core.krendering.KForegroundColor;
 import de.cau.cs.kieler.core.krendering.KGridPlacementData;
-import de.cau.cs.kieler.core.krendering.KLineWidth;
-import de.cau.cs.kieler.core.krendering.KPosition;
 import de.cau.cs.kieler.core.krendering.KRectangle;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
-import de.cau.cs.kieler.core.krendering.KXPosition;
-import de.cau.cs.kieler.core.krendering.KYPosition;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
@@ -50,6 +41,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klighd.TransformationContext;
 import de.cau.cs.kieler.klighd.transformations.AbstractTransformation;
@@ -76,12 +69,16 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
         if (layout != null) {
             layout.setProperty(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.klay.layered");
             layout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
+            if (model.getChildEntities() == null || model.getChildEntities().isEmpty()) {
+                layout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+                
+            }
         }
         k = addConnections(model, parent);
         return k;
     }
 
-    private KContainerRendering getKRendering(KGraphElement k) {
+    private static KContainerRendering getKRendering(KGraphElement k) {
         EList<KGraphData> data = k.getData();
         for(KGraphData d: data) {
             if (d instanceof KContainerRendering) {
@@ -91,7 +88,7 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
         return null;
     }
     
-    private KShapeLayout getKLayout(KGraphElement k) {
+    private static KShapeLayout getKLayout(KGraphElement k) {
         EList<KGraphData> data = k.getData();
         for(KGraphData d: data) {
             if (d instanceof KShapeLayout) {
@@ -172,6 +169,10 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             if (lay != null) {
                 lay.setProperty(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.klay.layered");
                 lay.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
+                if (e.getChildEntities() == null || e.getChildEntities().isEmpty()) {
+                    lay.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+                    
+                }
             }
             if (ren != null) {
                 if (topRen != null) {
@@ -194,6 +195,20 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
         }
         for (Relation r : element.getChildRelations()) {
             KNode n = KimlUtil.createInitializedNode();
+            KRendering topRen = getKRendering(n);
+            KRendering ren = KRenderingProvider.getRelationRendering();
+            KShapeLayout lay = getKLayout(n);
+            if (topRen != null) {
+                getKRendering(n).getChildren().add(ren);
+            } else {
+                n.getData().add(ren);
+            }
+            
+            if (lay != null) {
+                lay.setHeight(10);
+                lay.setWidth(10);
+            }
+            
             map.put(r, n);
             parent.getChildren().add(n);
         }
@@ -202,8 +217,9 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             map.put(p, port);
             parent.getPorts().add(port);
             KRendering topRen = getKRendering(port);
-            KRendering ren = KRenderingProvider.getKPortRendering(p);
             KShapeLayout lay = getKLayout(port);
+            KRendering ren = KRenderingProvider.getKPortRendering(p, lay, getKLayout(parent));
+            
             
             if (p.getName() != null) {
                 KLabel l = KimlUtil.createInitializedLabel(port);
@@ -219,6 +235,7 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             if (lay != null) {
                 lay.setHeight(8);
                 lay.setWidth(8);
+                //lay.setProperty(LayoutOptions.PORT_SIDE, PortSide.SOUTH);
             }
             
         }
@@ -258,7 +275,7 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             if (ksource instanceof KNode) {
                 edge.setSource((KNode) ksource);
             } else if (ksource instanceof KPort) {
-                KNode sourceNode = (KNode)ksource.eContainer();
+                KNode sourceNode = (KNode) ksource.eContainer();
                 edge.setSource(sourceNode);
                 edge.setSourcePort((KPort) ksource);
                 ((KPort) ksource).getEdges().add(edge);
@@ -267,7 +284,7 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             if (ktarget instanceof KNode) {
                 edge.setTarget((KNode) ktarget);
             } else if (ktarget instanceof KPort) {
-                KNode targetNode = (KNode)ktarget.eContainer();
+                KNode targetNode = (KNode) ktarget.eContainer();
                 edge.setTarget(targetNode);
                 edge.setTargetPort((KPort) ktarget);
                 ((KPort) ktarget).getEdges().add(edge);
@@ -276,75 +293,10 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
         }
         if (!element.getChildEntities().isEmpty()) {
             for (Entity e : element.getChildEntities()) {
-                addConnections(e, (KNode)map.get(e));
+                addConnections(e, (KNode) map.get(e));
             }
         }
         return parent;
-    }
-    
-    private static KColor lookupColor(final String color, final KColor kcolor) {
-        String s = color.toLowerCase();
-        if (s.equals("black")) {
-            kcolor.setBlue(ColorConstants.black.getBlue());
-            kcolor.setRed(ColorConstants.black.getRed());
-            kcolor.setGreen(ColorConstants.black.getGreen());
-            return kcolor;
-        } else if (s.equals("blue")) {
-            kcolor.setBlue(ColorConstants.blue.getBlue());
-            kcolor.setRed(ColorConstants.blue.getRed());
-            kcolor.setGreen(ColorConstants.blue.getGreen());
-            return kcolor;
-        } else if (s.equals("cyan")) {
-            kcolor.setBlue(ColorConstants.cyan.getBlue());
-            kcolor.setRed(ColorConstants.cyan.getRed());
-            kcolor.setGreen(ColorConstants.cyan.getGreen());
-            return kcolor;
-        } else if (s.equals("darkgray") || s.equals("darkgrey")) {
-            kcolor.setBlue(ColorConstants.darkGray.getBlue());
-            kcolor.setRed(ColorConstants.darkGray.getRed());
-            kcolor.setGreen(ColorConstants.darkGray.getGreen());
-            return kcolor;
-        } else if (s.equals("lightgray") || s.equals("lightgrey")) {
-            kcolor.setBlue(ColorConstants.lightGray.getBlue());
-            kcolor.setRed(ColorConstants.lightGray.getRed());
-            kcolor.setGreen(ColorConstants.lightGray.getGreen());
-            return kcolor;
-        } else if (s.equals("gray") || s.equals("grey")) {
-            kcolor.setBlue(ColorConstants.gray.getBlue());
-            kcolor.setRed(ColorConstants.gray.getRed());
-            kcolor.setGreen(ColorConstants.gray.getGreen());
-            return kcolor;
-        } else if (s.equals("green")) {
-            kcolor.setBlue(ColorConstants.green.getBlue());
-            kcolor.setRed(ColorConstants.green.getRed());
-            kcolor.setGreen(ColorConstants.green.getGreen());
-            return kcolor;
-        } else if (s.equals("orange")) {
-            kcolor.setBlue(ColorConstants.orange.getBlue());
-            kcolor.setRed(ColorConstants.orange.getRed());
-            kcolor.setGreen(ColorConstants.orange.getGreen());
-            return kcolor;
-        } else if (s.equals("red")) {
-            kcolor.setBlue(ColorConstants.red.getBlue());
-            kcolor.setRed(ColorConstants.red.getRed());
-            kcolor.setGreen(ColorConstants.red.getGreen());
-            return kcolor;
-        } else if (s.equals("white")) {
-            kcolor.setBlue(ColorConstants.white.getBlue());
-            kcolor.setRed(ColorConstants.white.getRed());
-            kcolor.setGreen(ColorConstants.white.getGreen());
-            return kcolor;
-        } else if (s.equals("yellow")) {
-            kcolor.setBlue(ColorConstants.yellow.getBlue());
-            kcolor.setRed(ColorConstants.yellow.getRed());
-            kcolor.setGreen(ColorConstants.yellow.getGreen());
-            return kcolor;
-        } else {
-            kcolor.setBlue(ColorConstants.black.getBlue());
-            kcolor.setRed(ColorConstants.black.getRed());
-            kcolor.setGreen(ColorConstants.black.getGreen());
-            return kcolor;
-        }
     }
     
 }
