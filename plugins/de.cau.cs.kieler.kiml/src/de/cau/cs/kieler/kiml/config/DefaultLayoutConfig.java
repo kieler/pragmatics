@@ -216,7 +216,8 @@ public class DefaultLayoutConfig implements ILayoutConfig {
      */
     public static LayoutAlgorithmData getLayouterData(final String theLayoutHint,
             final String diagramType) {
-        String chDiagType = diagramType == null ? LayoutDataService.DIAGRAM_TYPE_GENERAL : diagramType;
+        String chDiagType = diagramType == null || diagramType.length() == 0
+                ? LayoutDataService.DIAGRAM_TYPE_GENERAL : diagramType;
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         String layoutHint = theLayoutHint;
         
@@ -232,8 +233,9 @@ public class DefaultLayoutConfig implements ILayoutConfig {
         boolean matchesLayoutType = false, matchesDiagramType = false, matchesGeneralDiagram = false;
         for (LayoutAlgorithmData providerData : layoutServices.getAlgorithmData()) {
             int currentPrio = providerData.getSupportedPriority(chDiagType);
+            String layoutType = providerData.getType();
             if (matchesLayoutType) {
-                if (providerData.getType().equals(layoutHint)) {
+                if (layoutType.length() > 0 && layoutType.equals(layoutHint)) {
                     if (matchesDiagramType) {
                         if (currentPrio > bestPrio) {
                             bestProvider = providerData;
@@ -266,7 +268,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                     }
                 }
             } else {
-                if (providerData.getType().equals(layoutHint)) {
+                if (layoutType.length() > 0 && layoutType.equals(layoutHint)) {
                     bestProvider = providerData;
                     matchesLayoutType = true;
                     if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {

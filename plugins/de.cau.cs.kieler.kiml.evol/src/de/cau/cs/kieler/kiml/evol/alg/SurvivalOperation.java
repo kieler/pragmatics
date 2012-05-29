@@ -41,7 +41,7 @@ public class SurvivalOperation implements IEvolutionaryOperation {
     /** Maximum number of individuals that may survive. */
     private static final int MAX_SURVIVORS = 1000;
     /** factor for minimal distance between surviving individuals. */
-    private static final double MIN_DIST_FACTOR = 0.2;
+    private static final double MIN_DIST_FACTOR = 0.1;
 
     /** the random number generator. */
     private Random random;
@@ -57,15 +57,22 @@ public class SurvivalOperation implements IEvolutionaryOperation {
      * {@inheritDoc}
      */
     public void process(final Population population) {
+        if (population.size() <= MIN_SURVIVORS) {
+            return;
+        }
+        
         // only some survive
         int surviveCount = KielerMath.limit(Math.round(population.size() * SURVIVAL_RATIO),
                 MIN_SURVIVORS, MAX_SURVIVORS);
 
         Genome[] survivors = new Genome[surviveCount];
         Iterator<Genome> genomeIter = population.iterator();
-        survivors[0] = genomeIter.next();
+        for (int i = 0; i < MIN_SURVIVORS; i++) {
+            survivors[i] = genomeIter.next();
+        }
+        
         double minDist = survivors[0].getSize() * MIN_DIST_FACTOR;
-        for (int i = 1; i < surviveCount; i++) {
+        for (int i = MIN_SURVIVORS; i < surviveCount; i++) {
             Genome individual = null;
             int sampleCount = (int) Math.log(i) + 1;
             while (genomeIter.hasNext()) {
@@ -87,7 +94,7 @@ public class SurvivalOperation implements IEvolutionaryOperation {
             }
 
             if (individual == null) {
-                surviveCount = i + 1;
+                surviveCount = i;
                 break;
             } else {
                 survivors[i] = individual;

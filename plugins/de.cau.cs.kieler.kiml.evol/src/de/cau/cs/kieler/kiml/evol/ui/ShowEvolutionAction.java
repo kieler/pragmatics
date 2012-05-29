@@ -99,6 +99,7 @@ public class ShowEvolutionAction extends Action {
                     LayoutMapping<?> layoutMapping = layoutManager.buildLayoutGraph(editorPart, null);
                     if (layoutMapping != null) {
                         
+                        // display the evolution dialog
                         EvolutionDialog dialog = new EvolutionDialog(window.getShell(), layoutMapping);
                         int result;
                         try {
@@ -110,7 +111,9 @@ public class ShowEvolutionAction extends Action {
                                     StatusManager.SHOW | StatusManager.LOG);
                             result = EvolutionDialog.CANCEL;
                         }
+                        
                         if (result == EvolutionDialog.OK) {
+                            // perform layout with the new configuration
                             IPreferenceStore preferenceStore = KimlUiPlugin.getDefault()
                                     .getPreferenceStore();
                             boolean animation = preferenceStore.getBoolean(
@@ -121,6 +124,12 @@ public class ShowEvolutionAction extends Action {
                                     LayoutHandler.PREF_PROGRESS);
                             DiagramLayoutEngine.INSTANCE.layout(editorPart, null, animation,
                                     progressDialog, false, zoomToFit);
+                            
+                            // refresh the layout view to update the configuration
+                            LayoutViewPart layoutView = LayoutViewPart.findView();
+                            if (layoutView != null) {
+                                layoutView.refresh();
+                            }
                         }
                         
                     } else {

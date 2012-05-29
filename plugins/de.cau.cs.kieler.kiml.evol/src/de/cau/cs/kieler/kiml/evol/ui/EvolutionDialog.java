@@ -18,6 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -34,6 +36,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -63,7 +66,7 @@ public class EvolutionDialog extends Dialog {
     /** the height of each preview image. */
     private static final int PREVIEW_HEIGHT = 150;
     /** the number of evolution steps to perform when the "Evolve" button is pressed. */
-    private static final int EVOLVE_STEPS = 10;
+    private static final int EVOLVE_STEPS = 4;
     
     /** property for the preview image of an individual. */
     private static final IProperty<Image> PREVIEW_IMAGE = new Property<Image>("evol.previewImage");
@@ -129,7 +132,9 @@ public class EvolutionDialog extends Dialog {
                     public void run(final IProgressMonitor monitor) throws InvocationTargetException,
                             InterruptedException {
                         monitor.beginTask("Initialize Evolution", 1);
-                        evolutionModel.initializePopulation(layoutMapping);
+                        synchronized (evolutionModel) {
+                            evolutionModel.initializePopulation(layoutMapping);
+                        }
                         monitor.done();
                     }
                 });
@@ -163,7 +168,8 @@ public class EvolutionDialog extends Dialog {
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
         createButton(parent, IDialogConstants.OK_ID, "Apply", true);
-        createButton(parent, IDialogConstants.NEXT_ID, "Evolve", false);
+        createButton(parent, IDialogConstants.PROCEED_ID, "Evolve", false);
+        createButton(parent, IDialogConstants.ABORT_ID, "Reset", false);
         createButton(parent, IDialogConstants.CANCEL_ID, "Cancel", false);
     }
     
@@ -180,9 +186,12 @@ public class EvolutionDialog extends Dialog {
         case IDialogConstants.CANCEL_ID:
             cancelPressed();
             break;
-        case IDialogConstants.NEXT_ID:
+        case IDialogConstants.PROCEED_ID:
             applyUserRating();
             evolve();
+            break;
+        case IDialogConstants.ABORT_ID:
+            reset();
             break;
         }
     }
@@ -195,7 +204,11 @@ public class EvolutionDialog extends Dialog {
      */
     private void createPreviewArea(final Composite parent, final int index) {
         Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new GridLayout());
+        GridLayout gridLayout = new GridLayout();
+        gridLayout.marginHeight = 0;
+        gridLayout.marginWidth = 0;
+        gridLayout.verticalSpacing = 2;
+        composite.setLayout(gridLayout);
         
         Label previewLabel = new Label(composite, SWT.BORDER);
         previewLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
@@ -269,8 +282,6 @@ public class EvolutionDialog extends Dialog {
      * Evolve the current population.
      */
     private void evolve() {
-        final LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
-        
         // perform some steps of the evolution
         try {
             PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
@@ -278,19 +289,61 @@ public class EvolutionDialog extends Dialog {
                 public void run(final IProgressMonitor monitor) throws InvocationTargetException,
                         InterruptedException {
                     monitor.beginTask("Evolve", EVOLVE_STEPS);
-                    for (int i = 0; i < EVOLVE_STEPS; i++) {
-                        evolutionModel.step();
-                        monitor.worked(1);
+                    LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+                    synchronized (evolutionModel) {
+                        for (int i = 0; i < EVOLVE_STEPS; i++) {
+                            evolutionModel.step();
+                            monitor.worked(1);
+                        }
                     }
                     monitor.done();
                 }
             });
-        } catch (Exception exception) {
-            throw new WrappedException(exception);
+        } catch (InvocationTargetException exception) {
+            handleError(exception.getCause());
+            return;
+        } catch (Throwable throwable) {
+            handleError(throwable);
+            return;
         }
 
-        // replace the current preview images by the new population
-        Population population = evolutionModel.getPopulation();
+        refreshPreviews();
+    }
+    
+    /**
+     * Reset the population to initial values.
+     */
+    private void reset() {
+        // reinitialize the population
+        try {
+            PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
+                    new IRunnableWithProgress() {
+                public void run(final IProgressMonitor monitor) throws InvocationTargetException,
+                        InterruptedException {
+                    monitor.beginTask("Initialize Evolution", 1);
+                    LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+                    synchronized (evolutionModel) {
+                        evolutionModel.initializePopulation(layoutMapping);                        
+                    }
+                    monitor.done();
+                }
+            });
+        } catch (InvocationTargetException exception) {
+            handleError(exception.getCause());
+            return;
+        } catch (Throwable throwable) {
+            handleError(throwable);
+            return;
+        }
+        
+        refreshPreviews();
+    }
+    
+    /**
+     * Refresh the preview images after population changes.
+     */
+    private void refreshPreviews() {
+        Population population = LayoutEvolutionModel.getInstance().getPopulation();
         for (int i = 0; i < INDIVIDUALS_DISPLAY; i++) {
             if (i < population.size()) {
                 Image image = createPreviewImage(population.get(i));
@@ -300,7 +353,21 @@ public class EvolutionDialog extends Dialog {
                 previewLabels[i].setImage(null);
                 selectionButtons[i].setEnabled(false);
             }
+            selectionButtons[i].setSelection(false);
         }
+    }
+    
+    /**
+     * Handle an error that occurred during evolution operation.
+     * 
+     * @param throwable an error
+     */
+    private void handleError(final Throwable throwable) {
+        setReturnCode(CANCEL);
+        close();
+        IStatus status = new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID,
+                "Error while performing evolution.", throwable);
+        StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
     }
 
 }
