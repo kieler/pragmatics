@@ -62,7 +62,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      */
     private static final int DEFAULT_TARGET_GROUP_COLUMNS = 3;
     /**
-     * The number of columns used to lay out the default target groups.
+     * The top margin of the target group combo box
      */
     private static final int DEFAULT_TARGET_GROUP_MARGIN_TOP = 20;
     /**
@@ -93,14 +93,17 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         GridLayout gl = new GridLayout(DEFAULT_TARGET_GROUP_COLUMNS, false);
         gl.marginHeight = DEFAULT_TARGET_GROUP_MARGIN_TOP;
         targetGroup.setLayout(gl);
+
         // Label
         Label label = new Label(targetGroup, SWT.NULL);
         label.setText(Messages.ExportDialog_file_format_caption);
         label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+
         // Combo
         fileFormatCombo = new Combo(targetGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
         fileFormatCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        //fill the Combo with all possible export formats
+
+        // fill the Combo with all possible export formats
         String[] formatNames = getGraphFileExtensions();
         if (formatNames.length > 0) {
             fileFormatCombo.setItems(formatNames);
@@ -135,7 +138,6 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         for (IResource resource : selectedResources) {
             if (resource instanceof IFile) {
                 IFile iFile = (IFile) resource;
-                // files.add(iFile.getLocation().toFile());
                 files.add(iFile.getFullPath());
             }
         }
@@ -228,16 +230,6 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         return fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex()).toLowerCase();
     }
 
-    /**
-     * actions to do when closing the window.
-     * 
-     * 
-     */
-    public void close() {
-        // save settings to preference store
-        // preferenceStore.setValue(PREFERENCE_EXPORTER, getTargetFormat());
-    }
-
     @Override
     public void saveDialogSettings() {
         super.saveDialogSettings();
@@ -257,14 +249,14 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
     @Override
     protected void restoreDialogSettings() {
         super.restoreDialogSettings();
-        
+
         // get the last export format from dialogSettings
         IDialogSettings dialogSettings = getDialogSettings();
         if (dialogSettings == null) {
             // The dialog settings have not been set on the wizard
             return;
         }
-        //set the target format combo selection to the restored format 
+        // set the target format combo selection to the restored format
         String targetFormatName = dialogSettings.get(getName() + PREFERENCE_EXPORTER);
         if (fileFormatCombo.getItemCount() > 0) {
             for (int i = 0; i < fileFormatCombo.getItemCount(); i++) {

@@ -48,7 +48,8 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
         super();
         
         setDialogSettings(ExportPlugin.getDefault().getDialogSettings());
-
+        setWindowTitle(Messages.ExportGraphWizard_title);
+        setNeedsProgressMonitor(true);
     }
 
     /**
@@ -72,9 +73,7 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
      * {@inheritDoc}
      */
     public void init(final IWorkbench workbench, final IStructuredSelection select) {
-        setWindowTitle(Messages.ExportGraphWizard_title);
         this.selection = select;
-        setNeedsProgressMonitor(true);
     }
 
     /**
@@ -86,13 +85,12 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
             return false;
         }
 
-        if (!targetFilesHandler()) {
+        if (!checkExistingTargetFiles()) {
             return false;
         }
         
         // Save dialog settings
         workspaceSourcesPage.saveDialogSettings();
-        workspaceSourcesPage.close();
 
         return true;
     }
@@ -102,7 +100,7 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
      * 
      * @return true if ignore or replace and false if cancel
      */
-    private boolean targetFilesHandler() {
+    private boolean checkExistingTargetFiles() {
         // for all selected files
         for (IPath sourceFile : workspaceSourcesPage.getSourceFiles(null)) {
             // get the target format selected from the user

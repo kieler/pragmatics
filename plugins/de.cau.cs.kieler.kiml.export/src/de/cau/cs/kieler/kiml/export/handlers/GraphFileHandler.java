@@ -42,14 +42,19 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
+ *  This class is responsible for transforming and exporting graphs from graphical diagrams.
+ * 
  * @author wah
  * 
  */
 public class GraphFileHandler {
+    /** The source file to export.  */
     private IPath sourceFile;
+    /** The target format to export file into ( without leading period ). */
     private String targetFormat;
+    /** The target directory to export file into. */
     private IPath targetDirectory;
-
+    /** The workspace directory. */    
     private IPath workspacePath = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 
     /**
@@ -57,7 +62,7 @@ public class GraphFileHandler {
      * @param sourceFile
      *            the source file
      * @param targetFormat
-     *            the target format(extension)
+     *            the target format(extension) without leading period
      * @param targetDirectory
      *            the target directory
      */
@@ -93,7 +98,7 @@ public class GraphFileHandler {
 
     /**
      * @param targetFormat
-     *            the targetFormat to set
+     *            the targetFormat to set (without leading period))
      */
     public void setTargetFormat(final String targetFormat) {
         this.targetFormat = targetFormat;
