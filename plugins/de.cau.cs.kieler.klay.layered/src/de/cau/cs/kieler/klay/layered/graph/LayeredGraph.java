@@ -244,6 +244,12 @@ public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
                 } else {
                     options.append("n_" + node.id + " ");
                 }
+                if (node.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                    Object origin = node.getProperty(Properties.ORIGIN);
+                    if (origin instanceof LNode) {
+                        options.append("(" + ((LNode) origin).toString() + ")");
+                    }
+                }
             }
             options.append("(" + layerNumber + "," + nodeNumber + ")\",");
             

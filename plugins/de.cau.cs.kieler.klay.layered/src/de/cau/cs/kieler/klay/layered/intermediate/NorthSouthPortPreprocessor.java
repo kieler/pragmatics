@@ -336,6 +336,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         if (inPort != null) {
             LPort dummyInputPort = new LPort();
             dummyInputPort.setProperty(Properties.ORIGIN, inPort);
+            dummy.setProperty(Properties.ORIGIN, inPort.getNode());
             dummyInputPort.setSide(PortSide.WEST);
             dummyInputPort.setNode(dummy);
             
@@ -351,6 +352,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         // Output port
         if (outPort != null) {
             LPort dummyOutputPort = new LPort();
+            dummy.setProperty(Properties.ORIGIN, outPort.getNode());
             dummyOutputPort.setProperty(Properties.ORIGIN, outPort);
             dummyOutputPort.setSide(PortSide.EAST);
             dummyOutputPort.setNode(dummy);
