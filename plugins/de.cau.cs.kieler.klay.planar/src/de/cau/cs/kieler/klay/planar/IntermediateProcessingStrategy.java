@@ -115,9 +115,7 @@ public class IntermediateProcessingStrategy {
      */
     public IntermediateProcessingStrategy(final int slotIndex,
             final IntermediateLayoutProcessor processor) {
-
         this();
-
         addAll(slotIndex, EnumSet.of(processor));
     }
 
@@ -132,9 +130,7 @@ public class IntermediateProcessingStrategy {
      */
     public IntermediateProcessingStrategy(final int slotIndex,
             final Collection<IntermediateLayoutProcessor> processors) {
-
         this();
-
         addAll(slotIndex, processors);
     }
 
@@ -177,7 +173,6 @@ public class IntermediateProcessingStrategy {
             throw new IllegalArgumentException("slotIndex must be >= 0 and < "
                     + INTERMEDIATE_PHASE_SLOTS + ".");
         }
-
         return EnumSet.copyOf(strategy.get(slotIndex));
     }
 
@@ -194,7 +189,6 @@ public class IntermediateProcessingStrategy {
             throw new IllegalArgumentException("slotIndex must be >= 0 and < "
                     + INTERMEDIATE_PHASE_SLOTS + ".");
         }
-
         strategy.get(slotIndex).add(processor);
     }
 
@@ -209,16 +203,13 @@ public class IntermediateProcessingStrategy {
      */
     public IntermediateProcessingStrategy addAll(final int slotIndex,
             final Collection<IntermediateLayoutProcessor> processors) {
-
         if (slotIndex < 0 || slotIndex >= INTERMEDIATE_PHASE_SLOTS) {
             throw new IllegalArgumentException("slotIndex must be >= 0 and < "
                     + INTERMEDIATE_PHASE_SLOTS + ".");
         }
-
         if (processors != null) {
             strategy.get(slotIndex).addAll(processors);
         }
-
         return this;
     }
 
@@ -236,7 +227,6 @@ public class IntermediateProcessingStrategy {
                 strategy.get(i).addAll(operand.strategy.get(i));
             }
         }
-
         return this;
     }
 
@@ -254,7 +244,6 @@ public class IntermediateProcessingStrategy {
             throw new IllegalArgumentException("slotIndex must be >= 0 and < "
                     + INTERMEDIATE_PHASE_SLOTS + ".");
         }
-
         strategy.get(slotIndex).remove(processor);
     }
 

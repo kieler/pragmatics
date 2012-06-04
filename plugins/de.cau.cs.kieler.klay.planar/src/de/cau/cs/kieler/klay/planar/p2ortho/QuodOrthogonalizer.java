@@ -116,38 +116,13 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements ILayoutPhas
     // TODO does leaving the cage nodes in the graph influence the flow network?
 
     /**
+     * {@inheritDoc}
+     * 
      * This takes a planar graph and computes an orthogonal representation defining the shape of the
      * orthogonal graph.
      * 
      * @param graph
      *            the graph to draw as orthogonal graph
-     * @return an orthogonal representation of the graph
-     */
-    public OrthogonalRepresentation orthogonalize(final PGraph graph) {
-
-        // Replace high-degree nodes with cages
-        LinkedList<Cage> cages = new LinkedList<Cage>();
-        for (PNode node : graph.getNodes()) {
-            if (node.getAdjacentEdgeCount() > TamassiaOrthogonalizer.MAXDEGREE) {
-                cages.add(new Cage(node));
-            }
-        }
-
-        TamassiaOrthogonalizer orthogonalizer = new TamassiaOrthogonalizer();
-        OrthogonalRepresentation orthogonal = orthogonalizer.orthogonalize(graph);
-
-        // TODO force cages as rectangles
-
-        // Remove the cages from the graph
-        for (Cage cage : cages) {
-            cage.remove();
-        }
-
-        return orthogonal;
-    }
-
-    /**
-     * {@inheritDoc}
      */
     public void process(final PGraph graph) {
         // Replace high-degree nodes with cages
@@ -159,7 +134,8 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements ILayoutPhas
         }
 
         TamassiaOrthogonalizer orthogonalizer = new TamassiaOrthogonalizer();
-        OrthogonalRepresentation orthogonal = orthogonalizer.orthogonalize(graph);
+        orthogonalizer.process(graph);
+        OrthogonalRepresentation orthogonal = graph.getProperty(Properties.ORTHO_REPRESENTATION);
 
         // TODO force cages as rectangles
 

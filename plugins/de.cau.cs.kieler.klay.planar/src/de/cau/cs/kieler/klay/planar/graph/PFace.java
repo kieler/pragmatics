@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.klay.planar.properties.Properties;
 import de.cau.cs.kieler.klay.planar.util.IFunction;
 import de.cau.cs.kieler.klay.planar.util.MappedIterable;
 
@@ -82,7 +81,7 @@ public class PFace extends PGraphElement implements Serializable {
      */
     public boolean isAdjacent(final PEdge edge) {
         for (PEdge e : this.edges) {
-            if (e.equals(edge)) {
+            if (e == edge) {
                 return true;
             }
         }
@@ -105,10 +104,6 @@ public class PFace extends PGraphElement implements Serializable {
             }
         }
         return false;
-    }
-
-    public boolean isExternal() {
-        return this.getProperty(Properties.IS_EXTERNAL);
     }
 
     /**

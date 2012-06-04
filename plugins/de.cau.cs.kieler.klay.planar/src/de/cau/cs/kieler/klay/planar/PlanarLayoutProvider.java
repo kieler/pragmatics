@@ -33,7 +33,7 @@ import de.cau.cs.kieler.klay.planar.p1planar.EdgeInsertionPlanarization;
 import de.cau.cs.kieler.klay.planar.p1planar.LRPlanarSubgraphBuilder;
 import de.cau.cs.kieler.klay.planar.p1planar.PlanarityTestStrategy;
 import de.cau.cs.kieler.klay.planar.p2ortho.TamassiaOrthogonalizer;
-import de.cau.cs.kieler.klay.planar.p3compact.GiottoCompactor;
+import de.cau.cs.kieler.klay.planar.p3compact.TidyRectangleCompactor;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
@@ -59,7 +59,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
     private ILayoutPhase orthogonalizer = new TamassiaOrthogonalizer();
 
     /** phase 4: algorithm for compaction. */
-    private ILayoutPhase compactor = new GiottoCompactor();
+    private ILayoutPhase compactor = new TidyRectangleCompactor();
 
     /** connected components processor. */
     private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
@@ -136,7 +136,8 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         // Util.storeGraph(pgraph, 50, false);
         // }
         // split the input graph into components
-        // TODO work with the components processor!
+        // TODO work with the components processor! much of the given algorithms don't work
+        // with not connected graphs. for example: breadth-first-search, compaction step...
         // List<PGraph> components = componentsProcessor.split(pgraph);
 
         // if (pgraph.getProperty(LayoutOptions.DEBUG_MODE)) {
@@ -153,7 +154,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
 
         // TODO do that step
         // apply the layout results to the original graph
-        // this.factory.applyLayout(pgraph);
+        this.factory.applyLayout(pgraph);
 
         progressMonitor.done();
     }
@@ -239,7 +240,6 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
                 processor.process(graph);
                 // graph debug output
                 Util.storeGraph(graph, slotIndex++, false);
-
             }
 
         } else {

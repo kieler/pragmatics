@@ -42,12 +42,27 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
         PNode sink = network.addNode();
         for (PNode node : network.getNodes()) {
             int s = node.getProperty(IFlowNetworkSolver.SUPPLY);
+            PEdge arc = null;
+            int cap = 0;
             if (s > 0) {
-                network.addEdge(source, node, true);
+                arc = network.addEdge(source, node, true);
+                for (PEdge edge : node.adjacentEdges()) {
+                    cap += edge.getProperty(IFlowNetworkSolver.CAPACITY);
+                }
             } else if (s < 0) {
-                network.addEdge(node, sink, true);
+                arc = network.addEdge(node, sink, true);
+                for (PEdge edge : node.adjacentEdges()) {
+                    cap += edge.getProperty(IFlowNetworkSolver.CAPACITY);
+                }
+            }
+            if (arc != null) {
+                arc.setProperty(IFlowNetworkSolver.CAPACITY, cap);
+                arc.setProperty(IPathFinder.PATHCOST, 1);
+                arc.setProperty(IFlowNetworkSolver.LOWER_BOUND, 1);
             }
         }
+
+        // Construct to residual-network
 
         // Initialize path finder and path condition
         IPathFinder pathFinder = new BFSPathFinder();
@@ -56,12 +71,12 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
                 PNode node = object.getFirst();
                 PEdge edge = object.getSecond();
                 int cap = 0;
-                if (edge.isDirected() && (node == edge.getSource())) {
+                if (edge.isDirected() && (node == edge.getTarget())) {
                     cap = edge.getProperty(CAPACITY) - edge.getProperty(FLOW);
-                } else if (edge.isDirected() && (node == edge.getTarget())) {
+                } else if (edge.isDirected() && (node == edge.getSource())) {
                     cap = edge.getProperty(FLOW);
                 }
-                edge.setProperty(RESIDUALCAPACITY, cap);
+                edge.setProperty(RESIDUAL_CAPACITY, cap);
                 return cap > 0;
             }
         };
@@ -71,13 +86,13 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
             // Get minimal capacity along path
             int value = Integer.MAX_VALUE;
             for (PEdge edge : path) {
-                int cap = edge.getProperty(RESIDUALCAPACITY);
+                int cap = edge.getProperty(RESIDUAL_CAPACITY);
                 if (cap < value) {
                     value = cap;
                 }
             }
 
-            // Update flow along path
+            // Update flow along path and change the residual-network
             for (PEdge edge : path) {
                 int flow = edge.getProperty(FLOW);
                 edge.setProperty(FLOW, flow + value);
@@ -91,4 +106,5 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
         network.removeNode(source);
         network.removeNode(sink);
     }
+
 }

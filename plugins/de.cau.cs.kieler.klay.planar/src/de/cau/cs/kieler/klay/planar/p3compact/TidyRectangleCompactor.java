@@ -19,13 +19,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver;
-import de.cau.cs.kieler.klay.planar.flownetwork.SuccessiveShortestPathFlowSolver;
+import de.cau.cs.kieler.klay.planar.flownetwork.SimpleFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -35,6 +39,7 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.intermediate.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
+import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
@@ -68,11 +73,21 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
 
     private PFace externalFace;
 
+    private PNode source;
+
+    private PNode sink;
+
+    private BiMap<PFace, PNode> faceMap = HashBiMap.create();
+
     /**
      * {@inheritDoc}
      */
     public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph pgraph) {
         IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy();
+        strategy.addLayoutProcessor(IntermediateProcessingStrategy.BEFORE_PHASE_4,
+                IntermediateLayoutProcessor.RECT_SHAPE);
+        strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_4,
+                IntermediateLayoutProcessor.GRID_DRAWING);
         strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_4,
                 IntermediateLayoutProcessor.DUMMYNODE_REMOVING_PROCESSOR);
         return strategy;
@@ -92,28 +107,103 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
         // the orthogonal representation of the book!!!
         this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
 
-        if (!checkPremise()) {
+        if (checkPremise()) {
             // TODO think about: the input graph has to have at least 4 nodes, otherwise
             // it would not make any sense to do the flownetwork step.
             // Then it would be meaningful to set the edge-sizes to the same value.
             // x -- x -- x
             // Think about other exceptions and try to work on them.
+
+            // used to create the flownetwork
+            findExternalFace();
+
+            // helps to create the flow network
+            defineFaceSideEdges();
+            // Create networks, start with side 0 for horizontal and 1 for vertical.
+            IFlowNetworkSolver solver = new SimpleFlowSolver();
+
+            // side 0 is the left face side, thus it is vertical.
+            PGraph verticalNetwork = createFlowNetwork(0);
+            solver.findFlow(verticalNetwork);
+            addFlowAsLength(verticalNetwork, false);
+
+            // side 1 is the top face side, thus it is horizontal.
+            PGraph horizontalNetwork = createFlowNetwork(1);
+            solver.findFlow(horizontalNetwork);
+            addFlowAsLength(horizontalNetwork, true);
+            // Assign coordinates based on flow
+            // filter edges meaning using the horizontal and vertical segments to
+            // determine the edge size.
+            // faceside
+        } else {
             assignSimpleCooridnates();
-            return;
         }
+    }
 
-        // used to create the flownetwork
-        findExternalFace();
+    /**
+     * Maps the flow of the flow network to the edges of the original graph.
+     * 
+     * @param network
+     *            , containing edge flow
+     * @param isHorizontal
+     *            , meaning if the horizontal edge length of a graph has to determine, otherwise
+     *            vertical is assumed. And the vertical edge length of the original graph are
+     *            determined.
+     * 
+     */
+    private void addFlowAsLength(final PGraph network, final boolean isHorizontal) {
 
-        // helps to create the flow network
-        defineFaceSideEdges();
-        // Create networks, start with side 0 for horizontal and 1 for vertical.
-        PGraph horizontalNetwork = createFlowNetwork(0);
-        PGraph verticalNetwork = createFlowNetwork(1);
-        IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
-        // solver.findFlow(horizontalNetwork);
-        // solver.findFlow(networks.getSecond());
-        // TODO Assign coordinates based on flow
+        boolean isSourceExternal = false;
+
+        BiMap<PNode, PFace> inverseFaceMap = faceMap.inverse();
+
+        // source and target of the original graph.
+        PFace sourceFace = null;
+        PFace targetFace = null;
+
+        int targetSideIndex = -1;
+
+        int sourceSideIndex = -1;
+
+        for (PEdge edge : network.getEdges()) {
+
+            // here we can deal with source and target, because the network has
+            // directed edges.
+            sourceFace = inverseFaceMap.get(edge.getSource());
+
+            isSourceExternal = false;
+
+            if (sourceFace == null) {
+                // if sourceFace is null, that means that it only can be source node,
+                // because all other face-nodes are stored in the face-map.
+                // That results from the create flow network step.
+                sourceFace = graph.getExternalFace(false);
+                isSourceExternal = true;
+            }
+            targetFace = inverseFaceMap.get(edge.getTarget());
+
+            // if source is external then the left external side is the same as the
+            // left inner face side. Otherwise it has to be the opposite side,
+            // thus "+ 2", because left + 2 is right and top + 2 is bottom.
+            sourceSideIndex = isHorizontal ? 1 : 0;
+            sourceSideIndex = isSourceExternal ? sourceSideIndex : sourceSideIndex + 2;
+
+            // if source or target is externals
+            if (isSourceExternal || targetFace == graph.getExternalFace(false)) {
+                targetSideIndex = sourceSideIndex;
+            } else {
+                targetSideIndex = (sourceSideIndex + 2) % FACE_SIDES_NUMBER;
+            }
+            for (PEdge sourceEdge : sourceFace.getProperty(Properties.FACE_SIDES)[sourceSideIndex]) {
+                // search for the border edge
+                if (targetFace.getProperty(Properties.FACE_SIDES)[targetSideIndex]
+                        .contains(sourceEdge)) {
+                    sourceEdge.setProperty(Properties.RELATIVE_LENGTH,
+                            edge.getProperty(IFlowNetworkSolver.FLOW));
+                    break;
+                }
+            }
+        }
 
     }
 
@@ -131,12 +221,12 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
      */
     private boolean checkPremise() {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     /**
-     * Creates the flownetwork. Create for all faces of the origin-graph nodes and to nodes for the
-     * external-face. These two nodes are source and sink of the flownetwork. Depending on the
+     * Creates the flownetwork. Create for all faces of the original graph nodes and to nodes for
+     * the external-face. These two nodes are source and sink of the flow network. Depending on the
      * direction (horizontal or vertical) the method generates edges from source to target over the
      * face-nodes.
      * 
@@ -146,31 +236,30 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     private PGraph createFlowNetwork(final int startSide) {
         PGraph flowNetwork = new PGraphFactory().createEmptyGraph();
 
-        // Face-map to store all nodes of a face.
-        Map<PFace, PNode> faceMap = new HashMap<PFace, PNode>();
-
+        faceMap.clear();
         // Create nodes for every graph face
         for (PFace face : this.graph.getFaces()) {
             if (face != this.externalFace) {
-                PNode newnode;
-                newnode = flowNetwork.addNode();
-                newnode.setProperty(NETWORKTOGRAPH, face);
-                faceMap.put(face, newnode);
+                PNode newNode;
+                newNode = flowNetwork.addNode();
+                newNode.setProperty(NETWORKTOGRAPH, face);
+                newNode.setProperty(IFlowNetworkSolver.SUPPLY, 0);
+                faceMap.put(face, newNode);
             }
         }
 
-        // A source node for the external face.
-        // Attention: double key problem, therefore the first iteration is beyond the while loop.
-        PNode source = flowNetwork.addNode();
-        source.setProperty(NETWORKTOGRAPH, this.externalFace);
+        // we can't put the source to the face map, because the source and sink node points
+        // to the same value namely the external face!
+        this.source = flowNetwork.addNode();
+        this.source.setProperty(NETWORKTOGRAPH, this.externalFace);
+        this.source.setProperty(IFlowNetworkSolver.SUPPLY, 1);
 
-        // A target node for the external face.
-        PNode target = flowNetwork.addNode();
-        target.setProperty(NETWORKTOGRAPH, this.externalFace);
-        faceMap.put(this.externalFace, target);
+        this.sink = flowNetwork.addNode();
+        this.sink.setProperty(NETWORKTOGRAPH, this.externalFace);
+        this.sink.setProperty(IFlowNetworkSolver.SUPPLY, -1);
+        faceMap.put(this.externalFace, this.sink);
 
         PFace currentFace = this.externalFace;
-        @SuppressWarnings("unchecked")
         List<PEdge> currentSide = currentFace.getProperty(Properties.FACE_SIDES)[startSide];
 
         // Start to build up the flowNetwork
@@ -242,6 +331,16 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                 }
             }
         }
+
+        // set networkflow arcs (edges) properties.
+        for (PEdge arc : flowNetwork.getEdges()) {
+
+            // capacity is infinite.
+            arc.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
+            arc.setProperty(IPathFinder.PATHCOST, 1);
+            arc.setProperty(IFlowNetworkSolver.LOWER_BOUND, 1);
+        }
+
         return flowNetwork;
     }
 
@@ -255,7 +354,27 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void defineFaceSideEdges() {
 
-        for (PFace face : graph.getFaces()) {
+        List<PFace> visitedFaces = Lists.newArrayList();
+
+        List<PFace> completedFaces = Lists.newArrayList();
+
+        PFace currentFace = this.externalFace;
+
+        // Choose a arbitrary edge of the face.
+        // It is enough to store the edge on the face sides in arbitrary order,
+        // here are no dependency to other faces stored. E.g. it is possible, that
+        // e1 at f1 is on the left but the same edge e1 at f2 on the top.
+        // FIXED, now if e right of face1 and secondly adjacent to face2
+        // it must be the opposite site of face2 (here left).
+        PEdge startEdge = currentFace.adjacentEdges().iterator().next();
+
+        int sideIndex = 0;
+
+        // The currently processed edge, starting with a arbitrary chosen one.
+        PEdge currentEdge = startEdge;
+
+        while (currentFace != null) {
+
             // 0 for left, 1 for top, 2 for right, 3 for bottom.
             List[] faceSides = new ArrayList[FACE_SIDES_NUMBER];
 
@@ -263,25 +382,21 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                 faceSides[i] = new ArrayList<PEdge>();
             }
 
-            int listPointer = 0;
-
-            // Choose a arbitrary edge of the face.
-            // It is enough to store the edge on the face sides in arbitrary order,
-            // here are no dependency to other faces stored. E.g. it is possible, that
-            // e1 at f1 is on the left but the same edge e1 at f2 on the top.
-            PEdge startEdge = face.adjacentEdges().iterator().next();
-            // The currently processed edge, starting with a arbitrary chosen one.
-            PEdge currentEdge = startEdge;
-
             PNode previousNode = null;
             PNode currentNode = null;
 
             // starts with the startEdge and runs around the chosen face until the startEdge has
-            // found. Then all edges of the face are set to a face-side.
+            // found. Then all edges of the face are a part of a face-side.
             do {
-                // choose a arbitrary node of the edge, which is not visited before.
-                currentNode = currentEdge.getTarget() == previousNode ? currentEdge.getSource()
-                        : currentEdge.getTarget();
+
+                if (previousNode == null) {
+                    // at the start of a face, previousNode is 0 and we have to determine the
+                    // clockwise order, otherwise the faceSide indices aren't fit.
+                    currentNode = findCWNextNode(currentEdge, currentFace);
+                } else {
+                    currentNode = (currentEdge.getTarget() == previousNode) ? currentEdge
+                            .getSource() : currentEdge.getTarget();
+                }
                 previousNode = currentNode;
                 List<Pair<PEdge, OrthogonalAngle>> angles = this.orthogonal.getAngles(currentNode);
                 // first get the current edge to determine the direction of the next edge,
@@ -291,7 +406,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
 
                 // find the currentEdge and store the index.
                 for (int i = 0; i < angles.size(); i++) {
-                    if (angles.get(i).getFirst().equals(currentEdge)) {
+                    if (angles.get(i).getFirst() == currentEdge) {
                         currentIndex = i;
                         break;
                     }
@@ -300,24 +415,24 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                 int directionCounter = 0;
                 boolean otherface = false;
                 Pair<PEdge, OrthogonalAngle> pair = null;
-                // Goes around a node and checks if a face-edge is straight to an other face-edge
-                // or if there is a face-side change. Thereby have to regard the other node-edges
-                // and that's why there is a direction-counter (1 for left, 2 for straight and 3 for
-                // right), although left and right are both count as knee. That is possible, because
-                // of the rectangular face-shape.
+                // Goes around a node and checks if a face-edge is straight to an other
+                // face-edge or if there is a face-side change. Thereby have to regard the other
+                // node-edges and that's why there is a direction-counter (1 for left, 2 for
+                // straight and 3 for right), although left and right are both count as knee. That
+                // is possible, because of the rectangular face-shape.
 
                 while (true) {
                     previousIndex = currentIndex;
                     currentIndex = (currentIndex + 1) < angles.size() ? currentIndex + 1 : 0;
                     pair = angles.get(currentIndex);
 
-                    if (!otherface && face.isAdjacent(pair.getFirst())) {
+                    if (!otherface && currentFace.isAdjacent(pair.getFirst())) {
                         currentEdge = pair.getFirst();
                         if (angles.get(previousIndex).getSecond() != OrthogonalAngle.STRAIGHT) {
-                            listPointer = (listPointer == faceSides.length - 1) ? 0
-                                    : (listPointer + 1);
+                            // TODO check modulo operator
+                            sideIndex = (sideIndex + 1) % FACE_SIDES_NUMBER;
                         }
-                        faceSides[listPointer].add(currentEdge);
+                        faceSides[sideIndex].add(currentEdge);
                         // hasFound
                         break;
                     } else {
@@ -328,24 +443,153 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                         } else {
                             directionCounter += 1;
                         }
-                        if (face.isAdjacent(pair.getFirst())) {
+                        if (currentFace.isAdjacent(pair.getFirst())) {
                             currentEdge = pair.getFirst();
                             if (directionCounter != 2) {
-                                listPointer = (listPointer == faceSides.length - 1) ? 0
-                                        : (listPointer + 1);
+                                // TODO check modulo operator
+                                sideIndex = (sideIndex + 1) % FACE_SIDES_NUMBER;
                             }
-                            faceSides[listPointer].add(currentEdge);
+                            faceSides[sideIndex].add(currentEdge);
                             // hasFound
                             break;
                         }
                     }
                 }
-            } while (currentEdge == startEdge);
+            } while (currentEdge != startEdge);
 
             // put face-sides to the current face.
-            face.setProperty(Properties.FACE_SIDES, faceSides);
+            currentFace.setProperty(Properties.FACE_SIDES, faceSides);
+            visitedFaces.add(currentFace);
+
+            // choose next face
+            currentFace = null;
+            out: for (PFace visitedFace : visitedFaces) {
+                if (completedFaces.contains(visitedFace)) {
+                    continue;
+                }
+                List<PEdge>[] sides = visitedFace.getProperty(Properties.FACE_SIDES);
+                for (int i = 0; i < sides.length; i++) {
+                    for (PEdge edge : sides[i]) {
+                        if (edge.getRightFace() != visitedFace
+                                && !visitedFaces.contains(edge.getRightFace())) {
+                            currentFace = edge.getRightFace();
+                        } else if (edge.getLeftFace() != visitedFace
+                                && !visitedFaces.contains(edge.getLeftFace())) {
+                            currentFace = edge.getLeftFace();
+                        }
+                        if (currentFace != null) {
+                            currentEdge = edge;
+                            startEdge = currentEdge;
+                            if (visitedFace == this.externalFace) {
+                                // same side - 1
+                                // (-1 because of the structure of loop to construct faceSides)
+                                sideIndex = i;
+                            } else {
+                                // opposite side - 1
+                                // (-1 because of the structure of loop to construct faceSides)
+                                sideIndex = (i + 2) % FACE_SIDES_NUMBER;
+                            }
+                            break out;
+                        }
+                    }
+                }
+                completedFaces.add(visitedFace);
+            }
+        }
+    }
+
+    /**
+     * Searches for the next clockwise node of the face by determine a node of the currentEdge. If a
+     * previousNode is known, it is easy to determine the next node. Then one can choose the other
+     * node of a edge. If the previous node is not known, it is a bit tricky.
+     * 
+     * @return
+     * 
+     */
+
+    /**
+     * 
+     */
+    private PNode findCWNextNode(final PEdge startEdge, final PFace currentFace) {
+        // at the beginning, we use the target-node of the start-edge as resulting node.
+        PEdge currentEdge = startEdge;
+
+        // Go in the target direction. Use target as starting point,
+        // if the run doesn't work use instead target source point.
+        PNode currentNode = currentEdge.getTarget();
+
+        Pair<Integer, PEdge> anglePair = null;
+
+        int direction = -1;
+        // search until next corner is found.
+        PNode tempNode = currentNode;
+
+        do {
+            anglePair = determineAngleDirection(this.orthogonal.getAngles(tempNode), currentFace,
+                    currentEdge);
+            direction = anglePair.getFirst();
+            currentEdge = anglePair.getSecond();
+
+            if (direction == OrthogonalAngle.RIGHT.ordinal()) {
+                // if next edge is right of the edge than use target-edge
+                return startEdge.getTarget();
+            } else if (direction == OrthogonalAngle.LEFT.ordinal()) {
+                // otherwise use source-edge
+                return startEdge.getSource();
+            }
+            tempNode = currentEdge.getSource() == tempNode ? currentEdge.getTarget() : currentEdge
+                    .getSource();
+        } while (direction == OrthogonalAngle.STRAIGHT.ordinal());
+        return null;
+    }
+
+    private Pair<Integer, PEdge> determineAngleDirection(
+            final List<Pair<PEdge, OrthogonalAngle>> angles, final PFace currentFace,
+            final PEdge startEdge) {
+
+        int previousIndex = -1;
+        int currentIndex = -1;
+
+        // get edge index.
+        for (int i = 0; i < angles.size(); i++) {
+            if (angles.get(i).getFirst() == startEdge) {
+                currentIndex = i;
+                break;
+            }
         }
 
+        int directionCounter = -1;
+        // if a edge of an other face has detected, we have to sum over all angles until
+        // a face-edge is reached.
+        boolean containsForeignEdge = false;
+        Pair<PEdge, OrthogonalAngle> pair = null;
+        // determine the directions of the next corner face-edge
+        do {
+            previousIndex = currentIndex;
+            currentIndex = (currentIndex + 1) < angles.size() ? currentIndex + 1 : 0;
+            pair = angles.get(currentIndex);
+
+            if (!containsForeignEdge && currentFace.isAdjacent(pair.getFirst())) {
+                // hasFound
+                // TODO check ordinal
+                directionCounter = angles.get(previousIndex).getSecond().ordinal();
+                break;
+            } else {
+                containsForeignEdge = true;
+                // look at the direction of the previous edge to determine the direction
+                directionCounter += angles.get(previousIndex).getSecond().ordinal();
+
+                if (currentFace.isAdjacent(pair.getFirst())) {
+                    // hasFound
+                    break;
+                }
+            }
+        } while (true);
+
+        Pair<Integer, PEdge> result = new Pair<Integer, PEdge>();
+        result.setFirst(directionCounter);
+        result.setSecond(pair.getFirst());
+        return result;
     }
 
     /**
@@ -359,7 +603,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
      * @return the edges of the other face-side.
      */
     private List<PEdge> findOppositeEdges(final PFace face, final PEdge edge) {
-        @SuppressWarnings("unchecked")
         List<PEdge>[] faceSides = face.getProperty(Properties.FACE_SIDES);
         for (int i = 0; i < faceSides.length; i++) {
             if (faceSides[i].contains(edge)) {
@@ -456,7 +699,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                 }
             }
             if (isExternal) {
-                face.setProperty(Properties.IS_EXTERNAL, true);
+                this.graph.setExternalFace(face);
                 this.externalFace = face;
                 break;
             }

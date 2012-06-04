@@ -16,8 +16,12 @@ package de.cau.cs.kieler.klay.planar;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
 
 /**
  * provides some methods to debug the graph.
@@ -100,6 +104,40 @@ public final class Util {
         } catch (IOException e) {
             // do nothing
         }
+    }
+
+    // ======================== General Algorithms==========================================
+
+    /**
+     * computes a breadth-first-search. Starting with the source node, moving along the edges and
+     * put every found node to the result.
+     * 
+     * @param graph
+     * @param startNode
+     * @return a sorted listed from source to the furthermost apart node.
+     */
+    public static List<PNode> bfsNodes(final PGraph graph, final PNode startNode) {
+        List<PNode> result = new LinkedList<PNode>();
+
+        // need to save the already visited nodes.
+        List<PNode> visited = new LinkedList<PNode>();
+
+        Queue<PNode> queue = new LinkedList<PNode>();
+        queue.add(startNode);
+        visited.add(startNode);
+
+        while (!queue.isEmpty()) {
+            PNode node = queue.remove();
+            result.add(node);
+            for (PNode child : node.adjacentNodes()) {
+                if (!visited.contains(child)) {
+                    queue.add(child);
+                    visited.add(child);
+                }
+            }
+
+        }
+        return result;
     }
 
 }

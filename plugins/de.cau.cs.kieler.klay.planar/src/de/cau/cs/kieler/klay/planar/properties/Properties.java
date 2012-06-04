@@ -23,6 +23,7 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.EdgeType;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.p1planar.PlanarityTestStrategy;
@@ -58,19 +59,29 @@ public final class Properties {
     public static final IProperty<List<PEdge>> INSERTABLE_EDGES = new Property<List<PEdge>>(
             "de.cau.cs.kieler.klay.planar.properties.insertable_edges", new ArrayList<PEdge>());
 
+    public static final IProperty<PFace> EXTERNAL_FACE = new Property<PFace>("externalFace");
+
+    // =========================== NODE PROPERTIES ========================================
+
     /** Node type. */
     public static final IProperty<NodeType> NODE_TYPE = new Property<NodeType>("nodeType",
             NodeType.NORMAL);
+
+    // =========================== EDGE PROPERTIES ========================================
 
     /** Edge type. */
     public static final IProperty<EdgeType> EDGE_TYPE = new Property<EdgeType>("edgeType",
             EdgeType.NONE);
 
+    public static final IProperty<Integer> RELATIVE_LENGTH = new Property<Integer>(
+            "relativeEdgeLength");
+
+    // =========================== FACE PROPERTIES ========================================
+
     /** Face-sides, contains the bounding edges with respect to their side. */
     @SuppressWarnings("rawtypes")
-    public static final IProperty<List[]> FACE_SIDES = new Property<List[]>("faceSides");
-
-    public static final IProperty<Boolean> IS_EXTERNAL = new Property<Boolean>("isExternal", false);
+    public static final IProperty<List<PEdge>[]> FACE_SIDES = new Property<List<PEdge>[]>(
+            "faceSides");
 
     /** priority of nodes or edges. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,

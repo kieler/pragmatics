@@ -83,6 +83,8 @@ public class PGraph extends PNode implements Serializable {
     /** Remember if the faces have to be regenerated. */
     private boolean changedFaces;
 
+    private PFace externalFace;
+
     // ======================== Constructor ======================================
 
     /**
@@ -676,6 +678,22 @@ public class PGraph extends PNode implements Serializable {
         writer.write("}\n");
         writer.close();
 
+    }
+
+    /**
+     * @return the externalFace
+     */
+    public PFace getExternalFace(boolean wantsReCal) {
+        if (externalFace == null || wantsReCal) {
+            // TODO find external face, replace find external face of the compactors!
+        }
+        return externalFace;
+    }
+
+    // do not use this at final version!
+    @Deprecated
+    public void setExternalFace(PFace externalFace) {
+        this.externalFace = externalFace;
     }
 
 }

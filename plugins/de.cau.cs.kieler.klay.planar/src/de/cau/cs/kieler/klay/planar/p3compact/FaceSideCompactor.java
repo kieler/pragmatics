@@ -55,8 +55,6 @@ public class FaceSideCompactor extends AbstractAlgorithm implements ILayoutPhase
     /** The orthogonal representation of the graph. */
     private OrthogonalRepresentation orthogonal;
 
-    private PFace externalFace;
-
     /**
      * {@inheritDoc}
      */
@@ -253,8 +251,7 @@ public class FaceSideCompactor extends AbstractAlgorithm implements ILayoutPhase
                 }
             }
             if (isExternal) {
-                face.setProperty(Properties.IS_EXTERNAL, true);
-                this.externalFace = face;
+                this.graph.setExternalFace(face);
                 break;
             }
         }

@@ -41,11 +41,18 @@ public interface IFlowNetworkSolver extends IAlgorithm {
             "de.cau.cs.kieler.klay.planar.properties.networkcapacity", 0);
 
     /**
+     * A property assigning a lower bound to an edge. The lower bound of an edge is the minimum flow
+     * allowed to be transferred through the edge.
+     */
+    Property<Integer> LOWER_BOUND = new Property<Integer>(
+            "de.cau.cs.kieler.klay.planar.properties.networklowerbound", 0);
+
+    /**
      * A property assigning a capacity to an edge in the residual network. The capacity in the
      * residual network is the initial capacity minus the flow in edge direction, or the flow
      * against edge direction.
      */
-    Property<Integer> RESIDUALCAPACITY = new Property<Integer>(
+    Property<Integer> RESIDUAL_CAPACITY = new Property<Integer>(
             "de.cau.cs.kieler.klay.planar.properties.networkresidualcapacity", 0);
 
     /**

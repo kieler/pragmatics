@@ -37,8 +37,12 @@ public enum IntermediateLayoutProcessor {
     // Before Phase 3
 
     // Before Phase 4
+    /** before performing the compaction, rectangular shapes of the faces are required. */
+    RECT_SHAPE,
 
     // After Phase 4
+    /** Adds coordinates to the vertices and bends in the graph to be a grid drawing. */
+    GRID_DRAWING,
 
     /** Removes dummy-nodes which are added in the planarization phase. */
     DUMMYNODE_REMOVING_PROCESSOR;
@@ -63,6 +67,10 @@ public enum IntermediateLayoutProcessor {
         switch (this) {
         case DUMMYNODE_REMOVING_PROCESSOR:
             return new DummyNodeRemovingProcessor();
+        case GRID_DRAWING:
+            return new GridDrawingProcessor();
+        case RECT_SHAPE:
+            return new RectShapeProcessor();
         default:
             return null;
         }

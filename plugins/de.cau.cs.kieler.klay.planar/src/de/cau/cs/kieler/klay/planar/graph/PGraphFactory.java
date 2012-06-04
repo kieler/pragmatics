@@ -21,12 +21,8 @@ import java.util.HashMap;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
@@ -275,52 +271,53 @@ public class PGraphFactory {
      */
     public void applyLayout(final PGraph pgraph) {
         KNode kgraph = (KNode) pgraph.getProperty(Properties.ORIGIN);
-
         // determine the border spacing, which influences the offset
         KShapeLayout parentLayout = kgraph.getData(KShapeLayout.class);
-        float borderSpacing = pgraph.getProperty(LayoutOptions.BORDER_SPACING);
-        if (borderSpacing < 0) {
-            borderSpacing = Properties.DEF_SPACING;
-        }
-        pgraph.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
+        Float spacing = parentLayout.getProperty(LayoutOptions.SPACING);
+
+        // float borderSpacing = pgraph.getProperty(LayoutOptions.BORDER_SPACING);
+        // if (borderSpacing < 0) {
+        // borderSpacing = Properties.DEF_SPACING;
+        // }
+        // pgraph.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
 
         // calculate the offset from border spacing and node distribution
-        double minXPos = Integer.MAX_VALUE, minYPos = Integer.MAX_VALUE;
-        double maxXPos = Integer.MIN_VALUE, maxYPos = Integer.MIN_VALUE;
-        for (PNode node : pgraph.getNodes()) {
-            KVector pos = node.getPosition();
-            KVector size = node.getSize();
-            minXPos = Math.min(minXPos, pos.x - size.x / 2);
-            minYPos = Math.min(minYPos, pos.y - size.y / 2);
-            maxXPos = Math.max(maxXPos, pos.x + size.x / 2);
-            maxYPos = Math.max(maxYPos, pos.y + size.y / 2);
-        }
-        KVector offset = new KVector(borderSpacing - minXPos, borderSpacing - minYPos);
+        // double minXPos = Integer.MAX_VALUE, minYPos = Integer.MAX_VALUE;
+        // double maxXPos = Integer.MIN_VALUE, maxYPos = Integer.MIN_VALUE;
+        // for (PNode node : pgraph.getNodes()) {
+        // KVector pos = node.getPosition();
+        // KVector size = node.getSize();
+        // minXPos = Math.min(minXPos, pos.x - size.x / 2);
+        // minYPos = Math.min(minYPos, pos.y - size.y / 2);
+        // maxXPos = Math.max(maxXPos, pos.x + size.x / 2);
+        // maxYPos = Math.max(maxYPos, pos.y + size.y / 2);
+        // }
+        // KVector offset = new KVector(borderSpacing - minXPos, borderSpacing - minYPos);
 
         // process the nodes
-        for (PNode pnode : pgraph.getNodes()) {
-            Object object = pnode.getProperty(Properties.ORIGIN);
-
-            if (object instanceof KNode) {
-                // set the node position
-                KNode knode = (KNode) object;
-                KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-                KVector nodePos = pnode.getPosition().add(offset);
-                nodeLayout.setXpos((float) nodePos.x - nodeLayout.getWidth() / 2);
-                nodeLayout.setYpos((float) nodePos.y - nodeLayout.getHeight() / 2);
-            }
-        }
-
-        // process the edges
-        for (PEdge pedge : pgraph.getEdges()) {
-            KEdge kedge = (KEdge) pedge.getProperty(Properties.ORIGIN);
-            if (kedge != null) {
-                KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-                // edgeLayout.getBendPoints().clear();
-                edgeLayout.getSourcePoint().applyVector(pedge.getSourcePoint());
-                edgeLayout.getTargetPoint().applyVector(pedge.getTargetPoint());
-            }
-        }
+        // for (PNode pnode : pgraph.getNodes()) {
+        // Object object = pnode.getProperty(Properties.ORIGIN);
+        //
+        // if (object instanceof KNode) {
+        // // set the node position
+        // KNode knode = (KNode) object;
+        // KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
+        // KVector nodePos = pnode.getPosition().add(offset);
+        // nodeLayout.setXpos((float) nodePos.x - nodeLayout.getWidth() / 2);
+        // nodeLayout.setYpos((float) nodePos.y - nodeLayout.getHeight() / 2);
+        // }
+        // }
+        //
+        // // process the edges
+        // for (PEdge pedge : pgraph.getEdges()) {
+        // KEdge kedge = (KEdge) pedge.getProperty(Properties.ORIGIN);
+        // if (kedge != null) {
+        // KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+        // // edgeLayout.getBendPoints().clear();
+        // edgeLayout.getSourcePoint().applyVector(pedge.getSourcePoint());
+        // edgeLayout.getTargetPoint().applyVector(pedge.getTargetPoint());
+        // }
+        // }
 
         // process the labels
         // for (PLabel plabel : pgraph.getLabels()) {
@@ -331,12 +328,12 @@ public class PGraphFactory {
         // }
 
         // set up the parent node
-        KInsets insets = parentLayout.getInsets();
-        float width = (float) (maxXPos - minXPos) + 2 * borderSpacing + insets.getLeft()
-                + insets.getRight();
-        float height = (float) (maxYPos - minYPos) + 2 * borderSpacing + insets.getTop()
-                + insets.getBottom();
-        KimlUtil.resizeNode(kgraph, width, height, false);
+        // KInsets insets = parentLayout.getInsets();
+        // float width = (float) (maxXPos - minXPos) + 2 * borderSpacing + insets.getLeft()
+        // + insets.getRight();
+        // float height = (float) (maxYPos - minYPos) + 2 * borderSpacing + insets.getTop()
+        // + insets.getBottom();
+        // KimlUtil.resizeNode(kgraph, width, height, false);
     }
 
 }

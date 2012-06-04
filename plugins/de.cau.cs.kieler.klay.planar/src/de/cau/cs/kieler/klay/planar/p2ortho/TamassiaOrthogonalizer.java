@@ -73,32 +73,6 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
      */
     private LinkedList<Pair<PEdge, PEdge>> faceArcs;
 
-    // ======================== Algorithm ==========================================================
-
-    /**
-     * This takes a planar graph and computes an orthogonal representation defining the shape of the
-     * orthogonal graph.
-     * 
-     * @param g
-     *            the graph to draw as orthogonal graph
-     * @return an orthogonal representation of the graph
-     */
-    public OrthogonalRepresentation orthogonalize(final PGraph g) {
-        getMonitor().begin("Orthogonalization", 1);
-
-        // Initialization
-        this.graph = g;
-
-        // Solve flow network and compute orthogonal representation
-        PGraph network = createFlowNetwork();
-        IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
-        solver.findFlow(network);
-        OrthogonalRepresentation orthogonal = this.computeAngles(network);
-
-        getMonitor().done();
-        return orthogonal;
-    }
-
     /**
      * Create the flow network base upon the graph. The flow network contains a source node for
      * every node in the graph and a sink node for every face. It contains an arc for every node and
@@ -297,6 +271,12 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
     /**
      * {@inheritDoc}
+     * 
+     * This takes a planar graph and computes an orthogonal representation defining the shape of the
+     * orthogonal graph.
+     * 
+     * @param pgraph
+     *            the graph to draw as orthogonal graph
      */
     public void process(final PGraph pgraph) {
         getMonitor().begin("Orthogonalization", 1);
