@@ -157,6 +157,74 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         progressMonitor.done();
     }
+    
+    /**
+     * Does a layout on the given graph, but only to the point where the given phase or processor was
+     * executed. If connected components processing was active, the returned list will contain one
+     * layered graph for each connected component; if the processing was not active, the list will only
+     * contain one layered graph. Either way, the layered graphs are in the state they were in after
+     * execution of the given phase finished.
+     * 
+     * <p>If the given phase does not exist in the algorithm's configuration or is {@code null}, the
+     * returned result is the connected components just prior to the execution of the first phase.</p>
+     * 
+     * <p><strong>Note:</strong> This method does not apply the layout back to the original kgraph!</p>
+     * 
+     * @param kgraph the graph to layout.
+     * @param progressMonitor a progress monitor to show progress information in.
+     * @param phase the phase or processor to stop after.
+     * @return list of connected components after the execution of the given phase.
+     */
+    public List<LayeredGraph> doLayoutTest(final KNode kgraph,
+            final IKielerProgressMonitor progressMonitor,
+            final Class<? extends ILayoutProcessor> phase) {
+        
+        progressMonitor.begin("Layered layout test", 1);
+
+        KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
+        IGraphImporter<KNode> graphImporter;
+
+        // Check if hierarchy handling for a compound graph is requested, choose importer
+        // accordingly
+        boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+        if (isCompound) {
+            graphImporter = new CompoundKGraphImporter();
+        } else {
+            graphImporter = new KGraphImporter();
+        }
+
+        LayeredGraph layeredGraph = graphImporter.importGraph(kgraph);
+
+        // set special properties for the layered graph
+        setOptions(layeredGraph, kgraph);
+
+        // update the modules depending on user options
+        updateModules(layeredGraph, kgraph.getData(KShapeLayout.class));
+
+        // split the input graph into components
+        List<LayeredGraph> components = componentsProcessor.split(layeredGraph);
+        
+        // check if the given phase exists in our current algorithm configuration
+        boolean phaseExists = false;
+        for (ILayoutProcessor processor : algorithm) {
+            if (processor.getClass().equals(phase)) {
+                phaseExists = true;
+                break;
+            }
+        }
+        
+        // if the phase exists, perform the layout up to and including that phase
+        if (phaseExists) {
+            // perform the actual layout
+            for (LayeredGraph comp : components) {
+                layoutTest(comp, progressMonitor.subTask(1.0f / components.size()), phase);
+            }
+        }
+
+        progressMonitor.done();
+        
+        return components;
+    }
 
     // /////////////////////////////////////////////////////////////////////////////
     // Options and Modules Management
@@ -453,6 +521,43 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 }
                 processor.reset(monitor.subTask(1));
                 processor.process(graph);
+            }
+        }
+
+        monitor.done();
+    }
+
+    /**
+     * Performs a test layout for the given graph that stops once the given phase or processor has
+     * finished executing. This method does not write debug output into files.
+     * 
+     * @param graph
+     *            the graph that is to be laid out
+     * @param themonitor
+     *            a progress monitor, or {@code null}
+     * @param phase
+     *            phase or processor to stop the layout after
+     */
+    public void layoutTest(final LayeredGraph graph, final IKielerProgressMonitor themonitor,
+            final Class<? extends ILayoutProcessor> phase) {
+        
+        IKielerProgressMonitor monitor = themonitor;
+        if (monitor == null) {
+            monitor = new BasicProgressMonitor();
+        }
+        monitor.begin("Component Layout", algorithm.size());
+
+        // invoke each layout processor
+        for (ILayoutProcessor processor : algorithm) {
+            if (monitor.isCanceled()) {
+                return;
+            }
+            processor.reset(monitor.subTask(1));
+            processor.process(graph);
+            
+            // check if we need to stop after this processor
+            if (processor.getClass().equals(phase)) {
+                break;
             }
         }
 
