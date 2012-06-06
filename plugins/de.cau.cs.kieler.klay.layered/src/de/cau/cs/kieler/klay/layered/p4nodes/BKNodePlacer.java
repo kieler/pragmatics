@@ -239,6 +239,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             }
         }
         
+        
         List<Layer> layers = layeredGraph.getLayers();
         // If the horizontal direction is bottom, the layers are traversed from
         // right to left, thus a reverse iterator is needed
@@ -778,9 +779,9 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         public int compare(final LNode o1, final LNode o2) {
             int result = 0;
             if (o1.getIndex() < o2.getIndex()) {
-                result = -1;
-            } else if (o1.getIndex() > o2.getIndex()) {
                 result = 1;
+            } else if (o1.getIndex() > o2.getIndex()) {
+                result = -1;
             }
             return result;
         }
