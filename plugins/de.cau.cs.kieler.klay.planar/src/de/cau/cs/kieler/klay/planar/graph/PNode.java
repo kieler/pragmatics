@@ -456,4 +456,13 @@ public class PNode extends PShape implements Serializable {
         this.edges = edges;
     }
 
+    /**
+     * Checks if the properties are not null and not empty.
+     * 
+     * @return true if it is not empty otherwise false.
+     */
+    public boolean hasProperties() {
+        return super.getAllProperties() != null && !super.getAllProperties().isEmpty();
+    }
+
 }

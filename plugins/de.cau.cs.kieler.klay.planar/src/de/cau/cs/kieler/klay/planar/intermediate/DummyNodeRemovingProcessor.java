@@ -40,7 +40,8 @@ public class DummyNodeRemovingProcessor extends AbstractAlgorithm implements ILa
     public void process(final PGraph graph) {
         getMonitor().begin("Remove dummynodes", 1);
 
-        // TODO to implement.
+        // it might be possible that in the edgeInsertion step some dummynodes are added,
+        // to ensure planarity.
 
         getMonitor().done();
     }

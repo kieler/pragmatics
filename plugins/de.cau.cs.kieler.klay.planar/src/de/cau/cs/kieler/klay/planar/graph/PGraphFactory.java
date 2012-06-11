@@ -18,11 +18,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
@@ -35,6 +37,12 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * @author pkl
  */
 public class PGraphFactory {
+
+    private PNode[][] grid;
+    private float startX;
+    private float startY;
+    private float spacing;
+    private PGraph graph;
 
     /**
      * Create an empty graph instance. The resulting graph will not contain any edges or nodes.
@@ -264,76 +272,156 @@ public class PGraphFactory {
     }
 
     /**
-     * Apply the computed layout of a planar graph to the original graph.
+     * Apply the computed layout of a planar graph to the original graph. Builds implicit the bend
+     * points of the edges.
      * 
      * @param pgraph
      *            the graph for which layout is applied
      */
     public void applyLayout(final PGraph pgraph) {
-        KNode kgraph = (KNode) pgraph.getProperty(Properties.ORIGIN);
-        // determine the border spacing, which influences the offset
-        KShapeLayout parentLayout = kgraph.getData(KShapeLayout.class);
-        Float spacing = parentLayout.getProperty(LayoutOptions.SPACING);
+        this.graph = pgraph;
+        grid = pgraph.getProperty(Properties.GRID_DRAWING);
+        // the pgraph must not contain any planarity dummynodes.
 
-        // float borderSpacing = pgraph.getProperty(LayoutOptions.BORDER_SPACING);
-        // if (borderSpacing < 0) {
-        // borderSpacing = Properties.DEF_SPACING;
-        // }
-        // pgraph.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
+        float borderSpacing = pgraph.getProperty(Properties.BORDER_SPACING);
 
-        // calculate the offset from border spacing and node distribution
-        // double minXPos = Integer.MAX_VALUE, minYPos = Integer.MAX_VALUE;
-        // double maxXPos = Integer.MIN_VALUE, maxYPos = Integer.MIN_VALUE;
-        // for (PNode node : pgraph.getNodes()) {
-        // KVector pos = node.getPosition();
-        // KVector size = node.getSize();
-        // minXPos = Math.min(minXPos, pos.x - size.x / 2);
-        // minYPos = Math.min(minYPos, pos.y - size.y / 2);
-        // maxXPos = Math.max(maxXPos, pos.x + size.x / 2);
-        // maxYPos = Math.max(maxYPos, pos.y + size.y / 2);
-        // }
-        // KVector offset = new KVector(borderSpacing - minXPos, borderSpacing - minYPos);
+        spacing = pgraph.getProperty(Properties.SPACING);
 
-        // process the nodes
-        // for (PNode pnode : pgraph.getNodes()) {
-        // Object object = pnode.getProperty(Properties.ORIGIN);
-        //
-        // if (object instanceof KNode) {
-        // // set the node position
-        // KNode knode = (KNode) object;
-        // KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-        // KVector nodePos = pnode.getPosition().add(offset);
-        // nodeLayout.setXpos((float) nodePos.x - nodeLayout.getWidth() / 2);
-        // nodeLayout.setYpos((float) nodePos.y - nodeLayout.getHeight() / 2);
-        // }
-        // }
-        //
-        // // process the edges
-        // for (PEdge pedge : pgraph.getEdges()) {
-        // KEdge kedge = (KEdge) pedge.getProperty(Properties.ORIGIN);
-        // if (kedge != null) {
-        // KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-        // // edgeLayout.getBendPoints().clear();
-        // edgeLayout.getSourcePoint().applyVector(pedge.getSourcePoint());
-        // edgeLayout.getTargetPoint().applyVector(pedge.getTargetPoint());
-        // }
-        // }
+        startX = borderSpacing;
 
-        // process the labels
-        // for (PLabel plabel : pgraph.getLabels()) {
-        // KLabel klabel = (KLabel) flabel.getProperty(Properties.ORIGIN);
-        // KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
-        // KVector labelPos = flabel.getPosition().add(offset);
-        // klabelLayout.applyVector(labelPos);
-        // }
+        startY = grid.length * spacing + borderSpacing;
 
-        // set up the parent node
-        // KInsets insets = parentLayout.getInsets();
-        // float width = (float) (maxXPos - minXPos) + 2 * borderSpacing + insets.getLeft()
-        // + insets.getRight();
-        // float height = (float) (maxYPos - minYPos) + 2 * borderSpacing + insets.getTop()
-        // + insets.getBottom();
-        // KimlUtil.resizeNode(kgraph, width, height, false);
+        // first determine original nodes coordinates.
+        for (int x = 0; x < grid.length; x++) {
+            for (int y = 0; y < grid.length; y++) {
+                if (grid[x][y] != null) {
+                    if (grid[x][y].hasProperties()
+                            && grid[x][y].getProperty(Properties.ORIGIN) instanceof KNode) {
+                        // if there is a original knode for that pnode, then set it to the diagram,
+                        // depending on spacing and border_spacing.
+                        KShapeLayout nodeLayout = ((KNode) grid[x][y]
+                                .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
+                        nodeLayout.setXpos(startX + x * spacing);
+                        nodeLayout.setYpos(startY - y * spacing);
+                    }
+                }
+            }
+        }
+
+        // TODO determine the maximal segment width for the horizontal and vertical direction!
+        for (int x = 0; x < grid.length; x++) {
+            for (int y = 0; y < grid.length; y++) {
+
+            }
+        }
+
+        // construct bendpoints for each node for which there is no original node.
+        for (int x = 0; x < grid.length; x++) {
+            for (int y = 0; y < grid.length; y++) {
+                if (grid[x][y] != null) {
+                    if (!grid[x][y].hasProperties()
+                            || !(grid[x][y].getProperty(Properties.ORIGIN) instanceof KNode)) {
+                        constructBendPointEdge(x, y);
+                    }
+                }
+            }
+        }
+
+        // map all PNode edges with bendpoints and source and target coordinates
+        // to the original kedges
+        for (PEdge edge : pgraph.getEdges()) {
+            KEdge originEdge = (KEdge) edge.getProperty(Properties.ORIGIN);
+            KEdgeLayout edgeLayout = originEdge.getData(KEdgeLayout.class);
+            KVectorChain bendPoints = edge.getBendPoints();
+
+            // Now every edge contains of a original start and end node.
+            // Thus we do not need to check, whether the node has a original knode.
+            KNode source = (KNode) edge.getSource().getProperty(Properties.ORIGIN);
+            KNode target = (KNode) edge.getTarget().getProperty(Properties.ORIGIN);
+
+            // add source and target
+            bendPoints.addFirst(source.getData(KShapeLayout.class).createVector());
+            bendPoints.addLast(target.getData(KShapeLayout.class).createVector());
+
+            // apply the bend points
+            edgeLayout.applyVectorChain(bendPoints);
+        }
+
+        // moves all original nodes to the left/top to let the edges walk to the center
+        // of the nodes.
+        for (int x = 0; x < grid.length; x++) {
+            for (int y = 0; y < grid.length; y++) {
+                if (grid[x][y] != null) {
+                    if (grid[x][y].hasProperties()
+                            && grid[x][y].getProperty(Properties.ORIGIN) instanceof KNode) {
+                        // search for the pnodes that represents a knode.
+                        KShapeLayout nodeLayout = ((KNode) grid[x][y]
+                                .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
+                        nodeLayout.setXpos(startX + x * spacing - nodeLayout.getWidth() / 2);
+                        nodeLayout.setYpos(startY - y * spacing - nodeLayout.getHeight() / 2);
+                    }
+                }
+            }
+        }
+
     }
 
+    /**
+     * Goes through the grid, and if a bendpoint is found (meaning a point with no knode as origin),
+     * it is merged with the original edge that goes into that point. Afterwards it is a bendpoint
+     * of the original edge.
+     * 
+     * @param x
+     *            , index of the grid.
+     * @param y
+     *            , index of the grid.
+     */
+    private void constructBendPointEdge(final int x, final int y) {
+
+        // it is enough to check if it has a kedge as origin, and if not, it must be a
+        // bendpoint, because other dummynodes are removed in the last processors.
+
+        Iterator<PEdge> iterator = grid[x][y].getEdges().iterator();
+        PEdge nodeEdge1 = iterator.next();
+        PNode node1 = nodeEdge1.getOppositeNode(grid[x][y]);
+        PEdge nodeEdge2 = iterator.next();
+        PNode node2 = nodeEdge2.getOppositeNode(grid[x][y]);
+
+        if (nodeEdge1.hasProperties() && nodeEdge1.getProperty(Properties.ORIGIN) instanceof KEdge) {
+            // then that is the original edge. So the other edge has to be removed
+            // remove edge 2 and add a bendpoint to edge 1.
+
+            // TODO think of the embedding, I guess this goes lost.
+            if (nodeEdge1.getSource() == node1) {
+                graph.changeEdge(nodeEdge1, null, node2);
+            } else {
+                // then it has to be the target
+                graph.changeEdge(nodeEdge1, node2, null);
+            } // TODO check if node1 can be removed!
+            nodeEdge1.getBendPoints().add(startX + x * spacing, startY - y * spacing);
+        } else if (nodeEdge2.hasProperties()
+                && nodeEdge2.getProperty(Properties.ORIGIN) instanceof KEdge) {
+            if (nodeEdge2.getSource() == node2) {
+                graph.changeEdge(nodeEdge2, null, node1);
+            } else {
+                graph.changeEdge(nodeEdge2, node1, null);
+                // then it has to be the target
+            } // TODO check if node1 can be removed!
+            nodeEdge2.getBendPoints().add(startX + x * spacing, startY - y * spacing);
+
+        } else {
+            boolean found = false;
+            while (!found) {
+                found = true;
+                // go along edge one until a original edge is found otherwise go in the other
+                // direction
+            }
+            // node2 has properties as origin a knode.
+            // the bend point is surrounded by two dummy edges. we have to go around until not
+            // such a case is found!
+            // I guess here it would be sufficient to check if node1 or node2 is a original node.
+        }
+        this.graph.removeNode(grid[x][y]);
+        grid[x][y] = null;
+    }
 }

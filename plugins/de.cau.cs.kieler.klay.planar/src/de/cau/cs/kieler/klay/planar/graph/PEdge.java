@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 
 /**
  * An edge in a basic graph data structure for various graph theory algorithms.
@@ -49,6 +50,9 @@ public class PEdge extends PGraphElement implements Serializable {
 
     /** The face at the right side. */
     private PFace rightFace;
+
+    /** the bend points. */
+    private KVectorChain bendPoints = new KVectorChain();
 
     // ======================== Constructor ========================================================
 
@@ -222,6 +226,15 @@ public class PEdge extends PGraphElement implements Serializable {
     }
 
     /**
+     * Returns the list of bend points, which is initially empty.
+     * 
+     * @return the bend points
+     */
+    public KVectorChain getBendPoints() {
+        return bendPoints;
+    }
+
+    /**
      * Clip the given vector to a rectangular box of given size.
      * 
      * @param v
@@ -285,4 +298,24 @@ public class PEdge extends PGraphElement implements Serializable {
         return res;
     }
 
+    /**
+     * Gives the opposite node of the edge, meaning if the param node is source then it gives
+     * target-node otherwise source-node.
+     * 
+     * @param node
+     *            PNode
+     * @return PNode
+     */
+    public PNode getOppositeNode(final PNode node) {
+        return node == source ? target : source;
+    }
+
+    /**
+     * Checks if the properties are not null and not empty.
+     * 
+     * @return true if it is not empty otherwise false.
+     */
+    public boolean hasProperties() {
+        return super.getAllProperties() != null && !super.getAllProperties().isEmpty();
+    }
 }

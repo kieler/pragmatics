@@ -152,7 +152,6 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         // pack the components back into one graph
         // pgraph = componentsProcessor.pack(components);
 
-        // TODO do that step
         // apply the layout results to the original graph
         this.factory.applyLayout(pgraph);
 

@@ -13,10 +13,15 @@
  */
 package de.cau.cs.kieler.klay.planar.intermediate;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
@@ -40,6 +45,11 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  */
 public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
+    /**
+     * 
+     */
+    private static final int BOTTOM_SIDE = 3;
+
     private PNode[][] grid;
 
     private PGraph graph;
@@ -53,7 +63,7 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
         PFace externalFace = this.graph.getExternalFace(false);
         List<PEdge>[] sides = externalFace.getProperty(Properties.FACE_SIDES);
 
-        // set size of the grid.
+        // determine size of the grid.
         // it is enough to count one vertical and horizontal direction.
 
         int gridHeight = 0;
@@ -65,73 +75,411 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
         for (PEdge edge : sides[1]) {
             gridWidth = edge.getProperty(Properties.RELATIVE_LENGTH);
         }
+        grid = new PNode[gridWidth + 1][gridHeight + 1];
 
-        grid = new PNode[gridWidth][gridHeight];
         fillGrid();
 
         getMonitor().done();
     }
 
-    private void fillGrid() {
+    /**
+     * First add the external face to the grid, thereby store the neighbored faces. Then look at not
+     * completed faces for not set nodes. If such a node is found, search for the edge of the last
+     * set node and store the grid position. Then set the first found node to the grid depending on
+     * the grid position and edge length!
+     */
+    private void fillGrid2() {
+        PEdge currentEdge = null;
+        PNode currentNode = null;
+
+        boolean found = false;
         PFace externalFace = this.graph.getExternalFace(false);
         List<PEdge>[] sides = externalFace.getProperty(Properties.FACE_SIDES);
-
-        PNode startNode = null;
-        PEdge startEdge = null;
-        int sideIndex = -1;
         // filter startNode, the node that lies on the left side and on the bottom side,
         // meaning the leftmost and lower most node!
-        boolean found;
         out: for (PEdge leftSideEdge : sides[0]) {
-            for (PEdge bottomSideEdge : sides[3]) {
+            for (PEdge bottomSideEdge : sides[BOTTOM_SIDE]) {
                 found = leftSideEdge.getSource() == bottomSideEdge.getSource()
                         || leftSideEdge.getSource() == bottomSideEdge.getTarget();
                 if (found) {
-                    startNode = leftSideEdge.getSource();
-                    startEdge = leftSideEdge;
+                    currentNode = leftSideEdge.getSource();
+                    currentEdge = leftSideEdge;
                     break out;
                 }
                 found = leftSideEdge.getTarget() == bottomSideEdge.getSource()
                         || leftSideEdge.getTarget() == bottomSideEdge.getTarget();
                 if (found) {
-                    startNode = leftSideEdge.getTarget();
-                    startEdge = leftSideEdge;
+                    currentNode = leftSideEdge.getTarget();
+                    currentEdge = leftSideEdge;
                     break out;
                 }
             }
         }
 
-        grid[0][0] = startNode;
+        int gridX = 0;
+        int gridY = 0;
+
+        grid[gridX][gridY] = currentNode;
 
         // start filling the grid
         // beginning with the external face sides.
 
-        List<PNode> visitedNodes = new ArrayList<PNode>();
-        visitedNodes.add(startNode);
-        List<PNode> completedNodes = new ArrayList<PNode>();
+        // Store the visited target-nodes / faces from the current face/node.
+        // Is needed to check if a edge already exists to the target.
+        List<PEdge> visitedEdges = Lists.newArrayList();
+        visitedEdges.add(currentEdge);
 
-        List<PEdge> completedEdges = new ArrayList<PEdge>();
+        PFace currentFace = externalFace;
+        Map<PFace, Pair<PEdge, Integer>> knownFaces = Maps.newHashMap();
+        knownFaces.put(currentFace, new Pair<PEdge, Integer>(currentEdge, 0));
 
-        // left
-        List<PEdge> side = sides[0];
-        int startIndex = side.indexOf(startEdge);
-        // work all sides
-        // do{
-        // side.
-        //
-        // }while(true)
+        List<PFace> completedFaces = Lists.newArrayList();
 
-        // for (int i = 0; i < sides.length; i++) {
-        // while(true)
-        // {
-        // C if(side.indexOf(startEdge))
-        // }
+        int sideIndex = 0;
 
-        // }
+        while (currentFace != null) {
 
-        // first implement the external face, then go all neighboredge durch and place it in the
-        // grid.
+            found = true;
 
-        // now it should be possible to use the sides so as | e1 | e2 | e3 |
+            // work all sides
+            List<PEdge>[] faceSides = currentFace.getProperty(Properties.FACE_SIDES);
+            while (found) {
+
+                found = false;
+
+                // determine currentNode of the faceSide.
+                currentNode = (currentEdge.getTarget() == currentNode) ? currentEdge.getSource()
+                        : currentEdge.getTarget();
+                Integer value = currentEdge.getProperty(Properties.RELATIVE_LENGTH);
+
+                // determine the correct grid field. Remember, we walk clockwise around
+                // the face.
+                if (sideIndex == 0) {
+                    gridY += value;
+                } else if (sideIndex == 1) {
+                    gridX += value;
+                } else if (sideIndex == 2) {
+                    gridY -= value;
+                } else {
+                    // sideIndex has to be 3
+                    gridX -= value;
+                }
+
+                // add node of face to the grid.
+                grid[gridX][gridY] = currentNode;
+                visitedEdges.add(currentEdge);
+                // choose next edge
+                out: for (int i = 0; i < faceSides.length; i++) {
+                    // start at the current sideIndex and walk around until edge is found
+                    for (PEdge edge : faceSides[(i + sideIndex) % faceSides.length]) {
+                        if (edge != currentEdge && !visitedEdges.contains(edge)) {
+                            if (edge.getTarget() == currentNode || edge.getSource() == currentNode) {
+                                currentEdge = edge;
+                                // added new knwon faces.
+                                // check if knownFaces does not contain a face.
+
+                                if (!knownFaces.containsKey(edge.getLeftFace())) {
+                                    knownFaces.put(edge.getLeftFace(), new Pair<PEdge, Integer>(
+                                            edge, sideIndex));
+                                } else if (!knownFaces.containsKey(edge.getRightFace())) {
+                                    knownFaces.put(edge.getRightFace(), new Pair<PEdge, Integer>(
+                                            edge, sideIndex));
+                                }
+
+                                found = true;
+                                // TODO I guess this is not meaningful, if at each
+                                // found changes the side, that is not correct!
+                                sideIndex = (i + sideIndex) % faceSides.length;
+                                break out;
+                            }
+                        }
+                    }
+                }
+            } // end of while
+            visitedEdges.clear();
+            completedFaces.add(currentFace);
+
+            // choose the next known uncompleted face
+            out: for (Entry<PFace, Pair<PEdge, Integer>> knownFace : knownFaces.entrySet()) {
+                if (completedFaces.contains(knownFace.getKey())) {
+                    continue;
+                }
+
+                currentFace = knownFace.getKey();
+                Pair<PEdge, Integer> pair = knownFace.getValue();
+                currentEdge = pair.getFirst();
+                sideIndex = pair.getSecond();
+                // FIXME use the side of the currentEdge, to make it more performant,
+                // instead of iterating over all grid items.
+
+                // calculate the grid startIndices and the currentNode with the currentEdge.
+                for (int i = 0; i < grid.length; i++) {
+                    for (int j = 0; j < grid.length; j++) {
+                        // TODO is that really useful
+                        if (grid[i][j] == currentEdge.getSource()) {
+                            currentNode = currentEdge.getSource();
+                            // we have to define the start x and y values.
+                            gridX = i;
+                            gridY = j;
+                            break out;
+                        } else if (grid[i][j] == currentEdge.getTarget()) {
+                            currentNode = currentEdge.getSource();
+                            gridX = i;
+                            gridY = j;
+                            break out;
+                        }
+                    }
+                }
+            }
+        }
     }
+
+    private void fillGrid() {
+
+        PEdge currentEdge = null;
+        PNode currentNode = null;
+
+        boolean found = false;
+        PFace externalFace = this.graph.getExternalFace(false);
+        List<PEdge>[] sides = externalFace.getProperty(Properties.FACE_SIDES);
+        // filter startNode, the node that lies on the left side and on the bottom side,
+        // meaning the leftmost and lower most node!
+        out: for (PEdge leftSideEdge : sides[0]) {
+            for (PEdge bottomSideEdge : sides[BOTTOM_SIDE]) {
+                found = leftSideEdge.getSource() == bottomSideEdge.getSource()
+                        || leftSideEdge.getSource() == bottomSideEdge.getTarget();
+                if (found) {
+                    currentNode = leftSideEdge.getSource();
+                    currentEdge = leftSideEdge;
+                    break out;
+                }
+                found = leftSideEdge.getTarget() == bottomSideEdge.getSource()
+                        || leftSideEdge.getTarget() == bottomSideEdge.getTarget();
+                if (found) {
+                    currentNode = leftSideEdge.getTarget();
+                    currentEdge = leftSideEdge;
+                    break out;
+                }
+            }
+        }
+
+        int gridX = 0;
+        int gridY = 0;
+
+        grid[gridX][gridY] = currentNode;
+
+        // start filling the grid
+        // beginning with the external face sides.
+
+        // Store the visited target-nodes / faces from the current face/node.
+        // Is needed to check if a edge already exists to the target.
+        List<PEdge> visitedEdges = Lists.newArrayList();
+        visitedEdges.add(currentEdge);
+
+        PFace currentFace = externalFace;
+        Map<PFace, Pair<PEdge, Integer>> knownFaces = Maps.newHashMap();
+        knownFaces.put(currentFace, new Pair<PEdge, Integer>(currentEdge, 0));
+
+        List<PFace> completedFaces = Lists.newArrayList();
+
+        int sideIndex = 0;
+
+        while (currentFace != null) {
+
+            found = true;
+
+            // work all sides
+            List<PEdge>[] faceSides = currentFace.getProperty(Properties.FACE_SIDES);
+            while (found) {
+
+                found = false;
+
+                // determine currentNode of the faceSide.
+                currentNode = (currentEdge.getTarget() == currentNode) ? currentEdge.getSource()
+                        : currentEdge.getTarget();
+                Integer value = currentEdge.getProperty(Properties.RELATIVE_LENGTH);
+
+                // determine the correct grid field. Remember, we walk clockwise around
+                // the face.
+                if (sideIndex == 0) {
+                    gridY += value;
+                } else if (sideIndex == 1) {
+                    gridX += value;
+                } else if (sideIndex == 2) {
+                    gridY -= value;
+                } else {
+                    // sideIndex has to be 3
+                    gridX -= value;
+                }
+
+                // add node of face to the grid.
+                grid[gridX][gridY] = currentNode;
+                visitedEdges.add(currentEdge);
+                // choose next edge
+                out: for (int i = 0; i < faceSides.length; i++) {
+                    // start at the current sideIndex and walk around until edge is found
+                    for (PEdge edge : faceSides[(i + sideIndex) % faceSides.length]) {
+                        if (edge != currentEdge && !visitedEdges.contains(edge)) {
+                            if (edge.getTarget() == currentNode || edge.getSource() == currentNode) {
+                                currentEdge = edge;
+                                // added new knwon faces.
+                                // check if knownFaces does not contain a face.
+
+                                if (!knownFaces.containsKey(edge.getLeftFace())) {
+                                    knownFaces.put(edge.getLeftFace(), new Pair<PEdge, Integer>(
+                                            edge, sideIndex));
+                                } else if (!knownFaces.containsKey(edge.getRightFace())) {
+                                    knownFaces.put(edge.getRightFace(), new Pair<PEdge, Integer>(
+                                            edge, sideIndex));
+                                }
+
+                                found = true;
+                                // TODO I guess this is not meaningful, if at each
+                                // found changes the side, that is not correct!
+                                sideIndex = (i + sideIndex) % faceSides.length;
+                                break out;
+                            }
+                        }
+                    }
+                }
+            } // end of while
+            visitedEdges.clear();
+            completedFaces.add(currentFace);
+
+            currentFace = null;
+
+            // choose the next known uncompleted face
+            out: for (Entry<PFace, Pair<PEdge, Integer>> knownFace : knownFaces.entrySet()) {
+                if (completedFaces.contains(knownFace.getKey())) {
+                    continue;
+                }
+
+                currentFace = knownFace.getKey();
+                Pair<PEdge, Integer> pair = knownFace.getValue();
+                currentEdge = pair.getFirst();
+                sideIndex = pair.getSecond();
+                // FIXME use the side of the currentEdge, to make it more performant,
+                // instead of iterating over all grid items.
+
+                PNode checkNode = null;
+                boolean tempFound = false;
+                // calculate the grid startIndices and the currentNode with the currentEdge.
+                for (int x = 0; x < grid.length; x++) {
+                    for (int y = 0; y < grid.length; y++) {
+                        // TODO is that really useful
+                        if (grid[x][y] == currentEdge.getSource()) {
+                            currentNode = currentEdge.getSource();
+                            tempFound = true;
+                        } else if (grid[x][y] == currentEdge.getTarget()) {
+                            currentNode = currentEdge.getTarget();
+                            tempFound = true;
+                        }
+                        if (tempFound) {
+                            // if currentNode is part of an other edge with other node, that is in
+                            // cw direction further than the chosen node, take the further one.
+                            checkNode = currentEdge.getTarget() == currentNode ? currentEdge
+                                    .getSource() : currentEdge.getTarget();
+                            Integer edgeLength = currentEdge
+                                    .getProperty(Properties.RELATIVE_LENGTH);
+                            if (sideIndex == 0) {
+                                // TODO use grid width and height
+                                if (y >= edgeLength) {
+                                    if (grid[x][y - edgeLength] == checkNode) {
+                                        gridX = x;
+                                        gridY = y - edgeLength;
+                                        currentNode = checkNode;
+                                    } else {
+                                        gridX = x;
+                                        gridY = y;
+                                    }
+                                } else {
+                                    // sideIndex == 3
+                                    if (grid[x + edgeLength][y] == checkNode) {
+                                        gridX = x + edgeLength;
+                                        gridY = y;
+                                        currentNode = checkNode;
+                                    } else {
+                                        gridX = x;
+                                        gridY = y;
+                                    }
+                                }
+                            } else if (sideIndex == 1) {
+                                if (x >= edgeLength) {
+                                    if (grid[x - edgeLength][y] == checkNode) {
+                                        gridX = x - edgeLength;
+                                        gridY = y;
+                                        currentNode = checkNode;
+                                    } else {
+                                        gridX = x;
+                                        gridY = y;
+                                    }
+                                } else {
+                                    // sideIndex == 0
+                                    if (grid[x][y - edgeLength] == checkNode) {
+                                        gridX = x;
+                                        gridY = y - edgeLength;
+                                        currentNode = checkNode;
+                                    } else {
+                                        gridX = x;
+                                        gridY = y;
+                                    }
+                                }
+                            } else if (sideIndex == 2) {
+                                if (y <= edgeLength) {
+                                    if (grid[x][y + edgeLength] == checkNode) {
+                                        gridX = x;
+                                        gridY = y + edgeLength;
+                                        currentNode = checkNode;
+                                    } else {
+                                        gridX = x;
+                                        gridY = y;
+                                    }
+                                } else {
+                                    // sideIndex == 1
+                                    if (grid[x - edgeLength][y] == checkNode) {
+                                        gridX = x - edgeLength;
+                                        gridY = y;
+                                        currentNode = checkNode;
+                                    } else {
+                                        gridX = x;
+                                        gridY = y;
+                                    }
+                                }
+                            } else if (sideIndex == 3) {
+                                if (y <= edgeLength) {
+                                    if (grid[x + edgeLength][y] == checkNode) {
+                                        gridX = x + edgeLength;
+                                        gridY = y;
+                                        currentNode = checkNode;
+                                    } else {
+                                        gridX = x;
+                                        gridY = y;
+                                    }
+                                } else {
+                                    // sideIndex == 2
+                                    if (grid[x][y + edgeLength] == checkNode) {
+                                        gridX = x;
+                                        gridY = y + edgeLength;
+                                        currentNode = checkNode;
+                                    } else {
+                                        gridX = x;
+                                        gridY = y;
+                                    }
+                                }
+                            } else {
+                                gridX = x;
+                                gridY = y;
+                            }
+                            break out;
+                        }
+                    }
+                }
+            }
+        }
+        graph.setProperty(Properties.GRID_DRAWING, grid);
+    }
+    // first implement the external face,
+    // then go along all neighbor edge and place it in the grid.
+
+    // now it should be possible to use the sides so as | e1 | e2 | e3 |
 }

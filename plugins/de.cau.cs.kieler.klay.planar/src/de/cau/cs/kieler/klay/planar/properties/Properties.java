@@ -25,6 +25,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.p1planar.PlanarityTestStrategy;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
@@ -111,6 +112,9 @@ public final class Properties {
     public static final IProperty<OrthogonalRepresentation> ORTHO_REPRESENTATION = new Property<OrthogonalRepresentation>(
             "de.cau.cs.kieler.klay.planar.orthogonal.representation",
             new OrthogonalRepresentation());
+
+    public static final IProperty<PNode[][]> GRID_DRAWING = new Property<PNode[][]>(
+            "de.cau.cs.kieler.klay.planar.griddrawing");
 
     /**
      * Hidden default constructor.

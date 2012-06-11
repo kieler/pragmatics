@@ -368,6 +368,30 @@ public class PGraph extends PNode implements Serializable {
     }
 
     /**
+     * Changes the source or/and target of a edge.
+     * 
+     * @param edge
+     *            , selected PEdge
+     * @param source
+     *            , new source node, set {@code null} if no new source is wanted.
+     * @param target
+     *            , new target node, set {@code null} if no new target is wanted.
+     */
+    public void changeEdge(final PEdge edge, final PNode source, final PNode target) {
+        if (source != null) {
+            edge.getSource().unlinkEdge(edge);
+            edge.setSource(source);
+            source.linkEdge(edge);
+        }
+        if (target != null) {
+            edge.getTarget().unlinkEdge(edge);
+            edge.setTarget(target);
+            target.linkEdge(edge);
+        }
+        this.changedFaces = true;
+    }
+
+    /**
      * Remove an edge from the graph. The edge will be removed together will all references to the
      * edge in neighboring nodes.
      * 
