@@ -24,9 +24,7 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IResizableCompartmentEditPart;
@@ -49,7 +47,6 @@ import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.karma.IRenderingProvider.CollapseStatus;
 import de.cau.cs.kieler.karma.SwitchableFigure;
 import de.cau.cs.kieler.karma.conditions.IEditPartSensitiveCondition;
-import de.cau.cs.kieler.karma.kivi.KarmaEffect;
 
 /**
  * Class containing generic method to update the figure and handle the notification. Used to
@@ -177,7 +174,8 @@ public class AdvancedRenderingEditPartUtil {
                     } else {
                         lastCondition = condition;
                         //get our figure description strings. 
-                        //No type check for better performance. The Types are hardcoded in the conditionprovider anyway.
+                        //No type check for better performance. The Types are hardcoded 
+                        //in the conditionprovider anyway.
                         
                         @SuppressWarnings("unchecked")
                         Pair<Integer, Integer> figureSize = (Pair<Integer, Integer>) conditionElement
@@ -210,8 +208,6 @@ public class AdvancedRenderingEditPartUtil {
                             }
                         }
                         
-                        //KarmaEffect effect = new KarmaEffect(renderingProvider, figure, modelElement, editPart, figureParam, layoutParam, borderItemParam, figureSize, collapseStatus);
-                        //effect.schedule();
                         return true;
                     }
                 }
@@ -224,8 +220,13 @@ public class AdvancedRenderingEditPartUtil {
         if (condition instanceof IEditPartSensitiveCondition<?>) {
             ((IEditPartSensitiveCondition<?>) condition).setEditPart(editPart);
         } else if (condition instanceof CompoundCondition) {
-            List<ICondition<?>> childConditions = ((CompoundCondition) condition).getChildConditions();
-            for (ICondition<?> cond : childConditions) {
+            //Due to the nature of generics its not possible to do a real type check here.
+            //The only other option is too much overhead for too less gain.
+            @SuppressWarnings("unchecked")
+            CompoundCondition<EObject> compound = (CompoundCondition<EObject>) condition;
+            
+            List<ICondition<EObject>> childConditions = compound.getChildConditions();
+            for (ICondition<EObject> cond : childConditions) {
                 addEditPartToCondition(cond, editPart);
             }
         }
@@ -301,7 +302,8 @@ public class AdvancedRenderingEditPartUtil {
     private void setBorderItemLocator(final IGraphicalEditPart editPart,
             final IRenderingProvider renderingProvider, final String borderItemParam,
             final EObject modelElement, final IFigure figure) {
-        // sets the new BoderItemLocator. unfortunately pretty hacked to get the right elements und special cases
+        // sets the new BoderItemLocator. unfortunately pretty hacked
+        // to get the right elements und special cases
         if (editPart instanceof IBorderItemEditPart) {
             if (editPart.getParent() instanceof AbstractBorderedShapeEditPart) {
                 AbstractBorderedShapeEditPart parent = ((AbstractBorderedShapeEditPart) editPart
@@ -374,12 +376,17 @@ public class AdvancedRenderingEditPartUtil {
     private boolean checkCollapsed(final EditPart part) {
         if (part instanceof TopGraphicEditPart) {
             TopGraphicEditPart ep = (TopGraphicEditPart) part;
+            //Due to the nature of generics its not possible to do a real type check here.
+            //The only other option is too much overhead for too less gain.
+            @SuppressWarnings("unchecked")
             List<EditPart> resizeableCompartments = ep.getResizableCompartments();
             for (EditPart compartment : resizeableCompartments) {
                 if (compartment instanceof IResizableCompartmentEditPart) {
-                    IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                    IResizableCompartmentEditPart resizeComp = 
+                            (IResizableCompartmentEditPart) compartment;
                     if (resizeComp.getFigure() instanceof ResizableCompartmentFigure) {
-                        ResizableCompartmentFigure f = (ResizableCompartmentFigure) resizeComp.getFigure();
+                        ResizableCompartmentFigure f = 
+                                (ResizableCompartmentFigure) resizeComp.getFigure();
                         boolean expanded = f.isExpanded();
                         if (expanded) {
                             return false;
