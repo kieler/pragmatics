@@ -92,7 +92,7 @@ public class Genome extends MapPropertyHolder implements Comparable<Genome> {
      */
     public Gene<?> find(final String theId) {
         for (Gene<?> gene : genes) {
-            if (gene.getId().equals(theId)) {
+            if (gene.getTypeInfo().getId().equals(theId)) {
                 return gene;
             }
         }

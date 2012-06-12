@@ -121,7 +121,7 @@ public class CrossoverOperation implements IEvolutionaryOperation {
                     if (typeData != null && gene.getTypeInfo().getGeneType() == GeneType.LAYOUT_ALGO
                             && !typeData.getId().equals(
                                     ((LayoutAlgorithmData) gene.listValue()).getType())) {
-                        genes[genomeIndex] = Gene.create(gene.getId(), null, gene.getTypeInfo());
+                        genes[genomeIndex] = Gene.create(null, gene.getTypeInfo());
                     } else {
                         genes[genomeIndex] = gene;
                     }
@@ -176,9 +176,9 @@ public class CrossoverOperation implements IEvolutionaryOperation {
                 if (count > 0) {
                     float average = sum / count;
                     if (geneType == GeneType.INTEGER) {
-                        return Gene.create(oldGene.getId(), Math.round(average), oldGene.getTypeInfo());
+                        return Gene.create(Math.round(average), oldGene.getTypeInfo());
                     } else {
-                        return Gene.create(oldGene.getId(), average, oldGene.getTypeInfo());
+                        return Gene.create(average, oldGene.getTypeInfo());
                     }
                 }
                 break;

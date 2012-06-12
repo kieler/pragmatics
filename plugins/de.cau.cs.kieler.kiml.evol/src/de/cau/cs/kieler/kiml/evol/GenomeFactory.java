@@ -59,17 +59,17 @@ public final class GenomeFactory {
     public static final String LAYOUT_TYPE_ID = "de.cau.cs.kieler.kiml.evol.layoutType";
 
     /** probability for mutation of layout type genes. */
-    private static final double P_LAYOUT_TYPE_MUTATION = 0.06;
+    private static final double P_LAYOUT_TYPE_MUTATION = 0.08;
     /** probability for mutation of layout algorithm genes. */
-    private static final double P_LAYOUT_ALGO_MUTATION = 0.10;
+    private static final double P_LAYOUT_ALGO_MUTATION = 0.15;
     /** probability for mutation of boolean type genes. */
-    private static final double P_BOOLEAN_MUTATION = 0.15;
+    private static final double P_BOOLEAN_MUTATION = 0.20;
     /** probability for mutation of enumeration type genes. */
-    private static final double P_ENUM_MUTATION = 0.15;
+    private static final double P_ENUM_MUTATION = 0.25;
     /** probability for mutation of integer type genes. */
-    private static final double P_INT_MUTATION = 0.25;
+    private static final double P_INT_MUTATION = 0.35;
     /** probability for mutation of floating point type genes. */
-    private static final double P_FLOAT_MUTATION = 0.30;
+    private static final double P_FLOAT_MUTATION = 0.40;
     
     /**
      * Create a genome with default values from the given layout mapping.
@@ -106,8 +106,13 @@ public final class GenomeFactory {
                     && optionData.getVariance() > 0) {
                 TypeInfo<?> typeInfo = createTypeInfo(optionData);
                 if (typeInfo != null) {
-                    Gene<?> gene = createDefaultGene(algorithmData, optionData, typeInfo,
-                            config, context);
+                    Gene<?> gene;
+                    if (algorithmData.knowsOption(optionData)) {
+                        gene = createDefaultGene(algorithmData, optionData, typeInfo, config, context);
+                    } else {
+                        gene = Gene.create(null, typeInfo);
+                        gene.setActive(false);
+                    }
                     genome.getGenes().add(gene);
                 }
             }
@@ -125,9 +130,9 @@ public final class GenomeFactory {
         List<LayoutTypeData> typeList = new ArrayList<LayoutTypeData>(LayoutDataService.getInstance()
                 .getTypeData());
         int index = typeList.indexOf(typeData);
-        TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(GeneType.LAYOUT_TYPE, 0,
+        TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(LAYOUT_TYPE_ID, GeneType.LAYOUT_TYPE, 0,
                 typeList.size() - 1, typeList, P_LAYOUT_TYPE_MUTATION, 1);
-        return Gene.create(LAYOUT_TYPE_ID, index, typeInfo);
+        return Gene.create(index, typeInfo);
     }
     
     /**
@@ -141,9 +146,9 @@ public final class GenomeFactory {
             final LayoutAlgorithmData algoData) {
         List<LayoutAlgorithmData> algoList = layoutType.getLayouters();
         int index = algoList.indexOf(algoData);
-        TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(GeneType.LAYOUT_ALGO, 0,
-                algoList.size() - 1, algoList, P_LAYOUT_ALGO_MUTATION, 1);
-        return Gene.create(LayoutOptions.ALGORITHM.getId(), index, typeInfo);
+        TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(LayoutOptions.ALGORITHM.getId(),
+                GeneType.LAYOUT_ALGO, 0, algoList.size() - 1, algoList, P_LAYOUT_ALGO_MUTATION, 1);
+        return Gene.create(index, typeInfo);
     }
     
     /**
@@ -156,10 +161,10 @@ public final class GenomeFactory {
     public static Gene<Integer> createAlgorithmGene(final LayoutTypeData layoutType,
             final Random random) {
         List<LayoutAlgorithmData> algoList = layoutType.getLayouters(); 
-        TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(GeneType.LAYOUT_ALGO, 0,
-                algoList.size() - 1, algoList, P_LAYOUT_ALGO_MUTATION, 1);
+        TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(LayoutOptions.ALGORITHM.getId(),
+                GeneType.LAYOUT_ALGO, 0, algoList.size() - 1, algoList, P_LAYOUT_ALGO_MUTATION, 1);
         int randomAlgoIndex = random.nextInt(algoList.size());
-        return Gene.create(LayoutOptions.ALGORITHM.getId(), randomAlgoIndex, typeInfo);
+        return Gene.create(randomAlgoIndex, typeInfo);
     }
     
     /**
@@ -172,18 +177,19 @@ public final class GenomeFactory {
     public static TypeInfo<?> createTypeInfo(final LayoutOptionData<?> optionData) {
         switch (optionData.getType()) {
         case BOOLEAN:
-            return new TypeInfo<Integer>(GeneType.BOOLEAN, 0, 1, optionData, P_BOOLEAN_MUTATION, 1);
+            return new TypeInfo<Integer>(optionData.getId(), GeneType.BOOLEAN, 0,
+                    1, optionData, P_BOOLEAN_MUTATION, 1);
         case ENUM:
-            return new TypeInfo<Integer>(GeneType.ENUM, 0,
+            return new TypeInfo<Integer>(optionData.getId(), GeneType.ENUM, 0,
                     optionData.getOptionClass().getEnumConstants().length - 1,
                     optionData, P_ENUM_MUTATION, 1);
         case INT:
-            return new TypeInfo<Integer>(GeneType.INTEGER,
+            return new TypeInfo<Integer>(optionData.getId(), GeneType.INTEGER,
                     (Comparable<Integer>) optionData.getLowerBound(),
                     (Comparable<Integer>) optionData.getUpperBound(),
                     optionData, P_INT_MUTATION, optionData.getVariance());
         case FLOAT:
-            return new TypeInfo<Float>(GeneType.FLOAT,
+            return new TypeInfo<Float>(optionData.getId(), GeneType.FLOAT,
                     (Comparable<Float>) optionData.getLowerBound(),
                     (Comparable<Float>) optionData.getUpperBound(),
                     optionData, P_FLOAT_MUTATION, optionData.getVariance());
@@ -237,7 +243,7 @@ public final class GenomeFactory {
     }
     
     /**
-     * Create a gene with default value using an existing type info.
+     * Create a gene with default value using an existing type info. The gene is initially active.
      * 
      * @param algoData the active layout algorithm
      * @param optionData the layout option for which to create the gene
@@ -263,7 +269,7 @@ public final class GenomeFactory {
                 value = (T) upperBound;
             }
         }
-        return Gene.create(optionData.getId(), value, typeInfo);
+        return Gene.create(value, typeInfo);
     }
     
     /**
@@ -335,7 +341,7 @@ public final class GenomeFactory {
         // then transfer values from the given genome, overriding values of the configurator
         for (Gene<?> gene : genome.getGenes()) {
             if (gene.getValue() != null) {
-                LayoutOptionData<?> optionData = dataService.getOptionData(gene.getId());
+                LayoutOptionData<?> optionData = dataService.getOptionData(gene.getTypeInfo().getId());
                 if (optionData != null) {
                     parentLayout.setProperty(optionData, translateFromGene(gene));
                 }

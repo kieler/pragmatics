@@ -97,7 +97,7 @@ public class EvolLayoutConfig implements ILayoutConfig {
         if (model != null) {
             LayoutDataService dataService = LayoutDataService.getInstance();
             for (Gene<?> gene : model.getSelected().getGenes()) {
-                LayoutOptionData<?> optionData = dataService.getOptionData(gene.getId());
+                LayoutOptionData<?> optionData = dataService.getOptionData(gene.getTypeInfo().getId());
                 if (optionData != null) {
                     graphData.setProperty(optionData, GenomeFactory.translateFromGene(gene));
                 }

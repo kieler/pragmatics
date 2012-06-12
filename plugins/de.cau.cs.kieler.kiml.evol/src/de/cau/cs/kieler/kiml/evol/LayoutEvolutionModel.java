@@ -40,7 +40,7 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
     
     /** the initial number of individuals to create. */
-    private static final int INITIAL_POPULATION = 20;
+    private static final int INITIAL_POPULATION = 16;
     
     /** the singleton instance. */
     private static LayoutEvolutionModel instance = new LayoutEvolutionModel();
@@ -106,11 +106,14 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
         
         // mutate the patriarch to create an initial population
         MutationOperation mutationOperation = (MutationOperation) getMutationOperation();
-        for (int i = 1; i < INITIAL_POPULATION; i++) {
-            Genome mutation = mutationOperation.mutate(patriarch, configPair.getFirst(),
-                    configPair.getSecond());
-            population.add(mutation);
-        }
+        do {
+            int mutationCount = population.size();
+            for (int i = 0; i < mutationCount; i++) {
+                Genome mutation = mutationOperation.mutate(population.get(i), configPair.getFirst(),
+                        configPair.getSecond());
+                population.add(mutation);
+            }
+        } while (population.size() < INITIAL_POPULATION);
         
         // reset and evaluate the population
         setPopulation(population);

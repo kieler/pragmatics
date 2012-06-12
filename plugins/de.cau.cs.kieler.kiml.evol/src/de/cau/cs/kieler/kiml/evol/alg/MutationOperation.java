@@ -171,7 +171,7 @@ public class MutationOperation implements IEvolutionaryOperation {
             double value = gene.floatValue();
             boolean inBounds = false;
             do {
-                value += random.nextGaussian() * Math.sqrt(variance);
+                value += random.nextGaussian() * variance;
                 if (lowerBound.compareTo((int) Math.floor(value)) > 0) {
                     value = (Integer) lowerBound;
                 } else  if (upperBound.compareTo((int) Math.ceil(value)) < 0) {
@@ -181,7 +181,7 @@ public class MutationOperation implements IEvolutionaryOperation {
                 }
             } while (!inBounds);
             intValue = (int) Math.round(value);
-            return Gene.create(gene.getId(), intValue, typeInfo);
+            return Gene.create(intValue, typeInfo);
         }
             
         case FLOAT:
@@ -194,7 +194,7 @@ public class MutationOperation implements IEvolutionaryOperation {
             double value = gene.floatValue();
             boolean inBounds = false;
             do {
-                value += random.nextGaussian() * Math.sqrt(variance);
+                value += random.nextGaussian() * variance;
                 if (lowerBound.compareTo((float) value) > 0) {
                     value = (Float) lowerBound;
                 } else if (upperBound.compareTo((float) value) < 0) {
@@ -204,7 +204,7 @@ public class MutationOperation implements IEvolutionaryOperation {
                 }
             } while (!inBounds);
             floatValue = (float) value;
-            return Gene.create(gene.getId(), floatValue, typeInfo);
+            return Gene.create(floatValue, typeInfo);
         }
             
         default:
@@ -212,7 +212,7 @@ public class MutationOperation implements IEvolutionaryOperation {
             int lowerBound = (Integer) typeInfo.getLowerBound();
             int upperBound = (Integer) typeInfo.getUpperBound();
             intValue = random.nextInt((upperBound - lowerBound) + 1) + lowerBound;
-            return Gene.create(gene.getId(), intValue, typeInfo);
+            return Gene.create(intValue, typeInfo);
         }
     }
 

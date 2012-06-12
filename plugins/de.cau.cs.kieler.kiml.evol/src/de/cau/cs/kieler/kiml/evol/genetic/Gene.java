@@ -28,20 +28,16 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  */
 public final class Gene<T extends Comparable<? super T>> {
 
-    /** The id of this gene. */
-    private final String id;
-    /** The value of this gene. */
-    private final T value;
     /** The type info for this gene. */
     private final TypeInfo<T> typeInfo;
+    /** The value of this gene. */
+    private final T value;
     /** Whether the gene is active or not. */
     private boolean active;
     
     /**
      * Creates a new gene. The gene is initially active.
      * 
-     * @param id
-     *            the identifier
      * @param value
      *            the value
      * @param typeInfo
@@ -50,12 +46,12 @@ public final class Gene<T extends Comparable<? super T>> {
      * @return a new gene
      */
     @SuppressWarnings("unchecked")
-    public static <S extends Comparable<? super S>> Gene<S> create(final String id, final S value,
+    public static <S extends Comparable<? super S>> Gene<S> create(final S value,
             final TypeInfo<?> typeInfo) {
-        if (id == null || typeInfo == null) {
+        if (typeInfo == null) {
             throw new NullPointerException();
         }
-        Gene<S> newGene = new Gene<S>(id, value, (TypeInfo<S>) typeInfo);
+        Gene<S> newGene = new Gene<S>(value, (TypeInfo<S>) typeInfo);
         newGene.active = true;
         return newGene;
     }
@@ -69,7 +65,7 @@ public final class Gene<T extends Comparable<? super T>> {
      * @return a new gene
      */
     public static <S extends Comparable<? super S>> Gene<S> create(final Gene<S> gene) {
-        Gene<S> newGene = new Gene<S>(gene.id, gene.value, gene.typeInfo);
+        Gene<S> newGene = new Gene<S>(gene.value, gene.typeInfo);
         newGene.active = gene.active;
         return newGene;
     }
@@ -77,15 +73,12 @@ public final class Gene<T extends Comparable<? super T>> {
     /**
      * Creates a new abstract gene instance.
      *
-     * @param theId
-     *            the identifier
      * @param theValue
      *            the value
      * @param theTypeInfo
      *            the type information
      */
-    private Gene(final String theId, final T theValue, final TypeInfo<T> theTypeInfo) {
-        this.id = theId;
+    private Gene(final T theValue, final TypeInfo<T> theTypeInfo) {
         this.value = theValue;
         this.typeInfo = theTypeInfo;
     }
@@ -97,7 +90,9 @@ public final class Gene<T extends Comparable<? super T>> {
     public boolean equals(final Object object) {
         if (object instanceof Gene) {
             Gene<?> other = (Gene<?>) object;
-            return this.id.equals(other.id) && this.value.equals(other.value);
+            return this.typeInfo.getId().equals(other.typeInfo.getId())
+                    && this.value == null ? other.value == null
+                    : this.value.equals(other.value);
         }
         return false;
     }
@@ -107,7 +102,10 @@ public final class Gene<T extends Comparable<? super T>> {
      */
     @Override
     public int hashCode() {
-        return id.hashCode() + value.hashCode();
+        if (value != null) {
+            return typeInfo.getId().hashCode() + value.hashCode();
+        }
+        return typeInfo.getId().hashCode();
     }
     
     /**
@@ -115,16 +113,10 @@ public final class Gene<T extends Comparable<? super T>> {
      */
     @Override
     public String toString() {
-        return id + "=" + value.toString();
-    }
-
-    /**
-     * Return the identifier of the gene.
-     *
-     * @return the identifier
-     */
-    public String getId() {
-        return id;
+        if (value != null) {
+            return typeInfo.getId() + "=" + value.toString();
+        }
+        return typeInfo.getId() + "=null";
     }
 
     /**
@@ -160,8 +152,11 @@ public final class Gene<T extends Comparable<? super T>> {
      * @return the value as list item
      */
     public Object listValue() {
-        List<?> list = (List<?>) typeInfo.getTypeParam();
-        return list.get((Integer) value);
+        if (value instanceof Integer) {
+            List<?> list = (List<?>) typeInfo.getTypeParam();
+            return list.get((Integer) value);
+        }
+        return null;
     }
     
     /**
@@ -171,8 +166,11 @@ public final class Gene<T extends Comparable<? super T>> {
      * @return the value as enumeration constant
      */
     public Enum<?> enumValue() {
-        LayoutOptionData<?> optionData = (LayoutOptionData<?>) typeInfo.getTypeParam();
-        return optionData.getEnumValue((Integer) value);
+        if (value instanceof Integer) {
+            LayoutOptionData<?> optionData = (LayoutOptionData<?>) typeInfo.getTypeParam();
+            return optionData.getEnumValue((Integer) value);
+        }
+        return null;
     }
 
     /**

@@ -40,8 +40,10 @@ public class TypeInfo<T extends Comparable<? super T>> {
         LAYOUT_ALGO;
     }
     
+    /** The id of this gene type. */
+    private final String id;
     /** The gene type. */
-    private GeneType geneType;
+    private final GeneType geneType;
     /** The lower bound. */
     private final Comparable<T> lowerBound;
     /** The upper bound. */
@@ -56,6 +58,8 @@ public class TypeInfo<T extends Comparable<? super T>> {
     /**
      * Constructor for a type info.
      *
+     * @param theid
+     *            the gene identifier
      * @param theGeneType
      *            the gene type 
      * @param theLowerBound
@@ -70,20 +74,30 @@ public class TypeInfo<T extends Comparable<? super T>> {
      * @param var
      *            the variance (used for Gaussian distribution); must be >= 0.0
      */
-    public TypeInfo(final GeneType theGeneType, final Comparable<T> theLowerBound,
+    public TypeInfo(final String theid, final GeneType theGeneType, final Comparable<T> theLowerBound,
             final Comparable<T> theUpperBound, final Object theParam, final double prob,
             final double var) {
-        if (theGeneType == null || theLowerBound == null || theUpperBound == null
+        if (theid == null || theGeneType == null || theLowerBound == null || theUpperBound == null
                 || prob < 0.0 || prob > 1.0 || var < 0.0) {
             throw new IllegalArgumentException();
         }
 
+        this.id = theid;
         this.geneType = theGeneType;
         this.lowerBound = theLowerBound;
         this.upperBound = theUpperBound;
         this.typeParameter = theParam;
         this.probability = prob;
         this.variance = var;
+    }
+
+    /**
+     * Return the identifier of the gene.
+     *
+     * @return the identifier
+     */
+    public String getId() {
+        return id;
     }
     
     /**
