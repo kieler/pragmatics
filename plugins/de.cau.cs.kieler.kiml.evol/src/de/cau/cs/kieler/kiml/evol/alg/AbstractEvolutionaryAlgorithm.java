@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Random;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
@@ -81,13 +82,22 @@ public abstract class AbstractEvolutionaryAlgorithm {
      * Before a step can be performed, a population must be set using
      * {@link #setPopulation(Population)}. Furthermore, a random number generator needs
      * to be set using {@link #setRandom(Random)}.
+     * 
+     * @param progressMonitor a progress monitor
      */
-    public final void step() {
+    public final void step(final IKielerProgressMonitor progressMonitor) {
         generationNumber++;
+        progressMonitor.begin("Evolution cycle " + generationNumber, 1 + 1 + 1 + 1);
+        
         crossover();
+        
         mutate();
+        
         evaluate();
+        
         survive();
+        
+        progressMonitor.done();
     }
 
     /**

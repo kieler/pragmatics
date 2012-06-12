@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -34,6 +35,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -43,6 +45,8 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.core.ui.ProgressBarMonitor;
+import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.LayoutEvolutionModel;
 import de.cau.cs.kieler.kiml.evol.alg.EvaluationOperation;
@@ -81,6 +85,8 @@ public class EvolutionDialog extends Dialog {
     private Button[] selectionButtons;
     /** the labels for displaying individuals. */
     private Label[] previewLabels;
+    /** the progress bar for displaying progess of operations. */
+    private ProgressBar progressBar;
     
     /**
      * Creates an evolution dialog.
@@ -131,11 +137,10 @@ public class EvolutionDialog extends Dialog {
                         new IRunnableWithProgress() {
                     public void run(final IProgressMonitor monitor) throws InvocationTargetException,
                             InterruptedException {
-                        monitor.beginTask("Initialize Evolution", 1);
                         synchronized (evolutionModel) {
-                            evolutionModel.initializePopulation(layoutMapping);
+                            evolutionModel.initializePopulation(layoutMapping,
+                                    new ProgressMonitorAdapter(monitor));
                         }
-                        monitor.done();
                     }
                 });
             } catch (Exception exception) {
@@ -167,6 +172,13 @@ public class EvolutionDialog extends Dialog {
      */
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
+        // create the progress bar
+        ((GridLayout) parent.getLayout()).numColumns++;
+        progressBar = new ProgressBar(parent, SWT.HORIZONTAL);
+        progressBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        progressBar.setVisible(false);
+        
+        // create the buttons
         createButton(parent, IDialogConstants.OK_ID, "Apply", true);
         createButton(parent, IDialogConstants.PROCEED_ID, "Evolve", false);
         createButton(parent, IDialogConstants.ABORT_ID, "Reset", false);
@@ -284,27 +296,25 @@ public class EvolutionDialog extends Dialog {
     private void evolve() {
         // perform some steps of the evolution
         try {
-            PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
-                    new IRunnableWithProgress() {
-                public void run(final IProgressMonitor monitor) throws InvocationTargetException,
-                        InterruptedException {
-                    monitor.beginTask("Evolve", EVOLVE_STEPS);
+            progressBar.setVisible(true);
+            BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+                public void run() {
+                    ProgressBarMonitor pbmonitor = new ProgressBarMonitor(progressBar);
+                    pbmonitor.begin("Evolution steps", EVOLVE_STEPS);
                     LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
                     synchronized (evolutionModel) {
                         for (int i = 0; i < EVOLVE_STEPS; i++) {
-                            evolutionModel.step();
-                            monitor.worked(1);
+                            evolutionModel.step(pbmonitor.subTask(1));
                         }
                     }
-                    monitor.done();
+                    pbmonitor.done();
                 }
             });
-        } catch (InvocationTargetException exception) {
-            handleError(exception.getCause());
-            return;
         } catch (Throwable throwable) {
             handleError(throwable);
             return;
+        } finally {
+            progressBar.setVisible(false);
         }
 
         refreshPreviews();
@@ -316,24 +326,21 @@ public class EvolutionDialog extends Dialog {
     private void reset() {
         // reinitialize the population
         try {
-            PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
-                    new IRunnableWithProgress() {
-                public void run(final IProgressMonitor monitor) throws InvocationTargetException,
-                        InterruptedException {
-                    monitor.beginTask("Initialize Evolution", 1);
+            progressBar.setVisible(true);
+            BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+                public void run() {
                     LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
                     synchronized (evolutionModel) {
-                        evolutionModel.initializePopulation(layoutMapping);                        
+                        evolutionModel.initializePopulation(layoutMapping,
+                                new ProgressBarMonitor(progressBar));                        
                     }
-                    monitor.done();
                 }
             });
-        } catch (InvocationTargetException exception) {
-            handleError(exception.getCause());
-            return;
         } catch (Throwable throwable) {
             handleError(throwable);
             return;
+        } finally {
+            progressBar.setVisible(false);
         }
         
         refreshPreviews();

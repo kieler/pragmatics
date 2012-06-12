@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.evol;
 
 import java.util.Random;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutContext;
@@ -90,8 +91,12 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
      * Initialize the population of the evolution model.
      * 
      * @param layoutMapping a layout mapping from which to derive an initial configuration
+     * @param progressMonitor a progress monitor
      */
-    public void initializePopulation(final LayoutMapping<?> layoutMapping) {
+    public void initializePopulation(final LayoutMapping<?> layoutMapping,
+            final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Initialize population", INITIAL_POPULATION + 2);
+        
         Population population = new Population(2 * INITIAL_POPULATION);
         KNode graph = layoutMapping.getLayoutGraph();
         population.setProperty(Population.EVALUATION_GRAPH, graph);
@@ -103,6 +108,7 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
         Genome patriarch = GenomeFactory.createInitialGenome(layoutMapping, configPair.getFirst(),
                 configPair.getSecond());
         population.add(patriarch);
+        progressMonitor.worked(1);
         
         // mutate the patriarch to create an initial population
         MutationOperation mutationOperation = (MutationOperation) getMutationOperation();
@@ -112,11 +118,14 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
                 Genome mutation = mutationOperation.mutate(population.get(i), configPair.getFirst(),
                         configPair.getSecond());
                 population.add(mutation);
+                progressMonitor.worked(1);
             }
         } while (population.size() < INITIAL_POPULATION);
         
         // reset and evaluate the population
         setPopulation(population);
+        
+        progressMonitor.done();
     }
 
 }
