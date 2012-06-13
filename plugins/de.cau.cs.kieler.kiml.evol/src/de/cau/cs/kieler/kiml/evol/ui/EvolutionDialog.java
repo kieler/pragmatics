@@ -102,6 +102,8 @@ public class EvolutionDialog extends Dialog {
     private ProgressBar progressBar;
     /** the labels for displaying metrics results and the sliders for setting weights. */
     private Map<String, Pair<Label, Slider>> metricControls = Maps.newHashMap();
+    /** the label for the total fitness value. */
+    private Label fitnessLabel;
     
     /**
      * Creates an evolution dialog.
@@ -139,6 +141,8 @@ public class EvolutionDialog extends Dialog {
         }
         return result;
     }
+    
+    // CHECKSTYLEOFF MagicNumber
     
     /**
      * {@inheritDoc}
@@ -178,6 +182,7 @@ public class EvolutionDialog extends Dialog {
             if (i < population.size()) {
                 Image image = createPreviewImage(population.get(i));
                 previewLabels[i].setImage(image);
+                selectionButtons[i].setEnabled(image != null);
             } else {
                 selectionButtons[i].setEnabled(false);
             }
@@ -185,13 +190,34 @@ public class EvolutionDialog extends Dialog {
         
         // create metrics area
         Composite metricsPane = new Composite(composite, SWT.NONE);
-        metricsPane.setLayout(new GridLayout(2, false));
+        GridLayout gridLayout = new GridLayout(2, false);
+        gridLayout.verticalSpacing = 8;
+        metricsPane.setLayout(gridLayout);
         
         AnalysisCategory category = AnalysisService.getInstance().getCategory(
                 EvaluationOperation.METRIC_CATEGORY);
         for (AnalysisData data : category.getAnalyses()) {
             createMetricArea(metricsPane, data);
         }
+        AnalysisData executionTimeData = new AnalysisData();
+        executionTimeData.setId(EvaluationOperation.EXEC_TIME_METRIC);
+        executionTimeData.setName("Execution Time");
+        executionTimeData.setDescription("The measured execution time for layout computation.");
+        createMetricArea(metricsPane, executionTimeData);
+        
+        // create label for fitness value
+        GridData gridData = new GridData(SWT.FILL, SWT.LEFT, true, false);
+        gridData.horizontalSpan = 2;
+        gridData.verticalIndent = 10;
+        new Label(metricsPane, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(gridData);
+        Label nameLabel = new Label(metricsPane, SWT.NONE);
+        nameLabel.setText("Fitness: ");
+        nameLabel.setToolTipText("The overall fitness of the individual.");
+        nameLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+        fitnessLabel = new Label(metricsPane, SWT.NONE);
+        fitnessLabel.setText("100%");
+        fitnessLabel.setVisible(false);
+        fitnessLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
         
         return composite;
     }
@@ -277,14 +303,14 @@ public class EvolutionDialog extends Dialog {
      * Create a preview image for the given individual.
      * 
      * @param genome an individual
-     * @return a preview image for the individual
+     * @return a preview image for the individual, or {@code null} if the genome has no graph
      */
     private Image createPreviewImage(final Genome genome) {
         Image previewImage = genome.getProperty(PREVIEW_IMAGE);
         if (previewImage == null || previewImage.isDisposed()) {
             KNode graph = genome.getProperty(EvaluationOperation.LAYOUT_GRAPH);
             if (graph == null) {
-                throw new IllegalStateException("Missing evaluation graph for genome preview.");
+                return null;
             }
             KShapeLayout graphSize = graph.getData(KShapeLayout.class);
             double scale;
@@ -330,7 +356,7 @@ public class EvolutionDialog extends Dialog {
         slider.setMaximum(SLIDER_MAX);
         slider.setSelection(SLIDER_MAX);
         GridData gridData = new GridData(SWT.FILL, SWT.TOP, false, false);
-        gridData.horizontalIndent = 20; // SUPPRESS CHECKSTYLE MagicNumber
+        gridData.horizontalIndent = 20;
         gridData.horizontalSpan = 2;
         slider.setLayoutData(gridData);
         metricControls.put(data.getId(), new Pair<Label, Slider>(resultLabel, slider));
@@ -442,7 +468,7 @@ public class EvolutionDialog extends Dialog {
             if (i < population.size()) {
                 Image image = createPreviewImage(population.get(i));
                 previewLabels[i].setImage(image);
-                selectionButtons[i].setEnabled(true);
+                selectionButtons[i].setEnabled(image != null);
             } else {
                 previewLabels[i].setImage(null);
                 selectionButtons[i].setEnabled(false);
@@ -459,8 +485,11 @@ public class EvolutionDialog extends Dialog {
     private void refreshMetrics(final int genomeIndex) {
         Population population = LayoutEvolutionModel.getInstance().getPopulation();
         Map<String, Float> metricsResult = null;
+        Double fitness = null;
         if (genomeIndex >= 0 && genomeIndex < population.size()) {
-            metricsResult = population.get(genomeIndex).getProperty(EvaluationOperation.METRIC_RESULT);
+            Genome genome = population.get(genomeIndex);
+            metricsResult = genome.getProperty(EvaluationOperation.METRIC_RESULT);
+            fitness = genome.getProperty(Genome.FITNESS);
         }
         if (metricsResult == null) {
             metricsResult = Collections.emptyMap();
@@ -473,9 +502,16 @@ public class EvolutionDialog extends Dialog {
             if (result == null) {
                 label.setVisible(false);
             } else {
-                label.setText(Math.round(result * 100) + "%"); // SUPPRESS CHECKSTYLE MagicNumber
+                label.setText(Math.round(result * 100) + "%");
                 label.setVisible(true);
             }
+        }
+        
+        if (fitness == null) {
+            fitnessLabel.setVisible(false);
+        } else {
+            fitnessLabel.setText(Math.round(fitness * 100) + "%");
+            fitnessLabel.setVisible(true);
         }
     }
     

@@ -42,6 +42,8 @@ public class SurvivalOperation implements IEvolutionaryOperation {
     private static final int MAX_SURVIVORS = 1000;
     /** factor for minimal distance between surviving individuals. */
     private static final double MIN_DIST_FACTOR = 0.1;
+    /** minimal fitness value for survivors. */
+    private static final double MIN_FITNESS = 0.05;
 
     /** the random number generator. */
     private Random random;
@@ -77,19 +79,23 @@ public class SurvivalOperation implements IEvolutionaryOperation {
             int sampleCount = (int) Math.log(i) + 1;
             while (genomeIter.hasNext()) {
                 Genome genome = genomeIter.next();
-                // compare individual to random samples from other survivors
-                boolean distinct = true;
-                for (int j = 0; j < sampleCount; j++) {
-                    Genome sample = survivors[random.nextInt(i)];
-                    double distance = Genome.distance(genome, sample);
-                    if (distance < minDist) {
-                        distinct = false;
+                Double fitness = genome.getProperty(Genome.FITNESS);
+                // only individuals survive that meet the minimal fitness
+                if (fitness != null && fitness >= MIN_FITNESS) {
+                    // compare individual to random samples from other survivors
+                    boolean distinct = true;
+                    for (int j = 0; j < sampleCount; j++) {
+                        Genome sample = survivors[random.nextInt(i)];
+                        double distance = Genome.distance(genome, sample);
+                        if (distance < minDist) {
+                            distinct = false;
+                            break;
+                        }
+                    }
+                    if (distinct) {
+                        individual = genome;
                         break;
                     }
-                }
-                if (distinct) {
-                    individual = genome;
-                    break;
                 }
             }
 

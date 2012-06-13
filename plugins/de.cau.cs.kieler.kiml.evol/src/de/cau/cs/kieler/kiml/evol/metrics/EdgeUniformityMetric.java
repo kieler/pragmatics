@@ -35,6 +35,9 @@ import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeLengthAnalysis;
  * @author msp
  */
 public class EdgeUniformityMetric implements IAnalysis {
+    
+    /** the result returned if the standard deviation equals the average. */
+    private static final float RESULT_BASE = 0.5f;
 
     /**
      * {@inheritDoc}
@@ -85,7 +88,11 @@ public class EdgeUniformityMetric implements IAnalysis {
             deviation = Math.sqrt(deviation / numberOfEdges);
             
             // the higher the standard deviation, the more the result goes to zero
-            result = 1.0f / ((float) deviation + 1);
+            if (deviation >= average) {
+                result = RESULT_BASE * (float) (average / deviation);
+            } else {
+                result = 1 - (float) (deviation / average) * (1 - RESULT_BASE);
+            }
 
             assert result >= 0 && result <= 1;
         } else {

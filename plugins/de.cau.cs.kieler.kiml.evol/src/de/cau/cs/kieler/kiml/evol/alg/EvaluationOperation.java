@@ -52,6 +52,8 @@ public class EvaluationOperation implements IEvolutionaryOperation {
     
     /** identifier for the metric category. */
     public static final String METRIC_CATEGORY = "de.cau.cs.kieler.kiml.evol.metricCategory";
+    /** identifier for the execution time metric. */
+    public static final String EXEC_TIME_METRIC = "de.cau.cs.kieler.kiml.evol.executionTime";
     
     /** genome property for the layout graph created from the individual. */
     public static final IProperty<KNode> LAYOUT_GRAPH = new Property<KNode>("evol.layoutGraph");
@@ -62,6 +64,9 @@ public class EvaluationOperation implements IEvolutionaryOperation {
     /** population property for the weights of layout metrics. */
     public static final IProperty<Map<String, Double>> METRIC_WEIGHT
             = new Property<Map<String, Double>>("evol.metricWeight");
+    
+    /** the execution time result for one second. */
+    private static final float EXECTIME_SEC = 0.7f;
 
     /** the graph layout engine used for executing configured layout on the evaluation graph. */
     private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();
@@ -116,10 +121,12 @@ public class EvaluationOperation implements IEvolutionaryOperation {
         // perform layout on the evaluation graph
         KNode graph = EcoreUtil.copy(testGraph);
         GenomeFactory.configureGraph(graph, genome, layoutConfig, layoutContext);
-        genome.setProperty(LAYOUT_GRAPH, graph);
+        double executionTime;
         try {
-            // TODO consider execution time
-            graphLayoutEngine.layout(graph, progressMonitor.subTask(1));
+            IKielerProgressMonitor layoutMonitor = progressMonitor.subTask(1);
+            graphLayoutEngine.layout(graph, layoutMonitor);
+            executionTime = layoutMonitor.getExecutionTime();
+            genome.setProperty(LAYOUT_GRAPH, graph);
         } catch (Throwable throwable) {
             // automatic layout led to an error - give the genome a bad rating!
             return 0;
@@ -160,6 +167,23 @@ public class EvaluationOperation implements IEvolutionaryOperation {
                         "Analysis \"" + analysisData.getName() + "\" failed: " + result));
             }
         }
+        
+        // consider the execution time as special metric
+        float execTimeResult;
+        if (executionTime >= 1) {
+            execTimeResult = EXECTIME_SEC / (float) executionTime;
+        } else {
+            execTimeResult = 1 - (float) executionTime * (1 - EXECTIME_SEC);
+        }
+        Double weight = metricWeights.get(EXEC_TIME_METRIC);
+        if (weight == null) {
+            rating += execTimeResult;
+            totalWeight += 1;
+        } else {
+            rating += weight * execTimeResult;
+            totalWeight += weight;
+        }
+        metricResults.put(EXEC_TIME_METRIC, execTimeResult);
         
         double result;
         if (totalWeight == 0) {
