@@ -21,9 +21,9 @@
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.metrics.AreaMetric"
-            description="Measures the area extent of the given graph layout."
+            description="The area extent of the graph."
             id="de.cau.cs.kieler.kiml.evol.areaMetric"
-            name="Area Metric">
+            name="Area">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.area">
          </dependency>
@@ -37,9 +37,9 @@
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.metrics.BendsMetric"
-            description="Calculates a metric for the number of bends in the graph."
+            description="The number of edge bends in the graph."
             id="de.cau.cs.kieler.kiml.evol.bendsMetric"
-            name="Bends Metric">
+            name="Edge Bends">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.bendpointCount">
          </dependency>
@@ -50,9 +50,9 @@
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.metrics.AspectRatioMetric"
-            description="Computes the aspect ratio of the given graph layout."
+            description="The aspect ratio of the graph, that is its width divided by its height."
             id="de.cau.cs.kieler.kiml.evol.aspectRatioMetric"
-            name="Aspect Ratio Metric">
+            name="Aspect Ratio">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.area">
          </dependency>
@@ -60,9 +60,9 @@
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.metrics.EdgeCrossingsMetric"
-            description="Calculates a normalized &quot;crosslessness&quot; metric, based upon the number of crossings."
+            description="The number of edge crossings in the graph."
             id="de.cau.cs.kieler.kiml.evol.edgeCrossingsMetric"
-            name="Edge Crossings Metric">
+            name="Edge Crossings">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.bendpointCount">
          </dependency>
@@ -76,9 +76,9 @@
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.metrics.EdgeUniformityMetric"
-            description="A layout metric that computes the edge length uniformity of the graph layout."
+            description="The edge length uniformity of the graph."
             id="de.cau.cs.kieler.kiml.evol.edgeUniformityMetric"
-            name="Edge Uniformity Metric">
+            name="Edge Uniformity">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
@@ -86,9 +86,9 @@
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$UpMetric"
-            description="Measures the fraction of upward edges."
+            description="The fraction of edges that point up."
             id="de.cau.cs.kieler.kiml.evol.upwardnessMetric"
-            name="Upwardness Metric">
+            name="Upwardness">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
@@ -99,9 +99,9 @@
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$DownMetric"
-            description="Measures the fraction of downward edges."
+            description="The fraction of edges that point down."
             id="de.cau.cs.kieler.kiml.evol.downwardnessMetric"
-            name="Downwardness Metric">
+            name="Downwardness">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
@@ -112,9 +112,9 @@
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$LeftMetric"
-            description="Measures the fraction of leftward edges."
+            description="The fraction of edges that point left."
             id="de.cau.cs.kieler.kiml.evol.leftwardnessMetric"
-            name="Leftwardness Metric">
+            name="Leftwardness">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
@@ -125,15 +125,22 @@
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$RightMetric"
-            description="Measures the fraction of rightward edges."
+            description="The fraction of edges that point right."
             id="de.cau.cs.kieler.kiml.evol.rightwardnessMetric"
-            name="Rightwardness Metric">
+            name="Rightwardness">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeDirections">
          </dependency>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
+            class="de.cau.cs.kieler.kiml.evol.metrics.NodeSeparationMetric"
+            description="Check whether the nodes have a minimal distance from each other."
+            id="de.cau.cs.kieler.kiml.evol.nodeSeparationMetric"
+            name="Node Separation">
       </analysis>
    </extension>
 
