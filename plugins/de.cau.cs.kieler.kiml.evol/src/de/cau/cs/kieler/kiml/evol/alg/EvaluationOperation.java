@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import com.google.common.collect.Maps;
+
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -53,6 +55,13 @@ public class EvaluationOperation implements IEvolutionaryOperation {
     
     /** genome property for the layout graph created from the individual. */
     public static final IProperty<KNode> LAYOUT_GRAPH = new Property<KNode>("evol.layoutGraph");
+    /** genome property for the results of layout metrics. */
+    public static final IProperty<Map<String, Float>> METRIC_RESULT
+            = new Property<Map<String, Float>>("evol.metricResult");
+
+    /** population property for the weights of layout metrics. */
+    public static final IProperty<Map<String, Double>> METRIC_WEIGHT
+            = new Property<Map<String, Double>>("evol.metricWeight");
 
     /** the graph layout engine used for executing configured layout on the evaluation graph. */
     private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();
@@ -68,18 +77,13 @@ public class EvaluationOperation implements IEvolutionaryOperation {
      * {@inheritDoc}
      */
     public void process(final Population population) {
-        KNode testGraph = population.getProperty(Population.EVALUATION_GRAPH);
-        ILayoutConfig layoutConfig = population.getProperty(Population.DEFAULT_CONFIG);
-        LayoutContext layoutContext = population.getProperty(Population.DEFAULT_CONTEXT);
-        
         // determine fitness value for individuals that do not have one yet
         for (Genome genome : population) {
             Double fitness = genome.getProperty(Genome.FITNESS);
             if (fitness == null) {
                 Double autoRating = genome.getProperty(Genome.AUTO_RATING);
                 if (autoRating == null) {
-                    autoRating = autoRate(genome, testGraph, layoutConfig, layoutContext,
-                            new BasicProgressMonitor());
+                    autoRating = autoRate(genome, population, new BasicProgressMonitor());
                     genome.setProperty(Genome.AUTO_RATING, autoRating);
                 }
                 double userRating = genome.getProperty(Genome.USER_RATING);
@@ -97,15 +101,17 @@ public class EvaluationOperation implements IEvolutionaryOperation {
      * Compute an automatic rating for the given individual.
      * 
      * @param genome an individual
-     * @param testGraph the graph used for evaluation
-     * @param layoutConfig the layout configuration used to obtain default values
-     * @param layoutContext the layout context used to obtain default values
+     * @param population the population the individual belongs to
      * @param progressMonitor a progress monitor
      * @return the automatic rating value
      */
-    public double autoRate(final Genome genome, final KNode testGraph, final ILayoutConfig layoutConfig,
-            final LayoutContext layoutContext, final IKielerProgressMonitor progressMonitor) {
+    public double autoRate(final Genome genome, final Population population,
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Evaluation", 2);
+
+        KNode testGraph = population.getProperty(Population.EVALUATION_GRAPH);
+        ILayoutConfig layoutConfig = population.getProperty(Population.DEFAULT_CONFIG);
+        LayoutContext layoutContext = population.getProperty(Population.DEFAULT_CONTEXT);
 
         // perform layout on the evaluation graph
         KNode graph = EcoreUtil.copy(testGraph);
@@ -125,22 +131,45 @@ public class EvaluationOperation implements IEvolutionaryOperation {
         Map<String, Object> results = analysisService.analyze(graph, category.getAnalyses(),
                 progressMonitor.subTask(1));
         
+        Map<String, Double> metricWeights = population.getProperty(METRIC_WEIGHT);
+        if (metricWeights == null) {
+            metricWeights = Collections.emptyMap();
+        }
+        Map<String, Float> metricResults = Maps.newHashMap();
+        genome.setProperty(METRIC_RESULT, metricResults);
+        
         // determine the weighted mean of the analysis results
-        float rating = 0;
-        float totalWeight = 0;
+        double rating = 0;
+        double totalWeight = 0;
         for (AnalysisData analysisData : category.getAnalyses()) {
-            Object result = results.get(analysisData.getId());
+            String analysisId = analysisData.getId();
+            Object result = results.get(analysisId);
             if (result instanceof Float) {
-                rating += (Float) result;
-                totalWeight += 1;
+                float floatResult = (Float) result;
+                Double weight = metricWeights.get(analysisId);
+                if (weight == null) {
+                    rating += floatResult;
+                    totalWeight += 1;
+                } else {
+                    rating += weight * floatResult;
+                    totalWeight += weight;
+                }
+                metricResults.put(analysisId, floatResult);
             } else {
                 StatusManager.getManager().handle(new Status(Status.ERROR, EvolPlugin.PLUGIN_ID,
                         "Analysis \"" + analysisData.getName() + "\" failed: " + result));
             }
         }
+        
+        double result;
+        if (totalWeight == 0) {
+            result = 0;
+        } else {
+            result = rating / totalWeight;
+        }
             
         progressMonitor.done();
-        return rating / totalWeight;
+        return result;
     }
 
 }

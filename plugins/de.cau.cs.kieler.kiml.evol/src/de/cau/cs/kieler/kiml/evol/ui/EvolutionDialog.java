@@ -14,8 +14,10 @@
 package de.cau.cs.kieler.kiml.evol.ui;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -25,6 +27,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -37,8 +41,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Slider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
+
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -47,12 +54,16 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.ui.ProgressBarMonitor;
 import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.LayoutEvolutionModel;
 import de.cau.cs.kieler.kiml.evol.alg.EvaluationOperation;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.service.AnalysisService;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisCategory;
+import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.util.KGraphRenderer;
 
@@ -71,6 +82,8 @@ public class EvolutionDialog extends Dialog {
     private static final int PREVIEW_HEIGHT = 150;
     /** the number of evolution steps to perform when the "Evolve" button is pressed. */
     private static final int EVOLVE_STEPS = 4;
+    /** the maximum value for sliders. */
+    private static final int SLIDER_MAX = 100;
     
     /** property for the preview image of an individual. */
     private static final IProperty<Image> PREVIEW_IMAGE = new Property<Image>("evol.previewImage");
@@ -87,6 +100,8 @@ public class EvolutionDialog extends Dialog {
     private Label[] previewLabels;
     /** the progress bar for displaying progess of operations. */
     private ProgressBar progressBar;
+    /** the labels for displaying metrics results and the sliders for setting weights. */
+    private Map<String, Pair<Label, Slider>> metricControls = Maps.newHashMap();
     
     /**
      * Creates an evolution dialog.
@@ -149,19 +164,33 @@ public class EvolutionDialog extends Dialog {
         }
         
         Composite composite = (Composite) super.createDialogArea(parent);
-        ((GridLayout) composite.getLayout()).numColumns = (int) Math.sqrt(INDIVIDUALS_DISPLAY);
+        ((GridLayout) composite.getLayout()).numColumns = 2;
+        
+        // create preview areas
+        Composite previewPane = new Composite(composite, SWT.NONE);
+        previewPane.setLayout(new GridLayout((int) Math.sqrt(INDIVIDUALS_DISPLAY), true));
         selectionButtons = new Button[INDIVIDUALS_DISPLAY];
         previewLabels = new Label[INDIVIDUALS_DISPLAY];
         
         Population population = evolutionModel.getPopulation();
         for (int i = 0; i < INDIVIDUALS_DISPLAY; i++) {
-            createPreviewArea(composite, i);
+            createPreviewArea(previewPane, i);
             if (i < population.size()) {
                 Image image = createPreviewImage(population.get(i));
                 previewLabels[i].setImage(image);
             } else {
                 selectionButtons[i].setEnabled(false);
             }
+        }
+        
+        // create metrics area
+        Composite metricsPane = new Composite(composite, SWT.NONE);
+        metricsPane.setLayout(new GridLayout(2, false));
+        
+        AnalysisCategory category = AnalysisService.getInstance().getCategory(
+                EvaluationOperation.METRIC_CATEGORY);
+        for (AnalysisData data : category.getAnalyses()) {
+            createMetricArea(metricsPane, data);
         }
         
         return composite;
@@ -193,6 +222,7 @@ public class EvolutionDialog extends Dialog {
         switch (buttonId) {
         case IDialogConstants.OK_ID:
             applyUserRating();
+            applyMetricWeights();
             okPressed();
             break;
         case IDialogConstants.CANCEL_ID:
@@ -200,9 +230,11 @@ public class EvolutionDialog extends Dialog {
             break;
         case IDialogConstants.PROCEED_ID:
             applyUserRating();
+            applyMetricWeights();
             evolve();
             break;
         case IDialogConstants.ABORT_ID:
+            applyMetricWeights();
             reset();
             break;
         }
@@ -225,6 +257,14 @@ public class EvolutionDialog extends Dialog {
         Label previewLabel = new Label(composite, SWT.BORDER);
         previewLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
         previewLabels[index] = previewLabel;
+        previewLabel.addMouseTrackListener(new MouseTrackAdapter() {
+            public void mouseEnter(final MouseEvent e) {
+                refreshMetrics(index);
+            }
+            public void mouseExit(final MouseEvent e) {
+                refreshMetrics(-1);
+            }
+        });
         
         Button selButton = new Button(composite, SWT.CHECK);
         selButton.setImage(thumbsupImage);
@@ -268,6 +308,35 @@ public class EvolutionDialog extends Dialog {
     }
     
     /**
+     * Create controls for displaying metric results and set their weight.
+     * 
+     * @param parent the parent composite
+     * @param data the analysis data
+     */
+    private void createMetricArea(final Composite parent, final AnalysisData data) {
+        // create labels for name and result
+        Label nameLabel = new Label(parent, SWT.NONE);
+        nameLabel.setText(data.getName() + ": ");
+        nameLabel.setToolTipText(data.getDescription());
+        nameLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+        Label resultLabel = new Label(parent, SWT.NONE);
+        resultLabel.setText("100%");
+        resultLabel.setVisible(false);
+        resultLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+        
+        // create slider for the weight
+        Slider slider = new Slider(parent, SWT.HORIZONTAL);
+        slider.setMinimum(0);
+        slider.setMaximum(SLIDER_MAX);
+        slider.setSelection(SLIDER_MAX);
+        GridData gridData = new GridData(SWT.FILL, SWT.TOP, false, false);
+        gridData.horizontalIndent = 20; // SUPPRESS CHECKSTYLE MagicNumber
+        gridData.horizontalSpan = 2;
+        slider.setLayoutData(gridData);
+        metricControls.put(data.getId(), new Pair<Label, Slider>(resultLabel, slider));
+    }
+    
+    /**
      * Apply user rating to all individuals.
      */
     private void applyUserRating() {
@@ -287,6 +356,24 @@ public class EvolutionDialog extends Dialog {
         // if no individual was selected, mark the first individual for meta layout
         if (!selectedFound) {
             evolutionModel.setSelected(0);
+        }
+    }
+    
+    /**
+     * Apply metric weights for all metrics.
+     */
+    private void applyMetricWeights() {
+        Population population = LayoutEvolutionModel.getInstance().getPopulation();
+        Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
+        if (metricWeights == null) {
+            metricWeights = Maps.newHashMap();
+            population.setProperty(EvaluationOperation.METRIC_WEIGHT, metricWeights);
+        }
+        
+        for (Map.Entry<String, Pair<Label, Slider>> entry : metricControls.entrySet()) {
+            String id = entry.getKey();
+            Slider slider = entry.getValue().getSecond();
+            metricWeights.put(id, (double) slider.getSelection() / SLIDER_MAX);
         }
     }
     
@@ -361,6 +448,34 @@ public class EvolutionDialog extends Dialog {
                 selectionButtons[i].setEnabled(false);
             }
             selectionButtons[i].setSelection(false);
+        }
+    }
+    
+    /**
+     * Refresh the result labels of layout metrics.
+     * 
+     * @param genomeIndex the index of the genome to consider, or -1 to disable the labels
+     */
+    private void refreshMetrics(final int genomeIndex) {
+        Population population = LayoutEvolutionModel.getInstance().getPopulation();
+        Map<String, Float> metricsResult = null;
+        if (genomeIndex >= 0 && genomeIndex < population.size()) {
+            metricsResult = population.get(genomeIndex).getProperty(EvaluationOperation.METRIC_RESULT);
+        }
+        if (metricsResult == null) {
+            metricsResult = Collections.emptyMap();
+        }
+        
+        for (Map.Entry<String, Pair<Label, Slider>> entry : metricControls.entrySet()) {
+            String metricId = entry.getKey();
+            Label label = entry.getValue().getFirst();
+            Float result = metricsResult.get(metricId);
+            if (result == null) {
+                label.setVisible(false);
+            } else {
+                label.setText(Math.round(result * 100) + "%"); // SUPPRESS CHECKSTYLE MagicNumber
+                label.setVisible(true);
+            }
         }
     }
     
