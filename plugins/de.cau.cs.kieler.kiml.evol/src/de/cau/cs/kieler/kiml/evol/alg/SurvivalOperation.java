@@ -35,7 +35,7 @@ public class SurvivalOperation implements IEvolutionaryOperation {
      * The survival ratio. This indicates the ratio of surviving individuals,
      * relative to the population size.
      */
-    private static final float SURVIVAL_RATIO = 0.54f;
+    private static final float SURVIVAL_RATIO = 0.6f;
     /** Minimum number of individuals that must survive. */
     private static final int MIN_SURVIVORS = 5;
     /** Maximum number of individuals that may survive. */

@@ -112,6 +112,7 @@ public class CrossoverOperation implements IEvolutionaryOperation {
             
             // iterate genes and create a recombination for each one
             LayoutTypeData typeData = null;
+            int algoIndex = 0;
             for (int geneIndex = 0; geneIndex < size; geneIndex++) {
                 Gene<?>[] genes = new Gene[genomes.length];
                 for (int genomeIndex = 0; genomeIndex < genomes.length; genomeIndex++) {
@@ -129,8 +130,21 @@ public class CrossoverOperation implements IEvolutionaryOperation {
                 Gene<?> newGene = recombine(genes);
                 result.getGenes().add(newGene);
                 
-                if (newGene.getTypeInfo().getGeneType() == GeneType.LAYOUT_TYPE) {
+                GeneType geneType = newGene.getTypeInfo().getGeneType();
+                if (geneType == GeneType.LAYOUT_TYPE) {
+                    // the layout type was crossed - get the new type to check the algorithm gene
                     typeData = (LayoutTypeData) newGene.listValue();
+                } else if (geneType == GeneType.LAYOUT_ALGO) {
+                    // the algorithm was crossed - get the index of the new algorithm
+                    for (int genomeIndex = 0; genomeIndex < genomes.length; genomeIndex++) {
+                        if (genes[genomeIndex].equals(newGene)) {
+                            algoIndex = genomeIndex;
+                            break;
+                        }
+                    }
+                } else {
+                    // the active flag is copied from the genome that gave the algorithm
+                    newGene.setActive(genes[algoIndex].isActive());
                 }
             }
             

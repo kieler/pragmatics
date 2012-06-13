@@ -181,8 +181,13 @@ public class EvolutionDialog extends Dialog {
             createPreviewArea(previewPane, i);
             if (i < population.size()) {
                 Image image = createPreviewImage(population.get(i));
+                if (image == null) {
+                    // create an empty image in order to set the initial size
+                    image = new Image(getShell().getDisplay(), PREVIEW_WIDTH, PREVIEW_HEIGHT);
+                    resources.add(image);
+                    selectionButtons[i].setEnabled(false);
+                }
                 previewLabels[i].setImage(image);
-                selectionButtons[i].setEnabled(image != null);
             } else {
                 selectionButtons[i].setEnabled(false);
             }

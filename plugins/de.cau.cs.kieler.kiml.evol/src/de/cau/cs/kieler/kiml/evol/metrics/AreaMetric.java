@@ -17,6 +17,8 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.service.grana.analyses.AreaAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
 
 /**
  * Measures the area extent of the given graph layout.
@@ -30,7 +32,7 @@ import de.cau.cs.kieler.kiml.service.grana.analyses.AreaAnalysis;
 public class AreaMetric implements IAnalysis {
     
     /** exponent for the computed area. */
-    private static final double AREA_EXP = 0.08;
+    private static final double AREA_EXP = 0.05;
 
     /**
      * {@inheritDoc}
@@ -40,17 +42,20 @@ public class AreaMetric implements IAnalysis {
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Area metric analysis", 1);
         Object[] dimsResult = (Object[]) results.get(AreaAnalysis.ID);
+        int nodeCount = (Integer) results.get(NodeCountAnalysis.ID);
+        int edgeCount = (Integer) results.get(EdgeCountAnalysis.ID);
+        int elementCount = nodeCount + edgeCount;
 
         float xdim = (Float) dimsResult[0];
         float ydim = (Float) dimsResult[1];
 
+        float result = 1.0f;
         double area = xdim * ydim;
-
-        // normalize
-        float result;
-        if (area < 1.0) {
-            result = 1.0f;
-        } else {
+        if (elementCount > 0) {
+            // normalize considering the number of nodes and edges
+            area /= elementCount * elementCount;
+        }
+        if (area > 1.0) {
             result = 1.0f / (float) Math.pow(area, AREA_EXP);
         }
         assert result >= 0 && result <= 1;
@@ -58,4 +63,5 @@ public class AreaMetric implements IAnalysis {
         progressMonitor.done();
         return result;
     }
+    
 }

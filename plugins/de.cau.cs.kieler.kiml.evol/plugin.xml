@@ -27,6 +27,12 @@
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.area">
          </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.nodeCount">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
+         </dependency>
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"

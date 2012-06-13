@@ -66,7 +66,7 @@ public class EvaluationOperation implements IEvolutionaryOperation {
             = new Property<Map<String, Double>>("evol.metricWeight");
     
     /** the execution time result for one second. */
-    private static final float EXECTIME_SEC = 0.7f;
+    private static final float EXECTIME_SEC = 0.5f;
 
     /** the graph layout engine used for executing configured layout on the evaluation graph. */
     private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();

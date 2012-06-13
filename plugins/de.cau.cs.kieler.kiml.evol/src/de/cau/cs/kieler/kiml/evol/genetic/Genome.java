@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
@@ -100,26 +101,23 @@ public class Genome extends MapPropertyHolder implements Comparable<Genome> {
     }
 
     /**
-     * Generate an identifier string for the individual.
-     *
-     * @return an identifier
-     */
-    public String getId() {
-        return Integer.toHexString(this.hashCode());
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        result.append(getId()).append(" (");
-        result.append(getProperty(USER_RATING) * getProperty(USER_WEIGHT)).append(")");
-        for (Gene<?> gene : genes) {
-            result.append(" - ");
-            result.append(gene.toString());
+        result.append("(");
+        ListIterator<Gene<?>> geneIter = genes.listIterator();
+        while (geneIter.hasNext()) {
+            Gene<?> gene = geneIter.next();
+            if (gene.getValue() != null) {
+                if (geneIter.previousIndex() > 0) {
+                    result.append(" - ");
+                }
+                result.append(gene.toString());
+            }
         }
+        result.append(")");
         return result.toString();
     }
 
@@ -146,7 +144,7 @@ public class Genome extends MapPropertyHolder implements Comparable<Genome> {
     /** Default gene distance. */
     private static final double DEFAULT_GENE_DISTANCE = 1.0;
     /** Scaling factor for float gene distances. */
-    private static final float FLOAT_GENE_SCALE = 0.8f;
+    private static final double FLOAT_GENE_SCALE = 0.8;
 
     /**
      * Returns the distance between the given genomes. The genomes must be
@@ -161,14 +159,14 @@ public class Genome extends MapPropertyHolder implements Comparable<Genome> {
     public static double distance(final Genome genome0, final Genome genome1) {
         assert genome0.genes.size() == genome1.genes.size();
 
-        Iterator<?> iter0 = genome0.getGenes().iterator();
-        Iterator<?> iter1 = genome1.getGenes().iterator();
+        Iterator<Gene<?>> iter0 = genome0.getGenes().iterator();
+        Iterator<Gene<?>> iter1 = genome1.getGenes().iterator();
         double dist = 0.0;
         while (iter0.hasNext() && iter1.hasNext()) {
-            Gene<?> gene0 = (Gene<?>) iter0.next();
-            Gene<?> gene1 = (Gene<?>) iter1.next();
+            Gene<?> gene0 = iter0.next();
+            Gene<?> gene1 = iter1.next();
 
-            if (gene0.isActive() && gene1.isActive() && !gene0.equals(gene1)) {
+            if (!gene0.equals(gene1)) {
                 switch (gene0.getTypeInfo().getGeneType()) {
                 case LAYOUT_TYPE:
                     dist += TYPE_GENE_DISTANCE;
@@ -178,13 +176,17 @@ public class Genome extends MapPropertyHolder implements Comparable<Genome> {
                     break;
                 case FLOAT:
                 case INTEGER:
-                    // Distance of float genes is analogous to the absolute difference,
-                    // related to the variance in order to make it more comparable.
-                    double var0 = gene0.getTypeInfo().getVariance();
-                    double var1 = gene1.getTypeInfo().getVariance();
-                    double var = (var0 + var1) / 2;
-                    float absDiff = Math.abs(gene0.floatValue() - gene1.floatValue());
-                    dist += absDiff * FLOAT_GENE_SCALE / var;
+                    if (gene0.getValue() == null || gene1.getValue() == null) {
+                        dist += DEFAULT_GENE_DISTANCE;
+                    } else {
+                        // Distance of float genes is proportional to the absolute difference,
+                        // related to the variance in order to make it more comparable.
+                        double var0 = gene0.getTypeInfo().getVariance();
+                        double var1 = gene1.getTypeInfo().getVariance();
+                        double var = (var0 + var1) / 2;
+                        double absDiff = Math.abs(gene0.floatValue() - gene1.floatValue());
+                        dist += absDiff * FLOAT_GENE_SCALE / var;
+                    }
                     break;
                 default:
                     dist += DEFAULT_GENE_DISTANCE;
