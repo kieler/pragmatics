@@ -13,13 +13,13 @@
  */
 package de.cau.cs.kieler.klay.layered.p4nodes;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.google.common.collect.Maps;
 
@@ -30,9 +30,10 @@ import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -50,6 +51,27 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
     /** Spacing between dummy nodes, determined by layout options. */
     private float smallSpacing;
+    
+    /** Flag which switches debug output of the algorithm on or off. */
+    private boolean debug = false;
+    
+    private boolean addBalancedLayout = true;
+    
+    /** additional processor dependencies for graphs with hierarchical ports. */
+    private static final IntermediateProcessingStrategy HIERARCHY_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_5,
+                IntermediateLayoutProcessor.HIERARCHICAL_PORT_POSITION_PROCESSOR);
+
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
+        if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
+            return HIERARCHY_PROCESSING_ADDITIONS;
+        } else {
+            return null;
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -57,7 +79,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("BK node placement", 1);
         markedEdges = new LinkedList<LEdge>();
-
+        
         // Determine overall node count for an optimal initialization of maps.
         int nodeCount = 0;
         for (Layer layer : layeredGraph) {
@@ -82,7 +104,6 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
         // Phase which determines the nodes' memberships in blocks. This happens in four different
         // ways, either from processing the nodes from the first layer to the last or vice versa.
-        // TODO more doc!!!
         verticalAlignment(layeredGraph, lefttop);
         verticalAlignment(layeredGraph, righttop);
         verticalAlignment(layeredGraph, leftbottom);
@@ -91,54 +112,61 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         // Additional phase which is not included in the original Brandes-Koepf Algorithm.
         // It makes sure that the connected ports within a block are aligned to avoid unnecessary
         // bend points.
+        // Also, the required size of each block is determined.
         insideBlockShift(layeredGraph, lefttop);
         insideBlockShift(layeredGraph, righttop);
         insideBlockShift(layeredGraph, leftbottom);
         insideBlockShift(layeredGraph, rightbottom);
 
+        // This phase determines the y coordinates of the blocks and thus the vertical coordinates
+        // of all nodes.
         horizontalCompaction(layeredGraph, lefttop);
         horizontalCompaction(layeredGraph, righttop);
         horizontalCompaction(layeredGraph, leftbottom);
         horizontalCompaction(layeredGraph, rightbottom);
-
+        
+        if (debug) {
+            System.out.println("lefttop size is " + lefttop.layoutSize());
+            System.out.println("righttop size is " + righttop.layoutSize());
+            System.out.println("leftbottom size is " + leftbottom.layoutSize());
+            System.out.println("rightbottom size is " + rightbottom.layoutSize());
+        }
+        
+        // Choose a layout from the four calculated layouts. Layouts that contain errors a skipped.
+        // The layout with the smallest size is selected.
         BKAlignedLayout chosenLayout = null;
-        
-        System.out.println(checkOrderConstraint(layeredGraph, lefttop));
-        System.out.println(checkOrderConstraint(layeredGraph, righttop));
-        System.out.println(checkOrderConstraint(layeredGraph, leftbottom));
-        System.out.println(checkOrderConstraint(layeredGraph, rightbottom));
-        
-        System.out.println("lefttop size is " + lefttop.layoutSize());
-        System.out.println("righttop size is " + righttop.layoutSize());
-        System.out.println("leftbottom size is " + leftbottom.layoutSize());
-        System.out.println("rightbottom size is " + rightbottom.layoutSize());
-
         LinkedList<BKAlignedLayout> layouts = new LinkedList<BKAlignedLayout>();
         layouts.add(lefttop);
         layouts.add(righttop);
         layouts.add(leftbottom);
         layouts.add(rightbottom);
-        for (BKAlignedLayout bal : layouts) {
-            if (checkOrderConstraint(layeredGraph, bal)) {
-                if (chosenLayout == null) {
-                    chosenLayout = bal;
-                } else {
-                    if (bal.layoutSize() < chosenLayout.layoutSize()) {
+        
+        BKAlignedLayout balanced = new BKAlignedLayout(nodeCount, null, null); 
+        
+        if (addBalancedLayout) {
+            balanced = createBalancedLayout(layouts, nodeCount);
+            chosenLayout = balanced;
+        } 
+        if (!addBalancedLayout || !checkOrderConstraint(layeredGraph, balanced)) {
+            chosenLayout = null;
+            for (BKAlignedLayout bal : layouts) {
+                if (checkOrderConstraint(layeredGraph, bal)) {
+                    if (chosenLayout == null) {
                         chosenLayout = bal;
+                    } else {
+                        if (bal.layoutSize() < chosenLayout.layoutSize()) {
+                            chosenLayout = bal;
+                        }
                     }
-                }
-            } 
+                } 
+            }
         }
         
-//        for (LNode root : getBlocks(chosenLayout).keySet()) {
-//            System.out.println("block pos " + " " + root + " " + chosenLayout.getY().get(root));
-//        }
-        
+        // Apply calculated positions to nodes.
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-//                 System.out.println("Set position of " + node.toString() + " to "
-//                 + (chosenLayout.getY().get(node) + chosenLayout.getInnerShift().get(node)));
-                node.getPosition().y = chosenLayout.getY().get(node) + chosenLayout.getInnerShift().get(node);
+                node.getPosition().y = chosenLayout.getY().get(node)
+                                        + chosenLayout.getInnerShift().get(node);
 
                 if (!node.getProperty(LayoutOptions.HYPERNODE)) {
                     layer.getSize().x = Math.max(layer.getSize().x,
@@ -163,25 +191,34 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         layeredGraph.getSize().y = maxY - minY;
         layeredGraph.getOffset().y -= minY;
 
-        System.out.println(getBlocks(chosenLayout));
-        
-        // Phase for postprocessing steps:
-        // - move dummy nodes to the height of respective ports
-        // postProcess(chosenLayout);
+        if (debug) {
+            System.out.println(getBlocks(chosenLayout));
+        }
 
         getMonitor().done();
     }
 
+    /**
+     * This phase of the node placer marks all type 1 conflicts.
+     * 
+     * Type 0 conflicts refer to two short edges crossing each other.
+     * Type 1 conflicts occur when a short edge cross a long edge.
+     * Type 2 conflicts happen when two long edges cross each other.
+     * 
+     * The markers are later used to solve conflicts in favor of long edges.
+     * 
+     * @param layeredGraph
+     */
     private void markConflicts(final LayeredGraph layeredGraph) {
-        for (int i = 1; i < layeredGraph.getLayers().size() - 2; i++) {
-            int k0 = -1;
+        for (int i = 1; i <= layeredGraph.getLayers().size() - 2; i++) {
+            int k0 = 0;
             int l = 0;
             for (int l1 = 0; l1 < layerSize(layeredGraph, i + 1); l1++) {
                 LNode vli = nodeByPosition(layeredGraph, i + 1, l1);
-                if (l1 == (layerSize(layeredGraph, i + 1) - 1)
-                        || incidentToInnerSegment(vli, -1)) {
+                if (l1 == (layerSize(layeredGraph, i + 1))
+                        || incidentToInnerSegment(vli, i, i + 1)) {
                     int k1 = layerSize(layeredGraph, i);
-                    if (incidentToInnerSegment(vli, -1)) {
+                    if (incidentToInnerSegment(vli, i, i + 1)) {
                         k1 =
                            allUpperNeighbors(vli).get(0).getIndex();
                     }
@@ -199,34 +236,6 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                 }
             }
         }
-        
-        
-        
-//        for (int i = 1; i < (layeredGraph.getLayers().size() - 1); i++) {
-//            int k0 = 0;
-//            int l = 1;
-//            for (int l1 = 1; l1 < layerSize(layeredGraph, i + 1); l1++) {
-//                if (l1 == layerSize(layeredGraph, i + 1)
-//                        || incidentToInnerSegment(nodeByPosition(layeredGraph, i + 1, l1), -1)) {
-//                    int k1 = layerSize(layeredGraph, i);
-//                    if (incidentToInnerSegment(nodeByPosition(layeredGraph, i + 1, l1), -1)) {
-//                        k1 = allUpperNeighbors(nodeByPosition(layeredGraph, i + 1, l1)).get(0)
-//                                .getIndex();
-//                    }
-//                    while (l <= l1) {
-//                        for (LNode node : allUpperNeighbors(nodeByPosition(layeredGraph, i + 1, l))) {
-//                            int k = node.getIndex();
-//                            if (k < k0 || k > k1) {
-//                                markedEdges.add(getEdge(node,
-//                                        nodeByPosition(layeredGraph, i + 1, l)));
-//                            }
-//                        }
-//                        l++;
-//                    }
-//                    k0 = k1;
-//                }
-//            }
-//        }
     }
 
     private void verticalAlignment(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
@@ -264,10 +273,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                 Collections.copy(nodes, layer.getNodes());
                 Collections.reverse(nodes);
             }
+            LNode previous = null;
             for (LNode vik : nodes) {
-//                if (vik.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
-//                    continue;
-//                }
                 List<LNode> neighbors = null;
                 if (bal.getHDir() == HDirection.BOTTOM) {
                     neighbors = allLowerNeighbors(vik);
@@ -308,6 +315,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                                     bal.getRoot().put(vik, bal.getRoot().get(um));
                                     bal.getAlign().put(vik, bal.getRoot().get(vik));
                                     r = um.getIndex();
+                                    previous = um;
                                 }
                             }
                         }
@@ -495,9 +503,13 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             }
         }
 
-        for (Layer layer : layeredGraph.getLayers()) {
+        //It's important to traverse top-bottom or bottom-top here too
+        for (Layer layer : layers) {
 
             for (LNode v : layer.getNodes()) {
+//                if (v.toString().equalsIgnoreCase("n_44")) {
+//                    System.out.println("blubb");
+//                }
                 bal.getY()
                         .put(v, bal.getY().get(bal.getRoot().get(v)));
                 if (bal.getVDir() == VDirection.RIGHT) {
@@ -527,6 +539,9 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     }
 
     private void placeBlock(final LNode v, final BKAlignedLayout bal) {
+//        if (v.toString().equalsIgnoreCase("n_54")) {
+//            System.out.println("blubb");
+//        }
         if (!bal.getY().containsKey(v)) {
             bal.getY().put(v, 0.0);
             LNode w = v;
@@ -534,6 +549,10 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                 if ((bal.getVDir() == VDirection.LEFT && w.getIndex() > 0)
                         || (bal.getVDir() == VDirection.RIGHT && w.getIndex() < (w.getLayer()
                                 .getNodes().size() - 1))) {
+                    
+//                  if (v.toString().equalsIgnoreCase("n_44")) {
+//                  System.out.println("blubb");
+//              }
 
                     LNode u = null;
                     if (bal.getVDir() == VDirection.RIGHT) {
@@ -548,24 +567,24 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                     }
                     if (!bal.getSink().get(v).equals(bal.getSink().get(u))) {
                         double spacing = normalSpacing;
-                        if (bal.getBlockSize().get(v) == 0.0 || bal.getBlockSize().get(u) == 0.0) {
-                            spacing = smallSpacing;
-                        }
-                        if (bal.getVDir() != VDirection.RIGHT) {
+//                        if (bal.getBlockSize().get(v) == 0.0 || bal.getBlockSize().get(u) == 0.0) {
+//                            spacing = smallSpacing;
+//                        }
+                        if (bal.getVDir() == VDirection.RIGHT) {
                             //TODO think about sign and effects here!!! (n_5 vs n_16)
+                            bal.getShift().put(
+                                    bal.getSink().get(u),
+                                    Math.max(bal.getShift().get(bal.getSink().get(u)), bal.getY()
+                                            .get(v) - bal.getY().get(u)
+                                            + bal.getBlockSize().get(v)
+                                            + spacing));
+                        } else {
                             bal.getShift().put(
                                     bal.getSink().get(u),
                                     Math.min(bal.getShift().get(bal.getSink().get(u)), bal.getY()
                                             .get(v) - bal.getY().get(u)
                                             - bal.getBlockSize().get(u)
                                             - spacing));
-                        } else {
-                            bal.getShift().put(
-                                    bal.getSink().get(u),
-                                    Math.max(bal.getShift().get(bal.getSink().get(u)), bal.getY()
-                                            .get(v) - bal.getY().get(u)
-                                            + bal.getBlockSize().get(u)
-                                            + spacing));
                         }
                     } else {
                         double spacing = normalSpacing;
@@ -593,49 +612,56 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         }
     }
 
-    private void postProcess(final BKAlignedLayout bal) {
-        HashMap<LNode, List<LNode>> blocks = getBlocks(bal);
-
-        for (List<LNode> block : blocks.values()) {
-            int layer = Integer.MAX_VALUE;
-            double portOffset = 0.0;
-
-            // TODO only use nodes which are directly connected to the long edge!!
-
-            // Check block for none dummy nodes and determine port height
-            for (LNode node : block) {
-                if (node.getProperty(Properties.NODE_TYPE) != NodeType.LONG_EDGE) {
-                    if (node.getLayer().getIndex() < layer) {
-                        // TODO consider treating left and right nodes differently
-                        // to align them correctly if left side and right side ports
-                        // have different positions
-                        for (LEdge edge : node.getIncomingEdges()) {
-                            if (block.contains(edge.getSource().getNode())) {
-                                portOffset = edge.getTarget().getPosition().y;
-                                layer = node.getLayer().getIndex();
-                            }
-                        }
-                        // To favor alignment to source nodes, their port offset is checked and
-                        // applied second
-                        for (LEdge edge : node.getOutgoingEdges()) {
-                            if (block.contains(edge.getTarget().getNode())) {
-                                portOffset = edge.getSource().getPosition().y;
-                                layer = node.getLayer().getIndex();
-                            }
-                        }
-                    }
+    private BKAlignedLayout createBalancedLayout(final List<BKAlignedLayout> layouts,
+            final int nodeCount) {
+        final int noOfLayouts = layouts.size();
+        BKAlignedLayout balanced = new BKAlignedLayout(nodeCount, null, null);
+        double[] width = new double[noOfLayouts];
+        double[] min = new double[noOfLayouts];
+        double[] max = new double[noOfLayouts];
+        int minWidthLayout = 0;
+        
+        for (int i = 0; i < noOfLayouts; i++) {
+            min[i] = Integer.MAX_VALUE;
+            max[i] = Integer.MIN_VALUE;
+        }
+        
+        for (int i = 0; i < noOfLayouts; i++) {
+            BKAlignedLayout current = layouts.get(i);
+            for (double y : current.getY().values()) {
+                if (min[i] > y) {
+                    min[i] = y;
+                }
+                if (max[i] < y) {
+                    max[i] = y;
                 }
             }
-
-            // Move dummy nodes to previously determined port height
-            for (LNode node : block) {
-                if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
-                    node.getPosition().y += portOffset;
-                    System.out.println("Offsetting " + node.toString() + " by " + portOffset);
-                }
+            width[i] = max[i] - min[i];
+            if (width[minWidthLayout] > width [i]) {
+                minWidthLayout = i;
             }
         }
-
+        
+        double[] shift = new double[noOfLayouts];
+        for (int i = 0; i < noOfLayouts; i++) {
+            if (layouts.get(i).vdir == VDirection.LEFT) {
+                shift[i] = min[minWidthLayout] - min[i];
+            } else {
+                shift[i] = max[minWidthLayout] - max[i];
+            }
+        }
+        
+        double[] calculatedYs = new double[noOfLayouts];
+        for (LNode node : layouts.get(0).getY().keySet()) {
+            for (int i = 0; i < noOfLayouts; i++) {
+                calculatedYs[i] = layouts.get(i).getY().get(node) + shift[i];
+            }
+            Arrays.sort(calculatedYs);
+            balanced.getY().put(node, (calculatedYs[1] + calculatedYs[2]) / 2.0);
+            balanced.getInnerShift().put(node, layouts.get(minWidthLayout).getInnerShift().get(node));
+        }
+        
+        return balanced;
     }
 
     private int layerSize(final LayeredGraph layeredGraph, final int layer) {
@@ -647,22 +673,34 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         return layeredGraph.getLayers().get(layer).getNodes().get(position);
     }
 
-    private boolean incidentToInnerSegment(final LNode node, final int layerOffset) {
+    private boolean incidentToInnerSegment(final LNode node, final int layer1, final int layer2) {
+//        if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
+//            for (LNode neighbor : allUpperNeighbors(node)) {
+//                if (neighbor.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
+//                    return node.getLayer().getIndex() == layer1
+//                            && neighbor.getLayer().getIndex() == layer2;
+//                }
+//            }
+//        }
+//        
+        
+        
+        
         if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
             for (LEdge edge : node.getIncomingEdges()) {
                 if (edge.getSource().getNode().getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
-                        && edge.getSource().getNode().getLayer().getIndex() == node.getLayer()
-                                .getIndex() + layerOffset) {
+                        && edge.getSource().getNode().getLayer().getIndex() == layer1
+                        && node.getLayer().getIndex() == layer2) {
                     return true;
                 }
             }
-            for (LEdge edge : node.getOutgoingEdges()) {
-                if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
-                        && edge.getTarget().getNode().getLayer().getIndex() == node.getLayer()
-                                .getIndex() + layerOffset) {
-                    return true;
-                }
-            }
+//            for (LEdge edge : node.getOutgoingEdges()) {
+//                if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
+//                        && edge.getTarget().getNode().getLayer().getIndex() == node.getLayer()
+//                                .getIndex() + layerOffset) {
+//                    return true;
+//                }
+//            }
         }
         return false;
     }
@@ -682,17 +720,18 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      */
     private List<LNode> allUpperNeighbors(final LNode node) {
         List<LNode> result = new LinkedList<LNode>();
-        int highestPriority = Integer.MIN_VALUE;
-        for (LEdge edge : node.getIncomingEdges()) {
-            int prio = edge.getProperty(Properties.PRIORITY);
-            if (prio > highestPriority) {
-                highestPriority = prio;
-            }
-        }
+//        int highestPriority = Integer.MIN_VALUE;
+//        for (LEdge edge : node.getIncomingEdges()) {
+//            int prio = edge.getProperty(Properties.PRIORITY);
+//            if (prio > highestPriority) {
+//                highestPriority = prio;
+//            }
+//        }
 //        System.out.println(highestPriority);
         for (LEdge edge : node.getIncomingEdges()) {
-            if (edge.getProperty(Properties.PRIORITY) == highestPriority
-                    && node.getLayer() != edge.getSource().getNode().getLayer()) {
+            if (
+//                    edge.getProperty(Properties.PRIORITY) == highestPriority &&
+                    node.getLayer() != edge.getSource().getNode().getLayer()) {
                 result.add(edge.getSource().getNode());
 //                System.out.println(edge.getTarget().getNode());
             }
@@ -704,17 +743,18 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
     private List<LNode> allLowerNeighbors(final LNode node) {
         List<LNode> result = new LinkedList<LNode>();
-        int highestPriority = Integer.MIN_VALUE;
-        for (LEdge edge : node.getOutgoingEdges()) {
-            int prio = edge.getProperty(Properties.PRIORITY);
-            if (prio > highestPriority) {
-                highestPriority = prio;
-            }
-        }
+//        int highestPriority = Integer.MIN_VALUE;
+//        for (LEdge edge : node.getOutgoingEdges()) {
+//            int prio = edge.getProperty(Properties.PRIORITY);
+//            if (prio > highestPriority) {
+//                highestPriority = prio;
+//            }
+//        }
 //        System.out.println(highestPriority);
         for (LEdge edge : node.getOutgoingEdges()) {
-            if (edge.getProperty(Properties.PRIORITY) == highestPriority
-                    && node.getLayer() != edge.getTarget().getNode().getLayer()) {
+            if (
+//                    edge.getProperty(Properties.PRIORITY) == highestPriority && 
+                    node.getLayer() != edge.getTarget().getNode().getLayer()) {
                 result.add(edge.getTarget().getNode());
             }
 //            System.out.println(node + " " + edge.getTarget().getNode() + " " + (node.getLayer() != edge.getTarget().getNode().getLayer()));
@@ -748,11 +788,21 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         boolean layoutIsSane = true;
         for (Layer layer : layeredGraph.getLayers()) {
             double pos = Double.NEGATIVE_INFINITY;
+            LNode previous = new LNode();
             for (LNode node : layer.getNodes()) {
-                if (bal.getY().get(node) + bal.getInnerShift().get(node) > pos) {
-                    pos = bal.getY().get(node) + bal.getInnerShift().get(node);
+//                double i = bal.getY().get(node) + bal.getInnerShift().get(node);
+//                if (node.toString().equalsIgnoreCase("n_442")) {
+//                    System.out.println("blubb");
+//                }
+                if (bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y > pos) {
+                    previous = node;
+                    pos = bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y;
                 } else {
                     layoutIsSane = false;
+                    if (debug) {
+                        System.out.println("breaks on " + node
+                                + " which should have been after " + previous);
+                    }
                     break;
                 }
             }
@@ -763,14 +813,6 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         return layoutIsSane;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     class NeighborComparator implements Comparator<LNode> {
 
         /**
@@ -779,9 +821,9 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         public int compare(final LNode o1, final LNode o2) {
             int result = 0;
             if (o1.getIndex() < o2.getIndex()) {
-                result = 1;
-            } else if (o1.getIndex() > o2.getIndex()) {
                 result = -1;
+            } else if (o1.getIndex() > o2.getIndex()) {
+                result = 1;
             }
             return result;
         }
