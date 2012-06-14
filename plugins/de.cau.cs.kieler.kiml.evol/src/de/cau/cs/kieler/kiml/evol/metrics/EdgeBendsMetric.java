@@ -26,13 +26,12 @@ import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
  * @author mri
  * @author bdu
  */
-public class BendsMetric implements IAnalysis {
+public class EdgeBendsMetric implements IAnalysis {
 
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(
-            final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Bend metric analysis", 1);
         // load numbers from analyses
@@ -51,8 +50,8 @@ public class BendsMetric implements IAnalysis {
         } else {
             result = 1.0f;
         }
+        
         assert result >= 0 && result <= 1;
-
         progressMonitor.done();
         return result;
     }

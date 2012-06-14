@@ -44,7 +44,7 @@ public class CrossoverOperation implements IEvolutionaryOperation {
     /** Minimum number of individuals to select. */
     private static final int MIN_SELECT = 2;
     /** Maximum number of individuals to select. */
-    private static final int MAX_SELECT = 1000;
+    private static final int MAX_SELECT = 100;
     
     /**
      * The cross over ratio. Indicates how many offspring individuals shall be
@@ -54,7 +54,7 @@ public class CrossoverOperation implements IEvolutionaryOperation {
     /** Minimum number of individuals to create by cross over. */
     private static final int MIN_CROSS_OVERS = 1;
     /** Maximum number of individuals to create by cross over. */
-    private static final int MAX_CROSS_OVERS = 1000;
+    private static final int MAX_CROSS_OVERS = 30;
 
     /** the random number generator. */
     private Random random;

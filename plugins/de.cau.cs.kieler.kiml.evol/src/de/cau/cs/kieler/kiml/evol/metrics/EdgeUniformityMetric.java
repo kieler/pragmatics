@@ -42,8 +42,7 @@ public class EdgeUniformityMetric implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(
-            final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Edge length uniformity analysis", 1);
         float result;

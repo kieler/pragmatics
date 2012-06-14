@@ -57,8 +57,7 @@ public abstract class UpwardnessMetric implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(
-            final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Upwardness metric analysis", 1);
         Float result;
@@ -85,8 +84,8 @@ public abstract class UpwardnessMetric implements IAnalysis {
         }
 
         result = (float) upwardEdgesCount / totalEdgesCount;
-        assert result >= 0 && result <= 1;
 
+        assert result >= 0 && result <= 1;
         progressMonitor.done();
         return result;
     }

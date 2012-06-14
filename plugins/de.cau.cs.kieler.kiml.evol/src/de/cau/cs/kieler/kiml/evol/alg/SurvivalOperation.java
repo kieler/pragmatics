@@ -39,7 +39,7 @@ public class SurvivalOperation implements IEvolutionaryOperation {
     /** Minimum number of individuals that must survive. */
     private static final int MIN_SURVIVORS = 5;
     /** Maximum number of individuals that may survive. */
-    private static final int MAX_SURVIVORS = 1000;
+    private static final int MAX_SURVIVORS = 100;
     /** factor for minimal distance between surviving individuals. */
     private static final double MIN_DIST_FACTOR = 0.1;
     /** minimal fitness value for survivors. */

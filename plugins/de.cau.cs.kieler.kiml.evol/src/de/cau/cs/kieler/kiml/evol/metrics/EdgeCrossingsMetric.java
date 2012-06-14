@@ -36,8 +36,7 @@ public class EdgeCrossingsMetric implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(
-            final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Edge crossings metric analysis", 1);
         
@@ -63,7 +62,6 @@ public class EdgeCrossingsMetric implements IAnalysis {
         }
 
         assert result >= 0 && result <= 1;
-
         progressMonitor.done();
         return result;
 

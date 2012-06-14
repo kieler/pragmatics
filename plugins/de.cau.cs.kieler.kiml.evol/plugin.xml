@@ -36,7 +36,7 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.metrics.BendsMetric"
+            class="de.cau.cs.kieler.kiml.evol.metrics.EdgeBendsMetric"
             description="The number of edge bends in the graph."
             id="de.cau.cs.kieler.kiml.evol.bendsMetric"
             name="Edge Bends">
@@ -141,6 +141,19 @@
             description="Check whether the nodes have a minimal distance from each other."
             id="de.cau.cs.kieler.kiml.evol.nodeSeparationMetric"
             name="Node Separation">
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
+            class="de.cau.cs.kieler.kiml.evol.metrics.EdgeOverlapsMetric"
+            description="The number of node-edge overlaps in the graph."
+            id="de.cau.cs.kieler.kiml.evol.edgeOverlapMetric"
+            name="Edge Overlaps">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.nodeEdgeOverlaps">
+         </dependency>
       </analysis>
    </extension>
 

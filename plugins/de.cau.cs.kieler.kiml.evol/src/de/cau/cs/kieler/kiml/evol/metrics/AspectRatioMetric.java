@@ -36,8 +36,7 @@ public class AspectRatioMetric implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(
-            final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Flatness metric analysis", 1);
 
@@ -58,7 +57,6 @@ public class AspectRatioMetric implements IAnalysis {
         result = (float) Math.sqrt(result);
 
         assert result >= 0 && result <= 1;
-        
         progressMonitor.done();
         return result;
     }

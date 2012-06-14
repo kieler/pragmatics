@@ -38,8 +38,7 @@ public class NodeSeparationMetric implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(
-            final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Node separation metric analysis", 1);
 

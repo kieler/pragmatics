@@ -37,8 +37,7 @@ public class AreaMetric implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(
-            final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Area metric analysis", 1);
         Object[] dimsResult = (Object[]) results.get(AreaAnalysis.ID);
@@ -58,8 +57,8 @@ public class AreaMetric implements IAnalysis {
         if (area > 1.0) {
             result = 1.0f / (float) Math.pow(area, AREA_EXP);
         }
+        
         assert result >= 0 && result <= 1;
-
         progressMonitor.done();
         return result;
     }
