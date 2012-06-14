@@ -104,6 +104,8 @@ public class EvolutionDialog extends Dialog {
     private Map<String, Pair<Label, Slider>> metricControls = Maps.newHashMap();
     /** the label for the total fitness value. */
     private Label fitnessLabel;
+    /** the label for the user rating value. */
+    private Label userRatingLabel;
     
     /**
      * Creates an evolution dialog.
@@ -202,20 +204,30 @@ public class EvolutionDialog extends Dialog {
         AnalysisCategory category = AnalysisService.getInstance().getCategory(
                 EvaluationOperation.METRIC_CATEGORY);
         for (AnalysisData data : category.getAnalyses()) {
-            createMetricArea(metricsPane, data);
+            createMetricArea(metricsPane, data, population);
         }
         AnalysisData executionTimeData = new AnalysisData();
         executionTimeData.setId(EvaluationOperation.EXEC_TIME_METRIC);
         executionTimeData.setName("Execution Time");
         executionTimeData.setDescription("The measured execution time for layout computation.");
-        createMetricArea(metricsPane, executionTimeData);
+        createMetricArea(metricsPane, executionTimeData, population);
         
         // create label for fitness value
         GridData gridData = new GridData(SWT.FILL, SWT.LEFT, true, false);
         gridData.horizontalSpan = 2;
         gridData.verticalIndent = 10;
         new Label(metricsPane, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(gridData);
+        // create label for user rating value
         Label nameLabel = new Label(metricsPane, SWT.NONE);
+        nameLabel.setText("User Rating: ");
+        nameLabel.setToolTipText("The weighted rating derived from your selection.");
+        nameLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+        userRatingLabel = new Label(metricsPane, SWT.NONE);
+        userRatingLabel.setText("100%");
+        userRatingLabel.setVisible(false);
+        userRatingLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+
+        nameLabel = new Label(metricsPane, SWT.NONE);
         nameLabel.setText("Fitness: ");
         nameLabel.setToolTipText("The overall fitness of the individual.");
         nameLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
@@ -250,10 +262,10 @@ public class EvolutionDialog extends Dialog {
      */
     @Override
     protected void buttonPressed(final int buttonId) {
+        applyMetricWeights();
         switch (buttonId) {
         case IDialogConstants.OK_ID:
             applyUserRating();
-            applyMetricWeights();
             okPressed();
             break;
         case IDialogConstants.CANCEL_ID:
@@ -261,11 +273,9 @@ public class EvolutionDialog extends Dialog {
             break;
         case IDialogConstants.PROCEED_ID:
             applyUserRating();
-            applyMetricWeights();
             evolve();
             break;
         case IDialogConstants.ABORT_ID:
-            applyMetricWeights();
             reset();
             break;
         }
@@ -343,8 +353,10 @@ public class EvolutionDialog extends Dialog {
      * 
      * @param parent the parent composite
      * @param data the analysis data
+     * @param population the current population
      */
-    private void createMetricArea(final Composite parent, final AnalysisData data) {
+    private void createMetricArea(final Composite parent, final AnalysisData data,
+            final Population population) {
         // create labels for name and result
         Label nameLabel = new Label(parent, SWT.NONE);
         nameLabel.setText(data.getName() + ": ");
@@ -359,12 +371,22 @@ public class EvolutionDialog extends Dialog {
         Slider slider = new Slider(parent, SWT.HORIZONTAL);
         slider.setMinimum(0);
         slider.setMaximum(SLIDER_MAX);
-        slider.setSelection(SLIDER_MAX);
         GridData gridData = new GridData(SWT.FILL, SWT.TOP, false, false);
         gridData.horizontalIndent = 20;
         gridData.horizontalSpan = 2;
         slider.setLayoutData(gridData);
         metricControls.put(data.getId(), new Pair<Label, Slider>(resultLabel, slider));
+        
+        // set the initial value for the slider
+        int value = SLIDER_MAX;
+        Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
+        if (metricWeights != null) {
+            Double weight = metricWeights.get(data.getId());
+            if (weight != null) {
+                value = (int) (weight * SLIDER_MAX);
+            }
+        }
+        slider.setSelection(value);
     }
     
     /**
@@ -491,15 +513,19 @@ public class EvolutionDialog extends Dialog {
         Population population = LayoutEvolutionModel.getInstance().getPopulation();
         Map<String, Float> metricsResult = null;
         Double fitness = null;
+        double userRating = -1;
         if (genomeIndex >= 0 && genomeIndex < population.size()) {
             Genome genome = population.get(genomeIndex);
             metricsResult = genome.getProperty(EvaluationOperation.METRIC_RESULT);
             fitness = genome.getProperty(Genome.FITNESS);
+            userRating = genome.getProperty(Genome.USER_RATING)
+                    * genome.getProperty(Genome.USER_WEIGHT);
         }
         if (metricsResult == null) {
             metricsResult = Collections.emptyMap();
         }
         
+        // set values for all metric results
         for (Map.Entry<String, Pair<Label, Slider>> entry : metricControls.entrySet()) {
             String metricId = entry.getKey();
             Label label = entry.getValue().getFirst();
@@ -512,11 +538,20 @@ public class EvolutionDialog extends Dialog {
             }
         }
         
+        // set overall fitness value
         if (fitness == null) {
             fitnessLabel.setVisible(false);
         } else {
             fitnessLabel.setText(Math.round(fitness * 100) + "%");
             fitnessLabel.setVisible(true);
+        }
+        
+        // set weighted user rating value
+        if (userRating < 0) {
+            userRatingLabel.setVisible(false);
+        } else {
+            userRatingLabel.setText(Math.round(userRating * 100) + "%");
+            userRatingLabel.setVisible(true);
         }
     }
     

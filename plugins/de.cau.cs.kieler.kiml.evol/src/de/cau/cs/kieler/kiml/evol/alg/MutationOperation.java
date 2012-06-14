@@ -19,6 +19,7 @@ package de.cau.cs.kieler.kiml.evol.alg;
 import java.util.ListIterator;
 import java.util.Random;
 
+import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -37,7 +38,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
  * @author bdu
  * @author msp
  */
-public class MutationOperation implements IEvolutionaryOperation {
+public class MutationOperation extends AbstractAlgorithm implements IEvolutionaryOperation {
 
     /**
      * The mutation application probability. This is the probability for each
@@ -63,6 +64,7 @@ public class MutationOperation implements IEvolutionaryOperation {
      * {@inheritDoc}
      */
     public void process(final Population population) {
+        getMonitor().begin("Mutation", 1);
         ILayoutConfig layoutConfig = population.getProperty(Population.DEFAULT_CONFIG);
         LayoutContext layoutContext = population.getProperty(Population.DEFAULT_CONTEXT);
         
@@ -71,12 +73,11 @@ public class MutationOperation implements IEvolutionaryOperation {
             Genome individual = genomeIter.next();
             if (random.nextDouble() < MUTATION_APPLICATION_PROBABILITY) {
                 Genome mutation = mutate(individual, layoutConfig, layoutContext);
-                // individual has mutated -- the user rating is outdated
-                mutation.setProperty(Genome.USER_WEIGHT, individual.getProperty(Genome.USER_WEIGHT)
-                        * USER_WEIGHT_FADE);
                 genomeIter.set(mutation);
             }
         }
+        
+        getMonitor().done();
     }
 
     /**
@@ -142,6 +143,12 @@ public class MutationOperation implements IEvolutionaryOperation {
             }
             newGenome.getGenes().add(newGene);
         }
+        
+        // individual has mutated -- the user rating is outdated
+        double userRating = genome.getProperty(Genome.USER_RATING);
+        newGenome.setProperty(Genome.USER_RATING, userRating);
+        double userWeight = genome.getProperty(Genome.USER_WEIGHT);
+        newGenome.setProperty(Genome.USER_WEIGHT, userWeight * USER_WEIGHT_FADE);
         return newGenome;
     }
 

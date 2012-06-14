@@ -18,6 +18,7 @@ package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Random;
 
+import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
@@ -26,7 +27,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  * @author bdu
  * @author msp
  */
-public interface IEvolutionaryOperation {
+public interface IEvolutionaryOperation extends IAlgorithm {
 
     /**
      * Performs the evolutionary operation on the given population.

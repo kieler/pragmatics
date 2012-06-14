@@ -26,7 +26,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -48,7 +48,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * 
  * @author msp
  */
-public class EvaluationOperation implements IEvolutionaryOperation {
+public class EvaluationOperation extends AbstractAlgorithm implements IEvolutionaryOperation {
     
     /** identifier for the metric category. */
     public static final String METRIC_CATEGORY = "de.cau.cs.kieler.kiml.evol.metricCategory";
@@ -82,24 +82,28 @@ public class EvaluationOperation implements IEvolutionaryOperation {
      * {@inheritDoc}
      */
     public void process(final Population population) {
+        getMonitor().begin("Evaluation", population.size());
+        
         // determine fitness value for individuals that do not have one yet
         for (Genome genome : population) {
-            Double fitness = genome.getProperty(Genome.FITNESS);
-            if (fitness == null) {
-                Double autoRating = genome.getProperty(Genome.AUTO_RATING);
-                if (autoRating == null) {
-                    autoRating = autoRate(genome, population, new BasicProgressMonitor());
-                    genome.setProperty(Genome.AUTO_RATING, autoRating);
-                }
-                double userRating = genome.getProperty(Genome.USER_RATING);
-                double userWeight = genome.getProperty(Genome.USER_WEIGHT);
-                fitness = userRating * userWeight + autoRating * (1 - userWeight);
-                genome.setProperty(Genome.FITNESS, fitness);
+            Double autoRating = genome.getProperty(Genome.AUTO_RATING);
+            if (autoRating == null) {
+                autoRating = autoRate(genome, population, getMonitor().subTask(1));
+                genome.setProperty(Genome.AUTO_RATING, autoRating);
+            } else {
+                getMonitor().worked(1);
             }
+            
+            double userRating = genome.getProperty(Genome.USER_RATING);
+            double userWeight = genome.getProperty(Genome.USER_WEIGHT);
+            double fitness = userRating * userWeight + autoRating * (1 - userWeight);
+            genome.setProperty(Genome.FITNESS, fitness);
         }
         
         // sort the individuals by descending fitness
         Collections.sort(population);
+        
+        getMonitor().done();
     }
     
     /**

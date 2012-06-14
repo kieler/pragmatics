@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Random;
 
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
@@ -34,18 +35,13 @@ public abstract class AbstractEvolutionaryAlgorithm {
      * dummy if you don't want an operation to be done.
      */
     private static final IEvolutionaryOperation NULL_OPERATION = new IEvolutionaryOperation() {
-            /**
-             * {@inheritDoc}
-             */
             public void process(final Population thepopulation) {
                 // Intentionally left empty.
             }
-    
-            /**
-             * {@inheritDoc}
-             */
-            public void setRandom(final Random random) {
-            }
+            public void setRandom(final Random random) { }
+            public void reset() { }
+            public void reset(final IKielerProgressMonitor monitor) { }
+            public void setProgressMonitor(final IKielerProgressMonitor monitor) { }
     };
 
     /** The number of the current generation. */
@@ -89,13 +85,13 @@ public abstract class AbstractEvolutionaryAlgorithm {
         generationNumber++;
         progressMonitor.begin("Evolution cycle " + generationNumber, 1 + 1 + 1 + 1);
         
-        crossover();
+        crossover(progressMonitor.subTask(1));
         
-        mutate();
+        mutate(progressMonitor.subTask(1));
         
-        evaluate();
+        evaluate(progressMonitor.subTask(1));
         
-        survive();
+        survive(progressMonitor.subTask(1));
         
         progressMonitor.done();
     }
@@ -117,14 +113,17 @@ public abstract class AbstractEvolutionaryAlgorithm {
     public final void setPopulation(final Population p) {
         generationNumber = 0;
         this.population = p;
-        evaluate();
+        evaluate(new BasicProgressMonitor());
     }
 
     /**
      * Determines fitness values for all individuals and sorts the individuals by this fitness,
      * with highest fitness first.
+     * 
+     * @param monitor a progress monitor
      */
-    protected final void evaluate() {
+    protected final void evaluate(final IKielerProgressMonitor monitor) {
+        evaluationOperation.reset(monitor);
         evaluationOperation.process(population);
     }
 
@@ -136,8 +135,11 @@ public abstract class AbstractEvolutionaryAlgorithm {
      * single one. The genetic material of two or more parent individuals is put
      * together to produce one or more offspring. How this is done may vary
      * widely among different implementations.
+     * 
+     * @param monitor a progress monitor
      */
-    protected final void crossover() {
+    protected final void crossover(final IKielerProgressMonitor monitor) {
+        crossoverOperation.reset(monitor);
         crossoverOperation.process(population);
     }
 
@@ -145,8 +147,11 @@ public abstract class AbstractEvolutionaryAlgorithm {
      * Mutates offspring, depending on some mutation strategy. The mutation
      * operation serves to introduce new genetic material into the population by
      * altering the existing material in a random fashion.
+     * 
+     * @param monitor a progress monitor
      */
-    protected final void mutate() {
+    protected final void mutate(final IKielerProgressMonitor monitor) {
+        mutationOperation.reset(monitor);
         mutationOperation.process(population);
     }
 
@@ -157,8 +162,11 @@ public abstract class AbstractEvolutionaryAlgorithm {
      * strategy, only newly generated individuals or also parent individuals may
      * be considered for survival. The fitness of an individual should have a
      * major influence on its chance for survival.
+     * 
+     * @param monitor a progress monitor
      */
-    protected final void survive() {
+    protected final void survive(final IKielerProgressMonitor monitor) {
+        survivalOperation.reset(monitor);
         survivalOperation.process(population);
     }
 
