@@ -119,6 +119,10 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.nodePlace">
          </knownOption>
+         <knownOption
+               default="true"
+               option="de.cau.cs.kieler.klay.layered.edgeBends">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -227,6 +231,15 @@
             id="de.cau.cs.kieler.klay.layered.portAnchor"
             name="Port Anchor Offset"
             type="object">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="true"
+            description="Tells the BK node placer to try to reduce edge bends. Otherwise it tries a more balanced placement."
+            id="de.cau.cs.kieler.klay.layered.edgeBends"
+            name="Less Edge Bends"
+            type="boolean">
       </layoutOption>
    </extension>
 
