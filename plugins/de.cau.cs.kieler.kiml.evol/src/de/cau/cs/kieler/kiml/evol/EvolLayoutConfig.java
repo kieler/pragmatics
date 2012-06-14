@@ -58,7 +58,7 @@ public class EvolLayoutConfig implements ILayoutConfig {
             context.setProperty(EVOL_MODEL, model);
             if (context.getProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS)) {
                 Gene<?> algorithmGene = model.getSelected().find(LayoutOptions.ALGORITHM.getId());
-                if (algorithmGene != null) {
+                if (algorithmGene != null && algorithmGene.getValue() != null) {
                     String algorithm = (String) GenomeFactory.translateFromGene(algorithmGene);
                     
                     // set layout algorithm identifier for the content
@@ -82,7 +82,7 @@ public class EvolLayoutConfig implements ILayoutConfig {
         LayoutEvolutionModel model = context.getProperty(EVOL_MODEL);
         if (model != null) {
             Gene<?> gene = model.getSelected().find(optionData.getId());
-            if (gene != null) {
+            if (gene != null && gene.getValue() != null) {
                 return GenomeFactory.translateFromGene(gene);
             }
         }
@@ -97,9 +97,12 @@ public class EvolLayoutConfig implements ILayoutConfig {
         if (model != null) {
             LayoutDataService dataService = LayoutDataService.getInstance();
             for (Gene<?> gene : model.getSelected().getGenes()) {
-                LayoutOptionData<?> optionData = dataService.getOptionData(gene.getTypeInfo().getId());
-                if (optionData != null) {
-                    graphData.setProperty(optionData, GenomeFactory.translateFromGene(gene));
+                if (gene.getValue() != null) {
+                    LayoutOptionData<?> optionData = dataService.getOptionData(
+                            gene.getTypeInfo().getId());
+                    if (optionData != null) {
+                        graphData.setProperty(optionData, GenomeFactory.translateFromGene(gene));
+                    }
                 }
             }
         }

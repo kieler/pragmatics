@@ -33,54 +33,52 @@ public final class Gene<T extends Comparable<? super T>> {
     /** The value of this gene. */
     private final T value;
     /** Whether the gene is active or not. */
-    private boolean active;
+    private final boolean active;
     
     /**
      * Creates a new gene. The gene is initially active.
      * 
-     * @param value
-     *            the value
-     * @param typeInfo
-     *            the type information
+     * @param value the value
+     * @param typeInfo the type information
+     * @param active whether the new gene shall be active
      * @param <S> type of contained values
      * @return a new gene
      */
     @SuppressWarnings("unchecked")
     public static <S extends Comparable<? super S>> Gene<S> create(final S value,
-            final TypeInfo<?> typeInfo) {
+            final TypeInfo<?> typeInfo, final boolean active) {
         if (typeInfo == null) {
             throw new NullPointerException();
         }
-        Gene<S> newGene = new Gene<S>(value, (TypeInfo<S>) typeInfo);
-        newGene.active = true;
+        Gene<S> newGene = new Gene<S>(value, (TypeInfo<S>) typeInfo, active);
         return newGene;
     }
     
     /**
      * Creates a new gene from an existing one.
      * 
-     * @param gene
-     *            the gene from which properties shall be copied
+     * @param gene the gene from which properties shall be copied
+     * @param active whether the new gene shall be active
      * @param <S> type of contained values
      * @return a new gene
      */
-    public static <S extends Comparable<? super S>> Gene<S> create(final Gene<S> gene) {
-        Gene<S> newGene = new Gene<S>(gene.value, gene.typeInfo);
-        newGene.active = gene.active;
+    public static <S extends Comparable<? super S>> Gene<S> create(final Gene<S> gene,
+            final boolean active) {
+        Gene<S> newGene = new Gene<S>(gene.value, gene.typeInfo, active);
         return newGene;
     }
     
     /**
      * Creates a new abstract gene instance.
      *
-     * @param theValue
-     *            the value
-     * @param theTypeInfo
-     *            the type information
+     * @param theValue the value
+     * @param theTypeInfo the type information
+     * @param theactive the active status
      */
-    private Gene(final T theValue, final TypeInfo<T> theTypeInfo) {
+    private Gene(final T theValue, final TypeInfo<T> theTypeInfo, final boolean theactive) {
         this.value = theValue;
         this.typeInfo = theTypeInfo;
+        this.active = theactive;
     }
     
     /**
@@ -88,7 +86,9 @@ public final class Gene<T extends Comparable<? super T>> {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object instanceof Gene) {
+        if (this == object) {
+            return true;
+        } else if (object instanceof Gene) {
             Gene<?> other = (Gene<?>) object;
             return this.typeInfo.getId().equals(other.typeInfo.getId())
                     && this.value == null ? other.value == null
@@ -146,6 +146,22 @@ public final class Gene<T extends Comparable<? super T>> {
     }
     
     /**
+     * Returns the value of the gene transformed to an integer number.
+     * 
+     * @return the value as integer number
+     */
+    public int intValue() {
+        if (value instanceof Integer) {
+            return (Integer) value;
+        } else if (value instanceof Boolean) {
+            return (Boolean) value ? 1 : 0;
+        } else if (value instanceof Float) {
+            return Math.round((Float) value);
+        }
+        return 0;
+    }
+    
+    /**
      * Returns the value of the gene interpreted as list index. This is only applicable to
      * the gene types {@code LAYOUT_TYPE} and {@code LAYOUT_ALGO}.
      * 
@@ -189,15 +205,6 @@ public final class Gene<T extends Comparable<? super T>> {
      */
     public boolean isActive() {
         return active;
-    }
-    
-    /**
-     * Sets the active status.
-     * 
-     * @param theActive the new active status 
-     */
-    public void setActive(final boolean theActive) {
-        this.active = theActive;
     }
     
 }

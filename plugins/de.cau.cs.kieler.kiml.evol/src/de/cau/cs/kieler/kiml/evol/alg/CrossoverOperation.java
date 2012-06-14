@@ -56,6 +56,9 @@ public class CrossoverOperation extends AbstractAlgorithm implements IEvolutiona
     private static final int MIN_CROSS_OVERS = 1;
     /** Maximum number of individuals to create by cross over. */
     private static final int MAX_CROSS_OVERS = 30;
+    
+    /** factor by which the user rating fades for new crossovers. */
+    private static final double USER_RATING_FADE = 0.8;
 
     /** the random number generator. */
     private Random random;
@@ -111,7 +114,7 @@ public class CrossoverOperation extends AbstractAlgorithm implements IEvolutiona
         Genome newGenome = new Genome(size);
         
         // iterate genes and create a recombination for each one
-        LayoutTypeData typeData = null;
+        LayoutTypeData layoutTypeData = null;
         int algoIndex = 0;
         for (int geneIndex = 0; geneIndex < size; geneIndex++) {
             Gene<?>[] genes = new Gene[genomes.length];
@@ -119,21 +122,25 @@ public class CrossoverOperation extends AbstractAlgorithm implements IEvolutiona
                 assert genomes[genomeIndex].getSize() == size;
                 Gene<?> gene = genomes[genomeIndex].getGenes().get(geneIndex);
                 // check whether the layout algorithm has the correct layout type
-                if (typeData != null && gene.getTypeInfo().getGeneType() == GeneType.LAYOUT_ALGO
-                        && !typeData.getId().equals(
+                if (layoutTypeData != null && gene.getTypeInfo().getGeneType() == GeneType.LAYOUT_ALGO
+                        && !layoutTypeData.getId().equals(
                                 ((LayoutAlgorithmData) gene.listValue()).getType())) {
-                    genes[genomeIndex] = Gene.create(null, gene.getTypeInfo());
+                    genes[genomeIndex] = Gene.create(null, gene.getTypeInfo(), false);
                 } else {
                     genes[genomeIndex] = gene;
                 }
             }
-            Gene<?> newGene = recombine(genes);
+            
+            // create a recombination of the collected genes
+            GeneType geneType = genes[algoIndex].getTypeInfo().getGeneType();
+            boolean active = geneType == GeneType.LAYOUT_TYPE || geneType == GeneType.LAYOUT_ALGO
+                    || genes[algoIndex].isActive();
+            Gene<?> newGene = recombine(active, genes);
             newGenome.getGenes().add(newGene);
             
-            GeneType geneType = newGene.getTypeInfo().getGeneType();
             if (geneType == GeneType.LAYOUT_TYPE) {
                 // the layout type was crossed - get the new type to check the algorithm gene
-                typeData = (LayoutTypeData) newGene.listValue();
+                layoutTypeData = (LayoutTypeData) newGene.listValue();
             } else if (geneType == GeneType.LAYOUT_ALGO) {
                 // the algorithm was crossed - get the index of the new algorithm
                 for (int genomeIndex = 0; genomeIndex < genomes.length; genomeIndex++) {
@@ -142,9 +149,6 @@ public class CrossoverOperation extends AbstractAlgorithm implements IEvolutiona
                         break;
                     }
                 }
-            } else {
-                // the active flag is copied from the genome that gave the algorithm
-                newGene.setActive(genes[algoIndex].isActive());
             }
         }
         
@@ -158,7 +162,7 @@ public class CrossoverOperation extends AbstractAlgorithm implements IEvolutiona
         }
         if (weightSum > 0) {
             newGenome.setProperty(Genome.USER_RATING, ratingSum / weightSum);
-            newGenome.setProperty(Genome.USER_WEIGHT, weightSum / genomes.length);
+            newGenome.setProperty(Genome.USER_WEIGHT, weightSum / genomes.length * USER_RATING_FADE);
         }
         return newGenome;
     }
@@ -168,60 +172,66 @@ public class CrossoverOperation extends AbstractAlgorithm implements IEvolutiona
      * For others one of the given genes is randomly picked with uniform probability.
      * Some of the gene values may be {@code null}.
      *
-     * @param genes
-     *            genes that are to be recombined
+     * @param active whether the new gene shall be active
+     * @param genes genes that are to be recombined
      * @return a new gene that is a cross over of the given genes
      */
-    public Gene<?> recombine(final Gene<?>... genes) {
+    public Gene<?> recombine(final boolean active, final Gene<?>... genes) {
+        assert genes.length > 1;
         Gene<?> oldGene = genes[0];
-        if (genes.length > 1) {
-            GeneType geneType = oldGene.getTypeInfo().getGeneType();
-            switch (geneType) {
-            case INTEGER:
-            case FLOAT:
-            {
-                // return average of the genes
-                float sum = 0;
-                int count = 0;
-                for (Gene<?> gene : genes) {
-                    if (gene.getValue() != null) {
-                        sum += gene.floatValue();
-                        count++;
-                    }
+        GeneType geneType = oldGene.getTypeInfo().getGeneType();
+        switch (geneType) {
+        case INTEGER:
+        case FLOAT:
+        {
+            // return average of the genes
+            float sum = 0;
+            int count = 0;
+            for (Gene<?> gene : genes) {
+                if (gene.getValue() != null) {
+                    sum += gene.floatValue();
+                    count++;
                 }
-                if (count > 0) {
-                    float average = sum / count;
-                    if (geneType == GeneType.INTEGER) {
-                        return Gene.create(Math.round(average), oldGene.getTypeInfo());
-                    } else {
-                        return Gene.create(average, oldGene.getTypeInfo());
-                    }
-                }
-                break;
             }
-                
-            default:
-                int count = 0;
+            if (count > 0) {
+                float average = sum / count;
+                if (geneType == GeneType.INTEGER) {
+                    return Gene.create(Math.round(average), oldGene.getTypeInfo(), active);
+                } else {
+                    return Gene.create(average, oldGene.getTypeInfo(), active);
+                }
+            }
+            break;
+        }
+            
+        default:
+            int count = 0;
+            for (Gene<?> gene : genes) {
+                if (gene.getValue() != null) {
+                    count++;
+                }
+            }
+            if (count > 0) {
+                // select a random gene that is active
+                int randomPos = random.nextInt(count);
+                int pos = 0;
                 for (Gene<?> gene : genes) {
                     if (gene.getValue() != null) {
-                        count++;
-                    }
-                }
-                if (count > 0) {
-                    int randomPos = random.nextInt(count);
-                    int pos = 0;
-                    for (Gene<?> gene : genes) {
-                        if (gene.getValue() != null) {
-                            if (pos == randomPos) {
-                                return Gene.create(gene);
-                            }
-                            pos++;
+                        if (pos == randomPos) {
+                            oldGene = gene;
+                            break;
                         }
+                        pos++;
                     }
                 }
             }
         }
-        return Gene.create(oldGene);
+        
+        if (oldGene.isActive() == active) {
+            return oldGene;
+        } else {
+            return Gene.create(oldGene, active);
+        }
     }
 
 
