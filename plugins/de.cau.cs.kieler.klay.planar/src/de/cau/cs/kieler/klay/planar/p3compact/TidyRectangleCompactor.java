@@ -633,65 +633,84 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
      * @return
      */
     private void findExternalFace() {
-        for (PFace face : graph.getFaces()) {
+        for (PFace currentFace : graph.getFaces()) {
 
             // store the visited edges, this is needed for uniqueness in the facesides.
             List<PEdge> visitedEdges = new ArrayList<PEdge>();
             // choose a arbitrary edge of the face.
-            PEdge startEdge = face.adjacentEdges().iterator().next();
+            PEdge startEdge = currentFace.adjacentEdges().iterator().next();
             PEdge currentEdge = startEdge;
 
             // needed for avoid duplicate direction searches.
             // if a edge has a node as target and a other edge the node as source there can
             // become confusion. This variables helps the wrong directions.
             PNode previousNode = null;
+            PNode currentNode = null;
+            List<Pair<PEdge, OrthogonalAngle>> angles;
             boolean finish = false;
             boolean isExternal = true;
             while (!finish) {
                 // choose a arbitrary node of the edge, which is not visited before.
-                PNode currentNode = currentEdge.getTarget() == previousNode ? currentEdge
+                 currentNode = currentEdge.getTarget() == previousNode ? currentEdge
                         .getSource() : currentEdge.getTarget();
                 previousNode = currentNode;
-                List<Pair<PEdge, OrthogonalAngle>> angles = this.orthogonal.getAngles(currentNode);
+                angles = this.orthogonal.getAngles(currentNode);
                 // first get the current edge to determine the direction of the next edge,
-                // if the next edge a face edge handle edge convenient,
+                // if the next edge is a face edge handle edge convenient,
+
                 int currentIndex = -1;
                 int previousIndex = -1;
 
                 // find the currentEdge and store the index.
                 for (int i = 0; i < angles.size(); i++) {
-                    if (angles.get(i).getFirst().equals(currentEdge)) {
+                    if (angles.get(i).getFirst() == currentEdge) {
                         currentIndex = i;
                         break;
                     }
                 }
                 // filter next edge of the face.
-                boolean hasFound = false;
-                while (!hasFound) {
+                boolean otherface = false;
+                int directionCounter = 0;
+
+                Pair<PEdge, OrthogonalAngle> pair;
+                while (true) {
                     previousIndex = currentIndex;
                     currentIndex = (currentIndex + 1) < angles.size() ? currentIndex + 1 : 0;
-                    Pair<PEdge, OrthogonalAngle> pair = angles.get(currentIndex);
-                    if (face.isAdjacent(pair.getFirst()) && !visitedEdges.contains(pair.getFirst())) {
+                    pair = angles.get(currentIndex);
+                    if (!otherface && currentFace.isAdjacent(pair.getFirst())) {
+                        // TODO is the currentEdge a bend edge, use the previous index to filter it
                         currentEdge = pair.getFirst();
-                        // look at the direction of the previous edge to determine the direction
-                        switch (angles.get(previousIndex).getSecond()) {
-                        case STRAIGHT:
-                            break;
-                        default:
-                            // can only be right or left and doesn`t matter which of them, because
-                            // of the invariant of rectangle shape faces.
-                            // if the direction isn't straight, there is a faceside change!
+                        if (angles.get(previousIndex).getSecond() != OrthogonalAngle.STRAIGHT) {
                             if (currentNode.getAdjacentEdgeCount() > 2) {
+                                finish = true;
+                                isExternal = false;
+                            }
+                        }
+                        break;
+                    } else {
+                        otherface = true;
+                        if (angles.get(previousIndex).getSecond() == OrthogonalAngle.STRAIGHT) {
+                            directionCounter += 2;
+                        } else {
+                            // right is not possible, because than the first if statement would
+                            // used!
+                            directionCounter += 1;
+                        }
+
+                        if (currentFace.isAdjacent(pair.getFirst())) {
+                            if (directionCounter == 2) {
+                                // straight line, go along this edge
+                                currentEdge = pair.getFirst();
+
+                            } else {
+                                // then there is a bendpoint with more than 2 edges,
+                                // and the external face has only bendpoints with 2 edges.
                                 finish = true;
                                 isExternal = false;
                             }
                             break;
                         }
-                        visitedEdges.add(currentEdge);
-                        System.out.println(currentEdge);
-                        hasFound = true;
                     }
-
                 }
 
                 if (currentEdge == startEdge) {
@@ -699,11 +718,10 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                 }
             }
             if (isExternal) {
-                this.graph.setExternalFace(face);
-                this.externalFace = face;
+                this.graph.setExternalFace(currentFace);
+                this.externalFace = currentFace;
                 break;
             }
         }
     }
-
 }

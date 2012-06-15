@@ -63,21 +63,21 @@ public class PGraphFactory {
      * @return a full graph with the given number of nodes
      */
     public PGraph createFullGraph(final int nodes) {
-        PGraph graph = new PGraph();
+        PGraph pgraph = new PGraph();
         PNode[] nodeArray = new PNode[nodes];
 
         // Create nodes
         for (int i = 0; i < nodes; i++) {
-            nodeArray[i] = graph.addNode();
+            nodeArray[i] = pgraph.addNode();
         }
 
         // Create edges
         for (int i = 0; i < nodes; i++) {
             for (int j = 0; j < i; j++) {
-                graph.addEdge(nodeArray[i], nodeArray[j]);
+                pgraph.addEdge(nodeArray[i], nodeArray[j]);
             }
         }
-        return graph;
+        return pgraph;
     }
 
     /**
@@ -90,44 +90,44 @@ public class PGraphFactory {
      * @return a random graph
      */
     public PGraph createRandomGraph(final int nodes, final int edges) {
-        PGraph graph = new PGraph();
+        PGraph pgraph = new PGraph();
         PNode[] nodeArray = new PNode[nodes];
 
         // Create nodes
         for (int i = 0; i < nodes; i++) {
-            nodeArray[i] = graph.addNode();
+            nodeArray[i] = pgraph.addNode();
         }
 
         // Create edges
         for (int i = 0; i < edges; i++) {
             int i1 = (int) Math.floor(Math.random() * nodes);
             int i2 = (int) Math.floor(Math.random() * nodes);
-            graph.addEdge(nodeArray[i1], nodeArray[i2]);
+            pgraph.addEdge(nodeArray[i1], nodeArray[i2]);
         }
-        return graph;
+        return pgraph;
     }
 
     /**
      * Create a graph base on an existing graph. This method does not guarantee an exact copy of the
      * graph (e.g. indices may be different), but the embedding should be equal.
      * 
-     * @param graph
+     * @param pgraph
      *            the graph to copy
      * @return a copy of the given graph
      */
-    public PGraph createGraphCopy(final PGraph graph) {
+    public PGraph createGraphCopy(final PGraph pgraph) {
         // TODO check for embedding constraints (ports)
         // TODO recurse over children in compound nodes
         PGraph copy = new PGraph();
-        HashMap<PNode, PNode> nodes = new HashMap<PNode, PNode>(graph.getNodeCount() * 2);
+        HashMap<PNode, PNode> nodes = new HashMap<PNode, PNode>(pgraph.getNodeCount() * 2);
 
         // Adding Nodes
-        for (PNode node : graph.getNodes()) {
+        for (PNode node : pgraph.getNodes()) {
             nodes.put(node, copy.addNode(node.getType()));
         }
 
         // Adding Edges
-        for (PEdge edge : graph.getEdges()) {
+        for (PEdge edge : pgraph.getEdges()) {
             if (!nodes.containsKey(edge.getSource()) || !nodes.containsKey(edge.getTarget())) {
                 throw new InconsistentGraphModelException(
                         "Attempted to link non-existent nodes by an edge.");
@@ -143,16 +143,16 @@ public class PGraphFactory {
      * Generate the dual graph of another graph. The dual graph is a graph, that has a node for
      * every face in the original graph, and edges between neighboring faces.
      * 
-     * @param graph
+     * @param pgraph
      *            the graph to create the dual graph of
      * @return the dual graph to this graph
      */
-    public PGraph createDualGraph(final PGraph graph) {
-        HashMap<PFace, PNode> map = new HashMap<PFace, PNode>(graph.getFaceCount() * 2);
+    public PGraph createDualGraph(final PGraph pgraph) {
+        HashMap<PFace, PNode> map = new HashMap<PFace, PNode>(pgraph.getFaceCount() * 2);
         PGraph dual = new PGraph();
 
         // Add the dual nodes from graph faces
-        for (PFace face : graph.getFaces()) {
+        for (PFace face : pgraph.getFaces()) {
             PNode node = dual.addNode();
             node.setProperty(Properties.TODUALGRAPH, face);
             face.setProperty(Properties.TODUALGRAPH, node);
@@ -160,7 +160,7 @@ public class PGraphFactory {
         }
 
         // Build the edges based on the neighboring faces
-        for (PEdge edge : graph.getEdges()) {
+        for (PEdge edge : pgraph.getEdges()) {
             PNode source = map.get(edge.getLeftFace());
             PNode target = map.get(edge.getRightFace());
             PEdge e = dual.addEdge(source, target, false);
@@ -182,20 +182,23 @@ public class PGraphFactory {
         // TODO check for directed/undirected edges
         // TODO check for embedding constraints (ports)
         // TODO recurse over children in compound nodes
-        PGraph graph = new PGraph();
+
+        // TODO the embedding of the graph is not the same as in the diagram.
+        // See kite example as example. Should this be the same?
+        PGraph pgraph = new PGraph();
         HashMap<KNode, PNode> map = new HashMap<KNode, PNode>(kgraph.getChildren().size() * 2);
-        graph.setProperty(Properties.ORIGIN, kgraph);
+        pgraph.setProperty(Properties.ORIGIN, kgraph);
 
         // Adding all user properties to the graph
-        graph.copyProperties(kgraph.getData(KShapeLayout.class));
+        pgraph.copyProperties(kgraph.getData(KShapeLayout.class));
 
         // Adding Nodes
         for (KNode knode : kgraph.getChildren()) {
             PNode node = null;
             if (knode.getChildren().size() > 0) {
-                node = graph.addNode(NodeType.COMPOUND);
+                node = pgraph.addNode(NodeType.COMPOUND);
             } else {
-                node = graph.addNode(NodeType.NORMAL);
+                node = pgraph.addNode(NodeType.NORMAL);
             }
             node.setProperty(Properties.ORIGIN, knode);
             map.put(knode, node);
@@ -213,12 +216,12 @@ public class PGraphFactory {
                 // FIXME planarization fails if there are multi-edges or
                 // self-loops, so suppress them
                 if (!source.isAdjacent(target) && source != target) {
-                    PEdge edge = graph.addEdge(source, target, true);
+                    PEdge edge = pgraph.addEdge(source, target, true);
                     edge.setProperty(Properties.ORIGIN, kedge);
                 }
             }
         }
-        return graph;
+        return pgraph;
     }
 
     /**
@@ -232,7 +235,7 @@ public class PGraphFactory {
      */
     public PGraph createGraphFromDIMACS(final File dimacs) throws IOException {
         BufferedReader input = new BufferedReader(new FileReader(dimacs));
-        PGraph graph = new PGraph();
+        PGraph pgraph = new PGraph();
         PNode[] nodes = null;
 
         String line = input.readLine();
@@ -246,7 +249,7 @@ public class PGraphFactory {
                 int n = Integer.parseInt(items[2]);
                 nodes = new PNode[n + 1];
                 for (int i = 0; i < nodes.length; i++) {
-                    nodes[i] = graph.addNode();
+                    nodes[i] = pgraph.addNode();
                 }
                 break;
 
@@ -257,7 +260,7 @@ public class PGraphFactory {
                 }
                 int n1 = Integer.parseInt(items[1]);
                 int n2 = Integer.parseInt(items[2]);
-                graph.addEdge(nodes[n1], nodes[n2], false);
+                pgraph.addEdge(nodes[n1], nodes[n2], false);
                 break;
 
             default:
@@ -268,7 +271,7 @@ public class PGraphFactory {
             line = input.readLine();
         }
         input.close();
-        return graph;
+        return pgraph;
     }
 
     /**
@@ -291,28 +294,143 @@ public class PGraphFactory {
 
         startY = grid.length * spacing + borderSpacing;
 
+        // TODO introduce minimum spacing or use spacing above as minimum.
+        float minSpacing = 40;
+
         // first determine original nodes coordinates.
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid.length; y++) {
                 if (grid[x][y] != null) {
-                    if (grid[x][y].hasProperties()
-                            && grid[x][y].getProperty(Properties.ORIGIN) instanceof KNode) {
-                        // if there is a original knode for that pnode, then set it to the diagram,
-                        // depending on spacing and border_spacing.
-                        KShapeLayout nodeLayout = ((KNode) grid[x][y]
-                                .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
-                        nodeLayout.setXpos(startX + x * spacing);
-                        nodeLayout.setYpos(startY - y * spacing);
-                    }
+                    grid[x][y].setPostion(startX + x * spacing, startY - y * spacing);
                 }
             }
         }
 
-        // TODO determine the maximal segment width for the horizontal and vertical direction!
-        for (int x = 0; x < grid.length; x++) {
-            for (int y = 0; y < grid.length; y++) {
+        // arrange nodes if minSpacing of nodes is not ensured for the horizontal and
+        // vertical direction!
+        // horizontal go through: take lower and upper nodes and go horizontal. check
+        // all nodes for minspace condition.
+        for (int y = 0; y < grid.length - 1; y++) {
+            float y1;
+            float y2;
+            float sum;
+            float minDistance = minSpacing;
+            // recognize a too small distance between two nodes.
+            for (int x = 0; x < grid.length; x++) {
+                if (grid[x][y] != null && grid[x][y].hasProperties()) {
+                    KNode property = (KNode) grid[x][y].getProperty(Properties.ORIGIN);
+                    KShapeLayout data = property.getData(KShapeLayout.class);
+                    y1 = data.getYpos() - data.getHeight() / 2;
+                } else {
+                    // bendpoint or no point
+                    y1 = startY - y * spacing;
+                }
+                if (grid[x][y + 1] != null && grid[x][y + 1].hasProperties()) {
+                    KNode property = (KNode) grid[x][y + 1].getProperty(Properties.ORIGIN);
+                    KShapeLayout data = property.getData(KShapeLayout.class);
+                    y2 = data.getYpos() + data.getHeight() / 2;
+                } else {
+                    // bendpoint or no point
+                    y2 = startY - (y + 1) * spacing;
+                }
+                sum = y1 - y2;
+                if (sum < minDistance) {
+                    // save the biggest deviation of minSum.
+                    minDistance = sum;
+                }
+            }
+            if (minDistance < minSpacing) {
+
+                float restDistance = (minSpacing - minDistance) / 2;
+
+                // if too small distance is found, adjust the grid position according this distance.
+                // move all grid segments in bottom direction.
+                for (int i = 0; i <= y; i++) {
+                    for (int x = 0; x < grid.length; x++) {
+                        if (grid[x][i] != null) {
+                            KShapeLayout nodeLayout = ((KNode) grid[x][i]
+                                    .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
+                            nodeLayout.setYpos(nodeLayout.getYpos() + restDistance);
+                        }
+                    }
+                }
+
+                // move all grid segments in top direction.
+                for (int i = y + 1; i < grid.length; i++) {
+                    for (int x = 0; x < grid.length; x++) {
+                        if (grid[x][i] != null) {
+                            KShapeLayout nodeLayout = ((KNode) grid[x][i]
+                                    .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
+                            nodeLayout.setYpos(nodeLayout.getYpos() - restDistance);
+                        }
+                    }
+
+                }
 
             }
+
+        }
+
+        // horizontal go through.
+
+        for (int x = 0; x < grid.length - 1; x++) {
+            float x1;
+            float x2;
+            float sum;
+            float minDistance = minSpacing;
+            // recognize a too small distance between two nodes.
+            for (int y = 0; y < grid.length; y++) {
+                if (grid[x][y] != null && grid[x][y].hasProperties()) {
+                    KNode property = (KNode) grid[x][y].getProperty(Properties.ORIGIN);
+                    KShapeLayout data = property.getData(KShapeLayout.class);
+                    x1 = data.getXpos() + data.getWidth() / 2;
+                } else {
+                    // bendpoint or no point
+                    x1 = startX + x * spacing;
+                }
+                if (grid[x + 1][y] != null && grid[x + 1][y].hasProperties()) {
+                    KNode property = (KNode) grid[x + 1][y].getProperty(Properties.ORIGIN);
+                    KShapeLayout data = property.getData(KShapeLayout.class);
+                    x2 = data.getXpos() - data.getWidth() / 2;
+                } else {
+                    // bendpoint or no point
+                    x2 = startX + (x + 1) * spacing;
+                }
+                sum = x2 - x1;
+                if (sum < minDistance) {
+                    // adjust the grid.
+                    minDistance = sum;
+                }
+            }
+            if (minDistance < minSpacing) {
+                float restDistance = (minSpacing - minDistance) / 2;
+
+                // if too small distance is found, adjust the grid position according this distance.
+                // move all grid segments in bottom direction.
+                for (int i = 0; i <= x; i++) {
+                    for (int y = 0; y < grid.length; y++) {
+                        if (grid[i][y] != null) {
+                            // TODO this is not enough, because the bendpoints aren't adjusted!!!!
+                            KShapeLayout nodeLayout = ((KNode) grid[i][y]
+                                    .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
+                            nodeLayout.setYpos(nodeLayout.getXpos() - restDistance);
+                        }
+                    }
+                }
+
+                // move all grid segments in top direction.
+                for (int i = x + 1; i < grid.length; i++) {
+                    for (int y = 0; y < grid.length; y++) {
+                        if (grid[i][y] != null) {
+                            KShapeLayout nodeLayout = ((KNode) grid[i][y]
+                                    .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
+                            nodeLayout.setYpos(nodeLayout.getXpos() + restDistance);
+                        }
+                    }
+                }
+
+            }
+
         }
 
         // construct bendpoints for each node for which there is no original node.
@@ -408,7 +526,6 @@ public class PGraphFactory {
                 // then it has to be the target
             } // TODO check if node1 can be removed!
             nodeEdge2.getBendPoints().add(startX + x * spacing, startY - y * spacing);
-
         } else {
             boolean found = false;
             while (!found) {

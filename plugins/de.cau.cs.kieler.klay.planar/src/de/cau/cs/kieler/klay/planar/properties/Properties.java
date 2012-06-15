@@ -68,6 +68,9 @@ public final class Properties {
     public static final IProperty<NodeType> NODE_TYPE = new Property<NodeType>("nodeType",
             NodeType.NORMAL);
 
+    public static final IProperty<Boolean> RECT_SHAPE_DUMMY = new Property<Boolean>(
+            "rectShapeDummy", false);
+
     // =========================== EDGE PROPERTIES ========================================
 
     /** Edge type. */

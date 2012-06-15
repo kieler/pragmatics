@@ -105,15 +105,15 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         }
 
         // Creating sink nodes for every graph face
+        // TODO that isn't enough!, we have to determine the external face explicit
         boolean internal = false;
         Iterable<PFace> faces2 = this.graph.getFaces();
         for (PFace face : faces2) {
             int supply = -1 * face.getAdjacentNodeCount();
-            if (internal) {
-                supply += MAXDEGREE;
-            } else {
-                internal = true;
+            if (face == graph.getExternalFace(false)) {
                 supply -= MAXDEGREE;
+            } else {
+                supply += MAXDEGREE;
             }
 
             PNode newnode = network.addNode(NodeType.FACE);

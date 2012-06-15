@@ -168,7 +168,7 @@ public class PGraph extends PNode implements Serializable {
     /**
      * Add a new node to the graph. This adds a node on the given {@code PEdge} to the graph. The
      * edge will be split into two edges and all references to the new node in neighboring edges and
-     * faces will be set correctly.
+     * faces is set correctly.
      * 
      * @param edge
      *            the edge to split up by the node
@@ -426,7 +426,10 @@ public class PGraph extends PNode implements Serializable {
      * @return {@code Iterable} containing all graph faces
      */
     public Iterable<PFace> getFaces() {
-        this.generateFaces();
+        if (this.changedFaces) {
+            generateFaces();
+            getExternalFace(true);
+        }
         return this.faces;
     }
 
@@ -456,10 +459,10 @@ public class PGraph extends PNode implements Serializable {
      */
     void generateFaces() {
 
-        // Reset changed faces flag
-        if (!this.changedFaces) {
+        if (!changedFaces) {
             return;
         }
+        // Reset changed faces flag
         this.changedFaces = false;
 
         // Clear old face data
@@ -541,6 +544,7 @@ public class PGraph extends PNode implements Serializable {
 
                 } while (nextNode != start);
             }
+
         }
     }
 
@@ -707,9 +711,11 @@ public class PGraph extends PNode implements Serializable {
     /**
      * @return the externalFace
      */
-    public PFace getExternalFace(boolean wantsReCal) {
-        if (externalFace == null || wantsReCal) {
-            // TODO find external face, replace find external face of the compactors!
+    public PFace getExternalFace(final boolean wantsReCal) {
+        if (this.externalFace == null || wantsReCal) {
+            // choose the first found face, but it would be better to use useful properties
+            // to determine the external face.
+            this.externalFace = this.getFaces().iterator().next();
         }
         return externalFace;
     }

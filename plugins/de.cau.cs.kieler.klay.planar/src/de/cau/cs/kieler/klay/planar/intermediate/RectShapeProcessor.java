@@ -23,21 +23,12 @@ import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
-import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
  * 
- * <dl>
- * <dt>Precondition:</dt>
- * <dd>a layered graph; nodes are placed; edges are routed.</dd>
- * <dt>Postcondition:</dt>
- * <dd>there are no dummy nodes of type {@link NodeType#DUMMY}.</dd>
- * <dt>Slots:</dt>
- * <dd>After phase 4.</dd>
- * </dl>
  * 
  * @author pkl
  */
@@ -51,10 +42,12 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
      * {@inheritDoc}
      */
     public void process(final PGraph pgraph) {
-        getMonitor().begin("Remove dummynodes", 1);
+        getMonitor().begin("Rectangular shaping", 1);
         this.graph = pgraph;
         this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
         List<PEdge> edges;
+
+        // FIXME use addAll instead
 
         // Add a node for every bend in the orthogonal representation
         edges = new LinkedList<PEdge>();
@@ -70,10 +63,13 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         for (PEdge edge : pgraph.getEdges()) {
             edges.add(edge);
         }
+
         for (PEdge edge : edges) {
             addVirtuals(edge, edge.getSource());
             addVirtuals(edge, edge.getTarget());
         }
+
+        // TODO the addVirtuals don't work. use your own implementation.
 
         getMonitor().done();
     }
@@ -116,7 +112,7 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         int bends = 0;
 
         do {
-            Pair<PEdge, OrthogonalAngle> pair = this.nextEdge(nextNode, nextEdge);
+            Pair<PEdge, OrthogonalAngle> pair = nextCWEdge(nextNode, nextEdge);
             if (firstPair == null) {
                 firstPair = pair;
             }
@@ -149,7 +145,7 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
             }
             nextEdge = pair.getFirst();
             nextNode = nextNode.getAdjacentNode(nextEdge);
-
+            System.out.println("rect: " + nextNode);
             if (bends == 1) {
                 Pair<PNode, PEdge> newPair = this.graph.addNode(nextEdge);
                 PNode virtualNode = newPair.getFirst();
@@ -212,7 +208,11 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
      *            the edge
      * @return the next edge after the given edge
      */
-    private Pair<PEdge, OrthogonalAngle> nextEdge(final PNode node, final PEdge edge) {
+    private Pair<PEdge, OrthogonalAngle> nextCWEdge(final PNode node, final PEdge edge) {
+        // TODO uses the invariant, that edges around a node are in counterclockwise order.
+        // Hence we can use the edge with previous index to get the cw edge.
+
+        // old code
         Iterator<Pair<PEdge, OrthogonalAngle>> iter = this.orthogonal.getAngles(node).iterator();
         Pair<PEdge, OrthogonalAngle> pair = new Pair<PEdge, OrthogonalAngle>(null, null);
         PEdge currentEdge = null;
@@ -232,6 +232,27 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
             currentEdge = pair.getFirst();
         }
         return new Pair<PEdge, OrthogonalAngle>(currentEdge, currentAngle);
+
+        // List<Pair<PEdge, OrthogonalAngle>> angles = orthogonal.getAngles(node);
+        // for (int i = 0; i < angles.size(); i++) {
+        // if (angles.get(i).getFirst() == edge) {
+        //
+        // // pre previous
+        // int value = 0;
+        // if (i == 0) {
+        // value = angles.size() - 2;
+        // } else if (i == 1) {
+        // value = angles.size() - 1;
+        // } else {
+        // value = i - 2;
+        // }
+        // // return previous edge with pre previous angle.
+        // return new Pair<PEdge, OrthogonalAngle>(angles.get(
+        // (i == 0) ? angles.size() - 1 : i - 1).getFirst(), angles.get(value)
+        // .getSecond());
+        // }
+        // }
+        // return null;
     }
 
 }

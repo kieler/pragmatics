@@ -18,8 +18,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.ICondition;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.planar.graph.IEmbeddingConstraint.ConstraintType;
+import de.cau.cs.kieler.klay.planar.properties.Properties;
 import de.cau.cs.kieler.klay.planar.util.FilteredIterable;
 import de.cau.cs.kieler.klay.planar.util.IFunction;
 import de.cau.cs.kieler.klay.planar.util.MappedIterable;
@@ -465,4 +468,16 @@ public class PNode extends PShape implements Serializable {
         return super.getAllProperties() != null && !super.getAllProperties().isEmpty();
     }
 
+    public void setPostion(final Float x, final Float y) {
+        if (hasProperties() && getProperty(Properties.ORIGIN) instanceof KNode) {
+            KShapeLayout nodeLayout = ((KNode) getProperty(Properties.ORIGIN))
+                    .getData(KShapeLayout.class);
+            if (x != null) {
+                nodeLayout.setXpos(x);
+            }
+            if (y != null) {
+                nodeLayout.setYpos(y);
+            }
+        }
+    }
 }
