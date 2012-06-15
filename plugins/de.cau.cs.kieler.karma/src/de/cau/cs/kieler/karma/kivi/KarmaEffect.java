@@ -58,7 +58,7 @@ public class KarmaEffect extends AbstractEffect {
     private String layoutParam = null;
     private String figureParam = null;
     private String borderItemParam = null;
-    private Pair<Integer, Integer> figureSize = null;
+    private Pair<Integer, Integer> figureSize = new Pair<Integer, Integer>(-1, -1);
 
     private CollapseStatus collapseStatus = CollapseStatus.UNCHANGED;
 
@@ -102,7 +102,9 @@ public class KarmaEffect extends AbstractEffect {
         this.layoutParam = layoutParam;
         this.figureParam = figureParam;
         this.borderItemParam = borderItemParam;
-        this.figureSize = figureSize;
+        if (figureSize != null) {
+            this.figureSize = figureSize;
+        }
         if (collapseStatus != null) {
             this.collapseStatus = collapseStatus;
         }

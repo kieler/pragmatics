@@ -20,7 +20,6 @@ import java.util.Collections;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -43,14 +42,19 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
+ *  This class is responsible for transforming and exporting graphs from graphical diagrams.
+ * 
  * @author wah
  * 
  */
 public class GraphFileHandler {
-    private File sourceFile;
+    /** The source file to export.  */
+    private IPath sourceFile;
+    /** The target format to export file into ( without leading period ). */
     private String targetFormat;
+    /** The target directory to export file into. */
     private IPath targetDirectory;
-
+    /** The workspace directory. */    
     private IPath workspacePath = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 
     /**
@@ -58,11 +62,11 @@ public class GraphFileHandler {
      * @param sourceFile
      *            the source file
      * @param targetFormat
-     *            the target format(extension)
+     *            the target format(extension) without leading period
      * @param targetDirectory
      *            the target directory
      */
-    public GraphFileHandler(final File sourceFile, final String targetFormat,
+    public GraphFileHandler(final IPath sourceFile, final String targetFormat,
             final IPath targetDirectory) {
         super();
         this.sourceFile = sourceFile;
@@ -71,31 +75,17 @@ public class GraphFileHandler {
     }
 
     /**
-     * @return the Absolute sourceFile
-     */
-    public File getAbsoluteSourceFile() {
-        return sourceFile;
-    }
-
-    /**
      * @return the Workspace sourceFile
      */
     public File getWorkspaceSourceFile() {
-        return new File(sourceFile.toString().replaceFirst(workspacePath.toString(), "/"));
-    }
-
-    /**
-     * @return the Workspace sourceIPath
-     */
-    public IPath getAbsoluteSourceIPath() {
-        return new Path(sourceFile.toString());
+        return new File(sourceFile.toString());
     }
 
     /**
      * @param sourceFile
      *            the sourceFile to set
      */
-    public void setSourceFile(final File sourceFile) {
+    public void setSourceFile(final IPath sourceFile) {
         this.sourceFile = sourceFile;
     }
 
@@ -108,7 +98,7 @@ public class GraphFileHandler {
 
     /**
      * @param targetFormat
-     *            the targetFormat to set
+     *            the targetFormat to set (without leading period))
      */
     public void setTargetFormat(final String targetFormat) {
         this.targetFormat = targetFormat;
@@ -142,9 +132,10 @@ public class GraphFileHandler {
      */
     public IPath getWorkspaceTargetIPath() {
         // get the last dot position
-        int dotPos = this.sourceFile.getName().lastIndexOf(".");
+        int dotPos = this.sourceFile.toFile().getName().toString().lastIndexOf(".");
         // replace the file extension with the new one
-        return this.targetDirectory.append(this.sourceFile.getName().substring(0, dotPos)
+        
+        return this.targetDirectory.append(this.sourceFile.toFile().getName().substring(0, dotPos)
                 .concat(".").concat(this.getTargetFormat()));
     }
 

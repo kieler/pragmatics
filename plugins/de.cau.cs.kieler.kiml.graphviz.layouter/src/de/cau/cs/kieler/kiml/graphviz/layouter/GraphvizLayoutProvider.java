@@ -164,8 +164,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         }
 
         try {
-            XtextResource resource = (XtextResource) resourceSet.createResource(URI
-                    .createURI("process.graphviz_dot"));
+            XtextResource resource = (XtextResource) resourceSet.createResource(
+                    URI.createURI("output.graphviz_dot"));
             resource.getContents().add(graphvizModel);
             resource.save(outputStream, null);
             outputStream.write('\n');
@@ -221,8 +221,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         }
 
         // parse the output stream of the dot process
-        XtextResource resource = (XtextResource) resourceSet.createResource(URI
-                .createURI("process.graphviz_dot"));
+        XtextResource resource = (XtextResource) resourceSet.createResource(
+                URI.createURI("input.graphviz_dot"));
         try {
             resource.load(inputStream, null);
         } catch (IOException exception) {

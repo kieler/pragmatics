@@ -141,7 +141,8 @@ public class LEdge extends LGraphElement {
     }
 
     /**
-     * Returns the list of bend points, which is initially empty.
+     * Returns the list of bend points, with coordinates relative to the {@code LayeredGraph}'s
+     * origin. The list is initially empty.
      * 
      * @return the bend points
      */

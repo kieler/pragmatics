@@ -39,10 +39,13 @@ import de.cau.cs.kieler.kaom.Port
 import de.cau.cs.kieler.kaom.importer.ptolemy.Messages
 import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportPlugin
 
+import static de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportConstants.*
+
 
 /**
  * Transforms a Ptolemy2 model to a KAOM model. This is part one of the Ptolemy model import process,
- * with part two consisting of the optimization of the transformed model.
+ * with part two consisting of the optimization of the transformed model as defined in
+ * {@code Ptolemy2KaomOptimization}.
  * 
  * <p>In this part, all Ptolemy entities, relations and links are transformed to their KAOM
  * counterparts. The transformed objects are annotated to originate from a Ptolemy2 model. This
@@ -52,13 +55,19 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportPlugin
  * leaving us without properly defined ports. In particular, we then cannot determine if a port
  * is an input port or an output port, which leads to problems when the directions of links are
  * inferred in the second part of the import process. (contrary to KAOM links, Ptolemy links are
- * undirected)</p>
+ * undirected) The optimization part following this transformation part tries to solve the port
+ * problem by heuristically inferring the direction of links.</p>
  * 
- * <p><b>Note:</b> This transformation cannot simply be reused. To keep things simple, always use
- * a new instance for each model to be transformed.</p>
+ * <p>The transformation works by recursively iterating over all entities defined in the model. For
+ * each entity, we transform its properties to annotations, transform its child ports, its child
+ * entities, and finally relations and links defined in the entity.</p>
+ * 
+ * <p><b>Note:</b> This transformation cannot simply be reused due to the way Xtend handles create
+ * methods. To keep things simple, always use a new instance for each model to be transformed.</p>
  * 
  * @author cds
  * @author haf
+ * @kieler.rating yellow 2012-06-15 KI-12 cmot, grh
  */
 class Ptolemy2KaomTransformation {
     
@@ -71,6 +80,12 @@ class Ptolemy2KaomTransformation {
      * Interface to the Ptolemy library.
      */
     @Inject PtolemyInterface ptolemy
+    
+    /**
+     * Flag indicating whether an instance of this transformation has already transformed something.
+     * If so, it cannot be reused due to Xtend restrictions.
+     */
+    boolean alreadyUsed = false
     
     /**
      * List of warnings collected during the transformation. These will usually only be warnings about
@@ -88,8 +103,13 @@ class Ptolemy2KaomTransformation {
      * 
      * @param ptDocumentRoot the Ptolemy MOML document's root element.
      * @return the transformed KAOM entity.
+     * @throws IllegalStateException if this class's instance has already been used.
      */
     def create result : KaomFactory::eINSTANCE.createEntity() transform(DocumentRoot ptDocumentRoot) {
+        if (alreadyUsed) {
+            throw new IllegalStateException("Transformations cannot be reused.");
+        }
+        
         // A Ptolemy document can contain an entity or a class, so transform those and add the
         // transformed objects as the KAOM entity's children
         val kaomEntity = ptDocumentRoot.entity?.transform()
@@ -113,8 +133,8 @@ class Ptolemy2KaomTransformation {
         result.name = ptEntity.name
         
         // Add annotations identifying this entity as having been created from a Ptolemy entity
-        result.addStringAnnotation("language", "ptolemy")
-        result.addStringAnnotation("ptolemyClass", ptEntity.class1)
+        result.markAsPtolemyElement()
+        result.addStringAnnotation(ANNOTATION_PTOLEMY_CLASS, ptEntity.class1)
         
         // Add the entity's ports, relations, links, and child entities
         result.addProperties(ptEntity.property)
@@ -138,8 +158,8 @@ class Ptolemy2KaomTransformation {
         result.name = ptClass.name
         
         // Add annotations identifying this entity as having been created from a Ptolemy entity
-        result.addStringAnnotation("language", "ptolemy")
-        result.addStringAnnotation("ptolemyClass", ptClass.^extends)
+        result.markAsPtolemyElement()
+        result.addStringAnnotation(ANNOTATION_PTOLEMY_CLASS, ptClass.^extends)
         
         // Add the entity's ports, relations, links, and child entities
         result.addProperties(ptClass.property)
@@ -161,7 +181,7 @@ class Ptolemy2KaomTransformation {
         result.name = ptRelation.name
         
         // Add annotation identifying this relation as having been created from a Ptolemy relation
-        result.addStringAnnotation("language", "ptolemy")
+        result.markAsPtolemyElement()
         
         // Add the relation's properties
         result.addProperties(ptRelation.property)
@@ -169,8 +189,17 @@ class Ptolemy2KaomTransformation {
     
     /**
      * Transforms the given Ptolemy link into a KAOM link. The problem here is that a Ptolemy link
-     * is (1) undirected and (2) has multiple possible attributes for head and tail. The latter is
-     * because it can connect either a port and a relation, or two relations.
+     * is (1) undirected and (2) has multiple possible attributes for head and tail.
+     * 
+     * <p>The former is ignored at this point: the link is simply annotated as not having had its
+     * direction determined yet, which is one of the responsibilities of the second part of the
+     * transformation.</p>
+     * 
+     * <p>The latter comes from the fact that a link can connect either a port and a relation, or two
+     * relations. We solve that by collecting all the elements incident to this link, hoping that there
+     * are only two (if that is not the case, we leave the link unconnected). The two are then
+     * connected to the transformed link element. Their order is not relevant, since the link's
+     * direction is currently unknown anyway.</p>
      * 
      * <p>Note: This method expects relations of the {@code kaomParent} to already have been
      * transformed.</p>
@@ -196,9 +225,11 @@ class Ptolemy2KaomTransformation {
         val endpoints = new ArrayList<Linkable>()
         
         // Add annotation identifying this link as having been created from a Ptolemy link
-        result.addStringAnnotation("language", "ptolemy")
+        result.markAsPtolemyElement()
         
-        // Add the ports and relations that are != null and hope that there's only two of them
+        // Add the ports and relations that are != null and hope that there's only two of them, leaving
+        // the link unconnected if that is not the case (which should never happen, at least not for
+        // valid Ptolemy models)
         if (relation != null) {
             endpoints.add(relation)
         }
@@ -235,7 +266,7 @@ class Ptolemy2KaomTransformation {
         result.name = ptPort.name
         
         // Add annotation identifying this port as having been created from a Ptolemy port
-        result.addStringAnnotation("language", "ptolemy")
+        result.markAsPtolemyElement()
         
         // Add the port's properties, which might add "input" / "output" annotations
         result.addProperties(ptPort.property)
@@ -270,7 +301,7 @@ class Ptolemy2KaomTransformation {
      */
     def private Port getOrCreatePortByName(Entity kaomParent, String name) throws CoreException {
         // Split the name into its two parts
-        val nameParts = newArrayList(name.split("\\."))
+        val nameParts = newArrayList(name.split(PORT_NAME_SEPARATOR_REGEX))
         
         // Check if nameParts has the correct size (1 or 2)
         if (nameParts.size() < 1 || nameParts.size() > 2) {
@@ -328,7 +359,7 @@ class Ptolemy2KaomTransformation {
         
         // Assign name and language annotation
         result.name = name;
-        result.addStringAnnotation("language", "ptolemy")
+        result.markAsPtolemyElement()
         kaomEntity.childPorts.add(result)
         
         result
@@ -411,7 +442,7 @@ class Ptolemy2KaomTransformation {
      * what ports an entity has, we need to instantiate it in Ptolemy.</p>
      * 
      * <p>If the actor is not available in KIELER's Ptolemy library, instantiating an actor to check
-     * for its ports will of cause fail, leaving the entity without ports. To handle these cases, such
+     * for its ports will of course fail, leaving the entity without ports. To handle these cases, such
      * ports are created once they are referenced later on. However, their specific attributes (e.g.,
      * whether they are input ports or output ports) will then be unavailable, which in turn may cause
      * link directions to be incorrectly inferred.</p>
