@@ -417,5 +417,21 @@
          </editPart>
       </configuration>
    </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.modelTransformations">
+      <transformation
+            class="de.cau.cs.kieler.kaom.karma.ptolemy.krendering.KaomKrenderingTransformation"
+            id="de.cau.cs.kieler.kaom.karma.ptolemy.kaomklighdtransformation">
+      </transformation>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.core.kivi.combinations">
+      <combination
+            active="false"
+            class="de.cau.cs.kieler.kaom.karma.ptolemy.krendering.KaomKlighdCombination"
+            description="every time a kaom diagram is opened a corresponding klighd view is opened as well"
+            name="kaom klight debug">
+      </combination>
+   </extension>
 
 </plugin>
