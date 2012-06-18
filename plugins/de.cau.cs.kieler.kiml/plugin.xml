@@ -134,8 +134,11 @@
             default="0.0"
             description="The aimed aspect ratio of the drawing, that is the quotient of width by height"
             id="de.cau.cs.kieler.aspectRatio"
+            lowerBound="0.01"
             name="Aspect Ratio"
-            type="float">
+            type="float"
+            upperBound="100"
+            variance="0.5">
       </layoutOption>
       <layoutOption
             appliesTo="edges"
@@ -150,8 +153,11 @@
             default="-1.0"
             description="Minimal amount of space to be left to the border"
             id="de.cau.cs.kieler.borderSpacing"
+            lowerBound="0"
             name="Border Spacing"
-            type="float">
+            type="float"
+            upperBound="1000"
+            variance="3.0">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -160,7 +166,8 @@
             description="Whether additional debug information shall be displayed"
             id="de.cau.cs.kieler.debugMode"
             name="Debug Mode"
-            type="boolean">
+            type="boolean"
+            variance="0">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
@@ -168,6 +175,7 @@
             default="UNDEFINED"
             description="Overall direction of edges: horizontal (right / left) or vertical (down / up)"
             id="de.cau.cs.kieler.direction"
+            lowerBound="1"
             name="Direction"
             type="enum">
       </layoutOption>
@@ -177,6 +185,7 @@
             default="UNDEFINED"
             description="Defines how edges are routed"
             id="de.cau.cs.kieler.edgeRouting"
+            lowerBound="1"
             name="Edge Routing"
             type="enum">
       </layoutOption>
@@ -194,15 +203,19 @@
             description="Optimize the layout for user interaction by considering previous layout"
             id="de.cau.cs.kieler.interactive"
             name="Interactive"
-            type="boolean">
+            type="boolean"
+            variance="0">
       </layoutOption>
       <layoutOption
             appliesTo="edges"
             default="-1.0"
             description="Factor for spacing of edge labels to the respective edge"
             id="de.cau.cs.kieler.labelSpacing"
+            lowerBound="0"
             name="Label Spacing"
-            type="float">
+            type="float"
+            upperBound="1000"
+            variance="1.0">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
@@ -225,6 +238,7 @@
             default="UNDEFINED"
             description="Defines constraints of the position of the ports of a node"
             id="de.cau.cs.kieler.portConstraints"
+            lowerBound="1"
             name="Port Constraints"
             type="enum">
       </layoutOption>
@@ -241,14 +255,16 @@
             description="Defines the priority of an object; its meaning depends on the specific layout algorithm"
             id="de.cau.cs.kieler.priority"
             name="Priority"
-            type="int">
+            type="int"
+            variance="2.0">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
             description="Seed used for pseudo-random number generators to control the layout algorithm; 0 means a new seed is generated"
             id="de.cau.cs.kieler.randomSeed"
             name="Randomization Seed"
-            type="int">
+            type="int"
+            variance="5.0">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
@@ -271,8 +287,11 @@
             default="-1.0"
             description="Overall setting for the minimal amount of space to be left between objects"
             id="de.cau.cs.kieler.spacing"
+            lowerBound="0"
             name="Spacing"
-            type="float">
+            type="float"
+            upperBound="1000"
+            variance="7.0">
       </layoutOption>
      <layoutOption
            advanced="true"
@@ -280,14 +299,16 @@
            description="Whether the node should be regarded as a comment box instead of a regular node."
            id="de.cau.cs.kieler.commentBox"
            name="Comment Box (programmatic)"
-           type="boolean">
+           type="boolean"
+           variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
            description="Identifier of a diagram type that is associated with the children of the respective node"
            id="de.cau.cs.kieler.diagramType"
            name="Diagram Type (programmatic)"
-           type="string">
+           type="string"
+           variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
@@ -296,7 +317,8 @@
            description="Gives a hint on where to put edge labels"
            id="de.cau.cs.kieler.edgeLabelPlacement"
            name="Edge Label Placement (programmatic)"
-           type="enum">
+           type="enum"
+           variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
@@ -305,21 +327,24 @@
            description="The type of the edge."
            id="de.cau.cs.kieler.edgeType"
            name="Edge Type (programmatic)"
-           type="enum">
+           type="enum"
+           variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
            description="Font name used for a label"
            id="de.cau.cs.kieler.fontName"
            name="Font Name (programmatic)"
-           type="string">
+           type="string"
+           variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
            description="Font size used for a label"
            id="de.cau.cs.kieler.fontSize"
            name="Font Size (programmatic)"
-           type="int">
+           type="int"
+           variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
@@ -327,7 +352,8 @@
            description="Whether the node should be handled as a hypernode"
            id="de.cau.cs.kieler.hypernode"
            name="Hypernode (programmatic)"
-           type="boolean">
+           type="boolean"
+           variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
@@ -335,7 +361,8 @@
            description="The minimal height to which a node can be reduced"
            id="de.cau.cs.kieler.minHeight"
            name="Minimal Height (programmatic)"
-           type="float">
+           type="float"
+           variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
@@ -343,7 +370,8 @@
            description="The minimal width to which a node can be reduced"
            id="de.cau.cs.kieler.minWidth"
            name="Minimal Width (programmatic)"
-           type="float">
+           type="float"
+           variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
@@ -358,7 +386,8 @@
            description="The offset of ports on the node border"
            id="de.cau.cs.kieler.offset"
            name="Port Offset (programmatic)"
-           type="float">
+           type="float"
+           variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
@@ -367,7 +396,8 @@
            description="The side of a node on which a port is situated"
            id="de.cau.cs.kieler.portSide"
            name="Port Side (programmatic)"
-           type="enum">
+           type="enum"
+           variance="0">
      </layoutOption>
    </extension>
    <extension

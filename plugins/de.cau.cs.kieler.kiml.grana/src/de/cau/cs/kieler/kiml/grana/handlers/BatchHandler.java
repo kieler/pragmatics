@@ -37,7 +37,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
+import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 import de.cau.cs.kieler.kiml.grana.batch.Batch;
 import de.cau.cs.kieler.kiml.grana.batch.BatchJob;
@@ -86,7 +86,7 @@ public class BatchHandler extends AbstractHandler {
             try {
                 IRunnableWithProgress runnable = new IRunnableWithProgress() {
                     public void run(final IProgressMonitor uiMonitor) {
-                        IKielerProgressMonitor monitor = new KielerProgressMonitor(uiMonitor);
+                        IKielerProgressMonitor monitor = new ProgressMonitorAdapter(uiMonitor);
                         monitor.begin("Starting analysis batch", WORK_ALL);
                         try {
                             // create the batch

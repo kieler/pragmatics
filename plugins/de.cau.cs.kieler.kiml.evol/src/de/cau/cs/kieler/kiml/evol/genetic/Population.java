@@ -14,275 +14,65 @@
 package de.cau.cs.kieler.kiml.evol.genetic;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.util.FilteredIterator;
-import de.cau.cs.kieler.core.util.ICondition;
-import de.cau.cs.kieler.kiml.evol.EvolPlugin;
-import de.cau.cs.kieler.kiml.evol.IFilterable;
+import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 
 /**
  * A population has a list of individuals (genomes).
  *
- * @author bdu
- *
+ * @author msp
  */
-public class Population extends MapPropertyHolder
-        implements
-            Iterable<Genome>,
-            IFilterable<List<Genome>, Genome> {
-    /** Property to mark individuals as selected. */
-    public static final IProperty<Boolean> SELECTED = new Property<Boolean>("evol.selected",
-            Boolean.FALSE);
+public class Population extends ArrayList<Genome> {
+    
+    /** property for the graph used for evaluation of individuals. */
+    public static final IProperty<KNode> EVALUATION_GRAPH = new Property<KNode>(
+            "evol.evaluationGraph");
+    /** property for the layout configuration used for obtaining default values. */
+    public static final IProperty<ILayoutConfig> DEFAULT_CONFIG = new Property<ILayoutConfig>(
+            "evol.defaultConfig");
+    /** property for the layout context used for obtaining default values. */
+    public static final IProperty<LayoutContext> DEFAULT_CONTEXT = new Property<LayoutContext>(
+            "evol.defaultContext");
 
-    /**
-     * Filter for rated individuals.
-     */
-    public static final ICondition<Genome> RATED_FILTER = new ICondition<Genome>() {
-        public boolean evaluate(final Genome genome) {
-            return genome.hasUserRating();
-        }
-    };
-
-    /**
-     * Filter for unrated individuals.
-     */
-    public static final ICondition<Genome> UNRATED_FILTER = new ICondition<Genome>() {
-        public boolean evaluate(final Genome genome) {
-            return !genome.hasUserRating();
-        }
-    };
-
-    /**
-     * Filter for selected individuals.
-     */
-    public static final ICondition<Genome> SELECTED_FILTER = new ICondition<Genome>() {
-        public boolean evaluate(final Genome genome) {
-            return genome.getProperty(SELECTED);
-        }
-    };
+    /** The serial version UID. */
+    private static final long serialVersionUID = -8591635951271498010L;
+    
+    /** the property holder map. */
+    private final MapPropertyHolder propertyHolder = new MapPropertyHolder();
 
     /**
      * Constructs an empty population.
+     * 
+     * @param size the initial size
      */
-    public Population() {
-        super();
+    public Population(final int size) {
+        super(size);
     }
-
+    
     /**
-     * Constructs a new Population instance using the given list of individuals.
-     *
-     * @param individuals
-     *            List of individuals. Must not be {@code null}, otherwise a
-     *            {@link NullPointerException} is thrown.
+     * Sets a property value using the nested property holder.
+     * 
+     * @param property the property to set
+     * @param value the new value
      */
-    public Population(final List<Genome> individuals) {
-        this.genomes.addAll(individuals);
+    public void setProperty(final IProperty<?> property, final Object value) {
+        propertyHolder.setProperty(property, value);
     }
-
+    
     /**
-     * Creates a new {@link Population} instance using the given instance.
-     *
-     * @param thePopulation
-     *            a population
+     * Retrieves a property value using the nested property holder.
+     * 
+     * @param <T> type of property
+     * @param property the property to get
+     * @return the current value, or the default value if the property is not set
      */
-    public Population(final Population thePopulation) {
-        this(thePopulation.getGenomes());
+    public <T> T getProperty(final IProperty<T> property) {
+        return propertyHolder.getProperty(property);
     }
-
-    /**
-     *
-     * @return the arithmetic mean of all individual ratings, or
-     *         {@code Double.NaN} if there are no individuals.
-     */
-    public Double getAverageRating() {
-        if (this.getGenomes().isEmpty()) {
-            return Double.valueOf(Double.NaN);
-        }
-        double ratingSum = 0.0;
-        for (final Genome ind : this.getGenomes()) {
-            ratingSum += ind.hasUserRating() ? ind.getUserRating() : 0.0;
-        }
-        return ratingSum / this.size();
-    }
-
-    /**
-     * @return a string containing detailed information about the population.
-     */
-    public String getDetails() {
-        String newLine = EvolPlugin.LINE_DELIMITER;
-        final int expectedLengthPerEntry = 70;
-        StringBuilder result = new StringBuilder(this.size() * expectedLengthPerEntry);
-
-        int i = 0;
-        for (final Genome ind : this.getGenomes()) {
-            // assuming individual is not null
-            result.append("Individual #" + ++i + " (" + ind.getGenerationNumber() + "." + ind.getId()
-                    + "): " + ind.getUserRating() + newLine);
-            for (final IGene<?> gene : ind.getGenes()) {
-                result.append(gene.getId() + ": " + gene.toString() + newLine);
-            }
-            result.append(newLine);
-            result.append("Features:" + newLine);
-            result.append(ind.getFeatures() + newLine);
-            result.append(newLine);
-        }
-        return result.toString();
-    }
-
-    /**
-     * Get a filtered iterator over this population, using the specified filter.
-     *
-     * @param filter
-     *            the filter
-     * @return a filtered iterator over this population
-     */
-    public FilteredIterator<Genome> filteredIterator(final ICondition<Genome> filter) {
-        FilteredIterator<Genome> result =
-                new FilteredIterator<Genome>(this.getGenomes().listIterator(), filter);
-        return result;
-    }
-
-    /**
-     * Randomly chooses one of the individuals in the list.
-     *
-     * @return an individual that is in the list, or {@code null}, if the list
-     *         is empty.
-     */
-    public final Genome pick() {
-        Genome result = null;
-        if (size() > 0) {
-            int pos = (int) (Math.random() * size());
-            result = this.genomes.get(pos);
-        }
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        String newLine = EvolPlugin.LINE_DELIMITER;
-        StringBuilder result = new StringBuilder();
-
-        int i = 0;
-        for (final Genome ind : this.getGenomes()) {
-            result.append("#" + ++i + ": " + ind.toString() + newLine);
-        }
-        return result.toString();
-    }
-
-    private final List<Genome> genomes = new ArrayList<Genome>();
-
-    /**
-     * @return the genomes
-     */
-    public List<Genome> getGenomes() {
-        return this.genomes;
-    }
-
-    // list interface implementations
-    /**
-     *
-     * @return number of genomes in this population
-     */
-    public int size() {
-        return this.getGenomes().size();
-    }
-
-    /**
-     * Returns <tt>true</tt> if the genomes list contains no elements.
-     *
-     * @return <tt>true</tt> if the genomes list contains no elements
-     */
-    public boolean isEmpty() {
-        return this.genomes.isEmpty();
-    }
-
-    /**
-     * @param theInd
-     */
-    public final boolean add(final Genome theInd) {
-        return this.genomes.add(theInd);
-    }
-
-    /**
-     * @param genome
-     *            element to be removed from this list, if present
-     * @return <tt>true</tt> if this list contained the specified element
-     */
-    /* (non-Javadoc)
-     * @see java.util.List#remove(java.lang.Object)
-     */
-    public final boolean remove(final Genome genome) {
-        return this.genomes.remove(genome);
-    }
-
-    /**
-     * @param index
-     *            index at which to insert the first element from the specified
-     *            collection
-     * @param genomes
-     *            collection containing elements to be added to this list
-     * @return <tt>true</tt> if this list changed as a result of the call
-     */
-    public final boolean addAll(
-final int index, final Collection<? extends Genome> genomes) {
-        return this.genomes.addAll(index, genomes);
-    }
-
-    /**
-     * @param genomes
-     *            the array into which the elements of this list are to be
-     *            stored, if it is big enough; otherwise, a new array of the
-     *            same runtime type is allocated for this purpose.
-     */
-    /* (non-Javadoc)
-     * @see java.util.List#toArray()
-     */
-    public final void toArray(final Genome[] genomes) {
-        this.genomes.toArray(genomes);
-    }
-
-    /**
-     * Returns a list iterator over the elements in the genomes list (in proper
-     * sequence).
-     *
-     * @return a list iterator over the elements in the genomes list (in proper
-     *         sequence)
-     */
-    /* (non-Javadoc)
-     * @see java.util.List#listIterator()
-     */
-    public ListIterator<Genome> listIterator() {
-        return this.genomes.listIterator();
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.List#clear()
-     */
-    public void clear() {
-        this.genomes.clear();
-
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Iterable#iterator()
-     */
-    public Iterator<Genome> iterator() {
-        return this.genomes.iterator();
-    }
-
-
-    /* (non-Javadoc)
-     * @see java.util.List#toArray()
-     */
-    public Object[] toArray() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    
 }

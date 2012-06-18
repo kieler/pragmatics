@@ -25,10 +25,11 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.debug.KimlViewerPlugin;
 import de.cau.cs.kieler.kiml.debug.Messages;
 import de.cau.cs.kieler.kiml.debug.views.LayoutGraphCanvas;
@@ -84,12 +85,12 @@ public class ImageExportAction extends Action {
                             monitor.beginTask(Messages.getString("kiml.viewer.6"), 2);
 
                             // paint the layout graph
-                            KShapeLayout graphSize = canvas.getLayoutGraph()
-                                    .getData(KShapeLayout.class);
-                            Point size = new Point((int) graphSize.getWidth() + 1,
+                            KNode graph = canvas.getLayoutGraph();
+                            KShapeLayout graphSize = graph.getData(KShapeLayout.class);
+                            Rectangle area = new Rectangle(0, 0, (int) graphSize.getWidth() + 1,
                                     (int) graphSize.getHeight() + 1);
-                            Image image = new Image(canvas.getDisplay(), size.x, size.y);
-                            canvas.paintLayoutGraph(new GC(image), size);
+                            Image image = new Image(canvas.getDisplay(), area.width, area.height);
+                            canvas.getRenderer().render(graph, new GC(image), area);
                             monitor.worked(1);
                             if (monitor.isCanceled()) {
                                 return new Status(IStatus.INFO, KimlViewerPlugin.PLUGIN_ID, 0,

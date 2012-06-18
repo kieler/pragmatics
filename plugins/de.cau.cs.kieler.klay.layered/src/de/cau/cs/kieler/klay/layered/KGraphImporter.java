@@ -554,6 +554,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             newLabel.getSize().x = labelLayout.getWidth();
             newLabel.getSize().y = labelLayout.getHeight();
             newLabel.setProperty(Properties.ORIGIN, klabel);
+            newLabel.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                    labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT));
             newEdge.getLabels().add(newLabel);
         }
         
@@ -750,10 +752,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             for (LLabel label : ledge.getLabels()) {
                 KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
                 KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
-
-                KVector labelPos = KVector.sum(ledge.getSource().getNode().getPosition(),
-                        ledge.getSource().getPosition(), label.getPosition(), offset);
-                klabelLayout.applyVector(labelPos);
+                klabelLayout.applyVector(label.getPosition().add(offset));
             }
 
             // set spline option

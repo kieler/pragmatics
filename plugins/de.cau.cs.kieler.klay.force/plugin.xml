@@ -58,9 +58,6 @@
                option="de.cau.cs.kieler.klay.force.repulsivePower">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.force.frc">
-         </knownOption>
-         <knownOption
                default="true"
                option="de.cau.cs.kieler.separateConnComp">
          </knownOption>
@@ -69,6 +66,7 @@
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.force.model.ForceModelStrategy"
             default="FRUCHTERMAN_REINGOLD"
+            description="Determines the model for force calculation."
             id="de.cau.cs.kieler.klay.force.model"
             name="Force Model"
             type="enum">
@@ -76,40 +74,56 @@
       <layoutOption
             appliesTo="parents"
             default="100"
+            description="The number of iterations on the force model."
             id="de.cau.cs.kieler.klay.force.iterations"
+            lowerBound="1"
             name="Iterations"
-            type="int">
+            type="int"
+            upperBound="10000"
+            variance="100.0">
       </layoutOption>
       <layoutOption
             appliesTo="edges"
             default="0"
+            description="Determines how many bend points are added to the edge; such bend points are regarded as repelling particles in the force model"
             id="de.cau.cs.kieler.klay.force.repulsivePower"
+            lowerBound="0"
             name="Repulsive Power"
-            type="int">
+            type="int"
+            upperBound="100"
+            variance="2.0">
       </layoutOption>
       <layoutOption
             advanced="true"
             appliesTo="parents"
             default="0.001"
+            description="The temperature is used as a scaling factor for particle displacements."
             id="de.cau.cs.kieler.klay.force.temperature"
+            lowerBound="0.00001"
             name="FR Temperature"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            advanced="true"
-            appliesTo="parents"
-            default="0.8"
-            id="de.cau.cs.kieler.klay.force.frc"
-            name="FR Distance Factor"
-            type="float">
+            type="float"
+            upperBound="100.0"
+            variance="0.1">
+         <dependency
+               option="de.cau.cs.kieler.klay.force.model"
+               value="FRUCHTERMAN_REINGOLD">
+         </dependency>
       </layoutOption>
       <layoutOption
             advanced="true"
             appliesTo="parents"
             default="5.0"
+            description="Factor for repulsive forces in Eades' model."
             id="de.cau.cs.kieler.klay.force.repulsion"
+            lowerBound="0.01"
             name="Eades Repulsion"
-            type="float">
+            type="float"
+            upperBound="100.0"
+            variance="2.0">
+         <dependency
+               option="de.cau.cs.kieler.klay.force.model"
+               value="EADES">
+         </dependency>
       </layoutOption>
    </extension>
 

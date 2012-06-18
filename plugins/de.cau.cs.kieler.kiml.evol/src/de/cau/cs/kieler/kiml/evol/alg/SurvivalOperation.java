@@ -16,109 +16,104 @@
  */
 package de.cau.cs.kieler.kiml.evol.alg;
 
-import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Random;
 
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
+ * Operation that determines individuals that survive.
+ * 
  * @author bdu
- *
+ * @author msp
  */
-public class SurvivalOperation implements IEvolutionaryOperation {
-    
-    /**
-     * Default value for the survival ratio.
-     */
-    private static final double SURVIVAL_RATIO_DEFAULT = 0.54;
+public class SurvivalOperation extends AbstractAlgorithm implements IEvolutionaryOperation {
 
     /**
      * The survival ratio. This indicates the ratio of surviving individuals,
      * relative to the population size.
      */
-    private static final IProperty<Double> SURVIVAL_RATIO = new Property<Double>(
-            "evol.survivalRatio", SURVIVAL_RATIO_DEFAULT);
-
-    /**
-     * Default value for minimum number of survivors.
-     */
-    private static final int MIN_SURVIVORS_DEFAULT = 5;
-
+    private static final float SURVIVAL_RATIO = 0.6f;
     /** Minimum number of individuals that must survive. */
-    private static final IProperty<Integer> MIN_SURVIVORS = new Property<Integer>(
-            "evol.minSurvivors", MIN_SURVIVORS_DEFAULT);
-
-    /**
-     * Default value for maximum number of survivors.
-     */
-    private static final int MAX_SURVIVORS_DEFAULT = 1000;
-
+    private static final int MIN_SURVIVORS = 5;
     /** Maximum number of individuals that may survive. */
-    private static final IProperty<Integer> MAX_SURVIVORS = new Property<Integer>(
-            "evol.maxSurvivors", MAX_SURVIVORS_DEFAULT);
+    private static final int MAX_SURVIVORS = 100;
+    /** factor for minimal distance between surviving individuals. */
+    private static final double MIN_DIST_FACTOR = 0.1;
+    /** minimal fitness value for survivors. */
+    private static final double MIN_FITNESS = 0.05;
 
-    private static final BoundMultipleCalculator BOUND_MULTIPLE_CALCULATOR =
-            new BoundMultipleCalculator(SURVIVAL_RATIO_DEFAULT, MIN_SURVIVORS_DEFAULT,
-                    MAX_SURVIVORS_DEFAULT);
+    /** the random number generator. */
+    private Random random;
 
     /**
      * {@inheritDoc}
      */
-    public final void process(final Population population) {
-        int count = population.size();
-        assert count > 0;
-        Genome[] individuals = new Genome[count];
-        population.toArray(individuals);
-        Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
-
-        // only some survive
-        int keep = BOUND_MULTIPLE_CALCULATOR.scale(count);
-        assert keep > 0;
-        double minDist = individuals[0].size() * 0.2;
-        Population survivors = new Population();
-        Population victims = new Population(population);
-
-        System.out.println(" -- keep " + keep + " of " + count);
-        for (final Genome ind : individuals) {
-            // prevent too similar genomes from surviving
-            if (survivors.size() == 0) {
-                survivors.add(ind);
-                victims.remove(ind);
-                System.out.println(" -- keep: " + ind.toString());
-            } else if (survivors.size() < keep) {
-                // compare individual to random samples from other survivors
-                Genome sample1 = survivors.pick();
-                Genome sample2 = survivors.pick();
-
-                double dist1 = Genome.distance(ind, sample1);
-                double dist2;
-                if (sample1 == sample2) {
-                    dist2 = dist1;
-                } else {
-                    dist2 = Genome.distance(ind, sample2);
-                }
-
-                if ((dist1 > minDist) && ((dist2 > minDist))) {
-                    survivors.add(ind);
-                    victims.remove(ind);
-                    System.out.println(" -- keep: " + ind.toString());
-                }
-            } else {
-                break;
-            }
+    public final void setRandom(final Random therandom) {
+        this.random = therandom;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void process(final Population population) {
+        getMonitor().begin("Survival", 1);
+        if (population.size() <= MIN_SURVIVORS) {
+            return;
         }
-        if (survivors.size() < keep) {
-            System.out.println("Only " + survivors.size() + " survive");
+        
+        // only some survive
+        int surviveCount = KielerMath.limit(Math.round(population.size() * SURVIVAL_RATIO),
+                MIN_SURVIVORS, MAX_SURVIVORS);
+
+        Genome[] survivors = new Genome[surviveCount];
+        Iterator<Genome> genomeIter = population.iterator();
+        for (int i = 0; i < MIN_SURVIVORS; i++) {
+            survivors[i] = genomeIter.next();
+        }
+        
+        double minDist = survivors[0].getSize() * MIN_DIST_FACTOR;
+        for (int i = MIN_SURVIVORS; i < surviveCount; i++) {
+            Genome individual = null;
+            int sampleCount = (int) Math.log(i) + 1;
+            while (genomeIter.hasNext()) {
+                Genome genome = genomeIter.next();
+                Double fitness = genome.getProperty(Genome.FITNESS);
+                // only individuals survive that meet the minimal fitness
+                if (fitness != null && fitness >= MIN_FITNESS) {
+                    // compare individual to random samples from other survivors
+                    boolean distinct = true;
+                    for (int j = 0; j < sampleCount; j++) {
+                        Genome sample = survivors[random.nextInt(i)];
+                        double distance = Genome.distance(genome, sample);
+                        if (distance < minDist) {
+                            distinct = false;
+                            break;
+                        }
+                    }
+                    if (distinct) {
+                        individual = genome;
+                        break;
+                    }
+                }
+            }
+
+            if (individual == null) {
+                surviveCount = i;
+                break;
+            } else {
+                survivors[i] = individual;
+            }
         }
 
         population.clear();
-        population.addAll(0, survivors.getGenomes());
-
-        System.out.println(" -- dying out: ");
-        System.out.println(victims);
-
+        for (int i = 0; i < surviveCount; i++) {
+            population.add(survivors[i]);
+        }
+        getMonitor().done();
     }
 
 }

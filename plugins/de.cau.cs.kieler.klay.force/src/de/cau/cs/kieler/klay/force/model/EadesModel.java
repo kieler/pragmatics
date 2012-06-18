@@ -29,11 +29,11 @@ public class EadesModel extends AbstractForceModel {
     private static final double ZERO_FACTOR = 100;
 
     /** the maximal number of iterations after which the model stops. */
-    private int maxIterations = Properties.DEF_ITERATIONS;
+    private int maxIterations = Properties.ITERATIONS.getDefault();
     /** the spring length that determines the optimal distance of connected nodes. */
-    private double springLength = Properties.DEF_SPACING;
+    private double springLength = Properties.SPACING.getDefault();
     /** additional factor for repulsive forces. */
-    private double repulsionFactor = Properties.DEF_REPULSION;
+    private double repulsionFactor = Properties.REPULSION.getDefault();
     
     /**
      * {@inheritDoc}

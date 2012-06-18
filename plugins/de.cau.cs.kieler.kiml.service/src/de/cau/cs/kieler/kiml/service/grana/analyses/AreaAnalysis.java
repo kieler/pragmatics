@@ -25,7 +25,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
  * A drawing analysis that computes the size of the area a graph drawing occupies. Returns
- * a two-component result {@code (int width, int height)}.
+ * a two-component result {@code (float width, float height)}.
  * 
  * @author cds
  */
@@ -57,10 +57,7 @@ public class AreaAnalysis implements IAnalysis {
         Point2D.Float area = computeArea(parentNode);
         progressMonitor.done();
         
-        return new Object[] {
-                (int) area.x,
-                (int) area.y
-        };
+        return new Object[] { area.x, area.y };
     }
     
     /**

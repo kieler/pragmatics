@@ -1,245 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="evolutionData" name="Evolution Data" schema="schema/evolutionData.exsd"/>
    <extension
-         point="org.eclipse.ui.views">
-      <view
-            allowMultiple="false"
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.kiml.evol.ui.EvolView"
-            icon="icons/gazelle16.png"
-            id="de.cau.cs.kieler.kiml.evol.evolView"
-            name="Evolution"
-            restorable="true">
-      </view>
-   </extension>
-   <extension
-         point="de.cau.cs.kieler.kiml.evol.evolutionData">
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0.001"
-            name="Aspect Ratio"
-            option="de.cau.cs.kieler.aspectRatio"
-            upperBound="1000.0">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0"
-            option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.desiredEdgeLength"
-            upperBound="1.0e7">
-      </data>
-      <data
-            distribution="UNIFORM"
-            option="de.cau.cs.kieler.klay.layered.distributeNodes">
-      </data>
-      <data
-            distribution="UNIFORM"
-            option="de.cau.cs.kieler.klay.layered.enhanceLayering">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0.0"
-            option="de.cau.cs.kieler.ogdf.labelDistance"
-            upperBound="1.0e7">
-      </data>
-      <data
-            distribution="UNIFORM"
-            enum="de.cau.cs.kieler.kiml.layout.options.LayoutDirection"
-            name="Layout Direction"
-            option="de.cau.cs.kieler.direction">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.maxIterFactor"
-            upperBound="20000">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0"
-            option="de.cau.cs.kieler.klay.layered.minimalAngle"
-            upperBound="360">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="1.0"
-            name="Min Dist CC"
-            option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC"
-            upperBound="1.0e7">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="1.0"
-            name = "Min. Dist. Circle"
-            option="de.cau.cs.kieler.kiml.ogdf.option.minDistCircle"
-            upperBound="1.0e7">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="1.0"
-            name = "Min. Dist. Level"
-            option="de.cau.cs.kieler.kiml.ogdf.option.minDistLevel"
-            upperBound="1.0e7">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="1.0"
-            option="de.cau.cs.kieler.kiml.ogdf.option.minDistSibling"
-            upperBound="1.0e7">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0.0"
-            name="Object Spacing"
-            option="de.cau.cs.kieler.spacing"
-            upperBound="1.0e7">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0.0"
-            name="Post Spring Strength"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.postSpringStrength"
-            upperBound="1.0e7">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="1"
-            option="de.cau.cs.kieler.ogdf.iterations"
-            upperBound="20000">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0.0"
-            name="Post Strength of Repulsive Forces"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.postStrengthOfRepForces"
-            upperBound="1.0e7">
-      </data>
-      <data
-            distribution="UNIFORM"
-            name="Quality vs. Speed"
-            option="de.cau.cs.kieler.ogdf.fmmm.qualityVsSpeed">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="1"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.minGraphSize"
-            upperBound="10000">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0"
-            name="Repulsive Forces Strength"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.repForcesStrength"
-            upperBound="10000">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0"
-            name="Steps for Rotating Components"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.stepsForRotatingComponents"
-            upperBound="1000">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0.0"
-            name="Stop Criteria Threshold"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.threshold"
-            upperBound="10.0">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0.0"
-            name="Spring Strength"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.springStrength"
-            upperBound="1.0e7">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0.1"
-            name="Unit Edge Length"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.unitEdgeLength">
-      </data>
-      <data
-            distribution="UNIFORM"
-            name="Use Cool Temperature"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.coolTemperature">            
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.randomTries"
-            upperBound="20000">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="1"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.frGridQuotient"
-            upperBound="20000">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0.0"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.coolValue"
-            upperBound="1.0e7">
-      </data>
-      <data
-            distribution="UNIFORM"
-            name="Costs"
-            option="de.cau.cs.kieler.ogdf.davidsonHarel.costs">
-      </data>
-      <data
-            distribution="UNIFORM"
-            option="de.cau.cs.kieler.edgeRouting">
-      </data>
-      <data
-            distribution="UNIFORM"
-            name="Expand Nodes"
-            option="de.cau.cs.kieler.expandNodes">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0"
-            name="Fine Tuning Iterations"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.fineTuningIterations"
-            upperBound="10000">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0.0"
-            name="Fine Tuning Scalar"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.fineTuneScalar"
-            upperBound="100">
-      </data>
-      <data
-            distribution="UNIFORM"
-            option="de.cau.cs.kieler.ogdf.davidsonHarel.speed">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="1"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.fixedIterations"
-            upperBound="20000">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0"
-            name="Force Scaling Factor"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.forceScalingFactor"
-            upperBound="1000">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0"
-            name="Border Spacing"
-            option="de.cau.cs.kieler.borderSpacing">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0"
-            option="de.cau.cs.kieler.klay.layered.thoroughness"
-            upperBound="1000">
-      </data>
+         point="de.cau.cs.kieler.kiml.layoutInfo">
+      <config
+            activation="de.cau.cs.kieler.kiml.evol"
+            activationAction="de.cau.cs.kieler.kiml.evol.ui.ShowEvolutionAction$Activator"
+            activationText="Activate Evolutionary Layout"
+            class="de.cau.cs.kieler.kiml.evol.EvolLayoutConfig"
+            default="false">
+      </config>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.service.analysisProviders">
@@ -251,19 +21,25 @@
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.metrics.AreaMetric"
-            description="description"
+            description="The area extent of the graph."
             id="de.cau.cs.kieler.kiml.evol.areaMetric"
-            name="Area Metric">
+            name="Area">
          <dependency
-               analysis="de.cau.cs.kieler.kiml.grana.dimensions">
+               analysis="de.cau.cs.kieler.kiml.grana.area">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.nodeCount">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.metrics.BendsMetric"
-            description="description"
+            class="de.cau.cs.kieler.kiml.evol.metrics.EdgeBendsMetric"
+            description="The number of edge bends in the graph."
             id="de.cau.cs.kieler.kiml.evol.bendsMetric"
-            name="Bends Metric">
+            name="Edge Bends">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.bendpointCount">
          </dependency>
@@ -272,38 +48,21 @@
          </dependency>
       </analysis>
       <analysis
-            category="de.cau.cs.kieler.kiml.grana.drawing"
-            class="de.cau.cs.kieler.kiml.evol.metrics.DimensionsAnalysis"
-            description="measures the horizontal and vertical dimensions of the given graph drawing"
-            id="de.cau.cs.kieler.kiml.grana.dimensions"
-            name="Dimensions">
-      </analysis>
-      <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.metrics.FlatnessMetric"
-            description="description"
-            id="de.cau.cs.kieler.kiml.evol.flatnessMetric"
-            name="Flatness Metric">
+            class="de.cau.cs.kieler.kiml.evol.metrics.AspectRatioMetric"
+            description="The aspect ratio of the graph, that is its width divided by its height."
+            id="de.cau.cs.kieler.kiml.evol.aspectRatioMetric"
+            name="Aspect Ratio">
          <dependency
-               analysis="de.cau.cs.kieler.kiml.grana.dimensions">
-         </dependency>
-      </analysis>
-      <analysis
-            category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.metrics.NarrownessMetric"
-            description="description"
-            id="de.cau.cs.kieler.kiml.evol.narrownessMetric"
-            name="Narrowness Metric">
-         <dependency
-               analysis="de.cau.cs.kieler.kiml.grana.dimensions">
+               analysis="de.cau.cs.kieler.kiml.grana.area">
          </dependency>
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.metrics.EdgeCrossingsMetric"
-            description="description"
+            description="The number of edge crossings in the graph."
             id="de.cau.cs.kieler.kiml.evol.edgeCrossingsMetric"
-            name="Edge Crossings Metric">
+            name="Edge Crossings">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.bendpointCount">
          </dependency>
@@ -315,48 +74,21 @@
          </dependency>
       </analysis>
       <analysis
-            class="de.cau.cs.kieler.kiml.evol.metrics.StandaloneUpwardnessMetric"
-            description="Measures the fraction of upward edges."
-            id="de.cau.cs.kieler.kiml.evol.standaloneUpwardnessMetric"
-            name="Standalone Upwardness Metric">
-      </analysis>
-      <analysis
-            class="de.cau.cs.kieler.kiml.evol.metrics.WeightedAggregation"
-            description="Returns the weighted sum of the metrics."
-            id="de.cau.cs.kieler.kiml.evol.weightedAggregation"
-            name="Weighted Aggregation">
-         <dependency
-               analysis="de.cau.cs.kieler.kiml.evol.areaMetric">
-         </dependency>
-         <dependency
-               analysis="de.cau.cs.kieler.kiml.evol.bendsMetric">
-         </dependency>
-         <dependency
-               analysis="de.cau.cs.kieler.kiml.evol.edgeCrossingsMetric">
-         </dependency>
-         <dependency
-               analysis="de.cau.cs.kieler.kiml.evol.flatnessMetric">
-         </dependency>
-         <dependency
-               analysis="de.cau.cs.kieler.kiml.evol.narrownessMetric">
-         </dependency>
-      </analysis>
-      <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.metrics.EdgeUniformityMetric"
-            description="description"
+            description="The edge length uniformity of the graph."
             id="de.cau.cs.kieler.kiml.evol.edgeUniformityMetric"
-            name="Edge Uniformity Metric">
+            name="Edge Uniformity">
          <dependency
-               analysis="de.cau.cs.kieler.kiml.grana.edgeLength">
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric"
-            description="Measures the fraction of upward edges."
+            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$UpMetric"
+            description="The fraction of edges that point up."
             id="de.cau.cs.kieler.kiml.evol.upwardnessMetric"
-            name="Upwardness Metric">
+            name="Upwardness">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
@@ -364,141 +96,65 @@
                analysis="de.cau.cs.kieler.kiml.grana.edgeDirections">
          </dependency>
       </analysis>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">
-      <command
-            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.AutoRateAllHandler"
-            description="computes automatic rating for all individuals"
-            id="de.cau.cs.kieler.kiml.evol.command.autoRateAll"
-            name="Auto-rate All">
-      </command>
-      <command
-            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.EvolveHandler"
-            description="proceeds to the next generation"
-            id="de.cau.cs.kieler.kiml.evol.evolve"
-            name="Evolve">
-         <commandParameter
-               id="de.cau.cs.kieler.kiml.evol.steps"
-               name="Steps"
-               optional="true">
-         </commandParameter>
-         <commandParameter
-               id="de.cau.cs.kieler.kiml.evol.stepsBeforeAutoRating"
-               name="Steps before Auto-rating"
-               optional="true">
-         </commandParameter>
-      </command>
-      <command
-            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.ResetHandler"
-            description="restarts with a new population"
-            id="de.cau.cs.kieler.kiml.evol.reset"
-            name="Reset">
-      </command>
-      <command
-            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.ChangeRatingHandler"
-            description="changes the rating of the current individual"
-            id="de.cau.cs.kieler.kiml.evol.changeRating"
-            name="Change Rating">
-         <commandParameter
-               id="de.cau.cs.kieler.kiml.evol.amount"
-               name="Amount"
-               optional="false">
-         </commandParameter>
-      </command>
-      <command
-            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.InfoHandler"
-            description="Display detailed information about the population."
-            id="de.cau.cs.kieler.kiml.evol.info"
-            name="Info">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="toolbar:de.cau.cs.kieler.kiml.evol.evolView">
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.evolve"
-               icon="icons/step16.png"
-               label="Evolve 1"
-               style="push"
-               tooltip="Proceed to the next generation.">
-            <parameter
-                  name="de.cau.cs.kieler.kiml.evol.steps"
-                  value="1">
-            </parameter>
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.changeRating"
-               icon="icons/thumbsup16.png"
-               label="Favor"
-               style="push"
-               tooltip="Promote the selected individual.">
-            <parameter
-                  name="de.cau.cs.kieler.kiml.evol.amount"
-                  value="0.06">
-            </parameter>
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.changeRating"
-               icon="icons/thumbsdn16.png"
-               label="Disregard"
-               style="push"
-               tooltip="Demote the selected individual.">
-            <parameter
-                  name="de.cau.cs.kieler.kiml.evol.amount"
-                  value="-0.06">
-            </parameter>
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.command.autoRateAll"
-               icon="icons/autorate16.png"
-               label="Auto-rate all"
-               style="push"
-               tooltip="Auto-rate all individuals.">
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.reset"
-               icon="icons/reset16.png"
-               label="Reset"
-               style="push"
-               tooltip="Restart with a new population.">
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.info"
-               icon="icons/info16.png"
-               label="Info"
-               style="push"
-               tooltip="Display detailed information about the population.">
-         </command>
-      </menuContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.kiml.evol.ui.EvolPreferencePage"
-            id="de.cau.cs.kieler.kiml.evol.preferences.evol"
-            name="KIML Evolutionary">
-      </page>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="de.cau.cs.kieler.kiml.evol.EvolPreferenceInitializer">
-      </initializer>
-   </extension>
-   <extension
-         point="org.eclipse.core.expressions.definitions">
-      <definition
-            id="de.cau.cs.kieler.kiml.evol.elementSelected">
-         <with
-               variable="selection">
-            <count
-                  value="1">
-            </count>
-         </with>
-      </definition>
+      <analysis
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
+            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$DownMetric"
+            description="The fraction of edges that point down."
+            id="de.cau.cs.kieler.kiml.evol.downwardnessMetric"
+            name="Downwardness">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeDirections">
+         </dependency>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
+            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$LeftMetric"
+            description="The fraction of edges that point left."
+            id="de.cau.cs.kieler.kiml.evol.leftwardnessMetric"
+            name="Leftwardness">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeDirections">
+         </dependency>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
+            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$RightMetric"
+            description="The fraction of edges that point right."
+            id="de.cau.cs.kieler.kiml.evol.rightwardnessMetric"
+            name="Rightwardness">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeDirections">
+         </dependency>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
+            class="de.cau.cs.kieler.kiml.evol.metrics.NodeSeparationMetric"
+            description="Check whether the nodes have a minimal distance from each other."
+            id="de.cau.cs.kieler.kiml.evol.nodeSeparationMetric"
+            name="Node Separation">
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
+            class="de.cau.cs.kieler.kiml.evol.metrics.EdgeOverlapsMetric"
+            description="The number of node-edge overlaps in the graph."
+            id="de.cau.cs.kieler.kiml.evol.edgeOverlapMetric"
+            name="Edge Overlaps">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.nodeEdgeOverlaps">
+         </dependency>
+      </analysis>
    </extension>
 
 </plugin>

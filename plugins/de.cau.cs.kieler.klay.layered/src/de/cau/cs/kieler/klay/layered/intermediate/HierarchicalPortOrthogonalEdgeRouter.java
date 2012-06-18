@@ -594,8 +594,6 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     continue;
                 }
                 
-                System.out.println("Node " + node.hashCode() + " position: " + node.getPosition());
-                
                 // There must be a port where all edges come in, another port where edges go out, and
                 // a port with an edge connecting node and origin (that one was added previously by
                 // this processor)

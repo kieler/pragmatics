@@ -96,17 +96,6 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         }
     }
 
-    /** literal value constant for diagram target. */
-    public static final String PARENTS_LITERAL = "parents";
-    /** literal value constant for nodes target. */
-    public static final String NODES_LITERAL = "nodes";
-    /** literal value constant for edges target. */
-    public static final String EDGES_LITERAL = "edges";
-    /** literal value constant for ports target. */
-    public static final String PORTS_LITERAL = "ports";
-    /** literal value constant for labels target. */
-    public static final String LABELS_LITERAL = "labels";
-
     /** option target enumeration. */
     public static enum Target {
         /** parents target (hierarchical nodes). */
@@ -139,9 +128,12 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     private String[] choices;
     /** whether the option should be shown in advanced mode only. */
     private boolean advanced;
-    /** Whether this layout option is visible to the user. Options are visible by default. */
-    private boolean visible 
-        = true;
+    /** the lower bound for option values. */
+    private T lowerBound;
+    /** the upper bound for option values. */
+    private T upperBound;
+    /** the variance for option values. */
+    private float variance = 1.0f;
     
     /**
      * Checks whether the enumeration class is set correctly. This method must
@@ -288,10 +280,20 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         case ENUM:
             try {
                 checkEnumClass();
-                @SuppressWarnings({ "rawtypes" })
+                @SuppressWarnings("rawtypes")
                 Enum<?> value = Enum.valueOf((Class<? extends Enum>) clazz, valueString);
                 return (T) value;
             } catch (IllegalArgumentException exception) {
+                // the value could not be parsed as enumeration constant, try as integer
+                try {
+                    int index = Integer.parseInt(valueString);
+                    Object[] constants = clazz.getEnumConstants();
+                    if (index >= 0 && index < constants.length) {
+                        return (T) constants[index];
+                    }
+                } catch (NumberFormatException e) {
+                    // ignore exception and return null
+                }
                 return null;
             }
         case OBJECT:
@@ -408,7 +410,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         case ENUM:
             checkEnumClass();
             @SuppressWarnings({ "unchecked", "rawtypes" })
-            Enum<?>[] enums = ((Class<Enum>) clazz).getEnumConstants();
+            Enum<?>[] enums = ((Class<? extends Enum>) clazz).getEnumConstants();
             return enums[intValue]; 
         default:
             return null;
@@ -416,7 +418,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     }
 
     /**
-     * Sets the targets property of this layout option data.
+     * Sets the layout option targets from a serialized definition. The input is expected to be
+     * a comma separated list of target literals.
      * 
      * @param targetsString comma separated list of targets
      */
@@ -426,15 +429,15 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             StringTokenizer tokenizer = new StringTokenizer(targetsString, ", \t");
             while (tokenizer.hasMoreTokens()) {
                 String token = tokenizer.nextToken();
-                if (token.equalsIgnoreCase(PARENTS_LITERAL)) {
+                if (token.equalsIgnoreCase(Target.PARENTS.toString())) {
                     targets.add(Target.PARENTS);
-                } else if (token.equalsIgnoreCase(NODES_LITERAL)) {
+                } else if (token.equalsIgnoreCase(Target.NODES.toString())) {
                     targets.add(Target.NODES);
-                } else if (token.equalsIgnoreCase(EDGES_LITERAL)) {
+                } else if (token.equalsIgnoreCase(Target.EDGES.toString())) {
                     targets.add(Target.EDGES);
-                } else if (token.equalsIgnoreCase(PORTS_LITERAL)) {
+                } else if (token.equalsIgnoreCase(Target.PORTS.toString())) {
                     targets.add(Target.PORTS);
-                } else if (token.equalsIgnoreCase(LABELS_LITERAL)) {
+                } else if (token.equalsIgnoreCase(Target.LABELS.toString())) {
                     targets.add(Target.LABELS);
                 }
             }
@@ -442,13 +445,13 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     }
 
     /**
-     * Checks whether the given target is active for this layout option.
+     * Returns the set of layout option targets, which determine the types of graph elements
+     * the option can be related to.
      * 
-     * @param target a layout option target
-     * @return true if the target is active
+     * @return the layout option targets
      */
-    public boolean hasTarget(final Target target) {
-        return targets.contains(target);
+    public Set<Target> getTargets() {
+        return targets;
     }
 
     /**
@@ -594,7 +597,19 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      */
     @SuppressWarnings("unchecked")
     public Comparable<T> getLowerBound() {
+        if (lowerBound instanceof Comparable<?>) {
+            return (Comparable<T>) lowerBound;
+        }
         return (Comparable<T>) Property.NEGATIVE_INFINITY;
+    }
+
+    /**
+     * Sets the lower bound for layout option values.
+     * 
+     * @param lowerBound the lowerBound to set
+     */
+    public void setLowerBound(final T lowerBound) {
+        this.lowerBound = lowerBound;
     }
 
     /**
@@ -602,7 +617,19 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      */
     @SuppressWarnings("unchecked")
     public Comparable<T> getUpperBound() {
+        if (upperBound instanceof Comparable<?>) {
+            return (Comparable<T>) upperBound;
+        }
         return (Comparable<T>) Property.POSITIVE_INFINITY;
+    }
+
+    /**
+     * Sets the upper bound for layout option values.
+     * 
+     * @param upperBound the upperBound to set
+     */
+    public void setUpperBound(final T upperBound) {
+        this.upperBound = upperBound;
     }
     
     /**
@@ -651,22 +678,22 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     }
 
     /**
-     * Returns whether this option is visible to users, e.g. should be displayed in GUI elements..
+     * Returns the variance for layout option values. If not given explicitly, the default
+     * value is 1.
      * 
-     * @return true if the option is visible
+     * @return the variance
      */
-    public boolean isVisible() {
-        return visible;
+    public float getVariance() {
+        return variance;
     }
 
     /**
-     * Sets whether this option is visible to users, e.g. should be displayed in GUI elements.
+     * Sets the variance for layout option values.
      * 
-     * @param thevisible whether this option is visible to users, e.g. should be displayed in
-     *          GUI elements
+     * @param variance the variance to set
      */
-    public void setVisible(final boolean thevisible) {
-        this.visible = thevisible;
+    public void setVariance(final float variance) {
+        this.variance = variance;
     }
 
 }

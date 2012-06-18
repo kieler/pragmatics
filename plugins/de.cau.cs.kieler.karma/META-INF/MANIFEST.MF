@@ -22,6 +22,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: de.cau.cs.kieler.karma,
  de.cau.cs.kieler.karma.conditions,
+ de.cau.cs.kieler.karma.kivi,
  de.cau.cs.kieler.karma.util,
  de.cau.cs.kieler.karma.util.expandcollapsebutton
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
