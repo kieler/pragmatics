@@ -63,7 +63,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
-import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
+import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.keg.Node;
@@ -183,7 +183,7 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
             public void run(final IProgressMonitor monitor) throws InterruptedException,
                     InvocationTargetException {
                 try {
-                    doFinish(new KielerProgressMonitor(monitor));
+                    doFinish(new ProgressMonitorAdapter(monitor));
                 } catch (InterruptedException e) {
                     throw e;
                 } catch (Throwable e) {

@@ -28,7 +28,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
+import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
 import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
@@ -191,7 +191,7 @@ public class DiagramLayoutEngine {
                     if (monitor == null) {
                         kielerMonitor = new BasicProgressMonitor(0);
                     } else {
-                        kielerMonitor = new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS);
+                        kielerMonitor = new ProgressMonitorAdapter(monitor, MAX_PROGRESS_LEVELS);
                     }
                     // translate the diagram part into one that is understood by the layout manager
                     Object transDiagPart = layoutManager.getAdapter(diagramPart,

@@ -46,11 +46,9 @@ public final class Properties {
     public static final Property<ForceModelStrategy> FORCE_MODEL = new Property<ForceModelStrategy>(
             "de.cau.cs.kieler.klay.force.model", ForceModelStrategy.FRUCHTERMAN_REINGOLD);
     
-    /** default value for object spacing. */
-    public static final float DEF_SPACING = 80.0f;
     /** minimal spacing between objects. */
     public static final Property<Float> SPACING = new Property<Float>(
-            LayoutOptions.SPACING, DEF_SPACING);
+            LayoutOptions.SPACING, 80.0f);
     
     /** the aspect ratio for packing connected components. */
     public static final Property<Float> ASPECT_RATIO = new Property<Float>(
@@ -63,28 +61,21 @@ public final class Properties {
     public static final Property<Float> LABEL_SPACING = new Property<Float>(
             LayoutOptions.LABEL_SPACING, 5.0f, 0.0f);
     
-    /** default value for temperature. */
-    public static final float DEF_TEMPERATURE = 0.001f;
     /** temperature property. */
     public static final Property<Float> TEMPERATURE = new Property<Float>(
-            "de.cau.cs.kieler.klay.force.temperature", DEF_TEMPERATURE, 0.0f);
+            "de.cau.cs.kieler.klay.force.temperature", 0.001f, 0.0f);
     
-    /** default value for iterations. */
-    public static final int DEF_ITERATIONS = 100;
     /** iterations property. */
     public static final Property<Integer> ITERATIONS = new Property<Integer>(
-            "de.cau.cs.kieler.klay.force.iterations", DEF_ITERATIONS, 1);
+            "de.cau.cs.kieler.klay.force.iterations", 100, 1);
     
-    /** edge repulsive power property identifier. */
-    public static final String EDGE_REP_ID = "de.cau.cs.kieler.klay.force.repulsivePower";
     /** edge repulsive power property. */
-    public static final Property<Integer> EDGE_REP = new Property<Integer>(EDGE_REP_ID, 0, 0);
+    public static final Property<Integer> EDGE_REP = new Property<Integer>(
+            "de.cau.cs.kieler.klay.force.repulsivePower", 0, 0);
     
-    /** default value for repulsion factor. */
-    public static final float DEF_REPULSION = 5.0f;
     /** repulsion factor property. */
     public static final Property<Float> REPULSION = new Property<Float>(
-            "de.cau.cs.kieler.klay.force.repulsion", DEF_REPULSION, 0.0f);
+            "de.cau.cs.kieler.klay.force.repulsion", 5.0f, 0.0f);
     
     ///////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

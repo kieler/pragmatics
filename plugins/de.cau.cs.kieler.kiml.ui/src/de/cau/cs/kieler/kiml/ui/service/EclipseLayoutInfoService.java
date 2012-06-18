@@ -423,18 +423,26 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
                     && data.getActivationProperty() != null) {
                 final String text = data.getActivationText();
                 final IProperty<Boolean> activation = data.getActivationProperty();
+                final Runnable activationAction = data.getActivationAction();
                 menuManager.add(new ContributionItem() {
                     public void fill(final Menu parent, final int index) {
                         final MenuItem menuItem = new MenuItem(parent, SWT.CHECK, index);
                         menuItem.setText(text);
-                        menuItem.setSelection(activation.getDefault());
+                        menuItem.setSelection(getConfigProperties().getProperty(activation));
                         menuItem.addSelectionListener(new SelectionListener() {
                             public void widgetSelected(final SelectionEvent e) {
                                 getConfigProperties().setProperty(activation, menuItem.getSelection());
+                                if (activationAction != null) {
+                                    activationAction.run();
+                                }
                             }
                             public void widgetDefaultSelected(final SelectionEvent e) {
                             }
                         });
+                        // execute the activation action initially
+                        if (activationAction != null) {
+                            activationAction.run();
+                        }
                     }
                 });
             }

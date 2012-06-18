@@ -66,10 +66,16 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     public static final String ATTRIBUTE_DEFAULT = "default";
     /** name of the 'description' attribute in the extension points. */
     public static final String ATTRIBUTE_DESCRIPTION = "description";
+    /** name of the 'enumValues' attribute used in doing remote layout. */
+    public static final String ATTRIBUTE_ENUMVALUES = "enumValues";
     /** name of the 'feature' attribute in the extension points. */
     public static final String ATTRIBUTE_FEATURE = "feature";
     /** name of the 'id' attribute in the extension points. */
     public static final String ATTRIBUTE_ID = "id";
+    /** name of the 'implementation' attribute of a layout option of type 'remoteenum'. */
+    public static final String ATTRIBUTE_IMPLEMENTATION = "implementation";
+    /** name of the 'lowerBound' attribute in the extension points. */
+    public static final String ATTRIBUTE_LOWER_BOUND = "lowerBound";
     /** name of the 'name' attribute in the extension points. */
     public static final String ATTRIBUTE_NAME = "name";
     /** name of the 'option' attribute in the extension points. */
@@ -80,10 +86,10 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     public static final String ATTRIBUTE_PRIORITY = "priority";
     /** name of the 'type' attribute in the extension points. */
     public static final String ATTRIBUTE_TYPE = "type";
-    /** name of the 'enumValues' attribute used in doing remote layout. */
-    public static final String ATTRIBUTE_ENUMVALUES = "enumValues";
-    /** name of the 'implementation' attribute of a layout option of type 'remoteenum'. */
-    public static final String ATTRIBUTE_IMPLEMENTATION = "implementation";
+    /** name of the 'upperBound' attribute in the extension points. */
+    public static final String ATTRIBUTE_UPPER_BOUND = "upperBound";
+    /** name of the 'variance' attribute in the extension points. */
+    public static final String ATTRIBUTE_VARIANCE = "variance";
     
     /**
      * Report an error that occurred while reading extensions.
@@ -339,12 +345,14 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
      */
     private void loadLayoutOption(final IConfigurationElement element) {
         LayoutOptionData<Object> optionData = new LayoutOptionData<Object>();
+        // get option identifier
         String optionId = element.getAttribute(ATTRIBUTE_ID);
         if (optionId == null || optionId.length() == 0) {
             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
             return;
         }
         optionData.setId(optionId);
+        // get option type
         String optionType = element.getAttribute(ATTRIBUTE_TYPE);        
         try {
             if (optionType.equals(LayoutOptionData.REMOTEENUM_LITERAL)) {
@@ -372,18 +380,35 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
         } catch (IllegalArgumentException exception) {
             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_TYPE, exception);
             return;
-        }    
+        }
+        // get default value, lower bound, and upper bound
         try {
             Object defaultValue = optionData.parseValue(element.getAttribute(ATTRIBUTE_DEFAULT));
             optionData.setDefault(defaultValue);
+            Object lowerBound = optionData.parseValue(element.getAttribute(ATTRIBUTE_LOWER_BOUND));
+            optionData.setLowerBound(lowerBound);
+            Object upperBound = optionData.parseValue(element.getAttribute(ATTRIBUTE_UPPER_BOUND));
+            optionData.setUpperBound(upperBound);
         } catch (IllegalStateException exception) {
             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, exception);
         }
+        // get name and description
         optionData.setName(element.getAttribute(ATTRIBUTE_NAME));
         optionData.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
+        // get option targets (which graph elements it applies to)
         optionData.setTargets(element.getAttribute(ATTRIBUTE_APPLIESTO));
+        // whether the option should only be shown in advanced mode
         String advanced = element.getAttribute(ATTRIBUTE_ADVANCED);
         optionData.setAdvanced(advanced != null && advanced.equals("true"));
+        // get variance for automatic configuration
+        try {
+            String varianceString = element.getAttribute(ATTRIBUTE_VARIANCE);
+            if (varianceString != null) {
+                optionData.setVariance(Float.parseFloat(varianceString));
+            }
+        } catch (NumberFormatException exception) {
+            reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_VARIANCE, exception);
+        }
         getRegistry().addLayoutOption(optionData);
     }
     

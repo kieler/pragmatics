@@ -28,7 +28,7 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
+import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
@@ -115,7 +115,7 @@ public final class DiagramAnalyzer {
 
                 // second phase: analyze the graph
                 protected IStatus execute(final IProgressMonitor monitor) {
-                    IKielerProgressMonitor kmonitor = new KielerProgressMonitor(monitor,
+                    IKielerProgressMonitor kmonitor = new ProgressMonitorAdapter(monitor,
                             MAX_PROGRESS_LEVELS);
                     kmonitor.begin("Diagram analysis", TOTAL_WORK);
                     // configure the layout graph to set proper layout options

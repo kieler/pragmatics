@@ -15,65 +15,52 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed.Type;
+import de.cau.cs.kieler.kiml.service.grana.analyses.AreaAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
 
 /**
  * Measures the area extent of the given graph layout.
  *
  * Does not care for hierarchy. The returned object is a float value within the
- * range of 0.0 to 1.0, where a higher value means more area.
+ * range of 0.0 to 1.0, where a higher value means less area.
  *
  * @author bdu
- *
+ * @author msp
  */
 public class AreaMetric implements IAnalysis {
-
-    /** Identifier for "dimensions". */
-    private static final String GRANA_DIMENSIONS = "de.cau.cs.kieler.kiml.grana.dimensions";
+    
+    /** exponent for the computed area. */
+    private static final double AREA_EXP = 0.05;
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public Object doAnalysis(
-            final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Area metric analysis", 1);
-        Float result;
+        Object[] dimsResult = (Object[]) results.get(AreaAnalysis.ID);
+        int nodeCount = (Integer) results.get(NodeCountAnalysis.ID);
+        int edgeCount = (Integer) results.get(EdgeCountAnalysis.ID);
+        int elementCount = nodeCount + edgeCount;
 
-        try {
-            Object dimsResult = results.get(GRANA_DIMENSIONS);
+        float xdim = (Float) dimsResult[0];
+        float ydim = (Float) dimsResult[1];
 
-            if (!(dimsResult instanceof Pair<?, ?>)) {
-                // This should only happen when the dimensions analysis fails.
-                // "Area metric analysis failed."
-                return new AnalysisFailed(Type.Dependency);
-            }
-
-            Pair<Float, Float> dims = (Pair<Float, Float>) dimsResult;
-            float xdim = dims.getFirst();
-            float ydim = dims.getSecond();
-
-            double area = xdim * ydim;
-
-            // normalize
-            if (area < 1.0) {
-                result = 0.0f;
-            } else {
-                final double exponent = 0.08;
-                result = (float) (1.0f - (1.0f / Math.pow(area, exponent)));
-            }
-            assert (0.0f <= result) && (result <= 1.0f) : "Metric result out of bounds: "
-                    + result;
-
-        } finally {
-            // We must close the monitor.
-            progressMonitor.done();
+        float result = 1.0f;
+        double area = xdim * ydim;
+        if (elementCount > 0) {
+            // normalize considering the number of nodes and edges
+            area /= elementCount * elementCount;
         }
-
+        if (area > 1.0) {
+            result = 1.0f / (float) Math.pow(area, AREA_EXP);
+        }
+        
+        assert result >= 0 && result <= 1;
+        progressMonitor.done();
         return result;
     }
+    
 }
