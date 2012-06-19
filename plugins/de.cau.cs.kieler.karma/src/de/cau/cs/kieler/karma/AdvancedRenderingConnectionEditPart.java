@@ -24,7 +24,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
-import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
+import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartDelegate;
 
 /**
  * 
@@ -40,7 +40,7 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
     // SUPPRESS CHECKSTYLE NEXT VisibilityModifier
     protected IFigure primaryShape;
 
-    private AdvancedRenderingEditPartUtil util;
+    private AdvancedRenderingEditPartDelegate util;
 
     /**
      * The constructor. Just calls super.
@@ -53,7 +53,7 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
         String className = this.getClass().getName();
         ConditionProvider conditionProvider = ConditionProvider.getInstance();
         List<HashMap<String, Object>> conditions = conditionProvider.getPairs(className);
-        util = new AdvancedRenderingEditPartUtil(conditions);
+        util = new AdvancedRenderingEditPartDelegate(conditions);
     }
 
     @Override

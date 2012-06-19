@@ -25,7 +25,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
-import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
+import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartDelegate;
 
 /**
  * @author ckru
@@ -42,7 +42,7 @@ public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPa
     /**
      * Utility class containing the actual methods. Used to eliminate redundant code.
      */
-    private AdvancedRenderingEditPartUtil util;
+    private AdvancedRenderingEditPartDelegate util;
 
     /**
      * The constructor. Just calls super.
@@ -55,7 +55,7 @@ public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPa
         String className = this.getClass().getName();
         ConditionProvider conditionProvider = ConditionProvider.getInstance();
         List<HashMap<String, Object>> conditions = conditionProvider.getPairs(className);
-        util = new AdvancedRenderingEditPartUtil(conditions);
+        util = new AdvancedRenderingEditPartDelegate(conditions);
 
     }
 

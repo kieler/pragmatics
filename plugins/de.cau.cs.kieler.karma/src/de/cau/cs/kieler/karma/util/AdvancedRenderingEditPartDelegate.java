@@ -55,7 +55,7 @@ import de.cau.cs.kieler.karma.conditions.IEditPartSensitiveCondition;
  * @author ckru
  * 
  */
-public class AdvancedRenderingEditPartUtil {
+public class AdvancedRenderingEditPartDelegate {
 
     /**
      * Container for the last positive condition. Used for performance optimizations.
@@ -80,7 +80,7 @@ public class AdvancedRenderingEditPartUtil {
      * @param theConditions
      *            The list of conditions and the corresponding string for generating the figure.
      */
-    public AdvancedRenderingEditPartUtil(final List<HashMap<String, Object>> theConditions) {
+    public AdvancedRenderingEditPartDelegate(final List<HashMap<String, Object>> theConditions) {
         conditions = theConditions;
     }
 

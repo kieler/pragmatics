@@ -31,7 +31,7 @@ import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
-import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
+import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartDelegate;
 import de.cau.cs.kieler.karma.util.expandcollapsebutton.AdvancedRenderingResizableCompartmentEditPolicy;
 
 /**
@@ -49,7 +49,7 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
     /**
      * Utility class containing the actual methods. Used to eliminate redundant code.
      */
-    private AdvancedRenderingEditPartUtil util;
+    private AdvancedRenderingEditPartDelegate util;
 
     public NodeFigure MyNodePlate;
 
@@ -64,7 +64,7 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
         String className = this.getClass().getName();
         ConditionProvider conditionProvider = ConditionProvider.getInstance();
         List<HashMap<String, Object>> conditions = conditionProvider.getPairs(className);
-        util = new AdvancedRenderingEditPartUtil(conditions);
+        util = new AdvancedRenderingEditPartDelegate(conditions);
     }
 
     @Override
