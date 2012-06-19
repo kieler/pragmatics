@@ -63,7 +63,8 @@ public class AdvancedRenderingEditPartDelegate {
     private ICondition<EObject> lastCondition = null;
 
     /**
-     * The list of conditions and the corresponding string for generating the figure.
+     * The list of condition data storage hashmaps which consist of the actual conditions and the
+     * strings describing the figure.
      */
     private List<HashMap<String, Object>> conditions;
 
@@ -72,6 +73,9 @@ public class AdvancedRenderingEditPartDelegate {
      */
     private boolean isCollapsed = false;
     
+    /**
+     * Remembers the last collapse status the object this delegate belongs to assumed.
+     */
     private CollapseStatus collapseStatus = CollapseStatus.UNCHANGED;
    
     
@@ -85,15 +89,16 @@ public class AdvancedRenderingEditPartDelegate {
     }
 
     /**
-     * 
+     * This method checks conditions and distributes figures accordingly every time the 
+     * EditPart this delegate belongs to gets a Notification.
      * @param notification
-     *            the notification given to the handleNotificationEvent of the editpart.
+     *            the notification given to the handleNotificationEvent of the EditPart.
      * @param primaryShape
-     *            the primaryShape attribute of the editpart.
+     *            the primaryShape attribute of the EditPart.
      * @param modelElement
-     *            the modelelement of the editpart.
+     *            the modelelement of the EditPart.
      * @param editPart
-     *            the editpart himself.
+     *            the EditPart himself.
      */
     public void handleNotificationEvent(final Notification notification,
             final IFigure primaryShape, final EObject modelElement,
@@ -118,11 +123,7 @@ public class AdvancedRenderingEditPartDelegate {
             IFigure figure = primaryShape;
             if (figure != null) {
                 boolean changed = false;
-                if (coll != this.isCollapsed) {
-                    changed = this.updateFigure(figure, modelElement, editPart, true);
-                } else {
-                    changed = this.updateFigure(figure, modelElement, editPart, false);
-                }
+                changed = this.updateFigure(figure, modelElement, editPart, coll != this.isCollapsed);
                 //do some layout if the figure actually was changed
                 if (changed) {
                     LayoutManager layoutManager = figure.getLayoutManager();
@@ -216,6 +217,11 @@ public class AdvancedRenderingEditPartDelegate {
         return false;
     }
 
+    /**
+     * Adds an EditPart to an IEditPartSensitive condition. Works recursively for compound conditions.
+     * @param condition the condition to add the edit part to
+     * @param editPart the edit part to add to the condition
+     */
     private void addEditPartToCondition(final ICondition<?> condition, final EditPart editPart) {
         if (condition instanceof IEditPartSensitiveCondition<?>) {
             ((IEditPartSensitiveCondition<?>) condition).setEditPart(editPart);
@@ -233,7 +239,7 @@ public class AdvancedRenderingEditPartDelegate {
     }
     
     /**
-     * method that gets a figure from the renderingProvider and sets it to the SwitchableFigure for
+     * Method that gets a figure from the renderingProvider and sets it to the SwitchableFigure for
      * display.
      * 
      * @param renderingProvider
@@ -253,10 +259,8 @@ public class AdvancedRenderingEditPartDelegate {
         // setting the new figure
         IFigure newFigure = renderingProvider.getFigureByString(figureParam, oldFigure,
                 modelElement, part);
-        if (newFigure != null) {
-            if (switchableFigure != null) {
+        if (newFigure != null && switchableFigure != null) {
                 switchableFigure.setCurrentFigure(newFigure);
-            }
         }
     }
 
