@@ -173,8 +173,6 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         if (chosenLayout == null) {
             chosenLayout = lefttop;
         }
-
-//        chosenLayout = rightbottom;
         
         // Apply calculated positions to nodes.
         for (Layer layer : layeredGraph.getLayers()) {
@@ -401,9 +399,13 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                 next = bal.getAlign().get(next);
             }
 
-            maximumNodeSize = upperBound + lowerBound;
-            postShift = lowerBound;
-
+            if (bal.getAlign().get(root) != root) {
+                maximumNodeSize = upperBound + lowerBound;
+            }
+            if (lowerBound > rootPortPos) {
+                postShift = lowerBound;
+            }
+            
             bal.getInnerShift().put(root, bal.getInnerShift().get(root) + postShift);
 
             current = root;
