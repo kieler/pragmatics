@@ -1,3 +1,17 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ * 
+ *****************************************************************************/
 package de.cau.cs.kieler.karma;
 
 import java.util.HashMap;
@@ -13,11 +27,18 @@ import org.eclipse.gmf.runtime.notation.View;
 import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartDelegate;
 
+/**
+ * EditPart for using KARMA with Labels.
+ * 
+ * @author ckru
+ * 
+ */
 public class AdvancedRenderingLabelEditPart extends LabelEditPart implements IAdvancedRenderingEditPart {
 
     /**
      * Figure that that represents the model element.
      */
+    // Visibility modification is necessary to be consistent with the generated EditParts.
     // SUPPRESS CHECKSTYLE NEXT VisibilityModifier
     protected IFigure primaryShape;
 
@@ -27,7 +48,7 @@ public class AdvancedRenderingLabelEditPart extends LabelEditPart implements IAd
     private AdvancedRenderingEditPartDelegate util;
 
     /**
-     * The constructor. Just calls super.
+     * The constructor. Just calls super and fills some fields.
      * 
      * @param view
      *            to be given to super
@@ -40,6 +61,7 @@ public class AdvancedRenderingLabelEditPart extends LabelEditPart implements IAd
         util = new AdvancedRenderingEditPartDelegate(conditions);
     }
 
+    
     @Override
     public void handleNotificationEvent(final Notification notification) {
         super.handleNotificationEvent(notification);
@@ -75,7 +97,7 @@ public class AdvancedRenderingLabelEditPart extends LabelEditPart implements IAd
             util.updateFigure(primaryShape, this.getModelElement(), this, true);
             IFigure label = this.getFigure();
             if (label instanceof WrappingLabel) {
-               ((WrappingLabel)label).setTextWrap(true);
+               ((WrappingLabel) label).setTextWrap(true);
             }
         }
         

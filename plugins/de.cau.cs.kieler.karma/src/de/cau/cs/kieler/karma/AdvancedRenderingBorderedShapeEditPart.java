@@ -27,7 +27,6 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IResizableCompartmentEditPart;
-import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
@@ -35,6 +34,8 @@ import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartDelegate;
 import de.cau.cs.kieler.karma.util.expandcollapsebutton.AdvancedRenderingResizableCompartmentEditPolicy;
 
 /**
+ * EditPart for using KARMA with BorderedShapeNodes.
+ * 
  * @author ckru
  */
 public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBorderedShapeEditPart
@@ -43,6 +44,7 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
     /**
      * Figure that that represents the model element.
      */
+    // Visibility modification is necessary to be consistent with the generated EditParts.
     // SUPPRESS CHECKSTYLE NEXT VisibilityModifier
     protected IFigure primaryShape;
 
@@ -51,10 +53,8 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
      */
     private AdvancedRenderingEditPartDelegate util;
 
-    public NodeFigure MyNodePlate;
-
     /**
-     * The constructor. Just calls super.
+     * The constructor. Just calls super and fills some fields.
      * 
      * @param view
      *            to be given to super
@@ -67,6 +67,7 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
         util = new AdvancedRenderingEditPartDelegate(conditions);
     }
 
+    
     @Override
     public void handleNotificationEvent(final Notification notification) {
         super.handleNotificationEvent(notification);
@@ -100,7 +101,10 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
      * expand/collapse button exchangable.
      */
     private void activateExchangableExpandCollapse() {
-        List<EditPart> resizeableCompartments = this.getResizableCompartments();
+        //Due to the nature of generics its not possible to do a real type check here.
+        //The only other option is too much overhead for too less gain.
+        @SuppressWarnings("unchecked")
+        List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
         for (EditPart compartment : resizeableCompartments) {
             if (compartment instanceof IResizableCompartmentEditPart) {
                 IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
@@ -116,13 +120,16 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
      * @param figure the new custom figure
      */
     public void setCollapseFigure(final IFigure figure) {
-        List<EditPart> resizeableCompartments = this.getResizableCompartments();
+        //Due to the nature of generics its not possible to do a real type check here.
+        //The only other option is too much overhead for too less gain.
+        @SuppressWarnings("unchecked")
+        List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
         for (EditPart compartment : resizeableCompartments) {
             if (compartment instanceof IResizableCompartmentEditPart) {
                 IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
                 EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
                 if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
-                    ((AdvancedRenderingResizableCompartmentEditPolicy)epol).setCollapseFigure(figure);
+                    ((AdvancedRenderingResizableCompartmentEditPolicy) epol).setCollapseFigure(figure);
                 }
             }
         }
@@ -133,13 +140,16 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
      * @param figure the new custom figure
      */
     public void setExpandFigure(final IFigure figure) {
-        List<EditPart> resizeableCompartments = this.getResizableCompartments();
+        //Due to the nature of generics its not possible to do a real type check here.
+        //The only other option is too much overhead for too less gain.
+        @SuppressWarnings("unchecked")
+        List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
         for (EditPart compartment : resizeableCompartments) {
             if (compartment instanceof IResizableCompartmentEditPart) {
                 IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
                 EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
                 if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
-                    ((AdvancedRenderingResizableCompartmentEditPolicy)epol).setExpandFigure(figure);
+                    ((AdvancedRenderingResizableCompartmentEditPolicy) epol).setExpandFigure(figure);
                 }
             }
         }
@@ -150,13 +160,17 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
      * @param locator the new custom figure
      */
     public void setCollapseExpandLocator(final Locator locator) {
-        List<EditPart> resizeableCompartments = this.getResizableCompartments();
+        //Due to the nature of generics its not possible to do a real type check here.
+        //The only other option is too much overhead for too less gain.
+        @SuppressWarnings("unchecked")
+        List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
         for (EditPart compartment : resizeableCompartments) {
             if (compartment instanceof IResizableCompartmentEditPart) {
                 IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
                 EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
                 if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
-                    ((AdvancedRenderingResizableCompartmentEditPolicy)epol).setCollapseExpandLocator(locator);
+                    ((AdvancedRenderingResizableCompartmentEditPolicy) epol)
+                        .setCollapseExpandLocator(locator);
                 }
             }
         }
@@ -164,16 +178,19 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
     
     /**
      * set custom size of the clickable area to expand/collapse.
-     * @param dim
+     * @param dim the size of the clickable area
      */
     public void setCollapseExpandSize(final Dimension dim) {
-        List<EditPart> resizeableCompartments = this.getResizableCompartments();
+        //Due to the nature of generics its not possible to do a real type check here.
+        //The only other option is too much overhead for too less gain.
+        @SuppressWarnings("unchecked")
+        List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
         for (EditPart compartment : resizeableCompartments) {
             if (compartment instanceof IResizableCompartmentEditPart) {
                 IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
                 EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
                 if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
-                    ((AdvancedRenderingResizableCompartmentEditPolicy)epol).setCollapseExpandSize(dim);
+                    ((AdvancedRenderingResizableCompartmentEditPolicy) epol).setCollapseExpandSize(dim);
                 }
             }
         }

@@ -28,6 +28,8 @@ import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartDelegate;
 
 /**
+ * EditPart for using KARMA with ShapeNodes.
+ * .
  * @author ckru
  */
 public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPart implements
@@ -36,6 +38,7 @@ public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPa
     /**
      * Figure that that represents the model element.
      */
+    // Visibility modification is necessary to be consistent with the generated EditParts.
     // SUPPRESS CHECKSTYLE NEXT VisibilityModifier
     protected IFigure primaryShape;
 
@@ -45,7 +48,7 @@ public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPa
     private AdvancedRenderingEditPartDelegate util;
 
     /**
-     * The constructor. Just calls super.
+     * The constructor. Just calls super and fills some fields.
      * 
      * @param view
      *            to be given to super
