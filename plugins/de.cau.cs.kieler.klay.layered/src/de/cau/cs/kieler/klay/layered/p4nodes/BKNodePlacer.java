@@ -19,7 +19,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import com.google.common.collect.Maps;
 
@@ -58,9 +57,10 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     private boolean addBalancedLayout = false;
 
     /** additional processor dependencies for graphs with hierarchical ports. */
-    private static final IntermediateProcessingStrategy HIERARCHY_PROCESSING_ADDITIONS = new IntermediateProcessingStrategy(
-            IntermediateProcessingStrategy.BEFORE_PHASE_5,
-            IntermediateLayoutProcessor.HIERARCHICAL_PORT_POSITION_PROCESSOR);
+    private static final IntermediateProcessingStrategy HIERARCHY_PROCESSING_ADDITIONS
+                            = new IntermediateProcessingStrategy(
+                                    IntermediateProcessingStrategy.BEFORE_PHASE_5,
+                                    IntermediateLayoutProcessor.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
     /**
      * {@inheritDoc}
@@ -174,6 +174,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             chosenLayout = lefttop;
         }
 
+//        chosenLayout = rightbottom;
+        
         // Apply calculated positions to nodes.
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
@@ -337,46 +339,56 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         HashMap<LNode, List<LNode>> blocks = getBlocks(bal);
 
         for (LNode root : blocks.keySet()) {
-            double maximumNodeSize = root.getSize().y;
+            double maximumNodeSize = root.getMargin().top + root.getSize().y + root.getMargin().bottom;
             double lowerBound = 0.0;
-            double upperBound = root.getSize().y;
+            double upperBound = root.getMargin().top + root.getSize().y + root.getMargin().bottom;
             double postShift = 0.0;
 
             LNode current = root;
             LNode next = bal.getAlign().get(root);
+            
+            double rootPortPos = 0.0;
+            double rootUpperBound = 0.0;
+            
+            LEdge rootEdge = getEdge(current, next);
+            
+            if (rootEdge != null) {
+                if (bal.getHDir() == HDirection.BOTTOM) {
+                    rootPortPos = rootEdge.getTarget().getPosition().y
+                            + rootEdge.getTarget().getAnchor().y + next.getMargin().top;
+                } else {
+                    rootPortPos = rootEdge.getSource().getPosition().y
+                            + rootEdge.getSource().getAnchor().y + next.getMargin().top;
+                }
+                rootUpperBound = current.getMargin().top + current.getSize().y
+                        + current.getMargin().bottom - rootPortPos;
+                
+                lowerBound = rootPortPos;
+                upperBound = rootUpperBound;
+            }
 
             while (next != root) {
                 LEdge edge = getEdge(current, next);
 
                 double difference = 0.0;
+                double portPos = 0.0;
                 if (bal.getHDir() == HDirection.BOTTOM) {
                     difference = edge.getTarget().getPosition().y + edge.getTarget().getAnchor().y
                             - edge.getSource().getPosition().y - edge.getSource().getAnchor().y
                             + bal.getInnerShift().get(current);
+                    portPos = edge.getSource().getPosition().y + edge.getSource().getAnchor().y
+                            + next.getMargin().top;
                 } else {
                     difference = edge.getSource().getPosition().y + edge.getSource().getAnchor().y
                             - edge.getTarget().getPosition().y - edge.getTarget().getAnchor().y
                             + bal.getInnerShift().get(current);
+                    portPos = edge.getTarget().getPosition().y + edge.getTarget().getAnchor().y
+                            + next.getMargin().top;
                 }
-                double portPos = edge.getTarget().getPosition().y + edge.getTarget().getAnchor().y
-                        + current.getMargin().top;
                 double currentLowerBound = portPos;
-                double currentUpperBound = current.getMargin().top + current.getSize().y
-                        + current.getMargin().bottom - currentLowerBound;
+                double currentUpperBound = next.getMargin().top + next.getSize().y
+                        + next.getMargin().bottom - currentLowerBound;
                 bal.getInnerShift().put(next, difference);
-
-                if (bal.getAlign().get(next) == root) {
-                    double nextPortPos = edge.getTarget().getPosition().y
-                            + edge.getTarget().getAnchor().y + next.getMargin().top;
-                    if (nextPortPos > currentLowerBound) {
-                        currentLowerBound = nextPortPos;
-                    }
-                    double nextUpperBound = next.getSize().y + next.getMargin().top
-                            + next.getMargin().bottom - nextPortPos;
-                    if (nextUpperBound > currentUpperBound) {
-                        currentUpperBound = nextUpperBound;
-                    }
-                }
 
                 if (currentLowerBound > lowerBound) {
                     lowerBound = currentLowerBound;
@@ -615,8 +627,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     private List<LNode> allUpperNeighbors(final LNode node) {
         List<LNode> result = new LinkedList<LNode>();
         for (LEdge edge : node.getIncomingEdges()) {
-            if (
-            node.getLayer() != edge.getSource().getNode().getLayer()) {
+            if (node.getLayer() != edge.getSource().getNode().getLayer()) {
                 result.add(edge.getSource().getNode());
             }
         }
@@ -627,8 +638,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     private List<LNode> allLowerNeighbors(final LNode node) {
         List<LNode> result = new LinkedList<LNode>();
         for (LEdge edge : node.getOutgoingEdges()) {
-            if (
-            node.getLayer() != edge.getTarget().getNode().getLayer()) {
+            if (node.getLayer() != edge.getTarget().getNode().getLayer()) {
                 result.add(edge.getTarget().getNode());
             }
         }
@@ -666,6 +676,9 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             double pos = Double.NEGATIVE_INFINITY;
             LNode previous = new LNode();
             for (LNode node : layer.getNodes()) {
+                if (node.toString().equalsIgnoreCase("n_N146")) {
+                    System.out.println(node.getSize() + " " + previous.getSize());
+                }
                 if (bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y > pos) {
                     previous = node;
                     pos = bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y;
