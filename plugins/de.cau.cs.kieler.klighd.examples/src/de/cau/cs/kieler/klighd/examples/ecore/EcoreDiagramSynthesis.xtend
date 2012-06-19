@@ -4,7 +4,7 @@ import de.cau.cs.kieler.klighd.transformations.AbstractTransformation
 import de.cau.cs.kieler.klighd.TransformationContext
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.kiml.util.KimlUtil
-import de.cau.cs.kieler.klighd.examples.EModelElementCollection
+import de.cau.cs.kieler.klighd.examples.ecore.EModelElementCollection
 import org.eclipse.emf.ecore.EClassifier
 import de.cau.cs.kieler.klighd.examples.KRenderingUtil
 import com.google.inject.Inject
@@ -50,7 +50,8 @@ class EcoreDiagramSynthesis extends AbstractTransformation<EModelElementCollecti
 	
 	def createClassifierFigures(Iterable<EClassifier> classes, KNode rootNode) {
 		classes.forEach[
-			val classNode = it.createRectangulareNode(80, 180);
+		    val boxWidth = if (it.name.length < 10) 180 else it.name.length*12+50;
+			val classNode = it.createRectangulareNode(80, boxWidth);
 			classNode.KRendering.add(
 				factory.createKText.of(it.name).add(factory.createKFontSize.of(20))
 					.add(factory.createKFontBold.setbold).add("lemon".bgColor)

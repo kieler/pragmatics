@@ -65,7 +65,7 @@ public final class HtmlResultGenerator {
                 }
                 
                 html += "<H2>"
-                    + AnalysisService.getInstance().getCategoryById(currentCategory).getName()
+                    + AnalysisService.getInstance().getCategory(currentCategory).getName()
                     + "</H2>";
                 html += "<TABLE border=0 cellpadding='10'>";
             }

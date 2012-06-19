@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
+import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 
@@ -58,7 +58,7 @@ public class LayoutDiagramFileHandler extends AbstractHandler {
             final Object[] elements = ((IStructuredSelection) selection).toArray();
             Job job = new Job("Layout diagram file") {
                 protected IStatus run(final IProgressMonitor monitor) {
-                    KielerProgressMonitor kielerMonitor = new KielerProgressMonitor(monitor);
+                    ProgressMonitorAdapter kielerMonitor = new ProgressMonitorAdapter(monitor);
                     kielerMonitor.begin("Layout selected files", elements.length);
                     try {
                         for (Object object : elements) {

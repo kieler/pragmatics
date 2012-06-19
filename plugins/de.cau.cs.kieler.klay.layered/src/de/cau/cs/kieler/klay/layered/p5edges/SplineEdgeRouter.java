@@ -124,7 +124,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
         layeredGraph.getSize().x = xpos - spacing;
 
         // get user defined minimal angle for straight edges heading in and out nodes.
-        int minimalAngle = layeredGraph.getProperty(Properties.MIN_EDGE_ANGLE);
+        float minimalAngle = layeredGraph.getProperty(Properties.MIN_EDGE_ANGLE);
         // check all short edges
         if (minimalAngle != 0) {
             for (LEdge edge : shortEdges) {

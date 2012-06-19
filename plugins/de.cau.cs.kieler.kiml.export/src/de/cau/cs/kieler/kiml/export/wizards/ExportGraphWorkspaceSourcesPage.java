@@ -14,22 +14,18 @@
 
 package de.cau.cs.kieler.kiml.export.wizards;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -39,9 +35,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import de.cau.cs.kieler.core.ui.wizards.WorkspaceResourcesPage;
-import de.cau.cs.kieler.kiml.export.ExportPlugin;
-import de.cau.cs.kieler.kiml.service.TransformationService;
 import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.ui.service.EclipseTransformationService;
 
 /**
  * The Export graph wizard page which lets the user select the source files from the workspace and
@@ -57,9 +52,6 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      */
     private static final String PAGE_NAME = "exportDiagramsWorkspaceSourcesPage"; //$NON-NLS-1$
 
-    /** the preference store. */
-    private IPreferenceStore preferenceStore = null;
-
     private Combo fileFormatCombo;
 
     /** the preference key for the selected exporter. */
@@ -70,9 +62,13 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      */
     private static final int DEFAULT_TARGET_GROUP_COLUMNS = 3;
     /**
-     * The number of columns used to lay out the default target groups.
+     * The top margin of the target group combo box
      */
     private static final int DEFAULT_TARGET_GROUP_MARGIN_TOP = 20;
+    /**
+     * The graph files extension able to be converted.
+     */
+    private static final String[] GRAPH_FILE_EXTENSIONS = { "kegdi", "kaod", "kids" };
 
     /**
      * Constructs a new instance.
@@ -81,11 +77,10 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      *            the selection the wizard was called on.
      */
     public ExportGraphWorkspaceSourcesPage(final IStructuredSelection selection) {
-        super(PAGE_NAME, true, getGraphFileExtensions(), selection);
+        super(PAGE_NAME, true, GRAPH_FILE_EXTENSIONS, selection);
         this.setTitle(Messages.ExportGraphWizard_title);
         this.setDescription(Messages.ExportGraphWizard_Exporting_workspace_task);
         this.setMessage(Messages.ExportGraphWizard_Exporting_workspace_task);
-        preferenceStore = ExportPlugin.getDefault().getPreferenceStore();
     }
 
     /**
@@ -98,26 +93,25 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         GridLayout gl = new GridLayout(DEFAULT_TARGET_GROUP_COLUMNS, false);
         gl.marginHeight = DEFAULT_TARGET_GROUP_MARGIN_TOP;
         targetGroup.setLayout(gl);
+
         // Label
         Label label = new Label(targetGroup, SWT.NULL);
         label.setText(Messages.ExportDialog_file_format_caption);
         label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+
         // Combo
         fileFormatCombo = new Combo(targetGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
         fileFormatCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+        // fill the Combo with all possible export formats
         String[] formatNames = getGraphFileExtensions();
         if (formatNames.length > 0) {
             fileFormatCombo.setItems(formatNames);
-            // get last exporter from preference store
-            String lastFormatName = preferenceStore.getString(PREFERENCE_EXPORTER);
-            if (lastFormatName.length() > 0) {
-                fileFormatCombo.setText(lastFormatName);
-            } else {
-                fileFormatCombo.setText(formatNames[0]);
-            }
+            fileFormatCombo.select(0);
         } else {
             fileFormatCombo.setEnabled(false);
         }
+
         return targetGroup;
     }
 
@@ -137,14 +131,14 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      *            progress monitor.
      * @return list of selected source files.
      */
-    public List<File> getSourceFiles(final IProgressMonitor monitor) {
+    public List<IPath> getSourceFiles(final IProgressMonitor monitor) {
         List<IResource> selectedResources = this.getResources(monitor);
-        List<File> files = new ArrayList<File>();
+        List<IPath> files = new ArrayList<IPath>();
 
         for (IResource resource : selectedResources) {
             if (resource instanceof IFile) {
                 IFile iFile = (IFile) resource;
-                files.add(iFile.getLocation().toFile());
+                files.add(iFile.getFullPath());
             }
         }
 
@@ -158,7 +152,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      */
 
     private static String[] getGraphFileExtensions() {
-        Collection<GraphFormatData> formatData = TransformationService.getInstance()
+        Collection<GraphFormatData> formatData = EclipseTransformationService.getInstance()
                 .getFormatData();
         String[] formatNames = new String[formatData.size()];
         if (formatNames.length > 0) {
@@ -189,7 +183,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         if (!super.doValidate()) {
             return false;
         }
-        //check if selected extension
+        // check if selected extension
         if (!(getTargetFormat().length() > 0)) {
             return false;
         }
@@ -228,17 +222,48 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         return false;
     }
 
+    /**
+     * 
+     * @return the selected target format
+     */
     public String getTargetFormat() {
         return fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex()).toLowerCase();
     }
 
+    @Override
+    public void saveDialogSettings() {
+        super.saveDialogSettings();
+
+        // save the last export format in dialogSettings
+        IDialogSettings dialogSettings = getDialogSettings();
+        if (dialogSettings == null) {
+            // The dialog settings have not been set on the wizard
+            return;
+        }
+        dialogSettings.put(getName() + PREFERENCE_EXPORTER, getTargetFormat());
+    }
+
     /**
-     * actions to do when closing the window.
-     * 
-     * 
+     * {@inheritDoc}
      */
-    public void close() {
-        // save settings to preference store
-        preferenceStore.setValue(PREFERENCE_EXPORTER, getTargetFormat());
+    @Override
+    protected void restoreDialogSettings() {
+        super.restoreDialogSettings();
+
+        // get the last export format from dialogSettings
+        IDialogSettings dialogSettings = getDialogSettings();
+        if (dialogSettings == null) {
+            // The dialog settings have not been set on the wizard
+            return;
+        }
+        // set the target format combo selection to the restored format
+        String targetFormatName = dialogSettings.get(getName() + PREFERENCE_EXPORTER);
+        if (fileFormatCombo.getItemCount() > 0) {
+            for (int i = 0; i < fileFormatCombo.getItemCount(); i++) {
+                if (fileFormatCombo.getItem(i).toLowerCase().equals(targetFormatName)) {
+                    fileFormatCombo.select(i);
+                }
+            }
+        }
     }
 }

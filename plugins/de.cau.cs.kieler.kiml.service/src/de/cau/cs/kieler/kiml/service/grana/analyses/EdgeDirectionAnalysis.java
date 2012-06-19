@@ -36,22 +36,24 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * @author cds
  */
 public class EdgeDirectionAnalysis implements IAnalysis {
+
+    /**
+     * Identifier of the edge directions analysis.
+     */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.edgeDirections";
     
     /**
      * Index of the number of edges going topwards in the result array.
      */
-    public static final int INDEX_TOP = 0;
-    
+    public static final int INDEX_UP = 0;
     /**
      * Index of the number of edges going leftwards in the result array.
      */
     public static final int INDEX_LEFT = 1;
-    
     /**
      * Index of the number of edges going bottomwards in the result array.
      */
-    public static final int INDEX_BOTTOM = 2;
-    
+    public static final int INDEX_DOWN = 2;
     /**
      * Index of the number of edges going rightwards in the result array.
      */
@@ -92,11 +94,11 @@ public class EdgeDirectionAnalysis implements IAnalysis {
                 }
                 
                 if (sourcePoint.getY() < targetPoint.getY()) {
-                    edgeDirections[INDEX_BOTTOM]++;
+                    edgeDirections[INDEX_DOWN]++;
                 }
                 
                 if (sourcePoint.getY() > targetPoint.getY()) {
-                    edgeDirections[INDEX_TOP]++;
+                    edgeDirections[INDEX_UP]++;
                 }
             }
             
@@ -109,9 +111,9 @@ public class EdgeDirectionAnalysis implements IAnalysis {
         progressMonitor.done();
         
         return new Object[] {
-                edgeDirections[INDEX_TOP],
+                edgeDirections[INDEX_UP],
                 edgeDirections[INDEX_LEFT],
-                edgeDirections[INDEX_BOTTOM],
+                edgeDirections[INDEX_DOWN],
                 edgeDirections[INDEX_RIGHT]
         };
     }

@@ -54,10 +54,7 @@ public class LayoutHandler extends AbstractHandler {
         // check parameter for layout scope, default is diagram scope
         String layoutScope = event.getParameter(PARAM_LAYOUT_SCOPE);
         if (layoutScope != null && layoutScope.equals(VAL_SELECTION)) {
-            selection = HandlerUtil.getActiveMenuSelection(event);
-            if (selection == null) {
-                selection = HandlerUtil.getCurrentSelection(event);
-            }
+            selection = HandlerUtil.getCurrentSelection(event);
         }
         
         // fetch general settings from preferences
@@ -66,7 +63,7 @@ public class LayoutHandler extends AbstractHandler {
         boolean zoomToFit = preferenceStore.getBoolean(PREF_ZOOM);
         boolean progressDialog = preferenceStore.getBoolean(PREF_PROGRESS);
 
-        // get the active editor, use the help of an external connector if necessary
+        // get the active editor, which is expected to contain the diagram for applying layout
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
         if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
             // perform layout with the given selection

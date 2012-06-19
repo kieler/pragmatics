@@ -34,7 +34,7 @@ public class FruchtermanReingoldModel extends AbstractForceModel {
     private static final double ZERO_FACTOR = 100;
     
     /** the current temperature of the system. */
-    private double temperature = Properties.DEF_TEMPERATURE;
+    private double temperature = Properties.TEMPERATURE.getDefault();
     /** the temperature threshold for stopping the model. */
     private double threshold;
     /** the main constant used for force calculations. */

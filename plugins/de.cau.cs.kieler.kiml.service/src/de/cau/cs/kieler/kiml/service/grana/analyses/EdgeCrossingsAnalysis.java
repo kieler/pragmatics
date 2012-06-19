@@ -44,6 +44,11 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * @author msp
  */
 public class EdgeCrossingsAnalysis implements IAnalysis {
+    
+    /**
+     * Identifier of the edge crossings analysis.
+     */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.edgeCrossings";
 
     /**
      * Returns whether two line segments have an intersection.

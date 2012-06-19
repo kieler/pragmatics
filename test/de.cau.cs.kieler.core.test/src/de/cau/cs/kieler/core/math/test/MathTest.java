@@ -285,9 +285,9 @@ public class MathTest {
     @Test
     public void testAverage() {
         /* test if the averagei is 4 */
-        assertEquals(KielerMath.averagei((long) 5, (long) 8, (long) 2, (long) 1), 4);
+        assertEquals(KielerMath.averagel((long) 5, (long) 8, (long) 2, (long) 1), 4);
         /* test if the averagei is 2 */
-        assertEquals(KielerMath.averagei((long) 5, (long) 0, (long) 2, (long) 1), 2);
+        assertEquals(KielerMath.averagel((long) 5, (long) 0, (long) 2, (long) 1), 2);
         /* test if the averagef is 4 */
         assertEquals(KielerMath.averagef(5, 8, 2, 1), 4, 0);
         /* test if the averagef is 2 */

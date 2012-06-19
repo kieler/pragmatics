@@ -387,12 +387,6 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         Rectangle targetBounds = new Rectangle(labelEditPart.getFigure().getBounds());
         targetBounds.x = (int) (labelLayout.getXpos() * scale);
         targetBounds.y = (int) (labelLayout.getYpos() * scale);
-        if (targetBounds.x < 0 || targetBounds.y < 0 || targetBounds.x > xbound
-                || targetBounds.y > ybound || !(parent instanceof KEdge)) {
-            // empty labels are just positioned near their reference point
-            command.addShapeLayout((View) labelEditPart.getModel(), new Point(), null);
-            return;
-        }
 
         ConnectionEditPart connectionEditPart = (ConnectionEditPart) labelEditPart.getParent();
         PointList bendPoints = getBendPoints((KEdge) parent, connectionEditPart.getFigure(), scale);

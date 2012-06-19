@@ -48,6 +48,34 @@ public class AnalysisData implements ILayoutData, IDepending<String> {
     private final List<Pair<String, String>> components = new LinkedList<Pair<String, String>>();
     /** the analysis dependencies. */
     private final List<Dependency<String>> dependencies = new LinkedList<Dependency<String>>();
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return analysisId;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object instanceof AnalysisData) {
+            AnalysisData other = (AnalysisData) object;
+            return this.analysisId.equals(other.analysisId);
+        }
+        return false;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return analysisId.hashCode();
+    }
 
     /**
      * Create a pool for instances of the analysis.

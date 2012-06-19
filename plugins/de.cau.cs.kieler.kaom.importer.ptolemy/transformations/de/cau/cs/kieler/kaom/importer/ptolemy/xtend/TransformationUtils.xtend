@@ -24,6 +24,7 @@ import de.cau.cs.kieler.kaom.Entity
 import de.cau.cs.kieler.kaom.Link
 import de.cau.cs.kieler.kaom.Linkable
 import de.cau.cs.kieler.kaom.Port
+import static de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportConstants.*
 
 
 /**
@@ -32,6 +33,42 @@ import de.cau.cs.kieler.kaom.Port
  * @author cds
  */
 class TransformationUtils {
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Port Names
+    
+    /**
+     * Checks if the given name is a name usual for input ports.
+     * 
+     * @param name the name of the port to check.
+     * @return {@code true} if the name is common for input ports, {@code false} otherwise.
+     */
+    def boolean isInputPortName(String name) {
+        for (String inputPortName : PORT_NAMES_INPUT) {
+            if (inputPortName.equals(name)) {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
+    /**
+     * Checks if the given name is a name usual for output ports.
+     * 
+     * @param name the name of the port to check.
+     * @return {@code true} if the name is common for output ports, {@code false} otherwise.
+     */
+    def boolean isOutputPortName(String name) {
+        for (String inputPortName : PORT_NAMES_OUTPUT) {
+            if (inputPortName.equals(name)) {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Annotations
@@ -115,6 +152,15 @@ class TransformationUtils {
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Markings
+    
+    /**
+     * Marks the given annotatable object as originating from a Ptolemy model.
+     * 
+     * @param annotatable the element to mark.
+     */
+    def void markAsPtolemyElement(Annotatable annotatable) {
+        annotatable.addStringAnnotation(ANNOTATION_LANGUAGE, ANNOTATION_LANGUAGE_PTOLEMY);
+    }
     
     /**
      * Marks the given link as being undirected. This means that the link's direction has not been

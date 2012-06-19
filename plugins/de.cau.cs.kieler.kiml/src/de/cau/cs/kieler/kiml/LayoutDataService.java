@@ -399,7 +399,7 @@ public class LayoutDataService {
         for (LayoutOptionData<?> optionData : layoutOptionMap.values()) {
             if (algorithmData.knowsOption(optionData)
                     || LayoutOptions.ALGORITHM.equals(optionData)) {
-                if (optionData.hasTarget(targetType)) {
+                if (optionData.getTargets().contains(targetType)) {
                     optionDataList.add(optionData);
                 }
             }
