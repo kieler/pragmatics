@@ -108,7 +108,6 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         // TODO that isn't enough!, we have to determine the external face in a iprocessor.
         Iterable<PFace> faces2 = this.graph.getFaces();
         for (PFace face : faces2) {
-            // int supply = -1 * face.getAdjacentNodeCount();
             int supply = -1 * face.getAdjacentEdgeCount();
             if (face == graph.getExternalFace(false)) {
                 supply -= MAXDEGREE;
@@ -138,7 +137,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         }
 
         // Creating arcs for every face adjacent to the face
-        // Meaning for every node in the graph add edges to the adjacent faces.
+        // Meaning for every node in the original graph add edges to the adjacent faces.
         for (PEdge edge : this.graph.getEdges()) {
             PFace left = edge.getLeftFace();
             PFace right = edge.getRightFace();
@@ -295,7 +294,6 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
      * {@inheritDoc}
      */
     public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph pgraph) {
-        // TODO Auto-generated method stub
         return null;
     }
 

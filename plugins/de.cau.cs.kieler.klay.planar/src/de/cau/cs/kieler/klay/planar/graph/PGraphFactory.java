@@ -435,7 +435,7 @@ public class PGraphFactory {
 
         // construct bendpoints for each node for which there is no original node.
         for (int x = 0; x < GridDrawingProcessor.gridWidth; x++) {
-            for (int y = 0; y < GridDrawingProcessor.gridWidth; y++) {
+            for (int y = 0; y < GridDrawingProcessor.gridHeight; y++) {
                 if (grid[x][y] != null) {
                     if (!grid[x][y].hasProperties()
                             || !(grid[x][y].getProperty(Properties.ORIGIN) instanceof KNode)) {

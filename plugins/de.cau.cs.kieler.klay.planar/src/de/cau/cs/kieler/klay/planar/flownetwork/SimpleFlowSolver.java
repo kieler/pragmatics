@@ -24,10 +24,12 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.pathfinding.DijkstraPathFinder;
 
 /**
+ * A own implementation of flow solving.
  * 
  * @author pkl
  */
 public class SimpleFlowSolver extends AbstractAlgorithm implements IFlowNetworkSolver {
+    // TODO to comment
 
     /**
      * {@inheritDoc} Works only with the assumption that the lower bound of every edge is 1 and edge

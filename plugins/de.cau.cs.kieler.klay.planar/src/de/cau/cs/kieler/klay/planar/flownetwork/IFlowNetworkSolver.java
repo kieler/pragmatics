@@ -23,6 +23,7 @@ import de.cau.cs.kieler.klay.planar.graph.PGraph;
  * provide a common interface for various implementation of algorithms working on flow networks.
  * 
  * @author ocl
+ * @author pkl
  */
 public interface IFlowNetworkSolver extends IAlgorithm {
 
@@ -56,6 +57,7 @@ public interface IFlowNetworkSolver extends IAlgorithm {
     Property<Integer> RESIDUAL_CAPACITY = new Property<Integer>(
             "de.cau.cs.kieler.klay.planar.properties.networkresidualcapacity", 0);
 
+    /** A property assigning a adjacent edge of two face nodes in the flow network. */
     Property<PEdge> CROSSING_EDGE = new Property<PEdge>(
             "de.cau.cs.kieler.klay.planar.properties.crossingedge");
 

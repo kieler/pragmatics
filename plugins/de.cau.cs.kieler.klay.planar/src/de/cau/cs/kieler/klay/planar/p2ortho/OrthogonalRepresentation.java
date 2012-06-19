@@ -50,7 +50,7 @@ public class OrthogonalRepresentation {
         FULL;
 
         /**
-         * Maps the ordinals to the enums.
+         * Maps ordinal to the enum.
          * 
          * @param angleInt
          *            , angle as ordinal.
