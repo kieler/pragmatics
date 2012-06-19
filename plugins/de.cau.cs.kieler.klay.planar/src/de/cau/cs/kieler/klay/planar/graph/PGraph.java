@@ -709,15 +709,28 @@ public class PGraph extends PNode implements Serializable {
     }
 
     /**
+     * Sets the face with the most adjacent nodes as externalFace.
+     * 
+     * @param wantsReCal
+     *            , uses this to trigger explicit a new externalFace calculation.
      * @return the externalFace
      */
     public PFace getExternalFace(final boolean wantsReCal) {
         if (this.externalFace == null || wantsReCal) {
-            // choose the first found face, but it would be better to use useful properties
-            // to determine the external face.
-            this.externalFace = this.getFaces().iterator().next();
+            Iterator<PFace> it = this.getFaces().iterator();
+            if (it.hasNext()) {
+                this.externalFace = it.next();
+                while (it.hasNext()) {
+                    PFace face = it.next();
+                    if (face.getAdjacentNodeCount() > this.externalFace.getAdjacentNodeCount()) {
+                        this.externalFace = face;
+                    }
+                }
+            } else {
+                throw new IllegalStateException();
+            }
         }
-        return externalFace;
+        return this.externalFace;
     }
 
     // do not use this at final version!

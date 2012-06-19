@@ -26,6 +26,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
+import de.cau.cs.kieler.klay.planar.intermediate.GridDrawingProcessor;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
@@ -291,15 +292,14 @@ public class PGraphFactory {
         spacing = pgraph.getProperty(Properties.SPACING);
 
         startX = borderSpacing;
-
-        startY = grid.length * spacing + borderSpacing;
+        startY = GridDrawingProcessor.gridHeight * spacing + borderSpacing;
 
         // TODO introduce minimum spacing or use spacing above as minimum.
         float minSpacing = 40;
 
         // first determine original nodes coordinates.
-        for (int x = 0; x < grid.length; x++) {
-            for (int y = 0; y < grid.length; y++) {
+        for (int x = 0; x < GridDrawingProcessor.gridWidth; x++) {
+            for (int y = 0; y < GridDrawingProcessor.gridHeight; y++) {
                 if (grid[x][y] != null) {
                     grid[x][y].setPostion(startX + x * spacing, startY - y * spacing);
                 }
@@ -310,13 +310,13 @@ public class PGraphFactory {
         // vertical direction!
         // horizontal go through: take lower and upper nodes and go horizontal. check
         // all nodes for minspace condition.
-        for (int y = 0; y < grid.length - 1; y++) {
+        for (int y = 0; y < GridDrawingProcessor.gridHeight - 1; y++) {
             float y1;
             float y2;
             float sum;
             float minDistance = minSpacing;
             // recognize a too small distance between two nodes.
-            for (int x = 0; x < grid.length; x++) {
+            for (int x = 0; x < GridDrawingProcessor.gridWidth; x++) {
                 if (grid[x][y] != null && grid[x][y].hasProperties()) {
                     KNode property = (KNode) grid[x][y].getProperty(Properties.ORIGIN);
                     KShapeLayout data = property.getData(KShapeLayout.class);
@@ -346,7 +346,7 @@ public class PGraphFactory {
                 // if too small distance is found, adjust the grid position according this distance.
                 // move all grid segments in bottom direction.
                 for (int i = 0; i <= y; i++) {
-                    for (int x = 0; x < grid.length; x++) {
+                    for (int x = 0; x < GridDrawingProcessor.gridWidth; x++) {
                         if (grid[x][i] != null) {
                             KShapeLayout nodeLayout = ((KNode) grid[x][i]
                                     .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
@@ -356,8 +356,8 @@ public class PGraphFactory {
                 }
 
                 // move all grid segments in top direction.
-                for (int i = y + 1; i < grid.length; i++) {
-                    for (int x = 0; x < grid.length; x++) {
+                for (int i = y + 1; i < GridDrawingProcessor.gridHeight; i++) {
+                    for (int x = 0; x < GridDrawingProcessor.gridWidth; x++) {
                         if (grid[x][i] != null) {
                             KShapeLayout nodeLayout = ((KNode) grid[x][i]
                                     .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
@@ -373,13 +373,13 @@ public class PGraphFactory {
 
         // horizontal go through.
 
-        for (int x = 0; x < grid.length - 1; x++) {
+        for (int x = 0; x < GridDrawingProcessor.gridWidth - 1; x++) {
             float x1;
             float x2;
             float sum;
             float minDistance = minSpacing;
             // recognize a too small distance between two nodes.
-            for (int y = 0; y < grid.length; y++) {
+            for (int y = 0; y < GridDrawingProcessor.gridHeight; y++) {
                 if (grid[x][y] != null && grid[x][y].hasProperties()) {
                     KNode property = (KNode) grid[x][y].getProperty(Properties.ORIGIN);
                     KShapeLayout data = property.getData(KShapeLayout.class);
@@ -408,7 +408,7 @@ public class PGraphFactory {
                 // if too small distance is found, adjust the grid position according this distance.
                 // move all grid segments in bottom direction.
                 for (int i = 0; i <= x; i++) {
-                    for (int y = 0; y < grid.length; y++) {
+                    for (int y = 0; y < GridDrawingProcessor.gridHeight; y++) {
                         if (grid[i][y] != null) {
                             // TODO this is not enough, because the bendpoints aren't adjusted!!!!
                             KShapeLayout nodeLayout = ((KNode) grid[i][y]
@@ -419,8 +419,8 @@ public class PGraphFactory {
                 }
 
                 // move all grid segments in top direction.
-                for (int i = x + 1; i < grid.length; i++) {
-                    for (int y = 0; y < grid.length; y++) {
+                for (int i = x + 1; i < GridDrawingProcessor.gridWidth; i++) {
+                    for (int y = 0; y < GridDrawingProcessor.gridHeight; y++) {
                         if (grid[i][y] != null) {
                             KShapeLayout nodeLayout = ((KNode) grid[i][y]
                                     .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
@@ -434,8 +434,8 @@ public class PGraphFactory {
         }
 
         // construct bendpoints for each node for which there is no original node.
-        for (int x = 0; x < grid.length; x++) {
-            for (int y = 0; y < grid.length; y++) {
+        for (int x = 0; x < GridDrawingProcessor.gridWidth; x++) {
+            for (int y = 0; y < GridDrawingProcessor.gridWidth; y++) {
                 if (grid[x][y] != null) {
                     if (!grid[x][y].hasProperties()
                             || !(grid[x][y].getProperty(Properties.ORIGIN) instanceof KNode)) {
@@ -467,8 +467,8 @@ public class PGraphFactory {
 
         // moves all original nodes to the left/top to let the edges walk to the center
         // of the nodes.
-        for (int x = 0; x < grid.length; x++) {
-            for (int y = 0; y < grid.length; y++) {
+        for (int x = 0; x < GridDrawingProcessor.gridWidth; x++) {
+            for (int y = 0; y < GridDrawingProcessor.gridHeight; y++) {
                 if (grid[x][y] != null) {
                     if (grid[x][y].hasProperties()
                             && grid[x][y].getProperty(Properties.ORIGIN) instanceof KNode) {

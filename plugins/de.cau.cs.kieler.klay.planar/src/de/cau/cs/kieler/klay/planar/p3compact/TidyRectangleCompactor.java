@@ -49,7 +49,6 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * reduced to a simple one prior to performing this algorithm. These compaction step results from
  * the chapter 5.4 of the Graph Drawing book of Di Battista, Eades, Tamassia and Tollis.
  * 
- * @author ocl
  * @author pkl
  */
 public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayoutPhase {
@@ -225,10 +224,9 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     }
 
     /**
-     * Creates the flownetwork. Create for all faces of the original graph nodes and to nodes for
-     * the external-face. These two nodes are source and sink of the flow network. Depending on the
-     * direction (horizontal or vertical) the method generates edges from source to target over the
-     * face-nodes.
+     * Creates the flow network. Create for all faces of the original graph nodes additionally two
+     * nodes are source and sink of the flow network. Depending on the direction (horizontal or
+     * vertical) the method generates edges from source to target over the face-nodes.
      * 
      * @param startSide
      * @return PGraph, the resulting flownetwork
@@ -547,8 +545,8 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             final List<Pair<PEdge, OrthogonalAngle>> angles, final PFace currentFace,
             final PEdge startEdge) {
 
-        int previousIndex = -1;
-        int currentIndex = -1;
+        int previousIndex = 0;
+        int currentIndex = 0;
 
         // get edge index.
         for (int i = 0; i < angles.size(); i++) {
@@ -615,7 +613,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                 + " is not part of the face " + face.toString() + "!");
     }
 
-    // TODO make a faster: have a look at bendpoints should be enough!
+    // TODO make it faster: have a look at bendpoints should be enough!
     // TODO needs a check: does this work for all examples?
     // the following example does not work with these method, because
     // it is not enough to check only for the edges of bendpoints.
@@ -624,7 +622,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     // x -- x
     // | f2 |
     // x -- x
-
+    // SOLUTION: this doesn't matter which face you choose because both have the same edge
     /**
      * To filter the external face it is enough to check, if all bend-nodes only have two edges of a
      * face. Because of the invariant, that all faces are rectangles is that sufficient. If so,
@@ -635,8 +633,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     private void findExternalFace() {
         for (PFace currentFace : graph.getFaces()) {
 
-            // store the visited edges, this is needed for uniqueness in the facesides.
-            List<PEdge> visitedEdges = new ArrayList<PEdge>();
             // choose a arbitrary edge of the face.
             PEdge startEdge = currentFace.adjacentEdges().iterator().next();
             PEdge currentEdge = startEdge;
@@ -651,8 +647,8 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             boolean isExternal = true;
             while (!finish) {
                 // choose a arbitrary node of the edge, which is not visited before.
-                 currentNode = currentEdge.getTarget() == previousNode ? currentEdge
-                        .getSource() : currentEdge.getTarget();
+                currentNode = currentEdge.getTarget() == previousNode ? currentEdge.getSource()
+                        : currentEdge.getTarget();
                 previousNode = currentNode;
                 angles = this.orthogonal.getAngles(currentNode);
                 // first get the current edge to determine the direction of the next edge,

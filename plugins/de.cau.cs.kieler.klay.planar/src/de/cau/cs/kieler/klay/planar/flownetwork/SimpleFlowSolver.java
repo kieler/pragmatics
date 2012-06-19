@@ -32,7 +32,7 @@ public class SimpleFlowSolver extends AbstractAlgorithm implements IFlowNetworkS
     /**
      * {@inheritDoc} Works only with the assumption that the lower bound of every edge is 1 and edge
      * cost = 1. No flow is already set or if set it isn't considered. The capacity of each edge is
-     * dealt as infinite. Additionally a source and a target node are needed, which contains onyl
+     * dealt as infinite. Additionally a source and a target node are needed, which contains only
      * outgoing or incoming edges respectively.
      */
     public void findFlow(final PGraph network) {
@@ -92,7 +92,8 @@ public class SimpleFlowSolver extends AbstractAlgorithm implements IFlowNetworkS
                 // add additional flow to all flow edges along that path
                 for (PEdge pEdge : reversePath) {
                     pEdge.setProperty(IFlowNetworkSolver.FLOW,
-                            pEdge.getProperty(IFlowNetworkSolver.FLOW) + additionalFlow);
+                            pEdge.getProperty(IFlowNetworkSolver.FLOW) - additionalFlow);
+                    // additionalFlow is negative so we have to subtract it to add it.
                 }
 
             } else {

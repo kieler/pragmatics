@@ -140,7 +140,7 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
         // set networkflow arcs (edges) properties.
         for (PEdge arc : flowNet.getEdges()) {
             // capacity is infinite.
-            arc.setProperty(IFlowNetworkSolver.CAPACITY, 100);
+            arc.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
             arc.setProperty(IPathFinder.PATHCOST, 1);
             arc.setProperty(IFlowNetworkSolver.LOWER_BOUND, 1);
         }

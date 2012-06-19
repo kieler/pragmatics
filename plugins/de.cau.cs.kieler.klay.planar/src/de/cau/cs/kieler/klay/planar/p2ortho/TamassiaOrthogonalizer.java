@@ -105,17 +105,16 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         }
 
         // Creating sink nodes for every graph face
-        // TODO that isn't enough!, we have to determine the external face explicit
-        boolean internal = false;
+        // TODO that isn't enough!, we have to determine the external face in a iprocessor.
         Iterable<PFace> faces2 = this.graph.getFaces();
         for (PFace face : faces2) {
-            int supply = -1 * face.getAdjacentNodeCount();
+            // int supply = -1 * face.getAdjacentNodeCount();
+            int supply = -1 * face.getAdjacentEdgeCount();
             if (face == graph.getExternalFace(false)) {
                 supply -= MAXDEGREE;
             } else {
                 supply += MAXDEGREE;
             }
-
             PNode newnode = network.addNode(NodeType.FACE);
             newnode.setProperty(NETWORKTOGRAPH, face);
             newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply);
@@ -131,7 +130,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                             "Attempted to link non-existent nodes by an edge.");
                 }
                 PEdge newedge = network.addEdge(nodes.get(node), faces.get(face), true);
-                newedge.setProperty(IFlowNetworkSolver.CAPACITY, MAXDEGREE);
+                newedge.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
                 newedge.setProperty(IFlowNetworkSolver.FLOW, 1);
                 newedge.setProperty(IPathFinder.PATHCOST, 0);
                 this.nodeArcs.add(newedge);
@@ -139,6 +138,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         }
 
         // Creating arcs for every face adjacent to the face
+        // Meaning for every node in the graph add edges to the adjacent faces.
         for (PEdge edge : this.graph.getEdges()) {
             PFace left = edge.getLeftFace();
             PFace right = edge.getRightFace();
@@ -151,9 +151,11 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
             PEdge edgeLeft = network.addEdge(faces.get(left), faces.get(right), true);
             edgeLeft.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
             edgeLeft.setProperty(IPathFinder.PATHCOST, 1);
+            edgeLeft.setProperty(IFlowNetworkSolver.CROSSING_EDGE, edge);
             PEdge edgeRight = network.addEdge(faces.get(right), faces.get(left), true);
             edgeRight.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
             edgeRight.setProperty(IPathFinder.PATHCOST, 1);
+            edgeRight.setProperty(IFlowNetworkSolver.CROSSING_EDGE, edge);
             this.faceArcs.add(new Pair<PEdge, PEdge>(edgeLeft, edgeRight));
         }
 
@@ -207,11 +209,9 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                 }
             }
 
-            boolean first = true;
             for (PEdge edge : face1.getEdges(face2)) {
-                if (first) {
-                    first = false;
-
+                PEdge crossingEdge = pair.getFirst().getProperty(IFlowNetworkSolver.CROSSING_EDGE);
+                if (crossingEdge == edge) {
                     if ((face1 == edge.getRightFace()) && (face2 == edge.getLeftFace())) {
                         orthogonal.setBends(edge, bends1);
                     } else if ((face1 == edge.getLeftFace()) && (face2 == edge.getRightFace())) {
@@ -220,9 +220,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                         throw new InconsistentGraphModelException(
                                 "The flow network has not been build correctly.");
                     }
-                } else {
-                    OrthogonalAngle[] bends = new OrthogonalAngle[0];
-                    orthogonal.setBends(edge, bends);
+                } else if (orthogonal.getBends(edge) == null) {
+                    orthogonal.setBends(edge, new OrthogonalAngle[0]);
                 }
             }
         }

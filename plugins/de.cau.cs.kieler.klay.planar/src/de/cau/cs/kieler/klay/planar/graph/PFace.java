@@ -73,6 +73,15 @@ public class PFace extends PGraphElement implements Serializable {
     }
 
     /**
+     * Get the number of edges adjacent to the face.
+     * 
+     * @return the number of adjacent nodes
+     */
+    public int getAdjacentEdgeCount() {
+        return this.edges.size();
+    }
+
+    /**
      * Checks if a given edge is in the surrounding edge set of the face.
      * 
      * @param edge

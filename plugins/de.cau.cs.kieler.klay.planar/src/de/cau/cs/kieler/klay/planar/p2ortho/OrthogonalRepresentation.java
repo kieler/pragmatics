@@ -47,7 +47,29 @@ public class OrthogonalRepresentation {
         RIGHT,
 
         /** A 360 degree angle, or full circle. */
-        FULL,
+        FULL;
+
+        /**
+         * Maps the ordinals to the enums.
+         * 
+         * @param angleInt
+         *            , angle as ordinal.
+         * @return angle to the given ordinal.
+         */
+        public static OrthogonalAngle map(final int angleInt) {
+            switch (angleInt) {
+            case 0:
+                return LEFT;
+            case 1:
+                return STRAIGHT;
+            case 2:
+                return RIGHT;
+            case 3:
+                return FULL;
+            default:
+                throw new IllegalArgumentException();
+            }
+        }
     }
 
     // ======================== Attributes =========================================================

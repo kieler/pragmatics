@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.planar.flownetwork;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 
 /**
@@ -54,6 +55,9 @@ public interface IFlowNetworkSolver extends IAlgorithm {
      */
     Property<Integer> RESIDUAL_CAPACITY = new Property<Integer>(
             "de.cau.cs.kieler.klay.planar.properties.networkresidualcapacity", 0);
+
+    Property<PEdge> CROSSING_EDGE = new Property<PEdge>(
+            "de.cau.cs.kieler.klay.planar.properties.crossingedge");
 
     /**
      * A property assigning a flow to an edge. This property is usually set during the network
