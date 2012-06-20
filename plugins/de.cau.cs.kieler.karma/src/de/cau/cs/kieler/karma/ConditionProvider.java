@@ -24,7 +24,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -35,7 +37,11 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EAttributeImpl;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.model.util.FeatureValueCondition;
 import de.cau.cs.kieler.core.model.util.ListSizeCondition;
@@ -44,6 +50,8 @@ import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 
 /**
+ * This class is for parsing the karma extension point and providing the conditions and additional
+ * data accordingly.
  * 
  * @author ckru
  * 
@@ -54,13 +62,13 @@ public final class ConditionProvider {
      * HashTable for caching condition pairs so that the ExtensionPoint is parsed only once per edit
      * part.
      */
-    private HashMap<String, List<HashMap<String, Object>>> hashTableConditions = new HashMap<String, List<HashMap<String, Object>>>();
+    private HashMap<String, List<HashMap<String, Object>>> hashTableConditions = Maps.newHashMap();
 
     /**
      * HashTable for caching the relevant features and feature ids. Not yet used, will probably
      * removed again.
      */
-    private HashMap<Integer, EStructuralFeature> hashTableRelevantFeatures = new HashMap<Integer, EStructuralFeature>();
+    private HashMap<Integer, EStructuralFeature> hashTableRelevantFeatures = Maps.newHashMap();
 
     /**
      * Constructor set to private to ensure usage of singleton instance.
@@ -72,7 +80,7 @@ public final class ConditionProvider {
     /**
      * Singleton instance.
      */
-    private static ConditionProvider instance;
+    private static ConditionProvider instance = new ConditionProvider();
 
     /**
      * Standard singleton getInstance.
@@ -80,9 +88,6 @@ public final class ConditionProvider {
      * @return the singleton instance
      */
     public static ConditionProvider getInstance() {
-        if (instance == null) {
-            instance = new ConditionProvider();
-        }
         return instance;
     }
 
@@ -109,11 +114,14 @@ public final class ConditionProvider {
                 .getConfigurationElementsFor(EXTENSION_POINT_ID);
         for (IConfigurationElement settings : configurations) {
             if (!settings.getName().equals("configuration")) {
-                System.out.println("faulty extensionpoint");
+                Status myStatus = new Status(IStatus.ERROR, KarmaPlugin.PLUGIN_ID,
+                        "karma extensionpoint could not be read correctly");
+                StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
                 continue;
             }
             IConfigurationElement[] parts = settings.getChildren("editPart");
-            //we need to be an editpart thats supposed to be a target of karma.(registered in the extensionpoint)
+            //we need to be an editpart thats supposed to be a target of karma.
+            //(registered in the extensionpoint)
             if (checkCompatibleEditParts(parts, callingEditPart)) {
                 int prio = 1;
                 String prioString = settings.getAttribute("Priority");
@@ -126,7 +134,8 @@ public final class ConditionProvider {
                     IConfigurationElement[] conditions = conditionContainer.getChildren();
                     //read and build all those conditions
                     for (IConfigurationElement condition : conditions) {
-                        //our condition element is a hashmap to be flexible in how many and what informations to provide.
+                        //our condition element is a hashmap to be flexible in how many 
+                        //and what informations to provide.
                         HashMap<String, Object> conditionElement = new HashMap<String, Object>();
 
                         //set the priority
@@ -171,7 +180,10 @@ public final class ConditionProvider {
                             conditionElement.put("condition", cond);
                             conditionsList.add(conditionElement);
                         } else {
-                            throw new RuntimeException("A failure occured while getting Conditions");
+                            Status myStatus = new Status(IStatus.ERROR, KarmaPlugin.PLUGIN_ID,
+                                    "A failure occured while reading conditions from the " 
+                                            + "karma extension point");
+                            StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
                         }
                     }
                 }
@@ -212,15 +224,20 @@ public final class ConditionProvider {
                     FeatureValueCondition cond = new FeatureValueCondition(feature, value);
                     return cond;
                 } else {
-                    // FIXME throw a more specific exception
-                    throw new RuntimeException("Could not parse value to type of feature.");
+                    Status myStatus = new Status(IStatus.ERROR, KarmaPlugin.PLUGIN_ID,
+                            "While reading karma extension point:" 
+                                    + " Could not parse value to type of feature.");
+                    StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
                 }
             } else {
-                // FIXME throw a more specific exception
-                throw new RuntimeException("Could not find specified feature.");
+                Status myStatus = new Status(IStatus.ERROR, KarmaPlugin.PLUGIN_ID,
+                        "While reading karma extension point:" 
+                                + " Could not find specified feature.");
+                StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
             }
             //If its a ListSizeCondition try to get the EStructuredFeature from registered packages.
-            //Also try to parse the desired size as an int and an operator (i.e. =< from the input string) 
+            //Also try to parse the desired size as an int and an operator 
+            //(i.e. =< from the input string) 
         } else if (condition.getName().equals("listSizeCondition")) {
             String featureString = condition.getAttribute("feature");
             String typeString = condition.getAttribute("type");
@@ -235,8 +252,10 @@ public final class ConditionProvider {
                 ListSizeCondition cond = new ListSizeCondition(feature, size, operator);
                 return cond;
             } else {
-                // FIXME throw a more specific exception
-                throw new RuntimeException("Could not find specified feature.");
+                Status myStatus = new Status(IStatus.ERROR, KarmaPlugin.PLUGIN_ID,
+                        "While reading karma extension point:" 
+                                + " Could not find specified feature.");
+                StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
             }
             // If its a CompoundCondition do some recursion to get the inner ones.
         } else if (condition.getName().equals("compoundCondition")) {
@@ -247,8 +266,10 @@ public final class ConditionProvider {
                 if (compCond != null) {
                     compoundList.add(compCond);
                 } else {
-                    // FIXME throw a more specific exception
-                    throw new RuntimeException("Could build compound.");
+                    Status myStatus = new Status(IStatus.ERROR, KarmaPlugin.PLUGIN_ID,
+                            "While reading karma extension point:" 
+                                    + " Could not not build compound.");
+                    StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
                 }
             }
             CompoundCondition<EObject> cond = new CompoundCondition<EObject>(compoundList);
@@ -391,22 +412,22 @@ public final class ConditionProvider {
         Pair<String, Integer> result = null;
         char[] charInput = input.toCharArray();
         boolean isOp = true;
-        String operator = "";
-        String numberString = "";
+        StringBuffer operator = new StringBuffer();
+        StringBuffer numberString = new StringBuffer();
         for (char c : charInput) {
             if (isOp) {
                 if ((c == '<') || (c == '>') || (c == '=') || (c == '!')) {
-                    operator += c;
+                    operator.append(c);
                 } else {
                     isOp = false;
-                    numberString += c;
+                    numberString.append(c);
                 }
             } else {
-                numberString += c;
+                numberString.append(c);
             }
         }
-        int number = Integer.parseInt(numberString);
-        result = new Pair<String, Integer>(operator, number);
+        int number = Integer.parseInt(numberString.toString());
+        result = new Pair<String, Integer>(operator.toString(), number);
         return result;
     }
 
@@ -416,7 +437,7 @@ public final class ConditionProvider {
      * @return a width/height pair of int
      */
     private Pair<Integer, Integer> parseFigureSize(final String input) {
-        if ((input != null) && !(input.equals(""))) {
+        if (!Strings.isNullOrEmpty(input)) {
             String[] xandy = input.split(",");
             if (xandy.length == 2) {
                 try {
@@ -427,7 +448,10 @@ public final class ConditionProvider {
                     throw new WrappedException(e);
                 }
             } else {
-                // FIXME throw a more specific exception
+                Status myStatus = new Status(IStatus.ERROR, KarmaPlugin.PLUGIN_ID,
+                        "While reading karma extension point:" 
+                                + " wrong format of figure size");
+                StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
                 throw new RuntimeException("wrong format of figure size");
             }
         } else {
@@ -448,12 +472,17 @@ public final class ConditionProvider {
          * Compare by priority.
          */
         public int compare(final HashMap<String, Object> o1, final HashMap<String, Object> o2) {
-            int prio1 = (Integer) o1.get("prio");
-            int prio2 = (Integer) o2.get("prio");
-            if (prio1 == prio2) {
-                return 0;
-            } else if (prio1 < prio2) {
-                return 1;
+            if (o1.get("prio") instanceof Integer && o2.get("prio") instanceof Integer) {
+                int prio1 = (Integer) o1.get("prio");
+                int prio2 = (Integer) o2.get("prio");
+            
+                if (prio1 == prio2) {
+                    return 0;
+                } else if (prio1 < prio2) {
+                    return 1;
+                } else {
+                    return -1;
+                }
             } else {
                 return -1;
             }
