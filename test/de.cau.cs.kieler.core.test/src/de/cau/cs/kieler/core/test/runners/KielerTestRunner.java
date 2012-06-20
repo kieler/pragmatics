@@ -38,7 +38,7 @@ import org.junit.runners.model.TestClass;
  * There is an initialize() method that is invoked with an instantiated object of the test class
  * with NULL-dummy-parameters. Be prepared to catch this instantiation in the constructor. This
  * enables the constructor to prepare some initialization data BEFORE the static method for getting
- * the paramters, e.g. getParameters(), is called.
+ * the parameters, e.g. getParameters(), is called.
  * 
  * @author cmot, chsch
  * 
