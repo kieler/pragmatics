@@ -57,9 +57,6 @@ public class CrossoverOperation extends AbstractAlgorithm implements IEvolutiona
     /** Maximum number of individuals to create by cross over. */
     private static final int MAX_CROSS_OVERS = 30;
     
-    /** factor by which the user rating fades for new crossovers. */
-    private static final double USER_RATING_FADE = 0.8;
-
     /** the random number generator. */
     private Random random;
 
@@ -152,18 +149,6 @@ public class CrossoverOperation extends AbstractAlgorithm implements IEvolutiona
             }
         }
         
-        // Use the average of the genomes' ratings as the new rating.
-        double ratingSum = 0;
-        double weightSum = 0;
-        for (final Genome genome : genomes) {
-            double weight = genome.getProperty(Genome.USER_WEIGHT);
-            ratingSum += genome.getProperty(Genome.USER_RATING) * weight;
-            weightSum += weight;
-        }
-        if (weightSum > 0) {
-            newGenome.setProperty(Genome.USER_RATING, ratingSum / weightSum);
-            newGenome.setProperty(Genome.USER_WEIGHT, weightSum / genomes.length * USER_RATING_FADE);
-        }
         return newGenome;
     }
 

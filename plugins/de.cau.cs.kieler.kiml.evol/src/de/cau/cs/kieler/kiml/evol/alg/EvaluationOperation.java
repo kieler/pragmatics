@@ -86,18 +86,13 @@ public class EvaluationOperation extends AbstractAlgorithm implements IEvolution
         
         // determine fitness value for individuals that do not have one yet
         for (Genome genome : population) {
-            Double autoRating = genome.getProperty(Genome.AUTO_RATING);
-            if (autoRating == null) {
-                autoRating = autoRate(genome, population, getMonitor().subTask(1));
-                genome.setProperty(Genome.AUTO_RATING, autoRating);
+            Double fitness = genome.getProperty(Genome.FITNESS);
+            if (fitness == null) {
+                fitness = autoRate(genome, population, getMonitor().subTask(1));
+                genome.setProperty(Genome.FITNESS, fitness);
             } else {
                 getMonitor().worked(1);
             }
-            
-            double userRating = genome.getProperty(Genome.USER_RATING);
-            double userWeight = genome.getProperty(Genome.USER_WEIGHT);
-            double fitness = userRating * userWeight + autoRating * (1 - userWeight);
-            genome.setProperty(Genome.FITNESS, fitness);
         }
         
         // sort the individuals by descending fitness

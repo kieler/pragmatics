@@ -123,10 +123,6 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
         } while (population.size() < INITIAL_POPULATION);
         
         // reset and evaluate the population
-        if (getPopulation() != null) {
-            population.setProperty(EvaluationOperation.METRIC_WEIGHT,
-                    getPopulation().getProperty(EvaluationOperation.METRIC_WEIGHT));
-        }
         setPopulation(population);
         
         progressMonitor.done();

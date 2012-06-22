@@ -45,12 +45,6 @@ public class MutationOperation extends AbstractAlgorithm implements IEvolutionar
      * individual to be subject to mutation.
      */
     private static final double MUTATION_APPLICATION_PROBABILITY = 0.6;
-    /** base fading of user rating weight. */
-    private static final double URWF_BASE = 0.02;
-    /** maximal mutation probability for extra fading of user rating weight. */
-    private static final double URWF_MAXPROB = 0.25;
-    /** squared probability factor base for extra fading of user rating weight. */
-    private static final double URWF_PROBFACT_BASE = 30;
 
     /** the random number generator. */
     private Random random;
@@ -99,7 +93,6 @@ public class MutationOperation extends AbstractAlgorithm implements IEvolutionar
         LayoutTypeData newLayoutType = null;
         LayoutAlgorithmData newLayoutAlgo = null;
         Genome newGenome = new Genome(genome.getSize());
-        double totalRatingFade = 0;
         for (final Gene<?> gene : genome.getGenes()) {
             Gene<?> newGene = gene;
             TypeInfo<?> typeInfo = gene.getTypeInfo();
@@ -143,30 +136,9 @@ public class MutationOperation extends AbstractAlgorithm implements IEvolutionar
                 }
             }
             
-            // calculate a user rating weight fading for the gene
-            if (!newGene.equals(gene)) {
-                totalRatingFade += URWF_BASE;
-                double mutationProb = typeInfo.getProbability();
-                if (mutationProb < URWF_MAXPROB) {
-                    double factor = URWF_MAXPROB / mutationProb;
-                    double sqfactor = factor * factor;
-                    if (sqfactor < URWF_PROBFACT_BASE) {
-                        totalRatingFade += sqfactor / URWF_PROBFACT_BASE;
-                    } else {
-                        totalRatingFade += 1;
-                    }
-                }
-            }
             newGenome.getGenes().add(newGene);
         }
         
-        // individual has mutated -- the user rating is outdated
-        if (totalRatingFade < 1) {
-            double userRating = genome.getProperty(Genome.USER_RATING);
-            newGenome.setProperty(Genome.USER_RATING, userRating);
-            double userWeight = genome.getProperty(Genome.USER_WEIGHT);
-            newGenome.setProperty(Genome.USER_WEIGHT, userWeight * (1 - totalRatingFade));
-        }
         return newGenome;
     }
 
