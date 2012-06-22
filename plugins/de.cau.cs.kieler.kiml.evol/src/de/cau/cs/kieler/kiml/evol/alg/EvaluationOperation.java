@@ -65,8 +65,10 @@ public class EvaluationOperation extends AbstractAlgorithm implements IEvolution
     public static final IProperty<Map<String, Double>> METRIC_WEIGHT
             = new Property<Map<String, Double>>("evol.metricWeight");
     
-    /** the execution time result for one second. */
-    private static final float EXECTIME_SEC = 0.5f;
+    /** the time base for execution time metric. */
+    private static final float EXECTIME_TIMEBASE = 0.2f;
+    /** the execution time result for the time base. */
+    private static final float EXECTIME_RESULT = 0.5f;
 
     /** the graph layout engine used for executing configured layout on the evaluation graph. */
     private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();
@@ -169,10 +171,10 @@ public class EvaluationOperation extends AbstractAlgorithm implements IEvolution
         
         // consider the execution time as special metric
         float execTimeResult;
-        if (executionTime >= 1) {
-            execTimeResult = EXECTIME_SEC / (float) executionTime;
+        if (executionTime >= EXECTIME_TIMEBASE) {
+            execTimeResult = EXECTIME_RESULT * EXECTIME_TIMEBASE / (float) executionTime;
         } else {
-            execTimeResult = 1 - (float) executionTime * (1 - EXECTIME_SEC);
+            execTimeResult = 1 - (float) executionTime / EXECTIME_TIMEBASE * (1 - EXECTIME_RESULT);
         }
         Double weight = metricWeights.get(EXEC_TIME_METRIC);
         if (weight == null) {

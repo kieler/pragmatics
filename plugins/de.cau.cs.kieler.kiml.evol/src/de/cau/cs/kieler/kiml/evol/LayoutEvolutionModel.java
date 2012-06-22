@@ -13,7 +13,10 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
+import java.util.Map;
 import java.util.Random;
+
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -42,6 +45,10 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
     
     /** the initial number of individuals to create. */
     private static final int INITIAL_POPULATION = 16;
+    /** the mutation boost for the initial population. */
+    private static final double INITIAL_MUTATION_BOOST = 3;
+    /** the metric result value for 50% weight adaption. */
+    private static final float HALF_WEIGHT_METRIC = 0.7f;
     
     /** the singleton instance. */
     private static LayoutEvolutionModel instance = new LayoutEvolutionModel();
@@ -116,7 +123,7 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
             int mutationCount = population.size();
             for (int i = 0; i < mutationCount; i++) {
                 Genome mutation = mutationOperation.mutate(population.get(i), configPair.getFirst(),
-                        configPair.getSecond());
+                        configPair.getSecond(), INITIAL_MUTATION_BOOST);
                 population.add(mutation);
                 progressMonitor.worked(1);
             }
@@ -126,6 +133,59 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
         setPopulation(population);
         
         progressMonitor.done();
+    }
+    
+    /**
+     * Adapt the metric weights of the current population according to the selected individuals.
+     * 
+     * @param selected an array of selections for the individuals in the population
+     */
+    public void adaptMetricWeights(final boolean[] selected) {
+        Population population = getPopulation();
+        assert selected.length == population.size();
+        
+        // aggregate the sum of metric results for selected individuals
+        int selectCount = 0;
+        Map<String, Float> resultSum = Maps.newHashMap();
+        for (int i = 0; i < selected.length; i++) {
+            if (selected[i]) {
+                Map<String, Float> metricsResult = population.get(i).getProperty(
+                        EvaluationOperation.METRIC_RESULT);
+                for (Map.Entry<String, Float> entry : metricsResult.entrySet()) {
+                    Float x = resultSum.get(entry.getKey());
+                    if (x == null) {
+                        resultSum.put(entry.getKey(), entry.getValue());
+                    } else {
+                        resultSum.put(entry.getKey(), x + entry.getValue());
+                    }
+                }
+                selectCount++;
+            }
+        }
+        
+        Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
+        if (metricWeights == null) {
+            metricWeights = Maps.newHashMap();
+            population.setProperty(EvaluationOperation.METRIC_WEIGHT, metricWeights);
+        }
+        
+        // determine new adapted weights from the previous values and metric results
+        for (Map.Entry<String, Float> entry : resultSum.entrySet()) {
+            float average = entry.getValue() / selectCount;
+            double newWeight;
+            if (average >= HALF_WEIGHT_METRIC) {
+                double w = (1 - average) / (1 - HALF_WEIGHT_METRIC);
+                newWeight = 1 - w * w / 2;
+            } else {
+                double w = average / HALF_WEIGHT_METRIC;
+                newWeight = w * w / 2;
+            }
+            Double oldWeight = metricWeights.get(entry.getKey());
+            if (oldWeight != null) {
+                newWeight = (oldWeight + newWeight) / 2;
+            }
+            metricWeights.put(entry.getKey(), newWeight);
+        }
     }
 
 }

@@ -261,8 +261,8 @@ public class EvolutionDialog extends Dialog {
             cancelPressed();
             break;
         case IDialogConstants.PROCEED_ID:
-            // TODO intelligently adapt weights
             applyMetricWeights();
+            adaptMetricWeights();
             evolve();
             break;
         case IDialogConstants.ABORT_ID:
@@ -459,7 +459,10 @@ public class EvolutionDialog extends Dialog {
                     }
                 }
             });
-            // TODO reset metric weights
+            // reset metric weights
+            for (Pair<Label, Slider> control : metricControls.values()) {
+                control.getSecond().setSelection(SLIDER_MAX);
+            }
         } catch (Throwable throwable) {
             handleError(throwable);
             return;
@@ -525,6 +528,37 @@ public class EvolutionDialog extends Dialog {
         } else {
             fitnessLabel.setText(Math.round(fitness * 100) + "%");
             fitnessLabel.setVisible(true);
+        }
+    }
+    
+    /**
+     * Adapt the metric weights to the selected individuals.
+     */
+    private void adaptMetricWeights() {
+        LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+        Population population = evolutionModel.getPopulation();
+        // find the selected individuals
+        boolean[] selected = new boolean[evolutionModel.getPopulation().size()];
+        for (int i = 0; i < selectionButtons.length; i++) {
+            if (selectionButtons[i] != null && selectionButtons[i].getSelection()) {
+                selected[i] = true;
+            }
+        }
+
+        // adapt the metric weights based on selection
+        evolutionModel.adaptMetricWeights(selected);
+        
+        // refresh the weight sliders from the new values
+        Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
+        if (metricWeights != null) {
+            for (Map.Entry<String, Pair<Label, Slider>> entry : metricControls.entrySet()) {
+                String id = entry.getKey();
+                Double weight = metricWeights.get(id);
+                if (weight != null) {
+                    Slider slider = entry.getValue().getSecond();
+                    slider.setSelection((int) Math.round(weight * SLIDER_MAX));
+                }
+            }
         }
     }
     
