@@ -41,6 +41,7 @@ import org.junit.runners.model.TestClass;
  * the parameters, e.g. getParameters(), is called.
  * 
  * @author cmot, chsch
+ * @kieler.rating 2012-07-02 yellow KI-17
  * 
  */
 public abstract class KielerTestRunner extends Parameterized {
