@@ -19,14 +19,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
-import de.cau.cs.kieler.klay.planar.intermediate.GridDrawingProcessor;
+import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
@@ -39,7 +42,6 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  */
 public class PGraphFactory {
 
-    private PNode[][] grid;
     private float startX;
     private float startY;
     private float spacing;
@@ -284,7 +286,7 @@ public class PGraphFactory {
      */
     public void applyLayout(final PGraph pgraph) {
         this.graph = pgraph;
-        grid = pgraph.getProperty(Properties.GRID_DRAWING);
+        GridRepresentation grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
         // the pgraph must not contain any planarity dummynodes.
 
         float borderSpacing = pgraph.getProperty(Properties.BORDER_SPACING);
@@ -292,16 +294,16 @@ public class PGraphFactory {
         spacing = pgraph.getProperty(Properties.SPACING);
 
         startX = borderSpacing;
-        startY = GridDrawingProcessor.gridHeight * spacing + borderSpacing;
+        startY = grid.getHeight() * spacing + borderSpacing;
 
         // TODO introduce minimum spacing or use spacing above as minimum.
         float minSpacing = 40;
 
         // first determine original nodes coordinates.
-        for (int x = 0; x < GridDrawingProcessor.gridWidth; x++) {
-            for (int y = 0; y < GridDrawingProcessor.gridHeight; y++) {
-                if (grid[x][y] != null) {
-                    grid[x][y].setPostion(startX + x * spacing, startY - y * spacing);
+        for (int x = 0; x < grid.getWidth(); x++) {
+            for (int y = 0; y < grid.getHeight(); y++) {
+                if (grid.get(x, y) != null) {
+                    grid.get(x, y).setPostion(startX + x * spacing, startY - y * spacing);
                 }
             }
         }
@@ -310,23 +312,25 @@ public class PGraphFactory {
         // vertical direction!
         // horizontal go through: take lower and upper nodes and go horizontal. check
         // all nodes for minspace condition.
-        for (int y = 0; y < GridDrawingProcessor.gridHeight - 1; y++) {
+        for (int y = 0; y < grid.getHeight() - 1; y++) {
             float y1;
             float y2;
             float sum;
             float minDistance = minSpacing;
             // recognize a too small distance between two nodes.
-            for (int x = 0; x < GridDrawingProcessor.gridWidth; x++) {
-                if (grid[x][y] != null && grid[x][y].hasProperties()) {
-                    KNode property = (KNode) grid[x][y].getProperty(Properties.ORIGIN);
+            for (int x = 0; x < grid.getWidth(); x++) {
+                if (grid.get(x, y) != null && grid.get(x, y).hasProperties()
+                        && grid.get(x, y).getProperty(Properties.ORIGIN) != null) {
+                    KNode property = (KNode) grid.get(x, y).getProperty(Properties.ORIGIN);
                     KShapeLayout data = property.getData(KShapeLayout.class);
                     y1 = data.getYpos() - data.getHeight() / 2;
                 } else {
                     // bendpoint or no point
                     y1 = startY - y * spacing;
                 }
-                if (grid[x][y + 1] != null && grid[x][y + 1].hasProperties()) {
-                    KNode property = (KNode) grid[x][y + 1].getProperty(Properties.ORIGIN);
+                if (grid.get(x, y + 1) != null && grid.get(x, y + 1).hasProperties()
+                        && grid.get(x, y + 1).getProperty(Properties.ORIGIN) != null) {
+                    KNode property = (KNode) grid.get(x, y + 1).getProperty(Properties.ORIGIN);
                     KShapeLayout data = property.getData(KShapeLayout.class);
                     y2 = data.getYpos() + data.getHeight() / 2;
                 } else {
@@ -346,21 +350,21 @@ public class PGraphFactory {
                 // if too small distance is found, adjust the grid position according this distance.
                 // move all grid segments in bottom direction.
                 for (int i = 0; i <= y; i++) {
-                    for (int x = 0; x < GridDrawingProcessor.gridWidth; x++) {
-                        if (grid[x][i] != null) {
-                            KShapeLayout nodeLayout = ((KNode) grid[x][i]
-                                    .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
+                    for (int x = 0; x < grid.getWidth(); x++) {
+                        if (grid.get(x, i) != null) {
+                            KShapeLayout nodeLayout = ((KNode) grid.get(x, i).getProperty(
+                                    Properties.ORIGIN)).getData(KShapeLayout.class);
                             nodeLayout.setYpos(nodeLayout.getYpos() + restDistance);
                         }
                     }
                 }
 
                 // move all grid segments in top direction.
-                for (int i = y + 1; i < GridDrawingProcessor.gridHeight; i++) {
-                    for (int x = 0; x < GridDrawingProcessor.gridWidth; x++) {
-                        if (grid[x][i] != null) {
-                            KShapeLayout nodeLayout = ((KNode) grid[x][i]
-                                    .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
+                for (int i = y + 1; i < grid.getHeight(); i++) {
+                    for (int x = 0; x < grid.getWidth(); x++) {
+                        if (grid.get(x, i) != null) {
+                            KShapeLayout nodeLayout = ((KNode) grid.get(x, i).getProperty(
+                                    Properties.ORIGIN)).getData(KShapeLayout.class);
                             nodeLayout.setYpos(nodeLayout.getYpos() - restDistance);
                         }
                     }
@@ -373,23 +377,25 @@ public class PGraphFactory {
 
         // horizontal go through.
 
-        for (int x = 0; x < GridDrawingProcessor.gridWidth - 1; x++) {
+        for (int x = 0; x < grid.getWidth() - 1; x++) {
             float x1;
             float x2;
             float sum;
             float minDistance = minSpacing;
             // recognize a too small distance between two nodes.
-            for (int y = 0; y < GridDrawingProcessor.gridHeight; y++) {
-                if (grid[x][y] != null && grid[x][y].hasProperties()) {
-                    KNode property = (KNode) grid[x][y].getProperty(Properties.ORIGIN);
+            for (int y = 0; y < grid.getHeight(); y++) {
+                if (grid.get(x, y) != null && grid.get(x, y).hasProperties()
+                        && grid.get(x, y).getProperty(Properties.ORIGIN) != null) {
+                    KNode property = (KNode) grid.get(x, y).getProperty(Properties.ORIGIN);
                     KShapeLayout data = property.getData(KShapeLayout.class);
                     x1 = data.getXpos() + data.getWidth() / 2;
                 } else {
                     // bendpoint or no point
                     x1 = startX + x * spacing;
                 }
-                if (grid[x + 1][y] != null && grid[x + 1][y].hasProperties()) {
-                    KNode property = (KNode) grid[x + 1][y].getProperty(Properties.ORIGIN);
+                if (grid.get(x + 1, y) != null && grid.get(x + 1, y).hasProperties()
+                        && grid.get(x + 1, y).getProperty(Properties.ORIGIN) != null) {
+                    KNode property = (KNode) grid.get(x + 1, y).getProperty(Properties.ORIGIN);
                     KShapeLayout data = property.getData(KShapeLayout.class);
                     x2 = data.getXpos() - data.getWidth() / 2;
                 } else {
@@ -408,38 +414,37 @@ public class PGraphFactory {
                 // if too small distance is found, adjust the grid position according this distance.
                 // move all grid segments in bottom direction.
                 for (int i = 0; i <= x; i++) {
-                    for (int y = 0; y < GridDrawingProcessor.gridHeight; y++) {
-                        if (grid[i][y] != null) {
+                    for (int y = 0; y < grid.getHeight(); y++) {
+                        if (grid.get(i, y) != null) {
                             // TODO this is not enough, because the bendpoints aren't adjusted!!!!
-                            KShapeLayout nodeLayout = ((KNode) grid[i][y]
-                                    .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
+                            KShapeLayout nodeLayout = ((KNode) grid.get(i, y).getProperty(
+                                    Properties.ORIGIN)).getData(KShapeLayout.class);
                             nodeLayout.setYpos(nodeLayout.getXpos() - restDistance);
                         }
                     }
                 }
 
                 // move all grid segments in top direction.
-                for (int i = x + 1; i < GridDrawingProcessor.gridWidth; i++) {
-                    for (int y = 0; y < GridDrawingProcessor.gridHeight; y++) {
-                        if (grid[i][y] != null) {
-                            KShapeLayout nodeLayout = ((KNode) grid[i][y]
-                                    .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
+                for (int i = x + 1; i < grid.getWidth(); i++) {
+                    for (int y = 0; y < grid.getHeight(); y++) {
+                        if (grid.get(i, y) != null) {
+                            KShapeLayout nodeLayout = ((KNode) grid.get(i, y).getProperty(
+                                    Properties.ORIGIN)).getData(KShapeLayout.class);
                             nodeLayout.setYpos(nodeLayout.getXpos() + restDistance);
                         }
                     }
                 }
-
             }
 
         }
 
         // construct bendpoints for each node for which there is no original node.
-        for (int x = 0; x < GridDrawingProcessor.gridWidth; x++) {
-            for (int y = 0; y < GridDrawingProcessor.gridHeight; y++) {
-                if (grid[x][y] != null) {
-                    if (!grid[x][y].hasProperties()
-                            || !(grid[x][y].getProperty(Properties.ORIGIN) instanceof KNode)) {
-                        constructBendPointEdge(x, y);
+        for (int x = 0; x < grid.getWidth(); x++) {
+            for (int y = 0; y < grid.getHeight(); y++) {
+                if (grid.get(x, y) != null) {
+                    if (!grid.get(x, y).hasProperties()
+                            || (grid.get(x, y).getProperty(Properties.BENDPOINT) != null)) {
+                        constructBendPointEdge(x, y, grid);
                     }
                 }
             }
@@ -467,14 +472,14 @@ public class PGraphFactory {
 
         // moves all original nodes to the left/top to let the edges walk to the center
         // of the nodes.
-        for (int x = 0; x < GridDrawingProcessor.gridWidth; x++) {
-            for (int y = 0; y < GridDrawingProcessor.gridHeight; y++) {
-                if (grid[x][y] != null) {
-                    if (grid[x][y].hasProperties()
-                            && grid[x][y].getProperty(Properties.ORIGIN) instanceof KNode) {
+        for (int x = 0; x < grid.getWidth(); x++) {
+            for (int y = 0; y < grid.getHeight(); y++) {
+                if (grid.get(x, y) != null) {
+                    if (grid.get(x, y).hasProperties()
+                            && grid.get(x, y).getProperty(Properties.ORIGIN) instanceof KNode) {
                         // search for the pnodes that represents a knode.
-                        KShapeLayout nodeLayout = ((KNode) grid[x][y]
-                                .getProperty(Properties.ORIGIN)).getData(KShapeLayout.class);
+                        KShapeLayout nodeLayout = ((KNode) grid.get(x, y).getProperty(
+                                Properties.ORIGIN)).getData(KShapeLayout.class);
                         nodeLayout.setXpos(startX + x * spacing - nodeLayout.getWidth() / 2);
                         nodeLayout.setYpos(startY - y * spacing - nodeLayout.getHeight() / 2);
                     }
@@ -485,60 +490,100 @@ public class PGraphFactory {
     }
 
     /**
-     * Goes through the grid, and if a bendpoint is found (meaning a point with no knode as origin),
-     * it is merged with the original edge that goes into that point. Afterwards it is a bendpoint
-     * of the original edge.
+     * Removes all bend point nodes from grid and adds them as bendpoints to the original edge.
      * 
      * @param x
      *            , index of the grid.
      * @param y
      *            , index of the grid.
+     * @param grid
+     *            , the grid.
      */
-    private void constructBendPointEdge(final int x, final int y) {
+    private void constructBendPointEdge(final int x, final int y, final GridRepresentation grid) {
 
         // it is enough to check if it has a kedge as origin, and if not, it must be a
         // bendpoint, because other dummynodes are removed in the last processors.
+        PNode startNode = grid.get(x, y);
+        Iterator<PEdge> startNodeIterator = startNode.getEdges().iterator();
 
-        Iterator<PEdge> iterator = grid[x][y].getEdges().iterator();
-        PEdge nodeEdge1 = iterator.next();
-        PNode node1 = nodeEdge1.getOppositeNode(grid[x][y]);
-        PEdge nodeEdge2 = iterator.next();
-        PNode node2 = nodeEdge2.getOppositeNode(grid[x][y]);
+        // search orginal nodes and edge.
+        Pair<PNode, PEdge> pair1 = searchOriginals(startNode, startNodeIterator.next());
+        Pair<PNode, PEdge> pair2 = searchOriginals(startNode, startNodeIterator.next());
 
-        if (nodeEdge1.hasProperties() && nodeEdge1.getProperty(Properties.ORIGIN) instanceof KEdge) {
-            // then that is the original edge. So the other edge has to be removed
-            // remove edge 2 and add a bendpoint to edge 1.
+        PNode originalNode1 = pair1.getFirst();
+        PNode originalNode2 = pair2.getFirst();
+        PEdge originalEdge = (pair1.getSecond() != null) ? pair1.getSecond() : pair2.getSecond();
 
-            // TODO think of the embedding, I guess this goes lost.
-            if (nodeEdge1.getSource() == node1) {
-                graph.changeEdge(nodeEdge1, null, node2);
-            } else {
-                // then it has to be the target
-                graph.changeEdge(nodeEdge1, node2, null);
-            } // TODO check if node1 can be removed!
-            nodeEdge1.getBendPoints().add(startX + x * spacing, startY - y * spacing);
-        } else if (nodeEdge2.hasProperties()
-                && nodeEdge2.getProperty(Properties.ORIGIN) instanceof KEdge) {
-            if (nodeEdge2.getSource() == node2) {
-                graph.changeEdge(nodeEdge2, null, node1);
-            } else {
-                graph.changeEdge(nodeEdge2, node1, null);
-                // then it has to be the target
-            } // TODO check if node1 can be removed!
-            nodeEdge2.getBendPoints().add(startX + x * spacing, startY - y * spacing);
+        PNode currentNode;
+        // original edge has to be adjacent to one of the original nodes.
+        if (originalEdge.getSource() == originalNode1 || originalEdge.getTarget() == originalNode1) {
+            currentNode = originalNode1;
         } else {
-            boolean found = false;
-            while (!found) {
-                found = true;
-                // go along edge one until a original edge is found otherwise go in the other
-                // direction
-            }
-            // node2 has properties as origin a knode.
-            // the bend point is surrounded by two dummy edges. we have to go around until not
-            // such a case is found!
-            // I guess here it would be sufficient to check if node1 or node2 is a original node.
+            currentNode = originalNode2;
         }
-        this.graph.removeNode(grid[x][y]);
-        grid[x][y] = null;
+
+        PEdge currentEdge = originalEdge;
+
+        List<int[]> removableNodes = new LinkedList<int[]>();
+
+        // add bendpoints
+        while (true) {
+            currentNode = currentEdge.getOppositeNode(currentNode);
+            if (currentNode == originalNode1 || currentNode == originalNode2) {
+                // the path is finished.
+                break;
+            }
+
+            int[] coordinates = grid.search(currentNode);
+            originalEdge.getBendPoints().add(this.startX + coordinates[0] * this.spacing,
+                    this.startY - coordinates[1] * spacing);
+
+            // filter next edge.
+            Iterator<PEdge> iterator = currentNode.adjacentEdges().iterator();
+            PEdge possibleEdge = iterator.next();
+            currentEdge = (possibleEdge == currentEdge) ? iterator.next() : possibleEdge;
+            removableNodes.add(coordinates);
+        }
+
+        for (int[] point : removableNodes) {
+            this.graph.removeNode(grid.get(point[0], point[1]));
+            grid.set(point[0], point[1], null);
+        }
+
+        // change the direction of the original edge.
+        if (originalEdge.getSource() == originalNode1 || originalEdge.getTarget() == originalNode2) {
+            graph.changeEdge(originalEdge, originalNode1, originalNode2);
+        } else if (originalEdge.getTarget() == originalNode1
+                || originalEdge.getSource() == originalNode2) {
+            graph.changeEdge(originalEdge, originalNode2, originalNode1);
+        }
+    }
+
+    /**
+     * Searches for the original node and if one original edge exists on the path, returns it, too.
+     * 
+     * @param startNode
+     * @param edge
+     * @return a {@link Pair} of original node and the properly found originalEdge.
+     */
+    private Pair<PNode, PEdge> searchOriginals(final PNode startNode, final PEdge edge) {
+        PEdge currentEdge = edge;
+        PNode currentNode = startNode;
+        PEdge resultEdge = null;
+        while (true) {
+            currentNode = currentEdge.getOppositeNode(currentNode);
+            if (currentEdge.hasProperties() && currentEdge.getProperty(Properties.ORIGIN) != null) {
+                resultEdge = currentEdge;
+            }
+            if (currentNode.hasProperties() && currentNode.getProperty(Properties.ORIGIN) != null) {
+                return new Pair<PNode, PEdge>(currentNode, resultEdge);
+            }
+
+            // filter next edge.
+            Iterator<PEdge> iterator = currentNode.adjacentEdges().iterator();
+            PEdge possibleEdge = iterator.next();
+            currentEdge = (possibleEdge == currentEdge) ? iterator.next() : possibleEdge;
+
+        }
     }
 }

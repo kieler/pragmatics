@@ -94,7 +94,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
             // Check if node has a valid degree
             if (supply < 0) {
-                throw new IllegalArgumentException("The node " + node.id
+                throw new InconsistentGraphModelException("The node " + node.id
                         + ") has a higher degree than the maximal allowed " + MAXDEGREE);
             }
 
