@@ -73,6 +73,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
         for (PEdge crossingEdge : crossingBorders) {
             // crossing a normal edge
             PNode newNode = graph.addNode(crossingEdge).getFirst();
+            newNode.setProperty(Properties.PlANAR_DUMMY_NODE, true);
             path.add(newNode);
         }
         path.add(target);

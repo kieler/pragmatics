@@ -25,10 +25,11 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
-import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
+import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
 import de.cau.cs.kieler.klay.planar.p1planar.PlanarityTestStrategy;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
+import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 
 /**
  * Container for property definitions.
@@ -69,7 +70,10 @@ public final class Properties {
             NodeType.NORMAL);
 
     public static final IProperty<Boolean> RECT_SHAPE_DUMMY = new Property<Boolean>(
-            "rectShapeDummy", false);
+            "rectShapeDummy");
+
+    public static final IProperty<Boolean> PlANAR_DUMMY_NODE = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.planar.planardummynode");
 
     // =========================== EDGE PROPERTIES ========================================
 
@@ -116,8 +120,11 @@ public final class Properties {
             "de.cau.cs.kieler.klay.planar.orthogonal.representation",
             new OrthogonalRepresentation());
 
-    public static final IProperty<PNode[][]> GRID_DRAWING = new Property<PNode[][]>(
-            "de.cau.cs.kieler.klay.planar.griddrawing");
+    public static final IProperty<GridRepresentation> GRID_REPRESENTATION = new Property<GridRepresentation>(
+            "de.cau.cs.kieler.klay.planar.grid");
+
+    public static final IProperty<OrthogonalAngle> BENDPOINT = new Property<OrthogonalRepresentation.OrthogonalAngle>(
+            "de.cau.cs.kieler.klay.planar.bendpoint");
 
     /**
      * Hidden default constructor.

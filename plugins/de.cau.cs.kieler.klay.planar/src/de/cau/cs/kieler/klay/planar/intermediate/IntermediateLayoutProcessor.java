@@ -66,7 +66,7 @@ public enum IntermediateLayoutProcessor {
     public ILayoutProcessor create() {
         switch (this) {
         case DUMMYNODE_REMOVING_PROCESSOR:
-            return new DummyNodeRemovingProcessor();
+            return new DummyRemovingProcessor();
         case GRID_DRAWING:
             return new GridDrawingProcessor();
         case RECT_SHAPE:

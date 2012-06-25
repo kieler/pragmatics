@@ -162,7 +162,7 @@ public class PGraph extends PNode implements Serializable {
      * @return the new node in the graph
      */
     public PNode addNode() {
-        return this.addNode(NodeType.NORMAL);
+        return addNode(NodeType.NORMAL);
     }
 
     /**
@@ -175,7 +175,7 @@ public class PGraph extends PNode implements Serializable {
      * @return the new node in the graph
      */
     public Pair<PNode, PEdge> addNode(final PEdge edge) {
-        return this.addNode(edge, NodeType.NORMAL);
+        return addNode(edge, NodeType.NORMAL);
     }
 
     /**
@@ -222,7 +222,7 @@ public class PGraph extends PNode implements Serializable {
             throw new IllegalArgumentException("The edge (" + edge.id
                     + ") is not part of the graph.");
         }
-        this.generateFaces();
+        generateFaces();
 
         // Remember target node
         PNode target = edge.getTarget();
@@ -262,7 +262,7 @@ public class PGraph extends PNode implements Serializable {
     }
 
     /**
-     * Remove a node from the graph. The node will be remove, together with all references to it in
+     * Remove a node from the graph. The node is been removed, together with all references to it in
      * other nodes as well as all edges connected to the node.
      * 
      * @param node
@@ -388,6 +388,7 @@ public class PGraph extends PNode implements Serializable {
             edge.setTarget(target);
             target.linkEdge(edge);
         }
+        this.edges.add(edge);
         this.changedFaces = true;
     }
 

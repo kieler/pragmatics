@@ -23,23 +23,14 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
+import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
-import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
- * 
- * <dl>
- * <dt>Precondition:</dt>
- * <dd>a layered graph; nodes are placed; edges are routed.</dd>
- * <dt>Postcondition:</dt>
- * <dd>there are no dummy nodes of type {@link NodeType#DUMMY}.</dd>
- * <dt>Slots:</dt>
- * <dd>After phase 4.</dd>
- * </dl>
  * 
  * @author pkl
  */
@@ -50,14 +41,9 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
      */
     private static final int BOTTOM_SIDE = 3;
 
-    // TODO think about a own class for that grid, including gridHeight and gridWidth.
-    private PNode[][] grid;
+    private GridRepresentation grid;
 
     private PGraph graph;
-
-    public static int gridHeight;
-
-    public static int gridWidth;
 
     /**
      * {@inheritDoc}
@@ -71,12 +57,12 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
         // determine size of the grid.
         // it is enough to count one vertical and horizontal direction.
 
-        gridWidth = 0;
+        int gridWidth = 0;
         for (PEdge edge : sides[1]) {
             gridWidth += edge.getProperty(Properties.RELATIVE_LENGTH);
         }
 
-        gridHeight = 0;
+        int gridHeight = 0;
         for (PEdge edge : sides[0]) {
             gridHeight += edge.getProperty(Properties.RELATIVE_LENGTH);
         }
@@ -85,7 +71,7 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
         gridWidth++;
         gridHeight++;
 
-        grid = new PNode[gridWidth][gridHeight];
+        this.grid = new GridRepresentation(gridWidth, gridHeight);
 
         fillGrid();
 
@@ -124,7 +110,7 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
         int gridX = 0;
         int gridY = 0;
 
-        grid[gridX][gridY] = currentNode;
+        grid.set(gridX, gridY, currentNode);
 
         // start filling the grid
         // beginning with the external face sides.
@@ -132,7 +118,7 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
         // Store the visited target-nodes / faces from the current face/node.
         // Is needed to check if a edge already exists to the target.
         List<PEdge> visitedEdges = Lists.newArrayList();
-        visitedEdges.add(currentEdge);
+        // visitedEdges.add(currentEdge);
 
         PFace currentFace = externalFace;
         Map<PFace, Pair<PEdge, Integer>> knownFaces = Maps.newHashMap();
@@ -153,8 +139,7 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
                 found = false;
 
                 // determine currentNode of the faceSide.
-                currentNode = (currentEdge.getTarget() == currentNode) ? currentEdge.getSource()
-                        : currentEdge.getTarget();
+                currentNode = currentEdge.getOppositeNode(currentNode);
                 Integer value = currentEdge.getProperty(Properties.RELATIVE_LENGTH);
 
                 // determine the correct grid field. Remember, we walk clockwise around
@@ -171,7 +156,7 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
                 }
 
                 // add node of face to the grid.
-                grid[gridX][gridY] = currentNode;
+                grid.set(gridX, gridY, currentNode);
                 visitedEdges.add(currentEdge);
                 // choose next edge
                 out: for (int i = 0; i < faceSides.length; i++) {
@@ -179,7 +164,12 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
                     for (PEdge edge : faceSides[(i + sideIndex) % faceSides.length]) {
                         if (edge != currentEdge && !visitedEdges.contains(edge)) {
                             if (edge.getTarget() == currentNode || edge.getSource() == currentNode) {
+                                found = true;
+                                if (changedSide(faceSides, currentEdge, edge)) {
+                                    sideIndex = (i + sideIndex) % faceSides.length;
+                                }
                                 currentEdge = edge;
+
                                 // added new knwon faces.
                                 // check if knownFaces does not contain a face.
 
@@ -191,10 +181,6 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
                                             edge, sideIndex));
                                 }
 
-                                found = true;
-                                // TODO I guess this is not meaningful, if at each
-                                // found changes the side, that is not correct!
-                                sideIndex = (i + sideIndex) % faceSides.length;
                                 break out;
                             }
                         }
@@ -223,112 +209,73 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
                 boolean tempFound = false;
                 // calculate the grid startIndices and the currentNode with the currentEdge.
 
-                for (int x = 0; x < GridDrawingProcessor.gridWidth; x++) {
-                    for (int y = 0; y < GridDrawingProcessor.gridHeight; y++) {
-                        // TODO is that really useful
-                        if (grid[x][y] == currentEdge.getSource()) {
+                for (int x = 0; x < this.grid.getWidth(); x++) {
+                    for (int y = 0; y < this.grid.getHeight(); y++) {
+                        if (grid.get(x, y) == currentEdge.getSource()) {
                             currentNode = currentEdge.getSource();
                             tempFound = true;
-                        } else if (grid[x][y] == currentEdge.getTarget()) {
+                        } else if (grid.get(x, y) == currentEdge.getTarget()) {
                             currentNode = currentEdge.getTarget();
                             tempFound = true;
                         }
+
                         if (tempFound) {
-                            // if currentNode is part of an other edge with other node, that is in
+                            // If currentNode is part of an other edge with other node, that is in
                             // cw direction further than the chosen node, take the further one.
-                            checkNode = currentEdge.getTarget() == currentNode ? currentEdge
-                                    .getSource() : currentEdge.getTarget();
+
+                            checkNode = currentEdge.getOppositeNode(currentNode);
                             Integer edgeLength = currentEdge
                                     .getProperty(Properties.RELATIVE_LENGTH);
+
+                            // Depending on the face side search to get the node before, you
+                            // have to subtract or add edge length. If the currentNode is already
+                            // the
+                            // in clockwise order before use the currentNode.
                             if (sideIndex == 0) {
-                                // TODO use grid width and height
-                                if (y >= edgeLength) {
-                                    // HHHHHHHHHHHHHHHHHEEEEEEEEEERRRRRRRRRREE wrong side?
-                                    if (grid[x][y - edgeLength] == checkNode) {
-                                        gridX = x;
-                                        gridY = y - edgeLength;
-                                        currentNode = checkNode;
-                                    } else {
-                                        gridX = x;
-                                        gridY = y;
-                                    }
+                                int checkY = y + edgeLength;
+                                if (this.grid.getHeight() >= checkY
+                                        && (grid.get(x, checkY) == checkNode)) {
+                                    gridX = x;
+                                    gridY = y;
                                 } else {
-                                    // sideIndex == 3
-                                    if (grid[x + edgeLength][y] == checkNode) {
-                                        gridX = x + edgeLength;
-                                        gridY = y;
-                                        currentNode = checkNode;
-                                    } else {
-                                        gridX = x;
-                                        gridY = y;
-                                    }
+                                    // checknode has to be the node before this node in cw.
+                                    currentNode = checkNode;
+                                    gridX = x;
+                                    gridY = y - edgeLength;
                                 }
+
                             } else if (sideIndex == 1) {
-                                if (x >= edgeLength) {
-                                    if (grid[x - edgeLength][y] == checkNode) {
-                                        gridX = x - edgeLength;
-                                        gridY = y;
-                                        currentNode = checkNode;
-                                    } else {
-                                        gridX = x;
-                                        gridY = y;
-                                    }
+                                int checkX = x + edgeLength;
+                                if (this.grid.getWidth() >= checkX
+                                        && this.grid.get(checkX, y) == checkNode) {
+                                    gridX = x;
+                                    gridY = y;
                                 } else {
-                                    // sideIndex == 0
-                                    if (grid[x][y - edgeLength] == checkNode) {
-                                        gridX = x;
-                                        gridY = y - edgeLength;
-                                        currentNode = checkNode;
-                                    } else {
-                                        gridX = x;
-                                        gridY = y;
-                                    }
+                                    currentNode = checkNode;
+                                    gridX = x - edgeLength;
+                                    gridY = y;
                                 }
                             } else if (sideIndex == 2) {
-                                if (y <= edgeLength) {
-                                    if (grid[x][y + edgeLength] == checkNode) {
-                                        gridX = x;
-                                        gridY = y + edgeLength;
-                                        currentNode = checkNode;
-                                    } else {
-                                        gridX = x;
-                                        gridY = y;
-                                    }
+                                int checkY = y - edgeLength;
+                                if (0 <= checkY && (grid.get(x, checkY) == checkNode)) {
+                                    gridX = x;
+                                    gridY = y;
                                 } else {
-                                    // sideIndex == 1
-                                    if (grid[x - edgeLength][y] == checkNode) {
-                                        gridX = x - edgeLength;
-                                        gridY = y;
-                                        currentNode = checkNode;
-                                    } else {
-                                        gridX = x;
-                                        gridY = y;
-                                    }
-                                }
-                            } else if (sideIndex == 3) {
-                                if (y <= edgeLength) {
-                                    if (grid[x + edgeLength][y] == checkNode) {
-                                        gridX = x + edgeLength;
-                                        gridY = y;
-                                        currentNode = checkNode;
-                                    } else {
-                                        gridX = x;
-                                        gridY = y;
-                                    }
-                                } else {
-                                    // sideIndex == 2
-                                    if (grid[x][y + edgeLength] == checkNode) {
-                                        gridX = x;
-                                        gridY = y + edgeLength;
-                                        currentNode = checkNode;
-                                    } else {
-                                        gridX = x;
-                                        gridY = y;
-                                    }
+                                    currentNode = checkNode;
+                                    gridX = x;
+                                    gridY = y + edgeLength;
                                 }
                             } else {
-                                gridX = x;
-                                gridY = y;
+                                // sideIndex == 3
+                                int checkX = x - edgeLength;
+                                if (0 <= checkX && (grid.get(checkX, y) == checkNode)) {
+                                    gridX = x;
+                                    gridY = y;
+                                } else {
+                                    currentNode = checkNode;
+                                    gridX = x + edgeLength;
+                                    gridY = y;
+                                }
                             }
                             break out;
                         }
@@ -336,10 +283,28 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
                 }
             }
         }
-        graph.setProperty(Properties.GRID_DRAWING, grid);
+        graph.setProperty(Properties.GRID_REPRESENTATION, grid);
     }
-    // first implement the external face,
-    // then go along all neighbor edge and place it in the grid.
 
-    // now it should be possible to use the sides so as | e1 | e2 | e3 |
+    /**
+     * Checks if two edges lay on different sides.
+     * 
+     * @param faceSides
+     * @param previousEdge
+     * @param currentEdge
+     * @return true if they lay on different sides, otherwise false is returned
+     */
+    private boolean changedSide(final List<PEdge>[] faceSides, final PEdge previousEdge,
+            final PEdge currentEdge) {
+        for (List<PEdge> edgeList : faceSides) {
+            if (edgeList.contains(previousEdge)) {
+                if (edgeList.contains(currentEdge)) {
+                    return false;
+                }
+                return true;
+            }
+        }
+        throw new InconsistentGraphModelException(
+                "The faces have to contain previous and current edge");
+    }
 }
