@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,8 +32,10 @@ import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
@@ -48,7 +51,9 @@ public class GraphTestUtil {
     /** the test graph root directory */
     private static final String SOURCE_GRAPHS_DIRECTORY = "/home/wah/runtime-EclipseApplication/";
     /** the source file format to load */
-    private static final String SOURCE_GRAPHS_FORMAT = "kgraph";
+    // private static final String SOURCE_GRAPHS_FORMAT = "kgraph";
+    private static final ArrayList<String> SOURCE_GRAPHS_FORMAT = new ArrayList<String>(
+            Arrays.asList("kegdi", "kaod", "kids"));
 
     /**
      * Load all graphs under the given folder.
@@ -103,26 +108,27 @@ public class GraphTestUtil {
      * @return a list of KNode
      */
     private static List<KNode> loadGraphsHandler(String folder, boolean subfolder, boolean doLayout) {
-        
-        //the root folder where graphs are located
+
+        // the root folder where graphs are located
         File rootFolder = new File(SOURCE_GRAPHS_DIRECTORY.concat(folder));
 
         // test if the root folder exists
         if (rootFolder.exists()) {
-            
+
             // load files from the directory
             List<File> graphFiles = loadFilesFromDirectory(rootFolder, new ArrayList<File>(),
                     subfolder);
-            
+
             // Test if there is files
             if (graphFiles.size() > 0) {
-                
+
                 List<KNode> knode = new ArrayList<KNode>();
                 for (File gfile : graphFiles) {
-                    System.out.println(gfile);
                     knode.add(getKGraph(gfile));
                 }
-                
+
+                return knode;
+
             } else {
                 throw new IllegalArgumentException(
                         "The given directory doesn't contain graph files!");
@@ -130,7 +136,6 @@ public class GraphTestUtil {
         } else {
             throw new IllegalArgumentException("The source graph directory doesn't exists!");
         }
-        return null;
     }
 
     /**
@@ -148,21 +153,19 @@ public class GraphTestUtil {
         } else {
             return null;
         }
-
     }
 
     /**
-     * Method to load all graph files under a given directory. 
-     * This Method is called recursively (if subfolder is set to true) to load all subcategories files.
+     * Method to load all graph files under a given directory. This Method is called recursively (if
+     * subfolder is set to true) to load all subcategories files.
      * 
      * @param folder
-     *          the folder where the graphs are located
+     *            the folder where the graphs are located
      * @param files
-     *          List of found files to transfer if the method is called recursively
+     *            List of found files to transfer if the method is called recursively
      * @param subfolder
-     *          if true then load subfolder graphs else only the given directory
-     * @return
-     *          return the List of graph files
+     *            if true then load subfolder graphs else only the given directory
+     * @return return the List of graph files
      */
     private static List<File> loadFilesFromDirectory(File folder, List<File> files,
             boolean subfolder) {
@@ -174,7 +177,8 @@ public class GraphTestUtil {
                     return true;
                 }
                 if (getFileExtension(pathname.getName()) != null) {
-                    return getFileExtension(pathname.getName()).equals(SOURCE_GRAPHS_FORMAT);
+
+                    return SOURCE_GRAPHS_FORMAT.contains(getFileExtension(pathname.getName()));
                 }
                 return false;
             }
@@ -194,26 +198,29 @@ public class GraphTestUtil {
         }
         return files;
     }
-    
-    
+
     /**
-     * @return the KGraph
+     * Method to return the KNode graph from a given File.
+     * 
+     * @param File
+     *            the file to convert into KNode
+     * @return the KNode file
      */
-    private static KNode getKGraph(File file) {
+    public static KNode getKGraph(File file) {
         // load the notation diagram element
-        //URI uri = URI.createPlatformResourceURI(file.toString(), true);
+        // URI uri = URI.createPlatformResourceURI(file.toString(), true);
         URI uri = URI.createFileURI(file.toString());
-        System.out.println(uri);
         ResourceSet resourceSet = new ResourceSetImpl();
         final Resource resource = resourceSet.createResource(uri);
-        
+
         try {
             resource.load(Collections.emptyMap());
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (resource.getContents().isEmpty() || !(resource.getContents().get(0) instanceof Diagram)) {
-            throw new IllegalArgumentException("The selected file does not contain a diagram.");
+            throw new IllegalArgumentException("The selected file does not contain a diagram: "
+                    + file);
         }
 
         // create a diagram edit part
@@ -244,8 +251,14 @@ public class GraphTestUtil {
         return inputGraph;
     }
 
-//    public static void main(String args[]) {
-//        GraphTestUtil.loadGraphs("test/", true);
-//    }
+    /**
+     * 
+     * @param graph
+     * @return
+     */
+    public static void applyLayout(LayoutMapping<?> mapping) {
+        // TODO implement the layout methode
+        DiagramLayoutEngine.INSTANCE.layout(mapping, new BasicProgressMonitor());
+    }
 
 }
