@@ -47,6 +47,8 @@ import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.InteractiveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
+import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
+import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.SplineEdgeRouter;
@@ -96,7 +98,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /** phase 3: crossing minimization module. */
     private ILayoutPhase crossingMinimizer;
     /** phase 4: node placement module. */
-    private ILayoutPhase nodePlacer = new LinearSegmentsNodePlacer();
+    private ILayoutPhase nodePlacer;
     /** phase 5: Edge routing module. */
     private ILayoutPhase edgeRouter;
 
@@ -302,6 +304,25 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         default:
             if (!(crossingMinimizer instanceof LayerSweepCrossingMinimizer)) {
                 crossingMinimizer = new LayerSweepCrossingMinimizer();
+            }
+        }
+        
+        // check with node placement strategy to use
+        NodePlacementStrategy nodePlaceStrategy = parentLayout.getProperty(Properties.NODEPLACE);
+        switch (nodePlaceStrategy) {
+        case LINEAR_SEGMENTS:
+            if (!(nodePlacer instanceof LinearSegmentsNodePlacer)) {
+                nodePlacer = new LinearSegmentsNodePlacer();
+            }
+            break;
+        case BK:
+            if (!(nodePlacer instanceof BKNodePlacer)) {
+                nodePlacer = new BKNodePlacer();
+            }
+            break;
+        default:
+            if (!(nodePlacer instanceof LinearSegmentsNodePlacer)) {
+                nodePlacer = new LinearSegmentsNodePlacer();
             }
         }
 

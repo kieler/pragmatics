@@ -261,7 +261,7 @@ public class ManuallyIterable<T> implements Iterable<T> {
              * {@inheritDoc}
              */
             public boolean hasNext() {
-                return (this.current != this.start) && (this.getNext() != null);
+                return (this.current != this.start) && (getNext() != null);
             }
 
             /**
@@ -292,6 +292,7 @@ public class ManuallyIterable<T> implements Iterable<T> {
             public void remove() {
                 throw new UnsupportedOperationException();
             }
+
         };
     }
 }

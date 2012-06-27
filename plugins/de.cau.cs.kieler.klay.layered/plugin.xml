@@ -113,6 +113,16 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.interactiveReferencePoint">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.knownOption1">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.nodePlace">
+         </knownOption>
+         <knownOption
+               default="true"
+               option="de.cau.cs.kieler.klay.layered.edgeBends">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -227,12 +237,30 @@
          </dependency>
       </layoutOption>
       <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy"
+            default="LINEAR_SEGMENTS"
+            description="Strategy for Node Placement"
+            id="de.cau.cs.kieler.klay.layered.nodePlace"
+            name="Node Placement"
+            type="enum">
+      </layoutOption>
+      <layoutOption
             advanced="true"
             class="de.cau.cs.kieler.core.math.KVector"
             description="The offset to the port position where connections shall be attached (programmatically set)."
             id="de.cau.cs.kieler.klay.layered.portAnchor"
             name="Port Anchor Offset"
             type="object">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="true"
+            description="Tells the BK node placer to try to reduce edge bends. Otherwise it tries a more balanced placement."
+            id="de.cau.cs.kieler.klay.layered.edgeBends"
+            name="Less Edge Bends"
+            type="boolean">
       </layoutOption>
    </extension>
 

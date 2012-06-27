@@ -35,6 +35,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 
 /**
  * Container for property definitions.
@@ -344,6 +345,19 @@ public final class Properties {
     public static final IProperty<CrossingMinimizationStrategy> CROSSMIN
             = new Property<CrossingMinimizationStrategy>("de.cau.cs.kieler.klay.layered.crossMin",
                     CrossingMinimizationStrategy.LAYER_SWEEP);
+    
+    /** property to choose a node placement strategy. */
+    public static final IProperty<NodePlacementStrategy> NODEPLACE
+            = new Property<NodePlacementStrategy>("de.cau.cs.kieler.klay.layered.nodePlace",
+                    NodePlacementStrategy.LINEAR_SEGMENTS);
+    
+    /** property to choose a node placement strategy. */
+    public static final IProperty<Boolean> EDGE_BENDS
+            = new Property<Boolean>("de.cau.cs.kieler.klay.layered.edgeBends", true);
+    
+    /** property to switch debug mode on or off. */
+    public static final IProperty<Boolean> DEBUG_MODE
+            = new Property<Boolean>("de.cau.cs.kieler.debugMode", false);
 
     /** property that determines how much effort should be spent. */
     public static final IProperty<Integer> THOROUGHNESS = new Property<Integer>(
