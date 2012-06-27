@@ -466,7 +466,7 @@ public final class ConditionProvider {
      *         Comparator for sorting the list of condition extensions by priority.
      * 
      */
-    private class ConditionElementComparator implements Comparator<HashMap<String, Object>> {
+    private static class ConditionElementComparator implements Comparator<HashMap<String, Object>> {
 
         /**
          * Compare by priority.

@@ -40,11 +40,14 @@ public class AdvancedRenderingResizableCompartmentEditPolicy extends ResizableCo
     
     private Dimension collapseExpandSize = null;
 
+    //Taken from original eclipse code, blame them
+    @SuppressWarnings("rawtypes")
     @Override
     protected List createCollapseHandles() {
         IGraphicalEditPart part = (IGraphicalEditPart) getHost();
 
-        List collapseHandles = new ArrayList();
+        List<AdvancedRenderingCompartmentCollapseHandle> collapseHandles = 
+                new ArrayList<AdvancedRenderingCompartmentCollapseHandle>();
         collapseHandle = new AdvancedRenderingCompartmentCollapseHandle(part, collapseFigure,
                 expandFigure, collapseExpandLocator, collapseExpandSize);
         collapseHandles.add(collapseHandle);
@@ -77,7 +80,7 @@ public class AdvancedRenderingResizableCompartmentEditPolicy extends ResizableCo
     
     /**
      * set custom size of the clickable area to expand/collapse.
-     * @param dim
+     * @param dim the new size
      */
     public void setCollapseExpandSize(final Dimension dim) {
         this.collapseExpandSize = dim;

@@ -33,11 +33,15 @@ import org.eclipse.swt.graphics.Image;
  * @author ckru
  * 
  */
+// Its necessary to use some internal draw 2d figures here.
+@SuppressWarnings("restriction")
 public class SwitchableFigure extends Shape {
 
     /**
      * The figure that will actually be displayed.
      */
+    // No gain in using getter here. 
+    // SUPPRESS CHECKSTYLE NEXT Visibility Modifier
     protected IFigure currentFigure;
 
     /**
