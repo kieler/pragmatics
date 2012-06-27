@@ -15,10 +15,8 @@
 
 package de.cau.cs.kieler.karma.util.expandcollapsebutton;
 
-import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.StackLayout;
 import org.eclipse.gmf.runtime.diagram.ui.internal.l10n.DiagramUIPluginImages;
 import org.eclipse.gmf.runtime.draw2d.ui.internal.figures.ImageFigureEx;
@@ -34,6 +32,8 @@ import de.cau.cs.kieler.karma.SwitchableFigure;
  * @author ckru
  * 
  */
+//Its necessary here to use some internal draw 2d figures
+@SuppressWarnings("restriction")
 public class SwitchableCollapseFigure extends SwitchableFigure {
 
     private boolean collapsed = false;
@@ -82,17 +82,22 @@ public class SwitchableCollapseFigure extends SwitchableFigure {
         expandFigure = figure;
     }
 
+    // taken from original gmf, blame them
+    @SuppressWarnings("deprecation")
     @Override
     public void paint(final Graphics graphics) {
         // Hack for image because gmf normally can't display image figures in a collapse handle.
         // The default gmf CollapseFigure pretty much does the same.
         if (getCurrentFigure() instanceof ImageFigureEx) {
-            if (getLocalBackgroundColor() != null)
+            if (getLocalBackgroundColor() != null) {
                 graphics.setBackgroundColor(getLocalBackgroundColor());
-            if (getLocalForegroundColor() != null)
+            }
+            if (getLocalForegroundColor() != null) {
                 graphics.setForegroundColor(getLocalForegroundColor());
-            if (font != null)
+            }
+            if (font != null) {
                 graphics.setFont(font);
+            }
 
             graphics.pushState();
             try {
@@ -140,18 +145,6 @@ public class SwitchableCollapseFigure extends SwitchableFigure {
         return imageFigure;
     }
 
-    /*
-     * not in use, just debug stuff.
-     */
-    private IFigure getDefaultFigure() {
-        RectangleFigure rectangle = new RectangleFigure();
-        rectangle.setLineWidth(1);
-        rectangle.setForegroundColor(ColorConstants.black);
-        rectangle.setBackgroundColor(ColorConstants.green);
-        rectangle.getBounds().setSize(7, 7);
-        return rectangle;
-    }
-
     /**
      * isCollapsed Utility method to determine if the IFigure is collapse or not.
      * 
@@ -192,12 +185,11 @@ public class SwitchableCollapseFigure extends SwitchableFigure {
      * 
      * part of the image hack
      */
+    @Override
     protected void outlineShape(final Graphics graphics) {
-        if (getCurrentFigure() instanceof ImageFigureEx) {
-            // do nothing
-        } else {
+        if (!(getCurrentFigure() instanceof ImageFigureEx)) {
             super.outlineShape(graphics);
-        }
+        } 
     }
 
     /*
@@ -207,6 +199,7 @@ public class SwitchableCollapseFigure extends SwitchableFigure {
      * 
      * part of the image hack
      */
+    @Override
     protected void fillShape(final Graphics graphics) {
         if (getCurrentFigure() instanceof ImageFigureEx) {
             Image img = ((ImageFigureEx) getCurrentFigure()).getImage();
