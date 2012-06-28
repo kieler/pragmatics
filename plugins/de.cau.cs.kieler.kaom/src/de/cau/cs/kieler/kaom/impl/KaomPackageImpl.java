@@ -17,7 +17,6 @@ package de.cau.cs.kieler.kaom.impl;
 
 
 import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
-import de.cau.cs.kieler.core.annotations.impl.AnnotationsPackageImpl;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomFactory;
@@ -31,7 +30,6 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EcorePackage;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
