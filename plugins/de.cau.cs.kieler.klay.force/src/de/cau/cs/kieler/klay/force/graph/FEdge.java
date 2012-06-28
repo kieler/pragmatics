@@ -170,7 +170,7 @@ public class FEdge extends MapPropertyHolder {
         if (count > 0) {
             KVector sourcePos = source.getPosition();
             KVector targetPos = target.getPosition();
-            KVector incr = targetPos.differenceCreate(sourcePos).scale(1 / (count + 1));
+            KVector incr = targetPos.differenceCreate(sourcePos).scale(1 / (double) (count + 1));
             KVector pos = sourcePos.clone();
             for (FBendpoint bendPoint : bendpoints) {
                 bendPoint.getPosition().x = pos.x;
