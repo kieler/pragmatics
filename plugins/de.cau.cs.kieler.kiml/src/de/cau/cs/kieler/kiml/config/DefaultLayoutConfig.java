@@ -216,7 +216,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
      */
     public static LayoutAlgorithmData getLayouterData(final String theLayoutHint,
             final String diagramType) {
-        String chDiagType = diagramType == null || diagramType.length() == 0
+        String chDiagType = (diagramType == null || diagramType.length() == 0)
                 ? LayoutDataService.DIAGRAM_TYPE_GENERAL : diagramType;
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         String layoutHint = theLayoutHint;
