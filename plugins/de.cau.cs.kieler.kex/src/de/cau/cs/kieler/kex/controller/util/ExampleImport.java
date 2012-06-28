@@ -69,7 +69,7 @@ public final class ExampleImport {
      * @param checkDuplicate
      *            , flag for checking example duplication in project.
      * @return directopens, {@link List} of {@link String}.
-     * @throws Exception
+     * @throws Exception if importing the given examples fails.
      */
     public static List<String> importExamples(final IPath destination,
             final List<Example> examples, final boolean checkDuplicate) throws Exception {
@@ -164,7 +164,7 @@ public final class ExampleImport {
                     URL entry = bundle.getEntry(localPath);
                     if (entry == null) {
                         // FIXME throw a more specific exception
-                        throw new RuntimeException(ErrorMessage.NO_Import
+                        throw new RuntimeException(ErrorMessage.NO_IMPORT
                                 + "Could not generate resource url from path: " + localPath);
                     }
                     String dest = newDestFolder + "/" + destPath;
@@ -176,11 +176,11 @@ public final class ExampleImport {
                     break;
                 }
             } catch (FileNotFoundException e) {
-                throw new WrappedException(e, ErrorMessage.NO_Import);
+                throw new WrappedException(e, ErrorMessage.NO_IMPORT);
             } catch (IOException e1) {
-                throw new WrappedException(e1, ErrorMessage.NO_Import);
+                throw new WrappedException(e1, ErrorMessage.NO_IMPORT);
             } catch (CoreException e2) {
-                throw new WrappedException(e2, ErrorMessage.NO_Import);
+                throw new WrappedException(e2, ErrorMessage.NO_IMPORT);
             }
         }
     }

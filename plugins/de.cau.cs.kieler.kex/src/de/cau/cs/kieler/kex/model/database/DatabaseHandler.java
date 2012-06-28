@@ -50,9 +50,20 @@ public class DatabaseHandler {
         // jdbc:postgresql:database
         // jdbc:postgresql://host/database
         // jdbc:postgresql://host:port/database
-
-        return ("jdbc:postgresql:"
-                + (host != null ? ("//" + host) + (port != null ? ":" + port : "") + "/" : "") + database);
+        
+        StringBuilder url = new StringBuilder("jdbc:postgresql:");
+        if (host != null) {
+            url.append("//" + host);
+            
+            if (port != null) {
+                url.append(":" + port);
+            }
+            
+            url.append("/");
+        }
+        url.append(database);
+        
+        return url.toString();
     }
 
     /**
