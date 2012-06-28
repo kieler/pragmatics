@@ -315,7 +315,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 nodePlacer = new LinearSegmentsNodePlacer();
             }
             break;
-        case BK:
+        case BRANDES_KOEPF:
             if (!(nodePlacer instanceof BKNodePlacer)) {
                 nodePlacer = new BKNodePlacer();
             }
