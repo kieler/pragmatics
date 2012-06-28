@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -361,10 +362,10 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             layerOrders.put(layer, layerOrder);
         }
         // Resort the layers.
-        for (Layer layer : layerOrders.keySet()) {
-            List<LNode> nodes = layer.getNodes();
+        for (Map.Entry<Layer, LinkedList<LNode>> entry : layerOrders.entrySet()) {
+            List<LNode> nodes = entry.getKey().getNodes();
             int sizeNodes = nodes.size();
-            LinkedList<LNode> orderNodes = layerOrders.get(layer);
+            LinkedList<LNode> orderNodes = entry.getValue();
             int sizeOrderNodes = orderNodes.size();
             assert (sizeNodes == sizeOrderNodes);
             for (int i = 0; i < sizeNodes; i++) {

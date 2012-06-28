@@ -524,7 +524,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             
             if (sourceNode != null && targetNode != null) {
                 // if we have a self-loop, set the appropriate graph property
-                if (sourceNode != graph && sourceNode == targetNode) {
+                if (sourceNode == targetNode) {
                     Set<GraphProperties> graphProperties = layeredGraph.getProperty(
                             Properties.GRAPH_PROPERTIES);
                     graphProperties.add(GraphProperties.SELF_LOOPS);

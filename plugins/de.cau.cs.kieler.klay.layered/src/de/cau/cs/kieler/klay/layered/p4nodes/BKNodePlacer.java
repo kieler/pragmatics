@@ -706,7 +706,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     /**
      * Neighbor comparator class.
      */
-    private class NeighborComparator implements Comparator<LNode> {
+    private static class NeighborComparator implements Comparator<LNode> {
 
         /**
          * {@inheritDoc}
@@ -726,7 +726,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     /**
      * Aligned layout class.
      */
-    private class BKAlignedLayout {
+    private static class BKAlignedLayout {
 
         private HashMap<LNode, LNode> root;
 
