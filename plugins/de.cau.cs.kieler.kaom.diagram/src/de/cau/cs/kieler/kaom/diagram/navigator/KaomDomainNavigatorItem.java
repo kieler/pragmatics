@@ -17,9 +17,10 @@ public class KaomDomainNavigatorItem extends PlatformObject {
      * @generated
      */
     static {
-        final Class[] supportedTypes = new Class[] { EObject.class, IPropertySource.class };
+        final Class<?>[] supportedTypes = new Class[] { EObject.class, IPropertySource.class };
         Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
+            @SuppressWarnings("rawtypes")
             public Object getAdapter(Object adaptableObject, Class adapterType) {
                 if (adaptableObject instanceof de.cau.cs.kieler.kaom.diagram.navigator.KaomDomainNavigatorItem) {
                     de.cau.cs.kieler.kaom.diagram.navigator.KaomDomainNavigatorItem domainNavigatorItem = (de.cau.cs.kieler.kaom.diagram.navigator.KaomDomainNavigatorItem) adaptableObject;
@@ -36,7 +37,7 @@ public class KaomDomainNavigatorItem extends PlatformObject {
                 return null;
             }
 
-            public Class[] getAdapterList() {
+            public Class<?>[] getAdapterList() {
                 return supportedTypes;
             }
         }, de.cau.cs.kieler.kaom.diagram.navigator.KaomDomainNavigatorItem.class);

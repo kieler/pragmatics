@@ -216,6 +216,7 @@ public class KaomParserProvider extends AbstractProvider implements IParserProvi
         /**
          * @generated
          */
+        @SuppressWarnings("rawtypes")
         public Object getAdapter(Class adapter) {
             if (IElementType.class.equals(adapter)) {
                 return elementType;

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import java.util.LinkedList;
 import org.eclipse.core.resources.IFile;
@@ -475,6 +474,7 @@ public class KaomNavigatorContentProvider implements ICommonContentProvider {
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     private Collection<View> getOutgoingLinksByType(Collection<? extends View> nodes, String type) {
         LinkedList<View> result = new LinkedList<View>();
         for (View nextNode : nodes) {
@@ -486,6 +486,7 @@ public class KaomNavigatorContentProvider implements ICommonContentProvider {
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     private Collection<View> getIncomingLinksByType(Collection<? extends View> nodes, String type) {
         LinkedList<View> result = new LinkedList<View>();
         for (View nextNode : nodes) {
@@ -497,6 +498,7 @@ public class KaomNavigatorContentProvider implements ICommonContentProvider {
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     private Collection<View> getChildrenByType(Collection<? extends View> nodes, String type) {
         LinkedList<View> result = new LinkedList<View>();
         for (View nextNode : nodes) {
@@ -508,6 +510,7 @@ public class KaomNavigatorContentProvider implements ICommonContentProvider {
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     private Collection<View> getDiagramLinksByType(Collection<Diagram> diagrams, String type) {
         ArrayList<View> result = new ArrayList<View>();
         for (Diagram nextDiagram : diagrams) {
