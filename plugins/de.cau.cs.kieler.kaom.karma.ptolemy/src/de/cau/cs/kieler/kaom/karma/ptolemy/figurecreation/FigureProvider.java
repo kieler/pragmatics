@@ -65,6 +65,8 @@ import diva.canvas.toolbox.ImageFigure;
  * @author ckru
  * 
  */
+//This class needs some internal draw2d figures.
+@SuppressWarnings("restriction")
 public class FigureProvider {
 
     /**
@@ -101,8 +103,11 @@ public class FigureProvider {
 
     /**
      * Create a figure for an entity representing an ptolemy input port.
+     * 
      * @return the input port figure
      */
+    //Thats just how big the ports are, no use to put it all in constants.
+    //CHECKSTYLEOFF Magic Number
     public IFigure createInputPort() {
         PointList pointList = new PointList();
         pointList.addPoint(0, 4);
@@ -117,11 +122,12 @@ public class FigureProvider {
         figure.setPoints(pointList);
         figure.setBackgroundColor(ColorConstants.black);
         return figure;
-        //return this.getDefaultFigure();
+        // return this.getDefaultFigure();
     }
-    
+
     /**
      * Create a figure for an entity representing an ptolemy output port.
+     * 
      * @return the output port figure
      */
     public IFigure createOutputPort() {
@@ -136,9 +142,9 @@ public class FigureProvider {
         PolygonShape figure = new PolygonShape();
         figure.setPoints(pointList);
         figure.setBackgroundColor(ColorConstants.black);
-        return figure;      
+        return figure;
     }
-    
+    //CHECKSTYLEON Magic Number
     
     /**
      * Create a draw2d figure out of an svg Document. FigureParser.createFigure does the actual
@@ -213,6 +219,7 @@ public class FigureProvider {
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
             // White background since draw2 can't handle transparency well
+            // SUPPRESS CHECKSTYLE NEXT Magic Number
             graphics.setBackground(new Color(255, 255, 255, 255));
             graphics.clearRect(0, 0, (int) figure.getBounds().getWidth(), (int) figure.getBounds()
                     .getHeight());
@@ -230,6 +237,7 @@ public class FigureProvider {
         RectangleFigure director = new RectangleFigure();
         // Directors just are that big. Wouldn't gain anything by hiding the magic numbers in
         // constants.
+        // SUPPRESS CHECKSTYLE NEXT Magic Number
         director.getBounds().setSize(100, 30);
         director.setBackgroundColor(ColorConstants.green);
         director.setForegroundColor(ColorConstants.black);
@@ -273,7 +281,7 @@ public class FigureProvider {
      * @author ckru
      * 
      */
-    private class MonitorValueFigure extends RectangleFigure implements IDataListener {
+    private static class MonitorValueFigure extends RectangleFigure implements IDataListener {
 
         private Label value;
 
@@ -331,7 +339,9 @@ public class FigureProvider {
     // Position of the label inside the outer rectangle to make it centered somehow.
     private static final int LABELLOCATION_X = 5;
     private static final int LABELLOCATION_Y = 8;
-
+    
+    private static final int TEXTSIZE = 10;
+    
     /**
      * A figure that displays a value.
      * 
@@ -355,7 +365,7 @@ public class FigureProvider {
                 // Make a font. Whithout giving the label a font we can't calculate it size.
                 FontData fd = new FontData();
                 fd.setStyle(SWT.NORMAL);
-                fd.setHeight(10);
+                fd.setHeight(TEXTSIZE);
                 Font font = new Font(PlatformUI.getWorkbench().getDisplay(), fd);
                 valueLabel.setFont(font);
                 // calculate and set the size the figure must have to display the text value.
@@ -367,6 +377,7 @@ public class FigureProvider {
             }
             // make the size of the outer rectangle a bit bigger than the label to have a nice
             // border
+            // SUPPRESS CHECKSTYLE NEXT Magic Number
             Dimension dim = valueLabel.getBounds().getSize().expand(10, 10);
             constFigure.getBounds().setSize(dim.getCopy());
             constFigure.setMaximumSize(dim.getCopy());
@@ -377,13 +388,16 @@ public class FigureProvider {
         return constFigure;
 
     }
-    
+
     /**
      * A figure to display if things go haywire.
+     * 
      * @return a red box with a questionmark in it
      */
     public IFigure getErrorFigure() {
         RectangleFigure errorFigure = new RectangleFigure();
+        // Its supposed to be that big.
+        // SUPPRESS CHECKSTYLE NEXT Magic Number
         errorFigure.setSize(50, 50);
         errorFigure.setLineWidth(1);
         errorFigure.setForegroundColor(ColorConstants.black);
@@ -391,10 +405,11 @@ public class FigureProvider {
         Label errorLabel = new Label("?");
         FontData fd = new FontData();
         fd.setStyle(SWT.NORMAL);
-        fd.setHeight(13);
+        fd.setHeight(TEXTSIZE);
         Font font = new Font(PlatformUI.getWorkbench().getDisplay(), fd);
         errorLabel.setFont(font);
-        errorLabel.getBounds().setLocation(20,15);
+     // SUPPRESS CHECKSTYLE NEXT Magic Number
+        errorLabel.getBounds().setLocation(20, 15);
         errorLabel.getBounds().setSize(errorLabel.getTextBounds().getSize());
         errorLabel.setLayoutManager(new BorderLayout());
         errorFigure.setLayoutManager(new BorderLayout());
