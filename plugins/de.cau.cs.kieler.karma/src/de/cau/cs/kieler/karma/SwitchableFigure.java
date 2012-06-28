@@ -27,18 +27,21 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * Class for encapsulating the actual drawn figure to avoid
- * inheritance problems. Also has some additional methods for example
- * changing resizeability.
+ * Class for encapsulating the actual drawn figure to avoid inheritance problems. Also has some
+ * additional methods for example changing resizeability.
  * 
- * @author ckru 
+ * @author ckru
  * 
  */
+// Its necessary to use some internal draw 2d figures here.
+@SuppressWarnings("restriction")
 public class SwitchableFigure extends Shape {
 
     /**
      * The figure that will actually be displayed.
      */
+    // No gain in using getter here. 
+    // SUPPRESS CHECKSTYLE NEXT Visibility Modifier
     protected IFigure currentFigure;
 
     /**
@@ -56,6 +59,7 @@ public class SwitchableFigure extends Shape {
 
     /**
      * A fallback default figure. Should only be displayed if things go wrong.
+     * 
      * @return the default figure.
      */
     private IFigure defaultFigure() {
@@ -65,11 +69,11 @@ public class SwitchableFigure extends Shape {
         rectangle.setBackgroundColor(ColorConstants.white);
         return rectangle;
     }
-    
+
     @Override
     public void paint(final Graphics graphics) {
         if (currentFigure != null) {
-            //some border stuff for better displaying the inner figure
+            // some border stuff for better displaying the inner figure
             Rectangle newBounds = new Rectangle();
             newBounds.x = this.getBounds().x + 1;
             newBounds.y = this.getBounds().y + 1;
@@ -99,21 +103,22 @@ public class SwitchableFigure extends Shape {
     public void setCurrentFigure(final IFigure figure) {
         currentFigure = figure;
         currentFigure.setParent(this.getParent());
-        
-        //adding some border for some types of figures otherwise they might get cut off.
-        if (this.getParent() instanceof DefaultSizeNodeFigure
-                && figure instanceof ImageFigureEx) {
+
+        // adding some border for some types of figures otherwise they might get cut off.
+        if (this.getParent() instanceof DefaultSizeNodeFigure && figure instanceof ImageFigureEx) {
             DefaultSizeNodeFigure defaultSizeNodeFigure = (DefaultSizeNodeFigure) this.getParent();
             Image image = ((ImageFigureEx) figure).getImage();
             if (image != null) {
-                defaultSizeNodeFigure.setDefaultSize(image.getBounds().width + 2, image.getBounds().height + 2);
+                defaultSizeNodeFigure.setDefaultSize(image.getBounds().width + 2,
+                        image.getBounds().height + 2);
             }
         } else if (this.getParent() instanceof DefaultSizeNodeFigure) {
             DefaultSizeNodeFigure defaultSizeNodeFigure = (DefaultSizeNodeFigure) this.getParent();
-            defaultSizeNodeFigure.setDefaultSize(currentFigure.getBounds().width + 2, currentFigure.getBounds().height + 2);
+            defaultSizeNodeFigure.setDefaultSize(currentFigure.getBounds().width + 2,
+                    currentFigure.getBounds().height + 2);
         }
         this.prefSize = currentFigure.getPreferredSize();
-        
+
     }
 
     /**

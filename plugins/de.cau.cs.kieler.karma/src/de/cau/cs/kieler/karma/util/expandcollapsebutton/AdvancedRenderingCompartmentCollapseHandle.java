@@ -44,19 +44,29 @@ import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 
 /**
  * 
- * This class is basically the same as the standard gmf CompartmentCollapseHandle.
- * In addition it provides the potential to exchange or influence the Collapse/Expand button. 
+ * This class is basically the same as the standard gmf CompartmentCollapseHandle. In addition it
+ * provides the potential to exchange or influence the Collapse/Expand button.
+ * 
  * @author ckru
- *
+ * 
  */
+//taken from original eclipse code, blame them
+@SuppressWarnings("restriction")
 public class AdvancedRenderingCompartmentCollapseHandle extends AbstractHandle implements
         PropertyChangeListener, NotificationListener {
 
     private SwitchableCollapseFigure switchableCollapseFigure;
 
     /** handle figure dimension. */
+    // Per default it just is that big, 
+    // name and visibility taken from eclipse code, blame them for bad code.
+    // CHECKSTYLEOFF Magic Number
+    // CHECKSTYLEOFF Visibility Modifier
+    // CHECKSTYLEOFF Static Variable Names
     public static Dimension SIZE = new Dimension(11, 11);
 
+    // CHECKSTYLEON
+    
     /**
      * Positions the supplied figure in its owner's top left corner offset by [1,1].
      */
@@ -69,9 +79,11 @@ public class AdvancedRenderingCompartmentCollapseHandle extends AbstractHandle i
         }
     }
 
-    
     /**
-     * @see org.eclipse.gmf.runtime.diagram.ui.handles.CompartmentCollapseHandle#CompartmentCollapseHandle(IGraphicalEditPart)
+     * @see org.eclipse.gmf.runtime.diagram.ui.handles
+     * .CompartmentCollapseHandle#CompartmentCollapseHandle(IGraphicalEditPart)
+     *
+     * @param owner the owning edit part
      */
     public AdvancedRenderingCompartmentCollapseHandle(final IGraphicalEditPart owner) {
         setOwner(owner);
@@ -81,7 +93,8 @@ public class AdvancedRenderingCompartmentCollapseHandle extends AbstractHandle i
         setSize(SIZE);
         setLayoutManager(new StackLayout());
 
-        add(switchableCollapseFigure = new SwitchableCollapseFigure(this));
+        switchableCollapseFigure = new SwitchableCollapseFigure(this);
+        add(switchableCollapseFigure);
 
         View view = owner.getNotationView();
         if (view != null) {
@@ -95,16 +108,23 @@ public class AdvancedRenderingCompartmentCollapseHandle extends AbstractHandle i
         switchableCollapseFigure.setCollapsed(false);
     }
 
-    
     /**
      * Constructs a new Handle with custom collapse/expand figures and locator.
-     * @param owner
-     * @param collapseFigure a custom figure to be display as collapse button.
-     * @param expandFigure a custom figure to be display as expand button.
-     * @param locator a custom locator to locate expand/collapse button
+     * 
+     * @param owner 
+     *            the edit part owning this handle
+     * @param collapseFigure
+     *            a custom figure to be display as collapse button.
+     * @param expandFigure
+     *            a custom figure to be display as expand button.
+     * @param locator
+     *            a custom locator to locate expand/collapse button
+     * @param size
+     *            the size of the clickable area
      */
     public AdvancedRenderingCompartmentCollapseHandle(final IGraphicalEditPart owner,
-            final IFigure collapseFigure, final IFigure expandFigure, final Locator locator, final Dimension size) {
+            final IFigure collapseFigure, final IFigure expandFigure, final Locator locator,
+            final Dimension size) {
         setOwner(owner);
         if (locator != null) {
             setLocator(locator);
@@ -119,7 +139,8 @@ public class AdvancedRenderingCompartmentCollapseHandle extends AbstractHandle i
         }
         setLayoutManager(new StackLayout());
 
-        add(switchableCollapseFigure = new SwitchableCollapseFigure(this));
+        switchableCollapseFigure = new SwitchableCollapseFigure(this);
+        add(switchableCollapseFigure);
         if (collapseFigure != null) {
             switchableCollapseFigure.setCollapseFigure(collapseFigure);
         }
@@ -139,7 +160,9 @@ public class AdvancedRenderingCompartmentCollapseHandle extends AbstractHandle i
     }
 
     /**
+     *  {@inheritDoc}
      * @see org.eclipse.draw2d.IFigure#findFigureAt(int, int, TreeSearch)
+     *
      */
     public IFigure findFigureAt(final int x, final int y, final TreeSearch search) {
         IFigure found = super.findFigureAt(x, y, search);
@@ -147,15 +170,17 @@ public class AdvancedRenderingCompartmentCollapseHandle extends AbstractHandle i
     }
 
     /**
+     *  {@inheritDoc}
      * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
      */
-    public void propertyChange(final PropertyChangeEvent evt) {
+    public void propertyChange(final PropertyChangeEvent evt) {      
         if (evt.getPropertyName().equals(Properties.ID_COLLAPSED)) {
             switchableCollapseFigure.setCollapsed(((Boolean) evt.getNewValue()).booleanValue());
         }
     }
 
     /**
+     *  {@inheritDoc}
      * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
      */
     public void notifyChanged(final Notification notification) {
@@ -166,18 +191,24 @@ public class AdvancedRenderingCompartmentCollapseHandle extends AbstractHandle i
         }
     }
 
-    private void triggerEvents(EditPart part, Notification n) {
+    /**
+     * Trigger the event that the button should change.
+     * @param part the part thats changed
+     * @param n the notification that somethings changed
+     */
+    private void triggerEvents(final EditPart part, final Notification n) {
         if (n != null && part instanceof IAdvancedRenderingEditPart) {
             ((IAdvancedRenderingEditPart) part).handleNotificationEvent(n);
         }
-        for (Object o: part.getChildren()) {
+        for (Object o : part.getChildren()) {
             if (o instanceof EditPart) {
                 triggerEvents((EditPart) o, n);
             }
         }
     }
-    
+
     /**
+     * {@inheritDoc}
      * @see org.eclipse.gef.handles.AbstractHandle#createDragTracker()
      */
     protected DragTracker createDragTracker() {

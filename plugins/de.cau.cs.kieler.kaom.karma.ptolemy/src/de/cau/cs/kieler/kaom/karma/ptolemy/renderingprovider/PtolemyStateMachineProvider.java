@@ -74,7 +74,8 @@ public class PtolemyStateMachineProvider implements IRenderingProvider {
      * {@inheritDoc}
      */
     public IBorderItemLocator getBorderItemLocatorByString(final String input,
-            final IFigure parentFigure, final Object locator, final EObject object, final CollapseStatus collapseStatus) {
+            final IFigure parentFigure, final Object locator, final EObject object,
+            final CollapseStatus collapseStatus) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -182,6 +183,7 @@ public class PtolemyStateMachineProvider implements IRenderingProvider {
          */
         @Override
         protected void fillShape(final Graphics graphics) {
+            Dimension corner = this.getCornerDimensions();
             graphics.fillRoundRectangle(getBounds(), corner.width, corner.height);
 
             float lineInset = Math.max(1.0f, getLineWidthFloat()) / 2.0f;

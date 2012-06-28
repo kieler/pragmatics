@@ -28,7 +28,6 @@ import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.karma.AdvancedRenderingLabelEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
@@ -110,6 +109,10 @@ public class KarmaEffect extends AbstractEffect {
         }
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public void execute() {
         SwitchableFigure switchableFigure = null;
         if ((figure instanceof SwitchableFigure)) {
@@ -137,11 +140,19 @@ public class KarmaEffect extends AbstractEffect {
         }
     }
 
+    /**
+     * Gets the most recent collapse status.
+     * @return the collapse status
+     */
     public CollapseStatus getCollapseStatus() {
         return collapseStatus;
     }
 
-    public void setCollapseStatus(CollapseStatus collapseStatus) {
+    /**
+     * Sets the current collapse status.
+     * @param collapseStatus the current collapse status
+     */
+    public void setCollapseStatus(final CollapseStatus collapseStatus) {
         this.collapseStatus = collapseStatus;
     }
 
@@ -160,12 +171,12 @@ public class KarmaEffect extends AbstractEffect {
      * @param switchableFigure
      *            the enclosing SwitchableFigure
      */
-    private void setFigure(final IRenderingProvider renderingProvider, final String figureParam,
-            final IFigure oldFigure, final EObject modelElement,
+    private void setFigure(final IRenderingProvider theRenderingProvider, final String theFigureParam,
+            final IFigure theOldFigure, final EObject theModelElement,
             final SwitchableFigure switchableFigure, final EditPart part) {
         // setting the new figure
-        IFigure newFigure = renderingProvider.getFigureByString(figureParam, oldFigure,
-                modelElement, part);
+        IFigure newFigure = theRenderingProvider.getFigureByString(theFigureParam, theOldFigure,
+                theModelElement, part);
         if (newFigure != null) {
             if (switchableFigure != null) {
                 switchableFigure.setCurrentFigure(newFigure);
@@ -185,14 +196,14 @@ public class KarmaEffect extends AbstractEffect {
      * @param modelElement
      *            the ModelElement whose figures LayoutManager should be changed.
      */
-    private void setLayoutManager(final IFigure figure, final IRenderingProvider renderingProvider,
-            final String layoutParam, final EObject modelElement) {
+    private void setLayoutManager(final IFigure theFigure, final IRenderingProvider theRenderingProvider,
+            final String theLayoutParam, final EObject theModelElement) {
         // setting the LayoutManager
-        if (figure != null) {
-            LayoutManager newLayoutManager = renderingProvider.getLayoutManagerByString(
-                    layoutParam, figure.getLayoutManager(), modelElement);
+        if (theFigure != null) {
+            LayoutManager newLayoutManager = theRenderingProvider.getLayoutManagerByString(
+                    theLayoutParam, theFigure.getLayoutManager(), theModelElement);
             if (newLayoutManager != null) {
-                figure.setLayoutManager(newLayoutManager);
+                theFigure.setLayoutManager(newLayoutManager);
             }
         }
     }
@@ -212,43 +223,41 @@ public class KarmaEffect extends AbstractEffect {
      * @param figure
      *            the Figure of the BorderItem
      */
-    private void setBorderItemLocator(final IGraphicalEditPart editPart,
-            final IRenderingProvider renderingProvider, final String borderItemParam,
-            final EObject modelElement, final IFigure figure) {
+    private void setBorderItemLocator(final IGraphicalEditPart theEditPart,
+            final IRenderingProvider theRenderingProvider, final String theBorderItemParam,
+            final EObject theModelElement, final IFigure theFigure) {
         // sets the new BoderItemLocator. unfortunately pretty hacked to get the right elements and
         // special cases
-        if (editPart instanceof IBorderItemEditPart) {
-            if (editPart.getParent() instanceof AbstractBorderedShapeEditPart) {
-                AbstractBorderedShapeEditPart parent = ((AbstractBorderedShapeEditPart) editPart
+        if (theEditPart instanceof IBorderItemEditPart) {
+            if (theEditPart.getParent() instanceof AbstractBorderedShapeEditPart) {
+                AbstractBorderedShapeEditPart parent = ((AbstractBorderedShapeEditPart) theEditPart
                         .getParent());
                 IFigure mainFigure = parent.getMainFigure();
                 // special case for labels since hierarchy is different
-                if (editPart instanceof AdvancedRenderingLabelEditPart) {
-                    IFigure contentPane = editPart.getContentPane();
+                if (theEditPart instanceof AdvancedRenderingLabelEditPart) {
+                    IFigure contentPane = theEditPart.getContentPane();
                     if (contentPane != null) {
                         IBorderItemLocator oldLocator = (IBorderItemLocator) contentPane
                                 .getParent().getLayoutManager().getConstraint(contentPane);
-                        IBorderItemLocator newLocator = renderingProvider
-                                .getBorderItemLocatorByString(borderItemParam, mainFigure,
-                                        oldLocator, modelElement, this.collapseStatus);
-                        parent.setLayoutConstraint(editPart, contentPane, newLocator);
-                    } else {
-                        // lastCondition = null;
+                        IBorderItemLocator newLocator = theRenderingProvider
+                                .getBorderItemLocatorByString(theBorderItemParam, mainFigure,
+                                        oldLocator, theModelElement, this.collapseStatus);
+                        parent.setLayoutConstraint(theEditPart, contentPane, newLocator);
                     }
                 } else {
                     // this is the code for ports etc.
-                    IFigure parentsParent = figure.getParent().getParent();
+                    IFigure parentsParent = theFigure.getParent().getParent();
                     if (parentsParent instanceof BorderedNodeFigure) {
                         BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) parentsParent;
                         if (borderedNodeFigure.getParent() != null) {
                             IBorderItemLocator oldLocator = (IBorderItemLocator) borderedNodeFigure
                                     .getParent().getLayoutManager()
                                     .getConstraint(borderedNodeFigure);
-                            IBorderItemLocator newLocator = renderingProvider
-                                    .getBorderItemLocatorByString(borderItemParam, mainFigure,
-                                            oldLocator, modelElement, this.collapseStatus);
+                            IBorderItemLocator newLocator = theRenderingProvider
+                                    .getBorderItemLocatorByString(theBorderItemParam, mainFigure,
+                                            oldLocator, theModelElement, this.collapseStatus);
                             if (oldLocator != newLocator) {
-                                parent.setLayoutConstraint(editPart, borderedNodeFigure, newLocator);
+                                parent.setLayoutConstraint(theEditPart, borderedNodeFigure, newLocator);
                             }
                         }
                     }
@@ -267,88 +276,161 @@ public class KarmaEffect extends AbstractEffect {
      * @param dim
      *            the new fixed size
      */
-    private void setFixedNodeSize(final SwitchableFigure switchableFigure, final IFigure figure,
+    private void setFixedNodeSize(final SwitchableFigure switchableFigure, final IFigure theFigure,
             final Dimension dim) {
-        figure.getBounds().setSize(dim);
-        figure.setMaximumSize(dim.getCopy());
-        figure.setMinimumSize(dim.getCopy());
-        figure.setPreferredSize(dim.getCopy());
-        if (figure.getParent() instanceof DefaultSizeNodeFigure) {
-            ((DefaultSizeNodeFigure) figure.getParent()).setDefaultSize(figure.getSize().getCopy());
-        } else if (figure.getParent() instanceof NodeFigure) {
-            ((NodeFigure) figure.getParent()).setSize(figure.getSize().getCopy());
+        theFigure.getBounds().setSize(dim);
+        theFigure.setMaximumSize(dim.getCopy());
+        theFigure.setMinimumSize(dim.getCopy());
+        theFigure.setPreferredSize(dim.getCopy());
+        if (theFigure.getParent() instanceof DefaultSizeNodeFigure) {
+            ((DefaultSizeNodeFigure) theFigure.getParent()).setDefaultSize(
+                    theFigure.getSize().getCopy());
+        } else if (theFigure.getParent() instanceof NodeFigure) {
+            ((NodeFigure) theFigure.getParent()).setSize(theFigure.getSize().getCopy());
         }
         switchableFigure.setResizeable(false);
     }
 
+    /**
+     * Get the RenderingProvider. 
+     * @return the RenderingProvider
+     */
     public IRenderingProvider getRenderingProvider() {
         return renderingProvider;
     }
 
+    /**
+     * Sets the RenderingProvider.
+     * @param renderingProvider the new RenderingProvider
+     */
     public void setRenderingProvider(final IRenderingProvider renderingProvider) {
         this.renderingProvider = renderingProvider;
     }
 
+    /**
+     * Gets the Figure.
+     * @return the Figure
+     */
     public IFigure getFigure() {
         return figure;
     }
 
+    /**
+     * Sets the Figure.
+     * @param figure the new Figure
+     */
     public void setFigure(final IFigure figure) {
         this.figure = figure;
     }
 
+    /**
+     * Gets the old figure.
+     * @return the old figure
+     */
     public IFigure getOldFigure() {
         return oldFigure;
     }
 
+    /**
+     * Sets the old figure.
+     * @param oldFigure the new old figure
+     */
     public void setOldFigure(final IFigure oldFigure) {
         this.oldFigure = oldFigure;
     }
 
+    /**
+     * Gets the model element.
+     * @return the model element
+     */
     public EObject getModelElement() {
         return modelElement;
     }
 
+    /**
+     * Sets the new model element.
+     * @param modelElement the new model element
+     */
     public void setModelElement(final EObject modelElement) {
         this.modelElement = modelElement;
     }
 
+    /**
+     * Get the edit part.
+     * @return the edit part
+     */
     public IGraphicalEditPart getEditPart() {
         return editPart;
     }
 
+    /**
+     * Sets the edit part.
+     * @param editPart the new edit part
+     */
     public void setEditPart(final IGraphicalEditPart editPart) {
         this.editPart = editPart;
     }
 
+    /**
+     * Get the layout param.
+     * @return the layout param
+     */
     public String getLayoutParam() {
         return layoutParam;
     }
 
+    /**
+     * Sets the layout param.
+     * @param layoutParam the new layout param
+     */
     public void setLayoutParam(final String layoutParam) {
         this.layoutParam = layoutParam;
     }
-
+    
+    /**
+     * Get the figure param.
+     * @return the figure param
+     */
     public String getFigureParam() {
         return figureParam;
     }
 
+    /**
+     * Sets the figure param.
+     * @param figureParam the new figure param
+     */
     public void setFigureParam(final String figureParam) {
         this.figureParam = figureParam;
     }
 
+    /**
+     * Get the border item param.
+     * @return the border item param
+     */
     public String getBorderItemParam() {
         return borderItemParam;
     }
 
+    /**
+     * Set the border item param.
+     * @param borderItemParam the enw border item param
+     */
     public void setBorderItemParam(final String borderItemParam) {
         this.borderItemParam = borderItemParam;
     }
 
+    /**
+     * Get the figure size.
+     * @return the figure size
+     */
     public Pair<Integer, Integer> getFigureSize() {
         return figureSize;
     }
 
+    /**
+     * Set the figure size.
+     * @param figureSize the new figure size
+     */
     public void setFigureSize(final Pair<Integer, Integer> figureSize) {
         this.figureSize = figureSize;
     }

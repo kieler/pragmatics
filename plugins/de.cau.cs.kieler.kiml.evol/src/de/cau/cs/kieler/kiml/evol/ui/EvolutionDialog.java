@@ -104,8 +104,6 @@ public class EvolutionDialog extends Dialog {
     private Map<String, Pair<Label, Slider>> metricControls = Maps.newHashMap();
     /** the label for the total fitness value. */
     private Label fitnessLabel;
-    /** the label for the user rating value. */
-    private Label userRatingLabel;
     
     /**
      * Creates an evolution dialog.
@@ -217,17 +215,8 @@ public class EvolutionDialog extends Dialog {
         gridData.horizontalSpan = 2;
         gridData.verticalIndent = 10;
         new Label(metricsPane, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(gridData);
-        // create label for user rating value
-        Label nameLabel = new Label(metricsPane, SWT.NONE);
-        nameLabel.setText("User Rating: ");
-        nameLabel.setToolTipText("The weighted rating derived from your selection.");
-        nameLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
-        userRatingLabel = new Label(metricsPane, SWT.NONE);
-        userRatingLabel.setText("100%");
-        userRatingLabel.setVisible(false);
-        userRatingLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 
-        nameLabel = new Label(metricsPane, SWT.NONE);
+        Label nameLabel = new Label(metricsPane, SWT.NONE);
         nameLabel.setText("Fitness: ");
         nameLabel.setToolTipText("The overall fitness of the individual.");
         nameLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
@@ -262,17 +251,18 @@ public class EvolutionDialog extends Dialog {
      */
     @Override
     protected void buttonPressed(final int buttonId) {
-        applyMetricWeights();
         switch (buttonId) {
         case IDialogConstants.OK_ID:
-            applyUserRating();
+            applyFirstSelected();
+            applyMetricWeights();
             okPressed();
             break;
         case IDialogConstants.CANCEL_ID:
             cancelPressed();
             break;
         case IDialogConstants.PROCEED_ID:
-            applyUserRating();
+            applyMetricWeights();
+            adaptMetricWeights();
             evolve();
             break;
         case IDialogConstants.ABORT_ID:
@@ -390,26 +380,19 @@ public class EvolutionDialog extends Dialog {
     }
     
     /**
-     * Apply user rating to all individuals.
+     * Find the first selected individual and apply it as the selected one, used for
+     * subsequent layouts. If no individual is selected, take the one with highest rating.
      */
-    private void applyUserRating() {
+    private void applyFirstSelected() {
         LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
-        boolean selectedFound = false;
         for (int i = 0; i < selectionButtons.length; i++) {
             if (selectionButtons[i] != null && selectionButtons[i].getSelection()) {
-                Genome genome = evolutionModel.getPopulation().get(i);
-                genome.setProperty(Genome.USER_RATING, 1.0);
-                genome.setProperty(Genome.USER_WEIGHT, 1.0);
-                if (!selectedFound) {
-                    selectedFound = true;
-                    evolutionModel.setSelected(i);
-                }
+                evolutionModel.setSelected(i);
+                return;
             }
         }
         // if no individual was selected, mark the first individual for meta layout
-        if (!selectedFound) {
-            evolutionModel.setSelected(0);
-        }
+        evolutionModel.setSelected(0);
     }
     
     /**
@@ -464,18 +447,22 @@ public class EvolutionDialog extends Dialog {
      * Reset the population to initial values.
      */
     private void reset() {
-        // reinitialize the population
         try {
             progressBar.setVisible(true);
             BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
                 public void run() {
                     LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
                     synchronized (evolutionModel) {
+                        // reinitialize the population
                         evolutionModel.initializePopulation(layoutMapping,
                                 new ProgressBarMonitor(progressBar));                        
                     }
                 }
             });
+            // reset metric weights
+            for (Pair<Label, Slider> control : metricControls.values()) {
+                control.getSecond().setSelection(SLIDER_MAX);
+            }
         } catch (Throwable throwable) {
             handleError(throwable);
             return;
@@ -513,13 +500,10 @@ public class EvolutionDialog extends Dialog {
         Population population = LayoutEvolutionModel.getInstance().getPopulation();
         Map<String, Float> metricsResult = null;
         Double fitness = null;
-        double userRating = -1;
         if (genomeIndex >= 0 && genomeIndex < population.size()) {
             Genome genome = population.get(genomeIndex);
             metricsResult = genome.getProperty(EvaluationOperation.METRIC_RESULT);
             fitness = genome.getProperty(Genome.FITNESS);
-            userRating = genome.getProperty(Genome.USER_RATING)
-                    * genome.getProperty(Genome.USER_WEIGHT);
         }
         if (metricsResult == null) {
             metricsResult = Collections.emptyMap();
@@ -545,13 +529,36 @@ public class EvolutionDialog extends Dialog {
             fitnessLabel.setText(Math.round(fitness * 100) + "%");
             fitnessLabel.setVisible(true);
         }
+    }
+    
+    /**
+     * Adapt the metric weights to the selected individuals.
+     */
+    private void adaptMetricWeights() {
+        LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+        Population population = evolutionModel.getPopulation();
+        // find the selected individuals
+        boolean[] selected = new boolean[evolutionModel.getPopulation().size()];
+        for (int i = 0; i < selectionButtons.length; i++) {
+            if (selectionButtons[i] != null && selectionButtons[i].getSelection()) {
+                selected[i] = true;
+            }
+        }
+
+        // adapt the metric weights based on selection
+        evolutionModel.adaptMetricWeights(selected);
         
-        // set weighted user rating value
-        if (userRating < 0) {
-            userRatingLabel.setVisible(false);
-        } else {
-            userRatingLabel.setText(Math.round(userRating * 100) + "%");
-            userRatingLabel.setVisible(true);
+        // refresh the weight sliders from the new values
+        Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
+        if (metricWeights != null) {
+            for (Map.Entry<String, Pair<Label, Slider>> entry : metricControls.entrySet()) {
+                String id = entry.getKey();
+                Double weight = metricWeights.get(id);
+                if (weight != null) {
+                    Slider slider = entry.getValue().getSecond();
+                    slider.setSelection((int) Math.round(weight * SLIDER_MAX));
+                }
+            }
         }
     }
     

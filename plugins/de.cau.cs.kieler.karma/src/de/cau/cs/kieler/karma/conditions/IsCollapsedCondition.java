@@ -23,9 +23,12 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.TopGraphicEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 
 import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
-import de.cau.cs.kieler.core.ui.util.EditorUtils;
+import de.cau.cs.kieler.karma.KarmaPlugin;
 
 /**
  * Condition for evaluating whether a model element is in a collapsed state in the opened diagram. 
@@ -43,7 +46,7 @@ public class IsCollapsedCondition extends IEditPartSensitiveCondition<EObject> {
             GmfFrameworkBridge gmfBridge = new GmfFrameworkBridge();
             objectEditPart = gmfBridge.getEditPart(object);
             if (objectEditPart == null) {
-                IEditorPart editorPart = EditorUtils.getLastActiveEditor();
+                IEditorPart editorPart = this.getActiveEditor();
                 if ((editorPart != null) && (editorPart instanceof DiagramDocumentEditor)) {
                     DiagramDocumentEditor dde = (DiagramDocumentEditor) editorPart;
                     objectEditPart = dde.getDiagramEditPart().findEditPart(
@@ -85,5 +88,25 @@ public class IsCollapsedCondition extends IEditPartSensitiveCondition<EObject> {
         return false;
     }
 
+    /**
+     * Get the active editor for the page.
+     * 
+     * @return the active editor.
+     */
+    private IEditorPart getActiveEditor() {
+        IEditorPart result = null;
+        IWorkbench workbench = KarmaPlugin.getDefault().getWorkbench();
+        if (workbench != null) {
+            IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+            if (window != null) {
+                IWorkbenchPage page = window.getActivePage();
+                if (page != null) {
+                    result = page.getActiveEditor();
+                }
+            }
+        }
+        return result;
+    }
+    
     
 }

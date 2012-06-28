@@ -24,9 +24,10 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
-import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
+import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartDelegate;
 
 /**
+ * EditPart for using KARMA with Connections.
  * 
  * @author ckru
  * 
@@ -37,13 +38,14 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
     /**
      * Figure that that represents the model element.
      */
+    // Visibility modification is necessary to be consistent with the generated EditParts.
     // SUPPRESS CHECKSTYLE NEXT VisibilityModifier
     protected IFigure primaryShape;
 
-    private AdvancedRenderingEditPartUtil util;
+    private AdvancedRenderingEditPartDelegate util;
 
     /**
-     * The constructor. Just calls super.
+     * The constructor. Just calls super and fills some fields.
      * 
      * @param view
      *            to be given to super
@@ -53,9 +55,10 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
         String className = this.getClass().getName();
         ConditionProvider conditionProvider = ConditionProvider.getInstance();
         List<HashMap<String, Object>> conditions = conditionProvider.getPairs(className);
-        util = new AdvancedRenderingEditPartUtil(conditions);
+        util = new AdvancedRenderingEditPartDelegate(conditions);
     }
 
+    
     @Override
     public void handleNotificationEvent(final Notification notification) {
         super.handleNotificationEvent(notification);

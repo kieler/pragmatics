@@ -29,7 +29,6 @@ import org.eclipse.draw2d.PolylineShape;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -53,6 +52,8 @@ import org.w3c.dom.NodeList;
  * @author ckru
  * 
  */
+//this class needs some internal draw2d figures
+@SuppressWarnings("restriction")
 public final class FigureParser {
 
     /**
@@ -132,7 +133,8 @@ public final class FigureParser {
                     Double ry = Double.parseDouble(childElement.getAttribute("ry"));
                     String style = (String) childElement.getAttribute("style");
                     figure.getBounds().setLocation(new PrecisionPoint(x + 1 - rx, y + 1 - ry));
-                    figure.getBounds().setSize(new Dimension((int)Math.abs(rx * 2), (int)Math.abs(ry * 2)));
+                    figure.getBounds().setSize(
+                            new Dimension((int) Math.abs(rx * 2), (int) Math.abs(ry * 2)));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
                     // make a PolyLineShape from a line element
@@ -220,14 +222,18 @@ public final class FigureParser {
                     Image img = null;
                     ImageFigureEx figure = null;
                     try {
-                        img = new Image(null, url.openStream());
-                        figure = new ImageFigureEx(img);
+                        if (url != null) {
+                            img = new Image(null, url.openStream());
+                            figure = new ImageFigureEx(img);
+                        }
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    figure.setBounds(new Rectangle(new PrecisionPoint(x, y), new PrecisionPoint(
+                    if (figure != null) {
+                        figure.setBounds(new Rectangle(new PrecisionPoint(x, y), new PrecisionPoint(
                             width, height)));
+                    }
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
 
