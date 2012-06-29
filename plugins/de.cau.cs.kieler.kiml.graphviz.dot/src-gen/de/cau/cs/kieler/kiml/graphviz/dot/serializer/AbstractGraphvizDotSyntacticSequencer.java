@@ -29,13 +29,13 @@ public class AbstractGraphvizDotSyntacticSequencer extends AbstractSyntacticSequ
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (GraphvizDotGrammarAccess) access;
-		match_AttributeStatement_CommaKeyword_2_1_0_q = new TokenAlias(true, false, grammarAccess.getAttributeStatementAccess().getCommaKeyword_2_1_0());
-		match_EdgeStatement_CommaKeyword_2_1_1_0_q = new TokenAlias(true, false, grammarAccess.getEdgeStatementAccess().getCommaKeyword_2_1_1_0());
-		match_EdgeStatement___LeftSquareBracketKeyword_2_0_RightSquareBracketKeyword_2_2__q = new GroupAlias(true, false, new TokenAlias(false, false, grammarAccess.getEdgeStatementAccess().getLeftSquareBracketKeyword_2_0()), new TokenAlias(false, false, grammarAccess.getEdgeStatementAccess().getRightSquareBracketKeyword_2_2()));
-		match_NodeStatement_CommaKeyword_1_1_1_0_q = new TokenAlias(true, false, grammarAccess.getNodeStatementAccess().getCommaKeyword_1_1_1_0());
-		match_NodeStatement___LeftSquareBracketKeyword_1_0_RightSquareBracketKeyword_1_2__q = new GroupAlias(true, false, new TokenAlias(false, false, grammarAccess.getNodeStatementAccess().getLeftSquareBracketKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getNodeStatementAccess().getRightSquareBracketKeyword_1_2()));
-		match_Statement_SemicolonKeyword_1_q = new TokenAlias(true, false, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
-		match_Subgraph_SubgraphKeyword_1_0_q = new TokenAlias(true, false, grammarAccess.getSubgraphAccess().getSubgraphKeyword_1_0());
+		match_AttributeStatement_CommaKeyword_2_1_0_q = new TokenAlias(false, true, grammarAccess.getAttributeStatementAccess().getCommaKeyword_2_1_0());
+		match_EdgeStatement_CommaKeyword_2_1_1_0_q = new TokenAlias(false, true, grammarAccess.getEdgeStatementAccess().getCommaKeyword_2_1_1_0());
+		match_EdgeStatement___LeftSquareBracketKeyword_2_0_RightSquareBracketKeyword_2_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getEdgeStatementAccess().getLeftSquareBracketKeyword_2_0()), new TokenAlias(false, false, grammarAccess.getEdgeStatementAccess().getRightSquareBracketKeyword_2_2()));
+		match_NodeStatement_CommaKeyword_1_1_1_0_q = new TokenAlias(false, true, grammarAccess.getNodeStatementAccess().getCommaKeyword_1_1_1_0());
+		match_NodeStatement___LeftSquareBracketKeyword_1_0_RightSquareBracketKeyword_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getNodeStatementAccess().getLeftSquareBracketKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getNodeStatementAccess().getRightSquareBracketKeyword_1_2()));
+		match_Statement_SemicolonKeyword_1_q = new TokenAlias(false, true, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
+		match_Subgraph_SubgraphKeyword_1_0_q = new TokenAlias(false, true, grammarAccess.getSubgraphAccess().getSubgraphKeyword_1_0());
 	}
 	
 	@Override

@@ -16,10 +16,10 @@ package de.cau.cs.kieler.kiml.graphviz.dot.transform;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
-import com.google.inject.Injector;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.service.formats.AbstractEmfHandler;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
@@ -31,9 +31,9 @@ import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
  */
 public class DotHandler extends AbstractEmfHandler<GraphvizModel> {
     
-    /** the injector for creation of resources. */
-    private static Injector injector;
-
+    /** The graph format identifier for Graphviz Dot. */
+    public static final String ID = "org.graphviz.dot";
+    
     /**
      * {@inheritDoc}
      */
@@ -41,16 +41,15 @@ public class DotHandler extends AbstractEmfHandler<GraphvizModel> {
     protected String getFileExtension() {
         return "graphviz_dot";
     }
+    
+    @Inject private Provider<XtextResourceSet> resourceSetProvider;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public ResourceSet createResourceSet() {
-        if (injector == null) {
-            injector = new GraphvizDotStandaloneSetup().createInjectorAndDoEMFRegistration();
-        }
-        return injector.getInstance(XtextResourceSet.class);
+        return resourceSetProvider.get();
     }
 
     private DotImporter importer = new DotImporter();
