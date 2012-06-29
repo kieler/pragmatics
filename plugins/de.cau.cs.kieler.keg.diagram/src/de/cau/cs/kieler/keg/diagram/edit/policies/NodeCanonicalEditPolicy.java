@@ -248,12 +248,13 @@ public class NodeCanonicalEditPolicy extends CanonicalEditPolicy {
     /**
      * @generated
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private Collection<IAdaptable> refreshConnections() {
         Map<EObject, View> domain2NotationMap = new HashMap<EObject, View>();
         Collection<GraphsLinkDescriptor> linkDescriptors = collectAllLinks(getDiagram(),
                 domain2NotationMap);
-        Collection existingLinks = new LinkedList(getDiagram().getEdges());
-        for (Iterator linksIterator = existingLinks.iterator(); linksIterator.hasNext();) {
+        Collection<View> existingLinks = new LinkedList(getDiagram().getEdges());
+        for (Iterator<View> linksIterator = existingLinks.iterator(); linksIterator.hasNext();) {
             Edge nextDiagramLink = (Edge) linksIterator.next();
             int diagramLinkVisualID = GraphsVisualIDRegistry.getVisualID(nextDiagramLink);
             if (diagramLinkVisualID == -1) {
@@ -433,10 +434,10 @@ public class NodeCanonicalEditPolicy extends CanonicalEditPolicy {
             break;
         }
         }
-        for (Iterator children = view.getChildren().iterator(); children.hasNext();) {
+        for (Iterator<?> children = view.getChildren().iterator(); children.hasNext();) {
             result.addAll(collectAllLinks((View) children.next(), domain2NotationMap));
         }
-        for (Iterator edges = view.getSourceEdges().iterator(); edges.hasNext();) {
+        for (Iterator<?> edges = view.getSourceEdges().iterator(); edges.hasNext();) {
             result.addAll(collectAllLinks((View) edges.next(), domain2NotationMap));
         }
         return result;

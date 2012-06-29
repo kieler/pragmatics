@@ -37,6 +37,7 @@ import de.cau.cs.kieler.keg.diagram.providers.GraphsElementTypes;
 /**
  * @generated
  */
+@SuppressWarnings("restriction")
 public class Node5EditPart extends ShapeNodeEditPart
 
 implements KEGNode
@@ -132,7 +133,7 @@ implements KEGNode
                 // implementation of the OvalFigure had to be skipped
                 if (isOpaque() && getBorder() != null) {
                     Rectangle tempRect = new Rectangle(getBounds());
-                    tempRect.crop(getBorder().getInsets(this));
+                    tempRect.shrink(getBorder().getInsets(this));
                     graphics.fillRectangle(tempRect);
                     return;
                 }
