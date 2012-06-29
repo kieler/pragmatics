@@ -24,6 +24,9 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
  */
 public abstract class FParticle extends MapPropertyHolder {
     
+    /** the serial version UID. */
+    private static final long serialVersionUID = -6264474302326798066L;
+    
     /** Position of this particle. */
     private KVector position = new KVector();
     /** Width and height of graphical representation. */

@@ -22,6 +22,9 @@ import de.cau.cs.kieler.core.math.KVector;
  */
 public abstract class PShape extends PGraphElement {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = -5722626533071201367L;
+    
     /** the current position of the element. */
     private KVector pos = new KVector();
     /** the size of the element. */

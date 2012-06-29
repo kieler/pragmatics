@@ -40,6 +40,9 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  */
 public class LPort extends LShape {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = -3406558719744943360L;
+    
     /** the owning node. */
     private LNode owner;
     /** the port side. */

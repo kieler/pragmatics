@@ -30,6 +30,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class LEdge extends LGraphElement {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = 1429497419118554817L;
+    
     /** the bend points. */
     private KVectorChain bendPoints = new KVectorChain();
     /** the source and target ports. */

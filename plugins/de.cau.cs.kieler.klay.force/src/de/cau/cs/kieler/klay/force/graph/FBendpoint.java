@@ -22,6 +22,9 @@ package de.cau.cs.kieler.klay.force.graph;
  */
 public class FBendpoint extends FParticle {
     
+    /** the serial version UID. */
+    private static final long serialVersionUID = -7146373072650467350L;
+    
     /** The edge this bend point belongs to. */
     private FEdge edge;
     

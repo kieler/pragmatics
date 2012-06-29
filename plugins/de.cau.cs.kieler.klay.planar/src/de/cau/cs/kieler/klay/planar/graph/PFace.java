@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.planar.graph;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,7 +29,7 @@ import de.cau.cs.kieler.klay.planar.util.MappedIterable;
  * @author ocl
  * @author pkl
  */
-public class PFace extends PGraphElement implements Serializable {
+public class PFace extends PGraphElement {
     // TODO guarantee edge and node order
     // TODO is left/right face correct according to source/target?
 

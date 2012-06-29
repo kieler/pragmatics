@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.planar.graph;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -36,7 +35,7 @@ import de.cau.cs.kieler.klay.planar.util.MappedIterable;
  * @author cku
  * @author pkl
  */
-public class PNode extends PShape implements Serializable {
+public class PNode extends PShape {
 
     /** Generated Version UID for Serialization. */
     private static final long serialVersionUID = 1943479208604255107L;

@@ -23,6 +23,9 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 public abstract class LGraphElement extends MapPropertyHolder
         implements Comparable<LGraphElement> {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = 5480383439314459124L;
+    
     // CHECKSTYLEOFF VisibilityModifier
     /** Identifier value, may be arbitrarily used by algorithms. */
     public int id;
