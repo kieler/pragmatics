@@ -31,7 +31,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 
 /**
  * An abstract superclass for EMF-based transformers.

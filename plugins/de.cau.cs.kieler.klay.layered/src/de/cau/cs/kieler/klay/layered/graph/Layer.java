@@ -29,6 +29,9 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  */
 public class Layer extends LGraphElement implements Iterable<LNode> {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = 5760328884701318753L;
+
     /** the owning layered graph. */
     private LayeredGraph owner;
 

@@ -385,6 +385,27 @@ public class OrthogonalRoutingGenerator {
         public int compareTo(final HyperNode other) {
             return this.mark - other.mark;
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object instanceof HyperNode) {
+                HyperNode other = (HyperNode) object;
+                return this.mark == other.mark;
+            }
+            return false;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return mark;
+        }
+        
     }
 
     /**

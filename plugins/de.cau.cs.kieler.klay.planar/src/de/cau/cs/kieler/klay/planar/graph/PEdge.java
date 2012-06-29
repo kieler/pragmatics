@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.planar.graph;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -29,7 +28,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
  * @author cku
  * @author pkl
  */
-public class PEdge extends PGraphElement implements Serializable {
+public class PEdge extends PGraphElement {
 
     /** Generated Version UID for Serialization. */
     private static final long serialVersionUID = 6297150511478367448L;

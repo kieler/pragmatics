@@ -27,6 +27,9 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
  */
 public class TransformationData<S, T> extends MapPropertyHolder {
     
+    /** the serial version UID. */
+    private static final long serialVersionUID = 1216251172929233162L;
+    
     /** the original source graph. */
     private S sourceGraph;
     /** the transformed target graphs. */

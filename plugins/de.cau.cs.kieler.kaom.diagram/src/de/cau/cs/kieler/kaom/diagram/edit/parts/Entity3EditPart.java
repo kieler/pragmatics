@@ -93,7 +93,7 @@ public class Entity3EditPart extends AdvancedRenderingBorderedShapeEditPart {
                 case EntityName2EditPart.VISUAL_ID:
                     return new BorderItemSelectionEditPolicy() {
 
-                        protected List createSelectionHandles() {
+                        protected List<?> createSelectionHandles() {
                             MoveHandle mh = new MoveHandle((GraphicalEditPart) getHost());
                             mh.setBorder(null);
                             return Collections.singletonList(mh);

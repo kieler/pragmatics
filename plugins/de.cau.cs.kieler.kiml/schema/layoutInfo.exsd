@@ -89,11 +89,8 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Either a domain model class or an edit part class. The option is assigned to all instances of the given class.
+                  Either a domain model class, a diagram part class, or a diagram type. The option is assigned to all instances of the given class or type.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="option" type="string" use="required">

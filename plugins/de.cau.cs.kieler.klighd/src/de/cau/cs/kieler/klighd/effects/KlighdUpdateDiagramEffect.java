@@ -27,6 +27,9 @@ import de.cau.cs.kieler.klighd.views.DiagramViewPart;
  */
 public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = -5653125647788085065L;
+
     /**
      * Constructs an effect that updates the diagram view for the given identifier with the given
      * name.

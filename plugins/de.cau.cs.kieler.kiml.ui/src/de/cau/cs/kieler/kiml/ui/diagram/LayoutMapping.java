@@ -35,6 +35,9 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
  */
 public class LayoutMapping<T> extends MapPropertyHolder {
     
+    /** the serial version UID. */
+    private static final long serialVersionUID = 4066018168889912586L;
+    
     /** the bidirectional mapping of layout graph elements to diagram parts. */
     private BiMap<KGraphElement, T> graphElemMap = HashBiMap.create();
     /** additional layout configurations for specification of layout options. */

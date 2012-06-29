@@ -114,9 +114,6 @@
                option="de.cau.cs.kieler.klay.layered.interactiveReferencePoint">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.knownOption1">
-         </knownOption>
-         <knownOption
                option="de.cau.cs.kieler.klay.layered.nodePlace">
          </knownOption>
          <knownOption

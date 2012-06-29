@@ -203,7 +203,7 @@ public abstract class AnalysisService {
                                 throw new WrappedException(e);
                             }
                         }
-                        public void destroy(IAnalysis provider) {
+                        public void destroy(final IAnalysis provider) {
                         }
                     };
                     analysisData.createPool(analysisFactory);

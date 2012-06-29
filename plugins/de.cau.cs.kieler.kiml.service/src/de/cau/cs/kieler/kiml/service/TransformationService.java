@@ -36,7 +36,8 @@ import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 public abstract class TransformationService {
     
     /** identifier of the extension point for layout info. */
-    protected static final String EXTP_ID_GRAPH_TRANS = "de.cau.cs.kieler.kiml.service.graphTransformers";
+    protected static final String EXTP_ID_GRAPH_TRANS
+            = "de.cau.cs.kieler.kiml.service.graphTransformers";
     /** name of the 'handler' element in the 'graph transformer' extension point. */
     protected static final String ELEMENT_HANDLER = "handler";
     /** name of the 'class' attribute in the extension points. */

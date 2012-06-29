@@ -32,7 +32,7 @@ public class KaomReorientConnectionViewCommand extends
 	/**
 	 * @generated
 	 */
-	public List getAffectedFiles() {
+	public List<?> getAffectedFiles() {
 		View view = (View) edgeAdaptor.getAdapter(View.class);
 		if (view != null) {
 			return getWorkspaceFiles(view);

@@ -43,7 +43,7 @@ public class GraphFormatData implements ILayoutData {
     /**
      * {@inheritDoc}
      */
-    public void setId(String theid) {
+    public void setId(final String theid) {
         this.id = theid;
     }
 
@@ -57,7 +57,7 @@ public class GraphFormatData implements ILayoutData {
     /**
      * {@inheritDoc}
      */
-    public void setName(String thename) {
+    public void setName(final String thename) {
         this.name = thename;
     }
 
@@ -71,7 +71,7 @@ public class GraphFormatData implements ILayoutData {
     /**
      * {@inheritDoc}
      */
-    public void setDescription(String thedescription) {
+    public void setDescription(final String thedescription) {
         this.description = thedescription;
     }
     

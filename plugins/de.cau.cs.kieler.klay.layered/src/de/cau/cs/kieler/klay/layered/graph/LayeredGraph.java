@@ -36,6 +36,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
     
+    /** the serial version UID. */
+    private static final long serialVersionUID = -8006835373897072852L;
+    
     /**
      * Map mapping node types to the colors used to represent those types when
      * writing debug output graphs. The colors are given as strings of the form
