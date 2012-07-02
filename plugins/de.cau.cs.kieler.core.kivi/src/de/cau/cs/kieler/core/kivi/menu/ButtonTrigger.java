@@ -17,12 +17,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
 import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
 import de.cau.cs.kieler.core.kivi.ITrigger;
 import de.cau.cs.kieler.core.kivi.ITriggerState;
-import de.cau.cs.kieler.core.ui.util.EditorUtils;
 
 /**
  * Listens to various buttons for the view management.
@@ -97,8 +97,9 @@ public class ButtonTrigger extends AbstractTrigger {
          * @return the active editor
          */
         public IEditorPart getEditor() {
-            if (editor == null) {
-                editor = EditorUtils.getLastActiveEditor();
+            if (editor == null) {              
+                editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                        .getActivePage().getActiveEditor();
             }
             return editor;
         }
