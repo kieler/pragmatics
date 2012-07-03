@@ -17,9 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -39,7 +37,8 @@ public class LabelDummySwitcher extends AbstractAlgorithm implements ILayoutProc
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
-        
+        // Mark all label nodes which can be swapped to the middle of a long edge
+        List<Pair<LNode, LNode>> nodesToSwap = new LinkedList<Pair<LNode, LNode>>();
         for (Layer layer : layeredGraph) {
             for (LNode node : layer.getNodes()) {
                 if (node.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
@@ -52,49 +51,64 @@ public class LabelDummySwitcher extends AbstractAlgorithm implements ILayoutProc
                                 .get(0).getTarget().getNode();
                     }
                     int middle = longEdge.size() / 2;
-                    swapNodes(node, longEdge.get(middle));
+                    if (longEdge.size() > 0) {
+                        nodesToSwap.add(new Pair<LNode, LNode>(node, longEdge.get(middle)));
+                    }
                 }
             }
         }
         
+        // Execute the swapping
+        for (Pair<LNode, LNode> swapPair : nodesToSwap) {
+            swapNodes(swapPair.getFirst(), swapPair.getSecond());
+        }
     }
     
     private void swapNodes(final LNode one, final LNode other) {
-//        Layer oneLayer = one.getLayer();
-//        List<LEdge> oneIncoming = one.getPorts().get(0).getIncomingEdges();
-//        List<LEdge> oneOutgoing = one.getPorts().get(0).getOutgoingEdges();
-//        
-//     // Get the next layer
-//        Layer nextLayer = layerIter.next();
-//        
-//        // Create dummy node
-//        LNode dummyNode = new LNode();
-//        dummyNode.setProperty(Properties.ORIGIN, edge);
-//        dummyNode.setProperty(Properties.NODE_TYPE, NodeType.LONG_EDGE);
-//        dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
-//                PortConstraints.FIXED_POS);
-//        dummyNode.setLayer(nextLayer);
-//        
-//        // Create dummy input and output ports
-//        LPort dummyInput = new LPort();
-//        dummyInput.setSide(PortSide.WEST);
-//        dummyInput.setNode(dummyNode);
-//        
-//        LPort dummyOutput = new LPort();
-//        dummyOutput.setSide(PortSide.EAST);
-//        dummyOutput.setNode(dummyNode);
-//        
-//        edge.setTarget(dummyInput);
-//        
-//        // Create a dummy edge
-//        LEdge dummyEdge = new LEdge();
-//        dummyEdge.copyProperties(edge);
-//        dummyEdge.setSource(dummyOutput);
-//        dummyEdge.setTarget(targetPort);
-//        
-//        setDummyProperties(dummyNode, edge, dummyEdge);
-//        
-//        // Reset the layer pointer
-//        layerIter.previous();
+        // Detect incoming and outgoing ports of the nodes
+        // Since they are dummy nodes, they can simply be found by looking where
+        // there are incoming or outgoing edges
+        LPort oneIncomingPort = null;
+        LPort oneOutgoingPort = null;
+        LPort otherIncomingPort = null;
+        LPort otherOutgoingPort = null;
+        for (LPort port : one.getPorts()) {
+            if (port.getIncomingEdges().size() > 0) {
+                oneIncomingPort = port;
+            } else if (port.getOutgoingEdges().size() > 0) {
+                oneOutgoingPort = port;
+            }
+        }
+        for (LPort port : other.getPorts()) {
+            if (port.getIncomingEdges().size() > 0) {
+                otherIncomingPort = port;
+            } else if (port.getOutgoingEdges().size() > 0) {
+                otherOutgoingPort = port;
+            }
+        }
+        
+        // Store information about first node
+        Layer oneLayer = one.getLayer();
+        int inLayerPosition = one.getIndex();
+        List<LEdge> oneIncomingEdges = oneIncomingPort.getIncomingEdges();
+        List<LEdge> oneOutgoingEdges = oneOutgoingPort.getOutgoingEdges();
+        
+        // Set values of first node to values from second node
+        one.setLayer(other.getIndex(), other.getLayer());
+        for (LEdge edge : otherIncomingPort.getIncomingEdges()) {
+            edge.setTarget(oneIncomingPort);
+        }
+        for (LEdge edge : otherOutgoingPort.getOutgoingEdges()) {
+            edge.setSource(oneOutgoingPort);
+        }
+        
+        // Set values of first node to values from second node
+        other.setLayer(inLayerPosition, oneLayer);
+        for (LEdge edge : oneIncomingEdges) {
+            edge.setTarget(otherIncomingPort);
+        }
+        for (LEdge edge : oneOutgoingEdges) {
+            edge.setSource(otherOutgoingPort);
+        }
     }
 }

@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
@@ -49,6 +50,11 @@ public class LabelDummyRemover extends AbstractAlgorithm implements ILayoutProce
                 LNode node = nodeIterator.next();
                 
                 if (node.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
+                    // First, place label on position of dummy node 
+                    LLabel label = (LLabel) node.getProperty(Properties.ORIGIN);
+                    label.getPosition().x = node.getPosition().x;
+                    label.getPosition().y = node.getPosition().y;
+                    
                     // We can assume that there are exactly one western and eastern port
                     // on each side of the node
                     List<LEdge> inputPortEdges =
