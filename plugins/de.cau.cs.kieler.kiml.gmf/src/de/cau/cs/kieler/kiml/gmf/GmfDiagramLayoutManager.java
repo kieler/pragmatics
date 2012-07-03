@@ -36,6 +36,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.impl.InternalTransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.commands.Command;
@@ -388,10 +389,14 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         KShapeLayout graphLayout = mapping.getLayoutGraph().getData(KShapeLayout.class);
         applyLayoutRequest.setUpperBound(graphLayout.getWidth(), graphLayout.getHeight());
 
-        // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
-        Command applyLayoutCommand = mapping.getProperty(DIAGRAM_EDIT_PART).getCommand(
-                applyLayoutRequest);
-        mapping.setProperty(LAYOUT_COMMAND, applyLayoutCommand);
+        // check the validity of the editing domain to catch cases where it is disposed
+        DiagramEditPart diagramEditPart = mapping.getProperty(DIAGRAM_EDIT_PART);
+        if (((InternalTransactionalEditingDomain) diagramEditPart.getEditingDomain())
+                .getChangeRecorder() != null) {
+            // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
+            Command applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
+            mapping.setProperty(LAYOUT_COMMAND, applyLayoutCommand);
+        }
     }
 
     /**
@@ -399,28 +404,32 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      */
     @Override
     protected void applyLayout(final LayoutMapping<IGraphicalEditPart> mapping) {
-        // get a command stack to execute the command
-        CommandStack commandStack = mapping.getProperty(COMMAND_STACK);
-        DiagramEditor diagramEditor = mapping.getProperty(DIAGRAM_EDITOR);
-        if (commandStack == null) {
-            if (diagramEditor != null) {
-                Object adapter = diagramEditor.getAdapter(CommandStack.class);
-                if (adapter instanceof CommandStack) {
-                    commandStack = (CommandStack) adapter;
+        Command applyLayoutCommand = mapping.getProperty(LAYOUT_COMMAND);
+        
+        if (applyLayoutCommand != null) {
+            // get a command stack to execute the command
+            CommandStack commandStack = mapping.getProperty(COMMAND_STACK);
+            DiagramEditor diagramEditor = mapping.getProperty(DIAGRAM_EDITOR);
+            if (commandStack == null) {
+                if (diagramEditor != null) {
+                    Object adapter = diagramEditor.getAdapter(CommandStack.class);
+                    if (adapter instanceof CommandStack) {
+                        commandStack = (CommandStack) adapter;
+                    }
+                }
+                if (commandStack == null) {
+                    commandStack = mapping.getParentElement().getDiagramEditDomain()
+                            .getDiagramCommandStack();
                 }
             }
-            if (commandStack == null) {
-                commandStack = mapping.getParentElement().getDiagramEditDomain()
-                        .getDiagramCommandStack();
+    
+            // execute the command
+            commandStack.execute(applyLayoutCommand);
+            
+            // refresh the border items in the diagram
+            if (diagramEditor != null || mapping.getParentElement() != null) {
+                refreshDiagram(diagramEditor, mapping.getParentElement());
             }
-        }
-
-        // execute the command
-        commandStack.execute(mapping.getProperty(LAYOUT_COMMAND));
-        
-        // refresh the border items in the diagram
-        if (diagramEditor != null || mapping.getParentElement() != null) {
-            refreshDiagram(diagramEditor, mapping.getParentElement());
         }
     }
     
