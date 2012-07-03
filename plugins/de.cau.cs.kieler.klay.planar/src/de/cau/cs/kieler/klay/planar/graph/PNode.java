@@ -480,4 +480,18 @@ public class PNode extends PShape implements Serializable {
             }
         }
     }
+
+    /**
+     * 
+     */
+    public void unlinkAll() {
+        this.edges.clear();
+    }
+
+    /**
+     * @param linkEdges
+     */
+    public void linkEdges(Collection<PEdge> linkEdges) {
+        this.edges.addAll(linkEdges);
+    }
 }

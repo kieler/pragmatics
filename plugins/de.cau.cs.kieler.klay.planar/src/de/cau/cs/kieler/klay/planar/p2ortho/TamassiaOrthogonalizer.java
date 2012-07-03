@@ -14,9 +14,11 @@
 package de.cau.cs.kieler.klay.planar.p2ortho;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
@@ -83,8 +85,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
      */
     private PGraph createFlowNetwork() {
         PGraph network = new PGraphFactory().createEmptyGraph();
-        HashMap<PNode, PNode> nodes = new HashMap<PNode, PNode>();
-        HashMap<PFace, PNode> faces = new HashMap<PFace, PNode>();
+        Map<PNode, PNode> nodes = Maps.newHashMap();
+        Map<PFace, PNode> faces = Maps.newHashMap();
         this.nodeArcs = new LinkedList<PEdge>();
         this.faceArcs = new LinkedList<Pair<PEdge, PEdge>>();
 
