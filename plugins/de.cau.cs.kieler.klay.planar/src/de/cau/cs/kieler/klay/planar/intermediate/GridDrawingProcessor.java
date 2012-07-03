@@ -54,8 +54,8 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
         PFace externalFace = this.graph.getExternalFace(false);
         List<PEdge>[] sides = externalFace.getProperty(Properties.FACE_SIDES);
 
-        // determine size of the grid.
-        // it is enough to count one vertical and horizontal direction.
+        // Determine size of the grid.
+        // It is enough to count vertical and horizontal direction once.
 
         int gridWidth = 0;
         for (PEdge edge : sides[1]) {
@@ -67,11 +67,8 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
             gridHeight += edge.getProperty(Properties.RELATIVE_LENGTH);
         }
 
-        // from index to real numbers
-        gridWidth++;
-        gridHeight++;
-
-        this.grid = new GridRepresentation(gridWidth, gridHeight);
+        // From index to real numbers
+        this.grid = new GridRepresentation(gridWidth + 1, gridHeight + 1);
 
         fillGrid();
 
@@ -170,15 +167,30 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
                                 }
                                 currentEdge = edge;
 
-                                // added new knwon faces.
+                                // added new known faces.
                                 // check if knownFaces does not contain a face.
 
                                 if (!knownFaces.containsKey(edge.getLeftFace())) {
-                                    knownFaces.put(edge.getLeftFace(), new Pair<PEdge, Integer>(
-                                            edge, sideIndex));
+                                    if (edge.getLeftFace() != externalFace
+                                            && edge.getRightFace() != externalFace)
+                                        knownFaces.put(edge.getLeftFace(),
+                                                new Pair<PEdge, Integer>(edge, (sideIndex + 2)
+                                                        % faceSides.length));
+                                    else {
+                                        knownFaces.put(edge.getLeftFace(),
+                                                new Pair<PEdge, Integer>(edge, sideIndex));
+
+                                    }
                                 } else if (!knownFaces.containsKey(edge.getRightFace())) {
-                                    knownFaces.put(edge.getRightFace(), new Pair<PEdge, Integer>(
-                                            edge, sideIndex));
+                                    if (edge.getLeftFace() != externalFace
+                                            && edge.getRightFace() != externalFace)
+                                        knownFaces.put(edge.getRightFace(),
+                                                new Pair<PEdge, Integer>(edge, (sideIndex + 2)
+                                                        % faceSides.length));
+                                    else {
+                                        knownFaces.put(edge.getRightFace(),
+                                                new Pair<PEdge, Integer>(edge, (sideIndex)));
+                                    }
                                 }
 
                                 break out;

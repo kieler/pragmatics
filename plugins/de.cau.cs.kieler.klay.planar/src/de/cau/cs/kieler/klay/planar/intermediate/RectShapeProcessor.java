@@ -72,79 +72,78 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         // choose a arbitrary start edge and start node then go along that edge and check the
         // angles.
         // for r,l,l or l,r,r. if one of them is found add a new edge to the graph.
-
+        boolean wantsAgain = true;
         // prepare face list.
-        List<PFace> faces = new LinkedList<PFace>();
-        for (PFace face : graph.getFaces()) {
-            faces.add(face);
-        }
-        for (PFace face : faces) {
-            // go along the edges and check for pattern right left left or left right right
-            // to determine a non rectangular face.
-            PEdge currentEdge = face.adjacentEdges().iterator().next();
 
-            // arbitrary node.
-            PNode startNode = currentEdge.getTarget();
-            PNode currentNode = startNode;
-            // stores the edge from the first matching edge to the last.
+        while (wantsAgain) {
+            wantsAgain = false;
+            out: for (PFace face : graph.getFaces()) {
+                // go along the edges and check for pattern right left left or left right right
+                // to determine a non rectangular face.
+                PEdge currentEdge = face.adjacentEdges().iterator().next();
 
-            // TODO extend for more compaction.
-            // use the path to check how many edges are on the side at at first time l or r is
-            // found, and then at the finalnode check the number of edges of the side and
-            // determine depending on the startside edge number where the new edge should be placed.
+                // arbitrary node.
+                PNode startNode = currentEdge.getTarget();
+                PNode currentNode = startNode;
+                // stores the edge from the first matching edge to the last.
 
-            Pair<LinkedList<PEdge>, Integer> lrrPatternPath = new Pair<LinkedList<PEdge>, Integer>();
-            lrrPatternPath.setFirst(new LinkedList<PEdge>());
-            lrrPatternPath.setSecond(0);
-            PNode lrrPatternNode = null;
+                // TODO extend for more compaction.
+                // use the path to check how many edges are on the side at at first time l or r is
+                // found, and then at the finalnode check the number of edges of the side and
+                // determine depending on the startside edge number where the new edge should be
+                // placed.
 
-            Pair<LinkedList<PEdge>, Integer> rllPatternPath = new Pair<LinkedList<PEdge>, Integer>();
-            rllPatternPath.setFirst(new LinkedList<PEdge>());
-            rllPatternPath.setSecond(0);
-            PNode rllPatternNode = null;
+                Pair<LinkedList<PEdge>, Integer> lrrPatternPath = new Pair<LinkedList<PEdge>, Integer>();
+                lrrPatternPath.setFirst(new LinkedList<PEdge>());
+                lrrPatternPath.setSecond(0);
+                PNode lrrPatternNode = null;
 
-            while (true) {
+                Pair<LinkedList<PEdge>, Integer> rllPatternPath = new Pair<LinkedList<PEdge>, Integer>();
+                rllPatternPath.setFirst(new LinkedList<PEdge>());
+                rllPatternPath.setSecond(0);
+                PNode rllPatternNode = null;
 
-                Pair<PEdge, OrthogonalAngle> pair = nextCCWEdge(currentNode, currentEdge, face);
+                // Flag that ensures that a face split is done before leaving the while loop.
+                boolean toSplit = false;
 
-                // try to add the new edge to a pattern path.
-                boolean lrrStart = tryPutInLRR(lrrPatternPath, pair);
-                boolean rllStart = tryPutInRLL(rllPatternPath, pair);
+                do {
 
-                // if a new path is started, save the currentNode
-                if (lrrStart) {
-                    lrrPatternNode = currentNode;
-                } else if (rllStart) {
-                    rllPatternNode = currentNode;
-                }
+                    Pair<PEdge, OrthogonalAngle> pair = nextCCWEdge(currentNode, currentEdge, face);
 
-                // if a path is complete (last angle has been found) , add artificial edge.
-                if (lrrPatternPath.getSecond() == index3) {
-                    addArtificial(lrrPatternNode, lrrPatternPath, false);
-                    // reset path
-                    lrrPatternPath.getFirst().clear();
-                    rllPatternPath.setSecond(0);
-                    lrrPatternNode = null;
-                } else if (rllPatternPath.getSecond() == index3) {
-                    addArtificial(rllPatternNode, rllPatternPath, true);
-                    // reset path
-                    rllPatternPath.getFirst().clear();
-                    rllPatternPath.setSecond(0);
-                    rllPatternNode = null;
-                }
+                    // Try to add the new edge to a pattern path.
+                    boolean lrrStart = tryPutInLRR(lrrPatternPath, pair);
+                    boolean rllStart = tryPutInRLL(rllPatternPath, pair);
 
-                // set next edges.
-                currentEdge = pair.getFirst();
-                currentNode = currentEdge.getOppositeNode(currentNode);
+                    // If a new path is started, save the currentNode.
+                    if (lrrStart) {
+                        lrrPatternNode = currentNode;
+                    } else if (rllStart) {
+                        rllPatternNode = currentNode;
+                    }
 
-                if (startNode == currentNode) {
-                    break;
-                }
+                    // If a path is complete (last angle has been found), add artificial edge.
+                    if (lrrPatternPath.getSecond() == index3) {
+                        addArtificial(lrrPatternNode, lrrPatternPath, false);
+                        wantsAgain = true;
+                        break out;
+                    } else if (rllPatternPath.getSecond() == index3) {
+                        addArtificial(rllPatternNode, rllPatternPath, true);
+                        wantsAgain = true;
+                        break out;
+                    }
 
+                    if (lrrPatternNode != null && rllPatternNode != null) {
+                        // the face isn't in rectangular shape, because left and right angles exist.
+                        toSplit = true;
+                    }
+
+                    // set next edges.
+                    currentEdge = pair.getFirst();
+                    currentNode = currentEdge.getOppositeNode(currentNode);
+
+                } while (startNode != currentNode || toSplit);
             }
-
         }
-
     }
 
     /**
@@ -174,201 +173,104 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         // add new node and new edge and set the orthogonal representation!
         Pair<PNode, PEdge> virtualPair = this.graph.addNode(lastPathEdge);
 
-        // add rect shape dummy property to later determine the dummy elements.
+        // add rect shape dummy property to determine later the dummy elements.
         virtualPair.getFirst().setProperty(Properties.RECT_SHAPE_DUMMY, true);
 
         PNode virtualNode = virtualPair.getFirst();
         PEdge newEdge = this.graph.addEdge(patternStartNode, virtualNode);
         newEdge.setProperty(Properties.RECT_SHAPE_DUMMY, true);
-        this.orthogonal.setBends(newEdge, new OrthogonalAngle[0]);
-        this.orthogonal.setBends(virtualPair.getSecond(), new OrthogonalAngle[0]);
 
-        // Invariant: exact 3 edges are adjacent to the new node.
-        PEdge beforeEdge = null;
-        PEdge afterEdge = null;
-        for (PEdge edge : virtualNode.adjacentEdges()) {
-            if (edge.getSource() == secondLastNode || edge.getTarget() == secondLastNode) {
-                beforeEdge = edge;
-            } else if (edge != newEdge) {
-                afterEdge = edge;
+        // Fix embedding and/or angles of startNode
+        fixStartNode(patternStartNode, path.getFirst(), newEdge, isRll);
+
+        // Fix embedding and/or angles of virtual node
+        fixVirtualNode(isRll, lastPathEdge, virtualPair.getSecond(), virtualNode, newEdge);
+
+        // Fix embedding and/or angles of before node
+        fixBeforeNode(finalNode, secondLastNode, virtualPair.getSecond());
+
+        // Fix embedding and/or angles of successor node
+        // There is nothing to do, because the angles don't change and the embedding is
+        // done implicitly by the graph.addEdge(...).
+
+        // triggers a new face determination.
+        this.graph.getFaces();
+
+    }
+
+    private void fixBeforeNode(PNode successorNode, PNode beforeNode, PEdge virtualEdge) {
+        // Fix angles of before node, the embedding is implicitly fixed by graph.addEdge(...).
+
+        // Find the old wrong edge and replace the new one with that
+        Pair<PEdge, OrthogonalAngle> chosenPair = null;
+        for (Pair<PEdge, OrthogonalAngle> pair : this.orthogonal.getAngles(beforeNode)) {
+            if (pair.getFirst().getTarget() == successorNode
+                    || pair.getFirst().getSource() == successorNode) {
+                chosenPair = pair;
+                chosenPair.setFirst(virtualEdge);
+                return;
             }
         }
-        List<Pair<PEdge, OrthogonalAngle>> newAngles = new LinkedList<Pair<PEdge, OrthogonalAngle>>();
-        if (isRll) {
-            newAngles.add(new Pair<PEdge, OrthogonalAngle>(beforeEdge, OrthogonalAngle.LEFT));
-            newAngles.add(new Pair<PEdge, OrthogonalAngle>(newEdge, OrthogonalAngle.LEFT));
-            newAngles.add(new Pair<PEdge, OrthogonalAngle>(afterEdge, OrthogonalAngle.STRAIGHT));
-        } else {
-            newAngles.add(new Pair<PEdge, OrthogonalAngle>(beforeEdge, OrthogonalAngle.STRAIGHT));
-            newAngles.add(new Pair<PEdge, OrthogonalAngle>(newEdge, OrthogonalAngle.LEFT));
-            newAngles.add(new Pair<PEdge, OrthogonalAngle>(afterEdge, OrthogonalAngle.LEFT));
-        }
-        this.orthogonal.setAngles(virtualNode, newAngles);
+    }
 
-        // Fix embedding of startNode
+    private void fixStartNode(final PNode startNode, final PEdge startNodeEdge,
+            final PEdge newEdge, final boolean isRll) {
+        // fix node embedding: is implicit done by graph.addEdge(..)
 
+        // fix angles
         // patternStartNode to be a node with exact 2 edges.
-        List<Pair<PEdge, OrthogonalAngle>> angles = this.orthogonal.getAngles(patternStartNode);
-
+        List<Pair<PEdge, OrthogonalAngle>> angles = this.orthogonal.getAngles(startNode);
         Pair<PEdge, OrthogonalAngle> successor = null;
-        Pair<PEdge, OrthogonalAngle> current = null;
-        if (path.get(0) == angles.get(0).getFirst()) {
-            current = angles.get(0);
-            successor = angles.get(1);
-        } else {
-            current = angles.get(1);
+        Pair<PEdge, OrthogonalAngle> before = null;
+        // choose the other edge as startEdge because it is not in the path and thus before
+        // the startNodeEdge.
+        if (startNodeEdge == angles.get(0).getFirst()) {
+            before = angles.get(1);
             successor = angles.get(0);
+        } else {
+            before = angles.get(0);
+            successor = angles.get(1);
         }
         angles.clear();
         if (isRll) {
-            angles.add(current);
-            successor.setSecond(OrthogonalAngle.STRAIGHT);
-            angles.add(successor);
+            before.setSecond(OrthogonalAngle.STRAIGHT);
+            angles.add(before);
             // add new node
             angles.add(new Pair<PEdge, OrthogonalAngle>(newEdge, OrthogonalAngle.LEFT));
+            angles.add(successor);
         } else {
             // is lrr
-            angles.add(current);
-            // add new new
-            angles.add(new Pair<PEdge, OrthogonalAngle>(newEdge, OrthogonalAngle.STRAIGHT));
+            angles.add(before);
             successor.setSecond(OrthogonalAngle.LEFT);
             angles.add(successor);
+            // add new angles
+            angles.add(new Pair<PEdge, OrthogonalAngle>(newEdge, OrthogonalAngle.STRAIGHT));
         }
-
-        // Fix embedding of beforeNode
-        PEdge insertableEdge = null;
-        for (PEdge edge : secondLastNode.adjacentEdges()) {
-            if (edge.getSource() == virtualPair.getFirst()
-                    || edge.getTarget() == virtualPair.getFirst()) {
-                insertableEdge = edge;
-                break;
-            }
-        }
-
-        Pair<PEdge, OrthogonalAngle> chosenPair = null;
-        for (Pair<PEdge, OrthogonalAngle> pair : this.orthogonal.getAngles(secondLastNode)) {
-            if (pair.getFirst().getTarget() == finalNode
-                    || pair.getFirst().getSource() == finalNode) {
-                // deletable edge
-                chosenPair = pair;
-                break;
-            }
-        }
-        chosenPair.setFirst(insertableEdge);
-
-        // Fix embedding of afterNode
-        // for (Pair<PEdge, OrthogonalAngle> pair : this.orthogonal.getAngles(secondLastNode)) {
-        // if (pair.getFirst() == lastPathEdge) {
-        // pair.setFirst(virtualPair.getSecond());
-        // break;
-        // }
-        // }
-
-        // TODO embed further ...
-
-        Iterable<PFace> faces = graph.getFaces();
-
-        // TODO use this
-        // now we have to determine if we should use a existing node or generate a new node to
-        // put the edge from start node to that determined node.
-        // int angleCount = countAngles(finalNode, lastPathEdge);
-        //
-        // if (angleCount > 2) {
-        // // if the node has a edge in the direction of the lrrPatternStart,
-        // // we have to split the last edge and to insert a new node there.
-        // Pair<PNode, PEdge> virtualPair = this.graph.addNode(lastPathEdge);
-        // PNode virtualNode = virtualPair.getFirst();
-        // PEdge newEdge = this.graph.addEdge(patternStartNode, virtualNode);
-        // this.orthogonal.setBends(newEdge, new OrthogonalAngle[0]);
-        // this.orthogonal.setBends(virtualPair.getSecond(), new OrthogonalAngle[0]);
-        //
-        // // TODO is that correct
-        // // Fix embedding of virtual node neighbor
-        // PNode neighbor = virtualNode.getAdjacentNode(newEdge);
-        // for (Pair<PEdge, OrthogonalAngle> entry : this.orthogonal.getAngles(neighbor)) {
-        // // if (entry.getFirst() == nextEdge) {
-        // // entry.setFirst(newedge);
-        // // }
-        // }
-        //
-        // // Fix embedding in virtual nodes
-        // // nextEdge.move(virtualNode, virtualNode);
-        // // virtualEdge.move(virtualNode, virtualNode);
-        // // newedge.move(virtualNode, virtualNode);
-        // // list = new LinkedList<Pair<PEdge, OrthogonalAngle>>();
-        // // list.add(new Pair<PEdge, OrthogonalAngle>(nextEdge, OrthogonalAngle.LEFT));
-        // // list.add(new Pair<PEdge, OrthogonalAngle>(virtualEdge, OrthogonalAngle.LEFT));
-        // // list.add(new Pair<PEdge, OrthogonalAngle>(newedge, OrthogonalAngle.STRAIGHT));
-        // // this.orthogonal.setAngles(virtualNode, list);
-        //
-        // // Fix embedding in virtual nodes
-        // // nextEdge.move(virtualNode, virtualNode);
-        // // virtualEdge.move(virtualNode, virtualNode);
-        // // newedge.move(virtualNode, virtualNode);
-        // // list = new LinkedList<Pair<PEdge, OrthogonalAngle>>();
-        // // list.add(new Pair<PEdge, OrthogonalAngle>(nextEdge, OrthogonalAngle.LEFT));
-        // // list.add(new Pair<PEdge, OrthogonalAngle>(virtualEdge, OrthogonalAngle.LEFT));
-        // // list.add(new Pair<PEdge, OrthogonalAngle>(newedge, OrthogonalAngle.STRAIGHT));
-        // // this.orthogonal.setAngles(virtualNode, list);
-        //
-        // // Fix embedding in old node
-        // // boolean found = false;
-        // // List<PEdge> toMove = new LinkedList<PEdge>();
-        // // for (PEdge e : node.adjacentEdges()) {
-        // // if (found) {
-        // // toMove.add(e);
-        // // } else {
-        // // found = (e == edge);
-        // // }
-        // // }
-        // // for (PEdge e : toMove) {
-        // // e.move(node, node);
-        // // }
-        // // list = new LinkedList<Pair<PEdge, OrthogonalAngle>>();
-        // // list.add(new Pair<PEdge, OrthogonalAngle>(edge, OrthogonalAngle.STRAIGHT));
-        // // list.add(new Pair<PEdge, OrthogonalAngle>(virtualEdge, OrthogonalAngle.LEFT));
-        // // list.add(new Pair<PEdge, OrthogonalAngle>(firstPair.getFirst(),
-        // // OrthogonalAngle.LEFT));
-        // // this.orthogonal.setAngles(node, list);
-        //
-        // } else {
-        // // otherwise we can use the final path node to add the edge there.
-        // PEdge newEdge = this.graph.addEdge(patternStartNode, finalNode);
-        // this.orthogonal.setBends(newEdge, new OrthogonalAngle[0]);
-        // // TODO do the correct embedding.
-        // }
     }
 
-    /**
-     * @param node
-     * @return
-     */
-    private int countAngles(final PNode node, final PEdge startEdge) {
-        List<Pair<PEdge, OrthogonalAngle>> angles = this.orthogonal.getAngles(node);
-
-        int currentIndex = 0;
-
-        // get edge index.
-        for (int i = 0; i < angles.size(); i++) {
-            if (angles.get(i).getFirst() == startEdge) {
-                currentIndex = i;
-                break;
-            }
+    private void fixVirtualNode(final boolean isRll, PEdge lastPathEdge, PEdge virtualEdge,
+            PNode virtualNode, PEdge newEdge) {
+        List<Pair<PEdge, OrthogonalAngle>> list = new LinkedList<Pair<PEdge, OrthogonalAngle>>();
+        if (isRll) {
+            newEdge.move(virtualNode, virtualNode);
+            lastPathEdge.move(virtualNode, virtualNode);
+            virtualEdge.move(virtualNode, virtualNode);
+            list.add(new Pair<PEdge, OrthogonalAngle>(newEdge, OrthogonalAngle.LEFT));
+            list.add(new Pair<PEdge, OrthogonalAngle>(lastPathEdge, OrthogonalAngle.STRAIGHT));
+            list.add(new Pair<PEdge, OrthogonalAngle>(virtualEdge, OrthogonalAngle.LEFT));
+        } else {
+            newEdge.move(virtualNode, virtualNode);
+            virtualEdge.move(virtualNode, virtualNode);
+            lastPathEdge.move(virtualNode, virtualNode);
+            list.add(new Pair<PEdge, OrthogonalAngle>(newEdge, OrthogonalAngle.LEFT));
+            list.add(new Pair<PEdge, OrthogonalAngle>(virtualEdge, OrthogonalAngle.STRAIGHT));
+            list.add(new Pair<PEdge, OrthogonalAngle>(lastPathEdge, OrthogonalAngle.LEFT));
         }
 
-        int startIndex = currentIndex;
-        int previousIndex = currentIndex;
-        currentIndex = (currentIndex + 1) % angles.size();
+        this.orthogonal.setAngles(virtualNode, list);
+        this.orthogonal.setBends(newEdge, new OrthogonalAngle[0]);
+        this.orthogonal.setBends(virtualEdge, new OrthogonalAngle[0]);
 
-        int result = 0;
-        // check of what angle structure is the node.
-        while (startIndex != currentIndex) {
-            result += angles.get(previousIndex).getSecond().ordinal();
-            previousIndex = currentIndex;
-            currentIndex = (currentIndex + 1) % angles.size();
-        }
-
-        return result;
     }
 
     /**
@@ -630,6 +532,7 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         boolean containsForeignEdge = false;
         Pair<PEdge, OrthogonalAngle> pair = null;
         // determine the directions of the next corner face-edge
+
         do {
             previousIndex = currentIndex;
             currentIndex = (currentIndex + 1) < angles.size() ? currentIndex + 1 : 0;
@@ -642,16 +545,11 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
             } else {
                 containsForeignEdge = true;
                 // look at the direction of the previous edge to determine the direction
-                directionCounter += angles.get(previousIndex).getSecond().ordinal();
-
-                if (face.isAdjacent(pair.getFirst())) {
-                    // hasFound
-                    break;
-                }
+                directionCounter += angles.get(previousIndex).getSecond().ordinal() + 1;
             }
-        } while (true);
+        } while (!face.isAdjacent(pair.getFirst()));
         return new Pair<PEdge, OrthogonalAngle>(pair.getFirst(),
-                OrthogonalAngle.map(directionCounter));
+                OrthogonalAngle.map(containsForeignEdge ? directionCounter - 1 : directionCounter));
     }
 
 }

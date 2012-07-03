@@ -479,4 +479,18 @@ public class PNode extends PShape {
             }
         }
     }
+
+    /**
+     * 
+     */
+    public void unlinkAll() {
+        this.edges.clear();
+    }
+
+    /**
+     * @param linkEdges
+     */
+    public void linkEdges(Collection<PEdge> linkEdges) {
+        this.edges.addAll(linkEdges);
+    }
 }

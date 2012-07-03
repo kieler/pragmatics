@@ -74,6 +74,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
             // crossing a normal edge
             PNode newNode = graph.addNode(crossingEdge).getFirst();
             newNode.setProperty(Properties.PlANAR_DUMMY_NODE, true);
+            // graph.reindex();
             path.add(newNode);
         }
         path.add(target);
@@ -243,7 +244,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
     }
 
     /**
-     * brings the edges of a node in the right order for an embedding.
+     * brings the edges of a node in the correct order for an embedding.
      * 
      * @param edge
      *            , the new edge
@@ -332,7 +333,6 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
     public void process(final PGraph graph) {
         List<PEdge> edges = graph.getProperty(Properties.INSERTABLE_EDGES);
         if (edges != null) {
-
             // initialize path finder
             AbstractPathFinder dijkstra = new DijkstraPathFinder();
 

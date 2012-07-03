@@ -82,7 +82,7 @@ public class GridRepresentation {
     }
 
     /**
-     * Searches in the grid for the given node and gives it position in the grid!
+     * Searches in the grid for the given node and gives its position in the grid!
      * 
      * @throws IllegalArgumentException
      *             if no entry is found.
