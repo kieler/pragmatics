@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 public class CompoundLayoutConfig implements IMutableLayoutConfig {
 
     /** the contained layout configurations. */
-    private LinkedList<ILayoutConfig> configs = new LinkedList<ILayoutConfig>();
+    private final LinkedList<ILayoutConfig> configs = new LinkedList<ILayoutConfig>();
     
     /**
      * Insert the given layout configuration into this compound configuration according
