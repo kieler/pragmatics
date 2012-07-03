@@ -33,6 +33,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -557,7 +558,15 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             newLabel.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
                     labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT));
             newEdge.getLabels().add(newLabel);
-        }
+            if (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                    == EdgeLabelPlacement.CENTER) {
+                    // Add annotation if graph contains labels which shall be placed
+                    // in the middle of an edge
+                    Set<GraphProperties> graphProperties = layeredGraph.getProperty(
+                            Properties.GRAPH_PROPERTIES);
+                    graphProperties.add(GraphProperties.CENTER_LABELS);
+                }
+            }
         
         // copy the bend points of the edge if they are needed by anyone
         if (layeredGraph.getProperty(Properties.CROSSMIN)
