@@ -258,6 +258,10 @@
             id="de.cau.cs.kieler.klay.layered.edgeBends"
             name="Less Edge Bends"
             type="boolean">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodePlace"
+               value="BRANDES_KOEPF">
+         </dependency>
       </layoutOption>
    </extension>
 
