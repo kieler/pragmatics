@@ -28,6 +28,9 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
  */
 public class FEdge extends MapPropertyHolder {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = 4387555754824186467L;
+    
     /** the bend points of the edge. */
     private List<FBendpoint> bendpoints = new LinkedList<FBendpoint>();
     /** the labels of the edge. */
@@ -170,7 +173,7 @@ public class FEdge extends MapPropertyHolder {
         if (count > 0) {
             KVector sourcePos = source.getPosition();
             KVector targetPos = target.getPosition();
-            KVector incr = targetPos.differenceCreate(sourcePos).scale(1 / (count + 1));
+            KVector incr = targetPos.differenceCreate(sourcePos).scale(1 / (double) (count + 1));
             KVector pos = sourcePos.clone();
             for (FBendpoint bendPoint : bendpoints) {
                 bendPoint.getPosition().x = pos.x;

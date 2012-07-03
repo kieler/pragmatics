@@ -43,6 +43,7 @@ public class GraphsLinkDescriptor extends GraphsNodeDescriptor {
         this(source, destination, (EObject) null, linkVID);
         final IElementType elementTypeCopy = elementType;
         mySemanticAdapter = new IAdaptable() {
+            @SuppressWarnings("rawtypes")
             public Object getAdapter(Class adapter) {
                 if (IElementType.class.equals(adapter)) {
                     return elementTypeCopy;
@@ -60,6 +61,7 @@ public class GraphsLinkDescriptor extends GraphsNodeDescriptor {
         this(source, destination, linkElement, linkVID);
         final IElementType elementTypeCopy = elementType;
         mySemanticAdapter = new EObjectAdapter(linkElement) {
+            @SuppressWarnings("rawtypes")
             public Object getAdapter(Class adapter) {
                 if (IElementType.class.equals(adapter)) {
                     return elementTypeCopy;

@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.dialogs.EditorSelectionDialog;
 import org.osgi.framework.Bundle;
 
 import com.google.inject.Guice;
@@ -50,6 +49,8 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * 
  * @kieler.rating 2010-01-22 yellow review by msp, skn
  */
+// Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
+@SuppressWarnings("deprecation")
 public final class TransformationManager {
 
     /**
@@ -369,62 +370,65 @@ public final class TransformationManager {
                                 "Invalid KSBasE configuration found. Please check "
                                         + "transformations defined for " + editor.getEditorId());
                     }
-                    KSBasETransformation transformation = new KSBasETransformation(
-                            t.getAttribute("name"), t.getAttribute("transformation"));
-                    transformation.setKeyboardShortcut(t.getAttribute("keyboardShortcut"));
-                    transformation.setTransformationId(t.getAttribute("transformationId"));
-                    transformation.setIcon(t.getAttribute("icon"));
-                    String s = t.getAttribute("tooltip");
-                    if (s != null) {
-                        transformation.setToolTip(s);
-                    } else {
-                        transformation.setToolTip(transformation.getName());
-                    }
-                    transformation.setValidation(t.getAttribute("validation"));
-                    
-                    
-                    // fill the desired menus
-                    String attr = t.getAttribute("menu");
-                    if (attr == null || ((attr != null) && attr.equals("true"))) {
-                        String separator = t.getAttribute("separated");
-                        String transformationID = t.getAttribute("transformationId");
-                        if ((separator != null) && separator.equals("true")) {
-                            menuContrib.addCommand(transformationID + "_SEPARATOR");
-                        }
-                        menuContrib.addCommand(transformationID);
-                    }
-                    attr = t.getAttribute("toolbar");
-                    if ((attr != null) && attr.equals("true")) {      
-                        String separator = t.getAttribute("separated");
-                        if ((separator != null) && separator.equals("true")) {
-                            toolbarContrib.addCommand(t.getAttribute("transformationId") + "_SEPARATOR");
-                        }
-                        toolbarContrib.addCommand(t.getAttribute("transformationId"));
-                    }
-                    attr = t.getAttribute("popup");
-                    if ((attr != null) && attr.equals("true")) {
-                        String separator = t.getAttribute("separated");
-                        if ((separator != null) && separator.equals("true")) {
-                            popupContrib.addCommand(t.getAttribute("transformationId") + "_SEPARATOR");
-                        }
-                        popupContrib.addCommand(t.getAttribute("transformationId"));
-                    }
-                    attr = t.getAttribute("popupbar");
-                    if ((attr != null) && attr.equals("true")) {
-                        String separator = t.getAttribute("separated");
-                        if ((separator != null) && separator.equals("true")) {
-                            popupbarContrib.addCommand(t.getAttribute("transformationId")
-                                    + "_SEPARATOR");
-                        } 
-                        popupbarContrib.addCommand(t.getAttribute("transformationId"));
-                    }
-                    attr = t.getAttribute("customMenuEntry");
-                    if ((attr != null) && !attr.isEmpty()) {
-                        customContrib.addCommand(t.getAttribute("transformationId"));
-                        transformation.setCommandId(attr);
-                    }
-                    editor.addTransformation(transformation);
+                    if (t != null) {
+                        KSBasETransformation transformation = new KSBasETransformation(
+                                t.getAttribute("name"), t.getAttribute("transformation"));
+                        transformation.setKeyboardShortcut(t.getAttribute("keyboardShortcut"));
+                        transformation.setTransformationId(t.getAttribute("transformationId"));
+                        transformation.setIcon(t.getAttribute("icon"));
+                        String s = t.getAttribute("tooltip");
 
+                        if (s != null) {
+                            transformation.setToolTip(s);
+                        } else {
+                            transformation.setToolTip(transformation.getName());
+                        }
+                        transformation.setValidation(t.getAttribute("validation"));
+
+                        // fill the desired menus
+                        String attr = t.getAttribute("menu");
+                        if (attr == null || ((attr != null) && attr.equals("true"))) {
+                            String separator = t.getAttribute("separated");
+                            String transformationID = t.getAttribute("transformationId");
+                            if ((separator != null) && separator.equals("true")) {
+                                menuContrib.addCommand(transformationID + "_SEPARATOR");
+                            }
+                            menuContrib.addCommand(transformationID);
+                        }
+                        attr = t.getAttribute("toolbar");
+                        if ((attr != null) && attr.equals("true")) {
+                            String separator = t.getAttribute("separated");
+                            if ((separator != null) && separator.equals("true")) {
+                                toolbarContrib.addCommand(t.getAttribute("transformationId")
+                                        + "_SEPARATOR");
+                            }
+                            toolbarContrib.addCommand(t.getAttribute("transformationId"));
+                        }
+                        attr = t.getAttribute("popup");
+                        if ((attr != null) && attr.equals("true")) {
+                            String separator = t.getAttribute("separated");
+                            if ((separator != null) && separator.equals("true")) {
+                                popupContrib.addCommand(t.getAttribute("transformationId")
+                                        + "_SEPARATOR");
+                            }
+                            popupContrib.addCommand(t.getAttribute("transformationId"));
+                        }
+                        attr = t.getAttribute("popupbar");
+                        if ((attr != null) && attr.equals("true")) {
+                            String separator = t.getAttribute("separated");
+                            if ((separator != null) && separator.equals("true")) {
+                                popupbarContrib.addCommand(t.getAttribute("transformationId")
+                                        + "_SEPARATOR");
+                            }
+                            popupbarContrib.addCommand(t.getAttribute("transformationId"));
+                        }
+                        attr = t.getAttribute("customMenuEntry");
+                        if ((attr != null) && !attr.isEmpty()) {
+                            customContrib.addCommand(t.getAttribute("transformationId"));
+                            transformation.setCommandId(attr);
+                        }
+                        editor.addTransformation(transformation);
+                    }
                 }
                 editor.addMenuContribution(menuContrib);
                 editor.addMenuContribution(toolbarContrib);
@@ -458,55 +462,30 @@ public final class TransformationManager {
                 editor.setFramework(TransformationFrameworkFactory
                         .getDefaultTransformationFramework());
             }
-            // Read menu contributions
-            IConfigurationElement[] menus = settings.getChildren("menus");
-            /*
-             * if (menus != null && menus.length > 0) { // since we only allowed one single
-             * <menuContribution> child, we // are using it w/o iteration for (IConfigurationElement
-             * c : menus[0] .getChildren("menuContribution")) { KSBasEMenuContribution contrib = new
-             * KSBasEMenuContribution( c.getAttribute("locationURI")); for (IConfigurationElement m
-             * : c.getChildren("menu")) { KSBasEMenuContribution menu = new KSBasEMenuContribution(
-             * m.getAttribute("id")); menu.setLabel(m.getAttribute("label")); for
-             * (IConfigurationElement com : m.getChildren()) { menu.addCommand(com
-             * .getAttribute("transformationId")); } contrib.addSubMenu(menu); } for
-             * (IConfigurationElement com : c.getChildren()) { if
-             * (com.getName().equals("transformationCommand")) { contrib.addCommand(com
-             * .getAttribute("transformationId")); } if (com.getName().equals("separator")) {
-             * contrib.addCommand("_SEPARATOR"); } } // for (IConfigurationElement com : c //
-             * .getChildren("transformationCommand")) { // System.out.println(com.getName()); //
-             * contrib.addCommand(com.getAttribute("transformationId")); // }
-             * editor.addMenuContribution(contrib); }
-             * 
-             * }
-             */
 
-            //read xtend2 files from extensionpoint
-            
-            IConfigurationElement[] xtend2transformations = 
-                    settings.getChildren("Xtend2TransformationClass");
+            // read xtend2 files from extensionpoint
+
+            IConfigurationElement[] xtend2transformations = settings
+                    .getChildren("Xtend2TransformationClass");
             if (xtend2transformations != null && xtend2transformations.length > 0) {
                 Injector injector = Guice.createInjector();
                 for (IConfigurationElement tf : xtend2transformations) {
                     try {
-                      //MyXtendClass transformation = Guice.createInjector(new AbstractGenericModule() {}).getInstance(MyXtendClass.class);
-                        //String className = tf.getAttribute("TransformationClass");
-                        //Class<?> c = Class.forName(className, true, ClassLoader.getSystemClassLoader());
-                        //Class<?> c = ClassLoader.getSystemClassLoader().loadClass(className);
                         Class<?> c = tf.createExecutableExtension("TransformationClass").getClass();
                         Object transformationClass = injector.getInstance(c);
-                        
+
                         editor.getTransformationClasses().add(transformationClass);
                     } catch (CoreException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
-                    }         
+                    }
                 }
-                
+
             }
-            
+
             // Read file from extension point configuration
-            IConfigurationElement[] xtend1transformations = 
-                    settings.getChildren("XtendTransformationFile");
+            IConfigurationElement[] xtend1transformations = settings
+                    .getChildren("XtendTransformationFile");
             if (xtend1transformations != null && xtend1transformations.length > 0) {
                 for (IConfigurationElement tf : xtend1transformations) {
                     InputStream inStream;
@@ -548,9 +527,9 @@ public final class TransformationManager {
                                         extFileURL = bundle.getEntry("transformations/"
                                                 + transformationFile);
                                     }
-                                }                                
+                                }
                                 // chsch: end
-                                
+
                                 // Parse transformation file to read transformations and
                                 // parameters now:
                                 editor.parseTransformations(false, extFileURL);
@@ -558,7 +537,7 @@ public final class TransformationManager {
                                     inStream = extFileURL.openStream();
                                     while (inStream.available() > 0) {
                                         contentBuffer.append((char) inStream.read());
-        
+
                                     }
                                 }
                             }
@@ -568,7 +547,7 @@ public final class TransformationManager {
                             path = path.append(editor.getEditorId());
                             // Add extension:
                             path = path.addFileExtension(editor.getFramework().getFileExtension());
-        
+
                             File file = new File(path.toOSString());
                             if (file != null) {
                                 FileOutputStream out = null;
@@ -579,8 +558,8 @@ public final class TransformationManager {
                                             if (!file.createNewFile()) {
                                                 KSBasEPlugin.getDefault().logError(
                                                         "Error while storing transformation "
-                                                        + "file for editor: "
-                                                        + editor.getEditorId());
+                                                                + "file for editor: "
+                                                                + editor.getEditorId());
                                             }
                                         }
 
@@ -611,7 +590,7 @@ public final class TransformationManager {
                     } catch (IOException e) {
                         KSBasEPlugin.getDefault().logWarning(
                                 "KSBasE configuration exception: "
-                                + "Can't read transformation file for editor :"
+                                        + "Can't read transformation file for editor :"
                                         + editor.getEditorId());
                     }
                 }

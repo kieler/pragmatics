@@ -20,6 +20,9 @@ package de.cau.cs.kieler.klay.layered.graph;
  */
 public class LLabel extends LShape {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = -264988654527750053L;
+    
     /** text of the label. */
     private String text;
     

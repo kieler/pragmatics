@@ -40,7 +40,7 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
     /**
      * @generated
      */
-    public List getTypesForPopupBar(IAdaptable host) {
+    public List<?> getTypesForPopupBar(IAdaptable host) {
         IGraphicalEditPart editPart = (IGraphicalEditPart) host
                 .getAdapter(IGraphicalEditPart.class);
         if (editPart instanceof NodeEditPart) {
@@ -77,7 +77,7 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
     /**
      * @generated
      */
-    public List getRelTypesOnSource(IAdaptable source) {
+    public List<?> getRelTypesOnSource(IAdaptable source) {
         IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
                 .getAdapter(IGraphicalEditPart.class);
         if (sourceEditPart instanceof Node2EditPart) {
@@ -101,7 +101,7 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
     /**
      * @generated
      */
-    public List getRelTypesOnTarget(IAdaptable target) {
+    public List<?> getRelTypesOnTarget(IAdaptable target) {
         IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
                 .getAdapter(IGraphicalEditPart.class);
         if (targetEditPart instanceof Node2EditPart) {
@@ -125,7 +125,7 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
     /**
      * @generated
      */
-    public List getRelTypesOnSourceAndTarget(IAdaptable source, IAdaptable target) {
+    public List<?> getRelTypesOnSourceAndTarget(IAdaptable source, IAdaptable target) {
         IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
                 .getAdapter(IGraphicalEditPart.class);
         IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
@@ -151,7 +151,7 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
     /**
      * @generated
      */
-    public List getTypesForSource(IAdaptable target, IElementType relationshipType) {
+    public List<?> getTypesForSource(IAdaptable target, IElementType relationshipType) {
         IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
                 .getAdapter(IGraphicalEditPart.class);
         if (targetEditPart instanceof Node2EditPart) {
@@ -175,7 +175,7 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
     /**
      * @generated
      */
-    public List getTypesForTarget(IAdaptable source, IElementType relationshipType) {
+    public List<?> getTypesForTarget(IAdaptable source, IElementType relationshipType) {
         IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
                 .getAdapter(IGraphicalEditPart.class);
         if (sourceEditPart instanceof Node2EditPart) {
@@ -213,6 +213,7 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
     /**
      * @generated
      */
+    @SuppressWarnings("rawtypes")
     protected EObject selectExistingElement(IAdaptable host, Collection types) {
         if (types.isEmpty()) {
             return null;
@@ -239,6 +240,7 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
     /**
      * @generated
      */
+    @SuppressWarnings("rawtypes")
     protected boolean isApplicableElement(EObject element, Collection types) {
         IElementType type = ElementTypeRegistry.getInstance().getElementType(element);
         return types.contains(type);

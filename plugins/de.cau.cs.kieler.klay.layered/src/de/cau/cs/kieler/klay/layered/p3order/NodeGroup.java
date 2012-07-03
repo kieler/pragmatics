@@ -221,6 +221,8 @@ public class NodeGroup implements Comparable<NodeGroup> {
 
     /**
      * {@inheritDoc}
+     * 
+     * FIXME this comparison is not consistent with equals().
      */
     public int compareTo(final NodeGroup other) {
         // Empty vertices are placed at the end of all things ((c) by J. R. R. Tolkien)
@@ -236,4 +238,5 @@ public class NodeGroup implements Comparable<NodeGroup> {
             return Float.compare(barycenter, other.barycenter);
         }
     }
+    
 }

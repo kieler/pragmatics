@@ -10,10 +10,16 @@
        genModel = "de/cau/cs/kieler/kiml/graphviz/dot/GraphvizDot.genmodel" /> 
 	
   </extension>
+  <extension point="org.eclipse.emf.ecore.extension_parser">
+     <parser
+          class="de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
+          type="graphviz_dot">
+      </parser>
+  </extension>
   <extension
         point="de.cau.cs.kieler.kiml.service.graphTransformers">
      <handler
-           class="de.cau.cs.kieler.kiml.graphviz.dot.transform.DotHandler"
+           class="de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotExecutableExtensionFactory:de.cau.cs.kieler.kiml.graphviz.dot.transform.DotHandler"
            description="The Graphviz Dot format. See http://www.graphviz.org/"
            extensions="dot,graphviz"
            id="org.graphviz.dot"

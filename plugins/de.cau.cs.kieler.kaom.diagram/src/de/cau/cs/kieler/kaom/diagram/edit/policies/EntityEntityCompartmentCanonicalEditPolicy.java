@@ -159,6 +159,7 @@ public class EntityEntityCompartmentCanonicalEditPolicy extends CanonicalEditPol
     /**
      * @generated
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected Set getFeaturesToSynchronize() {
         if (myFeaturesToSynchronize == null) {
             myFeaturesToSynchronize = new HashSet<EStructuralFeature>();

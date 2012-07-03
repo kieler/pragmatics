@@ -333,6 +333,7 @@ public class EntityNameEditPart extends AdvancedRenderingLabelEditPart implement
     /**
      * @generated
      */
+    @SuppressWarnings("deprecation")
     protected DirectEditManager getManager() {
         if (manager == null) {
             setManager(new TextDirectEditManager(this,

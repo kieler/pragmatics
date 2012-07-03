@@ -32,17 +32,14 @@ import de.cau.cs.kieler.core.properties.Property;
  */
 public class Genome extends MapPropertyHolder implements Comparable<Genome> {
 
-    /** property for the user defined rating value. */
-    public static final IProperty<Double> USER_RATING = new Property<Double>("evol.userRating", 0.0);
-    /** property for the weight of the user rating. */
-    public static final IProperty<Double> USER_WEIGHT = new Property<Double>("evol.userWeight", 0.0);
-    /** property for the automatically determined rating value. */
-    public static final IProperty<Double> AUTO_RATING = new Property<Double>("evol.autoRating");
-    /** property for the overall fitness composed of user rating and auto rating. */
+    /** the serial version UID. */
+    private static final long serialVersionUID = -2795552035498265257L;
+
+    /** property for the fitness calculated in evaluation. */
     public static final IProperty<Double> FITNESS = new Property<Double>("evol.fitness");
 
     /** The genes of this genome. */
-    private final List<Gene<?>> genes;
+    private final ArrayList<Gene<?>> genes;
 
     /**
      * Returns the number of genes in this genome.
@@ -123,6 +120,7 @@ public class Genome extends MapPropertyHolder implements Comparable<Genome> {
 
     /**
      * {@inheritDoc}
+     * FIXME this comparison is not compatible with equals().
      */
     public int compareTo(final Genome other) {
         Double fitness1 = this.getProperty(FITNESS);

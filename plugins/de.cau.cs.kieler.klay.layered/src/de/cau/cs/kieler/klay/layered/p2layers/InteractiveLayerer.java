@@ -50,7 +50,7 @@ public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhas
     }
     
     /** Utility class for marking horizontal regions that are already covered by some nodes. */
-    private class LayerSpan {
+    private static class LayerSpan {
         private double start;
         private double end;
         private List<LNode> nodes = new LinkedList<LNode>();

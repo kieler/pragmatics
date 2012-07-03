@@ -34,6 +34,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class LNode extends LShape {
     
+    /** the serial version UID. */
+    private static final long serialVersionUID = -4272570519129722541L;
+    
     /** the owning layer. */
     private Layer owner;
     /** the ports of the node. */

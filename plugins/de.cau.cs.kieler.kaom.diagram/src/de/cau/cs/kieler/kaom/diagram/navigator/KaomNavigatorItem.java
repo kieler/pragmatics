@@ -15,9 +15,10 @@ public class KaomNavigatorItem extends KaomAbstractNavigatorItem {
      * @generated
      */
     static {
-        final Class[] supportedTypes = new Class[] { View.class, EObject.class };
+        final Class<?>[] supportedTypes = new Class[] { View.class, EObject.class };
         Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
+            @SuppressWarnings("rawtypes")
             public Object getAdapter(Object adaptableObject, Class adapterType) {
                 if (adaptableObject instanceof de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorItem
                         && (adapterType == View.class || adapterType == EObject.class)) {
@@ -27,7 +28,7 @@ public class KaomNavigatorItem extends KaomAbstractNavigatorItem {
                 return null;
             }
 
-            public Class[] getAdapterList() {
+            public Class<?>[] getAdapterList() {
                 return supportedTypes;
             }
         }, de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorItem.class);

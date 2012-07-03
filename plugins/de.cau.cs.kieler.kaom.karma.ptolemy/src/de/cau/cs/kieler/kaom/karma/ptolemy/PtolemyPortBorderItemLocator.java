@@ -115,6 +115,8 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
             distributePortsVertical(location);
             break;
         case PositionConstants.WEST:
+            //The additional offset has to be here for it to be displayed correctly.
+            // SUPPRESS CHECKSTYLE NEXT Magic Number
             location.x = parentBorder.x - location.width + offset.width + 3;
             location.y = parentBorder.y + (parentBorder.height - location.height) / 2;
             distributePortsVertical(location);
@@ -143,9 +145,13 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
      *            the location without offset
      */
     private void distributePortsVertical(final Rectangle location) {
+        // It is actually important to explicitly do nothing in this case
+        // SUPPRESS CHECKSTYLE NEXT Empty Block
         if (numberOfPorts == 1) {
             // do nothing, if there is only one port it is already in the middle where it belongs
         } else if ((numberOfPorts % 2) == 1) {
+            // It is actually important to explicitly do nothing in this case
+            // SUPPRESS CHECKSTYLE NEXT Empty Block
             if (this.index == (numberOfPorts + 1) / 2) {
                 // do nothing, the port in the middle of an odd number of ports is already where it
                 // belongs
@@ -173,9 +179,13 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
      *            the location without offset
      */
     private void distributePortsHorizontal(final Rectangle location) {
+        // It is actually important to explicitly do nothing in this case
+        // SUPPRESS CHECKSTYLE NEXT Empty Block
         if (numberOfPorts == 1) {
             // do nothing, if there is only one port it is already in the middle where it belongs
         } else if ((numberOfPorts % 2) == 1) {
+            // It is actually important to explicitly do nothing in this case
+            // SUPPRESS CHECKSTYLE NEXT Empty Block
             if (this.index == (numberOfPorts + 1) / 2) {
                 // do nothing, the port in the middle of an odd number of ports is already where it
                 // belongs

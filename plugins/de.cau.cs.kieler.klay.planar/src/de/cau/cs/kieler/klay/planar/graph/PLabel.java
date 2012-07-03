@@ -20,6 +20,9 @@ package de.cau.cs.kieler.klay.planar.graph;
  */
 public class PLabel extends PShape {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = -1870955938798249029L;
+    
     /** text of the label. */
     private String text;
 

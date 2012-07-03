@@ -202,12 +202,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * {@inheritDoc}
      */
     public int compareTo(final IProperty<?> other) {
-        Object otherId = other.getId();
-        if (otherId instanceof String) {
-            return id.compareTo((String) otherId);
-        } else {
-            throw new UnsupportedOperationException("Not comparable with given property.");
-        }
+        return id.compareTo(other.getId());
     }
 
      /**

@@ -83,8 +83,9 @@ public abstract class UpwardnessMetric implements IAnalysis {
             break;
         }
 
-        result = (float) upwardEdgesCount / totalEdgesCount;
-
+        float fract = (float) upwardEdgesCount / totalEdgesCount;
+        result = fract * fract;
+        
         assert result >= 0 && result <= 1;
         progressMonitor.done();
         return result;

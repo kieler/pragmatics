@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.planar.graph;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -45,7 +44,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * @author cku
  * @author pkl
  */
-public class PGraph extends PNode implements Serializable {
+public class PGraph extends PNode {
 
     /** Generated Version UID for Serialization. */
     private static final long serialVersionUID = -7340177117233615855L;

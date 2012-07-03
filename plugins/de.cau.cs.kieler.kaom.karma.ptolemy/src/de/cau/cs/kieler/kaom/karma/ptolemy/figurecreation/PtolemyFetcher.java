@@ -202,7 +202,7 @@ public final class PtolemyFetcher {
             for (int i = 0; i < doc.getElementsByTagName("polygon").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("polygon").item(i);
                 if (e.hasAttribute("points")) {
-                    String newpoints = "";
+                    StringBuffer newpoints = new StringBuffer();
                     String allpoints = e.getAttribute("points");
                     String[] pointsarray = allpoints.split(" +");
                     for (String coords : pointsarray) {
@@ -211,10 +211,10 @@ public final class PtolemyFetcher {
                         float y = Float.parseFloat(coordsarray[1]);
                         x += xoffset;
                         y += yoffset;
-                        newpoints += String.valueOf(x) + "," + String.valueOf(y) + " ";
+                        newpoints.append(String.valueOf(x) + "," + String.valueOf(y) + " ");
 
                     }
-                    e.setAttribute("points", newpoints);
+                    e.setAttribute("points", newpoints.toString());
                     e.setAttribute("style",
                             e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
                 }
@@ -223,7 +223,7 @@ public final class PtolemyFetcher {
             for (int i = 0; i < doc.getElementsByTagName("polyline").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("polyline").item(i);
                 if (e.hasAttribute("points")) {
-                    String newpoints = "";
+                    StringBuffer newpoints = new StringBuffer();
                     String allpoints = e.getAttribute("points");
                     String[] pointsarray = allpoints.split(" +");
                     for (String coords : pointsarray) {
@@ -232,10 +232,10 @@ public final class PtolemyFetcher {
                         float y = Float.parseFloat(coordsarray[1]);
                         x += xoffset;
                         y += yoffset;
-                        newpoints += String.valueOf(x) + "," + String.valueOf(y) + " ";
+                        newpoints.append(String.valueOf(x) + "," + String.valueOf(y) + " ");
 
                     }
-                    e.setAttribute("points", newpoints);
+                    e.setAttribute("points", newpoints.toString());
                 }
             }
             // shift all lines by the offset calculated beforehand
@@ -311,15 +311,15 @@ public final class PtolemyFetcher {
      */
     private static String repairString(final String input) {
         String[] parts = input.split("\"");
-        String output = "";
+        StringBuffer output = new StringBuffer();
         for (int i = 0; i < parts.length; i += 2) {
             if (i < parts.length - 1) {
-                output += parts[i] + "\"" + parts[i + 1] + "\" ";
+                output.append(parts[i] + "\"" + parts[i + 1] + "\" ");
             } else {
-                output += parts[i];
+                output.append(parts[i]);
             }
         }
-        return output;
+        return output.toString();
     }
 
     /**

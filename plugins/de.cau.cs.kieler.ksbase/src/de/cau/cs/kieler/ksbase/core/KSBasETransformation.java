@@ -36,6 +36,8 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * 
  * @kieler.rating 2010-01-22 yellow review by msp, skn
  */
+//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
+@SuppressWarnings("deprecation")
 public class KSBasETransformation extends AbstractTransformation implements Serializable, Cloneable {
 
     /** Serialization Id. **/

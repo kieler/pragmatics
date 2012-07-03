@@ -37,8 +37,8 @@ public class CompoundEdgeAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(KNode parentNode, Map<String, Object> results,
-            IKielerProgressMonitor progressMonitor) {
+    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Compound edge analysis", 1);
 
         int edgeCount = 0, maxLevels = 0, compoundEdges = 0;

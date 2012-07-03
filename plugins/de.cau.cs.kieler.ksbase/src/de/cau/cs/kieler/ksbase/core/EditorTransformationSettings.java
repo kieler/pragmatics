@@ -44,6 +44,8 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * 
  * @kieler.rating 2010-01-22 yellow review by msp, skn
  */
+//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
+@SuppressWarnings("deprecation")
 public class EditorTransformationSettings implements Serializable {
 
     /** Serialization Id. **/
@@ -438,7 +440,8 @@ public class EditorTransformationSettings implements Serializable {
             // If we have any invalid transformations, i.e.
             // the transformation defined here has no transformation
             // match in the transformation file, we want to remove them.
-            LinkedList<KSBasETransformation> cachedTransformations = new LinkedList<KSBasETransformation>();
+            LinkedList<KSBasETransformation> cachedTransformations =
+                    new LinkedList<KSBasETransformation>();
 
             for (AbstractTransformation t : parseTransformations) {
                 KSBasETransformation transformation = getTransformationByName(t.getTransformation());
@@ -548,6 +551,10 @@ public class EditorTransformationSettings implements Serializable {
         return hash;
     }
 
+    /**
+     * Add a transformation class.
+     * @param classObject the transformation class.
+     */
     public void addTransformationClass(final Object classObject) {
        transformationClasses.add(classObject);
     }

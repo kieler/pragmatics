@@ -184,23 +184,8 @@ public class KaomPasteFeature extends AbstractPasteFeature {
             }
         }
         return null;
-        // if (eObject instanceof Port) {
-        // return (Anchor) util.geteObjectTopictMap().get(eObject);
-        // }
-        // AnchorContainer ac =
-        // (AnchorContainer) util.geteObjectTopictMap().get(eObject);
-        // for (Anchor a : ac.getAnchors()) {
-        // if (a instanceof ChopboxAnchor) {
-        // return a;
-        // }
-        // }
-        // return null;
     }
 
-    /**
-     * @param parentEntity
-     * @param clipBoard
-     */
     private void pasteIntoEntity(final Entity parentEntity,
             final List<EObject> clipBoard) {
         ContainerShape container =
@@ -223,10 +208,6 @@ public class KaomPasteFeature extends AbstractPasteFeature {
 
     }
 
-    /**
-     * @param cs
-     * @param entity
-     */
     private void recursiveAdd(final ContainerShape cs, final Entity entity) {
         List<ContainerShape> children = new LinkedList<ContainerShape>();
         for (Entity ent : entity.getChildEntities()) {
@@ -248,11 +229,6 @@ public class KaomPasteFeature extends AbstractPasteFeature {
         }
     }
 
-    /**
-     * @param cs
-     * @param eObj
-     * @return
-     */
     private PictogramElement addToView(final ContainerShape cs,
             final EObject eObj) {
         AddContext ac = new AddContext();
@@ -264,24 +240,20 @@ public class KaomPasteFeature extends AbstractPasteFeature {
     }
 
     /**
-     * @author soh
+     * blah.
      */
     private static enum Situation {
         ON_SINGLE_ENTITY, LINKS_BETWEEN_ITEMS, UNDEF;
     }
 
     /**
-     * @author soh
+     * blah.
      */
     private static enum PartialSituation {
         ONE_ENTITY, TWO_ENTITIES, ONE_PORT, TWO_PORTS, ONE_LINK, TWO_LINKS,
         ONE_RELATION, TWO_RELATIONS, MANY_ENTITIES, MANY_RELATIONS, MANY_PORTS,
         MANY_LINKS, UNDEF;
 
-        /**
-         * @param eObject
-         * @return
-         */
         public static PartialSituation one(final EObject eObject) {
             if (eObject instanceof Entity) {
                 return ONE_ENTITY;
@@ -296,10 +268,6 @@ public class KaomPasteFeature extends AbstractPasteFeature {
             }
         }
 
-        /**
-         * @param eObject
-         * @return
-         */
         public static PartialSituation two(final EObject eObject) {
             if (eObject instanceof Entity) {
                 return TWO_ENTITIES;
@@ -314,10 +282,6 @@ public class KaomPasteFeature extends AbstractPasteFeature {
             }
         }
 
-        /**
-         * @param eObject
-         * @return
-         */
         public static PartialSituation many(final EObject eObject) {
             if (eObject instanceof Entity) {
                 return MANY_ENTITIES;
@@ -332,64 +296,21 @@ public class KaomPasteFeature extends AbstractPasteFeature {
             }
         }
 
-        // /**
-        // * @param situation
-        // * @return
-        // */
-        // public static boolean entities(final PartialSituation situation) {
-        // return situation == ONE_ENTITY || situation == TWO_ENTITIES
-        // || situation == MANY_ENTITIES;
-        // }
-
-        // /**
-        // * @param situation
-        // * @return
-        // */
-        // public static boolean relations(final PartialSituation situation) {
-        // return situation == ONE_RELATION || situation == TWO_RELATIONS
-        // || situation == MANY_RELATIONS;
-        // }
-        //
-        // /**
-        // * @param situation
-        // * @return
-        // */
-        // public static boolean ports(final PartialSituation situation) {
-        // return situation == ONE_PORT || situation == TWO_PORTS
-        // || situation == MANY_PORTS;
-        // }
-        //
-        /**
-         * @param situation
-         * @return
-         */
         public static boolean links(final PartialSituation situation) {
             return situation == ONE_LINK || situation == TWO_LINKS
                     || situation == MANY_LINKS;
         }
 
-        /**
-         * @param situation
-         * @return
-         */
         public static boolean isOne(final PartialSituation situation) {
             return situation == ONE_ENTITY || situation == ONE_LINK
                     || situation == ONE_PORT || situation == ONE_RELATION;
         }
 
-        /**
-         * @param situation
-         * @return
-         */
         public static boolean isTwo(final PartialSituation situation) {
             return situation == TWO_ENTITIES || situation == TWO_LINKS
                     || situation == TWO_PORTS || situation == TWO_RELATIONS;
         }
 
-        /**
-         * @param list
-         * @return
-         */
         public static boolean noLinks(final List<PartialSituation> list) {
             for (PartialSituation p : list) {
                 if (links(p)) {
@@ -399,10 +320,6 @@ public class KaomPasteFeature extends AbstractPasteFeature {
             return true;
         }
 
-        /**
-         * @param list
-         * @return
-         */
         public static boolean onlyLinks(final List<PartialSituation> list) {
             for (PartialSituation p : list) {
                 if (!links(p)) {
@@ -413,11 +330,6 @@ public class KaomPasteFeature extends AbstractPasteFeature {
         }
     }
 
-    /**
-     * @param selection
-     * @param clipBoard
-     * @return
-     */
     private Situation analyze(final List<EObject> selection,
             final List<EObject> clipBoard) {
         List<PartialSituation> selectionSituation =
@@ -454,10 +366,6 @@ public class KaomPasteFeature extends AbstractPasteFeature {
         return Situation.UNDEF;
     }
 
-    /**
-     * @param list
-     * @return
-     */
     private List<PartialSituation> doPartialAnalysis(final List<EObject> list) {
         List<PartialSituation> result = new LinkedList<PartialSituation>();
         for (EObject eObj : list) {
@@ -467,9 +375,7 @@ public class KaomPasteFeature extends AbstractPasteFeature {
             } else if (result.contains(PartialSituation.two(eObj))) {
                 result.remove(PartialSituation.two(eObj));
                 result.add(PartialSituation.many(eObj));
-            } else if (result.contains(PartialSituation.many(eObj))) {
-                // do nothing
-            } else {
+            } else if (!result.contains(PartialSituation.many(eObj))) {
                 PartialSituation part = PartialSituation.one(eObj);
                 if (part != PartialSituation.UNDEF) {
                     result.add(part);
@@ -490,7 +396,8 @@ public class KaomPasteFeature extends AbstractPasteFeature {
             return false;
         }
         for (Object o : obj) {
-            if (!(o instanceof Entity || o instanceof Link || o instanceof Port || o instanceof Relation)) {
+            if (!(o instanceof Entity || o instanceof Link || o instanceof Port
+                    || o instanceof Relation)) {
                 return false;
             }
         }

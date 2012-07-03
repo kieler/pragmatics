@@ -29,6 +29,9 @@ import de.cau.cs.kieler.core.properties.Property;
  */
 public class LayoutContext extends MapPropertyHolder {
     
+    /** the serial version UID. */
+    private static final long serialVersionUID = -7544617305602906672L;
+
     /** the graph element in the current context. */
     public static final IProperty<KGraphElement> GRAPH_ELEM = new Property<KGraphElement>(
             "context.graphElement");

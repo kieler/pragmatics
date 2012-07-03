@@ -33,12 +33,12 @@ public class GraphsEditPartProvider extends AbstractEditPartProvider {
     /**
      * @generated
      */
-    private WeakReference cachedPart;
+    private WeakReference<?> cachedPart;
 
     /**
      * @generated
      */
-    private WeakReference cachedView;
+    private WeakReference<?> cachedView;
 
     /**
      * @generated
@@ -119,6 +119,7 @@ public class GraphsEditPartProvider extends AbstractEditPartProvider {
     /**
      * @generated
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public synchronized boolean provides(IOperation operation) {
         if (operation instanceof CreateGraphicEditPartOperation) {
             View view = ((IEditPartOperation) operation).getView();

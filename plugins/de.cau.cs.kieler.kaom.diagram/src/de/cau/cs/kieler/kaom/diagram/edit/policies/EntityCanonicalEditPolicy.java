@@ -21,7 +21,6 @@ import org.eclipse.gmf.runtime.diagram.ui.commands.DeferredLayoutCommand;
 import org.eclipse.gmf.runtime.diagram.ui.commands.ICommandProxy;
 import org.eclipse.gmf.runtime.diagram.ui.commands.SetViewMutabilityCommand;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalConnectionEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.requests.CreateConnectionViewRequest;
 import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewRequest;
@@ -88,6 +87,7 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
     /**
      * @generated
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected Set getFeaturesToSynchronize() {
         if (myFeaturesToSynchronize == null) {
             myFeaturesToSynchronize = new HashSet<EStructuralFeature>();
@@ -199,12 +199,13 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
     /**
      * @generated
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private Collection<IAdaptable> refreshConnections() {
         Map<EObject, View> domain2NotationMap = new HashMap<EObject, View>();
         Collection<KaomLinkDescriptor> linkDescriptors = collectAllLinks(getDiagram(),
                 domain2NotationMap);
         Collection existingLinks = new LinkedList(getDiagram().getEdges());
-        for (Iterator linksIterator = existingLinks.iterator(); linksIterator.hasNext();) {
+        for (Iterator<?> linksIterator = existingLinks.iterator(); linksIterator.hasNext();) {
             Edge nextDiagramLink = (Edge) linksIterator.next();
             int diagramLinkVisualID = KaomVisualIDRegistry.getVisualID(nextDiagramLink);
             if (diagramLinkVisualID == -1) {
@@ -314,10 +315,10 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
             break;
         }
         }
-        for (Iterator children = view.getChildren().iterator(); children.hasNext();) {
+        for (Iterator<?> children = view.getChildren().iterator(); children.hasNext();) {
             result.addAll(collectAllLinks((View) children.next(), domain2NotationMap));
         }
-        for (Iterator edges = view.getSourceEdges().iterator(); edges.hasNext();) {
+        for (Iterator<?> edges = view.getSourceEdges().iterator(); edges.hasNext();) {
             result.addAll(collectAllLinks((View) edges.next(), domain2NotationMap));
         }
         return result;

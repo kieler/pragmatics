@@ -140,6 +140,27 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         public int compareTo(final LinearSegment other) {
             return this.id - other.id;
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object instanceof LinearSegment) {
+                LinearSegment other = (LinearSegment) object;
+                return this.id == other.id;
+            }
+            return false;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return id;
+        }
+        
     }
     
     /** additional processor dependencies for graphs with hierarchical ports. */

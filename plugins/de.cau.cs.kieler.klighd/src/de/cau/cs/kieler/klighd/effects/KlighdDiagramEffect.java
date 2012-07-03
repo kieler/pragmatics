@@ -32,6 +32,9 @@ import de.cau.cs.kieler.klighd.views.DiagramViewPart;
  */
 public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = -1571536114123214570L;
+    
     /** the identifier for the diagram view. */
     private String id = null;
     /** the new name for the diagram view. */

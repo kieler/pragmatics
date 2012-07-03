@@ -37,8 +37,8 @@ public class EdgeLabelCountAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(KNode parentNode, Map<String, Object> results,
-            IKielerProgressMonitor progressMonitor) {
+    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Edge label count analysis", 1);
         
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(

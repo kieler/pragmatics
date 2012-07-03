@@ -77,7 +77,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
-        getMonitor().begin("BK node placement", 1);
+        getMonitor().begin("Brandes & Koepf node placement", 1);
         markedEdges = new LinkedList<LEdge>();
 
         // Determine overall node count for an optimal initialization of maps.
@@ -703,7 +703,10 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         return layoutIsSane;
     }
 
-    class NeighborComparator implements Comparator<LNode> {
+    /**
+     * Neighbor comparator class.
+     */
+    private static class NeighborComparator implements Comparator<LNode> {
 
         /**
          * {@inheritDoc}
@@ -720,7 +723,10 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
     }
 
-    private class BKAlignedLayout {
+    /**
+     * Aligned layout class.
+     */
+    private static class BKAlignedLayout {
 
         private HashMap<LNode, LNode> root;
 
@@ -853,16 +859,18 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
     }
 
+    /**
+     * Vertical direction enumeration.
+     */
     private enum VDirection {
-
         LEFT, RIGHT;
-
     }
 
+    /**
+     * Horizontal direction enumeration.
+     */
     private enum HDirection {
-
         TOP, BOTTOM;
-
     }
 
 }

@@ -14,7 +14,7 @@ public class GraphsDiagramActionBarContributor extends DiagramActionBarContribut
     /**
      * @generated
      */
-    protected Class getEditorClass() {
+    protected Class<?> getEditorClass() {
         return GraphsDiagramEditor.class;
     }
 

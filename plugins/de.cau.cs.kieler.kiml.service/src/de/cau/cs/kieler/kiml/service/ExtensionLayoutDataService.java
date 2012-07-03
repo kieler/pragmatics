@@ -217,7 +217,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
                     throw new WrappedException(e);
                 }
             }
-            public void destroy(AbstractLayoutProvider provider) {
+            public void destroy(final AbstractLayoutProvider provider) {
                 provider.dispose();
             }
         };

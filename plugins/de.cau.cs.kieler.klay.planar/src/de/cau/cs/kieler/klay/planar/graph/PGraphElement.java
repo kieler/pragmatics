@@ -24,6 +24,9 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
  */
 public abstract class PGraphElement extends MapPropertyHolder implements Comparable<PGraphElement> {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = 863800115925613802L;
+
     // ======================== Attributes =========================================================
 
     // CHECKSTYLEOFF VisibilityModifier

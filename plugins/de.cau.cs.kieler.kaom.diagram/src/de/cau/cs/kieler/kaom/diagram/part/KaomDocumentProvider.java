@@ -2,7 +2,6 @@ package de.cau.cs.kieler.kaom.diagram.part;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -58,6 +57,7 @@ import org.eclipse.ui.part.FileEditorInput;
 /**
  * @generated
  */
+@SuppressWarnings("restriction")
 public class KaomDocumentProvider extends AbstractDocumentProvider implements
         IDiagramDocumentProvider {
 
@@ -198,6 +198,7 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements
     /**
      * @generated
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected void setDocumentContent(IDocument document, IEditorInput element)
             throws CoreException {
         IDiagramDocument diagramDocument = (IDiagramDocument) document;
@@ -1024,7 +1025,7 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements
                     Resource resource = (Resource) notification.getNotifier();
                     if (resource.isLoaded()) {
                         boolean modified = false;
-                        for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it = myInfo
+                        for (Iterator<?> it = myInfo
                                 .getLoadedResourcesIterator(); it.hasNext() && !modified;) {
                             Resource nextResource = (Resource) it.next();
                             if (nextResource.isLoaded()) {

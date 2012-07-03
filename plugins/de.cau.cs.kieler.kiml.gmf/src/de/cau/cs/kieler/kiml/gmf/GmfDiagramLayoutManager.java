@@ -889,7 +889,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 IFigure labelFigure = labelEditPart.getFigure();
                 
                 // Check if the label is visible in the first place
-                if (labelFigure != null && !labelFigure.isVisible()) {
+                if (labelFigure == null || !labelFigure.isVisible()) {
                     continue;
                 }
                 
@@ -936,7 +936,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                             break;
                         }
                     } else {
-                        labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, placement);
+                        staticConfig.setValue(LayoutOptions.EDGE_LABEL_PLACEMENT, label,
+                                LayoutContext.GRAPH_ELEM, placement);
                     }
                     Font font = labelFigure.getFont();
                     if (font != null && !font.isDisposed()) {
