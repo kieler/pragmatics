@@ -961,11 +961,13 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
                 Port sourcePort = factory.createPort();
                 source.getPorts().add(sourcePort);
                 edge.setSourcePort(sourcePort);
+                sourcePort.getEdges().add(edge);
             }
             if (!target.isHypernode()) {
                 Port targetPort = factory.createPort();
                 target.getPorts().add(targetPort);
                 edge.setTargetPort(targetPort);
+                targetPort.getEdges().add(edge);
             }
             // set the correct edge type
             edge.setType(determineEdgeType(source, target));
@@ -1045,6 +1047,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
                 Port newPort = factory.createPort();
                 node.getPorts().add(newPort);
                 edge.setSourcePort(newPort);
+                newPort.getEdges().add(edge);
             }
             edge.setType(determineEdgeType(node, (Node) edge.getTarget()));
         }
@@ -1068,6 +1071,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
                 Port newPort = factory.createPort();
                 node.getPorts().add(newPort);
                 edge.setTargetPort(newPort);
+                newPort.getEdges().add(edge);
             }
             edge.setType(determineEdgeType((Node) edge.getSource(), node));
         }
