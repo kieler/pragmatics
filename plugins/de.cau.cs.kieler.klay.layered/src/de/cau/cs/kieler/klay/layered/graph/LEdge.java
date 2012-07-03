@@ -38,7 +38,7 @@ public class LEdge extends LGraphElement {
     /** the source and target ports. */
     private LPort source, target;
     /** labels assigned to this edge. */
-    private List<LLabel> labels = new LinkedList<LLabel>();
+    private final List<LLabel> labels = new LinkedList<LLabel>();
 
     /**
      * {@inheritDoc}
