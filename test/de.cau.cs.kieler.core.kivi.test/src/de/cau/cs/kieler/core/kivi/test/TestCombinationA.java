@@ -15,7 +15,6 @@ package de.cau.cs.kieler.core.kivi.test;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.test.TestTriggerA.AState;
-import de.cau.cs.kieler.core.kivi.test.TestTriggerB.BState;
 
 /**
  * Simple test combination that uses some triggers and executes effects
