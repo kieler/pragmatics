@@ -27,8 +27,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
- * Calculates port ranks and distributes ports in a node-relative way. This is in fact the original
- * way KLay Layered calculated port ranks.
+ * Calculates port ranks and distributes ports in a node-relative way.
  * 
  * <p>Port ranks are calculated by giving each node {@code i} a range of values {@code [i,i+1)} to
  * distribute their port values in. This effectively gives a node with many ports the same weight as
@@ -40,22 +39,47 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  */
 public class NodeRelativePortDistributor implements IPortDistributor {
 
+    /**
+     * Returns a list of input ports, beginning at the top right port of the eastern side, going
+     * clockwise.
+     * 
+     * @param node
+     *            the node whose input ports to return.
+     * @return list of input ports.
+     */
+    public static List<LPort> getSortedInputPorts(final LNode node) {
+        List<LPort> northPorts = new LinkedList<LPort>();
+        List<LPort> portList = new LinkedList<LPort>();
+
+        for (LPort port : node.getPorts(PortType.INPUT)) {
+            if (port.getSide() == PortSide.NORTH) {
+                northPorts.add(port);
+            } else {
+                portList.add(port);
+            }
+        }
+
+        // Append the list of northern ports to the other ports
+        portList.addAll(northPorts);
+        return portList;
+    }
+
     /** barycenter values for ports. */
     private float[] portBarycenter;
     /** port position array. */
-    private float[] portPos;
+    private float[] portRanks;
 
     /**
-     * Constructs a NodeRelativePortDistributor with the given portPos-array.
+     * Constructs a node-relative port distributor with the given arrays of ranks and barycenters.
      * 
      * @param portRanks
-     *            The array of portRanks;
+     *            The array of port ranks
      * @param portBarycenters
-     *            The barycenter value array for ports.
+     *            The array of port barycenter values
      */
     public NodeRelativePortDistributor(final float[] portRanks, final float[] portBarycenters) {
-        portPos = portRanks;
-        portBarycenter = portBarycenters;
+        this.portRanks = portRanks;
+        this.portBarycenter = portBarycenters;
     }
 
     // /////////////////////////////////////////////////////////////////////////////
@@ -67,27 +91,29 @@ public class NodeRelativePortDistributor implements IPortDistributor {
     public void calculatePortRanks(final LNode[] layer) {
         int nodeIx = 0;
         for (LNode node : layer) {
-            // count the input and output ports
-            int inputPorts = 0, outputPorts = 0;
-            for (LPort port : node.getPorts()) {
-                if (port.getNetFlow() < 0) {
-                    outputPorts++;
-                } else {
-                    inputPorts++;
+            if (node != null) {
+                // count the input and output ports
+                int inputPorts = 0, outputPorts = 0;
+                for (LPort port : node.getPorts()) {
+                    if (port.getNetFlow() < 0) {
+                        outputPorts++;
+                    } else {
+                        inputPorts++;
+                    }
                 }
+    
+                // set positions for the input ports
+                if (inputPorts > 0) {
+                    calculatePortRanks(node, nodeIx, PortType.INPUT, inputPorts);
+                }
+    
+                // set positions for the output ports
+                if (outputPorts > 0) {
+                    calculatePortRanks(node, nodeIx, PortType.OUTPUT, outputPorts);
+                }
+    
+                nodeIx++;
             }
-
-            // set positions for the input ports
-            if (inputPorts > 0) {
-                calculatePortRanks(node, nodeIx, PortType.INPUT, inputPorts);
-            }
-
-            // set positions for the output ports
-            if (outputPorts > 0) {
-                calculatePortRanks(node, nodeIx, PortType.OUTPUT, outputPorts);
-            }
-
-            nodeIx++;
         }
     }
 
@@ -115,44 +141,24 @@ public class NodeRelativePortDistributor implements IPortDistributor {
                 float pos = nodeIx + 1 - incr;
 
                 for (LPort port : portList) {
-                    portPos[port.id] = pos;
+                    portRanks[port.id] = pos;
                     pos -= incr;
                 }
 
             } else {
-                // Start at the top left port, going clockwise
+                // Start at the top left port, going clockwise (the natural ordering of ports)
                 float pos = nodeIx;
 
                 for (LPort port : node.getPorts(type)) {
-                    portPos[port.id] = pos;
+                    portRanks[port.id] = pos;
                     pos += incr;
                 }
             }
         } else {
             for (LPort port : node.getPorts(type)) {
-                portPos[port.id] = nodeIx + getPortIncr(type, port.getSide());
+                portRanks[port.id] = nodeIx + getPortIncr(type, port.getSide());
             }
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<LPort> getSortedInputPorts(final LNode node) {
-        List<LPort> northPorts = new LinkedList<LPort>();
-        List<LPort> portList = new LinkedList<LPort>();
-
-        for (LPort port : node.getPorts(PortType.INPUT)) {
-            if (port.getSide() == PortSide.NORTH) {
-                northPorts.add(port);
-            } else {
-                portList.add(port);
-            }
-        }
-
-        // Append the list of northern ports to the other ports
-        portList.addAll(northPorts);
-        return portList;
     }
 
     private static final float INCR_ONE = 0.3f;
@@ -243,7 +249,7 @@ public class NodeRelativePortDistributor implements IPortDistributor {
         for (LPort port : node.getPorts()) {
             float sum = 0;
             for (LPort connectedPort : port.getConnectedPorts()) {
-                sum += portPos[connectedPort.id];
+                sum += portRanks[connectedPort.id];
             }
             if (port.getDegree() == 0) {
                 portBarycenter[port.id] = -1;

@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -20,13 +21,16 @@ import java.util.Map;
 import java.util.Random;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -60,21 +64,30 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author cds
  * @author ima
  */
-public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
+public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {
 
-    /** A map associating layout units with their respective members. */
-    private Multimap<LNode, LNode> layoutUnits;
+    /** intermediate processing strategy. */
+    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
+        new IntermediateProcessingStrategy(
+                // Before Phase 1
+                null,
+                // Before Phase 2
+                null,
+                // Before Phase 3
+                EnumSet.of(IntermediateLayoutProcessor.LONG_EDGE_SPLITTER),
+                // Before Phase 4
+                EnumSet.of(IntermediateLayoutProcessor.IN_LAYER_CONSTRAINT_PROCESSOR),
+                // Before Phase 5
+                null,
+                // After Phase 5
+                EnumSet.of(IntermediateLayoutProcessor.LONG_EDGE_JOINER));
+    
     /**
-     * A map of single-node vertices for each layer. This provides the vertices used at the
-     * beginning of each crossing reduction run.
+     * {@inheritDoc}
      */
-    private Map<LNode, NodeGroup>[] singleNodeNodeGroups;
-    /** the random number generator. */
-    private Random random;
-    /** The CompoundGraphLayerCrossingMinimizer. */
-    private CompoundGraphLayerCrossingMinimizer compoundMinimizer;
-    /** The port distributor. */
-    private IPortDistributor portDistributor;
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
+        return INTERMEDIATE_PROCESSING_STRATEGY;
+    }
 
     /**
      * {@inheritDoc}
@@ -84,10 +97,9 @@ public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
         getMonitor().begin("Layer sweep crossing minimization", 1);
 
         // Fetch the graph's randomizer.
-        random = layeredGraph.getProperty(Properties.RANDOM);
+        Random random = layeredGraph.getProperty(Properties.RANDOM);
 
-        // Find the number of layers. If there's only one, no crossing minimization
-        // is necessary.
+        // Find the number of layers. If there's only one, no crossing minimization is necessary.
         int layerCount = layeredGraph.getLayers().size();
         if (layerCount < 2) {
             getMonitor().done();
@@ -103,8 +115,8 @@ public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
         int curSweepCrossings = Integer.MAX_VALUE;
         int prevSweepCrossings = Integer.MAX_VALUE;
 
-        layoutUnits = HashMultimap.create();
-        singleNodeNodeGroups = new HashMap[layerCount];
+        Multimap<LNode, LNode> layoutUnits = HashMultimap.create();
+        Map<LNode, NodeGroup>[] singleNodeNodeGroups = new HashMap[layerCount];
 
         int nodeCount = 0;
         int portCount = 0;
@@ -123,7 +135,7 @@ public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
             prevSweep[layerIndex] = new LNode[layerNodeCount];
             curSweep[layerIndex] = new LNode[layerNodeCount];
 
-            singleNodeNodeGroups[layerIndex] = new HashMap<LNode, NodeGroup>();
+            singleNodeNodeGroups[layerIndex] = Maps.newHashMapWithExpectedSize(layer.getNodes().size());
 
             ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
             while (nodeIter.hasNext()) {
@@ -132,7 +144,7 @@ public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
                 curSweep[layerIndex][nodeIter.previousIndex()] = node;
                 node.id = nodeCount++;
                 layoutUnits.put(node.getProperty(Properties.IN_LAYER_LAYOUT_UNIT), node);
-                singleNodeNodeGroups[layerIndex].put(node, new NodeGroup(node, random));
+                singleNodeNodeGroups[layerIndex].put(node, new NodeGroup(node));
 
                 for (LPort port : node.getPorts()) {
                     port.id = portCount++;
@@ -141,23 +153,23 @@ public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
         }
 
         // Initialize the position arrays
-        portBarycenter = new float[portCount];
-        portPos = new float[portCount];
+        float[] portBarycenter = new float[portCount];
+        float[] portRanks = new float[portCount];
 
         // determine the requested number of runs
         int runCount = layeredGraph.getProperty(Properties.THOROUGHNESS);
 
-        // determine, if compound graph is to be laid out.
-        KNode kgraph = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
-        KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
-        boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+        // Initialize IPortDistributor
+        IPortDistributor portDistributor = new NodeRelativePortDistributor(portRanks, portBarycenter);
 
-        // Initialize IPortDistributor.
-        portDistributor = new NodeRelativePortDistributor(portPos, portBarycenter);
-
-        // Initialize CompoundGraphLayerCrossingMinimizer.
-        compoundMinimizer = new CompoundGraphLayerCrossingMinimizer(portDistributor, random,
-                isCompound, portPos, singleNodeNodeGroups, layoutUnits);
+        // Initialize CompoundGraphLayerCrossingMinimizer
+        IConstraintResolver constraintResolver = new ForsterConstraintResolver(layoutUnits,
+                singleNodeNodeGroups);
+        ICrossingMinimizationHeuristic heuristic = new BarycenterHeuristic(portDistributor,
+                constraintResolver, random, portRanks, singleNodeNodeGroups);
+        CompoundGraphLayerCrossingMinimizer compoundMinimizer
+                = new CompoundGraphLayerCrossingMinimizer(layeredGraph, heuristic,
+                        singleNodeNodeGroups);
 
         // Perform the requested number of runs, each consisting of several sweeps
         // (alternating between forward and backward sweeps)
@@ -170,14 +182,14 @@ public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
             // The fixed layer is randomized
             int totalEdges = 0;
             compoundMinimizer.compoundMinimizeCrossings(fixedLayer, fixedLayerIndex, forward,
-                    false, true, layeredGraph);
+                    false, true);
 
             // Reset last and current run crossing counters
             prevSweepCrossings = Integer.MAX_VALUE;
             curSweepCrossings = Integer.MAX_VALUE;
 
-            // Do the forward and backward sweeps until the number of crossings
-            // increases with respect to the previous sweep
+            // Do alternating forward and backward sweeps as long as the number of crossings
+            // decreases with respect to the previous sweep.
             boolean firstSweep = true;
             do {
                 // The formerly current sweep is now the previous sweep
@@ -191,7 +203,7 @@ public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
                         LNode[] freeLayer = curSweep[layerIndex];
 
                         totalEdges = compoundMinimizer.compoundMinimizeCrossings(freeLayer,
-                                layerIndex, true, !firstSweep, false, layeredGraph);
+                                layerIndex, true, !firstSweep, false);
                         curSweepCrossings += countCrossings(fixedLayer, freeLayer, totalEdges)
                                 + countCrossings(freeLayer);
 
@@ -203,7 +215,7 @@ public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
                         LNode[] freeLayer = curSweep[layerIndex];
 
                         totalEdges = compoundMinimizer.compoundMinimizeCrossings(freeLayer,
-                                layerIndex, false, !firstSweep, false, layeredGraph);
+                                layerIndex, false, !firstSweep, false);
                         curSweepCrossings += countCrossings(freeLayer, fixedLayer, totalEdges)
                                 + countCrossings(freeLayer);
 
@@ -244,18 +256,7 @@ public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
             }
         }
 
-        dispose();
         getMonitor().done();
-    }
-
-    /**
-     * Release all created resources so the GC can reap them.
-     */
-    private void dispose() {
-        this.portBarycenter = null;
-        this.portPos = null;
-        this.layoutUnits = null;
-        this.singleNodeNodeGroups = null;
     }
 
     // /////////////////////////////////////////////////////////////////////////////
@@ -283,7 +284,7 @@ public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
         int targetCount = 0;
         for (LNode node : rightLayer) {
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-                List<LPort> inputPorts = portDistributor.getSortedInputPorts(node);
+                List<LPort> inputPorts = NodeRelativePortDistributor.getSortedInputPorts(node);
                 ListIterator<LPort> portIter = inputPorts.listIterator(inputPorts.size());
                 while (portIter.hasPrevious()) {
                     targetMap.put(portIter.previous(), targetCount++);
@@ -662,11 +663,7 @@ public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
             array[j + 1] = array[j];
         }
 
-        if (insx >= array.length) {
-            System.out.println("BLA!");
-        } else {
-            array[insx] = n;
-        }
+        array[insx] = n;
     }
 
     /**
@@ -702,4 +699,5 @@ public class LayerSweepCrossingMinimizer extends AbstractCrossingMinimizer {
         }
         return -(low + 1); // key not found
     }
+    
 }

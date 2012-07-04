@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.p3order;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
@@ -29,9 +28,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * @author ima
  */
 public class NodeGroup implements Comparable<NodeGroup> {
-
-    /** the random number generator. */
-    private Random random;
 
     /**
      * List of nodes this vertex consists of.
@@ -62,20 +58,16 @@ public class NodeGroup implements Comparable<NodeGroup> {
     /**
      * This vertex' barycenter value. (summedWeight / degree)
      */
-    private float barycenter = -1.0f;
+    private Float barycenter;
 
     /**
      * Constructs a new instance containing the given node.
      * 
      * @param node
-     *            the node the vertex should contain.
-     * 
-     * @param graphRandom
-     *            The random number generator of the graph to be laid out.
+     *            the node the vertex should contain
      */
-    public NodeGroup(final LNode node, final Random graphRandom) {
+    public NodeGroup(final LNode node) {
         nodes.add(node);
-        random = graphRandom;
     }
 
     /**
@@ -84,22 +76,16 @@ public class NodeGroup implements Comparable<NodeGroup> {
      * successors' incoming count appropriately if both vertices are predecessors.
      * 
      * @param nodeGroup1
-     *            the first vertex.
+     *            the first vertex
      * @param nodeGroup2
-     *            the second vertex.
-     * @param graphRandom
-     *            The random number generator of the graph to be laid out.
+     *            the second vertex
      */
-    public NodeGroup(final NodeGroup nodeGroup1, final NodeGroup nodeGroup2,
-            final Random graphRandom) {
+    public NodeGroup(final NodeGroup nodeGroup1, final NodeGroup nodeGroup2) {
         nodes.addAll(nodeGroup1.nodes);
         nodes.addAll(nodeGroup2.nodes);
 
-        random = graphRandom;
-
         // Add constraints, taking care not to add any constraints to vertex1 or vertex2
-        // and to decrement the incoming constraints count of those that are successors
-        // to both
+        // and to decrement the incoming constraints count of those that are successors to both
         outgoingConstraints.addAll(nodeGroup1.outgoingConstraints);
         outgoingConstraints.remove(nodeGroup2);
         for (NodeGroup candidate : nodeGroup2.outgoingConstraints) {
@@ -122,98 +108,95 @@ public class NodeGroup implements Comparable<NodeGroup> {
     }
 
     /**
-     * Gets the incomingConstraintsCount of the NodeGroup.
+     * Gets the incoming constraints count of the node group.
      * 
-     * @return Returns the incomingConstraintsCount.
+     * @return the incoming constraints count
      */
     public int getIncomingConstraintsCount() {
         return incomingConstraintsCount;
     }
 
     /**
-     * Sets the incomingConstraintsCount to the given value.
+     * Sets the incoming constraints count to the given value.
      * 
      * @param value
-     *            The value the incomingConstraintsCount is set to.
+     *            The value the incoming constraints count is set to
      */
     public void setIncomingConstraintsCount(final int value) {
-        incomingConstraintsCount = value;
+        this.incomingConstraintsCount = value;
     }
 
     /**
-     * Gets the list of outgoing constraints.
+     * Returns the list of outgoing constraints.
      * 
-     * @return Returns the outgoingConstraints-list of the NodeGroup.
+     * @return the outgoing constraints list of the node group
      */
     public List<NodeGroup> getOutgoingConstraints() {
         return outgoingConstraints;
     }
     
     /**
-     * Gets the nodes-list.
+     * Returns the list of nodes.
      * 
-     * @return
-     *    Returns the nodes-list of the NodeGroup.
+     * @return the nodes-list of the node group
      */
     public List<LNode> getNodes() {
         return nodes;
     }
     
     /**
-     * Gets the barycenter value of the NodeGroup.
+     * Returns the barycenter value of the node group, or {@code null} if no barycenter was
+     * assigned yet.
      * 
-     * @return
-     *     Returns the barycenter value of the NodeGroup.
+     * @return the barycenter value of the node group
      */
-    public float getBarycenter() {
+    public Float getBarycenter() {
         return barycenter;
     }
     
     /**
-     * Sets barycenter to the given value.
+     * Sets the barycenter to the given value.
      * 
      * @param value
-     *      value the barycenter is to be set to.
+     *      value the barycenter is set to
      */
-    public void setBarycenter(final float value) {
+    public void setBarycenter(final Float value) {
         barycenter = value;
     }
     
     /**
-     * Gets the summedWeight of the NodeGroup.
+     * Returns the summed weight of the node group.
      * 
-     * @return
-     *    Returns the summedWeight of the NodeGroup.
+     * @return the summed weight of the node group.
      */
     public float getSummedWeight() {
         return summedWeight;
     }
     
     /**
-     * Sets the summedWeight to the given value.
+     * Sets the summed weight to the given value.
      * 
      * @param value
-     *    The value summedWeight is to be set to.
+     *    The value summed weight is set to
      */
     public void setSummedWeight(final float value) {
         summedWeight = value;
     }
     
     /**
-     * Gets the degree of the NodeGroup.
+     * Returns the degree of the node group.
      * 
-     * @return
-     *    Returns the degree of the NodeGroup.
+     * @return the degree of the node group
      */
     public int getDegree() {
         return degree;
     }
     
     /**
-     * Sets the degree of the NodeGroup to the given value.
+     * Sets the degree of the node group to the given value.
      * 
      * @param value
-     *      The value the degree is to be set to.
+     *      The value the degree is set to
      */
     public void setDegree(final int value) {
         degree = value;
@@ -221,8 +204,6 @@ public class NodeGroup implements Comparable<NodeGroup> {
 
     /**
      * {@inheritDoc}
-     * 
-     * FIXME this comparison is not consistent with equals().
      */
     public int compareTo(final NodeGroup other) {
         // Empty vertices are placed at the end of all things ((c) by J. R. R. Tolkien)
@@ -230,13 +211,7 @@ public class NodeGroup implements Comparable<NodeGroup> {
             return other.nodes.size() - nodes.size();
         }
 
-        // Nodes with equal barycenter values are randomized. This is not a stable
-        // comparison, but we don't care.
-        if (barycenter == other.barycenter) {
-            return random.nextBoolean() ? 1 : -1;
-        } else {
-            return Float.compare(barycenter, other.barycenter);
-        }
+        return barycenter.compareTo(other.barycenter);
     }
     
 }

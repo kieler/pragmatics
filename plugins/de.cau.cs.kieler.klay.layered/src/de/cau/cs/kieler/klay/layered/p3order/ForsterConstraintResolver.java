@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Random;
 
 import com.google.common.collect.Multimap;
 
@@ -29,30 +28,48 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * Detects and resolves violated constraints. Inspired by: Michael Forster. A fast and simple
- * heuristic for constrained two-level crossing reduction. In <i>Graph Drawing</i>, volume 3383 of
- * LNCS, pp. 206-216. Springer, 2005.
+ * Detects and resolves violated constraints. Inspired by
+ * <ul>
+ * <li>Michael Forster. A fast and simple heuristic for constrained two-level crossing reduction. In
+ * <i>Graph Drawing</i>, volume 3383 of LNCS, pp. 206-216. Springer, 2005.</li>
+ * </ul>
  * 
- * @author msp
  * @author cds
  * @author ima
  */
 public class ForsterConstraintResolver implements IConstraintResolver {
 
+    /** the layout units for handling dummy nodes for north / south ports. */
+    private Multimap<LNode, LNode> layoutUnits;
+    /** the node groups containing only single nodes. */
+    private Map<LNode, NodeGroup>[] singleNodeNodeGroups;
+    
+    /**
+     * Constructs a Forster constraint resolver.
+     * 
+     * @param layoutUnits
+     *            a map associating layout units with their respective members
+     * @param oneNodeNodeGroups
+     *            map of single node vertices for each layer
+     */
+    public ForsterConstraintResolver(final Multimap<LNode, LNode> layoutUnits,
+            final Map<LNode, NodeGroup>[] oneNodeNodeGroups) {
+        this.layoutUnits = layoutUnits;
+        this.singleNodeNodeGroups = oneNodeNodeGroups;
+    }
+    
     /**
      * {@inheritDoc}
      */
-    public void processConstraints(final List<NodeGroup> nodeGroups, final int layerIndex,
-            final Random random, final Map<LNode, NodeGroup>[] singleNodeNodeGroups,
-            final Multimap<LNode, LNode> layoutUnits) {
+    public void processConstraints(final List<NodeGroup> nodeGroups, final int layerIndex) {
 
         // Build the constraints graph
-        buildConstraintsGraph(nodeGroups, singleNodeNodeGroups[layerIndex], layoutUnits);
+        buildConstraintsGraph(nodeGroups, singleNodeNodeGroups[layerIndex]);
 
         // Find violated vertices
         Pair<NodeGroup, NodeGroup> violatedConstraint = null;
         while ((violatedConstraint = findViolatedConstraint(nodeGroups)) != null) {
-            handleViolatedConstraint(violatedConstraint, nodeGroups, random);
+            handleViolatedConstraint(violatedConstraint, nodeGroups);
         }
     }
 
@@ -63,11 +80,9 @@ public class ForsterConstraintResolver implements IConstraintResolver {
      *            the array of single-node vertices sorted by their barycenter values.
      * @param layerNodeGroups
      *            map mapping the nodes in the current layer to their vertices.
-     * @param layoutUnits 
-     *            a map associating layout units with their respective members.
      */
     private void buildConstraintsGraph(final List<NodeGroup> nodeGroups,
-            final Map<LNode, NodeGroup> layerNodeGroups, final Multimap<LNode, LNode> layoutUnits) {
+            final Map<LNode, NodeGroup> layerNodeGroups) {
 
         // Reset the constraint fields
         for (NodeGroup nodeGroup : nodeGroups) {
@@ -172,11 +187,9 @@ public class ForsterConstraintResolver implements IConstraintResolver {
      *            the violated constraint.
      * @param nodeGroups
      *            the array of vertices.
-     * @param random 
-     *            the random number generator.
      */
     private void handleViolatedConstraint(final Pair<NodeGroup, NodeGroup> violatedConstraint,
-            final List<NodeGroup> nodeGroups, final Random random) {
+            final List<NodeGroup> nodeGroups) {
 
         NodeGroup firstNodeGroup = violatedConstraint.getFirst();
         NodeGroup secondNodeGroup = violatedConstraint.getSecond();
@@ -184,7 +197,7 @@ public class ForsterConstraintResolver implements IConstraintResolver {
         // Create a new vertex from the two constrain-violating vertices; this also
         // automatically calculates the new vertex's barycenter value
         NodeGroup newNodeGroup = new NodeGroup(violatedConstraint.getFirst(),
-                violatedConstraint.getSecond(), random);
+                violatedConstraint.getSecond());
 
         // Iterate through the vertices. Remove the old vertices. Insert the new one
         // according to the barycenter value, thereby keeping the list sorted. Along

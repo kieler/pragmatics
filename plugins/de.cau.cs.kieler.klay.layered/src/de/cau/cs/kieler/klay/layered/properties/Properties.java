@@ -115,7 +115,7 @@ public final class Properties {
      * Layer layout units are identified through one of their nodes.
      */
     public static final IProperty<LNode> IN_LAYER_LAYOUT_UNIT = new Property<LNode>(
-            "inLayerLayoutUnit", null);
+            "inLayerLayoutUnit");
 
     /**
      * The in-layer constraint placed on a node. This indicates whether this node should be handled
@@ -133,7 +133,7 @@ public final class Properties {
      * constraint. This property only makes sense for nodes.
      */
     public static final IProperty<LNode> IN_LAYER_SUCCESSOR_CONSTRAINT = new Property<LNode>(
-            "inLayerSuccessorConstraint", null);
+            "inLayerSuccessorConstraint");
 
     /**
      * Crossing hint used for in-layer cross counting with northern and southern port dummies.
@@ -174,7 +174,7 @@ public final class Properties {
      * node.
      */
     public static final IProperty<LNode> EXT_PORT_REPLACED_DUMMY = new Property<LNode>(
-            "externalPortReplacedDummy", null);
+            "externalPortReplacedDummy");
     
     /**
      * The port sides of external ports a connected component connects to. This property is set

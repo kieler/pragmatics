@@ -13,16 +13,15 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-
-import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -32,58 +31,43 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 /**
  * Implements the actual crossing minimization step for a given free layer. In a flat graph, an
  * ICrossingMinimizationHeuristic is directly used to compute the node ordering. For compound graphs
- * it computes orderings for each compound node seperately, working its way from the innermost
+ * it computes orderings for each compound node separately, working its way from the innermost
  * compound node to the outermost, using calculated node orders as atomic sets of nodes for the next
- * calculations. This approach is inspired by Michael Forster: "Applying Crossing Reduction
- * Strategies to Layered Compound Graphs", University of Passau.
+ * calculations. This approach is inspired by
+ * <ul>
+ * <li>Michael Forster. Applying crossing reduction strategies to layered compound graphs. In
+ * <i>Graph Drawing</i>, volume 2528 of LNCS, pp. 115-132. Springer, 2002.</li>
+ * </ul> 
  * 
  * @author ima
  * @author cds
  * @author msp
  */
-
 public class CompoundGraphLayerCrossingMinimizer {
 
-    private IPortDistributor portDistributor;
-
-    private Random random;
-
-    private boolean isCompound;
-
-    private float[] portPos;
-
+    /** the layered graph that is processed. */
+    private LayeredGraph layeredGraph;
+    /** the node groups containing only single nodes. */
     private Map<LNode, NodeGroup>[] singleNodeNodeGroups;
-
-    private Multimap<LNode, LNode> layoutUnits;
-
-    private ICrossingMinimizationHeuristic minimizationHeuristic;
+    /** the crossing minimization heuristic. */
+    private ICrossingMinimizationHeuristic crossminHeuristic;
 
     /**
-     * Constructs a CompoundGraphLayerCrossingMinimizer with the given IPortDistributor, Random,
-     * isCompound, portPos array, single-node-nodeGroup map and layoutUnits.
+     * Constructs a compound graph layer crossing minimizer.
      * 
-     * @param selPortDistributor
-     *            the IPortDistributor chosen by the crossing minimizer.
-     * @param graphRandom
-     *            the random number generator.
-     * @param handleHierarchy
-     *            whether the graph to be laid out is a compound one.
-     * @param portRanks
-     *            the array of port ranks.
+     * @param layeredGraph
+     *            The layered graph that is to be laid out
+     * @param heuristic
+     *            the crossing minimization heuristic
      * @param oneNodeNodeGroups
-     *            map of single node vertices for each layer.
-     * @param layoutUnit
-     *            map associating layoutUnits with their members.
+     *            map of single node vertices for each layer
      */
-    protected CompoundGraphLayerCrossingMinimizer(final IPortDistributor selPortDistributor,
-            final Random graphRandom, final boolean handleHierarchy, final float[] portRanks,
-            final Map<LNode, NodeGroup>[] oneNodeNodeGroups, final Multimap<LNode, LNode> layoutUnit) {
-        portDistributor = selPortDistributor;
-        random = graphRandom;
-        isCompound = handleHierarchy;
-        portPos = portRanks;
-        singleNodeNodeGroups = oneNodeNodeGroups;
-        layoutUnits = layoutUnit;
+    public CompoundGraphLayerCrossingMinimizer(final LayeredGraph layeredGraph,
+            final ICrossingMinimizationHeuristic heuristic,
+            final Map<LNode, NodeGroup>[] oneNodeNodeGroups) {
+        this.layeredGraph = layeredGraph;
+        this.singleNodeNodeGroups = oneNodeNodeGroups;
+        this.crossminHeuristic = heuristic;
     }
 
     /**
@@ -94,52 +78,36 @@ public class CompoundGraphLayerCrossingMinimizer {
      * entity with fixed node order, represented by a NodeGroup for the next calculations.
      * 
      * @param layer
-     *            the nodes of the layer, whose order is to be determined.
+     *            the nodes of the layer, whose order is to be determined
      * @param layerIndex
-     *            the index of that layer.
+     *            the index of that layer
      * @param forward
-     *            whether the fixed layer is located after the free layer.
+     *            whether the fixed layer is located after the free layer
      * @param preOrdered
-     *            whether the nodes have been ordered in a previous run.
+     *            whether the nodes have been ordered in a previous run
      * @param randomize
-     *            whether the layer's node order should just be randomized.
-     * @param layeredGraph
-     *            The layered graph that is to be laid out.
-     * @return the total number of edges going either in or out of the given layer.
+     *            whether the layer's node order should just be randomized
+     * @return the total number of edges going either in or out of the given layer
      */
-    protected int compoundMinimizeCrossings(final LNode[] layer, final int layerIndex,
-            final boolean forward, final boolean preOrdered, final boolean randomize,
-            final LayeredGraph layeredGraph) {
-
-        // chose a crossing minimization heuristic
-        minimizationHeuristic = new BarycenterHeuristic(portDistributor, random);
-
-        // get the map associating LGraph-elements and the original KGraph-Elements
-        HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
-                .getProperty(Properties.ELEMENT_MAP);
-
-        // prepare an LNode as key representing the layeredGraph in HashMaps
-        LNode graphKey = new LNode();
-        graphKey.setProperty(Properties.ORIGIN, layeredGraph);
-
-        int totalEdges = 0;
-
+    public int compoundMinimizeCrossings(final LNode[] layer, final int layerIndex,
+            final boolean forward, final boolean preOrdered, final boolean randomize) {
         // Ignore empty free layers
         if (layer.length == 0) {
             return 0;
         }
 
-        if (!isCompound) {
-            /*
-             * Prepare list of single-node NodeGroups for the minimization Heuristic.
-             */
-            List<NodeGroup> layerNodeGroups = new LinkedList<NodeGroup>();
-            for (LNode node : layer) {
-                layerNodeGroups.add(singleNodeNodeGroups[layerIndex].get(node));
-            }
+        int totalEdges = 0;
 
-            totalEdges = minimizationHeuristic.minimizeCrossings(layerNodeGroups, layoutUnits,
-                    layerIndex, preOrdered, randomize, forward, portPos, singleNodeNodeGroups);
+        // determine whether a compound graph is to be laid out
+        boolean isCompound = layeredGraph.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+        
+        if (!isCompound) {
+            // Prepare list of single-node NodeGroups for the minimization heuristic
+            List<NodeGroup> layerNodeGroups = new ArrayList<NodeGroup>(
+                    singleNodeNodeGroups[layerIndex].values());
+
+            totalEdges = crossminHeuristic.minimizeCrossings(layerNodeGroups, layerIndex, preOrdered,
+                    randomize, forward);
             applyNodeGroupOrderingToNodeArray(layerNodeGroups, layer);
             
         } else {
@@ -154,6 +122,10 @@ public class CompoundGraphLayerCrossingMinimizer {
 
             int maximalDepth = 0;
 
+            // prepare an LNode as key representing the layeredGraph in HashMaps
+            LNode graphKey = new LNode();
+            graphKey.setProperty(Properties.ORIGIN, layeredGraph);
+            
             for (LNode node : layer) {
                 // The correlation node/compoundNode is the same as in the SubGraphOrderingProcessor
                 LNode key = Util.getRelatedCompoundNode(node, layeredGraph);
@@ -190,6 +162,10 @@ public class CompoundGraphLayerCrossingMinimizer {
                         compoundNode);
             }
 
+            // get the map associating LGraph-elements and the original KGraph-Elements
+            HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
+                    .getProperty(Properties.ELEMENT_MAP);
+
             while (!compoundNodesPerDepthLevel.isEmpty()) {
                 // Handle the compound nodes beginning from the highest depth level up to the
                 // lowest.
@@ -198,25 +174,22 @@ public class CompoundGraphLayerCrossingMinimizer {
                 for (LNode keyNode : actualList) {
                     LinkedList<NodeGroup> compoundContent = compoundNodesMap.get(keyNode);
                     // Calculate the nodeOrder for this compound node.
-                    totalEdges += minimizationHeuristic.minimizeCrossings(compoundContent,
-                            layoutUnits, layerIndex, preOrdered, randomize, forward, portPos,
-                            singleNodeNodeGroups);
+                    totalEdges += crossminHeuristic.minimizeCrossings(compoundContent,
+                            layerIndex, preOrdered, randomize, forward);
                     // Is outermost level reached? If not, represent the compound node as one entity
-                    // for the higher levels. Update compoundNodesMap and
-                    // compoundNodesPerDepthLevel.
+                    // for the higher levels. Update compoundNodesMap and compoundNodesPerDepthLevel.
                     if (keyNode != graphKey) {
                         // Create a NodeGroup comprising all Nodes of this compound node, preserving
-                        // the
-                        // order
+                        // the order
                         NodeGroup aggregatedNodeGroup;
                         if (compoundContent.size() == 1) {
                             aggregatedNodeGroup = compoundContent.getFirst();
                         } else {
                             aggregatedNodeGroup = new NodeGroup(compoundContent.removeFirst(),
-                                    compoundContent.removeLast(), random);
+                                    compoundContent.removeLast());
                             while (!compoundContent.isEmpty()) {
                                 aggregatedNodeGroup = new NodeGroup(aggregatedNodeGroup,
-                                        compoundContent.removeFirst(), random);
+                                        compoundContent.removeFirst());
                             }
                         }
                         // Store the new nodeGroup representing the compound node in the
@@ -241,8 +214,7 @@ public class CompoundGraphLayerCrossingMinimizer {
                         parentContents.add(aggregatedNodeGroup);
 
                         // Store the parent of the compoundNode in the
-                        // compoundNodesPerDepthLevel-list
-                        // if not already present
+                        // compoundNodesPerDepthLevel-list if not already present
                         LinkedList<LNode> parentList = compoundNodesPerDepthLevel.get(parentKey
                                 .getProperty(Properties.DEPTH));
                         if (!parentList.contains(parentKey)) {
@@ -276,4 +248,5 @@ public class CompoundGraphLayerCrossingMinimizer {
             }
         }
     }
+    
 }
