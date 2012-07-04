@@ -33,9 +33,9 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
  */
 public class DiagramPartDefaultAction extends Action {
 
-    /** an identifier for the action without the domain model option. */
+    /** identifier of the part default action without the domain model option. */
     public static final String EDIT_PART_ACTION_ID = "kieler.edit.part.default";
-    /** an identifier for the action with the domain model option. */
+    /** identifier of the part default action with the domain model option. */
     public static final String MODEL_ACTION_ID = "kieler.model.default";
 
     /** the icon used for this action. */
