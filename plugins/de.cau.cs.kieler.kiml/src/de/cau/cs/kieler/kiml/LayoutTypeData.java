@@ -47,7 +47,7 @@ public class LayoutTypeData implements ILayoutData {
     /** detail description. */
     private String description = "";
     /** the list of layout algorithms that are registered for this type. */
-    private List<LayoutAlgorithmData> layouters = new LinkedList<LayoutAlgorithmData>();
+    private final List<LayoutAlgorithmData> layouters = new LinkedList<LayoutAlgorithmData>();
     
     /**
      * {@inheritDoc}

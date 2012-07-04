@@ -91,7 +91,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     /** the page that is displayed in this view part. */
     private PropertySheetPage page;
     /** the property source provider that keeps track of created property sources. */
-    private LayoutPropertySourceProvider propSourceProvider = new LayoutPropertySourceProvider();
+    private final LayoutPropertySourceProvider propSourceProvider = new LayoutPropertySourceProvider();
     
     /**
      * Finds the active layout view, if it exists.

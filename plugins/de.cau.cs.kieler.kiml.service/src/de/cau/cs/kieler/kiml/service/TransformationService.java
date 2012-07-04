@@ -72,10 +72,10 @@ public abstract class TransformationService {
     }
     
     /** mapping of graph format identifiers to their meta-data instances. */
-    private Map<String, GraphFormatData> graphFormatMap
+    private final Map<String, GraphFormatData> graphFormatMap
             = new LinkedHashMap<String, GraphFormatData>();
     /** additional map of graph format suffixes to data instances. */
-    private Map<String, GraphFormatData> formatSuffixMap
+    private final Map<String, GraphFormatData> formatSuffixMap
             = new HashMap<String, GraphFormatData>();
 
     /**

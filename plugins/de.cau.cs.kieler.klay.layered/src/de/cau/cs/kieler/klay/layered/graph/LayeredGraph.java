@@ -61,15 +61,15 @@ public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
     
 
     /** the total size of the drawing, without offset. */
-    private KVector size = new KVector();
+    private final KVector size = new KVector();
     /** the graph's insets. */
-    private LInsets.Double insets = new LInsets.Double(0, 0, 0, 0);
+    private final LInsets.Double insets = new LInsets.Double(0, 0, 0, 0);
     /** the offset to be added to all positions. */
-    private KVector offset = new KVector();
+    private final KVector offset = new KVector();
     /** nodes that are not currently part of a layer. */
-    private List<LNode> layerlessNodes = new LinkedList<LNode>();
+    private final List<LNode> layerlessNodes = new LinkedList<LNode>();
     /** the layers of the layered graph. */
-    private List<Layer> layers = new LinkedList<Layer>();
+    private final List<Layer> layers = new LinkedList<Layer>();
     
     /**
      * {@inheritDoc}

@@ -11,9 +11,37 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered;
 
-import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.BigNodesProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.CommentPostprocessor;
+import de.cau.cs.kieler.klay.layered.intermediate.CommentPreprocessor;
+import de.cau.cs.kieler.klay.layered.intermediate.CompoundCycleProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.CompoundDummyEdgeRemover;
+import de.cau.cs.kieler.klay.layered.intermediate.CompoundGraphRestorer;
+import de.cau.cs.kieler.klay.layered.intermediate.CompoundSideProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.EdgeAndLayerConstraintEdgeReverser;
+import de.cau.cs.kieler.klay.layered.intermediate.GraphTransformer;
+import de.cau.cs.kieler.klay.layered.intermediate.HierarchicalPortConstraintProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.HierarchicalPortDummySizeProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.HierarchicalPortOrthogonalEdgeRouter;
+import de.cau.cs.kieler.klay.layered.intermediate.HierarchicalPortPositionProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.HyperedgeDummyMerger;
+import de.cau.cs.kieler.klay.layered.intermediate.HypernodesProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.InLayerConstraintProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.InvertedPortProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.LongEdgeJoiner;
+import de.cau.cs.kieler.klay.layered.intermediate.LongEdgeSplitter;
+import de.cau.cs.kieler.klay.layered.intermediate.NodeMarginCalculator;
+import de.cau.cs.kieler.klay.layered.intermediate.NorthSouthPortPostprocessor;
+import de.cau.cs.kieler.klay.layered.intermediate.NorthSouthPortPreprocessor;
+import de.cau.cs.kieler.klay.layered.intermediate.PortListSorter;
+import de.cau.cs.kieler.klay.layered.intermediate.PortPositionProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.PortSideProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.ReversedEdgeRestorer;
+import de.cau.cs.kieler.klay.layered.intermediate.SelfLoopProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.SubgraphOrderingProcessor;
 
 /**
  * Definition of available intermediate layout processors for the layered layouter.

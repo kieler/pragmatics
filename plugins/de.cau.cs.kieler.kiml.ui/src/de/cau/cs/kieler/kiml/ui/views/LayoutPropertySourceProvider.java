@@ -42,7 +42,7 @@ import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 public class LayoutPropertySourceProvider implements IPropertySourceProvider {
 
     /** property sources that have been created for the current selection. */
-    private Map<Object, LayoutPropertySource> propertySources = Maps.newHashMap();
+    private final Map<Object, LayoutPropertySource> propertySources = Maps.newHashMap();
     /** the workbench part containing the current selection. */
     private IWorkbenchPart workbenchPart;
     

@@ -164,15 +164,15 @@ public abstract class LayoutInfoService {
     }
     
     /** mapping of diagram type identifiers to their names. */
-    private Map<String, String> diagramTypeMap = Maps.newLinkedHashMap();
+    private final Map<String, String> diagramTypeMap = Maps.newLinkedHashMap();
     /** mapping of object identifiers to associated options. */
-    private Map<String, Map<String, Object>> id2OptionsMap = Maps.newHashMap();
+    private final Map<String, Map<String, Object>> id2OptionsMap = Maps.newHashMap();
     /** mapping of domain class names to semantic layout configurations. */
-    private Multimap<String, SemanticLayoutConfig> semanticConfigMap = HashMultimap.create();
+    private final Multimap<String, SemanticLayoutConfig> semanticConfigMap = HashMultimap.create();
     /** list of general layout configurators. */
-    private List<ConfigData> configData = Lists.newLinkedList();
+    private final List<ConfigData> configData = Lists.newLinkedList();
     /** property map for activation of registered layout configurators. */
-    private MapPropertyHolder configProperties = new MapPropertyHolder();
+    private final MapPropertyHolder configProperties = new MapPropertyHolder();
     
     /**
      * Returns the property holder to activate or deactivate registered layout configurations.

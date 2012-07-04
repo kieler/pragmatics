@@ -18,3 +18,4 @@ Require-Bundle: org.eclipse.graphiti;bundle-version="0.8.1",
  de.cau.cs.kieler.core.ui,
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.kiml.ui
+Export-Package: de.cau.cs.kieler.kiml.graphiti

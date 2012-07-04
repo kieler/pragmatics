@@ -457,13 +457,13 @@ public class OrthogonalRoutingGenerator {
     private static final int CONFLICT_PENALTY = 16;
     
     /** routing direction strategy. */
-    private IRoutingDirectionStrategy routingStrategy = null;
+    private IRoutingDirectionStrategy routingStrategy;
     /** spacing between edges. */
     private double edgeSpacing;
     /** threshold at which conflicts of horizontal line segments are detected. */
     private double conflictThreshold;
     
-    private String debugPrefix = null;
+    private String debugPrefix;
     
     
     ///////////////////////////////////////////////////////////////////////////////

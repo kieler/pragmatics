@@ -33,9 +33,9 @@ public class TransformationData<S, T> extends MapPropertyHolder {
     /** the original source graph. */
     private S sourceGraph;
     /** the transformed target graphs. */
-    private List<T> layoutGraphs = new LinkedList<T>();
+    private final List<T> layoutGraphs = new LinkedList<T>();
     /** the log messages. */
-    private List<String> logMessages = new LinkedList<String>();
+    private final List<String> logMessages = new LinkedList<String>();
     
     /**
      * Set the original source graph.
