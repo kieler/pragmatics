@@ -74,6 +74,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * 
  * @author atr
  * @author soh
+ * @author msp
  */
 @SuppressWarnings("restriction")
 public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<PictogramElement> {
@@ -252,15 +253,12 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     /**
      * Recursively builds a layout graph by analyzing the children of the given current pictogram
      * Element.
-     * 
-     * @param parentElement
-     *            the currently analyzed element
-     * @param parentNode
-     *            the corresponding KNode
-     * @param layoutConfig
-     *            the layout configuration
+     *
+     * @param mapping the mapping of pictogram elements to graph elements
+     * @param parentElement the currently analyzed element
+     * @param parentNode the corresponding KNode
      */
-    private void buildLayoutGraphRecursively(final LayoutMapping<PictogramElement> mapping,
+    protected void buildLayoutGraphRecursively(final LayoutMapping<PictogramElement> mapping,
             final ContainerShape parentElement, final KNode parentNode) {
         for (Shape shape : parentElement.getChildren()) {
             // relevant shapes are those that can be connected
@@ -273,11 +271,12 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     /**
      * Create a node for the layout graph.
      * 
+     * @param mapping the mapping of pictogram elements to graph elements
      * @param parentNode the parent node
      * @param shape the shape for a new node
-     * @param layoutConfig the layout configuration
+     * @return a new layout node
      */
-    private KNode createNode(final LayoutMapping<PictogramElement> mapping,
+    protected KNode createNode(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final Shape shape) {
         KNode childNode = KimlUtil.createInitializedNode();
         childNode.setParent(parentNode);
@@ -345,11 +344,12 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * algorithm of the anchor is assumed to be the same as the one returned by
      * {@link GraphitiUtil#findVisibleGa(GraphicsAlgorithm)}.
      * 
+     * @param mapping the mapping of pictogram elements to graph elements
      * @param parentNode the parent node
      * @param bra the anchor
-     * @param layoutConfig the layout configuration
+     * @return a new layout port
      */
-    private KPort createPort(final LayoutMapping<PictogramElement> mapping,
+    protected KPort createPort(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final BoxRelativeAnchor bra) {
         KPort port = KimlUtil.createInitializedPort();
         port.setNode(parentNode);
@@ -385,11 +385,12 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     /**
      * Create a port for the layout graph using a fixed-position anchor.
      * 
+     * @param mapping the mapping of pictogram elements to graph elements
      * @param parentNode the parent node
      * @param fpa the anchor
-     * @param layoutConfig the layout configuration
+     * @return a new layout port
      */
-    private KPort createPort(final LayoutMapping<PictogramElement> mapping,
+    protected KPort createPort(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final FixPointAnchor fpa) {
         KPort port = KimlUtil.createInitializedPort();
         port.setNode(parentNode);
@@ -419,9 +420,9 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * @param abstractText the text graphics algorithm to set up the label
      * @param offsetx the x coordinate offset
      * @param offsety the y coordinate offset
-     * @return the new label
+     * @return a new label
      */
-    private KLabel createLabel(final KLabeledGraphElement element, final AbstractText abstractText,
+    protected KLabel createLabel(final KLabeledGraphElement element, final AbstractText abstractText,
             final float offsetx, final float offsety) {
         String labelText = abstractText.getValue();
         if (labelText != null) {
@@ -483,10 +484,10 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     /**
      * Create an edge for the layout graph.
      * 
-     * @param connection a connection
-     * @param layoutConfig the layout configuration
+     * @param mapping the mapping of pictogram elements to graph elements
+     * @param connection a pictogram connection
      */
-    private void createEdge(final LayoutMapping<PictogramElement> mapping,
+    protected void createEdge(final LayoutMapping<PictogramElement> mapping,
             final Connection connection) {
         KEdge edge = KimlUtil.createInitializedEdge();
         BiMap<KGraphElement, PictogramElement> graphMap = mapping.getGraphMap();
@@ -598,12 +599,13 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     /**
      * Returns an end point for an anchor.
      * 
-     * @param node
-     *            the node that owns the anchor
-     * @param port
-     *            the port that represents the anchor
+     * @param node the node that owns the anchor
+     * @param port the port that represents the anchor
+     * @param referenceNode the parent node to which edge points are relative
+     * @return the position of the anchor, relative to the reference node
      */
-    private KVector calculateAnchorEnds(final KNode node, final KPort port, final KNode referenceNode) {
+    protected KVector calculateAnchorEnds(final KNode node, final KPort port,
+            final KNode referenceNode) {
         KVector pos = new KVector();
         if (port != null) {
             // the anchor end is represented by a port (box-relative anchor or fix-point anchor)
