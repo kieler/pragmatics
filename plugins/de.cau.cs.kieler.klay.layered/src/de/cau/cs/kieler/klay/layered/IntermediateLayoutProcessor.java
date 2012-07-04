@@ -76,6 +76,8 @@ public enum IntermediateLayoutProcessor {
     
     /** Splits big nodes into multiple layers to distribute them better and reduce whitespace. */
     BIG_NODES_PROCESSOR,
+    /** Adds dummy nodes in edges where center labels are present. */
+    LABEL_DUMMY_INSERTER,
     
     // Before Phase 3
     
@@ -97,6 +99,9 @@ public enum IntermediateLayoutProcessor {
     PORT_LIST_SORTER,
     /** Inserts dummy nodes to take care of northern and southern ports. */
     NORTH_SOUTH_PORT_PREPROCESSOR,
+    /** Tries to switch the label dummy nodes which the middle most dummy node
+     *  of a long edge. */
+    LABEL_DUMMY_SWITCHER,
    
     
     // Before Phase 4
@@ -143,7 +148,9 @@ public enum IntermediateLayoutProcessor {
     /** Transposes the graph to perform a top-bottom drawing. */
     DOWN_DIR_POSTPROCESSOR,
     /** Mirrors and transposes the graph to perform a bottom-up drawing. */
-    UP_DIR_POSTPROCESSOR;
+    UP_DIR_POSTPROCESSOR,
+    /** Removes dummy nodes which were introduced for center labels. */
+    LABEL_DUMMY_REMOVER;
     
     
     /**
@@ -259,6 +266,15 @@ public enum IntermediateLayoutProcessor {
         case UP_DIR_POSTPROCESSOR:
         case UP_DIR_PREPROCESSOR:
             return new GraphTransformer(GraphTransformer.Mode.MIRROR_AND_TRANSPOSE);
+            
+        case LABEL_DUMMY_INSERTER:
+            return new LabelDummyInserter();
+            
+        case LABEL_DUMMY_REMOVER:
+            return new LabelDummyRemover();
+            
+        case LABEL_DUMMY_SWITCHER:
+            return new LabelDummySwitcher();
         
         default:
             return null;

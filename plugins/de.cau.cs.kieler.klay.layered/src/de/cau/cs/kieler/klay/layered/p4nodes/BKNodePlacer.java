@@ -38,6 +38,61 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * 
+ * This algorithm is an implementation for solving the node placement problem
+ * which is posed in phase 4 of the KLay Layered algorithm.
+ * 
+ * It is based on the node placement algorithm by Ulrik Brandes and Boris Koepf
+ * (http://www.informatik.uni-konstanz.de/algo/publications/bk-fshca-01.pdf) and
+ * was extended to be able to cope with ports, node sizes, node margins and was made
+ * more stable in general.
+ * 
+ * The algorithm is structured in five steps, which include two new steps which were
+ * not included in the original algorithm by Brandes and Koepf. The middle three steps
+ * are executed four times, traversing the graph in all combinations of TOP or BOTTOM
+ * and LEFT or RIGHT.
+ * 
+ * Although we have, in KLay Layered, the general idea of layouting from left to right
+ * and transforming in the desired direction later, we decided to keep the terminology
+ * from the original algorithm which thinks of a layout from top to bottom. When placing
+ * coordinates, we have to differ from the original algorithm, since node placement in
+ * KLay Layered has to assign y-coordinates and not x-coordinates.
+ * 
+ * The algorithm:
+ * 
+ * The first step checks the graphs' edges and marks short edges which cross long edges
+ * (called type 1 conflict). The algorithm indents to draw long edges as straight
+ * as possible, thus trying to solve the marked conflicts in a way which keep the
+ * long edge straight.
+ * 
+ * ============ TOP, BOTTOM x LEFT, RIGHT ============
+ * 
+ * The second step traverses the graph in the given directions and tries to group
+ * connected nodes into (horizontal) blocks. These blocks, respectively the contained
+ * nodes, will be drawn straight when the algorithm is finished. Here, type 1 conflicts
+ * are resolved, so that the dummy nodes of a long edge share the same block if possible,
+ * such that the long edge is drawn straightly.
+ * 
+ * The third step contains the addition of node size and port positions to the original
+ * algorithm. Each block is investigated from TOP to BOTTOM. Nodes are moved inside the
+ * blocks, such that the port of the edge going to the next node is on the same level as
+ * that next node. Furthermore, the size of the block is calculated, regarding node sizes
+ * and new space needed due to node movement.
+ * 
+ * In the fourth step, actual y-coordinates are determined. The blocks are placed, start
+ * block and direction determined by the directions of the current iteration. 
+ * It is tried to place the blocks as compact as possible by grouping blocks.
+ *  
+ * ======================= END =======================
+ * 
+ * The action of the last step depends on a layout option. If "Less Edge Bends" is set to
+ * true, one of the four calculated layouts is selected and applied, choosing the layout 
+ * which uses the least space. If it is false, a balanced layout is chosen by calculating
+ * a median layout of all four layouts.
+ * 
+ * In rare cases, it is possible that one or more layouts is not correct, e.g. having nodes
+ * which overlap each other or violating the layer ordering constraint. If the algorithm
+ * detects that, the respective layout is discarded and another one is chosen.
+ * 
  * @author jjc
  */
 public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
@@ -246,6 +301,19 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         }
     }
 
+    /**
+     * 
+     * The graph is traversed in the given directions and nodes a grouped into blocks.
+     * 
+     * These blocks, respectively the contained nodes, will be drawn straight when the
+     * algorithm is finished.
+     * 
+     * Type 1 conflicts are resolved, so that the dummy nodes of a long edge share the
+     * same block if possible, such that the long edge is drawn straightly.
+     * 
+     * @param layeredGraph
+     * @param bal One of the four layouts which shall be used in this step 
+     */
     private void verticalAlignment(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
         // Initialize root and align maps
         for (Layer layer : layeredGraph.getLayers()) {
@@ -330,18 +398,32 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
     /**
      * 
+     * This phase moves the nodes inside a block, ensuring that all edges inside a block
+     * can be drawn straightly.
+     * 
+     * This phase is not included in the original algorithm and adds port and node size
+     * handling.
+     * 
      * @param layeredGraph
-     * @param bal
+     * @param bal One of the four layouts which shall be used in this step
      */
     private void insideBlockShift(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
         HashMap<LNode, List<LNode>> blocks = getBlocks(bal);
 
         for (LNode root : blocks.keySet()) {
+            // Determine the basic size of the block
             double maximumNodeSize = root.getMargin().top + root.getSize().y + root.getMargin().bottom;
+            
+            // lowerBound determines the top (!) border of the block, since the coordinates
+            // of the canvas start with (0,0) and grow down. upperBound then determines
+            // the bottom border of the block.
             double lowerBound = 0.0;
             double upperBound = root.getMargin().top + root.getSize().y + root.getMargin().bottom;
             double postShift = 0.0;
 
+            // Now, the sizes and shifts between the root node and a possible second node
+            // of the block is determined, for cases where there are only one or two nodes
+            // inside a block
             LNode current = root;
             LNode next = bal.getAlign().get(root);
             
@@ -365,6 +447,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                 upperBound = rootUpperBound;
             }
 
+            // Now, the rest of the block is investigated and borders are updated if
+            // they exceed the old borders due to shifting or larger node sizes
             while (next != root) {
                 LEdge edge = getEdge(current, next);
 
@@ -399,15 +483,20 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                 next = bal.getAlign().get(next);
             }
 
+            // Use the values calculated above only if there are more nodes than the
+            // root node in the block
             if (bal.getAlign().get(root) != root) {
                 maximumNodeSize = upperBound + lowerBound;
             }
+            // If the block's top border is higher than the root node, use this, else
+            // use the root node
             if (lowerBound > rootPortPos) {
                 postShift = lowerBound;
             }
-            
-            bal.getInnerShift().put(root, bal.getInnerShift().get(root) + postShift);
 
+            // Apply a general shift to all nodes of the block, which results from
+            // nodes which would be placed higher than the top border of the block
+            bal.getInnerShift().put(root, bal.getInnerShift().get(root) + postShift);
             current = root;
             next = bal.getAlign().get(root);
             while (next != root) {
@@ -415,11 +504,25 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                 current = next;
                 next = bal.getAlign().get(next);
             }
+            
+            // Note the block size of the investigated block for later use
             bal.getBlockSize().put(root, maximumNodeSize);
         }
     }
 
+    /**
+     * 
+     * In this step, actual coordinates are calculated for blocks and its nodes.
+     * 
+     * First, all blocks are placed, trying to avoid any crossing of the blocks.
+     * Then, the blocks are shifted towards each other if there is any space for 
+     * compaction.
+     * 
+     * @param layeredGraph
+     * @param bal One of the four layouts which shall be used in this step
+     */
     private void horizontalCompaction(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
+        // Initialize fields with basic values, partially depending on the direction
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 bal.getSink().put(node, node);
@@ -442,13 +545,15 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         }
 
         for (Layer layer : layers) {
-
+            // As with layers, we need a reversed iterator for blocks for different directions
             List<LNode> nodes = layer.getNodes();
             if (bal.getVDir() == VDirection.RIGHT) {
                 nodes = Arrays.asList(new LNode[layer.getNodes().size()]);
                 Collections.copy(nodes, layer.getNodes());
                 Collections.reverse(nodes);
             }
+            
+            // Do a initial placement for all blocks
             for (LNode v : nodes) {
                 if (bal.getRoot().get(v).equals(v)) {
                     placeBlock(v, bal);
@@ -456,7 +561,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             }
         }
 
-        // It's important to traverse top-bottom or bottom-top here too
+        // Try to compact blocks by shifting them towards each other if there is space
+        // between them. It's important to traverse top-bottom or bottom-top here too
         for (Layer layer : layers) {
 
             for (LNode v : layer.getNodes()) {
@@ -479,15 +585,33 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
     }
 
+    /**
+     * 
+     * Blocks are placed based on their root node.
+     * 
+     * This is done by watching all layers which are crossed by this block and
+     * moving the whole block up/downwards if there are blocks which already occupy
+     * the chosen position.
+     * 
+     * @param v The root node of the block
+     * @param bal One of the four layouts which shall be used in this step
+     */
     private void placeBlock(final LNode v, final BKAlignedLayout bal) {
+        // Only place block if it does not have a placement already
         if (!bal.getY().containsKey(v)) {
             bal.getY().put(v, 0.0);
             LNode w = v;
+            
+            // Iterate through block and determine, where the block can be placed
             do {
+                // If the node is the top or bottom node of it's layer, it can be, depending
+                // on the current direction, placed safely since it is the first to be placed
                 if ((bal.getVDir() == VDirection.LEFT && w.getIndex() > 0)
                         || (bal.getVDir() == VDirection.RIGHT && w.getIndex() < (w.getLayer()
                                 .getNodes().size() - 1))) {
 
+                    // Get the node which is top/bottom to the node to be placed to check,
+                    // whether the current node conflicts with it
                     LNode u = null;
                     if (bal.getVDir() == VDirection.RIGHT) {
                         u = bal.getRoot().get(w.getLayer().getNodes().get(w.getIndex() + 1));
@@ -495,10 +619,18 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                         u = bal.getRoot().get(w.getLayer().getNodes().get(w.getIndex() - 1));
                     }
 
+                    // Check whether the comparison node is already placed, place it if not
                     placeBlock(u, bal);
+                    
+                    // Note that the two nodes and their blocks form a unit called class in the
+                    // original algorithm. These are combinations of blocks which play a role
+                    // in the final compaction
                     if (bal.getSink().get(v).equals(v)) {
                         bal.getSink().put(v, bal.getSink().get(u));
                     }
+                    
+                    // If two nodes aren't member of the same class, calculate how the two classes
+                    // might be compacted later on
                     if (!bal.getSink().get(v).equals(bal.getSink().get(u))) {
                         double spacing = normalSpacing;
                         if (bal.getVDir() == VDirection.RIGHT) {
@@ -519,6 +651,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                                             - spacing));
                         }
                     } else {
+                        // If they are on the class, calculate a y position for the current block,
+                        // using the information from the comparison node
                         double spacing = normalSpacing;
                         if (bal.getBlockSize().get(v) == 0.0 || bal.getBlockSize().get(u) == 0.0) {
                             spacing = smallSpacing;
@@ -537,11 +671,25 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                         }
                     }
                 }
+                // Get the next node in the block
                 w = bal.getAlign().get(w);
             } while (w != v);
         }
     }
 
+    /**
+     * 
+     * A balanced layout is calculated by determining the median layout of the
+     * four layouts.
+     * 
+     * First, the layout with the smallest size is used as a starting point.
+     * Then, the median position of each of the four layouts is used for determining
+     * the final position.
+     * 
+     * @param layouts The four calculated layouts
+     * @param nodeCount The number of nodes in the graph
+     * @return A balanced layout, the median of the four layouts
+     */
     private BKAlignedLayout createBalancedLayout(final List<BKAlignedLayout> layouts,
             final int nodeCount) {
         final int noOfLayouts = layouts.size();
@@ -551,11 +699,11 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         double[] max = new double[noOfLayouts];
         int minWidthLayout = 0;
 
+        // Find the smallest layout
         for (int i = 0; i < noOfLayouts; i++) {
             min[i] = Integer.MAX_VALUE;
             max[i] = Integer.MIN_VALUE;
         }
-
         for (int i = 0; i < noOfLayouts; i++) {
             BKAlignedLayout current = layouts.get(i);
             for (double y : current.getY().values()) {
@@ -572,6 +720,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             }
         }
 
+        // Find the shift between the smallest and the four layouts
         double[] shift = new double[noOfLayouts];
         for (int i = 0; i < noOfLayouts; i++) {
             if (layouts.get(i).vdir == VDirection.LEFT) {
@@ -581,6 +730,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             }
         }
 
+        // Calculated y-coordinates for a balanced placement
         double[] calculatedYs = new double[noOfLayouts];
         for (LNode node : layouts.get(0).getY().keySet()) {
             for (int i = 0; i < noOfLayouts; i++) {
@@ -595,15 +745,41 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         return balanced;
     }
 
+    /**
+     * 
+     * Auxiliary method for getting the size of a layer.
+     * 
+     * @param layeredGraph
+     * @param layer
+     * @return The size of the given layer
+     */
     private int layerSize(final LayeredGraph layeredGraph, final int layer) {
         return layeredGraph.getLayers().get(layer).getNodes().size();
     }
 
+    /**
+     * 
+     * Auxiliary method for getting the node on a certain position of a layer.
+     * 
+     * @param layeredGraph
+     * @param layer
+     * @param position
+     * @return The node which is on the given position of the given layer
+     */
     private LNode nodeByPosition(final LayeredGraph layeredGraph, final int layer,
             final int position) {
         return layeredGraph.getLayers().get(layer).getNodes().get(position);
     }
 
+    /**
+     * 
+     * Checks whether the given node is part of a long edge between the two given layers.
+     * 
+     * @param node
+     * @param layer1
+     * @param layer2
+     * @return True if the node is part of a long edge between the layers, false else
+     */
     private boolean incidentToInnerSegment(final LNode node, final int layer1, final int layer2) {
         if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
             for (LEdge edge : node.getIncomingEdges()) {
@@ -623,7 +799,6 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * An upper neighbor is a node in a previous layer which has an edge pointing to the given node.
      * 
      * @param node
-     *            The node of which upper neighbors shall be found
      * @return A list containing all upper neighbors
      */
     private List<LNode> allUpperNeighbors(final LNode node) {
@@ -637,6 +812,14 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         return result;
     }
 
+    /**
+     * Give all lower neighbors of a given node.
+     * 
+     * A lower neighbor is a node in a following layer which has an edge coming from the given node.
+     * 
+     * @param node
+     * @return A list containing all lower neighbors
+     */
     private List<LNode> allLowerNeighbors(final LNode node) {
         List<LNode> result = new LinkedList<LNode>();
         for (LEdge edge : node.getOutgoingEdges()) {
@@ -648,6 +831,13 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         return result;
     }
 
+    /**
+     * An auxiliary method to find an edge between two given nodes.
+     * 
+     * @param source
+     * @param target
+     * @return The edge between source and target, or null if there is none
+     */
     private LEdge getEdge(final LNode source, final LNode target) {
         for (LEdge edge : source.getConnectedEdges()) {
             if (edge.getTarget().getNode().equals(target)
@@ -658,6 +848,12 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         return null;
     }
 
+    /**
+     * An auxiliary method for finding all blocks of a given layout.
+     * 
+     * @param bal The layout of which the blocks shall be found
+     * @return The blocks of the given layout
+     */
     private HashMap<LNode, List<LNode>> getBlocks(final BKAlignedLayout bal) {
         HashMap<LNode, List<LNode>> blocks = new HashMap<LNode, List<LNode>>();
         for (LNode key : bal.getRoot().keySet()) {
@@ -669,6 +865,14 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         return blocks;
     }
 
+    /**
+     * It is checked whether all nodes are placed in the correct order in their layers
+     * and do not overlap each other.
+     * 
+     * @param layeredGraph
+     * @param bal The layout which shall be checked
+     * @return True if the order is preserved and no nodes overlap, false else
+     */
     private boolean checkOrderConstraint(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
         if (bal.getY().isEmpty()) {
             return false;
@@ -704,7 +908,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     }
 
     /**
-     * Neighbor comparator class.
+     * Comparator which determines the order of nodes in a layer.
      */
     private static class NeighborComparator implements Comparator<LNode> {
 
@@ -724,30 +928,41 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     }
 
     /**
-     * Aligned layout class.
+     * Class which holds all information about a layout in one of the four direction
+     * combinations.
      */
     private static class BKAlignedLayout {
 
+        /** The root node of each node in a block. */
         private HashMap<LNode, LNode> root;
 
+        /** The size of a block. */
         private HashMap<LNode, Double> blockSize;
 
+        /** The next node in a block, or the first if the current node is the last,
+         * forming a ring. */
         private HashMap<LNode, LNode> align;
 
+        /** The value by which a node must be shifted to stay straight inside a block. */
         private HashMap<LNode, Double> innerShift;
 
+        /** The root node of a class, mapped from block root nodes to class root nodes. */
         private HashMap<LNode, LNode> sink;
 
+        /** The value by which a block must be shifted for a more compact placement. */
         private HashMap<LNode, Double> shift;
 
+        /** The y-coordinate of every node, forming the final layout. */
         private HashMap<LNode, Double> y;
 
+        /** The vertical direction of the current layout. */
         private VDirection vdir;
 
+        /** The horizontal direction of the current layout. */
         private HDirection hdir;
 
         /**
-         * 
+         * Basic constructor for a layout.
          */
         public BKAlignedLayout(final int nodeCount, final VDirection vdir, final HDirection hdir) {
             root = Maps.newHashMapWithExpectedSize(nodeCount);
@@ -824,6 +1039,11 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             return hdir;
         }
 
+        /**
+         * Calculate the layout size for comparison.
+         * 
+         * @return The size of the layout
+         */
         public double layoutSize() {
             double min = Double.POSITIVE_INFINITY;
             double max = Double.NEGATIVE_INFINITY;

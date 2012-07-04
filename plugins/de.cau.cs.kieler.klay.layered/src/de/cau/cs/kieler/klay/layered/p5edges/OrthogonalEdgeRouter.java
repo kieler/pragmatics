@@ -51,6 +51,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  * @author msp
  * @author cds
+ * @author jjc
  */
 public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
     
@@ -62,7 +63,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      *   - None.
      * 
      * Before phase 2:
-     *   - None.
+     *   - For center edge labels:
+     *      - LABEL_DUMMY_INSERTER
      * 
      * Before phase 3:
      *   - For non-free ports:
@@ -74,6 +76,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      *   
      *   - For hierarchical ports:
      *     - HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR
+     *   
+     *   - For center edge labels:
+     *      - LABEL_DUMMY_SWITCHER
      * 
      * Before phase 4:
      *   - For hyperedges:
@@ -89,6 +94,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      *   
      *   - For hierarchical ports:
      *     - HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER
+     *     
+     *   - For center edge labels:
+     *      - LABEL_DUMMY_REMOVER
      */
     
     /** additional processor dependencies for graphs with hyperedges. */
@@ -153,6 +161,26 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         new IntermediateProcessingStrategy(IntermediateProcessingStrategy.AFTER_PHASE_5,
                 IntermediateLayoutProcessor.HYPERNODE_PROCESSOR);
     
+    /** additional processor dependencies for graphs with center edge labels. */
+    private static final IntermediateProcessingStrategy CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(
+                // Before Phase 1
+                null,
+                
+                // Before Phase 2
+                EnumSet.of(IntermediateLayoutProcessor.LABEL_DUMMY_INSERTER),
+                
+                // Before Phase 3
+                EnumSet.of(IntermediateLayoutProcessor.LABEL_DUMMY_SWITCHER),
+                
+                // Before Phase 4
+                null,
+                
+                // Before Phase 5
+                null,
+                
+                // After Phase 5
+                EnumSet.of(IntermediateLayoutProcessor.LABEL_DUMMY_REMOVER));
     /**
      * {@inheritDoc}
      */
@@ -186,6 +214,10 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         
         if (graphProperties.contains(GraphProperties.HYPERNODES)) {
             strategy.addAll(HYPERNODE_PROCESSING_ADDITIONS);
+        }
+        
+        if (graphProperties.contains(GraphProperties.CENTER_LABELS)) {
+            strategy.addAll(CENTER_EDGE_LABEL_PROCESSING_ADDITIONS);
         }
         
         return strategy;

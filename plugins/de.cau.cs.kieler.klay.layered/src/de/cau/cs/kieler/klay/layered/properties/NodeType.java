@@ -19,6 +19,7 @@ package de.cau.cs.kieler.klay.layered.properties;
  * @author msp
  * @author cds
  * @author ima
+ * @author jjc
  */
 public enum NodeType {
     /** a normal node is created from a node of the original graph. */
@@ -47,6 +48,8 @@ public enum NodeType {
      * a dummy node created to be part of a linear segment used to draw the sides of a compound
      * node.
      */
-    COMPOUND_SIDE;
+    COMPOUND_SIDE,
+    /** a dummy node to represent a mid-label on an edge. */
+    LABEL;
 
 }
