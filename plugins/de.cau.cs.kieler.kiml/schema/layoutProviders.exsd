@@ -317,10 +317,10 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="value" type="string" use="required">
+         <attribute name="value" type="string">
             <annotation>
                <documentation>
-                  The expected value of the referenced option. The containing option will only be visible if the referenced option is set to this value.
+                  The expected value of the referenced option. The containing option will only be visible if the referenced option is set to this value. If the expected value is left empty, the option is visible if any value is present.
                </documentation>
             </annotation>
          </attribute>

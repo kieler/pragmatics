@@ -18,14 +18,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
@@ -42,10 +39,17 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  */
 public class PGraphFactory {
 
+    /** Start position of the horizontal direction. */
     private float startX;
+
+    /** Start position of the vertical direction. */
     private float startY;
+
+    /** Spacing between the nodes. */
     private float spacing;
-    private PGraph graph;
+
+    /** The graph on which it is worked. */
+    private PGraph pGraph;
 
     /**
      * Create an empty graph instance. The resulting graph will not contain any edges or nodes.
@@ -61,26 +65,26 @@ public class PGraphFactory {
      * Create a full graph. In a full graph, every node is connected to every other node via an
      * edge.
      * 
-     * @param nodes
+     * @param nodesCount
      *            the number of nodes in the graph
      * @return a full graph with the given number of nodes
      */
-    public PGraph createFullGraph(final int nodes) {
-        PGraph pgraph = new PGraph();
-        PNode[] nodeArray = new PNode[nodes];
+    public PGraph createFullGraph(final int nodesCount) {
+        PGraph pGraph = new PGraph();
+        PNode[] nodeArray = new PNode[nodesCount];
 
         // Create nodes
-        for (int i = 0; i < nodes; i++) {
-            nodeArray[i] = pgraph.addNode();
+        for (int i = 0; i < nodesCount; i++) {
+            nodeArray[i] = pGraph.addNode();
         }
 
         // Create edges
-        for (int i = 0; i < nodes; i++) {
+        for (int i = 0; i < nodesCount; i++) {
             for (int j = 0; j < i; j++) {
-                pgraph.addEdge(nodeArray[i], nodeArray[j]);
+                pGraph.addEdge(nodeArray[i], nodeArray[j]);
             }
         }
-        return pgraph;
+        return pGraph;
     }
 
     /**
@@ -285,9 +289,8 @@ public class PGraphFactory {
      *            the graph for which layout is applied
      */
     public void applyLayout(final PGraph pgraph) {
-        this.graph = pgraph;
+        this.pGraph = pgraph;
         GridRepresentation grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
-        // the pgraph must not contain any planarity dummynodes.
 
         float borderSpacing = pgraph.getProperty(Properties.BORDER_SPACING);
 
@@ -297,6 +300,7 @@ public class PGraphFactory {
         startY = grid.getHeight() * spacing + borderSpacing;
 
         // TODO introduce minimum spacing or use spacing above as minimum.
+        //
         float minSpacing = 40;
 
         // first determine original nodes coordinates.
@@ -438,15 +442,11 @@ public class PGraphFactory {
 
         }
 
-        // construct bendpoints for each node for which there is no original node.
-        for (int x = 0; x < grid.getWidth(); x++) {
-            for (int y = 0; y < grid.getHeight(); y++) {
-                if (grid.get(x, y) != null) {
-                    if (!grid.get(x, y).hasProperties()
-                            || (grid.get(x, y).getProperty(Properties.BENDPOINT) != null)) {
-                        constructBendPointEdge(x, y, grid);
-                    }
-                }
+        // map bendpoints.
+        for (PEdge edge : pGraph.getEdges()) {
+            for (KVector vec : edge.getBendPoints()) {
+                vec.x = this.startX + vec.x * this.spacing;
+                vec.y = this.startY - vec.y * this.spacing;
             }
         }
 
@@ -487,103 +487,5 @@ public class PGraphFactory {
             }
         }
 
-    }
-
-    /**
-     * Removes all bend point nodes from grid and adds them as bendpoints to the original edge.
-     * 
-     * @param x
-     *            , index of the grid.
-     * @param y
-     *            , index of the grid.
-     * @param grid
-     *            , the grid.
-     */
-    private void constructBendPointEdge(final int x, final int y, final GridRepresentation grid) {
-
-        // it is enough to check if it has a kedge as origin, and if not, it must be a
-        // bendpoint, because other dummynodes are removed in the last processors.
-        PNode startNode = grid.get(x, y);
-        Iterator<PEdge> startNodeIterator = startNode.getEdges().iterator();
-
-        // search orginal nodes and edge.
-        Pair<PNode, PEdge> pair1 = searchOriginals(startNode, startNodeIterator.next());
-        Pair<PNode, PEdge> pair2 = searchOriginals(startNode, startNodeIterator.next());
-
-        PNode originalNode1 = pair1.getFirst();
-        PNode originalNode2 = pair2.getFirst();
-        PEdge originalEdge = (pair1.getSecond() != null) ? pair1.getSecond() : pair2.getSecond();
-
-        PNode currentNode;
-        // original edge has to be adjacent to one of the original nodes.
-        if (originalEdge.getSource() == originalNode1 || originalEdge.getTarget() == originalNode1) {
-            currentNode = originalNode1;
-        } else {
-            currentNode = originalNode2;
-        }
-
-        PEdge currentEdge = originalEdge;
-
-        List<int[]> removableNodes = new LinkedList<int[]>();
-
-        // add bendpoints
-        while (true) {
-            currentNode = currentEdge.getOppositeNode(currentNode);
-            if (currentNode == originalNode1 || currentNode == originalNode2) {
-                // the path is finished.
-                break;
-            }
-
-            int[] coordinates = grid.search(currentNode);
-            originalEdge.getBendPoints().add(this.startX + coordinates[0] * this.spacing,
-                    this.startY - coordinates[1] * spacing);
-
-            // filter next edge.
-            Iterator<PEdge> iterator = currentNode.adjacentEdges().iterator();
-            PEdge possibleEdge = iterator.next();
-            currentEdge = (possibleEdge == currentEdge) ? iterator.next() : possibleEdge;
-            removableNodes.add(coordinates);
-        }
-
-        for (int[] point : removableNodes) {
-            this.graph.removeNode(grid.get(point[0], point[1]));
-            grid.set(point[0], point[1], null);
-        }
-
-        // change the direction of the original edge.
-        if (originalEdge.getSource() == originalNode1 || originalEdge.getTarget() == originalNode2) {
-            graph.changeEdge(originalEdge, originalNode1, originalNode2);
-        } else if (originalEdge.getTarget() == originalNode1
-                || originalEdge.getSource() == originalNode2) {
-            graph.changeEdge(originalEdge, originalNode2, originalNode1);
-        }
-    }
-
-    /**
-     * Searches for the original node and if one original edge exists on the path, returns it, too.
-     * 
-     * @param startNode
-     * @param edge
-     * @return a {@link Pair} of original node and the properly found originalEdge.
-     */
-    private Pair<PNode, PEdge> searchOriginals(final PNode startNode, final PEdge edge) {
-        PEdge currentEdge = edge;
-        PNode currentNode = startNode;
-        PEdge resultEdge = null;
-        while (true) {
-            currentNode = currentEdge.getOppositeNode(currentNode);
-            if (currentEdge.hasProperties() && currentEdge.getProperty(Properties.ORIGIN) != null) {
-                resultEdge = currentEdge;
-            }
-            if (currentNode.hasProperties() && currentNode.getProperty(Properties.ORIGIN) != null) {
-                return new Pair<PNode, PEdge>(currentNode, resultEdge);
-            }
-
-            // filter next edge.
-            Iterator<PEdge> iterator = currentNode.adjacentEdges().iterator();
-            PEdge possibleEdge = iterator.next();
-            currentEdge = (possibleEdge == currentEdge) ? iterator.next() : possibleEdge;
-
-        }
     }
 }

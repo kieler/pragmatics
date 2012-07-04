@@ -22,7 +22,10 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
@@ -227,7 +230,7 @@ public class PGraph extends PNode {
         PNode target = edge.getTarget();
 
         // Remember all edges in target adjacency list after the edge
-        LinkedList<PEdge> move = new LinkedList<PEdge>();
+        LinkedList<PEdge> move = Lists.newLinkedList();
         boolean found = false;
         for (PEdge e : target.adjacentEdges()) {
             if (found) {
@@ -238,7 +241,7 @@ public class PGraph extends PNode {
         }
 
         // Create node, move edge and create new edge
-        PNode node = (PNode) this.addNode(type);
+        PNode node = (PNode) addNode(type);
         edge.move(target, node);
         PEdge newedge = (PEdge) this.addEdge(node, target, edge.isDirected());
 
@@ -292,6 +295,11 @@ public class PGraph extends PNode {
             this.edges.remove(edge);
             es.remove();
         }
+        OrthogonalRepresentation ortho = getProperty(Properties.ORTHO_REPRESENTATION);
+        if (ortho != null) {
+            ortho.setAngles(node, null);
+        }
+
         this.changedFaces = true;
     }
 
@@ -370,6 +378,68 @@ public class PGraph extends PNode {
      * Changes the source or/and target of a edge.
      * 
      * @param edge
+     *            this edge is kept and changed with source and target node.
+     * @param source
+     *            new source node, set {@code null} if no new source is wanted.
+     * @param target
+     *            new target node, set {@code null} if no new target is wanted.
+     */
+    public void bridgeOverEdge(final PEdge edge, final PNode source, final PNode target) {
+
+        PNode toBridgeNode = edge.getOppositeNode(source);
+        PEdge removableEdge = toBridgeNode.getEdge(target);
+        PNode currentNode = target;
+
+        if (removableEdge == edge) {
+            removableEdge = toBridgeNode.getEdge(source);
+            currentNode = source;
+        }
+
+        LinkedList<PEdge> nodeEdges = Lists.newLinkedList();
+        nodeEdges.addAll(currentNode.getEdges());
+
+        // Get the index of removable edge and build up the edges before
+        // and after that edge to ensure the correct edge embedding of the node.
+        int removableEdgeIndex = -1;
+
+        LinkedList<PEdge> targetBeforeEdge = Lists.newLinkedList();
+        for (int i = 0; i < nodeEdges.size(); i++) {
+            if (nodeEdges.get(i) == removableEdge) {
+                removableEdgeIndex = i;
+                break;
+            } else {
+                targetBeforeEdge.add(nodeEdges.get(i));
+            }
+        }
+
+        LinkedList<PEdge> targetAfterEdge = Lists.newLinkedList();
+        for (int i = removableEdgeIndex + 1; i < nodeEdges.size(); i++) {
+            targetAfterEdge.add(nodeEdges.get(i));
+        }
+
+        toBridgeNode.unlinkEdge(edge);
+
+        if (edge.getSource() == source) {
+            edge.setTarget(currentNode);
+        } else {
+            edge.setSource(currentNode);
+        }
+
+        currentNode.unlinkAll();
+        currentNode.linkEdges(targetBeforeEdge);
+        currentNode.linkEdge(edge);
+        currentNode.linkEdges(targetAfterEdge);
+
+        removeEdge(removableEdge);
+
+        this.changedFaces = true;
+
+    }
+
+    /**
+     * Changes the source or/and target of a edge.
+     * 
+     * @param edge
      *            , selected PEdge
      * @param source
      *            , new source node, set {@code null} if no new source is wanted.
@@ -377,14 +447,14 @@ public class PGraph extends PNode {
      *            , new target node, set {@code null} if no new target is wanted.
      */
     public void changeEdge(final PEdge edge, final PNode source, final PNode target) {
-        if (source != null) {
+        // TODO support null as input and fix embedding,
+        // used at bendpoints maybe you can merge this method with bridgeOverEdge?!
+        if (source != null && target != null) {
             edge.getSource().unlinkEdge(edge);
-            edge.setSource(source);
-            source.linkEdge(edge);
-        }
-        if (target != null) {
             edge.getTarget().unlinkEdge(edge);
+            edge.setSource(source);
             edge.setTarget(target);
+            source.linkEdge(edge);
             target.linkEdge(edge);
         }
         this.edges.add(edge);

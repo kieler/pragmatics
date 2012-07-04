@@ -77,7 +77,7 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
     private final List<Pair<Integer, IGraphLayoutEngine>> layoutEngines
             = new LinkedList<Pair<Integer, IGraphLayoutEngine>>();
     /** set of registered diagram elements. */
-    private Set<String> registeredElements = new HashSet<String>();
+    private final Set<String> registeredElements = new HashSet<String>();
     
     /**
      * Returns the singleton instance of the layout info service.

@@ -45,7 +45,7 @@ public class LongEdge {
     /** the real target of this edge. */
     private LPort target;
     /** points being passed by this edge. (actually the positions of the dummy nodes) */
-    private LinkedList<KVector> points = new LinkedList<KVector>();
+    private final LinkedList<KVector> points = new LinkedList<KVector>();
 
     /**
      * default constructor. One also needs to call {@link #initialize()} to initialize all values

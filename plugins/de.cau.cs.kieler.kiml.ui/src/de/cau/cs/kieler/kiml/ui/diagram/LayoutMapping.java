@@ -39,9 +39,9 @@ public class LayoutMapping<T> extends MapPropertyHolder {
     private static final long serialVersionUID = 4066018168889912586L;
     
     /** the bidirectional mapping of layout graph elements to diagram parts. */
-    private BiMap<KGraphElement, T> graphElemMap = HashBiMap.create();
+    private final BiMap<KGraphElement, T> graphElemMap = HashBiMap.create();
     /** additional layout configurations for specification of layout options. */
-    private List<ILayoutConfig> layoutConfigs = Lists.newLinkedList();
+    private final List<ILayoutConfig> layoutConfigs = Lists.newLinkedList();
     /** the top-level parent node of the layout graph. */
     private KNode layoutGraph;
     /** the top-level diagram part. */

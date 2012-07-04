@@ -114,8 +114,8 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             // Think about other exceptions and try to work on them.
 
             // used to create the flownetwork
-            findExternalFace();
-
+            // findExternalFace();
+            this.externalFace = pgraph.getExternalFace(false);
             // helps to create the flow network
             defineFaceSideEdges();
             // Create networks, start with side 0 for horizontal and 1 for vertical.
@@ -388,9 +388,9 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             do {
 
                 if (previousNode == null) {
-                    // at the start of a face, previousNode is 0 and we have to determine the
+                    // at the start of a face, previousNode is null and we have to determine the
                     // clockwise order, otherwise the faceSide indices aren't fit.
-                    currentNode = findCWNextNode(currentEdge, currentFace);
+                    currentNode = findCWNextNode(startEdge, currentFace);
                 } else {
                     currentNode = (currentEdge.getTarget() == previousNode) ? currentEdge
                             .getSource() : currentEdge.getTarget();
@@ -427,7 +427,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                     if (!otherface && currentFace.isAdjacent(pair.getFirst())) {
                         currentEdge = pair.getFirst();
                         if (angles.get(previousIndex).getSecond() != OrthogonalAngle.STRAIGHT) {
-                            // TODO check modulo operator
                             sideIndex = (sideIndex + 1) % FACE_SIDES_NUMBER;
                         }
                         faceSides[sideIndex].add(currentEdge);
@@ -444,7 +443,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                         if (currentFace.isAdjacent(pair.getFirst())) {
                             currentEdge = pair.getFirst();
                             if (directionCounter != 2) {
-                                // TODO check modulo operator
                                 sideIndex = (sideIndex + 1) % FACE_SIDES_NUMBER;
                             }
                             faceSides[sideIndex].add(currentEdge);
@@ -497,46 +495,43 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     }
 
     /**
-     * Searches for the next clockwise node of the face by determine a node of the currentEdge. If a
-     * previousNode is known, it is easy to determine the next node. Then one can choose the other
+     * Searches for the next clockwise node of the face by determining a node of the currentEdge. If
+     * a previousNode is known, it is easy to determine the next node. Then one can choose the other
      * node of a edge. If the previous node is not known, it is a bit tricky.
      * 
      * @return
      * 
      */
-
-    /**
-     * 
-     */
     private PNode findCWNextNode(final PEdge startEdge, final PFace currentFace) {
-        // at the beginning, we use the target-node of the start-edge as resulting node.
-        PEdge currentEdge = startEdge;
 
         // Go in the target direction. Use target as starting point,
         // if the run doesn't work use instead target source point.
-        PNode currentNode = currentEdge.getTarget();
+
+        // at the beginning, we use the target-node of the start-edge as resulting node.
+        PNode currentNode = startEdge.getTarget();
 
         Pair<Integer, PEdge> anglePair = null;
 
-        int direction = -1;
-        // search until next corner is found.
-        PNode tempNode = currentNode;
+        PEdge currentEdge = startEdge;
 
+        int direction = 0;
+
+        // search until next corner is found.
         do {
-            anglePair = determineAngleDirection(this.orthogonal.getAngles(tempNode), currentFace,
-                    currentEdge);
+            anglePair = determineAngleDirection(this.orthogonal.getAngles(currentNode),
+                    currentFace, currentEdge);
             direction = anglePair.getFirst();
             currentEdge = anglePair.getSecond();
 
             if (direction == OrthogonalAngle.RIGHT.ordinal()) {
-                // if next edge is right of the edge than use target-edge
-                return startEdge.getTarget();
+                // if next edge is right of the edge use the other startEdge node.
+                return startEdge.getSource();
             } else if (direction == OrthogonalAngle.LEFT.ordinal()) {
                 // otherwise use source-edge
-                return startEdge.getSource();
+                return startEdge.getTarget();
             }
-            tempNode = currentEdge.getSource() == tempNode ? currentEdge.getTarget() : currentEdge
-                    .getSource();
+            currentNode = currentEdge.getSource() == currentNode ? currentEdge.getTarget()
+                    : currentEdge.getSource();
         } while (direction == OrthogonalAngle.STRAIGHT.ordinal());
         return null;
     }
@@ -556,7 +551,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             }
         }
 
-        int directionCounter = -1;
+        int directionCounter = 0;
         // if a edge of an other face has detected, we have to sum over all angles until
         // a face-edge is reached.
         boolean containsForeignEdge = false;
@@ -575,7 +570,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             } else {
                 containsForeignEdge = true;
                 // look at the direction of the previous edge to determine the direction
-                directionCounter += angles.get(previousIndex).getSecond().ordinal();
+                directionCounter += angles.get(previousIndex).getSecond().ordinal() + 1;
 
                 if (currentFace.isAdjacent(pair.getFirst())) {
                     // hasFound
@@ -585,7 +580,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
         } while (true);
 
         Pair<Integer, PEdge> result = new Pair<Integer, PEdge>();
-        result.setFirst(directionCounter);
+        result.setFirst(containsForeignEdge ? directionCounter - 1 : directionCounter);
         result.setSecond(pair.getFirst());
         return result;
     }

@@ -48,10 +48,10 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 public class LayoutOptionManager {
 
     /** internal cache of semantic layout configurations. */
-    private Map<EClass, List<ILayoutConfig>> semanticConfigMap = Maps.newHashMap();
+    private final Map<EClass, List<ILayoutConfig>> semanticConfigMap = Maps.newHashMap();
     
     /** the default layout configuration. */
-    private DefaultLayoutConfig defaultLayoutConfig = new DefaultLayoutConfig();
+    private final DefaultLayoutConfig defaultLayoutConfig = new DefaultLayoutConfig();
 
     /**
      * Configure the layout graph in the given layout mapping.

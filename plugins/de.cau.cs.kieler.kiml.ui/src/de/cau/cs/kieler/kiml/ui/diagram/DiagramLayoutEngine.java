@@ -171,12 +171,8 @@ public class DiagramLayoutEngine {
             // first phase: build the layout graph
             @Override
             protected void preUIexec() {
-                // check for visibility of the given workbench part
-                if (workbenchPart == null
-                        || workbenchPart.getSite().getPage().isPartVisible(workbenchPart)) {
-                    layoutMapping.set(layoutManager.buildLayoutGraph(workbenchPart,
-                            layoutAncestors ? null : diagramPart));
-                }
+                layoutMapping.set(layoutManager.buildLayoutGraph(workbenchPart,
+                        layoutAncestors ? null : diagramPart));
             }
 
             // second phase: execute layout algorithms
@@ -208,7 +204,10 @@ public class DiagramLayoutEngine {
             @Override
             protected void postUIexec() {
                 if (layoutMapping.get() != null) {
-                    int animationTime = calcAnimationTime(layoutMapping.get(), animate);
+                    // check for visibility of the given workbench part
+                    boolean withAnimation = animate && workbenchPart != null
+                            && workbenchPart.getSite().getPage().isPartVisible(workbenchPart);
+                    int animationTime = calcAnimationTime(layoutMapping.get(), withAnimation);
                     layoutManager.applyLayout(layoutMapping.get(), zoom, animationTime);
                 }
             }

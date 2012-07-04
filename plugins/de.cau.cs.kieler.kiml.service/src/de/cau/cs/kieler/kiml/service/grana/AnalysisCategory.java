@@ -35,7 +35,7 @@ public class AnalysisCategory implements ILayoutData {
     /** the categories description. */
     private String categoryDescription;
     /** the analyses in this category. */
-    private List<AnalysisData> analyses = new LinkedList<AnalysisData>();
+    private final List<AnalysisData> analyses = new LinkedList<AnalysisData>();
 
     /**
      * {@inheritDoc}

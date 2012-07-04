@@ -52,7 +52,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     // Store information about inserted dummy edges
-    private HashMap<LEdge, LEdge> dummyEdgeMap = new HashMap<LEdge, LEdge>();
+    private final HashMap<LEdge, LEdge> dummyEdgeMap = new HashMap<LEdge, LEdge>();
 
     /**
      * {@inheritDoc}

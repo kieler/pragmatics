@@ -43,7 +43,7 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
     /**
      * List of component groups holding the different components.
      */
-    private List<ComponentGroup> componentGroups = Lists.newLinkedList();
+    private final List<ComponentGroup> componentGroups = Lists.newLinkedList();
     
     
     ///////////////////////////////////////////////////////////////////////////////

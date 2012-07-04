@@ -36,12 +36,12 @@ public class NodeGroup implements Comparable<NodeGroup> {
     /**
      * List of nodes this vertex consists of.
      */
-    private List<LNode> nodes = new LinkedList<LNode>();
+    private final List<LNode> nodes = new LinkedList<LNode>();
 
     /**
      * List of outgoing constraints.
      */
-    private List<NodeGroup> outgoingConstraints = new LinkedList<NodeGroup>();
+    private final List<NodeGroup> outgoingConstraints = new LinkedList<NodeGroup>();
 
     /**
      * The number of incoming constraints.

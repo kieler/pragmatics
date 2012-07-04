@@ -26,9 +26,9 @@ public abstract class LShape extends LGraphElement {
     private static final long serialVersionUID = 5111245934175354687L;
     
     /** the current position of the element. */
-    private KVector pos = new KVector();
+    private final KVector pos = new KVector();
     /** the size of the element. */
-    private KVector size = new KVector();
+    private final KVector size = new KVector();
 
 
     /**

@@ -45,7 +45,7 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
     }
     
     /** the configured mode of the graph transformer. */
-    private Mode mode;
+    private final Mode mode;
     
     /**
      * Creates a graph transformer with the given mode.
