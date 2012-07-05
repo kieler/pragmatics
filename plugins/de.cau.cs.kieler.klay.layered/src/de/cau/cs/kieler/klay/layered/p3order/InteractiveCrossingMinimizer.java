@@ -126,8 +126,6 @@ public class InteractiveCrossingMinimizer extends AbstractAlgorithm implements I
         }
 
         // Initialize the position arrays and layered graph array
-        float[] portBarycenter = new float[portCount];
-        float[] portRanks = new float[portCount];
         LNode[][] lgraphArray = new LNode[layeredGraph.getLayers().size()][];
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
@@ -137,11 +135,9 @@ public class InteractiveCrossingMinimizer extends AbstractAlgorithm implements I
         }
         
         // Distribute the ports of all nodes with free port constraints
-        IPortDistributor portDistributor = new NodeRelativePortDistributor(portRanks, portBarycenter);
+        IPortDistributor portDistributor = new NodeRelativePortDistributor(new float[portCount]);
         portDistributor.distributePorts(lgraphArray);
         
-        portBarycenter = null;
-        portRanks = null;
         getMonitor().done();
     }
     

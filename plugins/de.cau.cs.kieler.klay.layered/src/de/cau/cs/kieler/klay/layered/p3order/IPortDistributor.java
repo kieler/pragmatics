@@ -21,24 +21,42 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * 
  * @author cds
  * @author ima
+ * @author msp
  */
 public interface IPortDistributor {
     
     /**
      * Determine positions for all ports in the given layer. Input and output ports are processed
-     * separately. Entries in the node array that are {@code null} are ignored.
+     * separately.
      * 
      * @param layer
-     *            a layer
+     *            a layer as node array
      */
     void calculatePortRanks(final LNode[] layer);
+    
+    /**
+     * Determine positions for all ports in the given layer. Input and output ports are processed
+     * separately. Entries that contain multiple nodes are ignored.
+     * 
+     * @param layer
+     *            a layer as node group array
+     */
+    void calculatePortRanks(final NodeGroup[] layer);
     
     /**
      * Distribute the ports of the layered graph depending on the port constraints.
      * 
      * @param layeredGraph
-     *            a layered graph
+     *            a layered graph as node array
      */
     void distributePorts(final LNode[][] layeredGraph);
+    
+    /**
+     * Distribute the ports of the layered graph depending on the port constraints.
+     * 
+     * @param layeredGraph
+     *            a layered graph as node group array
+     */
+    void distributePorts(final NodeGroup[][] layeredGraph);
     
 }

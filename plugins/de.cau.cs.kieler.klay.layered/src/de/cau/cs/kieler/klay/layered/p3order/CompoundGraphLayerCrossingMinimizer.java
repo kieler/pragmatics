@@ -13,11 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -47,8 +44,6 @@ public class CompoundGraphLayerCrossingMinimizer {
 
     /** the layered graph that is processed. */
     private LayeredGraph layeredGraph;
-    /** the node groups containing only single nodes. */
-    private Map<LNode, NodeGroup>[] singleNodeNodeGroups;
     /** the crossing minimization heuristic. */
     private ICrossingMinimizationHeuristic crossminHeuristic;
 
@@ -59,14 +54,10 @@ public class CompoundGraphLayerCrossingMinimizer {
      *            The layered graph that is to be laid out
      * @param heuristic
      *            the crossing minimization heuristic
-     * @param oneNodeNodeGroups
-     *            map of single node vertices for each layer
      */
     public CompoundGraphLayerCrossingMinimizer(final LayeredGraph layeredGraph,
-            final ICrossingMinimizationHeuristic heuristic,
-            final Map<LNode, NodeGroup>[] oneNodeNodeGroups) {
+            final ICrossingMinimizationHeuristic heuristic) {
         this.layeredGraph = layeredGraph;
-        this.singleNodeNodeGroups = oneNodeNodeGroups;
         this.crossminHeuristic = heuristic;
     }
 
@@ -89,7 +80,7 @@ public class CompoundGraphLayerCrossingMinimizer {
      *            whether the layer's node order should just be randomized
      * @return the total number of edges going either in or out of the given layer
      */
-    public int compoundMinimizeCrossings(final LNode[] layer, final int layerIndex,
+    public int compoundMinimizeCrossings(final NodeGroup[] layer, final int layerIndex,
             final boolean forward, final boolean preOrdered, final boolean randomize) {
         // Ignore empty free layers
         if (layer.length == 0) {
@@ -102,13 +93,8 @@ public class CompoundGraphLayerCrossingMinimizer {
         boolean isCompound = layeredGraph.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
         
         if (!isCompound) {
-            // Prepare list of single-node NodeGroups for the minimization heuristic
-            List<NodeGroup> layerNodeGroups = new ArrayList<NodeGroup>(
-                    singleNodeNodeGroups[layerIndex].values());
-
-            totalEdges = crossminHeuristic.minimizeCrossings(layerNodeGroups, layerIndex, preOrdered,
+            totalEdges = crossminHeuristic.minimizeCrossings(layer, layerIndex, preOrdered,
                     randomize, forward);
-            applyNodeGroupOrderingToNodeArray(layerNodeGroups, layer);
             
         } else {
             // sort the layer's nodes according to their related compound nodes. Find out the
@@ -126,24 +112,21 @@ public class CompoundGraphLayerCrossingMinimizer {
             LNode graphKey = new LNode();
             graphKey.setProperty(Properties.ORIGIN, layeredGraph);
             
-            for (LNode node : layer) {
+            for (NodeGroup nodeGroup : layer) {
                 // The correlation node/compoundNode is the same as in the SubGraphOrderingProcessor
-                LNode key = Util.getRelatedCompoundNode(node, layeredGraph);
+                LNode key = Util.getRelatedCompoundNode(nodeGroup.getNode(), layeredGraph);
                 // If node is contained by the layeredGraph directly, getRelatedCompoundNode has
                 // returned null. Use the graphkey in this case.
                 if (key == null) {
                     key = graphKey;
                 }
-                LinkedList<NodeGroup> relatedList;
-                if (compoundNodesMap.containsKey(key)) {
-                    relatedList = compoundNodesMap.get(key);
-                } else {
+                LinkedList<NodeGroup> relatedList = compoundNodesMap.get(key);
+                if (relatedList == null) {
                     relatedList = new LinkedList<NodeGroup>();
                     compoundNodesMap.put(key, relatedList);
                     compoundNodesMapKeys.add(key);
                 }
-                NodeGroup thisNodesGroup = singleNodeNodeGroups[layerIndex].get(node);
-                relatedList.add(thisNodesGroup);
+                relatedList.add(nodeGroup);
                 int keydepth = key.getProperty(Properties.DEPTH);
                 if (keydepth > maximalDepth) {
                     maximalDepth = keydepth;
@@ -173,8 +156,10 @@ public class CompoundGraphLayerCrossingMinimizer {
                 // Process the compound nodes of the actual depth level.
                 for (LNode keyNode : actualList) {
                     LinkedList<NodeGroup> compoundContent = compoundNodesMap.get(keyNode);
-                    // Calculate the nodeOrder for this compound node.
-                    totalEdges += crossminHeuristic.minimizeCrossings(compoundContent,
+                    // Calculate the node order for this compound node.
+                    NodeGroup[] sortedContent = compoundContent.toArray(
+                            new NodeGroup[compoundContent.size()]);
+                    totalEdges += crossminHeuristic.minimizeCrossings(sortedContent,
                             layerIndex, preOrdered, randomize, forward);
                     // Is outermost level reached? If not, represent the compound node as one entity
                     // for the higher levels. Update compoundNodesMap and compoundNodesPerDepthLevel.
@@ -182,14 +167,14 @@ public class CompoundGraphLayerCrossingMinimizer {
                         // Create a NodeGroup comprising all Nodes of this compound node, preserving
                         // the order
                         NodeGroup aggregatedNodeGroup;
-                        if (compoundContent.size() == 1) {
-                            aggregatedNodeGroup = compoundContent.getFirst();
+                        if (sortedContent.length == 1) {
+                            aggregatedNodeGroup = sortedContent[0];
                         } else {
-                            aggregatedNodeGroup = new NodeGroup(compoundContent.removeFirst(),
-                                    compoundContent.removeLast());
-                            while (!compoundContent.isEmpty()) {
+                            aggregatedNodeGroup = new NodeGroup(sortedContent[0],
+                                    sortedContent[sortedContent.length - 1]);
+                            for (int i = 1; i < sortedContent.length - 1; i++) {
                                 aggregatedNodeGroup = new NodeGroup(aggregatedNodeGroup,
-                                        compoundContent.removeFirst());
+                                        sortedContent[i]);
                             }
                         }
                         // Store the new nodeGroup representing the compound node in the
@@ -203,10 +188,8 @@ public class CompoundGraphLayerCrossingMinimizer {
                             assert (parentRepresentative instanceof LNode);
                             parentKey = (LNode) parentRepresentative;
                         }
-                        LinkedList<NodeGroup> parentContents;
-                        if (compoundNodesMap.containsKey(parentKey)) {
-                            parentContents = compoundNodesMap.get(parentKey);
-                        } else {
+                        LinkedList<NodeGroup> parentContents = compoundNodesMap.get(parentKey);
+                        if (parentContents == null) {
                             parentContents = new LinkedList<NodeGroup>();
                             compoundNodesMap.put(parentKey, parentContents);
                             compoundNodesMapKeys.add(parentKey);
@@ -221,32 +204,22 @@ public class CompoundGraphLayerCrossingMinimizer {
                             parentList.add(parentKey);
                         }
                     } else {
-                        applyNodeGroupOrderingToNodeArray(compoundContent, layer);
+                        
+                        // Apply the node order as determined by the sorted list of vertices
+                        int layerIx = 0;
+                        for (int i = 0; i < sortedContent.length; i++) {
+                            NodeGroup nodeGroup = sortedContent[i];
+                            for (int j = 0; j < nodeGroup.getNodes().length; j++) {
+                                layer[layerIx++] = nodeGroup.getNodes()[j]
+                                        .getProperty(Properties.NODE_GROUP);
+                            }
+                        }
                     }
                 }
             }
         }
 
         return totalEdges;
-    }
-
-    /**
-     * Apply the node order as determined by the sorted list of vertices to the free layer array.
-     * 
-     * @param nodeGroups
-     *            sorted array of vertices.
-     * @param freeLayer
-     *            array of nodes to apply the ordering to.
-     */
-    private void applyNodeGroupOrderingToNodeArray(final List<NodeGroup> nodeGroups,
-            final LNode[] freeLayer) {
-        int index = 0;
-
-        for (NodeGroup nodeGroup : nodeGroups) {
-            for (LNode node : nodeGroup.getNodes()) {
-                freeLayer[index++] = node;
-            }
-        }
     }
     
 }

@@ -13,12 +13,11 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.util.Pair;
@@ -36,35 +35,30 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author cds
  * @author ima
+ * @author msp
  */
 public class ForsterConstraintResolver implements IConstraintResolver {
 
     /** the layout units for handling dummy nodes for north / south ports. */
     private Multimap<LNode, LNode> layoutUnits;
-    /** the node groups containing only single nodes. */
-    private Map<LNode, NodeGroup>[] singleNodeNodeGroups;
     
     /**
      * Constructs a Forster constraint resolver.
      * 
      * @param layoutUnits
      *            a map associating layout units with their respective members
-     * @param oneNodeNodeGroups
-     *            map of single node vertices for each layer
      */
-    public ForsterConstraintResolver(final Multimap<LNode, LNode> layoutUnits,
-            final Map<LNode, NodeGroup>[] oneNodeNodeGroups) {
+    public ForsterConstraintResolver(final Multimap<LNode, LNode> layoutUnits) {
         this.layoutUnits = layoutUnits;
-        this.singleNodeNodeGroups = oneNodeNodeGroups;
     }
     
     /**
      * {@inheritDoc}
      */
-    public void processConstraints(final List<NodeGroup> nodeGroups, final int layerIndex) {
+    public void processConstraints(final NodeGroup[] nodeGroups, final int layerIndex) {
 
         // Build the constraints graph
-        buildConstraintsGraph(nodeGroups, singleNodeNodeGroups[layerIndex]);
+        buildConstraintsGraph(nodeGroups);
 
         // Find violated vertices
         Pair<NodeGroup, NodeGroup> violatedConstraint = null;
@@ -78,30 +72,26 @@ public class ForsterConstraintResolver implements IConstraintResolver {
      * 
      * @param nodeGroups
      *            the array of single-node vertices sorted by their barycenter values.
-     * @param layerNodeGroups
-     *            map mapping the nodes in the current layer to their vertices.
      */
-    private void buildConstraintsGraph(final List<NodeGroup> nodeGroups,
-            final Map<LNode, NodeGroup> layerNodeGroups) {
+    private void buildConstraintsGraph(final NodeGroup[] nodeGroups) {
 
         // Reset the constraint fields
         for (NodeGroup nodeGroup : nodeGroups) {
-            nodeGroup.getOutgoingConstraints().clear();
-            nodeGroup.setIncomingConstraintsCount(0);
+            nodeGroup.resetOutgoingConstraints();
+            nodeGroup.incomingConstraintsCount = 0;
         }
 
         // Iterate through the vertices, adding the necessary constraints
         LNode lastNonDummyNode = null;
         for (NodeGroup nodeGroup : nodeGroups) {
-            LNode vertexNode = nodeGroup.getNodes().get(0);
+            LNode vertexNode = nodeGroup.getNode();
 
             // Add the constraints given by the vertex's node
             LNode successor = vertexNode.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT);
             if (successor != null) {
-                NodeGroup successorNodeGroup = layerNodeGroups.get(successor);
+                NodeGroup successorNodeGroup = successor.getProperty(Properties.NODE_GROUP);
                 nodeGroup.getOutgoingConstraints().add(successorNodeGroup);
-                successorNodeGroup.setIncomingConstraintsCount(successorNodeGroup
-                        .getIncomingConstraintsCount() + 1);
+                successorNodeGroup.incomingConstraintsCount++;
             }
 
             // Check if we're processing a a normal, none-dummy node
@@ -111,13 +101,13 @@ public class ForsterConstraintResolver implements IConstraintResolver {
                 // node's layout unit's vertices
                 if (lastNonDummyNode != null) {
                     for (LNode lastUnitNode : layoutUnits.get(lastNonDummyNode)) {
-                        NodeGroup lastUnitNodeGroup = layerNodeGroups.get(lastUnitNode);
+                        NodeGroup lastUnitNodeGroup = lastUnitNode.getProperty(Properties.NODE_GROUP);
 
                         for (LNode currentUnitNode : layoutUnits.get(vertexNode)) {
-                            NodeGroup currentUnitNodeGroup = layerNodeGroups.get(currentUnitNode);
+                            NodeGroup currentUnitNodeGroup = currentUnitNode.getProperty(
+                                    Properties.NODE_GROUP);
                             lastUnitNodeGroup.getOutgoingConstraints().add(currentUnitNodeGroup);
-                            currentUnitNodeGroup.setIncomingConstraintsCount(currentUnitNodeGroup
-                                    .getIncomingConstraintsCount() + 1);
+                            currentUnitNodeGroup.incomingConstraintsCount++;
                         }
                     }
                 }
@@ -136,42 +126,41 @@ public class ForsterConstraintResolver implements IConstraintResolver {
      *         found. The two vertices are returned in the order they should appear in, not in the
      *         order that violates their constraint.
      */
-    private Pair<NodeGroup, NodeGroup> findViolatedConstraint(final List<NodeGroup> nodeGroups) {
-        List<NodeGroup> activeNodeGroups = new LinkedList<NodeGroup>();
-        Map<NodeGroup, List<NodeGroup>> incoming = new HashMap<NodeGroup, List<NodeGroup>>();
+    private Pair<NodeGroup, NodeGroup> findViolatedConstraint(final NodeGroup[] nodeGroups) {
+        List<NodeGroup> activeNodeGroups = null;
 
         // Iterate through the constrained vertices
         for (NodeGroup nodeGroup : nodeGroups) {
             // Ignore unconstrained vertices
-            if (nodeGroup.getIncomingConstraintsCount() == 0
-                    && nodeGroup.getOutgoingConstraints().isEmpty()) {
-                continue;
-            }
-
-            incoming.put(nodeGroup, new LinkedList<NodeGroup>());
-            if (nodeGroup.getIncomingConstraintsCount() == 0) {
+            if (nodeGroup.hasOutgoingConstraints() && nodeGroup.incomingConstraintsCount == 0) {
+                if (activeNodeGroups == null) {
+                    activeNodeGroups = new LinkedList<NodeGroup>();
+                }
                 activeNodeGroups.add(nodeGroup);
             }
         }
 
         // Iterate through the active vertices to find one with violated constraints
-        while (!activeNodeGroups.isEmpty()) {
-            NodeGroup nodeGroup = activeNodeGroups.remove(0);
-
-            // See if we can find a violated constraint
-            for (NodeGroup predecessor : incoming.get(nodeGroup)) {
-                if (predecessor.getBarycenter() >= nodeGroup.getBarycenter()) {
-                    return new Pair<NodeGroup, NodeGroup>(predecessor, nodeGroup);
+        if (activeNodeGroups != null) {
+            Multimap<NodeGroup, NodeGroup> incoming = HashMultimap.create();
+            while (!activeNodeGroups.isEmpty()) {
+                NodeGroup nodeGroup = activeNodeGroups.remove(0);
+    
+                // See if we can find a violated constraint
+                for (NodeGroup predecessor : incoming.get(nodeGroup)) {
+                    if (predecessor.barycenter >= nodeGroup.barycenter) {
+                        return new Pair<NodeGroup, NodeGroup>(predecessor, nodeGroup);
+                    }
                 }
-            }
-
-            // No violated constraints; add outgoing constraints to the respective incoming list
-            for (NodeGroup successor : nodeGroup.getOutgoingConstraints()) {
-                List<NodeGroup> successorIncomingList = incoming.get(successor);
-                successorIncomingList.add(0, nodeGroup);
-
-                if (successor.getIncomingConstraintsCount() == successorIncomingList.size()) {
-                    activeNodeGroups.add(successor);
+    
+                // No violated constraints; add outgoing constraints to the respective incoming list
+                for (NodeGroup successor : nodeGroup.getOutgoingConstraints()) {
+                    Collection<NodeGroup> successorIncomingList = incoming.get(successor);
+                    successorIncomingList.add(nodeGroup);
+    
+                    if (successor.incomingConstraintsCount == successorIncomingList.size()) {
+                        activeNodeGroups.add(successor);
+                    }
                 }
             }
         }
@@ -184,12 +173,12 @@ public class ForsterConstraintResolver implements IConstraintResolver {
      * Handles the case of a violated constraint.
      * 
      * @param violatedConstraint
-     *            the violated constraint.
+     *            the violated constraint
      * @param nodeGroups
-     *            the array of vertices.
+     *            the array of vertices
      */
     private void handleViolatedConstraint(final Pair<NodeGroup, NodeGroup> violatedConstraint,
-            final List<NodeGroup> nodeGroups) {
+            final NodeGroup[] nodeGroups) {
 
         NodeGroup firstNodeGroup = violatedConstraint.getFirst();
         NodeGroup secondNodeGroup = violatedConstraint.getSecond();
@@ -202,23 +191,21 @@ public class ForsterConstraintResolver implements IConstraintResolver {
         // Iterate through the vertices. Remove the old vertices. Insert the new one
         // according to the barycenter value, thereby keeping the list sorted. Along
         // the way, constraint relationships will be updated
-        ListIterator<NodeGroup> nodeGroupIterator = nodeGroups.listIterator();
         boolean alreadyInserted = false;
-        while (nodeGroupIterator.hasNext()) {
-            NodeGroup nodeGroup = nodeGroupIterator.next();
+        for (int i = 0; i < nodeGroups.length; i++) {
+            NodeGroup nodeGroup = nodeGroups[i];
 
             if (nodeGroup == firstNodeGroup || nodeGroup == secondNodeGroup) {
                 // If the vertex is either the first or the second vertex, remove it
-                nodeGroupIterator.remove();
-            } else if (!alreadyInserted && nodeGroup.getBarycenter() > newNodeGroup.getBarycenter()) {
-                // If we haven't inserted the new vertex into the list already, do that now. Note:
-                // we're not calling next() again. This means that during the next iteration, we
-                // will again be looking at the current vertex. But then, alreadyInserted will be
-                // true and we can look at vertex's outgoing constraints.
-                nodeGroupIterator.previous();
-                nodeGroupIterator.add(newNodeGroup);
-
+                remove(nodeGroups, i--);
+            } else if (!alreadyInserted && nodeGroup.barycenter > newNodeGroup.barycenter) {
+                // If we haven't inserted the new vertex into the list already, do that now.
+                // Note: During the next iteration, we will again be looking at the current vertex.
+                // But then, alreadyInserted will be true and we can look at vertex's outgoing
+                // constraints.
+                insert(nodeGroups, newNodeGroup, i);
                 alreadyInserted = true;
+                
             } else {
                 // Check if the vertex has any constraints with the former two vertices
                 boolean firstNodeGroupConstraint = nodeGroup.getOutgoingConstraints().remove(
@@ -228,16 +215,41 @@ public class ForsterConstraintResolver implements IConstraintResolver {
 
                 if (firstNodeGroupConstraint || secondNodeGroupConstraint) {
                     nodeGroup.getOutgoingConstraints().add(newNodeGroup);
-                    newNodeGroup.setIncomingConstraintsCount(newNodeGroup
-                            .getIncomingConstraintsCount() + 1);
+                    newNodeGroup.incomingConstraintsCount++;
                 }
             }
         }
 
         // If we haven't inserted the new vertex already, do that now
         if (!alreadyInserted) {
-            nodeGroups.add(newNodeGroup);
+            nodeGroups[nodeGroups.length - 1] = newNodeGroup;
         }
+    }
+    
+    /**
+     * Remove the element at given index.
+     * 
+     * @param array an array
+     * @param index an index
+     */
+    private static void remove(final NodeGroup[] array, final int index) {
+        for (int i = index + 1; i < array.length; i++) {
+            array[i - 1] = array[i];
+        }
+    }
+    
+    /**
+     * Add the element at given index.
+     * 
+     * @param array an array
+     * @param ng a new element
+     * @param index an index
+     */
+    private static void insert(final NodeGroup[] array, final NodeGroup ng, final int index) {
+        for (int i = array.length - 1; i > index; i--) {
+            array[i] = array[i - 1];
+        }
+        array[index] = ng;
     }
 
 }
