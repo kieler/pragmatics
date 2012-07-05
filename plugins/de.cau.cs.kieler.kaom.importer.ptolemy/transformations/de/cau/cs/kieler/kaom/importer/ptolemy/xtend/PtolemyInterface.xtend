@@ -234,7 +234,7 @@ class PtolemyInterface {
         // we want to instantiate
         val xml = '''
             <entity name="TopLevel" class="ptolemy.actor.TypedCompositeActor">
-                <entity name="Â«entityNameÂ»" class="Â«classNameÂ»" />
+                <entity name="«entityName»" class="«className»" />
             </entity>
         '''
         
@@ -262,7 +262,7 @@ class PtolemyInterface {
         // we want to instantiate
         val xml = '''
             <entity name="TopLevel" class="ptolemy.domains.modal.modal.ModalController">
-                <entity name="Â«entityNameÂ»" class="Â«classNameÂ»" />
+                <entity name="«entityName»" class="«className»" />
             </entity>
         '''
         
