@@ -99,7 +99,6 @@ class DiagramUtil {
         anchor.setLink(PictogramsFactory::eINSTANCE.createPictogramLink)
         anchor.setReferencedGraphicsAlgorithm(shape.graphicsAlgorithm)
         shape.anchors.add(anchor)
-        anchor
     }
 
     /**
@@ -858,7 +857,6 @@ class DiagramUtil {
     	while (list.size < size) {
             list.add(list.size);
         }
-        list
     }
     
     def ArrayList<Integer> create list: size.listWithElementsAscendingTo getListWithElementsDescendingFrom(Integer size) {
