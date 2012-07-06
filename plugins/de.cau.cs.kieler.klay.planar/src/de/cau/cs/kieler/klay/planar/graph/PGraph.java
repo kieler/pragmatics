@@ -180,6 +180,10 @@ public class PGraph extends PNode {
         return addNode(edge, NodeType.NORMAL);
     }
 
+    public Pair<PNode, PEdge> addNode(final PEdge edge, final PNode targetNode) {
+        return addNode(edge, NodeType.NORMAL, targetNode);
+    }
+
     /**
      * Add a new node of a specific type to the graph. This adds an empty node of the given type to
      * the graph, that is not connected with any other nodes in the graph.
@@ -216,51 +220,7 @@ public class PGraph extends PNode {
      * @return the new node in the graph
      */
     public Pair<PNode, PEdge> addNode(final PEdge edge, final NodeType type) {
-        if (!(edge.getSource() instanceof PNode && edge.getTarget() instanceof PNode)) {
-            throw new IncompatibleGraphTypeException();
-        } else if (!(edge.getLeftFace() instanceof PFace && edge.getRightFace() instanceof PFace)) {
-            throw new IncompatibleGraphTypeException();
-        } else if (!this.edges.contains(edge)) {
-            throw new IllegalArgumentException("The edge (" + edge.id
-                    + ") is not part of the graph.");
-        }
-        generateFaces();
-
-        // Remember target node
-        PNode target = edge.getTarget();
-
-        // Remember all edges in target adjacency list after the edge
-        LinkedList<PEdge> move = Lists.newLinkedList();
-        boolean found = false;
-        for (PEdge e : target.adjacentEdges()) {
-            if (found) {
-                move.addLast(e);
-            } else if (e == edge) {
-                found = true;
-            }
-        }
-
-        // Create node, move edge and create new edge
-        PNode node = (PNode) addNode(type);
-        edge.move(target, node);
-        PEdge newedge = (PEdge) this.addEdge(node, target, edge.isDirected());
-
-        // Move remembered edges to end of adjacency list (so new edge is at
-        // correct position)
-        for (PEdge e : move) {
-            e.move(target, target);
-        }
-
-        // Update references in faces
-        this.changedFaces = false;
-        newedge.setLeftFace(edge.getLeftFace());
-        newedge.setRightFace(edge.getRightFace());
-        ((PFace) edge.getLeftFace()).addNode(node);
-        ((PFace) edge.getLeftFace()).addEdge(newedge);
-        ((PFace) edge.getRightFace()).addNode(node);
-        ((PFace) edge.getRightFace()).addEdge(newedge);
-
-        return new Pair<PNode, PEdge>(node, newedge);
+        return addNode(edge, type, null);
     }
 
     /**
@@ -807,6 +767,65 @@ public class PGraph extends PNode {
     @Deprecated
     public void setExternalFace(PFace externalFace) {
         this.externalFace = externalFace;
+    }
+
+    /**
+     * @param edge
+     * @param type
+     * @param targetNode
+     * @return
+     */
+    public Pair<PNode, PEdge> addNode(PEdge edge, NodeType type, PNode targetNode) {
+        if (!(edge.getSource() instanceof PNode && edge.getTarget() instanceof PNode)) {
+            throw new IncompatibleGraphTypeException();
+        } else if (!(edge.getLeftFace() instanceof PFace && edge.getRightFace() instanceof PFace)) {
+            throw new IncompatibleGraphTypeException();
+        } else if (!this.edges.contains(edge)) {
+            throw new IllegalArgumentException("The edge (" + edge.id
+                    + ") is not part of the graph.");
+        }
+        generateFaces();
+
+        // Remember target node
+        PNode target = null;
+        if (targetNode == null) {
+            target = edge.getTarget();
+        } else {
+            target = targetNode;
+        }
+        // Remember all edges in target adjacency list after the edge
+        LinkedList<PEdge> move = Lists.newLinkedList();
+        boolean found = false;
+        for (PEdge e : target.adjacentEdges()) {
+            if (found) {
+                move.addLast(e);
+            } else if (e == edge) {
+                found = true;
+            }
+        }
+
+        // Create node, move edge and create new edge
+        PNode newNode = (PNode) addNode(type);
+        edge.move(target, newNode);
+        PEdge newedge = (PEdge) this.addEdge(newNode, target, edge.isDirected());
+
+        // Move remembered edges to end of adjacency list (so new edge is at
+        // correct position)
+        for (PEdge e : move) {
+            e.move(target, target);
+        }
+
+        // Update references in faces
+        this.changedFaces = false;
+        newedge.setLeftFace(edge.getLeftFace());
+        newedge.setRightFace(edge.getRightFace());
+        ((PFace) edge.getLeftFace()).addNode(newNode);
+        ((PFace) edge.getLeftFace()).addEdge(newedge);
+        ((PFace) edge.getRightFace()).addNode(newNode);
+        ((PFace) edge.getRightFace()).addEdge(newedge);
+
+        return new Pair<PNode, PEdge>(newNode, newedge);
+
     }
 
 }

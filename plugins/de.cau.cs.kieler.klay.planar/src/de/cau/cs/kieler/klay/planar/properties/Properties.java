@@ -25,6 +25,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
 import de.cau.cs.kieler.klay.planar.p1planar.PlanarityTestStrategy;
@@ -125,6 +126,18 @@ public final class Properties {
 
     public static final IProperty<OrthogonalAngle> BENDPOINT = new Property<OrthogonalRepresentation.OrthogonalAngle>(
             "de.cau.cs.kieler.klay.planar.bendpoint");
+
+    public static final IProperty<PEdge> RECT_SHAPE_NEXT = new Property<PEdge>(
+            "de.cau.cs.kieler.klay.planar.rect_shape_next");
+
+    public static final IProperty<PNode> RECT_SHAPE_CORNER = new Property<PNode>(
+            "de.cau.cs.kieler.klay.planar.rect_shape_corner");
+
+    public static final IProperty<Integer> RECT_SHAPE_TURN = new Property<Integer>(
+            "de.cau.cs.kieler.klay.planar.rect_shape_turn");
+
+    public static final IProperty<PEdge> RECT_SHAPE_FRONT = new Property<PEdge>(
+            "de.cau.cs.kieler.klay.planar.rect_shape_front");
 
     /**
      * Hidden default constructor.
