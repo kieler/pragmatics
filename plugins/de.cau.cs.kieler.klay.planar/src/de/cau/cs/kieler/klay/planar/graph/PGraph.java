@@ -20,12 +20,14 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
+import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
@@ -239,6 +241,8 @@ public class PGraph extends PNode {
         // Remove node
         this.nodes.remove(node);
 
+        OrthogonalRepresentation ortho = getProperty(Properties.ORTHO_REPRESENTATION);
+
         // Remove all edges
         for (Iterator<PEdge> es = node.adjacentEdges().iterator(); es.hasNext();) {
             PEdge edge = es.next();
@@ -251,11 +255,28 @@ public class PGraph extends PNode {
                         + ") is not part of the graph.");
             }
 
+            // fix angles of neighbors.
             ((PNode) node.getAdjacentNode(edge)).unlinkEdge(edge);
+            if (ortho != null) {
+                List<Pair<PEdge, OrthogonalAngle>> removables = Lists.newLinkedList();
+                List<Pair<PEdge, OrthogonalAngle>> angles = ortho.getAngles(edge
+                        .getOppositeNode(node));
+                if (angles != null) {
+                    for (Pair<PEdge, OrthogonalAngle> pair : angles) {
+                        if (pair.getFirst().isConnected(node)) {
+                            removables.add(pair);
+                        }
+                    }
+
+                    if (!removables.isEmpty()) {
+                        angles.removeAll(removables);
+                    }
+                }
+            }
+
             this.edges.remove(edge);
             es.remove();
         }
-        OrthogonalRepresentation ortho = getProperty(Properties.ORTHO_REPRESENTATION);
         if (ortho != null) {
             ortho.setAngles(node, null);
         }
@@ -439,8 +460,8 @@ public class PGraph extends PNode {
 
         // Remove edge and references
         this.edges.remove(edge);
-        ((PNode) edge.getSource()).unlinkEdge(edge);
-        ((PNode) edge.getTarget()).unlinkEdge(edge);
+        edge.getSource().unlinkEdge(edge);
+        edge.getTarget().unlinkEdge(edge);
         this.changedFaces = true;
     }
 

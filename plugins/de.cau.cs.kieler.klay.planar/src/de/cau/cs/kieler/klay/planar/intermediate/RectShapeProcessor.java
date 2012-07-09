@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar.intermediate;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,9 +45,6 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
      */
     private static final int FACE_SIDE_NUMBER = 4;
 
-    // TODO use history to get the first way of using 100 pattern to calc the face.
-    // and use the ccw direction determination of this algorithm.
-    // then you got 2 rectshape processors ^^. but both work for internal faces.
     private PGraph graph;
 
     private OrthogonalRepresentation orthogonal;
@@ -79,12 +77,8 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
      * 
      */
     private void addVirtuals() {
-        // determine rectangular refinement H'
-        // - add an isolated vertex, - insert a vertex along an edge, - add an edge.
 
         transformExternalFace();
-
-        graph.getFaces();
 
         // do a preselection
         List<PFace> noRectShapeFaces = Lists.newLinkedList();
@@ -110,10 +104,36 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
             // (corner(e),
             // project(e)). ...
 
-            // arbitrary edge.
-            PEdge currentEdge = face.adjacentEdges().iterator().next();
-            PEdge startEdge = currentEdge;
+            // startEdge wählen, dazu den längsten pfad zu der front wählen!
+            // arbitrary edge, but with longest path to the front.
+            //
+            Iterator<PEdge> edgeIt = face.adjacentEdges().iterator();
+            PEdge currentEdge = null;
+            PEdge startEdge = null;
+            while (edgeIt.hasNext()) {
+                currentEdge = edgeIt.next();
+                if (currentEdge.getProperty(Properties.RECT_SHAPE_TURN).intValue() == 1) {
+                    startEdge = currentEdge;
+                    break;
+                }
+            }
+            PEdge startFront = startEdge.getProperty(Properties.RECT_SHAPE_FRONT);
+            int maxPathLength = startEdge.getProperty(Properties.RECT_SHAPE_PATH_LENGTH);
+            do {
+                currentEdge = currentEdge.getProperty(Properties.RECT_SHAPE_NEXT);
+                if (currentEdge.getProperty(Properties.RECT_SHAPE_TURN).intValue() == 1) {
+                    PEdge front = currentEdge.getProperty(Properties.RECT_SHAPE_FRONT);
+                    int newPathLength = currentEdge.getProperty(Properties.RECT_SHAPE_PATH_LENGTH)
+                            .intValue();
+                    if (front == startFront && newPathLength > maxPathLength) {
+                        startEdge = currentEdge;
+                        maxPathLength = newPathLength;
+                    }
+                }
+            } while (currentEdge != startEdge);
 
+            // arbitrary edge.
+            currentEdge = startEdge;
             do {
                 if (currentEdge.getProperty(Properties.RECT_SHAPE_TURN).intValue() == 1) {
                     addArtificial(currentEdge, false);
@@ -129,7 +149,11 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
     private void determineFronts(final PFace face) {
         PEdge startEdge;
         PEdge currentEdge;
-        PEdge next;
+        PEdge previousEdge = null;
+        PEdge next = null;
+        PNode corner;
+        int turn;
+        int pathLength;
         // step 3
         // for each edge e, find the first edge e' following e counterclockwise, such that
         // the sum of the turn value for all the edges between (included) and e' (excluded)
@@ -140,17 +164,41 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
             }
             startEdge = edge;
             currentEdge = edge;
-            int turn = 0;
+            turn = 0;
+            pathLength = 0;
             do {
-                turn += currentEdge.getProperty(Properties.RECT_SHAPE_TURN);
-                next = currentEdge.getProperty(Properties.RECT_SHAPE_NEXT);
+                pathLength++;
 
-                // e' excluded
-                if (turn == -1) {
-                    startEdge.setProperty(Properties.RECT_SHAPE_FRONT, next);
-                    break;
+                if (previousEdge == null) {
+                    turn += currentEdge.getProperty(Properties.RECT_SHAPE_TURN);
+                    next = currentEdge.getProperty(Properties.RECT_SHAPE_NEXT);
+
+                    // special case
+                    if (next.hasProperties()
+                            && next.getProperty(Properties.RECT_SHAPE_SPECIALEDGE) != null) {
+                        previousEdge = currentEdge;
+                    }
+                } else {
+                    // special case
+                    if (previousEdge.getSource() == currentEdge.getTarget()
+                            || previousEdge.getSource() == currentEdge.getTarget()) {
+                        corner = currentEdge.getSource();
+                    } else {
+                        corner = currentEdge.getTarget();
+                    }
+                    Pair<PEdge, OrthogonalAngle> nextEdgeWithAngle = face.nextEdgeWithAngle(corner,
+                            currentEdge, this.orthogonal.getAngles(corner));
+                    turn += determineTurn(nextEdgeWithAngle, false);
+                    next = nextEdgeWithAngle.getFirst();
+                    previousEdge = null;
                 }
 
+                if (turn == -1) {
+                    startEdge.setProperty(Properties.RECT_SHAPE_FRONT, next);
+                    startEdge.setProperty(Properties.RECT_SHAPE_PATH_LENGTH,
+                            Integer.valueOf(pathLength));
+                    break;
+                }
                 currentEdge = next;
             } while (currentEdge != startEdge);
         }
@@ -185,26 +233,32 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
             next = newEdgeWithAngle.getFirst();
             currentEdge.setProperty(Properties.RECT_SHAPE_NEXT, next);
 
-            int edgeTurn = 0;
-            switch (newEdgeWithAngle.getSecond()) {
-            case LEFT:
-                edgeTurn = isExternal ? -1 : 1;
-                break;
-            case STRAIGHT:
-                edgeTurn = 0;
-                break;
-            case RIGHT:
-                edgeTurn = isExternal ? 1 : -1;
-                break;
-            default:
-                new InconsistentGraphModelException("ladida, du bist doof! :-)");
-            }
+            int edgeTurn = determineTurn(newEdgeWithAngle, isExternal);
             currentEdge.setProperty(Properties.RECT_SHAPE_TURN, edgeTurn);
 
             currentEdge = next;
             corner = next.getOppositeNode(corner);
 
         } while (currentEdge != startEdge);
+    }
+
+    private int determineTurn(final Pair<PEdge, OrthogonalAngle> newEdgeWithAngle,
+            final boolean isExternal) {
+        int edgeTurn = 0;
+        switch (newEdgeWithAngle.getSecond()) {
+        case LEFT:
+            edgeTurn = isExternal ? -1 : 1;
+            break;
+        case STRAIGHT:
+            edgeTurn = 0;
+            break;
+        case RIGHT:
+            edgeTurn = isExternal ? 1 : -1;
+            break;
+        default:
+            new InconsistentGraphModelException("ladida, du bist doof! :-)");
+        }
+        return edgeTurn;
     }
 
     /**
@@ -260,7 +314,6 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
 
         setEdgeProperties(face, false);
 
-        // TODO check whether turn is correct!
         determineFronts(face);
 
         // step 4
@@ -270,23 +323,56 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         // project(e)). ...
 
         // add rectangle to the graph.
-        PNode bottomLeft = this.graph.addNode();
-        PNode topLeft = this.graph.addNode();
-        PNode topRight = this.graph.addNode();
-        PNode bottomRight = this.graph.addNode();
 
+        PNode[] rectNodes = new PNode[FACE_SIDE_NUMBER];
+        rectNodes[0] = this.graph.addNode();
+        rectNodes[0].setProperty(Properties.RECT_SHAPE_DUMMY, Boolean.valueOf(true));
+
+        rectNodes[1] = this.graph.addNode();
+        rectNodes[1].setProperty(Properties.RECT_SHAPE_DUMMY, Boolean.valueOf(true));
+
+        rectNodes[2] = this.graph.addNode();
+        rectNodes[2].setProperty(Properties.RECT_SHAPE_DUMMY, Boolean.valueOf(true));
+
+        rectNodes[3] = this.graph.addNode();
+        rectNodes[3].setProperty(Properties.RECT_SHAPE_DUMMY, Boolean.valueOf(true));
+
+        // TODO make loop of this.
         PEdge[] faceSides = new PEdge[FACE_SIDE_NUMBER];
-        faceSides[0] = this.graph.addEdge(bottomLeft, topLeft);
-        faceSides[0].setProperty(Properties.RECT_SHAPE_CORNER, topLeft);
+        faceSides[0] = this.graph.addEdge(rectNodes[0], rectNodes[1]);
+        faceSides[0].setProperty(Properties.RECT_SHAPE_CORNER, rectNodes[1]);
+        faceSides[0].setProperty(Properties.RECT_SHAPE_DUMMY, Boolean.valueOf(true));
 
-        faceSides[1] = this.graph.addEdge(topLeft, topRight);
-        faceSides[1].setProperty(Properties.RECT_SHAPE_CORNER, topRight);
+        faceSides[1] = this.graph.addEdge(rectNodes[1], rectNodes[2]);
+        faceSides[1].setProperty(Properties.RECT_SHAPE_CORNER, rectNodes[2]);
+        faceSides[1].setProperty(Properties.RECT_SHAPE_DUMMY, Boolean.valueOf(true));
 
-        faceSides[2] = this.graph.addEdge(topRight, bottomRight);
-        faceSides[2].setProperty(Properties.RECT_SHAPE_CORNER, bottomRight);
+        faceSides[2] = this.graph.addEdge(rectNodes[2], rectNodes[3]);
+        faceSides[2].setProperty(Properties.RECT_SHAPE_CORNER, rectNodes[3]);
+        faceSides[2].setProperty(Properties.RECT_SHAPE_DUMMY, Boolean.valueOf(true));
 
-        faceSides[3] = this.graph.addEdge(bottomRight, bottomLeft);
-        faceSides[3].setProperty(Properties.RECT_SHAPE_CORNER, bottomLeft);
+        faceSides[3] = this.graph.addEdge(rectNodes[3], rectNodes[0]);
+        faceSides[3].setProperty(Properties.RECT_SHAPE_CORNER, rectNodes[0]);
+        faceSides[3].setProperty(Properties.RECT_SHAPE_DUMMY, Boolean.valueOf(true));
+
+        for (int i = 0; i < rectNodes.length; i++) {
+
+            Iterator<PEdge> it = rectNodes[i].adjacentEdges().iterator();
+
+            List<Pair<PEdge, OrthogonalAngle>> list = Lists.newLinkedList();
+            if (i == 0) {
+                list.add(new Pair<PEdge, OrthogonalAngle>(it.next(), OrthogonalAngle.RIGHT));
+                list.add(new Pair<PEdge, OrthogonalAngle>(it.next(), OrthogonalAngle.LEFT));
+            } else {
+                list.add(new Pair<PEdge, OrthogonalAngle>(it.next(), OrthogonalAngle.LEFT));
+                list.add(new Pair<PEdge, OrthogonalAngle>(it.next(), OrthogonalAngle.RIGHT));
+            }
+            this.orthogonal.setAngles(rectNodes[i], list);
+        }
+        this.orthogonal.setBends(faceSides[0], new OrthogonalAngle[0]);
+        this.orthogonal.setBends(faceSides[1], new OrthogonalAngle[0]);
+        this.orthogonal.setBends(faceSides[2], new OrthogonalAngle[0]);
+        this.orthogonal.setBends(faceSides[3], new OrthogonalAngle[0]);
 
         // 0 left, 1 top, 2 right, 3 bottom.
         int sideIndex = 0;
@@ -295,11 +381,6 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         PEdge startEdge = face.adjacentEdges().iterator().next();
         PEdge currentEdge = startEdge;
         PEdge next = null;
-
-        // TODO we have to start at the beginning of an edge. that means the first time the edge
-        // appears.
-        // oder new calc beispiel: 12 -13 und 1- 20, alle die front als die geänderte seite haben,
-        // müssen neu berechnet werden
 
         do {
             int edgeturn = currentEdge.getProperty(Properties.RECT_SHAPE_TURN);
@@ -321,16 +402,29 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
             default:
                 throw new InconsistentGraphModelException("Du bist doof!");
             }
-
-            if (currentEdge.getProperty(Properties.RECT_SHAPE_TURN).intValue() == 1
-                    && currentEdge.getProperty(Properties.RECT_SHAPE_FRONT) == null) {
-                currentEdge.setProperty(Properties.RECT_SHAPE_FRONT, faceSides[sideIndex + 1
-                        % FACE_SIDE_NUMBER]);
-                addArtificial(currentEdge, true);
-            }
-
+            currentEdge.setProperty(Properties.RECT_SHAPE_SIDE_INDEX, Integer.valueOf(sideIndex));
             currentEdge = next;
         } while (currentEdge != startEdge);
+
+        do {
+            int index = currentEdge.getProperty(Properties.RECT_SHAPE_SIDE_INDEX).intValue();
+            if (currentEdge.getProperty(Properties.RECT_SHAPE_TURN).intValue() == 1
+                    && currentEdge.getProperty(Properties.RECT_SHAPE_FRONT) == null) {
+                currentEdge.setProperty(Properties.RECT_SHAPE_FRONT, faceSides[(index + 1)
+                        % FACE_SIDE_NUMBER]);
+                addArtificial(currentEdge, true);
+                break;
+            }
+
+            next = currentEdge.getProperty(Properties.RECT_SHAPE_NEXT);
+            currentEdge = next;
+        } while (currentEdge != startEdge);
+
+        for (PFace pface : graph.getFaces()) {
+            if (pface.isAdjacent(faceSides[0]) && pface.getAdjacentEdgeCount() == 5) {
+                graph.setExternalFace(pface);
+            }
+        }
 
     }
 
@@ -347,6 +441,7 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         projectE.setProperty(Properties.RECT_SHAPE_DUMMY, true);
 
         PEdge newEdge = this.graph.addEdge(corner, projectE);
+        newEdge.setProperty(Properties.RECT_SHAPE_SPECIALEDGE, Boolean.TRUE);
         newEdge.setProperty(Properties.RECT_SHAPE_DUMMY, true);
         front.setProperty(Properties.RECT_SHAPE_CORNER, projectE);
 
@@ -359,8 +454,6 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         // Fix embedding and/or angles of ancestor node
         // There is nothing to do, because the angles don't change and the embedding is
         // done implicitly by the graph.addEdge(...).
-
-        // TODO fuer external face, successorNode ist anders als?!
 
         // Fix embedding and/or angles of successor node
         fixSuccessorNode(virtualEdge.getOppositeNode(projectE), front.getOppositeNode(projectE),
@@ -436,108 +529,6 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         this.orthogonal.setBends(newEdge, new OrthogonalAngle[0]);
         this.orthogonal.setBends(virtualEdge, new OrthogonalAngle[0]);
 
-    }
-
-    /**
-     * @param lrrPatternPath
-     * @param currentEdge
-     * @return true, if the path is complete, meaning if the currentEdge has a right angle and index
-     *         is 2
-     */
-    private boolean tryPutInLRR(final Pair<LinkedList<PEdge>, Integer> lrrPatternPath,
-            final Pair<PEdge, OrthogonalAngle> pair) {
-        int index = lrrPatternPath.getSecond();
-
-        OrthogonalAngle angle = pair.getSecond();
-        boolean startNewPath = false;
-        switch (index) {
-        case 0:
-            // check if angle is right => start filling the path.
-            if (angle == OrthogonalAngle.LEFT) {
-                startNewPath = true;
-            }
-            break;
-        case 1:
-            if (angle == OrthogonalAngle.RIGHT) {
-                lrrPatternPath.setSecond(2);
-                lrrPatternPath.getFirst().add(pair.getFirst());
-            } else if (angle == OrthogonalAngle.LEFT) {
-                // a new left angle has been found, we have to start a new path.
-                startNewPath = true;
-            }
-            break;
-        case 2:
-            if (angle == OrthogonalAngle.RIGHT) {
-                lrrPatternPath.setSecond(index3);
-                lrrPatternPath.getFirst().add(pair.getFirst());
-            } else if (angle == OrthogonalAngle.LEFT) {
-                startNewPath = true;
-            }
-            break;
-        default:
-            throw new InconsistentGraphModelException(
-                    "RectShapeProcessor: the index of lrr pattern is not defined!");
-        }
-
-        if (startNewPath) {
-            lrrPatternPath.setSecond(1);
-            lrrPatternPath.getFirst().clear();
-            lrrPatternPath.getFirst().add(pair.getFirst());
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param rllPatternPath
-     * @param currentEdge
-     * @return true, if the path is complete, meaning if the currentEdge has a left angle and index
-     *         is 2
-     */
-    private boolean tryPutInRLL(final Pair<LinkedList<PEdge>, Integer> rllPatternPath,
-            final Pair<PEdge, OrthogonalAngle> pair) {
-        int index = rllPatternPath.getSecond();
-        boolean startNewPath = false;
-        OrthogonalAngle angle = pair.getSecond();
-        switch (index) {
-        case 0:
-            // check if angle is right => start filling the path.
-            if (angle == OrthogonalAngle.RIGHT) {
-                rllPatternPath.setSecond(1);
-                rllPatternPath.getFirst().add(pair.getFirst());
-                return true;
-            }
-            break;
-        case 1:
-            if (angle == OrthogonalAngle.LEFT) {
-                rllPatternPath.setSecond(2);
-                rllPatternPath.getFirst().add(pair.getFirst());
-            } else if (angle == OrthogonalAngle.RIGHT) {
-                startNewPath = true;
-            }
-            break;
-        case 2:
-            if (angle == OrthogonalAngle.LEFT) {
-                rllPatternPath.setSecond(index3);
-                rllPatternPath.getFirst().add(pair.getFirst());
-            } else if (angle == OrthogonalAngle.RIGHT) {
-                startNewPath = true;
-            }
-            break;
-        default:
-            throw new InconsistentGraphModelException(
-                    "RectShapeProcessor: the index of rll pattern is not defined!");
-        }
-
-        if (startNewPath) {
-            rllPatternPath.setSecond(1);
-            rllPatternPath.getFirst().clear();
-            rllPatternPath.getFirst().add(pair.getFirst());
-            return true;
-        }
-
-        return false;
     }
 
     private void addBendDummies(final PEdge edge) {

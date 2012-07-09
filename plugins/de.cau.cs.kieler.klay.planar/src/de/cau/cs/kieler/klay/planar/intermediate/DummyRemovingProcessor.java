@@ -21,13 +21,11 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
+import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
-import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
-import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
@@ -134,20 +132,34 @@ public class DummyRemovingProcessor extends AbstractAlgorithm implements ILayout
                     break;
                 }
             }
+
             graph.removeEdge(removableEdge);
+            Iterator<PEdge> edgeIt;
+            switch (dummy.getAdjacentEdgeCount()) {
+            case 0:
+                // nothing to do
+                break;
+            case 1:
+                edgeIt = dummy.adjacentEdges().iterator();
+                graph.removeEdge(edgeIt.next());
+                break;
+            case 2:
+                edgeIt = dummy.adjacentEdges().iterator();
+                PEdge first = edgeIt.next();
+                PEdge second = edgeIt.next();
 
-            Iterator<PEdge> it = dummy.adjacentEdges().iterator();
-            PEdge first = it.next();
-            PEdge second = it.next();
-
-            // Check for origin is needed, because the original edge should is kept.
-            if (first.hasProperties() && first.getProperty(Properties.ORIGIN) != null) {
-                graph.bridgeOverEdge(first, first.getOppositeNode(dummy),
-                        second.getOppositeNode(dummy));
-            } else {
-                // Use the second edge otherwise, if it is origin or not.
-                graph.bridgeOverEdge(second, second.getOppositeNode(dummy),
-                        first.getOppositeNode(dummy));
+                // Check for origin is needed, because the original edge should is kept.
+                if (first.hasProperties() && first.getProperty(Properties.ORIGIN) != null) {
+                    graph.bridgeOverEdge(first, first.getOppositeNode(dummy),
+                            second.getOppositeNode(dummy));
+                } else {
+                    // Use the second edge otherwise, if it is origin or not.
+                    graph.bridgeOverEdge(second, second.getOppositeNode(dummy),
+                            first.getOppositeNode(dummy));
+                }
+                break;
+            default:
+                throw new InconsistentGraphModelException("This should not happen here! :-)");
             }
             grid.remove(dummy);
             graph.removeNode(dummy);
@@ -171,8 +183,6 @@ public class DummyRemovingProcessor extends AbstractAlgorithm implements ILayout
      * graph and grid.
      */
     private void removePlanarDummies() {
-        OrthogonalRepresentation ortho = graph.getProperty(Properties.ORTHO_REPRESENTATION);
-
         List<PNode> planarDummynodes = new LinkedList<PNode>();
         for (PNode node : graph.getNodes()) {
             if (node.hasProperties() && node.getProperty(Properties.PlANAR_DUMMY_NODE) != null) {
@@ -181,15 +191,19 @@ public class DummyRemovingProcessor extends AbstractAlgorithm implements ILayout
         }
 
         for (PNode dummyNode : planarDummynodes) {
-            List<Pair<PEdge, OrthogonalAngle>> angles = ortho.getAngles(dummyNode);
+            Iterator<PEdge> iterator = dummyNode.adjacentEdges().iterator();
+            PEdge first = iterator.next();
+            PEdge second = iterator.next();
+            PEdge third = iterator.next();
+            PEdge fourth = iterator.next();
 
             // move the original edge over the dummy node from source to new target or vice versa
             // according to the edge direction. Edge 0 and 2 are straight to each other so that
             // we can move the edge from source 0 to target 2 or vice versa.
-            doPlanarRemoveStep(dummyNode, angles.get(0).getFirst(), angles.get(2).getFirst());
+            doPlanarRemoveStep(dummyNode, first, third);
 
             // do the same to the edges 1 and 3.
-            doPlanarRemoveStep(dummyNode, angles.get(1).getFirst(), angles.get(3).getFirst());
+            doPlanarRemoveStep(dummyNode, second, fourth);
 
             graph.removeNode(dummyNode);
             grid.remove(dummyNode);

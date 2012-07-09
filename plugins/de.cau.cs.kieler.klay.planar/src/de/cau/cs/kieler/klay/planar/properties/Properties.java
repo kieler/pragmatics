@@ -88,7 +88,6 @@ public final class Properties {
     // =========================== FACE PROPERTIES ========================================
 
     /** Face-sides, contains the bounding edges with respect to their side. */
-    @SuppressWarnings("rawtypes")
     public static final IProperty<List<PEdge>[]> FACE_SIDES = new Property<List<PEdge>[]>(
             "faceSides");
 
@@ -113,6 +112,7 @@ public final class Properties {
 
     /** default value for object spacing. */
     public static final float DEF_SPACING = 80.0f;
+
     /** minimal spacing between objects. */
     public static final Property<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
             DEF_SPACING);
@@ -130,6 +130,9 @@ public final class Properties {
     public static final IProperty<PEdge> RECT_SHAPE_NEXT = new Property<PEdge>(
             "de.cau.cs.kieler.klay.planar.rect_shape_next");
 
+    public static final IProperty<PEdge[]> RECT_SHAPE_NEXTS = new Property<PEdge[]>(
+            "de.cau.cs.kieler.klay.planar.rect_shape_nexts");
+
     public static final IProperty<PNode> RECT_SHAPE_CORNER = new Property<PNode>(
             "de.cau.cs.kieler.klay.planar.rect_shape_corner");
 
@@ -138,6 +141,15 @@ public final class Properties {
 
     public static final IProperty<PEdge> RECT_SHAPE_FRONT = new Property<PEdge>(
             "de.cau.cs.kieler.klay.planar.rect_shape_front");
+
+    public static final IProperty<Integer> RECT_SHAPE_SIDE_INDEX = new Property<Integer>(
+            "de.cau.cs.kieler.klay.planar.rect_shape_side_index");
+
+    public static final IProperty<Integer> RECT_SHAPE_PATH_LENGTH = new Property<Integer>(
+            "de.cau.cs.kieler.klay.planar.rect_shape_path_length");
+
+    public static final IProperty<Boolean> RECT_SHAPE_SPECIALEDGE = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.planar.rect_shape_specialcorner");
 
     /**
      * Hidden default constructor.

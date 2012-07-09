@@ -332,4 +332,13 @@ public class PEdge extends PGraphElement {
         }
         return null;
     }
+
+    /**
+     * @param node
+     * @return
+     */
+    public boolean isConnected(PNode node) {
+        return node == source || node == target;
+    }
+
 }
