@@ -42,13 +42,18 @@ public class LabelDummySwitcher extends AbstractAlgorithm implements ILayoutProc
         for (Layer layer : layeredGraph) {
             for (LNode node : layer.getNodes()) {
                 if (node.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
-                    LNode target = node.getPorts().get(0).getOutgoingEdges()
-                            .get(0).getTarget().getNode();
+                    // Move to beginning of long edge if necessary
+                    LPort source = node.getProperty(Properties.LONG_EDGE_SOURCE);
+
+                    // Collect all nodes of the long edge
+                    LNode target = source.getOutgoingEdges().get(0).getTarget()
+                            .getNode();
                     List<LNode> longEdge = new LinkedList<LNode>();
-                    while (target.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
+                    while (target.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
+                            || target.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
                         longEdge.add(target);
-                        target = target.getPorts().get(0).getOutgoingEdges()
-                                .get(0).getTarget().getNode();
+                        target = target.getPorts().get(0).getOutgoingEdges().get(0).getTarget()
+                                .getNode();
                     }
                     int middle = longEdge.size() / 2;
                     if (longEdge.size() > 0) {
@@ -57,13 +62,13 @@ public class LabelDummySwitcher extends AbstractAlgorithm implements ILayoutProc
                 }
             }
         }
-        
+
         // Execute the swapping
         for (Pair<LNode, LNode> swapPair : nodesToSwap) {
             swapNodes(swapPair.getFirst(), swapPair.getSecond());
         }
     }
-    
+
     private void swapNodes(final LNode one, final LNode other) {
         // Detect incoming and outgoing ports of the nodes
         // Since they are dummy nodes, they can simply be found by looking where
@@ -86,13 +91,13 @@ public class LabelDummySwitcher extends AbstractAlgorithm implements ILayoutProc
                 otherOutgoingPort = port;
             }
         }
-        
+
         // Store information about first node
         Layer oneLayer = one.getLayer();
         int inLayerPosition = one.getIndex();
         List<LEdge> oneIncomingEdges = oneIncomingPort.getIncomingEdges();
         List<LEdge> oneOutgoingEdges = oneOutgoingPort.getOutgoingEdges();
-        
+
         // Set values of first node to values from second node
         one.setLayer(other.getIndex(), other.getLayer());
         for (LEdge edge : otherIncomingPort.getIncomingEdges()) {
@@ -101,7 +106,7 @@ public class LabelDummySwitcher extends AbstractAlgorithm implements ILayoutProc
         for (LEdge edge : otherOutgoingPort.getOutgoingEdges()) {
             edge.setSource(oneOutgoingPort);
         }
-        
+
         // Set values of first node to values from second node
         other.setLayer(inLayerPosition, oneLayer);
         for (LEdge edge : oneIncomingEdges) {
