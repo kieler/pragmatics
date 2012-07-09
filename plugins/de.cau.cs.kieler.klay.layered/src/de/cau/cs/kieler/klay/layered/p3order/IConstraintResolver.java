@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
+import java.util.List;
+
 /**
  * Detects and resolves violated constraints.
  * 
@@ -30,6 +32,6 @@ public interface IConstraintResolver {
      * @param layerIndex
      *            the layer index
      */
-    void processConstraints(final NodeGroup[] nodeGroups, final int layerIndex);
+    void processConstraints(final List<NodeGroup> nodeGroups, final int layerIndex);
 
 }

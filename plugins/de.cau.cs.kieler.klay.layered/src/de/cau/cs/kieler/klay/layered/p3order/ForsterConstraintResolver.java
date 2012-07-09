@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered.p3order;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -55,7 +56,7 @@ public class ForsterConstraintResolver implements IConstraintResolver {
     /**
      * {@inheritDoc}
      */
-    public void processConstraints(final NodeGroup[] nodeGroups, final int layerIndex) {
+    public void processConstraints(final List<NodeGroup> nodeGroups, final int layerIndex) {
 
         // Build the constraints graph
         buildConstraintsGraph(nodeGroups);
@@ -73,7 +74,7 @@ public class ForsterConstraintResolver implements IConstraintResolver {
      * @param nodeGroups
      *            the array of single-node vertices sorted by their barycenter values.
      */
-    private void buildConstraintsGraph(final NodeGroup[] nodeGroups) {
+    private void buildConstraintsGraph(final List<NodeGroup> nodeGroups) {
 
         // Reset the constraint fields
         for (NodeGroup nodeGroup : nodeGroups) {
@@ -126,7 +127,7 @@ public class ForsterConstraintResolver implements IConstraintResolver {
      *         found. The two vertices are returned in the order they should appear in, not in the
      *         order that violates their constraint.
      */
-    private Pair<NodeGroup, NodeGroup> findViolatedConstraint(final NodeGroup[] nodeGroups) {
+    private Pair<NodeGroup, NodeGroup> findViolatedConstraint(final List<NodeGroup> nodeGroups) {
         List<NodeGroup> activeNodeGroups = null;
 
         // Iterate through the constrained vertices
@@ -175,10 +176,10 @@ public class ForsterConstraintResolver implements IConstraintResolver {
      * @param violatedConstraint
      *            the violated constraint
      * @param nodeGroups
-     *            the array of vertices
+     *            the list of vertices
      */
     private void handleViolatedConstraint(final Pair<NodeGroup, NodeGroup> violatedConstraint,
-            final NodeGroup[] nodeGroups) {
+            final List<NodeGroup> nodeGroups) {
 
         NodeGroup firstNodeGroup = violatedConstraint.getFirst();
         NodeGroup secondNodeGroup = violatedConstraint.getSecond();
@@ -191,21 +192,23 @@ public class ForsterConstraintResolver implements IConstraintResolver {
         // Iterate through the vertices. Remove the old vertices. Insert the new one
         // according to the barycenter value, thereby keeping the list sorted. Along
         // the way, constraint relationships will be updated
+        ListIterator<NodeGroup> nodeGroupIterator = nodeGroups.listIterator();
         boolean alreadyInserted = false;
-        for (int i = 0; i < nodeGroups.length; i++) {
-            NodeGroup nodeGroup = nodeGroups[i];
+        while (nodeGroupIterator.hasNext()) {
+            NodeGroup nodeGroup = nodeGroupIterator.next();
 
             if (nodeGroup == firstNodeGroup || nodeGroup == secondNodeGroup) {
                 // If the vertex is either the first or the second vertex, remove it
-                remove(nodeGroups, i--);
+                nodeGroupIterator.remove();
             } else if (!alreadyInserted && nodeGroup.barycenter > newNodeGroup.barycenter) {
-                // If we haven't inserted the new vertex into the list already, do that now.
-                // Note: During the next iteration, we will again be looking at the current vertex.
-                // But then, alreadyInserted will be true and we can look at vertex's outgoing
-                // constraints.
-                insert(nodeGroups, newNodeGroup, i);
+                // If we haven't inserted the new vertex into the list already, do that now. Note:
+                // we're not calling next() again. This means that during the next iteration, we
+                // will again be looking at the current vertex. But then, alreadyInserted will be
+                // true and we can look at vertex's outgoing constraints.
+                nodeGroupIterator.previous();
+                nodeGroupIterator.add(newNodeGroup);
+
                 alreadyInserted = true;
-                
             } else {
                 // Check if the vertex has any constraints with the former two vertices
                 boolean firstNodeGroupConstraint = nodeGroup.getOutgoingConstraints().remove(
@@ -222,34 +225,8 @@ public class ForsterConstraintResolver implements IConstraintResolver {
 
         // If we haven't inserted the new vertex already, do that now
         if (!alreadyInserted) {
-            nodeGroups[nodeGroups.length - 1] = newNodeGroup;
+            nodeGroups.add(newNodeGroup);
         }
-    }
-    
-    /**
-     * Remove the element at given index.
-     * 
-     * @param array an array
-     * @param index an index
-     */
-    private static void remove(final NodeGroup[] array, final int index) {
-        for (int i = index + 1; i < array.length; i++) {
-            array[i - 1] = array[i];
-        }
-    }
-    
-    /**
-     * Add the element at given index.
-     * 
-     * @param array an array
-     * @param ng a new element
-     * @param index an index
-     */
-    private static void insert(final NodeGroup[] array, final NodeGroup ng, final int index) {
-        for (int i = array.length - 1; i > index; i--) {
-            array[i] = array[i - 1];
-        }
-        array[index] = ng;
     }
 
 }

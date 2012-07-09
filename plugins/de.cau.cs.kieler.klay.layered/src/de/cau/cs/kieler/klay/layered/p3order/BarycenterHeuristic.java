@@ -13,8 +13,9 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Random;
 import java.util.Set;
 
@@ -38,8 +39,6 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
 
     /** the array of port ranks. */
     private float[] portRanks;
-    /** the port distributor for handling port ranks. */
-    private IPortDistributor portDistributor;
     /** the random number generator. */
     private Random random;
     /** the constraint resolver for ordering constraints. */
@@ -48,8 +47,6 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
     /**
      * Constructs a Barycenter heuristic for crossing minimization between two layers.
      * 
-     * @param selPortDistributor
-     *            the port distributor
      * @param constraintResolver
      *            the constraint resolver
      * @param graphRandom
@@ -57,10 +54,8 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
      * @param portRanks
      *            the array of port ranks
      */
-    public BarycenterHeuristic(final IPortDistributor selPortDistributor,
-            final IConstraintResolver constraintResolver, final Random graphRandom,
+    public BarycenterHeuristic(final IConstraintResolver constraintResolver, final Random graphRandom,
             final float[] portRanks) {
-        this.portDistributor = selPortDistributor;
         this.constraintResolver = constraintResolver;
         this.random = graphRandom;
         this.portRanks = portRanks;
@@ -69,23 +64,20 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
     /**
      * {@inheritDoc}
      */
-    public int minimizeCrossings(final NodeGroup[] layer, final int layerIndex,
+    public int minimizeCrossings(final List<NodeGroup> layer, final int layerIndex,
             final boolean preOrdered, final boolean randomize, final boolean forward) {
-        int totalEdges = 0;
-        // Ignore empty free layers
-        if (layer.length == 0) {
-            return 0;
-        } else if (layer.length == 1) {
-            NodeGroup nodeGroup = layer[0];
+        if (layer.size() == 1) {
+            NodeGroup nodeGroup = layer.get(0);
             if (nodeGroup.getNodes().length == 1) {
                 nodeGroup.degree = 0;
                 for (LPort port : nodeGroup.getNode().getPorts(
                         forward ? PortType.INPUT : PortType.OUTPUT)) {
                     nodeGroup.degree += port.getDegree();
                 }
-                totalEdges = nodeGroup.degree;
+                return nodeGroup.degree;
             }
-        } else {
+        } else if (layer.size() > 1) {
+            int totalEdges = 0;
             
             if (randomize) {
                 // Randomize barycenters (we don't need to update the edge count in this case;
@@ -99,16 +91,15 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
             }
     
             // Sort the vertices according to their barycenters
-            Arrays.sort(layer);
+            Collections.sort(layer);
     
             // Resolve ordering constraints
             constraintResolver.processConstraints(layer, layerIndex);
+            
+            return totalEdges;
         }
 
-        // Calculate port ranks according to the new ordering
-        portDistributor.calculatePortRanks(layer);
-
-        return totalEdges;
+        return 0;
     }
 
     /**
@@ -117,7 +108,7 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
      * @param nodeGroups
      *            a layer
      */
-    private void randomizeBarycenters(final NodeGroup[] nodeGroups) {
+    private void randomizeBarycenters(final List<NodeGroup> nodeGroups) {
         for (NodeGroup nodeGroup : nodeGroups) {
             // Set barycenters only for nodeGroups containing a single node.
             if (nodeGroup.getNodes().length == 1) {
@@ -136,19 +127,23 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
      * @param preOrdered
      *            whether the nodeGroups have been ordered in a previous run.
      */
-    private void fillInUnknownBarycenters(final NodeGroup[] nodeGroups, final boolean preOrdered) {
+    private void fillInUnknownBarycenters(final List<NodeGroup> nodeGroups, final boolean preOrdered) {
         // Determine placements for vertices with undefined position value
         if (preOrdered) {
             float lastValue = -1;
-            for (int i = 0; i < nodeGroups.length; i++) {
-                NodeGroup nodeGroup = nodeGroups[i];
+            ListIterator<NodeGroup> nodeGroupIterator = nodeGroups.listIterator();
+
+            while (nodeGroupIterator.hasNext()) {
+                NodeGroup nodeGroup = nodeGroupIterator.next();
                 Float value = nodeGroup.barycenter;
 
                 if (value == null) {
                     float nextValue = lastValue + 1;
 
-                    for (int j = i + 1; j < nodeGroups.length; j++) {
-                        Float x = nodeGroups[j].barycenter;
+                    ListIterator<NodeGroup> nextNodeGroupIterator = nodeGroups
+                            .listIterator(nodeGroupIterator.nextIndex());
+                    while (nextNodeGroupIterator.hasNext()) {
+                        Float x = nextNodeGroupIterator.next().barycenter;
                         if (x != null) {
                             nextValue = x;
                             break;
@@ -189,8 +184,8 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
      *            {@code true} if the current sweep moves forward
      * @return the total number of encountered edges.
      */
-    private int calculateBarycenters(final NodeGroup[] nodeGroups, final boolean forward) {
-        Set<NodeGroup> workingSet = Sets.newHashSetWithExpectedSize(nodeGroups.length);
+    private int calculateBarycenters(final List<NodeGroup> nodeGroups, final boolean forward) {
+        Set<NodeGroup> workingSet = Sets.newHashSetWithExpectedSize(nodeGroups.size());
 
         int totalEdges = 0;
         for (NodeGroup nodeGroup : nodeGroups) {

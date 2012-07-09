@@ -207,8 +207,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         // Initialize the compound graph layer crossing minimizer
         IPortDistributor portDistributor = new NodeRelativePortDistributor(portRanks);
         IConstraintResolver constraintResolver = new ForsterConstraintResolver(layoutUnits);
-        ICrossingMinimizationHeuristic heuristic = new BarycenterHeuristic(portDistributor,
-                constraintResolver, random, portRanks);
+        ICrossingMinimizationHeuristic heuristic = new BarycenterHeuristic(constraintResolver,
+                random, portRanks);
         CompoundGraphLayerCrossingMinimizer compoundMinimizer
                 = new CompoundGraphLayerCrossingMinimizer(layeredGraph, heuristic);
 
@@ -224,6 +224,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             int totalEdges = 0;
             compoundMinimizer.compoundMinimizeCrossings(fixedLayer, fixedLayerIndex, forward,
                     false, true);
+            portDistributor.calculatePortRanks(fixedLayer);
 
             // Reset last and current run crossing counters
             prevSweepCrossings = Integer.MAX_VALUE;
@@ -249,6 +250,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                         if (inLayerEdgeCount[layerIndex] > 0) {
                             curSweepCrossings += countCrossings(freeLayer);
                         }
+                        portDistributor.calculatePortRanks(freeLayer);
 
                         fixedLayer = freeLayer;
                     }
@@ -263,6 +265,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                         if (inLayerEdgeCount[layerIndex] > 0) {
                             curSweepCrossings += countCrossings(freeLayer);
                         }
+                        portDistributor.calculatePortRanks(freeLayer);
 
                         fixedLayer = freeLayer;
                     }
