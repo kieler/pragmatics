@@ -55,6 +55,8 @@ import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommand;
  * @author soh
  * @kieler.rating 2010-06-15 yellow msp, cmot
  */
+//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
+@SuppressWarnings("deprecation")
 public abstract class AbstractCutCopyPasteCommandFactory implements
         ICutCopyPasteCommandFactory {
 

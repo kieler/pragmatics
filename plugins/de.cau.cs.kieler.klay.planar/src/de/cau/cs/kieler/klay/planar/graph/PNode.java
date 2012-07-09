@@ -16,11 +16,17 @@ package de.cau.cs.kieler.klay.planar.graph;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.ICondition;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.planar.graph.IEmbeddingConstraint.ConstraintType;
+import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
+import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 import de.cau.cs.kieler.klay.planar.util.FilteredIterable;
 import de.cau.cs.kieler.klay.planar.util.IFunction;
@@ -136,7 +142,7 @@ public class PNode extends PShape {
      *            the node to check for
      * @return true if {@code node} is adjacent to this node
      */
-    public boolean isAdjacent(final PNode node) { // TODO O(n)
+    public boolean isAdjacent(final PNode node) {
         for (PEdge e : this.edges) {
             if (e.getSource() == this && e.getTarget() == node) {
                 return true;
@@ -180,7 +186,7 @@ public class PNode extends PShape {
      * @throws IllegalArgumentException
      *             if there is no edge to the parameter node
      */
-    public PEdge getEdge(final PNode node) { // TODO O(n)
+    public PEdge getEdge(final PNode node) {
         for (PEdge e : this.edges) {
             if (this.getAdjacentNode(e) == node) {
                 return e;
@@ -227,7 +233,7 @@ public class PNode extends PShape {
      * @param edge
      *            the edge to remove
      */
-    void unlinkEdge(final PEdge edge) { // TODO O(n)
+    void unlinkEdge(final PEdge edge) {
         this.edges.remove(edge);
     }
 
@@ -398,7 +404,7 @@ public class PNode extends PShape {
      * @param edge
      *            the edge to move
      */
-    public void moveToStart(final PEdge edge) { // TODO O(2n)
+    public void moveToStart(final PEdge edge) {
         int count = 0;
         Iterator<PEdge> iter = this.edges.iterator();
         while (iter.hasNext()) {
@@ -419,7 +425,7 @@ public class PNode extends PShape {
      * @param edge
      *            the edge to move
      */
-    public void moveToEnd(final PEdge edge) { // TODO O(2n)
+    public void moveToEnd(final PEdge edge) {
         int count = 0;
         Iterator<PEdge> iter = this.edges.iterator();
         while (iter.hasNext()) {
@@ -490,7 +496,29 @@ public class PNode extends PShape {
     /**
      * @param linkEdges
      */
-    public void linkEdges(Collection<PEdge> linkEdges) {
+    public void linkEdges(final Collection<PEdge> linkEdges) {
         this.edges.addAll(linkEdges);
+    }
+
+    /**
+     * Orders the angles like the edge order of the node.
+     */
+    public void orderAngles() {
+        OrthogonalRepresentation ortho = getParent().getProperty(Properties.ORTHO_REPRESENTATION);
+        if (ortho == null) {
+            throw new InconsistentGraphModelException(
+                    "To use this method, a orthogonal representation is needed!");
+        }
+        List<Pair<PEdge, OrthogonalAngle>> angles = ortho.getAngles(this);
+        List<Pair<PEdge, OrthogonalAngle>> orderedAngles = Lists.newLinkedList();
+        for (PEdge edge : adjacentEdges()) {
+            for (Pair<PEdge, OrthogonalAngle> pair : angles) {
+                if (edge == pair.getFirst()) {
+                    orderedAngles.add(pair);
+                }
+            }
+        }
+        angles.clear();
+        angles.addAll(orderedAngles);
     }
 }

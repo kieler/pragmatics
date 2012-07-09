@@ -60,11 +60,14 @@ import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
  * @author ckru
  * 
  */
+//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
+@SuppressWarnings("deprecation")
 public class KSBasECombination extends AbstractCombination implements ITransformationListener {
 
     private EditorTransformationSettings editorSettings;
 
-    private HashMap<String, KSBasETransformation> transformations = new HashMap<String, KSBasETransformation>();
+    private HashMap<String, KSBasETransformation> transformations = 
+            new HashMap<String, KSBasETransformation>();
 
     private static DiagramDocumentEditor lastEditor = null;
 
@@ -106,7 +109,10 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                 if (editor instanceof DiagramDocumentEditor) {
                     final DiagramDocumentEditor diagramEditor = (DiagramDocumentEditor) editor;
                     lastEditor = (DiagramDocumentEditor) editor;
-                    List<EditPart> selectedParts = diagramEditor.getDiagramGraphicalViewer()
+                    //Its guaranteed to return a list, can't check for generics.
+                    @SuppressWarnings("unchecked")
+                    List<EditPart> selectedParts = 
+                        (List<EditPart>) diagramEditor.getDiagramGraphicalViewer()
                             .getSelectedEditParts();
                     EditPart root = diagramEditor.getDiagramGraphicalViewer().getRootEditPart();
                     IGraphicalEditPart groot = (IGraphicalEditPart) root.getChildren().get(0);
@@ -139,8 +145,6 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                         }
                         // execute xtend transformation
                         if (selectionMapping != null) {
-                            EditPart selectedPart = diagramEditor.getDiagramEditPart()
-                                    .findEditPart(null, selectionList.get(0));
                             evokeXtend(transformation, selectionMapping, diagramEditor);
                             // refreshEditPolicy(diagramEditor);
                             evokeLayout(selectionList, rootObject, button);
@@ -192,6 +196,8 @@ public class KSBasECombination extends AbstractCombination implements ITransform
      *            the current selection
      * @return the current selection of a hashmap with type as key and proposed parameter as value
      */
+    //Can't check for generics.
+    @SuppressWarnings("unchecked")
     private HashMap<Object, Object> getSelectionHash(final List<EObject> selection) {
         HashMap<Object, Object> selectionCache = new HashMap<Object, Object>();
         for (EObject obj : selection) {
@@ -207,13 +213,6 @@ public class KSBasECombination extends AbstractCombination implements ITransform
 
             }
         }
-        /*
-         * // a cache to eliminate concurrent modification error List<Object> cache = new
-         * LinkedList<Object>(); cache.addAll(selectionCache.values()); // Also put the element of a
-         * list of length = 1 in there for non list single object // parameters. for (Object obj :
-         * cache) { if (obj instanceof List) { if (((List<?>) obj).size() == 1) {
-         * selectionCache.put(((List<?>) obj).get(0), ((List<?>) obj).get(0)); } } }
-         */
         return selectionCache;
     }
 
