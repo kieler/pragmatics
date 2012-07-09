@@ -13,8 +13,9 @@
  */
 package de.cau.cs.kieler.klighd.effects;
 
+import org.eclipse.ui.PlatformUI;
+
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 
@@ -87,7 +88,7 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
      */
     public void execute() {
         final IPropertyHolder propertyHolder = this;
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 DiagramViewPart view;
                 if (DiagramViewManager.getInstance().getView(getId()) == null) {
@@ -103,7 +104,7 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
                     setViewer(view.getContextViewer().getActiveViewer());
                 }
             }
-        }, true);
+        });
     }
 
 }

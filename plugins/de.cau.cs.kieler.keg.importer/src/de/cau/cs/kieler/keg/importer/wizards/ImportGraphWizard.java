@@ -64,7 +64,6 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.diagram.edit.parts.NodeEditPart;
@@ -222,25 +221,25 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         final Maybe<IPropertyHolder> options = new Maybe<IPropertyHolder>();
         final Maybe<Boolean> createDiagram = new Maybe<Boolean>();
         final Maybe<Boolean> openDiagram = new Maybe<Boolean>();
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 importer.set(optionsPage.getImporter());
                 options.set(optionsPage.getOptions());
                 createDiagram.set(optionsPage.getCreateDiagramFiles());
                 openDiagram.set(optionsPage.getOpenDiagramFiles());
             }
-        }, true);
+        });
         // import from workspace or file system
         if (sourcesPage.getImportFromWorkspace()) {
             // fetch the files and target folder from the workspace sources page
             final Maybe<List<IFile>> files = new Maybe<List<IFile>>();
             final Maybe<IPath> targetPath = new Maybe<IPath>();
-            MonitoredOperation.runInUI(new Runnable() {
+            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                 public void run() {
                     files.set(workspaceSourcesPage.getFiles(null));
                     targetPath.set(workspaceSourcesPage.getTargetContainerPath());
                 }
-            }, true);
+            });
             monitor.begin(Messages.ImportGraphWizard_importing_workspace_task, files.get().size());
             // try to import all selected files
             for (IFile file : files.get()) {
@@ -267,12 +266,12 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
             // fetch the files and target folder from the file system sources page
             final Maybe<List<File>> files = new Maybe<List<File>>();
             final Maybe<IPath> targetPath = new Maybe<IPath>();
-            MonitoredOperation.runInUI(new Runnable() {
+            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                 public void run() {
                     files.set(fileSystemSourcesPage.getFiles(null));
                     targetPath.set(fileSystemSourcesPage.getTargetContainerPath());
                 }
-            }, true);
+            });
             monitor.begin(Messages.ImportGraphWizard_importing_file_system_task, files.get().size());
             // try to import all selected files
             for (File file : files.get()) {
@@ -361,7 +360,7 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
     private void openDiagram(final IPath diagramPath) {
         final IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(diagramPath);
         if (diagramFile.exists()) {
-            MonitoredOperation.runInUI(new Runnable() {
+            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                 public void run() {
                     IWorkbenchPage page =
                             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -381,7 +380,7 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
                         }
                     }
                 }
-            }, true);
+            });
         }
     }
 
@@ -389,7 +388,7 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         final IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(diagramPath);
         if (diagramFile.exists()) {
             // close all editors which have the diagram file opened
-            MonitoredOperation.runInUI(new Runnable() {
+            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                 public void run() {
                     IWorkbenchPage page =
                             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -399,7 +398,7 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
                         page.closeEditor(editorPart, false);
                     }
                 }
-            }, true);
+            });
         }
     }
 

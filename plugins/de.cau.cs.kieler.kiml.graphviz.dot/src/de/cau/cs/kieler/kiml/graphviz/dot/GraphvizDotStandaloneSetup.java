@@ -20,8 +20,10 @@ package de.cau.cs.kieler.kiml.graphviz.dot;
  */
 public class GraphvizDotStandaloneSetup extends GraphvizDotStandaloneSetupGenerated {
 
-	public static void doSetup() {
-		new GraphvizDotStandaloneSetup().createInjectorAndDoEMFRegistration();
-	}
+    /**
+     * Do the standalone setup.
+     */
+    public static void doSetup() {
+        new GraphvizDotStandaloneSetup().createInjectorAndDoEMFRegistration();
+    }
 }
-

@@ -43,7 +43,6 @@ import de.cau.cs.kieler.core.model.m2m.ITransformationContext;
 import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -195,11 +194,12 @@ public final class ImportUtil {
      *            the diagram path
      * @param openDiagram
      *            whether to keep the diagram opened in an editor
+     * @param <T> type of layout mapping
      */
     public static <T> void applyContainedLayout(final IPath diagramPath, final boolean openDiagram) {
         final IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(diagramPath);
         final Maybe<Exception> lastException = new Maybe<Exception>();
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 IWorkbenchPage page =
                         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -241,7 +241,7 @@ public final class ImportUtil {
                     page.closeEditor(editorPart, true);
                 }
             }
-        }, true);
+        });
         if (lastException.get() != null) {
             throw new RuntimeException(lastException.get());
         }
