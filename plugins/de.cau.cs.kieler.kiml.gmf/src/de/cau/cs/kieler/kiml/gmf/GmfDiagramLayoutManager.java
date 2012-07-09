@@ -193,6 +193,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param connection a connection figure
      * @param index the index in the point list
      * @return the absolute point
+     * @deprecated this method does not correctly compensate panning of the diagram
      */
     public static Point getAbsolutePoint(final Connection connection, final int index) {
         Point point = new Point(connection.getPoints().getPoint(index)) {
@@ -848,19 +849,19 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         PointList pointList = figure.getPoints();
 
         KPoint sourcePoint = edgeLayout.getSourcePoint();
-        Point firstPoint = getAbsolutePoint(figure, 0);
+        Point firstPoint = pointList.getPoint(0);
         sourcePoint.setX(firstPoint.x - (float) offset.x);
         sourcePoint.setY(firstPoint.y - (float) offset.y);
 
         for (int i = 1; i < pointList.size() - 1; i++) {
-            Point point = getAbsolutePoint(figure, i);
+            Point point = pointList.getPoint(i);
             KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
             kpoint.setX(point.x - (float) offset.x);
             kpoint.setY(point.y - (float) offset.y);
             edgeLayout.getBendPoints().add(kpoint);
         }
         KPoint targetPoint = edgeLayout.getTargetPoint();
-        Point lastPoint = getAbsolutePoint(figure, pointList.size() - 1);
+        Point lastPoint = pointList.getPoint(pointList.size() - 1);
         targetPoint.setX(lastPoint.x - (float) offset.x);
         targetPoint.setY(lastPoint.y - (float) offset.y);
         
