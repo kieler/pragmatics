@@ -13,18 +13,15 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
-import java.util.List;
-
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LPort;
 
 
 /**
- * calculates port ranks and distributes ports.
+ * Calculates port ranks and distributes ports.
  * 
- * @author msp
  * @author cds
  * @author ima
+ * @author msp
  */
 public interface IPortDistributor {
     
@@ -33,26 +30,33 @@ public interface IPortDistributor {
      * separately.
      * 
      * @param layer
-     *            a layer
+     *            a layer as node array
      */
     void calculatePortRanks(final LNode[] layer);
     
     /**
-     * Returns a list of input ports, beginning at the top right port of the eastern side, going
-     * clockwise.
+     * Determine positions for all ports in the given layer. Input and output ports are processed
+     * separately. Entries that contain multiple nodes are ignored.
      * 
-     * @param node
-     *            the node whose input ports to return.
-     * @return list of input ports.
+     * @param layer
+     *            a layer as node group array
      */
-    List<LPort> getSortedInputPorts(final LNode node);
+    void calculatePortRanks(final NodeGroup[] layer);
     
     /**
      * Distribute the ports of the layered graph depending on the port constraints.
      * 
      * @param layeredGraph
-     *            a layered graph
+     *            a layered graph as node array
      */
     void distributePorts(final LNode[][] layeredGraph);
+    
+    /**
+     * Distribute the ports of the layered graph depending on the port constraints.
+     * 
+     * @param layeredGraph
+     *            a layered graph as node group array
+     */
+    void distributePorts(final NodeGroup[][] layeredGraph);
     
 }
