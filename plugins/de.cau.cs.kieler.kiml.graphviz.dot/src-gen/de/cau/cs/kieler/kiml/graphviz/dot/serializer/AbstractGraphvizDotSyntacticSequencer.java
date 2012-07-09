@@ -14,8 +14,8 @@ import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISyn
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynTransition;
 import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 
-@SuppressWarnings("restriction")
-public class AbstractGraphvizDotSyntacticSequencer extends AbstractSyntacticSequencer {
+@SuppressWarnings("all")
+public abstract class AbstractGraphvizDotSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected GraphvizDotGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_AttributeStatement_CommaKeyword_2_1_0_q;
