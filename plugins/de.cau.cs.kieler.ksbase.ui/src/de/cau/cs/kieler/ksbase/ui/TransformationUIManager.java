@@ -112,6 +112,8 @@ public final class TransformationUIManager {
      *            A selection containing the edit parts that should be used. This may also be null,
      *            which indicates that the elements are selected automatically
      */
+    //Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
+    @SuppressWarnings("deprecation")
     public void createAndExecuteTransformationCommand(
             final EditorTransformationSettings editorSettings,
             final KSBasETransformation transformation, final List<EObject> selection) {

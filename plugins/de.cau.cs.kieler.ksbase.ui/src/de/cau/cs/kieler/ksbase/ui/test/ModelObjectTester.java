@@ -36,6 +36,8 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
  * 
  * @kieler.rating 2009-12-15 proposed yellow
  */
+//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
+@SuppressWarnings("deprecation")
 public class ModelObjectTester extends PropertyTester {
 
     /**

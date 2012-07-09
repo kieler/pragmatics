@@ -279,7 +279,7 @@ class PtolemyTransformations {
             val Entity oldSource = link.source as Entity
             oldSource.childLinks.remove(link)
             (oldSource.eContainer as Entity).childLinks.add(link)
-            oldSource.outgoingLinks.remove(link) ->
+            oldSource.outgoingLinks.remove(link)
             (oldSource.eContainer as Entity).childEntities.remove(oldSource)
         } else {
             val Port oldSource = link.source as Port
