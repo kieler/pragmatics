@@ -124,6 +124,8 @@ public class NodeGroup implements Comparable<NodeGroup> {
 
         if (degree > 0) {
             barycenter = summedWeight / degree;
+        } else if (nodeGroup1.barycenter != null && nodeGroup2.barycenter != null) {
+            barycenter = (nodeGroup1.barycenter + nodeGroup2.barycenter) / 2;
         }
     }
     
