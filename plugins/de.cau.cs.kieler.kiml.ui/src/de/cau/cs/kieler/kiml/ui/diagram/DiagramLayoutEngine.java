@@ -186,32 +186,26 @@ public class DiagramLayoutEngine {
             // second phase: execute layout algorithms
             @Override
             protected IStatus execute(final IProgressMonitor monitor) {
-                IStatus status;
-                if (layoutMapping.get() == null) {
-                    // the given workbench part is not visible; return silently in this case
-                    return null;
+                IKielerProgressMonitor kielerMonitor;
+                if (monitor == null) {
+                    kielerMonitor = new BasicProgressMonitor(0);
                 } else {
-                    IKielerProgressMonitor kielerMonitor;
-                    if (monitor == null) {
-                        kielerMonitor = new BasicProgressMonitor(0);
-                    } else {
-                        kielerMonitor = new ProgressMonitorAdapter(monitor, MAX_PROGRESS_LEVELS);
-                    }
-                    
-                    // the manager's adapter list is expected to return its diagram part type
-                    Class<?>[] adapterList = layoutManager.getAdapterList();
-                    assert adapterList.length > 0;
-                    
-                    // translate the diagram part into one that is understood by the layout manager
-                    Object transDiagPart = layoutManager.getAdapter(diagramPart, adapterList[0]);
-                    
-                    // perform the actual layout
-                    status = layout(layoutMapping.get(), transDiagPart, kielerMonitor,
-                            extraLayoutConfigs, layoutAncestors);
-                    
-                    kielerMonitor.done();
-                    return status;
+                    kielerMonitor = new ProgressMonitorAdapter(monitor, MAX_PROGRESS_LEVELS);
                 }
+                
+                // the manager's adapter list is expected to return its diagram part type
+                Class<?>[] adapterList = layoutManager.getAdapterList();
+                assert adapterList.length > 0;
+                
+                // translate the diagram part into one that is understood by the layout manager
+                Object transDiagPart = layoutManager.getAdapter(diagramPart, adapterList[0]);
+                
+                // perform the actual layout
+                IStatus status = layout(layoutMapping.get(), transDiagPart, kielerMonitor,
+                        extraLayoutConfigs, layoutAncestors);
+                
+                kielerMonitor.done();
+                return status;
             }
 
             // third phase: apply layout with animation

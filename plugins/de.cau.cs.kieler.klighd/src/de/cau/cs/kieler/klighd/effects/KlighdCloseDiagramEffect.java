@@ -13,8 +13,9 @@
  */
 package de.cau.cs.kieler.klighd.effects;
 
+import org.eclipse.ui.PlatformUI;
+
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 
 /**
@@ -41,11 +42,11 @@ public class KlighdCloseDiagramEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 DiagramViewManager.getInstance().closeView(viewId);
             }
-        }, true);
+        });
     }
 
 }
