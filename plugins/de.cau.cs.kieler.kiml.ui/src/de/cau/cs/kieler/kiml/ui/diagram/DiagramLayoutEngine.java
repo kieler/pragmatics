@@ -46,6 +46,10 @@ import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 
 /**
  * The entry class for automatic layout of graphical diagrams.
+ * Use this class to perform automatic layout on the content of a workbench part that contains
+ * a graph-based diagram. The mapping between the diagram and the layout graph structure is managed
+ * by a {@link IDiagramLayoutManager} implementation, which has to be registered using the
+ * {@code layoutManagers} extension point.
  * 
  * @author msp
  */
@@ -89,9 +93,11 @@ public class DiagramLayoutEngine {
     }
     
     /**
-     * Perform layout on the given workbench part. If zero or one layout configuration is passed,
-     * the layout engine is executed exactly once. If multiple layout configurations are passed,
-     * the layout engine is executed accordingly often.
+     * Perform layout on the given workbench part. If zero or one layout configurator is passed,
+     * the layout engine is executed exactly once. If multiple layout configurators are passed,
+     * the layout engine is executed accordingly often, but the resulting layout is applied only
+     * once. This is useful for composition of multiple algorithms that process only parts of
+     * the graph.
      * 
      * @param workbenchPart
      *            the workbench part for which layout is performed
@@ -108,7 +114,7 @@ public class DiagramLayoutEngine {
      * @param zoom
      *            if true, automatic zoom-to-fit is activated
      * @param extraLayoutConfigs
-     *            list of additional layout configurations to use, or {@code null}
+     *            list of additional layout configurators to use, or {@code null}
      * @return the layout mapping used in this session
      */
     public LayoutMapping<?> layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
@@ -137,8 +143,10 @@ public class DiagramLayoutEngine {
 
     /**
      * Perform layout on the given workbench part using the given layout manager. If zero or one
-     * layout configuration is passed, the layout engine is executed exactly once. If multiple
-     * layout configurations are passed, the layout engine is executed accordingly often.
+     * layout configurator is passed, the layout engine is executed exactly once. If multiple
+     * layout configurators are passed, the layout engine is executed accordingly often,
+     * but the resulting layout is applied only once. This is useful for composition of multiple
+     * algorithms that process only parts of the graph.
      * 
      * @param <T> the type of diagram part that is handled by the given diagram layout manager
      * @param layoutManager
@@ -158,7 +166,7 @@ public class DiagramLayoutEngine {
      * @param zoom
      *            if true, automatic zoom-to-fit is activated
      * @param extraLayoutConfigs
-     *            list of additional layout configurations to use, or {@code null}
+     *            list of additional layout configurators to use, or {@code null}
      * @return the layout mapping used in this session
      */
     protected <T> LayoutMapping<T> layout(final IDiagramLayoutManager<T> layoutManager,
@@ -189,12 +197,18 @@ public class DiagramLayoutEngine {
                     } else {
                         kielerMonitor = new ProgressMonitorAdapter(monitor, MAX_PROGRESS_LEVELS);
                     }
+                    
+                    // the manager's adapter list is expected to return its diagram part type
+                    Class<?>[] adapterList = layoutManager.getAdapterList();
+                    assert adapterList.length > 0;
+                    
                     // translate the diagram part into one that is understood by the layout manager
-                    Object transDiagPart = layoutManager.getAdapter(diagramPart,
-                            layoutManager.getAdapterList()[0]);
+                    Object transDiagPart = layoutManager.getAdapter(diagramPart, adapterList[0]);
+                    
                     // perform the actual layout
                     status = layout(layoutMapping.get(), transDiagPart, kielerMonitor,
                             extraLayoutConfigs, layoutAncestors);
+                    
                     kielerMonitor.done();
                     return status;
                 }
@@ -312,10 +326,14 @@ public class DiagramLayoutEngine {
         submon1.begin("Build layout graph", 1);
         LayoutMapping<T> mapping = layoutManager.buildLayoutGraph(workbenchPart, diagramPart);
         
+        // the manager's adapter list is expected to return its internally used diagram part type
+        Class<?>[] adapterList = layoutManager.getAdapterList();
+        assert adapterList.length > 0;
+                
         // translate the diagram part into one that is understood by the layout manager
-        Object transDiagPart = layoutManager.getAdapter(diagramPart,
-                layoutManager.getAdapterList()[0]);
+        Object transDiagPart = layoutManager.getAdapter(diagramPart, adapterList[0]);
         submon1.done();
+        
         // perform the actual layout
         IStatus status = layout(mapping, transDiagPart, progressMonitor.subTask(1), null, false);
         
@@ -345,10 +363,11 @@ public class DiagramLayoutEngine {
             = new Property<IKielerProgressMonitor>("layout.progressMonitor");
     
     /**
-     * Perform layout on the given layout graph mapping. If zero or one layout configuration is
-     * passed, the layout engine is executed exactly once. If multiple layout configurations are
-     * passed, the layout engine is executed accordingly often. Layout listeners are notified after
-     * the layout has been computed.
+     * Perform layout on the given layout graph mapping. If zero or one layout configurator is
+     * passed, the layout engine is executed exactly once. If multiple layout configurators are
+     * passed, the layout engine is executed accordingly often, but the resulting layout is applied
+     * only once. This is useful for composition of multiple algorithms that process only parts of
+     * the graph. Layout listeners are notified after the layout has been computed.
      * 
      * @param mapping
      *            a mapping for the layout graph
@@ -358,7 +377,7 @@ public class DiagramLayoutEngine {
      * @param progressMonitor
      *            a progress monitor to which progress of the layout algorithm is reported
      * @param extraLayoutConfigs
-     *            list of additional layout configurations to use
+     *            list of additional layout configurators to use
      * @param layoutAncestors
      *            if true, layout is not only performed for the selected diagram part, but also for
      *            its ancestors
