@@ -14,21 +14,16 @@
 package de.cau.cs.kieler.klay.layered.p3order;
 
 import java.util.List;
-import java.util.Map;
-
-import com.google.common.collect.Multimap;
-
-import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
  * Determines the node order of a given free layer. Uses heuristic methods to find an ordering that
  * minimizes edge crossings between the given free layer and a neighboring layer with fixed node
- * order. Given constraints are to be respected, possibly by the use of an IConstraintResolver.
- * Port ranks are calculated with the help of a IPortDistributor.
+ * order. Given constraints are to be respected, possibly by the use of an {@link IConstraintResolver}.
+ * Port ranks are calculated with the help of a {@link IPortDistributor}.
  * 
- * @author msp
  * @author cds
  * @author ima
+ * @author msp
  */
 public interface ICrossingMinimizationHeuristic {
 
@@ -38,8 +33,6 @@ public interface ICrossingMinimizationHeuristic {
      * 
      * @param layer
      *            the free layer whose nodes are reordered.
-     * @param layoutUnits
-     *            a map associating layout units with their respective members.
      * @param layerIndex
      *            the free layer's index.
      * @param preOrdered
@@ -50,14 +43,9 @@ public interface ICrossingMinimizationHeuristic {
      *            {@code 0}.
      * @param forward
      *            whether the free layer is after the fixed layer.
-     * @param portPos
-     *            position array.
-     * @param singleNodeNodeGroups
-     *            Map of single node vertices for each layer.
      * @return the total number of edges going either in or out of the given layer.
      */
-    int minimizeCrossings(final List<NodeGroup> layer, Multimap<LNode, LNode> layoutUnits,
-            final int layerIndex, final boolean preOrdered, final boolean randomize,
-            boolean forward, final float[] portPos, final Map<LNode, NodeGroup>[] singleNodeNodeGroups);
+    int minimizeCrossings(List<NodeGroup> layer, int layerIndex, boolean preOrdered, boolean randomize,
+            boolean forward);
 
 }

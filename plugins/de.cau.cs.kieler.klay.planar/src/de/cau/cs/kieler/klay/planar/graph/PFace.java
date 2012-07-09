@@ -14,9 +14,14 @@
 package de.cau.cs.kieler.klay.planar.graph;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
+import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
+import de.cau.cs.kieler.klay.planar.properties.Properties;
 import de.cau.cs.kieler.klay.planar.util.IFunction;
 import de.cau.cs.kieler.klay.planar.util.MappedIterable;
 
@@ -218,4 +223,118 @@ public class PFace extends PGraphElement {
         return res;
     }
 
+    /**
+     * Checks if a face is in rectangular shape. That means that all consecutive edges are straight
+     * to each other or have always the same angle.
+     * 
+     * @return true if it is in rectangular shape, otherwise false.
+     */
+    public boolean isInRectShape() {
+        OrthogonalRepresentation ortho = this.getParent().getProperty(
+                Properties.ORTHO_REPRESENTATION);
+        if (ortho == null) {
+            throw new InconsistentGraphModelException(
+                    "To use this method, a orthogonal representation is needed!");
+        }
+
+        Iterator<PEdge> edgeIt = this.adjacentEdges().iterator();
+        PEdge startEdge = edgeIt.next();
+        PEdge currentEdge = startEdge;
+        PNode currentNode = currentEdge.getSource();
+        boolean isRect = true;
+
+        OrthogonalAngle currentAngle = null;
+        OrthogonalAngle checkAngle = null;
+        do {
+            Pair<PEdge, OrthogonalAngle> pair = nextEdgeWithAngle(currentNode, currentEdge,
+                    ortho.getAngles(currentNode));
+            currentEdge = pair.getFirst();
+            checkAngle = pair.getSecond();
+            currentNode = currentEdge.getOppositeNode(currentNode);
+            if (currentAngle != null) {
+                // if a angle between two face edges change, the face is not in rectangular shape.
+                if (checkAngle != OrthogonalAngle.STRAIGHT && checkAngle != currentAngle) {
+                    isRect = false;
+                    break;
+                }
+            } else {
+                if (checkAngle != OrthogonalAngle.STRAIGHT) {
+                    currentAngle = checkAngle;
+                }
+            }
+
+        } while (startEdge != currentEdge);
+
+        return isRect;
+    }
+
+    public PEdge lastNodeEdge(final PNode node, final PEdge startEdge,
+            final List<Pair<PEdge, OrthogonalAngle>> angles) {
+        int startIndex = 0;
+        int currentIndex = 0;
+
+        // get start edge index.
+        for (int i = 0; i < angles.size(); i++) {
+            if (angles.get(i).getFirst() == startEdge) {
+                startIndex = i;
+                break;
+            }
+        }
+        currentIndex = (startIndex + 1) % angles.size();
+        PEdge result = null;
+        do {
+            if (isAdjacent(angles.get(currentIndex).getFirst())) {
+                result = angles.get(currentIndex).getFirst();
+            }
+        } while (currentIndex != startIndex);
+
+        return result;
+    }
+
+    /**
+     * Get the next edge adjacent to a given node from an edge. Returns {@code null} if the given
+     * edge is not adjacent to the node, and the given edge if it is the only one adjacent to the
+     * node and the angle between the next edge and the start edge.
+     * 
+     * @param node
+     *            the node between start edge and next edge.
+     * @param startEdge
+     *            the start edge
+     * @param angles
+     *            angles of the node.
+     * @return the next edge after the given start edge adjacent to node and a ccw angle.
+     */
+    public Pair<PEdge, OrthogonalAngle> nextEdgeWithAngle(final PNode node, final PEdge startEdge,
+            final List<Pair<PEdge, OrthogonalAngle>> angles) {
+
+        int previousIndex = 0;
+        int directionCounter = 0;
+        int startIndex = 0;
+        int targetIndex = 0;
+        // get start edge index.
+        for (int i = 0; i < angles.size(); i++) {
+            if (angles.get(i).getFirst() == startEdge) {
+                startIndex = i;
+                break;
+            }
+        }
+
+        // take last matching index.
+        int currentIndex = (startIndex + 1) % angles.size();
+        while (currentIndex != startIndex) {
+            if (isAdjacent(angles.get(currentIndex).getFirst())) {
+                targetIndex = currentIndex;
+            }
+            currentIndex = (currentIndex + 1) % angles.size();
+        }
+
+        // if a edge of an other face has detected, we have to sum over all angles until
+        // a face-edge is reached.
+        while (targetIndex != currentIndex) {
+            directionCounter += angles.get(currentIndex).getSecond().ordinal() + 1;
+            currentIndex = (currentIndex + 1) % angles.size();
+        }
+        return new Pair<PEdge, OrthogonalAngle>(angles.get(targetIndex).getFirst(),
+                OrthogonalAngle.map(directionCounter - 1));
+    }
 }

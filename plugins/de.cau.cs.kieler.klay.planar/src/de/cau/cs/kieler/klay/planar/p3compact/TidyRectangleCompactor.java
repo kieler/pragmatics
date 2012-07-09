@@ -392,8 +392,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                     // clockwise order, otherwise the faceSide indices aren't fit.
                     currentNode = findCWNextNode(startEdge, currentFace);
                 } else {
-                    currentNode = (currentEdge.getTarget() == previousNode) ? currentEdge
-                            .getSource() : currentEdge.getTarget();
+                    currentNode = currentEdge.getOppositeNode(previousNode);
                 }
                 previousNode = currentNode;
                 List<Pair<PEdge, OrthogonalAngle>> angles = this.orthogonal.getAngles(currentNode);
@@ -421,7 +420,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
 
                 while (true) {
                     previousIndex = currentIndex;
-                    currentIndex = (currentIndex + 1) < angles.size() ? currentIndex + 1 : 0;
+                    currentIndex = (currentIndex + 1) % angles.size();
                     pair = angles.get(currentIndex);
 
                     if (!otherface && currentFace.isAdjacent(pair.getFirst())) {
