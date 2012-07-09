@@ -38,6 +38,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
@@ -48,7 +49,6 @@ import de.cau.cs.kieler.core.model.m2m.TransformationObserver;
 import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.EObjectSelectionState;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationEffect;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.kivi.LayoutEffect;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
@@ -171,9 +171,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
      *            the editpart that should be selected afterwards
      */
     public void setSelection(final IEditorPart editor, final EditPart part) {
-
-        MonitoredOperation.runInUI(new Runnable() {
-
+        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
             public void run() {
                 // if (obj != KSBasECombination.this.lastSelection) {
                 try {
@@ -185,7 +183,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                 // }
 
             }
-        }, false);
+        });
     }
 
     /**
