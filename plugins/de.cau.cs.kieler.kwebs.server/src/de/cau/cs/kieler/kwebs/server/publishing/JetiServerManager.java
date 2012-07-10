@@ -33,11 +33,8 @@ import de.unido.ls5.eti.toolserver.SessionTimeouter;
  * Manager for wrapping the jETI tool server.
  * Concurrent safety has to be provided by using instance.
  * 
- * @kieler.rating  2011-08-25 yellow
- *      reviewed by ckru, msp, mri
- *      
+ * @kieler.design 2011-08-25 reviewed by ckru, msp, mri
  * @author swe
- *
  */
 final class JetiServerManager extends AbstractServerManager {
 

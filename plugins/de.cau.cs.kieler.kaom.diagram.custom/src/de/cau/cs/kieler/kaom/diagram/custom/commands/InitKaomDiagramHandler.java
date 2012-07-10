@@ -53,7 +53,6 @@ import de.cau.cs.kieler.kaom.diagram.part.Messages;
  * A command handler that reinitializes a diagram file from a given KAOM model file.
  * 
  * @author soh
- * @kieler.rating 2010-06-14 proposed yellow
  */
 public class InitKaomDiagramHandler extends AbstractInitDiagramHandler {
 

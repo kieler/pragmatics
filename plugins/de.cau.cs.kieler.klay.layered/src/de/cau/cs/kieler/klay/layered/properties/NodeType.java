@@ -20,8 +20,10 @@ package de.cau.cs.kieler.klay.layered.properties;
  * @author cds
  * @author ima
  * @author jjc
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public enum NodeType {
+    
     /** a normal node is created from a node of the original graph. */
     NORMAL,
     /** a dummy node created to split a long edge. */

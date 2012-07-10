@@ -37,6 +37,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * determine the points where the edge touches the source and target nodes.</p>
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class LPort extends LShape {
 

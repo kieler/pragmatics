@@ -33,6 +33,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * is desired, it can be obtained by pre-processing and post-processing the graph.
  * 
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
     

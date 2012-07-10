@@ -17,8 +17,8 @@ package de.cau.cs.kieler.kiml;
  * Thrown when a layout algorithm is executed on a graph that is not supported.
  *
  * @author msp
- * @kieler.rating 2011-03-14 yellow
- *     reviewed by cmot, cds
+ * @kieler.design 2011-03-14 reviewed by cmot, cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class UnsupportedGraphException extends RuntimeException {
 

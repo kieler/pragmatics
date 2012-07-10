@@ -36,6 +36,7 @@ import de.cau.cs.kieler.kiml.options.GraphFeature;
  * A layout data service that reads its content from the Eclipse extension registry.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public abstract class ExtensionLayoutDataService extends LayoutDataService {
     

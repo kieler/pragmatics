@@ -48,8 +48,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
  * </p>
  *
  * @generated
- * @kieler.rating 2011-03-14 yellow
- *     reviewed by cmot, cds
+ * @kieler.design 2011-03-14 reviewed by cmot, cds
  */
 public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
     /**

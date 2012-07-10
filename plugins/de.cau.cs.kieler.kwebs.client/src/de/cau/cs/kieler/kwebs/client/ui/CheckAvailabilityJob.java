@@ -25,8 +25,6 @@ import de.cau.cs.kieler.kwebs.client.ServerConfigData;
 /**
  * This job tests layout service availability and displays a status dialog afterwards.
  *
- * @kieler.rating 2011-05-14
- * 
  * @author swe
  */
 public class CheckAvailabilityJob extends AbstractServerBasedJob {

@@ -27,6 +27,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * A graph analysis that computes the number of nodes in the given graph.
  * 
  * @author mri
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class NodeCountAnalysis implements IAnalysis {
     

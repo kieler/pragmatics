@@ -60,6 +60,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * 
  * @author msp
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class OrthogonalRoutingGenerator {
     

@@ -20,8 +20,6 @@ package de.cau.cs.kieler.ksbase.ui.listener;
  * transformation.
  * 
  * @author mim
- * 
- * @kieler.rating 2009-12-15 proposed yellow
  */
 public interface ITransformationEventListener {
 

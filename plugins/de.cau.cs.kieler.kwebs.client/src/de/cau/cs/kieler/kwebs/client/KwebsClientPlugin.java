@@ -32,9 +32,7 @@ import de.cau.cs.kieler.kwebs.client.layout.SwitchLayoutMode;
 /**
  * Activator for the client plug-in. It provides storage management for the user defined provider list.
  *
- * @kieler.rating  2011-08-02 yellow
- *     reviewed by ckru, mri, msp
- *     
+ * @kieler.design 2011-08-02 reviewed by ckru, mri, msp
  * @author  swe
  */
 public class KwebsClientPlugin extends Plugin {

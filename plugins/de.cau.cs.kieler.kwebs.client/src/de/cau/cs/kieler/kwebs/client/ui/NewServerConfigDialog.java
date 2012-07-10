@@ -22,7 +22,6 @@ import de.cau.cs.kieler.kwebs.client.ServerConfigs;
 /**
  * Dialog for adding a new provider.
  *
- * @kieler.rating 2011-05-14 red
  * @author swe
  */
 public class NewServerConfigDialog extends AbstractServerConfigDialog {

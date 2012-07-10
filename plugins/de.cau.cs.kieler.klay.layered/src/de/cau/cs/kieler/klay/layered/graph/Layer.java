@@ -26,6 +26,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * drawn in one column.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class Layer extends LGraphElement implements Iterable<LNode> {
 

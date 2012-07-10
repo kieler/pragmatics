@@ -35,8 +35,6 @@ import de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort;
 /**
  * Client implementation for the JAX-WS web service.
  *
- * @kieler.rating 2011-05-12 red
- *
  * @author swe
  */
 public class JaxWsClient extends HttpBasedLayoutServiceClient {

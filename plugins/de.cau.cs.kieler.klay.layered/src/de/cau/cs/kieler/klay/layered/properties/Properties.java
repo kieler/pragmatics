@@ -44,6 +44,7 @@ import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
  * @author msp
  * @author cds
  * @author ima
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public final class Properties {
 

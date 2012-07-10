@@ -37,6 +37,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  *
  * @param <T> type of EMF object
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public abstract class AbstractEmfHandler<T extends EObject> implements ITransformationHandler<T> {
     

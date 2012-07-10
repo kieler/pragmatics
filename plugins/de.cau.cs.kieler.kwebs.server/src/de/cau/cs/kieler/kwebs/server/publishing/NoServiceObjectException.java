@@ -17,8 +17,7 @@ package de.cau.cs.kieler.kwebs.server.publishing;
 /**
  * .
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public class NoServiceObjectException extends RuntimeException {
 

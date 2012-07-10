@@ -26,6 +26,7 @@ import de.cau.cs.kieler.core.properties.Property;
  * Context information for configuration of layout options.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class LayoutContext extends MapPropertyHolder {
     

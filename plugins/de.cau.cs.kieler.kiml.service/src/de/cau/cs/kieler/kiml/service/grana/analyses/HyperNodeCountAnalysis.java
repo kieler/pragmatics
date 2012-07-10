@@ -25,12 +25,12 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
-
 /**
  * A graph analysis that counts the number of hyper nodes. Returns a single-component
  * result {@code (int hyperNodes)}.
  * 
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class HyperNodeCountAnalysis implements IAnalysis {
 

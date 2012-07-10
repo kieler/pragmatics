@@ -22,6 +22,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  * An extension of the layout configuration interface for configurations that can be altered.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public interface IMutableLayoutConfig extends ILayoutConfig {
     
