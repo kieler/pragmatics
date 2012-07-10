@@ -165,6 +165,11 @@ public class PluginExampleCreator {
                 : relativeLocation);
     }
 
+    /**
+     * Gets the plugin node.
+     *
+     * @return the plugin node
+     */
     public Node getPluginNode() {
         try {
             if (IOHandler.PLUGIN_XML.equals(this.pluginXML.getName())) {
