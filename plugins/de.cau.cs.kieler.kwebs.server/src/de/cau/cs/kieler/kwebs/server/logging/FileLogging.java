@@ -30,8 +30,7 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.LoggerEvent;
  * This class implements {@link ILoggerListener} and provides basic
  * file based logging in csv format.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public class FileLogging implements ILoggerListener {
 

@@ -40,8 +40,6 @@ import de.cau.cs.kieler.ksbase.ui.test.ModelObjectTester;
  * Edit policy for the KSBasE popup balloons.
  * 
  * @author mim
- * 
- * @kieler.rating 2010-03-22 proposed yellow
  */
 //Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
 @SuppressWarnings("deprecation")

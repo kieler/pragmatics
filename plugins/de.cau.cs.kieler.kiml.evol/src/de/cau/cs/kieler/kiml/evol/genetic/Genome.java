@@ -26,7 +26,6 @@ import de.cau.cs.kieler.core.properties.Property;
  * A genome has a list of Gene objects. It can be used as an individual in an
  * evolutionary algorithm.
  *
- * @kieler.rating 2011-07-08 yellow reviewed by swe, ima, msp
  * @author bdu
  * @author msp
  */

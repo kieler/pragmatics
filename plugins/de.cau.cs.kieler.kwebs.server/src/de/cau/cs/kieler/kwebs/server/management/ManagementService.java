@@ -33,8 +33,7 @@ import de.cau.cs.kieler.kwebs.server.publishing.ServicePublisher;
 /**
  * Management for the server. Connections to the management server can only be made from localhost.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public final class ManagementService implements UncaughtExceptionHandler {
 

@@ -39,8 +39,6 @@ import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
  * The command to execute a transformation.
  * 
  * @author mim
- * 
- * @kieler.rating 2009-12-15 proposed yellow
  */
 //Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
 @SuppressWarnings("deprecation")

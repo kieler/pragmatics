@@ -29,7 +29,6 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
  * <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=283083">Eclipse bug 283083</a>.
  * </p>
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
 public class ZestLayoutProvider extends AbstractLayoutProvider {
