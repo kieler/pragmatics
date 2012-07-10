@@ -62,7 +62,7 @@ import com.google.inject.Injector;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.diagram.custom.commands.InitKaomDiagramHandler;
-import de.cau.cs.kieler.kaom.importer.ptolemy.utils.Utils;
+import de.cau.cs.kieler.kaom.importer.ptolemy.utils.PtolemyImporterUtils;
 import de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramsWizard;
 import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.Ptolemy2KaomOptimization;
 import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.Ptolemy2KaomTransformation;
@@ -405,7 +405,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
      */
     private String getBaseFileName(final String sourceFileName) {
         // Get the file's base name
-        String sourceFileExtension = Utils.getFileExtension(sourceFileName);
+        String sourceFileExtension = PtolemyImporterUtils.getFileExtension(sourceFileName);
         String sourceFileBaseName = sourceFileName.substring(
                 0, sourceFileName.length() - sourceFileExtension.length() - 1);
         
@@ -626,14 +626,14 @@ public class DiagramsImporter implements IRunnableWithProgress {
      */
     private File ensureMomlFileExtension(final File sourceFile) throws IOException {
         // Check if the source file is already a moml file
-        if (Utils.getFileExtension(sourceFile.getName()).toLowerCase().equals(
+        if (PtolemyImporterUtils.getFileExtension(sourceFile.getName()).toLowerCase().equals(
                 PtolemyImportConstants.PTOLEMY_INTERNAL_FILE_EXTENSION)) {
             
             return sourceFile;
         }
         
         // Get the file's base name
-        String baseName = Utils.getFileBaseName(sourceFile.getName());
+        String baseName = PtolemyImporterUtils.getFileBaseName(sourceFile.getName());
         
         // Create a temporary file that automatically gets deleted when the VM ends
         File realSourceFile = File.createTempFile(baseName,
