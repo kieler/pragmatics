@@ -97,6 +97,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      *     
      *   - For center edge labels:
      *      - LABEL_DUMMY_REMOVER
+     *     
+     *   - For end edge labels:
+     *     - END_LABEL_PROCESSOR
      */
     
     /** additional processor dependencies for graphs with hyperedges. */
@@ -181,6 +184,28 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 
                 // After Phase 5
                 EnumSet.of(IntermediateLayoutProcessor.LABEL_DUMMY_REMOVER));
+    
+    /** additional processor dependencies for graphs with head or tail edge labels. */
+    private static final IntermediateProcessingStrategy END_EDGE_LABEL_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(
+                // Before Phase 1
+                null,
+                
+                // Before Phase 2
+                null,
+                
+                // Before Phase 3
+                null,
+                
+                // Before Phase 4
+                EnumSet.of(IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR),
+                
+                // Before Phase 5
+                null,
+                
+                // After Phase 5
+                EnumSet.of(IntermediateLayoutProcessor.END_LABEL_PROCESSOR));
+    
     /**
      * {@inheritDoc}
      */
@@ -218,6 +243,10 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         
         if (graphProperties.contains(GraphProperties.CENTER_LABELS)) {
             strategy.addAll(CENTER_EDGE_LABEL_PROCESSING_ADDITIONS);
+        }
+        
+        if (graphProperties.contains(GraphProperties.END_LABELS)) {
+            strategy.addAll(END_EDGE_LABEL_PROCESSING_ADDITIONS);
         }
         
         return strategy;

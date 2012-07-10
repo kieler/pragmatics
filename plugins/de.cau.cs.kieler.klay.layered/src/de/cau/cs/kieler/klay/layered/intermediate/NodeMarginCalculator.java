@@ -107,7 +107,7 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
                 }
                 
                 // Do the same for end labels on edges connected to the node
-                // TODO: maybe consider port labels here if the placement stratgy requires
+                // TODO: maybe consider port labels here if the placement strategy requires
                 // this
                 for (LPort port : node.getPorts()) {
                     // Calculate the port's upper left corner's x and y coordinate
@@ -133,7 +133,7 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
                         for (LLabel label : edge.getLabels()) {
                             if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
                                     == EdgeLabelPlacement.TAIL) {
-                                elementBox.x = portX;
+                                elementBox.x = portX - label.getSize().x;
                                 elementBox.y = portY;
                                 elementBox.width = label.getSize().x;
                                 elementBox.height = label.getSize().y;
