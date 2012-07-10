@@ -22,8 +22,7 @@ import de.cau.cs.kieler.kwebs.client.Preferences;
 /**
  * This is an utility class for switching between local and remote layout.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public final class SwitchLayoutMode {
 

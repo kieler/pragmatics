@@ -30,10 +30,8 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 /**
  * Service endpoint to be published as JAX-WS web service.
  * 
- * @kieler.rating  2011-08-25 yellow
- *      reviewed by ckru, msp, mri
- *      
- * @author  swe
+ * @kieler.design 2011-08-25 reviewed by ckru, msp, mri
+ * @author swe
  */
 // The attributes are necessary because otherwise JAX-WS would use package and class name for
 // the definition of the service and port name and the namespace.

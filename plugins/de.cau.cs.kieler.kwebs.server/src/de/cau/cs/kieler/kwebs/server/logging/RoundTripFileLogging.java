@@ -20,8 +20,7 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.LoggerEvent;
  * This class registers as {@link ILoggerListener} and provides size based round trip
  * file logging.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public class RoundTripFileLogging extends FileLogging {
 

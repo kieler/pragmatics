@@ -40,7 +40,6 @@ import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
  * Policy for displaying balloons.
  * 
  * @author soh
- * @kieler.rating 2010-03-04 proposed yellow
  */
 public class BalloonPopupBarEditPolicy extends DiagramPopupBarPolicy {
 

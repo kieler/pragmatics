@@ -34,6 +34,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author msp
  * @author cds
  * @author ima
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
 
