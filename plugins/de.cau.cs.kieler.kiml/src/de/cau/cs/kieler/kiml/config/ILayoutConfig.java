@@ -32,7 +32,7 @@ public interface ILayoutConfig {
     
     /**
      * Return the priority of this layout configurator, which is relevant when multiple configurators
-     * are applied.
+     * are applied. A greater number means higher priority.
      * 
      * @return the priority
      */
@@ -40,7 +40,10 @@ public interface ILayoutConfig {
     
     /**
      * Enrich the given context with additional information that can be derived from what is already
-     * contained.
+     * contained. This information can be specific to the configurator or it can be reused by other
+     * configurators to find out more about the current context. This method should be called once to
+     * prepare a context before any values are queried. The configurator can use the context
+     * object as a cache to store results of more elaborate computations.
      * 
      * @param context a context for layout configuration
      */
@@ -56,7 +59,7 @@ public interface ILayoutConfig {
     Object getValue(LayoutOptionData<?> optionData, LayoutContext context);
     
     /**
-     * Transfer all non-default values that are managed by this layout configuration to the given
+     * Transfer all non-default values that are managed by this layout configurator to the given
      * graph data holder.
      * 
      * @param graphData a graph data instance that can hold layout options

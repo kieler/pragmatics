@@ -55,7 +55,6 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.keg.diagram.custom.KEGDiagramPlugin;
 import de.cau.cs.kieler.keg.Node;
@@ -243,21 +242,21 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         IPropertyHolder options = getOptions();
         final Maybe<Boolean> createDiagram = new Maybe<Boolean>();
         final Maybe<Boolean> openDiagram = new Maybe<Boolean>();
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 createDiagram.set(newFilePage.getCreateDiagramFiles());
                 openDiagram.set(newFilePage.getOpenDiagramFiles());
             }
-        }, true);
+        });
         // do the generation
         try {
             if (numberOfGraphs == 1) {
                 final Maybe<IFile> file = new Maybe<IFile>();
-                MonitoredOperation.runInUI(new Runnable() {
+                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                     public void run() {
                         file.set(newFilePage.createNewFile());
                     }
-                }, true);
+                });
                 // generate and serialize the graph
                 try {
                     generateAndSerialize(file.get(), createDiagram.get(), openDiagram.get(),
@@ -271,13 +270,13 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                 final Maybe<String> name = new Maybe<String>();
                 final Maybe<String> ext = new Maybe<String>();
                 final Maybe<IPath> containerPath = new Maybe<IPath>();
-                MonitoredOperation.runInUI(new Runnable() {
+                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                     public void run() {
                         name.set(newFilePage.getFileName());
                         ext.set(newFilePage.getFileExtension());
                         containerPath.set(newFilePage.getContainerFullPath());
                     }
-                }, true);
+                });
                 String nameWithoutExt = 
                     name.get().substring(0, name.get().lastIndexOf(".")); //$NON-NLS-1$
                 // generate the desired number of graphs
@@ -357,7 +356,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
     private void closeDiagram(final IPath diagramPath) {
         final IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(diagramPath);
         if (diagramFile.exists()) {
-            MonitoredOperation.runInUI(new Runnable() {
+            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                 public void run() {
                     // close all editors which have the diagram file opened
                     IWorkbenchPage page =
@@ -368,13 +367,13 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                         page.closeEditor(editorPart, false);
                     }
                 }
-            }, true);
+            });
         }
     }
 
     private void openDiagram(final IPath diagramPath) {
         final IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(diagramPath);
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 IWorkbenchPage page =
                         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -390,7 +389,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                     // opening the diagram failed but as it is optional it can be safely ignored
                 }
             }
-        }, true);
+        });
     }
 
     /**

@@ -30,7 +30,6 @@ import org.eclipse.ui.ide.IDE;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
@@ -68,7 +67,7 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
         final IFile diagramFile =
                 ResourcesPlugin.getWorkspace().getRoot().getFile(parameter);
         lastException = null;
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 IWorkbenchPage page =
                         PlatformUI.getWorkbench().getActiveWorkbenchWindow()
@@ -130,7 +129,7 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                     page.closeEditor(editorPart, false);
                 }
             }
-        }, true);
+        });
         monitor.done();
         // throw any exceptions that occurred inside the UI thread
         if (lastException != null) {

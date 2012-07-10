@@ -22,7 +22,8 @@ import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 
 /**
- * A layout configuration that is composed of multiple other configurations.
+ * A layout configurator that is composed of multiple other configurators.
+ * This is used to handle a collection of layout configurators during layout option management.
  *
  * @author msp
  */
@@ -113,11 +114,11 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
 
     /**
      * {@inheritDoc}
+     * The contained layout configurators are called in reversed order so those with higher priorities
+     * overwrite options set by those with lower priority.
      */
     public void transferValues(final KGraphData graphData, final LayoutContext context) {
         ListIterator<ILayoutConfig> configIter = configs.listIterator(configs.size());
-        // iterate the layout configurations in reversed order so those with higher priorities
-        // overwrite options set by those with lower priority
         while (configIter.hasPrevious()) {
             ILayoutConfig conf = configIter.previous();
             conf.transferValues(graphData, context);

@@ -1,7 +1,4 @@
 /**
- * <copyright>
- * </copyright>
- *
  */
 package de.cau.cs.kieler.kiml.graphviz.dot.dot;
 

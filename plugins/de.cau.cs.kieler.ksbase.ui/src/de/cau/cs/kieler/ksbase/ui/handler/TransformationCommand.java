@@ -42,6 +42,8 @@ import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
  * 
  * @kieler.rating 2009-12-15 proposed yellow
  */
+//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
+@SuppressWarnings("deprecation")
 public class TransformationCommand extends AbstractTransactionalCommand {
 
     /** The component that handles execution of a transformation. **/

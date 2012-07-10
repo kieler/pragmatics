@@ -38,6 +38,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
@@ -48,7 +49,6 @@ import de.cau.cs.kieler.core.model.m2m.TransformationObserver;
 import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.EObjectSelectionState;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationEffect;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.kivi.LayoutEffect;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
@@ -60,11 +60,14 @@ import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
  * @author ckru
  * 
  */
+//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
+@SuppressWarnings("deprecation")
 public class KSBasECombination extends AbstractCombination implements ITransformationListener {
 
     private EditorTransformationSettings editorSettings;
 
-    private HashMap<String, KSBasETransformation> transformations = new HashMap<String, KSBasETransformation>();
+    private HashMap<String, KSBasETransformation> transformations = 
+            new HashMap<String, KSBasETransformation>();
 
     private static DiagramDocumentEditor lastEditor = null;
 
@@ -106,7 +109,10 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                 if (editor instanceof DiagramDocumentEditor) {
                     final DiagramDocumentEditor diagramEditor = (DiagramDocumentEditor) editor;
                     lastEditor = (DiagramDocumentEditor) editor;
-                    List<EditPart> selectedParts = diagramEditor.getDiagramGraphicalViewer()
+                    //Its guaranteed to return a list, can't check for generics.
+                    @SuppressWarnings("unchecked")
+                    List<EditPart> selectedParts = 
+                        (List<EditPart>) diagramEditor.getDiagramGraphicalViewer()
                             .getSelectedEditParts();
                     EditPart root = diagramEditor.getDiagramGraphicalViewer().getRootEditPart();
                     IGraphicalEditPart groot = (IGraphicalEditPart) root.getChildren().get(0);
@@ -139,8 +145,6 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                         }
                         // execute xtend transformation
                         if (selectionMapping != null) {
-                            EditPart selectedPart = diagramEditor.getDiagramEditPart()
-                                    .findEditPart(null, selectionList.get(0));
                             evokeXtend(transformation, selectionMapping, diagramEditor);
                             // refreshEditPolicy(diagramEditor);
                             evokeLayout(selectionList, rootObject, button);
@@ -167,9 +171,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
      *            the editpart that should be selected afterwards
      */
     public void setSelection(final IEditorPart editor, final EditPart part) {
-
-        MonitoredOperation.runInUI(new Runnable() {
-
+        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
             public void run() {
                 // if (obj != KSBasECombination.this.lastSelection) {
                 try {
@@ -181,7 +183,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                 // }
 
             }
-        }, false);
+        });
     }
 
     /**
@@ -192,6 +194,8 @@ public class KSBasECombination extends AbstractCombination implements ITransform
      *            the current selection
      * @return the current selection of a hashmap with type as key and proposed parameter as value
      */
+    //Can't check for generics.
+    @SuppressWarnings("unchecked")
     private HashMap<Object, Object> getSelectionHash(final List<EObject> selection) {
         HashMap<Object, Object> selectionCache = new HashMap<Object, Object>();
         for (EObject obj : selection) {
@@ -207,13 +211,6 @@ public class KSBasECombination extends AbstractCombination implements ITransform
 
             }
         }
-        /*
-         * // a cache to eliminate concurrent modification error List<Object> cache = new
-         * LinkedList<Object>(); cache.addAll(selectionCache.values()); // Also put the element of a
-         * list of length = 1 in there for non list single object // parameters. for (Object obj :
-         * cache) { if (obj instanceof List) { if (((List<?>) obj).size() == 1) {
-         * selectionCache.put(((List<?>) obj).get(0), ((List<?>) obj).get(0)); } } }
-         */
         return selectionCache;
     }
 
