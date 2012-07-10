@@ -45,8 +45,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * </p>
  *
  * @generated
- * @kieler.rating 2011-03-14 yellow
- *     reviewed by cmot, cds
+ * @kieler.design 2011-03-14 reviewed by cmot, cds
  */
 public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
     /**

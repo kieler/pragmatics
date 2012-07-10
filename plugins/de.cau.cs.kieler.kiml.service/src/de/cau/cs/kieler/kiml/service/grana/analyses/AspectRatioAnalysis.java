@@ -21,13 +21,13 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
-
 /**
  * A drawing analysis that computes the aspect ratio of the area a graph drawing occupies.
  * This analysis depends on the {@link AreaAnalysis} results. Returns a single-component
  * result {@code (double ratio)}.
  * 
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class AspectRatioAnalysis implements IAnalysis {
 

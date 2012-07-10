@@ -21,12 +21,15 @@ package de.cau.cs.kieler.klay.layered.properties;
  * @see de.cau.cs.kieler.klay.layered.intermediate.InLayerConstraintProcessor
  *        InLayerConstraintProcessor
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public enum InLayerConstraint {
+    
     /** no constraint on in-layer placement. */
     NONE,
     /** float node to the top of the layer, along with other nodes posessing this constraint. */
     TOP,
     /** float node to the bottom of the layer, along with other nodes posessing this constraint. */
-    BOTTOM
+    BOTTOM;
+    
 }

@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * The interface all graph analysis algorithms have to implement.
  * 
  * @author mri
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public interface IAnalysis {
 
