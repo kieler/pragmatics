@@ -25,8 +25,7 @@ import java.net.Socket;
 /**
  * .
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public class ManagementClient {
     

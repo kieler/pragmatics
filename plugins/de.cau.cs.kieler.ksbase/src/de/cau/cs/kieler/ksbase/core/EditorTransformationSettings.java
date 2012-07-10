@@ -37,12 +37,10 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * {@link TransformationManager} to store settings that have been defined using the KSBasE extension
  * point or the KSBasE preference pages.
  * 
- * 
  * This class may be serialized.
  * 
  * @author mim
- * 
- * @kieler.rating 2010-01-22 yellow review by msp, skn
+ * @kieler.design 2010-01-22 review by msp, skn
  */
 //Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
 @SuppressWarnings("deprecation")

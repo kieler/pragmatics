@@ -24,12 +24,12 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
-
 /**
  * A graph analysis that counts the number of compound nodes. Returns a single-component
  * result {@code (int compoundNodes)}.
  * 
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class CompoundNodeCountAnalysis implements IAnalysis {
     

@@ -23,6 +23,7 @@ import de.cau.cs.kieler.kaom.KaomFactory
 import de.cau.cs.kieler.kaom.Link
 import de.cau.cs.kieler.kaom.Port
 import de.cau.cs.kieler.kaom.Relation
+import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.utils.TransformationUtils
 
 
 /**

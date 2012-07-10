@@ -28,7 +28,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
-
 /**
  * A graph analysis that counts the number of multi edges. (edges with the same
  * source and target) Returns a single-component result {@code (int multiEdgeCount)}.
@@ -38,6 +37,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * if that number is bigger than 1.
  * 
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class MultiEdgeCountAnalysis implements IAnalysis {
     

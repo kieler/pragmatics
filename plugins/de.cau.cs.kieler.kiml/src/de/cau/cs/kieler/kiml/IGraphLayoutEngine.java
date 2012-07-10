@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * Interface for graph layout engines.
  * 
  * @author swe
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public interface IGraphLayoutEngine {
 

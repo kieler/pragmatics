@@ -16,12 +16,10 @@ package de.cau.cs.kieler.kwebs.server.logging;
 
 import de.cau.cs.kieler.kwebs.server.logging.Logger.LoggerEvent;
 
-
 /**
  * Interface for listening to events from the {@link Logger}.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public interface ILoggerListener {
 

@@ -15,13 +15,13 @@ package de.cau.cs.kieler.klay.layered.p3order;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
-
 /**
  * Calculates port ranks and distributes ports.
  * 
  * @author cds
  * @author ima
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public interface IPortDistributor {
     

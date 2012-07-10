@@ -25,7 +25,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
-
 /**
  * A graph analysis that gives the number of self loops in the graph. Returns a
  * single-component result {@code (int selfLoops)}.
@@ -35,6 +34,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * kinds of self loops should be included or not.
  * 
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class SelfLoopAnalysis implements IAnalysis {
     

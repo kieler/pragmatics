@@ -17,9 +17,7 @@ package de.cau.cs.kieler.kwebs;
 /**
  * .
  *
- * @kieler.rating  2011-08-02 yellow
- *     reviewed by ckru, mri, msp
- *     
+ * @kieler.design 2011-08-02 reviewed by ckru, mri, msp
  * @author swe
  */
 public class LocalServiceException extends RuntimeException {

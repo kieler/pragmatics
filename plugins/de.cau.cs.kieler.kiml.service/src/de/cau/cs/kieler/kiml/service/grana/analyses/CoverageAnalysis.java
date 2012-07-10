@@ -26,7 +26,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
-
 /**
  * A drawing analysis that computes the percentage of the drawing area that is covered by
  * nodes and insets. The closer this value is to 1.0, the more effectively packed the layout
@@ -37,6 +36,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * on between nodes.
  * 
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class CoverageAnalysis implements IAnalysis {
 

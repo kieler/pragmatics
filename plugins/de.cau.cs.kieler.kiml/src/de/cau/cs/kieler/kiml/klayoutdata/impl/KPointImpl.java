@@ -40,8 +40,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * </p>
  *
  * @generated
- * @kieler.rating 2011-03-14 yellow
- *     reviewed by cmot, cds
+ * @kieler.design 2011-03-14 reviewed by cmot, cds
  */
 public class KPointImpl extends EObjectImpl implements KPoint {
     /**

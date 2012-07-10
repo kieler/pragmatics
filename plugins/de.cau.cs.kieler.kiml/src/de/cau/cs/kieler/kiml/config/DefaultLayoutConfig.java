@@ -37,8 +37,9 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  * Default implementation of the layout configuration interface. This configuration handles the
  * default values of layout algorithms and layout options.
  *
- * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
+ * @kieler.rating 2012-07-05 yellow
+ *      review by cmot, sgu
  */
 public class DefaultLayoutConfig implements ILayoutConfig {
     

@@ -28,6 +28,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * Analysis for the number of edge labels.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class EdgeLabelCountAnalysis implements IAnalysis {
     

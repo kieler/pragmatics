@@ -23,8 +23,8 @@ import java.util.Map.Entry;
 /**
  * A simple pair implementation.
  * 
- * @kieler.rating 2011-03-14 yellow
- *     reviewed by cmot, cds
+ * @kieler.design 2011-03-14 reviewed by cmot, cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  * @param <F> type of first contained object
  * @param <S> type of second contained object
  * @author msp

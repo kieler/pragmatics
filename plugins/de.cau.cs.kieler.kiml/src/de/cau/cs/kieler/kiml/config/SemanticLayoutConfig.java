@@ -26,6 +26,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * An abstract layout configuration that is able to consider semantic model properties.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
     

@@ -38,7 +38,6 @@ import de.cau.cs.kieler.kwebs.servicedata.SupportedDiagram;
  * This class realizes the {@code IConfigurationElement} interface of the eclipse platform in order to
  * provide the meta data of a layout service in a form processable by {@code ExtensionLayoutDataService}.
  *
- * @kieler.rating 2011-05-17 red
  * @author swe
  */
 public class ServiceDataConfigurationElement implements IConfigurationElement {

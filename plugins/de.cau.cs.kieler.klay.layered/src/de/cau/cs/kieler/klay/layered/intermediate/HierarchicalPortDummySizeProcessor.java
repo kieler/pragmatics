@@ -43,6 +43,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see HierarchicalPortOrthogonalEdgeRouter
  * @see HierarchicalPortPositionProcessor
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class HierarchicalPortDummySizeProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 

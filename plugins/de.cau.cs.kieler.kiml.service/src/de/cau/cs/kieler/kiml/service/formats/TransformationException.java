@@ -17,7 +17,8 @@ package de.cau.cs.kieler.kiml.service.formats;
 /**
  * An exception for graph transformation errors.
  *
- * @author  swe
+ * @author swe
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class TransformationException extends RuntimeException {
 

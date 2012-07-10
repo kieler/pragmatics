@@ -29,8 +29,6 @@ import de.cau.cs.kieler.ksbase.core.Messages;
  * {@link TransformationCommand} to execute the transformation.
  * 
  * @author mim
- * 
- * @kieler.rating 2009-12-15 proposed yellow
  */
 public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
 

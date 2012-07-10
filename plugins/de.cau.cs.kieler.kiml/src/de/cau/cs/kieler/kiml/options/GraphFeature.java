@@ -17,6 +17,7 @@ package de.cau.cs.kieler.kiml.options;
  * Graph features used for automatic recognition of the suitability of layout algorithms.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public enum GraphFeature {
 

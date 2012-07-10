@@ -8,6 +8,8 @@ import org.osgi.framework.Bundle;
 
 import com.google.inject.Injector;
 
+import de.cau.cs.kieler.kaom.text.ui.internal.KaomActivator;
+
 /**
  * This class was generated. Customizations should only happen in a newly
  * introduced subclass. 
@@ -16,12 +18,12 @@ public class KaomExecutableExtensionFactory extends AbstractGuiceAwareExecutable
 
 	@Override
 	protected Bundle getBundle() {
-		return de.cau.cs.kieler.kaom.text.ui.internal.KaomActivator.getInstance().getBundle();
+		return KaomActivator.getInstance().getBundle();
 	}
 	
 	@Override
 	protected Injector getInjector() {
-		return de.cau.cs.kieler.kaom.text.ui.internal.KaomActivator.getInstance().getInjector("de.cau.cs.kieler.kaom.text.Kaom");
+		return KaomActivator.getInstance().getInjector(KaomActivator.DE_CAU_CS_KIELER_KAOM_TEXT_KAOM);
 	}
 	
 }

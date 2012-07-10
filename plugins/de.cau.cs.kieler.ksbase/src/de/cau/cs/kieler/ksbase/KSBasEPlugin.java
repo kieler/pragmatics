@@ -28,9 +28,7 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
  * The activator class controls the plug-in life cycle.
  * 
  * @author mim
- * 
- * @kieler.rating 2010-01-22 yellow
- *          review by msp, skn
+ * @kieler.design 2010-01-22 review by msp, skn
  */
 public class KSBasEPlugin extends AbstractUIPlugin {
 

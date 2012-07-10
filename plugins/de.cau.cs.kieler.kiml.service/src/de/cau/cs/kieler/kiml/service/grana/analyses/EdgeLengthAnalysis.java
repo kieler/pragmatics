@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * supported).
  * 
  * @author mri
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class EdgeLengthAnalysis implements IAnalysis {
     

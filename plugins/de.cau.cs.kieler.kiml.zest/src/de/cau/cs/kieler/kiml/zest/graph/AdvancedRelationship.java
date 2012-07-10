@@ -20,7 +20,6 @@ import org.eclipse.zest.layouts.exampleStructures.SimpleRelationship;
  * Implementation of the LayoutRelationship interface in the Zest layout
  * package.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
 public class AdvancedRelationship extends SimpleRelationship {
