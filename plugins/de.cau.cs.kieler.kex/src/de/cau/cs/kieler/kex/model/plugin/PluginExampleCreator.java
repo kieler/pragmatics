@@ -199,6 +199,12 @@ public class PluginExampleCreator {
         throw new RuntimeException("Could not filter plugin node. " + pluginXML.getPath());
     }
 
+    /**
+     * Filter extension kex.
+     *
+     * @param pluginNode the plugin node
+     * @return the node
+     */
     public Node filterExtensionKEX(final Node pluginNode) {
         Node extensionKEX = null;
         NodeList nodes = pluginNode.getChildNodes();
