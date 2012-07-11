@@ -45,8 +45,18 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                 // Thus, tail labels will be placed.
                 Iterable<LPort> westPorts = node.getPorts(PortSide.WEST);
                 int westPortCount = 0;
+                // When only two edges are present, the labels shall be placed
+                // above and below the lines.
+                // To achieve that, the "higher" port has to be determined by 
+                // finding the port with the smallest y coordinate.
+                LPort higherPort = null;
+                double higherPortPos = Double.POSITIVE_INFINITY;
                 for (LPort westPort : westPorts) {
                     westPortCount++;
+                    if (westPort.getAbsoluteAnchor().y < higherPortPos) {
+                        higherPort = westPort;
+                        higherPortPos = westPort.getAbsoluteAnchor().y;
+                    }
                 }
                 if (westPortCount == 2) {
                     for (LPort westPort : westPorts) {
@@ -54,7 +64,16 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                             for (LLabel label : edge.getLabels()) {
                                 if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
                                         == EdgeLabelPlacement.TAIL) {
-
+                                    double portPosX = westPort.getAbsoluteAnchor().x;
+                                    double portPosY = westPort.getAbsoluteAnchor().y;
+                                    if (westPort.equals(higherPort)) {
+                                        label.getPosition().x = portPosX - label.getSize().x;
+                                        label.getPosition().y = portPosY  - label.getSize().y
+                                                - LABEL_DISTANCE;
+                                    } else {
+                                        label.getPosition().x = portPosX - label.getSize().x;
+                                        label.getPosition().y = portPosY + LABEL_DISTANCE;
+                                    }
                                 }
                             }
                         }
@@ -79,8 +98,18 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                 // Thus, head labels will be placed
                 Iterable<LPort> eastPorts = node.getPorts(PortSide.EAST);
                 int eastPortCount = 0;
+                // When only two edges are present, the labels shall be placed
+                // above and below the lines.
+                // To achieve that, the "higher" port has to be determined by 
+                // finding the port with the smallest y coordinate.
+                higherPort = null;
+                higherPortPos = Double.POSITIVE_INFINITY;
                 for (LPort eastPort : eastPorts) {
                     eastPortCount++;
+                    if (eastPort.getAbsoluteAnchor().y < higherPortPos) {
+                        higherPort = eastPort;
+                        higherPortPos = eastPort.getAbsoluteAnchor().y;
+                    }
                 }
                 if (eastPortCount == 2) {
                     for (LPort eastPort : eastPorts) {
@@ -88,7 +117,16 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                             for (LLabel label : edge.getLabels()) {
                                 if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
                                         == EdgeLabelPlacement.HEAD) {
-
+                                    double portPosX = eastPort.getAbsoluteAnchor().x;
+                                    double portPosY = eastPort.getAbsoluteAnchor().y;
+                                    if (eastPort.equals(higherPort)) {
+                                        label.getPosition().x = portPosX;
+                                        label.getPosition().y = portPosY  - label.getSize().y
+                                                - LABEL_DISTANCE;
+                                    } else {
+                                        label.getPosition().x = portPosX;
+                                        label.getPosition().y = portPosY + LABEL_DISTANCE;
+                                    }
                                 }
                             }
                         }

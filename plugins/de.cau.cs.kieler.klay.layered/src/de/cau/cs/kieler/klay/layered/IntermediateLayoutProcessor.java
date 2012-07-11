@@ -129,8 +129,6 @@ public enum IntermediateLayoutProcessor {
     HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR,
     /** Fix coordinates of hierarchical port dummy nodes. */
     HIERARCHICAL_PORT_POSITION_PROCESSOR,
-    /** Place end labels on edges. */
-    END_LABEL_PROCESSOR,
     
     // After Phase 5
     
@@ -156,7 +154,9 @@ public enum IntermediateLayoutProcessor {
     /** Mirrors and transposes the graph to perform a bottom-up drawing. */
     UP_DIR_POSTPROCESSOR,
     /** Removes dummy nodes which were introduced for center labels. */
-    LABEL_DUMMY_REMOVER;
+    LABEL_DUMMY_REMOVER,
+    /** Place end labels on edges. */
+    END_LABEL_PROCESSOR;
     
     
     /**
