@@ -302,17 +302,6 @@ public final class Util {
                     retNode = sourceNodeCompound;
                     // if the edge is hierarchy-crossing, choose the compound node of the target
                 } else {
-                    // LinkedList<LNode> sourceTargetList = new LinkedList<LNode>();
-                    // sourceTargetList.add(sourceNode);
-                    // sourceTargetList.add(targetNode);
-                    // propagatePair(sourceTargetList, elemMap);
-                    // LGraphElement container =
-                    // sourceTargetList.getFirst().getProperty(Properties.PARENT);
-                    // if (container instanceof LayeredGraph) {
-                    // retNode = null;
-                    // } else {
-                    // retNode = (LNode) container;
-                    // }
                     retNode = targetNodeCompound;
                 }
             }
