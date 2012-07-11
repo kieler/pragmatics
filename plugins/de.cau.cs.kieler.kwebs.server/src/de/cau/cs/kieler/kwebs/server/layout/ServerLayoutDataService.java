@@ -47,7 +47,6 @@ import de.cau.cs.kieler.kwebs.util.Resources;
  * This singleton class provides all extension based registered layout information at runtime 
  * and also the client side needed meta data about supported layout capabilities.
  *
- * @kieler.rating  2011-05-09 red
  * @author  swe
  */
 public final class ServerLayoutDataService extends ExtensionLayoutDataService {

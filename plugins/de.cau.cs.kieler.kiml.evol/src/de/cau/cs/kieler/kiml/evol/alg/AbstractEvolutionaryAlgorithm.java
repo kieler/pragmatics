@@ -25,7 +25,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  * {@link #step()} can be used for stepwise execution. In this case,
  * {@link #reset()} must be called explicitly once before.
  *
- * @kieler.rating 2011-07-08 yellow reviewed by swe, ima, msp
+ * @kieler.design 2011-07-08 reviewed by swe, ima, msp
  * @author bdu
  */
 public abstract class AbstractEvolutionaryAlgorithm {

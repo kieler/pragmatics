@@ -16,8 +16,8 @@ package de.cau.cs.kieler.kiml;
 /**
  * Interface for data holder classes that describe the layout infrastructure.
  *
- * @kieler.rating 2011-02-01 yellow
- *     reviewed by cmot, soh
+ * @kieler.design 2011-02-01 reviewed by cmot, soh
+ * @kieler.rating 2012-07-10 proposed yellow msp
  * @author msp
  */
 public interface ILayoutData {

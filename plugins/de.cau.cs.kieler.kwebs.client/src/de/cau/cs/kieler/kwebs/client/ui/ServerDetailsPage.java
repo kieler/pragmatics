@@ -22,8 +22,6 @@ import de.cau.cs.kieler.kwebs.servicedata.SupportedFormat;
 /**
  * Utility class for generating HTML content for the server details dialog.
  *
- * @kieler.rating 2011-05-14
- * 
  * @author swe
  */
 public final class ServerDetailsPage {

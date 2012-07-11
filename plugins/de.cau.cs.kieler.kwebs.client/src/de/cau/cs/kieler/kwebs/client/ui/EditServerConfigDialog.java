@@ -23,7 +23,6 @@ import de.cau.cs.kieler.kwebs.client.ServerConfigData;
 /**
  * Dialog for editing an existing server configuration.
  *
- * @kieler.rating 2011-05-14 red
  * @author swe
  */
 public class EditServerConfigDialog extends AbstractServerConfigDialog {

@@ -38,6 +38,7 @@ import de.cau.cs.kieler.kaom.Linkable
 import de.cau.cs.kieler.kaom.Port
 import de.cau.cs.kieler.kaom.importer.ptolemy.Messages
 import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportPlugin
+import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.utils.TransformationUtils
 
 import static de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportConstants.*
 

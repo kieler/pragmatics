@@ -27,8 +27,7 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 /**
  * Debugging handler for the JAX-WS service.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public class DebugHandler implements SOAPHandler<SOAPMessageContext> {
 

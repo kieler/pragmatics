@@ -32,8 +32,6 @@ import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransform
  * This job tests layout service availability and displays the layout servers capabilities
  * afterwards or an error message if the service is not available.
  *
- * @kieler.rating 2011-05-14
- * 
  * @author swe
  */
 public class ServerDetailsJob extends AbstractServerBasedJob {

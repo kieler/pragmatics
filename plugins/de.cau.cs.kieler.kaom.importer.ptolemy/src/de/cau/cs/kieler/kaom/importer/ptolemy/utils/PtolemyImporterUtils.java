@@ -21,13 +21,14 @@ import org.eclipse.jface.dialogs.IDialogSettings;
  * Contains utility methods used in the plug-in.
  * 
  * @author cds
+ * @kieler.rating yellow 2012-07-10 KI-15 cmot, grh
  */
-public final class Utils {
+public final class PtolemyImporterUtils {
     
     /**
      * This class is not supposed to be instantiated.
      */
-    private Utils() {
+    private PtolemyImporterUtils() {
     }
     
     
@@ -60,16 +61,16 @@ public final class Utils {
      * 
      * @param settings the dialog settings to retrieve the setting from.
      * @param key the setting's key.
-     * @param deflt the default value.
+     * @param defaultValue the default value.
      * @return the setting's value or its default value.
      */
     public static boolean getSettingBoolean(final IDialogSettings settings, final String key,
-            final boolean deflt) {
+            final boolean defaultValue) {
         
         String setting = settings.get(key);
         
         if (setting == null) {
-            return deflt;
+            return defaultValue;
         } else {
             return settings.getBoolean(key);
         }

@@ -28,8 +28,6 @@ import de.cau.cs.kieler.kwebs.client.KwebsClientPlugin;
 /**
  * An image descriptor for supporting lazy loading of the preview images via layout web service client.
  *
- * @kieler.rating  2011-08-14 red
- *     
  * @author  swe
  */
 public class LayoutServiceImageDescriptor extends ImageDescriptor {

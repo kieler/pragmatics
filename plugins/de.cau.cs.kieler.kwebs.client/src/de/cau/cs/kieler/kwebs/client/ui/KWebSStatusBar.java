@@ -48,8 +48,7 @@ import de.cau.cs.kieler.kwebs.client.Preferences;
  * This class makes an addition to the status bar so that the user can identify whether he is
  * doing local or remote layout.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public class KWebSStatusBar extends WorkbenchWindowControlContribution 
     implements IPropertyChangeListener {

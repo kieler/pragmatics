@@ -18,13 +18,13 @@ import java.util.List;
 
 import de.cau.cs.kieler.kiml.ILayoutData;
 
-
 /**
  * An analysis category. Objects of this class are defined through the
  * 'analysisProviders' extension point or the preference page.
  * 
  * @author mri
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class AnalysisCategory implements ILayoutData {
 

@@ -47,8 +47,6 @@ import de.cau.cs.kieler.ksbase.ui.utils.TransformationUtils;
  * transformationEvent listeners
  * 
  * @author mim
- * 
- * @kieler.rating 2009-12-15 proposed yellow
  */
 public final class TransformationUIManager {
 

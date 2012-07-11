@@ -19,8 +19,6 @@ import java.util.Vector;
 /**
  * This interface defines an API for storage management of the server configuration list.
  *
- * @kieler.rating 2011-05-03 red
- *
  * @author swe
  */
 public interface IServerConfigsStorageManager {

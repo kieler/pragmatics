@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.ILayoutData;
  * 
  * @author mri
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class AnalysisData implements ILayoutData, IDepending<String> {
 

@@ -40,10 +40,8 @@ import de.cau.cs.kieler.kwebs.util.Resources;
 /**
  * The main server application.
  *
- * @kieler.rating  2011-08-25 yellow
- *      reviewed by ckru, msp, mri
- *      
- * @author  swe
+ * @kieler.design 2011-08-25 reviewed by ckru, msp, mri
+ * @author swe
  */
 public class Application implements IApplication {
 

@@ -17,8 +17,7 @@ package de.cau.cs.kieler.kwebs.server.management;
 /**
  * Management commands the server.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public final class ManagementCommands {
 

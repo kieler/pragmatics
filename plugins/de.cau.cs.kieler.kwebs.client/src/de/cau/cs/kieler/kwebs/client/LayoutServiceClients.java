@@ -32,9 +32,7 @@ import org.osgi.framework.Bundle;
  * protocols. Each layout service client has to register itself through the extension registry using
  * the extension point {@code de.cau.cs.kieler.kwebs.client.protocol.support}.
  *
- * @kieler.rating 2011-08-02 yellow
- *     reviewed by ckru, mri, msp
- *
+ * @kieler.design 2011-08-02 reviewed by ckru, mri, msp
  * @author swe
  */
 public final class LayoutServiceClients {

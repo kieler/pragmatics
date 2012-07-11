@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * or removed to obtain a directed acyclic graph.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class DirectedCycleAnalysis implements IAnalysis {
     

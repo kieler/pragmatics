@@ -52,6 +52,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author msp
  * @author cds
  * @author jjc
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
     

@@ -20,13 +20,10 @@ import org.eclipse.gmf.runtime.common.core.service.IOperation;
 import org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.CreateEditPoliciesOperation;
 import org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvider;
 
-
 /**
  * Provides an edit policy to create and execute KSBasE commands.
  * 
  * @author mim
- * 
- * @kieler.rating 2009-12-15 proposed yellow
  */
 public class TransformationEditPolicyProvider extends AbstractProvider
         implements IEditPolicyProvider {

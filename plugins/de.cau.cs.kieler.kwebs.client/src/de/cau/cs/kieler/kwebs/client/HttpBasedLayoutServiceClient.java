@@ -26,10 +26,7 @@ import javax.net.ssl.TrustManagerFactory;
 /**
  * Abstract client implementation supporting HTTPS configuration.
  * 
- * @kieler.rating 2011-09-04 red
- *
  * @author swe
- *
  */
 public abstract class HttpBasedLayoutServiceClient extends AbstractLayoutServiceClient {
 

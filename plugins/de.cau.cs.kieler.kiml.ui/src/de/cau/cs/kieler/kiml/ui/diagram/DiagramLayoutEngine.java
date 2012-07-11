@@ -52,6 +52,8 @@ import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
  * {@code layoutManagers} extension point.
  * 
  * @author msp
+ * @kieler.rating 2012-07-05 yellow
+ *      review by cmot, sgu
  */
 public class DiagramLayoutEngine {
     
