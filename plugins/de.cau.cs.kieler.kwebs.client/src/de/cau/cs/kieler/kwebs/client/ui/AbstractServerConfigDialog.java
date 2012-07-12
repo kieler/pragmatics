@@ -45,7 +45,6 @@ import de.cau.cs.kieler.kwebs.client.ServerConfigs.ServerConfigError;
  * Abstract class for providing basic dialog functionality for {@link NewServerConfigDialog}
  * and {@link EditProviderDialog}.
  *
- * @kieler.rating 2011-05-14
  * @author swe
  */
 public abstract class AbstractServerConfigDialog extends Dialog {

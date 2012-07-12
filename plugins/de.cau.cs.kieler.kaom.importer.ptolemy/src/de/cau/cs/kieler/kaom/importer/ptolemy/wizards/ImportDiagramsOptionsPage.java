@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 import de.cau.cs.kieler.kaom.importer.ptolemy.Messages;
-import de.cau.cs.kieler.kaom.importer.ptolemy.utils.Utils;
+import de.cau.cs.kieler.kaom.importer.ptolemy.utils.PtolemyImporterUtils;
 
 
 /**
@@ -338,18 +338,18 @@ public class ImportDiagramsOptionsPage extends WizardPage {
     private void initializeControls() {
         IDialogSettings settings = this.getDialogSettings();
         
-        sourceFileSystemButton.setSelection(Utils.getSettingBoolean(
+        sourceFileSystemButton.setSelection(PtolemyImporterUtils.getSettingBoolean(
                 settings, SETT_SOURCE_FILESYSTEM, true));
         sourceWorkspaceButton.setSelection(!sourceFileSystemButton.getSelection());
         
-        optInitializeDiagramFilesButton.setSelection(Utils.getSettingBoolean(
+        optInitializeDiagramFilesButton.setSelection(PtolemyImporterUtils.getSettingBoolean(
                 settings, SETT_OPT_INIT_KAOD, true));
-        optOverwriteButton.setSelection(Utils.getSettingBoolean(
+        optOverwriteButton.setSelection(PtolemyImporterUtils.getSettingBoolean(
                 settings, SETT_OPT_OVERWRITE, false));
         
-        annAdvancedAnnotationsButton.setSelection(Utils.getSettingBoolean(
+        annAdvancedAnnotationsButton.setSelection(PtolemyImporterUtils.getSettingBoolean(
                 settings, SETT_ANN_ADV_ANNOTATIONS, true));
-        annHeuristicsOverrideOnButton.setSelection(Utils.getSettingBoolean(
+        annHeuristicsOverrideOnButton.setSelection(PtolemyImporterUtils.getSettingBoolean(
                 settings, SETT_ANN_HEURISTICS_OVERRIDE, false));
         annHeuristicsOverrideOffButton.setSelection(!annHeuristicsOverrideOnButton.getSelection());
     }

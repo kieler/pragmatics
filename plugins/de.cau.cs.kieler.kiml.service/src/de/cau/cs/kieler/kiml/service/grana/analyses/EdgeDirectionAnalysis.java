@@ -27,13 +27,13 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
-
 /**
  * A drawing analysis that counts the number of edges going in each of the four directions.
  * (top, left, bottom, right) An edge can go in two directions. Returns a four-component
  * result {@code (int top, int left, int bottom, int right)}.
  * 
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class EdgeDirectionAnalysis implements IAnalysis {
 

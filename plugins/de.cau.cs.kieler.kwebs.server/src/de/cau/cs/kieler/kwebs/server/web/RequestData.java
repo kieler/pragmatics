@@ -22,8 +22,7 @@ import com.sun.net.httpserver.HttpExchange;
  * Holder class for the exchange of data between a dynamic web content provider
  * and the dispatch implementation for a HTTP request.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public class RequestData extends CacheData {
 

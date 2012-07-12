@@ -20,8 +20,7 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.LoggerEvent;
 /**
  * This class registers as {@link ILoggerListener} and provides logging to screen.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public class DisplayLogging implements ILoggerListener {
 

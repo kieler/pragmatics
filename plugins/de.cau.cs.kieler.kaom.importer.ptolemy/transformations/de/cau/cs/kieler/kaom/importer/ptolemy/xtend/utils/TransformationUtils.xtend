@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kaom.importer.ptolemy.xtend
+package de.cau.cs.kieler.kaom.importer.ptolemy.xtend.utils
 
 
 import java.util.List
@@ -31,6 +31,7 @@ import static de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportConstants.*
  * Utility methods used by the Ptolemy to KAOM transformation.
  * 
  * @author cds
+ * @kieler.rating yellow 2012-07-10 KI-15 cmot, grh
  */
 class TransformationUtils {
     

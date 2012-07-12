@@ -53,6 +53,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.SubgraphOrderingProcessor;
  * 
  * @author cds
  * @author ima
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public enum IntermediateLayoutProcessor {
     

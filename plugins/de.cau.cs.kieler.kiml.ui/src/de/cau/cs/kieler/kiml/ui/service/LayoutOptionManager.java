@@ -41,9 +41,18 @@ import de.cau.cs.kieler.kiml.service.LayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
- * The main class for configuration of KGraph instances.
+ * The main class for configuration of KGraph instances. Configuration means the annotation of
+ * graph elements with layout options for selecting layout algorithms and setting parameters
+ * for their execution. This is done through <em>layout configurators</em>, which are executed
+ * as part of a {@link CompoundLayoutConfig}.
+ * The {@link #configure(LayoutMapping, IKielerProgressMonitor) configure} method should be
+ * called before a graph layout engine is executed for a layout graph.
  * 
  * @author msp
+ * @see de.cau.cs.kieler.kiml.options.LayoutOptions
+ * @see de.cau.cs.kieler.kiml.config.ILayoutConfig
+ * @kieler.rating 2012-07-05 yellow
+ *      review by cmot, sgu
  */
 public class LayoutOptionManager {
 
@@ -185,7 +194,8 @@ public class LayoutOptionManager {
      * 
      * @param modelElement
      *            a domain model element
-     * @return the list of semantic layout configurations
+     * @return the list of semantic layout configurations, or an empty list if the model element
+     *          is {@code null}
      */
     private List<ILayoutConfig> getSemanticConfigs(final EObject modelElement) {
         if (modelElement == null) {

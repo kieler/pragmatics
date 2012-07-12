@@ -21,7 +21,6 @@ import de.cau.cs.kieler.kiml.zest.ZestLayouterPlugin;
 /**
  * Initializer for the Zest layouter plugin preferences.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {

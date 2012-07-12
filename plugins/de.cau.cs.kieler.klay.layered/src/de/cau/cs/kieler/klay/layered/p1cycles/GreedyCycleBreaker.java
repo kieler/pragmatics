@@ -53,6 +53,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see de.cau.cs.kieler.klay.layered.intermediate.EdgeAndLayerConstraintEdgeReverser
  * @see de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintProcessor
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhase {
     

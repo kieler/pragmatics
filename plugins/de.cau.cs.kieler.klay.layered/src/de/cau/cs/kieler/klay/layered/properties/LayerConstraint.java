@@ -22,8 +22,10 @@ package de.cau.cs.kieler.klay.layered.properties;
  * @see de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintProcessor
  *        LayerConstraintProcessor
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public enum LayerConstraint {
+    
     /** no constraint on the layering. */
     NONE,
     /** put into the first layer. */
@@ -34,4 +36,5 @@ public enum LayerConstraint {
     LAST,
     /** put into a separate last layer; used internally. */
     LAST_SEPARATE;
+    
 }

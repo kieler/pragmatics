@@ -24,8 +24,8 @@ import de.cau.cs.kieler.core.properties.Property;
  * extension point. The former can be accessed with static variables, while the latter
  * are accessed with methods.
  * 
- * @kieler.rating 2011-03-14 yellow
- *     reviewed by cmot, cds
+ * @kieler.design 2011-03-14 reviewed by cmot, cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  * @author msp
  */
 public final class LayoutOptions {

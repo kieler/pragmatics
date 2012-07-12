@@ -40,8 +40,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * An implementation of the model <b>Package</b>.
  * <!-- end-user-doc -->
  * @generated
- * @kieler.rating 2011-03-14 yellow
- *     reviewed by cmot, cds
+ * @kieler.design 2011-03-14 reviewed by cmot, cds
  */
 public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataPackage {
     /**

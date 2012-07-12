@@ -34,8 +34,6 @@ import de.unido.ls5.eti.client.VirtualFile;
 /**
  * Client implementation for the jETI web service.
  *
- * @kieler.rating 2011-05-12 red
- *
  * @author swe
  */
 public final class JetiClient extends AbstractLayoutServiceClient {

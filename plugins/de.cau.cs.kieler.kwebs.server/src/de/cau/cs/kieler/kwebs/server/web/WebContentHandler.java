@@ -38,8 +38,7 @@ import de.cau.cs.kieler.kwebs.util.Resources;
 /**
  * HTTP Handler for handling the servers web interface.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public class WebContentHandler implements HttpHandler {
     

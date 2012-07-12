@@ -31,8 +31,8 @@ import de.cau.cs.kieler.core.util.Pair;
  * Data type used to store information for a layout option.
  * 
  * @param <T> data type for the option data
- * @kieler.rating 2011-02-01 yellow
- *     reviewed by cmot, soh
+ * @kieler.design 2011-02-01 reviewed by cmot, soh
+ * @kieler.rating 2012-07-10 proposed yellow msp
  * @author msp
  */
 public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparable<IProperty<?>> {

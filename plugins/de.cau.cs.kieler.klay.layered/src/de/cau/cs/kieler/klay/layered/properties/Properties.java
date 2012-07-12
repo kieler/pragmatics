@@ -35,6 +35,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
+import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 
 /**
@@ -43,6 +44,7 @@ import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
  * @author msp
  * @author cds
  * @author ima
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public final class Properties {
 
@@ -115,7 +117,7 @@ public final class Properties {
      * Layer layout units are identified through one of their nodes.
      */
     public static final IProperty<LNode> IN_LAYER_LAYOUT_UNIT = new Property<LNode>(
-            "inLayerLayoutUnit", null);
+            "inLayerLayoutUnit");
 
     /**
      * The in-layer constraint placed on a node. This indicates whether this node should be handled
@@ -133,7 +135,12 @@ public final class Properties {
      * constraint. This property only makes sense for nodes.
      */
     public static final IProperty<LNode> IN_LAYER_SUCCESSOR_CONSTRAINT = new Property<LNode>(
-            "inLayerSuccessorConstraint", null);
+            "inLayerSuccessorConstraint");
+    
+    /**
+     * The node group of an LNode as used in the crossing minimization phase.
+     */
+    public static final IProperty<NodeGroup> NODE_GROUP = new Property<NodeGroup>("nodeGroup");
 
     /**
      * Crossing hint used for in-layer cross counting with northern and southern port dummies.
@@ -174,7 +181,7 @@ public final class Properties {
      * node.
      */
     public static final IProperty<LNode> EXT_PORT_REPLACED_DUMMY = new Property<LNode>(
-            "externalPortReplacedDummy", null);
+            "externalPortReplacedDummy");
     
     /**
      * The port sides of external ports a connected component connects to. This property is set

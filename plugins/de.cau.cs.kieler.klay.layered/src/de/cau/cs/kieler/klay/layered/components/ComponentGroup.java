@@ -59,6 +59,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * <p>This class is not supposed to be public, but needs to be for JUnit tests to find it.</p>
  * 
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class ComponentGroup {
     
