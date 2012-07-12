@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.p4nodes;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,9 +43,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * which is posed in phase 4 of the KLay Layered algorithm.
  * 
  * It is based on the node placement algorithm by Ulrik Brandes and Boris Koepf
- * (http://www.informatik.uni-konstanz.de/algo/publications/bk-fshca-01.pdf) and
- * was extended to be able to cope with ports, node sizes, node margins and was made
- * more stable in general.
+ * @see <a href="http://www.informatik.uni-konstanz.de/algo/publications/bk-fshca-01.pdf">
+ * the corresponding paper</a> and was extended to be able to cope with ports, node sizes,
+ * node margins and was made more stable in general.
  * 
  * The algorithm is structured in five steps, which include two new steps which were
  * not included in the original algorithm by Brandes and Koepf. The middle three steps
@@ -191,8 +192,9 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             System.out.println("rightbottom size is " + rightbottom.layoutSize());
         }
 
-        // Choose a layout from the four calculated layouts. Layouts that contain errors a skipped.
-        // The layout with the smallest size is selected.
+        // Choose a layout from the four calculated layouts. Layouts that contain errors are skipped.
+        // The layout with the smallest size is selected. If more than one smallest layout exists,
+        // the first one of the competing layouts is selected.
         BKAlignedLayout chosenLayout = null;
         LinkedList<BKAlignedLayout> layouts = new LinkedList<BKAlignedLayout>();
         layouts.add(lefttop);
@@ -265,37 +267,49 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     }
 
     /**
-     * This phase of the node placer marks all type 1 conflicts.
+     * This phase of the node placer marks all type 1 and type 2 conflicts.
      * 
-     * Type 0 conflicts refer to two short edges crossing each other. Type 1 conflicts occur when a
-     * short edge cross a long edge. Type 2 conflicts happen when two long edges cross each other.
+     * The conflict types base on the distinction of inner segments and non-inner segments of edges.
+     * A inner segment is present if an edge is drawn between two dummy nodes and thus is part of
+     * a long edge. A non-inner segment is present if one of the connected nodes is not a dummy
+     * node.
      * 
-     * The markers are later used to solve conflicts in favor of long edges.
+     * Type 0 conflicts occur if two non-inner segments cross each other. Type 1 conflicts happen 
+     * when a non-inner segment and a inner segment cross. Type 2 conflicts are present if two
+     * inner segments cross.
+     * 
+     * The markers are later used to solve conflicts in favor of long edges. In case of type 2
+     * conflicts, the marker favors the earlier node in layout order.
      * 
      * @param layeredGraph
      */
     private void markConflicts(final LayeredGraph layeredGraph) {
         for (int i = 1; i <= layeredGraph.getLayers().size() - 2; i++) {
-            int k0 = 0;
+            // The variable naming here follows the notation of the corresponding paper
+            int k_0 = 0;
             int l = 0;
-            for (int l1 = 0; l1 < layerSize(layeredGraph, i + 1); l1++) {
-                LNode vli = nodeByPosition(layeredGraph, i + 1, l1);
-                if (l1 == (layerSize(layeredGraph, i + 1)) || incidentToInnerSegment(vli, i, i + 1)) {
-                    int k1 = layerSize(layeredGraph, i);
-                    if (incidentToInnerSegment(vli, i, i + 1)) {
-                        k1 = allUpperNeighbors(vli).get(0).getIndex();
+            for (int l_1 = 0; l_1 < layerSize(layeredGraph, i + 1); l_1++) {
+                // In the paper, l and i are indices for the layer and the position in the layer
+                LNode v_l_i = nodeByPosition(layeredGraph, i + 1, l_1);
+                if (l_1 == (layerSize(layeredGraph, i + 1)) || incidentToInnerSegment(v_l_i, i, i + 1)) {
+                    int k_1 = layerSize(layeredGraph, i);
+                    if (incidentToInnerSegment(v_l_i, i, i + 1)) {
+                        k_1 = allUpperNeighbors(v_l_i).get(0).getIndex();
                     }
-                    while (l <= l1) {
-                        LNode vl = nodeByPosition(layeredGraph, i + 1, l);
-                        for (LNode un : allUpperNeighbors(vl)) {
-                            int k = un.getIndex();
-                            if (k < k0 || k > k1) {
-                                markedEdges.add(getEdge(un, vl));
+                    while (l <= l_1) {
+                        LNode v_l = nodeByPosition(layeredGraph, i + 1, l);
+                        for (LNode upperNeighbor : allUpperNeighbors(v_l)) {
+                            int k = upperNeighbor.getIndex();
+                            if (k < k_0 || k > k_1) {
+                                // Marked edge can't return null here, because the upper neighbor
+                                // relationship between v_l and upperNeighbor enforces the existence
+                                // of at least one edge between the two nodes
+                                markedEdges.add(getEdge(upperNeighbor, v_l));
                             }
                         }
                         l++;
                     }
-                    k0 = k1;
+                    k_0 = k_1;
                 }
             }
         }
@@ -348,12 +362,15 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                 Collections.copy(nodes, layer.getNodes());
                 Collections.reverse(nodes);
             }
-            for (LNode vik : nodes) {
+            // Variable names here are again taken from the paper mentioned above.
+            // i denotes the index of the layer and k the position of the node within the layer.
+            // m denotes the position of a neighbor in the neighbor list of a node.
+            for (LNode v_i_k : nodes) {
                 List<LNode> neighbors = null;
                 if (bal.getHDir() == HDirection.BOTTOM) {
-                    neighbors = allLowerNeighbors(vik);
+                    neighbors = allLowerNeighbors(v_i_k);
                 } else {
-                    neighbors = allUpperNeighbors(vik);
+                    neighbors = allUpperNeighbors(v_i_k);
                 }
 
                 if (neighbors.size() > 0) {
@@ -365,27 +382,29 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                     int high = ((int) Math.ceil(((d + 1.0) / 2.0))) - 1;
 
                     if (bal.getVDir() == VDirection.RIGHT) {
-                        // Check, whether vik can be added to a block of its upper/lower neighbor(s)
+                        // Check, whether v_i_k can be added to a block of its upper/lower neighbor(s)
                         for (int m = high; m >= low; m--) {
-                            if (bal.getAlign().get(vik).equals(vik)) {
-                                LNode um = neighbors.get(m);
-                                if (!markedEdges.contains(getEdge(um, vik)) && r > um.getIndex()) {
-                                    bal.getAlign().put(um, vik);
-                                    bal.getRoot().put(vik, bal.getRoot().get(um));
-                                    bal.getAlign().put(vik, bal.getRoot().get(vik));
-                                    r = um.getIndex();
+                            if (bal.getAlign().get(v_i_k).equals(v_i_k)) {
+                                LNode u_m = neighbors.get(m);
+                                // Again, getEdge won't return null because the neighbor relationship
+                                // ensures that at least one edge exists
+                                if (!markedEdges.contains(getEdge(u_m, v_i_k)) && r > u_m.getIndex()) {
+                                    bal.getAlign().put(u_m, v_i_k);
+                                    bal.getRoot().put(v_i_k, bal.getRoot().get(u_m));
+                                    bal.getAlign().put(v_i_k, bal.getRoot().get(v_i_k));
+                                    r = u_m.getIndex();
                                 }
                             }
                         }
                     } else {
                         // Check, whether vik can be added to a block of its upper/lower neighbor(s)
                         for (int m = low; m <= high; m++) {
-                            if (bal.getAlign().get(vik).equals(vik)) {
+                            if (bal.getAlign().get(v_i_k).equals(v_i_k)) {
                                 LNode um = neighbors.get(m);
-                                if (!markedEdges.contains(getEdge(um, vik)) && r < um.getIndex()) {
-                                    bal.getAlign().put(um, vik);
-                                    bal.getRoot().put(vik, bal.getRoot().get(um));
-                                    bal.getAlign().put(vik, bal.getRoot().get(vik));
+                                if (!markedEdges.contains(getEdge(um, v_i_k)) && r < um.getIndex()) {
+                                    bal.getAlign().put(um, v_i_k);
+                                    bal.getRoot().put(v_i_k, bal.getRoot().get(um));
+                                    bal.getAlign().put(v_i_k, bal.getRoot().get(v_i_k));
                                     r = um.getIndex();
                                 }
                             }
@@ -682,7 +701,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * A balanced layout is calculated by determining the median layout of the
      * four layouts.
      * 
-     * First, the layout with the smallest size is used as a starting point.
+     * First, the layout with the smallest height, meaning the difference between the highest and the
+     * lowest y-coordinate placement, is used as a starting point.
      * Then, the median position of each of the four layouts is used for determining
      * the final position.
      * 
@@ -764,7 +784,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * @param layeredGraph
      * @param layer
      * @param position
-     * @return The node which is on the given position of the given layer
+     * @return The node which is on the given position of the given layer or an exception, if there is
+     *         no node on the given position
      */
     private LNode nodeByPosition(final LayeredGraph layeredGraph, final int layer,
             final int position) {
@@ -882,9 +903,6 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             double pos = Double.NEGATIVE_INFINITY;
             LNode previous = new LNode();
             for (LNode node : layer.getNodes()) {
-                if (node.toString().equalsIgnoreCase("n_N146")) {
-                    System.out.println(node.getSize() + " " + previous.getSize());
-                }
                 if (bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y > pos) {
                     previous = node;
                     pos = bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y;
@@ -910,7 +928,12 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     /**
      * Comparator which determines the order of nodes in a layer.
      */
-    private static class NeighborComparator implements Comparator<LNode> {
+    private static class NeighborComparator implements Comparator<LNode>, Serializable {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 7540379553811800233L;
 
         /**
          * {@inheritDoc}
