@@ -144,8 +144,7 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                 LNode targetNode = targetPort.getNode();
 
                 // process according to source node type. Translate ports of dummy nodes to ports of
-                // the
-                // compound node.
+                // the compound node.
                 switch (sourceNodeType) {
                 case LOWER_COMPOUND_BORDER:
                     LPort newPort = transferPort(sourcePort, compoundNodeSource);
@@ -180,8 +179,7 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                 LNode compoundNodeTarget = targetNode.getProperty(Properties.COMPOUND_NODE);
 
                 // process according to target node type. Translate ports of dummy nodes to ports of
-                // the
-                // compound node.
+                // the compound node.
                 switch (targetNodeType) {
                 case LOWER_COMPOUND_BORDER:
                     LPort newPort = transferPort(targetPort, compoundNodeTarget);

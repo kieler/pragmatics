@@ -445,6 +445,9 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                 }
             }
             newPort.setNode(lowerBorder);
+            // There is no upper compound border dummy node without corresponding lower
+            // compound border node, so no null pointer dereference possible (ignore find bug 
+            // warning)
             lowerBorder.getSize().y += edgeSpacing;
             break;
         case UPPER_COMPOUND_PORT:
