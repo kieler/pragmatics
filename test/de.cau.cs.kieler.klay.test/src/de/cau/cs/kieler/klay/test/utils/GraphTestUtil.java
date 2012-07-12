@@ -48,217 +48,240 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 public class GraphTestUtil {
 
-    /** the test graph root directory */
-    private static final String SOURCE_GRAPHS_DIRECTORY = "/home/wah/runtime-EclipseApplication/";
-    /** the source file format to load */
-    // private static final String SOURCE_GRAPHS_FORMAT = "kgraph";
-    private static final ArrayList<String> SOURCE_GRAPHS_FORMAT = new ArrayList<String>(
-            Arrays.asList("kegdi", "kaod", "kids"));
+	/** the test graph root directory */
+	private static final String SOURCE_GRAPHS_DIRECTORY = "/home/wah/runtime-EclipseApplication/";
+	/** the source file format to load */
+	// private static final String SOURCE_GRAPHS_FORMAT = "kgraph";
+	private static final ArrayList<String> SOURCE_GRAPHS_FORMAT = new ArrayList<String>(
+			Arrays.asList("kegdi", "kaod", "kids"));
 
-    /**
-     * Load all graphs under the given folder.
-     * 
-     * @param folder
-     *            the folder where the graphs are located
-     * @return a list of KNode
-     */
-    public static List<KNode> loadGraphs(String folder) {
-        return loadGraphsHandler(folder, false, false);
-    }
+	/**
+	 * Load all graphs under the given folder.
+	 * 
+	 * @param folder
+	 *            the folder where the graphs are located
+	 * @return a list of KNode
+	 */
+	public static List<KNode> loadGraphs(String folder) {
+		return loadGraphsHandler(folder, false, false);
+	}
 
-    /**
-     * Load all graphs under the given folder and subfolder(optional).
-     * 
-     * @param folder
-     *            the folder where the graphs are located
-     * @param subforlder
-     * @return a list of KNode
-     */
-    public static List<KNode> loadGraphs(String folder, boolean subfolder) {
-        return loadGraphsHandler(folder, subfolder, false);
-    }
+	/**
+	 * Load all graphs under the given folder and subfolder(optional).
+	 * 
+	 * @param folder
+	 *            the folder where the graphs are located
+	 * @param subforlder
+	 * @return a list of KNode
+	 */
+	public static List<KNode> loadGraphs(String folder, boolean subfolder) {
+		return loadGraphsHandler(folder, subfolder, false);
+	}
 
-    /**
-     * Load all graphs under the given folder and subfolder(optional) and apply the layout
-     * algorithm(optional).
-     * 
-     * @param folder
-     *            the folder where the graphs are located
-     * @param subfolder
-     *            if true then load subfolder graphs else only the given directory
-     * @param doLayout
-     *            apply the layout algorithm
-     * @return a list of KNode
-     */
-    public static List<KNode> loadGraphs(String folder, boolean subfolder, boolean doLayout) {
-        return loadGraphsHandler(folder, subfolder, doLayout);
-    }
+	/**
+	 * Load all graphs under the given folder and subfolder(optional) and apply
+	 * the layout algorithm(optional).
+	 * 
+	 * @param folder
+	 *            the folder where the graphs are located
+	 * @param subfolder
+	 *            if true then load subfolder graphs else only the given
+	 *            directory
+	 * @param doLayout
+	 *            apply the layout algorithm
+	 * @return a list of KNode
+	 */
+	public static List<KNode> loadGraphs(String folder, boolean subfolder,
+			boolean doLayout) {
+		return loadGraphsHandler(folder, subfolder, doLayout);
+	}
 
-    /**
-     * 
-     * load all graphs under the given folder and subfolder(optional) and apply the layout
-     * algorithm(optional).
-     * 
-     * @param folder
-     *            the folder where the graphs are located
-     * @param subfolder
-     *            if true then load subfolder graphs else only the given directory
-     * @param doLayout
-     *            apply the layout algorithm
-     * @return a list of KNode
-     */
-    private static List<KNode> loadGraphsHandler(String folder, boolean subfolder, boolean doLayout) {
+	/**
+	 * 
+	 * load all graphs under the given folder and subfolder(optional) and apply
+	 * the layout algorithm(optional).
+	 * 
+	 * @param folder
+	 *            the folder where the graphs are located
+	 * @param subfolder
+	 *            if true then load subfolder graphs else only the given
+	 *            directory
+	 * @param doLayout
+	 *            apply the layout algorithm
+	 * @return a list of KNode
+	 */
+	private static List<KNode> loadGraphsHandler(String folder,
+			boolean subfolder, boolean doLayout) {
 
-        // the root folder where graphs are located
-        File rootFolder = new File(SOURCE_GRAPHS_DIRECTORY.concat(folder));
+		// the root folder where graphs are located
+		File rootFolder = new File(SOURCE_GRAPHS_DIRECTORY.concat(folder));
 
-        // test if the root folder exists
-        if (rootFolder.exists()) {
+		// test if the root folder exists
+		if (rootFolder.exists()) {
 
-            // load files from the directory
-            List<File> graphFiles = loadFilesFromDirectory(rootFolder, new ArrayList<File>(),
-                    subfolder);
+			// load files from the directory
+			List<File> graphFiles = loadFilesFromDirectory(rootFolder,
+					new ArrayList<File>(), subfolder);
 
-            // Test if there is files
-            if (graphFiles.size() > 0) {
+			// Test if there is files
+			if (graphFiles.size() > 0) {
 
-                List<KNode> knode = new ArrayList<KNode>();
-                for (File gfile : graphFiles) {
-                    knode.add(getKGraph(gfile));
-                }
+				List<KNode> knode = new ArrayList<KNode>();
+				for (File gfile : graphFiles) {
+					LayoutMapping<?> mapping = getGraph(gfile);
+					// apply layout when applyLayout = true
+					if (doLayout)
+						applyLayout(mapping);
+					// add the KNode to the list
+					System.out.println(mapping.toString());
+					knode.add(mapping.getLayoutGraph());
+				}
 
-                return knode;
+				return knode;
 
-            } else {
-                throw new IllegalArgumentException(
-                        "The given directory doesn't contain graph files!");
-            }
-        } else {
-            throw new IllegalArgumentException("The source graph directory doesn't exists!");
-        }
-    }
+			} else {
+				throw new IllegalArgumentException(
+						"The given directory doesn't contain graph files!");
+			}
+		} else {
+			throw new IllegalArgumentException(
+					"The source graph directory doesn't exists!");
+		}
+	}
 
-    /**
-     * Method to return the file extension from a file name.
-     * 
-     * @param file
-     *            the file name
-     * @return the file extension
-     */
-    private static String getFileExtension(String file) {
-        // get the last dot position
-        int dotPos = file.lastIndexOf(".");
-        if (dotPos >= 0) {
-            return file.substring(dotPos + 1).toLowerCase();
-        } else {
-            return null;
-        }
-    }
+	/**
+	 * Method to return the file extension from a file name.
+	 * 
+	 * @param file
+	 *            the file name
+	 * @return the file extension
+	 */
+	private static String getFileExtension(String file) {
+		// get the last dot position
+		int dotPos = file.lastIndexOf(".");
+		if (dotPos >= 0) {
+			return file.substring(dotPos + 1).toLowerCase();
+		} else {
+			return null;
+		}
+	}
 
-    /**
-     * Method to load all graph files under a given directory. This Method is called recursively (if
-     * subfolder is set to true) to load all subcategories files.
-     * 
-     * @param folder
-     *            the folder where the graphs are located
-     * @param files
-     *            List of found files to transfer if the method is called recursively
-     * @param subfolder
-     *            if true then load subfolder graphs else only the given directory
-     * @return return the List of graph files
-     */
-    private static List<File> loadFilesFromDirectory(File folder, List<File> files,
-            boolean subfolder) {
-        // filter to select only files with SOURCE_GRAPHS_FORMAT extension or sub directories
-        FileFilter filter = new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                if (pathname.isDirectory()) {
-                    return true;
-                }
-                if (getFileExtension(pathname.getName()) != null) {
+	/**
+	 * Method to load all graph files under a given directory. This Method is
+	 * called recursively (if subfolder is set to true) to load all
+	 * subcategories files.
+	 * 
+	 * @param folder
+	 *            the folder where the graphs are located
+	 * @param files
+	 *            List of found files to transfer if the method is called
+	 *            recursively
+	 * @param subfolder
+	 *            if true then load subfolder graphs else only the given
+	 *            directory
+	 * @return return the List of graph files
+	 */
+	private static List<File> loadFilesFromDirectory(File folder,
+			List<File> files, boolean subfolder) {
+		// filter to select only files with SOURCE_GRAPHS_FORMAT extension or
+		// sub directories
+		FileFilter filter = new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				if (pathname.isDirectory()) {
+					return true;
+				}
+				if (getFileExtension(pathname.getName()) != null) {
 
-                    return SOURCE_GRAPHS_FORMAT.contains(getFileExtension(pathname.getName()));
-                }
-                return false;
-            }
-        };
-        // load files from directory
-        File[] listOfFiles = folder.listFiles(filter);
-        if (listOfFiles.length > 0) {
-            for (int i = 0; i < listOfFiles.length; i++) {
-                // load only files and files with SOURCE_GRAPHS_FORMAT extension
-                if (listOfFiles[i].isFile()) {
-                    files.add(listOfFiles[i]);
-                } else if (listOfFiles[i].isDirectory() && subfolder) {
-                    // files.addAll(loadFilesFromDirectory(listOfFiles[i], files, subfolder));
-                    loadFilesFromDirectory(listOfFiles[i], files, subfolder);
-                }
-            }
-        }
-        return files;
-    }
+					return SOURCE_GRAPHS_FORMAT
+							.contains(getFileExtension(pathname.getName()));
+				}
+				return false;
+			}
+		};
+		// load files from directory
+		File[] listOfFiles = folder.listFiles(filter);
+		if (listOfFiles.length > 0) {
+			for (int i = 0; i < listOfFiles.length; i++) {
+				// load only files and files with SOURCE_GRAPHS_FORMAT extension
+				if (listOfFiles[i].isFile()) {
+					files.add(listOfFiles[i]);
+				} else if (listOfFiles[i].isDirectory() && subfolder) {
+					// files.addAll(loadFilesFromDirectory(listOfFiles[i],
+					// files, subfolder));
+					loadFilesFromDirectory(listOfFiles[i], files, subfolder);
+				}
+			}
+		}
+		return files;
+	}
 
-    /**
-     * Method to return the KNode graph from a given File.
-     * 
-     * @param File
-     *            the file to convert into KNode
-     * @return the KNode file
-     */
-    public static KNode getKGraph(File file) {
-        // load the notation diagram element
-        // URI uri = URI.createPlatformResourceURI(file.toString(), true);
-        URI uri = URI.createFileURI(file.toString());
-        ResourceSet resourceSet = new ResourceSetImpl();
-        final Resource resource = resourceSet.createResource(uri);
+	/**
+	 * Method to return the KNode graph from a given File.
+	 * 
+	 * @param File
+	 *            the file to convert into KNode
+	 * @return the KNode file
+	 */
+	public static LayoutMapping<?> getGraph(File file) {
+		// load the notation diagram element
+		// URI uri = URI.createPlatformResourceURI(file.toString(), true);
+		URI uri = URI.createFileURI(file.toString());
+		ResourceSet resourceSet = new ResourceSetImpl();
+		final Resource resource = resourceSet.createResource(uri);
 
-        try {
-            resource.load(Collections.emptyMap());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (resource.getContents().isEmpty() || !(resource.getContents().get(0) instanceof Diagram)) {
-            throw new IllegalArgumentException("The selected file does not contain a diagram: "
-                    + file);
-        }
+		try {
+			resource.load(Collections.emptyMap());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (resource.getContents().isEmpty()
+				|| !(resource.getContents().get(0) instanceof Diagram)) {
+			throw new IllegalArgumentException(
+					"The selected file does not contain a diagram: " + file);
+		}
 
-        // create a diagram edit part
-        TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain(resourceSet);
-        final Maybe<DiagramEditPart> editPart = new Maybe<DiagramEditPart>();
-        final Maybe<RuntimeException> wrappedException = new Maybe<RuntimeException>();
-        Display.getDefault().syncExec(new Runnable() {
-            public void run() {
-                try {
-                    Diagram diagram = (Diagram) resource.getContents().get(0);
-                    OffscreenEditPartFactory offscreenFactory = OffscreenEditPartFactory
-                            .getInstance();
-                    editPart.set(offscreenFactory.createDiagramEditPart(diagram, new Shell()));
-                } catch (RuntimeException re) {
-                    wrappedException.set(re);
-                }
-            }
-        });
-        if (wrappedException.get() != null) {
-            throw wrappedException.get();
-        }
+		// create a diagram edit part
+		TransactionalEditingDomain.Factory.INSTANCE
+				.createEditingDomain(resourceSet);
+		final Maybe<DiagramEditPart> editPart = new Maybe<DiagramEditPart>();
+		final Maybe<RuntimeException> wrappedException = new Maybe<RuntimeException>();
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				try {
+					Diagram diagram = (Diagram) resource.getContents().get(0);
+					OffscreenEditPartFactory offscreenFactory = OffscreenEditPartFactory
+							.getInstance();
+					editPart.set(offscreenFactory.createDiagramEditPart(
+							diagram, new Shell()));
+				} catch (RuntimeException re) {
+					wrappedException.set(re);
+				}
+			}
+		});
+		if (wrappedException.get() != null) {
+			throw wrappedException.get();
+		}
 
-        // retrieve a kgraph representation of the diagram
-        LayoutMapping<?> mapping = EclipseLayoutInfoService.getInstance()
-                .getManager(null, editPart.get()).buildLayoutGraph(null, editPart.get());
-        KNode inputGraph = mapping.getLayoutGraph();
+		// retrieve a kgraph representation of the diagram
+		LayoutMapping<?> mapping = EclipseLayoutInfoService.getInstance()
+				.getManager(null, editPart.get())
+				.buildLayoutGraph(null, editPart.get());
 
-        return inputGraph;
-    }
+		// KNode inputGraph = mapping.getLayoutGraph();
+		// return inputGraph;
+		return mapping;
+	}
 
-    /**
-     * 
-     * @param graph
-     * @return
-     */
-    public static void applyLayout(LayoutMapping<?> mapping) {
-        // TODO implement the layout methode
-        DiagramLayoutEngine.INSTANCE.layout(mapping, new BasicProgressMonitor());
-    }
+	/**
+	 * Apply the layout algorithm
+	 * 
+	 * @param LayoutMapping
+	 *            <?> graph
+	 */
+	public static void applyLayout(LayoutMapping<?> mapping) {
+		DiagramLayoutEngine.INSTANCE
+				.layout(mapping, new BasicProgressMonitor());
+	}
 
 }

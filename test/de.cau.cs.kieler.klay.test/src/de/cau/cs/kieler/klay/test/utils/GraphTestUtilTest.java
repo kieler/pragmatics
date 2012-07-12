@@ -23,7 +23,7 @@ public class GraphTestUtilTest {
     
     @Test
     public void test(){
-        GraphTestUtil.loadGraphs("test/", true);
+        GraphTestUtil.loadGraphs("test/", true, true);
     }
 
 }
