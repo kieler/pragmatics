@@ -804,7 +804,9 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     private boolean incidentToInnerSegment(final LNode node, final int layer1, final int layer2) {
         if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
             for (LEdge edge : node.getIncomingEdges()) {
-                if (edge.getSource().getNode().getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
+                if ((edge.getSource().getNode().getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
+                        || edge.getSource().getNode().getProperty(Properties.NODE_TYPE)
+                                                             == NodeType.COMPOUND_SIDE)
                         && edge.getSource().getNode().getLayer().getIndex() == layer1
                         && node.getLayer().getIndex() == layer2) {
                     return true;
