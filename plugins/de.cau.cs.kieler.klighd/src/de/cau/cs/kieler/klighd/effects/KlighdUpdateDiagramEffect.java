@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klighd.effects;
 
+import org.eclipse.ui.IWorkbenchPart;
+
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
@@ -74,9 +76,12 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
      *            the name
      * @param model
      *            the input model
+     * @param theSourceWorkbenchPart
+     *            the workbench part the element to be shown has been selected in
      */
-    public KlighdUpdateDiagramEffect(final String id, final String name, final Object model) {
-        super(id, name, model);
+    public KlighdUpdateDiagramEffect(final String id, final String name, final Object model,
+            final IWorkbenchPart theSourceWorkbenchPart) {
+        super(id, name, model, theSourceWorkbenchPart);
     }
 
     /**
@@ -98,6 +103,7 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
                 setView(view);
                 if (view != null) {
                     setViewer(view.getContextViewer().getActiveViewer());
+                    setSourceWorkbenchPart();
                 }
             }
         }, true);
