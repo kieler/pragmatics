@@ -468,6 +468,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
             // Now, the rest of the block is investigated and borders are updated if
             // they exceed the old borders due to shifting or larger node sizes
+            // This loop is not executed if the block only consists of the root node
             while (next != root) {
                 LEdge edge = getEdge(current, next);
 
@@ -502,8 +503,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                 next = bal.getAlign().get(next);
             }
 
-            // Use the values calculated above only if there are more nodes than the
-            // root node in the block
+            // If the block only consists of the root node, keep its measurement and
+            // do not overwrite it with the default values of lower- and upperBound
             if (bal.getAlign().get(root) != root) {
                 maximumNodeSize = upperBound + lowerBound;
             }
