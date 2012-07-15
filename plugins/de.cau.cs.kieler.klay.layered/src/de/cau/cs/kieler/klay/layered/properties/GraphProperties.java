@@ -44,6 +44,8 @@ public enum GraphProperties {
     /** The graph contains self-loops. */
     SELF_LOOPS,
     /** The graph contains center edge labels. */
-    CENTER_LABELS;
+    CENTER_LABELS,
+    /** The graph contains head or tail edge labels. */
+    END_LABELS;
     
 }

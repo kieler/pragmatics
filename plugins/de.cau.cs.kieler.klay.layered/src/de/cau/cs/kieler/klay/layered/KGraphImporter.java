@@ -561,13 +561,23 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             newEdge.getLabels().add(newLabel);
             if (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
                     == EdgeLabelPlacement.CENTER) {
-                    // Add annotation if graph contains labels which shall be placed
-                    // in the middle of an edge
-                    Set<GraphProperties> graphProperties = layeredGraph.getProperty(
-                            Properties.GRAPH_PROPERTIES);
-                    graphProperties.add(GraphProperties.CENTER_LABELS);
-                }
+                // Add annotation if graph contains labels which shall be placed
+                // in the middle of an edge
+                Set<GraphProperties> graphProperties = layeredGraph.getProperty(
+                        Properties.GRAPH_PROPERTIES);
+                graphProperties.add(GraphProperties.CENTER_LABELS);
             }
+            if (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                    == EdgeLabelPlacement.HEAD
+                || labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                    == EdgeLabelPlacement.TAIL) {
+                // Add annotation if graph contains labels which shall be placed
+                // in the middle of an edge
+                Set<GraphProperties> graphProperties = layeredGraph.getProperty(
+                        Properties.GRAPH_PROPERTIES);
+                graphProperties.add(GraphProperties.END_LABELS);
+            }
+        }
         
         // copy the bend points of the edge if they are needed by anyone
         if (layeredGraph.getProperty(Properties.CROSSMIN)

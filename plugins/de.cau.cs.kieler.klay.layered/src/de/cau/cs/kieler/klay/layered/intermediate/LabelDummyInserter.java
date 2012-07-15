@@ -57,6 +57,8 @@ public class LabelDummyInserter extends AbstractAlgorithm implements ILayoutProc
                             dummyNode.setProperty(Properties.NODE_TYPE, NodeType.LABEL);
                             dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
                                     PortConstraints.FIXED_POS);
+                            dummyNode.setProperty(Properties.LONG_EDGE_SOURCE, edge.getSource());
+                            dummyNode.setProperty(Properties.LONG_EDGE_TARGET, edge.getTarget());
                             
                             // Set values of dummy node
                             dummyNode.getSize().x = label.getSize().x;                           

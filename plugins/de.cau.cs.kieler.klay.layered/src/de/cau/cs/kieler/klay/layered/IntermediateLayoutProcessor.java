@@ -21,6 +21,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.CompoundDummyEdgeRemover;
 import de.cau.cs.kieler.klay.layered.intermediate.CompoundGraphRestorer;
 import de.cau.cs.kieler.klay.layered.intermediate.CompoundSideProcessor;
 import de.cau.cs.kieler.klay.layered.intermediate.EdgeAndLayerConstraintEdgeReverser;
+import de.cau.cs.kieler.klay.layered.intermediate.EndLabelProcessor;
 import de.cau.cs.kieler.klay.layered.intermediate.GraphTransformer;
 import de.cau.cs.kieler.klay.layered.intermediate.HierarchicalPortConstraintProcessor;
 import de.cau.cs.kieler.klay.layered.intermediate.HierarchicalPortDummySizeProcessor;
@@ -154,7 +155,9 @@ public enum IntermediateLayoutProcessor {
     /** Mirrors and transposes the graph to perform a bottom-up drawing. */
     UP_DIR_POSTPROCESSOR,
     /** Removes dummy nodes which were introduced for center labels. */
-    LABEL_DUMMY_REMOVER;
+    LABEL_DUMMY_REMOVER,
+    /** Place end labels on edges. */
+    END_LABEL_PROCESSOR;
     
     
     /**
@@ -279,6 +282,9 @@ public enum IntermediateLayoutProcessor {
             
         case LABEL_DUMMY_SWITCHER:
             return new LabelDummySwitcher();
+            
+        case END_LABEL_PROCESSOR:
+            return new EndLabelProcessor();
         
         default:
             return null;
