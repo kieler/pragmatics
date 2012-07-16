@@ -1,3 +1,17 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ * 
+ */
 package de.cau.cs.kieler.kex.ui.util;
 
 import java.awt.image.BufferedImage;
@@ -18,6 +32,9 @@ import org.eclipse.swt.graphics.RGB;
  */
 public final class ImageConverter {
 
+    private static final int RGB_SIZE = 3;
+    private static final int COLOR_PATTERN = 0xFF;
+
     private ImageConverter() {
         // should not be called.
     }
@@ -31,7 +48,7 @@ public final class ImageConverter {
             BufferedImage bufferedImage = new BufferedImage(colorModel,
                     colorModel.createCompatibleWritableRaster(data.width, data.height), false, null);
             WritableRaster raster = bufferedImage.getRaster();
-            int[] pixelArray = new int[3];
+            int[] pixelArray = new int[RGB_SIZE];
             for (int y = 0; y < data.height; y++) {
                 for (int x = 0; x < data.width; x++) {
                     int pixel = data.getPixel(x, y);
@@ -83,7 +100,7 @@ public final class ImageConverter {
             ImageData data = new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(),
                     colorModel.getPixelSize(), palette);
             WritableRaster raster = bufferedImage.getRaster();
-            int[] pixelArray = new int[3];
+            int[] pixelArray = new int[RGB_SIZE];
             for (int y = 0; y < data.height; y++) {
                 for (int x = 0; x < data.width; x++) {
                     raster.getPixel(x, y, pixelArray);
@@ -104,7 +121,8 @@ public final class ImageConverter {
             colorModel.getBlues(blues);
             RGB[] rgbs = new RGB[size];
             for (int i = 0; i < rgbs.length; i++) {
-                rgbs[i] = new RGB(reds[i] & 0xFF, greens[i] & 0xFF, blues[i] & 0xFF);
+                rgbs[i] = new RGB(reds[i] & COLOR_PATTERN, greens[i] & COLOR_PATTERN, blues[i]
+                        & COLOR_PATTERN);
             }
             PaletteData palette = new PaletteData(rgbs);
             ImageData data = new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(),
@@ -124,12 +142,26 @@ public final class ImageConverter {
         return null;
     }
 
+    /**
+     * Scales a swt image with a given width and height by converting it into an awt image, scaling
+     * it and finally bring it back to swt.
+     * 
+     * @param imgData
+     *            of the original image
+     * @param width
+     *            new width
+     * @param height
+     *            new height
+     * @param scaleType
+     *            , hint to set the kind of quality of scaling
+     * @return the scaled {@link ImageData}
+     */
     public static ImageData scaleSWTImage(final ImageData imgData, final int width,
             final int height, final int scaleType) {
         BufferedImage bufImg = convertToAWT(imgData);
         BufferedImage bImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         bImage.getGraphics().drawImage(bufImg.getScaledInstance(width, height, scaleType), 0, 0,
                 null);
-        return convertToSWT(bImage);
+        return ImageConverter.convertToSWT(bImage);
     }
 }

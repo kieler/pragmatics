@@ -27,7 +27,8 @@ import org.eclipse.osgi.util.NLS;
  */
 public final class Messages extends NLS {
     /** the bundle name. **/
-    private static final String BUNDLE_NAME = "de.cau.cs.kieler.kex.ui.wizards.exporting.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME 
+        = "de.cau.cs.kieler.kex.ui.wizards.exporting.messages"; //$NON-NLS-1$
 
     /** the resource bundle instance. */
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
