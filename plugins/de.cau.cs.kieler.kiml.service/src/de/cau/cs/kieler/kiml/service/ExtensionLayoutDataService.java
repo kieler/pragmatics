@@ -24,6 +24,7 @@ import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IFactory;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
@@ -35,6 +36,7 @@ import de.cau.cs.kieler.kiml.options.GraphFeature;
  * A layout data service that reads its content from the Eclipse extension registry.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public abstract class ExtensionLayoutDataService extends LayoutDataService {
     
@@ -46,6 +48,8 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     public static final String ELEMENT_LAYOUT_TYPE = "layoutType";
     /** name of the 'category' element in the 'layout providers' extension point. */
     public static final String ELEMENT_CATEGORY = "category";
+    /** name of the 'dependency' element in the 'layout providers' extension point. */
+    public static final String ELEMENT_DEPENDENCY = "dependency";
     /** name of the 'known option' element in the 'layout providers' extension point. */
     public static final String ELEMENT_KNOWN_OPTION = "knownOption";
     /** name of the 'layout  option' element in the 'layout providers' extension point. */
@@ -66,10 +70,16 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     public static final String ATTRIBUTE_DEFAULT = "default";
     /** name of the 'description' attribute in the extension points. */
     public static final String ATTRIBUTE_DESCRIPTION = "description";
+    /** name of the 'enumValues' attribute used in doing remote layout. */
+    public static final String ATTRIBUTE_ENUMVALUES = "enumValues";
     /** name of the 'feature' attribute in the extension points. */
     public static final String ATTRIBUTE_FEATURE = "feature";
     /** name of the 'id' attribute in the extension points. */
     public static final String ATTRIBUTE_ID = "id";
+    /** name of the 'implementation' attribute of a layout option of type 'remoteenum'. */
+    public static final String ATTRIBUTE_IMPLEMENTATION = "implementation";
+    /** name of the 'lowerBound' attribute in the extension points. */
+    public static final String ATTRIBUTE_LOWER_BOUND = "lowerBound";
     /** name of the 'name' attribute in the extension points. */
     public static final String ATTRIBUTE_NAME = "name";
     /** name of the 'option' attribute in the extension points. */
@@ -80,10 +90,12 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     public static final String ATTRIBUTE_PRIORITY = "priority";
     /** name of the 'type' attribute in the extension points. */
     public static final String ATTRIBUTE_TYPE = "type";
-    /** name of the 'enumValues' attribute used in doing remote layout. */
-    public static final String ATTRIBUTE_ENUMVALUES = "enumValues";
-    /** name of the 'implementation' attribute of a layout option of type 'remoteenum'. */
-    public static final String ATTRIBUTE_IMPLEMENTATION = "implementation";
+    /** name of the 'upperBound' attribute in the extension points. */
+    public static final String ATTRIBUTE_UPPER_BOUND = "upperBound";
+    /** name of the 'value' attribute in the extension points. */
+    public static final String ATTRIBUTE_VALUE = "value";
+    /** name of the 'variance' attribute in the extension points. */
+    public static final String ATTRIBUTE_VARIANCE = "variance";
     
     /**
      * Report an error that occurred while reading extensions.
@@ -129,6 +141,8 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
      */
     protected void loadLayoutProviderExtensions() {    
         List<String[]> knownOptions = new LinkedList<String[]>();
+        List<String[]> dependencies = new LinkedList<String[]>();
+        
         IConfigurationElement[] extensions = getProviderExtensions();
         if (extensions == null || extensions.length == 0) {
             return;
@@ -140,7 +154,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
                 loadLayoutAlgorithm(element, knownOptions);
             } else if (ELEMENT_LAYOUT_OPTION.equals(element.getName())) {
                 // register a layout option from the extension
-                loadLayoutOption(element);
+                loadLayoutOption(element, dependencies);
             } else if (ELEMENT_LAYOUT_TYPE.equals(element.getName())) {
                 // register a layout type from the extension
                 String id = element.getAttribute(ATTRIBUTE_ID);
@@ -179,7 +193,22 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
                     reportError(EXTP_ID_LAYOUT_PROVIDERS, null, null, exception);
                 }
             }
-        }        
+        }
+        
+        // load layout option dependencies
+        for (String[] entry : dependencies) {
+            LayoutOptionData<?> sourceOption = getOptionData(entry[0]);
+            LayoutOptionData<?> targetOption = getOptionData(entry[1]);
+            if (sourceOption != null && targetOption != null) {
+                try {
+                    Object value = targetOption.parseValue(entry[2]);
+                    sourceOption.getDependencies().add(new Pair<LayoutOptionData<?>, Object>(
+                            targetOption, value));
+                } catch (IllegalStateException exception) {
+                    reportError(EXTP_ID_LAYOUT_PROVIDERS, null, null, exception);
+                }
+            }
+        }
     }
     
     /**
@@ -211,7 +240,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
                     throw new WrappedException(e);
                 }
             }
-            public void destroy(AbstractLayoutProvider provider) {
+            public void destroy(final AbstractLayoutProvider provider) {
                 provider.dispose();
             }
         };
@@ -336,15 +365,19 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
      * Load a layout option from a configuration element.
      * 
      * @param element a configuration element from an extension
+     * @param dependencies the list of option dependencies
      */
-    private void loadLayoutOption(final IConfigurationElement element) {
+    private void loadLayoutOption(final IConfigurationElement element,
+            final List<String[]> dependencies) {
         LayoutOptionData<Object> optionData = new LayoutOptionData<Object>();
+        // get option identifier
         String optionId = element.getAttribute(ATTRIBUTE_ID);
         if (optionId == null || optionId.length() == 0) {
             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
             return;
         }
         optionData.setId(optionId);
+        // get option type
         String optionType = element.getAttribute(ATTRIBUTE_TYPE);        
         try {
             if (optionType.equals(LayoutOptionData.REMOTEENUM_LITERAL)) {
@@ -372,18 +405,49 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
         } catch (IllegalArgumentException exception) {
             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_TYPE, exception);
             return;
-        }    
+        }
+        // get default value, lower bound, and upper bound
         try {
             Object defaultValue = optionData.parseValue(element.getAttribute(ATTRIBUTE_DEFAULT));
             optionData.setDefault(defaultValue);
+            Object lowerBound = optionData.parseValue(element.getAttribute(ATTRIBUTE_LOWER_BOUND));
+            optionData.setLowerBound(lowerBound);
+            Object upperBound = optionData.parseValue(element.getAttribute(ATTRIBUTE_UPPER_BOUND));
+            optionData.setUpperBound(upperBound);
         } catch (IllegalStateException exception) {
             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, exception);
         }
+        // get name and description
         optionData.setName(element.getAttribute(ATTRIBUTE_NAME));
         optionData.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
+        // get option targets (which graph elements it applies to)
         optionData.setTargets(element.getAttribute(ATTRIBUTE_APPLIESTO));
+        // whether the option should only be shown in advanced mode
         String advanced = element.getAttribute(ATTRIBUTE_ADVANCED);
         optionData.setAdvanced(advanced != null && advanced.equals("true"));
+        // get variance for automatic configuration
+        try {
+            String varianceString = element.getAttribute(ATTRIBUTE_VARIANCE);
+            if (varianceString != null) {
+                optionData.setVariance(Float.parseFloat(varianceString));
+            }
+        } catch (NumberFormatException exception) {
+            reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_VARIANCE, exception);
+        }
+        
+        // process child elements (dependencies)
+        for (IConfigurationElement childElement : element.getChildren()) {
+            if (ELEMENT_DEPENDENCY.equals(childElement.getName())) {
+                String depId = childElement.getAttribute(ATTRIBUTE_OPTION);
+                if (depId == null || depId.length() == 0) {
+                    reportError(EXTP_ID_LAYOUT_PROVIDERS, childElement, ATTRIBUTE_OPTION, null);
+                } else {
+                    dependencies.add(new String[] { optionId, depId,
+                            childElement.getAttribute(ATTRIBUTE_VALUE) });
+                }
+            }
+        }
+        
         getRegistry().addLayoutOption(optionData);
     }
     

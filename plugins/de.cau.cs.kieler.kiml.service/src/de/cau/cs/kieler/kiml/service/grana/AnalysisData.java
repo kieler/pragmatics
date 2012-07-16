@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.ILayoutData;
  * 
  * @author mri
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class AnalysisData implements ILayoutData, IDepending<String> {
 
@@ -48,6 +49,34 @@ public class AnalysisData implements ILayoutData, IDepending<String> {
     private final List<Pair<String, String>> components = new LinkedList<Pair<String, String>>();
     /** the analysis dependencies. */
     private final List<Dependency<String>> dependencies = new LinkedList<Dependency<String>>();
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return analysisId;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object instanceof AnalysisData) {
+            AnalysisData other = (AnalysisData) object;
+            return this.analysisId.equals(other.analysisId);
+        }
+        return false;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return analysisId.hashCode();
+    }
 
     /**
      * Create a pool for instances of the analysis.
@@ -77,7 +106,7 @@ public class AnalysisData implements ILayoutData, IDepending<String> {
     /**
      * {@inheritDoc}
      */
-    public void setId(String id) {
+    public void setId(final String id) {
         this.analysisId = id;
     }
 
@@ -91,7 +120,7 @@ public class AnalysisData implements ILayoutData, IDepending<String> {
     /**
      * {@inheritDoc}
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.analysisName = name;
     }
 
@@ -105,7 +134,7 @@ public class AnalysisData implements ILayoutData, IDepending<String> {
     /**
      * {@inheritDoc}
      */
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.analysisDescription = description;
     }
 

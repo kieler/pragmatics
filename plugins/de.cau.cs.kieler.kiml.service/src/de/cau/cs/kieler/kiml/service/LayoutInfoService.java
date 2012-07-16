@@ -45,6 +45,7 @@ import de.cau.cs.kieler.kiml.config.SemanticLayoutConfig;
  * pre-configured layout option values.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public abstract class LayoutInfoService {
     
@@ -62,6 +63,8 @@ public abstract class LayoutInfoService {
     protected static final String ELEMENT_CONFIG = "config";
     /** name of the 'activation' attribute in the extension points. */
     protected static final String ATTRIBUTE_ACTIVATION = "activation";
+    /** name of the 'activationAction' attribute in the extension points. */
+    protected static final String ATTRIBUTE_ACTIVATION_ACTION = "activationAction";
     /** name of the 'activationText' attribute in the extension points. */
     protected static final String ATTRIBUTE_ACTIVATION_TEXT = "activationText";
     /** name of the 'class' attribute in the extension points. */
@@ -80,20 +83,22 @@ public abstract class LayoutInfoService {
     protected static final String ATTRIBUTE_VALUE = "value";
     
     /**
-     * Data element for general layout configurations.
+     * Data element for general layout configurators.
      */
     public static class ConfigData {
-        /** the layout configuration implementation. */
+        /** the layout configurator implementation. */
         private ILayoutConfig config;
         /** the activation property. */
         private IProperty<Boolean> activation;
         /** the text of the activation menu entry. */
         private String activationText;
+        /** the activation action that is executed when activation changes. */
+        private Runnable activationAction;
         
         /**
-         * Returns the layout configuration implementation.
+         * Returns the layout configurator implementation.
          * 
-         * @return the layout configuration
+         * @return the layout configurator
          */
         public ILayoutConfig getConfig() {
             return config;
@@ -115,6 +120,16 @@ public abstract class LayoutInfoService {
          */
         public String getActivationText() {
             return activationText;
+        }
+        
+        /**
+         * Returns the activation action that is executed when the configurator is enabled or
+         * disabled.
+         * 
+         * @return the activation action
+         */
+        public Runnable getActivationAction() {
+            return activationAction;
         }
         
         /**
@@ -150,15 +165,15 @@ public abstract class LayoutInfoService {
     }
     
     /** mapping of diagram type identifiers to their names. */
-    private Map<String, String> diagramTypeMap = Maps.newLinkedHashMap();
+    private final Map<String, String> diagramTypeMap = Maps.newLinkedHashMap();
     /** mapping of object identifiers to associated options. */
-    private Map<String, Map<String, Object>> id2OptionsMap = Maps.newHashMap();
+    private final Map<String, Map<String, Object>> id2OptionsMap = Maps.newHashMap();
     /** mapping of domain class names to semantic layout configurations. */
-    private Multimap<String, SemanticLayoutConfig> semanticConfigMap = HashMultimap.create();
-    /** list of general layout configurations. */
-    private List<ConfigData> configData = Lists.newLinkedList();
-    /** property map for activation of registered layout configurations. */
-    private MapPropertyHolder configProperties = new MapPropertyHolder();
+    private final Multimap<String, SemanticLayoutConfig> semanticConfigMap = HashMultimap.create();
+    /** list of general layout configurators. */
+    private final List<ConfigData> configData = Lists.newLinkedList();
+    /** property map for activation of registered layout configurators. */
+    private final MapPropertyHolder configProperties = new MapPropertyHolder();
     
     /**
      * Returns the property holder to activate or deactivate registered layout configurations.
@@ -258,6 +273,11 @@ public abstract class LayoutInfoService {
                     }
                     String text = element.getAttribute(ATTRIBUTE_ACTIVATION_TEXT);
                     data.activationText = text;
+                    if (element.getAttribute(ATTRIBUTE_ACTIVATION_ACTION) != null) {
+                        Runnable action = (Runnable) element.createExecutableExtension(
+                                ATTRIBUTE_ACTIVATION_ACTION);
+                        data.activationAction = action;
+                    }
                     configData.add(data);
                 } catch (CoreException exception) {
                     reportError(exception);
@@ -439,12 +459,12 @@ public abstract class LayoutInfoService {
     }
 
     /**
-     * Return the semantic layout configurations that are associated with the given domain model
-     * class. This involves configurations that are set for any superclass of the given one.
+     * Return the semantic layout configurators that are associated with the given domain model
+     * class. This involves configurators that are set for any superclass of the given one.
      * 
      * @param clazz
      *            a domain model class
-     * @return the semantic layout configurations for the class or a superclass
+     * @return the semantic layout configurators for the class or a superclass
      */
     public final List<ILayoutConfig> getSemanticConfigs(final EClass clazz) {
         if (clazz != null) {
@@ -464,9 +484,9 @@ public abstract class LayoutInfoService {
     }
 
     /**
-     * Returns all general layout configurations that are currently active.
+     * Returns all general layout configurators that are currently active.
      * 
-     * @return the active layout configurations
+     * @return the active layout configurators
      */
     public final List<ILayoutConfig> getActiveConfigs() {
         LinkedList<ILayoutConfig> configs = new LinkedList<ILayoutConfig>();

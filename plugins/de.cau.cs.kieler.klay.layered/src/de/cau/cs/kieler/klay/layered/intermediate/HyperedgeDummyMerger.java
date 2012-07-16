@@ -45,6 +45,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  *
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class HyperedgeDummyMerger extends AbstractAlgorithm implements ILayoutProcessor {
 

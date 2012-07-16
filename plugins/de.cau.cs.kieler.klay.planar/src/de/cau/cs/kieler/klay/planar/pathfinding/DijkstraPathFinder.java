@@ -22,8 +22,8 @@ import java.util.Set;
 
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.planar.graph.IEdge;
-import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder.IShortestPathFinder;
 
 /**
@@ -36,31 +36,31 @@ public class DijkstraPathFinder extends AbstractPathFinder implements IShortestP
     /**
      * {@inheritDoc}
      */
-    public List<IEdge> findPath(final INode source, final INode target,
-            final ICondition<Pair<INode, IEdge>> condition) {
+    public List<PEdge> findPath(final PNode source, final PNode target,
+            final ICondition<Pair<PNode, PEdge>> condition) {
 
         // Initialize array
         int size = source.getParent().getNodeCount();
-        IEdge[] edges = new IEdge[size];
+        PEdge[] edges = new PEdge[size];
 
         // Initialize set of nodes
-        Set<INode> nodes = new HashSet<INode>(size * 2);
-        for (INode n : source.getParent().getNodes()) {
+        Set<PNode> nodes = new HashSet<PNode>(size * 2);
+        for (PNode n : source.getParent().getNodes()) {
             n.setProperty(DISTANCE, Integer.MAX_VALUE);
             nodes.add(n);
         }
         source.setProperty(DISTANCE, 0);
 
         // Comparator to find node of smallest distance value
-        Comparator<INode> comp = new Comparator<INode>() {
-            public int compare(final INode arg0, final INode arg1) {
+        Comparator<PNode> comp = new Comparator<PNode>() {
+            public int compare(final PNode arg0, final PNode arg1) {
                 return arg0.getProperty(DISTANCE) - arg1.getProperty(DISTANCE);
             }
         };
 
         // Main loop
         while (!nodes.isEmpty()) {
-            INode current = Collections.min(nodes, comp);
+            PNode current = Collections.min(nodes, comp);
 
             // Remaining nodes are unreachable
             if (current.getProperty(DISTANCE) == Integer.MAX_VALUE) {
@@ -69,13 +69,13 @@ public class DijkstraPathFinder extends AbstractPathFinder implements IShortestP
 
             // Target node found, Compute shortest path
             if (current == target) {
-                LinkedList<IEdge> path = new LinkedList<IEdge>();
-                INode pathNode = target;
-                IEdge pathEdge = edges[pathNode.getID()];
+                LinkedList<PEdge> path = new LinkedList<PEdge>();
+                PNode pathNode = target;
+                PEdge pathEdge = edges[pathNode.id];
                 while (pathEdge != null) {
                     path.addFirst(pathEdge);
                     pathNode = pathNode.getAdjacentNode(pathEdge);
-                    pathEdge = edges[pathNode.getID()];
+                    pathEdge = edges[pathNode.id];
                 }
                 return path;
             }
@@ -83,8 +83,8 @@ public class DijkstraPathFinder extends AbstractPathFinder implements IShortestP
             nodes.remove(current);
 
             // Traverse all neighbors
-            for (IEdge edge : current.adjacentEdges()) {
-                INode neighbor = current.getAdjacentNode(edge);
+            for (PEdge edge : current.adjacentEdges()) {
+                PNode neighbor = current.getAdjacentNode(edge);
 
                 // Skip already visited nodes
                 if (!nodes.contains(neighbor)) {
@@ -92,7 +92,7 @@ public class DijkstraPathFinder extends AbstractPathFinder implements IShortestP
                 }
 
                 // Check edge condition
-                if (!condition.evaluate(new Pair<INode, IEdge>(neighbor, edge))) {
+                if (!condition.evaluate(new Pair<PNode, PEdge>(neighbor, edge))) {
                     continue;
                 }
 
@@ -102,7 +102,85 @@ public class DijkstraPathFinder extends AbstractPathFinder implements IShortestP
 
                 if (cost < neighbor.getProperty(DISTANCE)) {
                     neighbor.setProperty(DISTANCE, cost);
-                    edges[neighbor.getID()] = edge;
+                    edges[neighbor.id] = edge;
+                }
+            }
+        }
+
+        // Target node not reached
+        return null;
+    }
+
+    /**
+     * perform a dijkstra shortest path search, but runs along the reverse direction of the edges,
+     * e.g. from target to source.
+     * 
+     * @param source
+     *            , startNode, remember this should not the root of a graph, because the search
+     *            works backward and that is in general to the root!
+     * @param target
+     *            , targetNode
+     */
+    public List<PEdge> findReversePath(final PNode source, final PNode target) {
+        // Initialize array
+        int size = source.getParent().getNodeCount();
+        PEdge[] edges = new PEdge[size];
+
+        // Initialize set of nodes
+        Set<PNode> nodes = new HashSet<PNode>(size * 2);
+        for (PNode n : source.getParent().getNodes()) {
+            n.setProperty(DISTANCE, Integer.MAX_VALUE);
+            nodes.add(n);
+        }
+        source.setProperty(DISTANCE, 0);
+
+        // Comparator to find node of smallest distance value
+        Comparator<PNode> comp = new Comparator<PNode>() {
+            public int compare(final PNode arg0, final PNode arg1) {
+                return arg0.getProperty(DISTANCE) - arg1.getProperty(DISTANCE);
+            }
+        };
+
+        // Main loop
+        while (!nodes.isEmpty()) {
+            PNode current = Collections.min(nodes, comp);
+
+            // Remaining nodes are unreachable
+            if (current.getProperty(DISTANCE) == Integer.MAX_VALUE) {
+                break;
+            }
+
+            // Target node found, Compute shortest path
+            if (current == target) {
+                LinkedList<PEdge> path = new LinkedList<PEdge>();
+                PNode pathNode = target;
+                PEdge pathEdge = edges[pathNode.id];
+                while (pathEdge != null) {
+                    path.addFirst(pathEdge);
+                    pathNode = pathNode.getAdjacentNode(pathEdge);
+                    pathEdge = edges[pathNode.id];
+                }
+                return path;
+            }
+
+            nodes.remove(current);
+
+            // Traverse all neighbors
+            for (PEdge edge : current.adjacentEdges()) {
+                PNode neighbor = current.getAdjacentNode(edge);
+
+                // Skip already visited nodes
+                if (!nodes.contains(neighbor)) {
+                    continue;
+                }
+
+                // Get edge cost property
+                int cost = edge.getProperty(PATHCOST);
+                cost += current.getProperty(DISTANCE);
+
+                if (cost < neighbor.getProperty(DISTANCE)) {
+                    neighbor.setProperty(DISTANCE, cost);
+                    edges[neighbor.id] = edge;
                 }
             }
         }

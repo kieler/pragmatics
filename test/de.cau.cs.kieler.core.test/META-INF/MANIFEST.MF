@@ -7,3 +7,5 @@ Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: de.cau.cs.kieler.core,
  org.junit
+Export-Package: de.cau.cs.kieler.core.test.math,
+ de.cau.cs.kieler.core.test.runners

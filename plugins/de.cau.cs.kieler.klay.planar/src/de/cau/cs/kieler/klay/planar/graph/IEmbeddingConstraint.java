@@ -79,7 +79,7 @@ public interface IEmbeddingConstraint {
          *            the edge the leaf object will hold
          * @return the newly created node
          */
-        IConstraintTreeLeaf addLeaf(IEdge edge);
+        IConstraintTreeLeaf addLeaf(PEdge edge);
 
     }
 
@@ -96,7 +96,7 @@ public interface IEmbeddingConstraint {
          * 
          * @return the associated edge
          */
-        IEdge getEdge();
+        PEdge getEdge();
 
     }
 

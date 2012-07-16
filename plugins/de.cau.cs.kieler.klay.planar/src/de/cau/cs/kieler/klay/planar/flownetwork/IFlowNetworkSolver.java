@@ -15,13 +15,15 @@ package de.cau.cs.kieler.klay.planar.flownetwork;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.klay.planar.graph.IGraph;
+import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PGraph;
 
 /**
  * Interface for algorithms to solve problems in flow networks. Uses the Strategy design pattern to
  * provide a common interface for various implementation of algorithms working on flow networks.
  * 
  * @author ocl
+ * @author pkl
  */
 public interface IFlowNetworkSolver extends IAlgorithm {
 
@@ -41,12 +43,23 @@ public interface IFlowNetworkSolver extends IAlgorithm {
             "de.cau.cs.kieler.klay.planar.properties.networkcapacity", 0);
 
     /**
+     * A property assigning a lower bound to an edge. The lower bound of an edge is the minimum flow
+     * allowed to be transferred through the edge.
+     */
+    Property<Integer> LOWER_BOUND = new Property<Integer>(
+            "de.cau.cs.kieler.klay.planar.properties.networklowerbound", 0);
+
+    /**
      * A property assigning a capacity to an edge in the residual network. The capacity in the
      * residual network is the initial capacity minus the flow in edge direction, or the flow
      * against edge direction.
      */
-    Property<Integer> RESIDUALCAPACITY = new Property<Integer>(
+    Property<Integer> RESIDUAL_CAPACITY = new Property<Integer>(
             "de.cau.cs.kieler.klay.planar.properties.networkresidualcapacity", 0);
+
+    /** A property assigning a adjacent edge of two face nodes in the flow network. */
+    Property<PEdge> CROSSING_EDGE = new Property<PEdge>(
+            "de.cau.cs.kieler.klay.planar.properties.crossingedge");
 
     /**
      * A property assigning a flow to an edge. This property is usually set during the network
@@ -62,7 +75,7 @@ public interface IFlowNetworkSolver extends IAlgorithm {
      * @param network
      *            the network to work on
      */
-    void findFlow(IGraph network);
+    void findFlow(PGraph network);
 
     /**
      * Interface for algorithms to solve the maximum flow problem in a flow network. The maximum

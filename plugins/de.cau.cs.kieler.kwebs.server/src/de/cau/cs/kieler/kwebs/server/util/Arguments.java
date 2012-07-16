@@ -19,9 +19,8 @@ import java.util.HashMap;
 /**
  * Utilities for parsing command line arguments.
  * 
- * @kieler.rating  2011-08-02 yellow
- *     reviewed by ckru, mri, msp
- * @author  swe
+ * @kieler.design 2011-08-02 reviewed by ckru, mri, msp
+ * @author swe
  */
 public final class Arguments {
 

@@ -35,6 +35,8 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
+import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
+import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 
 /**
  * Container for property definitions.
@@ -42,6 +44,7 @@ import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
  * @author msp
  * @author cds
  * @author ima
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public final class Properties {
 
@@ -114,7 +117,7 @@ public final class Properties {
      * Layer layout units are identified through one of their nodes.
      */
     public static final IProperty<LNode> IN_LAYER_LAYOUT_UNIT = new Property<LNode>(
-            "inLayerLayoutUnit", null);
+            "inLayerLayoutUnit");
 
     /**
      * The in-layer constraint placed on a node. This indicates whether this node should be handled
@@ -132,7 +135,12 @@ public final class Properties {
      * constraint. This property only makes sense for nodes.
      */
     public static final IProperty<LNode> IN_LAYER_SUCCESSOR_CONSTRAINT = new Property<LNode>(
-            "inLayerSuccessorConstraint", null);
+            "inLayerSuccessorConstraint");
+    
+    /**
+     * The node group of an LNode as used in the crossing minimization phase.
+     */
+    public static final IProperty<NodeGroup> NODE_GROUP = new Property<NodeGroup>("nodeGroup");
 
     /**
      * Crossing hint used for in-layer cross counting with northern and southern port dummies.
@@ -173,7 +181,7 @@ public final class Properties {
      * node.
      */
     public static final IProperty<LNode> EXT_PORT_REPLACED_DUMMY = new Property<LNode>(
-            "externalPortReplacedDummy", null);
+            "externalPortReplacedDummy");
     
     /**
      * The port sides of external ports a connected component connects to. This property is set
@@ -324,8 +332,8 @@ public final class Properties {
             LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
 
     /** defines the minimal angle a short edge may have. */
-    public static final IProperty<Integer> MIN_EDGE_ANGLE = new Property<Integer>(
-            "de.cau.cs.kieler.klay.layered.minimalAngle", 0);
+    public static final IProperty<Float> MIN_EDGE_ANGLE = new Property<Float>(
+            "de.cau.cs.kieler.klay.layered.minimalAngle", 0.0f);
 
     /** whether nodes shall be distributed during layer assignment. */
     public static final IProperty<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
@@ -344,6 +352,19 @@ public final class Properties {
     public static final IProperty<CrossingMinimizationStrategy> CROSSMIN
             = new Property<CrossingMinimizationStrategy>("de.cau.cs.kieler.klay.layered.crossMin",
                     CrossingMinimizationStrategy.LAYER_SWEEP);
+    
+    /** property to choose a node placement strategy. */
+    public static final IProperty<NodePlacementStrategy> NODEPLACE
+            = new Property<NodePlacementStrategy>("de.cau.cs.kieler.klay.layered.nodePlace",
+                    NodePlacementStrategy.LINEAR_SEGMENTS);
+    
+    /** property to choose a node placement strategy. */
+    public static final IProperty<Boolean> EDGE_BENDS
+            = new Property<Boolean>("de.cau.cs.kieler.klay.layered.edgeBends", true);
+    
+    /** property to switch debug mode on or off. */
+    public static final IProperty<Boolean> DEBUG_MODE
+            = new Property<Boolean>("de.cau.cs.kieler.debugMode", false);
 
     /** property that determines how much effort should be spent. */
     public static final IProperty<Integer> THOROUGHNESS = new Property<Integer>(

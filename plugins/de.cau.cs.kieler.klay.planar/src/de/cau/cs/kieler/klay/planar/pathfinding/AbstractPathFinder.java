@@ -18,8 +18,8 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.planar.graph.IEdge;
-import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
 
 /**
  * Algorithm to find a path between two nodes in a graph.
@@ -31,11 +31,11 @@ public abstract class AbstractPathFinder extends AbstractAlgorithm implements IP
     /**
      * {@inheritDoc}
      */
-    public List<IEdge> findPath(final INode source, final INode target) {
-        return this.findPath(source, target, new ICondition<Pair<INode, IEdge>>() {
-            public boolean evaluate(final Pair<INode, IEdge> object) {
-                INode node = object.getFirst();
-                IEdge edge = object.getSecond();
+    public List<PEdge> findPath(final PNode source, final PNode target) {
+        return this.findPath(source, target, new ICondition<Pair<PNode, PEdge>>() {
+            public boolean evaluate(final Pair<PNode, PEdge> object) {
+                PNode node = object.getFirst();
+                PEdge edge = object.getSecond();
                 return !edge.isDirected() || (node == edge.getTarget());
             }
         });

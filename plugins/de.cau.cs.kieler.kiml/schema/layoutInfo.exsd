@@ -89,11 +89,8 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Either a domain model class or an edit part class. The option is assigned to all instances of the given class.
+                  Either a domain model class, a diagram part class, or a diagram type. The option is assigned to all instances of the given class or type.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="option" type="string" use="required">
@@ -149,14 +146,14 @@
    <element name="config">
       <annotation>
          <documentation>
-            A general layout option configuration, which can calculate its values in arbitrary manner.
+            A general layout option configurator, which can calculate its values in arbitrary manner.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The implementation of the layout configuration.
+                  The implementation of the layout configurator.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.config.ILayoutConfig"/>
@@ -166,7 +163,7 @@
          <attribute name="activation" type="string">
             <annotation>
                <documentation>
-                  A property identifier used for activation of the layout configuration. If this property is omitted, the configuration is always active.
+                  A property identifier used for activation of the layout configurator. If this property is omitted, the configurator is always active.
                </documentation>
             </annotation>
          </attribute>
@@ -180,10 +177,20 @@
          <attribute name="activationText" type="string">
             <annotation>
                <documentation>
-                  Optional text to display in the user interface for manual activation of the layout configuration.
+                  Optional text to display in the user interface for manual activation of the layout configurator.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="activationAction" type="string">
+            <annotation>
+               <documentation>
+                  Optional action that is executed after the configurator has been enabled or disabled in the user interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":java.lang.Runnable"/>
                </appInfo>
             </annotation>
          </attribute>

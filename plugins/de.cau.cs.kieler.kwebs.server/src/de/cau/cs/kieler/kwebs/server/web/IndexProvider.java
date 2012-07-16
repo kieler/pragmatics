@@ -19,8 +19,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * This class implements a web content provider for displaying the service meta data in HTML format.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public class IndexProvider implements IDynamicWebContentProvider {
 

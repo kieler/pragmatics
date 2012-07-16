@@ -18,7 +18,10 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -43,6 +46,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  * @see PortPositionProcessor
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -100,6 +104,44 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
                         elementBox.height = label.getSize().y;
                         
                         Rectangle2D.union(boundingBox, elementBox, boundingBox);
+                    }
+                }
+                
+                // Do the same for end labels on edges connected to the node
+                // TODO: maybe consider port labels here if the placement strategy requires
+                // this
+                for (LPort port : node.getPorts()) {
+                    // Calculate the port's upper left corner's x and y coordinate
+                    double portX = port.getPosition().x + node.getPosition().x;
+                    double portY = port.getPosition().y + node.getPosition().y;
+                    
+                    for (LEdge edge : port.getOutgoingEdges()) {
+                        // For each edge, the head labels of outgoing edges ...
+                        for (LLabel label : edge.getLabels()) {
+                            if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                                    == EdgeLabelPlacement.HEAD) {
+                                elementBox.x = portX;
+                                elementBox.y = portY;
+                                elementBox.width = label.getSize().x;
+                                elementBox.height = label.getSize().y;
+                                
+                                Rectangle2D.union(boundingBox, elementBox, boundingBox);
+                            }
+                        }
+                    }
+                    for (LEdge edge : port.getIncomingEdges()) {
+                        // ... and the tail label of incoming edges shall be considered 
+                        for (LLabel label : edge.getLabels()) {
+                            if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                                    == EdgeLabelPlacement.TAIL) {
+                                elementBox.x = portX - label.getSize().x;
+                                elementBox.y = portY;
+                                elementBox.width = label.getSize().x;
+                                elementBox.height = label.getSize().y;
+                                
+                                Rectangle2D.union(boundingBox, elementBox, boundingBox);
+                            }
+                        }
                     }
                 }
                 

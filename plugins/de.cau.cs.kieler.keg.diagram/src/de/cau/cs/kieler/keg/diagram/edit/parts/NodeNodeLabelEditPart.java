@@ -291,6 +291,7 @@ public class NodeNodeLabelEditPart extends CompartmentEditPart implements ITextA
     /**
      * @generated
      */
+    @SuppressWarnings("deprecation")
     protected DirectEditManager getManager() {
         if (manager == null) {
             setManager(new TextDirectEditManager(this,

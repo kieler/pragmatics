@@ -31,13 +31,13 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 
 /**
  * An abstract superclass for EMF-based transformers.
  *
  * @param <T> type of EMF object
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public abstract class AbstractEmfHandler<T extends EObject> implements ITransformationHandler<T> {
     

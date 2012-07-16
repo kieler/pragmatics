@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
  */
 public class DiagramTypeDefaultAction extends Action {
 
-    /** an identifier for the action. */
+    /** identifier of the diagram type default action. */
     public static final String ACTION_ID = "kieler.diagram.type.default";
 
     /** the icon used for this action. */

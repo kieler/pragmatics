@@ -57,9 +57,7 @@ import de.cau.cs.kieler.kwebs.util.Graphs;
  * architecture specific service implementations may sub class this class in order to use the provided
  * layout.
  *
- * @kieler.rating  2011-08-25 yellow
- *      reviewed by ckru, msp, mri
- *      
+ * @kieler.design 2011-08-25 reviewed by ckru, msp, mri
  * @author swe
  * @author msp
  */
@@ -359,7 +357,7 @@ public abstract class AbstractService {
             if (optionData != null) {
                 Object optionValue = optionData.parseValue(option.getValue());
                 if (optionValue != null) {
-                    if (optionData.hasTarget(Target.PARENTS)) {
+                    if (optionData.getTargets().contains(Target.PARENTS)) {
                         if (optionData.equals(LayoutOptions.ALGORITHM)) {
                             LayoutAlgorithmData algoData = dataService.getAlgorithmDataBySuffix(
                                     (String) optionValue);
@@ -377,22 +375,22 @@ public abstract class AbstractService {
                             + optionValue.toString() + ")");
                         annotateGraphParents(layout, optionData, optionValue);
                     }
-                    if (optionData.hasTarget(Target.NODES)) {
+                    if (optionData.getTargets().contains(Target.NODES)) {
                         Logger.log(Severity.DEBUG, "Setting layout option (NODES, " 
                             + optionValue.toString() + ")");
                         annotateGraphNodes(layout, optionData, optionValue);
                     }
-                    if (optionData.hasTarget(Target.EDGES)) {
+                    if (optionData.getTargets().contains(Target.EDGES)) {
                         Logger.log(Severity.DEBUG, "Setting layout option (EDGES, " 
                             + optionValue.toString() + ")");
                         annotateGraphEdges(layout, optionData, optionValue);
                     }
-                    if (optionData.hasTarget(Target.PORTS)) {
+                    if (optionData.getTargets().contains(Target.PORTS)) {
                         Logger.log(Severity.DEBUG, "Setting layout option (PORTS, " 
                             + optionValue.toString() + ")");
                         annotateGraphPorts(layout, optionData, optionValue);
                     }
-                    if (optionData.hasTarget(Target.LABELS)) {
+                    if (optionData.getTargets().contains(Target.LABELS)) {
                         Logger.log(Severity.DEBUG, "Setting layout option (LABELS, " 
                             + optionValue.toString() + ")");
                         annotateGraphLabels(layout, optionData, optionValue);

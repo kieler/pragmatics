@@ -23,6 +23,7 @@ import de.cau.cs.kieler.kaom.KaomFactory
 import de.cau.cs.kieler.kaom.Link
 import de.cau.cs.kieler.kaom.Port
 import de.cau.cs.kieler.kaom.Relation
+import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.utils.TransformationUtils
 
 
 /**
@@ -35,6 +36,7 @@ import de.cau.cs.kieler.kaom.Relation
  * 
  * @author cds
  * @author haf
+ * @kieler.rating yellow 2012-06-14 KI-12 cmot, grh
  */
 class Ptolemy2KaomOptimization {
     
@@ -43,25 +45,30 @@ class Ptolemy2KaomOptimization {
      */
     @Inject extension TransformationUtils
     
-	
-	/**
-	 * Optimizes the given KAOM model.
-	 * 
-	 * @param kaomModel the model to optimize.
-	 */
-	def void optimize(Entity kaomModel) {
-	    // Infer link directions
-	    inferLinkDirections(kaomModel)
-	    
-	    // Remove ports from entities representing states
-	    makeStatesPortless(kaomModel)
-	    
-	    // Remove unnecessary relations
-	    removeUnnecessaryRelations(kaomModel)
-	    
-	    // Convert special annotations into entities
-	    convertAnnotationsToEntities(kaomModel)
-	}
+    
+    /**
+     * Optimizes the given KAOM model.
+     * 
+     * <p>The order in which we do that is partly important. We can remove a relation if it has only
+     * one incoming and one outgoing link. In order to determine this, we need to have inferred the
+     * link directions. When we remove ports from states or convert annotations to entities is less
+     * important.</p>
+     * 
+     * @param kaomModel the model to optimize.
+     */
+    def void optimize(Entity kaomModel) {
+        // Infer link directions
+        inferLinkDirections(kaomModel)
+        
+        // Remove ports from entities representing states
+        makeStatesPortless(kaomModel)
+        
+        // Remove unnecessary relations
+        removeUnnecessaryRelations(kaomModel)
+        
+        // Convert special annotations into entities
+        convertAnnotationsToEntities(kaomModel)
+    }
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,9 +77,9 @@ class Ptolemy2KaomOptimization {
     /**
      * Infers the direction of the links in the model tree rooted at the given entity.
      * 
-     * <p>First, a list of all ports of unknown type, all links of unknown direction, and all relations
-     * are collected. In that process, the direction of links connected to ports of known type is
-     * inferred.</p>
+     * <p>First, a list of all ports of known and unknown type, all links of unknown direction, and all
+     * relations are collected. In that process, the direction of links connected to ports of known type
+     * is inferred.</p>
      * 
      * <p>Second, an attempt is made to infer the type of ports of yet unknown type. This succeeds if
      * the port is connected to a link whose direction is known. The direction of all links connected
@@ -80,7 +87,7 @@ class Ptolemy2KaomOptimization {
      * 
      * <p>Third, all relations are traversed, looking for a relation with only incoming or only outgoing
      * links and just one link of unknown direction. If such a relation is found, the direction of that
-     * one link is inferred. If no such relation is found, a random undirected link's direction is
+     * one link is inferred. If no such relation is found, an undirected link's direction is randomly
      * fixed.</p>
      * 
      * <p>Repeat at step two.</p>
@@ -110,6 +117,12 @@ class Ptolemy2KaomOptimization {
         var relationsChanged = false
         var randomLinkFixed = false
         
+        /* This loop runs until no port types have changed, no relations have changed, and no random
+         * link has been fixed. It always terminates since the one factor that determines if one of
+         * these changes is if there are any undirected links remaining in the model. The way the loop
+         * works is that with each iteration, at least one link's direction is fixed. Assuming that the
+         * model only contains a finite number of links, this loop thus has to terminate.
+         */
         do {
             portTypesChanged = inferPortTypes(unknownPorts, unknownLinks)
             relationsChanged = traverseRelations(unknownRelations, unknownLinks, true)
@@ -122,7 +135,10 @@ class Ptolemy2KaomOptimization {
     }
     
     /**
-     * Traverses the model, filling the given lists with interesting elements.
+     * Traverses the model, filling the given lists with interesting elements: ports of known and
+     * unknown type, links of unknown direction, and relations with incident links of unknown
+     * direction. The lists can then be iterated over instead of always having to iterate over the
+     * whole model again and again.
      * 
      * @param root the root of the model tree.
      * @param knownPorts list to which ports of known type are added.
@@ -234,14 +250,10 @@ class Ptolemy2KaomOptimization {
             } else if (containsDirectedLink(unknownPort.outgoingLinks)) {
                 // The port has an outgoing link of known direction -> mark as output port
                 unknownPort.markAsOutputPort()
-            } else if (unknownPort.name.equals("in")
-                || unknownPort.name.equals("input")
-                || unknownPort.name.equals("incomingPort")) {
-                
+            } else if (isInputPortName(unknownPort.name)) {
                 // The port is named like an input port -> mark as input port
                 unknownPort.markAsInputPort()
-            } else if (unknownPort.name.equals("out")
-                || unknownPort.name.equals("output")) {
+            } else if (isOutputPortName(unknownPort.name)) {
                 
                 // The port is named like an input port -> mark as input port
                 unknownPort.markAsOutputPort()
@@ -264,8 +276,8 @@ class Ptolemy2KaomOptimization {
      * and links whose direction is unknown. This method can operate in two different modes regarding
      * the number of links with unknown direction.
      * 
-     * <p>The first mode is conservative. It only fixes an undirected link's direction if it is the only
-     * undirected link incident to a relation. This is the safe mode of operation.</p>
+     * <p>The first mode is conservative. For each undirected link it only fixes its direction if it
+     * is the only undirected link incident to a relation. This is the safe mode of operation.</p>
      * 
      * <p>The second mode also accepts relations with more than one incident undirected links. It takes
      * the first of them, sets its direction and returns, thereby only fixing the direction of at most
@@ -285,8 +297,8 @@ class Ptolemy2KaomOptimization {
         
         var result = false
         
-        // Iterate oer all the relations with incident links of unknown direction using a list iterator,
-        // since we want to be able to remove relations from the list in the process
+        // Iterate over all the relations with incident links of unknown direction using a list
+        // iterator, since we want to be able to remove relations from the list in the process
         val unknownRelationsIterator = unknownRelations.listIterator
         while (unknownRelationsIterator.hasNext()) {
             val unknownRelation = unknownRelationsIterator.next()
@@ -398,8 +410,8 @@ class Ptolemy2KaomOptimization {
     // Removal of Unnecessary Relations
     
     /**
-     * Removes unnecessary relations in the model rooted at the given entity. Unnecessary relations are
-     * those that have one incoming and one outgoing link.
+     * Recursively removes unnecessary relations in the model rooted at the given entity. Unnecessary
+     * relations are those that have one incoming and one outgoing link.
      * 
      * @param root the model's root entity. 
      */

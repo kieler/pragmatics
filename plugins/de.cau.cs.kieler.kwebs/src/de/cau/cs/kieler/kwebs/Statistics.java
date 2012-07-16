@@ -26,8 +26,6 @@ import de.cau.cs.kieler.core.properties.Property;
  * each side. This class provides higher order methods for accessing the statistical data which is
  * derived from the underlying measurements.
  *
- * @kieler.rating 2011-05-04 red
- *
  * @author swe
  */
 public class Statistics {

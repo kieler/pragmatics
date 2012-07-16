@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  *            
  * @param <T> type of handled graphs
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public interface ITransformationHandler<T> {
 

@@ -36,6 +36,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author cds
  * @author ima
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public final class Util {
 
@@ -301,17 +302,6 @@ public final class Util {
                     retNode = sourceNodeCompound;
                     // if the edge is hierarchy-crossing, choose the compound node of the target
                 } else {
-                    // LinkedList<LNode> sourceTargetList = new LinkedList<LNode>();
-                    // sourceTargetList.add(sourceNode);
-                    // sourceTargetList.add(targetNode);
-                    // propagatePair(sourceTargetList, elemMap);
-                    // LGraphElement container =
-                    // sourceTargetList.getFirst().getProperty(Properties.PARENT);
-                    // if (container instanceof LayeredGraph) {
-                    // retNode = null;
-                    // } else {
-                    // retNode = (LNode) container;
-                    // }
                     retNode = targetNodeCompound;
                 }
             }

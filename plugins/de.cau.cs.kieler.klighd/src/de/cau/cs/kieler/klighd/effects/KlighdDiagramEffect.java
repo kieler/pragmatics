@@ -13,13 +13,14 @@
  */
 package de.cau.cs.kieler.klighd.effects;
 
+import org.eclipse.ui.PlatformUI;
+
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
@@ -32,6 +33,9 @@ import de.cau.cs.kieler.klighd.views.DiagramViewPart;
  */
 public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = -1571536114123214570L;
+    
     /** the identifier for the diagram view. */
     private String id = null;
     /** the new name for the diagram view. */
@@ -124,14 +128,14 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      */
     public void execute() {
         final IPropertyHolder propertyHolder = this;
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 view = DiagramViewManager.getInstance().createView(id, name, model, propertyHolder);
                 if (view != null) {
                     viewer = view.getContextViewer().getActiveViewer();
                 }
             }
-        }, true);
+        });
     }
 
     /**

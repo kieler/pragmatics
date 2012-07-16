@@ -35,7 +35,6 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.components.ComponentsProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
@@ -47,6 +46,8 @@ import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.InteractiveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
+import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
+import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.SplineEdgeRouter;
@@ -83,6 +84,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author msp
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
@@ -96,7 +98,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /** phase 3: crossing minimization module. */
     private ILayoutPhase crossingMinimizer;
     /** phase 4: node placement module. */
-    private ILayoutPhase nodePlacer = new LinearSegmentsNodePlacer();
+    private ILayoutPhase nodePlacer;
     /** phase 5: Edge routing module. */
     private ILayoutPhase edgeRouter;
 
@@ -154,6 +156,74 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         graphImporter.applyLayout(layeredGraph);
 
         progressMonitor.done();
+    }
+    
+    /**
+     * Does a layout on the given graph, but only to the point where the given phase or processor was
+     * executed. If connected components processing was active, the returned list will contain one
+     * layered graph for each connected component; if the processing was not active, the list will only
+     * contain one layered graph. Either way, the layered graphs are in the state they were in after
+     * execution of the given phase finished.
+     * 
+     * <p>If the given phase does not exist in the algorithm's configuration or is {@code null}, the
+     * returned result is the connected components just prior to the execution of the first phase.</p>
+     * 
+     * <p><strong>Note:</strong> This method does not apply the layout back to the original kgraph!</p>
+     * 
+     * @param kgraph the graph to layout.
+     * @param progressMonitor a progress monitor to show progress information in.
+     * @param phase the phase or processor to stop after.
+     * @return list of connected components after the execution of the given phase.
+     */
+    public List<LayeredGraph> doLayoutTest(final KNode kgraph,
+            final IKielerProgressMonitor progressMonitor,
+            final Class<? extends ILayoutProcessor> phase) {
+        
+        progressMonitor.begin("Layered layout test", 1);
+
+        KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
+        IGraphImporter<KNode> graphImporter;
+
+        // Check if hierarchy handling for a compound graph is requested, choose importer
+        // accordingly
+        boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+        if (isCompound) {
+            graphImporter = new CompoundKGraphImporter();
+        } else {
+            graphImporter = new KGraphImporter();
+        }
+
+        LayeredGraph layeredGraph = graphImporter.importGraph(kgraph);
+
+        // set special properties for the layered graph
+        setOptions(layeredGraph, kgraph);
+
+        // update the modules depending on user options
+        updateModules(layeredGraph, kgraph.getData(KShapeLayout.class));
+
+        // split the input graph into components
+        List<LayeredGraph> components = componentsProcessor.split(layeredGraph);
+        
+        // check if the given phase exists in our current algorithm configuration
+        boolean phaseExists = false;
+        for (ILayoutProcessor processor : algorithm) {
+            if (processor.getClass().equals(phase)) {
+                phaseExists = true;
+                break;
+            }
+        }
+        
+        // if the phase exists, perform the layout up to and including that phase
+        if (phaseExists) {
+            // perform the actual layout
+            for (LayeredGraph comp : components) {
+                layoutTest(comp, progressMonitor.subTask(1.0f / components.size()), phase);
+            }
+        }
+
+        progressMonitor.done();
+        
+        return components;
     }
 
     // /////////////////////////////////////////////////////////////////////////////
@@ -234,6 +304,25 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         default:
             if (!(crossingMinimizer instanceof LayerSweepCrossingMinimizer)) {
                 crossingMinimizer = new LayerSweepCrossingMinimizer();
+            }
+        }
+        
+        // check with node placement strategy to use
+        NodePlacementStrategy nodePlaceStrategy = parentLayout.getProperty(Properties.NODEPLACE);
+        switch (nodePlaceStrategy) {
+        case LINEAR_SEGMENTS:
+            if (!(nodePlacer instanceof LinearSegmentsNodePlacer)) {
+                nodePlacer = new LinearSegmentsNodePlacer();
+            }
+            break;
+        case BRANDES_KOEPF:
+            if (!(nodePlacer instanceof BKNodePlacer)) {
+                nodePlacer = new BKNodePlacer();
+            }
+            break;
+        default:
+            if (!(nodePlacer instanceof LinearSegmentsNodePlacer)) {
+                nodePlacer = new LinearSegmentsNodePlacer();
             }
         }
 
@@ -432,6 +521,43 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 }
                 processor.reset(monitor.subTask(1));
                 processor.process(graph);
+            }
+        }
+
+        monitor.done();
+    }
+
+    /**
+     * Performs a test layout for the given graph that stops once the given phase or processor has
+     * finished executing. This method does not write debug output into files.
+     * 
+     * @param graph
+     *            the graph that is to be laid out
+     * @param themonitor
+     *            a progress monitor, or {@code null}
+     * @param phase
+     *            phase or processor to stop the layout after
+     */
+    public void layoutTest(final LayeredGraph graph, final IKielerProgressMonitor themonitor,
+            final Class<? extends ILayoutProcessor> phase) {
+        
+        IKielerProgressMonitor monitor = themonitor;
+        if (monitor == null) {
+            monitor = new BasicProgressMonitor();
+        }
+        monitor.begin("Component Layout", algorithm.size());
+
+        // invoke each layout processor
+        for (ILayoutProcessor processor : algorithm) {
+            if (monitor.isCanceled()) {
+                return;
+            }
+            processor.reset(monitor.subTask(1));
+            processor.process(graph);
+            
+            // check if we need to stop after this processor
+            if (processor.getClass().equals(phase)) {
+                break;
             }
         }
 

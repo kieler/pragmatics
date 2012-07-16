@@ -27,15 +27,19 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * point where the edge touches the node.
  * 
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class LEdge extends LGraphElement {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = 1429497419118554817L;
+    
     /** the bend points. */
     private KVectorChain bendPoints = new KVectorChain();
     /** the source and target ports. */
     private LPort source, target;
     /** labels assigned to this edge. */
-    private List<LLabel> labels = new LinkedList<LLabel>();
+    private final List<LLabel> labels = new LinkedList<LLabel>();
 
     /**
      * {@inheritDoc}

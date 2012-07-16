@@ -113,20 +113,31 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.interactiveReferencePoint">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.nodePlace">
+         </knownOption>
+         <knownOption
+               default="true"
+               option="de.cau.cs.kieler.klay.layered.edgeBends">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
             appliesTo="parents"
             default="0"
-            description="Defines the minimal angle that short edges may have."
+            description="Defines the minimal angle that short edges may have (in degrees)."
             id="de.cau.cs.kieler.klay.layered.minimalAngle"
             name="Minimal Angle"
-            type="int">
+            type="float">
+         <dependency
+               option="de.cau.cs.kieler.edgeRouting"
+               value="SPLINES">
+         </dependency>
       </layoutOption>
       <layoutOption
             appliesTo="parents"
             default="false"
-            description="Whether wide nodes should be distributed to several layers"
+            description="Whether wide nodes should be distributed to several layers."
             id="de.cau.cs.kieler.klay.layered.distributeNodes"
             name="Distribute Nodes"
             type="boolean">
@@ -135,37 +146,43 @@
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy"
             default="GREEDY"
-            description="Strategy for cycle breaking"
+            description="Strategy for cycle breaking."
             id="de.cau.cs.kieler.klay.layered.cycleBreaking"
             name="Cycle Breaking"
-            type="enum">
+            type="enum"
+            variance="0">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy"
             default="NETWORK_SIMPLEX"
-            description="Strategy for node layering"
+            description="Strategy for node layering."
             id="de.cau.cs.kieler.klay.layered.nodeLayering"
             name="Node Layering"
-            type="enum">
+            type="enum"
+            variance="0">
       </layoutOption>
       <layoutOption
       		appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy"
             default="LAYER_SWEEP"
-            description="Strategy for crossing minimization"
+            description="Strategy for crossing minimization."
             id="de.cau.cs.kieler.klay.layered.crossMin"
             name="Crossing Minimization"
-            type="enum">
+            type="enum"
+            variance="0">
       </layoutOption>
       <layoutOption
             advanced="true"
             appliesTo="parents"
             default="5"
-            description="How much effort should be spent to produce a nice layout"
+            description="How much effort should be spent to produce a nice layout."
             id="de.cau.cs.kieler.klay.layered.thoroughness"
+            lowerBound="1"
             name="Thoroughness"
-            type="int">
+            type="int"
+            upperBound="1000"
+            variance="4.0">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -181,10 +198,13 @@
             advanced="true"
             appliesTo="parents"
             default="0.5"
-            description="Factor by which the object spacing is multiplied to arrive at the minimal spacing between edges"
+            description="Factor by which the object spacing is multiplied to arrive at the minimal spacing between edges."
             id="de.cau.cs.kieler.klay.layered.edgeSpacingFactor"
+            lowerBound="0.01"
             name="Edge Spacing Factor"
-            type="float">
+            type="float"
+            upperBound="100"
+            variance="0.2">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -204,6 +224,23 @@
             id="de.cau.cs.kieler.klay.layered.interactiveReferencePoint"
             name="Interactive Reference Point"
             type="enum">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.cycleBreaking"
+               value="INTERACTIVE">
+         </dependency>
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.crossMin"
+               value="INTERACTIVE">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy"
+            default="LINEAR_SEGMENTS"
+            description="Strategy for Node Placement"
+            id="de.cau.cs.kieler.klay.layered.nodePlace"
+            name="Node Placement"
+            type="enum">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -212,6 +249,19 @@
             id="de.cau.cs.kieler.klay.layered.portAnchor"
             name="Port Anchor Offset"
             type="object">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="true"
+            description="Tells the BK node placer to try to reduce edge bends. Otherwise it tries a more balanced placement."
+            id="de.cau.cs.kieler.klay.layered.edgeBends"
+            name="Less Edge Bends"
+            type="boolean">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodePlace"
+               value="BRANDES_KOEPF">
+         </dependency>
       </layoutOption>
    </extension>
 

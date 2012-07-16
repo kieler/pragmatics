@@ -32,8 +32,14 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * The algorithm used is based on the Cohen-Sutherland algorithm.
  * 
  * @author mri
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class NodeEdgeOverlapsAnalysis implements IAnalysis {
+    
+    /**
+     * Identifier of the node-edge overlaps analysis.
+     */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.nodeEdgeOverlaps";
 
     /**
      * Returns whether two line segments have an intersection.
@@ -163,28 +169,19 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
             // the start- and endpoint of the line segment lie on opposite sides
             return true;
         } else {
-            int outcode =
-                    p1OutCode != TOP && p1OutCode > BOTTOM ? p2OutCode
-                            : p1OutCode;
+            int outcode = p1OutCode != TOP && p1OutCode > BOTTOM ? p2OutCode : p1OutCode;
+            float xpos = nodeLayout.getXpos();
+            float ypos = nodeLayout.getYpos();
+            float width = nodeLayout.getWidth();
+            float height = nodeLayout.getHeight();
             if ((outcode & LEFT) > 0) {
-                return hasIntersection(p1, p2, nodeLayout.getXpos(),
-                        nodeLayout.getYpos(), nodeLayout.getXpos(),
-                        nodeLayout.getYpos() + nodeLayout.getHeight());
+                return hasIntersection(p1, p2, xpos, ypos, xpos, ypos + height);
             } else if ((outcode & RIGHT) > 0) {
-                return hasIntersection(p1, p2, nodeLayout.getXpos()
-                        + nodeLayout.getWidth(), nodeLayout.getYpos(),
-                        nodeLayout.getXpos() + nodeLayout.getWidth(),
-                        nodeLayout.getYpos() + nodeLayout.getHeight());
+                return hasIntersection(p1, p2, xpos + width, ypos, xpos + width, ypos + height);
             } else if ((outcode & TOP) > 0) {
-                return hasIntersection(p1, p2, nodeLayout.getXpos(),
-                        nodeLayout.getYpos(),
-                        nodeLayout.getXpos() + nodeLayout.getWidth(),
-                        nodeLayout.getYpos());
+                return hasIntersection(p1, p2, xpos, ypos, xpos + width, ypos);
             } else /* if ((p1OutCode & BOTTOM) > 0) */ {
-                return hasIntersection(p1, p2, nodeLayout.getXpos(),
-                        nodeLayout.getYpos() + nodeLayout.getHeight(),
-                        nodeLayout.getXpos() + nodeLayout.getWidth(),
-                        nodeLayout.getYpos() + nodeLayout.getHeight());
+                return hasIntersection(p1, p2, xpos, ypos + height, xpos + width, ypos + height);
             }
         }
     }
@@ -202,7 +199,7 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
         if (node1 == node2) {
             return 0;
         }
-        int numberOfCrossings = 0;
+        int overlaps = 0;
         edgeLoop: for (KEdge edge : node1.getOutgoingEdges()) {
             if (edge.getTarget() == node2) {
                 continue;
@@ -211,17 +208,17 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
             KPoint p1 = edgeLayout.getSourcePoint();
             for (KPoint p2 : edgeLayout.getBendPoints()) {
                 if (hasIntersection(p1, p2, node2)) {
-                    ++numberOfCrossings;
+                    ++overlaps;
                     continue edgeLoop;
                 }
                 p1 = p2;
             }
             KPoint p2 = edgeLayout.getTargetPoint();
             if (hasIntersection(p1, p2, node2)) {
-                ++numberOfCrossings;
+                ++overlaps;
             }
         }
-        return numberOfCrossings;
+        return overlaps;
     }
 
     /**
@@ -235,7 +232,7 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
                 AnalysisOptions.ANALYZE_HIERARCHY);
         
-        int numberOfCrossings = 0;
+        int overlaps = 0;
         List<KNode> nodeQueue = new LinkedList<KNode>();
         nodeQueue.add(parentNode);
         while (nodeQueue.size() > 0) {
@@ -245,7 +242,7 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
             for (KNode node1 : node.getChildren()) {
                 for (KNode node2 : node.getChildren()) {
                     // count overlaps between the second node and edges of the first node
-                    numberOfCrossings += computeNumberOfOverlaps(node1, node2);
+                    overlaps += computeNumberOfOverlaps(node1, node2);
                 }
             }
             if (hierarchy) {
@@ -254,6 +251,6 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
         }
 
         progressMonitor.done();
-        return numberOfCrossings;
+        return overlaps;
     }
 }

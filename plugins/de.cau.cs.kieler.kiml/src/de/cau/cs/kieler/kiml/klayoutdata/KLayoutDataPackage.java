@@ -36,8 +36,7 @@ import org.eclipse.emf.ecore.EReference;
  * @see de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory
  * @model kind="package"
  * @generated
- * @kieler.rating 2011-03-14 yellow
- *     reviewed by cmot, cds
+ * @kieler.design 2011-03-14 reviewed by cmot, cds
  */
 public interface KLayoutDataPackage extends EPackage {
     /**

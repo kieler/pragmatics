@@ -16,7 +16,8 @@ package de.cau.cs.kieler.kiml.formats.gml;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
-import com.google.inject.Injector;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -34,18 +35,17 @@ import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
  */
 public class GmlHandler extends AbstractEmfHandler<GmlModel> {
     
-    /** the injector for creation of resources. */
-    private static Injector injector;
+    /** Identifier of the GML format. */
+    public static final String ID = "de.uni-passau.fim.gml";
+    
+    @Inject private Provider<XtextResourceSet> resourceSetProvider;
 
     /**
      * {@inheritDoc}
      */
     @Override
     protected ResourceSet createResourceSet() {
-        if (injector == null) {
-            injector = new GMLStandaloneSetup().createInjectorAndDoEMFRegistration();
-        }
-        return injector.getInstance(XtextResourceSet.class);
+        return resourceSetProvider.get();
     }
     
     private GmlImporter importer = new GmlImporter();

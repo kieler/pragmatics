@@ -61,7 +61,8 @@ public class SetOptionsEffect extends AbstractEffect {
      */
     public SetOptionsEffect(final IWorkbenchPart part, final EObject element,
             final String optionId, final Object value) {
-        optionMap = Collections.singletonMap(optionId, value);
+        this.workbenchPart = part;
+        this.optionMap = Collections.singletonMap(optionId, value);
         this.modelElement = element;
     }
     
@@ -74,6 +75,7 @@ public class SetOptionsEffect extends AbstractEffect {
      */
     public SetOptionsEffect(final IWorkbenchPart part, final EObject element,
             final Map<String, Object> options) {
+        this.workbenchPart = part;
         this.optionMap = options;
         this.modelElement = element;
     }

@@ -28,6 +28,9 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
  */
 public class FEdge extends MapPropertyHolder {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = 4387555754824186467L;
+    
     /** the bend points of the edge. */
     private List<FBendpoint> bendpoints = new LinkedList<FBendpoint>();
     /** the labels of the edge. */

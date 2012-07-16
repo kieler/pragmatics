@@ -44,6 +44,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  * 
  * @author uru
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
 
@@ -124,7 +125,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
         layeredGraph.getSize().x = xpos - spacing;
 
         // get user defined minimal angle for straight edges heading in and out nodes.
-        int minimalAngle = layeredGraph.getProperty(Properties.MIN_EDGE_ANGLE);
+        float minimalAngle = layeredGraph.getProperty(Properties.MIN_EDGE_ANGLE);
         // check all short edges
         if (minimalAngle != 0) {
             for (LEdge edge : shortEdges) {

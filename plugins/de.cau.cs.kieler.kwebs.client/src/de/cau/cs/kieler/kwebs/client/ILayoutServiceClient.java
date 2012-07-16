@@ -22,9 +22,7 @@ import de.cau.cs.kieler.kwebs.GraphLayoutOption;
  * Interface for a web service client. Every implementation needs to provide a
  * default constructor so that the {@link LayoutServiceClients} class can initialize it.
  *
- * @kieler.rating 2011-08-02 yellow
- *     reviewed by ckru, mri, msp
- *
+ * @kieler.design 2011-08-02 reviewed by ckru, mri, msp
  * @author swe
  */
 public interface ILayoutServiceClient {

@@ -20,6 +20,7 @@ package de.cau.cs.kieler.kiml.service.formats;
  * @param <S> source graph type
  * @param <T> target graph type
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public interface IGraphTransformer<S, T> {
     

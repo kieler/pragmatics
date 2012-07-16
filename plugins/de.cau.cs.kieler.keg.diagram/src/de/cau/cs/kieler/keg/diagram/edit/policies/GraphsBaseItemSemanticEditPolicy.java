@@ -71,6 +71,7 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      * 
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Command getCommand(Request request) {
         if (request instanceof ReconnectRequest) {
             Object view = ((ReconnectRequest) request).getConnectionEditPart().getModel();
@@ -277,7 +278,7 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      */
     protected void addDestroyShortcutsCommand(ICompositeCommand cmd, View view) {
         assert view.getEAnnotation("Shortcut") == null; //$NON-NLS-1$
-        for (Iterator it = view.getDiagram().getChildren().iterator(); it.hasNext();) {
+        for (Iterator<?> it = view.getDiagram().getChildren().iterator(); it.hasNext();) {
             View nextView = (View) it.next();
             if (nextView.getEAnnotation("Shortcut") == null || !nextView.isSetElement() || nextView.getElement() != view.getElement()) { //$NON-NLS-1$
                 continue;

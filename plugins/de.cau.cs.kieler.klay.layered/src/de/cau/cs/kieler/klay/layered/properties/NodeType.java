@@ -19,8 +19,11 @@ package de.cau.cs.kieler.klay.layered.properties;
  * @author msp
  * @author cds
  * @author ima
+ * @author jjc
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public enum NodeType {
+    
     /** a normal node is created from a node of the original graph. */
     NORMAL,
     /** a dummy node created to split a long edge. */
@@ -47,6 +50,8 @@ public enum NodeType {
      * a dummy node created to be part of a linear segment used to draw the sides of a compound
      * node.
      */
-    COMPOUND_SIDE;
+    COMPOUND_SIDE,
+    /** a dummy node to represent a mid-label on an edge. */
+    LABEL;
 
 }

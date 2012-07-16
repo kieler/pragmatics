@@ -13,10 +13,10 @@
  */
 package de.cau.cs.kieler.kiml.ui.preferences;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -237,6 +237,26 @@ public class NewOptionDialog extends Dialog {
          * {@inheritDoc}
          */
         @Override
+        public boolean equals(final Object object) {
+            if (object instanceof SelectionData) {
+                SelectionData other = (SelectionData) object;
+                return this.id.equals(other.id) && this.name.equals(other.name);
+            }
+            return false;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return id.hashCode() + name.hashCode();
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public String toString() {
             return name + " (" + id + ")";
         }
@@ -316,15 +336,14 @@ public class NewOptionDialog extends Dialog {
         });
         Collection<LayoutOptionData<?>> data = EclipseLayoutDataService
                 .getInstance().getOptionData();
-        Vector<SelectionData> inputVec = new Vector<SelectionData>();      
+        ArrayList<SelectionData> inputList = new ArrayList<SelectionData>(data.size());      
         for (LayoutOptionData<?> optionData : data) {
-            // Only display user visible options. For example, programmatically defined options
-            // are not to be displayed.
-            if (optionData.isVisible()) {
-                inputVec.add(new SelectionData(optionData));
+            // layout options without target definition are now shown to the user
+            if (!optionData.getTargets().isEmpty()) {
+                inputList.add(new SelectionData(optionData));
             }
         }
-        SelectionData[] input = inputVec.toArray(new SelectionData[0]);
+        SelectionData[] input = inputList.toArray(new SelectionData[0]);
         Arrays.sort(input);
         dialog.setInput(input);
         if (dialog.open() == ListDialog.OK) {

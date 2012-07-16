@@ -2,8 +2,8 @@
 <?eclipse version="3.4"?>
 <plugin>
 	<extension point="de.cau.cs.kieler.ksbase.configurations">
-		<configuration TransformationFile="transformations/feature.ext"
-			checkVisibility="true" contextId="de.cau.cs.kieler.keg.diagram.ui.diagramContext"
+		<configuration checkVisibility="true"
+		    contextId="de.cau.cs.kieler.keg.diagram.ui.diagramContext"
 			editorId="de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorID">
 			<transformations>
 				<transformation

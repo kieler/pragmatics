@@ -47,8 +47,8 @@ public class KaomDiagramUpdateCommand implements IHandler {
                     && ((EditPart) structuredSelection.getFirstElement()).getModel() instanceof View) {
                 EObject modelElement = ((View) ((EditPart) structuredSelection.getFirstElement())
                         .getModel()).getElement();
-                List editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(modelElement);
-                for (Iterator it = editPolicies.iterator(); it.hasNext();) {
+                List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(modelElement);
+                for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
                     CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
                     nextEditPolicy.refresh();
                 }

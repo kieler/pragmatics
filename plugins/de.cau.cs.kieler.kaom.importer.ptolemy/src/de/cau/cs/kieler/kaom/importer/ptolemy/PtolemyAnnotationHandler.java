@@ -165,6 +165,7 @@ import de.cau.cs.kieler.kaom.Entity;
  * simpllistic and doesn't always give correct results.</p>
  * 
  * @author cds
+ * @kieler.rating yellow 2012-06-15 KI-12 cmot, grh
  */
 public class PtolemyAnnotationHandler {
     
@@ -203,7 +204,7 @@ public class PtolemyAnnotationHandler {
     /**
      * The element name identifying Ptolemy entities.
      */
-    private static final String ELEMENT_NAME_ENTITY = "entity"; //$NON-NLS-1$
+    private static final String ELEM_ENTITY = "entity"; //$NON-NLS-1$
     
     /**
      * Tag of an {@code svg} element.
@@ -245,7 +246,7 @@ public class PtolemyAnnotationHandler {
     /**
      * Root of the Ptolemy model.
      */
-    private DocumentRoot ptolemyModel = null;
+    private DocumentRoot ptModel = null;
     
     /**
      * Root of the KAOM model.
@@ -295,7 +296,7 @@ public class PtolemyAnnotationHandler {
             final DocumentRoot ptolemyModel, final Entity kaomModel, final boolean heuristicsOverride) {
         
         unknownFeatures.putAll(ptolemyModelResource.getEObjectToExtensionMap());
-        this.ptolemyModel = ptolemyModel;
+        this.ptModel = ptolemyModel;
         this.kaomModel = kaomModel;
         this.heuristicsOverride = heuristicsOverride;
     }
@@ -305,7 +306,7 @@ public class PtolemyAnnotationHandler {
      * Starts converting annotations and attaching them to the entity they are probably annotating.
      */
     public void handleAnnotations() {
-        traverseModelTree(kaomModel);
+        handleAnnotations(kaomModel);
         applyAttachmentAnnotations();
     }
     
@@ -317,17 +318,17 @@ public class PtolemyAnnotationHandler {
      * 
      * @param node the current node being examined.
      */
-    private void traverseModelTree(final Entity node) {
+    private void handleAnnotations(final Entity node) {
         // Look at the entity's annotations
         for (Annotation annotation : node.getAnnotations()) {
             if (annotation instanceof TypedStringAnnotation) {
-                examineAnnotation(node, (TypedStringAnnotation) annotation);
+                handleAnnotation(node, (TypedStringAnnotation) annotation);
             }
         }
         
         // Recursively look at the entity's children
         for (Entity child : node.getChildEntities()) {
-            traverseModelTree(child);
+            handleAnnotations(child);
         }
     }
     
@@ -340,7 +341,7 @@ public class PtolemyAnnotationHandler {
      * @param parent the annotation's parent entity.
      * @param annotation the annotation to look at.
      */
-    private void examineAnnotation(final Entity parent, final TypedStringAnnotation annotation) {
+    private void handleAnnotation(final Entity parent, final TypedStringAnnotation annotation) {
         boolean isComment = false;
         
         // Check if the annotation represents a comment
@@ -359,14 +360,16 @@ public class PtolemyAnnotationHandler {
                 PropertyType originalIconDescription = findOriginalProperty(iconDescription);
                 
                 if (originalIconDescription != null) {
-                    // Try to extract the annotation's text
-                    isComment = convertAnnotation(annotation, originalIconDescription);
+                    // Check if the icon description represents a comment. If so, extract the comment's
+                    // text and add it as an annotation to the annotation
+                    isComment = addCommentTextToAnnotation(annotation, originalIconDescription);
                 }
             }
         }
         
         if (isComment) {
-            // Try to attach the comment annotation to an entity
+            // If we have found a comment, attach it to the nearest entity within the acceptable
+            // distance, if any such entity can be found
             attemptCommentAttachment(annotation);
         }
     }
@@ -377,7 +380,8 @@ public class PtolemyAnnotationHandler {
     
     /**
      * Returns the property from the original input model that the given annotation
-     * was transformed from.
+     * was transformed from. If the original property cannot be found, we return
+     * {@code null}; however, this shouldn't happen.
      * 
      * @param annotation the annotation whose original property to find.
      * @return the property, or {@code null} if it couldn't be found.
@@ -389,16 +393,17 @@ public class PtolemyAnnotationHandler {
             return null;
         }
         
-        // Iterate through the path and try to find the desired element
-        EObject currentElement = ptolemyModel;
-        for (String pathElement : annotationPath) {
+        // Iterate through the path and try to find the desired element; once we find it, we
+        // break out of the loop with the element being saved in currentElement
+        EObject currentElement = ptModel;
+        for (String annotationPathElement : annotationPath) {
             // Check what kind of element we're currently looking at
             if (currentElement instanceof DocumentRoot) {
                 // Here, we can only look at the document root's child entity
                 DocumentRoot specificElement = (DocumentRoot) currentElement;
                 EntityType candidate = specificElement.getEntity();
                 
-                if (candidate != null && candidate.getName().equals(pathElement)) {
+                if (candidate != null && candidate.getName().equals(annotationPathElement)) {
                     currentElement = candidate;
                     continue;
                 } else {
@@ -411,7 +416,7 @@ public class PtolemyAnnotationHandler {
                 EObject foundElement = null;
                 
                 for (EntityType childEntity : specificElement.getEntity()) {
-                    if (childEntity.getName().equals(pathElement)) {
+                    if (childEntity.getName().equals(annotationPathElement)) {
                         foundElement = childEntity;
                         break;
                     }
@@ -419,7 +424,7 @@ public class PtolemyAnnotationHandler {
                 
                 if (foundElement == null) {
                     for (PropertyType childProperty : specificElement.getProperty()) {
-                        if (childProperty.getName().equals(pathElement)) {
+                        if (childProperty.getName().equals(annotationPathElement)) {
                             foundElement = childProperty;
                             break;
                         }
@@ -437,7 +442,7 @@ public class PtolemyAnnotationHandler {
                 EObject foundElement = null;
 
                 for (PropertyType childProperty : specificElement.getProperty()) {
-                    if (childProperty.getName().equals(pathElement)) {
+                    if (childProperty.getName().equals(annotationPathElement)) {
                         foundElement = childProperty;
                         break;
                     }
@@ -451,6 +456,8 @@ public class PtolemyAnnotationHandler {
             }
         }
         
+        // We found an element with the path retrieved from the annotation; if it is a PropertyType
+        // instance, it's the one we were looking for. If it isn't, we failed and return null
         if (currentElement instanceof PropertyType) {
             return (PropertyType) currentElement;
         } else {
@@ -463,7 +470,8 @@ public class PtolemyAnnotationHandler {
      * the given model element.
      * 
      * @param entity element whose path to return.
-     * @return the path or {@code null} if the path couldn't be determined.
+     * @return the path or {@code null} if the path couldn't be determined. This is highly unlikely and
+     *         could only happen if the entity and all of its ancestors have {@code null} names.
      */
     private List<String> getFullPath(final Entity entity) {
         EObject container = entity.eContainer();
@@ -524,7 +532,7 @@ public class PtolemyAnnotationHandler {
      *                        annotation text.
      * @return {@code true} if a text annotation was added, {@code false} otherwise.
      */
-    private boolean convertAnnotation(final Annotation annotation,
+    private boolean addCommentTextToAnnotation(final Annotation annotation,
             final PropertyType iconDescription) {
         
         // Check if the icon description contains a <configure> element
@@ -574,7 +582,7 @@ public class PtolemyAnnotationHandler {
     }
     
     /**
-     * Goes through the given feature map looking for an entry whose structural feature
+     * Goes through the given feature map looking for the first entry whose structural feature
      * name equals the given name.
      * 
      * @param features the feature map.
@@ -697,7 +705,7 @@ public class PtolemyAnnotationHandler {
         
         // Check if we support the element type the annotation is relative to
         if (relativeToElementNameAnnotation.getValue() == null
-                || !relativeToElementNameAnnotation.getValue().equals(ELEMENT_NAME_ENTITY)) {
+                || !relativeToElementNameAnnotation.getValue().equals(ELEM_ENTITY)) {
             
             return null;
         }
@@ -804,10 +812,6 @@ public class PtolemyAnnotationHandler {
      * @return the object's location.
      */
     private Point2D.Double getLocation(final Annotatable object) {
-        // We're turning off the MagicNumber checks because we have a legitimate use
-        // for one...
-        // CHECKSTYLEOFF MagicNumber
-        
         // Find the location annotation
         Annotation locationAnnotation = object.getAnnotation(ANNOTATION_LOCATION);
         if (locationAnnotation == null) {
@@ -819,17 +823,15 @@ public class PtolemyAnnotationHandler {
             // one of the following three representations:
             //   "[140.0, 20.0]"     "{140.0, 20.0}"     "140.0, 20.0"
             String locationString = ((TypedStringAnnotation) locationAnnotation).getValue();
-            String[] locationArray = locationString.split("[\\s,\\[\\]{}]+"); //$NON-NLS-1$
+            locationString = locationString.replaceAll("[\\s\\[\\]{}]+", ""); //$NON-NLS-1$
+            String[] locationArray = locationString.split(","); //$NON-NLS-1$
             
-            // There must be two or three components: an optional empty first string,
-            // (occurs with the first two representations outlined above) and the x
-            // and y values.
-            int locationArrayLength = locationArray.length;
-            if (locationArrayLength == 2 || locationArrayLength == 3) {
+            // There must be two components now: the x and y values.
+            if (locationArray.length == 2) {
                 try {
                     Point2D.Double result = new Point2D.Double();
-                    result.x = Double.valueOf(locationArray[locationArrayLength - 2]);
-                    result.y = Double.valueOf(locationArray[locationArrayLength - 1]);
+                    result.x = Double.valueOf(locationArray[0]);
+                    result.y = Double.valueOf(locationArray[1]);
                     
                     return result;
                 } catch (NumberFormatException e) {
@@ -839,7 +841,5 @@ public class PtolemyAnnotationHandler {
                 return null;
             }
         }
-        
-        // CHECKSTYLEON MagicNumber
     }
 }

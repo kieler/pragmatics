@@ -40,6 +40,7 @@ import de.cau.cs.kieler.kaom.KaomFactory
 import de.cau.cs.kieler.kaom.Port
 import de.cau.cs.kieler.kaom.importer.ptolemy.Messages
 import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportPlugin
+import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.utils.TransformationUtils
 
 
 /**
@@ -48,6 +49,7 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportPlugin
  * 
  * @author cds
  * @author haf
+ * @kieler.rating yellow 2012-06-14 KI-12 cmot, grh
  */
 class PtolemyInterface {
     
@@ -58,9 +60,10 @@ class PtolemyInterface {
     
     /**
      * A cache mapping qualified class names of Ptolemy actors to their actual instances. If an actor
-     * was already instantiated, there's no need to instantiate it again since that's quite a
+     * was already instantiated, there's no need to instantiate it again since that's quite a bit of
+     * work.
      */
-    HashMap<String, Entity> entityCache = new HashMap<String, Entity>()
+    static HashMap<String, Entity> entityCache = new HashMap<String, Entity>()
     
     
     /**
@@ -72,22 +75,23 @@ class PtolemyInterface {
      * @return list of ports which will be empty if the entity could not be instantiated.
      * @throws Exception if the instantiation fails.
      */
-	def List<Port> getPortsFromImplementation(EObject entity) {
-	    // Create an empty list of ports which we'll add to
-	    val result = new ArrayList<Port>()
-	    
-	    // Try to instantiate the actor (this is where an exception might be thrown)
-	    var Entity actor = null
+    def List<Port> getPortsFromImplementation(EObject entity) {
+        // Create an empty list of ports which we'll add to
+        val result = new ArrayList<Port>()
+        
+        // Try to instantiate the actor (this is where an exception might be thrown which is propagated
+        // up to the caling method)
+        var Entity actor = null
         actor = instantiatePtolemyEntity(entity)
-	    
-	    // Add its ports
-	    if (actor != null) {
-            for (o : actor.portList) {
-                if (o instanceof IOPort) {
-                    val IOPort ptPort = o as IOPort
+        
+        // Add its ports
+        if (actor != null) {
+            for (port : actor.portList) {
+                if (port instanceof IOPort) {
+                    val IOPort ptPort = port as IOPort
                     val Port kaomPort = KaomFactory::eINSTANCE.createPort()
                     
-                    // Find our whether it is an input or an output port (or even both)
+                    // Find out whether it is an input or an output port (or even both)
                     if (ptPort.input) {
                         kaomPort.markAsInputPort()
                     }
@@ -111,40 +115,40 @@ class PtolemyInterface {
                     result.add(kaomPort)
                 }
             }
-	    }
-	    
-	    // Return the list of ports
-	    result
-	}
-	
-	/**
-	 * Makes an annotation out of the given attribute and attaches it to the given annotatable object.
-	 * Recursively adds attributes of the attributes to the correspondingly created annotations.
-	 * 
-	 * @param annotatable the object to annotate with the transformed attribute.
-	 * @param ptAttribute the attribute to turn into an annotation
-	 */
-	def private void turnAttributeIntoAnnotation(Annotatable annotatable, Attribute ptAttribute) {
-	    // Create an annotation for the attribute
-	    val kaomAnnotation = AnnotationsFactory::eINSTANCE.createTypedStringAnnotation()
-	    
-	    kaomAnnotation.name = ptAttribute.name
-	    kaomAnnotation.type = ptAttribute.className
-	    
-	    // If the attribute is a StringAttribute, assign its value
-	    if (ptAttribute instanceof StringAttribute) {
-	        kaomAnnotation.value = (ptAttribute as StringAttribute).valueAsString
-	    }
-	    
-	    // Add the annotation
-	    annotatable.annotations.add(kaomAnnotation)
-	    
-	    // Recursively add further attributes
-	    for (attribute : ptAttribute.attributeList) {
+        }
+        
+        // Return the list of ports
+        result
+    }
+    
+    /**
+     * Makes an annotation out of the given attribute and attaches it to the given annotatable object.
+     * Recursively adds attributes of the attributes to the correspondingly created annotations.
+     * 
+     * @param annotatable the object to annotate with the transformed attribute.
+     * @param ptAttribute the attribute to turn into an annotation
+     */
+    def private void turnAttributeIntoAnnotation(Annotatable annotatable, Attribute ptAttribute) {
+        // Create an annotation for the attribute
+        val kaomAnnotation = AnnotationsFactory::eINSTANCE.createTypedStringAnnotation()
+        
+        kaomAnnotation.name = ptAttribute.name
+        kaomAnnotation.type = ptAttribute.className
+        
+        // If the attribute is a StringAttribute, assign its value
+        if (ptAttribute instanceof StringAttribute) {
+            kaomAnnotation.value = (ptAttribute as StringAttribute).valueAsString
+        }
+        
+        // Add the annotation
+        annotatable.annotations.add(kaomAnnotation)
+        
+        // Recursively add further attributes
+        for (attribute : ptAttribute.attributeList) {
             if (attribute instanceof Attribute) {
                 turnAttributeIntoAnnotation(kaomAnnotation, attribute as Attribute)
             }
-	    }
+        }
     }
     
     
@@ -231,7 +235,7 @@ class PtolemyInterface {
         // we want to instantiate
         val xml = '''
             <entity name="TopLevel" class="ptolemy.actor.TypedCompositeActor">
-                <entity name="«entityName»" class="«className»" />
+                <entity name="�entityName�" class="�className�" />
             </entity>
         '''
         
@@ -259,11 +263,13 @@ class PtolemyInterface {
         // we want to instantiate
         val xml = '''
             <entity name="TopLevel" class="ptolemy.domains.modal.modal.ModalController">
-                <entity name="«entityName»" class="«className»" />
+                <entity name="�entityName�" class="�className�" />
             </entity>
         '''
         
-        // Parse XML
+        // Parse XML and return the first entity in the returned list. If the parser has a problem or
+        // if the returned list is empty, an exception will be thrown which is then propagated up to
+        // the calling method
         val NamedObj parentElement = parser.parse(xml.toString())
         (parentElement as CompositeEntity).entityList().get(0) as Entity
     }

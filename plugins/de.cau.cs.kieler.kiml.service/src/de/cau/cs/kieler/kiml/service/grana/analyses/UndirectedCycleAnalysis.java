@@ -33,6 +33,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * acyclic, otherwise it contains cycles.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class UndirectedCycleAnalysis implements IAnalysis {
     
@@ -45,8 +46,8 @@ public class UndirectedCycleAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(KNode parentNode, Map<String, Object> results,
-            IKielerProgressMonitor progressMonitor) {
+    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Approximate undirected cycle count", 1);
         
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(

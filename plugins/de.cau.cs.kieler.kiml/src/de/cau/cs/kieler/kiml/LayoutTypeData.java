@@ -19,8 +19,8 @@ import java.util.List;
 /**
  * Data type used to store information for a layout type.
  *
- * @kieler.rating 2011-02-01 yellow
- *     reviewed by cmot, soh
+ * @kieler.design 2011-02-01 reviewed by cmot, soh
+ * @kieler.rating 2012-07-10 proposed yellow msp
  * @author msp
  */
 public class LayoutTypeData implements ILayoutData {
@@ -47,7 +47,7 @@ public class LayoutTypeData implements ILayoutData {
     /** detail description. */
     private String description = "";
     /** the list of layout algorithms that are registered for this type. */
-    private List<LayoutAlgorithmData> layouters = new LinkedList<LayoutAlgorithmData>();
+    private final List<LayoutAlgorithmData> layouters = new LinkedList<LayoutAlgorithmData>();
     
     /**
      * {@inheritDoc}

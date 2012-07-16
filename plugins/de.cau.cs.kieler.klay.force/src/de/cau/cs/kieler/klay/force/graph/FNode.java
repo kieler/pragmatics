@@ -26,6 +26,9 @@ import de.cau.cs.kieler.core.math.KVector;
  */
 public class FNode extends FParticle {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = 8663670492984978893L;
+
     // CHECKSTYLEOFF VisibilityModifier
     /** the identifier number. */
     public int id;

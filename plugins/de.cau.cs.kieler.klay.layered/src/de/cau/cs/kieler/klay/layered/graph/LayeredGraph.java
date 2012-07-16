@@ -33,8 +33,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * is desired, it can be obtained by pre-processing and post-processing the graph.
  * 
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
+    
+    /** the serial version UID. */
+    private static final long serialVersionUID = -8006835373897072852L;
     
     /**
      * Map mapping node types to the colors used to represent those types when
@@ -58,15 +62,15 @@ public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
     
 
     /** the total size of the drawing, without offset. */
-    private KVector size = new KVector();
+    private final KVector size = new KVector();
     /** the graph's insets. */
-    private LInsets.Double insets = new LInsets.Double(0, 0, 0, 0);
+    private final LInsets.Double insets = new LInsets.Double(0, 0, 0, 0);
     /** the offset to be added to all positions. */
-    private KVector offset = new KVector();
+    private final KVector offset = new KVector();
     /** nodes that are not currently part of a layer. */
-    private List<LNode> layerlessNodes = new LinkedList<LNode>();
+    private final List<LNode> layerlessNodes = new LinkedList<LNode>();
     /** the layers of the layered graph. */
-    private List<Layer> layers = new LinkedList<Layer>();
+    private final List<Layer> layers = new LinkedList<Layer>();
     
     /**
      * {@inheritDoc}
@@ -243,6 +247,12 @@ public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
                     options.append(node.getName().replace("\"", "\\\"") + " ");
                 } else {
                     options.append("n_" + node.id + " ");
+                }
+                if (node.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                    Object origin = node.getProperty(Properties.ORIGIN);
+                    if (origin instanceof LNode) {
+                        options.append("(" + ((LNode) origin).toString() + ")");
+                    }
                 }
             }
             options.append("(" + layerNumber + "," + nodeNumber + ")\",");

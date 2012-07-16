@@ -14,39 +14,25 @@
 package de.cau.cs.kieler.klay.layered.p3order;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import com.google.common.collect.Multimap;
-
-import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
  * Detects and resolves violated constraints.
  * 
- * @author msp
  * @author cds
  * @author ima
+ * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
-
 public interface IConstraintResolver {
 
     /**
-     * Finds and handles violated constraints.
+     * Detects and resolves violated constraints.
      * 
      * @param nodeGroups
-     *            the array of single-node vertices sorted by their barycenter values.
+     *            the single-node vertices sorted by their barycenter values
      * @param layerIndex
-     *            the layer index.
-     * @param random
-     *            the random number generator.
-     * @param singleNodeNodeGroups
-     *            a map of single-node NodeGroups for each layer.
-     * @param layoutUnits
-     *            a map associating layout units with their respective members.
+     *            the layer index
      */
-    void processConstraints(final List<NodeGroup> nodeGroups, final int layerIndex,
-            final Random random, final Map<LNode, NodeGroup>[] singleNodeNodeGroups,
-            final Multimap<LNode, LNode> layoutUnits);
+    void processConstraints(final List<NodeGroup> nodeGroups, final int layerIndex);
 
 }

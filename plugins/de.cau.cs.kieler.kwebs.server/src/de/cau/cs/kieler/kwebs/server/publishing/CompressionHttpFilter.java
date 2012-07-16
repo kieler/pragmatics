@@ -36,10 +36,7 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
  * {@code sendResponseHeaders(...)}. So even if the client accepts encoded HTTP responses, the server
  * is not capable of delivering them.  
  * 
- * @kieler.rating  2011-08-25 red
- *      
  * @author swe
- *
  */
 public class CompressionHttpFilter extends Filter {
 

@@ -34,6 +34,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * the top-left to the bottom-right corner.</p>
  * 
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 class ComponentGroupGraphPlacer extends GraphPlacer {
     
@@ -43,7 +44,7 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
     /**
      * List of component groups holding the different components.
      */
-    private List<ComponentGroup> componentGroups = Lists.newLinkedList();
+    private final List<ComponentGroup> componentGroups = Lists.newLinkedList();
     
     
     ///////////////////////////////////////////////////////////////////////////////

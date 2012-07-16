@@ -18,7 +18,11 @@ package de.cau.cs.kieler.kaom.importer.ptolemy;
 /**
  * Contains constants commonly used in the plug-in. This class is not to be instantiated.
  * 
+ * <p><em>Note:</em> FindBugs has problems with the arrays defined herein. However, we don't care
+ * too much about that.</p>
+ * 
  * @author cds
+ * @kieler.rating yellow 2012-07-10 KI-15 cmot, grh
  */
 public final class PtolemyImportConstants {
     
@@ -41,6 +45,45 @@ public final class PtolemyImportConstants {
      * Our target file extension for diagram files.
      */
     public static final String TARGET_DIAGRAM_FILE_EXTENSION = "kaod"; //$NON-NLS-1$
+    
+    
+    // PORT NAMES
+    
+    /**
+     * Possible names for input ports. Used to infer port types during the transformation.
+     */
+    public static final String[] PORT_NAMES_INPUT = {"in", "input", "incomingPort"};
+    
+    /**
+     * Possible names for output ports. Used to infer port types during the transformation.
+     */
+    public static final String[] PORT_NAMES_OUTPUT = {"out", "output"};
+    
+    /**
+     * Regular expression for the separator character used in port names.
+     */
+    public static final String PORT_NAME_SEPARATOR_REGEX = "\\.";
+    
+    
+    // ANNOTATION CONSTANTS
+    
+    /**
+     * Name for an annotation describing where a model element originally came from if it was
+     * transformed from another model.
+     */
+    public static final String ANNOTATION_LANGUAGE = "language";
+    
+    /**
+     * Value of the {@link #ANNOTATION_LANGUAGE} annotation identifying elements transformed from a
+     * Ptolemy model.
+     */
+    public static final String ANNOTATION_LANGUAGE_PTOLEMY = "ptolemy";
+    
+    /**
+     * Name for an annotation describing the original class name of an element imported from a
+     * Ptolemy model.
+     */
+    public static final String ANNOTATION_PTOLEMY_CLASS = "ptolemyClass";
     
     
     /**

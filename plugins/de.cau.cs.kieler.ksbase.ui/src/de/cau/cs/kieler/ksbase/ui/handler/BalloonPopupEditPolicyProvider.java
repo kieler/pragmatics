@@ -32,7 +32,6 @@ import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
  * Provides an edit policy to create popup balloons.
  * 
  * @author soh
- * @kieler.rating 2009-02-23 proposed yellow
  */
 @SuppressWarnings("restriction")
 public class BalloonPopupEditPolicyProvider extends AbstractProvider implements

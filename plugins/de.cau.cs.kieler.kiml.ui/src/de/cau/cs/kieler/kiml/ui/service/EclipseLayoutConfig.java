@@ -173,7 +173,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             return result;
         }
         
-        if (optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
+        if (optionData.getTargets().contains(LayoutOptionData.Target.PARENTS)) {
             // check default value for the diagram type of the selection's content
             result = infoService.getOptionValue(context.getProperty(
                     DefaultLayoutConfig.CONTENT_DIAGT),

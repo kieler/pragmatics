@@ -63,11 +63,11 @@ public class DeleteElementAction extends AbstractDeleteFromAction {
      * @generated
      */
     protected Command getCommand(Request request) {
-        List operationSet = getOperationSet();
+        List<?> operationSet = getOperationSet();
         if (operationSet.isEmpty()) {
             return UnexecutableCommand.INSTANCE;
         }
-        Iterator editParts = operationSet.iterator();
+        Iterator<?> editParts = operationSet.iterator();
         CompositeTransactionalCommand command = new CompositeTransactionalCommand(
                 getEditingDomain(), getCommandLabel());
         while (editParts.hasNext()) {

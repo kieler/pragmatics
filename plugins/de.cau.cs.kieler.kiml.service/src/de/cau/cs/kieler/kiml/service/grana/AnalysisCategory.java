@@ -18,13 +18,13 @@ import java.util.List;
 
 import de.cau.cs.kieler.kiml.ILayoutData;
 
-
 /**
  * An analysis category. Objects of this class are defined through the
  * 'analysisProviders' extension point or the preference page.
  * 
  * @author mri
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class AnalysisCategory implements ILayoutData {
 
@@ -35,7 +35,7 @@ public class AnalysisCategory implements ILayoutData {
     /** the categories description. */
     private String categoryDescription;
     /** the analyses in this category. */
-    private List<AnalysisData> analyses = new LinkedList<AnalysisData>();
+    private final List<AnalysisData> analyses = new LinkedList<AnalysisData>();
 
     /**
      * {@inheritDoc}
@@ -47,7 +47,7 @@ public class AnalysisCategory implements ILayoutData {
     /**
      * {@inheritDoc}
      */
-    public void setId(String id) {
+    public void setId(final String id) {
         this.categoryId = id;
     }
 
@@ -61,7 +61,7 @@ public class AnalysisCategory implements ILayoutData {
     /**
      * {@inheritDoc}
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.categoryName = name;
     }
 
@@ -75,7 +75,7 @@ public class AnalysisCategory implements ILayoutData {
     /**
      * {@inheritDoc}
      */
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.categoryDescription = description;
     }
 

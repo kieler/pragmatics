@@ -38,7 +38,8 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * SERVICEDATASERVICE mode is intended to be used only by the KWebS server so using it inside the
  * KIELER modeling environment will introduce undefined behavior.
  * 
- * @kieler.rating 2011-03-14 yellow reviewed by cmot, cds
+ * @kieler.design 2011-03-14 reviewed by cmot, cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  * @author msp
  * @author swe
  */
@@ -399,7 +400,7 @@ public class LayoutDataService {
         for (LayoutOptionData<?> optionData : layoutOptionMap.values()) {
             if (algorithmData.knowsOption(optionData)
                     || LayoutOptions.ALGORITHM.equals(optionData)) {
-                if (optionData.hasTarget(targetType)) {
+                if (optionData.getTargets().contains(targetType)) {
                     optionDataList.add(optionData);
                 }
             }

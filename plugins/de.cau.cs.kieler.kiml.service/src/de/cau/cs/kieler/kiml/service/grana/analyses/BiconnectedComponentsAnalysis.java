@@ -30,6 +30,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * a single-component result of type integer.
  * 
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class BiconnectedComponentsAnalysis implements IAnalysis {
 

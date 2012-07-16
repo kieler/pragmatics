@@ -29,6 +29,9 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  */
 public class FGraph extends MapPropertyHolder {
     
+    /** the serial version UID. */
+    private static final long serialVersionUID = -2396315570561498425L;
+    
     /** All nodes of this graph. */
     private LinkedList<FNode> nodes = new LinkedList<FNode>();
     /** All edges of this graph. */

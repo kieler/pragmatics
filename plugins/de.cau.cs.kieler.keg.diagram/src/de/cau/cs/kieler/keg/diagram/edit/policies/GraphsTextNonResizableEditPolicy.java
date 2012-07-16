@@ -213,7 +213,7 @@ public class GraphsTextNonResizableEditPolicy extends NonResizableEditPolicyEx {
     /**
      * @generated
      */
-    protected List createSelectionHandles() {
+    protected List<?> createSelectionHandles() {
         MoveHandle moveHandle = new MoveHandle((GraphicalEditPart) getHost());
         moveHandle.setBorder(null);
         moveHandle.setDragTracker(new DragEditPartsTrackerEx(getHost()));

@@ -35,9 +35,9 @@ public class VolatileLayoutConfig implements ILayoutConfig {
     public static final int PRIORITY = 100;
 
     /** map of focus objects and property identifiers to their values. */
-    private Map<Object, Map<IProperty<?>, Object>> optionMap
+    private final Map<Object, Map<IProperty<?>, Object>> optionMap
             = new HashMap<Object, Map<IProperty<?>, Object>>();
-    private Set<IProperty<?>> contextKeys = new HashSet<IProperty<?>>();
+    private final Set<IProperty<?>> contextKeys = new HashSet<IProperty<?>>();
     
     /**
      * {@inheritDoc}

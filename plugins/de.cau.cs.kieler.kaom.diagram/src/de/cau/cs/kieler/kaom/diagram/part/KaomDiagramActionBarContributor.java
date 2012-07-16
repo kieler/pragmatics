@@ -18,6 +18,7 @@ public class KaomDiagramActionBarContributor extends DiagramActionBarContributor
     /**
      * @generated
      */
+    @SuppressWarnings("rawtypes")
     protected Class getEditorClass() {
         return KaomDiagramEditor.class;
     }

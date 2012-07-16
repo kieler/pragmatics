@@ -473,7 +473,10 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
             EdgeTarget edgeTarget = targetIter.next();
             KEdge kedge = KimlUtil.createInitializedEdge();
             kedge.setSource(source);
-            kedge.setSourcePort(sourcePort);
+            if (sourcePort != null) {
+                kedge.setSourcePort(sourcePort);
+                sourcePort.getEdges().add(kedge);
+            }
             KNode target;
             KPort targetPort = null;
             Node edgeTargetNode = edgeTarget.getTargetnode();
@@ -493,7 +496,10 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
                 }
             }
             kedge.setTarget(target);
-            kedge.setTargetPort(targetPort);
+            if (targetPort != null) {
+                kedge.setTargetPort(targetPort);
+                targetPort.getEdges().add(kedge);
+            }
             
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
             edgeLayout.copyProperties(defaultProps);

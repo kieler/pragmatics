@@ -19,10 +19,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 /**
  * Preference constants used by the KWebS web service clients.
  *
- * @kieler.rating  2011-08-02 yellow
- *     reviewed by ckru, mri, msp
- *     
- * @author  swe
+ * @kieler.design 2011-08-02 reviewed by ckru, mri, msp
+ * @author swe
  */
 public final class Preferences {
 

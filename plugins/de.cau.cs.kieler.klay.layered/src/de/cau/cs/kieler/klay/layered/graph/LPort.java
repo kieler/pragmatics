@@ -37,21 +37,25 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * determine the points where the edge touches the source and target nodes.</p>
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class LPort extends LShape {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = -3406558719744943360L;
+    
     /** the owning node. */
     private LNode owner;
     /** the port side. */
     private PortSide side = PortSide.UNDEFINED;
     /** the anchor point position. */
-    private KVector anchor = new KVector();
+    private final KVector anchor = new KVector();
     /** this port's labels. */
-    private List<LLabel> labels = new LinkedList<LLabel>();
+    private final List<LLabel> labels = new LinkedList<LLabel>();
     /** the edges going into the port. */
-    private List<LEdge> incomingEdges = new LinkedList<LEdge>();
+    private final List<LEdge> incomingEdges = new LinkedList<LEdge>();
     /** the edges going out of the port. */
-    private List<LEdge> outgoingEdges = new LinkedList<LEdge>();
+    private final List<LEdge> outgoingEdges = new LinkedList<LEdge>();
     
     /**
      * A condition that checks the type of ports. If a port has incoming edges, it is considered

@@ -71,7 +71,6 @@ import de.cau.cs.kieler.kwebs.client.ui.RemoteLayoutPreferencePage.ServerConfigV
  * all required preferences have been updated, this page uses the
  * {@code Preferences.PREFID_LAYOUT_SETTINGS_CHANGED} preference. 
  * 
- * @kieler.rating 2011-05-14 red
  * @author swe
  */
 public class RemoteLayoutPreferencePage extends PreferencePage implements

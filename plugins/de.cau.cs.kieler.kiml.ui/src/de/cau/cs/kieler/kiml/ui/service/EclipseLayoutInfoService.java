@@ -53,6 +53,7 @@ import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
  * An extension of the layout info service for diagram layout managers and preference handling.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public final class EclipseLayoutInfoService extends LayoutInfoService implements IAdapterFactory {
     
@@ -77,7 +78,7 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
     private final List<Pair<Integer, IGraphLayoutEngine>> layoutEngines
             = new LinkedList<Pair<Integer, IGraphLayoutEngine>>();
     /** set of registered diagram elements. */
-    private Set<String> registeredElements = new HashSet<String>();
+    private final Set<String> registeredElements = new HashSet<String>();
     
     /**
      * Returns the singleton instance of the layout info service.
@@ -423,18 +424,26 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
                     && data.getActivationProperty() != null) {
                 final String text = data.getActivationText();
                 final IProperty<Boolean> activation = data.getActivationProperty();
+                final Runnable activationAction = data.getActivationAction();
                 menuManager.add(new ContributionItem() {
                     public void fill(final Menu parent, final int index) {
                         final MenuItem menuItem = new MenuItem(parent, SWT.CHECK, index);
                         menuItem.setText(text);
-                        menuItem.setSelection(activation.getDefault());
+                        menuItem.setSelection(getConfigProperties().getProperty(activation));
                         menuItem.addSelectionListener(new SelectionListener() {
                             public void widgetSelected(final SelectionEvent e) {
                                 getConfigProperties().setProperty(activation, menuItem.getSelection());
+                                if (activationAction != null) {
+                                    activationAction.run();
+                                }
                             }
                             public void widgetDefaultSelected(final SelectionEvent e) {
                             }
                         });
+                        // execute the activation action initially
+                        if (activationAction != null) {
+                            activationAction.run();
+                        }
                     }
                 });
             }

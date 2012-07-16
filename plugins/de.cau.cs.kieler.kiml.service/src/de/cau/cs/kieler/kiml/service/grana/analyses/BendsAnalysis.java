@@ -40,8 +40,14 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * 
  * @author mri
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class BendsAnalysis implements IAnalysis {
+    
+    /**
+     * Identifier of the bend points analysis.
+     */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.bendpointCount";
 
     /**
      * {@inheritDoc}

@@ -18,8 +18,8 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.planar.graph.IEdge;
-import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder.IShortestPathFinder;
 
 /**
@@ -34,31 +34,31 @@ public class BellmanFordPathFinder extends AbstractPathFinder implements IShorte
     /**
      * {@inheritDoc}
      */
-    public List<IEdge> findPath(final INode source, final INode target,
-            final ICondition<Pair<INode, IEdge>> condition) {
+    public List<PEdge> findPath(final PNode source, final PNode target,
+            final ICondition<Pair<PNode, PEdge>> condition) {
 
         // Initialize array
         int size = source.getParent().getNodeCount();
-        IEdge[] edges = new IEdge[size];
+        PEdge[] edges = new PEdge[size];
 
         source.setProperty(DISTANCE, 0);
 
         // Relax edges
         for (int i = 1; i < size; i++) {
-            for (IEdge edge : source.getParent().getEdges()) {
-                INode src = edge.getSource();
-                INode dst = edge.getTarget();
+            for (PEdge edge : source.getParent().getEdges()) {
+                PNode src = edge.getSource();
+                PNode dst = edge.getTarget();
                 int cost = edge.getProperty(PATHCOST);
                 int dist = src.getProperty(DISTANCE);
                 if ((dist != Integer.MAX_VALUE) && (dist + cost < dst.getProperty(DISTANCE))) {
                     dst.setProperty(DISTANCE, cost + dist);
-                    edges[dst.getID()] = edge;
+                    edges[dst.id] = edge;
                 }
             }
         }
 
         // Detect negative cycles
-        for (IEdge edge : source.getParent().getEdges()) {
+        for (PEdge edge : source.getParent().getEdges()) {
             int cost = edge.getProperty(PATHCOST);
             cost += edge.getSource().getProperty(DISTANCE);
             if (cost < edge.getTarget().getProperty(DISTANCE)) {
@@ -67,13 +67,13 @@ public class BellmanFordPathFinder extends AbstractPathFinder implements IShorte
         }
 
         // Compute shortest path
-        LinkedList<IEdge> path = new LinkedList<IEdge>();
-        INode pathNode = target;
-        IEdge pathEdge = edges[pathNode.getID()];
+        LinkedList<PEdge> path = new LinkedList<PEdge>();
+        PNode pathNode = target;
+        PEdge pathEdge = edges[pathNode.id];
         while (pathEdge != null) {
             path.addFirst(pathEdge);
             pathNode = pathNode.getAdjacentNode(pathEdge);
-            pathEdge = edges[pathNode.getID()];
+            pathEdge = edges[pathNode.id];
         }
         if (pathNode == source) {
             return path;

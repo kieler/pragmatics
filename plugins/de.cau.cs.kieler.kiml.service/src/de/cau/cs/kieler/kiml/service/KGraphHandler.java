@@ -42,6 +42,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * Transformer for the KGraph model and XMI serialization.
  *
  * @author swe
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class KGraphHandler extends AbstractEmfHandler<KNode> {
     
@@ -91,7 +92,7 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
     private static final IGraphTransformer<KNode, KNode> TRANSFORMER
             = new IGraphTransformer<KNode, KNode>() {
         
-        public void transform(TransformationData<KNode, KNode> data) {
+        public void transform(final TransformationData<KNode, KNode> data) {
             KNode graph = data.getSourceGraph();        
             // Make sure all graph elements are configured according to specs
             validate(graph);
@@ -99,7 +100,7 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
             data.getTargetGraphs().add(graph);
         }
         
-        public void transferLayout(TransformationData<KNode, KNode> data) {
+        public void transferLayout(final TransformationData<KNode, KNode> data) {
             // nothing to do
         }
     };

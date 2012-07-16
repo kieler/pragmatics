@@ -25,6 +25,9 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  */
 public class FLabel extends FParticle {
     
+    /** the serial version UID. */
+    private static final long serialVersionUID = 9047772256368142239L;
+    
     /** the edge this label is associated to. */
     private FEdge edge;
     /** label text. */

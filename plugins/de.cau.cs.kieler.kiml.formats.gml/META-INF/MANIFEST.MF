@@ -15,6 +15,7 @@ Require-Bundle: org.eclipse.xtext;bundle-version="2.1.0";visibility:=reexport,
  org.eclipse.xtext.util,
  org.eclipse.emf.ecore,
  org.eclipse.emf.common,
+ org.eclipse.core.runtime;bundle-version="3.6.0",
  org.antlr.runtime,
  de.cau.cs.kieler.kiml.service,
  de.cau.cs.kieler.kiml,
@@ -32,3 +33,4 @@ Export-Package: de.cau.cs.kieler.kiml.formats.gml,
  de.cau.cs.kieler.kiml.formats.gml.parser.antlr.internal,
  de.cau.cs.kieler.kiml.formats.gml.serializer,
  de.cau.cs.kieler.kiml.formats.gml.formatting
+Bundle-Activator: de.cau.cs.kieler.kiml.formats.gml.GmlActivator

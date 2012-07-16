@@ -28,8 +28,8 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * can be used to get more information about the algorithm that caused the
  * exception.
  * 
- * @kieler.rating 2011-03-14 yellow
- *     reviewed by cmot, cds
+ * @kieler.design 2011-03-14 reviewed by cmot, cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  * @author ars
  * @author msp
  */

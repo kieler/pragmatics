@@ -23,7 +23,6 @@ import de.cau.cs.kieler.kaom.impl.KaomPackageImpl;
  * synccharts diagram.
  * 
  * @author soh
- * @kieler.rating 2010-03-12 proposed yellow
  */
 public class KaomDeletionPolicyProvider extends AbstractDeletionPolicyProvider {
 

@@ -42,8 +42,14 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * @author mri
  * @author cds
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class EdgeCrossingsAnalysis implements IAnalysis {
+    
+    /**
+     * Identifier of the edge crossings analysis.
+     */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.edgeCrossings";
 
     /**
      * Returns whether two line segments have an intersection.

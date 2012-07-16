@@ -28,6 +28,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -35,7 +36,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -60,6 +60,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author grh
  * @author cds
  * @author ima
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
@@ -140,6 +141,27 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         public int compareTo(final LinearSegment other) {
             return this.id - other.id;
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object instanceof LinearSegment) {
+                LinearSegment other = (LinearSegment) object;
+                return this.id == other.id;
+            }
+            return false;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return id;
+        }
+        
     }
     
     /** additional processor dependencies for graphs with hierarchical ports. */

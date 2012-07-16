@@ -24,8 +24,8 @@ import de.cau.cs.kieler.kiml.options.GraphFeature;
 /**
  * Data type used to store information for a layout algorithm.
  * 
- * @kieler.rating 2011-02-01 yellow
- *     reviewed by cmot, soh
+ * @kieler.design 2011-02-01 reviewed by cmot, soh
+ * @kieler.rating 2012-07-10 proposed yellow msp
  * @author msp
  */
 public class LayoutAlgorithmData implements ILayoutData {
@@ -118,10 +118,12 @@ public class LayoutAlgorithmData implements ILayoutData {
      * Returns the layout algorithm's default value for the given option.
      * 
      * @param optionData layout option data
+     * @param <T> the layout option type
      * @return the associated default value, or {@code null} if there is none
      */
-    public Object getDefaultValue(final LayoutOptionData<?> optionData) {
-        return knownOptions.get(optionData);
+    @SuppressWarnings("unchecked")
+    public <T> T getDefaultValue(final LayoutOptionData<T> optionData) {
+        return (T) knownOptions.get(optionData);
     }
     
     /**

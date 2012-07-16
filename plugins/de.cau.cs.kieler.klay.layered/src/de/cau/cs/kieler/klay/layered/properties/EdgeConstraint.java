@@ -20,12 +20,15 @@ package de.cau.cs.kieler.klay.layered.properties;
  * @see de.cau.cs.kieler.klay.layered.intermediate.EdgeAndLayerConstraintEdgeReverser
  *        EdgeAndLayerConstraintEdgeReverser
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public enum EdgeConstraint {
+    
     /** no constraint on incident edges. */
     NONE,
     /** node may have only incoming edges. */
     INCOMING_ONLY,
     /** node may have only outgoing edges. */
-    OUTGOING_ONLY
+    OUTGOING_ONLY;
+    
 }

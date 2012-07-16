@@ -31,6 +31,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * A layout processor that is able to perform transformations on the coordinates of a graph.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class GraphTransformer extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -45,7 +46,7 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
     }
     
     /** the configured mode of the graph transformer. */
-    private Mode mode;
+    private final Mode mode;
     
     /**
      * Creates a graph transformer with the given mode.
