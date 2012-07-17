@@ -286,6 +286,10 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     private void markConflicts(final LayeredGraph layeredGraph) {
         for (int i = 1; i <= layeredGraph.getLayers().size() - 2; i++) {
             // The variable naming here follows the notation of the corresponding paper
+            // Normally, underscores are not allowed in local variable names, but since there
+            // is no way of properly writing indices beside underscores, Checkstyle will be
+            // disabled here and in future methods containing indexed variables
+            // CHECKSTYLEOFF Local Variable Names
             int k_0 = 0;
             int l = 0;
             for (int l_1 = 0; l_1 < layerSize(layeredGraph, i + 1); l_1++) {
@@ -312,6 +316,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                     k_0 = k_1;
                 }
             }
+            // CHECKSTYLEON Local Variable Names
         }
     }
 
@@ -365,6 +370,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             // Variable names here are again taken from the paper mentioned above.
             // i denotes the index of the layer and k the position of the node within the layer.
             // m denotes the position of a neighbor in the neighbor list of a node.
+            // CHECKSTYLEOFF Local Variable Names
             for (LNode v_i_k : nodes) {
                 List<LNode> neighbors = null;
                 if (bal.getHDir() == HDirection.BOTTOM) {
@@ -411,6 +417,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                         }
                     }
                 }
+            // CHECKSTYLEOFF Local Variable Names
             }
         }
     }
