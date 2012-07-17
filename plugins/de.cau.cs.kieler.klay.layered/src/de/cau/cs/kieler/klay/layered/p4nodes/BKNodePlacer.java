@@ -282,7 +282,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * The markers are later used to solve conflicts in favor of long edges. In case of type 2
      * conflicts, the marker favors the earlier node in layout order.
      * 
-     * @param layeredGraph
+     * @param layeredGraph The layered graph to be layouted
      */
     private void markConflicts(final LayeredGraph layeredGraph) {
         for (int i = 1; i <= layeredGraph.getLayers().size() - 2; i++) {
@@ -331,7 +331,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * Type 1 conflicts are resolved, so that the dummy nodes of a long edge share the
      * same block if possible, such that the long edge is drawn straightly.
      * 
-     * @param layeredGraph
+     * @param layeredGraph The layered graph to be layouted
      * @param bal One of the four layouts which shall be used in this step 
      */
     private void verticalAlignment(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
@@ -431,7 +431,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * This phase is not included in the original algorithm and adds port and node size
      * handling.
      * 
-     * @param layeredGraph
+     * @param layeredGraph The layered graph to be layouted
      * @param bal One of the four layouts which shall be used in this step
      */
     private void insideBlockShift(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
@@ -546,7 +546,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * Then, the blocks are shifted towards each other if there is any space for 
      * compaction.
      * 
-     * @param layeredGraph
+     * @param layeredGraph The layered graph to be layouted
      * @param bal One of the four layouts which shall be used in this step
      */
     private void horizontalCompaction(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
@@ -778,8 +778,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * 
      * Auxiliary method for getting the size of a layer.
      * 
-     * @param layeredGraph
-     * @param layer
+     * @param layeredGraph The containing layered graph
+     * @param layer The respective layer
      * @return The size of the given layer
      */
     private int layerSize(final LayeredGraph layeredGraph, final int layer) {
@@ -790,9 +790,9 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * 
      * Auxiliary method for getting the node on a certain position of a layer.
      * 
-     * @param layeredGraph
-     * @param layer
-     * @param position
+     * @param layeredGraph The containing layered graph
+     * @param layer The containing layer
+     * @param position The node's position, with 0 <= position <= layer.size - 1
      * @return The node which is on the given position of the given layer or an exception, if there is
      *         no node on the given position
      */
@@ -805,9 +805,9 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * 
      * Checks whether the given node is part of a long edge between the two given layers.
      * 
-     * @param node
-     * @param layer1
-     * @param layer2
+     * @param node Possible long edge node
+     * @param layer1 The first layer, the layer of the node
+     * @param layer2 The second layer
      * @return True if the node is part of a long edge between the layers, false else
      */
     private boolean incidentToInnerSegment(final LNode node, final int layer1, final int layer2) {
@@ -830,7 +830,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * 
      * An upper neighbor is a node in a previous layer which has an edge pointing to the given node.
      * 
-     * @param node
+     * @param node The node which might have neighbors
      * @return A list containing all upper neighbors
      */
     private List<LNode> allUpperNeighbors(final LNode node) {
@@ -849,7 +849,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * 
      * A lower neighbor is a node in a following layer which has an edge coming from the given node.
      * 
-     * @param node
+     * @param node The node which might have neighbors
      * @return A list containing all lower neighbors
      */
     private List<LNode> allLowerNeighbors(final LNode node) {
@@ -866,8 +866,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     /**
      * An auxiliary method to find an edge between two given nodes.
      * 
-     * @param source
-     * @param target
+     * @param source The source node of the edge
+     * @param target The target node of the edge
      * @return The edge between source and target, or null if there is none
      */
     private LEdge getEdge(final LNode source, final LNode target) {
@@ -901,7 +901,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * It is checked whether all nodes are placed in the correct order in their layers
      * and do not overlap each other.
      * 
-     * @param layeredGraph
+     * @param layeredGraph The containing layered graph
      * @param bal The layout which shall be checked
      * @return True if the order is preserved and no nodes overlap, false else
      */
