@@ -19,7 +19,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 
 /**
  * A strategy for intermediate layout processors to be used.
@@ -57,6 +56,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
  * </pre>
  * 
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class IntermediateProcessingStrategy {
     

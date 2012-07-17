@@ -27,10 +27,8 @@ import org.eclipse.core.runtime.Platform;
 /**
  * Utilities for accessing resources such as files or bundled resources.
  *
- * @kieler.rating  2011-08-02 yellow
- *     reviewed by ckru, mri, msp
- *     
- * @author  swe
+ * @kieler.design 2011-08-02 reviewed by ckru, mri, msp
+ * @author swe
  */
 public final class Resources {
 

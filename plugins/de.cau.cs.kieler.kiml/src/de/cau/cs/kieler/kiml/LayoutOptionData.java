@@ -15,20 +15,24 @@ package de.cau.cs.kieler.kiml;
 
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.IDataObject;
+import de.cau.cs.kieler.core.util.Pair;
 
 /**
  * Data type used to store information for a layout option.
  * 
  * @param <T> data type for the option data
- * @kieler.rating 2011-02-01 yellow
- *     reviewed by cmot, soh
+ * @kieler.design 2011-02-01 reviewed by cmot, soh
+ * @kieler.rating 2012-07-10 proposed yellow msp
  * @author msp
  */
 public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparable<IProperty<?>> {
@@ -122,6 +126,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     private String description = "";
     /** configured targets. */
     private Set<Target> targets = Collections.emptySet();
+    /** dependencies to other layout options. */
+    private List<Pair<LayoutOptionData<?>, Object>> dependencies = Lists.newLinkedList();
     /** the class that represents this option type. */
     private Class<?> clazz;
     /** cached value of the available choices. */
@@ -202,12 +208,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * {@inheritDoc}
      */
     public int compareTo(final IProperty<?> other) {
-        Object otherId = other.getId();
-        if (otherId instanceof String) {
-            return id.compareTo((String) otherId);
-        } else {
-            throw new UnsupportedOperationException("Not comparable with given property.");
-        }
+        return id.compareTo(other.getId());
     }
 
      /**
@@ -490,6 +491,16 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             }
         }
         return descriptionBuf.toString();
+    }
+    
+    /**
+     * Returns the dependencies to other layout options. The option should only be made visible if
+     * at least one of the dependencies is met.
+     * 
+     * @return the options from which this option depends together with the expected values
+     */
+    public List<Pair<LayoutOptionData<?>, Object>> getDependencies() {
+        return dependencies;
     }
 
     /**

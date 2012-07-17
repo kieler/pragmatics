@@ -237,6 +237,26 @@ public class NewOptionDialog extends Dialog {
          * {@inheritDoc}
          */
         @Override
+        public boolean equals(final Object object) {
+            if (object instanceof SelectionData) {
+                SelectionData other = (SelectionData) object;
+                return this.id.equals(other.id) && this.name.equals(other.name);
+            }
+            return false;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return id.hashCode() + name.hashCode();
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public String toString() {
             return name + " (" + id + ")";
         }

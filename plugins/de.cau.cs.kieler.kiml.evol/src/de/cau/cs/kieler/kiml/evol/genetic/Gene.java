@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
+import java.io.Serializable;
 import java.util.List;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -26,8 +27,11 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  * @author bdu
  * @author msp
  */
-public final class Gene<T extends Comparable<? super T>> {
+public final class Gene<T extends Comparable<? super T>> implements Serializable {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = 6005239178452290713L;
+    
     /** The type info for this gene. */
     private final TypeInfo<T> typeInfo;
     /** The value of this gene. */

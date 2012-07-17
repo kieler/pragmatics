@@ -18,7 +18,6 @@ package de.cau.cs.kieler.kwebs.server;
  * This class provides support for the console application for running tests on the
  * KIELER web service.
  *
- * @kieler.rating 2011-05-20 red
  * @author swe
  */
 public final class ApplicationHelper {

@@ -29,11 +29,14 @@ public abstract class ICustomCondition<T> implements ICondition<T> {
     /**
      * Key for referencing the annotation.
      */
+    // No gain in using getter here. 
+    // SUPPRESS CHECKSTYLE NEXT Visibility Modifier
     protected String key;
 
     /**
      * Desired value of the annotation.
      */
+    // SUPPRESS CHECKSTYLE NEXT Visibility Modifier
     protected String value;
 
     /**

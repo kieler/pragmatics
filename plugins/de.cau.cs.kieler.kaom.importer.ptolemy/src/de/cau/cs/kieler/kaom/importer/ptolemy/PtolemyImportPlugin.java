@@ -22,6 +22,7 @@ import org.osgi.framework.BundleContext;
  * Activator for the Ptolemy importer plug-in.
  * 
  * @author cds
+ * @kieler.rating yellow 2012-07-10 KI-15 cmot, grh
  */
 public class PtolemyImportPlugin extends AbstractUIPlugin {
 

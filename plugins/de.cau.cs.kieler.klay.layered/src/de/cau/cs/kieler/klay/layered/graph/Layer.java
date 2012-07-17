@@ -26,16 +26,20 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * drawn in one column.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class Layer extends LGraphElement implements Iterable<LNode> {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = 5760328884701318753L;
+
     /** the owning layered graph. */
-    private LayeredGraph owner;
+    private final LayeredGraph owner;
 
     /** the size of the layer as drawn horizontally. */
-    private KVector size = new KVector();
+    private final KVector size = new KVector();
     /** the nodes of the layer. */
-    private List<LNode> nodes = new LinkedList<LNode>();
+    private final List<LNode> nodes = new LinkedList<LNode>();
     
     /**
      * Creates a layer for the given layered graph. The layer is not added to the

@@ -14,7 +14,7 @@ public abstract class KaomAbstractNavigatorItem extends PlatformObject {
      * @generated
      */
     static {
-        final Class[] supportedTypes = new Class[] { ITabbedPropertySheetPageContributor.class };
+        final Class<?>[] supportedTypes = new Class[] { ITabbedPropertySheetPageContributor.class };
         final ITabbedPropertySheetPageContributor propertySheetPageContributor = new ITabbedPropertySheetPageContributor() {
             public String getContributorId() {
                 return "de.cau.cs.kieler.kaom.diagram"; //$NON-NLS-1$
@@ -22,6 +22,7 @@ public abstract class KaomAbstractNavigatorItem extends PlatformObject {
         };
         Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
+            @SuppressWarnings("rawtypes")
             public Object getAdapter(Object adaptableObject, Class adapterType) {
                 if (adaptableObject instanceof de.cau.cs.kieler.kaom.diagram.navigator.KaomAbstractNavigatorItem
                         && adapterType == ITabbedPropertySheetPageContributor.class) {
@@ -30,7 +31,7 @@ public abstract class KaomAbstractNavigatorItem extends PlatformObject {
                 return null;
             }
 
-            public Class[] getAdapterList() {
+            public Class<?>[] getAdapterList() {
                 return supportedTypes;
             }
         }, de.cau.cs.kieler.kaom.diagram.navigator.KaomAbstractNavigatorItem.class);

@@ -25,7 +25,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
-
 /**
  * A drawing analysis that computes the minimum, maximum and average node size of nodes
  * that are not compound nodes. (that is, that don't contain other nodes) Returns a
@@ -34,6 +33,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * analysis.
  * 
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class NodeSizeAnalysis implements IAnalysis {
     

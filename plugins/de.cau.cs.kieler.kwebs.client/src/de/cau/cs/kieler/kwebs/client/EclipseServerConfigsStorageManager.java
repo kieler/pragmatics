@@ -28,8 +28,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * This utility class provides convenient access to the list of
  * server configuration configurable by the user.
  *
- * @kieler.rating 2011-05-03 red
- *
  * @author swe
  */
 public final class EclipseServerConfigsStorageManager implements IServerConfigsStorageManager {

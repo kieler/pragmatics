@@ -39,6 +39,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * </dl>
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhase {
 
@@ -50,7 +51,7 @@ public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhas
     }
     
     /** Utility class for marking horizontal regions that are already covered by some nodes. */
-    private class LayerSpan {
+    private static class LayerSpan {
         private double start;
         private double end;
         private List<LNode> nodes = new LinkedList<LNode>();

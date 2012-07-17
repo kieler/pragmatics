@@ -14,16 +14,20 @@
 package de.cau.cs.kieler.klay.planar.graph;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
+import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
@@ -42,7 +46,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * @author cku
  * @author pkl
  */
-public class PGraph extends PNode implements Serializable {
+public class PGraph extends PNode {
 
     /** Generated Version UID for Serialization. */
     private static final long serialVersionUID = -7340177117233615855L;
@@ -178,6 +182,10 @@ public class PGraph extends PNode implements Serializable {
         return addNode(edge, NodeType.NORMAL);
     }
 
+    public Pair<PNode, PEdge> addNode(final PEdge edge, final PNode targetNode) {
+        return addNode(edge, NodeType.NORMAL, targetNode);
+    }
+
     /**
      * Add a new node of a specific type to the graph. This adds an empty node of the given type to
      * the graph, that is not connected with any other nodes in the graph.
@@ -214,51 +222,7 @@ public class PGraph extends PNode implements Serializable {
      * @return the new node in the graph
      */
     public Pair<PNode, PEdge> addNode(final PEdge edge, final NodeType type) {
-        if (!(edge.getSource() instanceof PNode && edge.getTarget() instanceof PNode)) {
-            throw new IncompatibleGraphTypeException();
-        } else if (!(edge.getLeftFace() instanceof PFace && edge.getRightFace() instanceof PFace)) {
-            throw new IncompatibleGraphTypeException();
-        } else if (!this.edges.contains(edge)) {
-            throw new IllegalArgumentException("The edge (" + edge.id
-                    + ") is not part of the graph.");
-        }
-        generateFaces();
-
-        // Remember target node
-        PNode target = edge.getTarget();
-
-        // Remember all edges in target adjacency list after the edge
-        LinkedList<PEdge> move = new LinkedList<PEdge>();
-        boolean found = false;
-        for (PEdge e : target.adjacentEdges()) {
-            if (found) {
-                move.addLast(e);
-            } else if (e == edge) {
-                found = true;
-            }
-        }
-
-        // Create node, move edge and create new edge
-        PNode node = (PNode) this.addNode(type);
-        edge.move(target, node);
-        PEdge newedge = (PEdge) this.addEdge(node, target, edge.isDirected());
-
-        // Move remembered edges to end of adjacency list (so new edge is at
-        // correct position)
-        for (PEdge e : move) {
-            e.move(target, target);
-        }
-
-        // Update references in faces
-        this.changedFaces = false;
-        newedge.setLeftFace(edge.getLeftFace());
-        newedge.setRightFace(edge.getRightFace());
-        ((PFace) edge.getLeftFace()).addNode(node);
-        ((PFace) edge.getLeftFace()).addEdge(newedge);
-        ((PFace) edge.getRightFace()).addNode(node);
-        ((PFace) edge.getRightFace()).addEdge(newedge);
-
-        return new Pair<PNode, PEdge>(node, newedge);
+        return addNode(edge, type, null);
     }
 
     /**
@@ -277,6 +241,8 @@ public class PGraph extends PNode implements Serializable {
         // Remove node
         this.nodes.remove(node);
 
+        OrthogonalRepresentation ortho = getProperty(Properties.ORTHO_REPRESENTATION);
+
         // Remove all edges
         for (Iterator<PEdge> es = node.adjacentEdges().iterator(); es.hasNext();) {
             PEdge edge = es.next();
@@ -289,10 +255,32 @@ public class PGraph extends PNode implements Serializable {
                         + ") is not part of the graph.");
             }
 
+            // fix angles of neighbors.
             ((PNode) node.getAdjacentNode(edge)).unlinkEdge(edge);
+            if (ortho != null) {
+                List<Pair<PEdge, OrthogonalAngle>> removables = Lists.newLinkedList();
+                List<Pair<PEdge, OrthogonalAngle>> angles = ortho.getAngles(edge
+                        .getOppositeNode(node));
+                if (angles != null) {
+                    for (Pair<PEdge, OrthogonalAngle> pair : angles) {
+                        if (pair.getFirst().isConnected(node)) {
+                            removables.add(pair);
+                        }
+                    }
+
+                    if (!removables.isEmpty()) {
+                        angles.removeAll(removables);
+                    }
+                }
+            }
+
             this.edges.remove(edge);
             es.remove();
         }
+        if (ortho != null) {
+            ortho.setAngles(node, null);
+        }
+
         this.changedFaces = true;
     }
 
@@ -371,6 +359,68 @@ public class PGraph extends PNode implements Serializable {
      * Changes the source or/and target of a edge.
      * 
      * @param edge
+     *            this edge is kept and changed with source and target node.
+     * @param source
+     *            new source node, set {@code null} if no new source is wanted.
+     * @param target
+     *            new target node, set {@code null} if no new target is wanted.
+     */
+    public void bridgeOverEdge(final PEdge edge, final PNode source, final PNode target) {
+
+        PNode toBridgeNode = edge.getOppositeNode(source);
+        PEdge removableEdge = toBridgeNode.getEdge(target);
+        PNode currentNode = target;
+
+        if (removableEdge == edge) {
+            removableEdge = toBridgeNode.getEdge(source);
+            currentNode = source;
+        }
+
+        LinkedList<PEdge> nodeEdges = Lists.newLinkedList();
+        nodeEdges.addAll(currentNode.getEdges());
+
+        // Get the index of removable edge and build up the edges before
+        // and after that edge to ensure the correct edge embedding of the node.
+        int removableEdgeIndex = -1;
+
+        LinkedList<PEdge> targetBeforeEdge = Lists.newLinkedList();
+        for (int i = 0; i < nodeEdges.size(); i++) {
+            if (nodeEdges.get(i) == removableEdge) {
+                removableEdgeIndex = i;
+                break;
+            } else {
+                targetBeforeEdge.add(nodeEdges.get(i));
+            }
+        }
+
+        LinkedList<PEdge> targetAfterEdge = Lists.newLinkedList();
+        for (int i = removableEdgeIndex + 1; i < nodeEdges.size(); i++) {
+            targetAfterEdge.add(nodeEdges.get(i));
+        }
+
+        toBridgeNode.unlinkEdge(edge);
+
+        if (edge.getSource() == source) {
+            edge.setTarget(currentNode);
+        } else {
+            edge.setSource(currentNode);
+        }
+
+        currentNode.unlinkAll();
+        currentNode.linkEdges(targetBeforeEdge);
+        currentNode.linkEdge(edge);
+        currentNode.linkEdges(targetAfterEdge);
+
+        removeEdge(removableEdge);
+
+        this.changedFaces = true;
+
+    }
+
+    /**
+     * Changes the source or/and target of a edge.
+     * 
+     * @param edge
      *            , selected PEdge
      * @param source
      *            , new source node, set {@code null} if no new source is wanted.
@@ -378,14 +428,14 @@ public class PGraph extends PNode implements Serializable {
      *            , new target node, set {@code null} if no new target is wanted.
      */
     public void changeEdge(final PEdge edge, final PNode source, final PNode target) {
-        if (source != null) {
+        // TODO support null as input and fix embedding,
+        // used at bendpoints maybe you can merge this method with bridgeOverEdge?!
+        if (source != null && target != null) {
             edge.getSource().unlinkEdge(edge);
-            edge.setSource(source);
-            source.linkEdge(edge);
-        }
-        if (target != null) {
             edge.getTarget().unlinkEdge(edge);
+            edge.setSource(source);
             edge.setTarget(target);
+            source.linkEdge(edge);
             target.linkEdge(edge);
         }
         this.edges.add(edge);
@@ -410,8 +460,8 @@ public class PGraph extends PNode implements Serializable {
 
         // Remove edge and references
         this.edges.remove(edge);
-        ((PNode) edge.getSource()).unlinkEdge(edge);
-        ((PNode) edge.getTarget()).unlinkEdge(edge);
+        edge.getSource().unlinkEdge(edge);
+        edge.getTarget().unlinkEdge(edge);
         this.changedFaces = true;
     }
 
@@ -738,6 +788,65 @@ public class PGraph extends PNode implements Serializable {
     @Deprecated
     public void setExternalFace(PFace externalFace) {
         this.externalFace = externalFace;
+    }
+
+    /**
+     * @param edge
+     * @param type
+     * @param targetNode
+     * @return
+     */
+    public Pair<PNode, PEdge> addNode(PEdge edge, NodeType type, PNode targetNode) {
+        if (!(edge.getSource() instanceof PNode && edge.getTarget() instanceof PNode)) {
+            throw new IncompatibleGraphTypeException();
+        } else if (!(edge.getLeftFace() instanceof PFace && edge.getRightFace() instanceof PFace)) {
+            throw new IncompatibleGraphTypeException();
+        } else if (!this.edges.contains(edge)) {
+            throw new IllegalArgumentException("The edge (" + edge.id
+                    + ") is not part of the graph.");
+        }
+        generateFaces();
+
+        // Remember target node
+        PNode target = null;
+        if (targetNode == null) {
+            target = edge.getTarget();
+        } else {
+            target = targetNode;
+        }
+        // Remember all edges in target adjacency list after the edge
+        LinkedList<PEdge> move = Lists.newLinkedList();
+        boolean found = false;
+        for (PEdge e : target.adjacentEdges()) {
+            if (found) {
+                move.addLast(e);
+            } else if (e == edge) {
+                found = true;
+            }
+        }
+
+        // Create node, move edge and create new edge
+        PNode newNode = (PNode) addNode(type);
+        edge.move(target, newNode);
+        PEdge newedge = (PEdge) this.addEdge(newNode, target, edge.isDirected());
+
+        // Move remembered edges to end of adjacency list (so new edge is at
+        // correct position)
+        for (PEdge e : move) {
+            e.move(target, target);
+        }
+
+        // Update references in faces
+        this.changedFaces = false;
+        newedge.setLeftFace(edge.getLeftFace());
+        newedge.setRightFace(edge.getRightFace());
+        ((PFace) edge.getLeftFace()).addNode(newNode);
+        ((PFace) edge.getLeftFace()).addEdge(newedge);
+        ((PFace) edge.getRightFace()).addNode(newNode);
+        ((PFace) edge.getRightFace()).addEdge(newedge);
+
+        return new Pair<PNode, PEdge>(newNode, newedge);
+
     }
 
 }

@@ -17,8 +17,7 @@ package de.cau.cs.kieler.kwebs.server.web;
 /**
  * Holder class for caching already processed requests to the web interface of KWebS.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public class CacheData {
 

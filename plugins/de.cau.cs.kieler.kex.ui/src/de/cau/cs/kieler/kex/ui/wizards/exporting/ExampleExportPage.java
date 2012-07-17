@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -58,13 +57,17 @@ import de.cau.cs.kieler.kex.model.SourceType;
  */
 public class ExampleExportPage extends WizardResourceImportPage {
 
+    /**
+     * 
+     */
+
     private Text destPath;
 
     private Text previewPic;
 
     private static final int THREE_COLUMNS = 3;
     private static final int VERTICAL_INDENT = 10;
-    private static final int MARGIN = 10;
+    private static final int HORIZONTAL_SPAN = 3;
 
     private static final int PAGE_MIN_WIDTH = 540;
     private static final int PAGE_MIN_HEIGHT = 600;
@@ -180,9 +183,8 @@ public class ExampleExportPage extends WizardResourceImportPage {
                     picDialog.setFilterPath(WORKSPACE_DIR);
                 } else {
                     String portableString = path.removeLastSegments(1).toPortableString();
-                    picDialog.setFilterPath(choosenPath == null || choosenPath.length() < 2
-                            ? WORKSPACE_DIR
-                            : portableString);
+                    picDialog.setFilterPath(choosenPath == null 
+                            || choosenPath.length() < 2 ?   WORKSPACE_DIR : portableString);
                 }
                 String pic = picDialog.open();
                 if (pic != null) {
@@ -200,8 +202,9 @@ public class ExampleExportPage extends WizardResourceImportPage {
         buttonCompoLayout.marginHeight = 0;
         buttonCompoLayout.marginWidth = 0;
         buttonCompo.setLayout(buttonCompoLayout);
-        buttonCompo.setLayoutData(new GridData(SWT.END, SWT.BEGINNING, false, false, 3, 1));
-        
+        buttonCompo.setLayoutData(new GridData(SWT.END, SWT.BEGINNING, false, false,
+                HORIZONTAL_SPAN, 1));
+
         Button addCategory = new Button(buttonCompo, SWT.NONE);
         addCategory.setToolTipText("Create a new Example Category");
         addCategory.setText("New...");
@@ -367,18 +370,18 @@ public class ExampleExportPage extends WizardResourceImportPage {
     private void createBottomGroup(final Composite composite) {
         Label categoriesLabel = new Label(composite, SWT.NULL);
         categoriesLabel.setText("Example Categories:");
-        
-        GridData gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 3, 1);
-        gd.verticalIndent = 10;
+
+        GridData gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, HORIZONTAL_SPAN, 1);
+        gd.verticalIndent = VERTICAL_INDENT;
         categoriesLabel.setLayoutData(gd);
-        
+
         createCheckedTree(composite);
         createButtonComposite(composite);
     }
 
     private void createCheckedTree(final Composite parent) {
         this.categoryTree = new Tree(parent, SWT.CHECK | SWT.BORDER);
-        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
+        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, HORIZONTAL_SPAN, 1);
         data.heightHint = HEIGHT_HINT;
         categoryTree.setLayoutData(data);
 
@@ -465,9 +468,9 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
     private void addCategory(final List<TreeItem> items, final int itemCount,
             final List<Category> placeAbleCategories, final List<Category> allCategories) {
-        
+
         int newItemCount = itemCount;
-        
+
         // TODO not really worksome and test and tree has to be sprayed at default.
         List<Category> removable = new ArrayList<Category>();
         List<TreeItem> newItems = new ArrayList<TreeItem>(items);

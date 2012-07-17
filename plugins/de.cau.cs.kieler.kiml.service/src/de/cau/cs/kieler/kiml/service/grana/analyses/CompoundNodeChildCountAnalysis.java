@@ -24,12 +24,12 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
-
 /**
  * A graph analysis that counts the number of contained nodes per hierarchy level. The result
  * has three components for the minimum, average, and maximum value, respectively.
  * 
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class CompoundNodeChildCountAnalysis implements IAnalysis {
 

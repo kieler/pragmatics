@@ -17,16 +17,22 @@ package de.cau.cs.kieler.kex.model.plugin;
  * Constants for communication with the plugin extensionpoints.
  * 
  * @author pkl
- * 
  */
 public final class PluginConstants {
-
+    // This class just contains a number of element names which don't need comments
+    // CHECKSTYLEOFF JavadocVariable
+    
     public static final String KEX_EXT_POINT = "de.cau.cs.kieler.kex";
     public static final String PLUGIN = "plugin";
     public static final String EXTENSION = "extension";
     public static final String POINT = "point";
-
-    public final class Example {
+    
+    /**
+     * Names of the elements used in an example definition.
+     *
+     * @author pkl
+     */
+    public static final class Example {
         public static final String EXAMPLE = "example";
         public static final String ID = "id";
         public static final String TITLE = "title";
@@ -42,8 +48,13 @@ public final class PluginConstants {
             // should not be called.
         }
     }
-
-    public final class Category {
+    
+    /**
+     * Names of the elements used in an example category definition.
+     *
+     * @author pkl
+     */
+    public static final class Category {
         public static final String CATEGORY = "category";
         public static final String ID = "id";
         public static final String TITLE = "title";
@@ -56,7 +67,12 @@ public final class PluginConstants {
         }
     }
 
-    public final class Resource {
+    /**
+     * Names of the elements used in an example resource definition.
+     *
+     * @author pkl
+     */
+    public static final class Resource {
         public static final String EXAMPLE_RESOURCE = "resource";
         public static final String LOCAL_PATH = "local_path";
         public static final String DIRECT_OPEN = "direct_open";

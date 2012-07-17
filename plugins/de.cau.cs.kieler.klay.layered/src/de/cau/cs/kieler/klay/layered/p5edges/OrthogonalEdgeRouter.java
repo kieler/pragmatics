@@ -20,20 +20,20 @@ import java.util.Set;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Edge routing implementation that creates orthogonal bend points. Inspired by
  * <ul>
- *   <li>Georg Sander. Layout of directed hypergraphs with orthogonal hyperedges. In
+ *   <li>Georg Sander, Layout of directed hypergraphs with orthogonal hyperedges. In
  *     <i>Proceedings of the 11th International Symposium on Graph Drawing (GD '03)</i>,
- *     volume 2912 of LNCS, pp. 381-386. Springer, 2004.</li>
+ *     LNCS vol. 2912, pp. 381-386, Springer, 2004.</li>
  *   <li>Giuseppe di Battista, Peter Eades, Roberto Tamassia, Ioannis G. Tollis,
  *     <i>Graph Drawing: Algorithms for the Visualization of Graphs</i>,
  *     Prentice Hall, New Jersey, 1999 (Section 9.4, for cycle breaking in the
@@ -51,6 +51,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  * @author msp
  * @author cds
+ * @author jjc
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
     
@@ -62,7 +64,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      *   - None.
      * 
      * Before phase 2:
-     *   - None.
+     *   - For center edge labels:
+     *      - LABEL_DUMMY_INSERTER
      * 
      * Before phase 3:
      *   - For non-free ports:
@@ -74,6 +77,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      *   
      *   - For hierarchical ports:
      *     - HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR
+     *   
+     *   - For center edge labels:
+     *      - LABEL_DUMMY_SWITCHER
      * 
      * Before phase 4:
      *   - For hyperedges:
@@ -89,6 +95,12 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      *   
      *   - For hierarchical ports:
      *     - HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER
+     *     
+     *   - For center edge labels:
+     *      - LABEL_DUMMY_REMOVER
+     *     
+     *   - For end edge labels:
+     *     - END_LABEL_PROCESSOR
      */
     
     /** additional processor dependencies for graphs with hyperedges. */
@@ -153,6 +165,48 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         new IntermediateProcessingStrategy(IntermediateProcessingStrategy.AFTER_PHASE_5,
                 IntermediateLayoutProcessor.HYPERNODE_PROCESSOR);
     
+    /** additional processor dependencies for graphs with center edge labels. */
+    private static final IntermediateProcessingStrategy CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(
+                // Before Phase 1
+                null,
+                
+                // Before Phase 2
+                EnumSet.of(IntermediateLayoutProcessor.LABEL_DUMMY_INSERTER),
+                
+                // Before Phase 3
+                EnumSet.of(IntermediateLayoutProcessor.LABEL_DUMMY_SWITCHER),
+                
+                // Before Phase 4
+                null,
+                
+                // Before Phase 5
+                null,
+                
+                // After Phase 5
+                EnumSet.of(IntermediateLayoutProcessor.LABEL_DUMMY_REMOVER));
+    
+    /** additional processor dependencies for graphs with head or tail edge labels. */
+    private static final IntermediateProcessingStrategy END_EDGE_LABEL_PROCESSING_ADDITIONS =
+        new IntermediateProcessingStrategy(
+                // Before Phase 1
+                null,
+                
+                // Before Phase 2
+                null,
+                
+                // Before Phase 3
+                null,
+                
+                // Before Phase 4
+                EnumSet.of(IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR),
+                
+                // Before Phase 5
+                null,
+                
+                // After Phase 5
+                EnumSet.of(IntermediateLayoutProcessor.END_LABEL_PROCESSOR));
+    
     /**
      * {@inheritDoc}
      */
@@ -186,6 +240,14 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         
         if (graphProperties.contains(GraphProperties.HYPERNODES)) {
             strategy.addAll(HYPERNODE_PROCESSING_ADDITIONS);
+        }
+        
+        if (graphProperties.contains(GraphProperties.CENTER_LABELS)) {
+            strategy.addAll(CENTER_EDGE_LABEL_PROCESSING_ADDITIONS);
+        }
+        
+        if (graphProperties.contains(GraphProperties.END_LABELS)) {
+            strategy.addAll(END_EDGE_LABEL_PROCESSING_ADDITIONS);
         }
         
         return strategy;

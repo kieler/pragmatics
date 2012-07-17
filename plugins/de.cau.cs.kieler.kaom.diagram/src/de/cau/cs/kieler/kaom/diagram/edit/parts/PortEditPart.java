@@ -8,7 +8,6 @@ import java.util.List;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.PositionConstants;
-import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.StackLayout;
 import org.eclipse.draw2d.geometry.Dimension;
@@ -25,7 +24,6 @@ import org.eclipse.gef.handles.MoveHandle;
 import org.eclipse.gef.requests.CreateRequest;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.BorderItemSelectionEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
@@ -37,7 +35,6 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
 import de.cau.cs.kieler.core.model.gmf.figures.layout.LabelLocator;
-import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.diagram.edit.policies.PortItemSemanticEditPolicy;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
@@ -90,7 +87,7 @@ public class PortEditPart extends AdvancedRenderingBorderedBorderItemEditPart {
                 case PortNameEditPart.VISUAL_ID:
                     return new BorderItemSelectionEditPolicy() {
 
-                        protected List createSelectionHandles() {
+                        protected List<?> createSelectionHandles() {
                             MoveHandle mh = new MoveHandle((GraphicalEditPart) getHost());
                             mh.setBorder(null);
                             return Collections.singletonList(mh);

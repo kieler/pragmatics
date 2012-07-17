@@ -24,8 +24,8 @@ import de.cau.cs.kieler.kiml.options.GraphFeature;
 /**
  * Data type used to store information for a layout algorithm.
  * 
- * @kieler.rating 2011-02-01 yellow
- *     reviewed by cmot, soh
+ * @kieler.design 2011-02-01 reviewed by cmot, soh
+ * @kieler.rating 2012-07-10 proposed yellow msp
  * @author msp
  */
 public class LayoutAlgorithmData implements ILayoutData {

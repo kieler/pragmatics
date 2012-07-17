@@ -108,16 +108,8 @@ public class EntityLayout extends AbstractHintLayout {
              * Calculate sum of preferred heights of all children(totalHeight). Calculate sum of minimum
              * heights of all children(minHeight). Cache Preferred Sizes and Minimum Sizes of all
              * children.
-             * 
-             * totalHeight is the sum of the preferred heights of all children totalMinHeight is the sum
-             * of the minimum heights of all children prefMinSumHeight is the sum of the difference
-             * between all children's preferred heights and minimum heights. (This is used as a ratio to
-             * calculate how much each child will shrink).
              */
             IFigure child;
-            int totalHeight = 0;
-            int totalMinHeight = 0;
-            double totalMaxHeight = 0;
     
             for (int i = 0; i < numChildren; i++) {
                 child = (IFigure) children.get(i);
@@ -125,10 +117,6 @@ public class EntityLayout extends AbstractHintLayout {
                 prefSizes[i] = child.getPreferredSize(availableWidth, availableHeight);
                 minSizes[i] = child.getMinimumSize(availableWidth, availableHeight);
                 maxSizes[i] = child.getMaximumSize();
-    
-                totalHeight += prefSizes[i].height;
-                totalMinHeight += minSizes[i].height;
-                totalMaxHeight += maxSizes[i].height;
             }
     
             /*
@@ -161,7 +149,6 @@ public class EntityLayout extends AbstractHintLayout {
                 }
                 newBounds.height -= amntShrinkCurrentHeight;
                 child.setBounds(newBounds);
-                totalHeight -= prefHeight;
                 y += newBounds.height;
             }
         }

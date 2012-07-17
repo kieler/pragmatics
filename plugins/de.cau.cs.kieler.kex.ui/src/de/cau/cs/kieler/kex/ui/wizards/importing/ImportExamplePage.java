@@ -43,7 +43,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -54,8 +53,6 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -63,7 +60,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.osgi.framework.Bundle;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.ui.util.TreeViewerCheckStateHandler;
 import de.cau.cs.kieler.core.util.Maybe;
@@ -83,22 +83,19 @@ import de.cau.cs.kieler.kex.ui.util.ImageConverter;
  */
 public class ImportExamplePage extends WizardPage {
 
+    private static final int FIRST_ELEMENT = 3;
+    private static final int SECOND_ELEMENT = 7;
+
     private static final int IMAGE_PRE_WIDTH = 426;
     private static final int IMAGE_PRE_HEIGHT = 238;
 
     private static final int DESC_HEIGHT_HINT = 200;
     private static final int DESC_MIN_HEIGHT = 160;
 
-    private static final int IMG_PADDINGS_WIDTH = 40;
-    private static final int IMG_PADDINGS_HEIGHT = 120;
-
-    private static final int WIZARD_MIN_WIDTH = 540;
-    private static final int WIZARD_MIN_HEIGHT = 720;
-
     private static final int TREE_MIN_WIDTH = 200;
     private static final int HORIZONTAL_INDENT = 10;
     private static final int VERTICAL_INDENT = 10;
-    
+
     private SashForm sashForm;
     private Text exampleDescField;
     private Label imageLabel;
@@ -109,8 +106,8 @@ public class ImportExamplePage extends WizardPage {
 
     private boolean isPreviewAvailable;
 
-    private List<Pair<Category, ArrayList<Object>>> allCategoryPairs =
-            new ArrayList<Pair<Category, ArrayList<Object>>>();
+    private List<Pair<Category, ArrayList<Object>>> allCategoryPairs 
+        = new ArrayList<Pair<Category, ArrayList<Object>>>();
 
     /**
      * The constructor will be called with following parameters.
@@ -140,7 +137,7 @@ public class ImportExamplePage extends WizardPage {
         setControl(sashForm);
         createLeft(sashForm);
         createRight(sashForm);
-        sashForm.setWeights(new int[] {3, 7});
+        sashForm.setWeights(new int[] { FIRST_ELEMENT, SECOND_ELEMENT });
     }
 
     private void createLeft(final Composite parent) {
@@ -178,9 +175,8 @@ public class ImportExamplePage extends WizardPage {
                 TreeSelection treeEvent = (TreeSelection) event.getSelection();
                 Object firstElement = treeEvent.getFirstElement();
                 if (firstElement instanceof Pair) {
-                    Pair<Category, ArrayList<Object>> pair =
-                            (Pair<Category, ArrayList<Object>>) firstElement;
-                    String desc = pair.getFirst().getDescription();
+                    String desc = ((Pair<Category, ArrayList<Object>>) firstElement).getFirst()
+                            .getDescription();
                     getExampleDescField().setText(desc != null ? desc : "");
                     updateImageLabel(initPreviewImage());
                     isPreviewAvailable = false;
@@ -308,7 +304,7 @@ public class ImportExamplePage extends WizardPage {
 
     private Image computeImage(final String imagePath, final String nameSpaceId,
             final int displayWidth, final int displayHeight, final int scaleType) {
-        
+
         if (imagePath != null && imagePath.length() > 0) {
             Bundle bundle = Platform.getBundle(nameSpaceId);
             URL resource = bundle
@@ -326,8 +322,8 @@ public class ImportExamplePage extends WizardPage {
                             resizeFactor = 1;
                         }
                         imgData = ImageConverter.scaleSWTImage(imgData,
-                                (int) (imgData.width / resizeFactor), (int) (imgData.height / resizeFactor),
-                                scaleType);
+                                (int) (imgData.width / resizeFactor),
+                                (int) (imgData.height / resizeFactor), scaleType);
                     }
                     image = new Image(this.getShell().getDisplay(), imgData);
                 } else {
@@ -344,10 +340,8 @@ public class ImportExamplePage extends WizardPage {
     private void fillTreeViewer() {
         List<Category> categories = ExampleManager.get().getCategories();
         Collection<Example> values = ExampleManager.get().getExamples().values();
-        List<Pair<Category, ArrayList<Object>>> viewElement =
-                new ArrayList<Pair<Category, ArrayList<Object>>>();
-        List<Pair<Category, ArrayList<Object>>> categoryPairList =
-                new ArrayList<Pair<Category, ArrayList<Object>>>();
+        List<Pair<Category, ArrayList<Object>>> viewElement = Lists.newArrayList();
+        List<Pair<Category, ArrayList<Object>>> categoryPairList = Lists.newArrayList();
 
         // create categories
         for (Category category : categories) {
@@ -375,12 +369,9 @@ public class ImportExamplePage extends WizardPage {
                 viewElement.add(categoryPair);
             }
         }
-
         treeViewer.setInput(viewElement);
-        // FIXME use the correct way.
         TreeViewerCheckStateHandler checkStateManager = new TreeViewerCheckStateHandler(treeViewer);
         checkStateManager.checkElements(values);
-
     }
 
     /**
@@ -413,7 +404,7 @@ public class ImportExamplePage extends WizardPage {
      * @author pkl
      * 
      */
-    private class ExampleContentProvider implements ITreeContentProvider {
+    private static class ExampleContentProvider implements ITreeContentProvider {
 
         // Maybe use treeElements which are implemented in an revision before.
         private List<Pair<Category, List<Object>>> input;
@@ -480,16 +471,15 @@ public class ImportExamplePage extends WizardPage {
          *            an element from the content
          * @return true if the filter admits the element
          */
-        @SuppressWarnings("unchecked")
         public boolean applyFilter(final Object element) {
             Boolean result = filterMap.get(element);
             if (result == null) {
                 if (filterValue != null && filterValue.length() > 0) {
                     if (element instanceof Pair) {
-                        Pair<Category, ArrayList<Object>> pair =
-                                (Pair<Category, ArrayList<Object>>) element;
-                        Category category = ((Pair<Category, ArrayList<Object>>) element)
-                                .getFirst();
+                        @SuppressWarnings("unchecked")
+                        Pair<Category, ArrayList<Object>> pair 
+                            = (Pair<Category, ArrayList<Object>>) element;
+                        Category category = pair.getFirst();
                         result = category.getTitle().toLowerCase().contains(filterValue);
                         if (result) {
                             for (Object ob : pair.getSecond()) {
@@ -506,16 +496,16 @@ public class ImportExamplePage extends WizardPage {
                         }
                     } else if (element instanceof Example) {
                         Example example = (Example) element;
-                        if (example.getTitle().toLowerCase().contains(filterValue)) {
-                            result = Boolean.TRUE;
-                        } else {
-                            result = Boolean.FALSE;
-                        }
+                        return Boolean.valueOf(example.getTitle().toLowerCase()
+                                .contains(filterValue));
                     }
                 } else {
                     result = Boolean.TRUE;
                 }
                 filterMap.put(element, result);
+            }
+            if (result == null) {
+                throw new IllegalStateException("ImportExamplePage: result of applyFilter is null!");
             }
             return result;
         }
@@ -530,7 +520,6 @@ public class ImportExamplePage extends WizardPage {
      */
     private class ExampleLabelProvider extends LabelProvider implements ILabelProvider {
 
-        // TODO think about icon conversions
         private static final int ICON_WIDTH = 16;
         private static final int ICON_HEIGHT = 16;
 
@@ -583,7 +572,7 @@ public class ImportExamplePage extends WizardPage {
         previewDesc.setText(Messages.getString("previewLabel"));
         GridData previewDescData = new GridData(GridData.FILL_HORIZONTAL);
         previewDesc.setLayoutData(previewDescData);
-        
+
         previewComp = new Composite(composite, SWT.BORDER);
         previewComp.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
         GridLayout imageCompositeLayout = new GridLayout(1, false);
@@ -595,7 +584,7 @@ public class ImportExamplePage extends WizardPage {
         imageCompositeGridData.minimumHeight = DESC_MIN_HEIGHT;
         imageCompositeGridData.horizontalIndent = HORIZONTAL_INDENT;
         previewComp.setLayoutData(imageCompositeGridData);
-        
+
         imageLabel = new Label(previewComp, SWT.CENTER);
         imageLabel.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
         imageLabel.setImage(initPreviewImage());
@@ -676,7 +665,7 @@ public class ImportExamplePage extends WizardPage {
         GridData descriptionLabelData = new GridData();
         descriptionLabelData.verticalIndent = VERTICAL_INDENT;
         descriptionLabel.setLayoutData(descriptionLabelData);
-        
+
         this.exampleDescField = new Text(composite, SWT.WRAP | SWT.MULTI | SWT.V_SCROLL
                 | SWT.H_SCROLL | SWT.BORDER);
         GridData descData = new GridData(GridData.FILL_HORIZONTAL);

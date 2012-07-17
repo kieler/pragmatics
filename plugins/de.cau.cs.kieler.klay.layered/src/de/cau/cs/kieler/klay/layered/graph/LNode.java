@@ -31,17 +31,21 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * A node in a layered graph.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class LNode extends LShape {
+    
+    /** the serial version UID. */
+    private static final long serialVersionUID = -4272570519129722541L;
     
     /** the owning layer. */
     private Layer owner;
     /** the ports of the node. */
-    private List<LPort> ports = new LinkedList<LPort>();
+    private final List<LPort> ports = new LinkedList<LPort>();
     /** this node's labels. */
-    private List<LLabel> labels = new LinkedList<LLabel>();
+    private final List<LLabel> labels = new LinkedList<LLabel>();
     /** this node's insets. */
-    private LInsets.Double margin = new LInsets.Double();
+    private final LInsets.Double margin = new LInsets.Double();
 
     /**
      * {@inheritDoc}

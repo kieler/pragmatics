@@ -190,6 +190,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Diagram createDiagram(IAdaptable semanticAdapter, String diagramKind,
             PreferencesHint preferencesHint) {
         Diagram diagram = NotationFactory.eINSTANCE.createDiagram();
@@ -251,6 +252,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Node createEntity_2001(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
@@ -290,6 +292,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Node createRelation_2002(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
@@ -326,6 +329,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Node createPort_3001(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
@@ -360,6 +364,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Node createEntity_3002(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
@@ -398,6 +403,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Node createRelation_3003(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
@@ -433,6 +439,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Edge createLink_4001(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Edge edge = NotationFactory.eINSTANCE.createEdge();
@@ -499,6 +506,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     private Node createCompartment(View owner, String hint, boolean canCollapse, boolean hasTitle,
             boolean canSort, boolean canFilter) {
         //SemanticListCompartment rv = NotationFactory.eINSTANCE.createSemanticListCompartment();

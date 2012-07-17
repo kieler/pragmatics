@@ -88,13 +88,31 @@ public interface IRenderingProvider {
      *            the old BorderItemLocator
      * @param object
      *            the model element
+     * @param collapseStatus
+     *            transmits whether the parent node has been recently collapsed or expaned
      * @return the new BorderItemLocator
      */
     IBorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parentFigure,
             final Object locator, final EObject object, CollapseStatus collapseStatus);
 
+    /**
+     * The different states a model element can have as far as collapsing and expanding is concerned. 
+     * @author ckru
+     *
+     */
     public enum CollapseStatus {
-        COLLAPSING, EXPANDING, UNCHANGED
+        /**
+         * The model element is currently collapsing.
+         */
+        COLLAPSING,
+        /**
+         * The model element is currently expanding.
+         */
+        EXPANDING,
+        /**
+         * The model element is not changing.
+         */
+        UNCHANGED
     }
     
 }

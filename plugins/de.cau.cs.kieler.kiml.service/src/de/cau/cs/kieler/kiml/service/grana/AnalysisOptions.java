@@ -20,16 +20,15 @@ import de.cau.cs.kieler.core.properties.Property;
  * Static definitions of options for graph analysis.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public final class AnalysisOptions {
     
-    /** analysis option identifier: process hierarchy recursively. */
-    public static String ANALYZE_HIERARCHY_ID = "de.cau.cs.kieler.grana.analyzeHierarchy";
     /**
      * Whether the full hierarchy of a graph should be included in the analysis.
      */
-    public static IProperty<Boolean> ANALYZE_HIERARCHY = new Property<Boolean>(
-            ANALYZE_HIERARCHY_ID, true);
+    public static final IProperty<Boolean> ANALYZE_HIERARCHY = new Property<Boolean>(
+            "de.cau.cs.kieler.grana.analyzeHierarchy", true);
 
     /**
      * Hidden constructor to avoid instantiation.

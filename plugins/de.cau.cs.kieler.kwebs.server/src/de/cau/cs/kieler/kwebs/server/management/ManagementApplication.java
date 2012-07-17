@@ -17,8 +17,7 @@ package de.cau.cs.kieler.kwebs.server.management;
 /**
  * Main layout server management console application.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public final class ManagementApplication {
 

@@ -20,7 +20,6 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
 public class ZestLayouterPlugin extends AbstractUIPlugin {

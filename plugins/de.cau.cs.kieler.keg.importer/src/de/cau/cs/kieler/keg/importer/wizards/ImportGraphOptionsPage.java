@@ -428,8 +428,7 @@ public class ImportGraphOptionsPage extends WizardPage {
     public IPropertyHolder getOptions() {
         // create import configuration
         if (options == null) {
-            options = new MapPropertyHolder() {
-            };
+            options = new MapPropertyHolder();
             // attach options
             for (ImporterOption<?> option : lastImporter.getOptions()) {
                 attachImportOption(option);

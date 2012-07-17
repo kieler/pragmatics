@@ -24,15 +24,19 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
  * @param <S> source graph type
  * @param <T> target graph type
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class TransformationData<S, T> extends MapPropertyHolder {
+    
+    /** the serial version UID. */
+    private static final long serialVersionUID = 1216251172929233162L;
     
     /** the original source graph. */
     private S sourceGraph;
     /** the transformed target graphs. */
-    private List<T> layoutGraphs = new LinkedList<T>();
+    private final List<T> layoutGraphs = new LinkedList<T>();
     /** the log messages. */
-    private List<String> logMessages = new LinkedList<String>();
+    private final List<String> logMessages = new LinkedList<String>();
     
     /**
      * Set the original source graph.

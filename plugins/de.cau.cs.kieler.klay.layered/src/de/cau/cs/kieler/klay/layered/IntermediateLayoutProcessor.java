@@ -11,9 +11,41 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered;
 
-import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.BigNodesProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.CommentPostprocessor;
+import de.cau.cs.kieler.klay.layered.intermediate.CommentPreprocessor;
+import de.cau.cs.kieler.klay.layered.intermediate.CompoundCycleProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.CompoundDummyEdgeRemover;
+import de.cau.cs.kieler.klay.layered.intermediate.CompoundGraphRestorer;
+import de.cau.cs.kieler.klay.layered.intermediate.CompoundSideProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.EdgeAndLayerConstraintEdgeReverser;
+import de.cau.cs.kieler.klay.layered.intermediate.EndLabelProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.GraphTransformer;
+import de.cau.cs.kieler.klay.layered.intermediate.HierarchicalPortConstraintProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.HierarchicalPortDummySizeProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.HierarchicalPortOrthogonalEdgeRouter;
+import de.cau.cs.kieler.klay.layered.intermediate.HierarchicalPortPositionProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.HyperedgeDummyMerger;
+import de.cau.cs.kieler.klay.layered.intermediate.HypernodesProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.InLayerConstraintProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.InvertedPortProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.LabelDummyInserter;
+import de.cau.cs.kieler.klay.layered.intermediate.LabelDummyRemover;
+import de.cau.cs.kieler.klay.layered.intermediate.LabelDummySwitcher;
+import de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.LongEdgeJoiner;
+import de.cau.cs.kieler.klay.layered.intermediate.LongEdgeSplitter;
+import de.cau.cs.kieler.klay.layered.intermediate.NodeMarginCalculator;
+import de.cau.cs.kieler.klay.layered.intermediate.NorthSouthPortPostprocessor;
+import de.cau.cs.kieler.klay.layered.intermediate.NorthSouthPortPreprocessor;
+import de.cau.cs.kieler.klay.layered.intermediate.PortListSorter;
+import de.cau.cs.kieler.klay.layered.intermediate.PortPositionProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.PortSideProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.ReversedEdgeRestorer;
+import de.cau.cs.kieler.klay.layered.intermediate.SelfLoopProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.SubgraphOrderingProcessor;
 
 /**
  * Definition of available intermediate layout processors for the layered layouter.
@@ -21,6 +53,7 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
  * 
  * @author cds
  * @author ima
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public enum IntermediateLayoutProcessor {
     
@@ -48,6 +81,8 @@ public enum IntermediateLayoutProcessor {
     
     /** Splits big nodes into multiple layers to distribute them better and reduce whitespace. */
     BIG_NODES_PROCESSOR,
+    /** Adds dummy nodes in edges where center labels are present. */
+    LABEL_DUMMY_INSERTER,
     
     // Before Phase 3
     
@@ -69,6 +104,9 @@ public enum IntermediateLayoutProcessor {
     PORT_LIST_SORTER,
     /** Inserts dummy nodes to take care of northern and southern ports. */
     NORTH_SOUTH_PORT_PREPROCESSOR,
+    /** Tries to switch the label dummy nodes which the middle most dummy node
+     *  of a long edge. */
+    LABEL_DUMMY_SWITCHER,
    
     
     // Before Phase 4
@@ -115,7 +153,11 @@ public enum IntermediateLayoutProcessor {
     /** Transposes the graph to perform a top-bottom drawing. */
     DOWN_DIR_POSTPROCESSOR,
     /** Mirrors and transposes the graph to perform a bottom-up drawing. */
-    UP_DIR_POSTPROCESSOR;
+    UP_DIR_POSTPROCESSOR,
+    /** Removes dummy nodes which were introduced for center labels. */
+    LABEL_DUMMY_REMOVER,
+    /** Place end labels on edges. */
+    END_LABEL_PROCESSOR;
     
     
     /**
@@ -231,6 +273,18 @@ public enum IntermediateLayoutProcessor {
         case UP_DIR_POSTPROCESSOR:
         case UP_DIR_PREPROCESSOR:
             return new GraphTransformer(GraphTransformer.Mode.MIRROR_AND_TRANSPOSE);
+            
+        case LABEL_DUMMY_INSERTER:
+            return new LabelDummyInserter();
+            
+        case LABEL_DUMMY_REMOVER:
+            return new LabelDummyRemover();
+            
+        case LABEL_DUMMY_SWITCHER:
+            return new LabelDummySwitcher();
+            
+        case END_LABEL_PROCESSOR:
+            return new EndLabelProcessor();
         
         default:
             return null;

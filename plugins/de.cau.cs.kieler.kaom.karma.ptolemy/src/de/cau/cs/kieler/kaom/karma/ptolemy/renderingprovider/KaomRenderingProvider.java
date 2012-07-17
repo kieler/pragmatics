@@ -23,11 +23,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.PolygonDecoration;
-import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.RotatableDecoration;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.PointList;
@@ -37,10 +35,7 @@ import org.eclipse.emf.workspace.AbstractEMFOperation;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IResizableCompartmentEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.TopGraphicEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editpolicies.ResizableCompartmentEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
-import org.eclipse.gmf.runtime.diagram.ui.figures.ShapeCompartmentFigure;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.RoutingStyle;
 import org.eclipse.gmf.runtime.notation.Smoothness;
@@ -50,10 +45,8 @@ import org.w3c.dom.Document;
 
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.vergil.icon.EditorIcon;
-import de.cau.cs.kieler.core.model.gmf.figures.RoundedRectangleFigure;
 import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
 import de.cau.cs.kieler.kaom.custom.EntityLayout;
-import de.cau.cs.kieler.kaom.karma.ptolemy.Activator;
 import de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation.FigureProvider;
 import de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation.PtolemyFetcher;
 import de.cau.cs.kieler.karma.AdvancedRenderingBorderedShapeEditPart;
@@ -95,7 +88,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
             List<EditPart> resizeableCompartments = ep.getResizableCompartments();
             for (EditPart compartment : resizeableCompartments) {
                 if (compartment instanceof IResizableCompartmentEditPart) {
-                    IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
                     ResizableCompartmentEditPolicy rcep = (ResizableCompartmentEditPolicy) resizeComp
                             .getEditPolicy("PrimaryDrag Policy");
                     rcep.deactivate();
@@ -178,8 +171,11 @@ public class KaomRenderingProvider implements IRenderingProvider {
             }
         } else if (input.equals("inputPort")) {
             IFigure f = figureProvider.createInputPort();
-            f.setMinimumSize(new Dimension(30,30));
-            f.setPreferredSize(new Dimension(30,30));
+            //They just have to have thoses sizes to be displayed correctly.
+            // SUPPRESS CHECKSTYLE NEXT Magic Number
+            f.setMinimumSize(new Dimension(30, 30));
+            // SUPPRESS CHECKSTYLE NEXT Magic Number
+            f.setPreferredSize(new Dimension(30, 30));
             return f;         
         } else if (input.equals("outputPort")) {
             return figureProvider.createOutputPort();
@@ -187,14 +183,15 @@ public class KaomRenderingProvider implements IRenderingProvider {
             return figureProvider.getDefaultFigure();
         }
     }
-
+    
+    /* Might be reused later on.
     private void unhideCompartment(EditPart part) {
         if (part instanceof AdvancedRenderingBorderedShapeEditPart) {
-            AdvancedRenderingBorderedShapeEditPart arbsep = (AdvancedRenderingBorderedShapeEditPart) part;
+        AdvancedRenderingBorderedShapeEditPart arbsep = (AdvancedRenderingBorderedShapeEditPart) part;
             List<EditPart> resizeableCompartments = arbsep.getResizableCompartments();
             for (EditPart compartment : resizeableCompartments) {
                 if (compartment instanceof IResizableCompartmentEditPart) {
-                    IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+             IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
                     resizeComp.getFigure().setVisible(true);
                 }
             }
@@ -203,21 +200,33 @@ public class KaomRenderingProvider implements IRenderingProvider {
             
         }
     }
+    */
     
-    private void hideCompartment(EditPart part, boolean hideExpandCollapse) {
+    /**
+     * Hides a compartment so that you don't accidently click it.
+     * @param part editpart that owns the compartment to hide.
+     * @param hideExpandCollapse should the object still be expandable.
+     */
+    private void hideCompartment(final EditPart part, final boolean hideExpandCollapse) {
         if (part instanceof AdvancedRenderingBorderedShapeEditPart) {
-            AdvancedRenderingBorderedShapeEditPart arbsep = (AdvancedRenderingBorderedShapeEditPart) part;
+            AdvancedRenderingBorderedShapeEditPart arbsep = 
+                    (AdvancedRenderingBorderedShapeEditPart) part;
+            //Can't do check here cause generics are badly designed.
+            @SuppressWarnings("unchecked")
             List<EditPart> resizeableCompartments = arbsep.getResizableCompartments();
             for (EditPart compartment : resizeableCompartments) {
                 if (compartment instanceof IResizableCompartmentEditPart) {
-                    IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                    IResizableCompartmentEditPart resizeComp = 
+                            (IResizableCompartmentEditPart) compartment;
                     resizeComp.getFigure().setVisible(false);
                 }
             }
             if (hideExpandCollapse) {
-                arbsep.setCollapseExpandSize(new Dimension(0,0));
+                arbsep.setCollapseExpandSize(new Dimension(0, 0));
             } else {
-                arbsep.setCollapseExpandSize(new Dimension(8,8));
+                //Thats just how big the button is.
+                // SUPPRESS CHECKSTYLE NEXT Magic Number
+                arbsep.setCollapseExpandSize(new Dimension(8, 8));
             }
         }
         
@@ -302,7 +311,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
                     IFigure figure = figureProvider.createFigureFromSvg(doc);
                     return figure;
                 } else {
-                    Status myStatus = new Status(IStatus.WARNING, Activator.PLUGIN_ID,
+                    Status myStatus = new Status(IStatus.WARNING, "de.cau.cs.kieler.kaom.karma.ptolemy",
                             "couldn't get svg document from ptolemy");
                     StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
                     return figureProvider.getErrorFigure();

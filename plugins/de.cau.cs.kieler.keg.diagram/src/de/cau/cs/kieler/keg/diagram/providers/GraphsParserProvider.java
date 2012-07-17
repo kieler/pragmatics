@@ -630,6 +630,7 @@ public class GraphsParserProvider extends AbstractProvider implements IParserPro
         /**
          * @generated
          */
+        @SuppressWarnings("rawtypes")
         public Object getAdapter(Class adapter) {
             if (IElementType.class.equals(adapter)) {
                 return elementType;

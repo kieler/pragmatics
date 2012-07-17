@@ -37,8 +37,9 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  * Default implementation of the layout configuration interface. This configuration handles the
  * default values of layout algorithms and layout options.
  *
- * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
+ * @kieler.rating 2012-07-05 yellow
+ *      review by cmot, sgu
  */
 public class DefaultLayoutConfig implements ILayoutConfig {
     
@@ -208,6 +209,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     
     /**
      * Determine the most appropriate layout algorithm for the given layout hint and diagram type.
+     * If no layout algorithms are registered, this returns {@code null}.
      * 
      * @param theLayoutHint either a layout algorithm identifier,
      *          or a layout type identifier, or {@code null}
@@ -216,7 +218,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
      */
     public static LayoutAlgorithmData getLayouterData(final String theLayoutHint,
             final String diagramType) {
-        String chDiagType = diagramType == null || diagramType.length() == 0
+        String chDiagType = (diagramType == null || diagramType.length() == 0)
                 ? LayoutDataService.DIAGRAM_TYPE_GENERAL : diagramType;
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         String layoutHint = theLayoutHint;
@@ -228,40 +230,48 @@ public class DefaultLayoutConfig implements ILayoutConfig {
         }
 
         // look for the provider with highest priority, interpreting the hint as layout type
-        LayoutAlgorithmData bestProvider = null;
+        LayoutAlgorithmData bestAlgo = null;
         int bestPrio = LayoutAlgorithmData.MIN_PRIORITY;
         boolean matchesLayoutType = false, matchesDiagramType = false, matchesGeneralDiagram = false;
-        for (LayoutAlgorithmData providerData : layoutServices.getAlgorithmData()) {
-            int currentPrio = providerData.getSupportedPriority(chDiagType);
-            String layoutType = providerData.getType();
+        for (LayoutAlgorithmData currentAlgo : layoutServices.getAlgorithmData()) {
+            int currentPrio = currentAlgo.getSupportedPriority(chDiagType);
+            String layoutType = currentAlgo.getType();
             if (matchesLayoutType) {
                 if (layoutType.length() > 0 && layoutType.equals(layoutHint)) {
                     if (matchesDiagramType) {
                         if (currentPrio > bestPrio) {
-                            bestProvider = providerData;
+                            // the algorithm matches the layout type hint and has higher priority for
+                            // the given diagram type than the previous one
+                            bestAlgo = currentAlgo;
                             bestPrio = currentPrio;
                         }
                     } else {
                         if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {
-                            bestProvider = providerData;
+                            // the algorithm matches the layout type hint and has higher priority
+                            // for the given diagram type than the previous one
+                            bestAlgo = currentAlgo;
                             bestPrio = currentPrio;
                             matchesDiagramType = true;
                             matchesGeneralDiagram = false;
                         } else {
-                            currentPrio = providerData.getSupportedPriority(
+                            currentPrio = currentAlgo.getSupportedPriority(
                                     LayoutDataService.DIAGRAM_TYPE_GENERAL);
                             if (matchesGeneralDiagram) {
                                 if (currentPrio > bestPrio) {
-                                    bestProvider = providerData;
+                                    // the algorithm matches the layout type hint and has higher
+                                    // priority for general diagrams than the previous one
+                                    bestAlgo = currentAlgo;
                                     bestPrio = currentPrio;
                                 }
                             } else {
                                 if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {
-                                    bestProvider = providerData;
+                                    // the algorithm has a priority for general diagrams,
+                                    // while the previous one did not have it
+                                    bestAlgo = currentAlgo;
                                     bestPrio = currentPrio;
                                     matchesGeneralDiagram = true;
-                                } else if (bestProvider == null) {
-                                    bestProvider = providerData;
+                                } else if (bestAlgo == null) {
+                                    bestAlgo = currentAlgo;
                                 }
                             }
                         }
@@ -269,17 +279,21 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                 }
             } else {
                 if (layoutType.length() > 0 && layoutType.equals(layoutHint)) {
-                    bestProvider = providerData;
+                    // the first algorithm that matches the layout type hint is found
+                    bestAlgo = currentAlgo;
                     matchesLayoutType = true;
                     if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {
+                        // the algorithm supports the given diagram type
                         bestPrio = currentPrio;
                         matchesDiagramType = true;
                         matchesGeneralDiagram = false;
                     } else {
                         matchesDiagramType = false;
-                        currentPrio = providerData.getSupportedPriority(
+                        currentPrio = currentAlgo.getSupportedPriority(
                                 LayoutDataService.DIAGRAM_TYPE_GENERAL);
                         if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {
+                            // the algorithm does not support the given diagram type, but
+                            // has a priority for general diagrams
                             bestPrio = currentPrio;
                             matchesGeneralDiagram = true;
                         } else {
@@ -289,30 +303,37 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                 } else {
                     if (matchesDiagramType) {
                         if (currentPrio > bestPrio) {
-                            bestProvider = providerData;
+                            // the algorithm has higher priority for the given diagram type
+                            // than the previous one
+                            bestAlgo = currentAlgo;
                             bestPrio = currentPrio;
                         }
                     } else {
                         if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {
-                            bestProvider = providerData;
+                            // the first algorithm that matches the given diagram type is found
+                            bestAlgo = currentAlgo;
                             bestPrio = currentPrio;
                             matchesDiagramType = true;
                             matchesGeneralDiagram = false;
                         } else {
-                            currentPrio = providerData.getSupportedPriority(
+                            currentPrio = currentAlgo.getSupportedPriority(
                                     LayoutDataService.DIAGRAM_TYPE_GENERAL);
                             if (matchesGeneralDiagram) {
                                 if (currentPrio > bestPrio) {
-                                    bestProvider = providerData;
+                                    // the algorithm has higher priority for general diagrams
+                                    // than the previous one
+                                    bestAlgo = currentAlgo;
                                     bestPrio = currentPrio;
                                 }
                             } else {
                                 if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {
-                                    bestProvider = providerData;
+                                    // the first algorithm with a priority for general diagrams is found
+                                    bestAlgo = currentAlgo;
                                     bestPrio = currentPrio;
                                     matchesGeneralDiagram = true;
-                                } else if (bestProvider == null) {
-                                    bestProvider = providerData;
+                                } else if (bestAlgo == null) {
+                                    // if no match is found, the first algorithm in the list is returned
+                                    bestAlgo = currentAlgo;
                                 }
                             }
                         }
@@ -320,7 +341,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                 }
             }
         }
-        return bestProvider;
+        return bestAlgo;
     }
 
     /**

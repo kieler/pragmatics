@@ -62,7 +62,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      */
     private static final int DEFAULT_TARGET_GROUP_COLUMNS = 3;
     /**
-     * The top margin of the target group combo box
+     * The top margin of the target group combo box.
      */
     private static final int DEFAULT_TARGET_GROUP_MARGIN_TOP = 20;
     /**
@@ -266,4 +266,5 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
             }
         }
     }
+    
 }

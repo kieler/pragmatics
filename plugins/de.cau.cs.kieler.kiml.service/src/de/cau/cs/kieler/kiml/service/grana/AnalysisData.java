@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.ILayoutData;
  * 
  * @author mri
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class AnalysisData implements ILayoutData, IDepending<String> {
 
@@ -105,7 +106,7 @@ public class AnalysisData implements ILayoutData, IDepending<String> {
     /**
      * {@inheritDoc}
      */
-    public void setId(String id) {
+    public void setId(final String id) {
         this.analysisId = id;
     }
 
@@ -119,7 +120,7 @@ public class AnalysisData implements ILayoutData, IDepending<String> {
     /**
      * {@inheritDoc}
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.analysisName = name;
     }
 
@@ -133,7 +134,7 @@ public class AnalysisData implements ILayoutData, IDepending<String> {
     /**
      * {@inheritDoc}
      */
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.analysisDescription = description;
     }
 

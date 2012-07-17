@@ -18,7 +18,10 @@ import org.eclipse.osgi.util.NLS;
 
 
 /**
+ * Internationalization constants.
+ * 
  * @author cds
+ * @kieler.rating yellow 2012-07-10 KI-15 cmot, grh
  */
 public final class Messages extends NLS {
     // This is an automatically generated utility class. Keep Checkstyle off.

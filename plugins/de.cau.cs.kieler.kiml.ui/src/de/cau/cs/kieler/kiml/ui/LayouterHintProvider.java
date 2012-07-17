@@ -27,13 +27,14 @@ import de.cau.cs.kieler.kiml.LayoutTypeData;
  * Content provider for displaying layout algorithms sorted by layout type.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class LayouterHintProvider implements ITreeContentProvider {
 
     /** the layout services used for this provider. */
     private LayoutDataService layoutServices;
     /** the filter map that stores visibility information. */
-    private Map<Object, Boolean> filterMap = new HashMap<Object, Boolean>();
+    private final Map<Object, Boolean> filterMap = new HashMap<Object, Boolean>();
     /** the current filter value. */
     private String filterValue;
     /** the current best filter match. */

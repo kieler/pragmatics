@@ -250,11 +250,6 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
                 LNode sourceNode = lnode.getProperty(Properties.LONG_EDGE_SOURCE).getNode();
                 LNode targetNode = lnode.getProperty(Properties.LONG_EDGE_TARGET).getNode();
-                // if (Util.getRelatedCompoundNode(lnode, layeredGraph) == upperBorder) {
-                // ret = compareIndex(lnode, ret, lowerSide);
-                // }
-
-                // following four lines original
                 if (sourceNode.getProperty(Properties.PARENT) == targetNode
                         .getProperty(Properties.PARENT)) {
                     if ((Util.isDescendant(sourceNode, upperBorder))
@@ -266,18 +261,6 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
                         ret = compareIndex(lnode, ret, lowerSide);
                     }
                 }
-
-                // Object origin = edge.getProperty(Properties.ORIGIN);
-                // if (origin instanceof KEdge) {
-                // LNode sourceNode = edge.getSource().getNode();
-                // // KNode kSourceNode = (KNode) (sourceNode.getProperty(Properties.ORIGIN));
-                // KEdge originEdge = (KEdge) origin;
-                // KNode kSourceNode = originEdge.getSource();
-                // if (sourceNode == upperBorder
-                // || KimlUtil.isDescendant(kSourceNode, upperBorderOrigin)) {
-                // ret = compareIndex(lnode, ret, lowerSide);
-                // }
-                // }
             }
             // keep north-south-port dummies and their nodes together
             if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {

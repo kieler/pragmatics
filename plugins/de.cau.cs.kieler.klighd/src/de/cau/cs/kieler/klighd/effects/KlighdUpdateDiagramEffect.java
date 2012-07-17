@@ -14,9 +14,9 @@
 package de.cau.cs.kieler.klighd.effects;
 
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 
@@ -28,6 +28,9 @@ import de.cau.cs.kieler.klighd.views.DiagramViewPart;
  * @author mri
  */
 public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
+
+    /** the serial version UID. */
+    private static final long serialVersionUID = -5653125647788085065L;
 
     /**
      * Constructs an effect that updates the diagram view for the given identifier with the given
@@ -89,7 +92,7 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
      */
     public void execute() {
         final IPropertyHolder propertyHolder = this;
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 DiagramViewPart view;
                 if (DiagramViewManager.getInstance().getView(getId()) == null) {
@@ -106,7 +109,7 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
                     setSourceWorkbenchPart();
                 }
             }
-        }, true);
+        });
     }
 
 }

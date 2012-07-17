@@ -19,10 +19,14 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
  * Abstract superclass for the layers, nodes, ports, and edges of a layered graph.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public abstract class LGraphElement extends MapPropertyHolder
         implements Comparable<LGraphElement> {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = 5480383439314459124L;
+    
     // CHECKSTYLEOFF VisibilityModifier
     /** Identifier value, may be arbitrarily used by algorithms. */
     public int id;

@@ -92,7 +92,7 @@ public class KiViCoreTest {
     public void TestGetTriggerStates() {
         ICombination combo = new TestCombinationManyExecutes();
         Class<? extends ITriggerState>[] actuals = combo.getTriggerStates();
-        Class[] expecteds = { AState.class, BState.class, SpamState.class };
+        Class<?>[] expecteds = { AState.class, BState.class, SpamState.class };
         assertArrayEquals("The expected trigger states are not correct.", expecteds, actuals);
     }
 

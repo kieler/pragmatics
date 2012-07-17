@@ -44,6 +44,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * Utility class that is able to render a KGraph instance.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class KGraphRenderer {
     
@@ -59,7 +60,7 @@ public class KGraphRenderer {
     private static final double ARROW_WIDTH = 7.0f;
     
     /** mapping of each layout graph element to its computed bounds. */
-    private Map<Object, PaintRectangle> boundsMap = new LinkedHashMap<Object, PaintRectangle>();
+    private final Map<Object, PaintRectangle> boundsMap = new LinkedHashMap<Object, PaintRectangle>();
     /** border color for nodes. */
     private Color nodeBorderColor;
     /** fill color for nodes. */

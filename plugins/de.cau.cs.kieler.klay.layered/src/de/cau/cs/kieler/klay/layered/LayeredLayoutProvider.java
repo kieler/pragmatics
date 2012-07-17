@@ -35,7 +35,6 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.components.ComponentsProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
@@ -85,6 +84,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author msp
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
@@ -315,7 +315,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 nodePlacer = new LinearSegmentsNodePlacer();
             }
             break;
-        case BK:
+        case BRANDES_KOEPF:
             if (!(nodePlacer instanceof BKNodePlacer)) {
                 nodePlacer = new BKNodePlacer();
             }

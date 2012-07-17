@@ -33,22 +33,21 @@ public class ArrayResultVisualizer extends AbstractSimpleVisualizer<String> {
     /**
      * {@inheritDoc}
      */
-    public String visualize(final AnalysisData analysis,
-            final Object result) {
+    public String visualize(final AnalysisData analysis, final Object result) {
         if (result instanceof Object[]) {
             Object[] objects = (Object[]) result;
-            String vis = "(";
+            StringBuilder vis = new StringBuilder("(");
             boolean first = true;
             for (Object object : objects) {
                 if (first) {
                     first = false;
                 } else {
-                    vis += ", ";
+                    vis.append(", ");
                 }
-                vis += object.toString();
+                vis.append(object.toString());
             }
-            vis += ")";
-            return vis;
+            vis.append(")");
+            return vis.toString();
         } else {
             return result.toString();
         }

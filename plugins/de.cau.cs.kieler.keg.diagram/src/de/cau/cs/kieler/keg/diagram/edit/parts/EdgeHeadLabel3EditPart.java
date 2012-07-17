@@ -309,6 +309,7 @@ public class EdgeHeadLabel3EditPart extends LabelEditPart implements ITextAwareE
     /**
      * @generated
      */
+    @SuppressWarnings("deprecation")
     protected DirectEditManager getManager() {
         if (manager == null) {
             setManager(new TextDirectEditManager(this,

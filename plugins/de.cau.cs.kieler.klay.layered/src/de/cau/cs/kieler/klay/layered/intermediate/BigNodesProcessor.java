@@ -189,7 +189,7 @@ public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProce
         // save current node IDs to restore them in 'correctLayering()'
         nodeIDs = new LinkedHashMap<LNode, Integer>(nodes.size());
         for (LNode node : nodes) {
-            nodeIDs.put(node, new Integer(node.id));
+            nodeIDs.put(node, node.id);
         }
     }
 

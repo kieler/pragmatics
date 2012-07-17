@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
@@ -32,6 +33,7 @@ import org.eclipse.gmf.runtime.notation.StringValueStyle;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -128,11 +130,17 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             
             // get aspect ratio for the current diagram
             try {
-                Point size = focusEditPart.getViewer().getControl().getSize();
-                if (size.x > 0 && size.y > 0) {
-                    context.setProperty(EclipseLayoutConfig.ASPECT_RATIO,
-                            Math.round(ASPECT_RATIO_ROUND * (float) size.x / size.y)
-                            / ASPECT_RATIO_ROUND);
+                EditPartViewer viewer = focusEditPart.getViewer();
+                if (viewer != null) {
+                    Control control = viewer.getControl();
+                    if (control != null) {
+                        Point size = control.getSize();
+                        if (size.x > 0 && size.y > 0) {
+                            context.setProperty(EclipseLayoutConfig.ASPECT_RATIO,
+                                    Math.round(ASPECT_RATIO_ROUND * (float) size.x / size.y)
+                                    / ASPECT_RATIO_ROUND);
+                        }
+                    }
                 }
             } catch (SWTException exception) {
                 // ignore exception

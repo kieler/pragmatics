@@ -22,8 +22,8 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * extension point. All layout providers published to Eclipse this way are collected in the
  * {@link LayoutDataService} singleton, provided the UI plugin is loaded.
  * 
- * @kieler.rating 2011-01-17 yellow
- *     reviewed by haf, cmot, soh
+ * @kieler.design 2011-01-17 reviewed by haf, cmot, soh
+ * @kieler.rating 2012-07-10 proposed yellow msp
  * @author ars
  * @author msp
  */

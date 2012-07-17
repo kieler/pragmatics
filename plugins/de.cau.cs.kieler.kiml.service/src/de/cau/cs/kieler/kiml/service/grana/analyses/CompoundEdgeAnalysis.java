@@ -28,6 +28,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * hierarchy levels, the third component is the number of edges incident to compound nodes.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class CompoundEdgeAnalysis implements IAnalysis {
     
@@ -37,8 +38,8 @@ public class CompoundEdgeAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(KNode parentNode, Map<String, Object> results,
-            IKielerProgressMonitor progressMonitor) {
+    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Compound edge analysis", 1);
 
         int edgeCount = 0, maxLevels = 0, compoundEdges = 0;

@@ -37,6 +37,8 @@ import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotHandler;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool.Cleanup;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.TransformationService;
+import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 
 /**
@@ -57,7 +59,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     /** the Graphviz process pool. */
     private GraphvizTool graphvizTool;
     /** the Graphviz Dot format handler. */
-    private DotHandler dotHandler = new DotHandler();
+    private DotHandler dotHandler;
     /** the call number for the current execution. */
     private int myCallNo;
 
@@ -68,6 +70,14 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     public void initialize(final String parameter) {
         command = Command.valueOf(parameter);
         graphvizTool = new GraphvizTool(command);
+        // the dot format handler is indirectly fetched in order to ensure proper injection
+        ITransformationHandler<?> handler = TransformationService.getInstance()
+                .getFormatData(DotHandler.ID).getHandler();
+        if (handler instanceof DotHandler) {
+            dotHandler = (DotHandler) handler;
+        } else {
+            throw new IllegalStateException("The Graphviz Dot language support is not available.");
+        }
     }
     
     /**

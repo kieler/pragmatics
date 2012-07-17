@@ -45,6 +45,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * 
  * @author mri
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public abstract class AnalysisService {
 
@@ -203,7 +204,7 @@ public abstract class AnalysisService {
                                 throw new WrappedException(e);
                             }
                         }
-                        public void destroy(IAnalysis provider) {
+                        public void destroy(final IAnalysis provider) {
                         }
                     };
                     analysisData.createPool(analysisFactory);

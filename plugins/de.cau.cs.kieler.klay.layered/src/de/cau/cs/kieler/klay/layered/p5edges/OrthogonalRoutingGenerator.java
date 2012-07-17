@@ -60,6 +60,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * 
  * @author msp
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class OrthogonalRoutingGenerator {
     
@@ -385,6 +386,27 @@ public class OrthogonalRoutingGenerator {
         public int compareTo(final HyperNode other) {
             return this.mark - other.mark;
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object instanceof HyperNode) {
+                HyperNode other = (HyperNode) object;
+                return this.mark == other.mark;
+            }
+            return false;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return mark;
+        }
+        
     }
 
     /**
@@ -436,13 +458,13 @@ public class OrthogonalRoutingGenerator {
     private static final int CONFLICT_PENALTY = 16;
     
     /** routing direction strategy. */
-    private IRoutingDirectionStrategy routingStrategy = null;
+    private IRoutingDirectionStrategy routingStrategy;
     /** spacing between edges. */
     private double edgeSpacing;
     /** threshold at which conflicts of horizontal line segments are detected. */
     private double conflictThreshold;
     
-    private String debugPrefix = null;
+    private String debugPrefix;
     
     
     ///////////////////////////////////////////////////////////////////////////////

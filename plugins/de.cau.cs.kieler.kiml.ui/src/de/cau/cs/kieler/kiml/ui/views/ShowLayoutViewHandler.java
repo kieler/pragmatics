@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
  * A command handler for displaying the layout view.
  *
  * @author msp
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class ShowLayoutViewHandler extends AbstractHandler {
 

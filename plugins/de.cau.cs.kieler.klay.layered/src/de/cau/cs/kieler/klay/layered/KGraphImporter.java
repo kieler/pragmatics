@@ -33,6 +33,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -56,6 +57,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author msp
  * @author cds
+ * @kieler.rating 2012-07-10 proposed yellow msp
  */
 public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
@@ -524,7 +526,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             
             if (sourceNode != null && targetNode != null) {
                 // if we have a self-loop, set the appropriate graph property
-                if (sourceNode != graph && sourceNode == targetNode) {
+                if (sourceNode == targetNode) {
                     Set<GraphProperties> graphProperties = layeredGraph.getProperty(
                             Properties.GRAPH_PROPERTIES);
                     graphProperties.add(GraphProperties.SELF_LOOPS);
@@ -557,6 +559,24 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             newLabel.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
                     labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT));
             newEdge.getLabels().add(newLabel);
+            if (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                    == EdgeLabelPlacement.CENTER) {
+                // Add annotation if graph contains labels which shall be placed
+                // in the middle of an edge
+                Set<GraphProperties> graphProperties = layeredGraph.getProperty(
+                        Properties.GRAPH_PROPERTIES);
+                graphProperties.add(GraphProperties.CENTER_LABELS);
+            }
+            if (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                    == EdgeLabelPlacement.HEAD
+                || labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                    == EdgeLabelPlacement.TAIL) {
+                // Add annotation if graph contains labels which shall be placed
+                // in the middle of an edge
+                Set<GraphProperties> graphProperties = layeredGraph.getProperty(
+                        Properties.GRAPH_PROPERTIES);
+                graphProperties.add(GraphProperties.END_LABELS);
+            }
         }
         
         // copy the bend points of the edge if they are needed by anyone

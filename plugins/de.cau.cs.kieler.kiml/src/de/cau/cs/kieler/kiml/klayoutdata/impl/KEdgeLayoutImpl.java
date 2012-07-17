@@ -48,8 +48,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
  * </p>
  *
  * @generated
- * @kieler.rating 2011-03-14 yellow
- *     reviewed by cmot, cds
+ * @kieler.design 2011-03-14 reviewed by cmot, cds
  */
 public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
     /**
@@ -373,12 +372,13 @@ public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
      */
     @Override
     public String toString() {
-        String result = "( " + sourcePoint;
+        StringBuilder result = new StringBuilder("( ").append(sourcePoint);
         if (bendPoints != null) {
             for (KPoint p : bendPoints) {
-                result += " -> " + p;
+                result.append(" -> ").append(p);
             }
         }
-        return result + " -> " + targetPoint + " )";
+        result.append(" -> ").append(targetPoint).append(" )");
+        return result.toString();
     }
 } // KEdgeLayoutImpl

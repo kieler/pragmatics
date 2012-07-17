@@ -14,9 +14,7 @@
 package de.cau.cs.kieler.core.kivi.test;
 
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
-import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
 import de.cau.cs.kieler.core.kivi.ITrigger;
-import de.cau.cs.kieler.core.kivi.ITriggerState;
 import de.cau.cs.kieler.core.kivi.test.TestTriggerSpammer.SpamState;
 
 /**
