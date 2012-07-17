@@ -13,8 +13,12 @@
  */
 package de.cau.cs.kieler.klighd.triggers;
 
-import java.util.LinkedList;
 import java.util.List;
+
+import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
 import de.cau.cs.kieler.core.kivi.ITrigger;
@@ -70,7 +74,7 @@ public class KlighdSelectionTrigger extends AbstractTrigger {
          */
         public KlighdSelectionState() {
             // no selections
-            selections = new LinkedList<SelectionElement>();
+            selections = Lists.newLinkedList();
         }
 
         /**
@@ -99,6 +103,23 @@ public class KlighdSelectionTrigger extends AbstractTrigger {
          */
         public List<SelectionElement> getSelections() {
             return selections;
+        }
+        
+        public List<Object> getSelectedModelElements() {
+            return Lists.transform(selections, new Function<SelectionElement, Object>() {
+                public Object apply(SelectionElement input) {                   
+                    return input.getModelElement();
+                }
+            });
+        }
+
+        public List<EObject> getSelectedEModelElements() {
+            return Lists.transform(selections, new Function<SelectionElement, EObject>() {
+                public EObject apply(SelectionElement input) {
+                    return input.getModelElement() instanceof EObject ?
+                            (EObject) input.getModelElement() : null;
+                }
+            });
         }
 
         /**
