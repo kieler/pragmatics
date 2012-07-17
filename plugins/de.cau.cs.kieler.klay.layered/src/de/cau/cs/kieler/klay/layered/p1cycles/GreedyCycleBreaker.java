@@ -31,11 +31,14 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * Cycle breaker implementation that uses a greedy algorithm. Inspired by Section 9.4 of
+ * Cycle breaker implementation that uses a greedy algorithm. Inspired by
  * <ul>
+ *   <li>Peter Eades, Xuemin Lin, W. F. Smyth,
+ *     A fast and effective heuristic for the feedback arc set problem.
+ *     <i>Information Processing Letters</i> 47(6), pp. 319-323, 1993.</li>
  *   <li>Giuseppe di Battista, Peter Eades, Roberto Tamassia, Ioannis G. Tollis,
  *     <i>Graph Drawing: Algorithms for the Visualization of Graphs</i>,
- *     Prentice Hall, New Jersey, 1999
+ *     Prentice Hall, New Jersey, 1999 (Section 9.4).</li>
  * </ul>
  * 
  * <p>This cycle breaker doesn't support layer constraints out of the box. If layer

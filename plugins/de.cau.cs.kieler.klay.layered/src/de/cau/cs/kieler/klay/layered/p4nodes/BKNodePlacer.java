@@ -38,15 +38,16 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * 
  * This algorithm is an implementation for solving the node placement problem
- * which is posed in phase 4 of the KLay Layered algorithm.
+ * which is posed in phase 4 of the KLay Layered algorithm. Inspired by
+ * <ul>
+ *   <li> Ulrik Brandes and Boris K&ouml;pf, Fast and simple horizontal coordinate assignment.
+ *     In <i>Proceedings of the 9th International Symposium on Graph Drawing (GD'01)</i>,
+ *     LNCS vol. 2265, pp. 33-36, Springer, 2002. </li>
+ * </ul>
  * 
- * It is based on the node placement algorithm by Ulrik Brandes and Boris Koepf
- * @see <a href="http://www.informatik.uni-konstanz.de/algo/publications/bk-fshca-01.pdf">
- * the corresponding paper</a> and was extended to be able to cope with ports, node sizes,
- * node margins and was made more stable in general.
- * 
+ * The original algorithm was extended to be able to cope with ports, node sizes, and
+ * node margins, and was made more stable in general.
  * The algorithm is structured in five steps, which include two new steps which were
  * not included in the original algorithm by Brandes and Koepf. The middle three steps
  * are executed four times, traversing the graph in all combinations of TOP or BOTTOM

@@ -106,55 +106,12 @@ point="org.eclipse.ui.menus">
       </parameter>
       <visibleWhen
             checkEnabled="false">
-         <and>
-            <reference
-                  definitionId="de.cau.cs.kieler.expression.editorActive">
-            </reference>
-            <not>
-               <reference
-                     definitionId="de.cau.cs.kieler.expression.onlyConnectionsSelected">
-               </reference>
-            </not>
-            <not>
-               <reference
-                     definitionId="de.cau.cs.kieler.expression.diagramSelected">
-               </reference>
-            </not>
-            <count
-                  value="1">
-            </count>
-            <with
-                  variable="activeEditor">
-               <test
-                     property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
-               </test>
-            </with>
-         </and>
-      </visibleWhen>
-   </command>
-   <command
-         commandId="de.cau.cs.kieler.kiml.ui.command.layout"
-         icon="icons/menu16/kieler-arrange.gif"
-         label="%command.label.1"
-         mnemonic="%command.mnemonic.0"
-         style="push">
-      <parameter
-            name="de.cau.cs.kieler.kiml.ui.layoutScope"
-            value="diagram">
-      </parameter>
-      <visibleWhen
-            checkEnabled="false">
-         <and>
-            <reference
-                  definitionId="de.cau.cs.kieler.expression.diagramSelected">
-            </reference>
-            <with
-                  variable="activeEditor">
-               <test
-                     property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
-               </test>
-            </with>
-         </and>
+         <with
+               variable="activeEditor">
+            <test
+                  property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
+            </test>
+         </with>
       </visibleWhen>
    </command>
 </menuContribution>

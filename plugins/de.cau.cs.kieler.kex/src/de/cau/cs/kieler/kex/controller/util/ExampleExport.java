@@ -108,7 +108,11 @@ public final class ExampleExport {
         File destFile = new File(stringBuilder.append(projectFile.getPath())
                 .append(File.separatorChar).append(IMAGES_FOLDER).toString());
         if (!destFile.exists()) {
-            destFile.mkdir();
+            try {
+                destFile.mkdir();
+            } catch (SecurityException se) {
+                se.printStackTrace();
+            }
         }
         String absolutePath = extensionCreator.copyOverviewPic(destFile.getPath(), overviewPic,
                 finishedResources);

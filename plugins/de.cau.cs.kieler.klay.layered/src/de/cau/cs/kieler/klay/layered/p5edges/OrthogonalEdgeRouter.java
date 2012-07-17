@@ -31,9 +31,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 /**
  * Edge routing implementation that creates orthogonal bend points. Inspired by
  * <ul>
- *   <li>Georg Sander. Layout of directed hypergraphs with orthogonal hyperedges. In
+ *   <li>Georg Sander, Layout of directed hypergraphs with orthogonal hyperedges. In
  *     <i>Proceedings of the 11th International Symposium on Graph Drawing (GD '03)</i>,
- *     volume 2912 of LNCS, pp. 381-386. Springer, 2004.</li>
+ *     LNCS vol. 2912, pp. 381-386, Springer, 2004.</li>
  *   <li>Giuseppe di Battista, Peter Eades, Roberto Tamassia, Ioannis G. Tollis,
  *     <i>Graph Drawing: Algorithms for the Visualization of Graphs</i>,
  *     Prentice Hall, New Jersey, 1999 (Section 9.4, for cycle breaking in the
