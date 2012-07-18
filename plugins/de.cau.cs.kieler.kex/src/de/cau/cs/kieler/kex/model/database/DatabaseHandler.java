@@ -27,17 +27,17 @@ import java.sql.Statement;
  */
 public class DatabaseHandler {
 
-    private final String driver = "org.postgresql.Driver";
+    private static final String DRIVER = "org.postgresql.Driver";
 
-    private final String host = "localhost";
+    private static final String HOST = "localhost";
 
-    private final String port = "5432";
+    private static final String PORT = "5432";
 
-    private final String database = "postgres";
+    private static final String DATABASE = "postgres";
 
-    private final String user = "postgres";
+    private static final String USER = "postgres";
 
-    private final String password = "postgres";
+    private static final String PASSWORD = "postgres";
 
     private Connection connection = null;
 
@@ -52,16 +52,16 @@ public class DatabaseHandler {
         // jdbc:postgresql://host:port/database
         
         StringBuilder url = new StringBuilder("jdbc:postgresql:");
-        if (host != null) {
-            url.append("//" + host);
+        if (HOST != null) {
+            url.append("//" + HOST);
             
-            if (port != null) {
-                url.append(":" + port);
+            if (PORT != null) {
+                url.append(":" + PORT);
             }
             
             url.append("/");
         }
-        url.append(database);
+        url.append(DATABASE);
         
         return url.toString();
     }
@@ -71,10 +71,9 @@ public class DatabaseHandler {
      */
     private void loadJdbcDriver() {
         try {
-            Class.forName(driver);
+            Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            System.exit(1);
         }
 
         System.out.println("driver loaded");
@@ -85,10 +84,9 @@ public class DatabaseHandler {
      */
     private void openConnection() {
         try {
-            connection = DriverManager.getConnection(getUrl(), user, password);
+            connection = DriverManager.getConnection(getUrl(), USER, PASSWORD);
         } catch (SQLException e) {
             e.printStackTrace();
-            System.exit(1);
         }
 
         System.out.println("connection opened");
@@ -102,7 +100,6 @@ public class DatabaseHandler {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            System.exit(1);
         }
 
         System.out.println("\nconnection closed");
@@ -127,7 +124,6 @@ public class DatabaseHandler {
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            System.exit(1);
         }
         closeConnection();
     }

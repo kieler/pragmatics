@@ -485,5 +485,22 @@ public abstract class AbstractCombination implements ICombination {
         int index = name.lastIndexOf(".");
         return "Combination[" + name.substring(index) + "]";
     }
+ 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean runWithProgressMonitor() {
+        return false;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * Default implementation returns toString().
+     */
+    public String getName() {
+        return toString();
+    }
+    
     
 }

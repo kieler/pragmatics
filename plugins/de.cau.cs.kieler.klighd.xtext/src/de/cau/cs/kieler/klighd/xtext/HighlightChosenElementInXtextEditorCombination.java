@@ -14,11 +14,12 @@
 package de.cau.cs.kieler.klighd.xtext;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.ui.editor.XtextEditor;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.model.xtext.effects.XtextEditorHighlightEffect;
 import de.cau.cs.kieler.klighd.triggers.KlighdSelectionTrigger.KlighdSelectionState;
-import de.cau.cs.kieler.klighd.triggers.KlighdSelectionTrigger.KlighdSelectionState.SelectionElement;
 
 /**
  * @author chsch
@@ -29,13 +30,20 @@ public class HighlightChosenElementInXtextEditorCombination extends AbstractComb
      * @param state triggerState
      */
     public void execute(final KlighdSelectionState state) {
+        if (!state.getSelectedEModelElements().iterator().hasNext()
+                || !(state.getSelectedEModelElements().iterator().next().eResource() instanceof XtextResource)) {
+            return;
+        }
+        XtextEditor editor = null;
+        if (!(state.getViewContext().getSourceWorkbenchPart() instanceof XtextEditor)) {
+            editor = (XtextEditor) state.getViewContext().getSourceWorkbenchPart();
+        }
+
         if (!state.getSelections().isEmpty()) {
-            SelectionElement se = state.getSelections().get(0);
-            final Object me = se.getModelElement();
-            if (me == null || !(me instanceof EObject)) {
-                return;
+            Object me = state.getSelectedEModelElements().iterator().next();
+            if (me instanceof EObject) {
+                this.schedule(new XtextEditorHighlightEffect((EObject) me, editor));
             }
-            this.schedule(new XtextEditorHighlightEffect((EObject) me));
         }
     }
 }

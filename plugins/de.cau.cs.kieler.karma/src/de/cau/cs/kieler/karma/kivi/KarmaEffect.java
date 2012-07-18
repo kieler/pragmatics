@@ -434,5 +434,10 @@ public class KarmaEffect extends AbstractEffect {
     public void setFigureSize(final Pair<Integer, Integer> figureSize) {
         this.figureSize = figureSize;
     }
+    
+    @Override
+    public String getName() {
+        return "KarmaEffect";
+    }
 
 }

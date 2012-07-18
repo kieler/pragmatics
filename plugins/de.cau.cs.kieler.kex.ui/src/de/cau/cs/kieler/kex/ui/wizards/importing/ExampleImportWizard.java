@@ -43,7 +43,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.ui.KEXUIPlugin;
@@ -159,16 +158,13 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
     }
     
 
-    private static final int WARNING_THRESHOLD = 5;
-
-    private static final String ERROR_TITLE = "Could not complete Import";
 
     /* Wizard Pages */
     private ImportExamplePage mainPage;
     private ImportDestPage destinationPage;
     
+    private static final int WARNING_THRESHOLD = 5;
     private boolean checkDuplicate;
-    
 
     /**
      * Constructor for {@link ExampleImportWizard}.

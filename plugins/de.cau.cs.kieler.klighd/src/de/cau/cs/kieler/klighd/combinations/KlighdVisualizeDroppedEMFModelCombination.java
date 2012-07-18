@@ -48,7 +48,7 @@ public class KlighdVisualizeDroppedEMFModelCombination extends AbstractCombinati
             Object model = loadModel(file);
             if (model != null) {
                 // show the model in the view by scheduling the required effect
-                schedule(new KlighdDiagramEffect(state.getViewId(), file.getName(), model));
+                schedule(new KlighdDiagramEffect(state.getViewId(), file.getName(), model, null));
             }
         }
     }

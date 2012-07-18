@@ -39,8 +39,11 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * The main class of the network simplex layerer component. It offers an algorithm to determine an
  * optimal layering of all nodes in the graph concerning a minimal length of all edges using the
  * network simplex algorithm described in
- * {@literal Emden R. Gansner, Eleftherios Koutsofios, Stephen
- * C. North, Kiem-Phong Vo: "A Technique for Drawing Directed Graphs", AT&T Bell Laboratories}.
+ * <ul>
+ *   <li> Emden R. Gansner, Eleftherios Koutsofios, Stephen C. North, Kiem-Phong Vo,
+ *     A technique for drawing directed graphs. <i>Software Engineering</i> 19(3), pp. 214-230, 1993.
+ *   </li>
+ * </ul>
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>the graph has no cycles</dd>

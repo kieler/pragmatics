@@ -36,7 +36,12 @@ import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombination {
     
     /**
-     * The execute method revealed and invoked by KIVi.
+     * The execute method revealed and invoked by KIVi. <br>
+     * <br>
+     * This combination might cause some trouble with specialized ones addressing the view synthesis
+     * of concrete model elements, such as the one in the Ecore visualization example.<br>
+     * Due to this it is still registered in the plugin.xml, but its activity flag is set to false
+     * at the moment.
      * 
      * @param es
      *            A {@link EditorState} carrying information on the last workbench part change.
@@ -61,12 +66,14 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
                 
             } else {            
                 IEditingDomainProvider editor = (IEditingDomainProvider) es.getEditorPart();
+                // null check is performed above!
                 List<Resource> resources = editor.getEditingDomain().getResourceSet()
                         .getResources();
                 if (!resources.isEmpty() && !resources.get(0).getContents().isEmpty()) {
 
                     this.schedule(new KlighdDiagramEffect(id, inputPath.lastSegment(), EcoreUtil
-                            .getRootContainer(resources.get(0).getContents().get(0))));
+                            .getRootContainer(resources.get(0).getContents().get(0)), es
+                            .getEditorPart()));
                 }
             }
         } else {
@@ -78,11 +85,15 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
                 Object selected = ss.getSelectedObjects().get(0);
                 if (selected instanceof Resource && !((Resource) selected).getContents().isEmpty()) {
                     this.schedule(new KlighdDiagramEffect(id, inputPath.lastSegment(),
-                            ((Resource) selected).getContents().get(0)));
+                            ((Resource) selected).getContents().get(0), es.getEditorPart()));
+                    return;
                 }
                 if (selected instanceof EObject) {
-                    this.schedule(new KlighdDiagramEffect(id, inputPath.lastSegment(), EcoreUtil
-                            .getRootContainer((EObject) selected)));
+                    this.schedule(
+                            new KlighdDiagramEffect(
+                            id, inputPath.lastSegment(), EcoreUtil
+                            .getRootContainer((EObject) selected), es.getEditorPart()));
+                    return;
                 }
             }
         }

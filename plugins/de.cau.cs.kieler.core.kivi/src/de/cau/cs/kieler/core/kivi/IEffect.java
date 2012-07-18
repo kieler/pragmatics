@@ -60,5 +60,11 @@ public interface IEffect {
      * @return the newly merged effect, or null if no merge was possible.
      */
     IEffect merge(IEffect otherEffect);
+
+    /**
+     * Speaking name of the effect. Will for example be used in the progressMonitor.
+     * @return name of the effect.
+     */
+    String getName();
     
 }

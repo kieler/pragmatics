@@ -43,8 +43,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 /**
  * Node placement implementation that aligns long edges using linear segments. Inspired by Section 4 of
  * <ul>
- * <li>Georg Sander. A fast heuristic for hierarchical Manhattan layout. In <i>Proceedings of the
- * Symposium on Graph Drawing (GD '95)</i>, pp. 447-458, Springer, 1996.</li>
+ *   <li>Georg Sander, A fast heuristic for hierarchical Manhattan layout. In <i>Proceedings of the
+ *     Symposium on Graph Drawing (GD'95)</i>, LNCS vol. 1027, pp. 447-458, Springer, 1996.</li>
  * </ul>
  * 
  * <dl>

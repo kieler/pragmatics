@@ -354,4 +354,9 @@ public class LayoutEffect extends AbstractEffect {
         return result;
     }
 
+    @Override
+    public String getName() {
+        return "Layout";
+    }
+    
 }
