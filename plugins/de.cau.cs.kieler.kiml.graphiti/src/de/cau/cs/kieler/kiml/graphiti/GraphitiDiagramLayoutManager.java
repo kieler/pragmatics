@@ -55,7 +55,6 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 @SuppressWarnings("restriction")
 public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<PictogramElement> {
 
-    
     /**
      * {@inheritDoc}
      */
@@ -147,7 +146,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         if (diagramPart instanceof IPictogramElementEditPart) {
             layoutRootPart = (EditPart) diagramPart;
         } else if (mapping.getProperty(KimlGraphitiUtil.DIAGRAM_EDITOR) != null) {
-            layoutRootPart = mapping.getProperty(KimlGraphitiUtil.DIAGRAM_EDITOR).getGraphicalViewer().getContents();
+            layoutRootPart = mapping.getProperty(KimlGraphitiUtil.DIAGRAM_EDITOR)
+                    .getGraphicalViewer().getContents();
         }
         if (!(layoutRootPart instanceof IPictogramElementEditPart)) {
             throw new UnsupportedOperationException(
@@ -177,7 +177,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             KimlGraphitiUtil.createEdge(mapping, entry);
         }
         
-        // create a layout configuration
+        // create layout configurators for Graphiti
         mapping.getLayoutConfigs().add(mapping.getProperty(KimlGraphitiUtil.STATIC_CONFIG));
         mapping.getLayoutConfigs().add(layoutConfig);
 
@@ -237,7 +237,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * @param shape the shape for a new node
      * @return a new layout node
      */
-    private KNode createNode(final LayoutMapping<PictogramElement> mapping,
+    protected KNode createNode(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final Shape shape) {
         KNode childNode = KimlUtil.createInitializedNode();
         childNode.setParent(parentNode);
@@ -374,11 +374,5 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         
         return port;
     }
-    
-        
-
-
-    
-    
     
 }

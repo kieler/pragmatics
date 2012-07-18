@@ -67,7 +67,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     private List<Pair<KGraphElement, PictogramElement>> elements =
             new LinkedList<Pair<KGraphElement, PictogramElement>>();
     /** the feature provider for layout support. */
-    protected IFeatureProvider featureProvider;
+    private IFeatureProvider featureProvider;
     /** map of edge layouts to corresponding vector chains. */
     private Map<KEdgeLayout, KVectorChain> bendpointsMap =
             new HashMap<KEdgeLayout, KVectorChain>();
@@ -83,6 +83,15 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             final IFeatureProvider thefeatureProvider) {
         super(domain, "Automatic Layout");
         this.featureProvider = thefeatureProvider;
+    }
+    
+    /**
+     * Returns the feature provider.
+     * 
+     * @return the feature provider
+     */
+    protected IFeatureProvider getFeatureProvider() {
+        return featureProvider;
     }
 
     /**
@@ -339,9 +348,11 @@ public class GraphitiLayoutCommand extends RecordingCommand {
 
         // get vector chain for the bend points of the edge
         KVectorChain bendPoints = new KVectorChain(getBendPoints(kedge));
-        KVector sourcePoint = calculateAnchorEnds(kedge.getSource(), kedge.getSourcePort());
+        KVector sourcePoint = KimlGraphitiUtil.calculateAnchorEnds(kedge.getSource(),
+                kedge.getSourcePort(), null);
         bendPoints.addFirst(sourcePoint);
-        KVector targetPoint = calculateAnchorEnds(kedge.getTarget(), kedge.getTargetPort());
+        KVector targetPoint = KimlGraphitiUtil.calculateAnchorEnds(kedge.getTarget(),
+                kedge.getTargetPort(), null);
         bendPoints.addLast(targetPoint);
 
         // calculate reference point for the label
@@ -362,32 +373,6 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         KimlUtil.toAbsolute(position, parent);
         ga.setX((int) Math.round(position.x - referencePoint.x));
         ga.setY((int) Math.round(position.y - referencePoint.y));
-    }
-
-    /**
-     * Returns an end point for an anchor.
-     * 
-     * @param node the node that owns the anchor
-     * @param port the port that represents the anchor
-     */
-    protected KVector calculateAnchorEnds(final KNode node, final KPort port) {
-        KVector pos = new KVector();
-        if (port != null) {
-            // the anchor end is represented by a port (box-relative anchor or fix-point anchor)
-            KShapeLayout portLayout = port.getData(KShapeLayout.class);
-            pos.x = portLayout.getXpos() + portLayout.getWidth() / 2;
-            pos.y = portLayout.getYpos() + portLayout.getHeight() / 2;
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            pos.x += nodeLayout.getXpos();
-            pos.y += nodeLayout.getYpos();
-        } else {
-            // the anchor end is calculated by a chopbox anchor
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            pos.x = nodeLayout.getWidth() / 2 + nodeLayout.getXpos();
-            pos.y = nodeLayout.getHeight() / 2 + nodeLayout.getYpos();
-        }
-        KimlUtil.toAbsolute(pos, node.getParent());
-        return pos;
     }
 
 }
