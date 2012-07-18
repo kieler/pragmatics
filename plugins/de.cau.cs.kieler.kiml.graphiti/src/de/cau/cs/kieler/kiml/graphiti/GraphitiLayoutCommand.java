@@ -84,6 +84,15 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         super(domain, "Automatic Layout");
         this.featureProvider = thefeatureProvider;
     }
+    
+    /**
+     * Returns the feature provider.
+     * 
+     * @return the feature provider
+     */
+    protected IFeatureProvider getFeatureProvider() {
+        return featureProvider;
+    }
 
     /**
      * Adds the given element to this command, if it has been modified by a layout algorithm.
@@ -135,7 +144,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param kport a port
      * @param pelem the corresponding pictogram element
      */
-    private void applyPortLayout(final KPort kport, final PictogramElement pelem) {
+    protected void applyPortLayout(final KPort kport, final PictogramElement pelem) {
         KShapeLayout shapeLayout = kport.getData(KShapeLayout.class);
         applyPortLayout(shapeLayout.getXpos(), shapeLayout.getYpos(), pelem, kport.getNode());
     }
@@ -148,7 +157,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param pelem the pictogram element
      * @param knode the node to which the port is connected
      */
-    private void applyPortLayout(final double xpos, final double ypos,
+    protected void applyPortLayout(final double xpos, final double ypos,
             final PictogramElement pelem, final KNode knode) {
         int offsetx = 0, offsety = 0;
         if (pelem.getGraphicsAlgorithm() != null) {
@@ -192,7 +201,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param knode a node
      * @param pelem the corresponding pictogram element
      */
-    private void applyNodeLayout(final KNode knode, final PictogramElement pelem) {
+    protected void applyNodeLayout(final KNode knode, final PictogramElement pelem) {
         KShapeLayout shapeLayout = knode.getData(KShapeLayout.class);
         GraphicsAlgorithm ga = pelem.getGraphicsAlgorithm();
         float xpos = shapeLayout.getXpos();
@@ -227,7 +236,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param kedge an edge
      * @param pelem the corresponding pictogram element
      */
-    private void applyEdgeLayout(final KEdge kedge, final PictogramElement pelem) {
+    protected void applyEdgeLayout(final KEdge kedge, final PictogramElement pelem) {
         // create bend points for the edge
         KVectorChain bendPoints = getBendPoints(kedge);
 
@@ -331,7 +340,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param klabel an edge label
      * @param pelem the corresponding pictogram element
      */
-    private void applyEdgeLabelLayout(final KLabel klabel,
+    protected void applyEdgeLabelLayout(final KLabel klabel,
             final PictogramElement pelem) {
         GraphicsAlgorithm ga = pelem.getGraphicsAlgorithm();
         ConnectionDecorator decorator = (ConnectionDecorator) pelem;
@@ -339,9 +348,11 @@ public class GraphitiLayoutCommand extends RecordingCommand {
 
         // get vector chain for the bend points of the edge
         KVectorChain bendPoints = new KVectorChain(getBendPoints(kedge));
-        KVector sourcePoint = calculateAnchorEnds(kedge.getSource(), kedge.getSourcePort());
+        KVector sourcePoint = KimlGraphitiUtil.calculateAnchorEnds(kedge.getSource(),
+                kedge.getSourcePort(), null);
         bendPoints.addFirst(sourcePoint);
-        KVector targetPoint = calculateAnchorEnds(kedge.getTarget(), kedge.getTargetPort());
+        KVector targetPoint = KimlGraphitiUtil.calculateAnchorEnds(kedge.getTarget(),
+                kedge.getTargetPort(), null);
         bendPoints.addLast(targetPoint);
 
         // calculate reference point for the label
@@ -362,32 +373,6 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         KimlUtil.toAbsolute(position, parent);
         ga.setX((int) Math.round(position.x - referencePoint.x));
         ga.setY((int) Math.round(position.y - referencePoint.y));
-    }
-
-    /**
-     * Returns an end point for an anchor.
-     * 
-     * @param node the node that owns the anchor
-     * @param port the port that represents the anchor
-     */
-    private KVector calculateAnchorEnds(final KNode node, final KPort port) {
-        KVector pos = new KVector();
-        if (port != null) {
-            // the anchor end is represented by a port (box-relative anchor or fix-point anchor)
-            KShapeLayout portLayout = port.getData(KShapeLayout.class);
-            pos.x = portLayout.getXpos() + portLayout.getWidth() / 2;
-            pos.y = portLayout.getYpos() + portLayout.getHeight() / 2;
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            pos.x += nodeLayout.getXpos();
-            pos.y += nodeLayout.getYpos();
-        } else {
-            // the anchor end is calculated by a chopbox anchor
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            pos.x = nodeLayout.getWidth() / 2 + nodeLayout.getXpos();
-            pos.y = nodeLayout.getHeight() / 2 + nodeLayout.getYpos();
-        }
-        KimlUtil.toAbsolute(pos, node.getParent());
-        return pos;
     }
 
 }

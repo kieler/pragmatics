@@ -14,9 +14,13 @@
 package de.cau.cs.kieler.klighd.xtext;
 
 import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
+
+// SUPPRESS CHECKSTYLE NEXT LineLength
 import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;
+// SUPPRESS CHECKSTYLE NEXT LineLength
 import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;
 import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
@@ -42,27 +46,15 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
           // the replacement is needed since the secondary view ids seem to be required
           //  to be free of ':', which will be violated on windows determining them this way. 
         
-// chsch: sucks!!        
-//        // not final, because if a project has the same name like 
-//        //       a folder in the path it fails
-//        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-//        IPath path = state.getEditorInputPath();
-//        for (String segment : path.segments()) {
-//            if (root.getProject(segment).exists()) {
-//                id = id.substring(id.indexOf(segment));
-//                break;
-//            }
-//        }
         if (state.getEventType().equals(EventType.CLOSED)) {
             this.schedule(new KlighdCloseDiagramEffect(id));
         } else {
             XtextResource resource = state.getResource();
-            if (resource == null || resource.getContents() == null
-                    || resource.getContents().isEmpty()) {
+            if (resource == null || IterableExtensions.isNullOrEmpty(resource.getContents())) {
                 return;
             }
             this.schedule(new KlighdUpdateDiagramEffect(id, state.getEditorInputPath().lastSegment(),
-                    resource.getContents().get(0)));
+                    resource.getContents().get(0), state.getEditor()));
         }
     }
 }

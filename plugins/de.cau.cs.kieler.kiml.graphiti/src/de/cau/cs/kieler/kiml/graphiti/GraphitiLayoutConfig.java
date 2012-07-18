@@ -148,7 +148,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                     while (pe != null && !(pe instanceof Diagram)) {
                         pe = (PictogramElement) pe.eContainer();
                     }
-                    if (pe instanceof Diagram) {
+                    if (pe != null) {
                         diagram = (Diagram) pe;
                     }
                 }

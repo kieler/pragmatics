@@ -72,6 +72,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * The base wrapper class for all OGDF layouters.
  * 
  * @author mri
+ * @author msp
  */
 public abstract class OgdfLayouter {
 
@@ -199,12 +200,13 @@ public abstract class OgdfLayouter {
             applyLayout(layoutNode, layoutInformation, progressMonitor.subTask(SUBTASK_WORK));
             // perform post-processing
             postProcess(layoutNode);
-            
+            // clean up the OGDF server process
+            ogdfServer.cleanup(Cleanup.NORMAL);
+
         } catch (IOException exception) {
             ogdfServer.cleanup(Cleanup.ERROR);
             throw new WrappedException(exception, "Failed to communicate with the OGDF process.");
         } finally {
-            ogdfServer.cleanup(Cleanup.NORMAL);
             progressMonitor.done();
             reset();
         }
@@ -548,6 +550,14 @@ public abstract class OgdfLayouter {
                 KPoint sourcePoint =
                         toKPoint((float) sourceBend.x, (float) sourceBend.y, offsetX, offsetY);
                 edgeLayout.setSourcePoint(sourcePoint);
+                if (kedge.getSourcePort() != null) {
+                    KShapeLayout portLayout = kedge.getSourcePort().getData(KShapeLayout.class);
+                    KShapeLayout sourceLayout = kedge.getSource().getData(KShapeLayout.class);
+                    portLayout.setXpos(sourcePoint.getX() - sourceLayout.getXpos()
+                            - portLayout.getWidth() / 2);
+                    portLayout.setYpos(sourcePoint.getY() - sourceLayout.getYpos()
+                            - portLayout.getHeight() / 2);
+                }
                 // set the bend points
                 while (bendIt.hasNext()) {
                     KVector bend = bendIt.next();
@@ -557,6 +567,14 @@ public abstract class OgdfLayouter {
                     } else {
                         // set the target point
                         edgeLayout.setTargetPoint(point);
+                        if (kedge.getTargetPort() != null) {
+                            KShapeLayout portLayout = kedge.getTargetPort().getData(KShapeLayout.class);
+                            KShapeLayout targetLayout = kedge.getTarget().getData(KShapeLayout.class);
+                            portLayout.setXpos(point.getX() - targetLayout.getXpos()
+                                    - portLayout.getWidth() / 2);
+                            portLayout.setYpos(point.getY() - targetLayout.getYpos()
+                                    - portLayout.getHeight() / 2);
+                        }
                     }
                 }
             }

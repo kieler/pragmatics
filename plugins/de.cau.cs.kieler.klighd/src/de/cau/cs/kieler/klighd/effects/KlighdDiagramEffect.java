@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.effects;
 
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.Lists;
@@ -42,6 +43,8 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
     private String name = null;
     /** the new input model for the diagram view. */
     private Object model = null;
+    /** the workbench part the element to be shown has been selected in. */
+    private IWorkbenchPart sourceWorkbenchPart = null;
 
     // the following fields are valid AFTER the effect executed
 
@@ -116,11 +119,15 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      *            the name
      * @param model
      *            the input model
+     * @param theSourceWorkbenchPart
+     *            the workbench part the element to be shown has been selected in
      */
-    public KlighdDiagramEffect(final String id, final String name, final Object model) {
+    public KlighdDiagramEffect(final String id, final String name, final Object model,
+            final IWorkbenchPart theSourceWorkbenchPart) {
         this.id = id;
         this.name = name;
         this.model = model;
+        this.sourceWorkbenchPart = theSourceWorkbenchPart;
     }
 
     /**
@@ -130,9 +137,11 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
         final IPropertyHolder propertyHolder = this;
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
-                view = DiagramViewManager.getInstance().createView(id, name, model, propertyHolder);
+                view = DiagramViewManager.getInstance().createView(
+                        id, name, model, propertyHolder);
                 if (view != null) {
-                    viewer = view.getContextViewer().getActiveViewer();
+                    setViewer(view.getContextViewer().getActiveViewer());
+                    setSourceWorkbenchPart();
                 }
             }
         });
@@ -247,13 +256,22 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      * {@inheritDoc}
      */
     public boolean isMergeable() {
-        return false;
+        return true;
     }
 
     /**
      * {@inheritDoc}
      */
     public IEffect merge(final IEffect otherEffect) {
+        if (!(otherEffect instanceof KlighdDiagramEffect)) {
+            return null; // do not merge!!
+        }
+        
+        KlighdDiagramEffect other = (KlighdDiagramEffect) otherEffect;
+        
+        if (this.model == null || this.model.equals(other.model)) {
+            return other;
+        }
         return null;
     }
 
@@ -275,6 +293,17 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      */
     protected void setViewer(final IViewer<?> viewer) {
         this.viewer = viewer;
+    }
+    
+    /**
+     * Stores the reference to the source workbench part the depicted element has been selected in,
+     * if existent.
+     */
+    protected void setSourceWorkbenchPart() {
+        if (this.view != null && this.view.getContextViewer() != null) {
+            this.view.getContextViewer().getCurrentViewContext()
+                    .setSourceWorkbenchPart(this.sourceWorkbenchPart);
+        }
     }
 
 }

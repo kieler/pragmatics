@@ -918,6 +918,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
         KVector targetPoint = endpoints.getSecond();
         if (!splines.isEmpty()) {
             KLayoutDataFactory layoutDataFactory = KLayoutDataFactory.eINSTANCE;
+            
             // the first point in the list is the start point, if no arrowhead is given
             if (sourcePoint == null) {
                 List<KVector> points = splines.get(0);
@@ -930,6 +931,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                     sourcePoint.y = sourceLayout.getYpos() + sourceLayout.getHeight() / 2;
                 }
             }
+            
             // the last point in the list is the end point, if no arrowhead is given
             if (targetPoint == null) {
                 List<KVector> points = splines.get(splines.size() - 1);
@@ -942,6 +944,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                     targetPoint.y = targetLayout.getYpos() + targetLayout.getHeight() / 2;
                 }
             }
+            
             // add all other control points to the edge
             for (KVectorChain points : splines) {
                 for (KVector point : points) {
@@ -952,7 +955,36 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             }
             edgeLayout.getSourcePoint().applyVector(sourcePoint);
             edgeLayout.getTargetPoint().applyVector(targetPoint);
+            
+            // set source and target port positions accordingly
+            if (kedge.getSourcePort() != null || kedge.getTargetPort() != null) {
+                referenceNode = kedge.getSource();
+                if (!KimlUtil.isDescendant(kedge.getTarget(), referenceNode)) {
+                    referenceNode = referenceNode.getParent();
+                }
+                if (kedge.getSourcePort() != null) {
+                    KimlUtil.toAbsolute(sourcePoint, referenceNode);
+                    KimlUtil.toRelative(sourcePoint, kedge.getSource().getParent());
+                    KShapeLayout portLayout = kedge.getSourcePort().getData(KShapeLayout.class);
+                    KShapeLayout sourceLayout = kedge.getSource().getData(KShapeLayout.class);
+                    portLayout.setXpos((float) sourcePoint.x - sourceLayout.getXpos()
+                            - portLayout.getWidth() / 2);
+                    portLayout.setYpos((float) sourcePoint.y - sourceLayout.getYpos()
+                            - portLayout.getHeight() / 2);
+                }
+                if (kedge.getTargetPort() != null) {
+                    KimlUtil.toAbsolute(targetPoint, referenceNode);
+                    KimlUtil.toRelative(targetPoint, kedge.getTarget().getParent());
+                    KShapeLayout portLayout = kedge.getTargetPort().getData(KShapeLayout.class);
+                    KShapeLayout targetLayout = kedge.getTarget().getData(KShapeLayout.class);
+                    portLayout.setXpos((float) targetPoint.x - targetLayout.getXpos()
+                            - portLayout.getWidth() / 2);
+                    portLayout.setYpos((float) targetPoint.y - targetLayout.getYpos()
+                            - portLayout.getHeight() / 2);
+                }
+            }
         }
+        
         if (transData.getProperty(USE_SPLINES)) {
             edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
         }

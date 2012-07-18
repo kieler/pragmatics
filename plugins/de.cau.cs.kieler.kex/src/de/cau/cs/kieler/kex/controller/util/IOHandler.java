@@ -77,7 +77,11 @@ public final class IOHandler {
 
         // is directory works only on absolute paths.
         if (sourceFile.isDirectory()) {
-            destFile.mkdir();
+            try {
+                destFile.mkdir();
+            } catch (SecurityException se) {
+                se.printStackTrace();
+            }
         } else {
             InputStream is = new FileInputStream(sourceFile);
             OutputStream os = new FileOutputStream(destFile);
@@ -286,6 +290,10 @@ public final class IOHandler {
      *            , pathname of destination folder.
      */
     public static void createFolder(final String destFolder) {
-        new File(destFolder).mkdir();
+        try {
+            new File(destFolder).mkdir();
+        } catch (SecurityException se) {
+            se.printStackTrace();
+        }
     }
 }

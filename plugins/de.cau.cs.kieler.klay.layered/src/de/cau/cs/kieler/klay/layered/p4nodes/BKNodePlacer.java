@@ -38,15 +38,16 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * 
  * This algorithm is an implementation for solving the node placement problem
- * which is posed in phase 4 of the KLay Layered algorithm.
+ * which is posed in phase 4 of the KLay Layered algorithm. Inspired by
+ * <ul>
+ *   <li> Ulrik Brandes and Boris K&ouml;pf, Fast and simple horizontal coordinate assignment.
+ *     In <i>Proceedings of the 9th International Symposium on Graph Drawing (GD'01)</i>,
+ *     LNCS vol. 2265, pp. 33-36, Springer, 2002. </li>
+ * </ul>
  * 
- * It is based on the node placement algorithm by Ulrik Brandes and Boris Koepf
- * @see <a href="http://www.informatik.uni-konstanz.de/algo/publications/bk-fshca-01.pdf">
- * the corresponding paper</a> and was extended to be able to cope with ports, node sizes,
- * node margins and was made more stable in general.
- * 
+ * The original algorithm was extended to be able to cope with ports, node sizes, and
+ * node margins, and was made more stable in general.
  * The algorithm is structured in five steps, which include two new steps which were
  * not included in the original algorithm by Brandes and Koepf. The middle three steps
  * are executed four times, traversing the graph in all combinations of TOP or BOTTOM
@@ -281,11 +282,15 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * The markers are later used to solve conflicts in favor of long edges. In case of type 2
      * conflicts, the marker favors the earlier node in layout order.
      * 
-     * @param layeredGraph
+     * @param layeredGraph The layered graph to be layouted
      */
     private void markConflicts(final LayeredGraph layeredGraph) {
         for (int i = 1; i <= layeredGraph.getLayers().size() - 2; i++) {
             // The variable naming here follows the notation of the corresponding paper
+            // Normally, underscores are not allowed in local variable names, but since there
+            // is no way of properly writing indices beside underscores, Checkstyle will be
+            // disabled here and in future methods containing indexed variables
+            // CHECKSTYLEOFF Local Variable Names
             int k_0 = 0;
             int l = 0;
             for (int l_1 = 0; l_1 < layerSize(layeredGraph, i + 1); l_1++) {
@@ -312,6 +317,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                     k_0 = k_1;
                 }
             }
+            // CHECKSTYLEON Local Variable Names
         }
     }
 
@@ -325,7 +331,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * Type 1 conflicts are resolved, so that the dummy nodes of a long edge share the
      * same block if possible, such that the long edge is drawn straightly.
      * 
-     * @param layeredGraph
+     * @param layeredGraph The layered graph to be layouted
      * @param bal One of the four layouts which shall be used in this step 
      */
     private void verticalAlignment(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
@@ -365,6 +371,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             // Variable names here are again taken from the paper mentioned above.
             // i denotes the index of the layer and k the position of the node within the layer.
             // m denotes the position of a neighbor in the neighbor list of a node.
+            // CHECKSTYLEOFF Local Variable Names
             for (LNode v_i_k : nodes) {
                 List<LNode> neighbors = null;
                 if (bal.getHDir() == HDirection.BOTTOM) {
@@ -411,6 +418,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                         }
                     }
                 }
+            // CHECKSTYLEOFF Local Variable Names
             }
         }
     }
@@ -423,7 +431,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * This phase is not included in the original algorithm and adds port and node size
      * handling.
      * 
-     * @param layeredGraph
+     * @param layeredGraph The layered graph to be layouted
      * @param bal One of the four layouts which shall be used in this step
      */
     private void insideBlockShift(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
@@ -538,7 +546,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * Then, the blocks are shifted towards each other if there is any space for 
      * compaction.
      * 
-     * @param layeredGraph
+     * @param layeredGraph The layered graph to be layouted
      * @param bal One of the four layouts which shall be used in this step
      */
     private void horizontalCompaction(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
@@ -770,8 +778,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * 
      * Auxiliary method for getting the size of a layer.
      * 
-     * @param layeredGraph
-     * @param layer
+     * @param layeredGraph The containing layered graph
+     * @param layer The respective layer
      * @return The size of the given layer
      */
     private int layerSize(final LayeredGraph layeredGraph, final int layer) {
@@ -782,9 +790,9 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * 
      * Auxiliary method for getting the node on a certain position of a layer.
      * 
-     * @param layeredGraph
-     * @param layer
-     * @param position
+     * @param layeredGraph The containing layered graph
+     * @param layer The containing layer
+     * @param position The node's position, with 0 <= position <= layer.size - 1
      * @return The node which is on the given position of the given layer or an exception, if there is
      *         no node on the given position
      */
@@ -797,9 +805,9 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * 
      * Checks whether the given node is part of a long edge between the two given layers.
      * 
-     * @param node
-     * @param layer1
-     * @param layer2
+     * @param node Possible long edge node
+     * @param layer1 The first layer, the layer of the node
+     * @param layer2 The second layer
      * @return True if the node is part of a long edge between the layers, false else
      */
     private boolean incidentToInnerSegment(final LNode node, final int layer1, final int layer2) {
@@ -822,7 +830,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * 
      * An upper neighbor is a node in a previous layer which has an edge pointing to the given node.
      * 
-     * @param node
+     * @param node The node which might have neighbors
      * @return A list containing all upper neighbors
      */
     private List<LNode> allUpperNeighbors(final LNode node) {
@@ -841,7 +849,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * 
      * A lower neighbor is a node in a following layer which has an edge coming from the given node.
      * 
-     * @param node
+     * @param node The node which might have neighbors
      * @return A list containing all lower neighbors
      */
     private List<LNode> allLowerNeighbors(final LNode node) {
@@ -858,8 +866,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     /**
      * An auxiliary method to find an edge between two given nodes.
      * 
-     * @param source
-     * @param target
+     * @param source The source node of the edge
+     * @param target The target node of the edge
      * @return The edge between source and target, or null if there is none
      */
     private LEdge getEdge(final LNode source, final LNode target) {
@@ -893,7 +901,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * It is checked whether all nodes are placed in the correct order in their layers
      * and do not overlap each other.
      * 
-     * @param layeredGraph
+     * @param layeredGraph The containing layered graph
      * @param bal The layout which shall be checked
      * @return True if the order is preserved and no nodes overlap, false else
      */

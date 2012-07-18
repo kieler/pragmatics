@@ -39,7 +39,7 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
     public enum Mode {
         /** mirror the x coordinates of the graph. */
         MIRROR,
-        /** transpose by switching x and y coordinates. */
+        /** transpose by swapping x and y coordinates. */
         TRANSPOSE,
         /** mirror and then transpose the graph. */
         MIRROR_AND_TRANSPOSE;
