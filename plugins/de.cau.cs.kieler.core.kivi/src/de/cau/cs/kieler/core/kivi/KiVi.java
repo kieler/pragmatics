@@ -346,6 +346,10 @@ public class KiVi {
             try {
                 combo.handle(triggerState);
                 List<IEffect> effects = combo.getEffects();
+                if (combo.runWithProgressMonitor()) {
+                    effectsWorker.addMonitoredEffects(effects);
+                    effectsWorker.setNextMonitoredCombination(combo);
+                }
                 for (IEffect effect : effects) {
                     executeEffect(effect);
                 }

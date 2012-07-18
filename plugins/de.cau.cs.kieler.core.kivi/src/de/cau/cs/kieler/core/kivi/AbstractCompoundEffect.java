@@ -14,6 +14,7 @@
 
 package de.cau.cs.kieler.core.kivi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public abstract class AbstractCompoundEffect implements IEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        for (IEffect effect : this.getPrimitiveEffects()) {
+        for (IEffect effect : new ArrayList<IEffect>(this.getPrimitiveEffects())) {
             effect.execute();
         }
     }
@@ -77,6 +78,20 @@ public abstract class AbstractCompoundEffect implements IEffect {
     public IEffect merge(final IEffect otherEffect) {
      // default behaviour: no merge possible
         return null;
+    }
+    
+    @Override
+    public String toString() {
+        String name = this.getClass().getName();
+        int index = name.lastIndexOf(".");
+        return "Effect[" + name.substring(index) + "]";
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getName() {
+        return toString();
     }
 
 }
