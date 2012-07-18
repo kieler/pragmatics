@@ -67,7 +67,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     private List<Pair<KGraphElement, PictogramElement>> elements =
             new LinkedList<Pair<KGraphElement, PictogramElement>>();
     /** the feature provider for layout support. */
-    private IFeatureProvider featureProvider;
+    protected IFeatureProvider featureProvider;
     /** map of edge layouts to corresponding vector chains. */
     private Map<KEdgeLayout, KVectorChain> bendpointsMap =
             new HashMap<KEdgeLayout, KVectorChain>();
@@ -135,7 +135,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param kport a port
      * @param pelem the corresponding pictogram element
      */
-    private void applyPortLayout(final KPort kport, final PictogramElement pelem) {
+    protected void applyPortLayout(final KPort kport, final PictogramElement pelem) {
         KShapeLayout shapeLayout = kport.getData(KShapeLayout.class);
         applyPortLayout(shapeLayout.getXpos(), shapeLayout.getYpos(), pelem, kport.getNode());
     }
@@ -148,7 +148,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param pelem the pictogram element
      * @param knode the node to which the port is connected
      */
-    private void applyPortLayout(final double xpos, final double ypos,
+    protected void applyPortLayout(final double xpos, final double ypos,
             final PictogramElement pelem, final KNode knode) {
         int offsetx = 0, offsety = 0;
         if (pelem.getGraphicsAlgorithm() != null) {
@@ -192,7 +192,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param knode a node
      * @param pelem the corresponding pictogram element
      */
-    private void applyNodeLayout(final KNode knode, final PictogramElement pelem) {
+    protected void applyNodeLayout(final KNode knode, final PictogramElement pelem) {
         KShapeLayout shapeLayout = knode.getData(KShapeLayout.class);
         GraphicsAlgorithm ga = pelem.getGraphicsAlgorithm();
         float xpos = shapeLayout.getXpos();
@@ -227,7 +227,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param kedge an edge
      * @param pelem the corresponding pictogram element
      */
-    private void applyEdgeLayout(final KEdge kedge, final PictogramElement pelem) {
+    protected void applyEdgeLayout(final KEdge kedge, final PictogramElement pelem) {
         // create bend points for the edge
         KVectorChain bendPoints = getBendPoints(kedge);
 
@@ -331,7 +331,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param klabel an edge label
      * @param pelem the corresponding pictogram element
      */
-    private void applyEdgeLabelLayout(final KLabel klabel,
+    protected void applyEdgeLabelLayout(final KLabel klabel,
             final PictogramElement pelem) {
         GraphicsAlgorithm ga = pelem.getGraphicsAlgorithm();
         ConnectionDecorator decorator = (ConnectionDecorator) pelem;
@@ -370,7 +370,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param node the node that owns the anchor
      * @param port the port that represents the anchor
      */
-    private KVector calculateAnchorEnds(final KNode node, final KPort port) {
+    protected KVector calculateAnchorEnds(final KNode node, final KPort port) {
         KVector pos = new KVector();
         if (port != null) {
             // the anchor end is represented by a port (box-relative anchor or fix-point anchor)
