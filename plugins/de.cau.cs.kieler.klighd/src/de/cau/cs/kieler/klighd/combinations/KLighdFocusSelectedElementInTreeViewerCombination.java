@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klighd.combinations;
 import org.eclipse.jface.viewers.TreeViewer;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.klighd.effects.KLighdFocusInTreeViewerEffect;
+import de.cau.cs.kieler.klighd.effects.KlighdFocusInTreeViewerEffect;
 import de.cau.cs.kieler.klighd.triggers.KlighdSelectionTrigger.KlighdSelectionState;
 
 /**
@@ -44,7 +44,7 @@ public class KLighdFocusSelectedElementInTreeViewerCombination extends AbstractC
             // take just the 1st element for the moment - should be improved sometimes...
             Object me = state.getSelections().get(0).getModelElement();
             if (me != null) {
-                this.schedule(new KLighdFocusInTreeViewerEffect(me, viewer));
+                this.schedule(new KlighdFocusInTreeViewerEffect(me, viewer));
             }
         }
     }
