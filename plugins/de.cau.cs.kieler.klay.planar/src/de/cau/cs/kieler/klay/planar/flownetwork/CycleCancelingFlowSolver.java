@@ -28,6 +28,10 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
  */
 public class CycleCancelingFlowSolver extends AbstractAlgorithm implements IFlowNetworkSolver {
 
+    /**
+     * 
+     */
+    private static final int MAX_CAP = 1000;
     private PGraph graph;
 
     /**
@@ -40,7 +44,7 @@ public class CycleCancelingFlowSolver extends AbstractAlgorithm implements IFlow
         // set networkflow arcs (edges) properties.
         for (PEdge arc : graph.getEdges()) {
             // capacity is infinite.
-            arc.setProperty(CAPACITY, 1000);
+            arc.setProperty(CAPACITY, MAX_CAP);
             arc.setProperty(IPathFinder.PATHCOST, 1);
             arc.setProperty(LOWER_BOUND, 1);
         }

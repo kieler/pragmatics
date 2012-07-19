@@ -71,7 +71,7 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
         pathFinder.findPath(source, sink);
         int[] potentials = new int[network.getNodeCount()];
         for (PNode node : network.getNodes()) {
-            potentials[node.id] = 0 /* node.getProperty(IPathFinder.DISTANCE) */;
+            potentials[node.id] = 0 /*node.getProperty(IPathFinder.DISTANCE)*/;
         }
         for (PEdge edge : network.getEdges()) {
             int cost = edge.getProperty(IPathFinder.PATHCOST);

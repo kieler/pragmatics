@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
@@ -51,11 +52,11 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
     // ======================== Constants ==========================================================
 
     /** Property to convert a node in the flow network to a node or face in the graph. */
-    public static final Property<PGraphElement> NETWORKTOGRAPH = new Property<PGraphElement>(
+    public static final Property<PGraphElement> NETWORK_TO_GRAPH = new Property<PGraphElement>(
             "de.cau.cs.kieler.klay.planar.properties.networktograph");
 
     /** The maximal node degree in an orthogonal layout. */
-    public static final int MAXDEGREE = 4;
+    public static final int MAX_DEGREE = 4;
 
     // ======================== Attributes =========================================================
 
@@ -87,21 +88,21 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         PGraph network = new PGraphFactory().createEmptyGraph();
         Map<PNode, PNode> nodes = Maps.newHashMap();
         Map<PFace, PNode> faces = Maps.newHashMap();
-        this.nodeArcs = new LinkedList<PEdge>();
-        this.faceArcs = new LinkedList<Pair<PEdge, PEdge>>();
+        this.nodeArcs = Lists.newLinkedList();
+        this.faceArcs = Lists.newLinkedList();
 
         // Creating source nodes for every graph node
         for (PNode node : this.graph.getNodes()) {
-            int supply = MAXDEGREE - node.getAdjacentEdgeCount();
+            int supply = MAX_DEGREE - node.getAdjacentEdgeCount();
 
             // Check if node has a valid degree
             if (supply < 0) {
                 throw new InconsistentGraphModelException("The node " + node.id
-                        + ") has a higher degree than the maximal allowed " + MAXDEGREE);
+                        + ") has a higher degree than the maximal allowed " + MAX_DEGREE);
             }
 
             PNode newnode = network.addNode(NodeType.NORMAL);
-            newnode.setProperty(NETWORKTOGRAPH, node);
+            newnode.setProperty(NETWORK_TO_GRAPH, node);
             newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply);
             nodes.put(node, newnode);
         }
@@ -112,12 +113,12 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         for (PFace face : faces2) {
             int supply = -1 * face.getAdjacentEdgeCount();
             if (face == graph.getExternalFace(false)) {
-                supply -= MAXDEGREE;
+                supply -= MAX_DEGREE;
             } else {
-                supply += MAXDEGREE;
+                supply += MAX_DEGREE;
             }
             PNode newnode = network.addNode(NodeType.FACE);
-            newnode.setProperty(NETWORKTOGRAPH, face);
+            newnode.setProperty(NETWORK_TO_GRAPH, face);
             newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply);
             faces.put(face, newnode);
         }
@@ -173,13 +174,13 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
         // Flow in face arcs define bends in edges
         for (Pair<PEdge, PEdge> pair : this.faceArcs) {
-            PFace face1 = (PFace) pair.getFirst().getSource().getProperty(NETWORKTOGRAPH);
-            if (face1 != pair.getSecond().getTarget().getProperty(NETWORKTOGRAPH)) {
+            PFace face1 = (PFace) pair.getFirst().getSource().getProperty(NETWORK_TO_GRAPH);
+            if (face1 != pair.getSecond().getTarget().getProperty(NETWORK_TO_GRAPH)) {
                 throw new InconsistentGraphModelException(
                         "The flow network has not been build correctly.");
             }
-            PFace face2 = (PFace) pair.getSecond().getSource().getProperty(NETWORKTOGRAPH);
-            if (face2 != pair.getFirst().getTarget().getProperty(NETWORKTOGRAPH)) {
+            PFace face2 = (PFace) pair.getSecond().getSource().getProperty(NETWORK_TO_GRAPH);
+            if (face2 != pair.getFirst().getTarget().getProperty(NETWORK_TO_GRAPH)) {
                 throw new InconsistentGraphModelException(
                         "The flow network has not been build correctly.");
             }
@@ -229,13 +230,13 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
         // Flow in node arcs define angles in nodes
         for (PEdge arc : this.nodeArcs) {
-            PNode node = (PNode) arc.getSource().getProperty(NETWORKTOGRAPH);
-            PFace face = (PFace) arc.getTarget().getProperty(NETWORKTOGRAPH);
+            PNode node = (PNode) arc.getSource().getProperty(NETWORK_TO_GRAPH);
+            PFace face = (PFace) arc.getTarget().getProperty(NETWORK_TO_GRAPH);
 
             List<Pair<PEdge, OrthogonalAngle>> nodeList;
             nodeList = orthogonal.getAngles(node);
             if (nodeList == null) {
-                nodeList = new LinkedList<Pair<PEdge, OrthogonalAngle>>();
+                nodeList = Lists.newLinkedList();
                 for (PEdge edge : node.adjacentEdges()) {
                     nodeList.add(new Pair<PEdge, OrthogonalAngle>(edge, null));
                 }
@@ -261,7 +262,11 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                         pair.setSecond(OrthogonalAngle.LEFT);
                     } else {
                         int angle = arc.getProperty(IFlowNetworkSolver.FLOW) - numEdges;
-                        pair.setSecond(OrthogonalAngle.values()[angle]);
+                        if(angle < 0 ){
+                            //TODO error prone check!!! 
+                            angle = 0;
+                        }
+                        pair.setSecond(OrthogonalAngle.map(angle));
                     }
                 }
             }

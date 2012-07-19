@@ -558,7 +558,7 @@ public class PGraph extends PNode {
 
                     nextNode = nextNode.getAdjacentNode(nextEdge);
                     nextEdge = getNextClockwiseEdge(nextNode, nextEdge);
-                } while (nextNode != start);
+                } while (nextEdge != edge);
 
             }
 
@@ -593,7 +593,7 @@ public class PGraph extends PNode {
                     nextNode = nextNode.getAdjacentNode(nextEdge);
                     nextEdge = getNextCClockwiseEdge(nextNode, nextEdge);
 
-                } while (nextNode != start);
+                } while (nextEdge != edge);
             }
 
         }
@@ -784,9 +784,7 @@ public class PGraph extends PNode {
         return this.externalFace;
     }
 
-    // do not use this at final version!
-    @Deprecated
-    public void setExternalFace(PFace externalFace) {
+    public void setExternalFace(final PFace externalFace) {
         this.externalFace = externalFace;
     }
 
@@ -796,7 +794,7 @@ public class PGraph extends PNode {
      * @param targetNode
      * @return
      */
-    public Pair<PNode, PEdge> addNode(PEdge edge, NodeType type, PNode targetNode) {
+    public Pair<PNode, PEdge> addNode(final PEdge edge, final NodeType type, final PNode targetNode) {
         if (!(edge.getSource() instanceof PNode && edge.getTarget() instanceof PNode)) {
             throw new IncompatibleGraphTypeException();
         } else if (!(edge.getLeftFace() instanceof PFace && edge.getRightFace() instanceof PFace)) {
