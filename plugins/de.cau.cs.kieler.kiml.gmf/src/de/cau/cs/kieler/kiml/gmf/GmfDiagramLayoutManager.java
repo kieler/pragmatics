@@ -94,8 +94,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * {@link GmfLayoutCommand} to directly manipulate data in the GMF notation model, where layout
  * information is stored persistently.
  * 
- * @kieler.rating 2012-07-19 yellow
- *      reviewed by cds, jjc
+ * @kieler.rating 2012-07-19 yellow KI-20 cds, jjc
  * @author ars
  * @author msp
  */

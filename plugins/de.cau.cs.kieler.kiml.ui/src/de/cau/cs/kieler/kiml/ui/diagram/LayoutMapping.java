@@ -32,8 +32,7 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
  *
  * @param <T> the type of diagram parts to store in the mapping
  * @author msp
- * @kieler.rating 2012-07-19 yellow
- *      reviewed by cds, jjc
+ * @kieler.rating 2012-07-19 yellow KI-20 cds, jjc
  */
 public class LayoutMapping<T> extends MapPropertyHolder {
     

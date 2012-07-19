@@ -27,8 +27,7 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 /**
  * Handler for execution of layout triggered by menu, toolbar, or keyboard command.
  * 
- * @kieler.rating 2012-07-19 yellow
- *      reviewed by cds, jjc
+ * @kieler.rating 2012-07-19 yellow KI-20 cds, jjc
  * @author msp
  */
 public class LayoutHandler extends AbstractHandler {
