@@ -13,17 +13,26 @@
  */
 package de.cau.cs.kieler.klay.test.utils;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @author wah
  * 
  */
-public class GraphTestUtilTest {
+@RunWith(GraphTestRunner.class)
+public abstract class GraphTestUtilTest {
     
+	@Before
+	public void initialize(){
+		System.out.println("Hello");
+	}
+	
     @Test
     public void test(){
         GraphTestUtil.loadGraphs("test/", true, true);
+        assert(true);
     }
 
 }
