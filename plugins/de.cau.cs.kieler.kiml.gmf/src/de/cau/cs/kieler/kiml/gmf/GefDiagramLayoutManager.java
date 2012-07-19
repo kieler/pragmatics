@@ -30,8 +30,11 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
  * An abstract diagram layout manager for GEF-based implementations.
- * This variant is tuned for GMF diagram editors.
+ * This variant is tuned for GMF diagram editors, since it does not provide automatic zooming
+ * for other diagram editors.
  *
+ * @kieler.rating 2012-07-19 yellow
+ *      reviewed by cds, jjc
  * @param <T> the type of diagram part that is handled by this diagram layout manager
  * @author msp
  */
@@ -52,6 +55,10 @@ public abstract class GefDiagramLayoutManager<T> implements IDiagramLayoutManage
             // determine pre- or post-layout zoom
             DiagramEditPart diagramEditPart = GmfDiagramLayoutManager.getDiagramEditPart(
                     (EditPart) layoutGraphObj);
+            if (diagramEditPart == null) {
+                applyLayout(mapping, animationTime);
+                return;
+            }
             ZoomManager zoomManager = ((RenderedDiagramRootEditPart) diagramEditPart.getRoot())
                     .getZoomManager();
             KNode parentNode = mapping.getLayoutGraph();
@@ -65,12 +72,16 @@ public abstract class GefDiagramLayoutManager<T> implements IDiagramLayoutManage
             final double oldScale = zoomManager.getZoom();
 
             if (scale < oldScale) {
+                // we're zooming out, so do it before layout is applied
                 zoomManager.setViewLocation(new Point(0, 0));
                 zoomManager.setZoom(scale);
                 zoomManager.setViewLocation(new Point(0, 0));
             }
+            
             applyLayout(mapping, animationTime);
+            
             if (scale > oldScale) {
+                // we're zooming in, so do it after layout is applied
                 zoomManager.setViewLocation(new Point(0, 0));
                 zoomManager.setZoom(scale);
                 zoomManager.setViewLocation(new Point(0, 0));
@@ -101,17 +112,18 @@ public abstract class GefDiagramLayoutManager<T> implements IDiagramLayoutManage
     }
 
     /**
-     * Transfer all layout data from the last created KGraph instance to the
-     * original diagram. The diagram is not modified yet, but all required
-     * preparations are performed.
+     * Transfer all layout data from the last created KGraph instance to the original diagram.
+     * The diagram is not modified yet, but all required preparations are performed. This is
+     * separated from {@link #applyLayout(LayoutMapping)} to allow better code modularization.
      * 
      * @param mapping a layout mapping that was created by this layout manager
      */
     protected abstract void transferLayout(LayoutMapping<T> mapping);
     
     /**
-     * Apply the transferred layout to the original diagram. This final step
-     * is where the actual change to the diagram is done.
+     * Apply the transferred layout to the original diagram. This final step is where the actual
+     * change to the diagram is done. This method is always called after
+     * {@link #transferLayout(LayoutMapping)} has been done.
      * 
      * @param mapping a layout mapping that was created by this layout manager
      */
@@ -135,6 +147,7 @@ public abstract class GefDiagramLayoutManager<T> implements IDiagramLayoutManage
     
     /**
      * Perform undo in the original diagram (optional operation).
+     * This implementation throws an {@code UnsupportedOperationException}.
      *
      * @param mapping a layout mapping that was created by this layout manager
      */
