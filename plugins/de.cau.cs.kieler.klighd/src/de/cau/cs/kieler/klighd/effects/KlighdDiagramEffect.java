@@ -44,14 +44,14 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
     /** the new input model for the diagram view. */
     private Object model = null;
     /** the workbench part the element to be shown has been selected in. */
-    private IWorkbenchPart sourceWorkbenchPart = null;
-
+    private transient IWorkbenchPart sourceWorkbenchPart = null;
+    
     // the following fields are valid AFTER the effect executed
 
     /** the created/updated view. */
-    private DiagramViewPart view = null;
+    private transient DiagramViewPart view = null;
     /** the created viewer. */
-    private IViewer<?> viewer = null;
+    private transient IViewer<?> viewer = null;
 
     /**
      * Constructs an effect that opens the default diagram view if it is not already open.
