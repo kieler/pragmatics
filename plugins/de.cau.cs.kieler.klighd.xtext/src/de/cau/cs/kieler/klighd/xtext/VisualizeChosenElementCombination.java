@@ -130,7 +130,7 @@ public abstract class VisualizeChosenElementCombination extends AbstractCombinat
      * 
      * @author chsch, pkl
      */
-    class ModelExpression extends Expression {
+    private static class ModelExpression extends Expression {
 
         private Class<?> clazz = null;
         private EObject element = null;
