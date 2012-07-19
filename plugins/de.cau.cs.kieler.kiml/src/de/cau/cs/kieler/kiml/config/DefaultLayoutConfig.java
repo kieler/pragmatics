@@ -38,8 +38,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  * default values of layout algorithms and layout options.
  *
  * @author msp
- * @kieler.rating 2012-07-05 yellow
- *      review by cmot, sgu
+ * @kieler.rating 2012-07-05 yellow KI-18 cmot, sgu
  */
 public class DefaultLayoutConfig implements ILayoutConfig {
     

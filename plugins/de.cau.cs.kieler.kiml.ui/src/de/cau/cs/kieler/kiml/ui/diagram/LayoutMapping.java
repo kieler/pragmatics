@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
  *
  * @param <T> the type of diagram parts to store in the mapping
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating 2012-07-19 yellow KI-20 cds, jjc
  */
 public class LayoutMapping<T> extends MapPropertyHolder {
     
@@ -53,10 +53,10 @@ public class LayoutMapping<T> extends MapPropertyHolder {
     /**
      * Create a layout mapping with given adapter factory.
      * 
-     * @param theadapterFactory the adapter factory for accessing elements
+     * @param adapterFactory the adapter factory for accessing elements
      */
-    public LayoutMapping(final IAdapterFactory theadapterFactory) {
-        this.adapterFactory = theadapterFactory;
+    public LayoutMapping(final IAdapterFactory adapterFactory) {
+        this.adapterFactory = adapterFactory;
     }
     
     /**
@@ -71,10 +71,10 @@ public class LayoutMapping<T> extends MapPropertyHolder {
     /**
      * Set the top-level parent node of the layout graph.
      * 
-     * @param thelayoutGraph the layout graph
+     * @param layoutGraph the layout graph
      */
-    public void setLayoutGraph(final KNode thelayoutGraph) {
-        this.layoutGraph = thelayoutGraph;
+    public void setLayoutGraph(final KNode layoutGraph) {
+        this.layoutGraph = layoutGraph;
     }
     
     /**
@@ -99,10 +99,10 @@ public class LayoutMapping<T> extends MapPropertyHolder {
     /**
      * Set the top-level diagram part.
      * 
-     * @param theparentElem the parent diagram part
+     * @param parentElem the parent diagram part
      */
-    public void setParentElement(final T theparentElem) {
-        this.parentElement = theparentElem;
+    public void setParentElement(final T parentElem) {
+        this.parentElement = parentElem;
     }
     
     /**

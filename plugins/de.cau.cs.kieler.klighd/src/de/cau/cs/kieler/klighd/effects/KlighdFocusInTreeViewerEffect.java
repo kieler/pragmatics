@@ -22,11 +22,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 
 /**
  * Effect that realizes the focusing of element selected in KLighD views in related tree viewers.<br>
@@ -34,7 +34,7 @@ import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
  * 
  * @author chsch
  */
-public class KLighdFocusInTreeViewerEffect extends AbstractEffect {
+public class KlighdFocusInTreeViewerEffect extends AbstractEffect {
 
     private Object element = null;
     private TreeViewer treeViewer = null;
@@ -45,7 +45,7 @@ public class KLighdFocusInTreeViewerEffect extends AbstractEffect {
      * @param theElement the element to be focused, must not be null!
      * @param theTreeViewer the viewer to set the selection in, must not be null!
      */
-    public KLighdFocusInTreeViewerEffect(final Object theElement, final TreeViewer theTreeViewer) {
+    public KlighdFocusInTreeViewerEffect(final Object theElement, final TreeViewer theTreeViewer) {
         this.element = theElement;
         this.treeViewer = theTreeViewer;
     }
@@ -82,13 +82,14 @@ public class KLighdFocusInTreeViewerEffect extends AbstractEffect {
             
             final ISelection selection = new TreeSelection(new TreePath(l.toArray()));
 
-            MonitoredOperation.runInUI(new Runnable() {
+            
+            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                 public void run() {
                     if (treeViewer != null) {
                         treeViewer.setSelection(selection, true);
                     }
                 }
-            }, false);
+            });
         } else {
             if (this.element == null && this.treeViewer == null) {
                 throw new WrappedException(new KielerModelException(

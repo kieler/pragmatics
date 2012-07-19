@@ -36,11 +36,18 @@ public class KlighdStatusTrigger extends AbstractTrigger {
     }
 
     /**
+     * Setter of the current instance. Has been introduced due to a hint of FindBugs. 
+     */
+    private static synchronized void setInstance(final KlighdStatusTrigger theInstance) {
+        instance = theInstance;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public void register() {
-        instance = this;
+        setInstance(this);
     }
 
     /**
@@ -48,7 +55,7 @@ public class KlighdStatusTrigger extends AbstractTrigger {
      */
     @Override
     public void unregister() {
-        instance = null;
+        setInstance(null);
     }
 
     /**

@@ -121,7 +121,7 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
     /**
      * {@inheritDoc}
      */
-    public Object getModel() {
+    public synchronized Object getModel() {
         if (currentViewer != null) {
             return currentViewer.getModel();
         }
@@ -181,7 +181,7 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
             // create the selection objects
             List<SelectionElement> selections = new LinkedList<SelectionElement>();
             // create the selection state
-            KlighdSelectionState state = new KlighdSelectionState(viewId, currentViewContext,
+            KlighdSelectionState state = new KlighdSelectionState(viewId, getCurrentViewContext(),
                     currentViewer, selections);
             // fill the selection
             for (Object diagramObject : selectedElements) {
@@ -373,14 +373,14 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
      * 
      * @return the view context
      */
-    public ViewContext getCurrentViewContext() {
+    public synchronized ViewContext getCurrentViewContext() {
         return currentViewContext;
     }
 
     /**
      * An implementation of {@code IStructuredSelection} for the {@code ISelectionProvider}.
      */
-    private class Selection implements IStructuredSelection, Iterable<Object> {
+    private class Selection implements IStructuredSelection, Iterable<Object>, Cloneable {
 
         /** the objects which make up the selection. */
         private List<Object> selectedElements = new LinkedList<Object>();

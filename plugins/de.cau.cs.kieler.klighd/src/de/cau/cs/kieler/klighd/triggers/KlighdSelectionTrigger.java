@@ -45,11 +45,18 @@ public class KlighdSelectionTrigger extends AbstractTrigger {
     }
 
     /**
+     * Setter of the current instance. Has been introduced due to a hint of FindBugs. 
+     */
+    private static synchronized void setInstance(final KlighdSelectionTrigger theInstance) {
+        instance = theInstance;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public void register() {
-        instance = this;
+        setInstance(this);
     }
 
     /**
@@ -57,7 +64,7 @@ public class KlighdSelectionTrigger extends AbstractTrigger {
      */
     @Override
     public void unregister() {
-        instance = null;
+        setInstance(null);
     }
 
     /**
@@ -105,19 +112,31 @@ public class KlighdSelectionTrigger extends AbstractTrigger {
             return selections;
         }
         
+        /**
+         * Returns the semantic elements behind the selected representatives (figures).
+         * 
+         * @return a collection of elements being represented by the selected figures.
+         */
         public List<Object> getSelectedModelElements() {
             return Lists.transform(selections, new Function<SelectionElement, Object>() {
-                public Object apply(SelectionElement input) {                   
+                public Object apply(final SelectionElement input) {                   
                     return input.getModelElement();
                 }
             });
         }
 
+        /**
+         * Returns a filtered collection of semantic elements behind the selected representatives
+         * (figures) that are {@link EObject EObjects}.
+         * 
+         * @return a collection of elements being an {@link EObject} and represented by the selected
+         *         figures.
+         */
         public List<EObject> getSelectedEModelElements() {
             return Lists.transform(selections, new Function<SelectionElement, EObject>() {
-                public EObject apply(SelectionElement input) {
-                    return input.getModelElement() instanceof EObject ?
-                            (EObject) input.getModelElement() : null;
+                public EObject apply(final SelectionElement input) {
+                    return input.getModelElement() instanceof EObject
+                            ? (EObject) input.getModelElement() : null;
                 }
             });
         }
