@@ -668,7 +668,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
         if (port != null) {
             portRepresentative = (LPort) elemMap.get(port);
         }
-        if ((portRepresentative == null)) {
+      if ((portRepresentative == null) || (portRepresentative.getSide() != side)) {
             LPort dummyPort = new LPort();
             dummyPort.setSide(side);
             dummyPort.setNode(node);
