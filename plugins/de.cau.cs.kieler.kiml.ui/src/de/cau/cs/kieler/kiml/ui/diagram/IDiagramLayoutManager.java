@@ -34,7 +34,8 @@ import org.eclipse.ui.IWorkbenchPart;
  * diagram part, which should also match the generic type of the implementation.
  * 
  * @param <T> the type of diagram part that is handled by this diagram layout manager
- * @kieler.rating 2009-12-11 proposed yellow msp
+ * @kieler.rating 2012-07-19 yellow
+ *      reviewed by cds, jjc
  * @author msp
  */
 public interface IDiagramLayoutManager<T> extends IAdapterFactory {
@@ -53,24 +54,29 @@ public interface IDiagramLayoutManager<T> extends IAdapterFactory {
      * {@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout KShapeLayouts} or
      * {@link de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout KEdgeLayouts} attached,
      * and their modification flags must be set to {@code false}.
-     * <p>
+     * <p/>
      * Layout options should not be directly set for any graph elements, since they would be
-     * cleared later. Instead the {@link LayoutMapping#getLayoutConfigs()} list should be augmented
+     * cleared later by the
+     * {@link de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager LayoutOptionManager}.
+     * Instead the {@link LayoutMapping#getLayoutConfigs()} list should be augmented
      * with according layout configurators.
+     * <p/>
+     * At least one of the two parameters must be non-null.
      * 
      * @param workbenchPart
-     *            the workbench part for which layout is performed
+     *            the workbench part for which layout is performed, or {@code null} if there
+     *            is no workbench part for the diagram
      * @param diagramPart
-     *            the parent object for which layout is performed, or
-     *            {@code null} if the whole diagram shall be layouted
+     *            the parent object for which layout is performed, or {@code null} if the
+     *            whole diagram shall be layouted
      * @return a layout graph mapping
      */
     LayoutMapping<T> buildLayoutGraph(IWorkbenchPart workbenchPart,
             Object diagramPart);
 
     /**
-     * Apply the computed layout back to the diagram. Graph elements whose modification flags
-     * have not been raised during layout should be ignored.
+     * Apply the computed layout back to the diagram. Graph elements whose modification flag
+     * was not set during layout should be ignored.
      * 
      * @param mapping a layout mapping that was created by this layout manager
      * @param zoomToFit whether the diagram should zoom to fit

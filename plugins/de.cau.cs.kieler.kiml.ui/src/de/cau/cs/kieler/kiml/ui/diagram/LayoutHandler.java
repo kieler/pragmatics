@@ -27,7 +27,8 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 /**
  * Handler for execution of layout triggered by menu, toolbar, or keyboard command.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
+ * @kieler.rating 2012-07-19 yellow
+ *      reviewed by cds, jjc
  * @author msp
  */
 public class LayoutHandler extends AbstractHandler {
@@ -66,15 +67,15 @@ public class LayoutHandler extends AbstractHandler {
         // get the active editor, which is expected to contain the diagram for applying layout
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
         if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-            // perform layout with the given selection
+            // perform layout with the given selection (only the first element is considered)
             IStructuredSelection structuredSelection = (IStructuredSelection) selection;
             DiagramLayoutEngine.INSTANCE.layout(editorPart, structuredSelection.getFirstElement(),
                     animation, progressDialog, false, zoomToFit);
-            return null;
+        } else {
+            // perform layout on the whole diagram
+            DiagramLayoutEngine.INSTANCE.layout(editorPart, null, animation, progressDialog,
+                    false, zoomToFit);
         }
-        // perform layout on the whole diagram
-        DiagramLayoutEngine.INSTANCE.layout(editorPart, null, animation, progressDialog,
-                false, zoomToFit);
         return null;
     }
 

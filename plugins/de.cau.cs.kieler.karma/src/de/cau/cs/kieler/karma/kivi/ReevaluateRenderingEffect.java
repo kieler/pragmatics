@@ -35,7 +35,8 @@ public class ReevaluateRenderingEffect extends AbstractEffect {
     private EObject modelElement = null;
     
     /**
-     * The constructor.
+     * The constructor. The built effect will reevalute 
+     * the given model element and set a new rendering.
      * @param modelElement the model element to reevaluate.
      */
     public ReevaluateRenderingEffect(final EObject modelElement) {
