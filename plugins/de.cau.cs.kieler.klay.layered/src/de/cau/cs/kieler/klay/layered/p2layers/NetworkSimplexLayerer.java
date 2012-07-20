@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -85,7 +85,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
     // ================================== Attributes ==============================================
 
     /** The layered graph all methods in this class operate on. */
-    private LayeredGraph layeredGraph;
+    private LGraph layeredGraph;
 
     /** A {@code Collection} containing all nodes in the graph to layer. */
     private Collection<LNode> nodes;
@@ -210,7 +210,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph) {
         // Basic strategy
         IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy(
                 BASELINE_PROCESSING_STRATEGY);
@@ -442,7 +442,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
      *            
      * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
      */
-    public void process(final LayeredGraph theLayeredGraph) {
+    public void process(final LGraph theLayeredGraph) {
         assert theLayeredGraph != null;
         getMonitor().begin("Network-Simplex Layering", 1);
         

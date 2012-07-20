@@ -35,7 +35,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -172,7 +172,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph) {
         if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
             return HIERARCHY_PROCESSING_ADDITIONS;
         } else {
@@ -193,7 +193,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Linear segments node placement", 1);
 
         // sort the linear segments of the layered graph
@@ -240,7 +240,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      *            layered graph to process
      * @return a sorted array of linear segments
      */
-    private LinearSegment[] sortLinearSegments(final LayeredGraph layeredGraph) {
+    private LinearSegment[] sortLinearSegments(final LGraph layeredGraph) {
         // set the identifier and input / output priority for all nodes
         List<LinearSegment> segmentList = new LinkedList<LinearSegment>();
         for (Layer layer : layeredGraph) {
@@ -355,7 +355,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * @param incomingCountList
      *            the number of incoming dependencies for each segment.
      */
-    private void createDependencyGraphEdges(final LayeredGraph layeredGraph,
+    private void createDependencyGraphEdges(final LGraph layeredGraph,
             final List<LinearSegment> segmentList, final List<List<LinearSegment>> outgoingList,
             final List<Integer> incomingCountList) {
 
@@ -531,7 +531,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * @param layeredGraph
      *            the layered graph to create an unbalanced placement for.
      */
-    private void createUnbalancedPlacement(final LayeredGraph layeredGraph) {
+    private void createUnbalancedPlacement(final LGraph layeredGraph) {
         float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         float smallSpacing = normalSpacing
                 * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
@@ -615,7 +615,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * 
      * @param layeredGraph a layered graph
      */
-    private void balancePlacement(final LayeredGraph layeredGraph) {
+    private void balancePlacement(final LGraph layeredGraph) {
         float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         float smallSpacing = spacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         
@@ -774,7 +774,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * @param smallSpacing the dummy object spacing
      * @return true if any two regions have been merged
      */
-    private boolean mergeRegions(final LayeredGraph layeredGraph,
+    private boolean mergeRegions(final LGraph layeredGraph,
             final float normalSpacing, final float smallSpacing) {
         boolean changed = false;
         double threshold = OVERLAP_DETECT * normalSpacing;
@@ -833,7 +833,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * @param layeredGraph
      *            the layered graph
      */
-    private void postProcess(final LayeredGraph layeredGraph) {
+    private void postProcess(final LGraph layeredGraph) {
         float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         float smallSpacing = normalSpacing
                 * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
@@ -935,7 +935,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * @param outgoingList
      *            the list of successors for each linear segment.
      */
-    private static void writeDebugGraph(final LayeredGraph layeredGraph,
+    private static void writeDebugGraph(final LGraph layeredGraph,
             final List<LinearSegment> segmentList, final List<List<LinearSegment>> outgoingList) {
 
         try {
@@ -972,7 +972,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * @throws IOException
      *             if creating the output file fails.
      */
-    private static Writer createWriter(final LayeredGraph layeredGraph) throws IOException {
+    private static Writer createWriter(final LGraph layeredGraph) throws IOException {
         String path = Util.getDebugOutputPath();
         new File(path).mkdirs();
 

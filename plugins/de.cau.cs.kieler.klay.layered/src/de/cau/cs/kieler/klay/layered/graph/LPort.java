@@ -25,12 +25,11 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
- * A port in a layered graph. The position of the port is relative to the upper
- * left corner of the containing node. Contrary to the usual customs, a port's
- * position denotes its center point, not its upper left corner. A port has
- * only one list of incident edges; for input ports this list must only contain
- * incoming edges, while for output ports it must only contain outgoing edges.
- * Usually all ports are required to be either input ports or output ports.
+ * A port in a layered graph. The position of the port is relative to the upper left corner
+ * of the containing node and marks the port's upper left corner. The position where edges are
+ * attached is marked by the anchor and is relative to the port's position. The incoming edges
+ * and outgoing edges are stored separately, but is is possible to iterate over both types of
+ * edges using the concatenation of the corresponding lists.
  * 
  * <p>Port must be used even if the original graph does not reveal them. In this
  * case each edge has dedicated source and target ports, which are used to

@@ -29,7 +29,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -67,14 +67,14 @@ public class InteractiveCrossingMinimizer extends AbstractAlgorithm implements I
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph) {
         return INTERMEDIATE_PROCESSING_STRATEGY;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Interactive crossing minimization", 1);
         
         int portCount = 0;
@@ -150,7 +150,7 @@ public class InteractiveCrossingMinimizer extends AbstractAlgorithm implements I
      * @param graph the layered graph.
      * @return the vertical position used for sorting
      */
-    private double getPos(final LNode node, final double horizPos, final LayeredGraph graph) {
+    private double getPos(final LNode node, final double horizPos, final LGraph graph) {
         switch (node.getProperty(Properties.NODE_TYPE)) {
         case LONG_EDGE:
             LEdge edge = (LEdge) node.getProperty(Properties.ORIGIN);

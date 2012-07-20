@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -71,7 +71,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin(
                 "Order subgraphs so that the relative position " + "is the same on all layers", 1);
 
@@ -80,7 +80,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         // A subgraph ordering graph is used to find the correct subgraph ordering. The subgraph 
         // ordering graph is disconnected - it consists of connected components for each compound
         // node. Represent it as a HashMap of layered Graphs. The compound nodes serve as keys.
-        HashMap<LNode, LayeredGraph> subgraphOrderingGraph = new HashMap<LNode, LayeredGraph>();
+        HashMap<LNode, LGraph> subgraphOrderingGraph = new HashMap<LNode, LGraph>();
 
         // Make up an LNode that is to represent the layeredGraph as a key in
         // the subgraphOrderingGraph
@@ -157,17 +157,17 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                         LNode key;
                         LGraphElement parentRep = elemMap.get(propCompoundCurrent
                                 .getProperty(Properties.K_PARENT));
-                        if (parentRep instanceof LayeredGraph) {
+                        if (parentRep instanceof LGraph) {
                             key = graphKey;
                         } else {
                             key = (LNode) parentRep;
                         }
-                        LayeredGraph partGraph;
+                        LGraph partGraph;
                         // Get the corresponding component of the subgraphOrderingGraph or create it.
                         if (subgraphOrderingGraph.containsKey(key)) {
                             partGraph = subgraphOrderingGraph.get(key);
                         } else {
-                            partGraph = new LayeredGraph();
+                            partGraph = new LGraph();
                             partGraph.setProperty(Properties.RANDOM, random);
                             subgraphOrderingGraph.put(key, partGraph);
                         }
@@ -205,7 +205,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         boolean noProblems = true;
 
         for (LNode key : keys) {
-            LayeredGraph graphComponent = subgraphOrderingGraph.get(key);
+            LGraph graphComponent = subgraphOrderingGraph.get(key);
             // Remove cycles from the graph component.
             cycleBreaker.reset();
             cycleBreaker.process(graphComponent);
@@ -245,7 +245,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             final LNode currentChild, final LGraphElement currentParent, final LNode graphKey) {
         LinkedList<LNode> currentAncestorNodesList;
         // root of inclusion tree reached
-        if (currentParent instanceof LayeredGraph) {
+        if (currentParent instanceof LGraph) {
             currentAncestorNodesList = layerCompoundContents.get(graphKey);
             if (currentAncestorNodesList == null) {
                 currentAncestorNodesList = new LinkedList<LNode>();
@@ -322,8 +322,8 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
      * @param elemMap
      *            The element-map mapping the original KGraph elements to LGraph elements.
      */
-    private void applyOrder(final LayeredGraph layeredGraph,
-            final HashMap<LNode, LayeredGraph> subgraphOrderingGraph, final LNode graphKey,
+    private void applyOrder(final LGraph layeredGraph,
+            final HashMap<LNode, LGraph> subgraphOrderingGraph, final LNode graphKey,
             final HashMap<KGraphElement, LGraphElement> elemMap) {
 
         HashMap<Layer, LinkedList<LNode>> layerOrders = new HashMap<Layer, LinkedList<LNode>>();
@@ -369,8 +369,8 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
      *            The element map mapping original KGraph elements to LGraph elements.
      */
     private void recursiveApplyLayerOrder(final Layer layer, final LNode key,
-            final LayeredGraph layeredGraph,
-            final HashMap<LNode, LayeredGraph> subgraphOrderingGraph,
+            final LGraph layeredGraph,
+            final HashMap<LNode, LGraph> subgraphOrderingGraph,
             final LinkedList<LNode> layerOrder, final HashMap<KGraphElement, LGraphElement> elemMap) {
 
         LinkedList<LNode> componentOrder = orderedLists.get(key);
@@ -481,7 +481,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
      * @return List containing all nodes of the layered graph in an topological order.
      */
 
-    private LinkedList<LNode> graphToList(final LayeredGraph graph) {
+    private LinkedList<LNode> graphToList(final LGraph graph) {
         boolean acyclic = true;
         LinkedList<LNode> retList = new LinkedList<LNode>();
         List<LNode> nodes = graph.getLayerlessNodes();

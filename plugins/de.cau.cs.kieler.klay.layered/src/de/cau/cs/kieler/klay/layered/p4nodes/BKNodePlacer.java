@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -122,7 +122,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph) {
         if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
             return HIERARCHY_PROCESSING_ADDITIONS;
         } else {
@@ -133,7 +133,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Brandes & Koepf node placement", 1);
         markedEdges = new LinkedList<LEdge>();
 
@@ -284,7 +284,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * 
      * @param layeredGraph The layered graph to be layouted
      */
-    private void markConflicts(final LayeredGraph layeredGraph) {
+    private void markConflicts(final LGraph layeredGraph) {
         for (int i = 1; i <= layeredGraph.getLayers().size() - 2; i++) {
             // The variable naming here follows the notation of the corresponding paper
             // Normally, underscores are not allowed in local variable names, but since there
@@ -334,7 +334,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * @param layeredGraph The layered graph to be layouted
      * @param bal One of the four layouts which shall be used in this step 
      */
-    private void verticalAlignment(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
+    private void verticalAlignment(final LGraph layeredGraph, final BKAlignedLayout bal) {
         // Initialize root and align maps
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode v : layer.getNodes()) {
@@ -434,7 +434,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * @param layeredGraph The layered graph to be layouted
      * @param bal One of the four layouts which shall be used in this step
      */
-    private void insideBlockShift(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
+    private void insideBlockShift(final LGraph layeredGraph, final BKAlignedLayout bal) {
         HashMap<LNode, List<LNode>> blocks = getBlocks(bal);
 
         for (LNode root : blocks.keySet()) {
@@ -549,7 +549,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * @param layeredGraph The layered graph to be layouted
      * @param bal One of the four layouts which shall be used in this step
      */
-    private void horizontalCompaction(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
+    private void horizontalCompaction(final LGraph layeredGraph, final BKAlignedLayout bal) {
         // Initialize fields with basic values, partially depending on the direction
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
@@ -782,7 +782,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * @param layer The respective layer
      * @return The size of the given layer
      */
-    private int layerSize(final LayeredGraph layeredGraph, final int layer) {
+    private int layerSize(final LGraph layeredGraph, final int layer) {
         return layeredGraph.getLayers().get(layer).getNodes().size();
     }
 
@@ -796,7 +796,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * @return The node which is on the given position of the given layer or an exception, if there is
      *         no node on the given position
      */
-    private LNode nodeByPosition(final LayeredGraph layeredGraph, final int layer,
+    private LNode nodeByPosition(final LGraph layeredGraph, final int layer,
             final int position) {
         return layeredGraph.getLayers().get(layer).getNodes().get(position);
     }
@@ -905,7 +905,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * @param bal The layout which shall be checked
      * @return True if the order is preserved and no nodes overlap, false else
      */
-    private boolean checkOrderConstraint(final LayeredGraph layeredGraph, final BKAlignedLayout bal) {
+    private boolean checkOrderConstraint(final LGraph layeredGraph, final BKAlignedLayout bal) {
         if (bal.getY().isEmpty()) {
             return false;
         }

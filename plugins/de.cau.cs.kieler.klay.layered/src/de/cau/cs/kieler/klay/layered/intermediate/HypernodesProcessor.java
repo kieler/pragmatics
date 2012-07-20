@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 /**
  * Improves the placement of hypernodes by moving them such that they replace the join
@@ -46,7 +46,7 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Hypernodes processing", 1);
         
         for (Layer layer : layeredGraph) {
@@ -88,7 +88,7 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
      * @param right if true, the node is moved right (to the next layer), else it
      *     is moved left (to the previous layer)
      */
-    private void moveHypernode(final LayeredGraph layeredGraph, final LNode hypernode,
+    private void moveHypernode(final LGraph layeredGraph, final LNode hypernode,
             final boolean right) {
         // find edges that constitute the first join point of the hyperedge
         List<LEdge> bendEdges = new LinkedList<LEdge>();

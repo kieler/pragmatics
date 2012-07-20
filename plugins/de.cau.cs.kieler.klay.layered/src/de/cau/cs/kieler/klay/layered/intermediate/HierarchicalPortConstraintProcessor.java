@@ -34,7 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -117,7 +117,7 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Hierarchical port constraint processing", 1);
         
         processEasternAndWesternPortDummies(layeredGraph);
@@ -135,7 +135,7 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
      * 
      * @param layeredGraph the layered graph
      */
-    private void processEasternAndWesternPortDummies(final LayeredGraph layeredGraph) {
+    private void processEasternAndWesternPortDummies(final LGraph layeredGraph) {
         // If the port constraints are not at least FIXED_ORDER, there's nothing to be done here
         if (!layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
             return;
@@ -193,7 +193,7 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
      * 
      * @param layeredGraph the layered graph.
      */
-    private void processNorthernAndSouthernPortDummies(final LayeredGraph layeredGraph) {
+    private void processNorthernAndSouthernPortDummies(final LGraph layeredGraph) {
         // If the port constraints are not at least FIXED_SIDE, there's nothing to do here
         PortConstraints portConstraints = layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         if (!portConstraints.isSideFixed()) {

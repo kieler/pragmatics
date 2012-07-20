@@ -26,7 +26,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.EdgeType;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -58,7 +58,7 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin(
                 "Remove dummy edges and nodes, set node and edge positions"
                         + "and node size for compound nodes", 1);
@@ -273,7 +273,7 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
      *         upper resp. lower.
      */
     private KVector findSideNodePos(final LNode lnode, final boolean lower, final boolean left,
-            final LayeredGraph lGraph) {
+            final LGraph lGraph) {
         Layer layer;
         if (left) {
             layer = lnode.getLayer();

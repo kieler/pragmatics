@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -152,7 +152,7 @@ public final class Util {
      *            the graph to return the base debug file name for.
      * @return the base debug file name for the given graph.
      */
-    public static String getDebugOutputFileBaseName(final LayeredGraph graph) {
+    public static String getDebugOutputFileBaseName(final LGraph graph) {
         return Integer.toString(graph.hashCode() & ((1 << (Integer.SIZE / 2)) - 1)) + "-";
     }
 
@@ -249,7 +249,7 @@ public final class Util {
      *         represented LGraphElement for dummies of another kind. Null, if represented
      *         LGraphElement is of depth 1. D. null in default case.
      */
-    public static LNode getRelatedCompoundNode(final LNode node, final LayeredGraph layeredGraph) {
+    public static LNode getRelatedCompoundNode(final LNode node, final LGraph layeredGraph) {
         // method is to return null in the default case
         LNode retNode = null;
         HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
@@ -266,7 +266,7 @@ public final class Util {
         case NORMAL:
             KNode parent = node.getProperty(Properties.K_PARENT);
             parentRepresentative = elemMap.get(parent);
-            if (!(parentRepresentative instanceof LayeredGraph)) {
+            if (!(parentRepresentative instanceof LGraph)) {
                 retNode = (LNode) parentRepresentative;
             }
             break;
@@ -289,7 +289,7 @@ public final class Util {
                 LNode newSource = sourceTargetList.getFirst();
                 KNode newSourceParent = newSource.getProperty(Properties.K_PARENT);
                 LGraphElement container = elemMap.get(newSourceParent);
-                if (!(container instanceof LayeredGraph)) {
+                if (!(container instanceof LGraph)) {
                     retNode = (LNode) container;
                 }
                 // In other cases, determine, if the edge is hierarchy-crossing.
@@ -317,7 +317,7 @@ public final class Util {
             LNode portNode = node.getProperty(Properties.IN_LAYER_LAYOUT_UNIT);
             KNode portNodeParent = portNode.getProperty(Properties.K_PARENT);
             LGraphElement portNodeParentRepresentative = elemMap.get(portNodeParent);
-            if (!(elemMap.get(portNodeParent) instanceof LayeredGraph)) {
+            if (!(elemMap.get(portNodeParent) instanceof LGraph)) {
                 retNode = (LNode) portNodeParentRepresentative;
             }
             break;

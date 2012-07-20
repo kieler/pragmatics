@@ -271,7 +271,7 @@ public class LNode extends LShape {
             throw new IllegalStateException("node is not assigned to a layer in a graph.");
         }
         
-        LayeredGraph graph = owner.getGraph();
+        LGraph graph = owner.getGraph();
         
         LInsets.Double insets = graph.getInsets();
         float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
@@ -295,7 +295,7 @@ public class LNode extends LShape {
      * @param graph the layered graph.
      * @return the node's anchor point position.
      */
-    public KVector getInteractiveReferencePoint(final LayeredGraph graph) {
+    public KVector getInteractiveReferencePoint(final LGraph graph) {
         switch (graph.getProperty(Properties.INTERACTIVE_REFERENCE_POINT)) {
         case CENTER:
             KVector nodePos = getPosition();

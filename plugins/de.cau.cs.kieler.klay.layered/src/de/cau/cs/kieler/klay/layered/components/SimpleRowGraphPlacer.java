@@ -20,7 +20,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -33,16 +33,17 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author msp
  * @author cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 class SimpleRowGraphPlacer extends GraphPlacer {
 
     /**
      * {@inheritDoc}
      */
-    public LayeredGraph combine(final List<LayeredGraph> components) {
+    public LGraph combine(final List<LGraph> components) {
         if (components.size() == 1) {
-            LayeredGraph graph = components.get(0);
+            LGraph graph = components.get(0);
             // move all nodes away from the layers
             for (Layer layer : graph) {
                 graph.getLayerlessNodes().addAll(layer.getNodes());
@@ -50,11 +51,11 @@ class SimpleRowGraphPlacer extends GraphPlacer {
             graph.getLayers().clear();
             return graph;
         } else if (components.size() <= 0) {
-            return new LayeredGraph();
+            return new LGraph();
         }
         
         // assign priorities
-        for (LayeredGraph graph : components) {
+        for (LGraph graph : components) {
             int priority = 0;
             for (Layer layer : graph) {
                 for (LNode node : layer) {
@@ -65,8 +66,8 @@ class SimpleRowGraphPlacer extends GraphPlacer {
         }
 
         // sort the components by their priority and size
-        Collections.sort(components, new Comparator<LayeredGraph>() {
-            public int compare(final LayeredGraph graph1, final LayeredGraph graph2) {
+        Collections.sort(components, new Comparator<LGraph>() {
+            public int compare(final LGraph graph1, final LGraph graph2) {
                 int prio = graph2.id - graph1.id;
                 if (prio == 0) {
                     double size1 = graph1.getSize().x * graph1.getSize().y;
@@ -77,14 +78,14 @@ class SimpleRowGraphPlacer extends GraphPlacer {
             }
         });
         
-        LayeredGraph result = new LayeredGraph();
+        LGraph result = new LGraph();
         result.copyProperties(components.get(0));
         result.getInsets().copy(components.get(0).getInsets());
         
         // determine the maximal row width by the maximal box width and the total area
         double maxRowWidth = 0.0f;
         double totalArea = 0.0f;
-        for (LayeredGraph graph : components) {
+        for (LGraph graph : components) {
             KVector size = graph.getSize();
             maxRowWidth = Math.max(maxRowWidth, size.x);
             totalArea += size.x * size.y;
@@ -95,7 +96,7 @@ class SimpleRowGraphPlacer extends GraphPlacer {
 
         // place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;
-        for (LayeredGraph graph : components) {
+        for (LGraph graph : components) {
             KVector size = graph.getSize();
             if (xpos + size.x > maxRowWidth) {
                 // place the graph into the next row

@@ -24,7 +24,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
@@ -46,7 +46,7 @@ public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph) {
         return null;
     }
     
@@ -60,7 +60,7 @@ public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Interactive node layering", 1);
 
         // create layers with a start and an end position, merging when they overlap with others
@@ -133,7 +133,7 @@ public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhas
      * @param node1 a node
      * @param graph the layered graph
      */
-    private void checkNode(final LNode node1, final LayeredGraph graph) {
+    private void checkNode(final LNode node1, final LGraph graph) {
         node1.id = 1;
         Layer layer1 = node1.getLayer();
         for (LPort port : node1.getPorts(PortType.OUTPUT)) {

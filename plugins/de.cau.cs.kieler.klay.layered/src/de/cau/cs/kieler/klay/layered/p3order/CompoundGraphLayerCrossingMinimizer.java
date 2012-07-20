@@ -23,7 +23,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -45,7 +45,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 public class CompoundGraphLayerCrossingMinimizer {
 
     /** the layered graph that is processed. */
-    private LayeredGraph layeredGraph;
+    private LGraph layeredGraph;
     /** the crossing minimization heuristic. */
     private ICrossingMinimizationHeuristic crossminHeuristic;
 
@@ -57,7 +57,7 @@ public class CompoundGraphLayerCrossingMinimizer {
      * @param heuristic
      *            the crossing minimization heuristic
      */
-    public CompoundGraphLayerCrossingMinimizer(final LayeredGraph layeredGraph,
+    public CompoundGraphLayerCrossingMinimizer(final LGraph layeredGraph,
             final ICrossingMinimizationHeuristic heuristic) {
         this.layeredGraph = layeredGraph;
         this.crossminHeuristic = heuristic;
@@ -190,7 +190,7 @@ public class CompoundGraphLayerCrossingMinimizer {
                         KNode keyNodeParent = keyNode.getProperty(Properties.K_PARENT);
                         LGraphElement parentRepresentative = elemMap.get(keyNodeParent);
                         LNode parentKey;
-                        if (parentRepresentative instanceof LayeredGraph) {
+                        if (parentRepresentative instanceof LGraph) {
                             parentKey = graphKey;
                         } else {
                             assert (parentRepresentative instanceof LNode);

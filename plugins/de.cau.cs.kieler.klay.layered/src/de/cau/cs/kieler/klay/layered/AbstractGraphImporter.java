@@ -22,7 +22,7 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.EdgeConstraint;
 import de.cau.cs.kieler.klay.layered.properties.InLayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
@@ -206,7 +206,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
      * @param portHeight the external port's height.
      * @return the external port's position.
      */
-    protected KVector getExternalPortPosition(final LayeredGraph graph, final LNode portDummy,
+    protected KVector getExternalPortPosition(final LGraph graph, final LNode portDummy,
             final double portWidth, final double portHeight) {
         
         KVector portPosition = new KVector(portDummy.getPosition());
