@@ -39,7 +39,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * KIELER modeling environment will introduce undefined behavior.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  * @author msp
  * @author swe
  */

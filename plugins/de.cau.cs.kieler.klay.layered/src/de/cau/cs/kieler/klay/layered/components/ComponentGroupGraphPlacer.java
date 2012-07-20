@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -34,7 +34,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * the top-left to the bottom-right corner.</p>
  * 
  * @author cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 class ComponentGroupGraphPlacer extends GraphPlacer {
     
@@ -53,9 +54,9 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
     /**
      * {@inheritDoc}
      */
-    public LayeredGraph combine(final List<LayeredGraph> components) {
+    public LGraph combine(final List<LGraph> components) {
         // Create a new layered graph
-        LayeredGraph result = new LayeredGraph();
+        LGraph result = new LGraph();
         
         // Check if there are any components to be placed
         if (components.isEmpty()) {
@@ -67,7 +68,7 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
         result.getInsets().copy(components.get(0).getInsets());
         
         // Construct component groups
-        for (LayeredGraph component : components) {
+        for (LGraph component : components) {
             addComponent(component);
         }
         
@@ -101,7 +102,7 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
      * 
      * @param component the component to be placed.
      */
-    private void addComponent(final LayeredGraph component) {
+    private void addComponent(final LGraph component) {
         // Check if one of the existing component groups has some place left
         for (ComponentGroup group : componentGroups) {
             if (group.add(component)) {
@@ -247,13 +248,13 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
      * @return the space used by the component placement, including spacing to the right and to the
      *         bottom of the components.
      */
-    private KVector placeComponentsHorizontally(final Collection<LayeredGraph> components,
+    private KVector placeComponentsHorizontally(final Collection<LGraph> components,
             final double spacing) {
         
         KVector size = new KVector();
         
         // Iterate over the components and place them
-        for (LayeredGraph component : components) {
+        for (LGraph component : components) {
             offsetGraph(component, size.x, 0.0);
             
             size.x += component.getSize().x + spacing;
@@ -275,13 +276,13 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
      * @param spacing the amount of space to leave between two components.
      * @return the space used by the component placement.
      */
-    private KVector placeComponentsVertically(final Collection<LayeredGraph> components,
+    private KVector placeComponentsVertically(final Collection<LGraph> components,
             final double spacing) {
         
         KVector size = new KVector();
         
         // Iterate over the components and place them
-        for (LayeredGraph component : components) {
+        for (LGraph component : components) {
             offsetGraph(component, 0.0, size.y);
             
             size.y += component.getSize().y + spacing;
@@ -303,7 +304,7 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
      * @param spacing the amount of space to leave between two components.
      * @return the space used by the component placement.
      */
-    private KVector placeComponentsInRows(final Collection<LayeredGraph> components,
+    private KVector placeComponentsInRows(final Collection<LGraph> components,
             final double spacing) {
         
         /* This code is basically taken from the SimpleRowGraphPlacer. */
@@ -316,7 +317,7 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
         // Determine the maximal row width by the maximal box width and the total area
         double maxRowWidth = 0.0f;
         double totalArea = 0.0f;
-        for (LayeredGraph component : components) {
+        for (LGraph component : components) {
             KVector componentSize = component.getSize();
             maxRowWidth = Math.max(maxRowWidth, componentSize.x);
             totalArea += componentSize.x * componentSize.y;
@@ -327,7 +328,7 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
         
         // Place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;
-        for (LayeredGraph graph : components) {
+        for (LGraph graph : components) {
             KVector size = graph.getSize();
             
             if (xpos + size.x > maxRowWidth) {

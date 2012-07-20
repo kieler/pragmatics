@@ -20,7 +20,8 @@ package de.cau.cs.kieler.klay.layered.properties;
  * @author cds
  * @author ima
  * @author jjc
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public enum NodeType {
     
@@ -53,5 +54,25 @@ public enum NodeType {
     COMPOUND_SIDE,
     /** a dummy node to represent a mid-label on an edge. */
     LABEL;
+    
+    /**
+     * Return the color used when writing debug output graphs. The colors are given as strings of
+     * the form "#RGB", where each component is given as a two-digit hexadecimal value.
+     * 
+     * @return the color string
+     */
+    public String getColor() {
+        switch (this) {
+        case COMPOUND_SIDE: return "#808080";
+        case EXTERNAL_PORT: return "#cc99cc";
+        case LONG_EDGE: return "#eaed00";
+        case NORTH_SOUTH_PORT: return "#0034de";
+        case LOWER_COMPOUND_BORDER: return "#18e748";
+        case LOWER_COMPOUND_PORT: return "#2f6d3e";
+        case UPPER_COMPOUND_BORDER: return "#fb0838";
+        case UPPER_COMPOUND_PORT: return "#b01d38";
+        default: return "#000000";
+        }
+    }
 
 }

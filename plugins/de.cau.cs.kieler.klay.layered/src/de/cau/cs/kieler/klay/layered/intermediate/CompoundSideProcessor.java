@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.EdgeType;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -56,13 +56,14 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  * 
  * @author ima
+ * @kieler.design proposed by msp
  */
 public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Set Compound Side nodes", 1);
         List<Layer> layers = layeredGraph.getLayers();
         List<LNode> openingBorders = new LinkedList<LNode>();
@@ -107,7 +108,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
      */
     private void insertSideDummies(final int startIndex, final int endIndex,
             final List<Layer> layers, final LNode openingBorder, final LEdge lowerConnector,
-            final LEdge upperConnector, final LayeredGraph layeredGraph) {
+            final LEdge upperConnector, final LGraph layeredGraph) {
 
         // get the insets for origin of openingBorder
         KInsets insets = openingBorder.getProperty(Properties.ORIGINAL_INSETS);
@@ -230,7 +231,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
      *         compoundNode or any of its descendants.
      */
     private int findUltimateIndex(final Layer layer, final LNode upperBorder,
-            final boolean lowerSide, final LayeredGraph layeredGraph) {
+            final boolean lowerSide, final LGraph layeredGraph) {
         List<LNode> nodes = layer.getNodes();
         KNode upperBorderOrigin = (KNode) upperBorder.getProperty(Properties.ORIGIN);
         int ret = 0;

@@ -15,11 +15,9 @@ package de.cau.cs.kieler.klay.layered.graph;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.properties.EdgeType;
@@ -33,34 +31,14 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * is desired, it can be obtained by pre-processing and post-processing the graph.
  * 
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
-public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
+public class LGraph extends LGraphElement implements Iterable<Layer> {
     
     /** the serial version UID. */
     private static final long serialVersionUID = -8006835373897072852L;
     
-    /**
-     * Map mapping node types to the colors used to represent those types when
-     * writing debug output graphs. The colors are given as strings of the form
-     * "#RGB", where each component is given as a two-digit hexadecimal value.
-     */
-    public static final Map<NodeType, String> NODE_TYPE_COLORS = new EnumMap<NodeType, String>(
-            NodeType.class);
-    
-    // Initialize the node-type-to-color-map
-    static {
-        NODE_TYPE_COLORS.put(NodeType.COMPOUND_SIDE, "#808080");
-        NODE_TYPE_COLORS.put(NodeType.EXTERNAL_PORT, "#cc99cc");
-        NODE_TYPE_COLORS.put(NodeType.LONG_EDGE, "#eaed00");
-        NODE_TYPE_COLORS.put(NodeType.NORTH_SOUTH_PORT, "#0034de");
-        NODE_TYPE_COLORS.put(NodeType.LOWER_COMPOUND_BORDER, "#18e748");
-        NODE_TYPE_COLORS.put(NodeType.LOWER_COMPOUND_PORT, "#2f6d3e");
-        NODE_TYPE_COLORS.put(NodeType.UPPER_COMPOUND_BORDER, "#fb0838");
-        NODE_TYPE_COLORS.put(NodeType.UPPER_COMPOUND_PORT, "#b01d38");
-    }
-    
-
     /** the total size of the drawing, without offset. */
     private final KVector size = new KVector();
     /** the graph's insets. */
@@ -263,7 +241,7 @@ public class LayeredGraph extends LGraphElement implements Iterable<Layer> {
             } else {
                 options.append("shape=circle,style=filled,");
                 
-                String color = NODE_TYPE_COLORS.get(node.getProperty(Properties.NODE_TYPE));
+                String color = node.getProperty(Properties.NODE_TYPE).getColor();
                 if (color != null) {
                     options.append("color=\"" + color + "\",");
                 }

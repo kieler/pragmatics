@@ -20,7 +20,7 @@ import de.cau.cs.kieler.core.properties.Property;
  * Static definitions of options for graph analysis.
  *
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public final class AnalysisOptions {
     

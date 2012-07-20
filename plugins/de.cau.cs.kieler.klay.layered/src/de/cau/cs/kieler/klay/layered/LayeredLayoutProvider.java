@@ -34,7 +34,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.components.ComponentsProcessor;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
@@ -84,7 +84,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author msp
  * @author cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
@@ -133,7 +134,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             graphImporter = new KGraphImporter();
         }
 
-        LayeredGraph layeredGraph = graphImporter.importGraph(kgraph);
+        LGraph layeredGraph = graphImporter.importGraph(kgraph);
 
         // set special properties for the layered graph
         setOptions(layeredGraph, kgraph);
@@ -142,10 +143,10 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         updateModules(layeredGraph, kgraph.getData(KShapeLayout.class));
 
         // split the input graph into components
-        List<LayeredGraph> components = componentsProcessor.split(layeredGraph);
+        List<LGraph> components = componentsProcessor.split(layeredGraph);
 
         // perform the actual layout
-        for (LayeredGraph comp : components) {
+        for (LGraph comp : components) {
             layout(comp, progressMonitor.subTask(1.0f / components.size()));
         }
 
@@ -175,7 +176,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param phase the phase or processor to stop after.
      * @return list of connected components after the execution of the given phase.
      */
-    public List<LayeredGraph> doLayoutTest(final KNode kgraph,
+    public List<LGraph> doLayoutTest(final KNode kgraph,
             final IKielerProgressMonitor progressMonitor,
             final Class<? extends ILayoutProcessor> phase) {
         
@@ -193,7 +194,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             graphImporter = new KGraphImporter();
         }
 
-        LayeredGraph layeredGraph = graphImporter.importGraph(kgraph);
+        LGraph layeredGraph = graphImporter.importGraph(kgraph);
 
         // set special properties for the layered graph
         setOptions(layeredGraph, kgraph);
@@ -202,7 +203,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         updateModules(layeredGraph, kgraph.getData(KShapeLayout.class));
 
         // split the input graph into components
-        List<LayeredGraph> components = componentsProcessor.split(layeredGraph);
+        List<LGraph> components = componentsProcessor.split(layeredGraph);
         
         // check if the given phase exists in our current algorithm configuration
         boolean phaseExists = false;
@@ -216,7 +217,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // if the phase exists, perform the layout up to and including that phase
         if (phaseExists) {
             // perform the actual layout
-            for (LayeredGraph comp : components) {
+            for (LGraph comp : components) {
                 layoutTest(comp, progressMonitor.subTask(1.0f / components.size()), phase);
             }
         }
@@ -237,7 +238,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param parent
      *            the original parent node
      */
-    private void setOptions(final LayeredGraph layeredGraph, final KNode parent) {
+    private void setOptions(final LGraph layeredGraph, final KNode parent) {
         // set the random number generator based on the random seed option
         Integer randomSeed = layeredGraph.getProperty(LayoutOptions.RANDOM_SEED);
         if (randomSeed != null) {
@@ -260,7 +261,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param parentLayout
      *            the parent layout data
      */
-    private void updateModules(final LayeredGraph graph, final KShapeLayout parentLayout) {
+    private void updateModules(final LGraph graph, final KShapeLayout parentLayout) {
         // check which cycle breaking strategy to use
         CycleBreakingStrategy cycleBreaking = parentLayout.getProperty(Properties.CYCLE_BREAKING);
         switch (cycleBreaking) {
@@ -418,7 +419,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @return intermediate processing strategy. May be {@code null}.
      */
     private IntermediateProcessingStrategy getIntermediateProcessingStrategy(
-            final LayeredGraph graph) {
+            final LGraph graph) {
         Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
 
         // Basic strategy
@@ -472,7 +473,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param themonitor
      *            a progress monitor, or {@code null}
      */
-    public void layout(final LayeredGraph graph, final IKielerProgressMonitor themonitor) {
+    public void layout(final LGraph graph, final IKielerProgressMonitor themonitor) {
         IKielerProgressMonitor monitor = themonitor;
         if (monitor == null) {
             monitor = new BasicProgressMonitor();
@@ -538,7 +539,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param phase
      *            phase or processor to stop the layout after
      */
-    public void layoutTest(final LayeredGraph graph, final IKielerProgressMonitor themonitor,
+    public void layoutTest(final LGraph graph, final IKielerProgressMonitor themonitor,
             final Class<? extends ILayoutProcessor> phase) {
         
         IKielerProgressMonitor monitor = themonitor;
@@ -579,7 +580,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @throws IOException
      *             if anything goes wrong.
      */
-    private Writer createWriter(final LayeredGraph graph, final int slotIndex) throws IOException {
+    private Writer createWriter(final LGraph graph, final int slotIndex) throws IOException {
         String path = Util.getDebugOutputPath();
         new File(path).mkdirs();
 

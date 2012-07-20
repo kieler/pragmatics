@@ -24,7 +24,7 @@ import de.cau.cs.kieler.klay.layered.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -52,7 +52,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author msp
  * @author cds
  * @author jjc
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
     
@@ -210,7 +211,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph) {
         Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
         
         // Basic strategy
@@ -256,7 +257,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Orthogonal edge routing", 1);
         
         // Retrieve some generic values

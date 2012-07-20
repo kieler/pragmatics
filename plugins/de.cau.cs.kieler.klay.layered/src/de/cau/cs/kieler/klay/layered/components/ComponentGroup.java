@@ -21,7 +21,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -59,7 +59,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * <p>This class is not supposed to be public, but needs to be for JUnit tests to find it.</p>
  * 
  * @author cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class ComponentGroup {
     
@@ -179,7 +180,7 @@ public class ComponentGroup {
     /**
      * A map mapping external port side combinations to components in this group.
      */
-    private Multimap<Set<PortSide>, LayeredGraph> components = HashMultimap.create();
+    private Multimap<Set<PortSide>, LGraph> components = HashMultimap.create();
     
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -194,11 +195,11 @@ public class ComponentGroup {
     
     /**
      * Constructs a new component group with the given initial component. This is equivalent to
-     * constructing an empty component group and then calling {@link #add(LayeredGraph)}.
+     * constructing an empty component group and then calling {@link #add(LGraph)}.
      * 
      * @param component the component to be added to the group.
      */
-    public ComponentGroup(final LayeredGraph component) {
+    public ComponentGroup(final LGraph component) {
         add(component);
     }
 
@@ -208,13 +209,13 @@ public class ComponentGroup {
     
     /**
      * Tries to add the given component to the group. Before adding the component, a call to
-     * {@link #canAdd(LayeredGraph)} determines if the component can actually be added to this
+     * {@link #canAdd(LGraph)} determines if the component can actually be added to this
      * group.
      * 
      * @param component the component to be added to this group.
      * @return {@code true} if the component was successfully added, {@code false} otherwise.
      */
-    public boolean add(final LayeredGraph component) {
+    public boolean add(final LGraph component) {
         if (canAdd(component)) {
             components.put(
                     component.getProperty(Properties.EXT_PORT_CONNECTIONS),
@@ -232,7 +233,7 @@ public class ComponentGroup {
      * @return {@code true} if the group has enough space left to add the component, {@code false}
      *         otherwise.
      */
-    private boolean canAdd(final LayeredGraph component) {
+    private boolean canAdd(final LGraph component) {
         // Check if we have a component with incompatible external port sides
         Set<PortSide> candidateSides = component.getProperty(Properties.EXT_PORT_CONNECTIONS);
         Collection<Set<PortSide>> constraints = CONSTRAINTS.get(candidateSides);
@@ -253,7 +254,7 @@ public class ComponentGroup {
      * 
      * @return the components in this component group.
      */
-    public Collection<LayeredGraph> getComponents() {
+    public Collection<LGraph> getComponents() {
         return components.values();
     }
     
@@ -265,7 +266,7 @@ public class ComponentGroup {
      * @return the collection of components. If there are no components, an empty collection is
      *         returned.
      */
-    public Collection<LayeredGraph> getComponents(final Set<PortSide> connections) {
+    public Collection<LGraph> getComponents(final Set<PortSide> connections) {
         return components.get(connections);
     }
 }

@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  * This is used to handle a collection of layout configurators during layout option management.
  *
  * @author msp
- * @kieler.rating 2012-07-05 yellow KI-18 cmot, sgu
+ * @kieler.rating yellow 2012-07-05 review KI-18 by cmot, sgu
  */
 public class CompoundLayoutConfig implements IMutableLayoutConfig {
 

@@ -20,7 +20,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.InLayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -42,14 +42,15 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  * 
  * @author cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class InLayerConstraintProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Layer constraint edge reversal", 1);
         
         // Iterate through each layer

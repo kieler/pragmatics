@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 
 /**
@@ -24,7 +24,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *
  * @see LayeredLayoutProvider
  * @author cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public interface ILayoutPhase extends ILayoutProcessor {
     
@@ -35,6 +36,6 @@ public interface ILayoutPhase extends ILayoutProcessor {
      *              depending on certain properties of the graph.
      * @return intermediate processing strategy. May be {@code null}.
      */
-    IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph);
+    IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph);
     
 }

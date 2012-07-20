@@ -42,7 +42,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * Transformer for the KGraph model and XMI serialization.
  *
  * @author swe
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class KGraphHandler extends AbstractEmfHandler<KNode> {
     

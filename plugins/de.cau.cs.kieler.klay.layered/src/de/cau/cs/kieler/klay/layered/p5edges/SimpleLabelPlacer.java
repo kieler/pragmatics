@@ -19,7 +19,7 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -36,7 +36,7 @@ public class SimpleLabelPlacer {
      * 
      * @param thelayeredGraph The respective graph
      */
-    public void placeLabels(final LayeredGraph thelayeredGraph) {
+    public void placeLabels(final LGraph thelayeredGraph) {
         
         // Iterate over all layers
         for (Layer layer : thelayeredGraph) {

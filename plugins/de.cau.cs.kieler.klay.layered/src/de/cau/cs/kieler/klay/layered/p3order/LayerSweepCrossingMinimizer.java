@@ -34,7 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -62,7 +62,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author msp
  * @author cds
  * @author ima
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {
 
@@ -85,7 +86,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph) {
         return INTERMEDIATE_PROCESSING_STRATEGY;
     }
     
@@ -109,7 +110,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      * 
      * @param layeredGraph a layered graph
      */
-    private void initialize(final LayeredGraph layeredGraph) {
+    private void initialize(final LGraph layeredGraph) {
         int layerCount = layeredGraph.getLayers().size();
 
         // Remember the best, current and previous sweep; they basically save the node oder
@@ -183,7 +184,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Layer sweep crossing minimization", 1);
 
         // Fetch the graph's randomizer.

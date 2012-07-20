@@ -39,6 +39,9 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  */
 public class PGraphFactory {
 
+    /** Minimum distance between two nodes. */
+    private static final int MIN_DIST = 10;
+
     /** Start position of the horizontal direction. */
     private float startX;
 
@@ -70,21 +73,21 @@ public class PGraphFactory {
      * @return a full graph with the given number of nodes
      */
     public PGraph createFullGraph(final int nodesCount) {
-        PGraph pGraph = new PGraph();
+        PGraph graph = new PGraph();
         PNode[] nodeArray = new PNode[nodesCount];
 
         // Create nodes
         for (int i = 0; i < nodesCount; i++) {
-            nodeArray[i] = pGraph.addNode();
+            nodeArray[i] = graph.addNode();
         }
 
         // Create edges
         for (int i = 0; i < nodesCount; i++) {
             for (int j = 0; j < i; j++) {
-                pGraph.addEdge(nodeArray[i], nodeArray[j]);
+                graph.addEdge(nodeArray[i], nodeArray[j]);
             }
         }
-        return pGraph;
+        return graph;
     }
 
     /**
@@ -294,15 +297,31 @@ public class PGraphFactory {
 
         float borderSpacing = pgraph.getProperty(Properties.BORDER_SPACING);
 
-        spacing = pgraph.getProperty(Properties.SPACING);
+        Float userSpacing = pgraph.getProperty(Properties.SPACING);
+        this.spacing = (userSpacing == null) ? 0 : userSpacing;
+        //TODO anpassen!!!
+        this.spacing = 0;
 
-        startX = borderSpacing;
-        startY = grid.getHeight() * spacing + borderSpacing;
-
-        // TODO introduce minimum spacing or use spacing above as minimum.
-        //
         float minSpacing = 40;
+         for (PNode node : pgraph.getNodes()) {
+         KNode knode = (KNode) node.getProperty(Properties.ORIGIN);
+         KShapeLayout data = knode.getData(KShapeLayout.class);
+         if (minSpacing < data.getWidth()) {
+         minSpacing = data.getWidth();
+         }
+         if (minSpacing < data.getHeight()) {
+         minSpacing = data.getHeight();
+         }
+         }
+         // adding the min distance between to nodes.
+         minSpacing += MIN_DIST;
+         if (this.spacing < minSpacing) {
+         this.spacing = minSpacing;
+         }
 
+         this.startX = borderSpacing;
+         this.startY = grid.getHeight() * spacing + borderSpacing;
+         
         // first determine original nodes coordinates.
         for (int x = 0; x < grid.getWidth(); x++) {
             for (int y = 0; y < grid.getHeight(); y++) {
@@ -316,131 +335,131 @@ public class PGraphFactory {
         // vertical direction!
         // horizontal go through: take lower and upper nodes and go horizontal. check
         // all nodes for minspace condition.
-        for (int y = 0; y < grid.getHeight() - 1; y++) {
-            float y1;
-            float y2;
-            float sum;
-            float minDistance = minSpacing;
-            // recognize a too small distance between two nodes.
-            for (int x = 0; x < grid.getWidth(); x++) {
-                if (grid.get(x, y) != null && grid.get(x, y).hasProperties()
-                        && grid.get(x, y).getProperty(Properties.ORIGIN) != null) {
-                    KNode property = (KNode) grid.get(x, y).getProperty(Properties.ORIGIN);
-                    KShapeLayout data = property.getData(KShapeLayout.class);
-                    y1 = data.getYpos() - data.getHeight() / 2;
-                } else {
-                    // bendpoint or no point
-                    y1 = startY - y * spacing;
-                }
-                if (grid.get(x, y + 1) != null && grid.get(x, y + 1).hasProperties()
-                        && grid.get(x, y + 1).getProperty(Properties.ORIGIN) != null) {
-                    KNode property = (KNode) grid.get(x, y + 1).getProperty(Properties.ORIGIN);
-                    KShapeLayout data = property.getData(KShapeLayout.class);
-                    y2 = data.getYpos() + data.getHeight() / 2;
-                } else {
-                    // bendpoint or no point
-                    y2 = startY - (y + 1) * spacing;
-                }
-                sum = y1 - y2;
-                if (sum < minDistance) {
-                    // save the biggest deviation of minSum.
-                    minDistance = sum;
-                }
-            }
-            if (minDistance < minSpacing) {
-
-                float restDistance = (minSpacing - minDistance) / 2;
-
-                // if too small distance is found, adjust the grid position according this distance.
-                // move all grid segments in bottom direction.
-                for (int i = 0; i <= y; i++) {
-                    for (int x = 0; x < grid.getWidth(); x++) {
-                        if (grid.get(x, i) != null) {
-                            KShapeLayout nodeLayout = ((KNode) grid.get(x, i).getProperty(
-                                    Properties.ORIGIN)).getData(KShapeLayout.class);
-                            nodeLayout.setYpos(nodeLayout.getYpos() + restDistance);
-                        }
-                    }
-                }
-
-                // move all grid segments in top direction.
-                for (int i = y + 1; i < grid.getHeight(); i++) {
-                    for (int x = 0; x < grid.getWidth(); x++) {
-                        if (grid.get(x, i) != null) {
-                            KShapeLayout nodeLayout = ((KNode) grid.get(x, i).getProperty(
-                                    Properties.ORIGIN)).getData(KShapeLayout.class);
-                            nodeLayout.setYpos(nodeLayout.getYpos() - restDistance);
-                        }
-                    }
-
-                }
-
-            }
-
-        }
-
-        // horizontal go through.
-
-        for (int x = 0; x < grid.getWidth() - 1; x++) {
-            float x1;
-            float x2;
-            float sum;
-            float minDistance = minSpacing;
-            // recognize a too small distance between two nodes.
-            for (int y = 0; y < grid.getHeight(); y++) {
-                if (grid.get(x, y) != null && grid.get(x, y).hasProperties()
-                        && grid.get(x, y).getProperty(Properties.ORIGIN) != null) {
-                    KNode property = (KNode) grid.get(x, y).getProperty(Properties.ORIGIN);
-                    KShapeLayout data = property.getData(KShapeLayout.class);
-                    x1 = data.getXpos() + data.getWidth() / 2;
-                } else {
-                    // bendpoint or no point
-                    x1 = startX + x * spacing;
-                }
-                if (grid.get(x + 1, y) != null && grid.get(x + 1, y).hasProperties()
-                        && grid.get(x + 1, y).getProperty(Properties.ORIGIN) != null) {
-                    KNode property = (KNode) grid.get(x + 1, y).getProperty(Properties.ORIGIN);
-                    KShapeLayout data = property.getData(KShapeLayout.class);
-                    x2 = data.getXpos() - data.getWidth() / 2;
-                } else {
-                    // bendpoint or no point
-                    x2 = startX + (x + 1) * spacing;
-                }
-                sum = x2 - x1;
-                if (sum < minDistance) {
-                    // adjust the grid.
-                    minDistance = sum;
-                }
-            }
-            if (minDistance < minSpacing) {
-                float restDistance = (minSpacing - minDistance) / 2;
-
-                // if too small distance is found, adjust the grid position according this distance.
-                // move all grid segments in bottom direction.
-                for (int i = 0; i <= x; i++) {
-                    for (int y = 0; y < grid.getHeight(); y++) {
-                        if (grid.get(i, y) != null) {
-                            // TODO this is not enough, because the bendpoints aren't adjusted!!!!
-                            KShapeLayout nodeLayout = ((KNode) grid.get(i, y).getProperty(
-                                    Properties.ORIGIN)).getData(KShapeLayout.class);
-                            nodeLayout.setYpos(nodeLayout.getXpos() - restDistance);
-                        }
-                    }
-                }
-
-                // move all grid segments in top direction.
-                for (int i = x + 1; i < grid.getWidth(); i++) {
-                    for (int y = 0; y < grid.getHeight(); y++) {
-                        if (grid.get(i, y) != null) {
-                            KShapeLayout nodeLayout = ((KNode) grid.get(i, y).getProperty(
-                                    Properties.ORIGIN)).getData(KShapeLayout.class);
-                            nodeLayout.setYpos(nodeLayout.getXpos() + restDistance);
-                        }
-                    }
-                }
-            }
-
-        }
+        // for (int y = 0; y < grid.getHeight() - 1; y++) {
+        // float y1;
+        // float y2;
+        // float sum;
+        // float minDistance = minSpacing;
+        // // recognize a too small distance between two nodes.
+        // for (int x = 0; x < grid.getWidth(); x++) {
+        // if (grid.get(x, y) != null && grid.get(x, y).hasProperties()
+        // && grid.get(x, y).getProperty(Properties.ORIGIN) != null) {
+        // KNode property = (KNode) grid.get(x, y).getProperty(Properties.ORIGIN);
+        // KShapeLayout data = property.getData(KShapeLayout.class);
+        // y1 = data.getYpos() - data.getHeight() / 2;
+        // } else {
+        // // bendpoint or no point
+        // y1 = startY - y * spacing;
+        // }
+        // if (grid.get(x, y + 1) != null && grid.get(x, y + 1).hasProperties()
+        // && grid.get(x, y + 1).getProperty(Properties.ORIGIN) != null) {
+        // KNode property = (KNode) grid.get(x, y + 1).getProperty(Properties.ORIGIN);
+        // KShapeLayout data = property.getData(KShapeLayout.class);
+        // y2 = data.getYpos() + data.getHeight() / 2;
+        // } else {
+        // // bendpoint or no point
+        // y2 = startY - (y + 1) * spacing;
+        // }
+        // sum = y1 - y2;
+        // if (sum < minDistance) {
+        // // save the biggest deviation of minSum.
+        // minDistance = sum;
+        // }
+        // }
+        // if (minDistance < minSpacing) {
+        //
+        // float restDistance = (minSpacing - minDistance) / 2;
+        //
+        // // if too small distance is found, adjust the grid position according this distance.
+        // // move all grid segments in bottom direction.
+        // for (int i = 0; i <= y; i++) {
+        // for (int x = 0; x < grid.getWidth(); x++) {
+        // if (grid.get(x, i) != null) {
+        // KShapeLayout nodeLayout = ((KNode) grid.get(x, i).getProperty(
+        // Properties.ORIGIN)).getData(KShapeLayout.class);
+        // nodeLayout.setYpos(nodeLayout.getYpos() + restDistance);
+        // }
+        // }
+        // }
+        //
+        // // move all grid segments in top direction.
+        // for (int i = y + 1; i < grid.getHeight(); i++) {
+        // for (int x = 0; x < grid.getWidth(); x++) {
+        // if (grid.get(x, i) != null) {
+        // KShapeLayout nodeLayout = ((KNode) grid.get(x, i).getProperty(
+        // Properties.ORIGIN)).getData(KShapeLayout.class);
+        // nodeLayout.setYpos(nodeLayout.getYpos() - restDistance);
+        // }
+        // }
+        //
+        // }
+        //
+        // }
+        //
+        // }
+        //
+        // // horizontal go through.
+        //
+        // for (int x = 0; x < grid.getWidth() - 1; x++) {
+        // float x1;
+        // float x2;
+        // float sum;
+        // float minDistance = minSpacing;
+        // // recognize a too small distance between two nodes.
+        // for (int y = 0; y < grid.getHeight(); y++) {
+        // if (grid.get(x, y) != null && grid.get(x, y).hasProperties()
+        // && grid.get(x, y).getProperty(Properties.ORIGIN) != null) {
+        // KNode property = (KNode) grid.get(x, y).getProperty(Properties.ORIGIN);
+        // KShapeLayout data = property.getData(KShapeLayout.class);
+        // x1 = data.getXpos() + data.getWidth() / 2;
+        // } else {
+        // // bendpoint or no point
+        // x1 = startX + x * spacing;
+        // }
+        // if (grid.get(x + 1, y) != null && grid.get(x + 1, y).hasProperties()
+        // && grid.get(x + 1, y).getProperty(Properties.ORIGIN) != null) {
+        // KNode property = (KNode) grid.get(x + 1, y).getProperty(Properties.ORIGIN);
+        // KShapeLayout data = property.getData(KShapeLayout.class);
+        // x2 = data.getXpos() - data.getWidth() / 2;
+        // } else {
+        // // bendpoint or no point
+        // x2 = startX + (x + 1) * spacing;
+        // }
+        // sum = x2 - x1;
+        // if (sum < minDistance) {
+        // // adjust the grid.
+        // minDistance = sum;
+        // }
+        // }
+        // if (minDistance < minSpacing) {
+        // float restDistance = (minSpacing - minDistance) / 2;
+        //
+        // // if too small distance is found, adjust the grid position according this distance.
+        // // move all grid segments in bottom direction.
+        // for (int i = 0; i <= x; i++) {
+        // for (int y = 0; y < grid.getHeight(); y++) {
+        // if (grid.get(i, y) != null) {
+        // // TODO this is not enough, because the bendpoints aren't adjusted!!!!
+        // KShapeLayout nodeLayout = ((KNode) grid.get(i, y).getProperty(
+        // Properties.ORIGIN)).getData(KShapeLayout.class);
+        // nodeLayout.setYpos(nodeLayout.getXpos() - restDistance);
+        // }
+        // }
+        // }
+        //
+        // // move all grid segments in top direction.
+        // for (int i = x + 1; i < grid.getWidth(); i++) {
+        // for (int y = 0; y < grid.getHeight(); y++) {
+        // if (grid.get(i, y) != null) {
+        // KShapeLayout nodeLayout = ((KNode) grid.get(i, y).getProperty(
+        // Properties.ORIGIN)).getData(KShapeLayout.class);
+        // nodeLayout.setYpos(nodeLayout.getXpos() + restDistance);
+        // }
+        // }
+        // }
+        // }
+        //
+        // }
 
         // map bendpoints.
         for (PEdge edge : pGraph.getEdges()) {

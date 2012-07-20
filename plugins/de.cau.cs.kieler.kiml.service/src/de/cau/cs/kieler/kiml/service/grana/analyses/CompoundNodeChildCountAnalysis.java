@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * has three components for the minimum, average, and maximum value, respectively.
  * 
  * @author cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class CompoundNodeChildCountAnalysis implements IAnalysis {
 

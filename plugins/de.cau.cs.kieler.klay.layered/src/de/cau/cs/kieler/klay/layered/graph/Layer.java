@@ -26,7 +26,8 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * drawn in one column.
  *
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class Layer extends LGraphElement implements Iterable<LNode> {
 
@@ -34,7 +35,7 @@ public class Layer extends LGraphElement implements Iterable<LNode> {
     private static final long serialVersionUID = 5760328884701318753L;
 
     /** the owning layered graph. */
-    private final LayeredGraph owner;
+    private final LGraph owner;
 
     /** the size of the layer as drawn horizontally. */
     private final KVector size = new KVector();
@@ -47,7 +48,7 @@ public class Layer extends LGraphElement implements Iterable<LNode> {
      * 
      * @param graph the owning layered graph
      */
-    public Layer(final LayeredGraph graph) {
+    public Layer(final LGraph graph) {
         this.owner = graph;
     }
     
@@ -94,7 +95,7 @@ public class Layer extends LGraphElement implements Iterable<LNode> {
      * 
      * @return the owner
      */
-    public LayeredGraph getGraph() {
+    public LGraph getGraph() {
         return owner;
     }
     

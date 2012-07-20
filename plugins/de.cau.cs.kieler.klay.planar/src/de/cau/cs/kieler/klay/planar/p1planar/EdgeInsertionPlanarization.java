@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.planar.p1planar;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -73,7 +72,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
         for (PEdge crossingEdge : crossingBorders) {
             // crossing a normal edge
             PNode newNode = graph.addNode(crossingEdge).getFirst();
-            newNode.setProperty(Properties.PlANAR_DUMMY_NODE, true);
+            newNode.setProperty(Properties.PLANAR_DUMMY_NODE, true);
             // graph.reindex();
             path.add(newNode);
         }
@@ -114,9 +113,9 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
         LinkedList<PFace> shortestFacePath = new LinkedList<PFace>();
 
         // same path with faces in the normal graph
-        for (PEdge PEdge : dualEdgePath) {
-            PFace firstFace = (PFace) PEdge.getSource().getProperty(Properties.TODUALGRAPH);
-            PFace secondFace = (PFace) PEdge.getTarget().getProperty(Properties.TODUALGRAPH);
+        for (PEdge pEdge : dualEdgePath) {
+            PFace firstFace = (PFace) pEdge.getSource().getProperty(Properties.TODUALGRAPH);
+            PFace secondFace = (PFace) pEdge.getTarget().getProperty(Properties.TODUALGRAPH);
 
             // add first face to the path
             if (!shortestFacePath.contains(firstFace) && firstFace != null) {
@@ -203,30 +202,6 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
     }
 
     /**
-     * Find the next edge on a node.
-     * 
-     * @param node
-     *            , the node containing the edges
-     * @param edge
-     *            , the current edge
-     * @return the next edge
-     */
-    private PEdge getNextClockwiseEdge(final PNode node, final PEdge edge) {
-        Iterator<PEdge> iter = node.adjacentEdges().iterator();
-        PEdge current = null;
-        while (iter.hasNext() && current != edge) {
-            current = iter.next();
-        }
-        if (iter.hasNext()) {
-            // Get the next edge on the node
-            return iter.next();
-        } else {
-            // Reached the last node, get the first
-            return node.adjacentEdges().iterator().next();
-        }
-    }
-
-    /**
      * finds all faces, that contact the node.
      * 
      * @param node
@@ -272,30 +247,6 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
             }
             index++;
         }
-    }
-
-    /**
-     * returns the first clockwise edge of a face from a given node.
-     * 
-     * @param face
-     *            , the given face
-     * @param node
-     *            , the given node
-     * @return edge, the clockwise first edge at this node
-     */
-    private PEdge findFirstFaceEdge(final PEdge pEdge, final PNode node) {
-        // node is target of edge
-        PFace face = pEdge.getRightFace();
-        // node is source of edge
-        if (pEdge.getSource() == node) {
-            face = pEdge.getLeftFace();
-        }
-        for (PEdge edge : node.adjacentEdges()) {
-            if (edge.getRightFace() == face || edge.getLeftFace() == face) {
-                return edge;
-            }
-        }
-        return null;
     }
 
     /**

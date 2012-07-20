@@ -172,22 +172,22 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
 
                                 if (!knownFaces.containsKey(edge.getLeftFace())) {
                                     if (edge.getLeftFace() != externalFace
-                                            && edge.getRightFace() != externalFace)
+                                            && edge.getRightFace() != externalFace) {
                                         knownFaces.put(edge.getLeftFace(),
                                                 new Pair<PEdge, Integer>(edge, (sideIndex + 2)
                                                         % faceSides.length));
-                                    else {
+                                    } else {
                                         knownFaces.put(edge.getLeftFace(),
                                                 new Pair<PEdge, Integer>(edge, sideIndex));
 
                                     }
                                 } else if (!knownFaces.containsKey(edge.getRightFace())) {
                                     if (edge.getLeftFace() != externalFace
-                                            && edge.getRightFace() != externalFace)
+                                            && edge.getRightFace() != externalFace) {
                                         knownFaces.put(edge.getRightFace(),
                                                 new Pair<PEdge, Integer>(edge, (sideIndex + 2)
                                                         % faceSides.length));
-                                    else {
+                                    } else {
                                         knownFaces.put(edge.getRightFace(),
                                                 new Pair<PEdge, Integer>(edge, (sideIndex)));
                                     }

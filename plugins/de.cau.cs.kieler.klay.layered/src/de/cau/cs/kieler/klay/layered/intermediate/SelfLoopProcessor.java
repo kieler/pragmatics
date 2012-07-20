@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -60,13 +60,15 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  *
  * @author cds
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Self-loop processing", 1);
         
         // Iterate through all nodes

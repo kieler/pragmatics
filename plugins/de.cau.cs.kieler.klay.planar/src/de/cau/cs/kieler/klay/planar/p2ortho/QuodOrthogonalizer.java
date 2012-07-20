@@ -128,7 +128,7 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements ILayoutPhas
         // Replace high-degree nodes with cages
         LinkedList<Cage> cages = new LinkedList<Cage>();
         for (PNode node : graph.getNodes()) {
-            if (node.getAdjacentEdgeCount() > TamassiaOrthogonalizer.MAXDEGREE) {
+            if (node.getAdjacentEdgeCount() > TamassiaOrthogonalizer.MAX_DEGREE) {
                 cages.add(new Cage(node));
             }
         }

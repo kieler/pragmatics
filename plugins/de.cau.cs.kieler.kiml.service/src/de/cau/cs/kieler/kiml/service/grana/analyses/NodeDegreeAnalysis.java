@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * graph.
  * 
  * @author mri
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class NodeDegreeAnalysis implements IAnalysis {
 

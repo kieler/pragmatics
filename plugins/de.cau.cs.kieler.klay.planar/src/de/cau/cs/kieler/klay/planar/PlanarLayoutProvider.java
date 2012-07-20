@@ -80,8 +80,6 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
      * @return intermediate processing strategy. May be {@code null}.
      */
     private IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph graph) {
-        // TODO think about graphproperties Set<GraphProperties> graphProperties =
-        // graph.getProperty(Properties.GRAPH_PROPERTIES);
         return null;
     }
 

@@ -24,7 +24,7 @@ import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.properties.EdgeType;
@@ -48,6 +48,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  * 
  * @author ima
+ * @kieler.design proposed by msp
  */
 public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -57,11 +58,11 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Revert edges to remove cyclic dependencies between compound nodes", 1);
 
         // Represent the cyclic dependencies of compound nodes in a cycle-removal-graph
-        LayeredGraph cycleRemovalGraph = new LayeredGraph();
+        LGraph cycleRemovalGraph = new LGraph();
         cycleRemovalGraph.setProperty(Properties.RANDOM,
                 layeredGraph.getProperty(Properties.RANDOM));
         List<LNode> cycleRemovalNodes = cycleRemovalGraph.getLayerlessNodes();
@@ -301,8 +302,8 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
      * @param cycleRemovalGraph
      *            A layered graph representing the cyclic dependencies of the layeredGraph.
      */
-    private void reverseCyclicEdges(final LayeredGraph layeredGraph,
-            final LayeredGraph cycleRemovalGraph) {
+    private void reverseCyclicEdges(final LGraph layeredGraph,
+            final LGraph cycleRemovalGraph) {
 
         LinkedList<LEdge> edgesToReverse = new LinkedList<LEdge>();
 
@@ -341,7 +342,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
      *            The list of edges to be reversed.
      * @param layeredGraph
      */
-    private void reverseEdges(final LinkedList<LEdge> edgeList, final LayeredGraph layeredGraph) {
+    private void reverseEdges(final LinkedList<LEdge> edgeList, final LGraph layeredGraph) {
         for (int i = 0; i < edgeList.size(); i++) {
             LEdge edge = edgeList.get(i);
             LPort source = edge.getSource();
@@ -409,7 +410,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
      *            The layered graph.
      * @return Returns the port to replace port in edge reversion.
      */
-    private LPort getOppositePort(final LPort port, final LayeredGraph layeredGraph) {
+    private LPort getOppositePort(final LPort port, final LGraph layeredGraph) {
         float edgeSpacing = layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR)
                 * layeredGraph.getProperty(Properties.OBJ_SPACING);
 

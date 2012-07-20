@@ -17,7 +17,7 @@ package de.cau.cs.kieler.kiml.options;
  * Definition of layout directions.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  * @author msp
  */
 public enum Direction {

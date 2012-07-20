@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kiml.options;
 /**
  * Definition of size constraints.
  *
- * @kieler.rating 2012-01-17 proposed yellow by msp
+ * @kieler.rating proposed yellow 2012-01-17 msp
  * @author msp
  */
 public enum SizeConstraint {

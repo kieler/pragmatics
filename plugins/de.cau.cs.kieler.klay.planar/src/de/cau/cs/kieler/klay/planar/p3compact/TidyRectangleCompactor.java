@@ -14,14 +14,13 @@
 package de.cau.cs.kieler.klay.planar.p3compact;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
@@ -76,8 +75,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
 
     private PNode sink;
 
-    private BiMap<PFace, PNode> faceMap = HashBiMap.create();
-
     /**
      * {@inheritDoc}
      */
@@ -106,7 +103,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
         // the orthogonal representation of the book!!!
         this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
 
-        if (checkPremise()) {
             // TODO think about: the input graph has to have at least 4 nodes, otherwise
             // it would not make any sense to do the flownetwork step.
             // Then it would be meaningful to set the edge-sizes to the same value.
@@ -124,19 +120,16 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             // side 0 is the left face side, thus it is vertical.
             PGraph verticalNetwork = createFlowNetwork(0);
             solver.findFlow(verticalNetwork);
-            addFlowAsLength(verticalNetwork, false);
+            addFlowAsLength(verticalNetwork);
 
             // side 1 is the top face side, thus it is horizontal.
             PGraph horizontalNetwork = createFlowNetwork(1);
             solver.findFlow(horizontalNetwork);
-            addFlowAsLength(horizontalNetwork, true);
+            addFlowAsLength(horizontalNetwork);
             // Assign coordinates based on flow
             // filter edges meaning using the horizontal and vertical segments to
             // determine the edge size.
             // faceside
-        } else {
-            assignSimpleCooridnates();
-        }
     }
 
     /**
@@ -150,67 +143,13 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
      *            determined.
      * 
      */
-    private void addFlowAsLength(final PGraph network, final boolean isHorizontal) {
-
-        boolean isSourceExternal = false;
-
-        BiMap<PNode, PFace> inverseFaceMap = faceMap.inverse();
-
-        // source and target of the original graph.
-        PFace sourceFace = null;
-        PFace targetFace = null;
-
-        int targetSideIndex = -1;
-
-        int sourceSideIndex = -1;
+    private void addFlowAsLength(final PGraph network) {
 
         for (PEdge edge : network.getEdges()) {
-
-            // here we can deal with source and target, because the network has
-            // directed edges.
-            sourceFace = inverseFaceMap.get(edge.getSource());
-
-            isSourceExternal = false;
-
-            if (sourceFace == null) {
-                // if sourceFace is null, that means that it only can be source node,
-                // because all other face-nodes are stored in the face-map.
-                // That results from the create flow network step.
-                sourceFace = graph.getExternalFace(false);
-                isSourceExternal = true;
-            }
-            targetFace = inverseFaceMap.get(edge.getTarget());
-
-            // if source is external then the left external side is the same as the
-            // left inner face side. Otherwise it has to be the opposite side,
-            // thus "+ 2", because left + 2 is right and top + 2 is bottom.
-            sourceSideIndex = isHorizontal ? 1 : 0;
-            sourceSideIndex = isSourceExternal ? sourceSideIndex : sourceSideIndex + 2;
-
-            // if source or target is externals
-            if (isSourceExternal || targetFace == graph.getExternalFace(false)) {
-                targetSideIndex = sourceSideIndex;
-            } else {
-                targetSideIndex = (sourceSideIndex + 2) % FACE_SIDES_NUMBER;
-            }
-            for (PEdge sourceEdge : sourceFace.getProperty(Properties.FACE_SIDES)[sourceSideIndex]) {
-                // search for the border edge
-                if (targetFace.getProperty(Properties.FACE_SIDES)[targetSideIndex]
-                        .contains(sourceEdge)) {
-                    sourceEdge.setProperty(Properties.RELATIVE_LENGTH,
-                            edge.getProperty(IFlowNetworkSolver.FLOW));
-                    break;
-                }
-            }
+            PEdge sourceEdge = ((PEdge) edge.getProperty(NETWORKTOGRAPH));
+            sourceEdge.setProperty(Properties.RELATIVE_LENGTH,
+                    edge.getProperty(IFlowNetworkSolver.FLOW));
         }
-
-    }
-
-    /**
-     * 
-     */
-    private void assignSimpleCooridnates() {
-        // TODO Auto-generated method stub
 
     }
 
@@ -234,7 +173,8 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     private PGraph createFlowNetwork(final int startSide) {
         PGraph flowNetwork = new PGraphFactory().createEmptyGraph();
 
-        faceMap.clear();
+        BiMap<PFace, PNode> faceMap = HashBiMap.create();
+
         // Create nodes for every graph face
         for (PFace face : this.graph.getFaces()) {
             if (face != this.externalFace) {
@@ -264,15 +204,15 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
         // beginning at the bottom to the top.
 
         // After all outgoing edges of a face are set, the face is added to completedFaces.
-        List<PFace> completedFaces = new ArrayList<PFace>();
+        List<PFace> completedFaces = Lists.newLinkedList();
 
         // Contains the edge over which the sink has been found.
         // Is needed to store all faces/nodes that have been visited from any face.
-        Map<PFace, PEdge> sinks = new HashMap<PFace, PEdge>();
+        Map<PFace, PEdge> sinks = Maps.newHashMap();
 
         // Store the visited target-nodes / faces from the current face/node.
         // Is needed to check if a edge already exists to the target.
-        List<PFace> visited = new LinkedList<PFace>();
+        List<PFace> visited = Lists.newLinkedList();
 
         PFace targetFace = null;
 
@@ -282,11 +222,13 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
         for (PEdge edge : currentSide) {
             targetFace = edge.getLeftFace() != currentFace ? edge.getLeftFace() : edge
                     .getRightFace();
+            PEdge newEdge = flowNetwork.addEdge(source, faceMap.get(targetFace), true);
+            newEdge.setProperty(NETWORKTOGRAPH, edge);
             if (!visited.contains(targetFace)) {
-                flowNetwork.addEdge(source, faceMap.get(targetFace), true);
                 visited.add(targetFace);
-                sinks.put(targetFace, edge);
             }
+            sinks.put(targetFace, edge);
+
         }
         visited.clear();
         completedFaces.add(currentFace);
@@ -308,8 +250,10 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             for (PEdge edge : currentSide) {
                 targetFace = edge.getLeftFace() != currentFace ? edge.getLeftFace() : edge
                         .getRightFace();
+                PEdge newEdge = flowNetwork.addEdge(faceMap.get(currentFace),
+                        faceMap.get(targetFace), true);
+                newEdge.setProperty(NETWORKTOGRAPH, edge);
                 if (!visited.contains(targetFace)) {
-                    flowNetwork.addEdge(faceMap.get(currentFace), faceMap.get(targetFace), true);
                     visited.add(targetFace);
                     if (!sinks.containsKey(targetFace)) {
                         sinks.put(targetFace, edge);
@@ -332,7 +276,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
 
         // set networkflow arcs (edges) properties.
         for (PEdge arc : flowNetwork.getEdges()) {
-
             // capacity is infinite.
             arc.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
             arc.setProperty(IPathFinder.PATHCOST, 1);
@@ -342,7 +285,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
         return flowNetwork;
     }
 
-    // TODO needs a check, if it works for all possible input variants.
     /**
      * This method iterates over all faces of the graph and stores them in the left, top, right and
      * bottom side. This can be used, to determine how long a edge has to be. Meaning the opposite

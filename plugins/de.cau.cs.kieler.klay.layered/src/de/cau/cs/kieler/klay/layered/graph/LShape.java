@@ -19,7 +19,8 @@ import de.cau.cs.kieler.core.math.KVector;
  * Abstract superclass for {@link LGraphElement}s that can have a position and a size.
  * 
  * @author cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public abstract class LShape extends LGraphElement {
     

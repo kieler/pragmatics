@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -39,7 +39,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  *
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhase {
     
@@ -70,14 +71,14 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
                 IntermediateLayoutProcessor.BIG_NODES_PROCESSOR);
 
     /** the layered graph to which layers are added. */
-    private LayeredGraph layeredGraph;
+    private LGraph layeredGraph;
     /** map of nodes to their height in the layering. */
     private int[] nodeHeights;
     
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph) {
         // Basic strategy
         IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy(
                 BASELINE_PROCESSING_STRATEGY);
@@ -93,7 +94,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph thelayeredGraph) {
+    public void process(final LGraph thelayeredGraph) {
         getMonitor().begin("Longest path layering", 1);
         
         layeredGraph = thelayeredGraph;

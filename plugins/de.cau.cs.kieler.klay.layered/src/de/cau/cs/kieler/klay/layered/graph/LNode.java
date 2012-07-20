@@ -31,7 +31,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * A node in a layered graph.
  *
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LNode extends LShape {
     
@@ -271,7 +272,7 @@ public class LNode extends LShape {
             throw new IllegalStateException("node is not assigned to a layer in a graph.");
         }
         
-        LayeredGraph graph = owner.getGraph();
+        LGraph graph = owner.getGraph();
         
         LInsets.Double insets = graph.getInsets();
         float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
@@ -295,7 +296,7 @@ public class LNode extends LShape {
      * @param graph the layered graph.
      * @return the node's anchor point position.
      */
-    public KVector getInteractiveReferencePoint(final LayeredGraph graph) {
+    public KVector getInteractiveReferencePoint(final LGraph graph) {
         switch (graph.getProperty(Properties.INTERACTIVE_REFERENCE_POINT)) {
         case CENTER:
             KVector nodePos = getPosition();

@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 /**
  * Interface for importer classes for the layered graph structure. Graph importers
@@ -25,7 +25,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *
  * @param <T> the type of graph that this importer can transform into a layered graph.
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public interface IGraphImporter<T> {
     
@@ -35,7 +36,7 @@ public interface IGraphImporter<T> {
      * @param graph the graph to turn into a layered graph.
      * @return a layered graph, or {@code null} if the input was not recognized
      */
-    LayeredGraph importGraph(T graph);
+    LGraph importGraph(T graph);
     
     /**
      * Apply the computed layout of the given layered graph to the original input graph.
@@ -49,6 +50,6 @@ public interface IGraphImporter<T> {
      * 
      * @param layeredGraph a graph for which layout is applied
      */
-    void applyLayout(LayeredGraph layeredGraph);
+    void applyLayout(LGraph layeredGraph);
 
 }

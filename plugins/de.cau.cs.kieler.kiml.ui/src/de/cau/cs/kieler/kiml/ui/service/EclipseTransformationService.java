@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
  * Transformation service class for use in Eclipse.
  *
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public final class EclipseTransformationService extends TransformationService {
 

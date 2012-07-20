@@ -32,7 +32,7 @@ import de.cau.cs.kieler.core.util.Pair;
  * 
  * @param <T> data type for the option data
  * @kieler.design 2011-02-01 reviewed by cmot, soh
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  * @author msp
  */
 public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparable<IProperty<?>> {

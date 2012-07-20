@@ -19,7 +19,7 @@ import de.cau.cs.kieler.kiml.ILayoutData;
  * Data type used to store information for a graph format.
  *
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class GraphFormatData implements ILayoutData {
 

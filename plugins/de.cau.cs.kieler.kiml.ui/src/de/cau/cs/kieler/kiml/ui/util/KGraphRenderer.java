@@ -44,7 +44,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * Utility class that is able to render a KGraph instance.
  *
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class KGraphRenderer {
     

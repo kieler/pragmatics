@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
@@ -55,12 +55,13 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * 
  * 
  * <p>When instantiating a new routing generator, the concrete directional strategy must be
- * specified. Once that is done, {@link #routeEdges(LayeredGraph, List, int, List, double)}
+ * specified. Once that is done, {@link #routeEdges(LGraph, List, int, List, double)}
  * is called repeatedly to route edges between given lists of nodes.</p>
  * 
  * @author msp
  * @author cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class OrthogonalRoutingGenerator {
     
@@ -502,7 +503,7 @@ public class OrthogonalRoutingGenerator {
      * @param startPos horizontal position of the first routing slot
      * @return the number of routing slots for this layer
      */
-    public int routeEdges(final LayeredGraph layeredGraph, final Iterable<LNode> sourceLayerNodes,
+    public int routeEdges(final LGraph layeredGraph, final Iterable<LNode> sourceLayerNodes,
             final int sourceLayerIndex, final Iterable<LNode> targetLayerNodes, final double startPos) {
         
         Map<LPort, HyperNode> portToHyperNodeMap = new HashMap<LPort, HyperNode>();
@@ -945,7 +946,7 @@ public class OrthogonalRoutingGenerator {
      * @param hypernodes a list of hypernodes
      * @param label a label to append to the output files
      */
-    private void writeDebugGraph(final LayeredGraph layeredGraph, final int layerIndex,
+    private void writeDebugGraph(final LGraph layeredGraph, final int layerIndex,
             final List<HyperNode> hypernodes, final String label) {
         
         try {
@@ -982,7 +983,7 @@ public class OrthogonalRoutingGenerator {
      * @return a file writer for debug output
      * @throws IOException if creating the output file fails
      */
-    private Writer createWriter(final LayeredGraph layeredGraph, final int layerIndex,
+    private Writer createWriter(final LGraph layeredGraph, final int layerIndex,
             final String label) throws IOException {
         
         String path = Util.getDebugOutputPath();

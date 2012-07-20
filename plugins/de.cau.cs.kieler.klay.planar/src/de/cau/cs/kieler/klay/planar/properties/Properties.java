@@ -73,7 +73,7 @@ public final class Properties {
     public static final IProperty<Boolean> RECT_SHAPE_DUMMY = new Property<Boolean>(
             "rectShapeDummy");
 
-    public static final IProperty<Boolean> PlANAR_DUMMY_NODE = new Property<Boolean>(
+    public static final IProperty<Boolean> PLANAR_DUMMY_NODE = new Property<Boolean>(
             "de.cau.cs.kieler.klay.planar.planardummynode");
 
     // =========================== EDGE PROPERTIES ========================================
@@ -147,9 +147,6 @@ public final class Properties {
 
     public static final IProperty<Integer> RECT_SHAPE_PATH_LENGTH = new Property<Integer>(
             "de.cau.cs.kieler.klay.planar.rect_shape_path_length");
-
-    public static final IProperty<Boolean> RECT_SHAPE_SPECIALEDGE = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.planar.rect_shape_specialcorner");
 
     /**
      * Hidden default constructor.

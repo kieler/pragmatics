@@ -27,7 +27,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -43,6 +43,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * FIXME this doesn't work yet, since a postprocessor is needed that reverts the changes made here
  * @author pdo
+ * @kieler.design proposed by msp
  */
 public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -51,9 +52,9 @@ public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProce
     /**
      * The layered graph, all methods in this class operate on.
      * 
-     * @see de.cau.cs.kieler.klay.layered.graph.LayeredGraph LayeredGraph
+     * @see de.cau.cs.kieler.klay.layered.graph.LGraph LayeredGraph
      */
-    private LayeredGraph layeredGraph;
+    private LGraph layeredGraph;
 
     /**
      * A {@code Collection} containing all nodes in the graph to layer.
@@ -102,7 +103,7 @@ public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProce
      * 
      * @see de.cau.cs.kieler.klay.layered.intermediate.BigNodesProcessor#width width
      */
-    public void process(final LayeredGraph theLayeredGraph) {
+    public void process(final LGraph theLayeredGraph) {
         assert theLayeredGraph != null;
 
         // initialize attributes

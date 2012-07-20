@@ -22,7 +22,7 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 /**
  * Takes a list of layered graphs and combines them into a single graph, placing them according to some
@@ -30,7 +30,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * 
  * @author cds
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 abstract class GraphPlacer {
     
@@ -40,7 +41,7 @@ abstract class GraphPlacer {
      * @param components the graphs to be combined.
      * @return a single graph containing the components.
      */
-    public abstract LayeredGraph combine(final List<LayeredGraph> components);
+    public abstract LGraph combine(final List<LGraph> components);
     
 
     /**
@@ -51,10 +52,10 @@ abstract class GraphPlacer {
      * @param offsetx x coordinate offset.
      * @param offsety y coordinate offset.
      */
-    protected void moveGraphs(final LayeredGraph destGraph, final Collection<LayeredGraph> sourceGraphs,
+    protected void moveGraphs(final LGraph destGraph, final Collection<LGraph> sourceGraphs,
             final double offsetx, final double offsety) {
         
-        for (LayeredGraph sourceGraph : sourceGraphs) {
+        for (LGraph sourceGraph : sourceGraphs) {
             moveGraph(destGraph, sourceGraph, offsetx, offsety);
         }
     }
@@ -69,7 +70,7 @@ abstract class GraphPlacer {
      * @param offsetx x coordinate offset.
      * @param offsety y coordinate offset.
      */
-    protected void moveGraph(final LayeredGraph destGraph, final LayeredGraph sourceGraph,
+    protected void moveGraph(final LGraph destGraph, final LGraph sourceGraph,
             final double offsetx, final double offsety) {
         
         KVector graphOffset = sourceGraph.getOffset().translate(offsetx, offsety);
@@ -97,10 +98,10 @@ abstract class GraphPlacer {
      * @param offsetx x coordinate offset.
      * @param offsety y coordinate offset.
      */
-    protected void offsetGraphs(final Collection<LayeredGraph> graphs, final double offsetx,
+    protected void offsetGraphs(final Collection<LGraph> graphs, final double offsetx,
             final double offsety) {
         
-        for (LayeredGraph graph : graphs) {
+        for (LGraph graph : graphs) {
             offsetGraph(graph, offsetx, offsety);
         }
     }
@@ -114,7 +115,7 @@ abstract class GraphPlacer {
      * @param offsetx x coordinate offset.
      * @param offsety y coordinate offset.
      */
-    protected void offsetGraph(final LayeredGraph graph, final double offsetx, final double offsety) {
+    protected void offsetGraph(final LGraph graph, final double offsetx, final double offsety) {
         KVector graphOffset = new KVector(offsetx, offsety);
         
         for (Layer layer : graph) {

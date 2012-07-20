@@ -185,7 +185,7 @@ public class DummyRemovingProcessor extends AbstractAlgorithm implements ILayout
     private void removePlanarDummies() {
         List<PNode> planarDummynodes = new LinkedList<PNode>();
         for (PNode node : graph.getNodes()) {
-            if (node.hasProperties() && node.getProperty(Properties.PlANAR_DUMMY_NODE) != null) {
+            if (node.hasProperties() && node.getProperty(Properties.PLANAR_DUMMY_NODE) != null) {
                 planarDummynodes.add(node);
             }
         }

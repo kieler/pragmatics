@@ -15,7 +15,7 @@ package de.cau.cs.kieler.klay.debugview;
 
 import org.eclipse.swt.widgets.Control;
 
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
@@ -104,11 +104,11 @@ public final class LegendPage {
         sb.append(Messages.ColorKeyPage_Color);
         sb.append("</th></tr>"); //$NON-NLS-1$
         
-        for (NodeType type : LayeredGraph.NODE_TYPE_COLORS.keySet()) {
+        for (NodeType type : LGraph.NODE_TYPE_COLORS.keySet()) {
             sb.append("<tr><td>"); //$NON-NLS-1$
             sb.append(type.toString());
             sb.append("</td><td class='bordered' style='background-color:" //$NON-NLS-1$
-                    + LayeredGraph.NODE_TYPE_COLORS.get(type) + ";'>"); //$NON-NLS-1$
+                    + LGraph.NODE_TYPE_COLORS.get(type) + ";'>"); //$NON-NLS-1$
             sb.append("&nbsp;</td></tr>"); //$NON-NLS-1$
         }
         

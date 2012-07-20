@@ -45,7 +45,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
@@ -57,7 +57,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author msp
  * @author cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
@@ -67,8 +68,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
     /**
      * {@inheritDoc}
      */
-    public LayeredGraph importGraph(final KNode kgraph) {
-        LayeredGraph layeredGraph = new LayeredGraph();
+    public LGraph importGraph(final KNode kgraph) {
+        LGraph layeredGraph = new LGraph();
         layeredGraph.setProperty(Properties.ORIGIN, kgraph);
 
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
@@ -125,7 +126,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      *            the element map that maps the original {@code KGraph} elements to the transformed
      *            {@code LGraph} elements.
      */
-    private void transformNodesAndPorts(final KNode graph, final LayeredGraph layeredGraph,
+    private void transformNodesAndPorts(final KNode graph, final LGraph layeredGraph,
             final Map<KGraphElement, LGraphElement> elemMap) {
         Set<GraphProperties> graphProperties = layeredGraph.getProperty(Properties.GRAPH_PROPERTIES);
         List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
@@ -694,7 +695,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
     /**
      * {@inheritDoc}
      */
-    public void applyLayout(final LayeredGraph layeredGraph) {
+    public void applyLayout(final LGraph layeredGraph) {
         Object target = layeredGraph.getProperty(Properties.ORIGIN);
         if (!(target instanceof KNode)) {
             return;

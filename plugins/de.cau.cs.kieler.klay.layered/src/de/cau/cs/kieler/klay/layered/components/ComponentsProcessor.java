@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -64,7 +64,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  * @author msp
  * @author cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class ComponentsProcessor extends AbstractAlgorithm {
     
@@ -80,8 +81,8 @@ public class ComponentsProcessor extends AbstractAlgorithm {
      * @param graph an input graph with layerless nodes
      * @return a list of components that can be processed one by one
      */
-    public List<LayeredGraph> split(final LayeredGraph graph) {
-        List<LayeredGraph> result;
+    public List<LGraph> split(final LGraph graph) {
+        List<LGraph> result;
         
         // Whether separate components processing is requested
         Boolean separateProperty = graph.getProperty(LayoutOptions.SEPARATE_CC);
@@ -107,12 +108,12 @@ public class ComponentsProcessor extends AbstractAlgorithm {
             }
             
             // Perform DFS starting on each node, collecting connected components
-            result = new LinkedList<LayeredGraph>();
+            result = new LinkedList<LGraph>();
             for (LNode node : graph.getLayerlessNodes()) {
                 Pair<List<LNode>, Set<PortSide>> componentData = dfs(node, null);
                 
                 if (componentData != null) {
-                    LayeredGraph newGraph = new LayeredGraph();
+                    LGraph newGraph = new LGraph();
                     
                     newGraph.copyProperties(graph);
                     newGraph.setProperty(Properties.EXT_PORT_CONNECTIONS, componentData.getSecond());
@@ -133,7 +134,7 @@ public class ComponentsProcessor extends AbstractAlgorithm {
                 graphPlacer = new SimpleRowGraphPlacer();
             }
         } else {
-            result = new ArrayList<LayeredGraph>(1);
+            result = new ArrayList<LGraph>(1);
             result.add(graph);
             
             graphPlacer = new SimpleRowGraphPlacer();
@@ -196,8 +197,8 @@ public class ComponentsProcessor extends AbstractAlgorithm {
      * @param components a list of components
      * @return a single graph that contains all components
      */
-    public LayeredGraph pack(final List<LayeredGraph> components) {
-        LayeredGraph combinedGraph = graphPlacer.combine(components);
+    public LGraph pack(final List<LGraph> components) {
+        LGraph combinedGraph = graphPlacer.combine(components);
         
         return combinedGraph;
     }
