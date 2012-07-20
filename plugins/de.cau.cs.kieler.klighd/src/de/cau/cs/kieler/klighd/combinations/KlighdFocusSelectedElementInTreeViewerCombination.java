@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.combinations;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.TreeViewer;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
@@ -24,7 +25,7 @@ import de.cau.cs.kieler.klighd.triggers.KlighdSelectionTrigger.KlighdSelectionSt
  * 
  * @author chsch
  */
-public class KLighdFocusSelectedElementInTreeViewerCombination extends AbstractCombination {
+public class KlighdFocusSelectedElementInTreeViewerCombination extends AbstractCombination {
     
     /**
      * THE execute method!
@@ -40,9 +41,9 @@ public class KLighdFocusSelectedElementInTreeViewerCombination extends AbstractC
             // in this case there is nothing to show the selected element in
             return;
         }
-        if (!state.getSelections().isEmpty()) {
+        if (!state.getSelectedEModelElements().isEmpty()) {
             // take just the 1st element for the moment - should be improved sometimes...
-            Object me = state.getSelections().get(0).getModelElement();
+            EObject me = state.getSelectedEModelElements().get(0);
             if (me != null) {
                 this.schedule(new KlighdFocusInTreeViewerEffect(me, viewer));
             }
