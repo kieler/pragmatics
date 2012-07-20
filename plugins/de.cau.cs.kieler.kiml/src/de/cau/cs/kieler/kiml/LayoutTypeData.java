@@ -20,7 +20,7 @@ import java.util.List;
  * Data type used to store information for a layout type.
  *
  * @kieler.design 2011-02-01 reviewed by cmot, soh
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  * @author msp
  */
 public class LayoutTypeData implements ILayoutData {

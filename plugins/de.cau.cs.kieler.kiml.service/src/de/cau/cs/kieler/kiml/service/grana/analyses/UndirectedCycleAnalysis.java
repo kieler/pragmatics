@@ -33,7 +33,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * acyclic, otherwise it contains cycles.
  *
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class UndirectedCycleAnalysis implements IAnalysis {
     

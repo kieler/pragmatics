@@ -23,7 +23,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * {@link LayoutDataService} singleton, provided the UI plugin is loaded.
  * 
  * @kieler.design 2011-01-17 reviewed by haf, cmot, soh
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  * @author ars
  * @author msp
  */

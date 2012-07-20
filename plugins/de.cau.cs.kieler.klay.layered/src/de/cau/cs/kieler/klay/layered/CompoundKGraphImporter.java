@@ -55,6 +55,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author ima
  * @author cds
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class CompoundKGraphImporter extends KGraphImporter {
 

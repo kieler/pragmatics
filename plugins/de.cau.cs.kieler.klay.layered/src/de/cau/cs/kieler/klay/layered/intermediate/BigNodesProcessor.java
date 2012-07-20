@@ -43,6 +43,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * FIXME this doesn't work yet, since a postprocessor is needed that reverts the changes made here
  * @author pdo
+ * @kieler.design proposed by msp
  */
 public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 

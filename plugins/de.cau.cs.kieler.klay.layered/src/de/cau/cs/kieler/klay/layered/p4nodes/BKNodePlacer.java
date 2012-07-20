@@ -96,6 +96,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * detects that, the respective layout is discarded and another one is chosen.
  * 
  * @author jjc
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 

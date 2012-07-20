@@ -28,7 +28,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * A graph analysis that computes the number of edges in the given graph.
  * 
  * @author mri
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class EdgeCountAnalysis implements IAnalysis {
     

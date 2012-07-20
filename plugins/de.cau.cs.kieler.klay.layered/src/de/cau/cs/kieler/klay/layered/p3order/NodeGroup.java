@@ -20,15 +20,16 @@ import java.util.List;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
- * A NodeGroup contains one or more nodes. NodeGroups are used to model sets of nodes that are
+ * A node group contains one or more nodes. Node groups are used to model sets of nodes that are
  * placed next to each other. They are also used to model a compound node enveloping all child
- * nodes. A NodeGroup contains methods to calculate its barycenter value, to merge with another
+ * nodes. A node group contains methods to calculate its barycenter value, to merge with another
  * vertex and to generally do cool stuff.
  * 
  * @author cds
  * @author ima
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class NodeGroup implements Comparable<NodeGroup> {
 

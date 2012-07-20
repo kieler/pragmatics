@@ -25,7 +25,8 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  *
  * @param <T> the type of graph that this importer can transform into a layered graph.
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public interface IGraphImporter<T> {
     

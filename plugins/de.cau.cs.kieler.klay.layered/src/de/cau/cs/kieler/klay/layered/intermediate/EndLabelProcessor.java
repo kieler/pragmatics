@@ -28,6 +28,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 /**
  * 
  * @author jjc
+ * @kieler.design proposed by msp
  */
 public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 

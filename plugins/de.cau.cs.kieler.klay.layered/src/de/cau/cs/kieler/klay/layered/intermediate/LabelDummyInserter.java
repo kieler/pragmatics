@@ -33,6 +33,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 /**
  * 
  * @author jjc
+ * @kieler.design proposed by msp
  */
 public class LabelDummyInserter extends AbstractAlgorithm implements ILayoutProcessor {
 

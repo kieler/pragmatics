@@ -33,7 +33,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * result {@code (int top, int left, int bottom, int right)}.
  * 
  * @author cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class EdgeDirectionAnalysis implements IAnalysis {
 

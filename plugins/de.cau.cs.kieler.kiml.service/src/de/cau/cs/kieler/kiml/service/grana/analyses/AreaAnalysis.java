@@ -27,7 +27,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * a two-component result {@code (float width, float height)}.
  * 
  * @author cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class AreaAnalysis implements IAnalysis {
 

@@ -24,7 +24,7 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
  * @param <S> source graph type
  * @param <T> target graph type
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class TransformationData<S, T> extends MapPropertyHolder {
     

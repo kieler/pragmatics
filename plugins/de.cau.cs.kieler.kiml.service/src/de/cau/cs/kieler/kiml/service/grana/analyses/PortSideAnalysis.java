@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * A graph analysis that computes the number of ports on each of the four sides.
  * 
  * @author msp
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class PortSideAnalysis implements IAnalysis {
 

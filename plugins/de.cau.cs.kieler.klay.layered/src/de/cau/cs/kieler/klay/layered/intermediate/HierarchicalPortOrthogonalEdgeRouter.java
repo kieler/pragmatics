@@ -72,7 +72,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see HierarchicalPortPositionProcessor
  * @see OrthogonalRoutingGenerator
  * @author cds
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutProcessor {
     

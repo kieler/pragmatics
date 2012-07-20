@@ -26,7 +26,8 @@ import de.cau.cs.kieler.core.math.KVector;
  * Simple implementation for the spline calculator.
  * 
  * @author uru
- * @kieler.rating 2012-07-10 proposed yellow msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class SplineGenerator {
 
