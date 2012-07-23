@@ -26,6 +26,7 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.SemanticProvider;
  * Creates an entity object and passes this object to the {@link AddEntityFeature}.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class CreateEntityFeature extends AbstractCreateFeature {
 

@@ -25,6 +25,7 @@ import de.cau.cs.kieler.keg.importer.importer.OGMLImporter;
  * The activator class controls the plug-in life cycle.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class KEGImporterPlugin extends AbstractUIPlugin {
 

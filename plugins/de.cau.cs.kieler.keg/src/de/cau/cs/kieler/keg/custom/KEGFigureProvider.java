@@ -30,6 +30,7 @@ import de.cau.cs.kieler.karma.IRenderingProvider;
  * The figure provider for KEG figures.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class KEGFigureProvider implements IRenderingProvider {
 

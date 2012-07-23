@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kaom.Link;
  * Updates any changes made to a link.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class UpdateLinkFeature extends AbstractUpdateFeature {
 

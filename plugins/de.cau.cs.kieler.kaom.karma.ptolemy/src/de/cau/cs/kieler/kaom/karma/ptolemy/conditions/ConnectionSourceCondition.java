@@ -25,8 +25,9 @@ import de.cau.cs.kieler.karma.ICustomCondition;
 /**
  * Condition to check an annotation of the source of a connection.
  * Similar to annotation condition.
+ * 
  * @author ckru
- *
+ * @kieler.ignore (excluded from review process)
  */
 public class ConnectionSourceCondition extends ICustomCondition<EObject> {
 

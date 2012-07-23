@@ -25,6 +25,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * A semantic layout configuration that checks whether a given node is a hypernode.
  *
  * @author msp
+ * @kieler.ignore (excluded from review process)
  */
 public class HypernodeLayoutConfig extends SemanticLayoutConfig {
 

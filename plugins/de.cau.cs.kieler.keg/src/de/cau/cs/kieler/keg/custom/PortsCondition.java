@@ -20,6 +20,7 @@ import de.cau.cs.kieler.keg.Node;
  * The condition for a node with ports.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class PortsCondition extends ICustomCondition<Node> {
 

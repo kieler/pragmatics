@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
  * A KEG importer for the Graphviz Dot format.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class DotImporter extends AbstractImporter {
 

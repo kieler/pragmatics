@@ -20,6 +20,7 @@ import de.cau.cs.kieler.keg.Node;
  * The interface for KEG random graph generators.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public interface IRandomGraphGenerator {
 

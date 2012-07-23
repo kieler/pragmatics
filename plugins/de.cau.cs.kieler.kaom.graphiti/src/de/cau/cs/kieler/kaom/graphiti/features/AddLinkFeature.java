@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
  * Adds a link between the source and the target elements.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class AddLinkFeature extends AbstractAddFeature {
 

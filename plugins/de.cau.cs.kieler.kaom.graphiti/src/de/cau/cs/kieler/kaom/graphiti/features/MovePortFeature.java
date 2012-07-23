@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kaom.Entity;
  * Feature for moving ports.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class MovePortFeature extends DefaultMoveAnchorFeature {
 

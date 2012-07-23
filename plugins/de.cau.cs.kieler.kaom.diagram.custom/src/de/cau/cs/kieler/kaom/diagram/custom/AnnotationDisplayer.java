@@ -52,7 +52,6 @@ import de.cau.cs.kieler.kaom.Entity;
  * Utility class for displaying some annotations of a diagram.
  * 
  * @author ckru
- * 
  */
 public final class AnnotationDisplayer {
 

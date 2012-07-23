@@ -75,6 +75,7 @@ import de.cau.cs.kieler.kaom.graphiti.features.UpdateRelationFeature;
  * Provides and initializes all features for the Graphiti KAOM editor.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class FeatureProvider extends DefaultFeatureProvider {
 

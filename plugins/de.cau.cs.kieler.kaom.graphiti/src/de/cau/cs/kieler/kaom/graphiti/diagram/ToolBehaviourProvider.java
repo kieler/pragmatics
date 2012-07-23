@@ -37,6 +37,7 @@ import de.cau.cs.kieler.kaom.Entity;
  * Provides all the features to control the tool bar.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 

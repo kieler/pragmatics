@@ -31,6 +31,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * The options page for the TREE graph type.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class RandomGraphTreePage extends WizardPage {
 

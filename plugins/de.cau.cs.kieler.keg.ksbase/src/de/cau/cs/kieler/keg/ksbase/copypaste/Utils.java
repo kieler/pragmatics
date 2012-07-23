@@ -32,6 +32,7 @@ import de.cau.cs.kieler.keg.Node;
  * 
  * @author soh (synccharts version)
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public final class Utils {
 

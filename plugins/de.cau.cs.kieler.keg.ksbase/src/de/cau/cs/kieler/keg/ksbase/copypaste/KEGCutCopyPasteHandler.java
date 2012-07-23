@@ -27,6 +27,7 @@ import de.cau.cs.kieler.keg.custom.KEGNode;
  * Graphs specific handler for cut, copy and paste operations.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class KEGCutCopyPasteHandler extends AbstractCutCopyPasteHandler {
 

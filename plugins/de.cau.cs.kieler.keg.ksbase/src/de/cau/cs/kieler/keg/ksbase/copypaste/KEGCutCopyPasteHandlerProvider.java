@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.model.gmf.handlers.AbstractCutCopyPasteHandlerProvi
  * Handler for passing cut, copy and paste request to the appropriate KSbase handler if applicable.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class KEGCutCopyPasteHandlerProvider extends AbstractCutCopyPasteHandlerProvider {
 

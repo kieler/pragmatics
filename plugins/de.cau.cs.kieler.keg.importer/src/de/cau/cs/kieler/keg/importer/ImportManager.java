@@ -22,6 +22,7 @@ import java.util.Set;
  * A singleton class for accessing KEG graph import functionality.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public final class ImportManager {
 

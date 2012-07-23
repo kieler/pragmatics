@@ -27,6 +27,7 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.SemanticProvider;
  * Creates a relation object and passes it to the add relation feature.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class CreateRelationFeature extends AbstractCreateFeature {
 

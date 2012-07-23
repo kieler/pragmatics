@@ -78,6 +78,7 @@ import de.cau.cs.kieler.keg.importer.KEGImporterPlugin;
  * A wizard for importing graphs from various file formats into the KEG format.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class ImportGraphWizard extends Wizard implements IImportWizard {
 

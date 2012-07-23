@@ -30,6 +30,7 @@ import de.cau.cs.kieler.ksbase.ui.utils.AbstractCutCopyPasteCommandFactory;
  * Creates the cut, copy and paste commands from ksbase.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class KEGCutCopyPasteCommandFactory extends
         AbstractCutCopyPasteCommandFactory {

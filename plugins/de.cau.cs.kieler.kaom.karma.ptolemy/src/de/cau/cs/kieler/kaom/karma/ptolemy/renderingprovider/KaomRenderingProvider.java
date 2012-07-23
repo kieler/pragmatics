@@ -56,7 +56,7 @@ import de.cau.cs.kieler.karma.IRenderingProvider;
  * Karma rendering provider for rendering ptolemy diagrams in kaom.
  * 
  * @author ckru
- * 
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomRenderingProvider implements IRenderingProvider {
 

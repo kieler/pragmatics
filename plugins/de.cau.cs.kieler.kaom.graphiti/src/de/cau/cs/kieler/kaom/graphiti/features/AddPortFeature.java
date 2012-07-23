@@ -31,8 +31,10 @@ import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 
 /**
+ * Class adds a port to the parent entity.
  * 
- * @author atr Class adds a port to the parent entity
+ * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class AddPortFeature extends AbstractAddShapeFeature {
 
