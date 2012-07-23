@@ -34,6 +34,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * The options page for the ACYCLIC_NO_TRANSITIV_EDGES graph type.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class RandomGraphANTEPage extends WizardPage {
 

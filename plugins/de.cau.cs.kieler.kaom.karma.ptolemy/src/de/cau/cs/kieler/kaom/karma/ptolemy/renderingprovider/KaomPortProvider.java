@@ -67,6 +67,7 @@ import de.cau.cs.kieler.karma.IRenderingProvider;
 
 /**
  * @author ckru
+ * @kieler.ignore (excluded from review process)
  */
 //This class uses some internal gmf stuff.
 @SuppressWarnings("restriction")

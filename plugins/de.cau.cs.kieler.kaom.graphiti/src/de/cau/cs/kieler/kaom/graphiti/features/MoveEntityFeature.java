@@ -28,6 +28,7 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.SemanticProvider;
  * Feature for moving  entities.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class MoveEntityFeature extends DefaultMoveShapeFeature {
 

@@ -37,6 +37,7 @@ import de.cau.cs.kieler.kaom.Entity;
  * occurred.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class LayoutEntityFeature extends AbstractLayoutFeature {
 

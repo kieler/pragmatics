@@ -50,7 +50,7 @@ import org.w3c.dom.NodeList;
  * Class for creating a draw2d figure out of an svg document.
  * 
  * @author ckru
- * 
+ * @kieler.ignore (excluded from review process)
  */
 //this class needs some internal draw2d figures
 @SuppressWarnings("restriction")

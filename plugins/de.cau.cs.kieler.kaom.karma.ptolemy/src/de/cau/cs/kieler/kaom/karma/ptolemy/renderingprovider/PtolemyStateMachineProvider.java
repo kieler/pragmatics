@@ -32,7 +32,7 @@ import de.cau.cs.kieler.karma.IRenderingProvider;
  * RenderingProvider for ptolemy state machines.
  * 
  * @author ckru
- * 
+ * @kieler.ignore (excluded from review process)
  */
 public class PtolemyStateMachineProvider implements IRenderingProvider {
 

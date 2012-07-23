@@ -23,6 +23,7 @@ import de.cau.cs.kieler.keg.impl.KEGPackageImpl;
  * graphs diagram.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class KEGDeletionPolicyProvider extends
         AbstractDeletionPolicyProvider {

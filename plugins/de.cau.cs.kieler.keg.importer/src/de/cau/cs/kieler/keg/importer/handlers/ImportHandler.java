@@ -34,6 +34,7 @@ import de.cau.cs.kieler.keg.importer.wizards.ImportGraphWizard;
  * The handler that is responsible for importing graphs using the context menu.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class ImportHandler extends AbstractHandler {
 

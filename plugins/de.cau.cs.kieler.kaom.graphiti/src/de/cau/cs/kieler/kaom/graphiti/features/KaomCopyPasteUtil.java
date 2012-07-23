@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kaom.Relation;
 
 /**
  * @author soh
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomCopyPasteUtil {
 

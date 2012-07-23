@@ -27,6 +27,7 @@ import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
  * A provider for styles of diagram elements.
  * 
  * @author msp
+ * @kieler.ignore (excluded from review process)
  */
 public class StyleProvider implements IStyleProvider {
 

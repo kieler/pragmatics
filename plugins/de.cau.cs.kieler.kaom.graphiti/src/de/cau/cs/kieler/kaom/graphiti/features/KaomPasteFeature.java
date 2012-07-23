@@ -40,6 +40,7 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.ReInitKaomDiagramCommand;
 
 /**
  * @author soh
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomPasteFeature extends AbstractPasteFeature {
 

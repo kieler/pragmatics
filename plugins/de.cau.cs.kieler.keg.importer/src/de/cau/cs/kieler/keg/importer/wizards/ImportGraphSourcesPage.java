@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Label;
  * the file system.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class ImportGraphSourcesPage extends WizardPage {
 

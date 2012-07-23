@@ -36,6 +36,7 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
  * Adds a new entity, which is contained within the parent entity.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class AddEntityFeature extends AbstractAddShapeFeature {
 

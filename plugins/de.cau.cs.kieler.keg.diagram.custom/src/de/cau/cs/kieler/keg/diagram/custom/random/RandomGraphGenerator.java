@@ -37,6 +37,7 @@ import de.cau.cs.kieler.keg.Port;
  * The basic KEG random graph generator.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class RandomGraphGenerator implements IRandomGraphGenerator {
 

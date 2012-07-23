@@ -34,6 +34,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * The options page for utility settings.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class RandomGraphUtilityPage extends WizardPage {
 
