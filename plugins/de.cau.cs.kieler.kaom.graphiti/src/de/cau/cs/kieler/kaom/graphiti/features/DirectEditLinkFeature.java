@@ -25,6 +25,7 @@ import de.cau.cs.kieler.kaom.Link;
  * Feature for enabling direct editing of the name of links.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class DirectEditLinkFeature extends AbstractDirectEditingFeature {
 

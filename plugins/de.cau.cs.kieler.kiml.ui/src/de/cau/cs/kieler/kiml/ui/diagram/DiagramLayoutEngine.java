@@ -194,16 +194,23 @@ public class DiagramLayoutEngine {
                     kielerMonitor = new ProgressMonitorAdapter(monitor, MAX_PROGRESS_LEVELS);
                 }
                 
-                // the manager's adapter list is expected to return its diagram part type
-                Class<?>[] adapterList = layoutManager.getAdapterList();
-                assert adapterList.length > 0;
-                
-                // translate the diagram part into one that is understood by the layout manager
-                Object transDiagPart = layoutManager.getAdapter(diagramPart, adapterList[0]);
-                
-                // perform the actual layout
-                IStatus status = layout(layoutMapping.get(), transDiagPart, kielerMonitor,
-                        extraLayoutConfigs, layoutAncestors);
+                LayoutMapping<T> mapping = layoutMapping.get();
+                IStatus status;
+                if (mapping != null && mapping.getLayoutGraph() != null) {
+                    // the manager's adapter list is expected to return its diagram part type
+                    Class<?>[] adapterList = layoutManager.getAdapterList();
+                    assert adapterList.length > 0;
+                    
+                    // translate the diagram part into one that is understood by the layout manager
+                    Object transDiagPart = layoutManager.getAdapter(diagramPart, adapterList[0]);
+                    
+                    // perform the actual layout
+                    status = layout(mapping, transDiagPart, kielerMonitor, extraLayoutConfigs,
+                            layoutAncestors);
+                } else {
+                    status = new Status(Status.WARNING, KimlUiPlugin.PLUGIN_ID,
+                            Messages.getString("kiml.ui.62"));
+                }
                 
                 kielerMonitor.done();
                 return status;
@@ -321,23 +328,30 @@ public class DiagramLayoutEngine {
         submon1.begin("Build layout graph", 1);
         LayoutMapping<T> mapping = layoutManager.buildLayoutGraph(workbenchPart, diagramPart);
         
-        // the manager's adapter list is expected to return its internally used diagram part type
-        Class<?>[] adapterList = layoutManager.getAdapterList();
-        assert adapterList.length > 0;
-                
-        // translate the diagram part into one that is understood by the layout manager
-        Object transDiagPart = layoutManager.getAdapter(diagramPart, adapterList[0]);
-        submon1.done();
+        IStatus status;
+        if (mapping != null && mapping.getLayoutGraph() != null) {
+            // the manager's adapter list is expected to return its internally used diagram part type
+            Class<?>[] adapterList = layoutManager.getAdapterList();
+            assert adapterList.length > 0;
+                    
+            // translate the diagram part into one that is understood by the layout manager
+            Object transDiagPart = layoutManager.getAdapter(diagramPart, adapterList[0]);
+            submon1.done();
+            
+            // perform the actual layout
+            status = layout(mapping, transDiagPart, progressMonitor.subTask(1), null, false);
+            
+            // apply the layout to the diagram
+            IKielerProgressMonitor submon3 = progressMonitor.subTask(1);
+            submon3.begin("Apply layout to the diagram", 1);
+            layoutManager.applyLayout(mapping, false, 0);
+            submon3.done();
+        } else {
+            status = new Status(Status.WARNING, KimlUiPlugin.PLUGIN_ID,
+                    Messages.getString("kiml.ui.62"));
+        }
         
-        // perform the actual layout
-        IStatus status = layout(mapping, transDiagPart, progressMonitor.subTask(1), null, false);
-        
-        // apply the layout to the diagram
-        IKielerProgressMonitor submon3 = progressMonitor.subTask(1);
-        submon3.begin("Apply layout to the diagram", 1);
-        layoutManager.applyLayout(mapping, false, 0);
-        submon3.done();
-        
+        progressMonitor.done();
         return status;
     }
 

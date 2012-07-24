@@ -42,7 +42,7 @@ import ptolemy.vergil.icon.EditorIcon;
  * Class to fetch some stuff such as svg descriptions and ptolemy class instance from ptolemy.
  * 
  * @author ckru
- * 
+ * @kieler.ignore (excluded from review process)
  */
 public final class PtolemyFetcher {
 

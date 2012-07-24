@@ -24,7 +24,8 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 /**
  * A layout for KEG nodes.
  * 
- * @author mri 
+ * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class NodeLayout extends AbstractHintLayout {
 

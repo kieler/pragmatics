@@ -28,6 +28,7 @@ import de.cau.cs.kieler.kaom.Entity;
  * A provider of semantic elements for KAOM diagrams.
  *
  * @author msp
+ * @kieler.ignore (excluded from review process)
  */
 public class SemanticProvider {
    

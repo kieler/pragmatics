@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Control;
  * Utility functionality for the random graph wizard.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public final class Util {
 

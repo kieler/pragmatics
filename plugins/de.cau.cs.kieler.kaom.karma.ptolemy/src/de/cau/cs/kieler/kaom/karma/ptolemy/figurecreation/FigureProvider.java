@@ -63,7 +63,7 @@ import diva.canvas.toolbox.ImageFigure;
  * Class for generating draw2d Figures out of svg documents and EditorIcons.
  * 
  * @author ckru
- * 
+ * @kieler.ignore (excluded from review process)
  */
 //This class needs some internal draw2d figures.
 @SuppressWarnings("restriction")

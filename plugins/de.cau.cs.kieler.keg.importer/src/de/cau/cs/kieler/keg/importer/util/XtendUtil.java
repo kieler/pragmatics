@@ -23,6 +23,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
  * transformations.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public final class XtendUtil {
     /**

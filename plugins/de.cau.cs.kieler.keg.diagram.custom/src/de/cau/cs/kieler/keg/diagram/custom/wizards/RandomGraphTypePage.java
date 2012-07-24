@@ -31,6 +31,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * algorithm is used for the generation.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class RandomGraphTypePage extends WizardPage {
 

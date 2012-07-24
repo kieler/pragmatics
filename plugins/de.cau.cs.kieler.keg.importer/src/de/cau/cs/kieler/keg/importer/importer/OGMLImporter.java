@@ -36,7 +36,7 @@ import de.cau.cs.kieler.keg.importer.ImporterOption;
  * A KEG importer for the OGML file format.
  * 
  * @author mri
- * 
+ * @kieler.ignore (excluded from review process)
  */
 public class OGMLImporter extends AbstractImporter {
 

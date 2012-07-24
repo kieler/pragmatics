@@ -17,6 +17,7 @@ package de.cau.cs.kieler.keg.custom;
  * A marker interface for graphs nodes.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public interface KEGNode {
 

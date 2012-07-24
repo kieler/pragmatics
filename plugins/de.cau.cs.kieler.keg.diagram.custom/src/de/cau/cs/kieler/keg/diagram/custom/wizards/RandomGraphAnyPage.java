@@ -34,6 +34,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
  * The options page for the ANY graph type.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class RandomGraphAnyPage extends WizardPage {
 

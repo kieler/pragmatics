@@ -38,6 +38,7 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
  * Section for construction of the property view.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomPropertySection extends GFPropertySection implements ITabbedPropertyConstants {
 

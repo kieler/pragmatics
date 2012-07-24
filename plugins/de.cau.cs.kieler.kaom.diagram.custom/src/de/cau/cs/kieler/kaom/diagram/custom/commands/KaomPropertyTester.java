@@ -22,6 +22,7 @@ import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditor;
  * called by a kaom editor.
  * 
  * @author soh
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomPropertyTester extends PropertyTester {
 

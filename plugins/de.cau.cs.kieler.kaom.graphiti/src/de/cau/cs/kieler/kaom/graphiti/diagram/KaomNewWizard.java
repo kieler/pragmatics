@@ -23,6 +23,7 @@ import de.cau.cs.kieler.kaom.KaomFactory;
  * New-wizard for Graphiti KAOM diagrams.
  * 
  * @author msp
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomNewWizard extends GraphitiNewWizard {
 
