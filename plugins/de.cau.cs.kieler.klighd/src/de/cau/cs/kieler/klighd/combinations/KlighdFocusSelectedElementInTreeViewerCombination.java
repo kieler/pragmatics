@@ -41,9 +41,9 @@ public class KlighdFocusSelectedElementInTreeViewerCombination extends AbstractC
             // in this case there is nothing to show the selected element in
             return;
         }
-        if (!state.getSelectedEModelElements().isEmpty()) {
+        if (state.getSelectedEModelElements().hasNext()) {
             // take just the 1st element for the moment - should be improved sometimes...
-            EObject me = state.getSelectedEModelElements().get(0);
+            EObject me = state.getSelectedEModelElements().next();
             if (me != null) {
                 this.schedule(new KlighdFocusInTreeViewerEffect(me, viewer));
             }

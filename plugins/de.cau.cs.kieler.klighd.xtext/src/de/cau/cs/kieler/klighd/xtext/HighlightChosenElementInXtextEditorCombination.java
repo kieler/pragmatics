@@ -30,8 +30,8 @@ public class HighlightChosenElementInXtextEditorCombination extends AbstractComb
      * @param state triggerState
      */
     public void execute(final KlighdSelectionState state) {
-        if (!state.getSelectedEModelElements().iterator().hasNext()
-                || !(state.getSelectedEModelElements().iterator().next().eResource() instanceof XtextResource)) {
+        if (!state.getSelectedEModelElements().hasNext()
+                || !(state.getSelectedEModelElements().next().eResource() instanceof XtextResource)) {
             return;
         }
         XtextEditor editor = null;
@@ -40,7 +40,7 @@ public class HighlightChosenElementInXtextEditorCombination extends AbstractComb
         }
 
         if (!state.getSelections().isEmpty()) {
-            Object me = state.getSelectedEModelElements().iterator().next();
+            Object me = state.getSelectedEModelElements().next();
             if (me instanceof EObject) {
                 this.schedule(new XtextEditorHighlightEffect((EObject) me, editor));
             }
