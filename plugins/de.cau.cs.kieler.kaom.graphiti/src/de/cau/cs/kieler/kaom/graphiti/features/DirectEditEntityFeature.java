@@ -24,6 +24,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
  * Feature for enabling direct editing of the name of entities.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class DirectEditEntityFeature extends AbstractDirectEditingFeature {
 

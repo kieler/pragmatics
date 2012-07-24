@@ -30,6 +30,7 @@ import de.cau.cs.kieler.keg.importer.ImportUtil;
  * A KEG importer for the GraphML file format.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class GraphMLImporter extends AbstractImporter {
 

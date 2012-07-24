@@ -24,6 +24,7 @@ import de.cau.cs.kieler.kaom.Port;
  * Feature used to layout a port.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class LayoutPortFeature extends AbstractLayoutFeature {
 

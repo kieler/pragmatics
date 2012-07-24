@@ -57,6 +57,7 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
  * A utility class for KEG import.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public final class ImportUtil {
 

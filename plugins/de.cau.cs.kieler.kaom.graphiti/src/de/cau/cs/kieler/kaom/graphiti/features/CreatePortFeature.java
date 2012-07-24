@@ -27,6 +27,7 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
  * Creates a port object and passes it to the add port feature.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class CreatePortFeature extends AbstractCreateFeature {
 

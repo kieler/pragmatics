@@ -68,6 +68,7 @@ import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorUtil;
  * The new-wizard for creating random KEG graphs.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class RandomGraphWizard extends Wizard implements INewWizard {
 

@@ -34,6 +34,7 @@ import de.cau.cs.kieler.keg.diagram.custom.KEGDiagramPlugin;
  * The wizard page from which to select the KEG file to the graph is generated into.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
 

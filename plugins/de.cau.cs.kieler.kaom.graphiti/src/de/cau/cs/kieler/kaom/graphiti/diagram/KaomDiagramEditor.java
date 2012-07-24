@@ -19,6 +19,7 @@ import org.eclipse.graphiti.ui.editor.DiagramEditor;
  * Diagram editor class for the Graphiti KAOM editor.
  * 
  * @author msp
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomDiagramEditor extends DiagramEditor {
 

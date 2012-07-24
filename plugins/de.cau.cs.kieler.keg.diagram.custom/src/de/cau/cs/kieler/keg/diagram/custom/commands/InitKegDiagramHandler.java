@@ -52,6 +52,7 @@ import de.cau.cs.kieler.keg.diagram.part.Messages;
  * A command handler that reinitializes a diagram file from a given KEG model file.
  * 
  * @author soh
+ * @kieler.ignore (excluded from review process)
  */
 public class InitKegDiagramHandler extends AbstractInitDiagramHandler {
 

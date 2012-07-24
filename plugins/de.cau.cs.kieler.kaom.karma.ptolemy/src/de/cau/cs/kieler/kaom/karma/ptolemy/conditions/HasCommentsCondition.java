@@ -27,7 +27,7 @@ import de.cau.cs.kieler.karma.ICustomCondition;
  * displayed.
  * 
  * @author ckru
- * 
+ * @kieler.ignore (excluded from review process)
  */
 public class HasCommentsCondition extends ICustomCondition<EObject> {
 

@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kaom.Port;
  * BorderItemLocator for determining the correct locations of ports in a kaom ptolemy diagram.
  * 
  * @author ckru
- * 
+ * @kieler.ignore (excluded from review process)
  */
 public class PtolemyPortBorderItemLocator extends BorderItemLocator {
     

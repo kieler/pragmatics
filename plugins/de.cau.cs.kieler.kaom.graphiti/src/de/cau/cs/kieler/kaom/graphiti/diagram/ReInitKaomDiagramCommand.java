@@ -20,6 +20,7 @@ import de.cau.cs.kieler.kaom.Link;
 
 /**
  * @author soh
+ * @kieler.ignore (excluded from review process)
  */
 public class ReInitKaomDiagramCommand extends
         AbstractInitGraphitiDiagramHandler {

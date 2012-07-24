@@ -21,6 +21,7 @@ import de.cau.cs.kieler.kaom.graphiti.KaomGraphitiPlugin;
  * Provides all the images required in the graphical editor.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class ImageProvider extends AbstractImageProvider {
    

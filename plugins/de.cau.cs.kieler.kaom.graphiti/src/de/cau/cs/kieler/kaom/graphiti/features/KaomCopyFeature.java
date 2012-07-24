@@ -22,6 +22,7 @@ import org.eclipse.graphiti.ui.features.AbstractCopyFeature;
 
 /**
  * @author soh
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomCopyFeature extends AbstractCopyFeature {
 

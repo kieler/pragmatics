@@ -24,6 +24,7 @@ import de.cau.cs.kieler.kaom.Relation;
  * Updates any changes made to a relation.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class UpdateRelationFeature extends AbstractUpdateFeature {
 

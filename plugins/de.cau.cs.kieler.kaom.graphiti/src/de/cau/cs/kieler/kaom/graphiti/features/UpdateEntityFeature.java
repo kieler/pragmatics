@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kaom.Entity;
  * Update any changes made to an entity.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class UpdateEntityFeature extends AbstractUpdateFeature {
 

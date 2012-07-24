@@ -25,6 +25,7 @@ import de.cau.cs.kieler.keg.Node;
  * The interface for all KEG importers.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public interface IImporter {
 
