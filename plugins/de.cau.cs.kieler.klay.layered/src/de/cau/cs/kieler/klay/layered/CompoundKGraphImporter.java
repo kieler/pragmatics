@@ -173,16 +173,16 @@ public class CompoundKGraphImporter extends KGraphImporter {
         super.transformNode(node, layeredNodes, elemMap,
                 (EnumSet<GraphProperties>) graphProperties, direction);
 
+        LNode newNode = (LNode) elemMap.get(node);
+        newNode.setProperty(Properties.K_PARENT, node.getParent());
+        
         // Set flat position (position in relation to layout node) coordinates to support
         // interactive
         // mode
         KVector flatPosVec = new KVector(0, 0);
         Util.getFlatPosition(node, kgraph, flatPosVec);
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        nodeLayout.applyVector(flatPosVec);
-
-        LNode newNode = (LNode) elemMap.get(node);
-        newNode.setProperty(Properties.K_PARENT, node.getParent());
+        newNode.getPosition().x = flatPosVec.x;
+        newNode.getPosition().y = flatPosVec.y;
 
         // Add ports to connect dummy edges for the layering phase.
         LPort dummyPortWest = createDummyPort(newNode, PortSide.WEST, null, elemMap);
