@@ -13,11 +13,14 @@
  */
 package de.cau.cs.kieler.klighd.triggers;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
@@ -113,32 +116,37 @@ public class KlighdSelectionTrigger extends AbstractTrigger {
         }
         
         /**
-         * Returns the semantic elements behind the selected representatives (figures).
+         * Returns an iterator on the semantic elements behind the selected representatives (figures).
          * 
          * @return a collection of elements being represented by the selected figures.
          */
-        public List<Object> getSelectedModelElements() {
-            return Lists.transform(selections, new Function<SelectionElement, Object>() {
-                public Object apply(final SelectionElement input) {                   
-                    return input.getModelElement();
-                }
-            });
+        public Iterator<Object> getSelectedModelElements() {
+            return Iterators.transform(selections.iterator(),
+                    new Function<SelectionElement, Object>() {
+                        public Object apply(final SelectionElement input) {
+                            return input.getModelElement();
+                        }
+                    });
         }
 
         /**
-         * Returns a filtered collection of semantic elements behind the selected representatives
-         * (figures) that are {@link EObject EObjects}.
+         * Returns an filtered iterator on the list of semantic elements behind the selected
+         * representatives (figures) that are {@link EObject EObjects}.
          * 
          * @return a collection of elements being an {@link EObject} and represented by the selected
          *         figures.
          */
-        public List<EObject> getSelectedEModelElements() {
-            return Lists.transform(selections, new Function<SelectionElement, EObject>() {
-                public EObject apply(final SelectionElement input) {
-                    return input.getModelElement() instanceof EObject
-                            ? (EObject) input.getModelElement() : null;
-                }
-            });
+        public Iterator<EObject> getSelectedEModelElements() {
+            return Iterators.transform(
+                    Iterators.filter(selections.iterator(), new Predicate<SelectionElement>() {
+                        public boolean apply(final SelectionElement input) {
+                            return input.getModelElement() instanceof EObject;
+                        }
+                    }), new Function<SelectionElement, EObject>() {
+                        public EObject apply(final SelectionElement input) {
+                            return (EObject) input.getModelElement();
+                        }
+                    });
         }
 
         /**
