@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
@@ -385,6 +386,46 @@ public final class Util {
         LNode newTarget = (LNode) elemMap.get(currentTarget);
         sourceTargetList.addFirst(newSource);
         sourceTargetList.addLast(newTarget);
+    }
+
+    /**
+     * Recursively calculates an x and y value that denote the position of a KNode in reference to
+     * the position of an ancestor KNode (usually the layout node). The insets of the ancestor node
+     * are not included in the relative coordinates. The position is written to a given KVector.
+     * 
+     * @param posNode
+     *            The node, for whom the position-vector is to be calculated. Must be a descendant
+     *            (contained by) the refNode! Must not be identical to refNode.
+     * @param refNode
+     *            The node whose position serves as reference point. This node has to be an ancestor
+     *            of the posNode (which means that it contains the posNode)!
+     * @param posVec
+     *            The KVector the calculated position is written to.
+     */
+    public static void getFlatPosition(final KNode posNode, final KNode refNode,
+            final KVector posVec) {
+        KShapeLayout posNodeLayout = posNode.getData(KShapeLayout.class);
+        KNode posNodeParent = posNode.getParent();
+        if (posNodeParent == refNode) {
+            // Direct child node of refNode reached. It's position is already relative to refNode
+            // (insets not included).
+            posVec.x = posNodeLayout.getXpos();
+            posVec.y = posNodeLayout.getYpos();
+        } else {
+            // posNode is not a direct child of refNode. We have to add positions and insets all the way
+            // up.
+            if (posNodeParent != null) {
+                getFlatPosition(posNodeParent, refNode, posVec);
+                KShapeLayout parentLayout = posNodeParent.getData(KShapeLayout.class);
+                posVec.x += (posNodeLayout.getXpos() + parentLayout.getInsets().getLeft());
+                posVec.y += (posNodeLayout.getYpos() + parentLayout.getInsets().getTop());
+            } else {
+                // This case should not be reached! It means that the arguments are not correct. refNode
+                // is no ancestor of posNode.
+                assert false;
+            }
+        }
+            
     }
 
     /**

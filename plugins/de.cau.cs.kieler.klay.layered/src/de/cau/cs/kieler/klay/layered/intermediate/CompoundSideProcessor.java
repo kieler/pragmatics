@@ -108,7 +108,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
      */
     private void insertSideDummies(final int startIndex, final int endIndex,
             final List<Layer> layers, final LNode openingBorder, final LEdge lowerConnector,
-            final LEdge upperConnector, final LGraph layeredGraph) {
+            final LEdge upperConnector, final LGraph layeredGraph) {     
 
         // get the insets for origin of openingBorder
         KInsets insets = openingBorder.getProperty(Properties.ORIGINAL_INSETS);
