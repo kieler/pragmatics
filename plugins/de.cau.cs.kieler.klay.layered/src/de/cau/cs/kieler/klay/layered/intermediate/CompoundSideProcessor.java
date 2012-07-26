@@ -258,7 +258,8 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
                         ret = compareIndex(lnode, ret, lowerSide);
                     }
                 } else {
-                    if ((Util.isDescendant(targetNode, upperBorder)) || (Util.isDescendant(sourceNode, upperBorder))) {
+                    if ((Util.isDescendant(targetNode, upperBorder)) 
+                            || (Util.isDescendant(sourceNode, upperBorder))) {
                         ret = compareIndex(lnode, ret, lowerSide);
                     }
                 }
