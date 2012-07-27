@@ -479,9 +479,40 @@ public class PGraph extends PNode {
     public Iterable<PFace> getFaces() {
         if (this.changedFaces) {
             generateFaces();
-            getExternalFace(true);
+            if (externalFace != null) {
+                determineExternalFace();
+            }
         }
         return this.faces;
+    }
+
+    /**
+     * Sets the face that has the most adjacent edges to the old external face as new external face.
+     */
+    private void determineExternalFace() {
+        Iterable<PEdge> adjacentEdges = this.externalFace.adjacentEdges();
+        int nodeNumber = this.externalFace.getAdjacentNodeCount();
+        int count = 0;
+        int maxCount = 0;
+        for (PFace face : getFaces()) {
+            for (PEdge edge : adjacentEdges) {
+                if (face.isAdjacent(edge)) {
+                    count++;
+                }
+            }
+
+            if (count == nodeNumber) {
+                // FIXME problematic if only two faces with equal nodes exists.
+                this.externalFace = face;
+                return;
+            }
+
+            if (count > maxCount) {
+                maxCount = count;
+                this.externalFace = face;
+            }
+            count = 0;
+        }
     }
 
     /**
@@ -760,32 +791,22 @@ public class PGraph extends PNode {
     }
 
     /**
-     * Sets the face with the most adjacent nodes as externalFace.
+     * Gets the external face.
      * 
-     * @param wantsReCal
-     *            , uses this to trigger explicit a new externalFace calculation.
      * @return the externalFace
      */
-    public PFace getExternalFace(final boolean wantsReCal) {
-        if (this.externalFace == null || wantsReCal) {
-            Iterator<PFace> it = this.getFaces().iterator();
-            if (it.hasNext()) {
-                this.externalFace = it.next();
-                while (it.hasNext()) {
-                    PFace face = it.next();
-                    if (face.getAdjacentNodeCount() > this.externalFace.getAdjacentNodeCount()) {
-                        this.externalFace = face;
-                    }
-                }
-            } else {
-                throw new IllegalStateException();
-            }
-        }
+    public PFace getExternalFace() {
         return this.externalFace;
     }
 
-    public void setExternalFace(final PFace externalFace) {
-        this.externalFace = externalFace;
+    /**
+     * Setter for the external face.
+     * 
+     * @param face
+     *            the new external face
+     */
+    public void setExternalFace(final PFace face) {
+        this.externalFace = face;
     }
 
     /**

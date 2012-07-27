@@ -129,23 +129,14 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         // update the modules
         updateModules(pgraph);
 
-        // if (pgraph.getProperty(LayoutOptions.DEBUG_MODE)) {
-        // Util.clearTmpDir();
-        // Util.storeGraph(pgraph, 50, false);
-        // }
         // split the input graph into components
-        // TODO work with the components processor! much of the given algorithms don't work
-        // with not connected graphs. for example: breadth-first-search, compaction step...
         // List<PGraph> components = componentsProcessor.split(pgraph);
 
-        // if (pgraph.getProperty(LayoutOptions.DEBUG_MODE)) {
-        // Util.storeGraph(pgraph, 51, false);
-        // }
         // perform the actual layout
         // for (PGraph comp : components) {
+        // reset(progressMonitor.subTask(1.0f / components.size()));
         layout(pgraph, null);
         // }
-        // layout(components.get(1), progressMonitor.subTask(1.0f / components.size()));
 
         // pack the components back into one graph
         // pgraph = componentsProcessor.pack(components);

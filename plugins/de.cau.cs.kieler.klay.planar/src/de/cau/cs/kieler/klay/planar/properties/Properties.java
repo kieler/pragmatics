@@ -148,6 +148,10 @@ public final class Properties {
     public static final IProperty<Integer> RECT_SHAPE_PATH_LENGTH = new Property<Integer>(
             "de.cau.cs.kieler.klay.planar.rect_shape_path_length");
 
+    /** A edge adjacent to the set face with a node as counter clockwise corner. */
+    public static final IProperty<Pair<PNode, PEdge>> FACE_DIRECTION = new Property<Pair<PNode, PEdge>>(
+            "de.cau.cs.kieler.klay.planar.face_direction");
+
     /**
      * Hidden default constructor.
      */

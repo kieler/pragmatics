@@ -109,14 +109,11 @@ public class ComponentsProcessor extends AbstractAlgorithm {
             visited = null;
 
             // redistribute identifier numbers to each component
-            // TODO Problem: Id of nodes can be n1,n2,n3,n5,n4, then n5 gets a smaller id than n4.
-            // that does not work for the boyer myrvold algorithm.
             if (components.size() > 1) {
                 for (PGraph comp : components) {
                     int id = 0;
-                    // sort the components by their priority and size
                     for (PNode node : comp.getNodes()) {
-                        node.id += id++;
+                        node.id = id++;
                     }
                 }
             }
@@ -151,7 +148,7 @@ public class ComponentsProcessor extends AbstractAlgorithm {
                     dfs(edge.getTarget(), component);
                 }
                 component.getEdges().add(edge);
-                // TODO labels? component.getLabels().addAll(edge.getLabels());
+                // component.getLabels().addAll(edge.getLabels());
             }
             return component;
         }
@@ -175,10 +172,8 @@ public class ComponentsProcessor extends AbstractAlgorithm {
         // assign priorities and sizes
         for (PGraph graph : components) {
             int priority = 0;
-            double minx = Integer.MAX_VALUE;
-            double miny = Integer.MAX_VALUE;
-            double maxx = Integer.MIN_VALUE;
-            double maxy = Integer.MIN_VALUE;
+            double minx = Integer.MAX_VALUE, miny = Integer.MAX_VALUE;
+            double maxx = Integer.MIN_VALUE, maxy = Integer.MIN_VALUE;
             for (PNode node : graph.getNodes()) {
                 Integer p = node.getProperty(LayoutOptions.PRIORITY);
                 if (p != null) {
@@ -266,13 +261,14 @@ public class ComponentsProcessor extends AbstractAlgorithm {
             node.getPosition().add(graphOffset);
             destGraph.getNodes().add(node);
         }
+        // TODO think about this
         // for (PEdge edge : sourceGraph.getEdges()) {
         // for (FBendpoint bendpoint : edge.getBendpoints()) {
         // bendpoint.getPosition().add(graphOffset);
         // }
         // destGraph.getEdges().add(edge);
         // }
-        // for (PLabel label : sourceGraph.getLabels()) {
+        // for (FLabel label : sourceGraph.getLabels()) {
         // label.getPosition().add(graphOffset);
         // destGraph.getLabels().add(label);
         // }

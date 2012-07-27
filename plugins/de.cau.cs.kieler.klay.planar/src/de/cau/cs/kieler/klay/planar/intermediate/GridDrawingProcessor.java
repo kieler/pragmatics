@@ -51,12 +51,10 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
     public void process(final PGraph pgraph) {
         getMonitor().begin("Draw grid", 1);
         this.graph = pgraph;
-        PFace externalFace = this.graph.getExternalFace(false);
+        PFace externalFace = this.graph.getExternalFace();
         List<PEdge>[] sides = externalFace.getProperty(Properties.FACE_SIDES);
 
         // Determine size of the grid.
-        // It is enough to count vertical and horizontal direction once.
-
         int gridWidth = 0;
         for (PEdge edge : sides[1]) {
             gridWidth += edge.getProperty(Properties.RELATIVE_LENGTH);
@@ -81,7 +79,7 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
         PNode currentNode = null;
 
         boolean found = false;
-        PFace externalFace = this.graph.getExternalFace(false);
+        PFace externalFace = this.graph.getExternalFace();
         List<PEdge>[] sides = externalFace.getProperty(Properties.FACE_SIDES);
         // filter startNode, the node that lies on the left side and on the bottom side,
         // meaning the leftmost and lower most node!

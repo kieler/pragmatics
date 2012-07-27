@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.planar.p2ortho;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -109,10 +110,25 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
         // Creating sink nodes for every graph face
         // TODO that isn't enough!, we have to determine the external face in a iprocessor.
+        Iterator<PFace> it = graph.getFaces().iterator();
+        PFace externalFace = null;
+        if (it.hasNext()) {
+            externalFace = it.next();
+            while (it.hasNext()) {
+                PFace face = it.next();
+                if (face.getAdjacentNodeCount() > externalFace.getAdjacentNodeCount()) {
+                    externalFace = face;
+                }
+            }
+        } else {
+            throw new IllegalStateException();
+        }
+        graph.setExternalFace(externalFace);
+
         Iterable<PFace> faces2 = this.graph.getFaces();
         for (PFace face : faces2) {
             int supply = -1 * face.getAdjacentEdgeCount();
-            if (face == graph.getExternalFace(false)) {
+            if (face == graph.getExternalFace()) {
                 supply -= MAX_DEGREE;
             } else {
                 supply += MAX_DEGREE;
@@ -262,8 +278,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                         pair.setSecond(OrthogonalAngle.LEFT);
                     } else {
                         int angle = arc.getProperty(IFlowNetworkSolver.FLOW) - numEdges;
-                        if(angle < 0 ){
-                            //TODO error prone check!!! 
+                        if (angle < 0) {
+                            // TODO error prone check!!!
                             angle = 0;
                         }
                         pair.setSecond(OrthogonalAngle.map(angle));
