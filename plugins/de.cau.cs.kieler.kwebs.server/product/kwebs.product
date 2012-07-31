@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="KIELER Layout Web Server" uid="de.cau.cs.kieler.kwebs.server.product" id="de.cau.cs.kieler.kwebs.server.Product" application="de.cau.cs.kieler.kwebs.server.Application" version="0.1.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="KIELER Layout Web Server" uid="de.cau.cs.kieler.kwebs.server.product" id="de.cau.cs.kieler.kwebs.server.Product" application="de.cau.cs.kieler.kwebs.server.Application" version="0.1.1.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
