@@ -31,7 +31,8 @@ public class PrintEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        System.out.println(text);
+        //commented to disable the output of KiVi Tests 
+        //System.out.println(text);
     }
 
 }
