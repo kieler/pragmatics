@@ -42,7 +42,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  */
 public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
-    /** Around a face in ccw direction is four times right */
+    /** Around a face in ccw direction is four times right. */
     private static final int CCW_DIRECTION = 4;
 
     /** The external face has at this point exact 5 adjacent edges. */
@@ -75,7 +75,10 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         determineFaceDirections();
 
         // Decompose faces into rectangles
-        if (!graph.getExternalFace().isInRectShape()) {
+        if (this.graph.getExternalFace().isInRectShape()) {
+            this.graph.setProperty(Properties.RECT_SHAPE_TRANS_EXTERNAL, Boolean.FALSE);
+        } else {
+            this.graph.setProperty(Properties.RECT_SHAPE_TRANS_EXTERNAL, Boolean.TRUE);
             transformExternalFace();
             determineFaceDirections();
         }
@@ -91,7 +94,7 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         while (true) {
             wantsFinish = true;
 
-            Iterable<PFace> graphFaces = graph.getFaces();
+            Iterable<PFace> graphFaces = this.graph.getFaces();
             determineFaceDirections();
 
             for (PFace checkFace : graphFaces) {
@@ -156,7 +159,7 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
                     + "startEdge is not defined!");
         }
 
-        // Choose as startEdge a edge is has the longest path to its front.
+        // Choose as startEdge a edge that has the longest path to its front.
         // This is needed to ensure the counter clockwise order while adding dummies.
         PEdge startFront = startEdge.getProperty(Properties.RECT_SHAPE_FRONT);
         int maxPathLength = startEdge.getProperty(Properties.RECT_SHAPE_PATH_LENGTH);
@@ -337,7 +340,6 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         List<PFace> completedFaces = Lists.newArrayList();
 
         PFace externalFace = this.graph.getExternalFace();
-        OrthogonalRepresentation ortho = this.graph.getProperty(Properties.ORTHO_REPRESENTATION);
         PFace currentFace = externalFace;
 
         PEdge startEdge = null;
@@ -380,13 +382,13 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
 
                 // next edge and corner.
                 Pair<PEdge, OrthogonalAngle> nextEdgeWithAngle = currentFace.nextCCWEdgeWithAngle(
-                        currentNode, currentEdge, ortho.getAngles(currentNode), true);
+                        currentNode, currentEdge, this.orthogonal.getAngles(currentNode), true);
                 currentEdge = nextEdgeWithAngle.getFirst();
                 currentNode = currentEdge.getOppositeNode(currentNode);
 
             } while (currentEdge != startEdge);
 
-            if (visitedFaces.size() == graph.getFaceCount()) {
+            if (visitedFaces.size() == this.graph.getFaceCount()) {
                 // finish
                 return;
             }
@@ -448,7 +450,8 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
                 return new Pair<PNode, PEdge>(startEdge.getTarget(), startEdge);
             }
         }
-        throw new InconsistentGraphModelException("should not happen!");
+        throw new InconsistentGraphModelException(
+                "RectShapeProcessor, determineCCWDirection: should not happen!");
 
         // check for cutvertex
         // int firstLength = face.calcLengthWithDirection(startEdge.getSource(), startEdge,
@@ -482,7 +485,7 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
      */
     private void transformExternalFace() {
 
-        PFace face = graph.getExternalFace();
+        PFace face = this.graph.getExternalFace();
 
         setEdgeProperties(face, true);
 
@@ -571,14 +574,14 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         } while (currentEdge != startEdge);
 
         // Set new external face.
-        out: for (PFace pface : graph.getFaces()) {
+        out: for (PFace pface : this.graph.getFaces()) {
             if (pface.getAdjacentEdgeCount() == EXTERNAL_EDGE_COUNT) {
                 for (PEdge edge : faceSides) {
                     if (!pface.isAdjacent(edge)) {
                         continue out;
                     }
                 }
-                graph.setExternalFace(pface);
+                this.graph.setExternalFace(pface);
             }
         }
     }

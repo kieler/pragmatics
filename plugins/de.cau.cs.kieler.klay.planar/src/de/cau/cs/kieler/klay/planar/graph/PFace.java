@@ -238,12 +238,12 @@ public class PFace extends PGraphElement {
                 Properties.ORTHO_REPRESENTATION);
         if (ortho == null) {
             throw new InconsistentGraphModelException(
-                    "To use this method, a orthogonal representation is needed!");
+                    "PFace, isInRectShape: to use this method, a orthogonal representation is needed!");
         }
         Pair<PNode, PEdge> startWithCorner = getProperty(Properties.FACE_DIRECTION);
         if (startWithCorner == null) {
             throw new InconsistentGraphModelException(
-                    "To use this method, the property FACE_DIRECTION has to be defined!");
+                    "PFace, isInRectShape: to use this method, the property FACE_DIRECTION has to be defined!");
         }
 
         PEdge startEdge = startWithCorner.getSecond();
@@ -554,6 +554,7 @@ public class PFace extends PGraphElement {
             directionCounter += angles.get(currentIndex).getSecond().ordinal() + 1;
             currentIndex = (currentIndex + 1) % angles.size();
         }
+        
         if (!wantsCCWAngle) {
             directionCounter = 4 - directionCounter;
         }

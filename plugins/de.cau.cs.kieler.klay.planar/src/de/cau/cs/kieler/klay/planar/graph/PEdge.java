@@ -322,6 +322,7 @@ public class PEdge extends PGraphElement {
      * Gives the node that connects this edge and a given edge.
      * 
      * @param edge
+     *            other edge that is connected about a node with this edge.
      * @return common node.
      */
     public PNode getCommonNode(final PEdge edge) {
@@ -334,11 +335,21 @@ public class PEdge extends PGraphElement {
     }
 
     /**
+     * Checks whether a node is connected to this edge.
+     * 
      * @param node
-     * @return
+     *            {@link PNode}, check node
+     * @return true if the node is connected with this edge otherwise false.
      */
-    public boolean isConnected(PNode node) {
+    public boolean isConnected(final PNode node) {
         return node == source || node == target;
+    }
+
+    /**
+     * Removes all bend points of this edge.
+     */
+    public void removeBendPoints() {
+        this.bendPoints.clear();
     }
 
 }

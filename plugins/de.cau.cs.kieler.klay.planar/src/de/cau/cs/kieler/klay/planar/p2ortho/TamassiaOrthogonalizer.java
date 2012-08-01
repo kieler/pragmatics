@@ -25,6 +25,7 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver;
@@ -121,10 +122,10 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                 }
             }
         } else {
-            throw new IllegalStateException();
+            throw new InconsistentGraphModelException("TamassiaOrthogonalizer, createFlowNetwork: "
+                    + "the graph has to have at least one face!");
         }
         graph.setExternalFace(externalFace);
-
         Iterable<PFace> faces2 = this.graph.getFaces();
         for (PFace face : faces2) {
             int supply = -1 * face.getAdjacentEdgeCount();
@@ -310,7 +311,30 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
         solver.findFlow(network);
         pgraph.setProperty(Properties.ORTHO_REPRESENTATION, computeAngles(network));
+        if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {
+            testOrthoRep();
+        }
         getMonitor().done();
+    }
+
+    /**
+     * 
+     */
+    private void testOrthoRep() {
+        OrthogonalRepresentation ortho = graph.getProperty(Properties.ORTHO_REPRESENTATION);
+        int directionCount = 0;
+        for (PNode node : graph.getNodes()) {
+            List<Pair<PEdge, OrthogonalAngle>> angles = ortho.getAngles(node);
+            directionCount = 0;
+            for (Pair<PEdge, OrthogonalAngle> pair : angles) {
+                directionCount += pair.getSecond().ordinal() + 1;
+            }
+            if (directionCount != 4) {
+                throw new InconsistentGraphModelException(
+                        "TamassiaOrthogonalizer, testOrthoRep: the sum of orthogonal angles around node"
+                                + node.toString() + "is not 4.");
+            }
+        }
     }
 
     /**
