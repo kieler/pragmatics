@@ -19,8 +19,8 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 /**
  * A layout phase is a special kind of layout processor that encapsulates an
  * implementation of one of the algorithm's five main phases. A layout phase
- * also specifies a strategy for the intermediate layout processors that it
- * wants to have executed in between layout phases. (think dependencies)
+ * also specifies a configuration for the intermediate layout processors that
+ * it wants to have executed in between layout phases. (think dependencies)
  *
  * @see LayeredLayoutProvider
  * @author cds
@@ -32,10 +32,10 @@ public interface ILayoutPhase extends ILayoutProcessor {
     /**
      * Returns the intermediate layout processors this phase depends on.
      * 
-     * @param graph the layered graph to be processed. The strategy may vary
-     *              depending on certain properties of the graph.
-     * @return intermediate processing strategy. May be {@code null}.
+     * @param graph the layered graph to be processed. The configuration may
+     *              vary depending on certain properties of the graph.
+     * @return intermediate processing configuration. May be {@code null}.
      */
-    IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph);
+    IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(final LGraph graph);
     
 }

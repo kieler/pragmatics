@@ -20,7 +20,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
-import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -74,7 +74,9 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph) {
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final LGraph graph) {
+        
         return null;
     }
 

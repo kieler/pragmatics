@@ -19,8 +19,8 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
-import de.cau.cs.kieler.klay.layered.IntermediateLayoutProcessor;
-import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.layered.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -42,17 +42,19 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  */
 public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayoutPhase {
 
-    /** intermediate processing strategy. */
-    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
-        new IntermediateProcessingStrategy(
-                IntermediateProcessingStrategy.AFTER_PHASE_5,
-                EnumSet.of(IntermediateLayoutProcessor.REVERSED_EDGE_RESTORER));
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
+        new IntermediateProcessingConfiguration(
+                IntermediateProcessingConfiguration.AFTER_PHASE_5,
+                EnumSet.of(LayoutProcessorStrategy.REVERSED_EDGE_RESTORER));
 
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph) {
-        return INTERMEDIATE_PROCESSING_STRATEGY;
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final LGraph graph) {
+        
+        return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
     /**

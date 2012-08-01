@@ -31,35 +31,35 @@ import java.util.Set;
  * <p>To construct a processing strategy that just depends on processors in a single
  * processing slot, use code like the following:</p>
  * <pre>
- * new IntermediateProcessingStrategy(
- *         IntermediateProcessingStrategy.BEFORE_PHASE_3,
- *         EnumSet.of(IntermediateLayoutProcessor.EDGE_SPLITTER));
+ * new IntermediateProcessingConfiguration(
+ *         IntermediateProcessingConfiguration.BEFORE_PHASE_3,
+ *         EnumSet.of(LayoutProcessorStrategy.EDGE_SPLITTER));
  * </pre>
  * 
  * <p>To construct a processing strategy with processors in more than one slot, you
  * can use code like the following:</p>
  * <pre>
- * new IntermediateProcessingStrategy(
+ * new IntermediateProcessingConfiguration(
  *         // Before Phase 1
  *         null,
  *         // Before Phase 2
  *         null,
  *         // Before Phase 3
- *         EnumSet.of(IntermediateLayoutProcessor.STRANGE_PORT_SIDE_PROCESSOR),
+ *         EnumSet.of(LayoutProcessorStrategy.STRANGE_PORT_SIDE_PROCESSOR),
  *         // Before Phase 4
  *         null,
  *         // Before Phase 5
  *         null,
  *         // After Phase 5
- *         EnumSet.of(IntermediateLayoutProcessor.SOME_OTHER_PROCESSOR,
- *                    IntermediateLayoutProcessor.YET_ANOTHER_PROCESSOR);
+ *         EnumSet.of(LayoutProcessorStrategy.SOME_OTHER_PROCESSOR,
+ *                    LayoutProcessorStrategy.YET_ANOTHER_PROCESSOR);
  * </pre>
  * 
  * @author cds
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class IntermediateProcessingStrategy {
+public class IntermediateProcessingConfiguration {
     
     /** Constant for the processors that should come before phase 1. */
     public static final int BEFORE_PHASE_1 = 0;
@@ -77,16 +77,16 @@ public class IntermediateProcessingStrategy {
     public static final int INTERMEDIATE_PHASE_SLOTS = 6;
     
     /** Array of sets describing which processors this strategy is composed of. */
-    private List<Set<IntermediateLayoutProcessor>> strategy = 
-        new ArrayList<Set<IntermediateLayoutProcessor>>(INTERMEDIATE_PHASE_SLOTS);
+    private List<Set<LayoutProcessorStrategy>> strategy = 
+        new ArrayList<Set<LayoutProcessorStrategy>>(INTERMEDIATE_PHASE_SLOTS);
     
     
     /**
      * Constructs a new empty strategy.
      */
-    public IntermediateProcessingStrategy() {
+    public IntermediateProcessingConfiguration() {
         for (int i = 0; i < INTERMEDIATE_PHASE_SLOTS; i++) {
-            strategy.add(EnumSet.noneOf(IntermediateLayoutProcessor.class));
+            strategy.add(EnumSet.noneOf(LayoutProcessorStrategy.class));
         }
     }
     
@@ -95,7 +95,7 @@ public class IntermediateProcessingStrategy {
      * 
      * @param init the strategy to copy.
      */
-    public IntermediateProcessingStrategy(final IntermediateProcessingStrategy init) {
+    public IntermediateProcessingConfiguration(final IntermediateProcessingConfiguration init) {
         for (int i = 0; i < INTERMEDIATE_PHASE_SLOTS; i++) {
             strategy.add(EnumSet.copyOf(init.strategy.get(i)));
         }
@@ -109,8 +109,8 @@ public class IntermediateProcessingStrategy {
      *                  {@code < INTERMEDIATE_PHASE_SLOTS}.
      * @param processor the layout processor to add.
      */
-    public IntermediateProcessingStrategy(final int slotIndex,
-            final IntermediateLayoutProcessor processor) {
+    public IntermediateProcessingConfiguration(final int slotIndex,
+            final LayoutProcessorStrategy processor) {
         
         this();
         
@@ -125,8 +125,8 @@ public class IntermediateProcessingStrategy {
      *                  {@code < INTERMEDIATE_PHASE_SLOTS}.
      * @param processors the layout processors to add.
      */
-    public IntermediateProcessingStrategy(final int slotIndex,
-            final Collection<IntermediateLayoutProcessor> processors) {
+    public IntermediateProcessingConfiguration(final int slotIndex,
+            final Collection<LayoutProcessorStrategy> processors) {
         
         this();
         
@@ -143,12 +143,12 @@ public class IntermediateProcessingStrategy {
      * @param beforePhase5 layout processors before phase 5. May be {@code null}.
      * @param afterPhase5 layout processors after phase 5. May be {@code null}.
      */
-    public IntermediateProcessingStrategy(final Collection<IntermediateLayoutProcessor> beforePhase1,
-            final Collection<IntermediateLayoutProcessor> beforePhase2,
-            final Collection<IntermediateLayoutProcessor> beforePhase3,
-            final Collection<IntermediateLayoutProcessor> beforePhase4,
-            final Collection<IntermediateLayoutProcessor> beforePhase5,
-            final Collection<IntermediateLayoutProcessor> afterPhase5) {
+    public IntermediateProcessingConfiguration(final Collection<LayoutProcessorStrategy> beforePhase1,
+            final Collection<LayoutProcessorStrategy> beforePhase2,
+            final Collection<LayoutProcessorStrategy> beforePhase3,
+            final Collection<LayoutProcessorStrategy> beforePhase4,
+            final Collection<LayoutProcessorStrategy> beforePhase5,
+            final Collection<LayoutProcessorStrategy> afterPhase5) {
         
         this();
         
@@ -169,7 +169,7 @@ public class IntermediateProcessingStrategy {
      *                  {@code < INTERMEDIATE_PHASE_SLOTS}.
      * @return the slot's set of layout processors.
      */
-    public Set<IntermediateLayoutProcessor> getProcessors(final int slotIndex) {
+    public Set<LayoutProcessorStrategy> getProcessors(final int slotIndex) {
         if (slotIndex < 0 || slotIndex >= INTERMEDIATE_PHASE_SLOTS) {
             throw new IllegalArgumentException("slotIndex must be >= 0 and < "
                     + INTERMEDIATE_PHASE_SLOTS + ".");
@@ -185,7 +185,7 @@ public class IntermediateProcessingStrategy {
      *                  {@code < INTERMEDIATE_PHASE_SLOTS}.
      * @param processor the layout processor to add.
      */
-    public void addLayoutProcessor(final int slotIndex, final IntermediateLayoutProcessor processor) {
+    public void addLayoutProcessor(final int slotIndex, final LayoutProcessorStrategy processor) {
         if (slotIndex < 0 || slotIndex >= INTERMEDIATE_PHASE_SLOTS) {
             throw new IllegalArgumentException("slotIndex must be >= 0 and < "
                     + INTERMEDIATE_PHASE_SLOTS + ".");
@@ -203,8 +203,8 @@ public class IntermediateProcessingStrategy {
      * @param processors the layout processors to add. May be {@code null}.
      * @return this strategy.
      */
-    public IntermediateProcessingStrategy addAll(final int slotIndex,
-            final Collection<IntermediateLayoutProcessor> processors) {
+    public IntermediateProcessingConfiguration addAll(final int slotIndex,
+            final Collection<LayoutProcessorStrategy> processors) {
         
         if (slotIndex < 0 || slotIndex >= INTERMEDIATE_PHASE_SLOTS) {
             throw new IllegalArgumentException("slotIndex must be >= 0 and < "
@@ -225,7 +225,7 @@ public class IntermediateProcessingStrategy {
      * @param operand the strategy to unify this strategy with. May be {@code null}.
      * @return this strategy.
      */
-    public IntermediateProcessingStrategy addAll(final IntermediateProcessingStrategy operand) {
+    public IntermediateProcessingConfiguration addAll(final IntermediateProcessingConfiguration operand) {
         if (operand != null) {
             for (int i = 0; i < INTERMEDIATE_PHASE_SLOTS; i++) {
                 strategy.get(i).addAll(operand.strategy.get(i));
@@ -242,7 +242,7 @@ public class IntermediateProcessingStrategy {
      *                  {@code < INTERMEDIATE_PHASE_SLOTS}.
      * @param processor the layout processor to add.
      */
-    public void removeLayoutProcessor(final int slotIndex, final IntermediateLayoutProcessor processor) {
+    public void removeLayoutProcessor(final int slotIndex, final LayoutProcessorStrategy processor) {
         if (slotIndex < 0 || slotIndex >= INTERMEDIATE_PHASE_SLOTS) {
             throw new IllegalArgumentException("slotIndex must be >= 0 and < "
                     + INTERMEDIATE_PHASE_SLOTS + ".");
@@ -255,7 +255,7 @@ public class IntermediateProcessingStrategy {
      * Clears this strategy.
      */
     public void clear() {
-        for (Set<IntermediateLayoutProcessor> set : strategy) {
+        for (Set<LayoutProcessorStrategy> set : strategy) {
             set.clear();
         }
     }

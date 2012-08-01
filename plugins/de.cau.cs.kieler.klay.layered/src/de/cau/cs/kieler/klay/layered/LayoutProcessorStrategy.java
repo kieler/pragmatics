@@ -56,7 +56,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.SubgraphOrderingProcessor;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public enum IntermediateLayoutProcessor {
+public enum LayoutProcessorStrategy {
     
     /* In this enumeration, intermediate layout processors are listed by the earliest
      * slot in which they can sensibly be used. The order in which they are listed is
@@ -167,7 +167,7 @@ public enum IntermediateLayoutProcessor {
      * @param i ordinal value
      * @return the related enumeration value
      */
-    public static IntermediateLayoutProcessor valueOf(final int i) {
+    public static LayoutProcessorStrategy valueOf(final int i) {
         return values()[i];
     }
     

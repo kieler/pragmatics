@@ -27,8 +27,8 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
-import de.cau.cs.kieler.klay.layered.IntermediateLayoutProcessor;
-import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.layered.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -116,15 +116,17 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     private boolean addBalancedLayout = false;
 
     /** additional processor dependencies for graphs with hierarchical ports. */
-    private static final IntermediateProcessingStrategy HIERARCHY_PROCESSING_ADDITIONS
-                            = new IntermediateProcessingStrategy(
-                                    IntermediateProcessingStrategy.BEFORE_PHASE_5,
-                                    IntermediateLayoutProcessor.HIERARCHICAL_PORT_POSITION_PROCESSOR);
+    private static final IntermediateProcessingConfiguration HIERARCHY_PROCESSING_ADDITIONS
+                            = new IntermediateProcessingConfiguration(
+                                    IntermediateProcessingConfiguration.BEFORE_PHASE_5,
+                                    LayoutProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph) {
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final LGraph graph) {
+        
         if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
             return HIERARCHY_PROCESSING_ADDITIONS;
         } else {

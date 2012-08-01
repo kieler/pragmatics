@@ -28,8 +28,8 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
-import de.cau.cs.kieler.klay.layered.IntermediateLayoutProcessor;
-import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.layered.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -67,27 +67,29 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {
 
-    /** intermediate processing strategy. */
-    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
-        new IntermediateProcessingStrategy(
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
+        new IntermediateProcessingConfiguration(
                 // Before Phase 1
                 null,
                 // Before Phase 2
                 null,
                 // Before Phase 3
-                EnumSet.of(IntermediateLayoutProcessor.LONG_EDGE_SPLITTER),
+                EnumSet.of(LayoutProcessorStrategy.LONG_EDGE_SPLITTER),
                 // Before Phase 4
-                EnumSet.of(IntermediateLayoutProcessor.IN_LAYER_CONSTRAINT_PROCESSOR),
+                EnumSet.of(LayoutProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR),
                 // Before Phase 5
                 null,
                 // After Phase 5
-                EnumSet.of(IntermediateLayoutProcessor.LONG_EDGE_JOINER));
+                EnumSet.of(LayoutProcessorStrategy.LONG_EDGE_JOINER));
     
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph) {
-        return INTERMEDIATE_PROCESSING_STRATEGY;
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final LGraph graph) {
+        
+        return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
     
     /** array of port ranks used for sorting nodes and ports. */
