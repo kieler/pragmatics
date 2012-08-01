@@ -88,7 +88,8 @@ public class GridRepresentation {
      *             if no entry is found.
      * @param node
      *            , the search element.
-     * @return the grid position of the node.
+     * @return the grid position of the node, first element is the x coordinate, second is the y
+     *         coordinate.
      */
     public int[] search(final PNode node) {
         int[] result = { 0, 0 };

@@ -19,7 +19,7 @@ import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
-import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -47,7 +47,9 @@ public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph) {
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final LGraph graph) {
+        
         return null;
     }
     

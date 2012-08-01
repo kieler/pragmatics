@@ -581,11 +581,8 @@ public class PGraph extends PNode {
                         ((PEdge) nextEdge).setRightFace(face);
                     }
 
-                    // don't add 1 edge 2 times
-                    if (nextEdge != getNextCClockwiseEdge(nextNode, nextEdge)) {
-                        face.addNode(nextNode);
-                        face.addEdge(nextEdge);
-                    }
+                    face.addNode(nextNode);
+                    face.addEdge(nextEdge);
 
                     nextNode = nextNode.getAdjacentNode(nextEdge);
                     nextEdge = getNextClockwiseEdge(nextNode, nextEdge);

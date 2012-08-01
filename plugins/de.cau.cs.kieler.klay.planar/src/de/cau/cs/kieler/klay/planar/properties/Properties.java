@@ -111,42 +111,52 @@ public final class Properties {
             LayoutOptions.BORDER_SPACING, 20.0f, 0.0f);
 
     /** default value for object spacing. */
-    public static final float DEF_SPACING = 80.0f;
+    public static final float DEF_SPACING = 40.0f;
 
     /** minimal spacing between objects. */
     public static final Property<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
             DEF_SPACING);
 
+    /** A property that indicates the orthogonal representation of a graph. */
     public static final IProperty<OrthogonalRepresentation> ORTHO_REPRESENTATION = new Property<OrthogonalRepresentation>(
             "de.cau.cs.kieler.klay.planar.orthogonal.representation",
             new OrthogonalRepresentation());
 
+    /** A property that indicates the grid representation of a graph. */
     public static final IProperty<GridRepresentation> GRID_REPRESENTATION = new Property<GridRepresentation>(
             "de.cau.cs.kieler.klay.planar.grid");
 
+    /** Indicates a nodes during the algorithm as a bend point. */
     public static final IProperty<OrthogonalAngle> BENDPOINT = new Property<OrthogonalRepresentation.OrthogonalAngle>(
             "de.cau.cs.kieler.klay.planar.bendpoint");
 
+    /** Next edge of an edge connected by the corner of the currentEdge. */
     public static final IProperty<PEdge> RECT_SHAPE_NEXT = new Property<PEdge>(
             "de.cau.cs.kieler.klay.planar.rect_shape_next");
 
-    public static final IProperty<PEdge[]> RECT_SHAPE_NEXTS = new Property<PEdge[]>(
-            "de.cau.cs.kieler.klay.planar.rect_shape_nexts");
-
+    /** Corner is the next node of a edge while walking around the face edges. */
     public static final IProperty<PNode> RECT_SHAPE_CORNER = new Property<PNode>(
             "de.cau.cs.kieler.klay.planar.rect_shape_corner");
 
+    /** Turn of an edge during the rectangular shape processor. */
     public static final IProperty<Integer> RECT_SHAPE_TURN = new Property<Integer>(
             "de.cau.cs.kieler.klay.planar.rect_shape_turn");
 
+    /** Front edge of a edge. */
     public static final IProperty<PEdge> RECT_SHAPE_FRONT = new Property<PEdge>(
             "de.cau.cs.kieler.klay.planar.rect_shape_front");
 
+    /** Face side index; 0 left, 1 top, 2 right, 3 bottom. */
     public static final IProperty<Integer> RECT_SHAPE_SIDE_INDEX = new Property<Integer>(
             "de.cau.cs.kieler.klay.planar.rect_shape_side_index");
 
+    /** Path length to the front of a edge. */
     public static final IProperty<Integer> RECT_SHAPE_PATH_LENGTH = new Property<Integer>(
             "de.cau.cs.kieler.klay.planar.rect_shape_path_length");
+
+    /** Indicates whether is the external face is a dummy or the original face. */
+    public static final IProperty<Boolean> RECT_SHAPE_TRANS_EXTERNAL = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.planar.rect_shape_trans_external");
 
     /** A edge adjacent to the set face with a node as counter clockwise corner. */
     public static final IProperty<Pair<PNode, PEdge>> FACE_DIRECTION = new Property<Pair<PNode, PEdge>>(

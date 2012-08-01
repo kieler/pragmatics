@@ -28,14 +28,14 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
-import de.cau.cs.kieler.klay.layered.IntermediateLayoutProcessor;
-import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -166,14 +166,16 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     }
     
     /** additional processor dependencies for graphs with hierarchical ports. */
-    private static final IntermediateProcessingStrategy HIERARCHY_PROCESSING_ADDITIONS =
-        new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_5,
-                IntermediateLayoutProcessor.HIERARCHICAL_PORT_POSITION_PROCESSOR);
+    private static final IntermediateProcessingConfiguration HIERARCHY_PROCESSING_ADDITIONS =
+        new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.BEFORE_PHASE_5,
+                LayoutProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LGraph graph) {
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final LGraph graph) {
+        
         if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
             return HIERARCHY_PROCESSING_ADDITIONS;
         } else {

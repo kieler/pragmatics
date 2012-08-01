@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Layout Web Service Server Components
 Bundle-SymbolicName: de.cau.cs.kieler.kwebs.server;singleton:=true
-Bundle-Version: 0.1.0.qualifier
+Bundle-Version: 0.1.1.qualifier
 Require-Bundle: org.eclipse.core.runtime,
  javax.xml.ws;bundle-version="2.1.0",
  org.apache.log4j;bundle-version="1.2.0",

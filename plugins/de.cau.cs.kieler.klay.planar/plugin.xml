@@ -15,6 +15,10 @@
          <knownOption
                option="de.cau.cs.kieler.debugMode">
          </knownOption>
+         <knownOption
+               default="40"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
