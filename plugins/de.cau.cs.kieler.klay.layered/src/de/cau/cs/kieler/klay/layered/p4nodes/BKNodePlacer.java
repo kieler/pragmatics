@@ -204,7 +204,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         layouts.add(righttop);
         layouts.add(leftbottom);
         layouts.add(rightbottom);
-
+        
         BKAlignedLayout balanced = new BKAlignedLayout(nodeCount, null, null);
 
         // If layout options chose to use the balanced layout, it is calculated and added here.
@@ -264,6 +264,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
         if (debug) {
             System.out.println(getBlocks(chosenLayout));
+            System.out.println(chosenLayout);
+            System.out.println(markedEdges);
         }
 
         getMonitor().done();
@@ -298,20 +300,23 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             for (int l_1 = 0; l_1 < layerSize(layeredGraph, i + 1); l_1++) {
                 // In the paper, l and i are indices for the layer and the position in the layer
                 LNode v_l_i = nodeByPosition(layeredGraph, i + 1, l_1);
-                if (l_1 == (layerSize(layeredGraph, i + 1)) || incidentToInnerSegment(v_l_i, i, i + 1)) {
-                    int k_1 = layerSize(layeredGraph, i);
-                    if (incidentToInnerSegment(v_l_i, i, i + 1)) {
+                if (l_1 == ((layerSize(layeredGraph, i + 1)) - 1)
+                        || incidentToInnerSegment(v_l_i, i + 1, i)) {
+                    int k_1 = layerSize(layeredGraph, i) - 1;
+                    if (incidentToInnerSegment(v_l_i, i + 1, i)) {
                         k_1 = allUpperNeighbors(v_l_i).get(0).getIndex();
                     }
                     while (l <= l_1) {
                         LNode v_l = nodeByPosition(layeredGraph, i + 1, l);
-                        for (LNode upperNeighbor : allUpperNeighbors(v_l)) {
-                            int k = upperNeighbor.getIndex();
-                            if (k < k_0 || k > k_1) {
-                                // Marked edge can't return null here, because the upper neighbor
-                                // relationship between v_l and upperNeighbor enforces the existence
-                                // of at least one edge between the two nodes
-                                markedEdges.add(getEdge(upperNeighbor, v_l));
+                        if (!incidentToInnerSegment(v_l, i + 1, i)) {
+                            for (LNode upperNeighbor : allUpperNeighbors(v_l)) {
+                                int k = upperNeighbor.getIndex();
+                                if (k < k_0 || k > k_1) {
+                                    // Marked edge can't return null here, because the upper neighbor
+                                    // relationship between v_l and upperNeighbor enforces the existence
+                                    // of at least one edge between the two nodes
+                                    markedEdges.add(getEdge(upperNeighbor, v_l));
+                                }
                             }
                         }
                         l++;
@@ -813,13 +818,14 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * @return True if the node is part of a long edge between the layers, false else
      */
     private boolean incidentToInnerSegment(final LNode node, final int layer1, final int layer2) {
-        if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
+        if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
+                || node.getProperty(Properties.NODE_TYPE) == NodeType.COMPOUND_SIDE) {
             for (LEdge edge : node.getIncomingEdges()) {
                 if ((edge.getSource().getNode().getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
                         || edge.getSource().getNode().getProperty(Properties.NODE_TYPE)
                                                              == NodeType.COMPOUND_SIDE)
-                        && edge.getSource().getNode().getLayer().getIndex() == layer1
-                        && node.getLayer().getIndex() == layer2) {
+                        && edge.getSource().getNode().getLayer().getIndex() == layer2
+                        && node.getLayer().getIndex() == layer1) {
                     return true;
                 }
             }
