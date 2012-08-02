@@ -204,8 +204,14 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         // create target terminal identifier
         KVector targetRel = getRelativeTargetPoint(kedge);
         INodeEditPart targetEditPart = (INodeEditPart) connectionEditPart.getTarget();
-        ConnectionAnchor targetAnchor = new SlidableAnchor(targetEditPart.getFigure(),
-                new PrecisionPoint(targetRel.x, targetRel.y));
+        ConnectionAnchor targetAnchor;
+        if (targetEditPart instanceof ConnectionEditPart) {
+            // This is only for very special cases necessary, where the edge is connected to a connection
+            targetAnchor = new SlidableAnchor(targetEditPart.getFigure());
+        } else {
+            targetAnchor = new SlidableAnchor(targetEditPart.getFigure(),
+                                    new PrecisionPoint(targetRel.x, targetRel.y));
+        }
         String targetTerminal = targetEditPart.mapConnectionAnchorToTerminal(targetAnchor);
 
         PointList bendPoints = getBendPoints(kedge, connectionEditPart.getFigure(), scale);
