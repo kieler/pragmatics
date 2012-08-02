@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -72,6 +71,11 @@ public class NodeGroup implements Comparable<NodeGroup> {
      * List of outgoing constraints.
      */
     private List<NodeGroup> outgoingConstraints;
+    
+    /**
+     * List of incoming constraints.
+     */
+    private List<NodeGroup> incomingConstraints;
 
     /**
      * Constructs a new instance containing the given node.
@@ -147,7 +151,18 @@ public class NodeGroup implements Comparable<NodeGroup> {
      */
     @Override
     public String toString() {
-        return Arrays.toString(nodes);
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        for (int i = 0; i < nodes.length; i++) {
+            sb.append(nodes[i].toString());
+            if (barycenter != null) {
+                sb.append("<").append(barycenter.toString()).append(">");
+            }
+            if (i < nodes.length - 1) {
+                sb.append(", ");
+            }
+        }
+        return sb.append(']').toString();
     }
 
     /**
@@ -176,6 +191,34 @@ public class NodeGroup implements Comparable<NodeGroup> {
      */
     public boolean hasOutgoingConstraints() {
         return outgoingConstraints != null && outgoingConstraints.size() > 0;
+    }
+
+    /**
+     * Returns the list of incoming constraints, creating it if not yet done before.
+     * 
+     * @return the incoming constraints list of the node group
+     */
+    public List<NodeGroup> getIncomingConstraints() {
+        if (incomingConstraints == null) {
+            incomingConstraints = new LinkedList<NodeGroup>();
+        }
+        return incomingConstraints;
+    }
+    
+    /**
+     * Reset the list of incoming constraints to {@code null}.
+     */
+    public void resetIncomingConstraints() {
+        incomingConstraints = null;
+    }
+    
+    /**
+     * Determine whether there are any incoming constraints.
+     * 
+     * @return true if there are incoming constraints
+     */
+    public boolean hasIncomingConstraints() {
+        return incomingConstraints != null && incomingConstraints.size() > 0;
     }
     
     /**

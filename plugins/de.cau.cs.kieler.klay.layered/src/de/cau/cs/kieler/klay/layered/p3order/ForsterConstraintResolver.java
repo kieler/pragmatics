@@ -13,12 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.util.Pair;
@@ -139,10 +137,12 @@ public class ForsterConstraintResolver implements IConstraintResolver {
         List<NodeGroup> activeNodeGroups = null;
 
         // Iterate through the constrained vertices
-        float lastValue = Float.MIN_NORMAL;
+        float lastValue = Short.MIN_VALUE;
         for (NodeGroup nodeGroup : nodeGroups) {
             assert nodeGroup.barycenter != null && nodeGroup.barycenter >= lastValue;
             lastValue = nodeGroup.barycenter;
+            nodeGroup.resetIncomingConstraints();
+            
             // Find sources of the constraint graph to start the constraints check
             if (nodeGroup.hasOutgoingConstraints() && nodeGroup.incomingConstraintsCount == 0) {
                 if (activeNodeGroups == null) {
@@ -154,27 +154,28 @@ public class ForsterConstraintResolver implements IConstraintResolver {
 
         // Iterate through the active node groups to find one with violated constraints
         if (activeNodeGroups != null) {
-            Multimap<NodeGroup, NodeGroup> incomingConstraints = HashMultimap.create();
             while (!activeNodeGroups.isEmpty()) {
                 NodeGroup nodeGroup = activeNodeGroups.remove(0);
     
                 // See if we can find a violated constraint
-                for (NodeGroup predecessor : incomingConstraints.get(nodeGroup)) {
-                    if (predecessor.barycenter.floatValue() == nodeGroup.barycenter.floatValue()) {
-                        if (nodeGroups.indexOf(predecessor) > nodeGroups.indexOf(nodeGroup)) {
-                            // The predecessor has equal barycenter, but higher index
+                if (nodeGroup.hasIncomingConstraints()) {
+                    for (NodeGroup predecessor : nodeGroup.getIncomingConstraints()) {
+                        if (predecessor.barycenter.floatValue() == nodeGroup.barycenter.floatValue()) {
+                            if (nodeGroups.indexOf(predecessor) > nodeGroups.indexOf(nodeGroup)) {
+                                // The predecessor has equal barycenter, but higher index
+                                return Pair.create(predecessor, nodeGroup);
+                            }
+                        } else if (predecessor.barycenter > nodeGroup.barycenter) {
+                            // The predecessor has greater barycenter and thus also higher index
                             return Pair.create(predecessor, nodeGroup);
                         }
-                    } else if (predecessor.barycenter > nodeGroup.barycenter) {
-                        // The predecessor has greater barycenter and thus also higher index
-                        return Pair.create(predecessor, nodeGroup);
                     }
                 }
     
                 // No violated constraints; add outgoing constraints to the respective incoming list
                 for (NodeGroup successor : nodeGroup.getOutgoingConstraints()) {
-                    Collection<NodeGroup> successorIncomingList = incomingConstraints.get(successor);
-                    successorIncomingList.add(nodeGroup);
+                    List<NodeGroup> successorIncomingList = successor.getIncomingConstraints();
+                    successorIncomingList.add(0, nodeGroup);
     
                     if (successor.incomingConstraintsCount == successorIncomingList.size()) {
                         activeNodeGroups.add(successor);

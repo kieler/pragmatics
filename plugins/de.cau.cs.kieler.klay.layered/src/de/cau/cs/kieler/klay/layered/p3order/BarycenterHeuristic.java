@@ -260,10 +260,9 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
         }
 
         if (nodeGroup.degree > 0) {
-            float barycenter = nodeGroup.summedWeight / nodeGroup.degree;
             // add a small random perturbation in order to increase diversity of solutions
-            barycenter += random.nextFloat() * RANDOM_AMOUNT - RANDOM_AMOUNT / 2;
-            nodeGroup.barycenter = barycenter;
+            nodeGroup.summedWeight += random.nextFloat() * RANDOM_AMOUNT - RANDOM_AMOUNT / 2;
+            nodeGroup.barycenter = nodeGroup.summedWeight / nodeGroup.degree;
         }
     }
 
