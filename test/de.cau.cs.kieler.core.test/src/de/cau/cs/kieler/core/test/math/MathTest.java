@@ -166,7 +166,7 @@ public class MathTest {
         /* test if the last KVector of the result similar to kvector4 */
         KVector[] vectors = KielerMath.calcBezierPoints(20, kvector1, kvector2, kvector3, kvector4);
         KVectorChain controlPoints = new KVectorChain(vectors);
-        KVectorChain result = KielerMath.appoximateSpline(controlPoints);
+        KVectorChain result = KielerMath.approximateSpline(controlPoints);
         KVector k = result.get(result.size() - 1);
         assertEquals(k.x, kvector4.x, 0.000000001);
         assertEquals(k.y, kvector4.y, 0.000000001);
@@ -179,7 +179,7 @@ public class MathTest {
         /* test if the all result-KVectors with y=10 */
         vectors = KielerMath.calcBezierPoints(20, kvector1, kvector2, kvector3, kvector4);
         controlPoints = new KVectorChain(vectors);
-        result = KielerMath.appoximateSpline(controlPoints);
+        result = KielerMath.approximateSpline(controlPoints);
 
         for (KVector kv : result) {
             assertEquals(kv.y, 10, 0.000000001);

@@ -41,7 +41,7 @@ import org.junit.runners.model.TestClass;
  * the parameters, e.g. getParameters(), is called.
  * 
  * @author cmot, chsch
- * @kieler.rating 2012-07-02 yellow KI-17
+ * @kieler.rating 2012-07-02 yellow KI-17 wah, chsch
  * 
  */
 public abstract class KielerTestRunner extends Parameterized {
@@ -109,9 +109,6 @@ public abstract class KielerTestRunner extends Parameterized {
         // Construct NULL-dummy-parameters according to the numer of parameters of the constructor
         Object[] parameterTypesArray = constructor.getParameterTypes();
         Object[] paramObjects = new Object[parameterTypesArray.length];
-        // for (Object paramObject : paramObjects) {
-        // paramObject = null;
-        // }
         // Call the constructor with these dummy parameters
         Object classObject = constructor.newInstance(paramObjects);
         // Call the initialization code with the new instance
@@ -206,7 +203,6 @@ public abstract class KielerTestRunner extends Parameterized {
          */
         @Override
         public Object createTest() throws Exception {
-            // Constructor[] constructors = getTestClass().getClass().getConstructors();
             return getTestClass().getOnlyConstructor().newInstance(computeParams());
         }
 

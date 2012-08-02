@@ -21,6 +21,8 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -77,6 +79,7 @@ public class DummyRemovingProcessor extends AbstractAlgorithm implements ILayout
                 }
             }
         }
+
     }
 
     /**
@@ -99,12 +102,12 @@ public class DummyRemovingProcessor extends AbstractAlgorithm implements ILayout
 
         if (first.hasProperties() && first.getProperty(Properties.ORIGIN) != null) {
             first.getBendPoints().add(x, y);
-            first.getBendPoints().addAll(second.getBendPoints());
             this.graph.bridgeOverEdge(first, firstNode, secondNode);
+            addBendsToEdge(first, second.getBendPoints(), null);
         } else {
             second.getBendPoints().add(x, y);
-            second.getBendPoints().addAll(first.getBendPoints());
             this.graph.bridgeOverEdge(second, secondNode, firstNode);
+            addBendsToEdge(second, first.getBendPoints(), null);
         }
         graph.removeNode(currentNode);
         grid.remove(currentNode);
@@ -176,6 +179,25 @@ public class DummyRemovingProcessor extends AbstractAlgorithm implements ILayout
         for (PEdge dummy : dummyEdges) {
             graph.removeEdge(dummy);
         }
+
+        // update grid.
+        Boolean isExtFaceTransformed = this.graph.getProperty(Properties.RECT_SHAPE_TRANS_EXTERNAL);
+        if (isExtFaceTransformed != null && isExtFaceTransformed.booleanValue()) {
+            // The old grid is to big, the external nodes were dummies and has been removed in this
+            // step. Create a new grid with smaller size.
+            GridRepresentation newGrid = new GridRepresentation(this.grid.getWidth() - 2,
+                    this.grid.getHeight() - 2);
+            for (int x = 1; x < grid.getWidth() - 1; x++) {
+                for (int y = 1; y < grid.getHeight() - 1; y++) {
+                    newGrid.set(x - 1, y - 1, this.grid.get(x, y));
+                }
+            }
+
+            this.grid = newGrid;
+            this.graph.setProperty(Properties.GRID_REPRESENTATION, newGrid);
+
+        }
+
     }
 
     /**
@@ -227,13 +249,13 @@ public class DummyRemovingProcessor extends AbstractAlgorithm implements ILayout
             graph.bridgeOverEdge(first, first.getOppositeNode(dummyNode),
                     second.getOppositeNode(dummyNode));
         } else if (second.hasProperties() && second.getProperty(Properties.ORIGIN) != null) {
-            second.getBendPoints().addAll(first.getBendPoints());
             graph.bridgeOverEdge(second, second.getOppositeNode(dummyNode),
                     first.getOppositeNode(dummyNode));
+            addBendsToEdge(second, first.getBendPoints(), dummyNode);
         } else {
-            first.getBendPoints().addAll(second.getBendPoints());
             graph.bridgeOverEdge(first, first.getOppositeNode(dummyNode),
                     second.getOppositeNode(dummyNode));
+            addBendsToEdge(first, second.getBendPoints(), dummyNode);
 
             List<PEdge> insertableEdges = graph.getProperty(Properties.INSERTABLE_EDGES);
             for (PEdge pEdge : insertableEdges) {
@@ -245,4 +267,99 @@ public class DummyRemovingProcessor extends AbstractAlgorithm implements ILayout
             }
         }
     }
+
+    /**
+     * Adds a {@link KVectorChain} of bendpoints to the edge bendpoints. Additionally orders them to
+     * their correct positions.
+     * 
+     * @param edge
+     *            the edge to that the bendpoints shell added.
+     * @param newBendPoints
+     *            the new bendpoints to add.
+     * @param exceptionNode
+     *            during the planarization, there is the dummynode on the road, this has to be
+     *            ignored.
+     */
+    public void addBendsToEdge(final PEdge edge, final KVectorChain newBendPoints,
+            final PNode exceptionNode) {
+        edge.getBendPoints().addAll(newBendPoints);
+
+        if (edge.getBendPoints().size() > 1) {
+
+            int[] sourceCoordinates = this.grid.search(edge.getSource());
+
+            double startX = (double) sourceCoordinates[0];
+            double startY = (double) sourceCoordinates[1];
+
+            KVectorChain myBendPoints = new KVectorChain(edge.getBendPoints());
+            edge.removeBendPoints();
+
+            double value = 0.0;
+            double end = 0.0;
+
+            KVector foundVec = null;
+            boolean found = false;
+            while (!myBendPoints.isEmpty()) {
+                // Search the next bendpoint
+                out: for (KVector vec : myBendPoints) {
+                    found = false;
+                    if (vec.x == startX) {
+                        found = true;
+                        if (vec.y < startY) {
+                            value = vec.y;
+                            end = startY;
+                        } else {
+                            value = startY;
+                            end = vec.y;
+                        }
+
+                        value++;
+                        while (value < end) {
+                            PNode pNode = grid.get((int) startX, (int) value);
+                            if (pNode != null && pNode != exceptionNode) {
+                                // there is another node.
+                                continue out;
+                            }
+                            value++;
+                        }
+
+                    } else if (vec.y == startY) {
+                        found = true;
+                        if (vec.x < startX) {
+                            value = vec.x;
+                            end = startX;
+                        } else {
+                            value = startX;
+                            end = vec.x;
+                        }
+
+                        value++;
+                        while (value < end) {
+                            PNode pNode = grid.get((int) value, (int) startY);
+                            if (pNode != null && (exceptionNode == null || pNode != exceptionNode)) {
+                                // there is another node.
+                                continue out;
+                            }
+                            value++;
+                        }
+
+                    }
+                    if (found) {
+                        foundVec = vec;
+                        break;
+                    }
+                }
+                if (!found) {
+                    // TODO Assertion found has to be true here. Otherwise the graphmodel is
+                    // inconsistent.
+                }
+                // If not continued add vec to bend data.
+                startX = foundVec.x;
+                startY = foundVec.y;
+                edge.getBendPoints().add(foundVec);
+                myBendPoints.remove(foundVec);
+            }
+        }
+    }
+
 }

@@ -81,16 +81,13 @@ public class CompoundGraphLayerCrossingMinimizer {
      *            whether the nodes have been ordered in a previous run
      * @param randomize
      *            whether the layer's node order should just be randomized
-     * @return the total number of edges going either in or out of the given layer
      */
-    public int compoundMinimizeCrossings(final NodeGroup[] layer, final int layerIndex,
+    public void compoundMinimizeCrossings(final NodeGroup[] layer, final int layerIndex,
             final boolean forward, final boolean preOrdered, final boolean randomize) {
         // Ignore empty free layers
         if (layer.length == 0) {
-            return 0;
+            return;
         }
-
-        int totalEdges = 0;
 
         // determine whether a compound graph is to be laid out
         boolean isCompound = layeredGraph.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
@@ -102,8 +99,7 @@ public class CompoundGraphLayerCrossingMinimizer {
             }
             
             // minimize crossings in the given layer
-            totalEdges = crossminHeuristic.minimizeCrossings(nodeGroups, layerIndex, preOrdered,
-                    randomize, forward);
+            crossminHeuristic.minimizeCrossings(nodeGroups, layerIndex, preOrdered, randomize, forward);
             // apply the new ordering
             applyNodeGroupOrderingToNodeArray(nodeGroups, layer);
             
@@ -167,9 +163,11 @@ public class CompoundGraphLayerCrossingMinimizer {
                 // Process the compound nodes of the actual depth level.
                 for (LNode keyNode : actualList) {
                     LinkedList<NodeGroup> compoundContent = compoundNodesMap.get(keyNode);
+                    
                     // Calculate the nodeOrder for this compound node.
-                    totalEdges += crossminHeuristic.minimizeCrossings(compoundContent,
-                            layerIndex, preOrdered, randomize, forward);
+                    crossminHeuristic.minimizeCrossings(compoundContent, layerIndex, preOrdered,
+                            randomize, forward);
+                    
                     // Is outermost level reached? If not, represent the compound node as one entity
                     // for the higher levels. Update compoundNodesMap and compoundNodesPerDepthLevel.
                     if (keyNode != graphKey) {
@@ -186,6 +184,7 @@ public class CompoundGraphLayerCrossingMinimizer {
                                         compoundContent.removeFirst());
                             }
                         }
+                        
                         // Store the new nodeGroup representing the compound node in the
                         // compoundNodesMap with the parent of the compoundNode as a key.
                         KNode keyNodeParent = keyNode.getProperty(Properties.K_PARENT);
@@ -218,8 +217,6 @@ public class CompoundGraphLayerCrossingMinimizer {
                 }
             }
         }
-
-        return totalEdges;
     }
 
     /**

@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.planar.p2ortho;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver;
@@ -109,10 +111,25 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
         // Creating sink nodes for every graph face
         // TODO that isn't enough!, we have to determine the external face in a iprocessor.
+        Iterator<PFace> it = graph.getFaces().iterator();
+        PFace externalFace = null;
+        if (it.hasNext()) {
+            externalFace = it.next();
+            while (it.hasNext()) {
+                PFace face = it.next();
+                if (face.getAdjacentNodeCount() > externalFace.getAdjacentNodeCount()) {
+                    externalFace = face;
+                }
+            }
+        } else {
+            throw new InconsistentGraphModelException("TamassiaOrthogonalizer, createFlowNetwork: "
+                    + "the graph has to have at least one face!");
+        }
+        graph.setExternalFace(externalFace);
         Iterable<PFace> faces2 = this.graph.getFaces();
         for (PFace face : faces2) {
             int supply = -1 * face.getAdjacentEdgeCount();
-            if (face == graph.getExternalFace(false)) {
+            if (face == graph.getExternalFace()) {
                 supply -= MAX_DEGREE;
             } else {
                 supply += MAX_DEGREE;
@@ -262,8 +279,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                         pair.setSecond(OrthogonalAngle.LEFT);
                     } else {
                         int angle = arc.getProperty(IFlowNetworkSolver.FLOW) - numEdges;
-                        if(angle < 0 ){
-                            //TODO error prone check!!! 
+                        if (angle < 0) {
+                            // TODO error prone check!!!
                             angle = 0;
                         }
                         pair.setSecond(OrthogonalAngle.map(angle));
@@ -294,7 +311,30 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
         solver.findFlow(network);
         pgraph.setProperty(Properties.ORTHO_REPRESENTATION, computeAngles(network));
+        if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {
+            testOrthoRep();
+        }
         getMonitor().done();
+    }
+
+    /**
+     * 
+     */
+    private void testOrthoRep() {
+        OrthogonalRepresentation ortho = graph.getProperty(Properties.ORTHO_REPRESENTATION);
+        int directionCount = 0;
+        for (PNode node : graph.getNodes()) {
+            List<Pair<PEdge, OrthogonalAngle>> angles = ortho.getAngles(node);
+            directionCount = 0;
+            for (Pair<PEdge, OrthogonalAngle> pair : angles) {
+                directionCount += pair.getSecond().ordinal() + 1;
+            }
+            if (directionCount != 4) {
+                throw new InconsistentGraphModelException(
+                        "TamassiaOrthogonalizer, testOrthoRep: the sum of orthogonal angles around node"
+                                + node.toString() + "is not 4.");
+            }
+        }
     }
 
     /**

@@ -298,30 +298,27 @@ public class PGraphFactory {
         float borderSpacing = pgraph.getProperty(Properties.BORDER_SPACING);
 
         Float userSpacing = pgraph.getProperty(Properties.SPACING);
-        this.spacing = (userSpacing == null) ? 0 : userSpacing;
-        //TODO anpassen!!!
-        this.spacing = 0;
+        this.spacing = (userSpacing == null) ? 0 : userSpacing.floatValue();
+        float minSpacing = userSpacing.floatValue();
+        for (PNode node : pgraph.getNodes()) {
+            KNode knode = (KNode) node.getProperty(Properties.ORIGIN);
+            KShapeLayout data = knode.getData(KShapeLayout.class);
+            if (minSpacing < data.getWidth()) {
+                minSpacing = data.getWidth();
+            }
+            if (minSpacing < data.getHeight()) {
+                minSpacing = data.getHeight();
+            }
+        }
+        // adding the min distance between to nodes.
+        minSpacing += MIN_DIST;
+        if (this.spacing < minSpacing) {
+            this.spacing = minSpacing;
+        }
 
-        float minSpacing = 40;
-         for (PNode node : pgraph.getNodes()) {
-         KNode knode = (KNode) node.getProperty(Properties.ORIGIN);
-         KShapeLayout data = knode.getData(KShapeLayout.class);
-         if (minSpacing < data.getWidth()) {
-         minSpacing = data.getWidth();
-         }
-         if (minSpacing < data.getHeight()) {
-         minSpacing = data.getHeight();
-         }
-         }
-         // adding the min distance between to nodes.
-         minSpacing += MIN_DIST;
-         if (this.spacing < minSpacing) {
-         this.spacing = minSpacing;
-         }
+        this.startX = borderSpacing;
+        this.startY = grid.getHeight() * spacing + borderSpacing;
 
-         this.startX = borderSpacing;
-         this.startY = grid.getHeight() * spacing + borderSpacing;
-         
         // first determine original nodes coordinates.
         for (int x = 0; x < grid.getWidth(); x++) {
             for (int y = 0; y < grid.getHeight(); y++) {

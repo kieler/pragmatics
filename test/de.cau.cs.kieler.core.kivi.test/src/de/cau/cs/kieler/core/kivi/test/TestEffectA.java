@@ -32,7 +32,7 @@ public class TestEffectA extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        System.out.println("A("+id+")");
+        //System.out.println("A("+id+")");
         if(done){
             throw new UnsupportedOperationException("TestEffectA: was executed already. Tried to execute same effect again!");
         }
@@ -49,7 +49,7 @@ public class TestEffectA extends AbstractEffect {
      */
     @Override
     public void undo() {
-        System.out.print("uA("+id+")");
+        //System.out.print("uA("+id+")");
         if(undone){
             throw new UnsupportedOperationException("TestEffectA: was undone already. Tried to undo again!");
         }
