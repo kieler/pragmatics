@@ -140,5 +140,10 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <feature id="de.cau.cs.kieler.kwebs.server.feature" version="0.1.1.qualifier"/>
    </features>
 
+   <configurations>
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="3" />
+      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="3" />
+   </configurations>
 
 </product>
