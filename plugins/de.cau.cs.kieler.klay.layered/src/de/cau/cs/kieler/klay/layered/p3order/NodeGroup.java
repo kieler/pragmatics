@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,6 +55,11 @@ public class NodeGroup implements Comparable<NodeGroup> {
      */
     public int incomingConstraintsCount;
     
+    /**
+     * Whether the node group has been visited in some traversing algorithm.
+     */
+    public boolean visited;
+    
     // CHECKSTYLEON VisibilityModifier
 
     /**
@@ -67,6 +71,11 @@ public class NodeGroup implements Comparable<NodeGroup> {
      * List of outgoing constraints.
      */
     private List<NodeGroup> outgoingConstraints;
+    
+    /**
+     * List of incoming constraints.
+     */
+    private List<NodeGroup> incomingConstraints;
 
     /**
      * Constructs a new instance containing the given node.
@@ -82,6 +91,7 @@ public class NodeGroup implements Comparable<NodeGroup> {
      * Constructs a new vertex that is the concatenation of the given two vertices. The incoming
      * constraints count is set to zero, while the list of successors are merged, updating the
      * successors' incoming count appropriately if both vertices are predecessors.
+     * The new barycenter is derived from the barycenters of the given node groups.
      * 
      * @param nodeGroup1
      *            the first vertex
@@ -129,6 +139,10 @@ public class NodeGroup implements Comparable<NodeGroup> {
             barycenter = summedWeight / degree;
         } else if (nodeGroup1.barycenter != null && nodeGroup2.barycenter != null) {
             barycenter = (nodeGroup1.barycenter + nodeGroup2.barycenter) / 2;
+        } else if (nodeGroup1.barycenter != null) {
+            barycenter = nodeGroup1.barycenter;
+        } else if (nodeGroup2.barycenter != null) {
+            barycenter = nodeGroup2.barycenter;
         }
     }
     
@@ -137,7 +151,18 @@ public class NodeGroup implements Comparable<NodeGroup> {
      */
     @Override
     public String toString() {
-        return Arrays.toString(nodes);
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        for (int i = 0; i < nodes.length; i++) {
+            sb.append(nodes[i].toString());
+            if (barycenter != null) {
+                sb.append("<").append(barycenter.toString()).append(">");
+            }
+            if (i < nodes.length - 1) {
+                sb.append(", ");
+            }
+        }
+        return sb.append(']').toString();
     }
 
     /**
@@ -166,6 +191,34 @@ public class NodeGroup implements Comparable<NodeGroup> {
      */
     public boolean hasOutgoingConstraints() {
         return outgoingConstraints != null && outgoingConstraints.size() > 0;
+    }
+
+    /**
+     * Returns the list of incoming constraints, creating it if not yet done before.
+     * 
+     * @return the incoming constraints list of the node group
+     */
+    public List<NodeGroup> getIncomingConstraints() {
+        if (incomingConstraints == null) {
+            incomingConstraints = new LinkedList<NodeGroup>();
+        }
+        return incomingConstraints;
+    }
+    
+    /**
+     * Reset the list of incoming constraints to {@code null}.
+     */
+    public void resetIncomingConstraints() {
+        incomingConstraints = null;
+    }
+    
+    /**
+     * Determine whether there are any incoming constraints.
+     * 
+     * @return true if there are incoming constraints
+     */
+    public boolean hasIncomingConstraints() {
+        return incomingConstraints != null && incomingConstraints.size() > 0;
     }
     
     /**
