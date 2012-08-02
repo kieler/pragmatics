@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.p3order;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
  * Calculates port ranks and distributes ports.
@@ -27,22 +28,26 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 public interface IPortDistributor {
     
     /**
-     * Determine positions for all ports in the given layer. Input and output ports are processed
-     * separately.
+     * Determine positions for all ports of specific type in the given layer. Input and output ports
+     * are processed separately.
      * 
      * @param layer
      *            a layer as node array
+     * @param portType
+     *            the port type to consider
      */
-    void calculatePortRanks(final LNode[] layer);
+    void calculatePortRanks(final LNode[] layer, final PortType portType);
     
     /**
-     * Determine positions for all ports in the given layer. Input and output ports are processed
-     * separately. Entries that contain multiple nodes are ignored.
+     * Determine positions for all ports of specific type in the given layer. Input and output ports
+     * are processed separately. Entries that contain multiple nodes are ignored.
      * 
      * @param layer
      *            a layer as node group array
+     * @param portType
+     *            the port type to consider
      */
-    void calculatePortRanks(final NodeGroup[] layer);
+    void calculatePortRanks(final NodeGroup[] layer, final PortType portType);
     
     /**
      * Distribute the ports of the layered graph depending on the port constraints.

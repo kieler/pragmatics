@@ -14,10 +14,8 @@
 
 package de.cau.cs.kieler.klay.layered.p3order;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -41,34 +39,6 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  */
 public class NodeRelativePortDistributor implements IPortDistributor {
 
-    /**
-     * Returns a list of input ports, beginning at the top right port of the eastern side, going
-     * clockwise.
-     * 
-     * @param node
-     *            the node whose input ports to return.
-     * @return list of input ports.
-     */
-    public static List<LPort> getSortedInputPorts(final LNode node) {
-        List<LPort> portList = new ArrayList<LPort>(node.getPorts().size());
-
-        // first the east, west, and south ports
-        for (LPort port : node.getPorts(PortType.INPUT)) {
-            if (port.getSide() != PortSide.NORTH) {
-                portList.add(port);
-            }
-        }
-        
-        // then the north ports
-        for (LPort port : node.getPorts(PortType.INPUT)) {
-            if (port.getSide() == PortSide.NORTH) {
-                portList.add(port);
-            }
-        }
-
-        return portList;
-    }
-
     /** barycenter values for ports. */
     private float[] portBarycenter;
     /** port position array. */
@@ -91,58 +61,20 @@ public class NodeRelativePortDistributor implements IPortDistributor {
     /**
      * {@inheritDoc}
      */
-    public void calculatePortRanks(final LNode[] layer) {
+    public void calculatePortRanks(final LNode[] layer, final PortType portType) {
         for (int nodeIx = 0; nodeIx < layer.length; nodeIx++) {
-            LNode node = layer[nodeIx];
-            // count the input and output ports
-            int inputPorts = 0, outputPorts = 0;
-            for (LPort port : node.getPorts()) {
-                if (port.getNetFlow() < 0) {
-                    outputPorts++;
-                } else {
-                    inputPorts++;
-                }
-            }
-
-            // set positions for the input ports
-            if (inputPorts > 0) {
-                calculatePortRanks(node, nodeIx, PortType.INPUT, inputPorts);
-            }
-
-            // set positions for the output ports
-            if (outputPorts > 0) {
-                calculatePortRanks(node, nodeIx, PortType.OUTPUT, outputPorts);
-            }
+            calculatePortRanks(layer[nodeIx], nodeIx, portType);
         }
     }
     
     /**
      * {@inheritDoc}
      */
-    public void calculatePortRanks(final NodeGroup[] layer) {
+    public void calculatePortRanks(final NodeGroup[] layer, final PortType portType) {
         for (int nodeIx = 0; nodeIx < layer.length; nodeIx++) {
             NodeGroup nodeGroup = layer[nodeIx];
             if (nodeGroup.getNodes().length == 1) {
-                LNode node = nodeGroup.getNode();
-                // count the input and output ports
-                int inputPorts = 0, outputPorts = 0;
-                for (LPort port : node.getPorts()) {
-                    if (port.getNetFlow() < 0) {
-                        outputPorts++;
-                    } else {
-                        inputPorts++;
-                    }
-                }
-    
-                // set positions for the input ports
-                if (inputPorts > 0) {
-                    calculatePortRanks(node, nodeIx, PortType.INPUT, inputPorts);
-                }
-    
-                // set positions for the output ports
-                if (outputPorts > 0) {
-                    calculatePortRanks(node, nodeIx, PortType.OUTPUT, outputPorts);
-                }
+                calculatePortRanks(nodeGroup.getNode(), nodeIx, portType);
             }
         }
     }
@@ -155,35 +87,59 @@ public class NodeRelativePortDistributor implements IPortDistributor {
      * @param nodeIx
      *            the node's index in its layer
      * @param type
-     *            the type of ports to process
-     * @param count
-     *            the number of ports of that type
+     *            the port type to consider
      */
-    private void calculatePortRanks(final LNode node, final int nodeIx, final PortType type,
-            final int count) {
+    private void calculatePortRanks(final LNode node, final int nodeIx, final PortType type) {
 
         if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-            float incr = 1.0f / count;
 
-            if (type == PortType.INPUT) {
-                // Start at the top right port, going counter-clockwise
-                List<LPort> portList = getSortedInputPorts(node);
-                float pos = nodeIx + 1 - incr;
-
-                for (LPort port : portList) {
-                    portRanks[port.id] = pos;
-                    pos -= incr;
+            switch (type) {
+            case INPUT:
+                // Count the number of input ports, and additionally the north-side input ports
+                int inputCount = 0, northInputCount = 0;
+                for (LPort port : node.getPorts()) {
+                    if (!port.getIncomingEdges().isEmpty()) {
+                        inputCount++;
+                        if (port.getSide() == PortSide.NORTH) {
+                            northInputCount++;
+                        }
+                    }
+                }
+                
+                // Assign port ranks in the order north - west - south - east
+                float incr = 1.0f / (inputCount + 1);
+                float northPos = nodeIx + (northInputCount + 1) * incr;
+                float restPos = nodeIx + 1 - incr;
+                for (LPort port : node.getPorts(PortType.INPUT)) {
+                    if (port.getSide() == PortSide.NORTH) {
+                        portRanks[port.id] = northPos;
+                        northPos -= incr;
+                    } else {
+                        portRanks[port.id] = restPos;
+                        restPos -= incr;
+                    }
+                }
+                break;
+                
+            case OUTPUT:
+                // Count the number of output ports
+                int outputCount = 0;
+                for (LPort port : node.getPorts()) {
+                    if (!port.getOutgoingEdges().isEmpty()) {
+                        outputCount++;
+                    }
                 }
 
-            } else {
-                // Start at the top left port, going clockwise (the natural ordering of ports)
-                float pos = nodeIx;
-
-                for (LPort port : node.getPorts(type)) {
+                // Iterate output ports in their natural order, that is north - east - south - west
+                float outincr = 1.0f / (outputCount + 1);
+                float pos = nodeIx + outincr;
+                for (LPort port : node.getPorts(PortType.OUTPUT)) {
                     portRanks[port.id] = pos;
-                    pos += incr;
+                    pos += outincr;
                 }
+                break;
             }
+            
         } else {
             for (LPort port : node.getPorts(type)) {
                 portRanks[port.id] = nodeIx + getPortIncr(type, port.getSide());
@@ -244,7 +200,7 @@ public class NodeRelativePortDistributor implements IPortDistributor {
     public void distributePorts(final LNode[][] layeredGraph) {
         for (int l = 0; l < layeredGraph.length; l++) {
             if (l + 1 < layeredGraph.length) {
-                calculatePortRanks(layeredGraph[l + 1]);
+                calculatePortRanks(layeredGraph[l + 1], PortType.INPUT);
             }
             LNode[] layer = layeredGraph[l];
             for (int i = 0; i < layer.length; i++) {
@@ -263,7 +219,7 @@ public class NodeRelativePortDistributor implements IPortDistributor {
     public void distributePorts(final NodeGroup[][] layeredGraph) {
         for (int l = 0; l < layeredGraph.length; l++) {
             if (l + 1 < layeredGraph.length) {
-                calculatePortRanks(layeredGraph[l + 1]);
+                calculatePortRanks(layeredGraph[l + 1], PortType.INPUT);
             }
             NodeGroup[] layer = layeredGraph[l];
             for (int i = 0; i < layer.length; i++) {
@@ -279,6 +235,7 @@ public class NodeRelativePortDistributor implements IPortDistributor {
     /**
      * Distribute the ports of the given node by their sides, connected ports, and input or output
      * type.
+     * FIXME this does not properly consider the FixedSides scenario
      * 
      * @param node node whose ports shall be sorted
      * @param nodeIndex the index of the given node
@@ -302,16 +259,8 @@ public class NodeRelativePortDistributor implements IPortDistributor {
         }
         node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
         
-        int outputPortCount = 0;
-        for (LPort port : node.getPorts()) {
-            if (port.getNetFlow() < 0) {
-                outputPortCount++;
-            }
-        }
-        if (outputPortCount > 0) {
-            // update the port ranks after reordering
-            calculatePortRanks(node, nodeIndex, PortType.OUTPUT, outputPortCount);
-        }
+        // update the port ranks after reordering
+        calculatePortRanks(node, nodeIndex, PortType.OUTPUT);
     }
 
     /**

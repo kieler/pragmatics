@@ -33,6 +33,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * <li>Michael Forster. A fast and simple heuristic for constrained two-level crossing reduction. In
  * <i>Graph Drawing</i>, volume 3383 of LNCS, pp. 206-216. Springer, 2005.</li>
  * </ul>
+ * This constraint resolver relies on the assumption that all node groups have well-defined barycenter
+ * values and are already sorted by these barycenter values.
  * 
  * @author cds
  * @author ima
@@ -66,12 +68,14 @@ public class ForsterConstraintResolver implements IConstraintResolver {
         // Find violated vertices
         Pair<NodeGroup, NodeGroup> violatedConstraint = null;
         while ((violatedConstraint = findViolatedConstraint(nodeGroups)) != null) {
-            handleViolatedConstraint(violatedConstraint, nodeGroups);
+            handleViolatedConstraint(violatedConstraint.getFirst(), violatedConstraint.getSecond(),
+                    nodeGroups);
         }
     }
 
     /**
-     * Builds the vertex graph for the given vertices.
+     * Build the constraint graph for the given vertices. The constraint graph is created from
+     * the predefined <em>in-layer successor constraints</em> and the <em>layout units</em>.
      * 
      * @param nodeGroups
      *            the array of single-node vertices sorted by their barycenter values.
@@ -87,10 +91,10 @@ public class ForsterConstraintResolver implements IConstraintResolver {
         // Iterate through the vertices, adding the necessary constraints
         LNode lastNonDummyNode = null;
         for (NodeGroup nodeGroup : nodeGroups) {
-            LNode vertexNode = nodeGroup.getNode();
+            LNode node = nodeGroup.getNode();
 
             // Add the constraints given by the vertex's node
-            LNode successor = vertexNode.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT);
+            LNode successor = node.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT);
             if (successor != null) {
                 NodeGroup successorNodeGroup = successor.getProperty(Properties.NODE_GROUP);
                 nodeGroup.getOutgoingConstraints().add(successorNodeGroup);
@@ -98,7 +102,7 @@ public class ForsterConstraintResolver implements IConstraintResolver {
             }
 
             // Check if we're processing a a normal, none-dummy node
-            if (vertexNode.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
+            if (node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
                 // If we already processed another normal, non-dummy node, we need to add
                 // constraints from all of that other node's layout unit's vertices to this
                 // node's layout unit's vertices
@@ -106,7 +110,7 @@ public class ForsterConstraintResolver implements IConstraintResolver {
                     for (LNode lastUnitNode : layoutUnits.get(lastNonDummyNode)) {
                         NodeGroup lastUnitNodeGroup = lastUnitNode.getProperty(Properties.NODE_GROUP);
 
-                        for (LNode currentUnitNode : layoutUnits.get(vertexNode)) {
+                        for (LNode currentUnitNode : layoutUnits.get(node)) {
                             NodeGroup currentUnitNodeGroup = currentUnitNode.getProperty(
                                     Properties.NODE_GROUP);
                             lastUnitNodeGroup.getOutgoingConstraints().add(currentUnitNodeGroup);
@@ -115,13 +119,15 @@ public class ForsterConstraintResolver implements IConstraintResolver {
                     }
                 }
 
-                lastNonDummyNode = vertexNode;
+                lastNonDummyNode = node;
             }
         }
     }
 
     /**
-     * Returns a violated constraint, if any is left.
+     * Returns a violated constraint, if any is left. Constraint violation detection is based
+     * on the barycenter values of the node groups, hence it is a critical requirement that
+     * the node groups are sorted by their barycenter values.
      * 
      * @param nodeGroups
      *            list of vertices.
@@ -133,8 +139,11 @@ public class ForsterConstraintResolver implements IConstraintResolver {
         List<NodeGroup> activeNodeGroups = null;
 
         // Iterate through the constrained vertices
+        float lastValue = Float.MIN_NORMAL;
         for (NodeGroup nodeGroup : nodeGroups) {
-            // Ignore unconstrained vertices
+            assert nodeGroup.barycenter != null && nodeGroup.barycenter >= lastValue;
+            lastValue = nodeGroup.barycenter;
+            // Find sources of the constraint graph to start the constraints check
             if (nodeGroup.hasOutgoingConstraints() && nodeGroup.incomingConstraintsCount == 0) {
                 if (activeNodeGroups == null) {
                     activeNodeGroups = new LinkedList<NodeGroup>();
@@ -143,22 +152,28 @@ public class ForsterConstraintResolver implements IConstraintResolver {
             }
         }
 
-        // Iterate through the active vertices to find one with violated constraints
+        // Iterate through the active node groups to find one with violated constraints
         if (activeNodeGroups != null) {
-            Multimap<NodeGroup, NodeGroup> incoming = HashMultimap.create();
+            Multimap<NodeGroup, NodeGroup> incomingConstraints = HashMultimap.create();
             while (!activeNodeGroups.isEmpty()) {
                 NodeGroup nodeGroup = activeNodeGroups.remove(0);
     
                 // See if we can find a violated constraint
-                for (NodeGroup predecessor : incoming.get(nodeGroup)) {
-                    if (predecessor.barycenter >= nodeGroup.barycenter) {
-                        return new Pair<NodeGroup, NodeGroup>(predecessor, nodeGroup);
+                for (NodeGroup predecessor : incomingConstraints.get(nodeGroup)) {
+                    if (predecessor.barycenter.floatValue() == nodeGroup.barycenter.floatValue()) {
+                        if (nodeGroups.indexOf(predecessor) > nodeGroups.indexOf(nodeGroup)) {
+                            // The predecessor has equal barycenter, but higher index
+                            return Pair.create(predecessor, nodeGroup);
+                        }
+                    } else if (predecessor.barycenter > nodeGroup.barycenter) {
+                        // The predecessor has greater barycenter and thus also higher index
+                        return Pair.create(predecessor, nodeGroup);
                     }
                 }
     
                 // No violated constraints; add outgoing constraints to the respective incoming list
                 for (NodeGroup successor : nodeGroup.getOutgoingConstraints()) {
-                    Collection<NodeGroup> successorIncomingList = incoming.get(successor);
+                    Collection<NodeGroup> successorIncomingList = incomingConstraints.get(successor);
                     successorIncomingList.add(nodeGroup);
     
                     if (successor.incomingConstraintsCount == successorIncomingList.size()) {
@@ -173,23 +188,26 @@ public class ForsterConstraintResolver implements IConstraintResolver {
     }
 
     /**
-     * Handles the case of a violated constraint.
+     * Handles the case of a violated constraint. The node groups must be sorted by their
+     * barycenter values. After this method has finished, the list of node groups is smaller
+     * by one element, since two node groups have been unified, but the list is still correctly
+     * sorted by barycenter values.
      * 
-     * @param violatedConstraint
-     *            the violated constraint
+     * @param firstNodeGroup
+     *            the node group with violated outgoing constraint
+     * @param secondNodeGroup
+     *            the node group with violated incoming constraint
      * @param nodeGroups
      *            the list of vertices
      */
-    private void handleViolatedConstraint(final Pair<NodeGroup, NodeGroup> violatedConstraint,
-            final List<NodeGroup> nodeGroups) {
-
-        NodeGroup firstNodeGroup = violatedConstraint.getFirst();
-        NodeGroup secondNodeGroup = violatedConstraint.getSecond();
+    private void handleViolatedConstraint(final NodeGroup firstNodeGroup,
+            final NodeGroup secondNodeGroup, final List<NodeGroup> nodeGroups) {
 
         // Create a new vertex from the two constrain-violating vertices; this also
         // automatically calculates the new vertex's barycenter value
-        NodeGroup newNodeGroup = new NodeGroup(violatedConstraint.getFirst(),
-                violatedConstraint.getSecond());
+        NodeGroup newNodeGroup = new NodeGroup(firstNodeGroup, secondNodeGroup);
+        assert newNodeGroup.barycenter >= secondNodeGroup.barycenter;
+        assert newNodeGroup.barycenter <= firstNodeGroup.barycenter;
 
         // Iterate through the vertices. Remove the old vertices. Insert the new one
         // according to the barycenter value, thereby keeping the list sorted. Along
@@ -200,23 +218,23 @@ public class ForsterConstraintResolver implements IConstraintResolver {
             NodeGroup nodeGroup = nodeGroupIterator.next();
 
             if (nodeGroup == firstNodeGroup || nodeGroup == secondNodeGroup) {
-                // If the vertex is either the first or the second vertex, remove it
+                // Remove the two node groups with violated constraint from the list
                 nodeGroupIterator.remove();
             } else if (!alreadyInserted && nodeGroup.barycenter > newNodeGroup.barycenter) {
-                // If we haven't inserted the new vertex into the list already, do that now. Note:
-                // we're not calling next() again. This means that during the next iteration, we
-                // will again be looking at the current vertex. But then, alreadyInserted will be
-                // true and we can look at vertex's outgoing constraints.
+                // If we haven't inserted the new node group into the list already, do that now.
+                // Note: we're not calling next() again. This means that during the next iteration,
+                // we will again be looking at the current node group. But then, alreadyInserted will
+                // be true and we can look at that node group's outgoing constraints.
                 nodeGroupIterator.previous();
                 nodeGroupIterator.add(newNodeGroup);
 
                 alreadyInserted = true;
-            } else {
+            } else if (nodeGroup.hasOutgoingConstraints()) {
                 // Check if the vertex has any constraints with the former two vertices
-                boolean firstNodeGroupConstraint = nodeGroup.getOutgoingConstraints().remove(
-                        firstNodeGroup);
-                boolean secondNodeGroupConstraint = nodeGroup.getOutgoingConstraints().remove(
-                        secondNodeGroup);
+                boolean firstNodeGroupConstraint = nodeGroup.getOutgoingConstraints()
+                        .remove(firstNodeGroup);
+                boolean secondNodeGroupConstraint = nodeGroup.getOutgoingConstraints()
+                        .remove(secondNodeGroup);
 
                 if (firstNodeGroupConstraint || secondNodeGroupConstraint) {
                     nodeGroup.getOutgoingConstraints().add(newNodeGroup);
@@ -225,7 +243,7 @@ public class ForsterConstraintResolver implements IConstraintResolver {
             }
         }
 
-        // If we haven't inserted the new vertex already, do that now
+        // If we haven't inserted the new node group already, add it to the end
         if (!alreadyInserted) {
             nodeGroups.add(newNodeGroup);
         }

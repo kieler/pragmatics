@@ -56,6 +56,11 @@ public class NodeGroup implements Comparable<NodeGroup> {
      */
     public int incomingConstraintsCount;
     
+    /**
+     * Whether the node group has been visited in some traversing algorithm.
+     */
+    public boolean visited;
+    
     // CHECKSTYLEON VisibilityModifier
 
     /**
@@ -82,6 +87,7 @@ public class NodeGroup implements Comparable<NodeGroup> {
      * Constructs a new vertex that is the concatenation of the given two vertices. The incoming
      * constraints count is set to zero, while the list of successors are merged, updating the
      * successors' incoming count appropriately if both vertices are predecessors.
+     * The new barycenter is derived from the barycenters of the given node groups.
      * 
      * @param nodeGroup1
      *            the first vertex
@@ -129,6 +135,10 @@ public class NodeGroup implements Comparable<NodeGroup> {
             barycenter = summedWeight / degree;
         } else if (nodeGroup1.barycenter != null && nodeGroup2.barycenter != null) {
             barycenter = (nodeGroup1.barycenter + nodeGroup2.barycenter) / 2;
+        } else if (nodeGroup1.barycenter != null) {
+            barycenter = nodeGroup1.barycenter;
+        } else if (nodeGroup2.barycenter != null) {
+            barycenter = nodeGroup2.barycenter;
         }
     }
     
