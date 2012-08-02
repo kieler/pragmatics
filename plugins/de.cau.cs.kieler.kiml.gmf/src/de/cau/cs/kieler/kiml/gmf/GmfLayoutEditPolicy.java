@@ -195,20 +195,26 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
     private void addEdgeLayout(final GmfLayoutCommand command, final KEdge kedge,
             final ConnectionEditPart connectionEditPart, final double scale) {
         // create source terminal identifier
-        KVector sourceRel = getRelativeSourcePoint(kedge);
         INodeEditPart sourceEditPart = (INodeEditPart) connectionEditPart.getSource();
-        ConnectionAnchor sourceAnchor = new SlidableAnchor(sourceEditPart.getFigure(),
-                new PrecisionPoint(sourceRel.x, sourceRel.y));
+        ConnectionAnchor sourceAnchor;
+        if (sourceEditPart instanceof ConnectionEditPart) {
+            // if the edge source is a connection, don't consider the source point
+            sourceAnchor = new SlidableAnchor(sourceEditPart.getFigure());
+        } else {
+            KVector sourceRel = getRelativeSourcePoint(kedge);
+            sourceAnchor = new SlidableAnchor(sourceEditPart.getFigure(),
+                    new PrecisionPoint(sourceRel.x, sourceRel.y));
+        }
         String sourceTerminal = sourceEditPart.mapConnectionAnchorToTerminal(sourceAnchor);
 
         // create target terminal identifier
-        KVector targetRel = getRelativeTargetPoint(kedge);
         INodeEditPart targetEditPart = (INodeEditPart) connectionEditPart.getTarget();
         ConnectionAnchor targetAnchor;
         if (targetEditPart instanceof ConnectionEditPart) {
-            // This is only for very special cases necessary, where the edge is connected to a connection
+            // if the edge target is a connection, don't consider the target point
             targetAnchor = new SlidableAnchor(targetEditPart.getFigure());
         } else {
+            KVector targetRel = getRelativeTargetPoint(kedge);
             targetAnchor = new SlidableAnchor(targetEditPart.getFigure(),
                                     new PrecisionPoint(targetRel.x, targetRel.y));
         }
@@ -223,6 +229,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 bendPoints.removePoint(1);
             }
         }
+        
         command.addEdgeLayout((Edge) connectionEditPart.getModel(), bendPoints, sourceTerminal,
                 targetTerminal);
     }
