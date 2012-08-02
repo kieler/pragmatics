@@ -107,7 +107,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
                 if (edge.getData(KEdgeLayout.class).getProperty(LayoutOptions.EDGE_ROUTING)
                         == EdgeRouting.SPLINES) {
                     
-                    chain = KielerMath.appoximateSpline(chain);
+                    chain = KielerMath.approximateSpline(chain);
                 }
                 
                 // Transform the vector chain into a list of line segments

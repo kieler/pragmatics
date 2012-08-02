@@ -324,7 +324,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             EdgeRouting edgeRouting = edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
             if (edgeRouting == EdgeRouting.SPLINES
                     && edgeLayout.getBendPoints().size() >= 1) {
-                bendPoints = KielerMath.appoximateSpline(bendPoints);
+                bendPoints = KielerMath.approximateSpline(bendPoints);
             }
             
             bendPoints.removeFirst();

@@ -458,7 +458,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                     LayoutOptions.EDGE_ROUTING));
             // in other cases an approximation is used
             if (approx && bendPoints.size() >= 1) {
-                bendPoints = KielerMath.appoximateSpline(bendPoints);
+                bendPoints = KielerMath.approximateSpline(bendPoints);
             }
 
             bendPoints.scale(scale);
