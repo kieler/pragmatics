@@ -204,11 +204,7 @@ public class NodeRelativePortDistributor implements IPortDistributor {
             }
             LNode[] layer = layeredGraph[l];
             for (int i = 0; i < layer.length; i++) {
-                LNode node = layer[i];
-                if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-                    // the order of ports on each side is variable, so distribute the ports
-                    distributePorts(node, i);
-                }
+                distributePorts(layer[i], i);
             }
         }
     }
@@ -223,11 +219,7 @@ public class NodeRelativePortDistributor implements IPortDistributor {
             }
             NodeGroup[] layer = layeredGraph[l];
             for (int i = 0; i < layer.length; i++) {
-                LNode node = layer[i].getNode();
-                if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-                    // the order of ports on each side is variable, so distribute the ports
-                    distributePorts(node, i);
-                }
+                distributePorts(layer[i].getNode(), i);
             }
         }
     }
@@ -241,23 +233,26 @@ public class NodeRelativePortDistributor implements IPortDistributor {
      * @param nodeIndex the index of the given node
      */
     private void distributePorts(final LNode node, final int nodeIndex) {
-        if (node.getPorts().size() > 1) {
-            // calculate barycenter values for the ports of the node
-            for (LPort port : node.getPorts()) {
-                float sum = 0;
-                for (LPort connectedPort : port.getConnectedPorts()) {
-                    sum += portRanks[connectedPort.id];
+        if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            // the order of ports on each side is variable, so distribute the ports
+            if (node.getPorts().size() > 1) {
+                // calculate barycenter values for the ports of the node
+                for (LPort port : node.getPorts()) {
+                    float sum = 0;
+                    for (LPort connectedPort : port.getConnectedPorts()) {
+                        sum += portRanks[connectedPort.id];
+                    }
+                    if (port.getDegree() == 0) {
+                        portBarycenter[port.id] = -1;
+                    } else {
+                        portBarycenter[port.id] = sum / port.getDegree();
+                    }
                 }
-                if (port.getDegree() == 0) {
-                    portBarycenter[port.id] = -1;
-                } else {
-                    portBarycenter[port.id] = sum / port.getDegree();
-                }
+                // sort the ports by considering the side, type, and barycenter values
+                sortPorts(node, portBarycenter);
             }
-            // sort the ports by considering the side, type, and barycenter values
-            sortPorts(node, portBarycenter);
+            node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
         }
-        node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
         
         // update the port ranks after reordering
         calculatePortRanks(node, nodeIndex, PortType.OUTPUT);

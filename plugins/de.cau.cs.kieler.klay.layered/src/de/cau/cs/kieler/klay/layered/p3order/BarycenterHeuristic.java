@@ -62,41 +62,26 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
     /**
      * {@inheritDoc}
      */
-    public int minimizeCrossings(final List<NodeGroup> layer, final int layerIndex,
+    public void minimizeCrossings(final List<NodeGroup> layer, final int layerIndex,
             final boolean preOrdered, final boolean randomize, final boolean forward) {
-        if (layer.size() == 1) {
-            NodeGroup nodeGroup = layer.get(0);
-            if (nodeGroup.getNodes().length == 1) {
-                nodeGroup.degree = 0;
-                for (LPort port : nodeGroup.getNode().getPorts()) {
-                    nodeGroup.degree += forward ? port.getIncomingEdges().size()
-                            : port.getOutgoingEdges().size();
-                }
-                return nodeGroup.degree;
-            }
-        } else if (layer.size() > 1) {
-            int totalEdges = 0;
-            
-            if (randomize) {
-                // Randomize barycenters (we don't need to update the edge count in this case;
-                // there are no edges of interest since we're only concerned with one layer)
-                randomizeBarycenters(layer);
-            } else {
-                // Calculate barycenters and assign barycenters to barycenterless node groups
-                totalEdges = calculateBarycenters(layer, forward);
-                fillInUnknownBarycenters(layer, preOrdered);
-            }
+
+        if (randomize) {
+            // Randomize barycenters (we don't need to update the edge count in this case;
+            // there are no edges of interest since we're only concerned with one layer)
+            randomizeBarycenters(layer);
+        } else {
+            // Calculate barycenters and assign barycenters to barycenterless node groups
+            calculateBarycenters(layer, forward);
+            fillInUnknownBarycenters(layer, preOrdered);
+        }
     
+        if (layer.size() > 1) {
             // Sort the vertices according to their barycenters
             Collections.sort(layer);
     
             // Resolve ordering constraints
             constraintResolver.processConstraints(layer, layerIndex);
-            
-            return totalEdges;
         }
-
-        return 0;
     }
 
     /**
@@ -185,25 +170,19 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
      *            the nodeGroups
      * @param forward
      *            {@code true} if the current sweep moves forward
-     * @return the total number of encountered edges.
      */
-    private int calculateBarycenters(final List<NodeGroup> nodeGroups, final boolean forward) {
+    private void calculateBarycenters(final List<NodeGroup> nodeGroups, final boolean forward) {
         // Set all visited flags to false
         for (NodeGroup nodeGroup : nodeGroups) {
             nodeGroup.visited = false;
         }
 
-        int totalEdges = 0;
         for (NodeGroup nodeGroup : nodeGroups) {
             if (nodeGroup.getNodes().length == 1) {
                 // Calculate the node groups's new barycenter (may be null)
                 calculateBarycenter(nodeGroup, forward);
             }
-            // TODO Discuss whether next line should be dependent on the condition as well.
-            totalEdges += nodeGroup.degree;
         }
-
-        return totalEdges;
     }
     
     /** the amount of random value to add to each calculated barycenter. */

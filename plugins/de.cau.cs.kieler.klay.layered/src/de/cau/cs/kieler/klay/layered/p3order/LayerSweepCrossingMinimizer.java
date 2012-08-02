@@ -242,9 +242,9 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                         NodeGroup[] freeLayer = curSweep[layerIndex];
 
                         portDistributor.calculatePortRanks(fixedLayer, PortType.OUTPUT);
-                        int totalEdges = compoundMinimizer.compoundMinimizeCrossings(freeLayer,
-                                layerIndex, true, !firstSweep, false);
-                        curSweepCrossings += countCrossings(fixedLayer, freeLayer, totalEdges);
+                        compoundMinimizer.compoundMinimizeCrossings(freeLayer, layerIndex, true,
+                                !firstSweep, false);
+                        curSweepCrossings += countCrossings(fixedLayer, freeLayer);
                         if (inLayerEdgeCount[layerIndex] > 0) {
                             curSweepCrossings += countCrossings(freeLayer);
                         }
@@ -257,9 +257,9 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                         NodeGroup[] freeLayer = curSweep[layerIndex];
 
                         portDistributor.calculatePortRanks(fixedLayer, PortType.INPUT);
-                        int totalEdges = compoundMinimizer.compoundMinimizeCrossings(freeLayer,
-                                layerIndex, false, !firstSweep, false);
-                        curSweepCrossings += countCrossings(freeLayer, fixedLayer, totalEdges);
+                        compoundMinimizer.compoundMinimizeCrossings(freeLayer, layerIndex, false,
+                                !firstSweep, false);
+                        curSweepCrossings += countCrossings(freeLayer, fixedLayer);
                         if (inLayerEdgeCount[layerIndex] > 0) {
                             curSweepCrossings += countCrossings(freeLayer);
                         }
@@ -319,14 +319,11 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      *            the left layer
      * @param rightLayer
      *            the right layer
-     * @param edgeCount
-     *            the total number of edges in the layer
      * @return the number of edge crossings
      */
-    private int countCrossings(final NodeGroup[] leftLayer, final NodeGroup[] rightLayer,
-            final int edgeCount) {
+    private int countCrossings(final NodeGroup[] leftLayer, final NodeGroup[] rightLayer) {
         // Assign index values to the ports of the right layer
-        int targetCount = 0;
+        int targetCount = 0, edgeCount = 0;
         for (NodeGroup nodeGroup : rightLayer) {
             LNode node = nodeGroup.getNode();
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
@@ -335,8 +332,11 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 int northInputPorts = 0;
                 for (LPort port : node.getPorts()) {
                     if (port.getSide() == PortSide.NORTH) {
-                        if (!port.getIncomingEdges().isEmpty()) {
-                            northInputPorts++;
+                        for (LEdge edge : port.getIncomingEdges()) {
+                            if (node.getLayer() != edge.getSource().getNode().getLayer()) {
+                                northInputPorts++;
+                                break;
+                            }
                         }
                     } else {
                         break;
@@ -347,7 +347,13 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 ListIterator<LPort> portIter = node.getPorts().listIterator(node.getPorts().size());
                 while (portIter.hasPrevious()) {
                     LPort port = portIter.previous();
-                    if (!port.getIncomingEdges().isEmpty()) {
+                    int portEdges = 0;
+                    for (LEdge edge : port.getIncomingEdges()) {
+                        if (node.getLayer() != edge.getSource().getNode().getLayer()) {
+                            portEdges++;
+                        }
+                    }
+                    if (portEdges > 0) {
                         if (port.getSide() == PortSide.NORTH) {
                             portPos[port.id] = targetCount;
                             targetCount++;
@@ -355,15 +361,26 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                             portPos[port.id] = targetCount + northInputPorts + otherInputPorts;
                             otherInputPorts++;
                         }
+                        edgeCount += portEdges;
                     }
                 }
                 targetCount += otherInputPorts;
+                
             } else {
                 // All ports are assigned the same index value, since their order does not matter
-                for (LPort port : node.getPorts(PortType.INPUT)) {
+                int nodeEdges = 0;
+                for (LPort port : node.getPorts()) {
+                    for (LEdge edge : port.getIncomingEdges()) {
+                        if (node.getLayer() != edge.getSource().getNode().getLayer()) {
+                            nodeEdges++;
+                        }
+                    }
                     portPos[port.id] = targetCount;
                 }
-                targetCount++;
+                if (nodeEdges > 0) {
+                    targetCount++;
+                    edgeCount += nodeEdges;
+                }
             }
         }
 

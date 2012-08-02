@@ -19,7 +19,6 @@ import java.util.List;
  * Determines the node order of a given free layer. Uses heuristic methods to find an ordering that
  * minimizes edge crossings between the given free layer and a neighboring layer with fixed node
  * order. Given constraints are to be respected, possibly by the use of an {@link IConstraintResolver}.
- * Port ranks are calculated with the help of a {@link IPortDistributor}.
  * 
  * @author cds
  * @author ima
@@ -31,7 +30,7 @@ public interface ICrossingMinimizationHeuristic {
 
     /**
      * Minimize the number of crossings for the edges between the given layer and either its
-     * predecessor or its successor. Resolve violated constraints. Calculate Port Ranks.
+     * predecessor or its successor. Resolve violated constraints.
      * 
      * @param layer
      *            the free layer whose nodes are reordered.
@@ -45,9 +44,8 @@ public interface ICrossingMinimizationHeuristic {
      *            {@code 0}.
      * @param forward
      *            whether the free layer is after the fixed layer.
-     * @return the total number of edges going either in or out of the given layer.
      */
-    int minimizeCrossings(List<NodeGroup> layer, int layerIndex, boolean preOrdered, boolean randomize,
+    void minimizeCrossings(List<NodeGroup> layer, int layerIndex, boolean preOrdered, boolean randomize,
             boolean forward);
 
 }
