@@ -37,7 +37,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-class ComponentGroupGraphPlacer extends GraphPlacer {
+class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Variables

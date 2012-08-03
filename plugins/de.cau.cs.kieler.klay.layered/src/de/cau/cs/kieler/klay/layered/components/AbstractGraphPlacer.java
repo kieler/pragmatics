@@ -33,7 +33,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-abstract class GraphPlacer {
+abstract class AbstractGraphPlacer {
     
     /**
      * Computes a proper placement for the given graphs and combines them into a single graph.

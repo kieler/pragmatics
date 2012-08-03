@@ -72,7 +72,7 @@ public class ComponentsProcessor extends AbstractAlgorithm {
     /**
      * Graph placer to be used to combine the different components back into a single graph.
      */
-    private GraphPlacer graphPlacer = null;
+    private AbstractGraphPlacer graphPlacer = null;
     
 
     /**
