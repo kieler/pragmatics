@@ -158,7 +158,7 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
                 // transform spline control points to approximated bend points
                 if (edge.getData(KEdgeLayout.class).getProperty(LayoutOptions.EDGE_ROUTING)
                         == EdgeRouting.SPLINES) {
-                    chain = KielerMath.appoximateSpline(chain);
+                    chain = KielerMath.approximateSpline(chain);
                 }
                 
                 edges.add(edge);

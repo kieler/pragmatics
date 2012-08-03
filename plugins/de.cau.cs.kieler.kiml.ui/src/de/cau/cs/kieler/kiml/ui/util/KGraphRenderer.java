@@ -403,7 +403,7 @@ public class KGraphRenderer {
         if (!rect.painted && rect.intersects(area)) {
             KVectorChain bendPoints = edgeLayout.createVectorChain();
             if (edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
-                bendPoints = KielerMath.appoximateSpline(bendPoints);
+                bendPoints = KielerMath.approximateSpline(bendPoints);
             }
             bendPoints.scale(scale);
             KVector point1 = bendPoints.getFirst();
