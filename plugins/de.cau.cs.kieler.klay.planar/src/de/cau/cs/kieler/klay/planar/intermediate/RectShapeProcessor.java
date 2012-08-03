@@ -80,7 +80,7 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         } else {
             this.graph.setProperty(Properties.RECT_SHAPE_TRANS_EXTERNAL, Boolean.TRUE);
             transformExternalFace();
-            determineFaceDirections();
+//            determineFaceDirections();
         }
 
         transformInternalFaces();

@@ -540,7 +540,6 @@ public class PGraph extends PNode {
      * information, this graph structure may not be good for you.
      */
     void generateFaces() {
-
         if (!changedFaces) {
             return;
         }
@@ -584,8 +583,8 @@ public class PGraph extends PNode {
                     face.addNode(nextNode);
                     face.addEdge(nextEdge);
 
-                    nextNode = nextNode.getAdjacentNode(nextEdge);
-                    nextEdge = getNextClockwiseEdge(nextNode, nextEdge);
+                    nextNode = nextEdge.getOppositeNode(nextNode);
+                    nextEdge = getNextCClockwiseEdge(nextNode, nextEdge);
                 } while (nextEdge != edge);
 
             }
@@ -612,14 +611,11 @@ public class PGraph extends PNode {
                         ((PEdge) nextEdge).setLeftFace(face);
                     }
 
-                    // don't add 1 edge 2 times
-                    if (nextEdge != getNextClockwiseEdge(nextNode, nextEdge)) {
-                        face.addNode(nextNode);
-                        face.addEdge(nextEdge);
-                    }
+                    face.addNode(nextNode);
+                    face.addEdge(nextEdge);
 
-                    nextNode = nextNode.getAdjacentNode(nextEdge);
-                    nextEdge = getNextCClockwiseEdge(nextNode, nextEdge);
+                    nextNode = nextEdge.getOppositeNode(nextNode);
+                    nextEdge = getNextClockwiseEdge(nextNode, nextEdge);
 
                 } while (nextEdge != edge);
             }
@@ -636,11 +632,10 @@ public class PGraph extends PNode {
      *            the current edge
      * @return the next edge
      */
-    private PEdge getNextClockwiseEdge(final PNode node, final PEdge edge) {
+    private PEdge getNextCClockwiseEdge(final PNode node, final PEdge edge) {
         Iterator<PEdge> iter = node.adjacentEdges().iterator();
-        PEdge current = null;
-        while (iter.hasNext() && current != edge) {
-            current = iter.next();
+        while (iter.hasNext() && iter.next() != edge) {
+            // nothing to do
         }
         if (iter.hasNext()) {
             // Get the next edge on the node
@@ -660,7 +655,7 @@ public class PGraph extends PNode {
      *            the current edge
      * @return the previous edge
      */
-    private PEdge getNextCClockwiseEdge(final PNode node, final PEdge edge) {
+    private PEdge getNextClockwiseEdge(final PNode node, final PEdge edge) {
         Iterator<PEdge> iter = node.adjacentEdges().iterator();
         PEdge current = null;
         PEdge previous = null;
@@ -687,8 +682,7 @@ public class PGraph extends PNode {
         }
     }
 
-    // ======================== Miscellaneous Functions
-    // ============================================
+    // ======================== Miscellaneous Functions ==========================================
 
     @Override
     public String toString() {

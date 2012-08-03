@@ -42,7 +42,7 @@ public class PUtil {
      * This method iterates over all faces of the graph and stores them in the left, top, right and
      * bottom side. This can be used, to determine how long a edge has to be. Meaning the opposite
      * edges have to have the same length. This works because of the rectangular shape of the input
-     * faces. Attention: This works only for graphs with rectangular face-shapes.
+     * faces. Attention: This works only for graphs with rectangular face-shapes...
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void defineFaceSideEdges(final PGraph graph) {
