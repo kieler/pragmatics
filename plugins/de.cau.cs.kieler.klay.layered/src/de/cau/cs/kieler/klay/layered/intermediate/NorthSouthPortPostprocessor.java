@@ -97,16 +97,16 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         LPort originPort = (LPort) inputPort.getProperty(Properties.ORIGIN);
         
         // Calculate the bend point
-        KVector bendPoint = new KVector(inputPort.getNode().getPosition());
-        bendPoint.x = originPort.getNode().getPosition().x + originPort.getPosition().x
+        double x = originPort.getNode().getPosition().x + originPort.getPosition().x
                 + originPort.getAnchor().x;
+        double y = inputPort.getNode().getPosition().y;
         
-        // Reroute the edges, inserting a new bend point at the position of
-        // the dummy node
-        LEdge[] edgeArray = inputPort.getIncomingEdges().toArray(new LEdge[0]);
+        // Reroute the edges, inserting a new bend point at the position of the dummy node
+        LEdge[] edgeArray = inputPort.getIncomingEdges().toArray(
+                new LEdge[inputPort.getIncomingEdges().size()]);
         for (LEdge inEdge : edgeArray) {
             inEdge.setTarget(originPort);
-            inEdge.getBendPoints().add(bendPoint);
+            inEdge.getBendPoints().addLast(x, y);
         }
     }
     
@@ -121,16 +121,16 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         LPort originPort = (LPort) outputPort.getProperty(Properties.ORIGIN);
         
         // Calculate the bend point
-        KVector bendPoint = new KVector(outputPort.getNode().getPosition());
-        bendPoint.x = originPort.getNode().getPosition().x + originPort.getPosition().x
+        double x = originPort.getNode().getPosition().x + originPort.getPosition().x
                 + originPort.getAnchor().x;
+        double y = outputPort.getNode().getPosition().y;
         
-        // Reroute the edges, inserting a new bend point at the position of
-        // the dummy node
-        LEdge[] edgeArray = outputPort.getOutgoingEdges().toArray(new LEdge[0]);
+        // Reroute the edges, inserting a new bend point at the position of the dummy node
+        LEdge[] edgeArray = outputPort.getOutgoingEdges().toArray(
+                new LEdge[outputPort.getOutgoingEdges().size()]);
         for (LEdge outEdge : edgeArray) {
             outEdge.setSource(originPort);
-            outEdge.getBendPoints().addFirst(bendPoint);
+            outEdge.getBendPoints().addFirst(x, y);
         }
     }
     
