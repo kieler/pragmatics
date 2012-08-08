@@ -754,9 +754,19 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // check if the edge routing uses splines
         EdgeRouting routing = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
         boolean splinesActive = routing == EdgeRouting.SPLINES;
+        
+        // check if the orthogonal edge router was used
+        boolean orthogonalRouting =
+                layeredGraph.getProperty(LayoutOptions.EDGE_ROUTING).equals(EdgeRouting.ORTHOGONAL);
 
         // iterate through all edges
         for (LEdge ledge : edgeList) {
+            // Self-loops are currently left untouched unless the edge router is set to
+            // the orthogonal router
+            if (ledge.isSelfLoop() && !orthogonalRouting) {
+                continue;
+            }
+            
             KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
             KVectorChain bendPoints = ledge.getBendPoints();

@@ -37,8 +37,10 @@ public class LEdge extends LGraphElement {
     
     /** the bend points. */
     private KVectorChain bendPoints = new KVectorChain();
-    /** the source and target ports. */
-    private LPort source, target;
+    /** the source port. */
+    private LPort source;
+    /** the target port. */
+    private LPort target;
     /** labels assigned to this edge. */
     private final List<LLabel> labels = new LinkedList<LLabel>();
 
@@ -143,6 +145,20 @@ public class LEdge extends LGraphElement {
         if (this.target != null) {
             this.target.getIncomingEdges().add(this);
         }
+    }
+    
+    /**
+     * Determines if this edge is a self-loop or not. An edge is considered a self-loop if both, source
+     * and target port are defined and belong to the same non-null node.
+     * 
+     * @return {@code true} if this edge is a self-loop.
+     */
+    public boolean isSelfLoop() {
+        if (this.source == null || this.target == null) {
+            return false;
+        }
+        
+        return this.source.getNode() != null && this.source.getNode() == this.target.getNode();
     }
 
     /**
