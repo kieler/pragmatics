@@ -36,15 +36,11 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
  */
 public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implements
         IMinimumCostFlowSolver {
-    // TODO Handle multi edges in network
-    // TODO flow can move in both directions in residual network
-    // TODO different path costs for forward and backward edges in residual network
 
     /**
      * {@inheritDoc}
      */
     public void findFlow(final PGraph network) {
-
         // Add source and sink nodes
         PNode source = network.addNode();
         PNode sink = network.addNode();
@@ -66,13 +62,16 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             }
         }
 
-        // Initialize node potentials using Bellman-Ford-Algorithm
+        // Initialize node potentials using Bellman-Ford-Algorithm, secondly make negative cycles
+        // in the network positive. Potential are used to ensure non negative path cycles and
+        // to calculate the reduced costs.
         IPathFinder pathFinder = new BellmanFordPathFinder();
         pathFinder.findPath(source, sink);
         int[] potentials = new int[network.getNodeCount()];
         for (PNode node : network.getNodes()) {
-            potentials[node.id] = 0 /*node.getProperty(IPathFinder.DISTANCE)*/;
+            potentials[node.id] = node.getProperty(IPathFinder.DISTANCE);
         }
+        // Set the reduced costs.
         for (PEdge edge : network.getEdges()) {
             int cost = edge.getProperty(IPathFinder.PATHCOST);
             cost += potentials[edge.getSource().id];
@@ -80,8 +79,8 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             edge.setProperty(IPathFinder.PATHCOST, cost);
         }
 
-        // Initialize path finder
-        // Condition describes residual network
+        // Initialize more efficient Dijkstra path finder.
+        // Condition describes residual network.
         pathFinder = new DijkstraPathFinder();
         ICondition<Pair<PNode, PEdge>> cond = new ICondition<Pair<PNode, PEdge>>() {
             public boolean evaluate(final Pair<PNode, PEdge> object) {
@@ -103,8 +102,8 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             // Update path costs based on potentials
             for (PEdge edge : network.getEdges()) {
                 int cost = edge.getProperty(IPathFinder.PATHCOST);
-                cost += potentials[edge.getSource().id];
-                cost -= potentials[edge.getTarget().id];
+                cost -= potentials[edge.getSource().id];
+                cost += potentials[edge.getTarget().id];
                 edge.setProperty(IPathFinder.PATHCOST, cost);
             }
 

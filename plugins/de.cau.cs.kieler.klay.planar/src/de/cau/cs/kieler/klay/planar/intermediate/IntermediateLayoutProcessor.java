@@ -35,9 +35,11 @@ public enum IntermediateLayoutProcessor {
     // Before Phase 2
 
     // Before Phase 3
+    /** The external face has to be determined for the tamassia orthogonalization, . */
+    EXT_FACE,
 
     // Before Phase 4
-    /** before performing the compaction, rectangular shapes of the faces are required. */
+    /** Before performing the tamassia compaction, rectangular shapes of the faces are required. */
     RECT_SHAPE,
 
     // After Phase 4
@@ -65,6 +67,8 @@ public enum IntermediateLayoutProcessor {
      */
     public ILayoutProcessor create() {
         switch (this) {
+        case EXT_FACE:
+            return new ExternalFaceProcessor();
         case DUMMYNODE_REMOVING_PROCESSOR:
             return new DummyRemovingProcessor();
         case GRID_DRAWING:

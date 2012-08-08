@@ -585,7 +585,7 @@ public class PGraph extends PNode {
 
                     nextNode = nextEdge.getOppositeNode(nextNode);
                     nextEdge = getNextCClockwiseEdge(nextNode, nextEdge);
-                } while (nextEdge != edge);
+                } while (!(nextEdge == edge && nextNode == start));
 
             }
 
@@ -617,7 +617,7 @@ public class PGraph extends PNode {
                     nextNode = nextEdge.getOppositeNode(nextNode);
                     nextEdge = getNextClockwiseEdge(nextNode, nextEdge);
 
-                } while (nextEdge != edge);
+                } while (!(nextEdge == edge && nextNode == start));
             }
 
         }
