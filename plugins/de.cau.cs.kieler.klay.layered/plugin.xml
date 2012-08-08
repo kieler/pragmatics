@@ -124,7 +124,7 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="0"
+            default="30.0"
             description="Defines the minimal angle that short edges may have (in degrees)."
             id="de.cau.cs.kieler.klay.layered.minimalAngle"
             name="Minimal Angle"

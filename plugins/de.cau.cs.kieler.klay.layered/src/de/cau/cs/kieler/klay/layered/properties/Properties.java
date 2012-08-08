@@ -334,7 +334,7 @@ public final class Properties {
 
     /** defines the minimal angle a short edge may have. */
     public static final IProperty<Float> MIN_EDGE_ANGLE = new Property<Float>(
-            "de.cau.cs.kieler.klay.layered.minimalAngle", 0.0f);
+            "de.cau.cs.kieler.klay.layered.minimalAngle", 30.0f);
 
     /** whether nodes shall be distributed during layer assignment. */
     public static final IProperty<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
