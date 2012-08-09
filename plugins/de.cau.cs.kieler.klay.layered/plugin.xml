@@ -65,9 +65,6 @@
                option="de.cau.cs.kieler.portConstraints">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.minimalAngle">
-         </knownOption>
-         <knownOption
                option="de.cau.cs.kieler.debugMode">
          </knownOption>
          <knownOption
@@ -121,19 +118,6 @@
                option="de.cau.cs.kieler.klay.layered.edgeBends">
          </knownOption>
       </layoutAlgorithm>
-      <layoutOption
-            advanced="true"
-            appliesTo="parents"
-            default="30.0"
-            description="Defines the minimal angle that short edges may have (in degrees)."
-            id="de.cau.cs.kieler.klay.layered.minimalAngle"
-            name="Minimal Angle"
-            type="float">
-         <dependency
-               option="de.cau.cs.kieler.edgeRouting"
-               value="SPLINES">
-         </dependency>
-      </layoutOption>
       <layoutOption
             appliesTo="parents"
             default="false"

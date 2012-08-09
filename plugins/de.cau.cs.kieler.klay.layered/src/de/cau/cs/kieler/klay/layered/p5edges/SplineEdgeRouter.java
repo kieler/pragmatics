@@ -58,6 +58,9 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
     /** factor for layer spacing. */
     private static final double LAYER_SPACE_FAC = 0.2;
     
+    /** the minimal angle that short edges must have (for smaller angles a spline is created). */
+    private static final double MINIMAL_ANGLE = Math.PI / 3;   // SUPPRESS CHECKSTYLE MagicNumber
+    
     /** amounts of points treated the same way. */
     private static final int HIGH_LIMIT = 7;
     private static final int MID_LIMIT = 5;
@@ -128,9 +131,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
         }
         layeredGraph.getSize().x = xpos - layerSpacing;
 
-        // get user defined minimal angle for straight edges heading in and out nodes
-        double minimalAngle = Math.toRadians(layeredGraph.getProperty(Properties.MIN_EDGE_ANGLE));
-        
         // process all edges
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
@@ -140,8 +140,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
                             if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
                                     == NodeType.LONG_EDGE) {
                                 processLongEdge(edge);
-                            } else if (minimalAngle > 0) {
-                                processShortEdge(edge, minimalAngle);
+                            } else {
+                                processShortEdge(edge);
                             }
                         }
                     }
@@ -156,9 +156,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
      * Process a short edge.
      * 
      * @param edge an edge
-     * @param minimalAngle the minimal outgoing angle for edges
      */
-    private void processShortEdge(final LEdge edge, final double minimalAngle) {
+    private void processShortEdge(final LEdge edge) {
         LPort start = edge.getSource();
         LPort end = edge.getTarget();
         KVector startVec = start.getAbsoluteAnchor();
@@ -169,7 +168,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
         double radians = startToEnd.toRadians();
 
         // if the minimalAngle criteria is not met, create a short spline
-        if ((radians < minimalAngle || radians > Math.PI - minimalAngle)) {
+        if ((radians < MINIMAL_ANGLE || radians > Math.PI - MINIMAL_ANGLE)) {
             BezierSpline spline = generateShortSpline(startVec, endVec);
             for (KVector v : spline.getInnerPoints()) {
                 edge.getBendPoints().add(v);
