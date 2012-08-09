@@ -74,9 +74,8 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      */
     public static boolean isNoLayout(final EditPart editPart) {
         if (editPart instanceof IGraphicalEditPart) {
-            Boolean result = (Boolean) EclipseLayoutConfig.getOption(editPart,
-                    ((IGraphicalEditPart) editPart).getNotationView().getElement(),
-                    LayoutOptions.NO_LAYOUT);
+            Boolean result = (Boolean) EclipseLayoutConfig.getValue(LayoutOptions.NO_LAYOUT,
+                    editPart, ((IGraphicalEditPart) editPart).getNotationView().getElement());
             if (result != null) {
                 return result;
             }
