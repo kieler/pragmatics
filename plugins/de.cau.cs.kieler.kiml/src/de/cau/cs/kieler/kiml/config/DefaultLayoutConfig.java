@@ -233,7 +233,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
         int bestPrio = LayoutAlgorithmData.MIN_PRIORITY;
         boolean matchesLayoutType = false, matchesDiagramType = false, matchesGeneralDiagram = false;
         for (LayoutAlgorithmData currentAlgo : layoutServices.getAlgorithmData()) {
-            int currentPrio = currentAlgo.getSupportedPriority(chDiagType);
+            int currentPrio = currentAlgo.getDiagramSupport(chDiagType);
             String layoutType = currentAlgo.getType();
             if (matchesLayoutType) {
                 if (layoutType.length() > 0 && layoutType.equals(layoutHint)) {
@@ -253,7 +253,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                             matchesDiagramType = true;
                             matchesGeneralDiagram = false;
                         } else {
-                            currentPrio = currentAlgo.getSupportedPriority(
+                            currentPrio = currentAlgo.getDiagramSupport(
                                     LayoutDataService.DIAGRAM_TYPE_GENERAL);
                             if (matchesGeneralDiagram) {
                                 if (currentPrio > bestPrio) {
@@ -288,7 +288,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                         matchesGeneralDiagram = false;
                     } else {
                         matchesDiagramType = false;
-                        currentPrio = currentAlgo.getSupportedPriority(
+                        currentPrio = currentAlgo.getDiagramSupport(
                                 LayoutDataService.DIAGRAM_TYPE_GENERAL);
                         if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {
                             // the algorithm does not support the given diagram type, but
@@ -315,7 +315,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                             matchesDiagramType = true;
                             matchesGeneralDiagram = false;
                         } else {
-                            currentPrio = currentAlgo.getSupportedPriority(
+                            currentPrio = currentAlgo.getDiagramSupport(
                                     LayoutDataService.DIAGRAM_TYPE_GENERAL);
                             if (matchesGeneralDiagram) {
                                 if (currentPrio > bestPrio) {
