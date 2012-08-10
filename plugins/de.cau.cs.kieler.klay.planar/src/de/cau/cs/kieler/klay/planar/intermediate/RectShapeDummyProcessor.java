@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.planar.intermediate;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -40,7 +39,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author pkl
  */
-public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /** Around a face in ccw direction is four times right. */
     private static final int CCW_DIRECTION = 4;
@@ -48,12 +47,16 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
     /** The external face has at this point exact 5 adjacent edges. */
     private static final int EXTERNAL_EDGE_COUNT = 6;
 
+    /** The number of face sides.*/
     private static final int SIDE_NUMBER = 4;
 
+    /** Left is 0, top is 1, right is 2 and bottom is 3.*/
     private static final int BOTTOM_SIDE_INDEX = 3;
 
+    /** The processed graph.*/
     private PGraph graph;
 
+    /** The orthogonal representation of that graph. */
     private OrthogonalRepresentation orthogonal;
 
     /**
@@ -64,23 +67,14 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         this.graph = pgraph;
         this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
 
-        // Add a node for every bend in the orthogonal representation
-        List<PEdge> edges = new LinkedList<PEdge>();
-        edges.addAll(pgraph.getEdges());
-
-        for (PEdge edge : edges) {
-            addBendDummies(edge);
-        }
-
         determineFaceDirections();
 
-        // Decompose faces into rectangles
+        // Decompose faces into rectangles and transform external and internal face separately.
         if (this.graph.getExternalFace().isInRectShape()) {
             this.graph.setProperty(Properties.RECT_SHAPE_TRANS_EXTERNAL, Boolean.FALSE);
         } else {
             this.graph.setProperty(Properties.RECT_SHAPE_TRANS_EXTERNAL, Boolean.TRUE);
             transformExternalFace();
-//            determineFaceDirections();
         }
 
         transformInternalFaces();
@@ -722,31 +716,6 @@ public class RectShapeProcessor extends AbstractAlgorithm implements ILayoutProc
         this.orthogonal.setBends(newEdge, new OrthogonalAngle[0]);
         this.orthogonal.setBends(virtualEdge, new OrthogonalAngle[0]);
 
-    }
-
-    private void addBendDummies(final PEdge edge) {
-        OrthogonalAngle[] bends = this.orthogonal.getBends(edge);
-        List<Pair<PEdge, OrthogonalAngle>> list;
-        for (int i = bends.length - 1; i >= 0; i--) {
-            Pair<PNode, PEdge> pair = this.graph.addNode(edge);
-            pair.getFirst().setProperty(Properties.BENDPOINT, bends[i]);
-            PEdge newedge = pair.getSecond();
-            OrthogonalAngle b1 = bends[i];
-            OrthogonalAngle b2 = (bends[i] == OrthogonalAngle.LEFT) ? OrthogonalAngle.RIGHT
-                    : OrthogonalAngle.LEFT;
-            list = new LinkedList<Pair<PEdge, OrthogonalAngle>>();
-            list.add(new Pair<PEdge, OrthogonalAngle>(edge, b1));
-            list.add(new Pair<PEdge, OrthogonalAngle>(newedge, b2));
-            this.orthogonal.setAngles(pair.getFirst(), list);
-            this.orthogonal.setBends(newedge, new OrthogonalAngle[0]);
-            for (Pair<PEdge, OrthogonalAngle> entry : this.orthogonal
-                    .getAngles(newedge.getTarget())) {
-                if (entry.getFirst() == edge) {
-                    entry.setFirst(newedge);
-                }
-            }
-        }
-        this.orthogonal.setBends(edge, new OrthogonalAngle[0]);
     }
 
 }
