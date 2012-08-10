@@ -40,7 +40,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @param <T> the type of graph that this importer can transform into a layered graph.
  * @author cds
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {

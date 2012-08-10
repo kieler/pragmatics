@@ -46,7 +46,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see LayerConstraintProcessor
  * @author cds
  * @author msp
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implements ILayoutProcessor {
