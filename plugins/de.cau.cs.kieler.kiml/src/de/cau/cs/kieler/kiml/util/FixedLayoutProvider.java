@@ -30,10 +30,18 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
 
 /**
- * A layout provider that sets fixed positions for all elements. Elements that have no position
- * option attached just stay where they are.
+ * A layout provider that sets fixed positions for all elements. These positions are taken
+ * from the {@link LayoutOptions#POSITION} and {@link LayoutOptions#BEND_POINTS} options.
+ * Elements that have no position option attached just stay where they are.
+ * This is useful for at least two things:
+ * <ul>
+ *   <li>Fix the layout of a part of the diagram so it won't be affected by automatic layout.</li>
+ *   <li>Apply a layout imported from somewhere else, e.g. the original layout that was
+ *     manually created in another modeling tool.</li>
+ * </ul>
  *
- * @kieler.rating 2011-01-13 proposed yellow msp
+ * @kieler.rating yellow 2012-08-10 review KI-23 by cds, sgu
+ * @kieler.design proposed by msp
  * @author msp
  */
 public class FixedLayoutProvider extends AbstractLayoutProvider {
@@ -143,6 +151,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         boolean sameHierarchy = edge.getSource().getParent() == edge.getTarget().getParent();
         KVector maxv = new KVector();
         KVectorChain bendPoints = edgeLayout.getProperty(LayoutOptions.BEND_POINTS);
+        // we need at least two bend points, since the source point and target point must be included
         if (bendPoints != null && bendPoints.size() >= 2) {
             edgeLayout.applyVectorChain(bendPoints);
         }

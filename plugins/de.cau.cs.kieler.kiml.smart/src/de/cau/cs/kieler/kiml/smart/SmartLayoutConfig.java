@@ -307,7 +307,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
         for (LayoutAlgorithmData algorithmData : typeData.getLayouters()) {
             double p = 0;
             for (GraphFeature feature : graphFeatures) {
-                int prio = algorithmData.getSupportedPriority(feature);
+                int prio = algorithmData.getFeatureSupport(feature);
                 if (prio <= -SUPP_FEATURE_PRIO_SCALE) {
                     p++;
                 } else if (prio < 0) {
@@ -339,15 +339,15 @@ public class SmartLayoutConfig implements ILayoutConfig {
         for (LayoutAlgorithmData algorithmData : typeData.getLayouters()) {
             int s = 0;
             for (GraphFeature feature : graphFeatures) {
-                s += Math.max(algorithmData.getSupportedPriority(feature), -SUPP_FEATURE_PRIO_SCALE);
+                s += Math.max(algorithmData.getFeatureSupport(feature), -SUPP_FEATURE_PRIO_SCALE);
             }
             if (s > featureSupport) {
                 featureSupport = s;
                 bestAlgo = algorithmData;
             } else if (s == featureSupport) {
-                int bestPrio = bestAlgo == null ? 0 : bestAlgo.getSupportedPriority(
+                int bestPrio = bestAlgo == null ? 0 : bestAlgo.getDiagramSupport(
                         LayoutDataService.DIAGRAM_TYPE_GENERAL);
-                int currentPrio = algorithmData.getSupportedPriority(
+                int currentPrio = algorithmData.getDiagramSupport(
                         LayoutDataService.DIAGRAM_TYPE_GENERAL);
                 if (bestAlgo == null || currentPrio > bestPrio) {
                     bestAlgo = algorithmData;

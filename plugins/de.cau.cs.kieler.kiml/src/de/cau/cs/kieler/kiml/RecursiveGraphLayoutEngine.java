@@ -21,25 +21,21 @@ import de.cau.cs.kieler.kiml.options.GraphFeature;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
- * Performs layout in a graph with hierarchy by executing a layout algorithm on
- * each level of the hierarchy. This is done recursively from the leafs to the
- * root of the nodes in the graph, using size information from lower levels in
- * the levels above. If an exception occurs, {@link #getLastLayoutProvider()}
- * can be used to get more information about the algorithm that caused the
- * exception.
+ * Performs layout on a graph with hierarchy by executing a layout algorithm on each level of the
+ * hierarchy. This is done recursively from the leafs to the root of the nodes in the graph, using
+ * size information from lower levels in the levels above.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2012-08-10 review KI-23 by cds, sgu
  * @author ars
  * @author msp
  */
 public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
 
     /**
-     * Performs recursive layout on the given layout graph. Layout is not only performed
-     * for the selected node, but also for its ancestors, if there are any.
+     * Performs recursive layout on the given layout graph.
      * 
-     * @param layoutGraph instance of a layout graph
+     * @param layoutGraph top-level node of the graph to be laid out
      * @param progressMonitor monitor to which progress of the layout algorithms is reported
      */
     public void layout(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor) {
@@ -68,9 +64,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             // if the layout provider supports hierarchy, it is expected to layout the children
             int nodeCount;
             if (layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)
-                    && (algorithmData.getSupportedPriority(GraphFeature.COMPOUND)
+                    && (algorithmData.getFeatureSupport(GraphFeature.COMPOUND)
                             > LayoutAlgorithmData.MIN_PRIORITY
-                        || algorithmData.getSupportedPriority(GraphFeature.CLUSTERS)
+                        || algorithmData.getFeatureSupport(GraphFeature.CLUSTERS)
                             > LayoutAlgorithmData.MIN_PRIORITY)) {
                 nodeCount = countNodes(layoutNode, false);
             } else {

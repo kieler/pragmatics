@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar.p3compact;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
-import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.flownetwork.SimpleFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -33,7 +34,7 @@ import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
-import de.cau.cs.kieler.klay.planar.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.planar.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 import de.cau.cs.kieler.klay.planar.util.PUtil;
@@ -69,18 +70,28 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
 
     private PNode sink;
 
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
+    // Before Phase 1
+            null,
+            // Before Phase 2
+            null,
+            // Before Phase 3
+            null,
+            // Before Phase 4
+            EnumSet.of(LayoutProcessorStrategy.BEND_DUMMY, LayoutProcessorStrategy.RECT_SHAPE_DUMMY),
+            // After Phase 4
+            EnumSet.of(LayoutProcessorStrategy.GRID_DRAWING,
+                    LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER));
+
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph pgraph) {
-        IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy();
-        strategy.addLayoutProcessor(IntermediateProcessingStrategy.BEFORE_PHASE_4,
-                IntermediateLayoutProcessor.RECT_SHAPE);
-        strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_4,
-                IntermediateLayoutProcessor.GRID_DRAWING);
-        strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_4,
-                IntermediateLayoutProcessor.DUMMYNODE_REMOVING_PROCESSOR);
-        return strategy;
+    public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pgraph) {
+        // TODO Auto-generated method stub
+        return new IntermediateProcessingConfiguration(INTERMEDIATE_PROCESSING_CONFIGURATION);
     }
 
     // ======================== Algorithm ==========================================================
@@ -96,33 +107,33 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
         // it is definitively the better way. But give a info at the docu what happens with
         // the orthogonal representation of the book!!!
 
-            // TODO think about: the input graph has to have at least 4 nodes, otherwise
-            // it would not make any sense to do the flownetwork step.
-            // Then it would be meaningful to set the edge-sizes to the same value.
-            // x -- x -- x
-            // Think about other exceptions and try to work on them.
+        // TODO think about: the input graph has to have at least 4 nodes, otherwise
+        // it would not make any sense to do the flownetwork step.
+        // Then it would be meaningful to set the edge-sizes to the same value.
+        // x -- x -- x
+        // Think about other exceptions and try to work on them.
 
-            // used to create the flownetwork
-            // findExternalFace();
-            this.externalFace = pgraph.getExternalFace();
-            // helps to create the flow network
-            PUtil.defineFaceSideEdges(graph);
-            // Create networks, start with side 0 for horizontal and 1 for vertical.
-            IFlowNetworkSolver solver = new SimpleFlowSolver();
+        // used to create the flownetwork
+        // findExternalFace();
+        this.externalFace = pgraph.getExternalFace();
+        // helps to create the flow network
+        PUtil.defineFaceSideEdges(graph);
+        // Create networks, start with side 0 for horizontal and 1 for vertical.
+        IFlowNetworkSolver solver = new SimpleFlowSolver();
 
-            // side 0 is the left face side, thus it is vertical.
-            PGraph verticalNetwork = createFlowNetwork(0);
-            solver.findFlow(verticalNetwork);
-            addFlowAsLength(verticalNetwork);
+        // side 0 is the left face side, thus it is vertical.
+        PGraph verticalNetwork = createFlowNetwork(0);
+        solver.findFlow(verticalNetwork);
+        addFlowAsLength(verticalNetwork);
 
-            // side 1 is the top face side, thus it is horizontal.
-            PGraph horizontalNetwork = createFlowNetwork(1);
-            solver.findFlow(horizontalNetwork);
-            addFlowAsLength(horizontalNetwork);
-            // Assign coordinates based on flow
-            // filter edges meaning using the horizontal and vertical segments to
-            // determine the edge size.
-            // faceside
+        // side 1 is the top face side, thus it is horizontal.
+        PGraph horizontalNetwork = createFlowNetwork(1);
+        solver.findFlow(horizontalNetwork);
+        addFlowAsLength(horizontalNetwork);
+        // Assign coordinates based on flow
+        // filter edges meaning using the horizontal and vertical segments to
+        // determine the edge size.
+        // faceside
     }
 
     /**

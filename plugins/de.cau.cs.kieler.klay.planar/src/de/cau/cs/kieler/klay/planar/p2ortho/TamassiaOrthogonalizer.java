@@ -26,7 +26,7 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
-import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.flownetwork.SuccessiveShortestPathFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
@@ -37,7 +37,7 @@ import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
-import de.cau.cs.kieler.klay.planar.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.planar.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
@@ -163,13 +163,13 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
             edgeLeft.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
             edgeLeft.setProperty(IPathFinder.PATHCOST, 1);
             edgeLeft.setProperty(IFlowNetworkSolver.CROSSING_EDGE, edge);
-           
+
             PEdge edgeRight = network.addEdge(faceMapping.get(right), faceMapping.get(left), true);
             edgeRight.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
             edgeRight.setProperty(IPathFinder.PATHCOST, 1);
             edgeRight.setProperty(IFlowNetworkSolver.CROSSING_EDGE, edge);
             this.faceArcs.add(new Pair<PEdge, PEdge>(edgeLeft, edgeRight));
-            
+
         }
 
         return network;
@@ -334,10 +334,10 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph pgraph) {
-        IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy();
-        strategy.addLayoutProcessor(IntermediateProcessingStrategy.BEFORE_PHASE_3,
-                IntermediateLayoutProcessor.EXT_FACE);
+    public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pgraph) {
+        IntermediateProcessingConfiguration strategy = new IntermediateProcessingConfiguration();
+        strategy.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_3,
+                LayoutProcessorStrategy.EXT_FACE);
         return strategy;
     }
 
