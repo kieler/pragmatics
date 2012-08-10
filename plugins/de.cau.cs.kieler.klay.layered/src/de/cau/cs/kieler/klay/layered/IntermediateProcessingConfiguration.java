@@ -165,13 +165,16 @@ public class IntermediateProcessingConfiguration {
     
     /**
      * Returns the layout processors in the given slot. Modifications of the returned
-     * set do not result in modifications of this strategy.
+     * set do not result in modifications of this strategy. Note that iterating over the
+     * returned {@code EnumSet} will iterate over the elements in the natural order in
+     * which they occur in the original enumeration. That natural order is in turn just
+     * the order in which they must be executed to satisfy all dependencies.
      * 
      * @param slotIndex the slot index. Must be {@code >= 0} and
      *                  {@code < INTERMEDIATE_PHASE_SLOTS}.
      * @return the slot's set of layout processors.
      */
-    public Set<LayoutProcessorStrategy> getProcessors(final int slotIndex) {
+    public EnumSet<LayoutProcessorStrategy> getProcessors(final int slotIndex) {
         if (slotIndex < 0 || slotIndex >= INTERMEDIATE_PHASE_SLOTS) {
             throw new IllegalArgumentException("slotIndex must be >= 0 and < "
                     + INTERMEDIATE_PHASE_SLOTS + ".");
@@ -227,7 +230,9 @@ public class IntermediateProcessingConfiguration {
      * @param operand the strategy to unify this strategy with. May be {@code null}.
      * @return this strategy.
      */
-    public IntermediateProcessingConfiguration addAll(final IntermediateProcessingConfiguration operand) {
+    public IntermediateProcessingConfiguration addAll(
+            final IntermediateProcessingConfiguration operand) {
+        
         if (operand != null) {
             for (int i = 0; i < INTERMEDIATE_PHASE_SLOTS; i++) {
                 strategy.get(i).addAll(operand.strategy.get(i));

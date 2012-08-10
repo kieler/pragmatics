@@ -390,11 +390,14 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      */
     private List<ILayoutProcessor> getIntermediateProcessorList(final int slotIndex) {
         // fetch the set of layout processors configured for the given slot
-        Set<LayoutProcessorStrategy> processors = intermediateProcessingConfiguration
+        EnumSet<LayoutProcessorStrategy> processors = intermediateProcessingConfiguration
                 .getProcessors(slotIndex);
         List<ILayoutProcessor> result = new ArrayList<ILayoutProcessor>(processors.size());
 
-        // iterate through the layout processors and add them to the result list
+        // iterate through the layout processors and add them to the result list; the EnumSet
+        // guarantees that we iterate over the processors in the order in which they occur in
+        // the LayoutProcessorStrategy, thereby satisfying all of their runtime order
+        // dependencies without having to sort them in any way
         for (LayoutProcessorStrategy processor : processors) {
             // check if an instance of the given layout processor is already in the cache
             ILayoutProcessor processorImpl = intermediateLayoutProcessorCache.get(processor);
