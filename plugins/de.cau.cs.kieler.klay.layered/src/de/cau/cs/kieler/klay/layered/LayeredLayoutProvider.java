@@ -152,7 +152,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
 
         // pack the components back into one graph
-        layeredGraph = componentsProcessor.pack(components);
+        layeredGraph = componentsProcessor.combine(components);
 
         // apply the layout results to the original graph
         graphImporter.applyLayout(layeredGraph);

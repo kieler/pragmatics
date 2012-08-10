@@ -29,7 +29,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * be used in the presence of such connections.
  * 
  * <p>This was the first algorithm implemented to place the different connected components of a graph,
- * and was formerly the implementation of the {@link ComponentsProcessor#pack(List)} method.</p>
+ * and was formerly the implementation of the {@link ComponentsProcessor#combine(List)} method.</p>
  * 
  * @author msp
  * @author cds

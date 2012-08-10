@@ -192,12 +192,13 @@ public class ComponentsProcessor extends AbstractAlgorithm {
     }
     
     /**
-     * Pack the given components into a single graph.
+     * Combine the given components into a single graph by moving them around such that they are
+     * placed next and beneath to each other instead of overlapping.
      * 
      * @param components a list of components
      * @return a single graph that contains all components
      */
-    public LGraph pack(final List<LGraph> components) {
+    public LGraph combine(final List<LGraph> components) {
         LGraph combinedGraph = graphPlacer.combine(components);
         
         return combinedGraph;
