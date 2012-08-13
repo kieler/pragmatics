@@ -26,14 +26,11 @@ import de.cau.cs.kieler.core.math.KVector;
  * class for the KIELER projects.
  * 
  * @author wah
- * 
  */
 public class CubicSplineInterpolatorTest {
 
     /**
-     * 
      * Test calculateClosedBezierSpline from CubicSplineInterpolatorTest class.
-     * 
      */
     @Test
     public void calculateClosedBezierSplineTest() {
@@ -56,10 +53,10 @@ public class CubicSplineInterpolatorTest {
         v4 = new KVector(70, 50);
         KVector[] vectors_h = { v0, v1, v2, v3, v4 };
         b = new CubicSplineInterpolator().calculateClosedBezierSpline(vectors_h);
-        assertEquals(b.getStartPoint().y, 50, 0);
-        assertEquals(b.getEndPoint().y, 50, 0);
+        assertEquals(50, b.getStartPoint().y, 0);
+        assertEquals(50, b.getEndPoint().y, 0);
         for (KVector v : b.getInnerPoints()) {
-            assertEquals(v.y, 50, 0);
+            assertEquals(50, v.y, 0);
         }
 
         // test vertical aligned points
@@ -70,10 +67,10 @@ public class CubicSplineInterpolatorTest {
         v4 = new KVector(100, 200);
         KVector[] vectors_v = { v0, v1, v2, v3, v4 };
         b = new CubicSplineInterpolator().calculateClosedBezierSpline(vectors_v);
-        assertEquals(b.getStartPoint().x, 100, 0);
-        assertEquals(b.getEndPoint().x, 100, 0);
+        assertEquals(100, b.getStartPoint().x, 0);
+        assertEquals(100, b.getEndPoint().x, 0);
         for (KVector v : b.getInnerPoints()) {
-            assertEquals(v.x, 100, 0);
+            assertEquals(100, v.x, 0);
         }
 
     }
