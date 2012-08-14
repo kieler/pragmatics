@@ -28,9 +28,6 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
-import de.cau.cs.kieler.core.ui.UnsupportedPartException;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.LayoutContext;
@@ -43,6 +40,8 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
+import de.cau.cs.kieler.kiml.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
 
 /**
  * The entry class for automatic layout of graphical diagrams.
@@ -397,32 +396,28 @@ public class DiagramLayoutEngine {
             final boolean layoutAncestors) {
         if (layoutAncestors) {
             // mark all parallel areas for exclusion from layout
-            try {
-                KGraphElement graphElem = mapping.getGraphMap().inverse().get(diagramPart);
-                if (graphElem instanceof KNode && ((KNode) graphElem).getParent() != null) {
-                    KNode node = (KNode) graphElem;
-                    VolatileLayoutConfig vlc = new VolatileLayoutConfig();
-                    do {
-                        KNode parent = node.getParent();
-                        for (KNode child : parent.getChildren()) {
-                            if (child != node) {
-                                // do not layout the content of the child node
-                                vlc.setValue(LayoutOptions.NO_LAYOUT, child,
-                                        LayoutContext.GRAPH_ELEM, true);
-                                // do not change the size of the child node
-                                vlc.setValue(LayoutOptions.SIZE_CONSTRAINT, child,
-                                        LayoutContext.GRAPH_ELEM, SizeConstraint.FIXED);
-                                // do not move the ports of the child node
-                                vlc.setValue(LayoutOptions.PORT_CONSTRAINTS, child,
-                                        LayoutContext.GRAPH_ELEM, PortConstraints.FIXED_POS);
-                            }
+            KGraphElement graphElem = mapping.getGraphMap().inverse().get(diagramPart);
+            if (graphElem instanceof KNode && ((KNode) graphElem).getParent() != null) {
+                KNode node = (KNode) graphElem;
+                VolatileLayoutConfig vlc = new VolatileLayoutConfig();
+                do {
+                    KNode parent = node.getParent();
+                    for (KNode child : parent.getChildren()) {
+                        if (child != node) {
+                            // do not layout the content of the child node
+                            vlc.setValue(LayoutOptions.NO_LAYOUT, child,
+                                    LayoutContext.GRAPH_ELEM, true);
+                            // do not change the size of the child node
+                            vlc.setValue(LayoutOptions.SIZE_CONSTRAINT, child,
+                                    LayoutContext.GRAPH_ELEM, SizeConstraint.FIXED);
+                            // do not move the ports of the child node
+                            vlc.setValue(LayoutOptions.PORT_CONSTRAINTS, child,
+                                    LayoutContext.GRAPH_ELEM, PortConstraints.FIXED_POS);
                         }
-                        node = parent;
-                    } while (node.getParent() != null);
-                    mapping.getLayoutConfigs().add(vlc);
-                }
-            } catch (UnsupportedPartException e) {
-                // ignore exception
+                    }
+                    node = parent;
+                } while (node.getParent() != null);
+                mapping.getLayoutConfigs().add(vlc);
             }
         }
         
