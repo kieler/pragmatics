@@ -17,12 +17,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
  * A port in a layered graph. The position of the port is relative to the upper left corner
@@ -57,57 +56,47 @@ public class LPort extends LShape {
     /** the edges going out of the port. */
     private final List<LEdge> outgoingEdges = new LinkedList<LEdge>();
     
-    /**
-     * A condition that checks the type of ports. If a port has incoming edges, it is considered
-     * an input port. If a port has outgoing edges, it is considered an output port. A port may
-     * be both, input and output port, or none.
-     */
-    public static class TypeCondition implements ICondition<LPort> {
-        private PortType condType;
-        
-        /**
-         * Creates a type condition.
-         * @param thetype the type of port to admit
-         */
-        public TypeCondition(final PortType thetype) {
-            this.condType = thetype;
+    /** a predicate that checks for output ports, that is ports with outgoing edges. */
+    public static final Predicate<LPort> OUTPUT_PREDICATE = new Predicate<LPort>() {
+        public boolean apply(final LPort port) {
+            return !port.outgoingEdges.isEmpty();
         }
-        
-        /**
-         * {@inheritDoc}
-         */
-        public boolean evaluate(final LPort object) {
-            switch (condType) {
-            case INPUT:
-                return !object.incomingEdges.isEmpty();
-            
-            case OUTPUT:
-                return !object.outgoingEdges.isEmpty();
-            
-            default:
-                return true;
-            }
+    };
+
+    /** a predicate that checks for input ports, that is ports with incoming edges. */
+    public static final Predicate<LPort> INPUT_PREDICATE = new Predicate<LPort>() {
+        public boolean apply(final LPort port) {
+            return !port.incomingEdges.isEmpty();
         }
-    }
+    };
     
-    /** A condition that checks the side of ports. */
-    public static class SideCondition implements ICondition<LPort> {
-        private PortSide condSide;
-        /**
-         * Creates a side condition.
-         * @param theside the side of port to admit
-         */
-        public SideCondition(final PortSide theside) {
-            this.condSide = theside;
+    /** a predicate that checks for north-side ports. */
+    public static final Predicate<LPort> NORTH_PREDICATE = new Predicate<LPort>() {
+        public boolean apply(final LPort port) {
+            return port.side == PortSide.NORTH;
         }
-        
-        /**
-         * {@inheritDoc}
-         */
-        public boolean evaluate(final LPort object) {
-            return object.side == condSide;
+    };
+    
+    /** a predicate that checks for east-side ports. */
+    public static final Predicate<LPort> EAST_PREDICATE = new Predicate<LPort>() {
+        public boolean apply(final LPort port) {
+            return port.side == PortSide.EAST;
         }
-    }
+    };
+    
+    /** a predicate that checks for south-side ports. */
+    public static final Predicate<LPort> SOUTH_PREDICATE = new Predicate<LPort>() {
+        public boolean apply(final LPort port) {
+            return port.side == PortSide.SOUTH;
+        }
+    };
+    
+    /** a predicate that checks for west-side ports. */
+    public static final Predicate<LPort> WEST_PREDICATE = new Predicate<LPort>() {
+        public boolean apply(final LPort port) {
+            return port.side == PortSide.WEST;
+        }
+    };
 
     /**
      * {@inheritDoc}
