@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.util;
+package de.cau.cs.kieler.kiml.service.grana.dependency;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,8 +30,7 @@ import java.util.Stack;
  * @param <T>
  *            the object type
  */
-public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>>
-        implements IDependencyGraph<S, T> {
+public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
 
     /** the removed marker. */
     private static final int MARKER_REMOVED = 0;
@@ -46,7 +45,11 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>>
     private Map<S, Node> nodes = new HashMap<S, Node>();
 
     /**
-     * {@inheritDoc}
+     * Adds an object to the graph if all dependencies can be resolved.
+     * 
+     * @param object
+     *            the object
+     * @return true if the object was added
      */
     public boolean add(final T object) {
         Node node = new Node(object);
@@ -59,7 +62,11 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>>
     }
 
     /**
-     * {@inheritDoc}
+     * Removes an object from the graph and all objects depending on it.
+     * 
+     * @param object
+     *            the object to remove
+     * @return the removed objects
      */
     public List<T> remove(final T object) {
         if (nodes.containsKey(object.getId())) {
@@ -76,7 +83,14 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>>
     }
 
     /**
-     * {@inheritDoc}
+     * Adds a collection of objects to the graph and tries to resolve
+     * dependencies.<br>
+     * Returns a list of objects that could not be added cause they had missing
+     * dependencies or were part of a cycle.
+     * 
+     * @param objects
+     *            the objects to add
+     * @return the list of objects that could not be added
      */
     public List<T> addAll(final Collection<T> objects) {
         Queue<Node> nodeQueue = new LinkedList<Node>();
@@ -110,7 +124,11 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>>
     }
 
     /**
-     * {@inheritDoc}
+     * Returns an object by it's identifier.
+     * 
+     * @param id
+     *            the identifier
+     * @return the object
      */
     public T get(final S id) {
         if (nodes.containsKey(id)) {
@@ -121,7 +139,13 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>>
     }
 
     /**
-     * {@inheritDoc}
+     * Returns a sorted list of the objects so that an object that depends on
+     * another object precedes it in the list. Removes objects that are not
+     * represented in this graph.
+     * 
+     * @param objects
+     *            the objects
+     * @return a sorted list respecting dependencies between the objects
      */
     public List<T> dependencySort(final List<T> objects) {
         LinkedList<T> sorted = new LinkedList<T>();
@@ -156,40 +180,6 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>>
             }
         }
         return sorted;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public <R> R deriveObject(final T object,
-            final DerivationDetail<T, R> derivationDetail) {
-        Node node = nodes.get(object.getId());
-        if (node == null) {
-            return null;
-        }
-        R derivative = derivationDetail.derive(node.getObject());
-        if (derivative == null) {
-            return null;
-        }
-        Queue<Pair<Node, R>> nodeQueue = new LinkedList<Pair<Node, R>>();
-        nodeQueue.add(new Pair<Node, R>(node, derivative));
-        while (!nodeQueue.isEmpty()) {
-            Pair<Node, R> currentPair = nodeQueue.poll();
-            R currentDerivative = currentPair.getSecond();
-            for (Node dependency : currentPair.getFirst()
-                    .getStrongDependencies()) {
-                R dependencyDerivative =
-                        derivationDetail.derive(dependency.getObject());
-                if (dependencyDerivative == null) {
-                    return null;
-                }
-                derivationDetail.makeDependent(currentDerivative,
-                        dependencyDerivative, dependency.getObject());
-                nodeQueue.add(new Pair<Node, R>(dependency,
-                        dependencyDerivative));
-            }
-        }
-        return derivative;
     }
 
     /**
