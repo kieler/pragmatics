@@ -537,7 +537,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     northernSourceLayer,
                     0,
                     northernTargetLayer,
-                    -nodeSpacing);
+                    -nodeSpacing - layeredGraph.getOffset().y);
             
             // If anything was routed, adjust the graph's offset and height
             if (slots > 0) {
@@ -631,7 +631,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                 KVectorChain incomingEdgeBendPoints = new KVectorChain(nodeToOriginEdge.getBendPoints());
                 
                 KVector firstBendPoint = new KVector(nodeInPort.getPosition());
-                firstBendPoint.add(node.getPosition());
+                firstBendPoint.add(new KVector(node.getPosition()));
                 incomingEdgeBendPoints.add(0, firstBendPoint);
                 
                 // Compute bend points for outgoing edges
@@ -639,7 +639,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                         nodeToOriginEdge.getBendPoints());
                 
                 KVector lastBendPoint = new KVector(nodeOutPort.getPosition());
-                lastBendPoint.add(node.getPosition());
+                lastBendPoint.add(new KVector(node.getPosition()));
                 outgoingEdgeBendPoints.add(lastBendPoint);
                 
                 // Retrieve the original hierarchical port dummy
