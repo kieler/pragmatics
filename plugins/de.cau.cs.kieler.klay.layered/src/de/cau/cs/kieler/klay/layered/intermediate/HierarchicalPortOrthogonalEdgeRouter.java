@@ -753,11 +753,13 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             case WEST:
                 if (constraints == PortConstraints.FIXED_RATIO) {
                     double ratio = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
-                    nodePosition.y = graphActualSize.y * ratio;
+                    nodePosition.y = graphActualSize.y * ratio
+                            - node.getProperty(Properties.PORT_ANCHOR).y;
                     requiredActualGraphHeight = nodePosition.y + extPortSize.y;
                     node.borderToContentAreaCoordinates(false, true);
                 } else if (constraints == PortConstraints.FIXED_POS) {
-                    nodePosition.y = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+                    nodePosition.y = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION)
+                            - node.getProperty(Properties.PORT_ANCHOR).y;
                     requiredActualGraphHeight = nodePosition.y + extPortSize.y;
                     node.borderToContentAreaCoordinates(false, true);
                 }
