@@ -351,6 +351,16 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                 bal.getRoot().put(v, v);
                 bal.getAlign().put(v, v);
                 bal.getInnerShift().put(v, 0.0);
+                if (v.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                    bal.getBlockContainsNorthSouth().put(v, true);
+                } else {
+                    bal.getBlockContainsNorthSouth().put(v, false);
+                }
+                if (v.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
+                    bal.getBlockContainsRegularNode().put(v, true);
+                } else {
+                    bal.getBlockContainsRegularNode().put(v, false);
+                }
             }
         }
 
@@ -409,6 +419,14 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                                     bal.getAlign().put(u_m, v_i_k);
                                     bal.getRoot().put(v_i_k, bal.getRoot().get(u_m));
                                     bal.getAlign().put(v_i_k, bal.getRoot().get(v_i_k));
+                                    if (bal.getBlockContainsNorthSouth().get(v_i_k)) {
+                                        bal.getBlockContainsNorthSouth()
+                                            .put(bal.getRoot().get(v_i_k), true);
+                                    }
+                                    if (bal.getBlockContainsRegularNode().get(v_i_k)) {
+                                        bal.getBlockContainsRegularNode()
+                                            .put(bal.getRoot().get(v_i_k), true);
+                                    }
                                     r = u_m.getIndex();
                                 }
                             }
@@ -422,6 +440,14 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                                     bal.getAlign().put(um, v_i_k);
                                     bal.getRoot().put(v_i_k, bal.getRoot().get(um));
                                     bal.getAlign().put(v_i_k, bal.getRoot().get(v_i_k));
+                                    if (bal.getBlockContainsNorthSouth().get(v_i_k)) {
+                                        bal.getBlockContainsNorthSouth()
+                                            .put(bal.getRoot().get(v_i_k), true);
+                                    }
+                                    if (bal.getBlockContainsRegularNode().get(v_i_k)) {
+                                        bal.getBlockContainsRegularNode()
+                                            .put(bal.getRoot().get(v_i_k), true);
+                                    }
                                     r = um.getIndex();
                                 }
                             }
@@ -922,14 +948,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * @return True, if the block contains a north-south dummy, false else
      */
     private boolean blockContainsNorthSouthDummy(final BKAlignedLayout bal, final LNode root) {
-        LNode current = root;
-        while (bal.getAlign().get(current) != root) {
-            if (current.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
-                return true;
-            }
-            current = bal.getAlign().get(current);
-        }
-        return current.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT;
+        return bal.getBlockContainsNorthSouth().get(root);
     }
     
     /**
@@ -942,14 +961,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      * @return True, if the block contains a regular node, false else
      */
     private boolean blockContainsRegularNode(final BKAlignedLayout bal, final LNode root) {
-        LNode current = root;
-        while (bal.getAlign().get(current) != root) {
-            if (current.getProperty(Properties.ORIGIN) instanceof KNode) {
-                return true;
-            }
-            current = bal.getAlign().get(current);
-        }
-        return current.getProperty(Properties.ORIGIN) instanceof KNode;
+        return bal.getBlockContainsRegularNode().get(root);
     }
 
     /**
@@ -1043,6 +1055,12 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
         /** The y-coordinate of every node, forming the final layout. */
         private HashMap<LNode, Double> y;
+        
+        /** Stores, whether a block contains a NORTH SOUTH port dummy. */
+        private HashMap<LNode, Boolean> blockContainsNorthSouth;
+        
+        /** Stores, whether a block contains a regular node. */
+        private HashMap<LNode, Boolean> blockContainsRegularNode;
 
         /** The vertical direction of the current layout. */
         private VDirection vdir;
@@ -1061,6 +1079,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             sink = Maps.newHashMapWithExpectedSize(nodeCount);
             shift = Maps.newHashMapWithExpectedSize(nodeCount);
             y = Maps.newHashMapWithExpectedSize(nodeCount);
+            blockContainsNorthSouth = Maps.newHashMapWithExpectedSize(nodeCount);
+            blockContainsRegularNode = Maps.newHashMapWithExpectedSize(nodeCount);
             this.vdir = vdir;
             this.hdir = hdir;
         }
@@ -1112,6 +1132,20 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
          */
         public HashMap<LNode, Double> getY() {
             return y;
+        }
+
+        /**
+         * @return the blockContainsNorthSouth
+         */
+        public HashMap<LNode, Boolean> getBlockContainsNorthSouth() {
+            return blockContainsNorthSouth;
+        }
+
+        /**
+         * @return the blockContainsRegularNode
+         */
+        public HashMap<LNode, Boolean> getBlockContainsRegularNode() {
+            return blockContainsRegularNode;
         }
 
         /**
