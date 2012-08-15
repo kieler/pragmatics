@@ -453,9 +453,9 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             // lowerBound determines the top (!) border of the block, since the coordinates
             // of the canvas start with (0,0) and grow down. upperBound then determines
             // the bottom border of the block.
-            double lowerBound = 0.0;
+            double lowerBound = root.getMargin().top;
             double upperBound = root.getMargin().top + root.getSize().y + root.getMargin().bottom;
-            double postShift = 0.0;
+            double postShift = lowerBound;
 
             // Now, the sizes and shifts between the root node and a possible second node
             // of the block is determined, for cases where there are only one or two nodes
