@@ -13,30 +13,30 @@
  */
 package de.cau.cs.kieler.kiml.formats.svg;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
+import java.io.ByteArrayInputStream;
 import java.util.Collections;
 
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.xtext.resource.XtextResourceSet;
+
+import com.google.inject.Injector;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.text.ui.internal.KGraphActivator;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 
@@ -47,55 +47,41 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationData;
  */
 public class Test extends AbstractHandler {
 
-    private static IPreferenceStore preferenceStore;
-    
     /**
      * {@inheritDoc}
      */
-    public Object execute(ExecutionEvent event) throws ExecutionException {
-        
-        if (preferenceStore == null) {
-            preferenceStore = new ScopedPreferenceStore(new InstanceScope(), "de.cau.cs.kieler.kiml.formats.svg");
-        }
-        
+    public Object execute(final ExecutionEvent event) throws ExecutionException {
         try {
-            FileDialog fileDialog = new FileDialog(HandlerUtil.getActiveShell(event));
-            fileDialog.setText("Select KGraph File");
-            String lastFile = preferenceStore.getString("test.lastFile");
-            if (lastFile.length() > 0) {
-                fileDialog.setFileName(lastFile);
-            }
-            String inputFileName = fileDialog.open();
-            if (inputFileName != null) {
-                preferenceStore.setValue("test.lastFile", inputFileName);
-                
-                ResourceSet resourceSet = new ResourceSetImpl();
-                URI inputFileURI = URI.createFileURI(new File(inputFileName).getAbsolutePath());
-                Resource resource = resourceSet.createResource(inputFileURI);
-                resource.load(Collections.EMPTY_MAP);
-                if (resource.getContents().size() != 1) {
-                    throw new RuntimeException("The input file must contain exactly one KGraph model.");
+            ISelection selection = HandlerUtil.getCurrentSelection(event);
+            if (selection instanceof IStructuredSelection) {
+                final Object[] elements = ((IStructuredSelection) selection).toArray();
+                for (Object object : elements) {
+                    if (object instanceof IFile) {
+                        IFile inputFile = (IFile) object;
+                        Injector injector = KGraphActivator.getInstance().getInjector(KGraphActivator.DE_CAU_CS_KIELER_CORE_KGRAPH_TEXT_KGRAPH);
+                        ResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
+                        URI inputFileURI = URI.createPlatformResourceURI(inputFile.getFullPath().toString(), false);
+                        Resource resource = resourceSet.createResource(inputFileURI);
+                        resource.load(Collections.EMPTY_MAP);
+                        if (resource.getContents().size() != 1) {
+                            throw new RuntimeException("The input file must contain exactly one KGraph model.");
+                        }
+                        EObject content = resource.getContents().get(0);
+                        if (!(content instanceof KNode)) {
+                            throw new RuntimeException("The input model must be an instance of KNode.");
+                        }
+                        
+                        SvgHandler svgHandler = new SvgHandler();
+                        IGraphTransformer<KNode, SVGGraphics2D> exporter = svgHandler.getExporter();
+                        TransformationData<KNode, SVGGraphics2D> data = new TransformationData<KNode, SVGGraphics2D>();
+                        data.setSourceGraph((KNode) content);
+                        exporter.transform(data);
+                        String output = svgHandler.serialize(data.getTargetGraphs().get(0));
+                        
+                        IFile outputFile = inputFile.getParent().getFile(new Path(inputFile.getName()).removeFileExtension().addFileExtension("svg"));
+                        outputFile.create(new ByteArrayInputStream(output.getBytes()), true, null);
+                    }
                 }
-                EObject content = resource.getContents().get(0);
-                if (!(content instanceof KNode)) {
-                    throw new RuntimeException("The input model must be an instance of KNode.");
-                }
-                
-                SvgHandler svgHandler = new SvgHandler();
-                IGraphTransformer<KNode, SVGGraphics2D> exporter = svgHandler.getExporter();
-                TransformationData<KNode, SVGGraphics2D> data = new TransformationData<KNode, SVGGraphics2D>();
-                data.setSourceGraph((KNode) content);
-                exporter.transform(data);
-                String output = svgHandler.serialize(data.getTargetGraphs().get(0));
-                
-                URI outputFileURI = inputFileURI.trimFileExtension().appendFileExtension("svg");
-                Writer outputFileWriter = new FileWriter(outputFileURI.toFileString());
-                outputFileWriter.write(output);
-                outputFileWriter.close();
-                
-                MessageDialog.openInformation(HandlerUtil.getActiveShell(event), "Success",
-                        "The SVG file was successfully created in " + outputFileURI.toFileString());
-                
             }
         } catch (Exception e) {
             Status status = new Status(Status.ERROR, "de.cau.cs.kieler.kiml.formats.svg",

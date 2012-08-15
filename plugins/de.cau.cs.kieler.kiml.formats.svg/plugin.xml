@@ -15,15 +15,25 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="menu:org.eclipse.ui.main.menu">
-         <menu
-               label="Test">
-            <command
-                  commandId="de.cau.cs.kieler.kiml.formats.svg.test"
-                  label="Make SVG..."
-                  style="push">
-            </command>
-         </menu>
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="de.cau.cs.kieler.kiml.formats.svg.test"
+               label="Make SVG"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                     <test
+                           forcePluginActivation="false"
+                           property="org.eclipse.core.resources.extension"
+                           value="kgt">
+                     </test>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
