@@ -34,14 +34,15 @@ public class SvgHandler implements ITransformationHandler<SVGGraphics2D> {
     /**
      * {@inheritDoc}
      */
-    public void deserialize(String serializedGraph, TransformationData<SVGGraphics2D, KNode> transData) {
+    public void deserialize(final String serializedGraph,
+            final TransformationData<SVGGraphics2D, KNode> transData) {
         throw new UnsupportedOperationException("SVG parsing is not supported.");
     }
 
     /**
      * {@inheritDoc}
      */
-    public String serialize(SVGGraphics2D graphics) {
+    public String serialize(final SVGGraphics2D graphics) {
         StringWriter writer = new StringWriter();
         try {
             graphics.stream(writer, true);

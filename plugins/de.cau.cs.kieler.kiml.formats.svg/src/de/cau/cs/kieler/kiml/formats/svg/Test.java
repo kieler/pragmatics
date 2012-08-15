@@ -100,7 +100,7 @@ public class Test extends AbstractHandler {
         } catch (Exception e) {
             Status status = new Status(Status.ERROR, "de.cau.cs.kieler.kiml.formats.svg",
                     "Error while performing SVG export.", e);
-            StatusManager.getManager().handle(status, StatusManager.SHOW);
+            StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
         }
         
         return null;
