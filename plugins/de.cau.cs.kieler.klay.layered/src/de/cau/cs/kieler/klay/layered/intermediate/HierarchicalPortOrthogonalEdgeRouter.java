@@ -561,7 +561,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     southernSourceLayer,
                     0,
                     southernTargetLayer,
-                    layeredGraph.getSize().y + nodeSpacing);
+                    layeredGraph.getSize().y + nodeSpacing - layeredGraph.getOffset().y);
             
             // Adjust graph height.
             if (slots > 0) {
