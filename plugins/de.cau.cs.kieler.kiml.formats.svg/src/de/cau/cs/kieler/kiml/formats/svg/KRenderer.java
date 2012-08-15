@@ -19,6 +19,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -27,7 +28,23 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.krendering.HorizontalAlignment;
+import de.cau.cs.kieler.core.krendering.KBackgroundColor;
+import de.cau.cs.kieler.core.krendering.KColor;
+import de.cau.cs.kieler.core.krendering.KFontBold;
+import de.cau.cs.kieler.core.krendering.KFontItalic;
+import de.cau.cs.kieler.core.krendering.KFontName;
+import de.cau.cs.kieler.core.krendering.KFontSize;
+import de.cau.cs.kieler.core.krendering.KHorizontalAlignment;
+import de.cau.cs.kieler.core.krendering.KLineStyle;
+import de.cau.cs.kieler.core.krendering.KLineWidth;
 import de.cau.cs.kieler.core.krendering.KRendering;
+import de.cau.cs.kieler.core.krendering.KRenderingPackage;
+import de.cau.cs.kieler.core.krendering.KStyle;
+import de.cau.cs.kieler.core.krendering.KVerticalAlignment;
+import de.cau.cs.kieler.core.krendering.KVisibility;
+import de.cau.cs.kieler.core.krendering.LineStyle;
+import de.cau.cs.kieler.core.krendering.VerticalAlignment;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
@@ -52,12 +69,13 @@ public class KRenderer {
     /** default font size for edges. */
     private static final int EDGE_FONT_SIZE = 8;
     /** default length of edge arrows. */
-    private static final double ARROW_LENGTH = 8.0f;
+    private static final double ARROW_LENGTH = 8.0;
     /** default width of edge arrows. */
-    private static final double ARROW_WIDTH = 7.0f;
-    
-    /** the default font. */
-    private static final Font DEFAULT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, NODE_FONT_SIZE);
+    private static final double ARROW_WIDTH = 7.0;
+    /** the length of dashes used in line style. */
+    private static final float DASH_LENGTH = 5.0f;
+    /** the length of blanks used in line style. */
+    private static final float BLANK_LENGTH = 3.0f;
     /** the default stroke. */
     private static final Stroke DEFAULT_STROKE = new BasicStroke(1);
     
@@ -110,7 +128,7 @@ public class KRenderer {
             }
         } else {
             // paint the given rendering
-            render(nodeLayout, nodeRendering);
+            render(nodeRendering, new KVector(nodeLayout.getWidth(), nodeLayout.getHeight()));
         }
         
         // render ports
@@ -126,7 +144,7 @@ public class KRenderer {
                 graphics.fillRect(0, 0, (int) portLayout.getWidth(), (int) portLayout.getHeight());
             } else {
                 // paint the given rendering
-                render(portLayout, portRendering);
+                render(portRendering, new KVector(portLayout.getWidth(), portLayout.getHeight()));
             }
             
             // render port labels
@@ -182,7 +200,8 @@ public class KRenderer {
             renderText(label.getText(), labelLayout.getHeight());
         } else {
             // paint the given rendering
-            render(labelLayout, labelRendering, label.getText());
+            render(labelRendering, new KVector(labelLayout.getWidth(), labelLayout.getHeight()),
+                    label.getText());
         }
         
         // reset the offset
@@ -237,15 +256,17 @@ public class KRenderer {
             node = node.getParent();
         }
         graphics.translate(offset.x, offset.y);
-        
+
+        // get the bend points of the edge
+        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+        KVectorChain bendPoints = edgeLayout.createVectorChain();
+        if (edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
+            bendPoints = KielerMath.approximateSpline(bendPoints);
+        }
+
         KRendering edgeRendering = edge.getData(KRendering.class);
         if (edgeRendering == null) {
             // paint a polyline following the edge bend points
-            KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-            KVectorChain bendPoints = edgeLayout.createVectorChain();
-            if (edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
-                bendPoints = KielerMath.approximateSpline(bendPoints);
-            }
             int[] xpoints = new int[bendPoints.size()];
             int[] ypoints = new int[bendPoints.size()];
             ListIterator<KVector> pointIter = bendPoints.listIterator();
@@ -260,6 +281,9 @@ public class KRenderer {
             
             // draw an arrow at the last segment of the connection
             makeArrow(bendPoints.get(bendPoints.size() - 2), bendPoints.getLast());
+        } else {
+            // paint the edge using the given rendering
+            render(edgeRendering, bendPoints);
         }
         
         // paint the edge labels
@@ -304,12 +328,133 @@ public class KRenderer {
         }
     }
     
-    public void render(final KShapeLayout shapeLayout, final KRendering rendering) {
-        render(shapeLayout, rendering, null);
+    private final LinkedList<KStyle> propagatedStyles = new LinkedList<KStyle>();
+    
+    public void render(final KRendering rendering, final KVector size) {
+        render(rendering, size, null);
     }
 
-    public void render(final KShapeLayout shapeLayout, final KRendering rendering, final String text) {
+    public void render(final KRendering rendering, final KVector size, final String text) {
+        // apply the propagated and contained styles
+        StyleData styleData = applyStyles(rendering);
         
+        // XXX
+        
+        // remove the contained propagated styles
+        for (KStyle style : rendering.getStyles()) {
+            if (style.isPropagateToChildren()) {
+                propagatedStyles.removeLastOccurrence(style);
+            }
+        }
+    }
+    
+    public void render(final KRendering rendering, final KVectorChain points) {
+        
+    }
+    
+    private StyleData applyStyles(final KRendering rendering) {
+        // apply the propagated styles
+        StyleData styleData = new StyleData();
+        for (KStyle style : propagatedStyles) {
+            handleStyle(style, styleData);
+        }
+        
+        // apply the contained styles
+        for (KStyle style : rendering.getStyles()) {
+            handleStyle(style, styleData);
+            if (style.isPropagateToChildren()) {
+                propagatedStyles.addLast(style);
+            }
+        }
+        
+        // transfer styles to the graphics context
+        graphics.setColor(styleData.color);
+        graphics.setBackground(styleData.backgroundColor);
+        graphics.setStroke(new BasicStroke(styleData.lineWidth, BasicStroke.CAP_SQUARE,
+                BasicStroke.JOIN_MITER, 1.0f, styleData.lineStyle, 0.0f));
+        graphics.setFont(new Font(styleData.fontName, styleData.fontStyle, styleData.fontSize));
+        return styleData;
+    }
+    
+    private void handleStyle(final KStyle style, final StyleData styleData) {
+        switch (style.eClass().getClassifierID()) {
+        case KRenderingPackage.KCOLOR:
+            KColor color = (KColor) style;
+            styleData.color = new Color(color.getRed(), color.getGreen(), color.getBlue());
+            break;
+        case KRenderingPackage.KBACKGROUND_COLOR:
+            KBackgroundColor backgroundColor = (KBackgroundColor) style;
+            styleData.backgroundColor = new Color(backgroundColor.getRed(), backgroundColor.getGreen(),
+                    backgroundColor.getBlue());
+            break;
+        case KRenderingPackage.KLINE_WIDTH:
+            styleData.lineWidth = ((KLineWidth) style).getLineWidth();
+            break;
+        case KRenderingPackage.KLINE_STYLE:
+            LineStyle lineStyle = ((KLineStyle) style).getLineStyle();
+            switch (lineStyle) {
+            case DASH:
+                styleData.lineStyle = new float[] { DASH_LENGTH, BLANK_LENGTH };
+                break;
+            case DOT:
+                styleData.lineStyle = new float[] { 1, BLANK_LENGTH };
+                break;
+            case DASHDOT:
+                styleData.lineStyle = new float[] { DASH_LENGTH, BLANK_LENGTH, 1, BLANK_LENGTH };
+                break;
+            case DASHDOTDOT:
+                styleData.lineStyle = new float[] { DASH_LENGTH, BLANK_LENGTH, 1, BLANK_LENGTH,
+                        1, BLANK_LENGTH };
+                break;
+            default:
+                styleData.lineStyle = null;
+            }
+            break;
+        case KRenderingPackage.KHORIZONTAL_ALIGNMENT:
+            styleData.horzAlignment = ((KHorizontalAlignment) style).getHorizontalAlignment();
+            break;
+        case KRenderingPackage.KVERTICAL_ALIGNMENT:
+            styleData.vertAlignment = ((KVerticalAlignment) style).getVerticalAlignment();
+            break;
+        case KRenderingPackage.KBACKGROUND_VISIBILITY:
+        case KRenderingPackage.KVISIBILITY:
+            styleData.visible = ((KVisibility) style).isVisible();
+            break;
+        case KRenderingPackage.KFONT_BOLD:
+            if (((KFontBold) style).isBold()) {
+                styleData.fontStyle |= Font.BOLD;
+            } else {
+                styleData.fontStyle &= ~Font.BOLD;
+            }
+            break;
+        case KRenderingPackage.KFONT_ITALIC:
+            if (((KFontItalic) style).isItalic()) {
+                styleData.fontStyle |= Font.ITALIC;
+            } else {
+                styleData.fontStyle &= ~Font.ITALIC;
+            }
+            break;
+        case KRenderingPackage.KFONT_NAME:
+            styleData.fontName = ((KFontName) style).getName();
+            break;
+        case KRenderingPackage.KFONT_SIZE:
+            styleData.fontSize = ((KFontSize) style).getSize();
+            break;
+        }
+    }
+    
+    /** meta data class holding style attributes. */
+    private static class StyleData {
+        private Color color = Color.BLACK;
+        private Color backgroundColor = Color.WHITE;
+        private float lineWidth = 1.0f;
+        private float[] lineStyle = null;
+        private HorizontalAlignment horzAlignment = HorizontalAlignment.LEFT;
+        private VerticalAlignment vertAlignment = VerticalAlignment.CENTER;
+        private boolean visible = true;
+        private int fontStyle = Font.PLAIN;
+        private String fontName = Font.SANS_SERIF;
+        private int fontSize = NODE_FONT_SIZE;
     }
 
 }
