@@ -24,6 +24,7 @@ import java.util.List;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
@@ -463,7 +464,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             LNode current = root;
             LNode next = bal.getAlign().get(root);
             
-            double rootPortPos = 0.0;
+            double rootPortPos = root.getMargin().top;
             double rootUpperBound = 0.0;
             
             LEdge rootEdge = getEdge(current, next);
@@ -471,10 +472,10 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             if (rootEdge != null) {
                 if (bal.getHDir() == HDirection.BOTTOM) {
                     rootPortPos = rootEdge.getTarget().getPosition().y
-                            + rootEdge.getTarget().getAnchor().y + next.getMargin().top;
+                            + rootEdge.getTarget().getAnchor().y + current.getMargin().top;
                 } else {
                     rootPortPos = rootEdge.getSource().getPosition().y
-                            + rootEdge.getSource().getAnchor().y + next.getMargin().top;
+                            + rootEdge.getSource().getAnchor().y + current.getMargin().top;
                 }
                 rootUpperBound = current.getMargin().top + current.getSize().y
                         + current.getMargin().bottom - rootPortPos;
@@ -505,7 +506,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                             + next.getMargin().top;
                 }
                 double currentLowerBound = portPos;
-                double currentUpperBound = next.getMargin().top + next.getSize().y
+                double currentUpperBound = next.getMargin().top +  next.getSize().y
                         + next.getMargin().bottom - currentLowerBound;
                 bal.getInnerShift().put(next, difference);
 
@@ -528,9 +529,9 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             // If the block's top border is higher than the root node, use this, else
             // use the root node
             if (lowerBound > rootPortPos) {
-                postShift = lowerBound;
+                postShift = lowerBound - rootPortPos;
             }
-
+            
             // Apply a general shift to all nodes of the block, which results from
             // nodes which would be placed higher than the top border of the block
             bal.getInnerShift().put(root, bal.getInnerShift().get(root) + postShift);
@@ -691,7 +692,11 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                         // If they are on the class, calculate a y position for the current block,
                         // using the information from the comparison node
                         double spacing = normalSpacing;
-                        if (bal.getBlockSize().get(v) == 0.0 || bal.getBlockSize().get(u) == 0.0) {
+                        if ((!(blockContainsNorthSouthDummy(bal, v)
+                                        && blockContainsRegularNode(bal, u))
+                                && !(blockContainsNorthSouthDummy(bal, u)
+                                        && blockContainsRegularNode(bal, v))
+                            && (bal.getBlockSize().get(v) == 0.0 || bal.getBlockSize().get(u) == 0.0))) {
                             spacing = smallSpacing;
                         }
                         if (bal.getVDir() == VDirection.RIGHT) {
@@ -905,6 +910,46 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             blocks.get(bal.getRoot().get(key)).add(key);
         }
         return blocks;
+    }
+    
+    /**
+     * 
+     * Checks whether any north-south port dummies are included in the block
+     * given by the root node.
+     * 
+     * @param bal The layout of which the blocks shall be found
+     * @param root The root of the block to investigate
+     * @return True, if the block contains a north-south dummy, false else
+     */
+    private boolean blockContainsNorthSouthDummy(final BKAlignedLayout bal, final LNode root) {
+        LNode current = root;
+        while (bal.getAlign().get(current) != root) {
+            if (current.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                return true;
+            }
+            current = bal.getAlign().get(current);
+        }
+        return current.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT;
+    }
+    
+    /**
+     * 
+     * Checks whether any regular nodes are included in the block
+     * given by the root node.
+     * 
+     * @param bal The layout of which the blocks shall be found
+     * @param root The root of the block to investigate
+     * @return True, if the block contains a regular node, false else
+     */
+    private boolean blockContainsRegularNode(final BKAlignedLayout bal, final LNode root) {
+        LNode current = root;
+        while (bal.getAlign().get(current) != root) {
+            if (current.getProperty(Properties.ORIGIN) instanceof KNode) {
+                return true;
+            }
+            current = bal.getAlign().get(current);
+        }
+        return current.getProperty(Properties.ORIGIN) instanceof KNode;
     }
 
     /**
