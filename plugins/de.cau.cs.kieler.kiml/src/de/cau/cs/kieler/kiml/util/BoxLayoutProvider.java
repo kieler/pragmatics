@@ -28,10 +28,12 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
- * A layout algorithm that does not take edges into account, but treats all
- * nodes as isolated boxes.
+ * A layout algorithm that does not take edges into account, but treats all nodes as isolated boxes.
+ * This is useful for parts of a diagram that consist of objects without connections, such as
+ * parallel regions in Statecharts.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
+ * @kieler.rating yellow 2012-08-10 review KI-23 by cds, sgu
+ * @kieler.design proposed by msp
  * @author msp
  */
 public class BoxLayoutProvider extends AbstractLayoutProvider {
@@ -76,8 +78,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     
 
     /**
-     * Sorts nodes according to priority and size or position. Nodes with
-     * higher priority get a lower rank.
+     * Sorts nodes according to priority and size or position. Nodes with higher priority are
+     * put to the start of the list.
      * 
      * @param parentNode parent node
      * @param interactive whether position should be considered instead of size
@@ -127,6 +129,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
 
     /**
      * Place the boxes of the given sorted list according to their order in the list.
+     * Furthermore, adjust the parent size to fit the bounding box.
      * 
      * @param sortedBoxes sorted list of boxes
      * @param parentNode parent node
@@ -158,8 +161,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Place the boxes of the given sorted list according to their order in the
-     * list.
+     * Place the boxes of the given sorted list according to their order in the list.
      * 
      * @param sortedBoxes sorted list of boxes
      * @param minSpacing minimal spacing between elements
@@ -168,6 +170,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
      * @param minTotalHeight minimal height of the parent node
      * @param expandNodes if true, the nodes are expanded to fill their parent
      * @param aspectRatio the desired aspect ratio
+     * @return the bounding box of the resulting layout
      */
     private KVector placeBoxes(final List<KNode> sortedBoxes, final float minSpacing,
             final float borderSpacing, final float minTotalWidth, final float minTotalHeight,
@@ -185,8 +188,10 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
                 + borderSpacing;
 
         // place nodes iteratively into rows
-        float xpos = borderSpacing, ypos = borderSpacing, highestBox = 0.0f,
-                broadestRow = 2 * borderSpacing;
+        float xpos = borderSpacing;
+        float ypos = borderSpacing;
+        float highestBox = 0.0f;
+        float broadestRow = 2 * borderSpacing;
         LinkedList<Integer> rowIndices = new LinkedList<Integer>();
         rowIndices.add(Integer.valueOf(0));
         LinkedList<Float> rowHeights = new LinkedList<Float>();

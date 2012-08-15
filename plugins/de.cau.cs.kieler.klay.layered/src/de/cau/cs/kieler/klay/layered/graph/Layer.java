@@ -115,21 +115,29 @@ public class Layer extends LGraphElement implements Iterable<LNode> {
      * of the layer is assumed to be already set to the maximal width of the
      * contained nodes. (usually done during node placement)
      * 
-     * @param xpos horizontal offset for layer placement
+     * @param xoffset horizontal offset for layer placement
      */
-    public void placeNodes(final double xpos) {
+    public void placeNodes(final double xoffset) {
+        // determine maximal left and right margin
+        double maxLeftMargin = 0, maxRightMargin = 0;
+        for (LNode node : nodes) {
+            maxLeftMargin = Math.max(maxLeftMargin, node.getMargin().left);
+            maxRightMargin = Math.max(maxRightMargin, node.getMargin().right);
+        }
+
+        // CHECKSTYLEOFF MagicNumber
         for (LNode node : nodes) {
             Alignment alignment = node.getProperty(LayoutOptions.ALIGNMENT);
-            double room = size.x - node.getSize().x - node.getMargin().left - node.getMargin().right;
-            double x = xpos;
+            double ratio;
             switch (alignment) {
             case LEFT:
+                ratio = 0.0;
                 break;
             case RIGHT:
-                x += room;
+                ratio = 1.0;
                 break;
             case CENTER:
-                x += room / 2;
+                ratio = 0.5;
                 break;
             default:
                 // determine the number of input and output ports for the node
@@ -146,12 +154,32 @@ public class Layer extends LGraphElement implements Iterable<LNode> {
                 
                 // calculate node placement based on the port numbers
                 if (inports + outports == 0) {
-                    x += room / 2;
+                    ratio = 0.5;
                 } else {
-                    x += room * outports / (inports + outports);
+                    ratio = (double) outports / (inports + outports);
                 }
             }
-            node.getPosition().x = x + node.getMargin().left;
+            
+            // align nodes to the layer's maximal margin
+            double nodeSize = node.getSize().x;
+            double xpos = (size.x - nodeSize) * ratio;
+            if (ratio > 0.5) {
+                xpos -= maxRightMargin * 2 * (ratio - 0.5);
+            } else if (ratio < 0.5) {
+                xpos += maxLeftMargin * 2 * (0.5 - ratio);
+            }
+            
+            // consider the node's individual margin
+            double leftMargin = node.getMargin().left;
+            if (xpos < leftMargin) {
+                xpos = leftMargin;
+            }
+            double rightMargin = node.getMargin().right;
+            if (xpos > size.x - rightMargin - nodeSize) {
+                xpos = size.x - rightMargin - nodeSize;
+            }
+            
+            node.getPosition().x = xoffset + xpos;
         }
     }
 

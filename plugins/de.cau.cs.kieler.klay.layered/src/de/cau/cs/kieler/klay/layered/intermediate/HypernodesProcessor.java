@@ -39,7 +39,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * </dl>
  *
  * @author msp
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutProcessor {

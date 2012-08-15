@@ -74,9 +74,8 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      */
     public static boolean isNoLayout(final EditPart editPart) {
         if (editPart instanceof IGraphicalEditPart) {
-            Boolean result = (Boolean) EclipseLayoutConfig.getOption(editPart,
-                    ((IGraphicalEditPart) editPart).getNotationView().getElement(),
-                    LayoutOptions.NO_LAYOUT);
+            Boolean result = (Boolean) EclipseLayoutConfig.getValue(LayoutOptions.NO_LAYOUT,
+                    editPart, ((IGraphicalEditPart) editPart).getNotationView().getElement());
             if (result != null) {
                 return result;
             }
@@ -218,10 +217,14 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
         } else if (editPart instanceof ConnectionEditPart) {
             partTarget = EnumSet.of(LayoutOptionData.Target.EDGES);
             EditPart sourcePart = ((ConnectionEditPart) editPart).getSource();
+            EditPart parentPart;
             if (sourcePart instanceof AbstractBorderItemEditPart) {
-                containerEditPart.set((IGraphicalEditPart) sourcePart.getParent().getParent());
+                parentPart = sourcePart.getParent().getParent();
             } else {
-                containerEditPart.set((IGraphicalEditPart) sourcePart.getParent());
+                parentPart = sourcePart.getParent();
+            }
+            if (parentPart instanceof IGraphicalEditPart) {
+                containerEditPart.set((IGraphicalEditPart) parentPart);
             }
             
         } else if (editPart instanceof LabelEditPart) {

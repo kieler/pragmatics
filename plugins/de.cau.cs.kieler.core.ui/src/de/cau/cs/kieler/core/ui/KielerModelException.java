@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.core;
+package de.cau.cs.kieler.core.ui;
 
 /**
  * An Exception that indicates problems with certain model elements. It carries

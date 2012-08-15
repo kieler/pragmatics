@@ -29,9 +29,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 public class KVectorChainTest {
 
     /**
-     * 
      * Test parse from KVectorChain class.
-     * 
      */
     @Test
     public void testParse() {
@@ -47,7 +45,9 @@ public class KVectorChainTest {
 
     }
 
-    /** Tests the IllegalArgumentException of parse from KVectorChain class. */
+    /** 
+     * Tests the IllegalArgumentException of parse from KVectorChain class.
+     */
     @Test(expected = IllegalArgumentException.class)
     public void testParseIllegalArgumentException() {
         KVectorChain kv = new KVectorChain();
@@ -55,28 +55,23 @@ public class KVectorChainTest {
     }
 
     /**
-     * 
      * Test getLength from KVectorChain class. This function test if the length result ist 0 when
      * KVectorChain composed of 3 overlapping KVectors. And test for 3 differing KVectors.
-     * 
-     * 
      */
     @Test
     public void testGetLength() {
         // 3 overlaped KVectors
         KVectorChain kv = new KVectorChain();
         kv.parse("{(10,50),(10,50),(10,50)}");
-        assertEquals(kv.getLength(), 0, 0);
+        assertEquals(0, kv.getLength(), 0);
         // 3 differing KVecors
         kv.parse("{(10,0),(10,20),(10,30)}");
-        assertEquals(kv.getLength(), 30, 0);
+        assertEquals(30, kv.getLength(), 0);
 
     }
 
     /**
-     * 
      * Test getPointOnLine from KVectorChain class.
-     * 
      */
     @Test
     public void testGetPointOnLine() {
@@ -91,7 +86,6 @@ public class KVectorChainTest {
         assertTrue(v1.equals(kv.getPointOnLine(5)));
         // test if resturns endpoint  for distance > KVectorChain's length
         assertTrue(v2.equals(kv.getPointOnLine(40)));
-
     }
 
 }

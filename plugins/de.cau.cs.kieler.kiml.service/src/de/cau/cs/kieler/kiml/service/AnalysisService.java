@@ -32,13 +32,13 @@ import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.Dependency;
-import de.cau.cs.kieler.core.util.DependencyGraph;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisCategory;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.dependency.Dependency;
+import de.cau.cs.kieler.kiml.service.grana.dependency.DependencyGraph;
 
 /**
  * Singleton class for global access to the KIML graph analysis services.

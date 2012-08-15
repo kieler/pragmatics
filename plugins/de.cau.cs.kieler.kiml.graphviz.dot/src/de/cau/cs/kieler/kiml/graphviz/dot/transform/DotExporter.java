@@ -424,12 +424,11 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                 graphAttrs.add(createAttribute(Attributes.RANKDIR, "LR"));
                 break;
             }
-            // set aspect ratio
-            // TODO: Take a look at this again. Giving an aspect ratio crashes dot.
-//            float aspectRatio = parentLayout.getProperty(LayoutOptions.ASPECT_RATIO);
-//            if (aspectRatio > 0) {
-//                graphAttrs.add(createAttribute(Attributes.ASPECT, "\"" + aspectRatio + ",1\""));
-//            }
+            // set aspect ratio (formerly crashed dot, but doesn't seem to anymore; see KIELER-1799)
+            float aspectRatio = parentLayout.getProperty(LayoutOptions.ASPECT_RATIO);
+            if (aspectRatio > 0) {
+                graphAttrs.add(createAttribute(Attributes.ASPECT, "\"" + aspectRatio + ",1\""));
+            }
             // set iterations limit
             float iterationsLimit = parentLayout.getProperty(Attributes.ITER_LIMIT_PROP);
             if (iterationsLimit > 0) {

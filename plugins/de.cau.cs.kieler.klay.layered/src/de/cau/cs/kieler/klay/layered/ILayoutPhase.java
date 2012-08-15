@@ -24,7 +24,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  *
  * @see LayeredLayoutProvider
  * @author cds
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public interface ILayoutPhase extends ILayoutProcessor {

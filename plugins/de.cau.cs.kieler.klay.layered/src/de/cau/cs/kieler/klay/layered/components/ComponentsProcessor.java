@@ -64,7 +64,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  * @author msp
  * @author cds
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public class ComponentsProcessor extends AbstractAlgorithm {
@@ -72,7 +72,7 @@ public class ComponentsProcessor extends AbstractAlgorithm {
     /**
      * Graph placer to be used to combine the different components back into a single graph.
      */
-    private GraphPlacer graphPlacer = null;
+    private AbstractGraphPlacer graphPlacer = null;
     
 
     /**
@@ -192,12 +192,13 @@ public class ComponentsProcessor extends AbstractAlgorithm {
     }
     
     /**
-     * Pack the given components into a single graph.
+     * Combine the given components into a single graph by moving them around such that they are
+     * placed next and beneath to each other instead of overlapping.
      * 
      * @param components a list of components
      * @return a single graph that contains all components
      */
-    public LGraph pack(final List<LGraph> components) {
+    public LGraph combine(final List<LGraph> components) {
         LGraph combinedGraph = graphPlacer.combine(components);
         
         return combinedGraph;

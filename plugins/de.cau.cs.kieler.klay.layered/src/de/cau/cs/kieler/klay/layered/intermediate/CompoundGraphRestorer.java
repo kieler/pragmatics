@@ -52,7 +52,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  * 
  * @author ima
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  */
 public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutProcessor {
 

@@ -1,15 +1,19 @@
 #!/bin/bash
 
 # Startup script for the KWebS server
-# Version 0.00
+# Version 0.01
 #
 # Author swe
-# Last edit 10.08.2011
-
-# !!!!!
+# Last edit 03.08.2012
+#
 # Please remember making this script executable by
 # doing chmod u+x kwebs_start.sh
+
 # !!!!!
+# After the server has started, its process id is stored in a file "kwebs.pid"
+# !!!!!
+
+PIDFILE=kwebs.pid
 
 # Start the server ignoring the HUP signal so the server
 # keeps running after closing a terminal connection
@@ -28,20 +32,20 @@ sleep 10
 if [ -f /proc/$PID/exe ]; then
 
   # If so, store process id in file
-  echo KWebS server started, process id is $PID
-  echo $PID > kwebs.pid
+  echo "KWebS server started, process id is $PID"
+  echo $PID > $PIDFILE
 
 else
 
   # If not, exit with an error code
-  echo KWebS server failed to start, see kwebs.out and kwebs.err for details
+  echo "KWebS server failed to start, see kwebs.out and kwebs.err for details"
   echo
 
-  echo kwebs.out:
+  echo ">>> kwebs.out:"
   cat kwebs.out
 
   echo
-  echo kwebs.err:
+  echo ">>> kwebs.err:"
   cat kwebs.err
 
   exit 1

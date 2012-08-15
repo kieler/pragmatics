@@ -48,6 +48,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * <li>Michael Forster. A fast and simple heuristic for constrained two-level crossing reduction. In
  * <i>Graph Drawing</i>, volume 3383 of LNCS, pp. 206-216. Springer, 2005.</li>
  * </ul>
+ * <p>This is the main layer sweep crossing minimization class that makes use of a number of further
+ * classes. This one implements the actual layer sweep logic and the cross counting code.</p>
  * 
  * <dl>
  * <dt>Precondition:</dt>
@@ -452,8 +454,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      * Currently, that can only happen due to odd port side handling. Because of the way dummies are
      * created, there are only two cases:
      * 
-     * - An eastern port can be connected to another eastern port. - A western port can be connected
-     * to another western port.
+     * - An eastern port can be connected to another eastern port.
+     * - A western port can be connected to another western port.
      * 
      * The algorithm now works by assigning numbers to eastern ports top-down, and to western ports
      * bottom-up, all the time dependent on their number of incident edges. (the link direction is

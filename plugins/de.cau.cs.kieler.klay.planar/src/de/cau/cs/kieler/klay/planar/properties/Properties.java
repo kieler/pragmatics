@@ -82,6 +82,7 @@ public final class Properties {
     public static final IProperty<EdgeType> EDGE_TYPE = new Property<EdgeType>("edgeType",
             EdgeType.NONE);
 
+    /** Relative length of an edge.*/
     public static final IProperty<Integer> RELATIVE_LENGTH = new Property<Integer>(
             "relativeEdgeLength");
 

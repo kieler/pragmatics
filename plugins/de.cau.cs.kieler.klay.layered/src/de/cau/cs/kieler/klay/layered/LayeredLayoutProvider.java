@@ -85,7 +85,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author msp
  * @author cds
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public class LayeredLayoutProvider extends AbstractLayoutProvider {
@@ -152,7 +152,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
 
         // pack the components back into one graph
-        layeredGraph = componentsProcessor.pack(components);
+        layeredGraph = componentsProcessor.combine(components);
 
         // apply the layout results to the original graph
         graphImporter.applyLayout(layeredGraph);
@@ -390,11 +390,14 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      */
     private List<ILayoutProcessor> getIntermediateProcessorList(final int slotIndex) {
         // fetch the set of layout processors configured for the given slot
-        Set<LayoutProcessorStrategy> processors = intermediateProcessingConfiguration
+        EnumSet<LayoutProcessorStrategy> processors = intermediateProcessingConfiguration
                 .getProcessors(slotIndex);
         List<ILayoutProcessor> result = new ArrayList<ILayoutProcessor>(processors.size());
 
-        // iterate through the layout processors and add them to the result list
+        // iterate through the layout processors and add them to the result list; the EnumSet
+        // guarantees that we iterate over the processors in the order in which they occur in
+        // the LayoutProcessorStrategy, thereby satisfying all of their runtime order
+        // dependencies without having to sort them in any way
         for (LayoutProcessorStrategy processor : processors) {
             // check if an instance of the given layout processor is already in the cache
             ILayoutProcessor processorImpl = intermediateLayoutProcessorCache.get(processor);

@@ -29,14 +29,14 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * be used in the presence of such connections.
  * 
  * <p>This was the first algorithm implemented to place the different connected components of a graph,
- * and was formerly the implementation of the {@link ComponentsProcessor#pack(List)} method.</p>
+ * and was formerly the implementation of the {@link ComponentsProcessor#combine(List)} method.</p>
  * 
  * @author msp
  * @author cds
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-class SimpleRowGraphPlacer extends GraphPlacer {
+class SimpleRowGraphPlacer extends AbstractGraphPlacer {
 
     /**
      * {@inheritDoc}

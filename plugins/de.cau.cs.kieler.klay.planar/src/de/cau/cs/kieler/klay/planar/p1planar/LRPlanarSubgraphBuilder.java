@@ -25,7 +25,7 @@ import java.util.Stack;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
-import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
@@ -189,7 +189,8 @@ public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayou
     // ====================== Constructor =====================================
 
     /**
-     * Default Constructor for {@link LRPlanarSubgraphBuilder}. It creates a new instance of this class.
+     * Default Constructor for {@link LRPlanarSubgraphBuilder}. It creates a new instance of this
+     * class.
      */
     public LRPlanarSubgraphBuilder() {
         super();
@@ -272,8 +273,7 @@ public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayou
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph graph) {
-        // TODO Auto-generated method stub
+    public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pGraph) {
         return null;
     }
 

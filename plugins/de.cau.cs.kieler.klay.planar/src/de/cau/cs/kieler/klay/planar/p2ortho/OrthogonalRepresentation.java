@@ -13,9 +13,10 @@
  */
 package de.cau.cs.kieler.klay.planar.p2ortho;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -49,14 +50,14 @@ public class OrthogonalRepresentation {
         /** A 360 degree angle, or full circle. */
         FULL;
 
-        /** The index of a full angle.        */
+        /** The index of a full angle. */
         public static final int FULL_ANGLE_INDEX = 3;
 
         /**
          * Maps ordinal to the enum.
          * 
          * @param angleInt
-         *            , angle as ordinal.
+         *            angle as ordinal.
          * @return angle to the given ordinal.
          */
         public static OrthogonalAngle map(final int angleInt) {
@@ -67,10 +68,14 @@ public class OrthogonalRepresentation {
                 return STRAIGHT;
             case 2:
                 return RIGHT;
+                // CHECKSTYLEOFF MagicNumber
             case 3:
+                // CHECKSTYLEON MagicNumber
                 return FULL;
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException(
+                        "Orthogonal Represenstation: the mapping fails because"
+                                + "of a unknown angle int:" + angleInt);
             }
         }
     }
@@ -78,20 +83,13 @@ public class OrthogonalRepresentation {
     // ======================== Attributes =========================================================
 
     /** The bends along each edge. */
-    private Map<PEdge, OrthogonalAngle[]> bendData;
-
-    /** The angles in a node. */
-    private Map<PNode, List<Pair<PEdge, OrthogonalAngle>>> angleData;
-
-    // ======================== Constructor ========================================================
+    private Map<PEdge, OrthogonalAngle[]> bendData = Maps.newHashMap();
 
     /**
-     * Create a new orthogonal representation.
+     * The angles in a node v. A angle consists of an edge and the angle to the next counter
+     * clockwise edge of node v.
      */
-    public OrthogonalRepresentation() {
-        this.bendData = new HashMap<PEdge, OrthogonalAngle[]>();
-        this.angleData = new HashMap<PNode, List<Pair<PEdge, OrthogonalAngle>>>();
-    }
+    private Map<PNode, List<Pair<PEdge, OrthogonalAngle>>> angleData = Maps.newHashMap();
 
     // ======================== Getters and Setters ================================================
 
