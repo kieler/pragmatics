@@ -17,7 +17,7 @@ package de.cau.cs.kieler.kwebs.server.web;
 /**
  * Interface for dynamic web content providers. 
  *
- * @author swe
+ * @author  swe
  */
 public interface IDynamicWebContentProvider {
     

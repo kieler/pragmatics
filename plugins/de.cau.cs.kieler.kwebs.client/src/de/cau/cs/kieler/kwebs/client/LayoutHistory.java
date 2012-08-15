@@ -28,7 +28,7 @@ import de.cau.cs.kieler.kwebs.Statistics;
 public class LayoutHistory {
     
     /** Singleton instance. */
-    private static final LayoutHistory INSTANCE 
+    public static final LayoutHistory INSTANCE 
         = new LayoutHistory();
     
     /** The list of statistics ordered by time. */
@@ -38,15 +38,6 @@ public class LayoutHistory {
     /** How many statistics to remember. */
     private int history
         = 20;
-    
-    /**
-     * Get the singleton instance.
-     * 
-     * @return the singleton instance
-     */
-    public static LayoutHistory getInstance() {
-        return INSTANCE;
-    }
     
     /**
      * 

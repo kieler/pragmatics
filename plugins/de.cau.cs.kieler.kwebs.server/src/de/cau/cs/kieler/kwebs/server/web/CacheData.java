@@ -14,10 +14,12 @@
 
 package de.cau.cs.kieler.kwebs.server.web;
 
+import com.sun.net.httpserver.Headers;
+
 /**
  * Holder class for caching already processed requests to the web interface of KWebS.
  *
- * @author swe
+ * @author  swe
  */
 public class CacheData {
 
@@ -35,6 +37,10 @@ public class CacheData {
     
     /** The date of the resource, date of file for example. Used to invalidate cache. */
     private long timestamp;
+    
+    /** */
+    private final Headers additionalHeaders
+    	= new Headers();
     
     /**
      * Constructs a data container intended for caching of at runtime of the layout service
@@ -111,6 +117,14 @@ public class CacheData {
      */
     public void setMimetype(final String mimetype) {
         this.mimetype = mimetype;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public Headers getAdditionalHeaders() {
+    	return additionalHeaders;
     }
 
     /**

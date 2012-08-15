@@ -25,6 +25,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -48,7 +49,8 @@ import de.cau.cs.kieler.kwebs.client.Preferences;
  * This class makes an addition to the status bar so that the user can identify whether he is
  * doing local or remote layout.
  *
- * @author swe
+ * @kieler.rating  2011-05-04 red
+ * @author  swe
  */
 public class KWebSStatusBar extends WorkbenchWindowControlContribution 
     implements IPropertyChangeListener {
@@ -108,12 +110,10 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
         // UI code needs magic numbers
         //CHECKSTYLEOFF MagicNumber
         Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(1, false);
-        layout.marginLeft = 0;
-        layout.marginRight = 0;
-        layout.marginHeight = 6;
+        FillLayout layout = new FillLayout(SWT.HORIZONTAL);
+        layout.marginWidth = 5;
+        layout.marginHeight = 0;
         composite.setLayout(layout);
-        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));    
         image = new Label(composite, SWT.WRAP);
         setStatusInfo();
         image.addMouseListener(
@@ -176,7 +176,7 @@ public class KWebSStatusBar extends WorkbenchWindowControlContribution
                 public void widgetSelected(final SelectionEvent e) {
                     if (e.getSource() == statisticsItem) {
                         Shell shell = Display.getCurrent().getActiveShell();
-                        if (LayoutHistory.getInstance().getStatistics().size() > 0) {
+                        if (LayoutHistory.INSTANCE.getStatistics().size() > 0) {
                             BrowserDialog dialog = new BrowserDialog(
                                 shell, 
                                 LayoutHistoryPage.generateHtml(), 

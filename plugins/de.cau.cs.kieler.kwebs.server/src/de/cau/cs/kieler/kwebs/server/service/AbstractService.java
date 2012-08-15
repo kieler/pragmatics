@@ -77,12 +77,12 @@ public abstract class AbstractService {
      * Value for maximum number of graphs transmitted in a single request
      * initially set to default value. 
      */
-    private int maxGraphs = Configuration.getInstance().getConfigPropertyAsInteger(
+    private int maxGraphs = Configuration.INSTANCE.getConfigPropertyAsInteger(
         Configuration.MAXNUMBER_GRAPHS, MAXNUMBER_GRAPHS
     );
 
     /** Whether to test on number of transmitted graphs. */
-    private boolean testMaxGraphs = Configuration.getInstance().getConfigPropertyAsBoolean(
+    private boolean testMaxGraphs = Configuration.INSTANCE.getConfigPropertyAsBoolean(
         Configuration.TESTMAXNUMBER_GRAPHS, true
     );
     
@@ -90,12 +90,12 @@ public abstract class AbstractService {
      * Value for maximum number of elements a single graph may contain
      * initially set to default value. 
      */
-    private int maxElements = Configuration.getInstance().getConfigPropertyAsInteger(
+    private int maxElements = Configuration.INSTANCE.getConfigPropertyAsInteger(
     	Configuration.MAXELEMENTS_GRAPHS, MAXNUMBER_ELEMENTS
     );
 
     /** Whether to test on number elements contained in the transmitted graphs. */
-    private boolean testMaxElements = Configuration.getInstance().getConfigPropertyAsBoolean(
+    private boolean testMaxElements = Configuration.INSTANCE.getConfigPropertyAsBoolean(
     	Configuration.TESTMAXELEMENTS_GRAPHS, true
     );
     		

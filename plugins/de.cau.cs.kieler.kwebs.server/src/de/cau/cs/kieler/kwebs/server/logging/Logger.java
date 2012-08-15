@@ -651,4 +651,69 @@ public final class Logger {
 
     }
 
+    // Helper methods for xtend where access to static enums is currently not possible
+    
+    /**
+     * Returns the severity value UNDEFINED.
+     * 
+     * @return the severity value UNDEFINED
+     */
+    public static Severity getSeverity_UNDEFINED() {
+    	return Severity.UNDEFINED;
+    }
+
+    /**
+     * Returns the severity value ALWAYS.
+     * 
+     * @return the severity value ALWAYS
+     */
+    public static Severity getSeverity_ALWAYS() {
+    	return Severity.ALWAYS;
+    }
+
+    /**
+     * Returns the severity value DEBUG.
+     * 
+     * @return the severity value DEBUG
+     */
+    public static Severity getSeverity_DEBUG() {
+    	return Severity.DEBUG;
+    }
+
+    /**
+     * Returns the severity value INFO.
+     * 
+     * @return the severity value INFO
+     */
+    public static Severity getSeverity_INFO() {
+    	return Severity.INFO;
+    }
+
+    /**
+     * Returns the severity value WARNING.
+     * 
+     * @return the severity value WARNING
+     */
+    public static Severity getSeverity_WARNING() {
+    	return Severity.WARNING;
+    }
+
+    /**
+     * Returns the severity value FAILURE.
+     * 
+     * @return the severity value FAILURE
+     */
+    public static Severity getSeverity_FAILURE() {
+    	return Severity.FAILURE;
+    }
+
+    /**
+     * Returns the severity value CRITICAL.
+     * 
+     * @return the severity value CRITICAL 
+     */
+    public static Severity getSeverity_CRITICAL() {
+    	return Severity.CRITICAL;
+    }
+    
 }

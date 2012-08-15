@@ -33,6 +33,13 @@ echo Copyright 2011 by Real-Time and Embedded Systems Group, Department
 echo of Computer Science, Christian-Albrechts-University of Kiel
 echo Published under the EPL v1.0 \(see http://www.eclipse.org/legal/epl-v10.html\)
 echo
+echo If you generate for the secure access of the web service you will have to copy
+echo the generated client trust store to 
+echo     server/kwebs/web/security/client.jks
+echo if you want it to be accessible to users by the web frontend. If you generate
+echo for the management service make sure that the servers key store lies under
+echo     server/kwebs/security/mserver.jks
+echo and that the key store for the client is not accessible from the server.
 
 if [ "$JAVA_HOME" == "" ];
 then
@@ -136,6 +143,17 @@ then
     exit 1;
 fi
 
+echo Please enter the name for the file storing the server key store:
+read SERVER_FILE=server.jks
+
+echo Please enter the name for the file storing the clients trust store:
+read CLIENT_FILE=client.jks
+
+mv "server.jks" "$SERVER_FILE"
+mv "client.jks" "$CLIENT_FILE"
+
+echo Copying key store and trust store to the servers security config folder.
+	
 if [ ! -d "../kwebs/security/keystores" ];
 then
     mkdir -p "../kwebs/security/keystores"
@@ -146,7 +164,7 @@ then
     mkdir -p "../kwebs/web/security"
 fi
 
-cp *.jks ../kwebs/security/keystores/
-cp client.jks ../kwebs/web/security/
+cp $SERVER_FILE ../kwebs/security/keystores/
+cp $CLIENT_FILE ../kwebs/security/keystores/
 
 RemoveTemps

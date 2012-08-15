@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
 
@@ -234,6 +235,37 @@ public final class Resources {
         return Platform.getBundle(pluginid).getResource(resource).openStream();                
     }
 
+    /**
+     * Creates an input stream to a bundled resource.
+     * 
+     * @param pluginid
+     *            id of the plug-in the resource is bundled with
+     * @param resource 
+     *            path to the resource within this plug-in
+     * @return an input stream to the resource
+     * @throws IOException
+     *             if the specified resource could not be found
+     */
+    public static URL getResourceURL(final String pluginid, final String resource) throws IOException {
+        return Platform.getBundle(pluginid).getResource(resource);                
+    }
+
+    /**
+     * Read the version of this plug-in.
+     * 
+     * @param pluginId
+     * @return the version of this plug-in
+     */
+    public static String getPluginVersion(final String pluginId) {
+        String version = "<unknown>";
+        try {
+            version = Platform.getBundle(pluginId).getVersion().toString();
+        } catch (Exception e) {
+            ; // Hmmm... Not sure what to do in this case
+        }
+        return version;
+    }
+    
     /**
      * Private Constructor. Utility class must not
      * be instantiated.

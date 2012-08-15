@@ -9,15 +9,27 @@
     ECHO of Computer Science, Christian-Albrechts-University of Kiel
     ECHO Published under the EPL v1.0 (see http://www.eclipse.org/legal/epl-v10.html)
     ECHO.
-
+	ECHO If you generate for the secure access of the web service you will have to copy
+	ECHO the generated client trust store to 
+	ECHO     server/kwebs/web/security/client.jks
+	ECHO if you want it to be accessible to users by the web frontend. If you generate
+	ECHO for the management service make sure that the servers key store lies under
+	ECHO     server/kwebs/security/mserver.jks
+	ECHO and that the key store for the client is not accessible from the server.
+	
     SETLOCAL
     SETLOCAL ENABLEEXTENSIONS
     SETLOCAL ENABLEDELAYEDEXPANSION
 
-    IF "%JAVA_HOME%" EQU "" GOTO NoJavaHome
-
+	::The full path to the java key tool
     SET KEYTOOL="%JAVA_HOME%\bin\keytool"
+    
+    ::The full path to the OpenSSL configuration file 'openssl.cnf'; has to be set by user
+	SET OPENSSL_CONF=
 
+    IF "%JAVA_HOME%"    EQU "" GOTO NoJavaHome
+    IF "%OPENSSL_CONF%" EQU "" GOTO NoOpenSSL
+	
     CALL :RemoveTemps TRUE
     CALL :CreateOpenSSLInf
 
@@ -91,19 +103,49 @@
 
     IF "%ERRORLEVEL%" NEQ "0" GOTO :end
 	
+    ECHO Please enter the name for the file storing the server key store:
+    SET SERVER_FILE=server.jks
+    CALL :GetFname SERVER_FILE server.jks
+    
+    ECHO Please enter the name for the file storing the clients trust store:
+    SET CLIENT_FILE=client.jks
+    CALL :GetFname CLIENT_FILE client.jks
+	
+	REN "server.jks" "!SERVER_FILE!"
+	REN "client.jks" "!CLIENT_FILE!"
+	
+	ECHO Copying key store and trust store to the servers security config folder.
+	
+	IF NOT EXIST "..\kwebs\security\keystores\" MKDIR "..\kwebs\security\keystores\"
+	IF NOT EXIST "..\kwebs\web\security\"       MKDIR "..\kwebs\web\security\"
+	
 	COPY /Y "*.jks" "..\kwebs\security\keystores\"
-	COPY /Y "client.jks" "..\kwebs\web\security\"
 	
     CALL :RemoveTemps
 
     GOTO :end
 
+:GetFname %1 %2
+
+	SET /P %1=
+	
+	IF "!%1!" EQU "" SET %1=%~2
+	
+	GOTO :EOF
+	
 :NoJavaHome
 
     ECHO You must set JAVA_HOME to point at your Java Development Kit installation
 
     GOTO :end
 
+:NoJavaHome
+
+    ECHO You must configure the full path to the OpenSSL configuration file 'openssl.cnf' packed
+    ECHO with your OpenSSL distribution in the scripts environment variable 'OPENSSL_CONF' 
+
+    GOTO :end
+    
 :CreateOpenSSLInf
 
     SET SERIAL=

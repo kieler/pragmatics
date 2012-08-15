@@ -84,8 +84,10 @@ final class HttpsServerManager extends HttpServerManager {
             = TrustManagerFactory.getInstance(
                   TrustManagerFactory.getDefaultAlgorithm()
               );
-        String keystoreFile = config.getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PATH);
-        String keystorePass = config.getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PASS);
+        String keystoreFile = Configuration.INSTANCE.
+        	getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PATH);
+        String keystorePass = Configuration.INSTANCE.
+        	getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PASS);
         byte[] keystoreData = Resources.readFileOrPluginResourceAsByteArray(
             Application.PLUGIN_ID, keystoreFile
         );  
@@ -122,7 +124,7 @@ final class HttpsServerManager extends HttpServerManager {
         }
         server = HttpsServer.create(
             new InetSocketAddress(host, port),
-            Integer.parseInt(config.getConfigProperty(Configuration.SERVER_BACKLOG))
+            Integer.parseInt(Configuration.INSTANCE.getConfigProperty(Configuration.SERVER_BACKLOG))
         );
         ((HttpsServer) server).setHttpsConfigurator(httpsConfigurator);
     }

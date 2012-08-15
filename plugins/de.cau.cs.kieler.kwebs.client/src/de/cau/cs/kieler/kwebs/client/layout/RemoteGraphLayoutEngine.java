@@ -275,7 +275,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
             statistics.setTimeTotal(timeTotal);
             statistics.setTimeNetwork(networkTotal);
             statistics.setTimeLocalSupplemental(timeTotal - networkTotal);
-            LayoutHistory.getInstance().addStatistic(statistics);
+            LayoutHistory.INSTANCE.addStatistic(statistics);
         }
     }
 

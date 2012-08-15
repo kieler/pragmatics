@@ -38,7 +38,7 @@ import de.cau.cs.kieler.kwebs.util.Resources;
 /**
  * HTTP Handler for handling the servers web interface.
  *
- * @author swe
+ * @author  swe
  */
 public class WebContentHandler implements HttpHandler {
     
@@ -75,7 +75,7 @@ public class WebContentHandler implements HttpHandler {
         // If none available, call the appropriate request handler
         // and cache the result, if allowed.
         URI uri = exchange.getRequestURI();
-        CacheData cacheData = contentCache.get(uri);
+        CacheData cacheData = null;//contentCache.get(uri);
         if (cacheData == null) {
             RequestData requestData = buildRequestData(exchange);
             // Do forward to index page on invalid request
@@ -112,6 +112,7 @@ public class WebContentHandler implements HttpHandler {
                 headers.add("Content-Disposition", "attachment; filename=" + cacheData.getName());
                 headers.add("Content-Transfer-Encoding", "binary");
             }
+            headers.putAll(cacheData.getAdditionalHeaders());
             responseLength = content.length;
         } else {     
             notfound(exchange);
