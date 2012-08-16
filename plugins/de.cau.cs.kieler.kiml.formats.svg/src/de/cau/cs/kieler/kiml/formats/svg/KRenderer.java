@@ -18,31 +18,47 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Stroke;
+import java.awt.geom.Path2D;
+import java.io.File;
+import java.net.URL;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+import javax.imageio.ImageIO;
+
+import org.eclipse.core.runtime.Platform;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.krendering.HorizontalAlignment;
+import de.cau.cs.kieler.core.krendering.KArc;
 import de.cau.cs.kieler.core.krendering.KBackgroundColor;
 import de.cau.cs.kieler.core.krendering.KBackgroundVisibility;
-import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KFontBold;
 import de.cau.cs.kieler.core.krendering.KFontItalic;
 import de.cau.cs.kieler.core.krendering.KFontName;
 import de.cau.cs.kieler.core.krendering.KFontSize;
+import de.cau.cs.kieler.core.krendering.KForegroundColor;
+import de.cau.cs.kieler.core.krendering.KForegroundVisibility;
 import de.cau.cs.kieler.core.krendering.KHorizontalAlignment;
+import de.cau.cs.kieler.core.krendering.KImage;
 import de.cau.cs.kieler.core.krendering.KLineStyle;
 import de.cau.cs.kieler.core.krendering.KLineWidth;
+import de.cau.cs.kieler.core.krendering.KPolyline;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
+import de.cau.cs.kieler.core.krendering.KRenderingRef;
+import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
 import de.cau.cs.kieler.core.krendering.KStyle;
+import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KVerticalAlignment;
 import de.cau.cs.kieler.core.krendering.KVisibility;
 import de.cau.cs.kieler.core.krendering.LineStyle;
@@ -278,6 +294,7 @@ public class KRenderer {
         KRendering edgeRendering = edge.getData(KRendering.class);
         if (edgeRendering == null) {
             // paint a polyline following the edge bend points
+            // TODO use getPath(..) instead
             int[] xpoints = new int[bendPoints.size()];
             int[] ypoints = new int[bendPoints.size()];
             ListIterator<KVector> pointIter = bendPoints.listIterator();
@@ -339,17 +356,54 @@ public class KRenderer {
         }
     }
     
+    /** the propagated styles of parent renderings. */
     private final LinkedList<KStyle> propagatedStyles = new LinkedList<KStyle>();
+    /** the propagated points of KEdge elements. */
+    private KVectorChain propagatedPoints;
+    /** the propagated text of KLabel elements. */
+    private String propagatedText;
     
+    /**
+     * Render something inside the given size. The graphics must be transformed to the
+     * rendering's position.
+     * 
+     * @param rendering a rendering
+     * @param size the size to apply for the rendering
+     */
     public void render(final KRendering rendering, final KVector size) {
         render(rendering, size, null);
     }
+    
+    /**
+     * Render something onto the given points. The graphics must be transformed to the
+     * rendering's position.
+     * 
+     * @param rendering a rendering
+     * @param points points to apply to the top-level {@link KPolyline}
+     */
+    public void render(final KRendering rendering, final KVectorChain points) {
+        propagatedPoints = points;
+        render(rendering, null, null);
+        propagatedPoints = null;
+    }
 
+    /**
+     * Render something inside the given size. The graphics must be transformed to the
+     * rendering's position.
+     * 
+     * @param rendering a rendering
+     * @param size the size to apply for the rendering
+     * @param text the text to display in the first encountered {@link KText}, or {@code null}
+     */
     public void render(final KRendering rendering, final KVector size, final String text) {
         // apply the propagated and contained styles
         StyleData styleData = applyStyles(rendering);
+        propagatedText = text;
         
-        // 
+        // draw the given rendering instance
+        handleRendering(rendering, styleData, size);
+        
+        // TODO children
         
         // remove the contained propagated styles
         for (KStyle style : rendering.getStyles()) {
@@ -357,10 +411,6 @@ public class KRenderer {
                 propagatedStyles.removeLastOccurrence(style);
             }
         }
-    }
-    
-    public void render(final KRendering rendering, final KVectorChain points) {
-        
     }
     
     /**
@@ -407,6 +457,13 @@ public class KRenderer {
         }
     }
     
+    /**
+     * Apply the styles contained in the given rendering. The propagated styles are applied first
+     * and updated according to the contained propagated styles.
+     * 
+     * @param rendering a rendering
+     * @return style data to be used for actually drawing the rendering
+     */
     private StyleData applyStyles(final KRendering rendering) {
         // apply the propagated styles
         StyleData styleData = new StyleData();
@@ -422,9 +479,7 @@ public class KRenderer {
             }
         }
         
-        // transfer styles to the graphics context
-        graphics.setColor(styleData.color);
-        graphics.setBackground(styleData.backgroundColor);
+        // transfer basic styles to the graphics context
         graphics.setStroke(new BasicStroke(styleData.lineWidth, BasicStroke.CAP_SQUARE,
                 BasicStroke.JOIN_MITER, 1.0f, styleData.lineStyle, 0.0f));
         graphics.setFont(new Font(styleData.fontName, styleData.fontStyle, styleData.fontSize));
@@ -433,9 +488,10 @@ public class KRenderer {
     
     /** meta data class holding style attributes. */
     private static class StyleData {
-        private Color color = Color.BLACK;
-        private Color backgroundColor = Color.WHITE;
-        private boolean backgroundVisible = false;
+        private Color foregColor = Color.BLACK;
+        private Color backgColor = Color.WHITE;
+        private boolean foregVisible = true;
+        private boolean backgVisible = false;
         private float lineWidth = 1.0f;
         private float[] lineStyle = null;
         private HorizontalAlignment horzAlignment = HorizontalAlignment.LEFT;
@@ -446,15 +502,21 @@ public class KRenderer {
         private int fontSize = NODE_FONT_SIZE;
     }
     
+    /**
+     * Handle a single style attribute.
+     * 
+     * @param style a style
+     * @param styleData the style data where gathered information is stored
+     */
     private void handleStyle(final KStyle style, final StyleData styleData) {
         switch (style.eClass().getClassifierID()) {
-        case KRenderingPackage.KCOLOR:
-            KColor color = (KColor) style;
-            styleData.color = new Color(color.getRed(), color.getGreen(), color.getBlue());
+        case KRenderingPackage.KFOREGROUND_COLOR:
+            KForegroundColor color = (KForegroundColor) style;
+            styleData.foregColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
             break;
         case KRenderingPackage.KBACKGROUND_COLOR:
             KBackgroundColor backgroundColor = (KBackgroundColor) style;
-            styleData.backgroundColor = new Color(backgroundColor.getRed(), backgroundColor.getGreen(),
+            styleData.backgColor = new Color(backgroundColor.getRed(), backgroundColor.getGreen(),
                     backgroundColor.getBlue());
             break;
         case KRenderingPackage.KLINE_WIDTH:
@@ -489,8 +551,11 @@ public class KRenderer {
         case KRenderingPackage.KVISIBILITY:
             styleData.visible = ((KVisibility) style).isVisible();
             break;
+        case KRenderingPackage.KFOREGROUND_VISIBILITY:
+            styleData.foregVisible = ((KForegroundVisibility) style).isVisible();
+            break;
         case KRenderingPackage.KBACKGROUND_VISIBILITY:
-            styleData.backgroundVisible = ((KBackgroundVisibility) style).isVisible();
+            styleData.backgVisible = ((KBackgroundVisibility) style).isVisible();
             break;
         case KRenderingPackage.KFONT_BOLD:
             if (((KFontBold) style).isBold()) {
@@ -515,8 +580,176 @@ public class KRenderer {
         }
     }
     
+    /**
+     * Draw the given rendering.
+     * 
+     * @param rendering a rendering
+     * @param styleData style to apply for drawing
+     * @param size the size in which the shape is drawn
+     */
     private void handleRendering(final KRendering rendering, final StyleData styleData,
             final KVector size) {
+        if (styleData.visible) {
+            int width = (int) Math.round(size.x);
+            int height = (int) Math.round(size.y);
+            switch (rendering.eClass().getClassifierID()) {
+            case KRenderingPackage.KRENDERING_REF:
+                handleRendering(((KRenderingRef) rendering).getRendering(), styleData, size);
+                break;
+            case KRenderingPackage.KRECTANGLE:
+                if (styleData.backgVisible) {
+                    graphics.setColor(styleData.backgColor);
+                    graphics.fillRect(0, 0, width, height);
+                }
+                if (styleData.foregVisible) {
+                    graphics.setColor(styleData.foregColor);
+                    graphics.drawRect(0, 0, width, height);
+                }
+                break;
+            case KRenderingPackage.KELLIPSE:
+                if (styleData.backgVisible) {
+                    graphics.setColor(styleData.backgColor);
+                    graphics.fillOval(0, 0, width, height);
+                }
+                if (styleData.foregVisible) {
+                    graphics.setColor(styleData.foregColor);
+                    graphics.drawOval(0, 0, width, height);
+                }
+                break;
+            case KRenderingPackage.KROUNDED_RECTANGLE:
+                KRoundedRectangle roundedRectangle = (KRoundedRectangle) rendering;
+                int arcWidth = Math.round(scale * roundedRectangle.getCornerWidth());
+                int arcHeight = Math.round(scale * roundedRectangle.getCornerHeight());
+                if (styleData.backgVisible) {
+                    graphics.setColor(styleData.backgColor);
+                    graphics.fillRoundRect(0, 0, width, height, arcWidth, arcHeight);
+                }
+                if (styleData.foregVisible) {
+                    graphics.setColor(styleData.foregColor);
+                    graphics.drawRoundRect(0, 0, width, height, arcWidth, arcHeight);
+                }
+                break;
+            case KRenderingPackage.KSPLINE:
+                if (styleData.foregVisible && propagatedPoints != null) {
+                    graphics.setColor(styleData.foregColor);
+                    graphics.draw(createPath(propagatedPoints, true));
+                    propagatedPoints = null;
+                }
+                break;
+            case KRenderingPackage.KPOLYGON:
+                if (styleData.foregVisible && propagatedPoints != null) {
+                    graphics.setColor(styleData.foregColor);
+                    Path2D path = createPath(propagatedPoints, false);
+                    path.closePath();
+                    graphics.draw(path);
+                    propagatedPoints = null;
+                }
+                break;
+            case KRenderingPackage.KPOLYLINE:
+                if (styleData.foregVisible && propagatedPoints != null) {
+                    graphics.setColor(styleData.foregColor);
+                    graphics.draw(createPath(propagatedPoints, false));
+                    propagatedPoints = null;
+                }
+                break;
+            case KRenderingPackage.KIMAGE:
+                if (styleData.backgVisible) {
+                    Image image = createImage((KImage) rendering);
+                    if (image != null) {
+                        graphics.drawImage(image, 0, 0, width, height, null);
+                    }
+                }
+                break;
+            case KRenderingPackage.KARC:
+                if (styleData.foregVisible) {
+                    KArc arc = (KArc) rendering;
+                    int startAngle = Math.round(arc.getStartAngle());
+                    int arcAngle = Math.round(arc.getArcAngle());
+                    graphics.setColor(styleData.foregColor);
+                    graphics.drawArc(0, 0, width, height, startAngle, arcAngle);
+                }
+                break;
+            case KRenderingPackage.KTEXT:
+                if (styleData.foregVisible) {
+                    String text = propagatedText;
+                    if (text == null) {
+                        // use the text contained in the rendering, if present
+                        text = ((KText) rendering).getText();
+                    } else {
+                        // consume the propagated text so contained renderings don't use it anymore
+                        propagatedText = null;
+                    }
+                    if (text != null) {
+                        graphics.setColor(styleData.foregColor);
+                        renderText(text, size, styleData.horzAlignment, styleData.vertAlignment);
+                    }
+                }
+                break;
+            default:
+                // paint a red cross indicating that the rendering is not supported
+                graphics.setColor(Color.RED);
+                graphics.drawRect(0, 0, width, height);
+                graphics.drawLine(0, 0, width, height);
+                graphics.drawLine(width, 0, 0, height);
+            }
+        }
+    }
+    
+    /**
+     * Create an AWT image for the given KImage.
+     * 
+     * @param kimage an image
+     * @return an according AWT image
+     */
+    private Image createImage(final KImage kimage) {
+        String bundleName = kimage.getBundleName();
+        String imagePath = kimage.getImagePath();
+        if (imagePath == null) {
+            // TODO support direct image references
+            return null;
+        } else {
+            try {
+                if (bundleName == null) {
+                    return ImageIO.read(new File(imagePath));
+                } else {
+                    URL url = Platform.getBundle(bundleName).getResource(imagePath);
+                    return ImageIO.read(new File(url.toURI()));
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
+    
+    /**
+     * Create an AWT path for the given vector chain.
+     * 
+     * @param points points of the path
+     * @param curve whether points shall be interpreted as spline control points
+     * @return an according AWT path
+     */
+    private Path2D createPath(final KVectorChain points, final boolean curve) {
+        Path2D path = new Path2D.Double(Path2D.WIND_NON_ZERO, points.size() + 1);
+        Iterator<KVector> pointIter = points.iterator();
+        if (pointIter.hasNext()) {
+            KVector point1 = pointIter.next();
+            path.moveTo(point1.x, point1.y);
+            while (pointIter.hasNext()) {
+                point1 = pointIter.next();
+                if (curve && pointIter.hasNext()) {
+                    KVector point2 = pointIter.next();
+                    if (pointIter.hasNext()) {
+                        KVector point3 = pointIter.next();
+                        path.curveTo(point1.x, point1.y, point2.x, point2.y, point3.x, point3.y);
+                    } else {
+                        path.quadTo(point1.x, point1.y, point2.x, point2.y);
+                    }
+                } else {
+                    path.lineTo(point1.x, point1.y);
+                }
+            }
+        }
+        return path;
     }
 
 }
