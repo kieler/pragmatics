@@ -18,22 +18,22 @@ import de.cau.cs.kieler.kwebs.server.management.command.client.IManagementExchan
 
 /**
  *
- * @author  swe
+ * @author swe
  * 
  */
 public interface IManagementCommand {
 
-	/**
-	 * 
-	 * @param context
-	 * @throws Exception
-	 */
-	void initialize(final IManagementExchange exchange) throws Exception;
-	
-	/**
-	 * 
-	 * @throws Exception
-	 */
-	void execute() throws Exception;
-    	
+    /**
+     * 
+     * @param context
+     * @throws Exception
+     */
+    void initialize(final IManagementExchange exchange) throws Exception;
+    
+    /**
+     * 
+     * @throws Exception
+     */
+    void execute() throws Exception;
+    
 }

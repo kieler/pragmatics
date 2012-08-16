@@ -19,7 +19,7 @@ import de.cau.cs.kieler.kwebs.server.configuration.Configuration
 /**
  * This class implements a web content provider for displaying the service meta data in HTML format.
  *
- * @author  swe
+ * @author swe
  */
 class ServiceinterfaceProvider
     extends AbstractProvider

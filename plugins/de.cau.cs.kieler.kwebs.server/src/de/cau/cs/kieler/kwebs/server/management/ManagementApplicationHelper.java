@@ -22,46 +22,44 @@ import java.util.Map.Entry;
 /**
  * Helper for layout server management console application.
  *
- * @kieler.rating  2011-05-04 red
- * 
- * @author  swe
- * 
+ * @author swe
+ *
  */
 public final class ManagementApplicationHelper {
-    
+
     //////////
-    
+
     /** Display a help message. */
-    public static final String[] HELP 
-    	= { "help", "-h" };
-    
+    public static final String[] HELP
+        = { "help", "-h" };
+
     /** */
-    public static final String[] COMMAND     
-    	= { "command", "-c" };
-    
+    public static final String[] COMMAND
+        = { "command", "-c" };
+
     /** */
-    public static final String[] PORT  
-    	= { "port", "-pt" };
-    
+    public static final String[] PORT
+        = { "port", "-pt" };
+
     /** */
-    public static final String[] VERBOSE  
-    	= { "verbose", "-v" };
-    
+    public static final String[] VERBOSE
+        = { "verbose", "-v" };
+
     /** */
-    public static final String[] KEYSTORE_LOCATION  
-    	= { "keystore", "-kl" };
-    
+    public static final String[] KEYSTORE_LOCATION
+        = { "keystore", "-kl" };
+
     /** */
-    public static final String[] KEYSTORE_PASSWORD  
-    	= { "password", "-kp" };
-    
+    public static final String[] KEYSTORE_PASSWORD
+        = { "password", "-kp" };
+
     //////////
-    
+
     /** */
     private static final String[][] KNOWN_PARAMS = {
-    	HELP, COMMAND, PORT, VERBOSE, KEYSTORE_LOCATION, KEYSTORE_PASSWORD
+        HELP, COMMAND, PORT, VERBOSE, KEYSTORE_LOCATION, KEYSTORE_PASSWORD
     };
-    
+
     /** The introductory help text. */
     private static final String[] HELP_INTRO = new String[] {
             "Management Client for the KIELER Layout Web Service (KWebS)",
@@ -70,14 +68,14 @@ public final class ManagementApplicationHelper {
             "Department of Computer Science, Christian-Albrechts-Universitaet zu Kiel",
             "",
             "The management client is used to control the server from the command",
-            "line. You can only use it from the server itself, meaning the management", 
-            "service the client communicates with only accepts connections from", 
+            "line. You can only use it from the server itself, meaning the management",
+            "service the client communicates with only accepts connections from",
             "localhost. The connection itself is secured with TLS so you need a valid",
-            "certificate and password for client authentication. How you can obtain", 
+            "certificate and password for client authentication. How you can obtain",
             "these required artifacts is subject to the provider of the layout service.",
             ""
         };
-    
+
     /** The usage help text. */
     private static final String[] HELP_USAGE = new String[] {
         "Available arguments:",
@@ -87,7 +85,7 @@ public final class ManagementApplicationHelper {
         "        Execute the given command where <cmd> is one of",
         "            alive:     Check whether the server is alive.",
         "            published: Check whether the layout service is currently published.",
-        "            publish:   Publish the layout service according to the servers", 
+        "            publish:   Publish the layout service according to the servers",
         "                       configuration.",
         "            unpublish: Unpublish the layout service.",
         "            shutdown:  Shut down the server.",
@@ -107,35 +105,35 @@ public final class ManagementApplicationHelper {
         "Whether this parameter is recognized by the server is not verified, in general",
         "the server ignores unknown command parameters."
     };
-    
+
     //////////
-    
+
     /** map of tool parameters read from the command line. */
-    private final Map<String, String> toolParameters 
-    	= new HashMap<String, String>();
-    
+    private final Map<String, String> toolParameters
+        = new HashMap<String, String>();
+
     /** map of command parameters read from the command line. */
-    private final Map<String, String> commandParameters 
-    	= new HashMap<String, String>();
-    
+    private final Map<String, String> commandParameters
+        = new HashMap<String, String>();
+
     /** */
     private boolean invalidArgumentOccured
-    	= false;
-    
+        = false;
+
     //////////
 
     /**
      * Parse the command line arguments and stores the key/value pairs for later use.
      *
-     * @param args Array of type {@code String} containing the command line arguments
+     * @param arguments Array of type {@code String} containing the command line arguments
      */
     public ManagementApplicationHelper(final String[] arguments) {
         for (String argument : arguments) {
             Map<String, String> argMap     = null;
-            String 				key;
-            String 				value;
-            int    				keyIndex   = 0;
-            int 				valueIndex = 0;
+            String              key;
+            String              value;
+            int                 keyIndex   = 0;
+            int                 valueIndex = 0;
             if (argument.startsWith("--")) {
                 argMap = commandParameters;
                 keyIndex = 2;
@@ -146,7 +144,7 @@ public final class ManagementApplicationHelper {
             if (valueIndex < 0) {
                 key   = argument.substring(keyIndex);
                 // options with no value are interpreted as boolean flags that are set to true
-                value = "true"; 
+                value = "true";
             } else {
                 key   = argument.substring(keyIndex, valueIndex);
                 value = argument.substring(valueIndex + 1);
@@ -157,41 +155,41 @@ public final class ManagementApplicationHelper {
                 }
             }
             if (argMap.containsKey(key)) {
-            	System.out.println(
-            	    "WARNING: Multiply defined argument '" + key + "' overrides prior definition."
-            	);
+                System.out.println(
+                    "WARNING: Multiply defined argument '" + key + "' overrides prior definition."
+                );
             }
-            if (argMap == toolParameters && key.length() != 0 && isknownParameter(key) 
+            if (argMap == toolParameters && key.length() != 0 && isknownParameter(key)
                 || argMap == commandParameters
             ) {
-            	argMap.put(key, value);
+                argMap.put(key, value);
             } else {
-            	invalidArgumentOccured = true;
+                invalidArgumentOccured = true;
             }
         }
     }
 
     //////////
-    
+
     /**
-     * 
+     *
      * @return
      */
     public boolean getInvalidArgumentOccured() {
-		return invalidArgumentOccured;
-	}
+        return invalidArgumentOccured;
+    }
 
     /**
-     * 
+     *
      * @param invalidArgumentOccured
      */
-	public void setInvalidArgumentOccured(final boolean invalidArgumentOccured) {
-		this.invalidArgumentOccured = invalidArgumentOccured;
-	}
+    public void setInvalidArgumentOccured(final boolean invalidArgumentOccured) {
+        this.invalidArgumentOccured = invalidArgumentOccured;
+    }
 
     //////////
 
-	/**
+    /**
      * Display intro.
      */
     public static void intro() {
@@ -199,7 +197,7 @@ public final class ManagementApplicationHelper {
             System.out.println(line);
         }
     }
-    
+
     /**
      * Display help on tool usage.
      */
@@ -211,7 +209,7 @@ public final class ManagementApplicationHelper {
 
     /**
      * Display an error message and terminate program with the given exit code.
-     * 
+     *
      * @param message
      *            the message to be displayed
      * @param exitCode
@@ -223,15 +221,15 @@ public final class ManagementApplicationHelper {
         }
         System.exit(exitCode);
     }
-    
-	/**
-	 * Returns whether a given parameter is supported.
-	 * 
-	 * @param parameter 
-	 * 			  the parameter to test
-	 * 
-	 * @return whether a given parameter is supported
-	 */
+
+    /**
+     * Returns whether a given parameter is supported.
+     *
+     * @param parameter
+     *            the parameter to test
+     *
+     * @return whether a given parameter is supported
+     */
     public static boolean isknownParameter(final String parameter) {
         for (String[] parameterSet : KNOWN_PARAMS) {
             for (String p : parameterSet) {
@@ -245,15 +243,15 @@ public final class ManagementApplicationHelper {
 
     /**
      * Return whether a value for the the given key set is set.
-     * 
+     *
      * @param keyset a parameter key set
-     * 
+     *
      * @return whether a value for the the given key set is set
      */
     public boolean hasParam(final String[] keyset) {
         for (String key : keyset) {
             if (toolParameters.containsKey(key)) {
-            	return true;
+                return true;
             }
         }
         return false;
@@ -261,9 +259,9 @@ public final class ManagementApplicationHelper {
 
     /**
      * Return the parameter value for the given key set.
-     * 
+     *
      * @param keyset a parameter key set
-     * 
+     *
      * @return the corresponding value, or the empty string if no value was specified,
      *     or {@code null} if the parameter is not present
      */
@@ -279,25 +277,25 @@ public final class ManagementApplicationHelper {
 
     /**
      * Set the parameter value for the given key set.
-     * 
-     * @param keyset 
+     *
+     * @param keyset
      *            a parameter key set
-     * @param value  
-     * 		      the value to be set for the given key set
+     * @param value
+     *            the value to be set for the given key set
      */
     public void setParam(final String[] keyset, final String value) {
         for (String key : keyset) {
-        	toolParameters.remove(key);
+            toolParameters.remove(key);
         }
         toolParameters.put(keyset[0], value);
     }
-    
+
     /**
-     * 
+     *
      * @return
      */
     public Iterable<Entry<String, String>> getCommandParameters() {
-    	return Collections.unmodifiableSet(commandParameters.entrySet());
+        return Collections.unmodifiableSet(commandParameters.entrySet());
     }
-    
+
 }

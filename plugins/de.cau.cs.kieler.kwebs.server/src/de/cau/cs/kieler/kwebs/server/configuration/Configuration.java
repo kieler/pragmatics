@@ -29,19 +29,19 @@ import java.util.Properties;
  */
 public final class Configuration extends Properties {
 
-	//////////
-	
+    //////////
+
     /** */
     private static final long serialVersionUID = -8065497054352065920L;
 
-	//////////
-	
+    //////////
+
     /** The singleton instance. */
     public static final Configuration INSTANCE
         = new Configuration();
 
-	//////////
-	
+    //////////
+
     /** Common prefix for property identifiers. */
     private static final String PREFIX
         = "de.cau.cs.kieler.kwebs.";
@@ -93,10 +93,10 @@ public final class Configuration extends Properties {
     /** REST HTTPS service address. */
     public static final String REST_HTTPS_ADDRESS
         = PREFIX + "rest.httpsAddress";
-    
-    // Preferences for the HTTPS configuration, the 
+
+    // Preferences for the HTTPS configuration, the
     // HTTPS configuration is used for both JAXWS and REST service
-    
+
     /** Fully qualified path to the JKS formatted key store file. */
     public static final String HTTPSKEYSTORE_JKS_PATH
         = PREFIX + "httpsKeystore.jks.path";
@@ -142,7 +142,7 @@ public final class Configuration extends Properties {
     /** . */
     public static final String JETI_SESSIONSFOLDER
         = PREFIX + "jeti.sessions.folder";
-    
+
     /** . */
     public static final String JETI_LOG4JCONFIG
         = PREFIX + "jeti.log4j.config";
@@ -150,7 +150,7 @@ public final class Configuration extends Properties {
     /** . */
     public static final String JETI_LOGPATH
         = PREFIX + "jeti.logpath";
-    
+
     // Graphviz preferences
 
     /** Path to the graphviz executable. */
@@ -172,7 +172,7 @@ public final class Configuration extends Properties {
     /** Size of executor pool for http/s server. */
     public static final String SERVER_POOLSIZE
         = PREFIX + "server.poolsize";
-    
+
     /** Size of backlog for http/s server. */
     public static final String SERVER_BACKLOG
         = PREFIX + "server.backlog";
@@ -180,7 +180,7 @@ public final class Configuration extends Properties {
     /** Path to log file. */
     public static final String KWEBS_LOGPATH
         = PREFIX + "log.path";
-    
+
     /** Round trip size of log file in mega bytes. */
     public static final String KWEBS_LOGSIZE
         = PREFIX + "log.size";
@@ -203,22 +203,22 @@ public final class Configuration extends Properties {
     public static final String MANAGEMENT_PORT
         = PREFIX + "management.port";
 
-    /** 
+    /**
      * Location of the key store holding the private key with which the management
-     *  Service creates secured connections. 
+     *  Service creates secured connections.
      */
     public static final String MANAGEMENT_KEYSTORE_LOCATION
         = PREFIX + "management.keystore.location";
-    
-    /** 
+
+    /**
      * Password for the key store holding the private key with which the management
-     *  Service creates secured connections. 
+     *  Service creates secured connections.
      */
     public static final String MANAGEMENT_KEYSTORE_PASSWORD
         = PREFIX + "management.keystore.password";
-    
+
     // Preferences for configuring restrictions on user transmitted graphs
-    
+
     /** Maximum number of graphs a user may transmit with a single request. */
     public static final String MAXNUMBER_GRAPHS
         = PREFIX + "graphs.maxnumber";
@@ -240,41 +240,48 @@ public final class Configuration extends Properties {
     /** Which server provider to use. */
     public static final String SERVER_PROVIDER
         = PREFIX + "server.provider";
-    
+
     /** Valid server providers. */
-    
+
     /** Sun server provider.*/
     public static final String SERVER_PROVIDER_SUN   = "sun";
-    
+
     /** Jetty server provider.*/
     public static final String SERVER_PROVIDER_JETTY = "jetty";
-    
+
     // Configuration options for the web frontend
-    
+
     /** Who is it who runs the server ? */
     public static final String FRONTEND_SERVICE_HOSTER
         = PREFIX + "frontend.service.hoster";
-    
+
     /** An optional logo. */
     public static final String FRONTEND_SERVICE_HOSTER_LOGO
-    	= PREFIX + "frontend.service.hoster.logo";
+        = PREFIX + "frontend.service.hoster.logo";
 
     /** Shall the trust store for using https be exposed via the web frontend? */
     public static final String FRONTEND_HTTPS_EXPOSE_TRUSTSTORE
-    	= PREFIX + "frontend.https.expose.truststore";
+        = PREFIX + "frontend.https.expose.truststore";
+
+    /** Disable the caching of static web pages. */
+    public static final String FRONTEND_DISBALE_CACHING
+        = PREFIX + "frontend.disable.caching";
 
     /** General information like address for the contact page. */
     public static final String CONTACT_INFORMATION
         = PREFIX + "frontend.contact.information.general";
 
-    /** Name of responsible person whos email address is being displayed. Not displayed if no email address is configured. */
+    /** 
+     *  Name of responsible person whos email address is being displayed.
+     *  Not displayed if no email address is configured. 
+     */
     public static final String CONTACT_EMAIL_PERSON
         = PREFIX + "frontend.contact.information.email.person";
-    
+
     /** Email address for the contact page. Email is not being displayed if none is configured. */
     public static final String CONTACT_EMAIL_ADDRESS
         = PREFIX + "frontend.contact.information.email.address";
-    
+
     //
 
     /**
@@ -286,7 +293,7 @@ public final class Configuration extends Properties {
 
     /**
      * Loads the property based server configuration from an input stream.
-     * 
+     *
      * @param stream
      *            the input stream to load from
      * @throws IOException
@@ -298,7 +305,7 @@ public final class Configuration extends Properties {
 
     /**
      * Loads the property based server configuration from a reader.
-     * 
+     *
      * @param reader
      *            the reader to load from
      * @throws IOException
@@ -310,7 +317,7 @@ public final class Configuration extends Properties {
 
     /**
      * Loads the XML based server configuration from an input stream.
-     * 
+     *
      * @param stream
      *            the input stream to load from
      * @throws IOException
@@ -319,13 +326,13 @@ public final class Configuration extends Properties {
     public synchronized void loadFromXmlStream(final InputStream stream) throws IOException {
         loadFromXML(stream);
     }
-    
+
     /**
      * Returns the value of the configuration property defined by key.
-     * 
+     *
      * @param key
      *            the name of the configuration property
-     * @return the value of the configuration property. may be {@code null} 
+     * @return the value of the configuration property. may be {@code null}
      */
     public synchronized String getConfigProperty(final String key) {
         return getProperty(key);
@@ -334,7 +341,7 @@ public final class Configuration extends Properties {
     /**
      * Sets the value of the configuration property defined by key to the value
      * defined by value.
-     * 
+     *
      * @param key
      *            the name of the configuration property
      * @param value
@@ -346,7 +353,7 @@ public final class Configuration extends Properties {
 
     /**
      * Returns whether the configuration property defined by key is defined.
-     * 
+     *
      * @param key
      *            the name of the configuration property
      * @return whether the configuration property defined by key is defined
@@ -354,10 +361,10 @@ public final class Configuration extends Properties {
     public synchronized boolean hasConfigProperty(final String key) {
         return containsKey(key);
     }
-    
+
     /**
-     * Returns a configuration property parsed to an integer value. 
-     * 
+     * Returns a configuration property parsed to an integer value.
+     *
      * @param key
      *            the name of the configuration property
      * @param defaultValue
@@ -366,20 +373,20 @@ public final class Configuration extends Properties {
      * @return
      */
     public synchronized int getConfigPropertyAsInteger(final String key, final int defaultValue) {
-    	int value = defaultValue;
-    	if (hasConfigProperty(key)) {
-    		try {
-				value = Integer.parseInt(getConfigProperty(key));
-			} catch (Exception e) {
-				// Nothing to do, returns default value
-			}
-    	}
-    	return value;
+        int value = defaultValue;
+        if (hasConfigProperty(key)) {
+            try {
+                value = Integer.parseInt(getConfigProperty(key));
+            } catch (Exception e) {
+                // Nothing to do, returns default value
+            }
+        }
+        return value;
     }
 
     /**
-     * Returns a configuration property parsed to a boolean value. 
-     * 
+     * Returns a configuration property parsed to a boolean value.
+     *
      * @param key
      *            the name of the configuration property
      * @param defaultValue
@@ -389,34 +396,34 @@ public final class Configuration extends Properties {
      */
     public synchronized boolean getConfigPropertyAsBoolean(
         final String key, final boolean defaultValue) {
-    	boolean value = defaultValue;
-    	if (hasConfigProperty(key)) {
-    		try {
-				value = Boolean.parseBoolean(getConfigProperty(key));
-			} catch (Exception e) {
-				// Nothing to do, returns default value
-			}
-    	}
-    	return value;
+        boolean value = defaultValue;
+        if (hasConfigProperty(key)) {
+            try {
+                value = Boolean.parseBoolean(getConfigProperty(key));
+            } catch (Exception e) {
+                // Nothing to do, returns default value
+            }
+        }
+        return value;
     }
-    
+
     /**
-     * 
+     *
      * @param key
      * @param value
      * @param ignoreCase
      * @return
      */
     public synchronized boolean configPropertyMatches(final String key,
-    	final Object value, final boolean ignoreCase) {
-    	Object object = getConfigProperty(key);
-    	if (object == null) {
-    		return value == null;
-    	}
-    	if (object instanceof String && value instanceof String && ignoreCase) {
-    		return ((String) object).equalsIgnoreCase((String) value);
-    	}
-    	return object.equals(value);
+        final Object value, final boolean ignoreCase) {
+        Object object = getConfigProperty(key);
+        if (object == null) {
+            return value == null;
+        }
+        if (object instanceof String && value instanceof String && ignoreCase) {
+            return ((String) object).equalsIgnoreCase((String) value);
+        }
+        return object.equals(value);
     }
-    
+
 }

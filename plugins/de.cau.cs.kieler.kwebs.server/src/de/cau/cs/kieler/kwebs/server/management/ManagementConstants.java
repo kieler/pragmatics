@@ -20,15 +20,13 @@ import java.util.List;
 /**
  * Management command constants used to create command instance from command line arguments.
  *
- * @kieler.rating  2011-05-04 red
- * 
- * @author  swe
- * 
+ * @author swe
+ *
  */
 public final class ManagementConstants {
 
-	//////////
-	
+    //////////
+
     /** The command for testing if the server is running. */
     public static final String COMMAND_ALIVE
         = "alive";
@@ -48,18 +46,18 @@ public final class ManagementConstants {
     /** The command for shutting down the server. */
     public static final String COMMAND_SHUTDOWN
         = "shutdown";
-    
+
     /** */
     public static final List<String> VALID_COMMANDS = Arrays.<String>asList(
-    	COMMAND_ALIVE, COMMAND_PUBLISHED, COMMAND_PUBLISH, COMMAND_UNPUBLISH, COMMAND_SHUTDOWN
+        COMMAND_ALIVE, COMMAND_PUBLISHED, COMMAND_PUBLISH, COMMAND_UNPUBLISH, COMMAND_SHUTDOWN
     );
-    
-	//////////
-    
+
+    //////////
+
     /** Common parameter identifier prefix. */
     private static final String PREFIX
-    	= "de.cau.cs.kieler.kwebs.management.parameter.";
-    
+        = "de.cau.cs.kieler.kwebs.management.parameter.";
+
     /** Parameter for the published state of the HTTP service. */
     public static final String HTTP_PUBLISHED
         = PREFIX + "http.published";
@@ -72,12 +70,12 @@ public final class ManagementConstants {
     public static final String JETI_PUBLISHED
         = PREFIX + "jeti.published";
 
-	//////////
-	
+    //////////
+
     /**
      * Private constructor since this is a utility class.
      */
-    private ManagementConstants() {        
+    private ManagementConstants() {
     }
-    
+
 }

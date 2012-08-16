@@ -42,7 +42,7 @@ import de.cau.cs.kieler.kwebs.util.Resources;
 /**
  * Manager for publishing a service object over HTTPS.
  * Concurrent safety has to be provided by using instance.
- * 
+ *
  * @kieler.design 2011-08-25 reviewed by ckru, msp, mri
  * @author swe
  */
@@ -53,21 +53,21 @@ final class HttpsServerManager extends HttpServerManager {
 
     /** Default port for HTTPS connections. */
     private static final int HTTPS_DEFAULTPORT = 9443;
-    
+
     /**
      * Creates the {@code HttpsServer} instance configured to listen on the host and port specified by
      * the property {@code Configuration.HTTPS_ADDRESS}.
-     * 
-     * @throws NoSuchAlgorithmException 
-     * @throws KeyStoreException 
-     * @throws IOException 
-     * @throws CertificateException 
-     * @throws UnrecoverableKeyException 
-     * @throws KeyManagementException 
-     * @throws URISyntaxException 
+     *
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     * @throws IOException
+     * @throws CertificateException
+     * @throws UnrecoverableKeyException
+     * @throws KeyManagementException
+     * @throws URISyntaxException
      */
-    protected synchronized void createServer() throws NoSuchAlgorithmException, 
-        KeyStoreException, CertificateException, IOException, 
+    protected synchronized void createServer() throws NoSuchAlgorithmException,
+        KeyStoreException, CertificateException, IOException,
         UnrecoverableKeyException, KeyManagementException, URISyntaxException {
         if (server != null) {
             throw new AlreadyPublishedException();
@@ -85,12 +85,12 @@ final class HttpsServerManager extends HttpServerManager {
                   TrustManagerFactory.getDefaultAlgorithm()
               );
         String keystoreFile = Configuration.INSTANCE.
-        	getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PATH);
+            getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PATH);
         String keystorePass = Configuration.INSTANCE.
-        	getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PASS);
+            getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PASS);
         byte[] keystoreData = Resources.readFileOrPluginResourceAsByteArray(
             Application.PLUGIN_ID, keystoreFile
-        );  
+        );
         keyStore.load(
             new ByteArrayInputStream(keystoreData),
             keystorePass.toCharArray()
@@ -108,7 +108,7 @@ final class HttpsServerManager extends HttpServerManager {
             = new HttpsConfigurator(sslContext);
         String host = address.getHost();
         if (host == null) {
-            Logger.log(Severity.WARNING, 
+            Logger.log(Severity.WARNING,
                 "The host you specified for the HTTPS server is invalid."
                 + " Using default host " + HTTPS_DEFAULTHOST + "."
             );
@@ -116,7 +116,7 @@ final class HttpsServerManager extends HttpServerManager {
         }
         int port = address.getPort();
         if (port == -1) {
-            Logger.log(Severity.WARNING, 
+            Logger.log(Severity.WARNING,
                 "The port you specified for the HTTPS server is invalid."
                 + " Using default port" + HTTPS_DEFAULTPORT + "."
             );

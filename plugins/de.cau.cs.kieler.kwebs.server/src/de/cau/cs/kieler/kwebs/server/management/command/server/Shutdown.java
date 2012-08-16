@@ -18,17 +18,17 @@ import de.cau.cs.kieler.kwebs.server.Application;
 
 /**
  *
- * @author  swe
+ * @author swe
  * 
  */
 public final class Shutdown extends AbstractManagementCommand {
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public void execute() throws Exception {
-		getExchange().setResponse("Server has been shut down.");
-		Application.getInstance().shutdownServer();
-	}
+
+    /**
+     * {@inheritDoc}
+     */
+    public void execute() throws Exception {
+        getExchange().setResponse("Server has been shut down.");
+        Application.getInstance().shutdownServer();
+    }
 
 }

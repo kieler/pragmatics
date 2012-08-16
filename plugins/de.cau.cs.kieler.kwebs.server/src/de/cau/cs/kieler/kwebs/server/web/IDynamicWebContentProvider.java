@@ -26,8 +26,6 @@ public interface IDynamicWebContentProvider {
      * 
      * @param requestData
      *            the request data
-     * @throws Exception
-     *            when an error occurs during execution
      */
     void handleRequest(final RequestData requestData);
     

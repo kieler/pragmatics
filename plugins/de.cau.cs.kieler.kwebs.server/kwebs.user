@@ -78,6 +78,7 @@
 #de.cau.cs.kieler.kwebs.frontend.service.hoster=
 #de.cau.cs.kieler.kwebs.frontend.service.hoster.logo=
 #de.cau.cs.kieler.kwebs.frontend.https.expose.truststore=false
+#de.cau.cs.kieler.kwebs.frontend.disable.caching=false
 
 #de.cau.cs.kieler.kwebs.frontend.contact.information.general=<Institution>\n\
 # <Department>\n\

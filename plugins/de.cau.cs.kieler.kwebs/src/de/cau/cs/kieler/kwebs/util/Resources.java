@@ -253,16 +253,18 @@ public final class Resources {
     /**
      * Read the version of this plug-in.
      * 
-     * @param pluginId
+     * @param pluginId the plugin from which the version is to be returned.
      * @return the version of this plug-in
      */
     public static String getPluginVersion(final String pluginId) {
         String version = "<unknown>";
+        //CHECKSTYLEOFF EmptyBlock
         try {
             version = Platform.getBundle(pluginId).getVersion().toString();
         } catch (Exception e) {
-            ; // Hmmm... Not sure what to do in this case
+            // Hmmm... Not sure what to do in this case
         }
+        //CHECKSTYLEON EmptyBlock
         return version;
     }
     

@@ -21,124 +21,124 @@ import java.util.Map.Entry;
 
 /**
  *
- * @author  swe
- * 
+ * @author swe
+ *
  */
 public final class ManagementExchange implements IManagementExchange {
-    
+
     //////////
-    
+
     /** */
     private static final long serialVersionUID = 2422098188190797439L;
-    
+
     //////////
-    
+
     /** */
     private final Map<String, Serializable> parameters
-    	= new HashMap<String, Serializable>();
-    
+        = new HashMap<String, Serializable>();
+
     /** */
     private String command;
-    
+
     /** */
     private Serializable response;
-    
+
     //////////
-    
+
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
     public <T extends Serializable> T getParameter(final String name) {
-    	return (T) parameters.get(name);
+        return (T) parameters.get(name);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public <T extends Serializable> void setParameter(final String name, final T value) {
-    	parameters.put(name, value);
+        parameters.put(name, value);
     }
-    
+
     /**
      * @return
      */
     public String getCommand() {
-    	return command;
+        return command;
     }
-    
+
     /**
      * @param command
      */
     public void setCommand(final String command) {
-    	this.command = command;
+        this.command = command;
     }
-    
+
     /**
      * @return
      */
     public Serializable getResponse() {
-    	return response;
+        return response;
     }
-    
+
     /**
      * @param response
      */
     public void setResponse(final Serializable response) {
-    	this.response = response;
+        this.response = response;
     }
-    
+
     //////////
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean equals(final Object object) {
-    	if (object == this) {
-    		return true;
-    	}
-    	if (!(object instanceof ManagementExchange)) {
-    		return false;
-    	}
-    	ManagementExchange other = (ManagementExchange) object;
-    	if (!getClass().equals(other.getClass())) {
-    		return false;
-    	}
-    	if (!parameters.equals(other.parameters)) {
-    		return false;
-    	}
-    	return true;
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof ManagementExchange)) {
+            return false;
+        }
+        ManagementExchange other = (ManagementExchange) object;
+        if (!getClass().equals(other.getClass())) {
+            return false;
+        }
+        if (!parameters.equals(other.parameters)) {
+            return false;
+        }
+        return true;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public int hashCode() {
-    	return (
-    		command != null ? command.hashCode() << 1 : 0 
-    		^ parameters.hashCode()
-    		^ getClass().hashCode() << 1
-    	);
+        return (
+            command != null ? command.hashCode() << 1 : 0
+            ^ parameters.hashCode()
+            ^ getClass().hashCode() << 1
+        );
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public String toString() {	
-    	StringBuilder builder = new StringBuilder();
-    	builder.append(getClass().getCanonicalName());
-    	builder.append("@");
-    	builder.append(Integer.toHexString(hashCode()));
-    	builder.append(" (command=" + (command != null ? command : "null"));
-    	builder.append(", parameters=[");
-    	for (Entry<String, Serializable> entry : parameters.entrySet()) {
-    		builder.append(entry.getKey() + "=" + entry.getValue() + ", ");
-    	}
-    	builder.append("], result=" + (response != null ? response.toString() : null) + ")");
-    	return builder.toString();
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(getClass().getCanonicalName());
+        builder.append("@");
+        builder.append(Integer.toHexString(hashCode()));
+        builder.append(" (command=" + (command != null ? command : "null"));
+        builder.append(", parameters=[");
+        for (Entry<String, Serializable> entry : parameters.entrySet()) {
+            builder.append(entry.getKey() + "=" + entry.getValue() + ", ");
+        }
+        builder.append("], result=" + (response != null ? response.toString() : null) + ")");
+        return builder.toString();
     }
-	
+
 }

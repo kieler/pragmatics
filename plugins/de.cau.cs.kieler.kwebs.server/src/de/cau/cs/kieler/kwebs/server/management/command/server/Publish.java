@@ -19,24 +19,24 @@ import de.cau.cs.kieler.kwebs.server.publishing.ServicePublisher;
 
 /**
  *
- * @author  swe
+ * @author swe
  * 
  */
 public final class Publish extends AbstractManagementCommand {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void execute() throws Exception {
-		if (ServicePublisher.INSTANCE.isPublished()) {
-			getExchange().setResponse(
-			    new AlreadyPublishedException("Can not publish service since it already is.")
-			);
-			return;
-		}
-		ServicePublisher.INSTANCE.publish();
-		getExchange().setResponse("Services have been published.");
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void execute() throws Exception {
+        if (ServicePublisher.INSTANCE.isPublished()) {
+            getExchange().setResponse(
+                new AlreadyPublishedException("Can not publish service since it already is.")
+            );
+            return;
+        }
+        ServicePublisher.INSTANCE.publish();
+        getExchange().setResponse("Services have been published.");
+    }
 
 }
 

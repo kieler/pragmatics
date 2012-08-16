@@ -14,7 +14,6 @@
 
 package de.cau.cs.kieler.kwebs.server.web
 
-import com.sun.net.httpserver.Headers
 import de.cau.cs.kieler.kiml.LayoutOptionData
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kwebs.server.Application

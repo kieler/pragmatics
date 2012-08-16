@@ -36,8 +36,8 @@ import de.unido.ls5.eti.toolserver.SessionTimeouter;
  * The implementation of the SEPP protocol {@link de.unido.ls5.eti.connector.sepp.EtiSeppConnector}
  * relies on the deprecated {@code stop} method of java threads to end listening for incoming
  * connections. Unfortunately, the thread does busy waiting and will not terminate until another
- * connection request has been received. 
- * 
+ * connection request has been received.
+ *
  * @kieler.design 2011-08-25 reviewed by ckru, msp, mri
  * @author swe
  *
@@ -51,7 +51,7 @@ final class JetiServerManager extends AbstractServerManager {
      * {@inheritDoc}
      */
     public synchronized void publish(final Object theobject) {
-        try {                    
+        try {
             createServer();
             etiConnector.start(EtiConfig.getProperties());
         } catch (Exception e) {
@@ -63,7 +63,7 @@ final class JetiServerManager extends AbstractServerManager {
     /** */
     private static final int DEFAULT_JETI_SHUTDOWN_TIMEOUT
         = 100;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -72,9 +72,9 @@ final class JetiServerManager extends AbstractServerManager {
             try {
                 // Hot fix for jETI stopping-bug
                 if (etiConnector instanceof EtiSeppConnector) {
-                	((EtiSeppConnector) etiConnector).stop(DEFAULT_JETI_SHUTDOWN_TIMEOUT);
+                    ((EtiSeppConnector) etiConnector).stop(DEFAULT_JETI_SHUTDOWN_TIMEOUT);
                 } else {
-                	etiConnector.stop(); // Does not actually stop jETI
+                    etiConnector.stop(); // Does not actually stop jETI
                 }
                 etiConnector = null;
             } catch (Exception e) {
@@ -109,7 +109,7 @@ final class JetiServerManager extends AbstractServerManager {
             throw new ServerNotCreatedException(e);
         }
         org.apache.log4j.PropertyConfigurator.configure(log4jProps);
-        org.apache.log4j.Logger.getLogger(ServicePublisher.class);        
+        org.apache.log4j.Logger.getLogger(ServicePublisher.class);
         java.util.Properties jetiProps = createJetiProperties();
         EtiConfig.setProperties(jetiProps);
         EtiConfig.setExecutor(new EtiExecutorImpl());
@@ -123,14 +123,14 @@ final class JetiServerManager extends AbstractServerManager {
         etiConnector = new EtiSeppConnector();
     }
 
-    /** 
+    /**
      *  Prefix to be cut off from the jETI property identifiers when they are put
      *  in the jETI configuration.
      */
     private static final String PREFIX
         = "de.cau.cs.kieler.kwebs.";
 
-    /** 
+    /**
      *  Statically defined array of the property identifiers
      *  relevant for initializing the jETI configuration.
      */
@@ -145,17 +145,17 @@ final class JetiServerManager extends AbstractServerManager {
             Configuration.JETI_CONNECTORSEPPPORT,
             Configuration.JETI_DEBUG
         };
-    
+
     /**
      * Creates a {@code java.util.Properties} object containing relevant data
      * for publishing the embedded jETI tool server.
-     * 
+     *
      * @return the properties
      */
     private java.util.Properties createJetiProperties() {
-        java.util.Properties props = new java.util.Properties();  
+        java.util.Properties props = new java.util.Properties();
         for (String prop : JETI_PROPERTIES) {
-            props.put(prop.substring(PREFIX.length()), Configuration.INSTANCE.getConfigProperty(prop));  
+            props.put(prop.substring(PREFIX.length()), Configuration.INSTANCE.getConfigProperty(prop));
         }
         return props;
     }
@@ -163,7 +163,7 @@ final class JetiServerManager extends AbstractServerManager {
     /**
      * Creates a {@code java.util.Properties} object containing relevant data
      * for configuring log4j logger used by jETI tool server.
-     * 
+     *
      * @return the properties
      * @throws IOException
      *             If the via the KWebS configuration defined configuration file for jog4j
@@ -176,10 +176,10 @@ final class JetiServerManager extends AbstractServerManager {
             Configuration.INSTANCE.getConfigProperty(Configuration.JETI_LOG4JCONFIG))
         );
         props.put(
-            "log4j.appender.A2.File", 
+            "log4j.appender.A2.File",
             Configuration.INSTANCE.getConfigProperty(Configuration.JETI_LOGPATH)
         );
         return props;
     }
-    
+
 }

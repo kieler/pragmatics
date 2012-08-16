@@ -19,23 +19,23 @@ import de.cau.cs.kieler.kwebs.server.publishing.ServicePublisher;
 
 /**
  *
- * @author  swe
+ * @author swe
  * 
  */
 public final class Unpublish extends AbstractManagementCommand {
-    
+
     /**
      * {@inheritDoc}
      */
     public void execute() throws Exception {
-    	if (!ServicePublisher.INSTANCE.isPublished()) {
-    		getExchange().setResponse(
-    		    new AlreadyPublishedException("Can not unpublish service since it is not published.")
-    		);
-    		return;
-    	}
-    	ServicePublisher.INSTANCE.unpublish();
-    	getExchange().setResponse("Services have been unpublished.");
+        if (!ServicePublisher.INSTANCE.isPublished()) {
+            getExchange().setResponse(
+                new AlreadyPublishedException("Can not unpublish service since it is not published.")
+            );
+            return;
+        }
+        ServicePublisher.INSTANCE.unpublish();
+        getExchange().setResponse("Services have been unpublished.");
     }
 
 }

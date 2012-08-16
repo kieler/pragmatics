@@ -18,36 +18,36 @@ import de.cau.cs.kieler.kwebs.server.management.command.client.IManagementExchan
 
 /**
  *
- * @author  swe
- * 
+ * @author swe
+ *
  */
 public abstract class AbstractManagementCommand implements IManagementCommand {
 
     //////////
 
-	/** */
-	private IManagementExchange exchange;
-	
-	//////////
-	
-	/**
-	 * 
-	 * @return the exchange data object associated to this management command
-	 */
-	public IManagementExchange getExchange() {
-		return exchange;
-	}
+    /** */
+    private IManagementExchange exchange;
 
-	//////////
+    //////////
 
-	/**
-	 * 
-	 * @param exchange
-	 *            the exchange data object to be associated to this management command
-	 * @throws Exception
-	 */
-	public void initialize(final IManagementExchange exchange) throws Exception {
-		this.exchange = exchange;
-	}
-	
+    /**
+     *
+     * @return the exchange data object associated to this management command
+     */
+    public IManagementExchange getExchange() {
+        return exchange;
+    }
+
+    //////////
+
+    /**
+     *
+     * @param exchange
+     *            the exchange data object to be associated to this management command
+     * @throws Exception
+     */
+    public void initialize(final IManagementExchange theExchange) throws Exception {
+        this.exchange = theExchange;
+    }
+
 }

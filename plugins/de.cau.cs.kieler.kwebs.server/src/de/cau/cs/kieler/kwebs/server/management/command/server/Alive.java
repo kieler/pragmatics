@@ -16,16 +16,16 @@ package de.cau.cs.kieler.kwebs.server.management.command.server;
 
 /**
  *
- * @author  swe
+ * @author swe
  * 
  */
 public final class Alive extends AbstractManagementCommand {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void execute() throws Exception {
-		getExchange().setResponse("The KWebS server is currently running.");
-	}
-    
+    /**
+     * {@inheritDoc}
+     */
+    public void execute() throws Exception {
+        getExchange().setResponse("The KWebS server is currently running.");
+    }
+
 }

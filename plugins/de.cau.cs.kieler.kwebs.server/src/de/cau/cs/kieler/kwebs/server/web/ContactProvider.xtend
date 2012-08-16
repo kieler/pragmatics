@@ -19,7 +19,7 @@ import de.cau.cs.kieler.kwebs.server.configuration.Configuration
 /**
  * This class implements a web content provider for displaying contact information.
  *
- * @author  swe
+ * @author swe
  */
 class ContactProvider 
 	extends AbstractProvider

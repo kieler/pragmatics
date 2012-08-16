@@ -30,158 +30,158 @@ import de.cau.cs.kieler.kwebs.server.management.command.client.ManagementExchang
  * Main layout server management console application.
  *
  * @kieler.rating  2011-05-04 red
- * 
+ *
  * @author  swe
- * 
+ *
  */
 public final class ManagementApplication {
-    
+
     //////////
-    
+
     /** */
     private static final String DEFAULT_TRUSTSTORE_LOCATION
         = "mclient.jks";
-    
+
     //////////
-    
+
     /** */
     private static ManagementApplicationHelper helper;
-    
+
     //////////
-    
+
     /**
      * Private constructor.
      */
-    private ManagementApplication() {        
+    private ManagementApplication() {
     }
-    
+
     /**
      * The main application entry point.
-     * 
+     *
      * @param args
      *            command line arguments
      */
     public static void main(final String[] args) {
-    	
-    	ManagementApplicationHelper.intro();
-    	
+
+        ManagementApplicationHelper.intro();
+
         helper = new ManagementApplicationHelper(args);
-        
+
         // Help command line argument overrides any other arguments like commands, etc.
         if (helper.hasParam(ManagementApplicationHelper.HELP)) {
-        	ManagementApplicationHelper.help();
-        	return;
+            ManagementApplicationHelper.help();
+            return;
         }
-        
+
         if (!helper.hasParam(ManagementApplicationHelper.PORT)) {
-        	helper.setParam(
-        	    ManagementApplicationHelper.PORT, 
-        	    Integer.toString(ManagementService.DEFAULT_MANAGEMENTPORT)
-        	);
+            helper.setParam(
+                ManagementApplicationHelper.PORT,
+                Integer.toString(ManagementService.DEFAULT_MANAGEMENTPORT)
+            );
         }
         if (!helper.hasParam(ManagementApplicationHelper.KEYSTORE_LOCATION)) {
-        	helper.setParam(
-        	    ManagementApplicationHelper.KEYSTORE_LOCATION, 
-        	    DEFAULT_TRUSTSTORE_LOCATION
-        	);
+            helper.setParam(
+                ManagementApplicationHelper.KEYSTORE_LOCATION,
+                DEFAULT_TRUSTSTORE_LOCATION
+            );
         }
         if (!helper.hasParam(ManagementApplicationHelper.COMMAND)) {
-        	ManagementApplicationHelper.error(
-        		new String[] {
-        			"ERROR: You did not specify any command to be executed."
-        		},
-        		1
-    		);
+            ManagementApplicationHelper.error(
+                new String[] {
+                    "ERROR: You did not specify any command to be executed."
+                },
+                1
+            );
         }
         final String command = helper.getParam(ManagementApplicationHelper.COMMAND);
         if (!ManagementConstants.VALID_COMMANDS.contains(command.toLowerCase())) {
-        	ManagementApplicationHelper.error(
-        		new String[] {
-        			"ERROR: The command you specified ('" + command + "') is not valid."
-        		},
-        		//CHECKSTYLEOFF MagicNumber
-        		3
+            ManagementApplicationHelper.error(
+                new String[] {
+                    "ERROR: The command you specified ('" + command + "') is not valid."
+                },
+                //CHECKSTYLEOFF MagicNumber
+                3
                 //CHECKSTYLEON MagicNumber
-    		);
+            );
         }
-        
+
         ManagementClient client = null;
-        
+
         try {
-    
+
             IManagementExchange exchange = new ManagementExchange();
-            
+
             exchange.setCommand(command);
-            
+
             for (Entry<String, String> parameter : helper.getCommandParameters()) {
-            	exchange.setParameter(parameter.getKey(), parameter.getValue());
+                exchange.setParameter(parameter.getKey(), parameter.getValue());
             }
-            
+
             client = new ManagementClient();
-            
+
             client.setPort(Integer.parseInt(helper.getParam(ManagementApplicationHelper.PORT)));
             client.setTruststoreLocation(helper.getParam(ManagementApplicationHelper.KEYSTORE_LOCATION));
             client.setTruststorePassword(helper.getParam(ManagementApplicationHelper.KEYSTORE_PASSWORD));
-            
-            exchange = client.execute(exchange);            
+
+            exchange = client.execute(exchange);
             Serializable response = exchange.getResponse();
-            
+
             if (response instanceof Throwable) {
-            	Throwable throwable = ((Throwable) response);
-            	ManagementApplicationHelper.error(
-            		getMessage(
-            			new String[] {
-                			"A server side exception occurred while executing the command:",
-                			"    " + throwable.getMessage()            			
-                		},
-                		throwable	            		
-            		),
-            		2
-            	);
+                Throwable throwable = ((Throwable) response);
+                ManagementApplicationHelper.error(
+                    getMessage(
+                        new String[] {
+                            "A server side exception occurred while executing the command:",
+                            "    " + throwable.getMessage()
+                        },
+                        throwable
+                    ),
+                    2
+                );
             }
-            
+
             System.out.println(response);
-            
+
         } catch (Exception e) {
-        	ManagementApplicationHelper.error(
-        		getMessage(
-        			new String[] {
-            			"A communication error occurred: " + e.getMessage()
-            		},
-            		e
-            	),
+            ManagementApplicationHelper.error(
+                getMessage(
+                    new String[] {
+                        "A communication error occurred: " + e.getMessage()
+                    },
+                    e
+                ),
                 //CHECKSTYLEOFF MagicNumber
-        		4
+                4
                 //CHECKSTYLEON MagicNumber
-    		);
+            );
             return;
         }
-        
+
     }
-    
+
     //////////
-    
+
     /**
-     * 
+     *
      * @param message
      * @param throwable
      * @return
      */
     private static String[] getMessage(final String[] message, final Throwable throwable) {
-    	List<String> lines = new ArrayList<String>(Arrays.<String>asList(message));
-    	if (helper.hasParam(ManagementApplicationHelper.VERBOSE)) {
-    		lines.add("Full stack trace is:");
-    		ByteArrayOutputStream out = new ByteArrayOutputStream();
-    		PrintWriter           prn = new PrintWriter(out);
-    		throwable.printStackTrace(prn);
-    		prn.flush();
-    		prn.close();
-    		StringTokenizer       st  = new StringTokenizer(out.toString(), "\r\n");
-    		while (st.hasMoreTokens()) {
-    			lines.add(st.nextToken());
-    		}
-    	}
-    	return lines.toArray(new String[0]);
+        List<String> lines = new ArrayList<String>(Arrays.<String>asList(message));
+        if (helper.hasParam(ManagementApplicationHelper.VERBOSE)) {
+            lines.add("Full stack trace is:");
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            PrintWriter           prn = new PrintWriter(out);
+            throwable.printStackTrace(prn);
+            prn.flush();
+            prn.close();
+            StringTokenizer       st  = new StringTokenizer(out.toString(), "\r\n");
+            while (st.hasMoreTokens()) {
+                lines.add(st.nextToken());
+            }
+        }
+        return lines.toArray(new String[0]);
     }
 
 }

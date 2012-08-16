@@ -18,21 +18,21 @@ import de.cau.cs.kieler.kwebs.server.publishing.ServicePublisher;
 
 /**
  *
- * @author  swe
+ * @author swe
  * 
  */
 public final class Published extends AbstractManagementCommand {
-    
+
     /**
      * {@inheritDoc}
      */
     public void execute() throws Exception {
-    	getExchange().setResponse(
-    		"The configured services are currently"
-    		+ (!ServicePublisher.INSTANCE.isPublished() ? " not" : "")
-    		+ " published."
-    			
-    		);
-    	}
+        getExchange().setResponse(
+            "The configured services are currently"
+            + (!ServicePublisher.INSTANCE.isPublished() ? " not" : "")
+            + " published."
+                    
+            );
+        }
         
 }

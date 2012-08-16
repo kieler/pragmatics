@@ -27,62 +27,60 @@ import de.cau.cs.kieler.kwebs.server.management.command.server.Unpublish;
 /**
  * A factory for management command instances.
  *
- * @kieler.rating  2011-05-04 red
- * 
- * @author  swe
- * 
+ * @author swe
+ *
  */
 public final class ManagementCommandFactory {
 
-	//////////
-	
-	/** Singleton instance. */
-	public static final ManagementCommandFactory INSTANCE
-		= new ManagementCommandFactory();
+    //////////
 
-	//////////
-	
-	/** A mapping from command identifiers to the implementing classes. */
-	private static final Map<String, Class<? extends IManagementCommand>> COMMANDTOTYPEMAP
-		= new HashMap<String, Class<? extends IManagementCommand>>();
-	
-	/**
-	 * Initialize the type mapping
-	 */
-	static {
-		COMMANDTOTYPEMAP.put(ManagementConstants.COMMAND_ALIVE, 		Alive.class);
-		COMMANDTOTYPEMAP.put(ManagementConstants.COMMAND_PUBLISHED, Published.class);
-		COMMANDTOTYPEMAP.put(ManagementConstants.COMMAND_PUBLISH,     Publish.class);
-		COMMANDTOTYPEMAP.put(ManagementConstants.COMMAND_UNPUBLISH, Unpublish.class);
-		COMMANDTOTYPEMAP.put(ManagementConstants.COMMAND_SHUTDOWN,   Shutdown.class);
-	}
-	
-	//////////
-	
-	/**
-	 * 
-	 */
-	private ManagementCommandFactory() {
-	}
-	
-	//////////
-	
-	/**
-	 * 
-	 * @param command
-	 * @return
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
-	 */
-	public IManagementCommand create(final String command) throws InstantiationException, 
-	    IllegalAccessException {
-		String key = command.trim().toLowerCase();
-		if (!COMMANDTOTYPEMAP.containsKey(key)) {
-			throw new IllegalArgumentException(
-				"Given command does not exist: " + command.trim()
-			);
-		}
-		return COMMANDTOTYPEMAP.get(key).newInstance();
-	}
-	
+    /** Singleton instance. */
+    public static final ManagementCommandFactory INSTANCE
+        = new ManagementCommandFactory();
+
+    //////////
+
+    /** A mapping from command identifiers to the implementing classes. */
+    private static final Map<String, Class<? extends IManagementCommand>> COMMANDTOTYPEMAP
+        = new HashMap<String, Class<? extends IManagementCommand>>();
+
+    /**
+     * Initialize the type mapping
+     */
+    static {
+        COMMANDTOTYPEMAP.put(ManagementConstants.COMMAND_ALIVE,         Alive.class);
+        COMMANDTOTYPEMAP.put(ManagementConstants.COMMAND_PUBLISHED, Published.class);
+        COMMANDTOTYPEMAP.put(ManagementConstants.COMMAND_PUBLISH,     Publish.class);
+        COMMANDTOTYPEMAP.put(ManagementConstants.COMMAND_UNPUBLISH, Unpublish.class);
+        COMMANDTOTYPEMAP.put(ManagementConstants.COMMAND_SHUTDOWN,   Shutdown.class);
+    }
+
+    //////////
+
+    /**
+     *
+     */
+    private ManagementCommandFactory() {
+    }
+
+    //////////
+
+    /**
+     *
+     * @param command
+     * @return
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    public IManagementCommand create(final String command) throws InstantiationException,
+        IllegalAccessException {
+        String key = command.trim().toLowerCase();
+        if (!COMMANDTOTYPEMAP.containsKey(key)) {
+            throw new IllegalArgumentException(
+                "Given command does not exist: " + command.trim()
+            );
+        }
+        return COMMANDTOTYPEMAP.get(key).newInstance();
+    }
+
 }

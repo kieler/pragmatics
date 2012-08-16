@@ -36,186 +36,184 @@ import de.cau.cs.kieler.kwebs.server.management.command.client.IManagementExchan
 
 /**
  *
- * @kieler.rating  2011-05-04 red
- * 
- * @author  swe
- * 
+ * @author swe
+ *
  */
 public class ManagementClient {
-    
+
     //////////
-    
+
     /** */
     private int port
-    	= ManagementService.DEFAULT_MANAGEMENTPORT;
-    
+        = ManagementService.DEFAULT_MANAGEMENTPORT;
+
     /** The socket which connects to the management service of the layout server. */
     private Socket socket;
-    
+
     /** */
     private InputStream socketIn;
-    
+
     /** */
     private OutputStream socketOut;
-    
+
     /** */
     private String truststoreLocation
-    	= null;
-    
+        = null;
+
     /** */
     private String truststorePassword
-    	= null;
-    
+        = null;
+
     //////////
-    
+
     /**
-     * 
+     *
      */
     public ManagementClient() {
-    	this(ManagementService.DEFAULT_MANAGEMENTPORT, null, null);
+        this(ManagementService.DEFAULT_MANAGEMENTPORT, null, null);
     }
-    
+
     /**
      * Creates a new management client to manage the layout server running on localhost.
-     * 
+     *
      * @param port
      *            the port the management server listens for management requests
      * @param truststoreLocation
-     * 			  the location of the trust store for client authentication.
+     *            the location of the trust store for client authentication.
      * @param truststorePassword
-     * 			  the password of the trust store for client authentication.
+     *            the password of the trust store for client authentication.
      */
-    public ManagementClient(final int port, final String truststoreLocation, 
+    public ManagementClient(final int port, final String truststoreLocation,
         final String truststorePassword) {
-    	this.port               = port;
-    	this.truststoreLocation = truststoreLocation;
-    	this.truststorePassword = truststorePassword;
+        this.port               = port;
+        this.truststoreLocation = truststoreLocation;
+        this.truststorePassword = truststorePassword;
     }
-    
+
     //////////
-    
+
     /**
-     * 
+     *
      * @return
      */
     public int getPort() {
-    	return port;
+        return port;
     }
 
     /**
-     * 
+     *
      * @param port
      */
-	public void setPort(final int port) {
-		this.port = port;
-	}
+    public void setPort(final int port) {
+        this.port = port;
+    }
 
-	/**
-     * 
+    /**
+     *
      * @return
      */
     public String getTruststoreLocation() {
-		return truststoreLocation;
-	}
+        return truststoreLocation;
+    }
 
     /**
-     * 
+     *
      * @param truststoreLocation
      */
-	public void setTruststoreLocation(final String truststoreLocation) {
-		this.truststoreLocation = truststoreLocation;
-	}
+    public void setTruststoreLocation(final String truststoreLocation) {
+        this.truststoreLocation = truststoreLocation;
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public String getTruststorePassword() {
-		return truststorePassword;
-	}
-
-	/**
-	 * 
-	 * @param truststorePassword
-	 */
-	public void setTruststorePassword(final String truststorePassword) {
-		this.truststorePassword = truststorePassword;
-	}
-
-	//////////
-	
-	/**
-     * Returns whether the layout server is running or not.
-     * 
-     * @return whether the layout server is running or not
-     * @throws IOException when a communication error occurs
-     * @throws ClassNotFoundException 
-	 * @throws CertificateException 
-	 * @throws KeyStoreException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyManagementException 
+    /**
+     *
+     * @return
      */
-    public IManagementExchange execute(final IManagementExchange exchange) throws IOException, 
-        ClassNotFoundException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, 
-        CertificateException {
-    	
-    	initSocket();
-        
-        ObjectOutputStream objectOut = new ObjectOutputStream(socketOut);
-        
-        objectOut.writeObject(exchange);
-        objectOut.flush();
-        
-        ObjectInputStream objectIn = new ObjectInputStream(socketIn);
-    	Object            object   = objectIn.readObject();
-        
-    	objectOut.close();
-    	objectIn.close();
-    	
-    	if (!(object instanceof IManagementExchange)) {
-    		throw new IllegalArgumentException(
-    			"Can only handle cmd instances, not objects of type " + object.getClass()
-    		);
-    	}
-    	
-    	return (IManagementExchange) object;
-        
+    public String getTruststorePassword() {
+        return truststorePassword;
+    }
+
+    /**
+     *
+     * @param truststorePassword
+     */
+    public void setTruststorePassword(final String truststorePassword) {
+        this.truststorePassword = truststorePassword;
     }
 
     //////////
-    
+
     /**
-     * @throws IOException 
-     * @throws CertificateException 
-     * @throws KeyStoreException 
-     * @throws NoSuchAlgorithmException 
-     * @throws KeyManagementException 
-     * 
+     * Returns whether the layout server is running or not.
+     *
+     * @return whether the layout server is running or not
+     * @throws IOException when a communication error occurs
+     * @throws ClassNotFoundException
+     * @throws CertificateException
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyManagementException
      */
-    private void initSocket() throws KeyManagementException, NoSuchAlgorithmException, 
+    public IManagementExchange execute(final IManagementExchange exchange) throws IOException,
+        ClassNotFoundException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException,
+        CertificateException {
+
+        initSocket();
+
+        ObjectOutputStream objectOut = new ObjectOutputStream(socketOut);
+
+        objectOut.writeObject(exchange);
+        objectOut.flush();
+
+        ObjectInputStream objectIn = new ObjectInputStream(socketIn);
+        Object            object   = objectIn.readObject();
+
+        objectOut.close();
+        objectIn.close();
+
+        if (!(object instanceof IManagementExchange)) {
+            throw new IllegalArgumentException(
+                "Can only handle cmd instances, not objects of type " + object.getClass()
+            );
+        }
+
+        return (IManagementExchange) object;
+
+    }
+
+    //////////
+
+    /**
+     * @throws IOException
+     * @throws CertificateException
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyManagementException
+     *
+     */
+    private void initSocket() throws KeyManagementException, NoSuchAlgorithmException,
         KeyStoreException, CertificateException, IOException {
-    	if (truststoreLocation == null) {
-    		throw new IllegalStateException(
-    			"No truststore has been set for client authentication."
-    		);
-    	}
-    	if (truststorePassword == null) {
-    		throw new IllegalStateException(
-    			"No password has been set for client authentication."
-    		);
-    	}
+        if (truststoreLocation == null) {
+            throw new IllegalStateException(
+                "No truststore has been set for client authentication."
+            );
+        }
+        if (truststorePassword == null) {
+            throw new IllegalStateException(
+                "No password has been set for client authentication."
+            );
+        }
         socket = createSocket(
-        	truststoreLocation,
-        	truststorePassword,
-        	InetAddress.getByName("localhost"), 
-        	port
+            truststoreLocation,
+            truststorePassword,
+            InetAddress.getByName("localhost"),
+            port
         );
         socketIn  = socket.getInputStream();
         socketOut = socket.getOutputStream();
     }
-    
+
     /**
-     * 
+     *
      * @param truststoreFile
      * @param truststorePass
      * @param address
@@ -229,8 +227,8 @@ public class ManagementClient {
      * @throws KeyManagementException
      */
     private Socket createSocket(final String truststoreFile, final String truststorePass,
-    	final InetAddress address, final int port) throws NoSuchAlgorithmException, KeyStoreException, 
-    	CertificateException, IOException, KeyManagementException {
+        final InetAddress address, final int thePort) throws NoSuchAlgorithmException, KeyStoreException,
+        CertificateException, IOException, KeyManagementException {
         // Create a trust manager factory
         TrustManagerFactory trustManagerFactory
             = TrustManagerFactory.getInstance(
@@ -244,17 +242,17 @@ public class ManagementClient {
             truststorePass.toCharArray()
         );
         // Initialize the trust manager factory with the loaded trust store.
-        // Here the trusted certificate from the trust store is imported. 
+        // Here the trusted certificate from the trust store is imported.
         trustManagerFactory.init(keyStore);
         // Initialize a SSL context with a trust manager which trusts the
         // imported certificate
-        SSLContext sslContext = SSLContext.getInstance("TLS");            
+        SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(
             null,
                 trustManagerFactory.getTrustManagers(),
                     new SecureRandom()
         );
-        return sslContext.getSocketFactory().createSocket(address, port);
+        return sslContext.getSocketFactory().createSocket(address, thePort);
     }
-    
+
 }

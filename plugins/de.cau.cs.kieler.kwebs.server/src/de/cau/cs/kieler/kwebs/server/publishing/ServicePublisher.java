@@ -25,7 +25,7 @@ import de.cau.cs.kieler.kwebs.server.service.JaxWsService;
 /**
  * The {@code ServicePublisher} is the central point for managing the
  * publishing of the layout service.
- * 
+ *
  * @kieler.design 2011-08-25 reviewed by ckru, msp, mri
  * @author swe
  */
@@ -54,7 +54,7 @@ public final class ServicePublisher {
     /** Instance of the layout web service to be published. */
     private LayoutServicePort jaxwsService
         = new JaxWsService();
-    
+
     /**
      * Private constructor.
      */
@@ -70,66 +70,66 @@ public final class ServicePublisher {
             throw new AlreadyPublishedException();
         }
         try {
-            URI address = null;  
+            URI address = null;
             // Determine the maximum amount of concurrently executed requests
             int poolSize = AbstractServerManager.DEFAULT_POOLSIZE;
             try {
                 poolSize = Integer.parseInt(
-                	Configuration.INSTANCE.getConfigProperty(Configuration.SERVER_POOLSIZE)
+                    Configuration.INSTANCE.getConfigProperty(Configuration.SERVER_POOLSIZE)
                 );
             } catch (NumberFormatException e) {
                 Logger.log(
-                    Severity.WARNING, 
-                    "Illegal pool size configured: " 
+                    Severity.WARNING,
+                    "Illegal pool size configured: "
                     + Configuration.INSTANCE.getConfigProperty(Configuration.SERVER_POOLSIZE)
-                    + ", using default value of " 
+                    + ", using default value of "
                     + AbstractServerManager.DEFAULT_POOLSIZE
                 );
-            }   
+            }
             // Check which variants are to be published
-            boolean publishHTTP = true;            
+            boolean publishHTTP = true;
             if (Configuration.INSTANCE.hasConfigProperty(Configuration.JAXWS_PUBLISH_HTTP)) {
                 publishHTTP = Configuration.INSTANCE.
-                	getConfigProperty(Configuration.JAXWS_PUBLISH_HTTP).equalsIgnoreCase("true");
+                    getConfigProperty(Configuration.JAXWS_PUBLISH_HTTP).equalsIgnoreCase("true");
             }
             boolean publishHTTPS = false;
             if (Configuration.INSTANCE.hasConfigProperty(Configuration.JAXWS_PUBLISH_HTTPS)) {
                 publishHTTPS = Configuration.INSTANCE.
-                	getConfigProperty(Configuration.JAXWS_PUBLISH_HTTPS).equalsIgnoreCase("true");
-            }        
+                    getConfigProperty(Configuration.JAXWS_PUBLISH_HTTPS).equalsIgnoreCase("true");
+            }
             boolean publishJETI = false;
             if (Configuration.INSTANCE.hasConfigProperty(Configuration.PUBLISH_JETI)) {
                 publishJETI = Configuration.INSTANCE.
-                	getConfigProperty(Configuration.PUBLISH_JETI).equalsIgnoreCase("true");
-            }        
+                    getConfigProperty(Configuration.PUBLISH_JETI).equalsIgnoreCase("true");
+            }
             boolean publishSUPP = true;
             if (Configuration.INSTANCE.hasConfigProperty(Configuration.PUBLISH_SUPPORTSERVER)) {
                 publishSUPP = Configuration.INSTANCE.
-                	getConfigProperty(Configuration.PUBLISH_SUPPORTSERVER).equalsIgnoreCase("true");
-            }        
+                    getConfigProperty(Configuration.PUBLISH_SUPPORTSERVER).equalsIgnoreCase("true");
+            }
             // When publishing the JAXWS as HTTP and HTTPS variant they have to share the maximum
             // amount of concurrently executed requests
             if (publishHTTP && publishHTTPS) {
                 if (poolSize > 1) {
                     poolSize /= 2;
                 }
-            }   
+            }
             // Publish the variants
             if (publishHTTP) {
                 address = new URI(
-                	Configuration.INSTANCE.getConfigProperty(Configuration.JAXWS_HTTP_ADDRESS)
+                    Configuration.INSTANCE.getConfigProperty(Configuration.JAXWS_HTTP_ADDRESS)
                 );
                 Logger.log(
                     "Publishing jaxws layout service via HTTP on "
                     + address.toString()
-                );                
+                );
                 jaxwsHttpManager.setPoolSize(poolSize);
                 jaxwsHttpManager.setAddress(address);
                 jaxwsHttpManager.publish(jaxwsService);
             }
             if (publishHTTPS) {
                 address = new URI(
-                	Configuration.INSTANCE.getConfigProperty(Configuration.JAXWS_HTTPS_ADDRESS)
+                    Configuration.INSTANCE.getConfigProperty(Configuration.JAXWS_HTTPS_ADDRESS)
                 );
                 Logger.log(
                     "Publishing jaxws layout service via HTTPS on "
