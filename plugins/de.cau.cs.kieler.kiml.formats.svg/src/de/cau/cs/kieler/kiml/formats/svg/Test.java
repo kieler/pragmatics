@@ -37,6 +37,7 @@ import com.google.inject.Injector;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.text.ui.internal.KGraphActivator;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 
@@ -79,7 +80,11 @@ public class Test extends AbstractHandler {
                         String output = svgHandler.serialize(data.getTargetGraphs().get(0));
                         
                         IFile outputFile = inputFile.getParent().getFile(new Path(inputFile.getName()).removeFileExtension().addFileExtension("svg"));
-                        outputFile.create(new ByteArrayInputStream(output.getBytes()), true, null);
+                        if (outputFile.exists()) {
+                            outputFile.setContents(new ByteArrayInputStream(output.getBytes()), true, false, null);
+                        } else {
+                            outputFile.create(new ByteArrayInputStream(output.getBytes()), true, null);
+                        }
                     }
                 }
             }

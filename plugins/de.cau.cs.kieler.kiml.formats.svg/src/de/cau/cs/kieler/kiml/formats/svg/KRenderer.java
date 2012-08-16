@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.formats.svg;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.krendering.HorizontalAlignment;
 import de.cau.cs.kieler.core.krendering.KBackgroundColor;
+import de.cau.cs.kieler.core.krendering.KBackgroundVisibility;
 import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KFontBold;
 import de.cau.cs.kieler.core.krendering.KFontItalic;
@@ -48,6 +50,8 @@ import de.cau.cs.kieler.core.krendering.VerticalAlignment;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -61,6 +65,10 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * @author msp
  */
 public class KRenderer {
+
+    /** property for output scaling, to be put in parent node's shape layout. */
+    public static final IProperty<Float> SCALE = new Property<Float>(
+            "de.cau.cs.kieler.awt.scale", 1.0f);
 
     /** default font size for nodes. */
     private static final int NODE_FONT_SIZE = 9;
@@ -81,6 +89,8 @@ public class KRenderer {
     
     /** the graphics context used for drawing. */
     private Graphics2D graphics;
+    /** the scale factor for all coordinates. */
+    private float scale = 1.0f;
     
     /**
      * Create a KRenderer.
@@ -95,15 +105,26 @@ public class KRenderer {
      * Render the whole content of a graph.
      * 
      * @param parentNode the parent node of the graph to render
+     * @return the size of the rendered graph
      */
-    public void renderGraph(final KNode parentNode) {
+    public KVector renderGraph(final KNode parentNode) {
+        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+        // set the scale factor
+        scale = parentLayout.getProperty(SCALE);
+        if (scale <= 0) {
+            scale = 1;
+        }
+        
         // render the nodes and ports
         Set<KEdge> edgeSet = new HashSet<KEdge>();
         renderNodeRecursive(parentNode, edgeSet);
+        
         // render the edges
         for (KEdge edge : edgeSet) {
             renderEdge(parentNode, edge);
         }
+        
+        return new KVector(parentLayout.getWidth(), parentLayout.getHeight()).scale(scale);
     }
 
     /**
@@ -117,34 +138,40 @@ public class KRenderer {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         KRendering nodeRendering = node.getData(KRendering.class);
         if (nodeRendering == null) {
+            int width = Math.round(scale * nodeLayout.getWidth());
+            int height = Math.round(scale * nodeLayout.getHeight());
             // paint the background with white
             graphics.setColor(Color.WHITE);
-            graphics.fillRect(0, 0, (int) nodeLayout.getWidth(), (int) nodeLayout.getHeight());
+            graphics.fillRect(0, 0, width, height);
             if (node.getParent() != null) {
                 // paint a black border around the node
                 graphics.setColor(Color.BLACK);
                 graphics.setStroke(DEFAULT_STROKE);
-                graphics.drawRect(0, 0, (int) nodeLayout.getWidth(), (int) nodeLayout.getHeight());
+                graphics.drawRect(0, 0, width, height);
             }
         } else {
+            KVector size = new KVector(nodeLayout.getWidth(), nodeLayout.getHeight()).scale(scale);
             // paint the given rendering
-            render(nodeRendering, new KVector(nodeLayout.getWidth(), nodeLayout.getHeight()));
+            render(nodeRendering, size);
         }
         
         // render ports
         for (KPort port : node.getPorts()) {
             KShapeLayout portLayout = port.getData(KShapeLayout.class);
             // apply the offset of the port coordinates
-            graphics.translate(portLayout.getXpos(), portLayout.getYpos());
+            graphics.translate(scale * portLayout.getXpos(), scale * portLayout.getYpos());
             
             KRendering portRendering = port.getData(KRendering.class);
             if (portRendering == null) {
+                int width = Math.round(scale * portLayout.getWidth());
+                int height = Math.round(scale * portLayout.getHeight());
                 // paint a dark gray box
                 graphics.setColor(Color.DARK_GRAY);
-                graphics.fillRect(0, 0, (int) portLayout.getWidth(), (int) portLayout.getHeight());
+                graphics.fillRect(0, 0, width, height);
             } else {
+                KVector size = new KVector(portLayout.getWidth(), portLayout.getHeight()).scale(scale);
                 // paint the given rendering
-                render(portRendering, new KVector(portLayout.getWidth(), portLayout.getHeight()));
+                render(portRendering, size);
             }
             
             // render port labels
@@ -153,7 +180,7 @@ public class KRenderer {
             }
             
             // reset the offset
-            graphics.translate(-portLayout.getXpos(), -portLayout.getYpos());
+            graphics.translate(-scale * portLayout.getXpos(), -scale * portLayout.getYpos());
         }
         
         // render node labels
@@ -163,22 +190,22 @@ public class KRenderer {
         
         // render contained child nodes
         KInsets insets = nodeLayout.getInsets();
-        graphics.translate(insets.getLeft(), insets.getTop());
+        graphics.translate(scale * insets.getLeft(), scale * insets.getTop());
         for (KNode child : node.getChildren()) {
             // apply the offset of the child coordinates
             KShapeLayout childLayout = child.getData(KShapeLayout.class);
-            graphics.translate(childLayout.getXpos(), childLayout.getYpos());
+            graphics.translate(scale * childLayout.getXpos(), scale * childLayout.getYpos());
             
             renderNodeRecursive(child, edgeSet);
             
             // reset the offset
-            graphics.translate(-childLayout.getXpos(), -childLayout.getYpos());
+            graphics.translate(-scale * childLayout.getXpos(), -scale * childLayout.getYpos());
 
             // store all incident edges to render them later
             edgeSet.addAll(child.getIncomingEdges());
             edgeSet.addAll(child.getOutgoingEdges());
         }
-        graphics.translate(-insets.getLeft(), -insets.getTop());
+        graphics.translate(-scale * insets.getLeft(), -scale * insets.getTop());
     }
     
     /**
@@ -186,45 +213,27 @@ public class KRenderer {
      * the label's parent for shapes and the edge reference point for edges.
      * 
      * @param label the label to paint
+     * @param fontSize the font size in points (unscaled)
      */
     private void renderLabel(final KLabel label, final int fontSize) {
         KShapeLayout labelLayout = label.getData(KShapeLayout.class);
         // apply the offset of the label coordinates
-        graphics.translate(labelLayout.getXpos(), labelLayout.getYpos());
+        graphics.translate(scale * labelLayout.getXpos(), scale * labelLayout.getYpos());
         
+        KVector size = new KVector(labelLayout.getWidth(), labelLayout.getHeight()).scale(scale);
         KRendering labelRendering = label.getData(KRendering.class);
         if (labelRendering == null) {
             // paint the text string
             graphics.setColor(Color.BLACK);
-            graphics.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, fontSize));
-            renderText(label.getText(), labelLayout.getHeight());
+            graphics.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Math.round(scale * fontSize)));
+            renderText(label.getText(), size, HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
         } else {
             // paint the given rendering
-            render(labelRendering, new KVector(labelLayout.getWidth(), labelLayout.getHeight()),
-                    label.getText());
+            render(labelRendering, size, label.getText());
         }
         
         // reset the offset
-        graphics.translate(-labelLayout.getXpos(), -labelLayout.getYpos());
-    }
-    
-    /**
-     * Render the given text respecting line breaks. The graphics must be transformed to the
-     * position of the containing box.
-     * 
-     * @param text the text to render
-     * @param height the height of the box in which the text is contained
-     */
-    private void renderText(final String text, final float height) {
-        StringTokenizer textTokenizer = new StringTokenizer(text, "\n\r");
-        int lineCount = textTokenizer.countTokens();
-        int fontHeight = graphics.getFontMetrics().getHeight();
-        float pos = (height - lineCount * fontHeight) / 2;
-        while (textTokenizer.hasMoreTokens()) {
-            String line = textTokenizer.nextToken();
-            pos += fontHeight;
-            graphics.drawString(line, 0, pos);
-        }
+        graphics.translate(-scale * labelLayout.getXpos(), -scale * labelLayout.getYpos());
     }
 
     /**
@@ -255,6 +264,7 @@ public class KRenderer {
                     nodeLayout.getYpos() + insets.getTop());
             node = node.getParent();
         }
+        offset.scale(scale);
         graphics.translate(offset.x, offset.y);
 
         // get the bend points of the edge
@@ -263,6 +273,7 @@ public class KRenderer {
         if (edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
             bendPoints = KielerMath.approximateSpline(bendPoints);
         }
+        bendPoints.scale(scale);
 
         KRendering edgeRendering = edge.getData(KRendering.class);
         if (edgeRendering == null) {
@@ -302,7 +313,7 @@ public class KRenderer {
      * @param point2 target point
      */
     private void makeArrow(final KVector point1, final KVector point2) {
-        if (!(point1.x == point2.x && point1.y == point2.y)) {
+        if (!(point1.x == point2.x && point1.y == point2.y) && scale * ARROW_WIDTH >= 2) {
             // CHECKSTYLEOFF MagicNumber
             int[] arrowx = new int[3];
             int[] arrowy = new int[3];
@@ -314,10 +325,10 @@ public class KRenderer {
             double length = Math.sqrt(vectX * vectX + vectY * vectY);
             double normX = vectX / length;
             double normY = vectY / length;
-            double neckX = point2.x + ARROW_LENGTH * normX;
-            double neckY = point2.y + ARROW_LENGTH * normY;
-            double orthX = normY * ARROW_WIDTH / 2;
-            double orthY = -normX * ARROW_WIDTH / 2;
+            double neckX = point2.x + scale * ARROW_LENGTH * normX;
+            double neckY = point2.y + scale * ARROW_LENGTH * normY;
+            double orthX = normY * scale * ARROW_WIDTH / 2;
+            double orthY = -normX * scale * ARROW_WIDTH / 2;
 
             arrowx[1] = (int) Math.round(neckX + orthX);
             arrowy[1] = (int) Math.round(neckY + orthY);
@@ -338,7 +349,7 @@ public class KRenderer {
         // apply the propagated and contained styles
         StyleData styleData = applyStyles(rendering);
         
-        // XXX
+        // 
         
         // remove the contained propagated styles
         for (KStyle style : rendering.getStyles()) {
@@ -350,6 +361,50 @@ public class KRenderer {
     
     public void render(final KRendering rendering, final KVectorChain points) {
         
+    }
+    
+    /**
+     * Render the given text respecting line breaks. The graphics must be transformed to the
+     * position of the containing box.
+     * 
+     * @param text the text to render
+     * @param containerSize the size of the box in which the text is contained
+     * @param horzAlignment the horizontal alignment
+     * @param vertAlignment the vertical alignment
+     */
+    private void renderText(final String text, final KVector containerSize,
+            final HorizontalAlignment horzAlignment, final VerticalAlignment vertAlignment) {
+        StringTokenizer textTokenizer = new StringTokenizer(text, "\n\r");
+        int lineCount = textTokenizer.countTokens();
+        FontMetrics fontMetrics = graphics.getFontMetrics();
+        int fontHeight = fontMetrics.getHeight();
+        float ypos;
+        switch (vertAlignment) {
+        case TOP:
+            ypos = 0;
+            break;
+        case BOTTOM:
+            ypos = (float) containerSize.y - lineCount * fontHeight;
+            break;
+        default:
+            ypos = (float) (containerSize.y - lineCount * fontHeight) / 2;
+        }
+        while (textTokenizer.hasMoreTokens()) {
+            String line = textTokenizer.nextToken();
+            ypos += fontHeight;
+            float xpos;
+            switch (horzAlignment) {
+            case LEFT:
+                xpos = 0;
+                break;
+            case RIGHT:
+                xpos = (float) containerSize.x - fontMetrics.stringWidth(line);
+                break;
+            default:
+                xpos = (float) (containerSize.x - fontMetrics.stringWidth(line)) / 2;
+            }
+            graphics.drawString(line, xpos, ypos);
+        }
     }
     
     private StyleData applyStyles(final KRendering rendering) {
@@ -374,6 +429,21 @@ public class KRenderer {
                 BasicStroke.JOIN_MITER, 1.0f, styleData.lineStyle, 0.0f));
         graphics.setFont(new Font(styleData.fontName, styleData.fontStyle, styleData.fontSize));
         return styleData;
+    }
+    
+    /** meta data class holding style attributes. */
+    private static class StyleData {
+        private Color color = Color.BLACK;
+        private Color backgroundColor = Color.WHITE;
+        private boolean backgroundVisible = false;
+        private float lineWidth = 1.0f;
+        private float[] lineStyle = null;
+        private HorizontalAlignment horzAlignment = HorizontalAlignment.LEFT;
+        private VerticalAlignment vertAlignment = VerticalAlignment.CENTER;
+        private boolean visible = true;
+        private int fontStyle = Font.PLAIN;
+        private String fontName = Font.SANS_SERIF;
+        private int fontSize = NODE_FONT_SIZE;
     }
     
     private void handleStyle(final KStyle style, final StyleData styleData) {
@@ -416,9 +486,11 @@ public class KRenderer {
         case KRenderingPackage.KVERTICAL_ALIGNMENT:
             styleData.vertAlignment = ((KVerticalAlignment) style).getVerticalAlignment();
             break;
-        case KRenderingPackage.KBACKGROUND_VISIBILITY:
         case KRenderingPackage.KVISIBILITY:
             styleData.visible = ((KVisibility) style).isVisible();
+            break;
+        case KRenderingPackage.KBACKGROUND_VISIBILITY:
+            styleData.backgroundVisible = ((KBackgroundVisibility) style).isVisible();
             break;
         case KRenderingPackage.KFONT_BOLD:
             if (((KFontBold) style).isBold()) {
@@ -443,18 +515,8 @@ public class KRenderer {
         }
     }
     
-    /** meta data class holding style attributes. */
-    private static class StyleData {
-        private Color color = Color.BLACK;
-        private Color backgroundColor = Color.WHITE;
-        private float lineWidth = 1.0f;
-        private float[] lineStyle = null;
-        private HorizontalAlignment horzAlignment = HorizontalAlignment.LEFT;
-        private VerticalAlignment vertAlignment = VerticalAlignment.CENTER;
-        private boolean visible = true;
-        private int fontStyle = Font.PLAIN;
-        private String fontName = Font.SANS_SERIF;
-        private int fontSize = NODE_FONT_SIZE;
+    private void handleRendering(final KRendering rendering, final StyleData styleData,
+            final KVector size) {
     }
 
 }

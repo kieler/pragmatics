@@ -451,8 +451,8 @@ public class KGraphRenderer {
             double normY = vectY / length;
             double neckX = point2.x + ARROW_LENGTH * normX * scale;
             double neckY = point2.y + ARROW_LENGTH * normY * scale;
-            double orthX = normY * ARROW_WIDTH / 2;
-            double orthY = -normX * ARROW_WIDTH / 2;
+            double orthX = normY * ARROW_WIDTH / 2 * scale;
+            double orthY = -normX * ARROW_WIDTH / 2 * scale;
 
             arrow[2] = (int) Math.round(neckX + orthX + offset.x);
             arrow[3] = (int) Math.round(neckY + orthY + offset.y);

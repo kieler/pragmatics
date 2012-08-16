@@ -21,7 +21,7 @@ import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 
@@ -45,14 +45,14 @@ public class SvgExporter implements IGraphTransformer<KNode, SVGGraphics2D> {
 
         // create an instance of the SVG generator
         SVGGraphics2D graphics = new SVGGraphics2D(document);
-        KShapeLayout graphLayout = data.getSourceGraph().getData(KShapeLayout.class);
-        graphics.setSVGCanvasSize(new Dimension((int) graphLayout.getWidth() + 1,
-                (int) graphLayout.getHeight() + 1));
         data.getTargetGraphs().add(graphics);
         
         // create and execute an instance of the KRenderer
         KRenderer renderer = new KRenderer(graphics);
-        renderer.renderGraph(data.getSourceGraph());
+        KVector size = renderer.renderGraph(data.getSourceGraph());
+        
+        // set the bounding box for the SVG canvas
+        graphics.setSVGCanvasSize(new Dimension((int) size.x + 1, (int) size.y + 1));
     }
 
     /**
