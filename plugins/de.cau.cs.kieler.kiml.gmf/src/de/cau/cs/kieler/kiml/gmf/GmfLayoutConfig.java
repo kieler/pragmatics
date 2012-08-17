@@ -106,11 +106,14 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             
             View notationView = focusEditPart.getNotationView();
             context.setProperty(NOTATION_VIEW, notationView);
-            // labels usually have no own domain model element, so they must not take the domain options
-            if (context.getProperty(LayoutContext.DOMAIN_MODEL) == null
-                    && !(focusEditPart instanceof LabelEditPart)) {
+            if (context.getProperty(LayoutContext.DOMAIN_MODEL) == null) {
                 EObject object = notationView.getElement();
-                context.setProperty(LayoutContext.DOMAIN_MODEL, object);
+                // put the EObject into the context only if the edit part has its own model element
+                if (focusEditPart.getParent() == null
+                        || !(focusEditPart.getParent().getModel() instanceof View)
+                        || ((View) focusEditPart.getParent().getModel()).getElement() != object) {
+                    context.setProperty(LayoutContext.DOMAIN_MODEL, object);
+                }
             }
             
             // determine the target type and container / containment edit parts
