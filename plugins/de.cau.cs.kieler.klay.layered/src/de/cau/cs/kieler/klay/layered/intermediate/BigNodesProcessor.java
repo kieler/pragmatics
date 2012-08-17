@@ -160,18 +160,18 @@ public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProce
                 // expand node by one dummy node per iteration
                 for (int d = 1; d < width[node.id]; d++) {
                     // create new dummy node
-                    LNode dummy = new LNode();
+                    LNode dummy = new LNode(layeredGraph);
                     dummy.id = dummyID++;
                     // set size
                     dummy.getSize().y = node.getSize().y;
                     dummy.getSize().x = minWidth;
                     // add ports to connect it with the previous node
-                    LPort outPort = new LPort();
-                    LPort inPort = new LPort();
+                    LPort outPort = new LPort(layeredGraph);
+                    LPort inPort = new LPort(layeredGraph);
                     outPort.setNode((d == 1) ? node : dummyNodes.getLast());
                     inPort.setNode(dummy);
                     // add edge to connect it with the previous node
-                    LEdge edge = new LEdge();
+                    LEdge edge = new LEdge(layeredGraph);
                     edge.setSource(outPort);
                     edge.setTarget(inPort);
                     // fixation edges should be handled as a straight line

@@ -85,7 +85,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
 
         // Make up an LNode that is to represent the layeredGraph as a key in
         // the subgraphOrderingGraph
-        LNode graphKey = new LNode();
+        LNode graphKey = new LNode(layeredGraph);
         graphKey.copyProperties(layeredGraph);
 
         // Document the insertion of nodes into the subgraphOrderingGraph.
@@ -168,7 +168,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                         if (subgraphOrderingGraph.containsKey(key)) {
                             partGraph = subgraphOrderingGraph.get(key);
                         } else {
-                            partGraph = new LGraph();
+                            partGraph = new LGraph(layeredGraph);
                             partGraph.setProperty(Properties.RANDOM, random);
                             subgraphOrderingGraph.put(key, partGraph);
                         }
@@ -177,9 +177,9 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
                         List<LNode> nodeList = partGraph.getLayerlessNodes();
                         LNode currentRep = getNodeCopy(propCompoundCurrent, nodeList, insertedNodes);
                         LNode nextRep = getNodeCopy(propCompoundNext, nodeList, insertedNodes);
-                        LEdge leftOfEdge = new LEdge();
-                        LPort sourcePort = new LPort();
-                        LPort targetPort = new LPort();
+                        LEdge leftOfEdge = new LEdge(layeredGraph);
+                        LPort sourcePort = new LPort(layeredGraph);
+                        LPort targetPort = new LPort(layeredGraph);
                         leftOfEdge.setSource(sourcePort);
                         leftOfEdge.setTarget(targetPort);
                         sourcePort.setNode(currentRep);
@@ -573,7 +573,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             retNode = insertedNodes.get(node);
         } else {
             // A representative has to be created.
-            retNode = new LNode();
+            retNode = new LNode(node.getLayer().getGraph());
             retNode.setProperty(Properties.ORIGIN, node);
             // retNode.copyProperties(node);
             insertedNodes.put(node, retNode);

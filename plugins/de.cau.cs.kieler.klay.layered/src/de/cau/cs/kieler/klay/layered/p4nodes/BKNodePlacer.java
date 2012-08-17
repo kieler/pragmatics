@@ -979,7 +979,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         boolean layoutIsSane = true;
         for (Layer layer : layeredGraph.getLayers()) {
             double pos = Double.NEGATIVE_INFINITY;
-            LNode previous = new LNode();
+            LNode previous = new LNode(layeredGraph);
             for (LNode node : layer.getNodes()) {
                 if (bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y > pos) {
                     previous = node;

@@ -142,11 +142,11 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
         if (!bendEdges.isEmpty() && diffx > hypernode.getSize().x / 2
                 && diffy > hypernode.getSize().y / 2) {
             // create new ports for the edges
-            LPort northPort = new LPort();
+            LPort northPort = new LPort(layeredGraph);
             northPort.setNode(hypernode);
             northPort.setSide(PortSide.NORTH);
             northPort.getPosition().x = hypernode.getSize().x / 2;
-            LPort southPort = new LPort();
+            LPort southPort = new LPort(layeredGraph);
             southPort.setNode(hypernode);
             southPort.setSide(PortSide.SOUTH);
             southPort.getPosition().x = hypernode.getSize().x / 2;

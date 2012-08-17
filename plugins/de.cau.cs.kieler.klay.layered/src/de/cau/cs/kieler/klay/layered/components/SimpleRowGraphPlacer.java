@@ -50,7 +50,7 @@ class SimpleRowGraphPlacer extends AbstractGraphPlacer {
             }
             graph.getLayers().clear();
             return graph;
-        } else if (components.size() <= 0) {
+        } else if (components.isEmpty()) {
             return new LGraph();
         }
         
@@ -78,9 +78,10 @@ class SimpleRowGraphPlacer extends AbstractGraphPlacer {
             }
         });
         
-        LGraph result = new LGraph();
-        result.copyProperties(components.get(0));
-        result.getInsets().copy(components.get(0).getInsets());
+        LGraph firstComponent = components.get(0);
+        LGraph result = new LGraph(firstComponent);
+        result.copyProperties(firstComponent);
+        result.getInsets().copy(firstComponent.getInsets());
         
         // determine the maximal row width by the maximal box width and the total area
         double maxRowWidth = 0.0f;

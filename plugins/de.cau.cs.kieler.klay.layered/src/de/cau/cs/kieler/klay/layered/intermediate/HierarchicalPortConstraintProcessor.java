@@ -261,7 +261,7 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
                     
                     if (prevLayerDummy == null) {
                         // No. Create one.
-                        prevLayerDummy = createDummy(sourceNode);
+                        prevLayerDummy = createDummy(layeredGraph, sourceNode);
                         prevExtPortToDummyNodesMap.put(
                                 sourceNode.getProperty(Properties.ORIGIN), prevLayerDummy);
                         prevNewDummyNodes.add(prevLayerDummy);
@@ -287,7 +287,7 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
                     
                     if (nextLayerDummy == null) {
                         // No. Create one.
-                        nextLayerDummy = createDummy(targetNode);
+                        nextLayerDummy = createDummy(layeredGraph, targetNode);
                         nextExtPortToDummyNodesMap.put(
                                 targetNode.getProperty(Properties.ORIGIN), nextLayerDummy);
                         nextNewDummyNodes.add(nextLayerDummy);
@@ -357,11 +357,12 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
      * will point to the original dummy. This way, the original dummy can later be restored,
      * and the newly created dummy can be told apart from the original.
      * 
+     * @param layeredGraph the layered graph.
      * @param originalDummy the original dummy.
      * @return the newly created dummy node.
      */
-    private LNode createDummy(final LNode originalDummy) {
-        LNode newDummy = new LNode();
+    private LNode createDummy(final LGraph layeredGraph, final LNode originalDummy) {
+        LNode newDummy = new LNode(layeredGraph);
         newDummy.copyProperties(originalDummy);
         newDummy.setProperty(Properties.EXT_PORT_REPLACED_DUMMY, originalDummy);
         newDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
@@ -370,11 +371,11 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
         // DEBUG
         newDummy.getLabels().addAll(originalDummy.getLabels());
         
-        LPort inputPort = new LPort();
+        LPort inputPort = new LPort(layeredGraph);
         inputPort.setNode(newDummy);
         inputPort.setSide(PortSide.WEST);
         
-        LPort outputPort = new LPort();
+        LPort outputPort = new LPort(layeredGraph);
         outputPort.setNode(newDummy);
         outputPort.setSide(PortSide.EAST);
         

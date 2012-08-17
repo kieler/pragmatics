@@ -180,7 +180,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     
                     // Restore the origin and connect the node to it
                     restoreDummy(replacedDummy, restoredDummies);
-                    connectNodeToDummy(node, replacedDummy);
+                    connectNodeToDummy(layeredGraph, node, replacedDummy);
                 }
             }
             
@@ -230,9 +230,9 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param node the node to connect to the dummy.
      * @param dummy the external port dummy to connect the node to.
      */
-    private void connectNodeToDummy(final LNode node, final LNode dummy) {
+    private void connectNodeToDummy(final LGraph layeredGraph, final LNode node, final LNode dummy) {
         // First, add a port to the node. The port side depends on the node's hierarchical port side
-        LPort outPort = new LPort();
+        LPort outPort = new LPort(layeredGraph);
         outPort.setNode(node);
         
         PortSide extPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
@@ -242,7 +242,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         LPort inPort = dummy.getPorts().get(0);
         
         // Connect the two nodes
-        LEdge edge = new LEdge();
+        LEdge edge = new LEdge(layeredGraph);
         edge.setSource(outPort);
         edge.setTarget(inPort);
     }

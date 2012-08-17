@@ -29,15 +29,58 @@ public abstract class LGraphElement extends MapPropertyHolder
     private static final long serialVersionUID = 5480383439314459124L;
     
     // CHECKSTYLEOFF VisibilityModifier
+
     /** Identifier value, may be arbitrarily used by algorithms. */
     public int id;
+    
     // CHECKSTYLEON VisibilityModifier
+    
+    /** the hash code for this graph element. */
+    private final int hashCode;
+
+    /**
+     * Create a graph element with given hash code counter.
+     * 
+     * @param counter the counter used to find a unique but predictable hash code
+     */
+    public LGraphElement(final HashCodeCounter counter) {
+        hashCode = ++counter.count;
+    }
     
     /**
      * {@inheritDoc}
      */
-    public int compareTo(final LGraphElement other) {
-        return this.id - other.id;
+    @Override
+    public final boolean equals(final Object object) {
+        if (object instanceof LGraphElement) {
+            LGraphElement other = (LGraphElement) object;
+            return this.hashCode == other.hashCode;
+        }
+        return false;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final int hashCode() {
+        return hashCode;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public final int compareTo(final LGraphElement other) {
+        return this.hashCode - other.hashCode;
+    }
+    
+    /**
+     * A counter for hash codes. The same counter must be used for all elements created in
+     * an algorithm run. This guarantees that the hash codes of all graph elements are unique,
+     * but predictable independently of their object instance.
+     */
+    public static class HashCodeCounter {
+        private int count = 0;
     }
     
 }

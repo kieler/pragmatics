@@ -43,6 +43,15 @@ public class LEdge extends LGraphElement {
     private LPort target;
     /** labels assigned to this edge. */
     private final List<LLabel> labels = new LinkedList<LLabel>();
+    
+    /**
+     * Creates an edge.
+     * 
+     * @param graph the graph for which the edge is created
+     */
+    public LEdge(final LGraph graph) {
+        super(graph.hashCodeCounter());
+    }
 
     /**
      * {@inheritDoc}

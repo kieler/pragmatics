@@ -106,7 +106,7 @@ public final class Util {
                     return inport;
                 }
             }
-            port = new LPort();
+            port = new LPort(node.getLayer().getGraph());
             port.setProperty(Properties.INPUT_COLLECT, true);
             break;
         case OUTPUT:
@@ -115,7 +115,7 @@ public final class Util {
                     return outport;
                 }
             }
-            port = new LPort();
+            port = new LPort(node.getLayer().getGraph());
             port.setProperty(Properties.OUTPUT_COLLECT, true);
             break;
         }
