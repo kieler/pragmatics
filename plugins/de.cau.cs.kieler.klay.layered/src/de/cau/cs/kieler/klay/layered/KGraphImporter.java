@@ -297,8 +297,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         }
 
         // transform the ports
-        KPort[] sortedPorts = KimlUtil.getSortedPorts(node);
-        for (KPort kport : sortedPorts) {
+        for (KPort kport : node.getPorts()) {
             KShapeLayout portLayout = kport.getData(KShapeLayout.class);
 
             // determine the port type
