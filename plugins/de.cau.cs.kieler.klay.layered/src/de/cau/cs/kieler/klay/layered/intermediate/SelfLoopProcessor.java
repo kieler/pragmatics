@@ -112,15 +112,15 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
                         if ((sourcePortSide == PortSide.NORTH || sourcePortSide == PortSide.SOUTH)
                                 && targetPortSide == PortSide.WEST) {
                             
-                            edge.reverse(false);
+                            edge.reverse(layeredGraph, false);
                         } else if (sourcePortSide == PortSide.SOUTH
                                 && targetPortSide == PortSide.NORTH) {
                             
-                            edge.reverse(false);
+                            edge.reverse(layeredGraph, false);
                         } else if (sourcePortSide == PortSide.EAST
                                 && targetPortSide != PortSide.EAST) {
                             
-                            edge.reverse(false);
+                            edge.reverse(layeredGraph, false);
                         }
                         
                         // Now, let's see if a dummy has to be inserted

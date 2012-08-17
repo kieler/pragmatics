@@ -618,7 +618,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 && !node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
             // Hypernodes have one output port and one input port
             final PortSide defaultSide = PortSide.fromDirection(direction);
-            port = Util.provideCollectorPort(node, type, defaultSide);
+            port = Util.provideCollectorPort(layeredGraph, node, type, defaultSide);
         } else {
             port = new LPort(layeredGraph);
             port.setNode(node);

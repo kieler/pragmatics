@@ -247,7 +247,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                 // edge.setSource(target);
                 // edge.setTarget(source);
                 // edge.setProperty(Properties.REVERSED, true);
-                edge.reverse(true);
+                edge.reverse(layeredGraph, true);
             }
         }
 
