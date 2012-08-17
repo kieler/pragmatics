@@ -17,8 +17,12 @@
 package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -26,7 +30,9 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -40,7 +46,6 @@ import de.cau.cs.kieler.kiml.evol.GenomeFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.service.AnalysisService;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisCategory;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
@@ -56,7 +61,8 @@ public class EvaluationOperation extends AbstractAlgorithm implements IEvolution
     public static final String EXEC_TIME_METRIC = "de.cau.cs.kieler.kiml.evol.executionTime";
     
     /** genome property for the layout graph created from the individual. */
-    public static final IProperty<KNode> LAYOUT_GRAPH = new Property<KNode>("evol.layoutGraph");
+    public static final IProperty<KNode> LAYOUT_GRAPH
+            = new Property<KNode>("evol.layoutGraph");
     /** genome property for the results of layout metrics. */
     public static final IProperty<Map<String, Float>> METRIC_RESULT
             = new Property<Map<String, Float>>("evol.metricResult");
@@ -72,6 +78,34 @@ public class EvaluationOperation extends AbstractAlgorithm implements IEvolution
 
     /** the graph layout engine used for executing configured layout on the evaluation graph. */
     private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();
+    /** the executor service used to perform evaluations. */
+    private final ExecutorService executorService;
+    /** the graph layout metrics used for evaluation. */
+    private final List<AnalysisData> metrics;
+    /** the sequence of analyses to execute for evaluating graph layout metrics. */
+    private final List<AnalysisData> analysisSequence;
+    
+    /**
+     * Create a single-threaded evaluation operation.
+     */
+    public EvaluationOperation() {
+        this(null);
+    }
+    
+    /**
+     * Create a possibly multi-threaded evaluation operation.
+     * 
+     * @param executorService the executor service for multi-threaded execution, or {@code null}
+     *          if all evaluations shall be done in the calling thread
+     */
+    public EvaluationOperation(final ExecutorService executorService) {
+        this.executorService = executorService;
+        
+        // determine the sequence of graph layout analysis to evaluate
+        AnalysisService analysisService = AnalysisService.getInstance();
+        metrics = analysisService.getCategory(METRIC_CATEGORY).getAnalyses();
+        analysisSequence = analysisService.getExecutionOrder(metrics);
+    }
     
     /**
      * {@inheritDoc}
@@ -86,15 +120,46 @@ public class EvaluationOperation extends AbstractAlgorithm implements IEvolution
     public void process(final Population population) {
         getMonitor().begin("Evaluation", population.size());
         
-        // determine fitness value for individuals that do not have one yet
-        for (Genome genome : population) {
-            Double fitness = genome.getProperty(Genome.FITNESS);
-            if (fitness == null) {
-                fitness = autoRate(genome, population, getMonitor().subTask(1));
-                genome.setProperty(Genome.FITNESS, fitness);
-            } else {
-                getMonitor().worked(1);
+        if (executorService == null) {
+            // single-threaded execution
+            for (Genome genome : population) {
+                Double fitness = genome.getProperty(Genome.FITNESS);
+                if (fitness == null) {
+                    fitness = autoRate(genome, population, getMonitor().subTask(1));
+                    genome.setProperty(Genome.FITNESS, fitness);
+                } else {
+                    getMonitor().worked(1);
+                }
             }
+            
+        } else {
+            // multi-threaded execution: submit tasks to the executor service
+            LinkedList<Future<?>> futures = new LinkedList<Future<?>>();
+            for (final Genome genome : population) {
+                if (genome.getProperty(Genome.FITNESS) == null) {
+                    Future<?> future = executorService.submit(new Runnable() {
+                        public void run() {
+                            double fitness = autoRate(genome, population, new BasicProgressMonitor(0));
+                            genome.setProperty(Genome.FITNESS, fitness);
+                        }
+                    });
+                    futures.addLast(future);
+                } else {
+                    getMonitor().worked(1);
+                }
+            }
+            
+            // wait for all tasks to finish execution
+            while (!futures.isEmpty()) {
+                try {
+                    // this call waits if necessary for the computation to complete
+                    futures.removeFirst().get();
+                    getMonitor().worked(1);
+                } catch (Exception exception) {
+                    throw new WrappedException(exception);
+                }
+            }
+            
         }
         
         // sort the individuals by descending fitness
@@ -134,10 +199,8 @@ public class EvaluationOperation extends AbstractAlgorithm implements IEvolution
         }
         
         // perform analysis on the evaluation graph
-        AnalysisService analysisService = AnalysisService.getInstance();
-        AnalysisCategory category = analysisService.getCategory(METRIC_CATEGORY);
-        Map<String, Object> results = analysisService.analyze(graph, category.getAnalyses(),
-                progressMonitor.subTask(1));
+        Map<String, Object> results = AnalysisService.getInstance().analyzePresorted(
+                graph, analysisSequence, progressMonitor.subTask(1));
         
         Map<String, Double> metricWeights = population.getProperty(METRIC_WEIGHT);
         if (metricWeights == null) {
@@ -149,7 +212,7 @@ public class EvaluationOperation extends AbstractAlgorithm implements IEvolution
         // determine the weighted mean of the analysis results
         double rating = 0;
         double totalWeight = 0;
-        for (AnalysisData analysisData : category.getAnalyses()) {
+        for (AnalysisData analysisData : metrics) {
             String analysisId = analysisData.getId();
             Object result = results.get(analysisId);
             if (result instanceof Float) {
