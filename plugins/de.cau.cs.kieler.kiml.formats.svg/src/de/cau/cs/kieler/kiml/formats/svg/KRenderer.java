@@ -44,6 +44,7 @@ import de.cau.cs.kieler.core.krendering.KArc;
 import de.cau.cs.kieler.core.krendering.KBackgroundColor;
 import de.cau.cs.kieler.core.krendering.KBackgroundVisibility;
 import de.cau.cs.kieler.core.krendering.KContainerRendering;
+import de.cau.cs.kieler.core.krendering.KDecoratorPlacementData;
 import de.cau.cs.kieler.core.krendering.KDirectPlacementData;
 import de.cau.cs.kieler.core.krendering.KFontBold;
 import de.cau.cs.kieler.core.krendering.KFontItalic;
@@ -184,11 +185,10 @@ public class KRenderer {
      * 
      * @param rendering a rendering
      * @param points points to apply to the top-level {@link KPolyline}
+     * @param isSpline whether the points are control points for a spline
      */
-    public void render(final KRendering rendering, final KVectorChain points) {
-        propagatedPoints = points;
-        doRender(rendering, null);
-        propagatedPoints = null;
+    public void render(final KRendering rendering, final KVectorChain points, final boolean isSpline) {
+        doRender(rendering, null, points, isSpline);
     }
 
     /**
@@ -334,32 +334,22 @@ public class KRenderer {
         // get the bend points of the edge
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         KVectorChain bendPoints = edgeLayout.createVectorChain();
-        if (edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
-            bendPoints = KielerMath.approximateSpline(bendPoints);
-        }
         bendPoints.scale(scale);
 
+        boolean isSpline = edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES;
         KRendering edgeRendering = edge.getData(KRendering.class);
         if (edgeRendering == null) {
             // paint a polyline following the edge bend points
-            // TODO use getPath(..) instead
-            int[] xpoints = new int[bendPoints.size()];
-            int[] ypoints = new int[bendPoints.size()];
-            ListIterator<KVector> pointIter = bendPoints.listIterator();
-            while (pointIter.hasNext()) {
-                KVector point = pointIter.next();
-                xpoints[pointIter.previousIndex()] = (int) Math.round(point.x);
-                ypoints[pointIter.previousIndex()] = (int) Math.round(point.y);
-            }
+            Path2D path = createPath(bendPoints, isSpline);
             graphics.setColor(Color.BLACK);
             graphics.setStroke(DEFAULT_STROKE);
-            graphics.drawPolyline(xpoints, ypoints, bendPoints.size());
+            graphics.draw(path);
             
             // draw an arrow at the last segment of the connection
             makeArrow(bendPoints.get(bendPoints.size() - 2), bendPoints.getLast());
         } else {
             // paint the edge using the given rendering
-            render(edgeRendering, bendPoints);
+            render(edgeRendering, bendPoints, isSpline);
         }
         
         // paint the edge labels
@@ -406,22 +396,29 @@ public class KRenderer {
     
     /** the propagated styles of parent renderings. */
     private final LinkedList<KStyle> propagatedStyles = new LinkedList<KStyle>();
-    /** the propagated points of KEdge elements. */
-    private KVectorChain propagatedPoints;
     /** the propagated text of KLabel elements. */
     private String propagatedText;
     
-    // XXX
-    private void doRender(final KRendering rendering, final KVector size) {
+    /**
+     * Apply styles, render the shape, render the content respecting placement information.
+     * 
+     * @param rendering a rendering
+     * @param size the size in which to render the shape, or {@code null} to use points
+     * @param points the points onto which to render the polyline, or {@code null} to use size
+     * @param isSpline true if the points are interpreted as spline control points in any case
+     */
+    private void doRender(final KRendering rendering, final KVector size, final KVectorChain points,
+            final boolean isSpline) {
+        // TODO RenderingRefs
         // apply the propagated and contained styles
         StyleData styleData = applyStyles(rendering);
         
         // draw the given rendering instance
-        handleRendering(rendering, styleData, size);
+        handleRendering(rendering, styleData, size, points, isSpline);
         
         // draw the contained child renderings
         if (rendering instanceof KContainerRendering) {
-            handleContent((KContainerRendering) rendering, size);
+            handleContent((KContainerRendering) rendering, size, points, isSpline);
         }
         
         // remove the contained propagated styles
@@ -499,9 +496,17 @@ public class KRenderer {
         }
         
         // transfer basic styles to the graphics context
-        graphics.setStroke(new BasicStroke(styleData.lineWidth, BasicStroke.CAP_SQUARE,
-                BasicStroke.JOIN_MITER, 1.0f, styleData.lineStyle, 0.0f));
-        graphics.setFont(new Font(styleData.fontName, styleData.fontStyle, styleData.fontSize));
+        float[] scaledLineStyle = null;
+        if (styleData.lineStyle != null) {
+            scaledLineStyle = new float[styleData.lineStyle.length];
+            for (int i = 0; i < styleData.lineStyle.length; i++) {
+                scaledLineStyle[i] = scale * styleData.lineStyle[i];
+            }
+        }
+        graphics.setStroke(new BasicStroke(scale * styleData.lineWidth, BasicStroke.CAP_SQUARE,
+                BasicStroke.JOIN_MITER, scale, scaledLineStyle, 0.0f));
+        graphics.setFont(new Font(styleData.fontName, styleData.fontStyle,
+                Math.round(scale * styleData.fontSize)));
         return styleData;
     }
     
@@ -604,112 +609,105 @@ public class KRenderer {
      * 
      * @param rendering a rendering
      * @param styleData style to apply for drawing
-     * @param size the size in which the shape is drawn
+     * @param size the size in which the shape is drawn, or {@code null}
+     * @param points the points onto which to draw lines, or {@code null}
+     * @param isSpline whether the points are control points for a spline
      */
     private void handleRendering(final KRendering rendering, final StyleData styleData,
-            final KVector size) {
+            final KVector size, final KVectorChain points, final boolean isSpline) {
         if (styleData.visible) {
-            int width = (int) Math.round(size.x);
-            int height = (int) Math.round(size.y);
-            switch (rendering.eClass().getClassifierID()) {
-            case KRenderingPackage.KRENDERING_REF:
-                handleRendering(((KRenderingRef) rendering).getRendering(), styleData, size);
-                break;
-            case KRenderingPackage.KRECTANGLE:
-                if (styleData.backgVisible) {
-                    graphics.setColor(styleData.backgColor);
-                    graphics.fillRect(0, 0, width, height);
+            if (size != null) {
+                // check shapes that need size information to be drawn
+                int width = (int) Math.round(size.x);
+                int height = (int) Math.round(size.y);
+                switch (rendering.eClass().getClassifierID()) {
+                case KRenderingPackage.KRECTANGLE:
+                    if (styleData.backgVisible) {
+                        graphics.setColor(styleData.backgColor);
+                        graphics.fillRect(0, 0, width, height);
+                    }
+                    if (styleData.foregVisible) {
+                        graphics.setColor(styleData.foregColor);
+                        graphics.drawRect(0, 0, width, height);
+                    }
+                    break;
+                case KRenderingPackage.KELLIPSE:
+                    if (styleData.backgVisible) {
+                        graphics.setColor(styleData.backgColor);
+                        graphics.fillOval(0, 0, width, height);
+                    }
+                    if (styleData.foregVisible) {
+                        graphics.setColor(styleData.foregColor);
+                        graphics.drawOval(0, 0, width, height);
+                    }
+                    break;
+                case KRenderingPackage.KROUNDED_RECTANGLE:
+                    KRoundedRectangle roundedRectangle = (KRoundedRectangle) rendering;
+                    int arcWidth = Math.round(scale * roundedRectangle.getCornerWidth());
+                    int arcHeight = Math.round(scale * roundedRectangle.getCornerHeight());
+                    if (styleData.backgVisible) {
+                        graphics.setColor(styleData.backgColor);
+                        graphics.fillRoundRect(0, 0, width, height, arcWidth, arcHeight);
+                    }
+                    if (styleData.foregVisible) {
+                        graphics.setColor(styleData.foregColor);
+                        graphics.drawRoundRect(0, 0, width, height, arcWidth, arcHeight);
+                    }
+                    break;
+                case KRenderingPackage.KIMAGE:
+                    if (styleData.backgVisible) {
+                        Image image = createImage((KImage) rendering);
+                        if (image != null) {
+                            graphics.drawImage(image, 0, 0, width, height, null);
+                        }
+                    }
+                    break;
+                case KRenderingPackage.KARC:
+                    if (styleData.foregVisible) {
+                        KArc arc = (KArc) rendering;
+                        int startAngle = Math.round(arc.getStartAngle());
+                        int arcAngle = Math.round(arc.getArcAngle());
+                        graphics.setColor(styleData.foregColor);
+                        graphics.drawArc(0, 0, width, height, startAngle, arcAngle);
+                    }
+                    break;
+                case KRenderingPackage.KTEXT:
+                    if (styleData.foregVisible) {
+                        String text = propagatedText;
+                        if (text == null) {
+                            // use the text contained in the rendering, if present
+                            text = ((KText) rendering).getText();
+                        } else {
+                            // consume the propagated text so contained renderings don't use it anymore
+                            propagatedText = null;
+                        }
+                        if (text != null) {
+                            graphics.setColor(styleData.foregColor);
+                            renderText(text, size, styleData.horzAlignment, styleData.vertAlignment);
+                        }
+                    }
+                    break;
                 }
-                if (styleData.foregVisible) {
+            }
+                
+            if (points != null && styleData.foregVisible) {
+                // check shapes that need points information to be drawn
+                switch (rendering.eClass().getClassifierID()) {
+                case KRenderingPackage.KSPLINE:
                     graphics.setColor(styleData.foregColor);
-                    graphics.drawRect(0, 0, width, height);
-                }
-                break;
-            case KRenderingPackage.KELLIPSE:
-                if (styleData.backgVisible) {
-                    graphics.setColor(styleData.backgColor);
-                    graphics.fillOval(0, 0, width, height);
-                }
-                if (styleData.foregVisible) {
+                    graphics.draw(createPath(points, true));
+                    break;
+                case KRenderingPackage.KPOLYGON:
                     graphics.setColor(styleData.foregColor);
-                    graphics.drawOval(0, 0, width, height);
-                }
-                break;
-            case KRenderingPackage.KROUNDED_RECTANGLE:
-                KRoundedRectangle roundedRectangle = (KRoundedRectangle) rendering;
-                int arcWidth = Math.round(scale * roundedRectangle.getCornerWidth());
-                int arcHeight = Math.round(scale * roundedRectangle.getCornerHeight());
-                if (styleData.backgVisible) {
-                    graphics.setColor(styleData.backgColor);
-                    graphics.fillRoundRect(0, 0, width, height, arcWidth, arcHeight);
-                }
-                if (styleData.foregVisible) {
-                    graphics.setColor(styleData.foregColor);
-                    graphics.drawRoundRect(0, 0, width, height, arcWidth, arcHeight);
-                }
-                break;
-            case KRenderingPackage.KSPLINE:
-                if (styleData.foregVisible && propagatedPoints != null) {
-                    graphics.setColor(styleData.foregColor);
-                    graphics.draw(createPath(propagatedPoints, true));
-                    propagatedPoints = null;
-                }
-                break;
-            case KRenderingPackage.KPOLYGON:
-                if (styleData.foregVisible && propagatedPoints != null) {
-                    graphics.setColor(styleData.foregColor);
-                    Path2D path = createPath(propagatedPoints, false);
+                    Path2D path = createPath(points, isSpline);
                     path.closePath();
                     graphics.draw(path);
-                    propagatedPoints = null;
-                }
-                break;
-            case KRenderingPackage.KPOLYLINE:
-                if (styleData.foregVisible && propagatedPoints != null) {
+                    break;
+                case KRenderingPackage.KPOLYLINE:
                     graphics.setColor(styleData.foregColor);
-                    graphics.draw(createPath(propagatedPoints, false));
-                    propagatedPoints = null;
+                    graphics.draw(createPath(points, isSpline));
+                    break;                
                 }
-                break;
-            case KRenderingPackage.KIMAGE:
-                if (styleData.backgVisible) {
-                    Image image = createImage((KImage) rendering);
-                    if (image != null) {
-                        graphics.drawImage(image, 0, 0, width, height, null);
-                    }
-                }
-                break;
-            case KRenderingPackage.KARC:
-                if (styleData.foregVisible) {
-                    KArc arc = (KArc) rendering;
-                    int startAngle = Math.round(arc.getStartAngle());
-                    int arcAngle = Math.round(arc.getArcAngle());
-                    graphics.setColor(styleData.foregColor);
-                    graphics.drawArc(0, 0, width, height, startAngle, arcAngle);
-                }
-                break;
-            case KRenderingPackage.KTEXT:
-                if (styleData.foregVisible) {
-                    String text = propagatedText;
-                    if (text == null) {
-                        // use the text contained in the rendering, if present
-                        text = ((KText) rendering).getText();
-                    } else {
-                        // consume the propagated text so contained renderings don't use it anymore
-                        propagatedText = null;
-                    }
-                    if (text != null) {
-                        graphics.setColor(styleData.foregColor);
-                        renderText(text, size, styleData.horzAlignment, styleData.vertAlignment);
-                    }
-                }
-                break;
-            default:
-                // paint a red cross indicating that the rendering is not supported
-                graphics.setColor(Color.RED);
-                graphics.drawRect(0, 0, width, height);
-                graphics.drawLine(0, 0, width, height);
-                graphics.drawLine(width, 0, 0, height);
             }
         }
     }
@@ -771,32 +769,55 @@ public class KRenderer {
         return path;
     }
     
-    private void handleContent(final KContainerRendering rendering, final KVector size) {
-        if (rendering.getChildPlacement() instanceof KGridPlacement) {
-            // handle the grid placement of the contained children
-            int colCount = ((KGridPlacement) rendering.getChildPlacement()).getNumColumns();
-            int childCount = rendering.getChildren().size();
-            if (colCount < 0) {
-                // special meaning for negative value: make as many columns as there are children
-                colCount = childCount;
-            } else {
-                colCount = Math.min(colCount, childCount);
+    /**
+     * Handle the content of the given rendering.
+     * 
+     * @param rendering a container rendering
+     * @param size the size of the shape rendering, or {@code null}
+     * @param points the points of the polyline rendering, or {@code null}
+     * @param isSpline whether the points are control points for splines
+     */
+    private void handleContent(final KContainerRendering rendering, final KVector size,
+            final KVectorChain points, final boolean isSpline) {
+        if (rendering instanceof KPolyline && points != null) {
+            // approximate the spline for more accurate decorator placement
+            KVectorChain referencePoints = points;
+            if (isSpline) {
+                referencePoints = KielerMath.approximateSpline(points);
             }
-            if (colCount > 0) {
-                int rowCount = childCount / colCount;
-                if (childCount % colCount > 0) {
-                    rowCount++;
+            
+            // handle the decorator placement of the contained children
+            for (KRendering child : rendering.getChildren()) {
+                handleDecoratorPlacement(child, referencePoints);
+            }
+            
+        } else if (size != null) {
+            if (rendering.getChildPlacement() instanceof KGridPlacement) {
+                // handle the grid placement of the contained children
+                int colCount = ((KGridPlacement) rendering.getChildPlacement()).getNumColumns();
+                int childCount = rendering.getChildren().size();
+                if (colCount < 0) {
+                    // special meaning for negative value: make as many columns as there are children
+                    colCount = childCount;
+                } else {
+                    colCount = Math.min(colCount, childCount);
                 }
-                KRendering[] children = rendering.getChildren().toArray(
-                        new KRendering[rendering.getChildren().size()]);
-                handleGridPlacement(children, size, colCount, rowCount);
-                return;
+                if (colCount > 0) {
+                    int rowCount = childCount / colCount;
+                    if (childCount % colCount > 0) {
+                        rowCount++;
+                    }
+                    KRendering[] children = rendering.getChildren().toArray(
+                            new KRendering[rendering.getChildren().size()]);
+                    handleGridPlacement(children, size, colCount, rowCount);
+                    return;
+                }
             }
-        }
-        
-        // handle the direct placement of the contained children
-        for (KRendering child : rendering.getChildren()) {
-            handleDirectPlacement(child, size);
+            
+            // handle the direct placement of the contained children
+            for (KRendering child : rendering.getChildren()) {
+                handleDirectPlacement(child, size);
+            }
         }
     }
     
@@ -818,11 +839,11 @@ public class KRenderer {
                 KPosition topLeft = directPlaceData.getTopLeft();
                 if (topLeft.getX() != null) {
                     KXPosition xpos = topLeft.getX();
-                    x = xpos.getRelative() * parentSize.x + xpos.getAbsolute();
+                    x = xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute();
                 }
                 if (topLeft.getY() != null) {
                     KYPosition ypos = topLeft.getY();
-                    y = ypos.getRelative() * parentSize.y + ypos.getAbsolute();
+                    y = ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute();
                 }
             }
             
@@ -832,20 +853,20 @@ public class KRenderer {
                 KPosition bottomRight = directPlaceData.getBottomRight();
                 if (bottomRight.getX() != null) {
                     KXPosition xpos = bottomRight.getX();
-                    childSize.x = xpos.getRelative() * parentSize.x + xpos.getAbsolute() - x;
+                    childSize.x = xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute() - x;
                 }
                 if (bottomRight.getY() != null) {
                     KYPosition ypos = bottomRight.getY();
-                    childSize.y = ypos.getRelative() * parentSize.y + ypos.getAbsolute() - y;
+                    childSize.y = ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute() - y;
                 }
             }
             
         } else if (placeData instanceof KStackPlacementData) {
             KStackPlacementData stackPlaceData = (KStackPlacementData) placeData;
-            x = stackPlaceData.getInsetLeft();
-            y = stackPlaceData.getInsetTop();
-            childSize.translate(-(x + stackPlaceData.getInsetRight()),
-                    -(y + stackPlaceData.getInsetBottom()));
+            x = scale * stackPlaceData.getInsetLeft();
+            y = scale * stackPlaceData.getInsetTop();
+            childSize.translate(-(x + scale * stackPlaceData.getInsetRight()),
+                    -(y + scale * stackPlaceData.getInsetBottom()));
         }
         
         if (childSize.x < 0) {
@@ -857,7 +878,7 @@ public class KRenderer {
 
         // render the child with translated graphics
         graphics.translate(x, y);
-        doRender(rendering, childSize);
+        doRender(rendering, childSize, null, false);
         graphics.translate(-x, -y);
     }
     
@@ -877,8 +898,10 @@ public class KRenderer {
         for (int i = 0; i < children.length; i++) {
             if (children[i].getPlacementData() instanceof KGridPlacementData) {
                 KGridPlacementData placeData = (KGridPlacementData) children[i].getPlacementData();
-                colWidth[i % colCount] = Math.max(colWidth[i % colCount], placeData.getWidthHint());
-                rowHeight[i / colCount] = Math.max(rowHeight[i / colCount], placeData.getHeightHint());
+                colWidth[i % colCount] = Math.max(colWidth[i % colCount],
+                        scale * placeData.getWidthHint());
+                rowHeight[i / colCount] = Math.max(rowHeight[i / colCount],
+                        scale * placeData.getHeightHint());
             }
         }
         
@@ -966,10 +989,12 @@ public class KRenderer {
             KPlacementData placeData = children[i].getPlacementData();
             if (placeData instanceof KGridPlacementData) {
                 KGridPlacementData gridPlaceData = (KGridPlacementData) placeData;
-                x += gridPlaceData.getInsetLeft();
-                y += gridPlaceData.getInsetTop();
-                childSize.translate(-(gridPlaceData.getInsetLeft() + gridPlaceData.getInsetRight()),
-                        -(gridPlaceData.getInsetTop() + gridPlaceData.getInsetBottom()));
+                x += scale * gridPlaceData.getInsetLeft();
+                y += scale * gridPlaceData.getInsetTop();
+                childSize.translate(-scale * (gridPlaceData.getInsetLeft()
+                                + gridPlaceData.getInsetRight()),
+                        -scale * (gridPlaceData.getInsetTop()
+                                + gridPlaceData.getInsetBottom()));
             }
 
             if (childSize.x < 0) {
@@ -981,12 +1006,58 @@ public class KRenderer {
             
             // render the child with translated graphics
             graphics.translate(x, y);
-            doRender(children[i], childSize);
+            doRender(children[i], childSize, null, false);
             graphics.translate(-x, -y);
             
             xpos += colWidth[c];
             if (c == colCount - 1) {
                 ypos += rowHeight[r];
+            }
+        }
+    }
+    
+    /**
+     * Handle the decorator placement of the given rendering and render it.
+     * 
+     * @param rendering a rendering
+     * @param linePoints points of the reference polyline
+     */
+    private void handleDecoratorPlacement(final KRendering rendering, final KVectorChain linePoints) {
+        if (rendering.getPlacementData() instanceof KDecoratorPlacementData && linePoints.size() >= 2) {
+            KDecoratorPlacementData placeData = (KDecoratorPlacementData) rendering.getPlacementData();
+            
+            // calculate the reference point
+            double absLocation = placeData.getLocation() * linePoints.getLength();
+            KVector referencePoint = linePoints.getPointOnLine(absLocation);
+            
+            KVector size = new KVector(placeData.getWidth(), placeData.getHeight());
+            if (size.x < 0) {
+                size.x = 0;
+            }
+            if (size.y < 0) {
+                size.y = 0;
+            }
+            
+            // rotate the decorator if requested
+            if (placeData.isRelative()) {
+                double angle = linePoints.getAngleOnLine(absLocation);
+                
+                // render the decorator with translated and rotated graphics
+                graphics.translate(referencePoint.x, referencePoint.y);
+                graphics.rotate(angle);
+                graphics.translate(placeData.getXOffset(), placeData.getYOffset());
+                doRender(rendering, size, null, false);
+                graphics.translate(-placeData.getXOffset(), -placeData.getYOffset());
+                graphics.rotate(-angle);
+                graphics.translate(-referencePoint.x, -referencePoint.y);
+            } else {
+                // render the decorator with translated graphics
+                double x = referencePoint.x + placeData.getXOffset();
+                double y = referencePoint.y + placeData.getYOffset();
+
+                graphics.translate(x, y);
+                doRender(rendering, size, null, false);
+                graphics.translate(-x, -y);
             }
         }
     }
