@@ -17,8 +17,11 @@ package de.cau.cs.kieler.klay.layered.properties;
  * Definition of edge types used in the layered approach.
  * 
  * @author ima
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public enum EdgeType {
+    
     /** a normal edge is created from an edge of the original graph. */
     NORMAL,
     /** a dummy edge created for the layering phase of compound graphs. */
@@ -28,4 +31,5 @@ public enum EdgeType {
      * side borders.
      */
     COMPOUND_SIDE;
+    
 }

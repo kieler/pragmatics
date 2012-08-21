@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.components.ComponentGroup;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -109,8 +109,8 @@ public class ComponentGroupTest {
      * @param connections the set of connections.
      * @return the layered graph.
      */
-    private static LayeredGraph generateGraph(final Set<PortSide> connections) {
-        LayeredGraph graph = new LayeredGraph();
+    private static LGraph generateGraph(final Set<PortSide> connections) {
+        LGraph graph = new LGraph();
         graph.setProperty(Properties.EXT_PORT_CONNECTIONS, connections);
         
         return graph;

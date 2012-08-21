@@ -22,9 +22,7 @@ import java.util.LinkedList;
  * commands, sub menus and a data property.
  * 
  * @author mim
- * 
- * @kieler.rating 2010-01-22 yellow
- *          review by msp, skn
+ * @kieler.design 2010-01-22 review by msp, skn
  */
 public class KSBasEMenuContribution implements Serializable {
 

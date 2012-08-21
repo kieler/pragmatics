@@ -64,7 +64,7 @@ public class SelectionInfoAction extends Action {
     /**
      * A dialog class that displays HTML content.
      */
-    private class SelectionInfoDialog extends Dialog {
+    private static class SelectionInfoDialog extends Dialog {
         
         /** the HTML text to display in the dialog. */
         private String htmlText;

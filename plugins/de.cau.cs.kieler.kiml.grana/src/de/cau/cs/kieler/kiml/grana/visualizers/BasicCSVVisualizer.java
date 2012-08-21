@@ -39,9 +39,8 @@ public class BasicCSVVisualizer extends AbstractSimpleVisualizer<String> {
      * {@inheritDoc}
      */
     @Override
-    public String visualize(final AnalysisData analysis,
-            final Object result) {
-        String str = "";
+    public String visualize(final AnalysisData analysis, final Object result) {
+        StringBuilder str = new StringBuilder();
         if (result instanceof Object[]) {
             Object[] results = (Object[]) result;
             if (results.length == analysis.getComponents().size()) {
@@ -50,40 +49,38 @@ public class BasicCSVVisualizer extends AbstractSimpleVisualizer<String> {
                     if (first) {
                         first = false;
                     } else {
-                        str += ";";
+                        str.append(";");
                     }
-                    Visualization visualization =
-                            VisualizationService.getInstance()
-                                    .getVisualization("text", results[i]);
+                    Visualization visualization = VisualizationService.getInstance()
+                            .getVisualization("text", results[i]);
                     if (visualization == null) {
-                        str += results[i].toString();
+                        str.append(results[i].toString());
                     } else {
-                        str += visualization.get(analysis, results[i]);
+                        str.append(visualization.get(analysis, results[i]));
                     }
                 }
             } else {
-                str += ERROR_WRONG_RESULT_FORMAT;
+                str.append(ERROR_WRONG_RESULT_FORMAT);
                 for (int i = 1; i < analysis.getComponents().size(); ++i) {
-                    str += "; " + ERROR_WRONG_RESULT_FORMAT;
+                    str.append("; ").append(ERROR_WRONG_RESULT_FORMAT);
                 }
             }
         } else {
             if (analysis.getComponents().size() > 1) {
-                str += ERROR_WRONG_RESULT_FORMAT;
+                str.append(ERROR_WRONG_RESULT_FORMAT);
                 for (int i = 1; i < analysis.getComponents().size(); ++i) {
-                    str += ";" + ERROR_WRONG_RESULT_FORMAT;
+                    str.append(";").append(ERROR_WRONG_RESULT_FORMAT);
                 }
             } else {
-                Visualization visualization =
-                        VisualizationService.getInstance().getVisualization(
-                                "text", result);
+                Visualization visualization = VisualizationService.getInstance().getVisualization(
+                        "text", result);
                 if (visualization == null) {
-                    str = result.toString();
+                    str.append(result.toString());
                 } else {
-                    str = visualization.get(analysis, result);
+                    str.append(visualization.get(analysis, result));
                 }
             }
         }
-        return str;
+        return str.toString();
     }
 }

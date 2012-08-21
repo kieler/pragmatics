@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 /**
  * Improves the placement of hypernodes by moving them such that they replace the join
@@ -39,13 +39,15 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * </dl>
  *
  * @author msp
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
 public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Hypernodes processing", 1);
         
         for (Layer layer : layeredGraph) {
@@ -87,7 +89,7 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
      * @param right if true, the node is moved right (to the next layer), else it
      *     is moved left (to the previous layer)
      */
-    private void moveHypernode(final LayeredGraph layeredGraph, final LNode hypernode,
+    private void moveHypernode(final LGraph layeredGraph, final LNode hypernode,
             final boolean right) {
         // find edges that constitute the first join point of the hyperedge
         List<LEdge> bendEdges = new LinkedList<LEdge>();
@@ -140,11 +142,11 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
         if (!bendEdges.isEmpty() && diffx > hypernode.getSize().x / 2
                 && diffy > hypernode.getSize().y / 2) {
             // create new ports for the edges
-            LPort northPort = new LPort();
+            LPort northPort = new LPort(layeredGraph);
             northPort.setNode(hypernode);
             northPort.setSide(PortSide.NORTH);
             northPort.getPosition().x = hypernode.getSize().x / 2;
-            LPort southPort = new LPort();
+            LPort southPort = new LPort(layeredGraph);
             southPort.setNode(hypernode);
             southPort.setSide(PortSide.SOUTH);
             southPort.getPosition().x = hypernode.getSize().x / 2;

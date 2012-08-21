@@ -53,7 +53,7 @@ public final class SmartLayoutService {
      * 
      * @return the singleton instance
      */
-    public static SmartLayoutService getInstance() {
+    public static synchronized SmartLayoutService getInstance() {
         if (instance == null) {
             instance = new SmartLayoutService();
             Bundle bundle = Platform.getBundle(PLUGIN_ID);

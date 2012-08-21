@@ -14,14 +14,16 @@
 package de.cau.cs.kieler.klay.layered;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 /**
- * A layout processor processes a {@link de.cau.cs.kieler.klay.layered.graph.LayeredGraph},
+ * A layout processor processes a {@link de.cau.cs.kieler.klay.layered.graph.LGraph},
  * performing layout related tasks on it.
  *
  * @see LayeredLayoutProvider
  * @author cds
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
 public interface ILayoutProcessor extends IAlgorithm {
     
@@ -30,6 +32,6 @@ public interface ILayoutProcessor extends IAlgorithm {
      * 
      * @param layeredGraph a layered graph
      */
-    void process(LayeredGraph layeredGraph);
+    void process(LGraph layeredGraph);
     
 }

@@ -27,15 +27,31 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * point where the edge touches the node.
  * 
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LEdge extends LGraphElement {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = 1429497419118554817L;
+    
     /** the bend points. */
     private KVectorChain bendPoints = new KVectorChain();
-    /** the source and target ports. */
-    private LPort source, target;
+    /** the source port. */
+    private LPort source;
+    /** the target port. */
+    private LPort target;
     /** labels assigned to this edge. */
-    private List<LLabel> labels = new LinkedList<LLabel>();
+    private final List<LLabel> labels = new LinkedList<LLabel>();
+    
+    /**
+     * Creates an edge.
+     * 
+     * @param graph the graph for which the edge is created
+     */
+    public LEdge(final LGraph graph) {
+        super(graph.hashCodeCounter());
+    }
 
     /**
      * {@inheritDoc}
@@ -53,23 +69,27 @@ public class LEdge extends LGraphElement {
      * edge that was marked as being reversed is then unmarked, and the other way around) This
      * does not change any properties on the connected ports.
      * 
+     * @param layeredGraph
+     *         the layered graph
      * @param adaptPorts
      *         If true and a connected port is a collector port (a port used to merge edges),
      *         the corresponding opposite port is used instead of the original one.
      */
-    public void reverse(final boolean adaptPorts) {
+    public void reverse(final LGraph layeredGraph, final boolean adaptPorts) {
         LPort oldSource = getSource();
         LPort oldTarget = getTarget();
         
         setSource(null);
         setTarget(null);
         if (adaptPorts && oldTarget.getProperty(Properties.INPUT_COLLECT)) {
-            setSource(Util.provideCollectorPort(oldTarget.getNode(), PortType.OUTPUT, PortSide.EAST));
+            setSource(Util.provideCollectorPort(layeredGraph, oldTarget.getNode(),
+                    PortType.OUTPUT, PortSide.EAST));
         } else {
             setSource(oldTarget);
         }
         if (adaptPorts && oldSource.getProperty(Properties.OUTPUT_COLLECT)) {
-            setTarget(Util.provideCollectorPort(oldSource.getNode(), PortType.INPUT, PortSide.WEST));
+            setTarget(Util.provideCollectorPort(layeredGraph, oldSource.getNode(),
+                    PortType.INPUT, PortSide.WEST));
         } else {
             setTarget(oldSource);
         }
@@ -138,6 +158,20 @@ public class LEdge extends LGraphElement {
         if (this.target != null) {
             this.target.getIncomingEdges().add(this);
         }
+    }
+    
+    /**
+     * Determines if this edge is a self-loop or not. An edge is considered a self-loop if both, source
+     * and target port are defined and belong to the same non-null node.
+     * 
+     * @return {@code true} if this edge is a self-loop.
+     */
+    public boolean isSelfLoop() {
+        if (this.source == null || this.target == null) {
+            return false;
+        }
+        
+        return this.source.getNode() != null && this.source.getNode() == this.target.getNode();
     }
 
     /**

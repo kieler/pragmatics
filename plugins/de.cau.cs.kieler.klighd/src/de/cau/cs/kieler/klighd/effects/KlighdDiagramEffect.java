@@ -13,13 +13,15 @@
  */
 package de.cau.cs.kieler.klighd.effects;
 
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
@@ -32,19 +34,24 @@ import de.cau.cs.kieler.klighd.views.DiagramViewPart;
  */
 public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = -1571536114123214570L;
+    
     /** the identifier for the diagram view. */
     private String id = null;
     /** the new name for the diagram view. */
     private String name = null;
     /** the new input model for the diagram view. */
     private Object model = null;
-
+    /** the workbench part the element to be shown has been selected in. */
+    private transient IWorkbenchPart sourceWorkbenchPart = null;
+    
     // the following fields are valid AFTER the effect executed
 
     /** the created/updated view. */
-    private DiagramViewPart view = null;
+    private transient DiagramViewPart view = null;
     /** the created viewer. */
-    private IViewer<?> viewer = null;
+    private transient IViewer<?> viewer = null;
 
     /**
      * Constructs an effect that opens the default diagram view if it is not already open.
@@ -112,11 +119,15 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      *            the name
      * @param model
      *            the input model
+     * @param theSourceWorkbenchPart
+     *            the workbench part the element to be shown has been selected in
      */
-    public KlighdDiagramEffect(final String id, final String name, final Object model) {
+    public KlighdDiagramEffect(final String id, final String name, final Object model,
+            final IWorkbenchPart theSourceWorkbenchPart) {
         this.id = id;
         this.name = name;
         this.model = model;
+        this.sourceWorkbenchPart = theSourceWorkbenchPart;
     }
 
     /**
@@ -124,14 +135,16 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      */
     public void execute() {
         final IPropertyHolder propertyHolder = this;
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
-                view = DiagramViewManager.getInstance().createView(id, name, model, propertyHolder);
+                view = DiagramViewManager.getInstance().createView(
+                        id, name, model, propertyHolder);
                 if (view != null) {
-                    viewer = view.getContextViewer().getActiveViewer();
+                    setViewer(view.getContextViewer().getActiveViewer());
+                    setSourceWorkbenchPart();
                 }
             }
-        }, true);
+        });
     }
 
     /**
@@ -243,13 +256,22 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      * {@inheritDoc}
      */
     public boolean isMergeable() {
-        return false;
+        return true;
     }
 
     /**
      * {@inheritDoc}
      */
     public IEffect merge(final IEffect otherEffect) {
+        if (!(otherEffect instanceof KlighdDiagramEffect)) {
+            return null; // do not merge!!
+        }
+        
+        KlighdDiagramEffect other = (KlighdDiagramEffect) otherEffect;
+        
+        if (this.model == null || this.model.equals(other.model)) {
+            return other;
+        }
         return null;
     }
 
@@ -271,6 +293,17 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      */
     protected void setViewer(final IViewer<?> viewer) {
         this.viewer = viewer;
+    }
+    
+    /**
+     * Stores the reference to the source workbench part the depicted element has been selected in,
+     * if existent.
+     */
+    protected void setSourceWorkbenchPart() {
+        if (this.view != null && this.view.getContextViewer() != null) {
+            this.view.getContextViewer().getCurrentViewContext()
+                    .setSourceWorkbenchPart(this.sourceWorkbenchPart);
+        }
     }
 
 }

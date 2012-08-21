@@ -77,6 +77,7 @@ public class KaomPropertySection extends AdvancedPropertySection implements IPro
     /**
      * @generated
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void setInput(IWorkbenchPart part, ISelection selection) {
         if (selection.isEmpty() || false == selection instanceof StructuredSelection) {
             super.setInput(part, selection);
@@ -84,7 +85,7 @@ public class KaomPropertySection extends AdvancedPropertySection implements IPro
         }
         final StructuredSelection structuredSelection = ((StructuredSelection) selection);
         ArrayList transformedSelection = new ArrayList(structuredSelection.size());
-        for (Iterator it = structuredSelection.iterator(); it.hasNext();) {
+        for (Iterator<?> it = structuredSelection.iterator(); it.hasNext();) {
             Object r = transformSelection(it.next());
             if (r != null) {
                 transformedSelection.add(r);

@@ -18,6 +18,8 @@ package de.cau.cs.kieler.klay.layered.properties;
  * of node positions.
  * 
  * @author cds
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public enum InteractiveReferencePoint {
     

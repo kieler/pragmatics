@@ -43,11 +43,8 @@ import de.cau.cs.kieler.kwebs.util.Resources;
  * Manager for publishing a service object over HTTPS.
  * Concurrent safety has to be provided by using instance.
  * 
- * @kieler.rating  2011-08-25 yellow
- *      reviewed by ckru, msp, mri
- *      
+ * @kieler.design 2011-08-25 reviewed by ckru, msp, mri
  * @author swe
- *
  */
 final class HttpsServerManager extends HttpServerManager {
 

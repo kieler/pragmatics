@@ -21,12 +21,13 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -36,14 +37,16 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author cds
  * @author ima
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public final class Util {
 
     /**
-     * Private constructor.
+     * Private constructor to avoid instantiation.
      */
     private Util() {
-        // This space intentionally left blank
+        // This method intentionally left blank
     }
 
     // /////////////////////////////////////////////////////////////////////////////
@@ -84,6 +87,8 @@ public final class Util {
      * Return a collector port of given type, creating it if necessary. A collector port is used to
      * merge all incident edges that originally had no ports.
      * 
+     * @param layeredGraph
+     *            the layered graph
      * @param node
      *            a node
      * @param type
@@ -93,8 +98,8 @@ public final class Util {
      *            the side to set for a newly created port
      * @return a collector port
      */
-    public static LPort provideCollectorPort(final LNode node, final PortType type,
-            final PortSide side) {
+    public static LPort provideCollectorPort(final LGraph layeredGraph, final LNode node,
+            final PortType type, final PortSide side) {
         LPort port = null;
         switch (type) {
         case INPUT:
@@ -103,7 +108,7 @@ public final class Util {
                     return inport;
                 }
             }
-            port = new LPort();
+            port = new LPort(layeredGraph);
             port.setProperty(Properties.INPUT_COLLECT, true);
             break;
         case OUTPUT:
@@ -112,7 +117,7 @@ public final class Util {
                     return outport;
                 }
             }
-            port = new LPort();
+            port = new LPort(layeredGraph);
             port.setProperty(Properties.OUTPUT_COLLECT, true);
             break;
         }
@@ -151,7 +156,7 @@ public final class Util {
      *            the graph to return the base debug file name for.
      * @return the base debug file name for the given graph.
      */
-    public static String getDebugOutputFileBaseName(final LayeredGraph graph) {
+    public static String getDebugOutputFileBaseName(final LGraph graph) {
         return Integer.toString(graph.hashCode() & ((1 << (Integer.SIZE / 2)) - 1)) + "-";
     }
 
@@ -248,7 +253,7 @@ public final class Util {
      *         represented LGraphElement for dummies of another kind. Null, if represented
      *         LGraphElement is of depth 1. D. null in default case.
      */
-    public static LNode getRelatedCompoundNode(final LNode node, final LayeredGraph layeredGraph) {
+    public static LNode getRelatedCompoundNode(final LNode node, final LGraph layeredGraph) {
         // method is to return null in the default case
         LNode retNode = null;
         HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
@@ -265,7 +270,7 @@ public final class Util {
         case NORMAL:
             KNode parent = node.getProperty(Properties.K_PARENT);
             parentRepresentative = elemMap.get(parent);
-            if (!(parentRepresentative instanceof LayeredGraph)) {
+            if (!(parentRepresentative instanceof LGraph)) {
                 retNode = (LNode) parentRepresentative;
             }
             break;
@@ -288,7 +293,7 @@ public final class Util {
                 LNode newSource = sourceTargetList.getFirst();
                 KNode newSourceParent = newSource.getProperty(Properties.K_PARENT);
                 LGraphElement container = elemMap.get(newSourceParent);
-                if (!(container instanceof LayeredGraph)) {
+                if (!(container instanceof LGraph)) {
                     retNode = (LNode) container;
                 }
                 // In other cases, determine, if the edge is hierarchy-crossing.
@@ -301,17 +306,6 @@ public final class Util {
                     retNode = sourceNodeCompound;
                     // if the edge is hierarchy-crossing, choose the compound node of the target
                 } else {
-                    // LinkedList<LNode> sourceTargetList = new LinkedList<LNode>();
-                    // sourceTargetList.add(sourceNode);
-                    // sourceTargetList.add(targetNode);
-                    // propagatePair(sourceTargetList, elemMap);
-                    // LGraphElement container =
-                    // sourceTargetList.getFirst().getProperty(Properties.PARENT);
-                    // if (container instanceof LayeredGraph) {
-                    // retNode = null;
-                    // } else {
-                    // retNode = (LNode) container;
-                    // }
                     retNode = targetNodeCompound;
                 }
             }
@@ -327,7 +321,7 @@ public final class Util {
             LNode portNode = node.getProperty(Properties.IN_LAYER_LAYOUT_UNIT);
             KNode portNodeParent = portNode.getProperty(Properties.K_PARENT);
             LGraphElement portNodeParentRepresentative = elemMap.get(portNodeParent);
-            if (!(elemMap.get(portNodeParent) instanceof LayeredGraph)) {
+            if (!(elemMap.get(portNodeParent) instanceof LGraph)) {
                 retNode = (LNode) portNodeParentRepresentative;
             }
             break;
@@ -394,6 +388,46 @@ public final class Util {
         LNode newTarget = (LNode) elemMap.get(currentTarget);
         sourceTargetList.addFirst(newSource);
         sourceTargetList.addLast(newTarget);
+    }
+
+    /**
+     * Recursively calculates an x and y value that denote the position of a KNode in reference to
+     * the position of an ancestor KNode (usually the layout node). The insets of the ancestor node
+     * are not included in the relative coordinates. The position is written to a given KVector.
+     * 
+     * @param posNode
+     *            The node, for whom the position-vector is to be calculated. Must be a descendant
+     *            (contained by) the refNode! Must not be identical to refNode.
+     * @param refNode
+     *            The node whose position serves as reference point. This node has to be an ancestor
+     *            of the posNode (which means that it contains the posNode)!
+     * @param posVec
+     *            The KVector the calculated position is written to.
+     */
+    public static void getFlatPosition(final KNode posNode, final KNode refNode,
+            final KVector posVec) {
+        KShapeLayout posNodeLayout = posNode.getData(KShapeLayout.class);
+        KNode posNodeParent = posNode.getParent();
+        if (posNodeParent == refNode) {
+            // Direct child node of refNode reached. It's position is already relative to refNode
+            // (insets not included).
+            posVec.x = posNodeLayout.getXpos();
+            posVec.y = posNodeLayout.getYpos();
+        } else {
+            // posNode is not a direct child of refNode. We have to add positions and insets all the way
+            // up.
+            if (posNodeParent != null) {
+                getFlatPosition(posNodeParent, refNode, posVec);
+                KShapeLayout parentLayout = posNodeParent.getData(KShapeLayout.class);
+                posVec.x += (posNodeLayout.getXpos() + parentLayout.getInsets().getLeft());
+                posVec.y += (posNodeLayout.getYpos() + parentLayout.getInsets().getTop());
+            } else {
+                // This case should not be reached! It means that the arguments are not correct. refNode
+                // is no ancestor of posNode.
+                assert false;
+            }
+        }
+            
     }
 
     /**

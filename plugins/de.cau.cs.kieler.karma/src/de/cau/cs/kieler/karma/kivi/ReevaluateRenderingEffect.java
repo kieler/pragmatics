@@ -30,11 +30,16 @@ import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
  */
 public class ReevaluateRenderingEffect extends AbstractEffect {
 
-    IAdvancedRenderingEditPart part = null;
+    private IAdvancedRenderingEditPart part = null;
     
-    EObject modelElement = null;
+    private EObject modelElement = null;
     
-    public ReevaluateRenderingEffect(EObject modelElement) {
+    /**
+     * The constructor. The built effect will reevalute 
+     * the given model element and set a new rendering.
+     * @param modelElement the model element to reevaluate.
+     */
+    public ReevaluateRenderingEffect(final EObject modelElement) {
         this.modelElement = modelElement;
         EditPart p = new GmfFrameworkBridge().getEditPart(modelElement);
         if (p instanceof IAdvancedRenderingEditPart) {
@@ -42,8 +47,20 @@ public class ReevaluateRenderingEffect extends AbstractEffect {
         }
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public void execute() {
         part.updateFigure(part.getPrimaryShape());
     }
 
+    /**
+     * Get the model element.
+     * @return the model element
+     */
+    public EObject getModelElement() {
+        return modelElement;
+    }
+    
 }

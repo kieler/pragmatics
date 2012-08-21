@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.EdgeType;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -56,13 +56,14 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  * 
  * @author ima
+ * @kieler.design 2012-08-10 chsch grh
  */
 public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Set Compound Side nodes", 1);
         List<Layer> layers = layeredGraph.getLayers();
         List<LNode> openingBorders = new LinkedList<LNode>();
@@ -107,7 +108,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
      */
     private void insertSideDummies(final int startIndex, final int endIndex,
             final List<Layer> layers, final LNode openingBorder, final LEdge lowerConnector,
-            final LEdge upperConnector, final LayeredGraph layeredGraph) {
+            final LEdge upperConnector, final LGraph layeredGraph) {     
 
         // get the insets for origin of openingBorder
         KInsets insets = openingBorder.getProperty(Properties.ORIGINAL_INSETS);
@@ -122,7 +123,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         int upperIndex = findUltimateIndex(layer, openingBorder, false, layeredGraph);
 
         // create lower side node (higher layer index)
-        LNode lowerSideDummy = new LNode();
+        LNode lowerSideDummy = new LNode(layeredGraph);
         lowerSideDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.LEFT);
         lowerSideDummy.getSize().y = insets.getBottom() + borderSpacing;
         lowerSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
@@ -136,7 +137,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         }
 
         // create upper side node (lower layer index)
-        LNode upperSideDummy = new LNode();
+        LNode upperSideDummy = new LNode(layeredGraph);
         upperSideDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.LEFT);
         upperSideDummy.getSize().y = insets.getTop() + borderSpacing;
         upperSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
@@ -144,19 +145,19 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         upperSideDummy.setLayer(upperIndex, layer);
 
         // create ports for connection-edges
-        LPort lowPortWest = new LPort();
+        LPort lowPortWest = new LPort(layeredGraph);
         lowPortWest.setSide(PortSide.WEST);
         lowPortWest.setNode(lowerSideDummy);
 
-        LPort lowPortEast = new LPort();
+        LPort lowPortEast = new LPort(layeredGraph);
         lowPortEast.setSide(PortSide.EAST);
         lowPortEast.setNode(lowerSideDummy);
 
-        LPort highPortWest = new LPort();
+        LPort highPortWest = new LPort(layeredGraph);
         highPortWest.setSide(PortSide.WEST);
         highPortWest.setNode(upperSideDummy);
 
-        LPort highPortEast = new LPort();
+        LPort highPortEast = new LPort(layeredGraph);
         highPortEast.setSide(PortSide.EAST);
         highPortEast.setNode(upperSideDummy);
 
@@ -170,8 +171,8 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
 
         if (startIndex < endIndex) {
             // create connection-edges to successor, if not last index.
-            LEdge lowerEdge = new LEdge();
-            LEdge upperEdge = new LEdge();
+            LEdge lowerEdge = new LEdge(layeredGraph);
+            LEdge upperEdge = new LEdge(layeredGraph);
 
             lowerEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
             upperEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
@@ -230,7 +231,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
      *         compoundNode or any of its descendants.
      */
     private int findUltimateIndex(final Layer layer, final LNode upperBorder,
-            final boolean lowerSide, final LayeredGraph layeredGraph) {
+            final boolean lowerSide, final LGraph layeredGraph) {
         List<LNode> nodes = layer.getNodes();
         KNode upperBorderOrigin = (KNode) upperBorder.getProperty(Properties.ORIGIN);
         int ret = 0;
@@ -250,11 +251,6 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
                 LNode sourceNode = lnode.getProperty(Properties.LONG_EDGE_SOURCE).getNode();
                 LNode targetNode = lnode.getProperty(Properties.LONG_EDGE_TARGET).getNode();
-                // if (Util.getRelatedCompoundNode(lnode, layeredGraph) == upperBorder) {
-                // ret = compareIndex(lnode, ret, lowerSide);
-                // }
-
-                // following four lines original
                 if (sourceNode.getProperty(Properties.PARENT) == targetNode
                         .getProperty(Properties.PARENT)) {
                     if ((Util.isDescendant(sourceNode, upperBorder))
@@ -262,22 +258,11 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
                         ret = compareIndex(lnode, ret, lowerSide);
                     }
                 } else {
-                    if (Util.isDescendant(targetNode, upperBorder)) {
+                    if ((Util.isDescendant(targetNode, upperBorder)) 
+                            || (Util.isDescendant(sourceNode, upperBorder))) {
                         ret = compareIndex(lnode, ret, lowerSide);
                     }
                 }
-
-                // Object origin = edge.getProperty(Properties.ORIGIN);
-                // if (origin instanceof KEdge) {
-                // LNode sourceNode = edge.getSource().getNode();
-                // // KNode kSourceNode = (KNode) (sourceNode.getProperty(Properties.ORIGIN));
-                // KEdge originEdge = (KEdge) origin;
-                // KNode kSourceNode = originEdge.getSource();
-                // if (sourceNode == upperBorder
-                // || KimlUtil.isDescendant(kSourceNode, upperBorderOrigin)) {
-                // ret = compareIndex(lnode, ret, lowerSide);
-                // }
-                // }
             }
             // keep north-south-port dummies and their nodes together
             if (lnode.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {

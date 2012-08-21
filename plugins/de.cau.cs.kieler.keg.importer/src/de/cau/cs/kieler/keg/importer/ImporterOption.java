@@ -20,6 +20,7 @@ import de.cau.cs.kieler.core.properties.Property;
  * {@code Property} functionality.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  * 
  * @param <T>
  *            the option type

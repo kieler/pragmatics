@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.annotations.NamedObject;
  * Filter for showing the property view of the selected element.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomPropertyFilter extends AbstractPropertySectionFilter {
 

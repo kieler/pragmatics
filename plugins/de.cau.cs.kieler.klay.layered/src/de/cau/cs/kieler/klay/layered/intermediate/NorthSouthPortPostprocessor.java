@@ -21,7 +21,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -40,13 +40,15 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @see NorthSouthPortPreprocessor
  * @author cds
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
 public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Odd port side processing", 1);
         
         // Iterate through the layers
@@ -95,16 +97,16 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         LPort originPort = (LPort) inputPort.getProperty(Properties.ORIGIN);
         
         // Calculate the bend point
-        KVector bendPoint = new KVector(inputPort.getNode().getPosition());
-        bendPoint.x = originPort.getNode().getPosition().x + originPort.getPosition().x
+        double x = originPort.getNode().getPosition().x + originPort.getPosition().x
                 + originPort.getAnchor().x;
+        double y = inputPort.getNode().getPosition().y;
         
-        // Reroute the edges, inserting a new bend point at the position of
-        // the dummy node
-        LEdge[] edgeArray = inputPort.getIncomingEdges().toArray(new LEdge[0]);
+        // Reroute the edges, inserting a new bend point at the position of the dummy node
+        LEdge[] edgeArray = inputPort.getIncomingEdges().toArray(
+                new LEdge[inputPort.getIncomingEdges().size()]);
         for (LEdge inEdge : edgeArray) {
             inEdge.setTarget(originPort);
-            inEdge.getBendPoints().add(bendPoint);
+            inEdge.getBendPoints().addLast(x, y);
         }
     }
     
@@ -119,16 +121,16 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
         LPort originPort = (LPort) outputPort.getProperty(Properties.ORIGIN);
         
         // Calculate the bend point
-        KVector bendPoint = new KVector(outputPort.getNode().getPosition());
-        bendPoint.x = originPort.getNode().getPosition().x + originPort.getPosition().x
+        double x = originPort.getNode().getPosition().x + originPort.getPosition().x
                 + originPort.getAnchor().x;
+        double y = outputPort.getNode().getPosition().y;
         
-        // Reroute the edges, inserting a new bend point at the position of
-        // the dummy node
-        LEdge[] edgeArray = outputPort.getOutgoingEdges().toArray(new LEdge[0]);
+        // Reroute the edges, inserting a new bend point at the position of the dummy node
+        LEdge[] edgeArray = outputPort.getOutgoingEdges().toArray(
+                new LEdge[outputPort.getOutgoingEdges().size()]);
         for (LEdge outEdge : edgeArray) {
             outEdge.setSource(originPort);
-            outEdge.getBendPoints().addFirst(bendPoint);
+            outEdge.getBendPoints().addFirst(x, y);
         }
     }
     

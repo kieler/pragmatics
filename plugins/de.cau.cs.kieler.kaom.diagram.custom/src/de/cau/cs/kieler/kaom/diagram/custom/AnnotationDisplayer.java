@@ -52,7 +52,6 @@ import de.cau.cs.kieler.kaom.Entity;
  * Utility class for displaying some annotations of a diagram.
  * 
  * @author ckru
- * 
  */
 public final class AnnotationDisplayer {
 
@@ -109,7 +108,7 @@ public final class AnnotationDisplayer {
                                 DiagramNotationType.NOTE.getSemanticHint(), dde
                                         .getDiagramEditPart().getDiagramPreferencesHint());
                         final CreateViewRequest noteRequest = new CreateViewRequest(viewDescriptor);
-                        final IAdaptable noteViewAdapter = (IAdaptable) ((List) noteRequest
+                        final IAdaptable noteViewAdapter = (IAdaptable) ((List<?>) noteRequest
                                 .getNewObject()).get(0);
                         Command createNoteCmd = compartmentPart.getCommand(noteRequest);
 
@@ -122,7 +121,7 @@ public final class AnnotationDisplayer {
                         if (adaptable instanceof Shape) {
                             Shape shape = (Shape) adaptable;
                             EditPartViewer viewer = dde.getDiagramGraphicalViewer();
-                            Map epRegistry = viewer.getEditPartRegistry();
+                            Map<?, ?> epRegistry = viewer.getEditPartRegistry();
                             ReferenceAnnotation targetAnnotation = (ReferenceAnnotation) ann
                                     .getFirst().getAnnotation("attachedTo");
                             EditPart target = null;
@@ -136,12 +135,12 @@ public final class AnnotationDisplayer {
                             }
                             IGraphicalEditPart source = (IGraphicalEditPart) epRegistry.get(shape);
                             if ((target != null) && (source != null)) {
-                                ConnectionViewDescriptor connectionViewDescriptor = new ConnectionViewDescriptor(
-                                        null,
+                                ConnectionViewDescriptor connectionViewDescriptor
+                                        = new ConnectionViewDescriptor(null,
                                         DiagramNotationType.NOTE_ATTACHMENT.getSemanticHint(), dde
                                                 .getDiagramEditPart().getDiagramPreferencesHint());
-                                CreateConnectionViewRequest createRequest = new CreateConnectionViewRequest(
-                                        connectionViewDescriptor);
+                                CreateConnectionViewRequest createRequest
+                                        = new CreateConnectionViewRequest(connectionViewDescriptor);
                                 Command attachCmd = CreateConnectionViewRequest.getCreateCommand(
                                         createRequest, source, target);
                                 dde.getDiagramEditDomain().getDiagramCommandStack()

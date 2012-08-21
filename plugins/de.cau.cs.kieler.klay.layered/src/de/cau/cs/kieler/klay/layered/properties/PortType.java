@@ -16,8 +16,8 @@ package de.cau.cs.kieler.klay.layered.properties;
 /**
  * Definition of port types.
  *
- * @kieler.rating 2011-03-14 yellow
- *     reviewed by cmot, cds
+ * @kieler.design 2011-03-14 reviewed by cmot, cds
+ * @kieler.rating proposed yellow by msp
  * @author msp
  */
 public enum PortType {

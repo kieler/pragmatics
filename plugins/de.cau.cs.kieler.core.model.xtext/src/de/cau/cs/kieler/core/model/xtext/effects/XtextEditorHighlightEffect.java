@@ -26,6 +26,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -35,7 +36,6 @@ import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.model.xtext.ModelXtextPlugin;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 
 /**
  * Initial implementation of a highlight effect for Xtext editors.
@@ -45,13 +45,16 @@ import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 public class XtextEditorHighlightEffect extends AbstractEffect {
 
     private EObject element = null;
+    private XtextEditor editor = null;
     
     /**
      * Constructor.
-     * @param theElement element
+     * @param theElement the element to be highlighted, must not be <b>null</b>
+     * @param theEditor the editor to be highlighted in, is considered as a hint, may be <b>null</b> 
      */
-    public XtextEditorHighlightEffect(final EObject theElement) {
+    public XtextEditorHighlightEffect(final EObject theElement, final XtextEditor theEditor) {
         this.element = theElement;
+        this.editor = theEditor;
     }
     
     /**
@@ -63,36 +66,45 @@ public class XtextEditorHighlightEffect extends AbstractEffect {
         final IPath path = new Path(this.element.eResource().getURI().toPlatformString(false));
         final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
-                IWorkbenchPage page =
-                        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                IWorkbenchPage page = null;
+                XtextEditor actualEditor = XtextEditorHighlightEffect.this.editor;
                 
-                // find an editor maintaining the document that defines 'element'
-                //  if some is open in the current page
-                Object editor = ResourceUtil.findEditor(page, file);
-                
-                // if no such xtext editor exists open a new one 
-                if (!(editor instanceof XtextEditor)) {
-                    try {
-                        IEditorPart part = IDE.openEditor(page, file);
-                        if (part instanceof XtextEditor) {
-                            editor = part;
-                            
+                if (actualEditor != null && actualEditor.getEditorInput().equals(
+                        new FileEditorInput(file))) {
+                    page = actualEditor.getSite().getPage();
+                } else {
+                    page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                            .getActivePage();
+
+                    // find an editor maintaining the document that defines 'element'
+                    // if some is open in the current page
+                    Object anEditor = ResourceUtil.findEditor(page, file);
+
+                    // if no such xtext editor exists open a new one
+                    if (!(anEditor instanceof XtextEditor)) {
+                        try {
+                            IEditorPart part = IDE.openEditor(page, file);
+                            if (part instanceof XtextEditor) {
+                                anEditor = part;
+                            } else {
+                                return;
+                            }
+                        } catch (PartInitException e) {
+                            StatusManager.getManager().handle(
+                                    new Status(IStatus.WARNING, ModelXtextPlugin.PLUGIN_ID,
+                                            "Error occured while opening the model element definition"
+                                                    + "in an Xtext based editor", e));
+                            return;
                         }
-                    } catch (PartInitException e) {
-                        StatusManager.getManager().handle(
-                                new Status(IStatus.WARNING, ModelXtextPlugin.PLUGIN_ID,
-                                        "Error occured while opening the model element definition"
-                                                + "in an Xtext based editor", e));
-                        return;
-                    }                    
-                    
-                } 
-                XtextEditor xEditor = (XtextEditor) editor;
+
+                    }
+                    actualEditor = (XtextEditor) anEditor;
+                }                
                 
                 // query the editor library for the position of the elements definition                
-                Integer[] elementData = xEditor.getDocument().readOnly(
+                Integer[] elementData = actualEditor.getDocument().readOnly(
                         new IUnitOfWork<Integer[], XtextResource>() {
                             public Integer[] exec(final XtextResource state) throws Exception {
                                 INode node = NodeModelUtils.findActualNodeFor(element);
@@ -101,14 +113,13 @@ public class XtextEditorHighlightEffect extends AbstractEffect {
                         });
                 
                 // set the selection to that area
-                xEditor.getInternalSourceViewer().setSelectedRange(elementData[0], elementData[1]);
-                xEditor.getInternalSourceViewer().revealRange(elementData[0], elementData[1]);
+                actualEditor.getInternalSourceViewer().setSelectedRange(elementData[0], elementData[1]);
+                actualEditor.getInternalSourceViewer().revealRange(elementData[0], elementData[1]);
                 
                 // bring it to foreground
-                page.bringToTop(xEditor);
+                page.bringToTop(actualEditor);
             }
-        }, true);
-            
+        });
     }
 
 }

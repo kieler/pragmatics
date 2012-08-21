@@ -22,8 +22,8 @@ import org.eclipse.draw2d.geometry.Rectangle;
 /**
  * A decoration that depicts a circle.
  * 
- * @kieler.rating 2010-01-26 proposed yellow msp
  * @author schm
+ * @kieler.ignore (excluded from review process)
  */
 public class CircleDecoration extends PolygonDecoration {
 
@@ -44,7 +44,7 @@ public class CircleDecoration extends PolygonDecoration {
     @Override
     protected void outlineShape(final Graphics g) {
         Rectangle ovalBounds = getBounds().getCopy();
-        ovalBounds.crop(new Insets(1));
+        ovalBounds.shrink(new Insets(1));
         g.drawOval(ovalBounds);
     }
 
@@ -54,7 +54,7 @@ public class CircleDecoration extends PolygonDecoration {
     @Override
     protected void fillShape(final Graphics g) {
         Rectangle ovalBounds = getBounds().getCopy();
-        ovalBounds.crop(new Insets(1));
+        ovalBounds.shrink(new Insets(1));
         g.fillOval(ovalBounds);
     }
 

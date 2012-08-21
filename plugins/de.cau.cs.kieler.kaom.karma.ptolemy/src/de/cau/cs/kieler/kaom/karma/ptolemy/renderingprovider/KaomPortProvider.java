@@ -67,7 +67,10 @@ import de.cau.cs.kieler.karma.IRenderingProvider;
 
 /**
  * @author ckru
+ * @kieler.ignore (excluded from review process)
  */
+//This class uses some internal gmf stuff.
+@SuppressWarnings("restriction")
 public class KaomPortProvider implements IRenderingProvider {
 
     /**
@@ -379,10 +382,9 @@ public class KaomPortProvider implements IRenderingProvider {
         try {
             nObj = ptolemy.instantiatePtolemyActor(className, "actor");
         } catch (Exception e) {
-            ;
             return null;
         }
-        if (nObj instanceof ptolemy.kernel.Entity) {
+        if (nObj != null) {
             return (ptolemy.kernel.Entity) nObj;
         } else {
             throw new Exception("Couldn't load Ptolemy Entity '" + className + "'.");

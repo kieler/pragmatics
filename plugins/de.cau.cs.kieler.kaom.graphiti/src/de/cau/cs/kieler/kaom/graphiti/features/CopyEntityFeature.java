@@ -24,6 +24,7 @@ import de.cau.cs.kieler.kaom.Entity;
  * Feature for copying an entity to the clip board.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class CopyEntityFeature extends AbstractCopyFeature {
 

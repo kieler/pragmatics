@@ -34,10 +34,8 @@ import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 
 import de.cau.cs.kieler.core.model.gmf.figures.layout.LabelLocator;
-import de.cau.cs.kieler.keg.custom.KEGFigureProvider;
 import de.cau.cs.kieler.keg.custom.KEGPort;
 import de.cau.cs.kieler.keg.diagram.edit.policies.PortItemSemanticEditPolicy;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;
@@ -97,7 +95,7 @@ public class PortEditPart extends BorderedBorderItemEditPart implements KEGPort
                 case PortPortLabelEditPart.VISUAL_ID:
                     return new BorderItemSelectionEditPolicy() {
 
-                        protected List createSelectionHandles() {
+                        protected List<?> createSelectionHandles() {
                             MoveHandle mh = new MoveHandle((GraphicalEditPart) getHost());
                             mh.setBorder(null);
                             return Collections.singletonList(mh);

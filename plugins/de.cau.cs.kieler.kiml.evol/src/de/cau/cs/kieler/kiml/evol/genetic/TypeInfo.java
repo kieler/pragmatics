@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
+import java.io.Serializable;
+
 /**
  * A type info describes the parameters of a type that is used in an {@link IGene}.
  *
@@ -20,8 +22,11 @@ package de.cau.cs.kieler.kiml.evol.genetic;
  * @author msp
  * @param <T> the type of contained values
  */
-public class TypeInfo<T extends Comparable<? super T>> {
+public class TypeInfo<T extends Comparable<? super T>> implements Serializable {
     
+    /** the serial version UID. */
+    private static final long serialVersionUID = 664399228696558674L;
+
     /**
      * Enumeration of available gene types.
      */

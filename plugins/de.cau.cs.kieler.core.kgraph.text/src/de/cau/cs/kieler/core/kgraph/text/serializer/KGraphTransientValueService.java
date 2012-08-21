@@ -15,28 +15,34 @@ package de.cau.cs.kieler.core.kgraph.text.serializer;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.xtext.serializer.sequencer.ITransientValueService;
-import org.eclipse.xtext.serializer.sequencer.TransientValueService;
 
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
+import de.cau.cs.kieler.core.kgraph.text.krendering.serializer.KRenderingTransientValueService;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 
 /**
- * A KGraph specific {@link ITransientValueService}. I implements also the old
- * {@link org.eclipse.xtext.parsetree.reconstr.ITransientValueService} since it is needed by the
- * current implementation of {@link org.eclipse.xtext.validation.IConcreteSyntaxValidator}.
+ * A KGraph specific {@link org.eclipse.xtext.serializer.sequencer.ITransientValueService}.
+ * Prevents serializer from trying to dump out eOpposite relations and
+ * {@link de.cau.cs.kieler.core.properties.IProperty} data.
  * 
  * @author chsch
  */
 @SuppressWarnings("restriction")
-public class KGraphTransientValueService extends TransientValueService implements
-        ITransientValueService, org.eclipse.xtext.parsetree.reconstr.ITransientValueService {
+public class KGraphTransientValueService extends KRenderingTransientValueService {
 
     @Override
     public ListTransient isListTransient(final EObject semanticObject,
             final EStructuralFeature feature) {
-        if (feature == KGraphPackage.eINSTANCE.getKNode_Parent()
-                || feature == KGraphPackage.eINSTANCE.getKNode_IncomingEdges()
-                || feature == KGraphPackage.eINSTANCE.getKEdge_Source()) {
+        // the whole lists of nodes' incoming edges, IProperties, ...
+        if (feature == KGraphPackage.eINSTANCE.getKNode_IncomingEdges()
+             || feature == KGraphPackage.eINSTANCE.getEMapPropertyHolder_Properties()
+             || (feature == KGraphPackage.eINSTANCE.getEMapPropertyHolder_PersistentEntries()
+                  // ... and persisted entries of non-KLayoutData ...    
+                  && !(KLayoutDataPackage.eINSTANCE.getKShapeLayout().isInstance(semanticObject)
+                        || KLayoutDataPackage.eINSTANCE.getKEdgeLayout().isInstance(semanticObject)))) {
+            // must not be serialized as they either do not have related elements in the concrete syntax,
+            //  or are no EObjects (IProperties).
+            //  
             return ListTransient.YES;
         }
         return super.isListTransient(semanticObject, feature);
@@ -45,49 +51,12 @@ public class KGraphTransientValueService extends TransientValueService implement
     @Override
     public boolean isValueInListTransient(final EObject semanticObject, final int index,
             final EStructuralFeature feature) {
-        if (feature == KGraphPackage.eINSTANCE.getKNode_Parent()
-                || feature == KGraphPackage.eINSTANCE.getKNode_IncomingEdges()
-                || feature == KGraphPackage.eINSTANCE.getKEdge_Source()) {
-            return true;
-        }
         return super.isValueInListTransient(semanticObject, index, feature);
     }
 
     @Override
     public ValueTransient isValueTransient(final EObject semanticObject,
             final EStructuralFeature feature) {
-        if (feature == KGraphPackage.eINSTANCE.getKNode_Parent()
-                || feature == KGraphPackage.eINSTANCE.getKNode_IncomingEdges()
-                || feature == KGraphPackage.eINSTANCE.getKEdge_Source()
-                || feature == KGraphPackage.eINSTANCE.getKPort_Node()
-                || feature == KGraphPackage.eINSTANCE.getKLabel_Parent()) {
-            return ValueTransient.YES;
-        }
         return super.isValueTransient(semanticObject, feature);
-    }
-
-    // the above methods implement
-    // org.eclipse.xtext.parsetree.reconstr.ITransientValueService
-    // we need this since the current IConcreteSyntaxValidator relies on it
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isCheckElementsIndividually(final EObject owner, final EStructuralFeature feature) {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isTransient(final EObject owner, final EStructuralFeature feature,
-            final int index) {
-        if (feature == KGraphPackage.eINSTANCE.getKNode_Parent()
-                || feature == KGraphPackage.eINSTANCE.getKNode_IncomingEdges()
-                || feature == KGraphPackage.eINSTANCE.getKEdge_Source()
-                || feature == KGraphPackage.eINSTANCE.getKPort_Node()
-                || feature == KGraphPackage.eINSTANCE.getKLabel_Parent()) {
-            return true;
-        }
-        return false;
     }
 }

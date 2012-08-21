@@ -21,7 +21,7 @@ public class GraphsNavigatorGroup extends GraphsAbstractNavigatorItem {
     /**
      * @generated
      */
-    private Collection myChildren = new LinkedList();
+    private Collection<Object> myChildren = new LinkedList<Object>();
 
     /**
      * @generated
@@ -56,7 +56,7 @@ public class GraphsNavigatorGroup extends GraphsAbstractNavigatorItem {
     /**
      * @generated
      */
-    public void addChildren(Collection children) {
+    public void addChildren(Collection<?> children) {
         myChildren.addAll(children);
     }
 

@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalRoutingGenerator;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -72,6 +72,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see HierarchicalPortPositionProcessor
  * @see OrthogonalRoutingGenerator
  * @author cds
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
 public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutProcessor {
     
@@ -96,7 +98,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Orthogonally routing hierarchical port edges", 1);
         
         /* Step 1
@@ -155,7 +157,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param layeredGraph the layered graph.
      * @return the list of restored external port dummies.
      */
-    private Set<LNode> restoreNorthSouthDummies(final LayeredGraph layeredGraph) {
+    private Set<LNode> restoreNorthSouthDummies(final LGraph layeredGraph) {
         Set<LNode> restoredDummies = new HashSet<LNode>();
         Layer lastLayer = null;
         
@@ -178,7 +180,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     
                     // Restore the origin and connect the node to it
                     restoreDummy(replacedDummy, restoredDummies);
-                    connectNodeToDummy(node, replacedDummy);
+                    connectNodeToDummy(layeredGraph, node, replacedDummy);
                 }
             }
             
@@ -228,9 +230,9 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param node the node to connect to the dummy.
      * @param dummy the external port dummy to connect the node to.
      */
-    private void connectNodeToDummy(final LNode node, final LNode dummy) {
+    private void connectNodeToDummy(final LGraph layeredGraph, final LNode node, final LNode dummy) {
         // First, add a port to the node. The port side depends on the node's hierarchical port side
-        LPort outPort = new LPort();
+        LPort outPort = new LPort(layeredGraph);
         outPort.setNode(node);
         
         PortSide extPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
@@ -240,7 +242,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         LPort inPort = dummy.getPorts().get(0);
         
         // Connect the two nodes
-        LEdge edge = new LEdge();
+        LEdge edge = new LEdge(layeredGraph);
         edge.setSource(outPort);
         edge.setTarget(inPort);
     }
@@ -255,7 +257,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param layeredGraph the layered graph.
      * @param northSouthDummies set of dummy nodes whose position to set.
      */
-    private void setNorthSouthDummyCoordinates(final LayeredGraph layeredGraph,
+    private void setNorthSouthDummyCoordinates(final LGraph layeredGraph,
             final Set<LNode> northSouthDummies) {
         
         PortConstraints constraints = layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
@@ -386,7 +388,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param dummies list of dummy nodes.
      * @param graph the layered graph.
      */
-    private void ensureUniquePositions(final List<LNode> dummies, final LayeredGraph graph) {
+    private void ensureUniquePositions(final List<LNode> dummies, final LGraph graph) {
         if (dummies.isEmpty()) {
             return;
         }
@@ -421,7 +423,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param dummies list of dummy nodes.
      * @param graph the layered graph.
      */
-    private void restoreProperOrder(final List<LNode> dummies, final LayeredGraph graph) {
+    private void restoreProperOrder(final List<LNode> dummies, final LGraph graph) {
         if (dummies.isEmpty()) {
             return;
         }
@@ -458,7 +460,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param dummies array of dummy nodes.
      * @param graph the layered graph.
      */
-    private void assignAscendingCoordinates(final LNode[] dummies, final LayeredGraph graph) {
+    private void assignAscendingCoordinates(final LNode[] dummies, final LGraph graph) {
         // Find the edge distance
         float edgeSpacing = graph.getProperty(Properties.OBJ_SPACING)
                 * graph.getProperty(Properties.EDGE_SPACING_FACTOR);
@@ -490,7 +492,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param layeredGraph the layered graph.
      * @param northSouthDummies the collection of restored northern and southern port dummies.
      */
-    private void routeEdges(final LayeredGraph layeredGraph, final Iterable<LNode> northSouthDummies) {
+    private void routeEdges(final LGraph layeredGraph, final Iterable<LNode> northSouthDummies) {
         // Prepare south and target layers for northern and southern routing
         Set<LNode> northernSourceLayer = new HashSet<LNode>();
         Set<LNode> northernTargetLayer = new HashSet<LNode>();
@@ -535,7 +537,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     northernSourceLayer,
                     0,
                     northernTargetLayer,
-                    -nodeSpacing);
+                    -nodeSpacing - layeredGraph.getOffset().y);
             
             // If anything was routed, adjust the graph's offset and height
             if (slots > 0) {
@@ -559,7 +561,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     southernSourceLayer,
                     0,
                     southernTargetLayer,
-                    layeredGraph.getSize().y + nodeSpacing);
+                    layeredGraph.getSize().y + nodeSpacing - layeredGraph.getOffset().y);
             
             // Adjust graph height.
             if (slots > 0) {
@@ -578,7 +580,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * 
      * @param layeredGraph the layered graph.
      */
-    private void removeTemporaryNorthSouthDummies(final LayeredGraph layeredGraph) {
+    private void removeTemporaryNorthSouthDummies(final LGraph layeredGraph) {
         List<LNode> nodesToRemove = new LinkedList<LNode>();
         
         // Iterate through all layers
@@ -629,7 +631,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                 KVectorChain incomingEdgeBendPoints = new KVectorChain(nodeToOriginEdge.getBendPoints());
                 
                 KVector firstBendPoint = new KVector(nodeInPort.getPosition());
-                firstBendPoint.add(node.getPosition());
+                firstBendPoint.add(new KVector(node.getPosition()));
                 incomingEdgeBendPoints.add(0, firstBendPoint);
                 
                 // Compute bend points for outgoing edges
@@ -637,7 +639,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                         nodeToOriginEdge.getBendPoints());
                 
                 KVector lastBendPoint = new KVector(nodeOutPort.getPosition());
-                lastBendPoint.add(node.getPosition());
+                lastBendPoint.add(new KVector(node.getPosition()));
                 outgoingEdgeBendPoints.add(lastBendPoint);
                 
                 // Retrieve the original hierarchical port dummy
@@ -687,7 +689,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * 
      * @param layeredGraph the layered graph.
      */
-    private void fixCoordinates(final LayeredGraph layeredGraph) {
+    private void fixCoordinates(final LGraph layeredGraph) {
         PortConstraints constraints = layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         
         // East port dummies are in the first layer; all other dummies are in the last layer
@@ -710,7 +712,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param graph the graph.
      */
     private void fixCoordinates(final Layer layer, final PortConstraints constraints,
-            final LayeredGraph graph) {
+            final LGraph graph) {
         
         // Get some geometric values from the graph
         LInsets.Double insets = graph.getInsets();
@@ -751,11 +753,13 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             case WEST:
                 if (constraints == PortConstraints.FIXED_RATIO) {
                     double ratio = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
-                    nodePosition.y = graphActualSize.y * ratio;
+                    nodePosition.y = graphActualSize.y * ratio
+                            - node.getProperty(Properties.PORT_ANCHOR).y;
                     requiredActualGraphHeight = nodePosition.y + extPortSize.y;
                     node.borderToContentAreaCoordinates(false, true);
                 } else if (constraints == PortConstraints.FIXED_POS) {
-                    nodePosition.y = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+                    nodePosition.y = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION)
+                            - node.getProperty(Properties.PORT_ANCHOR).y;
                     requiredActualGraphHeight = nodePosition.y + extPortSize.y;
                     node.borderToContentAreaCoordinates(false, true);
                 }
@@ -801,7 +805,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * 
      * @param layeredGraph the layered graph.
      */
-    private void correctSlantedEdgeSegments(final LayeredGraph layeredGraph) {
+    private void correctSlantedEdgeSegments(final LGraph layeredGraph) {
         // East port dummies are in the first layer; all other dummies are in the last layer
         List<Layer> layers = layeredGraph.getLayers();
         correctSlantedEdgeSegments(layers.get(0));

@@ -23,6 +23,7 @@ import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.util.EContentAdapter;
+import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -35,13 +36,16 @@ import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.kgraph.util.KGraphSwitch;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klighd.krendering.DiagramLayoutManager;
 import de.cau.cs.kieler.klighd.piccolo.activities.ApplySmartBoundsActivity;
 import de.cau.cs.kieler.klighd.piccolo.krendering.ApplyBendPointsActivity;
@@ -836,6 +840,8 @@ public class GraphController {
                         case KLayoutDataPackage.KSHAPE_LAYOUT__HEIGHT:
                             recordedChanges.put(nodeRep, getBounds(shapeLayout));
                             break;
+                        default:
+                            break;
                         }
                     } else {
 
@@ -864,6 +870,8 @@ public class GraphController {
                             nodeRep.setHeight(shapeLayout.getHeight());
                             break;
                         }
+                        default:
+                            break;
                         }
                         // }
                         // }, true);
@@ -895,6 +903,8 @@ public class GraphController {
                         case KLayoutDataPackage.KSHAPE_LAYOUT__HEIGHT:
                             recordedChanges.put(portRep, getBounds(shapeLayout));
                             break;
+                        default:
+                            break;
                         }
                     } else {
                         // MonitoredOperation.runInUI(new Runnable() {
@@ -920,6 +930,8 @@ public class GraphController {
                             portRep.setHeight(shapeLayout.getHeight());
                             break;
                         }
+                        default:
+                            break;
                         }
                         // }
                         // }, true);
@@ -951,6 +963,8 @@ public class GraphController {
                         case KLayoutDataPackage.KSHAPE_LAYOUT__HEIGHT:
                             recordedChanges.put(labelRep, getBounds(shapeLayout));
                             break;
+                        default:
+                            break;
                         }
                     } else {
                         // MonitoredOperation.runInUI(new Runnable() {
@@ -976,6 +990,8 @@ public class GraphController {
                             labelRep.setHeight(shapeLayout.getHeight());
                             break;
                         }
+                        default:
+                            break;
                         }
                         // }
                         // }, true);
@@ -1040,46 +1056,48 @@ public class GraphController {
                     switch (notification.getEventType()) {
                     case Notification.ADD: {
                         final KNode addedNode = (KNode) notification.getNewValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 addNode(nodeRep, addedNode);
                             }
-                        }, true);
+                        });
                         break;
                     }
                     case Notification.ADD_MANY: {
                         @SuppressWarnings("unchecked")
                         final List<KNode> addedNodes = (List<KNode>) notification.getNewValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 for (KNode addedNode : addedNodes) {
                                     addNode(nodeRep, addedNode);
                                 }
                             }
-                        }, true);
+                        });
                         break;
                     }
                     case Notification.REMOVE: {
                         final KNode removedNode = (KNode) notification.getOldValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 removeNode(removedNode);
                             }
-                        }, true);
+                        });
                         break;
                     }
                     case Notification.REMOVE_MANY: {
                         @SuppressWarnings("unchecked")
                         final List<KNode> removedNodes = (List<KNode>) notification.getOldValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 for (KNode removedNode : removedNodes) {
                                     removeNode(removedNode);
                                 }
                             }
-                        }, true);
+                        });
                         break;
                     }
+                    default:
+                        break;
                     }
                 }
             }
@@ -1111,46 +1129,48 @@ public class GraphController {
                     switch (notification.getEventType()) {
                     case Notification.ADD: {
                         final KEdge addedEdge = (KEdge) notification.getNewValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 addEdge(addedEdge);
                             }
-                        }, true);
+                        });
                         break;
                     }
                     case Notification.ADD_MANY: {
                         @SuppressWarnings("unchecked")
                         final List<KEdge> addedEdges = (List<KEdge>) notification.getNewValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 for (KEdge addedEdge : addedEdges) {
                                     addEdge(addedEdge);
                                 }
                             }
-                        }, true);
+                        });
                         break;
                     }
                     case Notification.REMOVE: {
                         final KEdge removedEdge = (KEdge) notification.getOldValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 removeEdge(removedEdge);
                             }
-                        }, true);
+                        });
                         break;
                     }
                     case Notification.REMOVE_MANY: {
                         @SuppressWarnings("unchecked")
                         final List<KEdge> removedEdges = (List<KEdge>) notification.getOldValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 for (KEdge removedEdge : removedEdges) {
                                     removeEdge(removedEdge);
                                 }
                             }
-                        }, true);
+                        });
                         break;
                     }
+                    default:
+                        break;
                     }
                 }
             }
@@ -1192,46 +1212,48 @@ public class GraphController {
                     switch (notification.getEventType()) {
                     case Notification.ADD: {
                         final KPort addedPort = (KPort) notification.getNewValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 addPort(nodeRep, addedPort);
                             }
-                        }, true);
+                        });
                         break;
                     }
                     case Notification.ADD_MANY: {
                         @SuppressWarnings("unchecked")
                         final List<KPort> addedPorts = (List<KPort>) notification.getNewValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 for (KPort addedPort : addedPorts) {
                                     addPort(nodeRep, addedPort);
                                 }
                             }
-                        }, true);
+                        });
                         break;
                     }
                     case Notification.REMOVE: {
                         final KPort removedPort = (KPort) notification.getOldValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 removePort(removedPort);
                             }
-                        }, true);
+                        });
                         break;
                     }
                     case Notification.REMOVE_MANY: {
                         @SuppressWarnings("unchecked")
                         final List<KPort> removedPorts = (List<KPort>) notification.getOldValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 for (KPort removedPort : removedPorts) {
                                     removePort(removedPort);
                                 }
                             }
-                        }, true);
+                        });
                         break;
                     }
+                    default:
+                        break;
                     }
                 }
             }
@@ -1257,47 +1279,49 @@ public class GraphController {
                     switch (notification.getEventType()) {
                     case Notification.ADD: {
                         final KLabel addedLabel = (KLabel) notification.getNewValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 addLabel(labeledNode, addedLabel);
                             }
-                        }, true);
+                        });
                         break;
                     }
                     case Notification.ADD_MANY: {
                         @SuppressWarnings("unchecked")
                         final List<KLabel> addedLabels = (List<KLabel>) notification.getNewValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 for (KLabel addedLabel : addedLabels) {
                                     addLabel(labeledNode, addedLabel);
                                 }
                             }
-                        }, true);
+                        });
                         break;
                     }
                     case Notification.REMOVE: {
                         final KLabel removedLabel = (KLabel) notification.getOldValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 removeLabel(removedLabel);
                             }
-                        }, true);
+                        });
                         break;
                     }
                     case Notification.REMOVE_MANY: {
                         @SuppressWarnings("unchecked")
                         final List<KLabel> removedLabels = (List<KLabel>) notification
                                 .getOldValue();
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 for (KLabel removedLabel : removedLabels) {
                                     removeLabel(removedLabel);
                                 }
                             }
-                        }, true);
+                        });
                         break;
                     }
+                    default:
+                        break;
                     }
                 }
             }
@@ -1319,11 +1343,13 @@ public class GraphController {
                 if (notification.getFeatureID(KLabel.class) == KGraphPackage.KLABEL__TEXT) {
                     switch (notification.getEventType()) {
                     case Notification.SET:
-                        MonitoredOperation.runInUI(new Runnable() {
+                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 labelRep.setText(node.getText());
                             }
-                        }, true);
+                        });
+                        break;
+                    default:
                         break;
                     }
                 }
@@ -1353,13 +1379,25 @@ public class GraphController {
      * @return the bend points
      */
     private static Point2D[] getBendPoints(final KEdgeLayout edgeLayout) {
+
+        // chsch: the following 8 lines for approximating spline connections are mainly taken
+        //  from de.cau.cs.kieler.kiml.gmf.GmfLayoutEditPolicy#getBendPoints()
+        KVectorChain bendPoints = edgeLayout.createVectorChain();
+
+        // for connections that support splines the control points are passed without change
+        boolean approx = edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES;
+        // in other cases an approximation is used
+        if (approx && bendPoints.size() >= 1) {
+            bendPoints = KielerMath.approximateSpline(bendPoints);
+        }
+        
         // build the bend point array
-        Point2D[] points = new Point2D[edgeLayout.getBendPoints().size() + 2];
+        Point2D[] points = new Point2D[bendPoints.size() + 2];
         int i = 0;
         points[i++] = new Point2D.Double(edgeLayout.getSourcePoint().getX(), edgeLayout
                 .getSourcePoint().getY());
-        for (KPoint bend : edgeLayout.getBendPoints()) {
-            points[i++] = new Point2D.Double(bend.getX(), bend.getY());
+        for (KVector bend : bendPoints) {
+            points[i++] = new Point2D.Double(bend.x, bend.y);
         }
         points[i] = new Point2D.Double(edgeLayout.getTargetPoint().getX(), edgeLayout
                 .getTargetPoint().getY());
@@ -1368,7 +1406,9 @@ public class GraphController {
 
     /**
      * Finds the parent node for the edge representation and adds the edge to that node
-     * representations child area.
+     * representations child area. This is needed since the clipping property of
+     * {@link KChildAreaNode}s will clip the edges. Hence they are located in the
+     * {@link KChildAreaNode} of lowest common ancestor.
      * 
      * @param edgeRep
      *            the edge representation
@@ -1389,7 +1429,9 @@ public class GraphController {
     }
 
     /**
-     * Updates the offset of the edge representation.
+     * Updates the offset of the edge representation. Takes care about insets due to
+     * {@link de.cau.cs.kieler.core.krendering.KPlacementData KPlacementData} and the relocation
+     * performed in {@link #updateEdgeParent(KEdgeNode)}-
      * 
      * @param edgeNode
      *            the edge representation
@@ -1398,9 +1440,12 @@ public class GraphController {
         final PNode edgeNodeParent = edgeNode.getParent();
         if (edgeNodeParent != null) {
             KEdge edge = edgeNode.getGraphElement();
-            KNode source = edge.getSource();
-            INode sourceParentNode = RenderingContextData.get(source.getParent()).getProperty(
-                    INode.NODE_REP);
+            // chsch: change due to KIELER-1988; // SUPPRESS CHECKSTYLE NEXT 3 LineLength
+            //  edges uses different reference points as indicated by 
+            //  http://rtsys.informatik.uni-kiel.de/~kieler/files/documentation/klayoutdata-reference-points.png
+            //  see page http://rtsys.informatik.uni-kiel.de/confluence/display/KIELER/KLayoutData+Meta+Model
+            INode sourceParentNode = RenderingContextData.get(determineReferenceNodeOf(edge))
+                    .getProperty(INode.NODE_REP);
             final KChildAreaNode relativeChildArea = sourceParentNode.getChildArea();
 
             // the listener that updates the offset
@@ -1459,6 +1504,25 @@ public class GraphController {
         }
         edgeNode.addAttribute(EDGE_OFFSET_LISTENER_KEY, null);
         edgeNode.addAttribute(EDGE_OFFSET_LISTENED_KEY, null);
+    }
+
+    /** Needed as edge coordinates uses different reference nodes as indicated by
+     *   http://rtsys.informatik.uni-kiel.de/~kieler/files/documentation/klayoutdata-reference-points.png
+     *   see page http://rtsys.informatik.uni-kiel.de/confluence/display/KIELER/KLayoutData+Meta+Model.
+     * @param edge the edge whose reference node is to be determined,
+     * @return its reference node
+     */
+    private static KNode determineReferenceNodeOf(final KEdge edge) {
+        // determine whether the edge directs to an inner node
+        KNode node = edge.getTarget();
+        while (node != null && node != edge.getSource()) {
+            node = node.getParent();
+        }
+        // if (node != null) holds, node == edge.getSource() holds and therefore the target node is
+        // contained in the source node; in this case the source node's child area denotes the
+        // reference point of the edge's coordinates, the child area of the source node's parent
+        // otherwise, as indicated by the above mentioned illustration
+        return node != null ? edge.getSource() : edge.getSource().getParent();
     }
 
     /**

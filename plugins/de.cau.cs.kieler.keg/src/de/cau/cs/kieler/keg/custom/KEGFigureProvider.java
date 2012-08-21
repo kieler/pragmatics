@@ -30,6 +30,7 @@ import de.cau.cs.kieler.karma.IRenderingProvider;
  * The figure provider for KEG figures.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class KEGFigureProvider implements IRenderingProvider {
 
@@ -108,7 +109,8 @@ public class KEGFigureProvider implements IRenderingProvider {
      * {@inheritDoc}
      */
     public IBorderItemLocator getBorderItemLocatorByString(final String input,
-            final IFigure parentFigure, final Object locator, final EObject object, final CollapseStatus collapseStatus) {
+            final IFigure parentFigure, final Object locator, final EObject object,
+            final CollapseStatus collapseStatus) {
         return null;
     }
 
@@ -138,4 +140,5 @@ public class KEGFigureProvider implements IRenderingProvider {
     public static void setBackgroundColor(final Color color) {
         bgColor = color;
     }
+    
 }

@@ -19,12 +19,12 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
-import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
@@ -37,26 +37,30 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * </dl>
  * 
  * @author msp
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
 public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayoutPhase {
 
-    /** intermediate processing strategy. */
-    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
-        new IntermediateProcessingStrategy(
-                IntermediateProcessingStrategy.AFTER_PHASE_5,
-                EnumSet.of(IntermediateLayoutProcessor.REVERSED_EDGE_RESTORER));
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
+        new IntermediateProcessingConfiguration(
+                IntermediateProcessingConfiguration.AFTER_PHASE_5,
+                EnumSet.of(LayoutProcessorStrategy.REVERSED_EDGE_RESTORER));
 
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
-        return INTERMEDIATE_PROCESSING_STRATEGY;
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final LGraph graph) {
+        
+        return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Interactive cycle breaking", 1);
         
         // gather edges that point to the wrong direction
@@ -78,7 +82,7 @@ public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayou
         }
         // reverse the gathered edges
         for (LEdge edge : revEdges) {
-            edge.reverse(true);
+            edge.reverse(layeredGraph, true);
         }
         
         // perform an additional check for cycles - maybe we missed something
@@ -91,7 +95,7 @@ public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayou
         }
         // again, reverse the edges that were marked
         for (LEdge edge : revEdges) {
-            edge.reverse(true);
+            edge.reverse(layeredGraph, true);
         }
         
         revEdges.clear();

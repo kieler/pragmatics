@@ -58,6 +58,7 @@ public class GraphsDomainNavigatorContentProvider implements ICommonContentProvi
     /**
      * @generated
      */
+    @SuppressWarnings({ "unchecked", "serial", "rawtypes" })
     public GraphsDomainNavigatorContentProvider() {
         myAdapterFctoryContentProvier = new AdapterFactoryContentProvider(GraphsDiagramEditorPlugin
                 .getInstance().getItemProvidersAdapterFactory());
@@ -190,7 +191,7 @@ public class GraphsDomainNavigatorContentProvider implements ICommonContentProvi
      * @generated
      */
     public Object[] wrapEObjects(Object[] objects, Object parentElement) {
-        Collection result = new ArrayList();
+        Collection<Object> result = new ArrayList<Object>();
         for (int i = 0; i < objects.length; i++) {
             if (objects[i] instanceof EObject) {
                 result.add(new GraphsDomainNavigatorItem((EObject) objects[i], parentElement,

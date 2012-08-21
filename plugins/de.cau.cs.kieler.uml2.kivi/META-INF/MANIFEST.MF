@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER View Management for UML2
 Bundle-SymbolicName: de.cau.cs.kieler.uml2.kivi;singleton:=true
-Bundle-Version: 0.1.1.qualifier
+Bundle-Version: 0.1.2.qualifier
 Bundle-Activator: de.cau.cs.kieler.uml2.kivi.Activator
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Require-Bundle: org.eclipse.ui,
@@ -10,8 +10,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.ecore;bundle-version="2.6.0",
  org.eclipse.papyrus.editor;bundle-version="0.8.0",
  org.eclipse.papyrus.core;bundle-version="0.8.0",
- org.eclipse.papyrus.diagram.statemachine;bundle-version="0.8.0",
- org.eclipse.papyrus.diagram.common;bundle-version="0.8.0",
+ org.eclipse.papyrus.diagram.statemachine,
+ org.eclipse.papyrus.diagram.common,
  org.eclipse.papyrus.core.adaptor.gmf;bundle-version="0.8.0",
  org.eclipse.gmf.runtime.diagram.ui.resources.editor;bundle-version="1.4.0",
  de.cau.cs.kieler.sim.kivi,

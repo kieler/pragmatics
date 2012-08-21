@@ -23,8 +23,7 @@ import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
  * This class provides the translation of place holders used in static web content to runtime
  * dependent values.
  *
- * @kieler.rating  2011-05-04 red
- * @author  swe
+ * @author swe
  */
 public final class ValuesForPlaceholders {
 

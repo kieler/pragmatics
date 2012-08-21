@@ -22,20 +22,23 @@ import java.util.Random;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
-import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * Cycle breaker implementation that uses a greedy algorithm. Inspired by Section 9.4 of
+ * Cycle breaker implementation that uses a greedy algorithm. Inspired by
  * <ul>
+ *   <li>Peter Eades, Xuemin Lin, W. F. Smyth,
+ *     A fast and effective heuristic for the feedback arc set problem.
+ *     <i>Information Processing Letters</i> 47(6), pp. 319-323, 1993.</li>
  *   <li>Giuseppe di Battista, Peter Eades, Roberto Tamassia, Ioannis G. Tollis,
  *     <i>Graph Drawing: Algorithms for the Visualization of Graphs</i>,
- *     Prentice Hall, New Jersey, 1999
+ *     Prentice Hall, New Jersey, 1999 (Section 9.4).</li>
  * </ul>
  * 
  * <p>This cycle breaker doesn't support layer constraints out of the box. If layer
@@ -53,14 +56,16 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see de.cau.cs.kieler.klay.layered.intermediate.EdgeAndLayerConstraintEdgeReverser
  * @see de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintProcessor
  * @author msp
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
 public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhase {
     
-    /** intermediate processing strategy. */
-    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
-        new IntermediateProcessingStrategy(
-                IntermediateProcessingStrategy.AFTER_PHASE_5,
-                EnumSet.of(IntermediateLayoutProcessor.REVERSED_EDGE_RESTORER));
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
+        new IntermediateProcessingConfiguration(
+                IntermediateProcessingConfiguration.AFTER_PHASE_5,
+                EnumSet.of(LayoutProcessorStrategy.REVERSED_EDGE_RESTORER));
 
     /** indegree values for the nodes. */
     private int[] indeg;
@@ -76,14 +81,16 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
-        return INTERMEDIATE_PROCESSING_STRATEGY;
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final LGraph graph) {
+        
+        return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Greedy cycle removal", 1);
         
         Collection<LNode> nodes = layeredGraph.getLayerlessNodes();
@@ -203,7 +210,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                         // However, this will not happen here, because edges are only reversed for
                         // nodes that are part of a cycle and thus already have both an input and
                         // an output collector port.
-                        edge.reverse(true);
+                        edge.reverse(layeredGraph, true);
                         layeredGraph.setProperty(Properties.CYCLIC, true);
                     }
                 }                

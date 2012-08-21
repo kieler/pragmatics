@@ -20,7 +20,7 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.EdgeConstraint;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
@@ -46,13 +46,15 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see LayerConstraintProcessor
  * @author cds
  * @author msp
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
 public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Edge and layer constraint edge reversal", 1);
         
         // Iterate through the list of nodes
@@ -76,9 +78,9 @@ public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implem
             EdgeConstraint edgeConstraint = node.getProperty(Properties.EDGE_CONSTRAINT);
             
             if (edgeConstraint == EdgeConstraint.INCOMING_ONLY) {
-                reverseEdges(node, PortType.OUTPUT);
+                reverseEdges(layeredGraph, node, PortType.OUTPUT);
             } else if (edgeConstraint == EdgeConstraint.OUTGOING_ONLY) {
-                reverseEdges(node, PortType.INPUT);
+                reverseEdges(layeredGraph, node, PortType.INPUT);
             } else if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()
                     && !node.getPorts().isEmpty()) {
                 // Check whether the ports are reversed, in which case all edges are reversed
@@ -91,7 +93,7 @@ public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implem
                     }
                 }
                 if (allPortsReversed) {
-                    reverseEdges(node, PortType.UNDEFINED);
+                    reverseEdges(layeredGraph, node, PortType.UNDEFINED);
                 }
             }
         }
@@ -102,10 +104,11 @@ public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implem
     /**
      * Reverses edges as appropriate.
      * 
+     * @param layeredGraph the layered graph
      * @param node the node to place in the layer.
      * @param type type of edges that are reversed
      */
-    private void reverseEdges(final LNode node, final PortType type) {
+    private void reverseEdges(final LGraph layeredGraph, final LNode node, final PortType type) {
         // Iterate through the node's edges and reverse them, if necessary
         LPort[] ports = node.getPorts().toArray(new LPort[node.getPorts().size()]);
         for (LPort port : ports) {
@@ -115,7 +118,7 @@ public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implem
                         new LEdge[port.getOutgoingEdges().size()]);
                 for (LEdge edge : outgoing) {
                     if (!edge.getProperty(Properties.REVERSED)) {
-                        edge.reverse(true);
+                        edge.reverse(layeredGraph, true);
                     }
                 }
             }
@@ -126,7 +129,7 @@ public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implem
                         new LEdge[port.getIncomingEdges().size()]);
                 for (LEdge edge : incoming) {
                     if (!edge.getProperty(Properties.REVERSED)) {
-                        edge.reverse(true);
+                        edge.reverse(layeredGraph, true);
                     }
                 }
             }

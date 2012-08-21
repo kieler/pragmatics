@@ -28,6 +28,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.IViewerEventListener;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
@@ -119,7 +121,7 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
     /**
      * {@inheritDoc}
      */
-    public Object getModel() {
+    public synchronized Object getModel() {
         if (currentViewer != null) {
             return currentViewer.getModel();
         }
@@ -179,7 +181,7 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
             // create the selection objects
             List<SelectionElement> selections = new LinkedList<SelectionElement>();
             // create the selection state
-            KlighdSelectionState state = new KlighdSelectionState(viewId, currentViewContext,
+            KlighdSelectionState state = new KlighdSelectionState(viewId, getCurrentViewContext(),
                     currentViewer, selections);
             // fill the selection
             for (Object diagramObject : selectedElements) {
@@ -188,11 +190,25 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
             trigger.trigger(state);
         }
         
+        // chsch: was 
+        //  updateSelection(selectedElements);
+        //  notifyListenersSelection(selectedElements);
+        //
+        // updated it since it makes IMO more sense this way:
+
         // update the selection status for the ISelectionProvider interface
-        updateSelection(selectedElements);
+        List<Object> selectedModelElements = Lists.newArrayList();
+        Object modelElement;
+        for (Object element : selectedElements) {            
+            modelElement = getCurrentViewContext().getSourceElement(element);
+            if (modelElement != null) {
+                selectedModelElements.add(modelElement);
+            }
+        }
+        updateSelection(selectedModelElements);
         
         // propagate event to listeners on this viewer
-        notifyListenersSelection(selectedElements);  
+        notifyListenersSelection(selectedModelElements);  
     }
 
     private void updateSelection(final Collection<?> selectedElements) {
@@ -357,14 +373,14 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
      * 
      * @return the view context
      */
-    public ViewContext getCurrentViewContext() {
+    public synchronized ViewContext getCurrentViewContext() {
         return currentViewContext;
     }
 
     /**
      * An implementation of {@code IStructuredSelection} for the {@code ISelectionProvider}.
      */
-    private class Selection implements IStructuredSelection, Iterable<Object> {
+    private class Selection implements IStructuredSelection, Iterable<Object>, Cloneable {
 
         /** the objects which make up the selection. */
         private List<Object> selectedElements = new LinkedList<Object>();

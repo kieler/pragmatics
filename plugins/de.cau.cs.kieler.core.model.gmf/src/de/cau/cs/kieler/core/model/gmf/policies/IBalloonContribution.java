@@ -22,7 +22,7 @@ import org.eclipse.swt.graphics.Image;
  * The interface for contributions to the balloon popup bar.
  * 
  * @author soh
- * @kieler.rating 2009-02-23 proposed yellow
+ * @kieler.ignore (excluded from review process)
  */
 public interface IBalloonContribution {
 

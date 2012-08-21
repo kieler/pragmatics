@@ -194,10 +194,10 @@ public final class LightDiagramServices {
             }
             return true;
         } catch (Exception e) {
-            StatusManager.getManager().addLoggedStatus(
+            StatusManager.getManager().handle(
                     new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID,
-                            "Failed to update view context", e));
-            e.printStackTrace();
+                            "KLighD: LightDiagramService failed to update a view context.", e),
+                    StatusManager.LOG);
         }
         return false;
     }

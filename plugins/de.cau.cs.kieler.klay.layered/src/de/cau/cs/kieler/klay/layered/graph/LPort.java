@@ -17,92 +17,94 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
- * A port in a layered graph. The position of the port is relative to the upper
- * left corner of the containing node. Contrary to the usual customs, a port's
- * position denotes its center point, not its upper left corner. A port has
- * only one list of incident edges; for input ports this list must only contain
- * incoming edges, while for output ports it must only contain outgoing edges.
- * Usually all ports are required to be either input ports or output ports.
+ * A port in a layered graph. The position of the port is relative to the upper left corner
+ * of the containing node and marks the port's upper left corner. The position where edges are
+ * attached is marked by the anchor and is relative to the port's position. The incoming edges
+ * and outgoing edges are stored separately, but is is possible to iterate over both types of
+ * edges using the concatenation of the corresponding lists.
  * 
  * <p>Port must be used even if the original graph does not reveal them. In this
  * case each edge has dedicated source and target ports, which are used to
  * determine the points where the edge touches the source and target nodes.</p>
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LPort extends LShape {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = -3406558719744943360L;
+    
     /** the owning node. */
     private LNode owner;
     /** the port side. */
     private PortSide side = PortSide.UNDEFINED;
     /** the anchor point position. */
-    private KVector anchor = new KVector();
+    private final KVector anchor = new KVector();
     /** this port's labels. */
-    private List<LLabel> labels = new LinkedList<LLabel>();
+    private final List<LLabel> labels = new LinkedList<LLabel>();
     /** the edges going into the port. */
-    private List<LEdge> incomingEdges = new LinkedList<LEdge>();
+    private final List<LEdge> incomingEdges = new LinkedList<LEdge>();
     /** the edges going out of the port. */
-    private List<LEdge> outgoingEdges = new LinkedList<LEdge>();
+    private final List<LEdge> outgoingEdges = new LinkedList<LEdge>();
+    
+    /** a predicate that checks for output ports, that is ports with outgoing edges. */
+    public static final Predicate<LPort> OUTPUT_PREDICATE = new Predicate<LPort>() {
+        public boolean apply(final LPort port) {
+            return !port.outgoingEdges.isEmpty();
+        }
+    };
+
+    /** a predicate that checks for input ports, that is ports with incoming edges. */
+    public static final Predicate<LPort> INPUT_PREDICATE = new Predicate<LPort>() {
+        public boolean apply(final LPort port) {
+            return !port.incomingEdges.isEmpty();
+        }
+    };
+    
+    /** a predicate that checks for north-side ports. */
+    public static final Predicate<LPort> NORTH_PREDICATE = new Predicate<LPort>() {
+        public boolean apply(final LPort port) {
+            return port.side == PortSide.NORTH;
+        }
+    };
+    
+    /** a predicate that checks for east-side ports. */
+    public static final Predicate<LPort> EAST_PREDICATE = new Predicate<LPort>() {
+        public boolean apply(final LPort port) {
+            return port.side == PortSide.EAST;
+        }
+    };
+    
+    /** a predicate that checks for south-side ports. */
+    public static final Predicate<LPort> SOUTH_PREDICATE = new Predicate<LPort>() {
+        public boolean apply(final LPort port) {
+            return port.side == PortSide.SOUTH;
+        }
+    };
+    
+    /** a predicate that checks for west-side ports. */
+    public static final Predicate<LPort> WEST_PREDICATE = new Predicate<LPort>() {
+        public boolean apply(final LPort port) {
+            return port.side == PortSide.WEST;
+        }
+    };
     
     /**
-     * A condition that checks the type of ports. If a port has incoming edges, it is considered
-     * an input port. If a port has outgoing edges, it is considered an output port. A port may
-     * be both, input and output port, or none.
+     * Creates a port.
+     * 
+     * @param graph the graph for which the label is created
      */
-    public static class TypeCondition implements ICondition<LPort> {
-        private PortType condType;
-        
-        /**
-         * Creates a type condition.
-         * @param thetype the type of port to admit
-         */
-        public TypeCondition(final PortType thetype) {
-            this.condType = thetype;
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        public boolean evaluate(final LPort object) {
-            switch (condType) {
-            case INPUT:
-                return !object.incomingEdges.isEmpty();
-            
-            case OUTPUT:
-                return !object.outgoingEdges.isEmpty();
-            
-            default:
-                return true;
-            }
-        }
-    }
-    
-    /** A condition that checks the side of ports. */
-    public static class SideCondition implements ICondition<LPort> {
-        private PortSide condSide;
-        /**
-         * Creates a side condition.
-         * @param theside the side of port to admit
-         */
-        public SideCondition(final PortSide theside) {
-            this.condSide = theside;
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        public boolean evaluate(final LPort object) {
-            return object.side == condSide;
-        }
+    public LPort(final LGraph graph) {
+        super(graph);
     }
 
     /**

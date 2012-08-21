@@ -22,7 +22,7 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 /**
  * Sorts the port lists of nodes with fixed port orders. The node's list of ports is sorted
@@ -40,6 +40,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * </dl>
  * 
  * @author cds
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
 public class PortListSorter extends AbstractAlgorithm implements ILayoutProcessor {
     
@@ -108,7 +110,7 @@ public class PortListSorter extends AbstractAlgorithm implements ILayoutProcesso
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Port order processing", 1);
         
         // Iterate through the nodes of all layers

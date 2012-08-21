@@ -21,6 +21,7 @@ import org.eclipse.graphiti.tb.IToolBehaviorProvider;
  * Diagram type provider used to initialize the diagram editor.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
 

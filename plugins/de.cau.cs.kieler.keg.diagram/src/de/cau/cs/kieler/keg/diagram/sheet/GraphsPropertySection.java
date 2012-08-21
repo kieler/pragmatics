@@ -78,6 +78,7 @@ public class GraphsPropertySection extends AdvancedPropertySection implements
     /**
      * @generated
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void setInput(IWorkbenchPart part, ISelection selection) {
         if (selection.isEmpty() || false == selection instanceof StructuredSelection) {
             super.setInput(part, selection);

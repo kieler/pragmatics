@@ -34,8 +34,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.components.ComponentsProcessor;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
+import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
@@ -47,6 +48,8 @@ import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.InteractiveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
+import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
+import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.SplineEdgeRouter;
@@ -83,6 +86,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author msp
  * @author cds
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
 public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
@@ -96,18 +101,18 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /** phase 3: crossing minimization module. */
     private ILayoutPhase crossingMinimizer;
     /** phase 4: node placement module. */
-    private ILayoutPhase nodePlacer = new LinearSegmentsNodePlacer();
+    private ILayoutPhase nodePlacer;
     /** phase 5: Edge routing module. */
     private ILayoutPhase edgeRouter;
 
     /** connected components processor. */
     private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
-    /** intermediate layout processor strategy. */
-    private IntermediateProcessingStrategy intermediateProcessingStrategy 
-                                         = new IntermediateProcessingStrategy();
+    /** intermediate layout processor configuration. */
+    private IntermediateProcessingConfiguration intermediateProcessingConfiguration 
+                                         = new IntermediateProcessingConfiguration();
     /** collection of instantiated intermediate modules. */
-    private Map<IntermediateLayoutProcessor, ILayoutProcessor> intermediateLayoutProcessorCache 
-                 = new HashMap<IntermediateLayoutProcessor, ILayoutProcessor>();
+    private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache 
+                 = new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
 
     /** list of layout processors that compose the current algorithm. */
     private List<ILayoutProcessor> algorithm = new LinkedList<ILayoutProcessor>();
@@ -118,20 +123,23 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void doLayout(final KNode kgraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Layered layout", 1);
+        
+        // Create the hash code counter used to create all graph elements; this is used to ensure
+        // that all hash codes are unique, but predictable independently of the object instances.
+        HashCodeCounter hashCodeCounter = new HashCodeCounter();
 
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
         IGraphImporter<KNode> graphImporter;
 
-        // Check if hierarchy handling for a compound graph is requested, choose importer
-        // accordingly
+        // Check if hierarchy handling for a compound graph is requested, choose importer accordingly
         boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
         if (isCompound) {
-            graphImporter = new CompoundKGraphImporter();
+            graphImporter = new CompoundKGraphImporter(hashCodeCounter);
         } else {
-            graphImporter = new KGraphImporter();
+            graphImporter = new KGraphImporter(hashCodeCounter);
         }
 
-        LayeredGraph layeredGraph = graphImporter.importGraph(kgraph);
+        LGraph layeredGraph = graphImporter.importGraph(kgraph);
 
         // set special properties for the layered graph
         setOptions(layeredGraph, kgraph);
@@ -140,15 +148,15 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         updateModules(layeredGraph, kgraph.getData(KShapeLayout.class));
 
         // split the input graph into components
-        List<LayeredGraph> components = componentsProcessor.split(layeredGraph);
+        List<LGraph> components = componentsProcessor.split(layeredGraph);
 
         // perform the actual layout
-        for (LayeredGraph comp : components) {
+        for (LGraph comp : components) {
             layout(comp, progressMonitor.subTask(1.0f / components.size()));
         }
 
         // pack the components back into one graph
-        layeredGraph = componentsProcessor.pack(components);
+        layeredGraph = componentsProcessor.combine(components);
 
         // apply the layout results to the original graph
         graphImporter.applyLayout(layeredGraph);
@@ -173,11 +181,14 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param phase the phase or processor to stop after.
      * @return list of connected components after the execution of the given phase.
      */
-    public List<LayeredGraph> doLayoutTest(final KNode kgraph,
+    public List<LGraph> doLayoutTest(final KNode kgraph,
             final IKielerProgressMonitor progressMonitor,
             final Class<? extends ILayoutProcessor> phase) {
-        
         progressMonitor.begin("Layered layout test", 1);
+        
+        // Create the hash code counter used to create all graph elements; this is used to ensure
+        // that all hash codes are unique, but predictable independently of the object instances.
+        HashCodeCounter hashCodeCounter = new HashCodeCounter();
 
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
         IGraphImporter<KNode> graphImporter;
@@ -186,12 +197,12 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // accordingly
         boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
         if (isCompound) {
-            graphImporter = new CompoundKGraphImporter();
+            graphImporter = new CompoundKGraphImporter(hashCodeCounter);
         } else {
-            graphImporter = new KGraphImporter();
+            graphImporter = new KGraphImporter(hashCodeCounter);
         }
 
-        LayeredGraph layeredGraph = graphImporter.importGraph(kgraph);
+        LGraph layeredGraph = graphImporter.importGraph(kgraph);
 
         // set special properties for the layered graph
         setOptions(layeredGraph, kgraph);
@@ -200,7 +211,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         updateModules(layeredGraph, kgraph.getData(KShapeLayout.class));
 
         // split the input graph into components
-        List<LayeredGraph> components = componentsProcessor.split(layeredGraph);
+        List<LGraph> components = componentsProcessor.split(layeredGraph);
         
         // check if the given phase exists in our current algorithm configuration
         boolean phaseExists = false;
@@ -214,7 +225,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // if the phase exists, perform the layout up to and including that phase
         if (phaseExists) {
             // perform the actual layout
-            for (LayeredGraph comp : components) {
+            for (LGraph comp : components) {
                 layoutTest(comp, progressMonitor.subTask(1.0f / components.size()), phase);
             }
         }
@@ -235,7 +246,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param parent
      *            the original parent node
      */
-    private void setOptions(final LayeredGraph layeredGraph, final KNode parent) {
+    private void setOptions(final LGraph layeredGraph, final KNode parent) {
         // set the random number generator based on the random seed option
         Integer randomSeed = layeredGraph.getProperty(LayoutOptions.RANDOM_SEED);
         if (randomSeed != null) {
@@ -258,7 +269,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param parentLayout
      *            the parent layout data
      */
-    private void updateModules(final LayeredGraph graph, final KShapeLayout parentLayout) {
+    private void updateModules(final LGraph graph, final KShapeLayout parentLayout) {
         // check which cycle breaking strategy to use
         CycleBreakingStrategy cycleBreaking = parentLayout.getProperty(Properties.CYCLE_BREAKING);
         switch (cycleBreaking) {
@@ -292,6 +303,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             }
         }
         
+        // check which crossing minimization strategy to use
         CrossingMinimizationStrategy crossminStrategy = parentLayout.getProperty(Properties.CROSSMIN);
         switch (crossminStrategy) {
         case INTERACTIVE:
@@ -302,6 +314,25 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         default:
             if (!(crossingMinimizer instanceof LayerSweepCrossingMinimizer)) {
                 crossingMinimizer = new LayerSweepCrossingMinimizer();
+            }
+        }
+        
+        // check with node placement strategy to use
+        NodePlacementStrategy nodePlaceStrategy = parentLayout.getProperty(Properties.NODEPLACE);
+        switch (nodePlaceStrategy) {
+        case LINEAR_SEGMENTS:
+            if (!(nodePlacer instanceof LinearSegmentsNodePlacer)) {
+                nodePlacer = new LinearSegmentsNodePlacer();
+            }
+            break;
+        case BRANDES_KOEPF:
+            if (!(nodePlacer instanceof BKNodePlacer)) {
+                nodePlacer = new BKNodePlacer();
+            }
+            break;
+        default:
+            if (!(nodePlacer instanceof LinearSegmentsNodePlacer)) {
+                nodePlacer = new LinearSegmentsNodePlacer();
             }
         }
 
@@ -324,35 +355,35 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             }
         }
 
-        // update intermediate processor strategy
-        intermediateProcessingStrategy.clear();
-        intermediateProcessingStrategy
-                .addAll(cycleBreaker.getIntermediateProcessingStrategy(graph))
-                .addAll(layerer.getIntermediateProcessingStrategy(graph))
-                .addAll(crossingMinimizer.getIntermediateProcessingStrategy(graph))
-                .addAll(nodePlacer.getIntermediateProcessingStrategy(graph))
-                .addAll(edgeRouter.getIntermediateProcessingStrategy(graph))
-                .addAll(this.getIntermediateProcessingStrategy(graph));
+        // update intermediate processor configuration
+        intermediateProcessingConfiguration.clear();
+        intermediateProcessingConfiguration
+                .addAll(cycleBreaker.getIntermediateProcessingConfiguration(graph))
+                .addAll(layerer.getIntermediateProcessingConfiguration(graph))
+                .addAll(crossingMinimizer.getIntermediateProcessingConfiguration(graph))
+                .addAll(nodePlacer.getIntermediateProcessingConfiguration(graph))
+                .addAll(edgeRouter.getIntermediateProcessingConfiguration(graph))
+                .addAll(this.getIntermediateProcessingConfiguration(graph));
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
         algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_1));
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
         algorithm.add(cycleBreaker);
         algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_2));
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
         algorithm.add(layerer);
         algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_3));
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
         algorithm.add(crossingMinimizer);
         algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_4));
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
         algorithm.add(nodePlacer);
         algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_5));
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_5));
         algorithm.add(edgeRouter);
         algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingStrategy.AFTER_PHASE_5));
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.AFTER_PHASE_5));
     }
 
     /**
@@ -361,17 +392,20 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * 
      * @param slotIndex
      *            the slot index. One of the constants defined in
-     *            {@link IntermediateProcessingStrategy}.
+     *            {@link IntermediateProcessingConfiguration}.
      * @return list of layout processors.
      */
     private List<ILayoutProcessor> getIntermediateProcessorList(final int slotIndex) {
         // fetch the set of layout processors configured for the given slot
-        Set<IntermediateLayoutProcessor> processors = intermediateProcessingStrategy
+        EnumSet<LayoutProcessorStrategy> processors = intermediateProcessingConfiguration
                 .getProcessors(slotIndex);
         List<ILayoutProcessor> result = new ArrayList<ILayoutProcessor>(processors.size());
 
-        // iterate through the layout processors and add them to the result list
-        for (IntermediateLayoutProcessor processor : processors) {
+        // iterate through the layout processors and add them to the result list; the EnumSet
+        // guarantees that we iterate over the processors in the order in which they occur in
+        // the LayoutProcessorStrategy, thereby satisfying all of their runtime order
+        // dependencies without having to sort them in any way
+        for (LayoutProcessorStrategy processor : processors) {
             // check if an instance of the given layout processor is already in the cache
             ILayoutProcessor processorImpl = intermediateLayoutProcessorCache.get(processor);
 
@@ -389,55 +423,60 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Returns an intermediate processing strategy with processors not tied to specific phases.
+     * Returns an intermediate processing configuration with processors not tied to specific phases.
      * 
      * @param graph
-     *            the layered graph to be processed. The strategy may vary depending on certain
+     *            the layered graph to be processed. The configuration may vary depending on certain
      *            properties of the graph.
-     * @return intermediate processing strategy. May be {@code null}.
+     * @return intermediate processing configuration. May be {@code null}.
      */
-    private IntermediateProcessingStrategy getIntermediateProcessingStrategy(
-            final LayeredGraph graph) {
+    private IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final LGraph graph) {
+        
         Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
 
-        // Basic strategy
-        IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy(
-                BASELINE_PROCESSING_STRATEGY);
+        // Basic configuration
+        IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration(
+                BASELINE_PROCESSING_CONFIGURATION);
         
         // graph transformations for unusual layout directions
         switch (graph.getProperty(LayoutOptions.DIRECTION)) {
         case LEFT:
-            strategy.addLayoutProcessor(IntermediateProcessingStrategy.BEFORE_PHASE_1,
-                    IntermediateLayoutProcessor.LEFT_DIR_PREPROCESSOR);
-            strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_5,
-                    IntermediateLayoutProcessor.LEFT_DIR_POSTPROCESSOR);
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_1,
+                    LayoutProcessorStrategy.LEFT_DIR_PREPROCESSOR);
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.AFTER_PHASE_5,
+                    LayoutProcessorStrategy.LEFT_DIR_POSTPROCESSOR);
             break;
         case DOWN:
-            strategy.addLayoutProcessor(IntermediateProcessingStrategy.BEFORE_PHASE_1,
-                    IntermediateLayoutProcessor.DOWN_DIR_PREPROCESSOR);
-            strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_5,
-                    IntermediateLayoutProcessor.DOWN_DIR_POSTPROCESSOR);
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_1,
+                    LayoutProcessorStrategy.DOWN_DIR_PREPROCESSOR);
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.AFTER_PHASE_5,
+                    LayoutProcessorStrategy.DOWN_DIR_POSTPROCESSOR);
             break;
         case UP:
-            strategy.addLayoutProcessor(IntermediateProcessingStrategy.BEFORE_PHASE_1,
-                    IntermediateLayoutProcessor.UP_DIR_PREPROCESSOR);
-            strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_5,
-                    IntermediateLayoutProcessor.UP_DIR_POSTPROCESSOR);
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_1,
+                    LayoutProcessorStrategy.UP_DIR_PREPROCESSOR);
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.AFTER_PHASE_5,
+                    LayoutProcessorStrategy.UP_DIR_POSTPROCESSOR);
+            break;
+        default:
+            // This is either RIGHT or UNDEFINED, which is just mapped to RIGHT. Either way, we don't
+            // need any processors here
             break;
         }
 
         // Additional dependencies
         if (graphProperties.contains(GraphProperties.FLAT_HIERARCHICAL)) {
-            strategy.addAll(FLATTENED_HIERARCHY_PROCESSING_ADDITIONS);
+            configuration.addAll(FLATTENED_HIERARCHY_PROCESSING_ADDITIONS);
         }
         if (graphProperties.contains(GraphProperties.COMMENTS)) {
-            strategy.addLayoutProcessor(IntermediateProcessingStrategy.BEFORE_PHASE_1,
-                    IntermediateLayoutProcessor.COMMENT_PREPROCESSOR);
-            strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_5,
-                    IntermediateLayoutProcessor.COMMENT_POSTPROCESSOR);
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_1,
+                    LayoutProcessorStrategy.COMMENT_PREPROCESSOR);
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.AFTER_PHASE_5,
+                    LayoutProcessorStrategy.COMMENT_POSTPROCESSOR);
         }
 
-        return strategy;
+        return configuration;
     }
 
     // /////////////////////////////////////////////////////////////////////////////
@@ -451,7 +490,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param themonitor
      *            a progress monitor, or {@code null}
      */
-    public void layout(final LayeredGraph graph, final IKielerProgressMonitor themonitor) {
+    public void layout(final LGraph graph, final IKielerProgressMonitor themonitor) {
         IKielerProgressMonitor monitor = themonitor;
         if (monitor == null) {
             monitor = new BasicProgressMonitor();
@@ -517,7 +556,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param phase
      *            phase or processor to stop the layout after
      */
-    public void layoutTest(final LayeredGraph graph, final IKielerProgressMonitor themonitor,
+    public void layoutTest(final LGraph graph, final IKielerProgressMonitor themonitor,
             final Class<? extends ILayoutProcessor> phase) {
         
         IKielerProgressMonitor monitor = themonitor;
@@ -558,7 +597,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @throws IOException
      *             if anything goes wrong.
      */
-    private Writer createWriter(final LayeredGraph graph, final int slotIndex) throws IOException {
+    private Writer createWriter(final LGraph graph, final int slotIndex) throws IOException {
         String path = Util.getDebugOutputPath();
         new File(path).mkdirs();
 
@@ -568,42 +607,42 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     }
     
     // /////////////////////////////////////////////////////////////////////////////
-    // Processing Strategy Constants
+    // Processing Configuration Constants
 
-    /** intermediate processing strategy for basic graphs. */
-    private static final IntermediateProcessingStrategy BASELINE_PROCESSING_STRATEGY 
-            = new IntermediateProcessingStrategy(null, null,
+    /** intermediate processing configuration for basic graphs. */
+    private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION 
+            = new IntermediateProcessingConfiguration(null, null,
             
             // Before Phase 3
-            EnumSet.of(IntermediateLayoutProcessor.PORT_LIST_SORTER,
-                    IntermediateLayoutProcessor.PORT_SIDE_PROCESSOR),
+            EnumSet.of(LayoutProcessorStrategy.PORT_LIST_SORTER,
+                    LayoutProcessorStrategy.PORT_SIDE_PROCESSOR),
             
             // Before Phase 4
-            EnumSet.of(IntermediateLayoutProcessor.NODE_MARGIN_CALCULATOR,
-                    IntermediateLayoutProcessor.PORT_POSITION_PROCESSOR),
+            EnumSet.of(LayoutProcessorStrategy.NODE_MARGIN_CALCULATOR,
+                    LayoutProcessorStrategy.PORT_POSITION_PROCESSOR),
             
             null, null);
 
     /** additional processor dependencies for flattened hierarchical graphs. */
-    private static final IntermediateProcessingStrategy FLATTENED_HIERARCHY_PROCESSING_ADDITIONS 
-            = new IntermediateProcessingStrategy(
+    private static final IntermediateProcessingConfiguration FLATTENED_HIERARCHY_PROCESSING_ADDITIONS 
+            = new IntermediateProcessingConfiguration(
             
             // Before Phase 1
-            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_CYCLE_PROCESSOR),
+            EnumSet.of(LayoutProcessorStrategy.COMPOUND_CYCLE_PROCESSOR),
             
             // Before Phase 2
             null, 
             
             // Before Phase 3
-            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_DUMMY_EDGE_REMOVER),
+            EnumSet.of(LayoutProcessorStrategy.COMPOUND_DUMMY_EDGE_REMOVER),
             
             // Before Phase 4
-            EnumSet.of(IntermediateLayoutProcessor.SUBGRAPH_ORDERING_PROCESSOR, 
-                    IntermediateLayoutProcessor.COMPOUND_SIDE_PROCESSOR),
+            EnumSet.of(LayoutProcessorStrategy.SUBGRAPH_ORDERING_PROCESSOR, 
+                    LayoutProcessorStrategy.COMPOUND_SIDE_PROCESSOR),
             
             null,
             
             // After Phase 5
-            EnumSet.of(IntermediateLayoutProcessor.COMPOUND_GRAPH_RESTORER));
+            EnumSet.of(LayoutProcessorStrategy.COMPOUND_GRAPH_RESTORER));
 
 }

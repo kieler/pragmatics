@@ -46,6 +46,7 @@ import de.cau.cs.kieler.keg.importer.KEGImporterPlugin;
  * The wizard page from which to select the source graph type and the options for the import.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class ImportGraphOptionsPage extends WizardPage {
 
@@ -428,8 +429,7 @@ public class ImportGraphOptionsPage extends WizardPage {
     public IPropertyHolder getOptions() {
         // create import configuration
         if (options == null) {
-            options = new MapPropertyHolder() {
-            };
+            options = new MapPropertyHolder();
             // attach options
             for (ImporterOption<?> option : lastImporter.getOptions()) {
                 attachImportOption(option);

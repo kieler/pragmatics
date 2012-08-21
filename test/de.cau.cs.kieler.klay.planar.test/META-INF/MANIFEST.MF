@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KLay Planar Test
+Bundle-SymbolicName: de.cau.cs.kieler.klay.planar.test
+Bundle-Version: 0.2.0.qualifier
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Require-Bundle: org.junit,
+ de.cau.cs.kieler.klay.planar;bundle-version="0.1.0",
+ de.cau.cs.kieler.kiml,
+ de.cau.cs.kieler.kiml.service;bundle-version="0.2.0",
+ de.cau.cs.kieler.core;bundle-version="0.7.0"

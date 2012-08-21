@@ -19,7 +19,6 @@ import java.util.List;
 import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
 import de.cau.cs.kieler.kiml.service.AnalysisService;
 
-
 /**
  * A utility class for generating html from a set of analysis results.
  * 
@@ -36,53 +35,48 @@ public final class HtmlResultGenerator {
     }
 
     /**
-     * Generates html for the given analyses and results using the registered
-     * visualizers.
+     * Generates html for the given analyses and results using the registered visualizers.
      * 
      * @param boundVisualizations
      *            the visualizations, sorted by category
      * @return the generated html, or null if no analysis could be visualized
      */
-    public static String generate(
-            final List<BoundVisualization> boundVisualizations) {
+    public static String generate(final List<BoundVisualization> boundVisualizations) {
 
         String currentCategory = "";
-        
+
         // build the html content
         boolean empty = true;
         boolean first = true;
-        String html =
-                "<HTML><HEAD></HEAD><BODY>";
+        StringBuilder html = new StringBuilder("<HTML><HEAD></HEAD><BODY>");
         for (BoundVisualization visualization : boundVisualizations) {
             // Check if this visualization starts a new category
             if (!visualization.getAnalysis().getCategory().equals(currentCategory)) {
                 currentCategory = visualization.getAnalysis().getCategory();
-                
+
                 if (first) {
                     first = false;
                 } else {
-                    html += "</TABLE>";
+                    html.append("</TABLE>");
                 }
-                
-                html += "<H2>"
-                    + AnalysisService.getInstance().getCategory(currentCategory).getName()
-                    + "</H2>";
-                html += "<TABLE border=0 cellpadding='10'>";
+
+                html.append("<H2>")
+                        .append(AnalysisService.getInstance().getCategory(currentCategory)
+                                .getName()).append("</H2>")
+                        .append("<TABLE border=0 cellpadding='10'>");
             }
-            
+
             empty = false;
-            html += "<TR><TD VALIGN='TOP'><b>";
-            html += visualization.getAnalysis().getName();
-            html += "</b></TD><TD VALIGN='TOP'>";
-            html += visualization.get();
-            html += "</TD></TR>";
+            html.append("<TR><TD VALIGN='TOP'><b>").append(visualization.getAnalysis().getName())
+                    .append("</b></TD><TD VALIGN='TOP'>").append(visualization.get())
+                    .append("</TD></TR>");
         }
-        html += "</TABLE></BODY></HTML>";
+        html.append("</TABLE></BODY></HTML>");
 
         if (empty) {
             return null;
         } else {
-            return html;
+            return html.toString();
         }
     }
 

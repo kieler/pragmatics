@@ -17,6 +17,7 @@ package de.cau.cs.kieler.keg.custom;
  * A marker interface for graphs ports.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public interface KEGPort {
 

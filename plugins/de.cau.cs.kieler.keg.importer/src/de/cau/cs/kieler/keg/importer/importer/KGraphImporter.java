@@ -33,6 +33,7 @@ import de.cau.cs.kieler.keg.importer.ImporterOption;
  * A KEG importer for the KGraph.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class KGraphImporter extends AbstractImporter {
 

@@ -13,13 +13,16 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
@@ -47,6 +50,8 @@ public class LayoutPropertySource implements IPropertySource {
     private TransactionalEditingDomain editingDomain;
     /** array of property descriptors for the option data. */
     private IPropertyDescriptor[] propertyDescriptors;
+    /** set of layout option identifiers that can affect the visibility of other options. */
+    private final Set<String> dependencyOptions = new HashSet<String>();
 
     /**
      * Creates a layout property source for the given layout configuration.
@@ -82,6 +87,9 @@ public class LayoutPropertySource implements IPropertySource {
             List<LayoutOptionData<?>> optionData = layoutContext.getProperty(
                     DefaultLayoutConfig.OPTIONS);
             
+            // filter the options hidden by option dependencies
+            filterDependencies(optionData);
+            
             propertyDescriptors = new IPropertyDescriptor[optionData.size()];
             ListIterator<LayoutOptionData<?>> optionIter = optionData.listIterator();
             while (optionIter.hasNext()) {
@@ -90,6 +98,33 @@ public class LayoutPropertySource implements IPropertySource {
             }
         }
         return propertyDescriptors;
+    }
+    
+    private void filterDependencies(final List<LayoutOptionData<?>> optionData) {
+        // the layout algorithm option always affects other options
+        dependencyOptions.add(LayoutOptions.ALGORITHM.getId());
+        
+        ListIterator<LayoutOptionData<?>> optionIter = optionData.listIterator();
+        while (optionIter.hasNext()) {
+            LayoutOptionData<?> option = optionIter.next();
+            boolean visible = option.getDependencies().isEmpty();
+            for (Pair<LayoutOptionData<?>, Object> dependency : option.getDependencies()) {
+                // if at least one dependency is met, the option is made visible
+                LayoutOptionData<?> targetOption = dependency.getFirst();
+                dependencyOptions.add(targetOption.getId());
+                Object expectedValue = dependency.getSecond();
+                Object value = layoutConfig.getValue(targetOption, layoutContext);
+                if (expectedValue == null && value != null
+                        || expectedValue != null && expectedValue.equals(value)) {
+                    visible = true;
+                    break;
+                }
+            }
+            
+            if (!visible) {
+                optionIter.remove();
+            }
+        }
     }
 
     /**
@@ -184,8 +219,8 @@ public class LayoutPropertySource implements IPropertySource {
         };
         KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.11"));
 
-        // if the choice of layout algorithm is affected, refresh the whole layout view
-        if (LayoutOptions.ALGORITHM.getId().equals(id)) {
+        // if the selected option can affect other options, refresh the whole layout view
+        if (dependencyOptions.contains(id)) {
             LayoutViewPart layoutView = LayoutViewPart.findView();
             if (layoutView != null) {
                 layoutView.refresh();
@@ -224,8 +259,8 @@ public class LayoutPropertySource implements IPropertySource {
         };
         KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.12"));
         
-        // if the choice of layout algorithm is affected, refresh the whole layout view
-        if (LayoutOptions.ALGORITHM.equals(optionData)) {
+        // if the selected option can affect other options, refresh the whole layout view
+        if (dependencyOptions.contains(id)) {
             LayoutViewPart layoutView = LayoutViewPart.findView();
             if (layoutView != null) {
                 layoutView.refresh();

@@ -15,16 +15,21 @@ package de.cau.cs.kieler.klay.layered.p3order;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -39,13 +44,40 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  *
  * @author msp
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
-public class InteractiveCrossingMinimizer extends AbstractCrossingMinimizer {
+public class InteractiveCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {
+
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
+        new IntermediateProcessingConfiguration(
+                // Before Phase 1
+                null,
+                // Before Phase 2
+                null,
+                // Before Phase 3
+                EnumSet.of(LayoutProcessorStrategy.LONG_EDGE_SPLITTER),
+                // Before Phase 4
+                EnumSet.of(LayoutProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR),
+                // Before Phase 5
+                null,
+                // After Phase 5
+                EnumSet.of(LayoutProcessorStrategy.LONG_EDGE_JOINER));
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final LGraph graph) {
+        
+        return INTERMEDIATE_PROCESSING_CONFIGURATION;
+    }
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Interactive crossing minimization", 1);
         
         int portCount = 0;
@@ -98,8 +130,6 @@ public class InteractiveCrossingMinimizer extends AbstractCrossingMinimizer {
         }
 
         // Initialize the position arrays and layered graph array
-        portBarycenter = new float[portCount];
-        portPos = new float[portCount];
         LNode[][] lgraphArray = new LNode[layeredGraph.getLayers().size()][];
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
@@ -109,10 +139,9 @@ public class InteractiveCrossingMinimizer extends AbstractCrossingMinimizer {
         }
         
         // Distribute the ports of all nodes with free port constraints
-        distributePorts(lgraphArray);
+        IPortDistributor portDistributor = new NodeRelativePortDistributor(new float[portCount]);
+        portDistributor.distributePorts(lgraphArray);
         
-        portBarycenter = null;
-        portPos = null;
         getMonitor().done();
     }
     
@@ -124,7 +153,7 @@ public class InteractiveCrossingMinimizer extends AbstractCrossingMinimizer {
      * @param graph the layered graph.
      * @return the vertical position used for sorting
      */
-    private double getPos(final LNode node, final double horizPos, final LayeredGraph graph) {
+    private double getPos(final LNode node, final double horizPos, final LGraph graph) {
         switch (node.getProperty(Properties.NODE_TYPE)) {
         case LONG_EDGE:
             LEdge edge = (LEdge) node.getProperty(Properties.ORIGIN);

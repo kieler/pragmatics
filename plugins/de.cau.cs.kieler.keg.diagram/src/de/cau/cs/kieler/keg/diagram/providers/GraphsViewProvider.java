@@ -218,6 +218,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Diagram createDiagram(IAdaptable semanticAdapter, String diagramKind,
             PreferencesHint preferencesHint) {
         Diagram diagram = NotationFactory.eINSTANCE.createDiagram();
@@ -296,6 +297,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Node createNode_2001(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
@@ -320,8 +322,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
                     IPreferenceConstants.PREF_FONT_COLOR);
             nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
         }
-        Node label5003 = createLabel(node,
-                GraphsVisualIDRegistry.getType(NodeNodeLabelEditPart.VISUAL_ID));
+        createLabel(node, GraphsVisualIDRegistry.getType(NodeNodeLabelEditPart.VISUAL_ID));
         createCompartment(node,
                 GraphsVisualIDRegistry.getType(NodeNodeCompartmentEditPart.VISUAL_ID), false,
                 false, false, false);
@@ -331,6 +332,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Node createNode_2002(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
@@ -368,6 +370,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Node createNode_3001(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
@@ -391,8 +394,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
                     IPreferenceConstants.PREF_FONT_COLOR);
             nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
         }
-        Node label5002 = createLabel(node,
-                GraphsVisualIDRegistry.getType(NodeNodeLabel2EditPart.VISUAL_ID));
+        createLabel(node, GraphsVisualIDRegistry.getType(NodeNodeLabel2EditPart.VISUAL_ID));
         createCompartment(node,
                 GraphsVisualIDRegistry.getType(NodeNodeCompartment2EditPart.VISUAL_ID), false,
                 false, false, false);
@@ -402,6 +404,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Node createPort_3002(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
@@ -437,6 +440,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Node createNode_3003(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
@@ -473,6 +477,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Edge createEdge_4001(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Edge edge = NotationFactory.eINSTANCE.createEdge();
@@ -530,6 +535,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Edge createEdge_4002(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Edge edge = NotationFactory.eINSTANCE.createEdge();
@@ -587,6 +593,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Edge createEdge_4003(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Edge edge = NotationFactory.eINSTANCE.createEdge();
@@ -644,6 +651,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Edge createEdge_4004(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Edge edge = NotationFactory.eINSTANCE.createEdge();
@@ -701,6 +709,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Edge createEdge_4005(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Edge edge = NotationFactory.eINSTANCE.createEdge();
@@ -758,6 +767,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Edge createEdge_4006(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Edge edge = NotationFactory.eINSTANCE.createEdge();
@@ -815,6 +825,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Edge createEdge_4007(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Edge edge = NotationFactory.eINSTANCE.createEdge();
@@ -872,6 +883,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     public Edge createEdge_4008(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Edge edge = NotationFactory.eINSTANCE.createEdge();
@@ -951,6 +963,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
+    @SuppressWarnings("unchecked")
     private Node createCompartment(View owner, String hint, boolean canCollapse, boolean hasTitle,
             boolean canSort, boolean canFilter) {
         //SemanticListCompartment rv = NotationFactory.eINSTANCE.createSemanticListCompartment();

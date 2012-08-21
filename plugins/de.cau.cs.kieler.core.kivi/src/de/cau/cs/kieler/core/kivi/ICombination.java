@@ -55,4 +55,19 @@ public interface ICombination extends ITriggerListener {
      *            new active status
      */
     void setActive(boolean active);
+    
+    /**
+     * If true a progressMonitor will be displayed if execution of the Effects
+     * takes a certain time.
+     * 
+     * @return true if progressMonitor should be displayed false else.
+     */
+    boolean runWithProgressMonitor();
+    
+    /**
+     * The name of the combination. Will for example be displayed in the 
+     * progressMonitor.
+     * @return name of the combination
+     */
+    String getName();
 }

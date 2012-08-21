@@ -13,14 +13,21 @@
  */
 package de.cau.cs.kieler.core.kivi.internal;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.core.kivi.ICombination;
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.KiViPlugin;
 import de.cau.cs.kieler.core.kivi.UndoEffect;
@@ -36,7 +43,13 @@ public class EffectsWorker extends Thread {
     private List<IEffectsListener> effectsListeners = new ArrayList<IEffectsListener>();
 
     private List<IEffect> effects = new ArrayList<IEffect>();
-
+    
+    private IProgressService ps = PlatformUI.getWorkbench().getProgressService();
+    
+    private List<IEffect> monitoredEffects = new ArrayList<IEffect>();
+    
+    private ICombination nextMonitoredCombination = null;
+    
     /**
      * Default constructor, sets thread name as effects.
      */
@@ -47,6 +60,7 @@ public class EffectsWorker extends Thread {
     @Override
     public void run() {
         IEffect effect = null;
+        
         while (!isInterrupted()) {
             try {
                 synchronized (effects) {
@@ -56,7 +70,45 @@ public class EffectsWorker extends Thread {
                     effect = effects.remove(0);
                 }
                 try {
-                    effect.execute();
+                    if (!monitoredEffects.isEmpty()) {
+                        final List<IEffect> monitoredEffectsCache = new ArrayList<IEffect>(monitoredEffects);
+                        monitoredEffects.clear();
+                        final ICombination comCache = this.nextMonitoredCombination;
+                        this.nextMonitoredCombination = null;
+                        Display.getDefault().asyncExec(new Runnable() {
+                           
+                            public void run() {
+                                try {
+                                    ps.busyCursorWhile(new IRunnableWithProgress() {
+                                        
+                                        public void run(IProgressMonitor monitor) throws InvocationTargetException,
+                                                InterruptedException {
+                                            if (comCache != null) {
+                                                monitor.beginTask(comCache.getName(), monitoredEffectsCache.size());
+                                            } else {
+                                                monitor.beginTask(" ", monitoredEffectsCache.size());
+                                            }
+                                            for (IEffect effect: monitoredEffectsCache) {
+                                                monitor.subTask("Processing " + effect.getName());
+                                                effect.execute();
+                                                effects.remove(effect);
+                                                monitor.worked(1);
+                                            }
+                                            monitor.done();
+                                        }
+                                    });
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                
+                            }
+                        });
+                    } else {
+                        effect.execute();
+                    }
+                    
                     synchronized (effectsListeners) {
                         for (IEffectsListener listener : effectsListeners) {
                             listener.executedEffect(effect);
@@ -74,7 +126,7 @@ public class EffectsWorker extends Thread {
             }
         }
     }
-
+    
     /**
      * Get the current size of the queue.
      * 
@@ -143,5 +195,22 @@ public class EffectsWorker extends Thread {
             effectsListeners.remove(listener);
         }
     }
+    
+    /**
+     * Enqueue effects that should be executed with a progress Monitor.
+     * @param effects the effects to be executed in a monitor.
+     */
+    public void addMonitoredEffects(List<IEffect> effects) { 
+        this.monitoredEffects.addAll(effects);
+    }
 
+    /**
+     * Set the next combination whose effects will be executed monitored.
+     * Mainly used to display name in the progressMonitor.
+     * @param com the new monitored combination.
+     */
+    public void setNextMonitoredCombination(ICombination com) {
+        this.nextMonitoredCombination = com;
+    }
+    
 }

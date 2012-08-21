@@ -36,12 +36,13 @@ import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.UndoEffect;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
 
 /**
  * A simple transient highlighting effect. Can change line colors, line styles, and line widths for
@@ -265,13 +266,16 @@ public class HighlightEffect extends AbstractEffect {
         } else {
             applyHighlight();
         }
+        if (targetFigure instanceof SplineConnection) {
+            ((SplineConnection) targetFigure).bringToFront();
+        }
     }
     
     /**
      * Apply the highlight state by directly manipulating the target figure.
      */
     private void applyHighlight() {
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 if (targetFigure == null) {
                     return;
@@ -358,7 +362,7 @@ public class HighlightEffect extends AbstractEffect {
                     resetColor(targetFigure, false);
                 }
             }
-        }, true);
+        });
     }
 
     @Override
@@ -377,7 +381,7 @@ public class HighlightEffect extends AbstractEffect {
      * Reset the highlight state by directly manipulating the target figure.
      */
     private void undoHighlight() {
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 if (targetFigure == null) {
                     return;
@@ -434,7 +438,7 @@ public class HighlightEffect extends AbstractEffect {
                 originalStyle = -1;
 
             }
-        }, false);
+        });
     }
 
     /**
@@ -654,4 +658,9 @@ public class HighlightEffect extends AbstractEffect {
         return color.getRed() << 16 | color.getGreen() << 8 | color.getBlue();
     }
 
+    @Override
+    public String getName() {
+        return "HighlightEffect";
+    }
+    
 }

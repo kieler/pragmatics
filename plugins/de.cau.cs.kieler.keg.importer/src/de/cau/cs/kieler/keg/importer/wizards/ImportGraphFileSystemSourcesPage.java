@@ -25,6 +25,7 @@ import de.cau.cs.kieler.keg.importer.ImportManager;
  * the target folder.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class ImportGraphFileSystemSourcesPage extends FileSystemResourcesPage {
 

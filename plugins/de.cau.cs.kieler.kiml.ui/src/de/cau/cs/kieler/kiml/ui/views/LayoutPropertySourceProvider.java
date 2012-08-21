@@ -24,7 +24,6 @@ import org.eclipse.ui.views.properties.IPropertySourceProvider;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
@@ -38,11 +37,12 @@ import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
  * A property source provider used by the layout view.
  *
  * @author msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class LayoutPropertySourceProvider implements IPropertySourceProvider {
 
     /** property sources that have been created for the current selection. */
-    private Map<Object, LayoutPropertySource> propertySources = Maps.newHashMap();
+    private final Map<Object, LayoutPropertySource> propertySources = Maps.newHashMap();
     /** the workbench part containing the current selection. */
     private IWorkbenchPart workbenchPart;
     
@@ -71,37 +71,33 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
         if (propertySources.containsKey(object)) {
             return propertySources.get(object);
         }
-        try {
-            IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
-                    workbenchPart, object);
-            if (manager != null) {
-                LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
-                Object diagramPart = manager.getAdapter(object, manager.getAdapterList()[0]);
-                EObject domainElement = (EObject) manager.getAdapter(object, EObject.class);
-                ILayoutConfig elc = (ILayoutConfig) manager.getAdapter(null, ILayoutConfig.class);
-                TransactionalEditingDomain editingDomain = (TransactionalEditingDomain)
-                        manager.getAdapter(object, TransactionalEditingDomain.class);
-                if (diagramPart != null) {
-                    IMutableLayoutConfig layoutConfig;
-                    if (elc == null) {
-                        layoutConfig = optionManager.createConfig(domainElement);
-                    } else {
-                        layoutConfig = optionManager.createConfig(domainElement, elc);
-                    }
-                    
-                    LayoutContext context = new LayoutContext();
-                    context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
-                    context.setProperty(LayoutContext.DOMAIN_MODEL, domainElement);
-                    context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-                    LayoutPropertySource propSource = new LayoutPropertySource(layoutConfig, context,
-                            editingDomain);
-                    
-                    propertySources.put(object, propSource);
-                    return propSource;
+        IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
+                workbenchPart, object);
+        if (manager != null) {
+            LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
+            Object diagramPart = manager.getAdapter(object, manager.getAdapterList()[0]);
+            EObject domainElement = (EObject) manager.getAdapter(object, EObject.class);
+            ILayoutConfig elc = (ILayoutConfig) manager.getAdapter(null, ILayoutConfig.class);
+            TransactionalEditingDomain editingDomain = (TransactionalEditingDomain)
+                    manager.getAdapter(object, TransactionalEditingDomain.class);
+            if (diagramPart != null) {
+                IMutableLayoutConfig layoutConfig;
+                if (elc == null) {
+                    layoutConfig = optionManager.createConfig(domainElement);
+                } else {
+                    layoutConfig = optionManager.createConfig(domainElement, elc);
                 }
+                
+                LayoutContext context = new LayoutContext();
+                context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
+                context.setProperty(LayoutContext.DOMAIN_MODEL, domainElement);
+                context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
+                LayoutPropertySource propSource = new LayoutPropertySource(layoutConfig, context,
+                        editingDomain);
+                
+                propertySources.put(object, propSource);
+                return propSource;
             }
-        } catch (UnsupportedPartException exception) {
-            // ignore exception
         }
         return null;
     }

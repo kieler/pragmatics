@@ -13,8 +13,15 @@
  */
 package de.cau.cs.kieler.klighd.triggers;
 
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
 import de.cau.cs.kieler.core.kivi.ITrigger;
@@ -41,11 +48,18 @@ public class KlighdSelectionTrigger extends AbstractTrigger {
     }
 
     /**
+     * Setter of the current instance. Has been introduced due to a hint of FindBugs. 
+     */
+    private static synchronized void setInstance(final KlighdSelectionTrigger theInstance) {
+        instance = theInstance;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public void register() {
-        instance = this;
+        setInstance(this);
     }
 
     /**
@@ -53,7 +67,7 @@ public class KlighdSelectionTrigger extends AbstractTrigger {
      */
     @Override
     public void unregister() {
-        instance = null;
+        setInstance(null);
     }
 
     /**
@@ -70,7 +84,7 @@ public class KlighdSelectionTrigger extends AbstractTrigger {
          */
         public KlighdSelectionState() {
             // no selections
-            selections = new LinkedList<SelectionElement>();
+            selections = Lists.newLinkedList();
         }
 
         /**
@@ -99,6 +113,40 @@ public class KlighdSelectionTrigger extends AbstractTrigger {
          */
         public List<SelectionElement> getSelections() {
             return selections;
+        }
+        
+        /**
+         * Returns an iterator on the semantic elements behind the selected representatives (figures).
+         * 
+         * @return a collection of elements being represented by the selected figures.
+         */
+        public Iterator<Object> getSelectedModelElements() {
+            return Iterators.transform(selections.iterator(),
+                    new Function<SelectionElement, Object>() {
+                        public Object apply(final SelectionElement input) {
+                            return input.getModelElement();
+                        }
+                    });
+        }
+
+        /**
+         * Returns an filtered iterator on the list of semantic elements behind the selected
+         * representatives (figures) that are {@link EObject EObjects}.
+         * 
+         * @return a collection of elements being an {@link EObject} and represented by the selected
+         *         figures.
+         */
+        public Iterator<EObject> getSelectedEModelElements() {
+            return Iterators.transform(
+                    Iterators.filter(selections.iterator(), new Predicate<SelectionElement>() {
+                        public boolean apply(final SelectionElement input) {
+                            return input.getModelElement() instanceof EObject;
+                        }
+                    }), new Function<SelectionElement, EObject>() {
+                        public EObject apply(final SelectionElement input) {
+                            return (EObject) input.getModelElement();
+                        }
+                    });
         }
 
         /**

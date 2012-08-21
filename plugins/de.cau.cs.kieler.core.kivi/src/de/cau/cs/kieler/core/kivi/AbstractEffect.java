@@ -65,4 +65,13 @@ public abstract class AbstractEffect implements IEffect {
         return "Effect[" + name.substring(index) + "]";
     }
     
+    /**
+     * {@inheritDoc}
+     * 
+     * Default implementation returns toString(). 
+     */
+    public String getName() {
+        return toString();
+    }
+    
 }

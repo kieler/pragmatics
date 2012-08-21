@@ -16,13 +16,13 @@ package de.cau.cs.kieler.core.math;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Represents a piecewise bezier spline. This means a collection of bezier curves adding up to a
  * smooth spline.
  * 
  * @author uru
- * 
  */
 public class BezierSpline {
 
@@ -113,32 +113,18 @@ public class BezierSpline {
             return new KVector[0];
         }
 
-        // we are sure about this size
-        // CHECKSTYLEOFF Magic Numbers
-        int size = (curves.size() * 3) - 1;
-        // CHECKSTYLEON Magic Numbers
+        int size = (curves.size() * 3) - 1;   // SUPPRESS CHECKSTYLE MagicNumber
         KVector[] points = new KVector[size];
 
         int i = 0;
-        if (curves.size() > 1) {
-            // is there a better way?
-            BezierCurve lastCurve = curves.removeLast();
-
-            // start and middle pieces
-            for (BezierCurve cu : curves) {
-                points[i++] = cu.fstControlPnt;
-                points[i++] = cu.sndControlPnt;
+        ListIterator<BezierCurve> curveIter = curves.listIterator();
+        while (curveIter.hasNext()) {
+            BezierCurve cu = curveIter.next();
+            points[i++] = cu.fstControlPnt;
+            points[i++] = cu.sndControlPnt;
+            if (curveIter.hasNext()) {
                 points[i++] = cu.end;
             }
-
-            // end piece
-            points[i++] = lastCurve.fstControlPnt;
-            points[i++] = lastCurve.sndControlPnt;
-            curves.add(lastCurve);
-
-        } else {
-            points[i++] = curves.getFirst().fstControlPnt;
-            points[i++] = curves.getFirst().sndControlPnt;
         }
 
         return points;
@@ -204,12 +190,12 @@ public class BezierSpline {
      */
     @Override
     public String toString() {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         for (BezierCurve cu : curves) {
-            s += "" + cu.start + " -> " + cu.fstControlPnt + " -> " + cu.sndControlPnt + " -> "
-                    + cu.end + "\n";
+            s.append("" + cu.start + " -> " + cu.fstControlPnt + " -> " + cu.sndControlPnt + " -> "
+                    + cu.end + "\n");
         }
-        return s;
+        return s.toString();
     }
 
     /**
@@ -221,7 +207,7 @@ public class BezierSpline {
      * @author uru
      * 
      */
-    public class BezierCurve {
+    public static class BezierCurve {
 
         // for easier handling.
         // CHECKSTYLEOFF VisibilityModifier

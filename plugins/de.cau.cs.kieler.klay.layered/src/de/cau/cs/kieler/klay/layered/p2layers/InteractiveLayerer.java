@@ -19,12 +19,12 @@ import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
-import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
@@ -39,18 +39,22 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * </dl>
  *
  * @author msp
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
 public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhase {
 
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final LGraph graph) {
+        
         return null;
     }
     
     /** Utility class for marking horizontal regions that are already covered by some nodes. */
-    private class LayerSpan {
+    private static class LayerSpan {
         private double start;
         private double end;
         private List<LNode> nodes = new LinkedList<LNode>();
@@ -59,7 +63,7 @@ public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Interactive node layering", 1);
 
         // create layers with a start and an end position, merging when they overlap with others
@@ -132,7 +136,7 @@ public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhas
      * @param node1 a node
      * @param graph the layered graph
      */
-    private void checkNode(final LNode node1, final LayeredGraph graph) {
+    private void checkNode(final LNode node1, final LGraph graph) {
         node1.id = 1;
         Layer layer1 = node1.getLayer();
         for (LPort port : node1.getPorts(PortType.OUTPUT)) {

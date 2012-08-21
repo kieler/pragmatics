@@ -293,7 +293,7 @@ public class GraphvizTool {
     /**
      * A specialized input stream for reading data from the Graphviz process.
      */
-    private class GraphvizStream extends InputStream {
+    private static class GraphvizStream extends InputStream {
         
         /** the stream of process data output. */
         private InputStream stream;

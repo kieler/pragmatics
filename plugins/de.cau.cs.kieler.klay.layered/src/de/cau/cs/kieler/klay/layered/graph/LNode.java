@@ -13,16 +13,15 @@
  */
 package de.cau.cs.kieler.klay.layered.graph;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.util.CompoundCondition;
-import de.cau.cs.kieler.core.util.FilteredIterator;
-import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -31,17 +30,31 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * A node in a layered graph.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LNode extends LShape {
+    
+    /** the serial version UID. */
+    private static final long serialVersionUID = -4272570519129722541L;
     
     /** the owning layer. */
     private Layer owner;
     /** the ports of the node. */
-    private List<LPort> ports = new LinkedList<LPort>();
+    private final List<LPort> ports = new LinkedList<LPort>();
     /** this node's labels. */
-    private List<LLabel> labels = new LinkedList<LLabel>();
+    private final List<LLabel> labels = new LinkedList<LLabel>();
     /** this node's insets. */
-    private LInsets.Double margin = new LInsets.Double();
+    private final LInsets.Double margin = new LInsets.Double();
+    
+    /**
+     * Creates a node.
+     * 
+     * @param graph the graph for which the node is created 
+     */
+    public LNode(final LGraph graph) {
+        super(graph);
+    }
 
     /**
      * {@inheritDoc}
@@ -143,8 +156,14 @@ public class LNode extends LShape {
      * @return an iterable for the ports of given type
      */
     public Iterable<LPort> getPorts(final PortType portType) {
-        return new FilteredIterator.Iterable<LPort>(ports,
-                new LPort.TypeCondition(portType));
+        switch (portType) {
+        case INPUT:
+            return Iterables.filter(ports, LPort.INPUT_PREDICATE);
+        case OUTPUT:
+            return Iterables.filter(ports, LPort.OUTPUT_PREDICATE);
+        default:
+            return Collections.emptyList();
+        }
     }
     
     /**
@@ -154,8 +173,18 @@ public class LNode extends LShape {
      * @return an iterable for the ports of given side
      */
     public Iterable<LPort> getPorts(final PortSide side) {
-        return new FilteredIterator.Iterable<LPort>(ports,
-                new LPort.SideCondition(side));
+        switch (side) {
+        case NORTH:
+            return Iterables.filter(ports, LPort.NORTH_PREDICATE);
+        case EAST:
+            return Iterables.filter(ports, LPort.EAST_PREDICATE);
+        case SOUTH:
+            return Iterables.filter(ports, LPort.SOUTH_PREDICATE);
+        case WEST:
+            return Iterables.filter(ports, LPort.WEST_PREDICATE);
+        default:
+            return Collections.emptyList();
+        }
     }
     
     /**
@@ -166,11 +195,37 @@ public class LNode extends LShape {
      * @return an iterable for the ports of the given type and side.
      */
     public Iterable<LPort> getPorts(final PortType portType, final PortSide side) {
-        List<ICondition<LPort>> conditions = new ArrayList<ICondition<LPort>>();
-        conditions.add(new LPort.TypeCondition(portType));
-        conditions.add(new LPort.SideCondition(side));
+        Predicate<LPort> typePredicate = null;
+        switch (portType) {
+        case INPUT:
+            typePredicate = LPort.INPUT_PREDICATE;
+            break;
+        case OUTPUT:
+            typePredicate = LPort.OUTPUT_PREDICATE;
+            break;
+        }
         
-        return new FilteredIterator.Iterable<LPort>(ports, new CompoundCondition<LPort>(conditions));
+        Predicate<LPort> sidePredicate = null;
+        switch (side) {
+        case NORTH:
+            sidePredicate = LPort.NORTH_PREDICATE;
+            break;
+        case EAST:
+            sidePredicate = LPort.EAST_PREDICATE;
+            break;
+        case SOUTH:
+            sidePredicate = LPort.SOUTH_PREDICATE;
+            break;
+        case WEST:
+            sidePredicate = LPort.WEST_PREDICATE;
+            break;
+        }
+        
+        if (typePredicate != null && sidePredicate != null) {
+            return Iterables.filter(ports, Predicates.and(typePredicate, sidePredicate));
+        } else {
+            return Collections.emptyList();
+        }
     }
     
     /**
@@ -267,7 +322,7 @@ public class LNode extends LShape {
             throw new IllegalStateException("node is not assigned to a layer in a graph.");
         }
         
-        LayeredGraph graph = owner.getGraph();
+        LGraph graph = owner.getGraph();
         
         LInsets.Double insets = graph.getInsets();
         float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
@@ -291,7 +346,7 @@ public class LNode extends LShape {
      * @param graph the layered graph.
      * @return the node's anchor point position.
      */
-    public KVector getInteractiveReferencePoint(final LayeredGraph graph) {
+    public KVector getInteractiveReferencePoint(final LGraph graph) {
         switch (graph.getProperty(Properties.INTERACTIVE_REFERENCE_POINT)) {
         case CENTER:
             KVector nodePos = getPosition();

@@ -24,10 +24,8 @@ import java.util.Properties;
  * defines constants and default values for accessing and storing application
  * related configuration parameters.
  *
- * @kieler.rating  2011-08-25 yellow
- *      reviewed by ckru, msp, mri
- *      
- * @author  swe
+ * @kieler.design 2011-08-25 reviewed by ckru, msp, mri
+ * @author swe
  */
 public final class Configuration extends Properties {
 

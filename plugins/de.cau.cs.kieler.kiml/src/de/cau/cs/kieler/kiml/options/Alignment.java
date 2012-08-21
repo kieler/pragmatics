@@ -17,8 +17,8 @@ package de.cau.cs.kieler.kiml.options;
  * Enumeration of node alignment options.
  *
  * @author msp
- * @kieler.rating 2011-03-14 yellow
- *     reviewed by cmot, cds
+ * @kieler.design 2011-03-14 reviewed by cmot, cds
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public enum Alignment {
     

@@ -26,21 +26,24 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
-import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * The main class of the network simplex layerer component. It offers an algorithm to determine an
  * optimal layering of all nodes in the graph concerning a minimal length of all edges using the
  * network simplex algorithm described in
- * {@literal Emden R. Gansner, Eleftherios Koutsofios, Stephen
- * C. North, Kiem-Phong Vo: "A Technique for Drawing Directed Graphs", AT&T Bell Laboratories}.
+ * <ul>
+ *   <li> Emden R. Gansner, Eleftherios Koutsofios, Stephen C. North, Kiem-Phong Vo,
+ *     A technique for drawing directed graphs. <i>Software Engineering</i> 19(3), pp. 214-230, 1993.
+ *   </li>
+ * </ul>
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>the graph has no cycles</dd>
@@ -49,20 +52,22 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  * 
  * @author pdo
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
 public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutPhase {
     
-    /** intermediate processing strategy. */
-    private static final IntermediateProcessingStrategy BASELINE_PROCESSING_STRATEGY =
-        new IntermediateProcessingStrategy(
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
+        new IntermediateProcessingConfiguration(
                 // Before Phase 1
-                EnumSet.of(IntermediateLayoutProcessor.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER),
+                EnumSet.of(LayoutProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER),
                 
                 // Before Phase 2
                 null,
                 
                 // Before Phase 3
-                EnumSet.of(IntermediateLayoutProcessor.LAYER_CONSTRAINT_PROCESSOR),
+                EnumSet.of(LayoutProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR),
                 
                 // Before Phase 4
                 null,
@@ -74,14 +79,14 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
                 null);
     
     /** additional processor dependencies for handling big nodes. */
-    private static final IntermediateProcessingStrategy BIG_NODES_PROCESSING_ADDITIONS =
-        new IntermediateProcessingStrategy(IntermediateProcessingStrategy.BEFORE_PHASE_2,
-                IntermediateLayoutProcessor.BIG_NODES_PROCESSOR);
+    private static final IntermediateProcessingConfiguration BIG_NODES_PROCESSING_ADDITIONS =
+        new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.BEFORE_PHASE_2,
+                LayoutProcessorStrategy.BIG_NODES_PROCESSOR);
     
     // ================================== Attributes ==============================================
 
     /** The layered graph all methods in this class operate on. */
-    private LayeredGraph layeredGraph;
+    private LGraph layeredGraph;
 
     /** A {@code Collection} containing all nodes in the graph to layer. */
     private Collection<LNode> nodes;
@@ -206,10 +211,12 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final LayeredGraph graph) {
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final LGraph graph) {
+        
         // Basic strategy
-        IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy(
-                BASELINE_PROCESSING_STRATEGY);
+        IntermediateProcessingConfiguration strategy = new IntermediateProcessingConfiguration(
+                BASELINE_PROCESSING_CONFIGURATION);
         
         // Additional dependencies
         if (graph.getProperty(Properties.DISTRIBUTE_NODES)) {
@@ -438,7 +445,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
      *            
      * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
      */
-    public void process(final LayeredGraph theLayeredGraph) {
+    public void process(final LGraph theLayeredGraph) {
         assert theLayeredGraph != null;
         getMonitor().begin("Network-Simplex Layering", 1);
         

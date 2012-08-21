@@ -24,8 +24,8 @@ import de.cau.cs.kieler.kiml.options.GraphFeature;
 /**
  * Data type used to store information for a layout algorithm.
  * 
- * @kieler.rating 2011-02-01 yellow
- *     reviewed by cmot, soh
+ * @kieler.design 2011-02-01 reviewed by cmot, soh
+ * @kieler.rating proposed yellow 2012-07-10 msp
  * @author msp
  */
 public class LayoutAlgorithmData implements ILayoutData {
@@ -142,13 +142,15 @@ public class LayoutAlgorithmData implements ILayoutData {
     }
     
     /**
-     * Returns the supported priority for the given diagram type. If the type is not supported,
-     * {@link MIN_PRIORITY} is returned.
+     * Returns a support value for the given diagram type. If the type is not supported,
+     * {@link MIN_PRIORITY} is returned, otherwise the returned value indicates the priority
+     * this algorithm has for the diagram type. Algorithms with higher priority are privileged
+     * over those with lower priority or no support when a diagram of specific type is encountered.
      * 
      * @param diagramType diagram type identifier
      * @return associated priority, or {@code MIN_PRIORITY} if the diagram type is not supported
      */
-    public int getSupportedPriority(final String diagramType) {
+    public int getDiagramSupport(final String diagramType) {
         Integer result = supportedDiagrams.get(diagramType);
         if (result != null) {
             return result;
@@ -172,13 +174,17 @@ public class LayoutAlgorithmData implements ILayoutData {
     }
     
     /**
-     * Returns the supported priority for the given graph feature. If the feature is not supported,
-     * {@link MIN_PRIORITY} is returned.
+     * Returns a support value for the given graph feature. If the feature is not supported,
+     * {@link MIN_PRIORITY} is returned, otherwise the returned value indicates the priority
+     * this algorithm has for the graph feature. Meta layout methods that automatically select
+     * a suitable algorithm for a graph may consider priority information on graph features.
+     * Algorithms with higher priority are privileged over those with lower priority with
+     * respect to the features that are actually contained in the graph.
      * 
      * @param graphFeature the graph feature
      * @return associated priority, or {@code MIN_PRIORITY} if the feature is not supported
      */
-    public int getSupportedPriority(final GraphFeature graphFeature) {
+    public int getFeatureSupport(final GraphFeature graphFeature) {
         Integer result = supportedFeatures.get(graphFeature);
         if (result != null) {
             return result;

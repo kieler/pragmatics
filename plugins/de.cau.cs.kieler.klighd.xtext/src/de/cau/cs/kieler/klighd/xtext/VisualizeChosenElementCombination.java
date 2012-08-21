@@ -109,7 +109,7 @@ public abstract class VisualizeChosenElementCombination extends AbstractCombinat
                     && visibilityExpression.getElement() != null) {
                 this.schedule(new KlighdDiagramEffect(visibilityExpression.getEditorInputPath()
                         .toOSString().replace(":", ""), visibilityExpression.getEditorInputPath()
-                        .lastSegment(), visibilityExpression.getElement()));
+                        .lastSegment(), visibilityExpression.getElement(), buttonState.getEditor()));
             } else {
                 // this case is needed if the buttonSate was fired by an Xtext quickfix provider
                 if (buttonState.getEditor() != null
@@ -118,7 +118,7 @@ public abstract class VisualizeChosenElementCombination extends AbstractCombinat
                             .getEditorInput()).getPath();
                     this.schedule(new KlighdDiagramEffect(editorInputPath.toOSString().replace(":",
                             ""), editorInputPath.lastSegment(), (EObject) buttonState
-                            .getParameters().get("element")));
+                            .getParameters().get("element"), buttonState.getEditor()));
                 }
             }
         }
@@ -130,7 +130,7 @@ public abstract class VisualizeChosenElementCombination extends AbstractCombinat
      * 
      * @author chsch, pkl
      */
-    class ModelExpression extends Expression {
+    private static class ModelExpression extends Expression {
 
         private Class<?> clazz = null;
         private EObject element = null;

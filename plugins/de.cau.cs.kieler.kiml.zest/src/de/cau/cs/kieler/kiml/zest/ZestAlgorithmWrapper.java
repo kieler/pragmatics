@@ -42,7 +42,6 @@ import de.cau.cs.kieler.kiml.zest.preferences.ZestLayouterPreferencePage;
  * Wrapper class that translates KIML layout graphs into the Zest graph
  * structure.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
 public class ZestAlgorithmWrapper {

@@ -14,20 +14,12 @@
 package de.cau.cs.kieler.klay.layered.p3order;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.Random;
-import java.util.Set;
-
-import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -38,79 +30,58 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author msp
  * @author cds
  * @author ima
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
 
-    private IPortDistributor portDistributor;
-
+    /** the array of port ranks. */
+    private float[] portRanks;
+    /** the random number generator. */
     private Random random;
+    /** the constraint resolver for ordering constraints. */
+    private IConstraintResolver constraintResolver;
 
     /**
-     * Constructs a BarycenterHeuristic with the given portDistributor, selected by the
-     * LayerSweepCrossingMinimizer.
+     * Constructs a Barycenter heuristic for crossing minimization between two layers.
      * 
-     * @param selPortDistributor
-     *            the port distributor chosen by the LayerSweepCrossingMinimizer.
+     * @param constraintResolver
+     *            the constraint resolver
      * @param graphRandom
-     *            the random number generator.
+     *            the random number generator
+     * @param portRanks
+     *            the array of port ranks
      */
-    public BarycenterHeuristic(final IPortDistributor selPortDistributor, final Random graphRandom) {
-        portDistributor = selPortDistributor;
-        random = graphRandom;
+    public BarycenterHeuristic(final IConstraintResolver constraintResolver, final Random graphRandom,
+            final float[] portRanks) {
+        this.constraintResolver = constraintResolver;
+        this.random = graphRandom;
+        this.portRanks = portRanks;
     }
 
     /**
      * {@inheritDoc}
-     * 
      */
-    public int minimizeCrossings(final List<NodeGroup> layerNodeGroups,
-            final Multimap<LNode, LNode> layoutUnits, final int layerIndex,
-            final boolean preOrdered, final boolean randomize, final boolean forward,
-            final float[] portPos, final Map<LNode, NodeGroup>[] singleNodeNodeGroups) {
+    public void minimizeCrossings(final List<NodeGroup> layer, final int layerIndex,
+            final boolean preOrdered, final boolean randomize, final boolean forward) {
 
-        // Ignore empty free layers
-        if (layerNodeGroups.isEmpty()) {
-            return 0;
-        }
-
-        // Barycenters!
-        int totalEdges = 0;
         if (randomize) {
             // Randomize barycenters (we don't need to update the edge count in this case;
-            // there are no edges of interest since we're only concerned with this one
-            // layer anyway)
-            randomizeBarycenters(layerNodeGroups);
+            // there are no edges of interest since we're only concerned with one layer)
+            randomizeBarycenters(layer);
         } else {
-            // Calculate barycenters and assign barycenters to barycenterless vertices
-            totalEdges = calculateBarycenters(layerNodeGroups, singleNodeNodeGroups[layerIndex],
-                    forward, portPos);
-            fillInUnknownBarycenters(layerNodeGroups, preOrdered);
+            // Calculate barycenters and assign barycenters to barycenterless node groups
+            calculateBarycenters(layer, forward);
+            fillInUnknownBarycenters(layer, preOrdered);
         }
-
-        // Sort the vertices according to their barycenters
-        Collections.sort(layerNodeGroups);
-
-        IConstraintResolver constraintResolver = new ForsterConstraintResolver();
-
-        constraintResolver.processConstraints(layerNodeGroups, layerIndex, random,
-                singleNodeNodeGroups, layoutUnits);
-
-        // Prepare an array of the nodes of the single-node-NodeGroups for the port rank
-        // calculation.
-        LinkedList<LNode> layerSingles = new LinkedList<LNode>();
-        for (NodeGroup nodeGroup : layerNodeGroups) {
-            List<LNode> nodeGroupNodes = nodeGroup.getNodes();
-            if (nodeGroupNodes.size() == 1) {
-                layerSingles.add(nodeGroupNodes.get(0));
-            }
+    
+        if (layer.size() > 1) {
+            // Sort the vertices according to their barycenters
+            Collections.sort(layer);
+    
+            // Resolve ordering constraints
+            constraintResolver.processConstraints(layer, layerIndex);
         }
-        LNode[] layerSingleNodes = new LNode[layerSingles.size()];
-        for (int i = 0; i < layerSingles.size(); i++) {
-            layerSingleNodes[i] = layerSingles.get(i);
-        }
-        portDistributor.calculatePortRanks(layerSingleNodes);
-
-        return totalEdges;
     }
 
     /**
@@ -122,16 +93,16 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
     private void randomizeBarycenters(final List<NodeGroup> nodeGroups) {
         for (NodeGroup nodeGroup : nodeGroups) {
             // Set barycenters only for nodeGroups containing a single node.
-            if (nodeGroup.getNodes().size() < 2) {
-                nodeGroup.setBarycenter(random.nextFloat());
-                nodeGroup.setSummedWeight(nodeGroup.getBarycenter());
-                nodeGroup.setDegree(1);
+            if (nodeGroup.getNodes().length == 1) {
+                nodeGroup.barycenter = random.nextFloat();
+                nodeGroup.summedWeight = nodeGroup.barycenter;
+                nodeGroup.degree = 1;
             }
         }
     }
 
     /**
-     * Try to find appropriate barycenter values for vertices whose barycenter is < 0.
+     * Try to find appropriate barycenter values for node groups whose barycenter is undefined.
      * 
      * @param nodeGroups
      *            the nodeGroups to fill in barycenters for.
@@ -139,33 +110,34 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
      *            whether the nodeGroups have been ordered in a previous run.
      */
     private void fillInUnknownBarycenters(final List<NodeGroup> nodeGroups, final boolean preOrdered) {
-        // Determine placements for vertices with undefined position value
+        // Determine placements for nodes with undefined barycenter value
         if (preOrdered) {
             float lastValue = -1;
             ListIterator<NodeGroup> nodeGroupIterator = nodeGroups.listIterator();
 
             while (nodeGroupIterator.hasNext()) {
                 NodeGroup nodeGroup = nodeGroupIterator.next();
-                float value = nodeGroup.getBarycenter();
+                Float value = nodeGroup.barycenter;
 
-                if (value < 0) {
+                if (value == null) {
+                    // The barycenter is undefined - take the center of the previous value
+                    // and the next defined value in the list
                     float nextValue = lastValue + 1;
 
-                    if (nodeGroupIterator.hasNext()) {
-                        Iterator<NodeGroup> nextNodeGroupIterator = nodeGroups
-                                .listIterator(nodeGroupIterator.nextIndex());
-
-                        while (nextNodeGroupIterator.hasNext()) {
-                            float x = nextNodeGroupIterator.next().getBarycenter();
-                            if (x >= 0) {
-                                nextValue = x;
-                                break;
-                            }
+                    ListIterator<NodeGroup> nextNodeGroupIterator = nodeGroups
+                            .listIterator(nodeGroupIterator.nextIndex());
+                    while (nextNodeGroupIterator.hasNext()) {
+                        Float x = nextNodeGroupIterator.next().barycenter;
+                        if (x != null) {
+                            nextValue = x;
+                            break;
                         }
                     }
 
                     value = (lastValue + nextValue) / 2;
-                    nodeGroup.setBarycenter(value);
+                    nodeGroup.barycenter = value;
+                    nodeGroup.summedWeight = value;
+                    nodeGroup.degree = 1;
                 }
 
                 lastValue = value;
@@ -174,105 +146,100 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
             // No previous ordering - determine random placement for new nodes
             float maxBary = 0;
             for (NodeGroup nodeGroup : nodeGroups) {
-                maxBary = Math.max(maxBary, nodeGroup.getBarycenter());
+                if (nodeGroup.barycenter != null) {
+                    maxBary = Math.max(maxBary, nodeGroup.barycenter);
+                }
             }
 
             maxBary += 2;
-            for (NodeGroup vertex : nodeGroups) {
-                if (vertex.getBarycenter() < 0) {
-                    vertex.setBarycenter(random.nextFloat() * maxBary - 1);
+            for (NodeGroup nodeGroup : nodeGroups) {
+                if (nodeGroup.barycenter == null) {
+                    float value = random.nextFloat() * maxBary - 1;
+                    nodeGroup.barycenter = value;
+                    nodeGroup.summedWeight = value;
+                    nodeGroup.degree = 1;
                 }
             }
         }
     }
 
     /**
-     * Calculates the barycenters of the given vertices.
+     * Calculate the barycenters of the given node groups.
      * 
      * @param nodeGroups
-     *            the nodeGroups.
-     * @param layerNodeGroups
-     *            map of the layer's nodes to their single-node nodeGroups.
+     *            the nodeGroups
      * @param forward
-     *            {@code true} if the current sweep moves forward.
-     * @param portPos
-     * @return the total number of encountered edges.
+     *            {@code true} if the current sweep moves forward
      */
-    private int calculateBarycenters(final List<NodeGroup> nodeGroups,
-            final Map<LNode, NodeGroup> layerNodeGroups, final boolean forward,
-            final float[] portPos) {
-
-        Set<NodeGroup> workingSet = new HashSet<NodeGroup>();
-
-        int totalEdges = 0;
+    private void calculateBarycenters(final List<NodeGroup> nodeGroups, final boolean forward) {
+        // Set all visited flags to false
         for (NodeGroup nodeGroup : nodeGroups) {
-            if (nodeGroup.getNodes().size() < 2) {
-                // Calculate the nodeGroups's new barycenter (may be -1)
-                calculateBarycenter(nodeGroup, layerNodeGroups, forward, workingSet, portPos);
-            }
-            // TODO: Discuss, if next line should be dependent on the condition as well.
-            totalEdges += nodeGroup.getDegree();
+            nodeGroup.visited = false;
         }
 
-        return totalEdges;
+        for (NodeGroup nodeGroup : nodeGroups) {
+            if (nodeGroup.getNodes().length == 1) {
+                // Calculate the node groups's new barycenter (may be null)
+                calculateBarycenter(nodeGroup, forward);
+            }
+        }
     }
+    
+    /** the amount of random value to add to each calculated barycenter. */
+    private static final float RANDOM_AMOUNT = 0.07f;
 
     /**
-     * Calculates the barycenter of the given single-node-vertex.
+     * Calculate the barycenter of the given single-node node group. This method is able to
+     * handle in-layer edges, but it may give incorrect results if the in-layer edges form
+     * a cycle. However, such cases do not occur in the present implementation.
      * 
      * @param nodeGroup
-     *            the nodeGroup, consisting of a single node.
-     * @param layerNodeGroups
-     *            map of the layer's nodes to their single-node nodeGroups.
+     *            a node group consisting of a single node
      * @param forward
-     *            {@code true} if the current sweep moves forward.
-     * @param workingSet
-     *            a set where vertices whose values are being computed are put into. When this
-     *            method is called on a nodeGroup that's already in the set, it immediately returns.
+     *            {@code true} if the current sweep moves forward
      * @param portPos
-     *            position array.
+     *            position array
      * @return a pair containing the summed port positions of the connected ports as the first, and
      *         the number of connected edges as the second entry.
      */
-    private void calculateBarycenter(final NodeGroup nodeGroup,
-            final Map<LNode, NodeGroup> layerNodeGroups, final boolean forward,
-            final Set<NodeGroup> workingSet, final float[] portPos) {
+    private void calculateBarycenter(final NodeGroup nodeGroup, final boolean forward) {
 
-        // Check if the vertex's barycenter was already computed
-        if (workingSet.contains(nodeGroup)) {
+        // Check if the node group's barycenter was already computed
+        if (nodeGroup.visited) {
             return;
         } else {
-            workingSet.add(nodeGroup);
+            nodeGroup.visited = true;
         }
 
-        nodeGroup.setDegree(0);
-        nodeGroup.setSummedWeight(0.0f);
-        nodeGroup.setBarycenter(-1.0f);
-        LNode node = nodeGroup.getNodes().get(0);
+        nodeGroup.degree = 0;
+        nodeGroup.summedWeight = 0.0f;
+        nodeGroup.barycenter = null;
+        LNode node = nodeGroup.getNode();
 
-        for (LPort freePort : node.getPorts(forward ? PortType.INPUT : PortType.OUTPUT)) {
-            for (LPort fixedPort : freePort.getConnectedPorts()) {
+        for (LPort freePort : node.getPorts()) {
+            Iterable<LPort> portIterable = forward ? freePort.getPredecessorPorts()
+                    : freePort.getSuccessorPorts();
+            for (LPort fixedPort : portIterable) {
                 // If the node the fixed port belongs to is part of the free layer (thus, if
                 // we have an in-layer edge), use that node's barycenter calculation instead
                 LNode fixedNode = fixedPort.getNode();
 
                 if (fixedNode.getLayer() == node.getLayer()) {
-                    // Find the fixed node's vertex and calculate its barycenter
-                    NodeGroup fixedNodeGroup = layerNodeGroups.get(fixedNode);
-                    calculateBarycenter(fixedNodeGroup, layerNodeGroups, forward, workingSet,
-                            portPos);
-
-                    // Update this vertex's values
-                    nodeGroup.setDegree(nodeGroup.getDegree()
-                            + Math.max(0, fixedNodeGroup.getDegree() - 1));
-                    nodeGroup.setSummedWeight(nodeGroup.getSummedWeight()
-                            + fixedNodeGroup.getSummedWeight());
+                    // Self-loops are ignored
+                    if (fixedNode != node) {
+                        // Find the fixed node's node group and calculate its barycenter
+                        NodeGroup fixedNodeGroup = fixedNode.getProperty(Properties.NODE_GROUP);
+                        calculateBarycenter(fixedNodeGroup, forward);
+    
+                        // Update this node group's values
+                        nodeGroup.degree += fixedNodeGroup.degree;
+                        nodeGroup.summedWeight += fixedNodeGroup.summedWeight;
+                    }
                 } else {
-                    nodeGroup.setSummedWeight(nodeGroup.getSummedWeight() + portPos[fixedPort.id]);
+                    nodeGroup.summedWeight += portRanks[fixedPort.id];
+                    nodeGroup.degree++;
                 }
             }
-
-            nodeGroup.setDegree(nodeGroup.getDegree() + freePort.getDegree());
         }
 
         // Iterate over the node's barycenter associates
@@ -280,24 +247,22 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
         if (barycenterAssociates != null) {
             for (LNode associate : barycenterAssociates) {
                 // Make sure the associate is in the same layer as this node
-                if (node.getLayer() != associate.getLayer()) {
-                    continue;
+                if (node.getLayer() == associate.getLayer()) {
+                    // Find the associate's node group and calculate its barycenter
+                    NodeGroup associateNodeGroup = associate.getProperty(Properties.NODE_GROUP);
+                    calculateBarycenter(associateNodeGroup, forward);
+    
+                    // Update this vertex's values
+                    nodeGroup.degree += associateNodeGroup.degree;
+                    nodeGroup.summedWeight += associateNodeGroup.summedWeight;
                 }
-
-                // Find the associate's vertex and calculate its barycenter
-                NodeGroup associateVertex = layerNodeGroups.get(associate);
-                calculateBarycenter(associateVertex, layerNodeGroups, forward, workingSet, portPos);
-
-                // Update this vertex's values
-                nodeGroup.setDegree(nodeGroup.getDegree()
-                        + Math.max(0, associateVertex.getDegree()));
-                nodeGroup.setSummedWeight(nodeGroup.getSummedWeight()
-                        + associateVertex.getSummedWeight());
             }
         }
 
-        if (nodeGroup.getDegree() > 0) {
-            nodeGroup.setBarycenter(nodeGroup.getSummedWeight() / nodeGroup.getDegree());
+        if (nodeGroup.degree > 0) {
+            // add a small random perturbation in order to increase diversity of solutions
+            nodeGroup.summedWeight += random.nextFloat() * RANDOM_AMOUNT - RANDOM_AMOUNT / 2;
+            nodeGroup.barycenter = nodeGroup.summedWeight / nodeGroup.degree;
         }
     }
 

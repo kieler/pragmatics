@@ -24,20 +24,39 @@ import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 
 /**
- * A layout configuration that can be used to generate on-the-fly layout options.
+ * A layout configurator that can be used to generate on-the-fly layout options.
  *
  * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public class VolatileLayoutConfig implements ILayoutConfig {
     
-    /** the priority for volatile layout configurations. */
-    public static final int PRIORITY = 100;
+    /** the default priority for volatile layout configurators. */
+    public static final int DEFAULT_PRIORITY = 100;
 
     /** map of focus objects and property identifiers to their values. */
-    private Map<Object, Map<IProperty<?>, Object>> optionMap
+    private final Map<Object, Map<IProperty<?>, Object>> optionMap
             = new HashMap<Object, Map<IProperty<?>, Object>>();
-    private Set<IProperty<?>> contextKeys = new HashSet<IProperty<?>>();
+    /** the layout context keys managed by this configurator. */
+    private final Set<IProperty<?>> contextKeys = new HashSet<IProperty<?>>();
+    /** the priority of this configurator. */
+    private int priority;
+    
+    /**
+     * Creates a volatile layout configurator with default priority.
+     */
+    public VolatileLayoutConfig() {
+        priority = DEFAULT_PRIORITY;
+    }
+    
+    /**
+     * Creates a volatile layout configurator with given priority.
+     * 
+     * @param prio the priority to apply for this configurator
+     */
+    public VolatileLayoutConfig(final int prio) {
+        this.priority = prio;
+    }
     
     /**
      * {@inheritDoc}
@@ -51,7 +70,7 @@ public class VolatileLayoutConfig implements ILayoutConfig {
      * {@inheritDoc}
      */
     public int getPriority() {
-        return PRIORITY;
+        return priority;
     }
 
     /**
@@ -105,9 +124,9 @@ public class VolatileLayoutConfig implements ILayoutConfig {
     }
     
     /**
-     * Copy all values from the given layout configuration into this one.
+     * Copy all values from the given layout configurator into this one.
      * 
-     * @param other another volatile layout configuration
+     * @param other another volatile layout configurator
      */
     public void copyValues(final VolatileLayoutConfig other) {
         this.contextKeys.addAll(other.contextKeys);

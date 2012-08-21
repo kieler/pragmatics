@@ -29,8 +29,6 @@ import de.cau.cs.kieler.kwebs.client.ServerConfigs.ServerConfigError;
 /**
  * This is an abstract job with the support for testing the servers availability.
  *  
- * @kieler.rating 2011-05-14
- * 
  * @author swe
  */
 public abstract class AbstractServerBasedJob extends Job {

@@ -26,7 +26,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.EdgeType;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -52,13 +52,14 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  * 
  * @author ima
+ * @kieler.design 2012-08-10 chsch grh
  */
 public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin(
                 "Remove dummy edges and nodes, set node and edge positions"
                         + "and node size for compound nodes", 1);
@@ -144,17 +145,16 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                 LNode targetNode = targetPort.getNode();
 
                 // process according to source node type. Translate ports of dummy nodes to ports of
-                // the
-                // compound node.
+                // the compound node.
                 switch (sourceNodeType) {
                 case LOWER_COMPOUND_BORDER:
-                    LPort newPort = transferPort(sourcePort, compoundNodeSource);
+                    LPort newPort = transferPort(layeredGraph, sourcePort, compoundNodeSource);
                     ledge.setSource(newPort);
                     break;
 
                 case UPPER_COMPOUND_PORT:
                 case LOWER_COMPOUND_PORT:
-                    LPort newPort2 = transferPort(sourcePort, compoundNodeSource);
+                    LPort newPort2 = transferPort(layeredGraph, sourcePort, compoundNodeSource);
                     // in this case, we have to keep the port's origin in mind.
                     newPort2.setProperty(Properties.ORIGIN,
                             sourcePort.getProperty(Properties.ORIGIN));
@@ -165,7 +165,7 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                     // Keep an eye on edges to descendant nodes: Their port coordinates have to be
                     // updated.
                     if (Util.isDescendant(targetNode, sourceNode)) {
-                        LPort newPort3 = transferPort(sourcePort, compoundNodeSource);
+                        LPort newPort3 = transferPort(layeredGraph, sourcePort, compoundNodeSource);
                         ledge.setSource(newPort3);
                     }
                     break;
@@ -180,17 +180,16 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                 LNode compoundNodeTarget = targetNode.getProperty(Properties.COMPOUND_NODE);
 
                 // process according to target node type. Translate ports of dummy nodes to ports of
-                // the
-                // compound node.
+                // the compound node.
                 switch (targetNodeType) {
                 case LOWER_COMPOUND_BORDER:
-                    LPort newPort = transferPort(targetPort, compoundNodeTarget);
+                    LPort newPort = transferPort(layeredGraph, targetPort, compoundNodeTarget);
                     ledge.setTarget(newPort);
                     break;
 
                 case UPPER_COMPOUND_PORT:
                 case LOWER_COMPOUND_PORT:
-                    LPort newPort2 = transferPort(targetPort, compoundNodeTarget);
+                    LPort newPort2 = transferPort(layeredGraph, targetPort, compoundNodeTarget);
                     // in this case, we have to keep the port's origin in mind.
                     newPort2.setProperty(Properties.ORIGIN,
                             targetPort.getProperty(Properties.ORIGIN));
@@ -215,6 +214,8 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
     /**
      * Creates a new port of the compound node for a given dummy node port.
      * 
+     * @param layeredGraph
+     *            the layered graph
      * @param dummyPort
      *            the port to be translated into a compound node port.
      * @param sourceNode
@@ -222,12 +223,13 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
      * @param compoundNode
      * @return
      */
-    private LPort transferPort(final LPort dummyPort, final LNode compoundNode) {
+    private LPort transferPort(final LGraph layeredGraph, final LPort dummyPort,
+            final LNode compoundNode) {
         // get node of dummyPort and its node type
         LNode dummyNode = dummyPort.getNode();
         NodeType dummyNodeType = dummyNode.getProperty(Properties.NODE_TYPE);
 
-        LPort newPort = new LPort();
+        LPort newPort = new LPort(layeredGraph);
         newPort.setNode(compoundNode);
 
         newPort.copyProperties(dummyPort);
@@ -245,9 +247,9 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
             newPortSide = PortSide.WEST;
         }
         if (newPortSide == PortSide.EAST) {
-            newPort.getPosition().x = compoundNode.getSize().x + dummyPort.getAnchor().x;
+            newPort.getPosition().x = compoundNode.getSize().x + dummyPort.getSize().x / 2;
         } else {
-            newPort.getPosition().x = -dummyPort.getAnchor().x;
+            newPort.getPosition().x = -(dummyPort.getSize().x / 2);
         }
         // as position of dummyPort is relative to dummyNode, compute new relative value with
         // respect to compoundNode.
@@ -275,7 +277,7 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
      *         upper resp. lower.
      */
     private KVector findSideNodePos(final LNode lnode, final boolean lower, final boolean left,
-            final LayeredGraph lGraph) {
+            final LGraph lGraph) {
         Layer layer;
         if (left) {
             layer = lnode.getLayer();

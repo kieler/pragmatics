@@ -26,10 +26,7 @@ import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
  * The activator class controls the plug-in life cycle. *
  * 
  * @author mim
- * 
- * @kieler.rating 2009-12-15 proposed yellow
  */
-
 public class KSBasEUIPlugin extends AbstractUIPlugin {
 
     /** The plug-in ID. **/

@@ -33,7 +33,6 @@ import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransform
  * {@code ServiceDataConfigurationElement} instances is derived from the model which is provided to 
  * {@code ExtensionLayoutDataService} by overriding its {@link getProviderExtensions()} method. 
  *
- * @kieler.rating 2011-05-17 red
  * @author swe
  */
 public abstract class ServiceDataLayoutDataService extends ExtensionLayoutDataService {

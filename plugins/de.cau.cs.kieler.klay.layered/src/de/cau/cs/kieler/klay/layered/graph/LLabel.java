@@ -17,26 +17,35 @@ package de.cau.cs.kieler.klay.layered.graph;
  * A label in the layered graph structure.
  * 
  * @author jjc
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LLabel extends LShape {
 
+    /** the serial version UID. */
+    private static final long serialVersionUID = -264988654527750053L;
+    
     /** text of the label. */
     private String text;
     
     /**
      * Creates a label.
      * 
+     * @param graph the graph for which the label is created
      * @param thetext text of the label
      */
-    public LLabel(final String thetext) {
+    public LLabel(final LGraph graph, final String thetext) {
+        super(graph);
         this.text = thetext;
     }
     
     /**
      * Creates a label with empty text.
+     * 
+     * @param graph the graph for which the label is created
      */
-    public LLabel() {
-        this("");
+    public LLabel(final LGraph graph) {
+        this(graph, "");
     }
     
     /**

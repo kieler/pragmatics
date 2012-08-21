@@ -25,9 +25,9 @@ import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework
  * Request for the execution of a model transformation.
  * 
  * @author mim
- * 
- * @kieler.rating 2009-12-15 proposed yellow
  */
+//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
+@SuppressWarnings("deprecation")
 public class ExecuteTransformationRequest extends Request {
 
     /** The request used to initiate a transformation. */

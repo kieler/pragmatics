@@ -36,6 +36,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.impl.InternalTransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.commands.Command;
@@ -93,7 +94,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * {@link GmfLayoutCommand} to directly manipulate data in the GMF notation model, where layout
  * information is stored persistently.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
+ * @kieler.rating yellow 2012-07-19 review KI-20 by cds, jjc
  * @author ars
  * @author msp
  */
@@ -136,16 +137,21 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         IFigure currentParent = child.getParent();
         Point coordsToAdd = null;
         boolean isRelative = false;
+        // follow the chain of parents in the figure hierarchy up to the given parent figure
         while (currentChild != parent && currentParent != null) {
             if (currentParent.isCoordinateSystem()) {
+                // the content of the current parent is relative to that figure's position
                 isRelative = true;
                 result.add(currentParent.getInsets());
                 if (coordsToAdd != null) {
+                    // add the position of the previous parent with local coordinate system
                     result.left += coordsToAdd.x;
                     result.top += coordsToAdd.y;
                 }
                 coordsToAdd = currentParent.getBounds().getLocation();
             } else if (currentParent == parent && coordsToAdd != null) {
+                // we found the top parent, and it does not have local coordinate system,
+                // so subtract the parent's coordinates from the previous parent's position
                 Point parentCoords = parent.getBounds().getLocation();
                 result.left += coordsToAdd.x - parentCoords.x;
                 result.top += coordsToAdd.y - parentCoords.y;
@@ -154,15 +160,16 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             currentParent = currentChild.getParent();
         }
         if (!isRelative) {
+            // there is no local coordinate system, so just subtract the coordinates
             Rectangle parentBounds = parent.getBounds();
             currentParent = child.getParent();
             Rectangle containerBounds = currentParent.getBounds();
             result.left = containerBounds.x - parentBounds.x;
             result.top = containerBounds.y - parentBounds.y;
         }
-        // FIXME in theory it would be better to get the bottom and right insets from the size;
-        // however, due to the inpredictability of Draw2D layout managers, this leads to
-        // bad results in many cases, so a fixed insets value is more stable
+        // In theory it would be better to get the bottom and right insets from the size.
+        // However, due to the inpredictability of Draw2D layout managers, this leads to
+        // bad results in many cases, so a fixed insets value is more stable.
         result.right = result.left;
         result.bottom = result.left;
         return result;
@@ -192,6 +199,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param connection a connection figure
      * @param index the index in the point list
      * @return the absolute point
+     * @deprecated this method does not correctly compensate panning of the diagram
+     *          (deprecated since July 2012)
      */
     public static Point getAbsolutePoint(final Connection connection, final int index) {
         Point point = new Point(connection.getPoints().getPoint(index)) {
@@ -218,6 +227,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             ep = ep.getParent();
         }
         if (ep instanceof RootEditPart) {
+            // the diagram edit part is a direct child of the root edit part
             RootEditPart root = (RootEditPart) ep;
             ep = null;
             for (Object child : root.getChildren()) {
@@ -242,7 +252,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes", "unchecked" }) // the signature of IAdapterFactory is unchecked
     public Object getAdapter(final Object object, final Class adapterType) {
         if (adapterType.isAssignableFrom(GmfLayoutConfig.class)) {
             return layoutConfig;
@@ -258,7 +268,19 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             }
         } else if (adapterType.isAssignableFrom(EObject.class)) {
             if (object instanceof IGraphicalEditPart) {
-                return ((IGraphicalEditPart) object).getNotationView().getElement();
+                IGraphicalEditPart editPart = (IGraphicalEditPart) object;
+                EObject element = editPart.getNotationView().getElement();
+                if (editPart.getParent() != null) {
+                    // return the EObject only if the edit part has its own model element
+                    Object model = editPart.getParent().getModel();
+                    if (model instanceof View) {
+                        EObject parentElement = ((View) model).getElement();
+                        if (element == parentElement) {
+                            return null;
+                        }
+                    }
+                }
+                return element;
             } else if (object instanceof View) {
                 return ((View) object).getElement();
             }
@@ -339,7 +361,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             final IGraphicalEditPart layoutRootPart) {
         LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>(this);
         mapping.setProperty(CONNECTIONS, new LinkedList<ConnectionEditPart>());
-        mapping.setProperty(STATIC_CONFIG, new VolatileLayoutConfig());
+        mapping.setProperty(STATIC_CONFIG, new VolatileLayoutConfig(GmfLayoutConfig.PRIORITY - 1));
 
         // set the parent element
         mapping.setParentElement(layoutRootPart);
@@ -388,10 +410,14 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         KShapeLayout graphLayout = mapping.getLayoutGraph().getData(KShapeLayout.class);
         applyLayoutRequest.setUpperBound(graphLayout.getWidth(), graphLayout.getHeight());
 
-        // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
-        Command applyLayoutCommand = mapping.getProperty(DIAGRAM_EDIT_PART).getCommand(
-                applyLayoutRequest);
-        mapping.setProperty(LAYOUT_COMMAND, applyLayoutCommand);
+        // check the validity of the editing domain to catch cases where it is disposed
+        DiagramEditPart diagramEditPart = mapping.getProperty(DIAGRAM_EDIT_PART);
+        if (((InternalTransactionalEditingDomain) diagramEditPart.getEditingDomain())
+                .getChangeRecorder() != null) {
+            // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
+            Command applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
+            mapping.setProperty(LAYOUT_COMMAND, applyLayoutCommand);
+        }
     }
 
     /**
@@ -399,33 +425,39 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      */
     @Override
     protected void applyLayout(final LayoutMapping<IGraphicalEditPart> mapping) {
-        // get a command stack to execute the command
-        CommandStack commandStack = mapping.getProperty(COMMAND_STACK);
-        DiagramEditor diagramEditor = mapping.getProperty(DIAGRAM_EDITOR);
-        if (commandStack == null) {
-            if (diagramEditor != null) {
-                Object adapter = diagramEditor.getAdapter(CommandStack.class);
-                if (adapter instanceof CommandStack) {
-                    commandStack = (CommandStack) adapter;
+        Command applyLayoutCommand = mapping.getProperty(LAYOUT_COMMAND);
+        
+        if (applyLayoutCommand != null) {
+            // get a command stack to execute the command
+            CommandStack commandStack = mapping.getProperty(COMMAND_STACK);
+            DiagramEditor diagramEditor = mapping.getProperty(DIAGRAM_EDITOR);
+            if (commandStack == null) {
+                if (diagramEditor != null) {
+                    Object adapter = diagramEditor.getAdapter(CommandStack.class);
+                    if (adapter instanceof CommandStack) {
+                        commandStack = (CommandStack) adapter;
+                    }
+                }
+                if (commandStack == null) {
+                    commandStack = mapping.getParentElement().getDiagramEditDomain()
+                            .getDiagramCommandStack();
                 }
             }
-            if (commandStack == null) {
-                commandStack = mapping.getParentElement().getDiagramEditDomain()
-                        .getDiagramCommandStack();
+    
+            // execute the command
+            commandStack.execute(applyLayoutCommand);
+            
+            // refresh the border items in the diagram
+            if (diagramEditor != null || mapping.getParentElement() != null) {
+                refreshDiagram(diagramEditor, mapping.getParentElement());
             }
-        }
-
-        // execute the command
-        commandStack.execute(mapping.getProperty(LAYOUT_COMMAND));
-        
-        // refresh the border items in the diagram
-        if (diagramEditor != null || mapping.getParentElement() != null) {
-            refreshDiagram(diagramEditor, mapping.getParentElement());
         }
     }
     
     /**
-     * {@inheritDoc}
+     * Perform undo in the original diagram.
+     *
+     * @param mapping a layout mapping that was created by this layout manager
      */
     @Override
     protected void performUndo(final LayoutMapping<IGraphicalEditPart> mapping) {
@@ -471,7 +503,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 createPort(mapping, (AbstractBorderItemEditPart) obj, parentEditPart,
                         parentLayoutNode);
 
-                // process a compartment, which may contain other elements
+            // process a compartment, which may contain other elements
             } else if (obj instanceof ResizableCompartmentEditPart
                     && ((CompartmentEditPart) obj).getChildren().size() > 0) {
                 CompartmentEditPart compartment = (CompartmentEditPart) obj;
@@ -491,7 +523,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     }
                 }
 
-                // process a node, which may be a parent of ports, compartments, or other nodes
+            // process a node, which may be a parent of ports, compartments, or other nodes
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
                 if (!GmfLayoutConfig.isNoLayout(childNodeEditPart)) {
@@ -499,7 +531,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                             kinsets);
                 }
 
-                // process a label of the current node
+            // process a label of the current node
             } else if (obj instanceof IGraphicalEditPart) {
                 createNodeLabel(mapping, (IGraphicalEditPart) obj, parentEditPart, parentLayoutNode);
             }
@@ -546,6 +578,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             staticConfig.setValue(LayoutOptions.MIN_HEIGHT, childLayoutNode, LayoutContext.GRAPH_ELEM,
                     (float) minSize.height);
         } catch (SWTException exception) {
+            // getMinimumSize() can cause this exception when fonts are disposed for some reason;
             // ignore exception and leave the default minimal size
         }
 
@@ -726,7 +759,9 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             EdgeLabelPlacement edgeLabelPlacement = EdgeLabelPlacement.UNDEFINED;
             KEdge edge;
 
-            // check whether the edge belongs to an Ecore reference, which may have opposites
+            // Check whether the edge belongs to an Ecore reference, which may have opposites.
+            // This is required for the layout of Ecore diagrams, since the bend points of
+            // opposite references are kept synchronized by the editor.
             EObject modelObject = connection.getNotationView().getElement();
             if (modelObject instanceof EReference) {
                 EReference reference = (EReference) modelObject;
@@ -839,19 +874,19 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         PointList pointList = figure.getPoints();
 
         KPoint sourcePoint = edgeLayout.getSourcePoint();
-        Point firstPoint = getAbsolutePoint(figure, 0);
+        Point firstPoint = pointList.getPoint(0);
         sourcePoint.setX(firstPoint.x - (float) offset.x);
         sourcePoint.setY(firstPoint.y - (float) offset.y);
 
         for (int i = 1; i < pointList.size() - 1; i++) {
-            Point point = getAbsolutePoint(figure, i);
+            Point point = pointList.getPoint(i);
             KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
             kpoint.setX(point.x - (float) offset.x);
             kpoint.setY(point.y - (float) offset.y);
             edgeLayout.getBendPoints().add(kpoint);
         }
         KPoint targetPoint = edgeLayout.getTargetPoint();
-        Point lastPoint = getAbsolutePoint(figure, pointList.size() - 1);
+        Point lastPoint = pointList.getPoint(pointList.size() - 1);
         targetPoint.setX(lastPoint.x - (float) offset.x);
         targetPoint.setY(lastPoint.y - (float) offset.y);
         
@@ -889,7 +924,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 IFigure labelFigure = labelEditPart.getFigure();
                 
                 // Check if the label is visible in the first place
-                if (labelFigure != null && !labelFigure.isVisible()) {
+                if (labelFigure == null || !labelFigure.isVisible()) {
                     continue;
                 }
                 
@@ -905,6 +940,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                         iconBounds.width = wrappingLabel.getIcon().getBounds().width
                                 + wrappingLabel.getIconTextGap();
                         iconBounds.height = wrappingLabel.getIcon().getBounds().height;
+                        // Add more characters to the text for layouters that need the text to
+                        // determine the label size.
                         labelText = "O " + labelText;
                     }
                 } else if (labelFigure instanceof Label) {
@@ -913,6 +950,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     if (label.getIcon() != null) {
                         iconBounds = label.getIconBounds().getSize();
                         iconBounds.width += label.getIconTextGap();
+                        // Add more characters to the text for layouters that need the text to
+                        // determine the label size.
                         labelText = "O " + labelText;
                     }
                 }
@@ -936,7 +975,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                             break;
                         }
                     } else {
-                        labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, placement);
+                        staticConfig.setValue(LayoutOptions.EDGE_LABEL_PLACEMENT, label,
+                                LayoutContext.GRAPH_ELEM, placement);
                     }
                     Font font = labelFigure.getFont();
                     if (font != null && !font.isDisposed()) {
@@ -975,6 +1015,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      *            the diagram editor
      * @param rootPart
      *            the root edit part
+     * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=291484
      */
     private static void refreshDiagram(final DiagramEditor editor, final IGraphicalEditPart rootPart) {
         EditPart editPart = rootPart;

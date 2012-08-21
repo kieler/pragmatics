@@ -44,6 +44,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * 
  * @author msp
  * @author cds
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class HyperedgeCrossingsAnalysis implements IAnalysis {
     
@@ -106,7 +107,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
                 if (edge.getData(KEdgeLayout.class).getProperty(LayoutOptions.EDGE_ROUTING)
                         == EdgeRouting.SPLINES) {
                     
-                    chain = KielerMath.appoximateSpline(chain);
+                    chain = KielerMath.approximateSpline(chain);
                 }
                 
                 // Transform the vector chain into a list of line segments

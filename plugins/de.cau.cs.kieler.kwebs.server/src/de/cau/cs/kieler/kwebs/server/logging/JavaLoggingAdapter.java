@@ -25,9 +25,7 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 /**
  * Adapter for catching the jaxws logging events and log them in our own logger.
  *
- * @kieler.rating  2011-08-25 yellow
- *      reviewed by ckru, msp, mri
- *      
+ * @kieler.design 2011-08-25 reviewed by ckru, msp, mri
  * @author  swe
  */
 public class JavaLoggingAdapter extends Handler implements java.util.logging.Filter {

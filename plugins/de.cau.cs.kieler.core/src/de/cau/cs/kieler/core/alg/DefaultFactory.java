@@ -20,6 +20,7 @@ import de.cau.cs.kieler.core.WrappedException;
  *
  * @param <T> type of instances that are created by this factory
  * @author msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class DefaultFactory<T> implements IFactory<T> {
 

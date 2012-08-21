@@ -23,6 +23,8 @@ package de.cau.cs.kieler.klay.layered.properties;
  * {@link Properties#GRAPH_PROPERTIES} property.</p>
  * 
  * @author cds
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public enum GraphProperties {
     
@@ -41,6 +43,10 @@ public enum GraphProperties {
     /** The graph contains ports on the northern or southern side. */
     NORTH_SOUTH_PORTS,
     /** The graph contains self-loops. */
-    SELF_LOOPS;
+    SELF_LOOPS,
+    /** The graph contains center edge labels. */
+    CENTER_LABELS,
+    /** The graph contains head or tail edge labels. */
+    END_LABELS;
     
 }

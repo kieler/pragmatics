@@ -22,6 +22,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
  * Contributes actions to the eclipse toolbar.
  * 
  * @author soh
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomEditorActionBarContributor extends EditorActionBarContributor {
 

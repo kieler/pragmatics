@@ -38,6 +38,7 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
  * Section for construction of the property view.
  * 
  * @author atr
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomPropertySection extends GFPropertySection implements ITabbedPropertyConstants {
 
@@ -58,6 +59,7 @@ public class KaomPropertySection extends GFPropertySection implements ITabbedPro
         /**
          * {@inheritDoc}
          */
+        @SuppressWarnings("restriction")
         public void focusLost(final FocusEvent e) {
             PictogramElement pe = getSelectedPictogramElement();
             if (pe instanceof ConnectionDecorator) {
@@ -103,7 +105,7 @@ public class KaomPropertySection extends GFPropertySection implements ITabbedPro
         nameText = factory.createText(composite, "");
         data = new FormData();
         data.left = new FormAttachment(0, STANDARD_LABEL_WIDTH);
-        data.right = new FormAttachment(100, 0);
+        data.right = new FormAttachment(100, 0); // SUPPRESS CHECKSTYLE MagicNumber
         data.top = new FormAttachment(0, VSPACE);
 
         // Layouts the nameText field and adds the listener

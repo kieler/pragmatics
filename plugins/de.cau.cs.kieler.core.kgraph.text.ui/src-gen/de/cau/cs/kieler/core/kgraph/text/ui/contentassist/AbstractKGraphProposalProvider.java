@@ -5,7 +5,7 @@ package de.cau.cs.kieler.core.kgraph.text.ui.contentassist;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.*;
-import de.cau.cs.kieler.core.krendering.text.ui.contentassist.KRenderingProposalProvider;
+import de.cau.cs.kieler.core.kgraph.text.krendering.ui.contentassist.KRenderingProposalProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 
@@ -59,6 +59,9 @@ public class AbstractKGraphProposalProvider extends KRenderingProposalProvider {
 	public void completeKEdge_Labels(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		completeRuleCall(((RuleCall)assignment.getTerminal()), context, acceptor);
 	}
+	public void completeKGraphDataImpl_PersistentEntries(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		completeRuleCall(((RuleCall)assignment.getTerminal()), context, acceptor);
+	}
     
 	public void complete_KNode(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		// subclasses may override
@@ -73,6 +76,9 @@ public class AbstractKGraphProposalProvider extends KRenderingProposalProvider {
 		// subclasses may override
 	}
 	public void complete_KGraphData(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		// subclasses may override
+	}
+	public void complete_KGraphDataImpl(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		// subclasses may override
 	}
 }

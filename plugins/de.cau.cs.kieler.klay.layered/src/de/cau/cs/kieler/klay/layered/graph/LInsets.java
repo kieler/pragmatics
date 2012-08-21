@@ -19,6 +19,8 @@ package de.cau.cs.kieler.klay.layered.graph;
  * 
  * @author cds
  * @see LInsets.Double
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LInsets {
     // Allow public fields in this utility classes.

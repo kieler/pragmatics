@@ -42,6 +42,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * @author mri
  * @author cds
  * @author msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class EdgeCrossingsAnalysis implements IAnalysis {
     
@@ -157,7 +158,7 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
                 // transform spline control points to approximated bend points
                 if (edge.getData(KEdgeLayout.class).getProperty(LayoutOptions.EDGE_ROUTING)
                         == EdgeRouting.SPLINES) {
-                    chain = KielerMath.appoximateSpline(chain);
+                    chain = KielerMath.approximateSpline(chain);
                 }
                 
                 edges.add(edge);

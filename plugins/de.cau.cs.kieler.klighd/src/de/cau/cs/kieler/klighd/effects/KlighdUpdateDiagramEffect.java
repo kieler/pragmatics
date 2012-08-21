@@ -13,8 +13,10 @@
  */
 package de.cau.cs.kieler.klighd.effects;
 
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 
@@ -26,6 +28,9 @@ import de.cau.cs.kieler.klighd.views.DiagramViewPart;
  * @author mri
  */
 public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
+
+    /** the serial version UID. */
+    private static final long serialVersionUID = -5653125647788085065L;
 
     /**
      * Constructs an effect that updates the diagram view for the given identifier with the given
@@ -74,9 +79,12 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
      *            the name
      * @param model
      *            the input model
+     * @param theSourceWorkbenchPart
+     *            the workbench part the element to be shown has been selected in
      */
-    public KlighdUpdateDiagramEffect(final String id, final String name, final Object model) {
-        super(id, name, model);
+    public KlighdUpdateDiagramEffect(final String id, final String name, final Object model,
+            final IWorkbenchPart theSourceWorkbenchPart) {
+        super(id, name, model, theSourceWorkbenchPart);
     }
 
     /**
@@ -84,7 +92,7 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
      */
     public void execute() {
         final IPropertyHolder propertyHolder = this;
-        MonitoredOperation.runInUI(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 DiagramViewPart view;
                 if (DiagramViewManager.getInstance().getView(getId()) == null) {
@@ -98,9 +106,10 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
                 setView(view);
                 if (view != null) {
                     setViewer(view.getContextViewer().getActiveViewer());
+                    setSourceWorkbenchPart();
                 }
             }
-        }, true);
+        });
     }
 
 }

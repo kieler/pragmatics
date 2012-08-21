@@ -33,7 +33,6 @@ import de.cau.cs.kieler.kwebs.client.KwebsClientPlugin;
  * options. At this moment the layout capabilities include available layout
  * algorithms and layout options only.
  *
- * @kieler.rating 2011-05-17 red
  * @author swe
  */
 public final class RemoteLayoutDataService extends ServiceDataLayoutDataService {

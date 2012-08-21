@@ -32,13 +32,17 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
  *
  * @param <T> the type of diagram parts to store in the mapping
  * @author msp
+ * @kieler.rating yellow 2012-07-19 review KI-20 by cds, jjc
  */
 public class LayoutMapping<T> extends MapPropertyHolder {
     
+    /** the serial version UID. */
+    private static final long serialVersionUID = 4066018168889912586L;
+    
     /** the bidirectional mapping of layout graph elements to diagram parts. */
-    private BiMap<KGraphElement, T> graphElemMap = HashBiMap.create();
+    private final BiMap<KGraphElement, T> graphElemMap = HashBiMap.create();
     /** additional layout configurations for specification of layout options. */
-    private List<ILayoutConfig> layoutConfigs = Lists.newLinkedList();
+    private final List<ILayoutConfig> layoutConfigs = Lists.newLinkedList();
     /** the top-level parent node of the layout graph. */
     private KNode layoutGraph;
     /** the top-level diagram part. */
@@ -49,10 +53,10 @@ public class LayoutMapping<T> extends MapPropertyHolder {
     /**
      * Create a layout mapping with given adapter factory.
      * 
-     * @param theadapterFactory the adapter factory for accessing elements
+     * @param adapterFactory the adapter factory for accessing elements
      */
-    public LayoutMapping(final IAdapterFactory theadapterFactory) {
-        this.adapterFactory = theadapterFactory;
+    public LayoutMapping(final IAdapterFactory adapterFactory) {
+        this.adapterFactory = adapterFactory;
     }
     
     /**
@@ -67,10 +71,10 @@ public class LayoutMapping<T> extends MapPropertyHolder {
     /**
      * Set the top-level parent node of the layout graph.
      * 
-     * @param thelayoutGraph the layout graph
+     * @param layoutGraph the layout graph
      */
-    public void setLayoutGraph(final KNode thelayoutGraph) {
-        this.layoutGraph = thelayoutGraph;
+    public void setLayoutGraph(final KNode layoutGraph) {
+        this.layoutGraph = layoutGraph;
     }
     
     /**
@@ -95,10 +99,10 @@ public class LayoutMapping<T> extends MapPropertyHolder {
     /**
      * Set the top-level diagram part.
      * 
-     * @param theparentElem the parent diagram part
+     * @param parentElem the parent diagram part
      */
-    public void setParentElement(final T theparentElem) {
-        this.parentElement = theparentElem;
+    public void setParentElement(final T parentElem) {
+        this.parentElement = parentElem;
     }
     
     /**

@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.properties.IPropertyHolder;
  * The base class for a KEG importer.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public abstract class AbstractImporter implements IImporter {
 

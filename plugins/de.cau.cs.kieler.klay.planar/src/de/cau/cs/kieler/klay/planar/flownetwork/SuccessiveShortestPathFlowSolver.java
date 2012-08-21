@@ -19,99 +19,104 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver.IMinimumCostFlowSolver;
-import de.cau.cs.kieler.klay.planar.graph.IEdge;
-import de.cau.cs.kieler.klay.planar.graph.IGraph;
-import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PGraph;
+import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.pathfinding.BellmanFordPathFinder;
 import de.cau.cs.kieler.klay.planar.pathfinding.DijkstraPathFinder;
 import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
 
 /**
  * Solve the minimum cost flow problem on flow networks using the successive shortest path
- * algorithm.
+ * algorithm. A good reference for constructing the Successive Shortest Path algorithm is
+ * http://coral.ie.lehigh.edu/~ted/files/ie411/lectures/Lecture14.pdf.
  * 
  * @author ocl
+ * @author pkl
  */
 public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implements
         IMinimumCostFlowSolver {
-    // TODO Handle multi edges in network
-    // TODO flow can move in both directions in residual network
-    // TODO different path costs for forward and backward edges in residual network
 
     /**
      * {@inheritDoc}
      */
-    public void findFlow(final IGraph network) {
-
+    public void findFlow(final PGraph network) {
         // Add source and sink nodes
-        INode source = network.addNode();
-        INode sink = network.addNode();
-        for (INode node : network.getNodes()) {
+        PNode source = network.addNode();
+        PNode sink = network.addNode();
+        // Add some edges as follows
+        for (PNode node : network.getNodes()) {
             int s = node.getProperty(SUPPLY);
+            // for each node i with bi > 0, add a source arc (s,i) with
+            // capacity bi and cost 0.
             if (s > 0) {
-                IEdge edge = network.addEdge(source, node, true);
+                PEdge edge = network.addEdge(source, node, true);
                 edge.setProperty(CAPACITY, s);
                 edge.setProperty(IPathFinder.PATHCOST, 0);
+                // for each node i with bi < 0, add a sink arc (i,t) with
+                // capacity -bi and cost 0.
             } else if (s < 0) {
-                IEdge edge = network.addEdge(node, sink, true);
+                PEdge edge = network.addEdge(node, sink, true);
                 edge.setProperty(CAPACITY, -s);
                 edge.setProperty(IPathFinder.PATHCOST, 0);
             }
         }
 
-        // Initialize node potentials using Bellman-Ford-Algorithm
+        // Initialize node potentials using Bellman-Ford-Algorithm, secondly make negative cycles
+        // in the network positive. Potential are used to ensure non negative path cycles and
+        // to calculate the reduced costs.
         IPathFinder pathFinder = new BellmanFordPathFinder();
         pathFinder.findPath(source, sink);
         int[] potentials = new int[network.getNodeCount()];
-        for (INode node : network.getNodes()) {
-            potentials[node.getID()] = node.getProperty(IPathFinder.DISTANCE);
+        for (PNode node : network.getNodes()) {
+            potentials[node.id] = node.getProperty(IPathFinder.DISTANCE);
         }
-        for (IEdge edge : network.getEdges()) {
+        // Set the reduced costs.
+        for (PEdge edge : network.getEdges()) {
             int cost = edge.getProperty(IPathFinder.PATHCOST);
-            cost += potentials[edge.getSource().getID()];
-            cost -= potentials[edge.getTarget().getID()];
+            cost += potentials[edge.getSource().id];
+            cost -= potentials[edge.getTarget().id];
             edge.setProperty(IPathFinder.PATHCOST, cost);
         }
 
-        // Initialize path finder
-        // Condition describes residual network
+        // Initialize more efficient Dijkstra path finder.
+        // Condition describes residual network.
         pathFinder = new DijkstraPathFinder();
-        ICondition<Pair<INode, IEdge>> cond = new ICondition<Pair<INode, IEdge>>() {
-            public boolean evaluate(final Pair<INode, IEdge> object) {
-                INode node = object.getFirst();
-                IEdge edge = object.getSecond();
+        ICondition<Pair<PNode, PEdge>> cond = new ICondition<Pair<PNode, PEdge>>() {
+            public boolean evaluate(final Pair<PNode, PEdge> object) {
+                PNode node = object.getFirst();
+                PEdge edge = object.getSecond();
                 int cap = 0;
                 if (edge.isDirected() && (node == edge.getTarget())) {
                     cap = edge.getProperty(CAPACITY) - edge.getProperty(FLOW);
-                    edge.setProperty(RESIDUALCAPACITY, cap);
+                    edge.setProperty(RESIDUAL_CAPACITY, cap);
                     return cap > 0;
                 }
                 return false;
             }
         };
 
-        List<IEdge> path = pathFinder.findPath(source, sink, cond);
+        List<PEdge> path = pathFinder.findPath(source, sink, cond);
         while (path != null) {
 
             // Update path costs based on potentials
-            for (IEdge edge : network.getEdges()) {
+            for (PEdge edge : network.getEdges()) {
                 int cost = edge.getProperty(IPathFinder.PATHCOST);
-                cost += potentials[edge.getSource().getID()];
-                cost -= potentials[edge.getTarget().getID()];
+                cost -= potentials[edge.getSource().id];
+                cost += potentials[edge.getTarget().id];
                 edge.setProperty(IPathFinder.PATHCOST, cost);
             }
-
             // Get minimal capacity along path
             int value = Integer.MAX_VALUE;
-            for (IEdge edge : path) {
-                int cap = edge.getProperty(RESIDUALCAPACITY);
+            for (PEdge edge : path) {
+                int cap = edge.getProperty(RESIDUAL_CAPACITY);
                 if (cap < value) {
                     value = cap;
                 }
             }
 
             // Update flow along path
-            for (IEdge edge : path) {
+            for (PEdge edge : path) {
                 int flow = edge.getProperty(FLOW);
                 edge.setProperty(FLOW, flow + value);
             }
@@ -119,9 +124,9 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             pathFinder.reset();
             path = pathFinder.findPath(source, sink, cond);
         }
-
         // Remove source and sink nodes
-        // network.removeNode(source);
-        // network.removeNode(sink);
+        network.removeNode(source);
+        network.removeNode(sink);
     }
+
 }

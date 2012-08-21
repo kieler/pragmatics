@@ -55,9 +55,7 @@ import de.cau.cs.kieler.kex.model.ExampleResource;
  * So it allows to create new examples or example categories.
  * 
  * @author pkl
- * 
  */
-
 public class PluginExampleCreator {
 
     private final IPath workspacePath = Platform.getLocation();
@@ -167,8 +165,12 @@ public class PluginExampleCreator {
                 : relativeLocation);
     }
 
+    /**
+     * Gets the plugin node.
+     *
+     * @return the plugin node
+     */
     public Node getPluginNode() {
-
         try {
             if (IOHandler.PLUGIN_XML.equals(this.pluginXML.getName())) {
                 parsedXML = parseDocument(this.pluginXML);
@@ -197,6 +199,12 @@ public class PluginExampleCreator {
         throw new RuntimeException("Could not filter plugin node. " + pluginXML.getPath());
     }
 
+    /**
+     * Filter extension kex.
+     *
+     * @param pluginNode the plugin node
+     * @return the node
+     */
     public Node filterExtensionKEX(final Node pluginNode) {
         Node extensionKEX = null;
         NodeList nodes = pluginNode.getChildNodes();
@@ -341,17 +349,6 @@ public class PluginExampleCreator {
                 .append(e.getLocalizedMessage()).toString());
     }
 
-    private Node toNode(final Category category) {
-        Element createdElement = parsedXML.createElement(PluginConstants.Category.CATEGORY);
-        createdElement.setAttribute(PluginConstants.Category.ID, category.getId());
-        createdElement.setAttribute(PluginConstants.Category.TITLE, category.getTitle());
-        createdElement
-                .setAttribute(PluginConstants.Category.DESCRIPTION, category.getDescription());
-        createdElement.setAttribute(PluginConstants.Category.ICON, category.getIconPath());
-        createdElement.setAttribute(PluginConstants.Category.PARENT, category.getParentId());
-        return createdElement;
-    }
-
     private Node toNode(final Example example, final File location) {
         Element createdExample = parsedXML.createElement(PluginConstants.Example.EXAMPLE);
         createdExample.setAttribute(PluginConstants.Example.ID, example.getId());
@@ -449,7 +446,7 @@ public class PluginExampleCreator {
     /**
      * setter for the pluginXML.
      * 
-     * @param pluginXML
+     * @param pluginXML the plugin.xml file.
      */
     public void setPluginXML(final File pluginXML) {
         this.pluginXML = pluginXML;

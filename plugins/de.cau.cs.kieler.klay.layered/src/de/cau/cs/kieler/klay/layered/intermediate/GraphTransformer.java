@@ -25,12 +25,14 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 /**
  * A layout processor that is able to perform transformations on the coordinates of a graph.
  *
  * @author msp
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
 public class GraphTransformer extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -38,14 +40,14 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
     public enum Mode {
         /** mirror the x coordinates of the graph. */
         MIRROR,
-        /** transpose by switching x and y coordinates. */
+        /** transpose by swapping x and y coordinates. */
         TRANSPOSE,
         /** mirror and then transpose the graph. */
         MIRROR_AND_TRANSPOSE;
     }
     
     /** the configured mode of the graph transformer. */
-    private Mode mode;
+    private final Mode mode;
     
     /**
      * Creates a graph transformer with the given mode.
@@ -59,7 +61,7 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Graph transformation (" + mode + ")", 1);
         List<LNode> nodes = new LinkedList<LNode>(layeredGraph.getLayerlessNodes());
         for (Layer layer : layeredGraph.getLayers()) {

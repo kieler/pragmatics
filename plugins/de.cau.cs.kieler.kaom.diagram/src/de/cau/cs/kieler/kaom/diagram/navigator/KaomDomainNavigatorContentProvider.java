@@ -3,7 +3,6 @@ package de.cau.cs.kieler.kaom.diagram.navigator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;
@@ -59,6 +58,7 @@ public class KaomDomainNavigatorContentProvider implements ICommonContentProvide
     /**
      * @generated
      */
+    @SuppressWarnings({ "unchecked", "serial", "rawtypes" })
     public KaomDomainNavigatorContentProvider() {
         myAdapterFctoryContentProvier = new AdapterFactoryContentProvider(KaomDiagramEditorPlugin
                 .getInstance().getItemProvidersAdapterFactory());
@@ -190,6 +190,7 @@ public class KaomDomainNavigatorContentProvider implements ICommonContentProvide
     /**
      * @generated
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Object[] wrapEObjects(Object[] objects, Object parentElement) {
         Collection result = new ArrayList();
         for (int i = 0; i < objects.length; i++) {

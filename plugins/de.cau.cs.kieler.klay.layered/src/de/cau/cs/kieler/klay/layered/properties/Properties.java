@@ -35,6 +35,8 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
+import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
+import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 
 /**
  * Container for property definitions.
@@ -42,6 +44,8 @@ import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
  * @author msp
  * @author cds
  * @author ima
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public final class Properties {
 
@@ -55,14 +59,14 @@ public final class Properties {
      */
     public static final IProperty<NodeType> NODE_TYPE = new Property<NodeType>("nodeType",
             NodeType.NORMAL);
-    
+
     /**
-     * Offset of port position to the node border. An offset of 0 means that the port touches
-     * its parent node on the outside, positive offsets move the port away from the node,
-     * and negative offset move the port towards the inside.
+     * Offset of port position to the node border. An offset of 0 means that the port touches its
+     * parent node on the outside, positive offsets move the port away from the node, and negative
+     * offset move the port towards the inside.
      */
     public static final IProperty<Float> OFFSET = new Property<Float>(LayoutOptions.OFFSET, 0.0f);
-    
+
     /**
      * The original bend points.
      */
@@ -114,7 +118,7 @@ public final class Properties {
      * Layer layout units are identified through one of their nodes.
      */
     public static final IProperty<LNode> IN_LAYER_LAYOUT_UNIT = new Property<LNode>(
-            "inLayerLayoutUnit", null);
+            "inLayerLayoutUnit");
 
     /**
      * The in-layer constraint placed on a node. This indicates whether this node should be handled
@@ -124,7 +128,8 @@ public final class Properties {
      * {@link de.cau.cs.kieler.klay.layered.intermediate.InLayerConstraintProcessor}.
      */
     public static final IProperty<InLayerConstraint> IN_LAYER_CONSTRAINT 
-    = new Property<InLayerConstraint>("inLayerConstraint", InLayerConstraint.NONE);
+           = new Property<InLayerConstraint>(
+            "inLayerConstraint", InLayerConstraint.NONE);
 
     /**
      * Indicates that a node {@code x} may only appear inside a layer before the node {@code y} the
@@ -132,7 +137,12 @@ public final class Properties {
      * constraint. This property only makes sense for nodes.
      */
     public static final IProperty<LNode> IN_LAYER_SUCCESSOR_CONSTRAINT = new Property<LNode>(
-            "inLayerSuccessorConstraint", null);
+            "inLayerSuccessorConstraint");
+
+    /**
+     * The node group of an LNode as used in the crossing minimization phase.
+     */
+    public static final IProperty<NodeGroup> NODE_GROUP = new Property<NodeGroup>("nodeGroup");
 
     /**
      * Crossing hint used for in-layer cross counting with northern and southern port dummies.
@@ -143,14 +153,15 @@ public final class Properties {
      * Flags indicating the properties of a graph.
      */
     public static final IProperty<Set<GraphProperties>> GRAPH_PROPERTIES 
-    = new Property<Set<GraphProperties>>("graphProperties", EnumSet.allOf(GraphProperties.class));
+    = new Property<Set<GraphProperties>>(
+            "graphProperties", EnumSet.allOf(GraphProperties.class));
 
     /**
      * The side of an external port a dummy node was created for.
      */
     public static final IProperty<PortSide> EXT_PORT_SIDE = new Property<PortSide>(
             "externalPortSide", PortSide.UNDEFINED);
-    
+
     /**
      * Original size of the external port a dummy node was created for.
      */
@@ -166,19 +177,18 @@ public final class Properties {
      */
     public static final IProperty<Double> EXT_PORT_RATIO_OR_POSITION = new Property<Double>(
             "externalPortRatioOrPosition", 0.0);
-    
+
     /**
-     * External port dummies that represent northern or southern external ports are replaced by
-     * new dummy nodes during layout. In these cases, this property is set to the original dummy
-     * node.
+     * External port dummies that represent northern or southern external ports are replaced by new
+     * dummy nodes during layout. In these cases, this property is set to the original dummy node.
      */
     public static final IProperty<LNode> EXT_PORT_REPLACED_DUMMY = new Property<LNode>(
-            "externalPortReplacedDummy", null);
-    
+            "externalPortReplacedDummy");
+
     /**
-     * The port sides of external ports a connected component connects to. This property is set
-     * on the layered graph that represents a connected component and defaults to no connections.
-     * If a connected component connects to an external port on the EAST side and to another external
+     * The port sides of external ports a connected component connects to. This property is set on
+     * the layered graph that represents a connected component and defaults to no connections. If a
+     * connected component connects to an external port on the EAST side and to another external
      * port on the NORTH side, this enumeration will list both sides.
      */
     public static final IProperty<Set<PortSide>> EXT_PORT_CONNECTIONS = new Property<Set<PortSide>>(
@@ -200,19 +210,19 @@ public final class Properties {
      * KNode that contained the origin of this node in the KGraph.
      */
     public static final IProperty<KNode> K_PARENT = new Property<KNode>("k_Parent");
-    
+
     /**
-     * LNode that is representative of the node that contains the property holder.
-     * Property for an LNode.
+     * LNode that is representative of the node that contains the property holder. Property for an
+     * LNode.
      */
     public static final IProperty<LGraphElement> PARENT = new Property<LGraphElement>("parent");
-    
+
     /**
-     * List of nodes that are children (direct descendants) of the node that is represented by
-     * the property holder. Property for an LNode.
+     * List of nodes that are children (direct descendants) of the node that is represented by the
+     * property holder. Property for an LNode.
      */
-    public static final IProperty<LinkedList<LNode>> CHILDREN 
-                    = new Property<LinkedList<LNode>>("children", null);
+    public static final IProperty<LinkedList<LNode>> CHILDREN = new Property<LinkedList<LNode>>(
+            "children", null);
 
     /**
      * LNode that is the left border node for the compound node the side dummy guards the side of.
@@ -240,7 +250,8 @@ public final class Properties {
      * Map between KGraph nodes/ports/edges and LGraph nodes/ports/edges.
      */
     public static final IProperty<HashMap<KGraphElement, LGraphElement>> ELEMENT_MAP 
-        = new Property<HashMap<KGraphElement, LGraphElement>>("ElementMap");
+        = new Property<HashMap<KGraphElement, LGraphElement>>(
+            "ElementMap");
 
     /**
      * List of comment boxes that are placed on top of a node.
@@ -259,48 +270,45 @@ public final class Properties {
      */
     public static final IProperty<LPort> COMMENT_CONN_PORT = new Property<LPort>(
             "CommentConnectionPort");
-    
+
     /**
      * The maximum depth of a leave node in the original graph a layered graph is representing.
      */
-    public static final IProperty<Integer> MAX_DEPTH = new Property<Integer>(
-            "MaxDepth", 0);
-    
+    public static final IProperty<Integer> MAX_DEPTH = new Property<Integer>("MaxDepth", 0);
+
     /**
      * The depth of a node in the nesting tree of a compound graph.
      */
-    public static final IProperty<Integer> DEPTH = new Property<Integer>(
-            "Depth", 0);
-    
+    public static final IProperty<Integer> DEPTH = new Property<Integer>("Depth", 0);
+
     /**
-     * Difference of Positions for an UPPER_BORDER_DUMMY_NODE before and after the CompoundGraphRestorer.
+     * Difference of Positions for an UPPER_BORDER_DUMMY_NODE before and after the
+     * CompoundGraphRestorer.
      */
     public static final IProperty<KVector> POSITION_DIFFERENCE = new Property<KVector>(
             "PositionDifference", null);
-    
+
     /**
      * Whether a port is used to collect all incoming edges of a node.
      */
-    public static final IProperty<Boolean> INPUT_COLLECT = new Property<Boolean>(
-            "inputCollect", false);
+    public static final IProperty<Boolean> INPUT_COLLECT = new Property<Boolean>("inputCollect",
+            false);
     /**
      * Whether a port is used to collect all outgoing edges of a node.
      */
-    public static final IProperty<Boolean> OUTPUT_COLLECT = new Property<Boolean>(
-            "outputCollect", false);
+    public static final IProperty<Boolean> OUTPUT_COLLECT = new Property<Boolean>("outputCollect",
+            false);
     /**
-     * Property of a LayeredGraph. Whether the graph has been processed by the cycle
-     * breaker and the cycle breaker has detected cycles and reverted edges. 
+     * Property of a LayeredGraph. Whether the graph has been processed by the cycle breaker and the
+     * cycle breaker has detected cycles and reverted edges.
      */
-    public static final IProperty<Boolean> CYCLIC = new Property<Boolean>(
-            "cyclic", false);
-    
+    public static final IProperty<Boolean> CYCLIC = new Property<Boolean>("cyclic", false);
+
     /**
      * The offset to the port position where connections shall be attached.
      */
     public static final IProperty<KVector> PORT_ANCHOR = new Property<KVector>(
             "de.cau.cs.kieler.klay.layered.portAnchor");
-    
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
@@ -317,33 +325,42 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.edgeSpacingFactor", 0.5f);
 
     /** priority of elements. controls how much single edges are emphasized. */
-    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
+    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
+            0);
 
     /** the aspect ratio for packing connected components. */
     public static final Property<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
-
-    /** defines the minimal angle a short edge may have. */
-    public static final IProperty<Float> MIN_EDGE_ANGLE = new Property<Float>(
-            "de.cau.cs.kieler.klay.layered.minimalAngle", 0.0f);
 
     /** whether nodes shall be distributed during layer assignment. */
     public static final IProperty<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.distributeNodes", false);
 
     /** property to choose a cycle breaking strategy. */
-    public static final IProperty<CycleBreakingStrategy> CYCLE_BREAKING
-            = new Property<CycleBreakingStrategy>("de.cau.cs.kieler.klay.layered.cycleBreaking",
-                    CycleBreakingStrategy.GREEDY);
-    
+    public static final IProperty<CycleBreakingStrategy> CYCLE_BREAKING 
+        = new Property<CycleBreakingStrategy>(
+            "de.cau.cs.kieler.klay.layered.cycleBreaking", CycleBreakingStrategy.GREEDY);
+
     /** property to choose a node layering strategy. */
     public static final IProperty<LayeringStrategy> NODE_LAYERING = new Property<LayeringStrategy>(
             "de.cau.cs.kieler.klay.layered.nodeLayering", LayeringStrategy.NETWORK_SIMPLEX);
 
     /** property to choose a crossing minimization strategy. */
-    public static final IProperty<CrossingMinimizationStrategy> CROSSMIN
-            = new Property<CrossingMinimizationStrategy>("de.cau.cs.kieler.klay.layered.crossMin",
-                    CrossingMinimizationStrategy.LAYER_SWEEP);
+    public static final IProperty<CrossingMinimizationStrategy> CROSSMIN 
+        = new Property<CrossingMinimizationStrategy>(
+            "de.cau.cs.kieler.klay.layered.crossMin", CrossingMinimizationStrategy.LAYER_SWEEP);
+
+    /** property to choose a node placement strategy. */
+    public static final IProperty<NodePlacementStrategy> NODEPLACE = new Property<NodePlacementStrategy>(
+            "de.cau.cs.kieler.klay.layered.nodePlace", NodePlacementStrategy.LINEAR_SEGMENTS);
+
+    /** property to choose a node placement strategy. */
+    public static final IProperty<Boolean> EDGE_BENDS = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.edgeBends", true);
+
+    /** property to switch debug mode on or off. */
+    public static final IProperty<Boolean> DEBUG_MODE = new Property<Boolean>(
+            "de.cau.cs.kieler.debugMode", false);
 
     /** property that determines how much effort should be spent. */
     public static final IProperty<Integer> THOROUGHNESS = new Property<Integer>(
@@ -352,7 +369,7 @@ public final class Properties {
     /** property to set constraints on the node layering. */
     public static final IProperty<LayerConstraint> LAYER_CONSTRAINT = new Property<LayerConstraint>(
             "de.cau.cs.kieler.klay.layered.layerConstraint", LayerConstraint.NONE);
-    
+
     /**
      * Property to enable or disable port merging. Merging ports is only interesting for edges
      * directly connected to nodes instead of ports. When this option is disabled, one port is
@@ -361,11 +378,12 @@ public final class Properties {
      */
     public static final IProperty<Boolean> MERGE_PORTS = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.mergePorts", false);
-    
+
     /** property that determines which point in a node determines the result of interactive phases. */
-    public static final IProperty<InteractiveReferencePoint> INTERACTIVE_REFERENCE_POINT
-            = new Property<InteractiveReferencePoint>(
-            "de.cau.cs.kieler.klay.layered.interactiveReferencePoint", InteractiveReferencePoint.CENTER);
+    public static final IProperty<InteractiveReferencePoint> INTERACTIVE_REFERENCE_POINT 
+        = new Property<InteractiveReferencePoint>(
+            "de.cau.cs.kieler.klay.layered.interactiveReferencePoint",
+            InteractiveReferencePoint.CENTER);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

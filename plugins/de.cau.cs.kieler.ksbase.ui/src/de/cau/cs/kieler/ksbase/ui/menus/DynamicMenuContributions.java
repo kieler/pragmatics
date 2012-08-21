@@ -61,8 +61,6 @@ import de.cau.cs.kieler.ksbase.ui.kivi.KSBasECombination;
  * contributes them when starting an eclipse instance.
  * 
  * @author mim, ckru
- * 
- * @kieler.rating 2009-12-15 proposed yellow
  */
 public final class DynamicMenuContributions {
 
@@ -363,6 +361,8 @@ public final class DynamicMenuContributions {
                     method = m;
                     // int index = 0;
                     int parameterindex = 0;
+                    //Its a clone, of course the types fit.
+                    @SuppressWarnings("unchecked")
                     HashMap<Object, Object> selectionValidationCache =
                             (HashMap<Object, Object>) selectionHash.clone();
                     for (Type t : m.getGenericParameterTypes()) {
@@ -419,6 +419,9 @@ public final class DynamicMenuContributions {
             return new Pair<Method, List<Object>>(method, params);
         }
 
+        
+        //Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
+        @SuppressWarnings("deprecation")
         @Override
         public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
             List<EObject> selection = getCurrentSelection(context);

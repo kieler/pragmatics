@@ -154,7 +154,7 @@ public class AnalysisSelectionViewer extends Composite implements ISelectionChan
     /**
      * The label provider for the analysis selection dialog.
      */
-    private class AnalysisLabelProvider extends LabelProvider {
+    private static class AnalysisLabelProvider extends LabelProvider {
 
         /**
          * {@inheritDoc}
@@ -164,18 +164,18 @@ public class AnalysisSelectionViewer extends Composite implements ISelectionChan
             if (element instanceof AnalysisData) {
                 AnalysisData analysis = (AnalysisData) element;
                 if (analysis.getComponents().size() > 0) {
-                    String label = analysis.getName() + " (";
+                    StringBuilder label = new StringBuilder(analysis.getName()).append(" (");
                     boolean first = true;
                     for (Pair<String, String> component : analysis.getComponents()) {
                         if (first) {
                             first = false;
                         } else {
-                            label += ", ";
+                            label.append(", ");
                         }
-                        label += component.getFirst();
+                        label.append(component.getFirst());
                     }
-                    label += ")";
-                    return label;
+                    label.append(")");
+                    return label.toString();
                 } else {
                     return analysis.getName();
                 }
@@ -191,7 +191,7 @@ public class AnalysisSelectionViewer extends Composite implements ISelectionChan
     /**
      * The content provider for the analysis selection dialog.
      */
-    private class AnalysisContentProvider implements ITreeContentProvider {
+    private static class AnalysisContentProvider implements ITreeContentProvider {
 
         /** maps analyses on their parents. */
         private Map<AnalysisData, AnalysisCategory> parentMap

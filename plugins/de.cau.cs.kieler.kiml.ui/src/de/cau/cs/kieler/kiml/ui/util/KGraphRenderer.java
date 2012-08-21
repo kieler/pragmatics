@@ -44,6 +44,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * Utility class that is able to render a KGraph instance.
  *
  * @author msp
+ * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class KGraphRenderer {
     
@@ -57,9 +58,12 @@ public class KGraphRenderer {
     private static final double ARROW_LENGTH = 8.0f;
     /** default width of edge arrows. */
     private static final double ARROW_WIDTH = 7.0f;
+
+    /** the minimal font height for displaying labels. */
+    private static final int MIN_FONT_HEIGHT = 3;
     
     /** mapping of each layout graph element to its computed bounds. */
-    private Map<Object, PaintRectangle> boundsMap = new LinkedHashMap<Object, PaintRectangle>();
+    private final Map<Object, PaintRectangle> boundsMap = new LinkedHashMap<Object, PaintRectangle>();
     /** border color for nodes. */
     private Color nodeBorderColor;
     /** fill color for nodes. */
@@ -315,18 +319,20 @@ public class KGraphRenderer {
      */
     private void renderLabel(final KLabel label, final GC graphics, final Rectangle area,
             final KVector offset) {
-        PaintRectangle rect = boundsMap.get(label);
-        KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-        if (rect == null) {
-            rect = new PaintRectangle(labelLayout, offset, scale);
-            boundsMap.put(label, rect);
-        }
-        if (!rect.painted && rect.intersects(area)) {
-            String text = label.getText();
-            if (text != null && text.length() > 0) {
-                graphics.drawString(text, rect.x, rect.y, true);
+        if (graphics.getFont().getFontData()[0].getHeight() >= MIN_FONT_HEIGHT) {
+            PaintRectangle rect = boundsMap.get(label);
+            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+            if (rect == null) {
+                rect = new PaintRectangle(labelLayout, offset, scale);
+                boundsMap.put(label, rect);
             }
-            rect.painted = true;
+            if (!rect.painted && rect.intersects(area)) {
+                String text = label.getText();
+                if (text != null && text.length() > 0) {
+                    graphics.drawString(text, rect.x, rect.y, true);
+                }
+                rect.painted = true;
+            }
         }
     }
     
@@ -402,7 +408,7 @@ public class KGraphRenderer {
         if (!rect.painted && rect.intersects(area)) {
             KVectorChain bendPoints = edgeLayout.createVectorChain();
             if (edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
-                bendPoints = KielerMath.appoximateSpline(bendPoints);
+                bendPoints = KielerMath.approximateSpline(bendPoints);
             }
             bendPoints.scale(scale);
             KVector point1 = bendPoints.getFirst();

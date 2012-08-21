@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -60,13 +60,15 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  *
  * @author cds
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
 public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LayeredGraph layeredGraph) {
+    public void process(final LGraph layeredGraph) {
         getMonitor().begin("Self-loop processing", 1);
         
         // Iterate through all nodes
@@ -110,23 +112,23 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
                         if ((sourcePortSide == PortSide.NORTH || sourcePortSide == PortSide.SOUTH)
                                 && targetPortSide == PortSide.WEST) {
                             
-                            edge.reverse(false);
+                            edge.reverse(layeredGraph, false);
                         } else if (sourcePortSide == PortSide.SOUTH
                                 && targetPortSide == PortSide.NORTH) {
                             
-                            edge.reverse(false);
+                            edge.reverse(layeredGraph, false);
                         } else if (sourcePortSide == PortSide.EAST
                                 && targetPortSide != PortSide.EAST) {
                             
-                            edge.reverse(false);
+                            edge.reverse(layeredGraph, false);
                         }
                         
                         // Now, let's see if a dummy has to be inserted
                         if (sourcePortSide == PortSide.EAST && targetPortSide == PortSide.WEST) {
                             // Note that the edge was reversed, so source and target port have switched
-                            createdDummies.add(createDummy(edge, targetPort, sourcePort));
+                            createdDummies.add(createDummy(layeredGraph, edge, targetPort, sourcePort));
                         } else if (sourcePortSide == PortSide.WEST && targetPortSide == PortSide.EAST) {
-                            createdDummies.add(createDummy(edge, sourcePort, targetPort));
+                            createdDummies.add(createDummy(layeredGraph, edge, sourcePort, targetPort));
                         }
                     }
                 }
@@ -145,30 +147,32 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
      * Creates a dummy for the self-loop edge connecting the two given ports. The dummy is not
      * added to the layer yet.
      * 
+     * @param layeredGraph the layered graph.
      * @param edge the self-looping edge.
      * @param sourcePort the source port.
      * @param targetPort the target port.
      * @return the dummy node created.
      */
-    private LNode createDummy(final LEdge edge, final LPort sourcePort, final LPort targetPort) {
+    private LNode createDummy(final LGraph layeredGraph, final LEdge edge, final LPort sourcePort,
+            final LPort targetPort) {
         // Create a dummy node with an input port and an output port
-        LNode dummyNode = new LNode();
+        LNode dummyNode = new LNode(layeredGraph);
         dummyNode.setProperty(Properties.ORIGIN, edge);
         dummyNode.setProperty(Properties.NODE_TYPE, NodeType.LONG_EDGE);
         dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
-        LPort dummyInput = new LPort();
+        LPort dummyInput = new LPort(layeredGraph);
         dummyInput.setSide(PortSide.WEST);
         dummyInput.setNode(dummyNode);
         
-        LPort dummyOutput = new LPort();
+        LPort dummyOutput = new LPort(layeredGraph);
         dummyOutput.setSide(PortSide.EAST);
         dummyOutput.setNode(dummyNode);
         
         edge.setTarget(dummyInput);
         
         // Create a dummy edge
-        LEdge dummyEdge = new LEdge();
+        LEdge dummyEdge = new LEdge(layeredGraph);
         dummyEdge.copyProperties(edge);
         dummyEdge.setSource(dummyOutput);
         dummyEdge.setTarget(targetPort);

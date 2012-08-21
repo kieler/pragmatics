@@ -137,6 +137,7 @@ public abstract class GefDiagramLayoutManager<T> implements IDiagramLayoutManage
     
     /**
      * Perform undo in the original diagram (optional operation).
+     * This implementation throws an {@code UnsupportedOperationException}.
      *
      * @param mapping a layout mapping that was created by this layout manager
      */

@@ -31,8 +31,6 @@ import de.cau.cs.kieler.kwebs.client.KwebsClientPlugin;
 /**
  * This class provides a dialog which can show arbitrary HTML content in a browser widget.
  *
- * @kieler.rating 2011-05-14
- * 
  * @author swe
  */
 public class BrowserDialog extends Dialog {

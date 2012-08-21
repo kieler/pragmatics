@@ -44,7 +44,8 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.properties.EdgeType;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
@@ -55,6 +56,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author ima
  * @author cds
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by msp
  */
 public class CompoundKGraphImporter extends KGraphImporter {
 
@@ -62,13 +65,22 @@ public class CompoundKGraphImporter extends KGraphImporter {
      * Maximal depth of the imported graph - to be updated during import.
      */
     private int maximalDepth;
+    
+    /**
+     * Creates a graph importer with the given hash code counter.
+     * 
+     * @param counter the hash code counter used to determine hash codes of graph elements
+     */
+    public CompoundKGraphImporter(final HashCodeCounter counter) {
+        super(counter);
+    }
 
     /**
      * {@inheritDoc}
      */
-    public LayeredGraph importGraph(final KNode kgraph) {
+    public LGraph importGraph(final KNode kgraph) {
 
-        LayeredGraph layeredGraph = super.importGraph(kgraph);
+        LGraph layeredGraph = super.importGraph(kgraph);
 
         layeredGraph.getProperty(Properties.ELEMENT_MAP).put(kgraph, layeredGraph);
 
@@ -102,6 +114,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
     /**
      * Transforms a compound graph recursively.
      * 
+     * @param kgraph
+     *            the KNode representing the graph to be laid out.
      * @param currentNode
      *            current node.
      * @param layeredNodes
@@ -116,8 +130,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
      * @param depth
      *            Current depth in the inclusion tree (depth of the currentNode);
      */
-    void recursiveTransformCompoundGraph(final KNode graph, final KNode currentNode,
-            final List<LNode> layeredNodes, final LayeredGraph layeredGraph,
+    void recursiveTransformCompoundGraph(final KNode kgraph, final KNode currentNode,
+            final List<LNode> layeredNodes, final LGraph layeredGraph,
             final Set<GraphProperties> graphProperties,
             final Map<LNode, List<LNode>> parentChildMap, final Direction direction, final int depth) {
         if (depth > maximalDepth) {
@@ -127,14 +141,14 @@ public class CompoundKGraphImporter extends KGraphImporter {
                 .getProperty(Properties.ELEMENT_MAP);
         if (currentNode.getChildren().isEmpty()) {
             transformLeaveNode(currentNode, layeredNodes, elemMap, graphProperties,
-                    layeredGraph.getProperty(LayoutOptions.DIRECTION), depth);
+                    layeredGraph.getProperty(LayoutOptions.DIRECTION), depth, kgraph);
             transformLeaveEdges(currentNode, elemMap, direction, layeredGraph);
         } else {
             for (KNode child : currentNode.getChildren()) {
-                recursiveTransformCompoundGraph(graph, child, layeredNodes, layeredGraph,
+                recursiveTransformCompoundGraph(kgraph, child, layeredNodes, layeredGraph,
                         graphProperties, parentChildMap, direction, depth + 1);
             }
-            if (currentNode != graph) {
+            if (currentNode != kgraph) {
                 transformCompoundNodeWithEdges(currentNode, layeredNodes, layeredGraph, elemMap,
                         direction, depth);
                 setCompoundDummyEdges(layeredNodes, parentChildMap, elemMap);
@@ -158,16 +172,27 @@ public class CompoundKGraphImporter extends KGraphImporter {
      *            overall layout direction
      * @param depth
      *            Depth of the leave node in the inclusion tree.
+     * @param kgraph
+     *            KNode representing the graph to be laid out.
      */
     private void transformLeaveNode(final KNode node, final List<LNode> layeredNodes,
             final Map<KGraphElement, LGraphElement> elemMap,
-            final Set<GraphProperties> graphProperties, final Direction direction, final int depth) {
+            final Set<GraphProperties> graphProperties, final Direction direction, final int depth,
+            final KNode kgraph) {
 
         super.transformNode(node, layeredNodes, elemMap,
                 (EnumSet<GraphProperties>) graphProperties, direction);
 
         LNode newNode = (LNode) elemMap.get(node);
         newNode.setProperty(Properties.K_PARENT, node.getParent());
+        
+        // Set flat position (position in relation to layout node) coordinates to support
+        // interactive
+        // mode
+        KVector flatPosVec = new KVector(0, 0);
+        Util.getFlatPosition(node, kgraph, flatPosVec);
+        newNode.getPosition().x = flatPosVec.x;
+        newNode.getPosition().y = flatPosVec.y;
 
         // Add ports to connect dummy edges for the layering phase.
         LPort dummyPortWest = createDummyPort(newNode, PortSide.WEST, null, elemMap);
@@ -194,7 +219,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
      */
     private void transformLeaveEdges(final KNode knode,
             final Map<KGraphElement, LGraphElement> elemMap, final Direction direction,
-            final LayeredGraph layeredGraph) {
+            final LGraph layeredGraph) {
         for (KEdge edge : knode.getIncomingEdges()) {
             KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
             LEdge newEdge = null;
@@ -259,7 +284,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
      * 
      */
     private void transformCompoundNodeWithEdges(final KNode node, final List<LNode> layeredNodes,
-            final LayeredGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
+            final LGraph layeredGraph, final Map<KGraphElement, LGraphElement> elemMap,
             final Direction direction, final int depth) {
         // While transforming the edges and creating dummy nodes, keep a list of the dummies.
         List<LNode> dummyNodes = new LinkedList<LNode>();
@@ -303,7 +328,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
      */
     private void transformCompoundEdgeList(final KNode node, final List<LNode> layeredNodes,
             final Map<KGraphElement, LGraphElement> elemMap, final List<LNode> dummyNodes,
-            final List<KEdge> edgesList, final boolean incoming, final LayeredGraph layeredGraph,
+            final List<KEdge> edgesList, final boolean incoming, final LGraph layeredGraph,
             final Direction direction, final int depth) {
 
         // get layout data of the compound node
@@ -315,7 +340,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
         if (incoming) {
             // Create upper border dummy node to represent the compound node.
             upperBorder = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_BORDER, dummyNodes,
-                    elemMap, depth);
+                    elemMap, depth, layeredGraph);
             upperBorder.setProperty(Properties.ORIGINAL_INSETS, insets);
             upperBorder.setProperty(Properties.BORDER_SPACING, borderSpacing);
             upperBorder.getSize().x = insets.getLeft() + borderSpacing;
@@ -371,7 +396,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
             if (port == null) {
                 if (fromInside) {
                     representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_BORDER,
-                            dummyNodes, elemMap, depth);
+                            dummyNodes, elemMap, depth, layeredGraph);
                     // representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
                     representative.getSize().x = insets.getRight() + borderSpacing;
                 } else {
@@ -385,12 +410,12 @@ public class CompoundKGraphImporter extends KGraphImporter {
                 if (portRepresentative == null) {
                     if (fromInside) {
                         representative = createBorderDummyNode(node, NodeType.LOWER_COMPOUND_PORT,
-                                dummyNodes, elemMap, depth);
+                                dummyNodes, elemMap, depth, layeredGraph);
                         // representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
                         representative.getSize().x = insets.getRight() + borderSpacing;
                     } else {
                         representative = createBorderDummyNode(node, NodeType.UPPER_COMPOUND_PORT,
-                                dummyNodes, elemMap, depth);
+                                dummyNodes, elemMap, depth, layeredGraph);
                         // representative.setProperty(Properties.COMPOUND_NODE, upperBorder);
                         representative.getSize().x = insets.getLeft() + borderSpacing;
                     }
@@ -448,7 +473,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
             }
         } else {
             nodeType = NodeType.LOWER_COMPOUND_BORDER;
-            LNode dummyNode = createBorderDummyNode(node, nodeType, dummyNodes, elemMap, depth);
+            LNode dummyNode = createBorderDummyNode(node, nodeType, dummyNodes, elemMap, depth,
+                    layeredGraph);
             dummyNode.getSize().x = insets.getRight() + borderSpacing;
             if (!(layeredNodes.contains(dummyNode))) {
                 layeredNodes.add(dummyNode);
@@ -482,7 +508,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
                                     .getProperty(Properties.ORIGIN)))) {
                         if (!(parentChildMap.containsKey(lNode))
                                 || !(parentChildMap.get(lNode).contains(childCandidate))) {
-                            LEdge dummyEdge = new LEdge();
+                            LEdge dummyEdge = new LEdge(layeredGraph);
                             dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
 
                             LPort sourcePort = lNode.getPorts(PortSide.EAST).iterator().next();
@@ -513,7 +539,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
                                     .getProperty(Properties.ORIGIN)))) {
                         if (!(parentChildMap.containsKey(lNode))
                                 || !(parentChildMap.get(lNode).contains(childCandidate))) {
-                            LEdge dummyEdge = new LEdge();
+                            LEdge dummyEdge = new LEdge(layeredGraph);
                             dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
 
                             LPort sourcePort = findDummyEdgePort(childCandidate, PortSide.EAST,
@@ -556,9 +582,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
      * @return returns created LEdge that represents the given KEdge.
      */
     private LEdge createLEdgeFromKEdge(final KEdge kedge,
-            final Map<KGraphElement, LGraphElement> elemMap, final LayeredGraph layeredGraph) {
-        super.transformEdge(kedge, (KNode) layeredGraph.getProperty(Properties.ORIGIN), elemMap,
-                layeredGraph);
+            final Map<KGraphElement, LGraphElement> elemMap, final LGraph layeredGraph) {
+        super.transformEdge(kedge, (KNode) layeredGraph.getProperty(Properties.ORIGIN), elemMap);
 
         LEdge newEdge = (LEdge) elemMap.get(kedge);
         elemMap.put(kedge, newEdge);
@@ -570,20 +595,29 @@ public class CompoundKGraphImporter extends KGraphImporter {
      * Creates a border dummy node in context of the representation of a compound node. Adds a
      * western and an eastern port. In case a lower or upper compound dummy node is asked for,
      * checks whether there is one already in the given list. If yes, that one will be returned, if
-     * not, a new dummy node is created.
+     * not, a new dummy node is created. As to initial positioning for interactive mode, the
+     * algorithm sets the positions of all left side dummy nodes alike as well as for all right
+     * dummy nodes. This might be enhanced by assigning positions in the original order of ports.
      * 
      * @param node
      *            The node to be represented.
      * @param elemMap
      * @param depth
      *            The depth of the compound node in the inclusion tree.
+     * @param layeredGraph
      * @param upperBorder
      *            Denotes, if an upper border node is to be created, if not, a lower border node
      *            will be created.
      */
     private LNode createBorderDummyNode(final KNode node, final NodeType nodeType,
             final List<LNode> dummyList, final Map<KGraphElement, LGraphElement> elemMap,
-            final int depth) {
+            final int depth, final LGraph layeredGraph) {
+
+        // Prepare initial positioning of dummy node for interactive mode
+        KNode refNode = (KNode) elemMap.get(layeredGraph);
+        KVector flatPosVec = new KVector(0, 0);
+        Util.getFlatPosition(node, refNode, flatPosVec);
+
         LNode dummyNode = null;
         if ((nodeType == NodeType.LOWER_COMPOUND_BORDER)) {
             for (LNode dummy : dummyList) {
@@ -594,7 +628,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
         }
         if (dummyNode == null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            dummyNode = new LNode();
+            dummyNode = new LNode(layeredGraph);
             dummyNode.setProperty(Properties.ORIGIN, node);
             dummyNode.setProperty(Properties.K_PARENT, node.getParent());
             dummyNode.getPosition().x = nodeLayout.getXpos();
@@ -602,10 +636,16 @@ public class CompoundKGraphImporter extends KGraphImporter {
             if (nodeType == NodeType.UPPER_COMPOUND_BORDER
                     || nodeType == NodeType.UPPER_COMPOUND_PORT) {
                 dummyNode.setProperty(LayoutOptions.ALIGNMENT, Alignment.RIGHT);
+                // set initial positioning for interactive mode
+                dummyNode.getPosition().x = flatPosVec.x;
+                dummyNode.getPosition().y = flatPosVec.y + (nodeLayout.getHeight() / 2.0);
             }
             if (nodeType == NodeType.LOWER_COMPOUND_BORDER
                     || nodeType == NodeType.LOWER_COMPOUND_PORT) {
                 dummyNode.setProperty(LayoutOptions.ALIGNMENT, Alignment.LEFT);
+                // set initial positioning for interactive mode
+                dummyNode.getPosition().x = flatPosVec.x + nodeLayout.getWidth();
+                dummyNode.getPosition().y = flatPosVec.y + (nodeLayout.getHeight() / 2.0);
             }
             createDummyPort(dummyNode, PortSide.EAST, null, elemMap);
             createDummyPort(dummyNode, PortSide.WEST, null, elemMap);
@@ -668,8 +708,8 @@ public class CompoundKGraphImporter extends KGraphImporter {
         if (port != null) {
             portRepresentative = (LPort) elemMap.get(port);
         }
-        if ((portRepresentative == null)) {
-            LPort dummyPort = new LPort();
+        if ((portRepresentative == null) || (portRepresentative.getSide() != side)) {
+            LPort dummyPort = new LPort(layeredGraph);
             dummyPort.setSide(side);
             dummyPort.setNode(node);
             if (port != null) {
@@ -776,7 +816,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
     /**
      * {@inheritDoc}
      */
-    public void applyLayout(final LayeredGraph layeredGraph) {
+    public void applyLayout(final LGraph layeredGraph) {
 
         KNode target = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
 
@@ -859,7 +899,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
      *            signifies if the edge routing uses splines.
      */
     private void applyEdgeLayout(final LEdge ledge, final double graphBorderSpacing,
-            final LayeredGraph layeredGraph, final boolean splinesActive) {
+            final LGraph layeredGraph, final boolean splinesActive) {
         // get layout of corresponding KEdge
         KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
@@ -981,7 +1021,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
      * @param node
      *            LNode representative of the KNode whose layout will be updated.
      */
-    private void applyNodeLayout(final LayeredGraph layeredGraph, final LNode node) {
+    private void applyNodeLayout(final LGraph layeredGraph, final LNode node) {
 
         // Get borderSpacing of the graph
         float graphBorderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
@@ -1062,7 +1102,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
      * @param representative
      *            LNode which represents the kNode in the layered graph.
      */
-    private void applyPortLayout(final KNode kNode, final LayeredGraph layeredGraph,
+    private void applyPortLayout(final KNode kNode, final LGraph layeredGraph,
             final LNode representative) {
         KShapeLayout nodeLayout = kNode.getData(KShapeLayout.class);
 
@@ -1088,7 +1128,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
      * @param representative
      *            upper compound border node representing the compound node.
      */
-    private void compoundApplyPortLayout(final KNode kNode, final LayeredGraph layeredGraph,
+    private void compoundApplyPortLayout(final KNode kNode, final LGraph layeredGraph,
             final LNode representative) {
         for (LPort lport : representative.getPorts()) {
             Object origin = lport.getProperty(Properties.ORIGIN);
@@ -1132,7 +1172,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
      * @param knode
      *            The current node.
      */
-    private void createInclusionTree(final LayeredGraph layeredGraph, final KNode knode) {
+    private void createInclusionTree(final LGraph layeredGraph, final KNode knode) {
         // get the layeredGraph's element map
         HashMap<KGraphElement, LGraphElement> elemMap = layeredGraph
                 .getProperty(Properties.ELEMENT_MAP);

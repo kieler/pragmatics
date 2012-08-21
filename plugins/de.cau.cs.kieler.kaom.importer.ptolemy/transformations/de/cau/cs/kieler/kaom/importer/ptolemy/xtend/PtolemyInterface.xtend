@@ -40,6 +40,7 @@ import de.cau.cs.kieler.kaom.KaomFactory
 import de.cau.cs.kieler.kaom.Port
 import de.cau.cs.kieler.kaom.importer.ptolemy.Messages
 import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportPlugin
+import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.utils.TransformationUtils
 
 
 /**
@@ -234,7 +235,7 @@ class PtolemyInterface {
         // we want to instantiate
         val xml = '''
             <entity name="TopLevel" class="ptolemy.actor.TypedCompositeActor">
-                <entity name="«entityName»" class="«className»" />
+                <entity name="�entityName�" class="�className�" />
             </entity>
         '''
         
@@ -262,7 +263,7 @@ class PtolemyInterface {
         // we want to instantiate
         val xml = '''
             <entity name="TopLevel" class="ptolemy.domains.modal.modal.ModalController">
-                <entity name="«entityName»" class="«className»" />
+                <entity name="�entityName�" class="�className�" />
             </entity>
         '''
         

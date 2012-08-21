@@ -15,225 +15,243 @@ package de.cau.cs.kieler.klay.layered.p3order;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
- * A NodeGroup contains one or more nodes. NodeGroups are used to model sets of nodes that are
+ * A node group contains one or more nodes. Node groups are used to model sets of nodes that are
  * placed next to each other. They are also used to model a compound node enveloping all child
- * nodes. A NodeGroup contains methods to calculate its barycenter value, to merge with another
+ * nodes. A node group contains methods to calculate its barycenter value, to merge with another
  * vertex and to generally do cool stuff.
  * 
  * @author cds
  * @author ima
+ * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class NodeGroup implements Comparable<NodeGroup> {
 
-    /** the random number generator. */
-    private Random random;
-
-    /**
-     * List of nodes this vertex consists of.
-     */
-    private List<LNode> nodes = new LinkedList<LNode>();
-
-    /**
-     * List of outgoing constraints.
-     */
-    private List<NodeGroup> outgoingConstraints = new LinkedList<NodeGroup>();
-
-    /**
-     * The number of incoming constraints.
-     */
-    private int incomingConstraintsCount = 0;
-
+    // CHECKSTYLEOFF VisibilityModifier
+    
     /**
      * The sum of the node weights. Each node weight is the sum of the weights of the ports the
      * node's ports are connected to.
      */
-    private float summedWeight = 0.0f;
+    public float summedWeight;
 
     /**
      * The number of ports relevant to the barycenter calculation.
      */
-    private int degree = 0;
+    public int degree;
 
     /**
      * This vertex' barycenter value. (summedWeight / degree)
      */
-    private float barycenter = -1.0f;
+    public Float barycenter;
+
+    /**
+     * The number of incoming constraints.
+     */
+    public int incomingConstraintsCount;
+    
+    /**
+     * Whether the node group has been visited in some traversing algorithm.
+     */
+    public boolean visited;
+    
+    // CHECKSTYLEON VisibilityModifier
+
+    /**
+     * List of nodes this vertex consists of.
+     */
+    private final LNode[] nodes;
+
+    /**
+     * List of outgoing constraints.
+     */
+    private List<NodeGroup> outgoingConstraints;
+    
+    /**
+     * List of incoming constraints.
+     */
+    private List<NodeGroup> incomingConstraints;
 
     /**
      * Constructs a new instance containing the given node.
      * 
      * @param node
-     *            the node the vertex should contain.
-     * 
-     * @param graphRandom
-     *            The random number generator of the graph to be laid out.
+     *            the node the vertex should contain
      */
-    public NodeGroup(final LNode node, final Random graphRandom) {
-        nodes.add(node);
-        random = graphRandom;
+    public NodeGroup(final LNode node) {
+        nodes = new LNode[] { node };
     }
 
     /**
      * Constructs a new vertex that is the concatenation of the given two vertices. The incoming
      * constraints count is set to zero, while the list of successors are merged, updating the
      * successors' incoming count appropriately if both vertices are predecessors.
+     * The new barycenter is derived from the barycenters of the given node groups.
      * 
      * @param nodeGroup1
-     *            the first vertex.
+     *            the first vertex
      * @param nodeGroup2
-     *            the second vertex.
-     * @param graphRandom
-     *            The random number generator of the graph to be laid out.
+     *            the second vertex
      */
-    public NodeGroup(final NodeGroup nodeGroup1, final NodeGroup nodeGroup2,
-            final Random graphRandom) {
-        nodes.addAll(nodeGroup1.nodes);
-        nodes.addAll(nodeGroup2.nodes);
-
-        random = graphRandom;
-
-        // Add constraints, taking care not to add any constraints to vertex1 or vertex2
-        // and to decrement the incoming constraints count of those that are successors
-        // to both
-        outgoingConstraints.addAll(nodeGroup1.outgoingConstraints);
-        outgoingConstraints.remove(nodeGroup2);
-        for (NodeGroup candidate : nodeGroup2.outgoingConstraints) {
-            if (candidate == nodeGroup1) {
-                continue;
-            } else if (outgoingConstraints.contains(candidate)) {
-                // The candidate was in both vertice's successor list
-                candidate.setIncomingConstraintsCount(candidate.getIncomingConstraintsCount() - 1);
-            } else {
-                outgoingConstraints.add(candidate);
-            }
+    public NodeGroup(final NodeGroup nodeGroup1, final NodeGroup nodeGroup2) {
+        // create a combined nodes array
+        int length1 = nodeGroup1.nodes.length;
+        int length2 = nodeGroup2.nodes.length;
+        nodes = new LNode[length1 + length2];
+        for (int i = 0; i < length1; i++) {
+            nodes[i] = nodeGroup1.nodes[i];
+        }
+        for (int i = 0; i < length2; i++) {
+            nodes[length1 + i] = nodeGroup2.nodes[i];
         }
 
-        summedWeight = nodeGroup1.summedWeight + nodeGroup2.summedWeight;
-        degree = nodeGroup1.degree + nodeGroup2.degree;
+        // Add constraints, taking care not to add any constraints to vertex1 or vertex2
+        // and to decrement the incoming constraints count of those that are successors to both
+        if (nodeGroup1.outgoingConstraints != null) {
+            this.outgoingConstraints = new LinkedList<NodeGroup>(nodeGroup1.outgoingConstraints);
+            this.outgoingConstraints.remove(nodeGroup2);
+            if (nodeGroup2.outgoingConstraints != null) {
+                for (NodeGroup candidate : nodeGroup2.outgoingConstraints) {
+                    if (candidate == nodeGroup1) {
+                        continue;
+                    } else if (outgoingConstraints.contains(candidate)) {
+                        // The candidate was in both vertices' successor list
+                        candidate.incomingConstraintsCount--;
+                    } else {
+                        outgoingConstraints.add(candidate);
+                    }
+                }
+            }
+        } else if (nodeGroup2.outgoingConstraints != null) {
+            this.outgoingConstraints = new LinkedList<NodeGroup>(nodeGroup2.outgoingConstraints);
+            this.outgoingConstraints.remove(nodeGroup1);
+        }
+
+        this.summedWeight = nodeGroup1.summedWeight + nodeGroup2.summedWeight;
+        this.degree = nodeGroup1.degree + nodeGroup2.degree;
 
         if (degree > 0) {
             barycenter = summedWeight / degree;
+        } else if (nodeGroup1.barycenter != null && nodeGroup2.barycenter != null) {
+            barycenter = (nodeGroup1.barycenter + nodeGroup2.barycenter) / 2;
+        } else if (nodeGroup1.barycenter != null) {
+            barycenter = nodeGroup1.barycenter;
+        } else if (nodeGroup2.barycenter != null) {
+            barycenter = nodeGroup2.barycenter;
         }
     }
-
+    
     /**
-     * Gets the incomingConstraintsCount of the NodeGroup.
-     * 
-     * @return Returns the incomingConstraintsCount.
+     * {@inheritDoc}
      */
-    public int getIncomingConstraintsCount() {
-        return incomingConstraintsCount;
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        for (int i = 0; i < nodes.length; i++) {
+            sb.append(nodes[i].toString());
+            if (barycenter != null) {
+                sb.append("<").append(barycenter.toString()).append(">");
+            }
+            if (i < nodes.length - 1) {
+                sb.append(", ");
+            }
+        }
+        return sb.append(']').toString();
     }
 
     /**
-     * Sets the incomingConstraintsCount to the given value.
+     * Returns the list of outgoing constraints, creating it if not yet done before.
      * 
-     * @param value
-     *            The value the incomingConstraintsCount is set to.
-     */
-    public void setIncomingConstraintsCount(final int value) {
-        incomingConstraintsCount = value;
-    }
-
-    /**
-     * Gets the list of outgoing constraints.
-     * 
-     * @return Returns the outgoingConstraints-list of the NodeGroup.
+     * @return the outgoing constraints list of the node group
      */
     public List<NodeGroup> getOutgoingConstraints() {
+        if (outgoingConstraints == null) {
+            outgoingConstraints = new LinkedList<NodeGroup>();
+        }
         return outgoingConstraints;
     }
     
     /**
-     * Gets the nodes-list.
-     * 
-     * @return
-     *    Returns the nodes-list of the NodeGroup.
+     * Reset the list of outgoing constraints to {@code null}.
      */
-    public List<LNode> getNodes() {
+    public void resetOutgoingConstraints() {
+        outgoingConstraints = null;
+    }
+    
+    /**
+     * Determine whether there are any outgoing constraints.
+     * 
+     * @return true if there are outgoing constraints
+     */
+    public boolean hasOutgoingConstraints() {
+        return outgoingConstraints != null && outgoingConstraints.size() > 0;
+    }
+
+    /**
+     * Returns the list of incoming constraints, creating it if not yet done before.
+     * 
+     * @return the incoming constraints list of the node group
+     */
+    public List<NodeGroup> getIncomingConstraints() {
+        if (incomingConstraints == null) {
+            incomingConstraints = new LinkedList<NodeGroup>();
+        }
+        return incomingConstraints;
+    }
+    
+    /**
+     * Reset the list of incoming constraints to {@code null}.
+     */
+    public void resetIncomingConstraints() {
+        incomingConstraints = null;
+    }
+    
+    /**
+     * Determine whether there are any incoming constraints.
+     * 
+     * @return true if there are incoming constraints
+     */
+    public boolean hasIncomingConstraints() {
+        return incomingConstraints != null && incomingConstraints.size() > 0;
+    }
+    
+    /**
+     * Returns the array of nodes.
+     * 
+     * @return the contained nodes of the node group
+     */
+    public LNode[] getNodes() {
         return nodes;
     }
     
     /**
-     * Gets the barycenter value of the NodeGroup.
+     * Returns the contained node. This may only be used for node groups with exactly one node.
      * 
-     * @return
-     *     Returns the barycenter value of the NodeGroup.
+     * @return the contained node
      */
-    public float getBarycenter() {
-        return barycenter;
-    }
-    
-    /**
-     * Sets barycenter to the given value.
-     * 
-     * @param value
-     *      value the barycenter is to be set to.
-     */
-    public void setBarycenter(final float value) {
-        barycenter = value;
-    }
-    
-    /**
-     * Gets the summedWeight of the NodeGroup.
-     * 
-     * @return
-     *    Returns the summedWeight of the NodeGroup.
-     */
-    public float getSummedWeight() {
-        return summedWeight;
-    }
-    
-    /**
-     * Sets the summedWeight to the given value.
-     * 
-     * @param value
-     *    The value summedWeight is to be set to.
-     */
-    public void setSummedWeight(final float value) {
-        summedWeight = value;
-    }
-    
-    /**
-     * Gets the degree of the NodeGroup.
-     * 
-     * @return
-     *    Returns the degree of the NodeGroup.
-     */
-    public int getDegree() {
-        return degree;
-    }
-    
-    /**
-     * Sets the degree of the NodeGroup to the given value.
-     * 
-     * @param value
-     *      The value the degree is to be set to.
-     */
-    public void setDegree(final int value) {
-        degree = value;
+    public LNode getNode() {
+        assert nodes.length == 1;
+        return nodes[0];
     }
 
     /**
      * {@inheritDoc}
      */
     public int compareTo(final NodeGroup other) {
-        // Empty vertices are placed at the end of all things ((c) by J. R. R. Tolkien)
-        if (nodes.isEmpty() || other.nodes.isEmpty()) {
-            return other.nodes.size() - nodes.size();
+        if (this.barycenter != null && other.barycenter != null) {
+            return barycenter.compareTo(other.barycenter);
+        } else if (this.barycenter != null) {
+            return -1;
+        } else if (other.barycenter != null) {
+            return 1;
         }
-
-        // Nodes with equal barycenter values are randomized. This is not a stable
-        // comparison, but we don't care.
-        if (barycenter == other.barycenter) {
-            return random.nextBoolean() ? 1 : -1;
-        } else {
-            return Float.compare(barycenter, other.barycenter);
-        }
+        return 0;
     }
+    
 }

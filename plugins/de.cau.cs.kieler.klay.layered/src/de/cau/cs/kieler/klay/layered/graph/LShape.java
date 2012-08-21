@@ -19,14 +19,27 @@ import de.cau.cs.kieler.core.math.KVector;
  * Abstract superclass for {@link LGraphElement}s that can have a position and a size.
  * 
  * @author cds
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public abstract class LShape extends LGraphElement {
     
+    /** the serial version UID. */
+    private static final long serialVersionUID = 5111245934175354687L;
+    
     /** the current position of the element. */
-    private KVector pos = new KVector();
+    private final KVector pos = new KVector();
     /** the size of the element. */
-    private KVector size = new KVector();
-
+    private final KVector size = new KVector();
+    
+    /**
+     * Creates a shape in the context of the given graph.
+     * 
+     * @param graph the graph for which the shape is created
+     */
+    public LShape(final LGraph graph) {
+        super(graph.hashCodeCounter());
+    }
 
     /**
      * Returns the element's current position. This is the coordinate of the element's upper

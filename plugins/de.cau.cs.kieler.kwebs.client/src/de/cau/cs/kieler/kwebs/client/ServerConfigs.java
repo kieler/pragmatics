@@ -21,9 +21,7 @@ import java.util.Vector;
  * This utility class provides convenient access to the list of
  * server configuration configurable by the user.
  *
- * @kieler.rating 2011-08-02 yellow
- *     reviewed by ckru, mri, msp
- *
+ * @kieler.design 2011-08-02 reviewed by ckru, mri, msp
  * @author swe
  */
 public final class ServerConfigs {

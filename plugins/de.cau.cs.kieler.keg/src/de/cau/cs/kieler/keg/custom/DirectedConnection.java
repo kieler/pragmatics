@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
  * A spline connection with an arrow head.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class DirectedConnection extends SplineConnection {
 

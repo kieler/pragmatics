@@ -178,7 +178,7 @@ public abstract class AbstractParser implements IParser {
      */
     protected Object getValue(EObject element, EAttribute feature) {
         Object value = element.eGet(feature);
-        Class iClass = feature.getEAttributeType().getInstanceClass();
+        Class<?> iClass = feature.getEAttributeType().getInstanceClass();
         if (String.class.equals(iClass)) {
             if (value == null) {
                 value = ""; //$NON-NLS-1$
@@ -242,7 +242,7 @@ public abstract class AbstractParser implements IParser {
     protected Object getValidNewValue(EAttribute feature, Object value) {
         EClassifier type = feature.getEType();
         if (type instanceof EDataType) {
-            Class iClass = type.getInstanceClass();
+            Class<?> iClass = type.getInstanceClass();
             if (Boolean.TYPE.equals(iClass)) {
                 if (value instanceof Boolean) {
                     // ok

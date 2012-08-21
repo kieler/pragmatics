@@ -14,14 +14,64 @@
 package de.cau.cs.kieler.kex.controller;
 
 /**
- * This enumeration contains a lot of example element values.
+ * This enumeration contains the names of the elements in an example description.
  * 
  * @author pkl
  */
 public enum ExampleElement {
     /**
-     * Some enums for an example element.
+     * The example's description.
      */
-    DESCRIPTION, DEST_LOCATION, CONTACT, SOURCETYPE, RESOURCES, CREATE_CATEGORIES, OVERVIEW_PIC, TITLE, AUTHOR, ID, CATEGORY;
-
+    DESCRIPTION,
+    
+    /**
+     * The destination location.
+     */
+    DEST_LOCATION,
+    
+    /**
+     * Contact information of the example's author.
+     */
+    CONTACT,
+    
+    /**
+     * Whether the example comes from within KIELER or from external users. The
+     * latter is currently not implemented yet.
+     */
+    SOURCETYPE,
+    
+    /**
+     * The resources the example is made up of.
+     */
+    RESOURCES,
+    
+    /**
+     * The categories the example contributes.
+     */
+    CREATE_CATEGORIES,
+    
+    /**
+     * Preview picture displayed for the example.
+     */
+    OVERVIEW_PIC,
+    
+    /**
+     * Name of the example.
+     */
+    TITLE,
+    
+    /**
+     * The example author.
+     */
+    AUTHOR,
+    
+    /**
+     * The example's unique ID.
+     */
+    ID,
+    
+    /**
+     * Category the example is displayed in.
+     */
+    CATEGORY;
 }

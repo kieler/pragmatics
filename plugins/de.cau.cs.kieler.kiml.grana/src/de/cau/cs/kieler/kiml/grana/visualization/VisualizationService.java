@@ -357,7 +357,7 @@ public final class VisualizationService {
     /**
      * Helper class for comparing info visualization methods.
      */
-    private class VisualizationMethodComparator implements Comparator<VisualizationMethodData> {
+    private static class VisualizationMethodComparator implements Comparator<VisualizationMethodData> {
 
         /**
          * {@inheritDoc}

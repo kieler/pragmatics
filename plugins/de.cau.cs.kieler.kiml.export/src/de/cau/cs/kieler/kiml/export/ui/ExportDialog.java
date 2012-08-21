@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml.export.ui;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.LinkedList;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -27,7 +26,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -86,12 +84,6 @@ public class ExportDialog extends Dialog {
     private Button workspacePathCheckbox = null;
     /** the file format combo. */
     private Combo fileFormatCombo = null;
-    /** the export options scrolled composite. */
-    private ScrolledComposite scrolledComposite = null;
-    /** the export options composite. */
-    private Composite optionsComposite = null;
-    /** the controls used for export options. */
-    private LinkedList<Control> optionControls = new LinkedList<Control>();
     /** the message image. */
     private Label messageImageLabel = null;
     /** the message label. */
@@ -282,26 +274,6 @@ public class ExportDialog extends Dialog {
         fileFormatCombo.setLayoutData(gridData);
     }
 
-    private static final int EXPORT_OPTIONS_COMPOSITE_MARGIN = 5;
-
-    /**
-     * Create group for additional options for export.
-     * 
-     * @param parent the parent composite
-     */
-    private void createExportOptionsGroup(final Composite parent) {
-        scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL);
-        scrolledComposite.setExpandVertical(true);
-        scrolledComposite.setExpandHorizontal(true);
-        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-        scrolledComposite.setLayoutData(data);
-        optionsComposite = createComposite(scrolledComposite, 2, EXPORT_OPTIONS_COMPOSITE_MARGIN,
-                EXPORT_OPTIONS_COMPOSITE_MARGIN);
-        // TODO create general options
-        
-        scrolledComposite.setContent(optionsComposite);
-    }
-
     private static final int MESSAGE_LABEL_WIDTH_HINT = 300;
 
     /**
@@ -334,29 +306,6 @@ public class ExportDialog extends Dialog {
         gridLayout.numColumns = columns;
         gridLayout.marginHeight = 0;
         gridLayout.marginWidth = 0;
-        gridLayout.makeColumnsEqualWidth = false;
-        GridData data = new GridData(SWT.FILL, SWT.NONE, true, false);
-        composite.setLayoutData(data);
-        composite.setLayout(gridLayout);
-        return composite;
-    }
-
-    /**
-     * Create and configure a composite with grid layout and a margin.
-     * 
-     * @param parent the parent composite
-     * @param columns the number of columns
-     * @param marginWidth the margin width
-     * @param marginHeight the margin height
-     * @return a new composite
-     */
-    private Composite createComposite(final Composite parent, final int columns,
-            final int marginWidth, final int marginHeight) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout gridLayout = new GridLayout();
-        gridLayout.numColumns = columns;
-        gridLayout.marginHeight = marginHeight;
-        gridLayout.marginWidth = marginWidth;
         gridLayout.makeColumnsEqualWidth = false;
         GridData data = new GridData(SWT.FILL, SWT.NONE, true, false);
         composite.setLayoutData(data);

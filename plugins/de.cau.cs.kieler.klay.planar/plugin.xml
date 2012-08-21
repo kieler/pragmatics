@@ -12,10 +12,17 @@
          <knownOption
                option="de.cau.cs.kieler.klay.planar.planarityTest">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.debugMode">
+         </knownOption>
+         <knownOption
+               default="40"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
-            class="de.cau.cs.kieler.klay.planar.planarity.PlanarityTestStrategy"
+            class="de.cau.cs.kieler.klay.planar.p1planar.PlanarityTestStrategy"
             default="BOYER_MYRVOLD_ALGORITHM"
             description="Defines which algorithm to use for planar testing."
             id="de.cau.cs.kieler.klay.planar.planarityTest"
