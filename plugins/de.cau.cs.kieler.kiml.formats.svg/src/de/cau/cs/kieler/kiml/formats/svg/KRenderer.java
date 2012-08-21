@@ -23,6 +23,7 @@ import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.io.File;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -42,25 +43,34 @@ import de.cau.cs.kieler.core.krendering.HorizontalAlignment;
 import de.cau.cs.kieler.core.krendering.KArc;
 import de.cau.cs.kieler.core.krendering.KBackgroundColor;
 import de.cau.cs.kieler.core.krendering.KBackgroundVisibility;
+import de.cau.cs.kieler.core.krendering.KContainerRendering;
+import de.cau.cs.kieler.core.krendering.KDirectPlacementData;
 import de.cau.cs.kieler.core.krendering.KFontBold;
 import de.cau.cs.kieler.core.krendering.KFontItalic;
 import de.cau.cs.kieler.core.krendering.KFontName;
 import de.cau.cs.kieler.core.krendering.KFontSize;
 import de.cau.cs.kieler.core.krendering.KForegroundColor;
 import de.cau.cs.kieler.core.krendering.KForegroundVisibility;
+import de.cau.cs.kieler.core.krendering.KGridPlacement;
+import de.cau.cs.kieler.core.krendering.KGridPlacementData;
 import de.cau.cs.kieler.core.krendering.KHorizontalAlignment;
 import de.cau.cs.kieler.core.krendering.KImage;
 import de.cau.cs.kieler.core.krendering.KLineStyle;
 import de.cau.cs.kieler.core.krendering.KLineWidth;
+import de.cau.cs.kieler.core.krendering.KPlacementData;
 import de.cau.cs.kieler.core.krendering.KPolyline;
+import de.cau.cs.kieler.core.krendering.KPosition;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 import de.cau.cs.kieler.core.krendering.KRenderingRef;
 import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
+import de.cau.cs.kieler.core.krendering.KStackPlacementData;
 import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KVerticalAlignment;
 import de.cau.cs.kieler.core.krendering.KVisibility;
+import de.cau.cs.kieler.core.krendering.KXPosition;
+import de.cau.cs.kieler.core.krendering.KYPosition;
 import de.cau.cs.kieler.core.krendering.LineStyle;
 import de.cau.cs.kieler.core.krendering.VerticalAlignment;
 import de.cau.cs.kieler.core.math.KVector;
@@ -141,6 +151,44 @@ public class KRenderer {
         }
         
         return new KVector(parentLayout.getWidth(), parentLayout.getHeight()).scale(scale);
+    }
+    
+    /**
+     * Render something inside the given size. The graphics must be transformed to the
+     * rendering's position.
+     * 
+     * @param rendering a rendering
+     * @param size the size to apply for the rendering
+     */
+    public void render(final KRendering rendering, final KVector size) {
+        handleDirectPlacement(rendering, size);
+    }
+
+    /**
+     * Render something inside the given size. The graphics must be transformed to the
+     * rendering's position. The text is applied to the first encountered {@link KText}.
+     * 
+     * @param rendering a rendering
+     * @param size the size to apply for the rendering
+     * @param text the text to display in the first encountered {@link KText}
+     */
+    public void render(final KRendering rendering, final KVector size, final String text) {
+        propagatedText = text;
+        handleDirectPlacement(rendering, size);
+        propagatedText = null;
+    }
+    
+    /**
+     * Render something onto the given points. The graphics must be transformed to the
+     * rendering's position.
+     * 
+     * @param rendering a rendering
+     * @param points points to apply to the top-level {@link KPolyline}
+     */
+    public void render(final KRendering rendering, final KVectorChain points) {
+        propagatedPoints = points;
+        doRender(rendering, null);
+        propagatedPoints = null;
     }
 
     /**
@@ -363,47 +411,18 @@ public class KRenderer {
     /** the propagated text of KLabel elements. */
     private String propagatedText;
     
-    /**
-     * Render something inside the given size. The graphics must be transformed to the
-     * rendering's position.
-     * 
-     * @param rendering a rendering
-     * @param size the size to apply for the rendering
-     */
-    public void render(final KRendering rendering, final KVector size) {
-        render(rendering, size, null);
-    }
-    
-    /**
-     * Render something onto the given points. The graphics must be transformed to the
-     * rendering's position.
-     * 
-     * @param rendering a rendering
-     * @param points points to apply to the top-level {@link KPolyline}
-     */
-    public void render(final KRendering rendering, final KVectorChain points) {
-        propagatedPoints = points;
-        render(rendering, null, null);
-        propagatedPoints = null;
-    }
-
-    /**
-     * Render something inside the given size. The graphics must be transformed to the
-     * rendering's position.
-     * 
-     * @param rendering a rendering
-     * @param size the size to apply for the rendering
-     * @param text the text to display in the first encountered {@link KText}, or {@code null}
-     */
-    public void render(final KRendering rendering, final KVector size, final String text) {
+    // XXX
+    private void doRender(final KRendering rendering, final KVector size) {
         // apply the propagated and contained styles
         StyleData styleData = applyStyles(rendering);
-        propagatedText = text;
         
         // draw the given rendering instance
         handleRendering(rendering, styleData, size);
         
-        // TODO children
+        // draw the contained child renderings
+        if (rendering instanceof KContainerRendering) {
+            handleContent((KContainerRendering) rendering, size);
+        }
         
         // remove the contained propagated styles
         for (KStyle style : rendering.getStyles()) {
@@ -750,6 +769,226 @@ public class KRenderer {
             }
         }
         return path;
+    }
+    
+    private void handleContent(final KContainerRendering rendering, final KVector size) {
+        if (rendering.getChildPlacement() instanceof KGridPlacement) {
+            // handle the grid placement of the contained children
+            int colCount = ((KGridPlacement) rendering.getChildPlacement()).getNumColumns();
+            int childCount = rendering.getChildren().size();
+            if (colCount < 0) {
+                // special meaning for negative value: make as many columns as there are children
+                colCount = childCount;
+            } else {
+                colCount = Math.min(colCount, childCount);
+            }
+            if (colCount > 0) {
+                int rowCount = childCount / colCount;
+                if (childCount % colCount > 0) {
+                    rowCount++;
+                }
+                KRendering[] children = rendering.getChildren().toArray(
+                        new KRendering[rendering.getChildren().size()]);
+                handleGridPlacement(children, size, colCount, rowCount);
+                return;
+            }
+        }
+        
+        // handle the direct placement of the contained children
+        for (KRendering child : rendering.getChildren()) {
+            handleDirectPlacement(child, size);
+        }
+    }
+    
+    /**
+     * Handle the direct placement or stack placement of a rendering and render it.
+     * 
+     * @param rendering a rendering
+     * @param parentSize the parent size
+     */
+    private void handleDirectPlacement(final KRendering rendering, final KVector parentSize) {
+        KPlacementData placeData = rendering.getPlacementData();
+        double x = 0, y = 0;
+        KVector childSize = new KVector(parentSize);
+        if (placeData instanceof KDirectPlacementData) {
+            KDirectPlacementData directPlaceData = (KDirectPlacementData) placeData;
+            
+            // determine top left corner
+            if (directPlaceData.getTopLeft() != null) {
+                KPosition topLeft = directPlaceData.getTopLeft();
+                if (topLeft.getX() != null) {
+                    KXPosition xpos = topLeft.getX();
+                    x = xpos.getRelative() * parentSize.x + xpos.getAbsolute();
+                }
+                if (topLeft.getY() != null) {
+                    KYPosition ypos = topLeft.getY();
+                    y = ypos.getRelative() * parentSize.y + ypos.getAbsolute();
+                }
+            }
+            
+            // determine bottom right corner
+            childSize.translate(-x, -y);
+            if (directPlaceData.getBottomRight() != null) {
+                KPosition bottomRight = directPlaceData.getBottomRight();
+                if (bottomRight.getX() != null) {
+                    KXPosition xpos = bottomRight.getX();
+                    childSize.x = xpos.getRelative() * parentSize.x + xpos.getAbsolute() - x;
+                }
+                if (bottomRight.getY() != null) {
+                    KYPosition ypos = bottomRight.getY();
+                    childSize.y = ypos.getRelative() * parentSize.y + ypos.getAbsolute() - y;
+                }
+            }
+            
+        } else if (placeData instanceof KStackPlacementData) {
+            KStackPlacementData stackPlaceData = (KStackPlacementData) placeData;
+            x = stackPlaceData.getInsetLeft();
+            y = stackPlaceData.getInsetTop();
+            childSize.translate(-(x + stackPlaceData.getInsetRight()),
+                    -(y + stackPlaceData.getInsetBottom()));
+        }
+        
+        if (childSize.x < 0) {
+            childSize.x = 0;
+        }
+        if (childSize.y < 0) {
+            childSize.y = 0;
+        }
+
+        // render the child with translated graphics
+        graphics.translate(x, y);
+        doRender(rendering, childSize);
+        graphics.translate(-x, -y);
+    }
+    
+    /**
+     * Handle the grid placement of the given renderings and render them.
+     * 
+     * @param children child renderings that shall be rendered
+     * @param parentSize the parent size
+     * @param colCount the number of columns
+     * @param rowCount the number of rows
+     */
+    private void handleGridPlacement(final KRendering[] children, final KVector parentSize,
+            final int colCount, final int rowCount) {
+        // gather the preferred width / height of each column / row
+        double[] colWidth = new double[colCount];
+        double[] rowHeight = new double[rowCount];
+        for (int i = 0; i < children.length; i++) {
+            if (children[i].getPlacementData() instanceof KGridPlacementData) {
+                KGridPlacementData placeData = (KGridPlacementData) children[i].getPlacementData();
+                colWidth[i % colCount] = Math.max(colWidth[i % colCount], placeData.getWidthHint());
+                rowHeight[i / colCount] = Math.max(rowHeight[i / colCount], placeData.getHeightHint());
+            }
+        }
+        
+        // check the column widths
+        double widthSum = 0;
+        int nullColCount = 0;
+        for (int c = 0; c < colCount; c++) {
+            widthSum += colWidth[c];
+            if (colWidth[c] == 0) {
+                nullColCount++;
+            }
+        }
+        if (widthSum > parentSize.x) {
+            assert nullColCount < colCount;
+            // the columns are too wide, diminish their size
+            double widthDim = (widthSum - parentSize.x) / (colCount - nullColCount);
+            for (int c = 0; c < colCount; c++) {
+                if (colWidth[c] >= widthDim) {
+                    colWidth[c] -= widthDim;
+                } else if (colWidth[c] > 0) {
+                    if (c < colCount - 1) {
+                        widthDim += (widthDim - colWidth[c]) / (colCount - c - 1);
+                    }
+                    colWidth[c] = 0;
+                }
+            }
+        } else if (widthSum < parentSize.x) {
+            // distribute the excess width to columns without width hint
+            if (nullColCount > 0) {
+                double widthAugm = (parentSize.x - widthSum) / nullColCount;
+                for (int c = 0; c < colCount; c++) {
+                    if (colWidth[c] == 0) {
+                        colWidth[c] = widthAugm;
+                    }
+                }
+            }
+        }
+        
+        // check the column heights
+        double heightSum = 0;
+        int nullRowCount = 0;
+        for (int r = 0; r < rowCount; r++) {
+            heightSum += rowHeight[r];
+            if (rowHeight[r] == 0) {
+                nullRowCount++;
+            }
+        }
+        if (heightSum > parentSize.y) {
+            assert nullRowCount < rowCount;
+            // the rows are too high, diminish their size
+            double heightDim = (heightSum - parentSize.y) / (rowCount - nullRowCount);
+            for (int r = 0; r < rowCount; r++) {
+                if (rowHeight[r] >= heightDim) {
+                    rowHeight[r] -= heightDim;
+                } else if (rowHeight[r] > 0) {
+                    if (r < colCount - 1) {
+                        heightDim += (heightDim - rowHeight[r]) / (colCount - r - 1);
+                    }
+                    rowHeight[r] = 0;
+                }
+            }
+        } else if (heightSum < parentSize.y) {
+            // distribute the excess height to rows without height hint
+            if (nullRowCount > 0) {
+                double heightAugm = (parentSize.y - heightSum) / nullRowCount;
+                for (int r = 0; r < rowCount; r++) {
+                    if (rowHeight[r] == 0) {
+                        rowHeight[r] = heightAugm;
+                    }
+                }
+            }
+        }
+        
+        // determine placement of each cell of the grid
+        double xpos = 0, ypos = 0;
+        for (int i = 0; i < children.length; i++) {
+            int c = i % colCount;
+            int r = i / colCount;
+            if (c == 0) {
+                xpos = 0;
+            }
+            
+            double x = xpos, y = ypos;
+            KVector childSize = new KVector(colWidth[c], rowHeight[r]);
+            KPlacementData placeData = children[i].getPlacementData();
+            if (placeData instanceof KGridPlacementData) {
+                KGridPlacementData gridPlaceData = (KGridPlacementData) placeData;
+                x += gridPlaceData.getInsetLeft();
+                y += gridPlaceData.getInsetTop();
+                childSize.translate(-(gridPlaceData.getInsetLeft() + gridPlaceData.getInsetRight()),
+                        -(gridPlaceData.getInsetTop() + gridPlaceData.getInsetBottom()));
+            }
+
+            if (childSize.x < 0) {
+                childSize.x = 0;
+            }
+            if (childSize.y < 0) {
+                childSize.y = 0;
+            }
+            
+            // render the child with translated graphics
+            graphics.translate(x, y);
+            doRender(children[i], childSize);
+            graphics.translate(-x, -y);
+            
+            xpos += colWidth[c];
+            if (c == colCount - 1) {
+                ypos += rowHeight[r];
+            }
+        }
     }
 
 }
