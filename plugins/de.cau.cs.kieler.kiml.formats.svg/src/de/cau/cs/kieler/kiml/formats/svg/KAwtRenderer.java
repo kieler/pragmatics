@@ -23,11 +23,9 @@ import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.io.File;
 import java.net.URL;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -87,11 +85,11 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
- * Renderer for KGraph and KRendering models.
+ * Renderer for KGraph and KRendering models on AWT graphics.
  *
  * @author msp
  */
-public class KRenderer {
+public class KAwtRenderer {
 
     /** property for output scaling, to be put in parent node's shape layout. */
     public static final IProperty<Float> SCALE = new Property<Float>(
@@ -124,7 +122,7 @@ public class KRenderer {
      * 
      * @param graphics the graphics context
      */
-    public KRenderer(final Graphics2D graphics) {
+    public KAwtRenderer(final Graphics2D graphics) {
         this.graphics = graphics;
     }
     

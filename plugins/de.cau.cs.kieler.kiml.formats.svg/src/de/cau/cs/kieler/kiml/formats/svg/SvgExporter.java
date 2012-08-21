@@ -47,8 +47,8 @@ public class SvgExporter implements IGraphTransformer<KNode, SVGGraphics2D> {
         SVGGraphics2D graphics = new SVGGraphics2D(document);
         data.getTargetGraphs().add(graphics);
         
-        // create and execute an instance of the KRenderer
-        KRenderer renderer = new KRenderer(graphics);
+        // create and execute an instance of the KAwtRenderer
+        KAwtRenderer renderer = new KAwtRenderer(graphics);
         KVector size = renderer.renderGraph(data.getSourceGraph());
         
         // set the bounding box for the SVG canvas
