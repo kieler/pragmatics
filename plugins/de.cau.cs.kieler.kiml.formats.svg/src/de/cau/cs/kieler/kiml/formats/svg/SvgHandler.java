@@ -30,6 +30,9 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationException;
  * @author msp
  */
 public class SvgHandler implements ITransformationHandler<SVGGraphics2D> {
+    
+    /** the identifier of the SVG format. */
+    public static final String ID = "org.w3.svg";
 
     /**
      * {@inheritDoc}

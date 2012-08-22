@@ -7,7 +7,7 @@
             class="de.cau.cs.kieler.kiml.formats.svg.SvgHandler"
             description="Scalable Vector Graphics (for export only)"
             extensions="svg"
-            id="de.cau.cs.kieler.kiml.formats.svg"
+            id="org.w3.svg"
             name="SVG">
       </handler>
    </extension>
