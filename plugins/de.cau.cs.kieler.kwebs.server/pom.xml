@@ -8,6 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <build>
+    <sourceDirectory>src</sourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
@@ -17,15 +18,6 @@
           <compilerArgument>-err:-forbidden</compilerArgument>
         </configuration>
       </plugin>
-    </plugins>
-  </build>
-  <groupId>de.cau.cs.kieler</groupId>
-  <artifactId>de.cau.cs.kieler.kwebs.server</artifactId>
-  <version>0.1.1-SNAPSHOT</version>
-  <packaging>eclipse-plugin</packaging>
-  <build>
-    <sourceDirectory>src</sourceDirectory>
-    <plugins>
       <plugin>
         <groupId>org.eclipse.xtend</groupId>
         <artifactId>xtend-maven-plugin</artifactId>
@@ -42,4 +34,8 @@
       </plugin>
     </plugins>
   </build>
+  <groupId>de.cau.cs.kieler</groupId>
+  <artifactId>de.cau.cs.kieler.kwebs.server</artifactId>
+  <version>0.1.1-SNAPSHOT</version>
+  <packaging>eclipse-plugin</packaging>
 </project>
