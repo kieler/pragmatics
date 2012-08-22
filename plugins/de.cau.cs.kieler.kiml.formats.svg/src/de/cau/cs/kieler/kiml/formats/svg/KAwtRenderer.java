@@ -396,6 +396,8 @@ public class KAwtRenderer {
     
     /** the propagated styles of parent renderings. */
     private final LinkedList<KStyle> propagatedStyles = new LinkedList<KStyle>();
+    /** the stack of renderings that are drawn (used to detect cycles). */
+    private final LinkedList<KRendering> renderingStack = new LinkedList<KRendering>();
     /** the propagated text of KLabel elements. */
     private String propagatedText;
     
@@ -409,12 +411,22 @@ public class KAwtRenderer {
      */
     private void doRender(final KRendering rendering, final KVector size, final KVectorChain points,
             final boolean isSpline) {
-        // TODO RenderingRefs
+        if (renderingStack.contains(rendering)) {
+            // the rendering references form a cycle, so ignore the last reference
+            return;
+        }
+        renderingStack.push(rendering);
+        
         // apply the propagated and contained styles
         StyleData styleData = applyStyles(rendering);
         
-        // draw the given rendering instance
-        handleRendering(rendering, styleData, size, points, isSpline);
+        if (rendering instanceof KRenderingRef) {
+            // draw the referenced rendering instance
+            doRender(((KRenderingRef) rendering).getRendering(), size, points, isSpline);
+        } else {
+            // draw the given rendering instance
+            handleRendering(rendering, styleData, size, points, isSpline);
+        }
         
         // draw the contained child renderings
         if (rendering instanceof KContainerRendering) {
@@ -427,6 +439,7 @@ public class KAwtRenderer {
                 propagatedStyles.removeLastOccurrence(style);
             }
         }
+        renderingStack.pop();
     }
     
     /**
