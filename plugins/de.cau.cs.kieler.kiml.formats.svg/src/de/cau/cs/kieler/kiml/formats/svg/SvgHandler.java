@@ -30,18 +30,22 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationException;
  * @author msp
  */
 public class SvgHandler implements ITransformationHandler<SVGGraphics2D> {
+    
+    /** the identifier of the SVG format. */
+    public static final String ID = "org.w3.svg";
 
     /**
      * {@inheritDoc}
      */
-    public void deserialize(String serializedGraph, TransformationData<SVGGraphics2D, KNode> transData) {
+    public void deserialize(final String serializedGraph,
+            final TransformationData<SVGGraphics2D, KNode> transData) {
         throw new UnsupportedOperationException("SVG parsing is not supported.");
     }
 
     /**
      * {@inheritDoc}
      */
-    public String serialize(SVGGraphics2D graphics) {
+    public String serialize(final SVGGraphics2D graphics) {
         StringWriter writer = new StringWriter();
         try {
             graphics.stream(writer, true);

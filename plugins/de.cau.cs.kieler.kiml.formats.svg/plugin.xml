@@ -7,7 +7,7 @@
             class="de.cau.cs.kieler.kiml.formats.svg.SvgHandler"
             description="Scalable Vector Graphics (for export only)"
             extensions="svg"
-            id="de.cau.cs.kieler.kiml.formats.svg"
+            id="org.w3.svg"
             name="SVG">
       </handler>
    </extension>
@@ -15,15 +15,25 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="menu:org.eclipse.ui.main.menu">
-         <menu
-               label="Test">
-            <command
-                  commandId="de.cau.cs.kieler.kiml.formats.svg.test"
-                  label="Make SVG..."
-                  style="push">
-            </command>
-         </menu>
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="de.cau.cs.kieler.kiml.formats.svg.test"
+               label="Make SVG"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                     <test
+                           forcePluginActivation="false"
+                           property="org.eclipse.core.resources.extension"
+                           value="kgt">
+                     </test>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -33,6 +43,15 @@
             id="de.cau.cs.kieler.kiml.formats.svg.test"
             name="Test">
       </command>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutProviders">
+      <layoutOption
+            default="1.0"
+            id="de.cau.cs.kieler.awt.scale"
+            name="AWT Rendering Scale"
+            type="float">
+      </layoutOption>
    </extension>
 
 </plugin>
