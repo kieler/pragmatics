@@ -23,4 +23,23 @@
   <artifactId>de.cau.cs.kieler.kwebs.server</artifactId>
   <version>0.1.1-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.xtend</groupId>
+        <artifactId>xtend-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <!-- This is an evil hack. Javadoc generation calls generate-sources twice and xtend compiler fails
+                 if xtend-gen is not empty; normally xtend compiler should run in generate-sources phase. -->
+            <phase>process-sources</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
