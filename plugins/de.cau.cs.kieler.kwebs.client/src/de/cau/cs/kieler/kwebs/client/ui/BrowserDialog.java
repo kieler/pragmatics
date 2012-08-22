@@ -46,14 +46,22 @@ public class BrowserDialog extends Dialog {
     
     /** The title of the dialog. */
     private String title;
+
+    /** Default width of the browser widget. */
+    private static final int DEFAULT_WIDGET_WIDTH
+        = 500;
+
+    /** Default height of the browser widget. */
+    private static final int DEFAULT_WIDGET_HEIGHT
+        = 400;
     
     /** The size of the browser widget. */
     private Rectangle size
-        = new Rectangle(0, 0, 500, 400);
+        = new Rectangle(0, 0, DEFAULT_WIDGET_WIDTH, DEFAULT_WIDGET_HEIGHT);
     
     /**
-     * Creates the browser dialog instance. Either concrete HTML content or a web page referenced by an URL
-     * can be displayed. An URL takes precedence over HTML.
+     * Creates the browser dialog instance. Either concrete HTML content or a web
+     * page referenced by an URL can be displayed. An URL takes precedence over HTML.
      * 
      * @param parentShell
      *            the parent shell for this dialog instance
@@ -63,6 +71,8 @@ public class BrowserDialog extends Dialog {
      *            the URL to display in the browser widget
      * @param thetitle
      *            the title of the dialog
+     * @param thesize
+     *            the size of the browser widget
      */
     public BrowserDialog(final Shell parentShell, final String thehtml, final String theurl, 
         final String thetitle, final Rectangle thesize) {
@@ -100,7 +110,11 @@ public class BrowserDialog extends Dialog {
             browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         } catch (Exception e) {
             StatusManager.getManager().handle(
-                new Status(IStatus.ERROR, KwebsClientPlugin.PLUGIN_ID, "Could not create browser widget", e)
+                new Status(
+                    IStatus.ERROR, 
+                    KwebsClientPlugin.PLUGIN_ID, "Could not create browser widget", 
+                    e
+                )
             );
         }        
         return composite;

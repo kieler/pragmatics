@@ -25,40 +25,37 @@ import de.cau.cs.kieler.kwebs.Statistics;
  *
  * @author swe
  */
-public class LayoutHistory {
+public final class LayoutHistory {
     
     /** Singleton instance. */
-    private static final LayoutHistory INSTANCE 
+    public static final LayoutHistory INSTANCE 
         = new LayoutHistory();
     
     /** The list of statistics ordered by time. */
     private List<Statistics> statistics
         = new ArrayList<Statistics>();
+
+    /** Default value for how many statistics are to be remembered. */
+    private static final int DEFAULT_HISTORY_SIZE
+        = 20;
     
     /** How many statistics to remember. */
     private int history
-        = 20;
+        = DEFAULT_HISTORY_SIZE;
     
     /**
-     * Get the singleton instance.
-     * 
-     * @return the singleton instance
-     */
-    public static LayoutHistory getInstance() {
-        return INSTANCE;
-    }
-    
-    /**
-     * 
-     * @return
+     * Returns an unmodifiable List containing statistical data aboout the last remote layouts.
+     *  
+     * @return An unmodifiable List containing statistical data aboout the last remote layouts
      */
     public List<Statistics> getStatistics() {
         return Collections.unmodifiableList(statistics);
     }
     
     /**
+     * Adds statitistics about a remote layout to the history.
      * 
-     * @param statistic
+     * @param statistic the statistics to be added to the history
      */
     public synchronized void addStatistic(final Statistics statistic) { 
         if (statistic == null) {

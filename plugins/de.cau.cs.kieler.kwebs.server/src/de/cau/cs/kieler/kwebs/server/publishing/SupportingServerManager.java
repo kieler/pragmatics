@@ -43,6 +43,8 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
  */
 public class SupportingServerManager extends AbstractServerManager {
 
+    //////////
+
     /** Default host for preview images. */
     private static final String SUPPORTINGSERVER_DEFAULTHOST
         = "0.0.0.0";
@@ -51,20 +53,25 @@ public class SupportingServerManager extends AbstractServerManager {
     private static final int SUPPORTINGSERVER_DEFAULTPORT
         = 8444;
 
+    //////////
+
     /** The HTTP server instance which provides the images. */
     private HttpServer server;
-    
+
     /** The contexts under which the diverse support handlers are published. */
-    private Vector<HttpContext> contexts;
-    
+    private final Vector<HttpContext> contexts
+        = new Vector<HttpContext>();
+
     /** The diverse handlers to be published indexed by their paths under which they get published. */
     private Map<String, HttpHandler> handlers
         = new HashMap<String, HttpHandler>();
-    
+
+    //////////
+
     /** The extension point ID. */
     public static final String EXTENSIONPOINT_ID
         = "de.cau.cs.kieler.kwebs.server.configuration";
-    
+
     /** The name of supportHandler element. */
     public static final String ELEMENT_SUPPORTHANDLER
         = "supportHandler";
@@ -80,14 +87,16 @@ public class SupportingServerManager extends AbstractServerManager {
     /** The name of the publish attribute. */
     public static final String ATTRIBUTE_PUBLISH
         = "publish";
-    
+
+    //////////
+
     /**
      * Constructs a new manager for the support server. Reads all registered handlers
      * from the extension point.
      */
     public SupportingServerManager() {
         String path = null;
-        String implementation = null;        
+        String implementation = null;
         String publish = null;
         Bundle contributor = null;
         for (IConfigurationElement element : getHandlerConfigurationElements()) {
@@ -108,20 +117,20 @@ public class SupportingServerManager extends AbstractServerManager {
                                 handlers.put(path, handler);
                             } catch (Exception e) {
                                 Logger.log(
-                                    Severity.FAILURE, 
+                                    Severity.FAILURE,
                                     "Handler class could not be instantiated: " + implementation,
                                     e
                                 );
                             }
                         } else {
                             Logger.log(
-                                Severity.WARNING, 
+                                Severity.WARNING,
                                 "Implementation attribute of support handler invalid, ignoring handler."
                             );
                         }
                     } else {
                         Logger.log(
-                            Severity.WARNING, 
+                            Severity.WARNING,
                             "Path attribute of support handler not valid, ignoring handler."
                         );
                     }
@@ -129,20 +138,20 @@ public class SupportingServerManager extends AbstractServerManager {
             }
         }
     }
-    
+
     /**
      * Returns all extension elements responsible for registering a handler to the support server.
-     * 
+     *
      * @return all extension elements responsible for registering a handler to the support server.
      */
     public static IConfigurationElement[] getHandlerConfigurationElements() {
         IExtensionRegistry registry = Platform.getExtensionRegistry();
         return registry.getConfigurationElementsFor(EXTENSIONPOINT_ID);
     }
-    
+
     /**
      * Publishes the support server. The given service object is not used in the support server.
-     * 
+     *
      * @param serviceObject
      *            the published service object
      */
@@ -169,13 +178,13 @@ public class SupportingServerManager extends AbstractServerManager {
         if (server != null) {
             server.stop(0);
         }
-        server = null;
         clearContexts();
+        server = null;
     }
 
     /**
      * Returns whether this managers server is published or not.
-     * 
+     *
      * @return whether this managers server is published or not
      */
     public synchronized boolean isPublished() {
@@ -183,18 +192,19 @@ public class SupportingServerManager extends AbstractServerManager {
     }
 
     /**
-     * 
+     *
      */
     private synchronized void createServer() {
         if (server != null) {
             throw new IllegalStateException("Support server has already been created");
         }
         try {
-            URI address = new URI(Configuration.getInstance().
-                getConfigProperty(Configuration.SUPPORTINGSERVER_ADDRESS));
+            URI address = new URI(
+                Configuration.INSTANCE.getConfigProperty(Configuration.SUPPORTINGSERVER_ADDRESS)
+            );
             String host = address.getHost();
             if (host == null) {
-                Logger.log(Severity.WARNING, 
+                Logger.log(Severity.WARNING,
                     "The host you specified for the support server is invalid."
                     + " Using default host " + SUPPORTINGSERVER_DEFAULTHOST + "."
                 );
@@ -202,7 +212,7 @@ public class SupportingServerManager extends AbstractServerManager {
             }
             int port = address.getPort();
             if (port == -1) {
-                Logger.log(Severity.WARNING, 
+                Logger.log(Severity.WARNING,
                     "The port you specified for the support server is invalid."
                     + " Using default port " + SUPPORTINGSERVER_DEFAULTPORT + "."
                 );
@@ -211,11 +221,11 @@ public class SupportingServerManager extends AbstractServerManager {
             server = HttpServer.create(
                 new InetSocketAddress(host, port),
                 Integer.parseInt(
-                    Configuration.getInstance().getConfigProperty(Configuration.SERVER_BACKLOG)
+                    Configuration.INSTANCE.getConfigProperty(Configuration.SERVER_BACKLOG)
                 )
             );
             server.setExecutor(Executors.newFixedThreadPool(
-                Integer.parseInt(config.getConfigProperty(Configuration.SERVER_POOLSIZE))
+                Integer.parseInt(Configuration.INSTANCE.getConfigProperty(Configuration.SERVER_POOLSIZE))
             ));
         } catch (Exception e) {
             Logger.log(Severity.CRITICAL, "Support server could not be created", e);
@@ -228,51 +238,51 @@ public class SupportingServerManager extends AbstractServerManager {
     }
 
     /**
-     * 
+     *
      */
     private synchronized void createContexts() {
         if (server == null) {
             throw new IllegalStateException("Support server has not been created");
         }
-        if (contexts != null) {
+        if (!contexts.isEmpty()) {
             throw new IllegalStateException("Contexts have already been created");
         }
-        contexts = new Vector<HttpContext>();        
         HttpHandler httpHandler = null;
         for (String path : handlers.keySet()) {
             try {
-                httpHandler = handlers.get(path); 
+                httpHandler = handlers.get(path);
                 Logger.log(
-                    Severity.INFO, 
-                    "Adding support context '" 
-                    + path 
-                    + "' for implementation '" 
+                    Severity.INFO,
+                    "Adding support context '"
+                    + path
+                    + "' for implementation '"
                     + httpHandler.getClass().getSimpleName()
                     + "'"
                 );
                 contexts.add(server.createContext(path, httpHandler));
             } catch (Exception e) {
                 Logger.log(
-                    Severity.FAILURE, 
-                    "Error while adding support handler '" 
+                    Severity.FAILURE,
+                    "Error while adding support handler '"
                     + httpHandler.getClass().getName()
                     + "': " + e.getMessage(),
                     e
                 );
             }
-        }        
+        }
     }
 
     /**
-     * 
+     *
      */
     private synchronized void clearContexts() {
-        if (server != null && contexts != null) {
-            for (HttpContext context : contexts) {
-                server.removeContext(context);            
-            }
-            contexts = null;
+        if (server == null) {
+            throw new IllegalStateException("Support server has not been created");
         }
+        for (HttpContext context : contexts) {
+            server.removeContext(context);
+        }
+        contexts.clear();
     }
-    
+
 }

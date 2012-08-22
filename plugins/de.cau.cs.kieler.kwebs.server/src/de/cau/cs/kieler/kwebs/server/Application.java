@@ -18,11 +18,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.DisplayLogging;
@@ -54,7 +56,7 @@ public class Application implements IApplication {
 
     /** The display logger used in debug mode. */
     private ILoggerListener displayLogging;
-    
+
     /** Object to synchronize and wait on for termination request. */
     private final Object termSync
         = new Object();
@@ -90,69 +92,68 @@ public class Application implements IApplication {
     /** Identifier for override command line options. */
     private static final String OVERRIDE_IDENTIFIER
         = "#";
-    
+
     /** Prefix for properties. */
     private static final String PROPERTY_PREFIX
         = "de.cau.cs.kieler.kwebs.";
-    
-    /** The server wide configuration instance. */
-    private Configuration config
-        = Configuration.getInstance();
-    
+
+    /** */
+    private static Injector injector;
+
     /** The instance of this application. */
     private static Application instance;
-    
+
     /**
      * Default constructor for setting the instance field.
      */
     public Application() {
-    	instance = this;	
+        instance = this;
     }
-    
+
     /**
      * Return this instance.
-     * 
+     *
      * @return this instance
      */
     public static final Application getInstance() {
-    	return instance;
+        return instance;
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public final Object start(final IApplicationContext context) {    	
-    	    	
+    public final Object start(final IApplicationContext context) {
+
         System.out.println(
             ApplicationHelper.toDisplayable(ApplicationHelper.TITLE_TEXT).
                 replace("$VERSION$", getVersion())
         );
-        
+
         // Register display logging
         displayLogging = new DisplayLogging();
         Logger.addLoggerListener(displayLogging);
-        
+
         String logPath = DEFAULT_LOGPATH;
         int logSize = DEFAULT_LOGSIZE;
-        
-        int managementPort = ManagementService.DEFAULT_MANAGEMENTPORT;
-        
+
         boolean debugMode = false;
-        
+
         // Parse command line arguments
         Map<String, String> arguments = null;
         if (context != null) {
-	        @SuppressWarnings("rawtypes")
-	        Map argumentsMap = context.getArguments();	        
-	        if (argumentsMap != null && argumentsMap.containsKey(ARGUMENTS_INDEX)) {
-	            arguments = Arguments.parseArgs((String[]) argumentsMap.get(ARGUMENTS_INDEX));
-	        }
+            @SuppressWarnings("rawtypes")
+            Map argumentsMap = context.getArguments();
+            if (argumentsMap != null && argumentsMap.containsKey(ARGUMENTS_INDEX)) {
+                arguments = Arguments.parseArgs((String[]) argumentsMap.get(ARGUMENTS_INDEX));
+            }
         }
-        
+
         // Read default config
         Logger.log(Severity.ALWAYS, "Loading default configuration.");
         try {
-            config.loadFromStream(Resources.getResourceStream(PLUGIN_ID, DEFAULT_CONFIG));
+            Configuration.INSTANCE.loadFromStream(
+                Resources.getResourceStream(PLUGIN_ID, DEFAULT_CONFIG)
+            );
         } catch (Exception e) {
             Logger.log(Severity.FAILURE, "Could not load default configuration.");
             return IApplication.EXIT_OK;
@@ -168,15 +169,15 @@ public class Application implements IApplication {
                 userConfig = arguments.get(USERCONFIG_INDEX);
             }
         }
-        Logger.log(Severity.ALWAYS, 
+        Logger.log(Severity.ALWAYS,
             "Loading user configuration: " + new File(userConfig).getAbsolutePath()
         );
-        try {            
-            config.loadFromStream(new FileInputStream(userConfig));
+        try {
+            Configuration.INSTANCE.loadFromStream(new FileInputStream(userConfig));
         } catch (Exception e) {
-            Logger.log(Severity.WARNING, "Could not load user configuration.");
+            Logger.log(Severity.WARNING, "Could not load user configuration.", e);
         }
-        
+
         // Command line overrides for the service publisher properties.
         // If the given property does not start with the common property prefix is
         // is being extended with it. This is for user friendliness.
@@ -188,76 +189,91 @@ public class Application implements IApplication {
                     if (!property.startsWith(PROPERTY_PREFIX)) {
                         property = PROPERTY_PREFIX + property;
                     }
-                    config.setConfigProperty(property, arguments.get(key));
+                    Configuration.INSTANCE.setConfigProperty(property, arguments.get(key));
                 }
             }
         }
-        
+
         // Update local vars from properties
-        if (config.hasConfigProperty(Configuration.KWEBS_LOGPATH)) {
-            logPath = config.getConfigProperty(Configuration.KWEBS_LOGPATH);
+        if (Configuration.INSTANCE.hasConfigProperty(Configuration.KWEBS_LOGPATH)) {
+            logPath = Configuration.INSTANCE.getConfigProperty(Configuration.KWEBS_LOGPATH);
         }
-        if (config.hasConfigProperty(Configuration.KWEBS_LOGSIZE)) {
+        if (Configuration.INSTANCE.hasConfigProperty(Configuration.KWEBS_LOGSIZE)) {
             try {
-                logSize = Integer.parseInt(config.getConfigProperty(Configuration.KWEBS_LOGSIZE));
+                logSize = Integer.parseInt(
+                    Configuration.INSTANCE.getConfigProperty(Configuration.KWEBS_LOGSIZE)
+                );
             } catch (Exception e) {
                 Logger.log(Severity.WARNING,
-                    "Invalid log size: " 
-                    + config.getConfigProperty(Configuration.KWEBS_LOGSIZE)
+                    "Invalid log size: "
+                    + Configuration.INSTANCE.getConfigProperty(Configuration.KWEBS_LOGSIZE)
                     + ", using default log size of " + DEFAULT_LOGSIZE + " mb"
                 );
             }
         }
-        
+
         // Register file logging
         fileLogging = new RoundTripFileLogging(logPath, logSize);
         Logger.addLoggerListener(fileLogging);
 
         // Optionally set the application in debug mode. In debug mode
         // the logger output is more verbose.
-        if (config.hasConfigProperty(Configuration.KWEBS_LOGDEBUGMODE)) {
+        if (Configuration.INSTANCE.hasConfigProperty(Configuration.KWEBS_LOGDEBUGMODE)) {
             try {
                 debugMode = Boolean.parseBoolean(
-                    config.getConfigProperty(Configuration.KWEBS_LOGDEBUGMODE)
+                    Configuration.INSTANCE.getConfigProperty(Configuration.KWEBS_LOGDEBUGMODE)
                 );
                 if (debugMode) {
                     Logger.setRunMode(Mode.DEBUG);
                 }
             } catch (Exception e) {
                 Logger.log(Severity.WARNING,
-                    "Invalid debug mode: " 
-                    + config.getConfigProperty(Configuration.KWEBS_LOGDEBUGMODE)
+                    "Invalid debug mode: "
+                    + Configuration.INSTANCE.getConfigProperty(Configuration.KWEBS_LOGDEBUGMODE)
                     + ", using non debug mode"
                 );
             }
         }
-        
+
+        injector = Guice.createInjector();
+
         // Create server configuration folder structure if it not already
         // exists.
         createConfigurationFolder();
 
         // Start the management service
-        if (config.hasConfigProperty(Configuration.MANAGEMENT_PORT)) {
+        if (Configuration.INSTANCE.hasConfigProperty(Configuration.MANAGEMENT_PORT)) {
             try {
-                managementPort = Integer.parseInt(
-                    config.getConfigProperty(Configuration.MANAGEMENT_PORT)
+                ManagementService.INSTANCE.setPort(
+                    Integer.parseInt(
+                        Configuration.INSTANCE.getConfigProperty(Configuration.MANAGEMENT_PORT)
+                    )
+                );
+                ManagementService.INSTANCE.setKeystoreLocation(
+                    Configuration.INSTANCE.getConfigProperty(Configuration.MANAGEMENT_KEYSTORE_LOCATION)
+                );
+                ManagementService.INSTANCE.setKeystorePassword(
+                    Configuration.INSTANCE.getConfigProperty(Configuration.MANAGEMENT_KEYSTORE_PASSWORD)
                 );
             } catch (Exception e) {
                 Logger.log(Severity.WARNING,
-                    "Invalid management port: " 
-                    + config.getConfigProperty(Configuration.MANAGEMENT_PORT)
+                    "Invalid management port: "
+                    + Configuration.INSTANCE.getConfigProperty(Configuration.MANAGEMENT_PORT)
                     + ", using default port " + ManagementService.DEFAULT_MANAGEMENTPORT
                 );
             }
         }
-        Logger.log(Severity.ALWAYS, "Starting management service on port " + managementPort);
+        Logger.log(
+            Severity.ALWAYS,
+            "Starting management service on port " + ManagementService.INSTANCE.getPort()
+        );
         try {
-            ManagementService.startManagement(managementPort);
-            Logger.log(Severity.ALWAYS, "Management service started");            
+            ManagementService.INSTANCE.startManagement();
+            Logger.log(Severity.ALWAYS, "Management service started");
         } catch (Exception e) {
             Logger.log(Severity.CRITICAL, "Management service could not be started", e);
         }
-        
+
         // Set necessary plug-in preferences of the used layout plug-ins
         try {
             setPluginPreferencesFromConfiguration();
@@ -265,20 +281,20 @@ public class Application implements IApplication {
             Logger.log(Severity.CRITICAL, "Error while initializing layouter preferences", e);
             return IApplication.EXIT_OK;
         }
-        
+
         // Initialize server and publish service
         try {
             Logger.log(Severity.DEBUG, "Registering logging adapter for jax-ws");
             JavaLoggingAdapter.register();
-            ServicePublisher.getInstance().publish();
+            ServicePublisher.INSTANCE.publish();
             synchronized (termSync) {
                 while (!termRequested) {
-                	try {
-                		termSync.wait();
-                	} catch (InterruptedException e) {
-    	    			// Nothing to do, simply wait on synchronization
-    	        		// object again.                		
-                	}
+                    try {
+                        termSync.wait();
+                    } catch (InterruptedException e) {
+                        // Nothing to do, simply wait on synchronization
+                        // object again.
+                    }
                 }
             }
         } catch (Exception e) {
@@ -286,16 +302,16 @@ public class Application implements IApplication {
         }
 
         // Unpublish service on exit if necessary
-        if (ServicePublisher.getInstance().isPublished()) {
-            ServicePublisher.getInstance().unpublish();
+        if (ServicePublisher.INSTANCE.isPublished()) {
+            ServicePublisher.INSTANCE.unpublish();
         }
 
         // Unpublish management service
-        ManagementService.stopManagement();
-        
+        ManagementService.INSTANCE.stopManagement();
+
         // Unregister file logging
         Logger.removeLoggerListener(fileLogging);
-        
+
         try {
             ((RoundTripFileLogging) fileLogging).close();
         } catch (Exception e) {
@@ -306,7 +322,7 @@ public class Application implements IApplication {
         Logger.removeLoggerListener(displayLogging);
 
         //FIXME: Unregister logging adapters
-        
+
         return IApplication.EXIT_OK;
 
     }
@@ -322,10 +338,12 @@ public class Application implements IApplication {
      * Shuts down the server.
      */
     public final synchronized void shutdownServer() {
-    	Logger.log("Shutting down the server.");
-    	// Notify the termination sync loop
+        Logger.log("Shutting down the server.");
+        // Notify the termination sync loop
         termRequested = true;
-        termSync.notify();    
+        synchronized (termSync) {
+            termSync.notify();
+        }
     }
 
     /** The plug-in id of the graphviz layouter. */
@@ -355,26 +373,26 @@ public class Application implements IApplication {
     private void setPluginPreferencesFromConfiguration() {
         String value = null;
         File file = null;
-        if (!config.hasConfigProperty(Configuration.GRAPHVIZ_PATH)) {
+        if (!Configuration.INSTANCE.hasConfigProperty(Configuration.GRAPHVIZ_PATH)) {
             throw new IllegalStateException(
                 "Properties do not contain property for graphviz executable"
             );
         }
-        if (!config.hasConfigProperty(Configuration.GRAPHVIZ_TIMEOUT)) {
+        if (!Configuration.INSTANCE.hasConfigProperty(Configuration.GRAPHVIZ_TIMEOUT)) {
             throw new IllegalStateException(
                 "Properties do not contain property for graphviz timeout"
             );
         }
-        if (!config.hasConfigProperty(Configuration.OGDF_TIMEOUT)) {
+        if (!Configuration.INSTANCE.hasConfigProperty(Configuration.OGDF_TIMEOUT)) {
             throw new IllegalStateException(
                 "Properties do not contain property for ogdf timeout"
             );
         }
-        value = config.getConfigProperty(Configuration.GRAPHVIZ_PATH);
+        value = Configuration.INSTANCE.getConfigProperty(Configuration.GRAPHVIZ_PATH);
         if (value != null) {
             file = new File(value.replaceAll("\\\\", "/"));
             if (!file.exists() || !file.canExecute()) {
-                Logger.log(Severity.WARNING, 
+                Logger.log(Severity.WARNING,
                     "The specified graphviz executable does not exist or is not executable."
                     + " Graphviz based layout will not work."
                     + " Please check your config file (normally kwebs.user in server root path)."
@@ -384,16 +402,16 @@ public class Application implements IApplication {
                 setPluginPreference(GRAPHVIZ_PLUGINID, GRAPHVIZ_EXECPREF, value);
             }
         } else {
-            Logger.log(Severity.WARNING, 
+            Logger.log(Severity.WARNING,
                 "The graphviz executable is not configured."
                 + " Graphviz based layout will not work."
                 + " Please check your config file (normally kwebs.user in server root path)."
             );
         }
-        value = config.getConfigProperty(Configuration.GRAPHVIZ_TIMEOUT);
+        value = Configuration.INSTANCE.getConfigProperty(Configuration.GRAPHVIZ_TIMEOUT);
         Logger.log(Severity.ALWAYS, "Setting graphviz timeout: " + value);
-        setPluginPreference(GRAPHVIZ_PLUGINID, GRAPHVIZ_TIMEOUTPREF, value);        
-        value = config.getConfigProperty(Configuration.OGDF_TIMEOUT);
+        setPluginPreference(GRAPHVIZ_PLUGINID, GRAPHVIZ_TIMEOUTPREF, value);
+        value = Configuration.INSTANCE.getConfigProperty(Configuration.OGDF_TIMEOUT);
         Logger.log(Severity.ALWAYS, "Setting ogdf timeout: " + value);
         setPluginPreference(OGDF_PLUGINID, OGDF_TIMEOUTPREF, value);
     }
@@ -411,7 +429,7 @@ public class Application implements IApplication {
     private void setPluginPreference(final String pluginid, final String preferenceid,
         final String value) {
         IEclipsePreferences store = InstanceScope.INSTANCE.getNode(pluginid);
-        Logger.log(Severity.DEBUG, 
+        Logger.log(Severity.DEBUG,
             pluginid + ", " + preferenceid + " : " + store.get(preferenceid, "")
         );
         store.put(preferenceid, value);
@@ -419,13 +437,13 @@ public class Application implements IApplication {
             store.flush();
         } catch (Exception e) {
             Logger.log(Severity.FAILURE, "Could not save preference store: " + pluginid);
-        }      
+        }
     }
 
     /**
      * Builds the configuration folder structure needed for operation.
      */
-    private void createConfigurationFolder() {        
+    private void createConfigurationFolder() {
         for (String file : ApplicationHelper.CONFIGURATION_FILES) {
             if (!new File(file).exists()) {
                 try {
@@ -434,22 +452,25 @@ public class Application implements IApplication {
                     Logger.log(Severity.FAILURE, "Could not create config file " + file, e);
                 }
             }
-        }        
+        }
     }
 
     /**
      * Read the version of this plug-in.
-     * 
+     *
      * @return the version of this plug-in
      */
     public static String getVersion() {
-        String version = "<unknown>";
-        try {
-            version = Platform.getBundle(PLUGIN_ID).getVersion().toString();
-        } catch (Exception e) {
-            Logger.log(Severity.WARNING, "Could not read version of server", e);
-        }
-        return version;
+        return Resources.getPluginVersion(PLUGIN_ID);
     }
-    
+
+    /**
+     * Returns the injector to be used server wide.
+     *
+     * @return the injector to be used server wide
+     */
+    public static Injector getInjector() {
+        return injector;
+    }
+
 }

@@ -16,8 +16,6 @@ package de.cau.cs.kieler.kwebs.server.publishing;
 
 import java.net.URI;
 
-import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
-
 /**
  * Abstract base implementation of the interface {@link IServerManager}.
  *
@@ -32,10 +30,6 @@ abstract class AbstractServerManager implements IServerManager {
     
     //CHECKSTYLEOFF VisibilityModifier
     
-    /** The server wide configuration instance. */
-    protected Configuration config
-        = Configuration.getInstance();
-
     /** The address this manager exposes the serviced object on. */
     protected URI address;
     
