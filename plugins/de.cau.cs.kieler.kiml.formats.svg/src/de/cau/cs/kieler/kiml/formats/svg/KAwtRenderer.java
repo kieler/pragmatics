@@ -58,11 +58,13 @@ import de.cau.cs.kieler.core.krendering.KLineStyle;
 import de.cau.cs.kieler.core.krendering.KLineWidth;
 import de.cau.cs.kieler.core.krendering.KPlacementData;
 import de.cau.cs.kieler.core.krendering.KPolyline;
+import de.cau.cs.kieler.core.krendering.KPolylinePlacementData;
 import de.cau.cs.kieler.core.krendering.KPosition;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 import de.cau.cs.kieler.core.krendering.KRenderingRef;
 import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
+import de.cau.cs.kieler.core.krendering.KSpline;
 import de.cau.cs.kieler.core.krendering.KStackPlacementData;
 import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.core.krendering.KText;
@@ -688,22 +690,32 @@ public class KAwtRenderer {
                 }
             }
                 
-            if (points != null && styleData.foregVisible) {
+            if (points != null) {
                 // check shapes that need points information to be drawn
                 switch (rendering.eClass().getClassifierID()) {
                 case KRenderingPackage.KSPLINE:
-                    graphics.setColor(styleData.foregColor);
-                    graphics.draw(createPath(points, true));
+                    if (styleData.foregVisible) {
+                        graphics.setColor(styleData.foregColor);
+                        graphics.draw(createPath(points, true));
+                    }
                     break;
                 case KRenderingPackage.KPOLYGON:
-                    graphics.setColor(styleData.foregColor);
                     Path2D path = createPath(points, isSpline);
                     path.closePath();
-                    graphics.draw(path);
+                    if (styleData.foregVisible) {
+                        graphics.setColor(styleData.foregColor);
+                        graphics.draw(path);
+                    }
+                    if (styleData.backgVisible) {
+                        graphics.setColor(styleData.backgColor);
+                        graphics.fill(path);
+                    }
                     break;
                 case KRenderingPackage.KPOLYLINE:
-                    graphics.setColor(styleData.foregColor);
-                    graphics.draw(createPath(points, isSpline));
+                    if (styleData.foregVisible) {
+                        graphics.setColor(styleData.foregColor);
+                        graphics.draw(createPath(points, isSpline));
+                    }
                     break;                
                 }
             }
@@ -734,6 +746,31 @@ public class KAwtRenderer {
                 return null;
             }
         }
+    }
+    
+    /**
+     * Create a vector chain for a polyline placement data.
+     * 
+     * @param placeData the placement data
+     * @param parentSize the parent size
+     * @return a vector chain with the points of the placement data
+     */
+    private KVectorChain createVectorChain(final KPolylinePlacementData placeData,
+            final KVector parentSize) {
+        KVectorChain points = new KVectorChain();
+        for (KPosition position : placeData.getPoints()) {
+            KVector point = new KVector();
+            KXPosition xpos = position.getX();
+            if (xpos != null) {
+                point.x = xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute();
+            }
+            KYPosition ypos = position.getY();
+            if (ypos != null) {
+                point.y = ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute();
+            }
+            points.add(point);
+        }
+        return points;
     }
     
     /**
@@ -780,7 +817,7 @@ public class KAwtRenderer {
         if (rendering instanceof KPolyline && points != null) {
             // approximate the spline for more accurate decorator placement
             KVectorChain referencePoints = points;
-            if (isSpline) {
+            if (isSpline || rendering instanceof KSpline) {
                 referencePoints = KielerMath.approximateSpline(points);
             }
             
@@ -827,6 +864,10 @@ public class KAwtRenderer {
      */
     private void handleDirectPlacement(final KRendering rendering, final KVector parentSize) {
         KPlacementData placeData = rendering.getPlacementData();
+        if (placeData instanceof KPolylinePlacementData) {
+            placeData = ((KPolylinePlacementData) placeData).getDetailPlacementData();
+        }
+        
         double x = 0, y = 0;
         KVector childSize = new KVector(parentSize);
         if (placeData instanceof KDirectPlacementData) {
@@ -849,12 +890,12 @@ public class KAwtRenderer {
             childSize.translate(-x, -y);
             if (directPlaceData.getBottomRight() != null) {
                 KPosition bottomRight = directPlaceData.getBottomRight();
-                if (bottomRight.getX() != null) {
-                    KXPosition xpos = bottomRight.getX();
+                KXPosition xpos = bottomRight.getX();
+                if (xpos != null) {
                     childSize.x = xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute() - x;
                 }
-                if (bottomRight.getY() != null) {
-                    KYPosition ypos = bottomRight.getY();
+                KYPosition ypos = bottomRight.getY();
+                if (ypos != null) {
                     childSize.y = ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute() - y;
                 }
             }
@@ -873,10 +914,17 @@ public class KAwtRenderer {
         if (childSize.y < 0) {
             childSize.y = 0;
         }
+        
+        // create points for polyline
+        KVectorChain points = null;
+        if (rendering.getPlacementData() instanceof KPolylinePlacementData) {
+            points = createVectorChain((KPolylinePlacementData) rendering.getPlacementData(),
+                    parentSize);
+        }
 
         // render the child with translated graphics
         graphics.translate(x, y);
-        doRender(rendering, childSize, null, false);
+        doRender(rendering, childSize, points, false);
         graphics.translate(-x, -y);
     }
     
@@ -894,12 +942,16 @@ public class KAwtRenderer {
         double[] colWidth = new double[colCount];
         double[] rowHeight = new double[rowCount];
         for (int i = 0; i < children.length; i++) {
-            if (children[i].getPlacementData() instanceof KGridPlacementData) {
-                KGridPlacementData placeData = (KGridPlacementData) children[i].getPlacementData();
+            KPlacementData placeData = children[i].getPlacementData();
+            if (placeData instanceof KPolylinePlacementData) {
+                placeData = ((KPolylinePlacementData) placeData).getDetailPlacementData();
+            }
+            if (placeData instanceof KGridPlacementData) {
+                KGridPlacementData gridPlaceData = (KGridPlacementData) placeData;
                 colWidth[i % colCount] = Math.max(colWidth[i % colCount],
-                        scale * placeData.getWidthHint());
+                        scale * gridPlaceData.getWidthHint());
                 rowHeight[i / colCount] = Math.max(rowHeight[i / colCount],
-                        scale * placeData.getHeightHint());
+                        scale * gridPlaceData.getHeightHint());
             }
         }
         
@@ -985,6 +1037,9 @@ public class KAwtRenderer {
             double x = xpos, y = ypos;
             KVector childSize = new KVector(colWidth[c], rowHeight[r]);
             KPlacementData placeData = children[i].getPlacementData();
+            if (placeData instanceof KPolylinePlacementData) {
+                placeData = ((KPolylinePlacementData) placeData).getDetailPlacementData();
+            }
             if (placeData instanceof KGridPlacementData) {
                 KGridPlacementData gridPlaceData = (KGridPlacementData) placeData;
                 x += scale * gridPlaceData.getInsetLeft();
@@ -1002,9 +1057,16 @@ public class KAwtRenderer {
                 childSize.y = 0;
             }
             
+            // create points for polyline
+            KVectorChain points = null;
+            if (children[i].getPlacementData() instanceof KPolylinePlacementData) {
+                points = createVectorChain((KPolylinePlacementData) children[i].getPlacementData(),
+                        childSize);
+            }
+            
             // render the child with translated graphics
             graphics.translate(x, y);
-            doRender(children[i], childSize, null, false);
+            doRender(children[i], childSize, points, false);
             graphics.translate(-x, -y);
             
             xpos += colWidth[c];
@@ -1021,14 +1083,18 @@ public class KAwtRenderer {
      * @param linePoints points of the reference polyline
      */
     private void handleDecoratorPlacement(final KRendering rendering, final KVectorChain linePoints) {
-        if (rendering.getPlacementData() instanceof KDecoratorPlacementData && linePoints.size() >= 2) {
-            KDecoratorPlacementData placeData = (KDecoratorPlacementData) rendering.getPlacementData();
+        KPlacementData placeData = rendering.getPlacementData();
+        if (placeData instanceof KPolylinePlacementData) {
+            placeData = ((KPolylinePlacementData) placeData).getDetailPlacementData();
+        }
+        if (placeData instanceof KDecoratorPlacementData && linePoints.size() >= 2) {
+            KDecoratorPlacementData decoPlaceData = (KDecoratorPlacementData) placeData;
             
             // calculate the reference point
-            double absLocation = placeData.getLocation() * linePoints.getLength();
+            double absLocation = decoPlaceData.getLocation() * linePoints.getLength();
             KVector referencePoint = linePoints.getPointOnLine(absLocation);
             
-            KVector size = new KVector(placeData.getWidth(), placeData.getHeight());
+            KVector size = new KVector(decoPlaceData.getWidth(), decoPlaceData.getHeight());
             if (size.x < 0) {
                 size.x = 0;
             }
@@ -1036,25 +1102,31 @@ public class KAwtRenderer {
                 size.y = 0;
             }
             
+            // create points for polyline
+            KVectorChain points = null;
+            if (rendering.getPlacementData() instanceof KPolylinePlacementData) {
+                points = createVectorChain((KPolylinePlacementData) rendering.getPlacementData(), size);
+            }
+            
             // rotate the decorator if requested
-            if (placeData.isRelative()) {
+            if (decoPlaceData.isRelative()) {
                 double angle = linePoints.getAngleOnLine(absLocation);
                 
                 // render the decorator with translated and rotated graphics
                 graphics.translate(referencePoint.x, referencePoint.y);
                 graphics.rotate(angle);
-                graphics.translate(placeData.getXOffset(), placeData.getYOffset());
-                doRender(rendering, size, null, false);
-                graphics.translate(-placeData.getXOffset(), -placeData.getYOffset());
+                graphics.translate(decoPlaceData.getXOffset(), decoPlaceData.getYOffset());
+                doRender(rendering, size, points, false);
+                graphics.translate(-decoPlaceData.getXOffset(), -decoPlaceData.getYOffset());
                 graphics.rotate(-angle);
                 graphics.translate(-referencePoint.x, -referencePoint.y);
             } else {
                 // render the decorator with translated graphics
-                double x = referencePoint.x + placeData.getXOffset();
-                double y = referencePoint.y + placeData.getYOffset();
+                double x = referencePoint.x + decoPlaceData.getXOffset();
+                double y = referencePoint.y + decoPlaceData.getYOffset();
 
                 graphics.translate(x, y);
-                doRender(rendering, size, null, false);
+                doRender(rendering, size, points, false);
                 graphics.translate(-x, -y);
             }
         }
