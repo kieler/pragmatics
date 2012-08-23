@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.test.runner;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,23 +38,28 @@ public abstract class KlayAutomatedJUnitTest {
     /**
      * @param file
      */
-    public KlayAutomatedJUnitTest(File file) {
+    public KlayAutomatedJUnitTest(GraphTestObject file) {
     }
-
+    
+    /**
+     * 
+     * 
+     * @return a Collection of GraphTestObject Objects 
+     */
     @Parameters
     public static Collection<Object[]> getGraphs() {
         LinkedList<Object[]> graphFilesList = new LinkedList<Object[]>();
 
         for (GraphTestObject file : graphsList) {
             Object[] objectArray = new Object[1];
-            objectArray[0] = file.getFile();
+            objectArray[0] = file;
             graphFilesList.add(objectArray);
         }
         return graphFilesList;
     }
 
     /**
-     * 
+     * Initialization - Load the graphs to be tested
      */
     @Before
     public void GraphAutomatedTestInitialization() {
@@ -85,7 +89,7 @@ public abstract class KlayAutomatedJUnitTest {
     // -------------------------------------------------------------------------
 
     /**
-     * Defines the directory where the graph files are located.
+     * Defines the directories where the graph files are located and its load options.
      * 
      * @return the Path
      */

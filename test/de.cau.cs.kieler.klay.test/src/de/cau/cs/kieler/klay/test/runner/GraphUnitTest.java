@@ -15,27 +15,30 @@ package de.cau.cs.kieler.klay.test.runner;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-
 import org.junit.Test;
 
+import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
+
 /**
+ * An Example test Class
  * 
  * @author Wahbi
  */
 public class GraphUnitTest extends KlayAutomatedJUnitTest {
 
-    private File graphFile;
+    // Object containing the current graphTestObject(File,KNode)
+    private GraphTestObject graphObject;
 
-    public GraphUnitTest(final File file) {
-        super(file);
-        graphFile = file;
+    public GraphUnitTest(final GraphTestObject testObject) {
+        super(testObject);
+        graphObject = testObject;
     }
 
     /**
      * {@inheritDoc}
      */
     protected TestPath[] getBundleTestPath() {
+        
         TestPath[] testPaths = { new TestPath("Esterel", true, false),
                 new TestPath("Esterel", false, false) };
         return testPaths;
@@ -43,12 +46,12 @@ public class GraphUnitTest extends KlayAutomatedJUnitTest {
 
     @Test
     public void testA() {
-        assertTrue(graphFile.getName().equals("backhoe-adapted.kids"));
+        assertTrue(graphObject.getFile().getName().equals("backhoe-adapted.kids"));
     }
 
     @Test
     public void testB() {
-        assertTrue(graphFile.getName().equals("backhoe-adapted.kids"));
+        assertTrue(graphObject.getFile().getName().equals("backhoe-adapted.kids"));
     }
 
 }

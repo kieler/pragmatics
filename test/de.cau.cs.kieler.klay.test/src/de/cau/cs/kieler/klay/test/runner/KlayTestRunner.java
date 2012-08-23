@@ -13,12 +13,12 @@
  */
 package de.cau.cs.kieler.klay.test.runner;
 
-import java.io.File;
 import java.util.List;
 
 import org.junit.runners.model.FrameworkMethod;
 
 import de.cau.cs.kieler.core.test.runners.KielerTestRunner;
+import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 
 /**
  * This test runner is used by the GraphAutomatedTest.
@@ -50,8 +50,8 @@ public class KlayTestRunner extends KielerTestRunner {
     @Override
     public String getRunnerName(List<Object[]> parameterObjectList, int parameterIndex) {
         Object[] objectArray = parameterObjectList.get(parameterIndex);
-        File file = (File) objectArray[0];
-        return file.toString();
+        GraphTestObject file = (GraphTestObject) objectArray[0];
+        return file.getFile().toString();
     }
 
     /**
@@ -60,7 +60,9 @@ public class KlayTestRunner extends KielerTestRunner {
     @Override
     public String getTestName(List<Object[]> parameterObjectList, int parameterIndex,
             FrameworkMethod method) {
-        return getRunnerName(parameterObjectList, parameterIndex);
+        Object[] objectArray = parameterObjectList.get(parameterIndex);
+        GraphTestObject file = (GraphTestObject) objectArray[0];
+        return method.getName().concat(" - ").concat(file.getFile().toString());
     }
 
 }

@@ -33,6 +33,9 @@ public class GraphTestObject {
      * @param file
      * @param knode
      */
+    public GraphTestObject() {
+    }
+
     public GraphTestObject(File file, KNode knode) {
         this.file = file;
         this.knode = knode;
@@ -54,5 +57,21 @@ public class GraphTestObject {
      */
     public KNode getKnode() {
         return knode;
+    }
+
+    /**
+     * @param file
+     *            the file to set
+     */
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    /**
+     * @param knode
+     *            the knode to set
+     */
+    public void setKnode(KNode knode) {
+        this.knode = knode;
     }
 }
