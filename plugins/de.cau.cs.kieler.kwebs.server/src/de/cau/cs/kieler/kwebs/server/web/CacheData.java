@@ -14,6 +14,8 @@
 
 package de.cau.cs.kieler.kwebs.server.web;
 
+import com.sun.net.httpserver.Headers;
+
 /**
  * Holder class for caching already processed requests to the web interface of KWebS.
  *
@@ -23,23 +25,27 @@ public class CacheData {
 
     /** Name of the cached resource. Needed for sending content as downloadable attachment. */
     private String name;
-    
+
     /** The MIME type of the resource. */
     private String mimetype;
 
     /** The character set. */
     private String charset;
-    
+
     /** The content of the resource. */
     private byte[] content;
-    
+
     /** The date of the resource, date of file for example. Used to invalidate cache. */
     private long timestamp;
-    
+
+    /** */
+    private final Headers additionalHeaders
+        = new Headers();
+
     /**
      * Constructs a data container intended for caching of at runtime of the layout service
      * generated web content. The date of modification is set to the current system time.
-     * 
+     *
      * @param thename
      *            the name of the resource
      * @param themimetype
@@ -57,7 +63,7 @@ public class CacheData {
     /**
      * Constructs a data container intended for caching of at runtime of the layout service
      * generated web content.
-     * 
+     *
      * @param thename
      *            the name of the resource
      * @param themimetype
@@ -65,7 +71,7 @@ public class CacheData {
      * @param thecontent
      *            the content of the resource
      * @param thetimestamp
-     *            the date of last modification of the cached resource.           
+     *            the date of last modification of the cached resource.
      */
     public CacheData(final String thename, final String themimetype, final byte[] thecontent,
         final long thetimestamp) {
@@ -74,10 +80,10 @@ public class CacheData {
         content = thecontent;
         timestamp = thetimestamp;
     }
-    
+
     /**
      * Returns the name of the cached resource.
-     * 
+     *
      * @return the name of the cached resource
      */
     public String getName() {
@@ -86,7 +92,7 @@ public class CacheData {
 
     /**
      * Sets the name of the cached resource.
-     * 
+     *
      * @param name
      *            the name of the cached resource.
      */
@@ -96,7 +102,7 @@ public class CacheData {
 
     /**
      * Returns the MIME type of the cached resource.
-     * 
+     *
      * @return the name of the cached resource
      */
     public String getMimetype() {
@@ -105,7 +111,7 @@ public class CacheData {
 
     /**
      * Sets the MIME type of the cached resource.
-     * 
+     *
      * @param mimetype
      *            the MIME type of the cached resource
      */
@@ -114,8 +120,16 @@ public class CacheData {
     }
 
     /**
+     *
+     * @return
+     */
+    public Headers getAdditionalHeaders() {
+        return additionalHeaders;
+    }
+
+    /**
      * Returns the character set of the cached resource.
-     * 
+     *
      * @return the character set of the cached resource.
      */
     public String getCharset() {
@@ -124,17 +138,17 @@ public class CacheData {
 
     /**
      * Sets the character set of the cached resource.
-     * 
+     *
      * @param charset
      *            the character set of the cached resource.
      */
     public void setCharset(final String charset) {
         this.charset = charset.toLowerCase();
     }
-        
+
     /**
      * Returns the content of the cached resource.
-     * 
+     *
      * @return the content of the cached resource.
      */
     public byte[] getContent() {
@@ -143,7 +157,7 @@ public class CacheData {
 
     /**
      * Sets the content of the cached resource.
-     * 
+     *
      * @param content
      *            the content of the cached resource.
      */
@@ -153,7 +167,7 @@ public class CacheData {
 
     /**
      * Returns the date of last modification of the cached resource.
-     * 
+     *
      * @return the date of last modification of the cached resource.
      */
     public long getTimestamp() {
@@ -162,12 +176,12 @@ public class CacheData {
 
     /**
      * Sets the date of last modification of the cached resource.
-     * 
+     *
      * @param timestamp
      *            the date of last modification of the cached resource.
      */
     public void setTimestamp(final long timestamp) {
         this.timestamp = timestamp;
     }
-        
+
 }
