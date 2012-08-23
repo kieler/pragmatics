@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.kiml.options;
 
 /**
- * Enumeration of node alignment options.
+ * Enumeration of node alignment options. To be accessed using {@link LayoutOptions#ALIGNMENT}.
  *
  * @author msp
  * @kieler.design 2011-03-14 reviewed by cmot, cds
