@@ -180,7 +180,9 @@ public abstract class AbstractService {
 
         // Get the graph instances of which the layout is to be calculated
         TransformationData<I, KNode> inTransData = new TransformationData<I, KNode>();
-        annotateTransData(inTransData, options);
+        if (options != null) {
+            annotateTransData(inTransData, options);
+        }
         inhandler.deserialize(serializedGraph, inTransData);
         if (inTransData.getSourceGraph() == null) {
             // The input was empty, so return an empty graph
@@ -228,10 +230,12 @@ public abstract class AbstractService {
 
         // Actually do the layout on the structure
         double layoutTime = 0;
-        for (KNode layout : graphs) {
-            IKielerProgressMonitor layoutMonitor = new BasicProgressMonitor();
-            layoutEngine.layout(layout, layoutMonitor);
-            layoutTime += layoutMonitor.getExecutionTime() * NANO_FACT;
+        if (!inTransData.getProperty(LayoutOptions.NO_LAYOUT)) {
+            for (KNode layout : graphs) {
+                IKielerProgressMonitor layoutMonitor = new BasicProgressMonitor();
+                layoutEngine.layout(layout, layoutMonitor);
+                layoutTime += layoutMonitor.getExecutionTime() * NANO_FACT;
+            }
         }
 
         // Calculate statistical values and annotate graph if it is a KGraph instance.
@@ -357,7 +361,8 @@ public abstract class AbstractService {
             if (optionData != null) {
                 Object optionValue = optionData.parseValue(option.getValue());
                 if (optionValue != null) {
-                    if (optionData.getTargets().contains(Target.PARENTS)) {
+                    if (optionData.getTargets().isEmpty()
+                            || optionData.getTargets().contains(Target.PARENTS)) {
                         if (optionData.equals(LayoutOptions.ALGORITHM)) {
                             LayoutAlgorithmData algoData = dataService.getAlgorithmDataBySuffix(
                                     (String) optionValue);
@@ -375,22 +380,26 @@ public abstract class AbstractService {
                             + optionValue.toString() + ")");
                         annotateGraphParents(layout, optionData, optionValue);
                     }
-                    if (optionData.getTargets().contains(Target.NODES)) {
+                    if (optionData.getTargets().isEmpty()
+                            || optionData.getTargets().contains(Target.NODES)) {
                         Logger.log(Severity.DEBUG, "Setting layout option (NODES, "
                             + optionValue.toString() + ")");
                         annotateGraphNodes(layout, optionData, optionValue);
                     }
-                    if (optionData.getTargets().contains(Target.EDGES)) {
+                    if (optionData.getTargets().isEmpty()
+                            || optionData.getTargets().contains(Target.EDGES)) {
                         Logger.log(Severity.DEBUG, "Setting layout option (EDGES, "
                             + optionValue.toString() + ")");
                         annotateGraphEdges(layout, optionData, optionValue);
                     }
-                    if (optionData.getTargets().contains(Target.PORTS)) {
+                    if (optionData.getTargets().isEmpty()
+                            || optionData.getTargets().contains(Target.PORTS)) {
                         Logger.log(Severity.DEBUG, "Setting layout option (PORTS, "
                             + optionValue.toString() + ")");
                         annotateGraphPorts(layout, optionData, optionValue);
                     }
-                    if (optionData.getTargets().contains(Target.LABELS)) {
+                    if (optionData.getTargets().isEmpty()
+                            || optionData.getTargets().contains(Target.LABELS)) {
                         Logger.log(Severity.DEBUG, "Setting layout option (LABELS, "
                             + optionValue.toString() + ")");
                         annotateGraphLabels(layout, optionData, optionValue);
@@ -425,7 +434,6 @@ public abstract class AbstractService {
                     layoutOption,
                     layoutOptionValue
                 );
-                //node.getData(KShapeLayout.class).setProperty(layoutOption, layoutOptionValue);
             }
         }
     }
@@ -453,7 +461,6 @@ public abstract class AbstractService {
                 layoutOption,
                 layoutOptionValue
             );
-            //node.getData(KShapeLayout.class).setProperty(layoutOption, layoutOptionValue);
         }
     }
 
@@ -480,7 +487,6 @@ public abstract class AbstractService {
                 layoutOption,
                 layoutOptionValue
             );
-            //edge.getData(KEdgeLayout.class).setProperty(layoutOption, layoutOptionValue);
         }
     }
 
@@ -507,7 +513,6 @@ public abstract class AbstractService {
                 layoutOption,
                 layoutOptionValue
             );
-            //port.getData(KShapeLayout.class).setProperty(layoutOption, layoutOptionValue);
         }
     }
 
@@ -534,7 +539,6 @@ public abstract class AbstractService {
                 layoutOption,
                 layoutOptionValue
             );
-            //label.getData(KShapeLayout.class).setProperty(layoutOption, layoutOptionValue);
         }
     }
 
