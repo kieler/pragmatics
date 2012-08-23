@@ -84,6 +84,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -118,14 +119,18 @@ public class KAwtRenderer {
     private Graphics2D graphics;
     /** the scale factor for all coordinates. */
     private float scale = 1.0f;
+    /** the transformation data object used for logging. */
+    private TransformationData<?, ?> transData;
     
     /**
      * Create a KRenderer.
      * 
      * @param graphics the graphics context
+     * @param transData transformation data used for logging, or {@code null} if no logging is required
      */
-    public KAwtRenderer(final Graphics2D graphics) {
+    public KAwtRenderer(final Graphics2D graphics, final TransformationData<?, ?> transData) {
         this.graphics = graphics;
+        this.transData = transData;
     }
     
     /**
@@ -614,6 +619,10 @@ public class KAwtRenderer {
         case KRenderingPackage.KFONT_SIZE:
             styleData.fontSize = ((KFontSize) style).getSize();
             break;
+        default:
+            if (transData != null) {
+                transData.log("Style class not supported: " + style.eClass().getName());
+            }
         }
     }
     
@@ -629,7 +638,9 @@ public class KAwtRenderer {
     private void handleRendering(final KRendering rendering, final StyleData styleData,
             final KVector size, final KVectorChain points, final boolean isSpline) {
         if (styleData.visible) {
+            boolean unknownShape = false, unknownLine = false;
             if (size != null) {
+                
                 // check shapes that need size information to be drawn
                 int width = (int) Math.round(size.x);
                 int height = (int) Math.round(size.y);
@@ -669,9 +680,13 @@ public class KAwtRenderer {
                     break;
                 case KRenderingPackage.KIMAGE:
                     if (styleData.backgVisible) {
-                        Image image = createImage((KImage) rendering);
+                        KImage kimage = (KImage) rendering;
+                        Image image = createImage(kimage);
                         if (image != null) {
                             graphics.drawImage(image, 0, 0, width, height, null);
+                        } else if (transData != null) {
+                            transData.log("Could not create image for bundle " + kimage.getBundleName()
+                                    + " and path " + kimage.getImagePath());
                         }
                     }
                     break;
@@ -700,6 +715,8 @@ public class KAwtRenderer {
                         }
                     }
                     break;
+                default:
+                    unknownShape = true;
                 }
             }
                 
@@ -729,8 +746,14 @@ public class KAwtRenderer {
                         graphics.setColor(styleData.foregColor);
                         graphics.draw(createPath(points, isSpline));
                     }
-                    break;                
+                    break;
+                default:
+                    unknownLine = true;
                 }
+            }
+            
+            if (unknownShape && unknownLine && transData != null) {
+                transData.log("Rendering class not supported: " + rendering.eClass().getName());
             }
         }
     }
@@ -919,6 +942,10 @@ public class KAwtRenderer {
             y = scale * stackPlaceData.getInsetTop();
             childSize.translate(-(x + scale * stackPlaceData.getInsetRight()),
                     -(y + scale * stackPlaceData.getInsetBottom()));
+            
+        } else if (placeData != null && transData != null) {
+            transData.log("Placement data not supported in the context of direct placement: "
+                    + placeData.eClass().getName());
         }
         
         if (childSize.x < 0) {
@@ -1061,6 +1088,9 @@ public class KAwtRenderer {
                                 + gridPlaceData.getInsetRight()),
                         -scale * (gridPlaceData.getInsetTop()
                                 + gridPlaceData.getInsetBottom()));
+            } else if (placeData != null && transData != null) {
+                transData.log("Placement data not supported in the context of grid placement: "
+                        + placeData.eClass().getName());
             }
 
             if (childSize.x < 0) {
@@ -1141,6 +1171,15 @@ public class KAwtRenderer {
                 graphics.translate(x, y);
                 doRender(rendering, size, points, false);
                 graphics.translate(-x, -y);
+            }
+            
+        } else if (transData != null) {
+            if (linePoints.size() < 2) {
+                transData.log("Need at least 2 line points for placement of decorator "
+                        + rendering.eClass().getName());
+            } else {
+                transData.log("Placement data not supported in the context of decorator placement: "
+                        + placeData.eClass().getName());
             }
         }
     }
