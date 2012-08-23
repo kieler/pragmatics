@@ -60,7 +60,9 @@ public class LayoutServiceImageDescriptor extends ImageDescriptor {
     public ImageData getImageData() {
         if (imageData == null) {
             try {
-                imageData = new ImageData(new ByteArrayInputStream(client.getPreviewImage(previewImage)));
+                imageData = new ImageData(
+                    new ByteArrayInputStream(client.getPreviewImage(previewImage))
+                );
             } catch (Exception e) {
                 StatusManager.getManager().handle(
                     new Status(

@@ -23,8 +23,14 @@
 # Use this option to configure the address, port and context under which the JAXWS and HTTP based layout will be published 
 #de.cau.cs.kieler.kwebs.jaxws.httpAddress=http://0.0.0.0:9442/layout
 
+# Use this option to configure the address under that the JAXWS based layout via HTTP is visible from outside 
+#de.cau.cs.kieler.kwebs.jaxws.publicHttpAddress=http://0.0.0.0:9442/layout
+
 # Use this option to configure the address, port and context under which the JAXWS and HTTPS based layout will be published 
 #de.cau.cs.kieler.kwebs.jaxws.httpsAddress=https://0.0.0.0:9443/layout
+
+# Use this option to configure the address under that the JAXWS based layout via HTTPS is visible from outside 
+#de.cau.cs.kieler.kwebs.jaxws.publicHttpsAddress=http://0.0.0.0:9443/layout
 
 # Use this option to configure the address and port under which the support server will be published
 #de.cau.cs.kieler.kwebs.supportServerAddress=http://0.0.0.0:9444
@@ -57,3 +63,27 @@
 
 # Use this option to configure the timeout for the ogdf process
 #de.cau.cs.kieler.kwebs.ogdf.timeout=
+
+#
+# Provider to use for creating the servers used for publishing the JAXWS web service
+#
+
+#de.cau.cs.kieler.kwebs.server.provider=sun
+#de.cau.cs.kieler.kwebs.server.provider=jetty
+
+#
+# Web frontend configuration
+#
+
+#de.cau.cs.kieler.kwebs.frontend.service.hoster=
+#de.cau.cs.kieler.kwebs.frontend.service.hoster.logo=
+#de.cau.cs.kieler.kwebs.frontend.https.expose.truststore=false
+#de.cau.cs.kieler.kwebs.frontend.disable.caching=false
+
+#de.cau.cs.kieler.kwebs.frontend.contact.information.general=<Institution>\n\
+# <Department>\n\
+# <Street>\n\
+# <Town>\n\
+
+#de.cau.cs.kieler.kwebs.frontend.contact.information.email.person=<Persons name> 
+#de.cau.cs.kieler.kwebs.frontend.contact.information.email.address=<Persons email address>

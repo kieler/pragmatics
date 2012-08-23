@@ -502,6 +502,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                     // SplineConnection.SPLINE_OFF
                     clazz.getMethod("setSplineMode", int.class).invoke(edgeFigure, 0);
                 }
+                return false;
             } catch (Exception exception) {
                 throw new WrappedException(exception);
             }

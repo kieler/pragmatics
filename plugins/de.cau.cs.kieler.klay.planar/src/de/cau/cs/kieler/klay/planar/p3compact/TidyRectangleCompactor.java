@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar.p3compact;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +24,8 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
-import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.flownetwork.SimpleFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -34,9 +34,7 @@ import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
-import de.cau.cs.kieler.klay.planar.intermediate.IntermediateLayoutProcessor;
-import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
-import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
+import de.cau.cs.kieler.klay.planar.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 import de.cau.cs.kieler.klay.planar.util.PUtil;
@@ -66,27 +64,34 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     /** The graph the algorithm works on. */
     private PGraph graph;
 
-    /** The orthogonal representation of the graph. */
-    private OrthogonalRepresentation orthogonal;
-
     private PFace externalFace;
 
     private PNode source;
 
     private PNode sink;
 
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
+    // Before Phase 1
+            null,
+            // Before Phase 2
+            null,
+            // Before Phase 3
+            null,
+            // Before Phase 4
+            EnumSet.of(LayoutProcessorStrategy.BEND_DUMMY, LayoutProcessorStrategy.RECT_SHAPE_DUMMY),
+            // After Phase 4
+            EnumSet.of(LayoutProcessorStrategy.GRID_DRAWING,
+                    LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER));
+
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph pgraph) {
-        IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy();
-        strategy.addLayoutProcessor(IntermediateProcessingStrategy.BEFORE_PHASE_4,
-                IntermediateLayoutProcessor.RECT_SHAPE);
-        strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_4,
-                IntermediateLayoutProcessor.GRID_DRAWING);
-        strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_4,
-                IntermediateLayoutProcessor.DUMMYNODE_REMOVING_PROCESSOR);
-        return strategy;
+    public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pgraph) {
+        // TODO Auto-generated method stub
+        return new IntermediateProcessingConfiguration(INTERMEDIATE_PROCESSING_CONFIGURATION);
     }
 
     // ======================== Algorithm ==========================================================
@@ -101,35 +106,34 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
         // on the graph direct and the bend-point nodes can be marked with a
         // it is definitively the better way. But give a info at the docu what happens with
         // the orthogonal representation of the book!!!
-        this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
 
-            // TODO think about: the input graph has to have at least 4 nodes, otherwise
-            // it would not make any sense to do the flownetwork step.
-            // Then it would be meaningful to set the edge-sizes to the same value.
-            // x -- x -- x
-            // Think about other exceptions and try to work on them.
+        // TODO think about: the input graph has to have at least 4 nodes, otherwise
+        // it would not make any sense to do the flownetwork step.
+        // Then it would be meaningful to set the edge-sizes to the same value.
+        // x -- x -- x
+        // Think about other exceptions and try to work on them.
 
-            // used to create the flownetwork
-            // findExternalFace();
-            this.externalFace = pgraph.getExternalFace();
-            // helps to create the flow network
-            PUtil.defineFaceSideEdges(graph);
-            // Create networks, start with side 0 for horizontal and 1 for vertical.
-            IFlowNetworkSolver solver = new SimpleFlowSolver();
+        // used to create the flownetwork
+        // findExternalFace();
+        this.externalFace = pgraph.getExternalFace();
+        // helps to create the flow network
+        PUtil.defineFaceSideEdges(graph);
+        // Create networks, start with side 0 for horizontal and 1 for vertical.
+        IFlowNetworkSolver solver = new SimpleFlowSolver();
 
-            // side 0 is the left face side, thus it is vertical.
-            PGraph verticalNetwork = createFlowNetwork(0);
-            solver.findFlow(verticalNetwork);
-            addFlowAsLength(verticalNetwork);
+        // side 0 is the left face side, thus it is vertical.
+        PGraph verticalNetwork = createFlowNetwork(0);
+        solver.findFlow(verticalNetwork);
+        addFlowAsLength(verticalNetwork);
 
-            // side 1 is the top face side, thus it is horizontal.
-            PGraph horizontalNetwork = createFlowNetwork(1);
-            solver.findFlow(horizontalNetwork);
-            addFlowAsLength(horizontalNetwork);
-            // Assign coordinates based on flow
-            // filter edges meaning using the horizontal and vertical segments to
-            // determine the edge size.
-            // faceside
+        // side 1 is the top face side, thus it is horizontal.
+        PGraph horizontalNetwork = createFlowNetwork(1);
+        solver.findFlow(horizontalNetwork);
+        addFlowAsLength(horizontalNetwork);
+        // Assign coordinates based on flow
+        // filter edges meaning using the horizontal and vertical segments to
+        // determine the edge size.
+        // faceside
     }
 
     /**
@@ -299,111 +303,4 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                 + " is not part of the face " + face.toString() + "!");
     }
 
-    // TODO make it faster: have a look at bendpoints should be enough!
-    // TODO needs a check: does this work for all examples?
-    // the following example does not work with these method, because
-    // it is not enough to check only for the edges of bendpoints.
-    //
-    // f1
-    // x -- x
-    // | f2 |
-    // x -- x
-    // SOLUTION: this doesn't matter which face you choose because both have the same edge
-    /**
-     * To filter the external face it is enough to check, if all bend-nodes only have two edges of a
-     * face. Because of the invariant, that all faces are rectangles is that sufficient. If so,
-     * we've found the external face.
-     * 
-     * @return
-     */
-    private void findExternalFace() {
-        for (PFace currentFace : graph.getFaces()) {
-
-            // choose a arbitrary edge of the face.
-            PEdge startEdge = currentFace.adjacentEdges().iterator().next();
-            PEdge currentEdge = startEdge;
-
-            // needed for avoid duplicate direction searches.
-            // if a edge has a node as target and a other edge the node as source there can
-            // become confusion. This variables helps the wrong directions.
-            PNode previousNode = null;
-            PNode currentNode = null;
-            List<Pair<PEdge, OrthogonalAngle>> angles;
-            boolean finish = false;
-            boolean isExternal = true;
-            while (!finish) {
-                // choose a arbitrary node of the edge, which is not visited before.
-                currentNode = currentEdge.getTarget() == previousNode ? currentEdge.getSource()
-                        : currentEdge.getTarget();
-                previousNode = currentNode;
-                angles = this.orthogonal.getAngles(currentNode);
-                // first get the current edge to determine the direction of the next edge,
-                // if the next edge is a face edge handle edge convenient,
-
-                int currentIndex = -1;
-                int previousIndex = -1;
-
-                // find the currentEdge and store the index.
-                for (int i = 0; i < angles.size(); i++) {
-                    if (angles.get(i).getFirst() == currentEdge) {
-                        currentIndex = i;
-                        break;
-                    }
-                }
-                // filter next edge of the face.
-                boolean otherface = false;
-                int directionCounter = 0;
-
-                Pair<PEdge, OrthogonalAngle> pair;
-                while (true) {
-                    previousIndex = currentIndex;
-                    currentIndex = (currentIndex + 1) < angles.size() ? currentIndex + 1 : 0;
-                    pair = angles.get(currentIndex);
-                    if (!otherface && currentFace.isAdjacent(pair.getFirst())) {
-                        // TODO is the currentEdge a bend edge, use the previous index to filter it
-                        currentEdge = pair.getFirst();
-                        if (angles.get(previousIndex).getSecond() != OrthogonalAngle.STRAIGHT) {
-                            if (currentNode.getAdjacentEdgeCount() > 2) {
-                                finish = true;
-                                isExternal = false;
-                            }
-                        }
-                        break;
-                    } else {
-                        otherface = true;
-                        if (angles.get(previousIndex).getSecond() == OrthogonalAngle.STRAIGHT) {
-                            directionCounter += 2;
-                        } else {
-                            // right is not possible, because than the first if statement would
-                            // used!
-                            directionCounter += 1;
-                        }
-
-                        if (currentFace.isAdjacent(pair.getFirst())) {
-                            if (directionCounter == 2) {
-                                // straight line, go along this edge
-                                currentEdge = pair.getFirst();
-
-                            } else {
-                                // then there is a bendpoint with more than 2 edges,
-                                // and the external face has only bendpoints with 2 edges.
-                                finish = true;
-                                isExternal = false;
-                            }
-                            break;
-                        }
-                    }
-                }
-
-                if (currentEdge == startEdge) {
-                    finish = true;
-                }
-            }
-            if (isExternal) {
-                this.graph.setExternalFace(currentFace);
-                this.externalFace = currentFace;
-                break;
-            }
-        }
-    }
 }

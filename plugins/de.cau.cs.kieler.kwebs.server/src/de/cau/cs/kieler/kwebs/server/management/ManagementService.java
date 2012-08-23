@@ -14,43 +14,78 @@
 
 package de.cau.cs.kieler.kwebs.server.management;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
-import de.cau.cs.kieler.kwebs.server.Application;
-import de.cau.cs.kieler.kwebs.server.logging.Logger;
-import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
+import de.cau.cs.kieler.kwebs.server.management.command.client.IManagementExchange;
+import de.cau.cs.kieler.kwebs.server.management.command.server.IManagementCommand;
 import de.cau.cs.kieler.kwebs.server.publishing.NotPublishedException;
-import de.cau.cs.kieler.kwebs.server.publishing.ServicePublisher;
 
 /**
+ *
  * Management for the server. Connections to the management server can only be made from localhost.
  *
  * @author swe
+ *
  */
 public final class ManagementService implements UncaughtExceptionHandler {
+
+    //////////
+
+    /** The singleton instance. */
+    public static final ManagementService INSTANCE
+        = new ManagementService();
+
+    //////////
 
     /** Default port for the management service. */
     public static final int DEFAULT_MANAGEMENTPORT
         = 23456;
 
-    /** The singleton instance. */
-    private static final ManagementService INSTANCE 
-        = new ManagementService();
-    
+    //////////
+
     /** The management server. */
-    private RequestListener requestListener 
+    private RequestListener requestListener
         = new RequestListener();
-    
+
+    /** */
     private Thread requestThread;
-    
+
+    /** */
+    private int port
+        = DEFAULT_MANAGEMENTPORT;
+
+    /** */
+    private String keystoreLocation
+        = null;
+
+    /** */
+    private String keystorePassword
+        = null;
+
+    //////////
+
     /**
      * Private constructor.
      *
@@ -60,32 +95,81 @@ public final class ManagementService implements UncaughtExceptionHandler {
         requestThread.setUncaughtExceptionHandler(this);
     }
 
+    //////////
+
+    /**
+     *
+     * @return
+     */
+    public int getPort() {
+        return port;
+    }
+
+    /**
+     *
+     * @param port
+     */
+    public void setPort(final int port) {
+        this.port = port;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getKeystoreLocation() {
+        return keystoreLocation;
+    }
+
+    /**
+     *
+     * @param keystoreLocation
+     */
+    public void setKeystoreLocation(final String keystoreLocation) {
+        this.keystoreLocation = keystoreLocation;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getKeystorePassword() {
+        return keystorePassword;
+    }
+
+    /**
+     *
+     * @param keystorePassword
+     */
+    public void setKeystorePassword(final String keystorePassword) {
+        this.keystorePassword = keystorePassword;
+    }
+
+    //////////
+
     /**
      * Starts the management server on the given port.
-     * 
-     * @param port
-     *            the port this management server listens on
      */
-    public static synchronized void startManagement(final int port) {
-        INSTANCE.requestListener.setPort(port);
+    public synchronized void startManagement() {
+        requestListener.setPort(port);
         try {
-            INSTANCE.requestThread.start();
+            requestThread.start();
         } catch (Exception e) {
             throw new NotPublishedException(e);
         }
     }
-    
+
     /**
-     * Stops the management server. 
+     * Stops the management server.
      */
-    public static synchronized void stopManagement() {
-        INSTANCE.requestListener.stop();
+    public synchronized void stopManagement() {
+        requestListener.stop();
     }
-    
+
     /**
      * This class implements the management server and dispatches management session requests to the
      * request handler.
-     *  
+     *
      * @author swe
      *
      */
@@ -98,25 +182,25 @@ public final class ManagementService implements UncaughtExceptionHandler {
         /** Backlog for the server socket. */
         private static final int DEFAULT_BACKLOG
             = 10;
-        
+
         /** The socket to listen for management requests. */
         private ServerSocket serverSocket;
-        
+
         /** The port to listen for management requests. */
         private int port
             = -1;
-        
+
         /** Whether to stop the management loop or not. */
         private boolean stopped;
 
         /**
-         * 
+         *
          * @param theport
          */
         public void setPort(final int theport) {
             port = theport;
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -129,8 +213,12 @@ public final class ManagementService implements UncaughtExceptionHandler {
             }
             stopped = false;
             try {
-                serverSocket = new ServerSocket(
-                    port, DEFAULT_BACKLOG, InetAddress.getByName("localhost")
+                serverSocket = createSocket(
+                    keystoreLocation,
+                    keystorePassword,
+                    InetAddress.getByName("localhost"),
+                    port,
+                    DEFAULT_BACKLOG
                 );
                 serverSocket.setSoTimeout(SOCKET_TIMEOUT);
                 while (!stopped) {
@@ -145,109 +233,162 @@ public final class ManagementService implements UncaughtExceptionHandler {
                 serverSocket = null;
             } catch (Exception e) {
                 throw new ManagementException("Management service could not be published", e);
-            }               
+            }
         }
-        
+
         /**
          * Stops the management server.
          */
         public void stop() {
             stopped = true;
         }
-        
+
     }
-    
+
     /**
      * This class handles a single management connection.
-     * 
+     *
      * @author swe
      *
      */
-    private final class RequestHandler {        
-        
+    private final class RequestHandler {
+
+        /** */
+        private InputStream socketIn;
+
+        /** */
+        private OutputStream socketOut;
+
         /**
          * Handles the management session based on the accepted socket.
-         * 
+         *
          * @param socket
          *            the socket this management session is connected to
          */
         public void handle(final Socket socket) {
+            ObjectInputStream   objectIn  = null;
+            ObjectOutputStream  objectOut = null;
+            Object              object    = null;
+            IManagementExchange exchange  = null;
+            IManagementCommand  command   = null;
             try {
-                BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream())
-                );
-                PrintWriter writer = new PrintWriter(
-                    new OutputStreamWriter(socket.getOutputStream())
-                );
-                Logger.log(Severity.ALWAYS, "Handling management request");
-                String request = reader.readLine();
-                String response = null;
-                String acknowledgement = ManagementCommands.RESPONSE_ACK;
-                Logger.log(Severity.ALWAYS, "Management request received: " + request);
-                // Execute the response to the management request
-                if (request.equals(ManagementCommands.COMMAND_ALIVE)) {
-                    // Nothing to do
-                } else if (request.equals(ManagementCommands.COMMAND_PUBLISH)) {
-                    if (ServicePublisher.getInstance().isPublished()) {
-                        response = "Cannot publish service, service is already published";
-                        acknowledgement = ManagementCommands.RESPONSE_NACK;
-                    } else {
-                        try {
-                            ServicePublisher.getInstance().publish();
-                            response = "Service has been published";
-                        } catch (Exception e) {
-                            response = "Error while publishing service\n"
-                                       + e.getMessage();
-                            acknowledgement = ManagementCommands.RESPONSE_NACK;
-                        }
-                    }
-                } else if (request.equals(ManagementCommands.COMMAND_UNPUBLISH)) {
-                    if (!ServicePublisher.getInstance().isPublished()) {
-                        response = "Cannot unpublish service, service is not published";
-                        acknowledgement = ManagementCommands.RESPONSE_NACK;
-                    } else {
-                        try {
-                            ServicePublisher.getInstance().unpublish();
-                            response = "Service has been unpublished";
-                        } catch (Exception e) {
-                            response = "Error while unpublishing service\n"
-                                       + e.getMessage();
-                            acknowledgement = ManagementCommands.RESPONSE_NACK;
-                        }
-                    }
-                } else if (request.equals(ManagementCommands.COMMAND_PUBLISHED)) {
-                    if (ServicePublisher.getInstance().isPublished()) {
-                        response = "Service is in published state";
-                    } else {
-                        response = "Service is in unpublished state";
-                    }
-                } else if (request.equals(ManagementCommands.COMMAND_SHUTDOWN)) {
-                    response = "Shutting down server";
+                socketIn = socket.getInputStream();
+                objectIn = new ObjectInputStream(socketIn);
+                object   = objectIn.readObject();
+                if (!(object instanceof IManagementExchange)) {
+                    throw new IllegalArgumentException(
+                        "Can only handle exchange instances, not objects of type " + object.getClass()
+                    );
                 }
-                // Send the result of the execution to the management request
-                if (response != null) {
-                    writer.println(response);
-                }
-                writer.println(acknowledgement);
-                writer.flush();
-                writer.close();
-                if (request.equals(ManagementCommands.COMMAND_SHUTDOWN)) {
-                	Application.getInstance().shutdownServer();
-                }
+                exchange = (IManagementExchange) object;
+                command  = ManagementCommandFactory.INSTANCE.create(exchange.getCommand());
+                command.initialize(exchange);
+                command.execute();
             } catch (Exception e) {
-                Logger.log(Severity.WARNING, 
-                    "Error while processing management request: " + e.getMessage(), 
-                e);
+                // Override any result the command may have calculated and set. Return
+                // the exception instead.
+                if (exchange != null) {
+                    exchange.setResponse(e);
+                }
+//                Logger.log(Severity.WARNING,
+//                    "Error while processing management request: " + e.getMessage(), e
+//                );
+            } finally {
+                try {
+                    if (exchange != null) {
+                        socketOut = socket.getOutputStream();
+                        objectOut = new ObjectOutputStream(socketOut);
+                        objectOut.writeObject(exchange);
+                    }
+                    if (objectIn != null) {
+                        objectIn.close();
+                    }
+                    if (objectOut != null) {
+                        objectOut.flush();
+                        objectOut.close();
+                    }
+                    if (socketIn != null) {
+                        socketIn.close();
+                    }
+                    if (socketOut != null) {
+                        socketOut.flush();
+                        socketOut.close();
+                    }
+                } catch (Exception e) {
+                    // Nothing more can be done here.
+                }
             }
         }
-        
+
     }
 
     /**
      * {@inheritDoc}
      */
     public void uncaughtException(final Thread t, final Throwable e) {
-        Logger.log(Severity.FAILURE, "Error in management service: " + e.getMessage(), e);
+//        Logger.log(Severity.FAILURE, "Error in management service: " + e.getMessage(), e);
     }
-    
+
+    //////////
+
+    /**
+     * 
+     * @param keystoreFile
+     * @param keystorePass
+     * @param address
+     * @param thePort
+     * @param backlog
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     * @throws CertificateException
+     * @throws IOException
+     * @throws UnrecoverableKeyException
+     * @throws KeyManagementException
+     * @throws URISyntaxException
+     */
+    private ServerSocket createSocket(final String keystoreFile, final String keystorePass,
+        final InetAddress address, final int thePort,
+        final int backlog) throws NoSuchAlgorithmException,
+        KeyStoreException, CertificateException, IOException, UnrecoverableKeyException,
+        KeyManagementException, URISyntaxException {
+        SSLContext sslContext
+            = SSLContext.getInstance("TLS");
+        KeyManagerFactory keyManagerFactory
+            = KeyManagerFactory.getInstance(
+                  KeyManagerFactory.getDefaultAlgorithm()
+              );
+        KeyStore keyStore
+            = KeyStore.getInstance("JKS");
+        TrustManagerFactory trustManagerFactory
+            = TrustManagerFactory.getInstance(
+                  TrustManagerFactory.getDefaultAlgorithm()
+              );
+        keyStore.load(
+            new FileInputStream("./" + keystoreFile),
+            keystorePass.toCharArray()
+        );
+        keyManagerFactory.init(
+            keyStore, keystorePass.toCharArray()
+        );
+        trustManagerFactory.init(keyStore);
+        sslContext.init(
+            keyManagerFactory.getKeyManagers(),
+                trustManagerFactory.getTrustManagers(),
+                    new SecureRandom()
+        );
+        return sslContext.getServerSocketFactory().createServerSocket(thePort, backlog, address);
+    }
+
+    //////////
+
+    /**
+     * Main method for testing purposes only.
+     *
+     * @param args
+     */
+    public static void main(final String[] args) {
+        ManagementService.INSTANCE.startManagement();
+    }
+
 }

@@ -268,7 +268,19 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             }
         } else if (adapterType.isAssignableFrom(EObject.class)) {
             if (object instanceof IGraphicalEditPart) {
-                return ((IGraphicalEditPart) object).getNotationView().getElement();
+                IGraphicalEditPart editPart = (IGraphicalEditPart) object;
+                EObject element = editPart.getNotationView().getElement();
+                if (editPart.getParent() != null) {
+                    // return the EObject only if the edit part has its own model element
+                    Object model = editPart.getParent().getModel();
+                    if (model instanceof View) {
+                        EObject parentElement = ((View) model).getElement();
+                        if (element == parentElement) {
+                            return null;
+                        }
+                    }
+                }
+                return element;
             } else if (object instanceof View) {
                 return ((View) object).getElement();
             }
@@ -349,7 +361,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             final IGraphicalEditPart layoutRootPart) {
         LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>(this);
         mapping.setProperty(CONNECTIONS, new LinkedList<ConnectionEditPart>());
-        mapping.setProperty(STATIC_CONFIG, new VolatileLayoutConfig());
+        mapping.setProperty(STATIC_CONFIG, new VolatileLayoutConfig(GmfLayoutConfig.PRIORITY - 1));
 
         // set the parent element
         mapping.setParentElement(layoutRootPart);

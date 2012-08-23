@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -82,14 +83,20 @@ public class EtiSeppConnector extends Thread implements EtiConnector{
 	private String hostname = "localhost";
 	private int port = 12345;
 	
+	// (swe 04.07.2012) Possible fix for stop bug:
+	private       boolean termReq  = false;
+	private final Object  termSync = new Object();
+	
 	/**
 	 * Waits endlessly for TCP-connections and gives control to {@link Sepp}.
 	 */
 	public void run() {
 		try {
-			while ( true ) {
+			while ( !termReq ) { // (swe 04.07.2012) Possible fix for stop bug:
 				new Thread(new Sepp( listener.accept() )).start();
 			}
+		} catch (SocketTimeoutException e) {
+			// Ignore it since it comes from the socket timeout set.
 		} catch (IOException e) {
 			// warn and exit
 			logger.debug(e.getMessage(), e);
@@ -440,6 +447,10 @@ public class EtiSeppConnector extends Thread implements EtiConnector{
 		
 		try {
 			listener = new ServerSocket(port);
+			listener.setSoTimeout(100);
+			synchronized (termSync) {
+				termReq = false;
+			}
 		} catch (IOException e) {
 			logger.debug(e.getMessage(), e);
 			logger.error("IO error: " + e.getMessage());
@@ -448,5 +459,21 @@ public class EtiSeppConnector extends Thread implements EtiConnector{
 		this.start();
 		return uri;
 	}
-
+	
+	// (swe 04.07.2012) Possible fix for stop bug: 
+	// Problem: this method is not visible via the interface {link de.unido.ls5.eti.sps.apis.EtiConnector}
+	public final void stop(
+		final int timeout
+	) 
+	{
+		try {
+			Thread.sleep(timeout);
+		} catch (Exception e) {
+			logger.warn("Timeout for stopping the server was interrupted: " + e.getMessage());
+		}
+		synchronized (termSync) {
+			termReq = true;
+		}
+	}
+	
 }

@@ -17,7 +17,7 @@ package de.cau.cs.kieler.kwebs.server.publishing;
 /**
  * .
  *
- * @author swe
+ * @author  swe
  */
 public class AlreadyPublishedException extends RuntimeException {
 
@@ -41,6 +41,14 @@ public class AlreadyPublishedException extends RuntimeException {
      */
     public AlreadyPublishedException(final Throwable throwable) {
         super(throwable);
+    }
+    
+    /**
+     * 
+     * @param message
+     */
+    public AlreadyPublishedException(final String message) {
+        super(message);
     }
     
 }

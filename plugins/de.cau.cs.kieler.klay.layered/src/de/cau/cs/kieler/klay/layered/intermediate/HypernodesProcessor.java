@@ -39,7 +39,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * </dl>
  *
  * @author msp
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutProcessor {
@@ -142,11 +142,11 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
         if (!bendEdges.isEmpty() && diffx > hypernode.getSize().x / 2
                 && diffy > hypernode.getSize().y / 2) {
             // create new ports for the edges
-            LPort northPort = new LPort();
+            LPort northPort = new LPort(layeredGraph);
             northPort.setNode(hypernode);
             northPort.setSide(PortSide.NORTH);
             northPort.getPosition().x = hypernode.getSize().x / 2;
-            LPort southPort = new LPort();
+            LPort southPort = new LPort(layeredGraph);
             southPort.setNode(hypernode);
             southPort.setSide(PortSide.SOUTH);
             southPort.getPosition().x = hypernode.getSize().x / 2;

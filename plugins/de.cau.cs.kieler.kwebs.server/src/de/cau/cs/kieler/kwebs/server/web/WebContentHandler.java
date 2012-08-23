@@ -31,6 +31,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import de.cau.cs.kieler.kwebs.server.Application;
+import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.util.Resources;
@@ -41,30 +42,36 @@ import de.cau.cs.kieler.kwebs.util.Resources;
  * @author swe
  */
 public class WebContentHandler implements HttpHandler {
-    
+
     /** Document root inside server plug in for static web content. */
     private static final String WEBCONTENT_ROOT
         = "server/kwebs/web";
-    
+
     /** Base package for classes providing dynamic web content. */
     private static final String DYNAMIC_BASEPACKAGE
         = "de.cau.cs.kieler.kwebs.server.web";
 
-    /** Cached instances of dynamic web content providing classes. */    
+    /** Cached instances of dynamic web content providing classes. */
     private Map<String, IDynamicWebContentProvider> dynamicWebContentProviders
         = new HashMap<String, IDynamicWebContentProvider>();
 
     /** Caching already generated content. */
     private Map<URI, CacheData> contentCache
-         = new HashMap<URI, CacheData>();
+        = new HashMap<URI, CacheData>();
+
+    /** Whether generated pages shall be chached or not. */
+    private final boolean cachingEnabled
+        = !Configuration.INSTANCE.getConfigPropertyAsBoolean(
+            Configuration.FRONTEND_DISBALE_CACHING, false
+        );
 
     /**
      * This method handles requests for static and dynamic contents of the servers web page. At first it
      * tries to resolve the request to a statically linked resource within the servers plug in. If no
      * such resource exists, a suitable handler for dynamic creation of the content is searched. If it
-     * can not be found either, the request fails and a HTTP 404 (not found) code is returned to the 
+     * can not be found either, the request fails and a HTTP 404 (not found) code is returned to the
      * requestor.
-     * 
+     *
      * @param exchange
      *            the {@link HttpExchange} to be handled
      * @throws IOException
@@ -75,7 +82,10 @@ public class WebContentHandler implements HttpHandler {
         // If none available, call the appropriate request handler
         // and cache the result, if allowed.
         URI uri = exchange.getRequestURI();
-        CacheData cacheData = contentCache.get(uri);
+        CacheData cacheData = null;
+        if (cachingEnabled) {
+            cacheData = contentCache.get(uri);
+        }
         if (cacheData == null) {
             RequestData requestData = buildRequestData(exchange);
             // Do forward to index page on invalid request
@@ -86,7 +96,7 @@ public class WebContentHandler implements HttpHandler {
             }
             if (handleStatic(requestData) || handleDynamic(requestData)) {
                 cacheData = requestData.toCacheData();
-                if (requestData.getCacheable()) {
+                if (cachingEnabled && requestData.getCacheable()) {
                     contentCache.put(uri, cacheData);
                 }
             } else {
@@ -94,17 +104,17 @@ public class WebContentHandler implements HttpHandler {
                 notfound(exchange);
                 return;
             }
-        }  
+        }
         // Build the response
         byte[] content = cacheData.getContent();
-        String mimetype = cacheData.getMimetype(); 
+        String mimetype = cacheData.getMimetype();
         String charset = cacheData.getCharset();
         Headers headers = exchange.getResponseHeaders();
         int responseLength = 0;
         int responseCode = HttpURLConnection.HTTP_OK;
-        if (content != null && mimetype != null) {    
+        if (content != null && mimetype != null) {
             headers.add(
-                "Content-type", 
+                "Content-type",
                 mimetype
                 + (charset != null ? ";charset=" + charset : "")
             );
@@ -112,27 +122,28 @@ public class WebContentHandler implements HttpHandler {
                 headers.add("Content-Disposition", "attachment; filename=" + cacheData.getName());
                 headers.add("Content-Transfer-Encoding", "binary");
             }
+            headers.putAll(cacheData.getAdditionalHeaders());
             responseLength = content.length;
-        } else {     
+        } else {
             notfound(exchange);
             return;
-        }    
+        }
         // Send the response
-        exchange.sendResponseHeaders(responseCode, responseLength);        
+        exchange.sendResponseHeaders(responseCode, responseLength);
         OutputStream os = exchange.getResponseBody();
         os.write(content);
         os.close();
     }
-    
+
     /**
-     * 
+     *
      * @param exchange
      * @return
      */
     private RequestData buildRequestData(final HttpExchange exchange) {
         // The context under which this handler is registered
         String context = exchange.getHttpContext().getPath();
-        // The URI for the requested resource. It begins with the 
+        // The URI for the requested resource. It begins with the
         // context under which this handler is registered
         String uri = exchange.getRequestURI().toString();
         // The requested resource, e.g. URI without the context at the beginning
@@ -147,7 +158,7 @@ public class WebContentHandler implements HttpHandler {
         try {
             resource = uri.substring(context.length());
             if (resource.startsWith("/")) {
-                resource = resource.substring(1);            
+                resource = resource.substring(1);
             }
             if (resource.indexOf("?") > -1) {
                 if (resource.indexOf("?") < resource.length() - 1) {
@@ -162,15 +173,15 @@ public class WebContentHandler implements HttpHandler {
             mimetype = guessMimeType(resource);
         } catch (Exception e) {
             Logger.log(
-                Severity.WARNING, "Invalid request received for web content: " + uri, 
+                Severity.WARNING, "Invalid request received for web content: " + uri,
                 e
-            );   
+            );
         }
         return new RequestData(exchange, resource, name, mimetype, queryToMap(query));
     }
-    
+
     /**
-     * 
+     *
      * @param requestData
      * @return
      */
@@ -188,9 +199,9 @@ public class WebContentHandler implements HttpHandler {
         }
         return (requestData.getContent() != null);
     }
-    
+
     /**
-     * 
+     *
      * @param requestData
      * @return
      */
@@ -201,10 +212,10 @@ public class WebContentHandler implements HttpHandler {
         String pkg = requestData.getResource();
         String cls = requestData.getResource();
         String ext = "";
-        int lastIndex = pkg.lastIndexOf("/"); 
+        int lastIndex = pkg.lastIndexOf("/");
         if (lastIndex > -1 && lastIndex < pkg.length() - 1) {
             cls = pkg.substring(lastIndex + 1);
-            pkg = pkg.substring(0, lastIndex); 
+            pkg = pkg.substring(0, lastIndex);
         } else {
             pkg = "";
         }
@@ -220,11 +231,11 @@ public class WebContentHandler implements HttpHandler {
         cls = cls.substring(0, 1).toUpperCase() + cls.substring(1).toLowerCase() + "Provider";
 //System.out.println("P " + pkg);
 //System.out.println("C " + cls);
-//System.out.println("E " + ext);       
-        String providerName = pkg + "." + cls;        
+//System.out.println("E " + ext);
+        String providerName = pkg + "." + cls;
         if (!dynamicWebContentProviders.containsKey(providerName)) {
             try {
-                Bundle contributor 
+                Bundle contributor
                     = Platform.getBundle(Application.PLUGIN_ID);
                 IDynamicWebContentProvider contentProvider = (IDynamicWebContentProvider)
                       (contributor.loadClass(providerName).newInstance());
@@ -233,7 +244,7 @@ public class WebContentHandler implements HttpHandler {
                 return false;
             }
         }
-        IDynamicWebContentProvider contentProvider = 
+        IDynamicWebContentProvider contentProvider =
             dynamicWebContentProviders.get(providerName);
         if (contentProvider != null) {
             try {
@@ -251,11 +262,11 @@ public class WebContentHandler implements HttpHandler {
             }
         }
         return false;
-    }        
+    }
 
     /**
      * Forwards a request.
-     * 
+     *
      * @param exchange
      *            the HTTP exchange object
      * @param uri
@@ -274,7 +285,7 @@ public class WebContentHandler implements HttpHandler {
 
     /**
      * Reports a non existing resource.
-     * 
+     *
      * @param exchange
      *            the HTTP exchange object
      * @throws IOException
@@ -282,22 +293,22 @@ public class WebContentHandler implements HttpHandler {
      */
     private void notfound(final HttpExchange exchange) throws IOException {
         byte[] data = (
-                          "<b>Resource '" 
-                          + exchange.getRequestURI().toString() 
+                          "<b>Resource '"
+                          + exchange.getRequestURI().toString()
                           + "' does not exist.</b>"
                       ).getBytes();
-        exchange.getResponseHeaders().add("Content-Type", "text/html");     
-        exchange.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, data.length);  
+        exchange.getResponseHeaders().add("Content-Type", "text/html");
+        exchange.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, data.length);
         OutputStream os = exchange.getResponseBody();
         os.write(data);
         os.close();
     }
-    
+
     // Utility methods
-    
+
     /**
      * Returns a map into which the key/value-pairs from a HTTP-query string are mapped.
-     *  
+     *
      * @param query
      *            the query string
      * @return a map into which the key/value-pairs from a HTTP-query string are mapped.
@@ -305,7 +316,7 @@ public class WebContentHandler implements HttpHandler {
     private Map<String, String> queryToMap(final String query) {
         Map<String, String> params = new HashMap<String, String>();
         if (query != null) {
-            StringTokenizer st = new StringTokenizer(query, "&");           
+            StringTokenizer st = new StringTokenizer(query, "&");
             while (st.hasMoreElements()) {
                 try {
                     String element = st.nextToken();
@@ -315,15 +326,15 @@ public class WebContentHandler implements HttpHandler {
                 } catch (Exception e) {
                     // Ignore invalid entries
                 }
-            }               
+            }
         }
         return params;
     }
 
-    /** Additional MIME types needed. */    
+    /** Additional MIME types needed. */
     private static Map<String, String> mimeTypes
         = new HashMap<String, String>();
-    
+
     /** Initializing additional MIME types. */
     static {
         mimeTypes.put("css", "text/css");
@@ -333,7 +344,7 @@ public class WebContentHandler implements HttpHandler {
     /**
      * Method which guesses the MIME type of a resource. If no concrete MIME type could be guessed,
      * "application/octet-stream" is returned.
-     * 
+     *
      * @param resource
      *            resource for which the MIME type is to be guessed.
      * @return the MIME type.
@@ -356,7 +367,7 @@ public class WebContentHandler implements HttpHandler {
             if (file.lastIndexOf(".") > -1 && file.lastIndexOf(".") < file.length() - 1) {
                 ext = file.substring(file.lastIndexOf(".") + 1);
             }
-            type = URLConnection.guessContentTypeFromName(file);            
+            type = URLConnection.guessContentTypeFromName(file);
             if (type == null) {
                 type = mimeTypes.get(ext);
             }
@@ -365,5 +376,5 @@ public class WebContentHandler implements HttpHandler {
         }
         return (type != null ? type : "application/octet-stream");
     }
-    
+
 }

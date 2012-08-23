@@ -301,24 +301,29 @@ public class KVector implements IDataObject, Cloneable {
     }
 
     /**
-     * Returns degree representation of this vector in degree.
+     * Returns angle representation of this vector in degree. The length of the vector must not be 0.
      * 
      * @return value within [0,360)
      */
     public double toDegrees() {
-        KVector temp = this.clone();
-        temp.normalize();
-        double sin = Math.toDegrees(Math.asin(temp.x));
-        double cos = Math.toDegrees(Math.acos(temp.y));
+        return Math.toDegrees(toRadians());
+    }
+    
+    /**
+     * Returns angle representation of this vector in radians. The length of the vector must not be 0.
+     * 
+     * @return value within [0,2*pi)
+     */
+    public double toRadians() {
+        double length = this.getLength();
+        assert length > 0;
 
-        if (y < 0 && x < 0) {
-            return (FULL_CIRCLE / 2) - sin;
-        } else if (y < 0) {
-            return cos;
-        } else if (x < 0) {
-            return FULL_CIRCLE + sin;
-        } else {
-            return cos;
+        if (x >= 0 && y >= 0) {  // 1st quadrant
+            return Math.asin(y / length);
+        } else if (x < 0) {      // 2nd or 3rd quadrant
+            return Math.PI - Math.asin(y / length);
+        } else {                 // 4th quadrant
+            return 2 * Math.PI + Math.asin(y / length);
         }
     }
 

@@ -14,19 +14,20 @@
 package de.cau.cs.kieler.klay.planar.p3compact;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
-import de.cau.cs.kieler.klay.planar.IntermediateProcessingStrategy;
+import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
-import de.cau.cs.kieler.klay.planar.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.planar.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
@@ -55,14 +56,28 @@ public class FaceSideCompactor extends AbstractAlgorithm implements ILayoutPhase
     /** The orthogonal representation of the graph. */
     private OrthogonalRepresentation orthogonal;
 
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
+    // Before Phase 1
+            null,
+            // Before Phase 2
+            null,
+            // Before Phase 3
+            null,
+            // Before Phase 4
+            EnumSet.of(LayoutProcessorStrategy.BEND_DUMMY, LayoutProcessorStrategy.RECT_SHAPE_DUMMY),
+            // After Phase 4
+            EnumSet.of(LayoutProcessorStrategy.GRID_DRAWING,
+                    LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER));
+
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph pgraph) {
-        IntermediateProcessingStrategy strategy = new IntermediateProcessingStrategy();
-        strategy.addLayoutProcessor(IntermediateProcessingStrategy.AFTER_PHASE_4,
-                IntermediateLayoutProcessor.DUMMYNODE_REMOVING_PROCESSOR);
-        return strategy;
+    public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pgraph) {
+        // TODO Auto-generated method stub
+        return new IntermediateProcessingConfiguration(INTERMEDIATE_PROCESSING_CONFIGURATION);
     }
 
     // ======================== Algorithm ==========================================================

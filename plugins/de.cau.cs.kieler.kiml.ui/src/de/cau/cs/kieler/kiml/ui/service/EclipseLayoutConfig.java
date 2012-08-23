@@ -31,6 +31,7 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
+import de.cau.cs.kieler.kiml.service.LayoutInfoService;
 
 /**
  * A layout configuration for extension point configurations and user preferences.
@@ -54,33 +55,18 @@ public class EclipseLayoutConfig implements ILayoutConfig {
     /** the aspect ratio of the currently processed diagram viewer. */
     public static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
             "context.aspectRatio");
-
-    /**
-     * Retrieves a layout option from the given diagram part by using the layout manager
-     * associated with the diagram part type.
-     * 
-     * @param diagramPart a diagram part such as an edit part
-     * @param optionData layout option data
-     * @return the current value for the given option, or {@code null}
-     */
-    public static Object getOption(final Object diagramPart, final IProperty<?> optionData) {
-        EclipseLayoutInfoService infoService = EclipseLayoutInfoService.getInstance();
-        Object relevantPart = infoService.getAdapter(diagramPart, null);
-        EObject domainModel = (EObject) infoService.getAdapter(diagramPart, EObject.class);
-        return getOption(relevantPart, domainModel, optionData);
-    }
     
     /**
-     * Retrieves a layout option for the given edit part and model element by querying the option
-     * for the edit part's class name and its domain model name. 
+     * Retrieves a layout option value for the given edit part and model element by querying the option
+     * for the edit part's class name and its domain model name.
      * 
+     * @param property the layout option data
      * @param diagramPart a diagram part such as an edit part
-     * @param modelElement the corresponding model element
-     * @param property layout option data
+     * @param modelElement the corresponding domain model element
      * @return the current value for the given option, or {@code null}
      */
-    public static Object getOption(final Object diagramPart, final EObject modelElement,
-            final IProperty<?> property) {
+    public static Object getValue(final IProperty<?> property, final Object diagramPart,
+            final EObject modelElement) {
         EclipseLayoutInfoService infoService = EclipseLayoutInfoService.getInstance();
         String id = property.getId();
         if (diagramPart != null) {
@@ -120,7 +106,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         // set diagram type for the content of the main edit part
         String diagramType = context.getProperty(DefaultLayoutConfig.CONTENT_DIAGT);
         if (diagramType == null) {
-            diagramType = (String) getOption(diagPart, domainElem, LayoutOptions.DIAGRAM_TYPE);
+            diagramType = (String) getValue(LayoutOptions.DIAGRAM_TYPE, diagPart, domainElem);
             context.setProperty(DefaultLayoutConfig.CONTENT_DIAGT, diagramType);
         }
         
@@ -128,7 +114,11 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             // set layout algorithm or type identifier for the content
             String layoutHint = context.getProperty(DefaultLayoutConfig.CONTENT_HINT);
             if (layoutHint == null) {
-                layoutHint = (String) getOption(diagPart, domainElem, LayoutOptions.ALGORITHM);
+                layoutHint = (String) getValue(LayoutOptions.ALGORITHM, diagPart, domainElem);
+                if (layoutHint == null) {
+                    layoutHint = (String) LayoutInfoService.getInstance().getOptionValue(
+                            diagramType, LayoutOptions.ALGORITHM.getId());
+                }
                 context.setProperty(DefaultLayoutConfig.CONTENT_HINT, layoutHint);
             }
             
@@ -144,16 +134,20 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             // set diagram type for the container of the main edit part
             String containerDiagramType = context.getProperty(DefaultLayoutConfig.CONTAINER_DIAGT);
             if (containerDiagramType == null) {
-                containerDiagramType = (String) getOption(containerDiagPart, containerDomainElem,
-                        LayoutOptions.DIAGRAM_TYPE);
+                containerDiagramType = (String) getValue(LayoutOptions.DIAGRAM_TYPE,
+                        containerDiagPart, containerDomainElem);
                 context.setProperty(DefaultLayoutConfig.CONTAINER_DIAGT, containerDiagramType);
             }
             
             // set layout algorithm or type identifier for the container
             String containerLayoutHint = context.getProperty(DefaultLayoutConfig.CONTAINER_HINT);
             if (containerLayoutHint == null) {
-                containerLayoutHint = (String) getOption(containerDiagPart, containerDomainElem,
-                        LayoutOptions.ALGORITHM);
+                containerLayoutHint = (String) getValue(LayoutOptions.ALGORITHM,
+                        containerDiagPart, containerDomainElem);
+                if (containerLayoutHint == null) {
+                    containerLayoutHint = (String) LayoutInfoService.getInstance().getOptionValue(
+                            containerDiagramType, LayoutOptions.ALGORITHM.getId());
+                }
                 context.setProperty(DefaultLayoutConfig.CONTAINER_HINT, containerLayoutHint);
             }
         }
@@ -167,8 +161,8 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         Object result = null;
         
         // check default value set for the actual edit part or its model element
-        result = getOption(context.getProperty(LayoutContext.DIAGRAM_PART),
-                context.getProperty(LayoutContext.DOMAIN_MODEL), optionData);
+        result = getValue(optionData, context.getProperty(LayoutContext.DIAGRAM_PART),
+                context.getProperty(LayoutContext.DOMAIN_MODEL));
         if (result != null) {
             return result;
         }

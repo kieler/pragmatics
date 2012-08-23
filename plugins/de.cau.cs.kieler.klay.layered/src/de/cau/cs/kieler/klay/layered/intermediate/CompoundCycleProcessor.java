@@ -48,7 +48,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  * 
  * @author ima
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  */
 public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -62,7 +62,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
         getMonitor().begin("Revert edges to remove cyclic dependencies between compound nodes", 1);
 
         // Represent the cyclic dependencies of compound nodes in a cycle-removal-graph
-        LGraph cycleRemovalGraph = new LGraph();
+        LGraph cycleRemovalGraph = new LGraph(layeredGraph);
         cycleRemovalGraph.setProperty(Properties.RANDOM,
                 layeredGraph.getProperty(Properties.RANDOM));
         List<LNode> cycleRemovalNodes = cycleRemovalGraph.getLayerlessNodes();
@@ -188,8 +188,10 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                                 currentTarget = currentTarget.getProperty(Properties.COMPOUND_NODE);
                             }
 
-                            insertCycleNode(currentSource, insertedNodes, cycleRemovalNodes);
-                            insertCycleNode(currentTarget, insertedNodes, cycleRemovalNodes);
+                            insertCycleNode(layeredGraph, currentSource, insertedNodes,
+                                    cycleRemovalNodes);
+                            insertCycleNode(layeredGraph, currentTarget, insertedNodes,
+                                    cycleRemovalNodes);
 
                             // While at it, add dummy edges to enhance the layering of the dependent
                             // nodes. Remember, which edge lead to the insertion of which dummy
@@ -202,7 +204,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                                         .getProperty(Properties.NODE_TYPE);
                                 if (nodeTypeDummySource == NodeType.NORMAL) {
                                     // leave node
-                                    insertDummyEdge(currentTarget, currentSource, edge);
+                                    insertDummyEdge(layeredGraph, currentTarget, currentSource, edge);
                                 } else {
                                     // compound node, lower border and port dummy nodes have to be
                                     // found
@@ -213,16 +215,16 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                                                         == NodeType.LOWER_COMPOUND_PORT))
                                                 && (node.getProperty(Properties.COMPOUND_NODE) 
                                                         == currentSource)) {
-                                            insertDummyEdge(currentTarget, node, edge);
+                                            insertDummyEdge(layeredGraph, currentTarget, node, edge);
                                         }
                                     }
                                 }
                             }
 
-                            LEdge cycleGraphEdge = new LEdge();
+                            LEdge cycleGraphEdge = new LEdge(layeredGraph);
                             cycleGraphEdge.setProperty(Properties.ORIGIN, edge);
-                            LPort cycleSourcePort = new LPort();
-                            LPort cycleTargetPort = new LPort();
+                            LPort cycleSourcePort = new LPort(layeredGraph);
+                            LPort cycleTargetPort = new LPort(layeredGraph);
                             cycleGraphEdge.setSource(cycleSourcePort);
                             cycleGraphEdge.setTarget(cycleTargetPort);
                             cycleSourcePort.setNode(insertedNodes.get(currentSource));
@@ -245,7 +247,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
                 // edge.setSource(target);
                 // edge.setTarget(source);
                 // edge.setProperty(Properties.REVERSED, true);
-                edge.reverse(true);
+                edge.reverse(layeredGraph, true);
             }
         }
 
@@ -255,20 +257,23 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
     /**
      * Inserts dummy edge for the layering phase.
      * 
+     * @param layeredGraph
+     *            the layered graph
      * @param target
      *            the LNode that is to be the edge's target.
-     * @param currentSource
+     * @param source
      *            the LNode that is to be the edge's source.
      * @param edge
      *            the edge, for which this dummy edge is inserted (edge leading to the requirement,
      *            one node should be placed before the other in layering)
      */
-    private void insertDummyEdge(final LNode target, final LNode source, final LEdge edge) {
-        LEdge dummyEdge = new LEdge();
+    private void insertDummyEdge(final LGraph layeredGraph, final LNode target, final LNode source,
+            final LEdge edge) {
+        LEdge dummyEdge = new LEdge(layeredGraph);
         dummyEdgeMap.put(edge, dummyEdge);
         dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
-        LPort dummyPortSource = new LPort();
-        LPort dummyPortTarget = new LPort();
+        LPort dummyPortSource = new LPort(layeredGraph);
+        LPort dummyPortTarget = new LPort(layeredGraph);
         dummyEdge.setSource(dummyPortSource);
         dummyEdge.setTarget(dummyPortTarget);
         dummyPortTarget.setNode(target);
@@ -278,6 +283,8 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
     /**
      * Inserts a representative for a node into the cycleRemovalGraph, if it has none already.
      * 
+     * @param layeredGraph
+     *            the layered graph
      * @param node
      *            LNode to be represented.
      * @param insertedNodes
@@ -285,10 +292,10 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
      * @param cycleRemovalNodes
      *            The layer-less nodes of the cycleRemoval graph.
      */
-    private void insertCycleNode(final LNode node, final HashMap<LNode, LNode> insertedNodes,
-            final List<LNode> cycleRemovalNodes) {
+    private void insertCycleNode(final LGraph layeredGraph, final LNode node,
+            final HashMap<LNode, LNode> insertedNodes, final List<LNode> cycleRemovalNodes) {
         if (!insertedNodes.containsKey(node)) {
-            LNode cycleGraphNode = new LNode();
+            LNode cycleGraphNode = new LNode(layeredGraph);
             cycleGraphNode.setProperty(Properties.ORIGIN, node);
             insertedNodes.put(node, cycleGraphNode);
             cycleRemovalNodes.add(cycleGraphNode);
@@ -424,7 +431,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
         }
 
         // In any case, the new portside will be the opposite of the old one.
-        LPort newPort = new LPort();
+        LPort newPort = new LPort(layeredGraph);
         newPort.getSize().x = port.getSize().x;
         newPort.getSize().y = port.getSize().y;
         newPort.copyProperties(port);
@@ -453,17 +460,17 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
             break;
         case UPPER_COMPOUND_PORT:
             // Create new LOWER_COMPOUND_PORT
-            LNode newLowerCompoundPort = new LNode();
+            LNode newLowerCompoundPort = new LNode(layeredGraph);
             newLowerCompoundPort.copyProperties(node);
             newLowerCompoundPort.setProperty(Properties.NODE_TYPE, NodeType.LOWER_COMPOUND_PORT);
             newLowerCompoundPort.setProperty(Properties.COMPOUND_NODE,
                     node.getProperty(Properties.COMPOUND_NODE));
-            LPort dummyConnectionPort = new LPort();
+            LPort dummyConnectionPort = new LPort(layeredGraph);
             dummyConnectionPort.setSide(PortSide.WEST);
             dummyConnectionPort.setNode(newLowerCompoundPort);
             // Connect it with compound dummy edges to the direct children of the compound node
             for (LNode child : Util.getChildren(node)) {
-                LEdge dummyEdge = new LEdge();
+                LEdge dummyEdge = new LEdge(layeredGraph);
                 dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
                 LPort startPort = child.getPorts(PortSide.WEST).iterator().next();
                 dummyEdge.setSource(startPort);
@@ -479,17 +486,17 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
             break;
         case LOWER_COMPOUND_PORT:
             // Create new UPPER_COMPOUND_PORT
-            LNode newUpperCompoundPort = new LNode();
+            LNode newUpperCompoundPort = new LNode(layeredGraph);
             newUpperCompoundPort.copyProperties(node);
             newUpperCompoundPort.setProperty(Properties.NODE_TYPE, NodeType.UPPER_COMPOUND_PORT);
             newUpperCompoundPort.setProperty(Properties.COMPOUND_NODE,
                     node.getProperty(Properties.COMPOUND_NODE));
-            LPort dummyConnector = new LPort();
+            LPort dummyConnector = new LPort(layeredGraph);
             dummyConnector.setSide(PortSide.EAST);
             dummyConnector.setNode(newUpperCompoundPort);
             // Connect it with compound dummy edges to the direct children of the compound node
             for (LNode child : Util.getChildren(node)) {
-                LEdge dummyEdge = new LEdge();
+                LEdge dummyEdge = new LEdge(layeredGraph);
                 dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
                 LPort endPort = child.getPorts(PortSide.EAST).iterator().next();
                 dummyEdge.setSource(dummyConnector);

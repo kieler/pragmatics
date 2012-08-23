@@ -18,10 +18,10 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.alg.InstancePool;
-import de.cau.cs.kieler.core.util.Dependency;
-import de.cau.cs.kieler.core.util.IDepending;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutData;
+import de.cau.cs.kieler.kiml.service.grana.dependency.Dependency;
+import de.cau.cs.kieler.kiml.service.grana.dependency.IDepending;
 
 /**
  * Analyses that derive from this class are required to provide an id, name and

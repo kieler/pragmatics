@@ -19,6 +19,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -40,10 +41,30 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @param <T> the type of graph that this importer can transform into a layered graph.
  * @author cds
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
+
+    // CHECKSTYLEOFF VisibilityModifier
+    
+    /** the hash code counter used to determine hash codes of graph elements. */
+    protected final HashCodeCounter hashCodeCounter;
+    
+    /** the layered graph constructed by this graph importer. */
+    protected LGraph layeredGraph;
+    
+    // CHECKSTYLEON VisibilityModifier
+
+    
+    /**
+     * Creates a graph importer with the given hash code counter.
+     * 
+     * @param counter the hash code counter used to determine hash codes of graph elements
+     */
+    public AbstractGraphImporter(final HashCodeCounter counter) {
+        this.hashCodeCounter = counter;
+    }
     
     ///////////////////////////////////////////////////////////////////////////////
     // External Ports
@@ -98,7 +119,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         PortSide finalExternalPortSide = portSide;
         
         // Create the dummy with one port
-        LNode dummy = new LNode();
+        LNode dummy = new LNode(layeredGraph);
         dummy.setProperty(Properties.NODE_TYPE, NodeType.EXTERNAL_PORT);
         dummy.setProperty(Properties.ORIGIN, port);
         dummy.setProperty(Properties.EXT_PORT_SIZE, portSize);
@@ -112,7 +133,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         }
         dummy.setProperty(Properties.PORT_ANCHOR, anchor);
         
-        LPort dummyPort = new LPort();
+        LPort dummyPort = new LPort(layeredGraph);
         dummyPort.setNode(dummy);
         
         // If the port constraints are free, we need to determine where to put the dummy (and its port)

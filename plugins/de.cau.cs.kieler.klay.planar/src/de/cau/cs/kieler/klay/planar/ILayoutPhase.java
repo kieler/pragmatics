@@ -33,6 +33,6 @@ public interface ILayoutPhase extends ILayoutProcessor {
      *            the planar graph to be processed.
      * @return intermediate processing strategy. May be {@code null}.
      */
-    IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph graph);
+    IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph graph);
 
 }

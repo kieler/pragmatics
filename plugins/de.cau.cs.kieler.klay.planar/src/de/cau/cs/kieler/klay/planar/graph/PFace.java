@@ -423,8 +423,12 @@ public class PFace extends PGraphElement {
     }
 
     /**
+     * A cutvertex is a vertex that divides a graph into two components if it is removed. Here it is
+     * identified if it contains more than two adjacent edge that are adjacent to this face.
+     * 
      * @param currentNode
-     * @return
+     *            possibly a cutvertex.
+     * @return true if the node is adjacent to more than two nodes, otherwise false.
      */
     public boolean isCutvertex(final PNode currentNode) {
         // at first handle exact 4 node edges.
@@ -438,10 +442,15 @@ public class PFace extends PGraphElement {
             }
         }
         // TODO cutvertex can also consists of 3 edges, then with a cut edge.
-        return count == 4;
+        return count == 4 || count == 3;
 
     }
 
+    /**
+     * Checks all adjacent nodes of the face if one of them is a cutvertex.
+     * 
+     * @return true if it is a cutvertex, false otherwise.
+     */
     public boolean containsCutvertex() {
         for (PNode node : this.adjacentNodes()) {
             if (isCutvertex(node)) {
@@ -554,7 +563,7 @@ public class PFace extends PGraphElement {
             directionCounter += angles.get(currentIndex).getSecond().ordinal() + 1;
             currentIndex = (currentIndex + 1) % angles.size();
         }
-        
+
         if (!wantsCCWAngle) {
             directionCounter = 4 - directionCounter;
         }

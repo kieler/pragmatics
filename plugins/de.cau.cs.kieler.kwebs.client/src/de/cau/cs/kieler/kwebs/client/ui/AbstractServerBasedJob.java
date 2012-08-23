@@ -78,8 +78,6 @@ public abstract class AbstractServerBasedJob extends Job {
      * Runs the job and checks for service availability. Display a message box with the result
      * of the test.
      * 
-     * @param monitor
-     *             the progress monitor used
      * @return whether the service is available
      */
     protected boolean checkAvailability() {
@@ -98,7 +96,7 @@ public abstract class AbstractServerBasedJob extends Job {
                 available(client, message);
             } catch (Exception e) { e.printStackTrace();
                 String[] errorLines = client.getLastErrorAsStringArray();
-                message = "The layout service you selected is not reachable.";                                            
+                message = "The layout service you selected is not reachable.";
                 message += "\n\nThe error occurred was:\n\n"; 
                 if (errorLines != null) {                            
                     for (String errorLine : errorLines) {
@@ -113,7 +111,7 @@ public abstract class AbstractServerBasedJob extends Job {
             }
         } else {
             message = "The selected server configuration is invalid."
-                      + " An availability test can not be performed.";                                        
+                      + " An availability test can not be performed.";
             message += "\n\nThe reason why this server configuration is not valid is:\n\n";
             if (why == ServerConfigError.ERROR_NOSERVERCONFIG) {
                 message += "The server configuration is missing a name or an address.";

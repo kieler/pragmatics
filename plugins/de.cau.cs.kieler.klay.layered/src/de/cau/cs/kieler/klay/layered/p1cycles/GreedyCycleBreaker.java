@@ -56,7 +56,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see de.cau.cs.kieler.klay.layered.intermediate.EdgeAndLayerConstraintEdgeReverser
  * @see de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintProcessor
  * @author msp
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhase {
@@ -210,7 +210,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                         // However, this will not happen here, because edges are only reversed for
                         // nodes that are part of a cycle and thus already have both an input and
                         // an output collector port.
-                        edge.reverse(true);
+                        edge.reverse(layeredGraph, true);
                         layeredGraph.setProperty(Properties.CYCLIC, true);
                     }
                 }                

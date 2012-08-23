@@ -45,7 +45,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  *
  * @author msp
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public class LongEdgeSplitter extends AbstractAlgorithm implements ILayoutProcessor {
@@ -78,7 +78,7 @@ public class LongEdgeSplitter extends AbstractAlgorithm implements ILayoutProces
                             Layer nextLayer = layerIter.next();
                             
                             // Create dummy node
-                            LNode dummyNode = new LNode();
+                            LNode dummyNode = new LNode(layeredGraph);
                             dummyNode.setProperty(Properties.ORIGIN, edge);
                             dummyNode.setProperty(Properties.NODE_TYPE, NodeType.LONG_EDGE);
                             dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
@@ -86,18 +86,18 @@ public class LongEdgeSplitter extends AbstractAlgorithm implements ILayoutProces
                             dummyNode.setLayer(nextLayer);
                             
                             // Create dummy input and output ports
-                            LPort dummyInput = new LPort();
+                            LPort dummyInput = new LPort(layeredGraph);
                             dummyInput.setSide(PortSide.WEST);
                             dummyInput.setNode(dummyNode);
                             
-                            LPort dummyOutput = new LPort();
+                            LPort dummyOutput = new LPort(layeredGraph);
                             dummyOutput.setSide(PortSide.EAST);
                             dummyOutput.setNode(dummyNode);
                             
                             edge.setTarget(dummyInput);
                             
                             // Create a dummy edge
-                            LEdge dummyEdge = new LEdge();
+                            LEdge dummyEdge = new LEdge(layeredGraph);
                             dummyEdge.copyProperties(edge);
                             dummyEdge.setSource(dummyOutput);
                             dummyEdge.setTarget(targetPort);

@@ -38,9 +38,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
 
 /**
  * Command handler for applying layout directly to GMF diagram files.

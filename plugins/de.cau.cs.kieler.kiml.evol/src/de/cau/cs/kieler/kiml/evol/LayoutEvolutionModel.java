@@ -15,6 +15,8 @@ package de.cau.cs.kieler.kiml.evol;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.google.common.collect.Maps;
 
@@ -50,8 +52,8 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
     /** the metric result value for 50% weight adaption. */
     private static final float HALF_WEIGHT_METRIC = 0.7f;
     
-    /** the singleton instance. */
-    private static LayoutEvolutionModel instance = new LayoutEvolutionModel();
+    /** the singleton instance (set by the plugin activator). */
+    private static LayoutEvolutionModel instance;
     
     /**
      * Returns the active evolution model instance.
@@ -59,20 +61,37 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
      * @return the active instance
      */
     public static LayoutEvolutionModel getInstance() {
+        if (instance == null) {
+            instance = new LayoutEvolutionModel();
+        }
         return instance;
+    }
+    
+    /**
+     * Reset the active evolution model instance to {@code null}. Only seen by classes of the
+     * same package.
+     */
+    static void resetInstance() {
+        if (instance != null) {
+            instance.executorService.shutdown();
+        }
+        instance = null;
     }
     
     /** the individual that was selected for meta layout. */
     private Genome selectedIndividual;
+    /** the executor service used for multi-threaded execution. */
+    private ExecutorService executorService;
     
     /**
-     * Hidden constructor to prevent instantiation from outside this class.
+     * Initialize the layout evolution model by creating the required evolutionary operations.
      */
     private LayoutEvolutionModel() {
+        executorService = Executors.newCachedThreadPool();
         setCrossoverOperation(new CrossoverOperation());
         setMutationOperation(new MutationOperation());
         setSurvivalOperation(new SurvivalOperation());
-        setEvaluationOperation(new EvaluationOperation());
+        setEvaluationOperation(new EvaluationOperation(executorService));
         setRandom(new Random());
     }
     

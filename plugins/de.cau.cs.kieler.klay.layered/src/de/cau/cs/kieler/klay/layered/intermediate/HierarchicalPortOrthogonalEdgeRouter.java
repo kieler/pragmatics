@@ -72,7 +72,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see HierarchicalPortPositionProcessor
  * @see OrthogonalRoutingGenerator
  * @author cds
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutProcessor {
@@ -180,7 +180,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     
                     // Restore the origin and connect the node to it
                     restoreDummy(replacedDummy, restoredDummies);
-                    connectNodeToDummy(node, replacedDummy);
+                    connectNodeToDummy(layeredGraph, node, replacedDummy);
                 }
             }
             
@@ -230,9 +230,9 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
      * @param node the node to connect to the dummy.
      * @param dummy the external port dummy to connect the node to.
      */
-    private void connectNodeToDummy(final LNode node, final LNode dummy) {
+    private void connectNodeToDummy(final LGraph layeredGraph, final LNode node, final LNode dummy) {
         // First, add a port to the node. The port side depends on the node's hierarchical port side
-        LPort outPort = new LPort();
+        LPort outPort = new LPort(layeredGraph);
         outPort.setNode(node);
         
         PortSide extPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
@@ -242,7 +242,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
         LPort inPort = dummy.getPorts().get(0);
         
         // Connect the two nodes
-        LEdge edge = new LEdge();
+        LEdge edge = new LEdge(layeredGraph);
         edge.setSource(outPort);
         edge.setTarget(inPort);
     }
@@ -537,7 +537,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     northernSourceLayer,
                     0,
                     northernTargetLayer,
-                    -nodeSpacing);
+                    -nodeSpacing - layeredGraph.getOffset().y);
             
             // If anything was routed, adjust the graph's offset and height
             if (slots > 0) {
@@ -561,7 +561,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                     southernSourceLayer,
                     0,
                     southernTargetLayer,
-                    layeredGraph.getSize().y + nodeSpacing);
+                    layeredGraph.getSize().y + nodeSpacing - layeredGraph.getOffset().y);
             
             // Adjust graph height.
             if (slots > 0) {
@@ -631,7 +631,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                 KVectorChain incomingEdgeBendPoints = new KVectorChain(nodeToOriginEdge.getBendPoints());
                 
                 KVector firstBendPoint = new KVector(nodeInPort.getPosition());
-                firstBendPoint.add(node.getPosition());
+                firstBendPoint.add(new KVector(node.getPosition()));
                 incomingEdgeBendPoints.add(0, firstBendPoint);
                 
                 // Compute bend points for outgoing edges
@@ -639,7 +639,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
                         nodeToOriginEdge.getBendPoints());
                 
                 KVector lastBendPoint = new KVector(nodeOutPort.getPosition());
-                lastBendPoint.add(node.getPosition());
+                lastBendPoint.add(new KVector(node.getPosition()));
                 outgoingEdgeBendPoints.add(lastBendPoint);
                 
                 // Retrieve the original hierarchical port dummy
@@ -753,11 +753,13 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
             case WEST:
                 if (constraints == PortConstraints.FIXED_RATIO) {
                     double ratio = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
-                    nodePosition.y = graphActualSize.y * ratio;
+                    nodePosition.y = graphActualSize.y * ratio
+                            - node.getProperty(Properties.PORT_ANCHOR).y;
                     requiredActualGraphHeight = nodePosition.y + extPortSize.y;
                     node.borderToContentAreaCoordinates(false, true);
                 } else if (constraints == PortConstraints.FIXED_POS) {
-                    nodePosition.y = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+                    nodePosition.y = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION)
+                            - node.getProperty(Properties.PORT_ANCHOR).y;
                     requiredActualGraphHeight = nodePosition.y + extPortSize.y;
                     node.borderToContentAreaCoordinates(false, true);
                 }

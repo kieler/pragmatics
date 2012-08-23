@@ -17,7 +17,7 @@ package de.cau.cs.kieler.klay.layered.p4nodes;
  * Definition of the available node placement strategies for the layered layout approach.
  *
  * @author jjc
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public enum NodePlacementStrategy {

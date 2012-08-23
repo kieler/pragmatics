@@ -31,17 +31,21 @@ public class LLabel extends LShape {
     /**
      * Creates a label.
      * 
+     * @param graph the graph for which the label is created
      * @param thetext text of the label
      */
-    public LLabel(final String thetext) {
+    public LLabel(final LGraph graph, final String thetext) {
+        super(graph);
         this.text = thetext;
     }
     
     /**
      * Creates a label with empty text.
+     * 
+     * @param graph the graph for which the label is created
      */
-    public LLabel() {
-        this("");
+    public LLabel(final LGraph graph) {
+        this(graph, "");
     }
     
     /**

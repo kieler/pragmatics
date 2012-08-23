@@ -18,12 +18,15 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
+import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
@@ -110,7 +113,7 @@ public class PUtil {
 
                 while (true) {
                     // clockwise direction
-                    currentIndex = currentIndex  > 0 ? currentIndex - 1 : angles.size() - 1;
+                    currentIndex = currentIndex > 0 ? currentIndex - 1 : angles.size() - 1;
                     pair = angles.get(currentIndex);
 
                     if (!otherface && currentFace.isAdjacent(pair.getFirst())) {
@@ -192,17 +195,18 @@ public class PUtil {
         case 2:
             return sideIndex;
             // straight
+            // CHECKSTYLEOFF MagicNumber
         case 3:
             return (sideIndex + 1) % FACE_SIDES_NUMBER;
             // full
         case 4:
+            // CHECKSTYLEON MagicNumber
             return (sideIndex + 2) % FACE_SIDES_NUMBER;
         default:
             throw new InconsistentGraphModelException(/* text */);
         }
     }
 
-    
     /**
      * Searches for the next clockwise node of the face by determining a node of the currentEdge. If
      * a previousNode is known, it is easy to determine the next node. Then one can choose the other
@@ -292,6 +296,102 @@ public class PUtil {
         result.setFirst(containsForeignEdge ? directionCounter - 1 : directionCounter);
         result.setSecond(pair.getFirst());
         return result;
+    }
+
+    /**
+     * Adds a {@link KVectorChain} of bendpoints to the edge bendpoints. Additionally orders them to
+     * their correct positions.
+     * 
+     * @param edge
+     *            the edge to that the bendpoints shell added.
+     * @param newBendPoints
+     *            the new bendpoints to add.
+     * @param exceptionNode
+     *            during the planarization, there is the dummy node on the road, this has to be
+     *            ignored.
+     * @param grid
+     *            the grid, that contains the edge and the exception node.
+     */
+    public static void addBendsToEdge(final PEdge edge, final KVectorChain newBendPoints,
+            final PNode exceptionNode, final GridRepresentation grid) {
+        edge.getBendPoints().addAll(newBendPoints);
+
+        if (edge.getBendPoints().size() > 1) {
+
+            int[] sourceCoordinates = grid.search(edge.getSource());
+
+            double startX = (double) sourceCoordinates[0];
+            double startY = (double) sourceCoordinates[1];
+
+            KVectorChain myBendPoints = new KVectorChain(edge.getBendPoints());
+            edge.removeBendPoints();
+
+            double value = 0.0;
+            double end = 0.0;
+
+            KVector foundVec = null;
+            boolean found = false;
+            while (!myBendPoints.isEmpty()) {
+                // Search the next bendpoint
+                out: for (KVector vec : myBendPoints) {
+                    found = false;
+                    if (vec.x == startX) {
+                        found = true;
+                        if (vec.y < startY) {
+                            value = vec.y;
+                            end = startY;
+                        } else {
+                            value = startY;
+                            end = vec.y;
+                        }
+
+                        value++;
+                        while (value < end) {
+                            PNode pNode = grid.get((int) startX, (int) value);
+                            if (pNode != null && pNode != exceptionNode) {
+                                // there is another node.
+                                continue out;
+                            }
+                            value++;
+                        }
+
+                    } else if (vec.y == startY) {
+                        found = true;
+                        if (vec.x < startX) {
+                            value = vec.x;
+                            end = startX;
+                        } else {
+                            value = startX;
+                            end = vec.x;
+                        }
+
+                        value++;
+                        while (value < end) {
+                            PNode pNode = grid.get((int) value, (int) startY);
+                            if (pNode != null && (exceptionNode == null || pNode != exceptionNode)) {
+                                // there is another node.
+                                continue out;
+                            }
+                            value++;
+                        }
+
+                    }
+                    if (found) {
+                        foundVec = vec;
+                        break;
+                    }
+                }
+                if (!found) {
+                    // TODO Assertion found has to be true here. Otherwise the graphmodel is
+                    // inconsistent.
+                }
+                // If not continued add vec to bend data.
+                startX = foundVec.x;
+                startY = foundVec.y;
+                edge.getBendPoints().add(foundVec);
+                myBendPoints.remove(foundVec);
+            }
+        }
     }
 
 }

@@ -7,8 +7,8 @@
          point="de.cau.cs.kieler.kiml.service.graphTransformers">
       <handler
             class="de.cau.cs.kieler.kiml.service.KGraphHandler"
-            description="Internally used graph format of the KIELER project. See http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/KGraph"
-            extensions="kgraph,xmi"
+            description="Internally used graph format of the KIELER project. See http://rtsys.informatik.uni-kiel.de/confluence/x/U4EN"
+            extensions="kgraph,kgx,xmi"
             id="de.cau.cs.kieler.kgraph"
             name="KGraph">
       </handler>

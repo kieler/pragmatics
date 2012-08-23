@@ -61,6 +61,7 @@ public final class ApplicationHelper {
         "server/jeti/config/log4j/log4j.properties",
         "server/jeti/config/tools/tools.xml",
         "server/kwebs/security/keystores/server.jks",
+        "server/kwebs/security/keystores/mserver.jks",
         "server/kwebs/config/kwebs.properties",
         "server/kwebs/web/security/client.jks",
         "server/kwebs/wsdl/layoutService.wsdl",
@@ -68,7 +69,10 @@ public final class ApplicationHelper {
         "kwebs_start.sh",
         "kwebs_stop.sh",
         "kwebs_backup.sh",
-        "kwebs_restore.sh"          
+        "kwebs_restore.sh",
+        "kwebs_start.cmd",
+        "kwebs_stop.cmd",
+        "mclient.jks"
     };
     
     /**
