@@ -58,6 +58,9 @@ public class KGraphRenderer {
     private static final double ARROW_LENGTH = 8.0f;
     /** default width of edge arrows. */
     private static final double ARROW_WIDTH = 7.0f;
+
+    /** the minimal font height for displaying labels. */
+    private static final int MIN_FONT_HEIGHT = 3;
     
     /** mapping of each layout graph element to its computed bounds. */
     private final Map<Object, PaintRectangle> boundsMap = new LinkedHashMap<Object, PaintRectangle>();
@@ -316,18 +319,20 @@ public class KGraphRenderer {
      */
     private void renderLabel(final KLabel label, final GC graphics, final Rectangle area,
             final KVector offset) {
-        PaintRectangle rect = boundsMap.get(label);
-        KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-        if (rect == null) {
-            rect = new PaintRectangle(labelLayout, offset, scale);
-            boundsMap.put(label, rect);
-        }
-        if (!rect.painted && rect.intersects(area)) {
-            String text = label.getText();
-            if (text != null && text.length() > 0) {
-                graphics.drawString(text, rect.x, rect.y, true);
+        if (graphics.getFont().getFontData()[0].getHeight() >= MIN_FONT_HEIGHT) {
+            PaintRectangle rect = boundsMap.get(label);
+            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+            if (rect == null) {
+                rect = new PaintRectangle(labelLayout, offset, scale);
+                boundsMap.put(label, rect);
             }
-            rect.painted = true;
+            if (!rect.painted && rect.intersects(area)) {
+                String text = label.getText();
+                if (text != null && text.length() > 0) {
+                    graphics.drawString(text, rect.x, rect.y, true);
+                }
+                rect.painted = true;
+            }
         }
     }
     
@@ -451,8 +456,8 @@ public class KGraphRenderer {
             double normY = vectY / length;
             double neckX = point2.x + ARROW_LENGTH * normX * scale;
             double neckY = point2.y + ARROW_LENGTH * normY * scale;
-            double orthX = normY * ARROW_WIDTH / 2;
-            double orthY = -normX * ARROW_WIDTH / 2;
+            double orthX = normY * ARROW_WIDTH / 2 * scale;
+            double orthY = -normX * ARROW_WIDTH / 2 * scale;
 
             arrow[2] = (int) Math.round(neckX + orthX + offset.x);
             arrow[3] = (int) Math.round(neckY + orthY + offset.y);

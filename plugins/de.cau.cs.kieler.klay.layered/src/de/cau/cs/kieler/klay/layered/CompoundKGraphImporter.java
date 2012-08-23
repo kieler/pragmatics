@@ -45,6 +45,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.properties.EdgeType;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
@@ -64,6 +65,15 @@ public class CompoundKGraphImporter extends KGraphImporter {
      * Maximal depth of the imported graph - to be updated during import.
      */
     private int maximalDepth;
+    
+    /**
+     * Creates a graph importer with the given hash code counter.
+     * 
+     * @param counter the hash code counter used to determine hash codes of graph elements
+     */
+    public CompoundKGraphImporter(final HashCodeCounter counter) {
+        super(counter);
+    }
 
     /**
      * {@inheritDoc}
@@ -498,7 +508,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
                                     .getProperty(Properties.ORIGIN)))) {
                         if (!(parentChildMap.containsKey(lNode))
                                 || !(parentChildMap.get(lNode).contains(childCandidate))) {
-                            LEdge dummyEdge = new LEdge();
+                            LEdge dummyEdge = new LEdge(layeredGraph);
                             dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
 
                             LPort sourcePort = lNode.getPorts(PortSide.EAST).iterator().next();
@@ -529,7 +539,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
                                     .getProperty(Properties.ORIGIN)))) {
                         if (!(parentChildMap.containsKey(lNode))
                                 || !(parentChildMap.get(lNode).contains(childCandidate))) {
-                            LEdge dummyEdge = new LEdge();
+                            LEdge dummyEdge = new LEdge(layeredGraph);
                             dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
 
                             LPort sourcePort = findDummyEdgePort(childCandidate, PortSide.EAST,
@@ -573,8 +583,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
      */
     private LEdge createLEdgeFromKEdge(final KEdge kedge,
             final Map<KGraphElement, LGraphElement> elemMap, final LGraph layeredGraph) {
-        super.transformEdge(kedge, (KNode) layeredGraph.getProperty(Properties.ORIGIN), elemMap,
-                layeredGraph);
+        super.transformEdge(kedge, (KNode) layeredGraph.getProperty(Properties.ORIGIN), elemMap);
 
         LEdge newEdge = (LEdge) elemMap.get(kedge);
         elemMap.put(kedge, newEdge);
@@ -619,7 +628,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
         }
         if (dummyNode == null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            dummyNode = new LNode();
+            dummyNode = new LNode(layeredGraph);
             dummyNode.setProperty(Properties.ORIGIN, node);
             dummyNode.setProperty(Properties.K_PARENT, node.getParent());
             dummyNode.getPosition().x = nodeLayout.getXpos();
@@ -700,7 +709,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
             portRepresentative = (LPort) elemMap.get(port);
         }
         if ((portRepresentative == null) || (portRepresentative.getSide() != side)) {
-            LPort dummyPort = new LPort();
+            LPort dummyPort = new LPort(layeredGraph);
             dummyPort.setSide(side);
             dummyPort.setNode(node);
             if (port != null) {

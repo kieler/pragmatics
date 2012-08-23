@@ -147,7 +147,7 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
      *            the objects
      * @return a sorted list respecting dependencies between the objects
      */
-    public List<T> dependencySort(final List<T> objects) {
+    public List<T> dependencySort(final Collection<T> objects) {
         LinkedList<T> sorted = new LinkedList<T>();
         // reset marker
         for (Node node : nodes.values()) {

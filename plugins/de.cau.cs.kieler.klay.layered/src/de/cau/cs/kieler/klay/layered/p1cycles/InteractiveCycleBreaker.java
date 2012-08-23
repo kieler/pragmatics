@@ -82,7 +82,7 @@ public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayou
         }
         // reverse the gathered edges
         for (LEdge edge : revEdges) {
-            edge.reverse(true);
+            edge.reverse(layeredGraph, true);
         }
         
         // perform an additional check for cycles - maybe we missed something
@@ -95,7 +95,7 @@ public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayou
         }
         // again, reverse the edges that were marked
         for (LEdge edge : revEdges) {
-            edge.reverse(true);
+            edge.reverse(layeredGraph, true);
         }
         
         revEdges.clear();

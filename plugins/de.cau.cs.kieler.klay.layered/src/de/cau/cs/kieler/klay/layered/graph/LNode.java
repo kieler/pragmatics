@@ -46,6 +46,15 @@ public class LNode extends LShape {
     private final List<LLabel> labels = new LinkedList<LLabel>();
     /** this node's insets. */
     private final LInsets.Double margin = new LInsets.Double();
+    
+    /**
+     * Creates a node.
+     * 
+     * @param graph the graph for which the node is created 
+     */
+    public LNode(final LGraph graph) {
+        super(graph);
+    }
 
     /**
      * {@inheritDoc}

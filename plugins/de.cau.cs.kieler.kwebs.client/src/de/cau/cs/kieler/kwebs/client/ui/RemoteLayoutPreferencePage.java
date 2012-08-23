@@ -59,7 +59,9 @@ import de.cau.cs.kieler.kwebs.client.ServerConfigs;
 import de.cau.cs.kieler.kwebs.client.KwebsClientPlugin;
 import de.cau.cs.kieler.kwebs.client.Preferences;
 import de.cau.cs.kieler.kwebs.client.layout.SwitchLayoutMode;
-import de.cau.cs.kieler.kwebs.client.ui.RemoteLayoutPreferencePage.ServerConfigViewerComparator.SortProperty;
+
+import de.cau.cs.kieler.kwebs.client.ui.RemoteLayoutPreferencePage.ServerConfigViewerComparator.
+    SortProperty;
 
 /**
  * This class provides the preference page for configuring the service based layout. In order to use

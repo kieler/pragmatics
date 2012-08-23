@@ -148,13 +148,13 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                 // the compound node.
                 switch (sourceNodeType) {
                 case LOWER_COMPOUND_BORDER:
-                    LPort newPort = transferPort(sourcePort, compoundNodeSource);
+                    LPort newPort = transferPort(layeredGraph, sourcePort, compoundNodeSource);
                     ledge.setSource(newPort);
                     break;
 
                 case UPPER_COMPOUND_PORT:
                 case LOWER_COMPOUND_PORT:
-                    LPort newPort2 = transferPort(sourcePort, compoundNodeSource);
+                    LPort newPort2 = transferPort(layeredGraph, sourcePort, compoundNodeSource);
                     // in this case, we have to keep the port's origin in mind.
                     newPort2.setProperty(Properties.ORIGIN,
                             sourcePort.getProperty(Properties.ORIGIN));
@@ -165,7 +165,7 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                     // Keep an eye on edges to descendant nodes: Their port coordinates have to be
                     // updated.
                     if (Util.isDescendant(targetNode, sourceNode)) {
-                        LPort newPort3 = transferPort(sourcePort, compoundNodeSource);
+                        LPort newPort3 = transferPort(layeredGraph, sourcePort, compoundNodeSource);
                         ledge.setSource(newPort3);
                     }
                     break;
@@ -183,13 +183,13 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
                 // the compound node.
                 switch (targetNodeType) {
                 case LOWER_COMPOUND_BORDER:
-                    LPort newPort = transferPort(targetPort, compoundNodeTarget);
+                    LPort newPort = transferPort(layeredGraph, targetPort, compoundNodeTarget);
                     ledge.setTarget(newPort);
                     break;
 
                 case UPPER_COMPOUND_PORT:
                 case LOWER_COMPOUND_PORT:
-                    LPort newPort2 = transferPort(targetPort, compoundNodeTarget);
+                    LPort newPort2 = transferPort(layeredGraph, targetPort, compoundNodeTarget);
                     // in this case, we have to keep the port's origin in mind.
                     newPort2.setProperty(Properties.ORIGIN,
                             targetPort.getProperty(Properties.ORIGIN));
@@ -214,6 +214,8 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
     /**
      * Creates a new port of the compound node for a given dummy node port.
      * 
+     * @param layeredGraph
+     *            the layered graph
      * @param dummyPort
      *            the port to be translated into a compound node port.
      * @param sourceNode
@@ -221,12 +223,13 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
      * @param compoundNode
      * @return
      */
-    private LPort transferPort(final LPort dummyPort, final LNode compoundNode) {
+    private LPort transferPort(final LGraph layeredGraph, final LPort dummyPort,
+            final LNode compoundNode) {
         // get node of dummyPort and its node type
         LNode dummyNode = dummyPort.getNode();
         NodeType dummyNodeType = dummyNode.getProperty(Properties.NODE_TYPE);
 
-        LPort newPort = new LPort();
+        LPort newPort = new LPort(layeredGraph);
         newPort.setNode(compoundNode);
 
         newPort.copyProperties(dummyPort);

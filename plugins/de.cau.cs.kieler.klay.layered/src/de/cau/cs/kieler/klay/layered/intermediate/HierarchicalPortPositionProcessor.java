@@ -112,7 +112,7 @@ public class HierarchicalPortPositionProcessor extends AbstractAlgorithm impleme
             }
 
             // Apply the node's new Y coordinate
-            node.getPosition().y = finalYCoordinate;
+            node.getPosition().y = finalYCoordinate - node.getProperty(Properties.PORT_ANCHOR).y;
             node.borderToContentAreaCoordinates(false, true);
         }
     }

@@ -87,6 +87,8 @@ public final class Util {
      * Return a collector port of given type, creating it if necessary. A collector port is used to
      * merge all incident edges that originally had no ports.
      * 
+     * @param layeredGraph
+     *            the layered graph
      * @param node
      *            a node
      * @param type
@@ -96,8 +98,8 @@ public final class Util {
      *            the side to set for a newly created port
      * @return a collector port
      */
-    public static LPort provideCollectorPort(final LNode node, final PortType type,
-            final PortSide side) {
+    public static LPort provideCollectorPort(final LGraph layeredGraph, final LNode node,
+            final PortType type, final PortSide side) {
         LPort port = null;
         switch (type) {
         case INPUT:
@@ -106,7 +108,7 @@ public final class Util {
                     return inport;
                 }
             }
-            port = new LPort();
+            port = new LPort(layeredGraph);
             port.setProperty(Properties.INPUT_COLLECT, true);
             break;
         case OUTPUT:
@@ -115,7 +117,7 @@ public final class Util {
                     return outport;
                 }
             }
-            port = new LPort();
+            port = new LPort(layeredGraph);
             port.setProperty(Properties.OUTPUT_COLLECT, true);
             break;
         }

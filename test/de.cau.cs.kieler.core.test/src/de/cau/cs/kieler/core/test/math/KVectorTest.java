@@ -115,23 +115,31 @@ public class KVectorTest {
      */
     @Test
     public void testToDegrees() {
-        // init a KVector
-        // test the 45Degree
-        KVector v = new KVector(10, 10);
-        assertEquals(45, v.toDegrees(), 0.00001);
-        // test the 0 Degree
-        v = new KVector(0, 50);
+        KVector v;
+        // test 0 degrees
+        v = new KVector(10, 0);
         assertEquals(0, v.toDegrees(), 0.00001);
-        // test the 90 Degree
-        v = new KVector(50, 0);
+        // test 45 degrees
+        v = new KVector(10, 10);
+        assertEquals(45, v.toDegrees(), 0.00001);
+        // test 90 degrees
+        v = new KVector(0, 10);
         assertEquals(90, v.toDegrees(), 0.00001);
-        // test the 180 Degree
-        v = new KVector(0, -50);
+        // test 135 degrees
+        v = new KVector(-10, 10);
+        assertEquals(135, v.toDegrees(), 0.00001);
+        // test 180 degrees
+        v = new KVector(-10, 0);
         assertEquals(180, v.toDegrees(), 0.00001);
-        // test the 270 Degree
-        v = new KVector(-50, 0);
+        // test 225 degrees
+        v = new KVector(-10, -10);
+        assertEquals(225, v.toDegrees(), 0.00001);
+        // test 270 degrees
+        v = new KVector(0, -10);
         assertEquals(270, v.toDegrees(), 0.00001);
-
+        // test 315 degrees
+        v = new KVector(10, -10);
+        assertEquals(315, v.toDegrees(), 0.00001);
     }
 
     /**

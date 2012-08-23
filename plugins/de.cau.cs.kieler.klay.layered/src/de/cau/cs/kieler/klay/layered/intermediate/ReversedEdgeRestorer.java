@@ -60,7 +60,7 @@ public class ReversedEdgeRestorer extends AbstractAlgorithm implements ILayoutPr
                     
                     for (LEdge edge : edgeArray) {
                         if (edge.getProperty(Properties.REVERSED)) {
-                            edge.reverse(false);
+                            edge.reverse(layeredGraph, false);
                         }
                     }
                 }

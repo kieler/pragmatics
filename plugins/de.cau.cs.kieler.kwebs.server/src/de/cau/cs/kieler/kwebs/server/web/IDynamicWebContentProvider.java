@@ -17,7 +17,7 @@ package de.cau.cs.kieler.kwebs.server.web;
 /**
  * Interface for dynamic web content providers. 
  *
- * @author swe
+ * @author  swe
  */
 public interface IDynamicWebContentProvider {
     
@@ -26,8 +26,6 @@ public interface IDynamicWebContentProvider {
      * 
      * @param requestData
      *            the request data
-     * @throws Exception
-     *            when an error occurs during execution
      */
     void handleRequest(final RequestData requestData);
     

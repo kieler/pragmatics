@@ -14,8 +14,6 @@
 
 package de.cau.cs.kieler.kwebs.client.ui;
 
-import java.net.URI;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -81,9 +79,11 @@ public class ServerDetailsJob extends AbstractServerBasedJob {
                 new BrowserDialog(
                     getShell(), 
                     html,
-                    null,//uri.getScheme() + "://" + uri.getAuthority() + "/ServiceData.html",
+                    null, //uri.getScheme() + "://" + uri.getAuthority() + "/ServiceData.html",
                     "Server Details",
+                    //CHECKSTYLEOFF MagicNumber - Superfluous while configuring UI components
                     new Rectangle(0, 0, 500, 450)
+                    //CHECKSTYLEON MagicNumber
                 ).open(); 
             }; }
         );

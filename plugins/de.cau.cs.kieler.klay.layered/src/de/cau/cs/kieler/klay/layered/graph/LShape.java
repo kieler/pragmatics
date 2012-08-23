@@ -31,7 +31,15 @@ public abstract class LShape extends LGraphElement {
     private final KVector pos = new KVector();
     /** the size of the element. */
     private final KVector size = new KVector();
-
+    
+    /**
+     * Creates a shape in the context of the given graph.
+     * 
+     * @param graph the graph for which the shape is created
+     */
+    public LShape(final LGraph graph) {
+        super(graph.hashCodeCounter());
+    }
 
     /**
      * Returns the element's current position. This is the coordinate of the element's upper

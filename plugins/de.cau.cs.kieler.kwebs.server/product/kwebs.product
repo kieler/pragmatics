@@ -12,7 +12,8 @@
 --launcher.XXMaxPermSize
 256m
 -consoleLog</programArgs>
-      <vmArgs>-Xss4m
+      <vmArgs>-Djava.awt.headless=true
+-Xss4m
 -Xms1024m
 -Xmn256m
 -Xmx1024m 
@@ -24,11 +25,11 @@
    <windowImages/>
 
    <launcher name="kwebs">
-      <linux icon="/de.cau.cs.kieler.kwebs.server/icons/kiel_64.xpm"/>
-      <macosx icon="/de.cau.cs.kieler.kwebs.server/icons/kiel.icns"/>
+      <linux icon="/de.cau.cs.kieler.kwebs.server/icons/kieler_64.xpm"/>
+      <macosx icon="/de.cau.cs.kieler.kwebs.server/icons/kieler.icns"/>
       <solaris/>
       <win useIco="true">
-         <ico path="/de.cau.cs.kieler.kwebs.server/icons/kiel.ico"/>
+         <ico path="/de.cau.cs.kieler.kwebs.server/icons/kieler.ico"/>
          <bmp/>
       </win>
    </launcher>

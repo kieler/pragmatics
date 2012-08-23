@@ -123,7 +123,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         int upperIndex = findUltimateIndex(layer, openingBorder, false, layeredGraph);
 
         // create lower side node (higher layer index)
-        LNode lowerSideDummy = new LNode();
+        LNode lowerSideDummy = new LNode(layeredGraph);
         lowerSideDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.LEFT);
         lowerSideDummy.getSize().y = insets.getBottom() + borderSpacing;
         lowerSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
@@ -137,7 +137,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         }
 
         // create upper side node (lower layer index)
-        LNode upperSideDummy = new LNode();
+        LNode upperSideDummy = new LNode(layeredGraph);
         upperSideDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.LEFT);
         upperSideDummy.getSize().y = insets.getTop() + borderSpacing;
         upperSideDummy.setProperty(Properties.NODE_TYPE, NodeType.COMPOUND_SIDE);
@@ -145,19 +145,19 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
         upperSideDummy.setLayer(upperIndex, layer);
 
         // create ports for connection-edges
-        LPort lowPortWest = new LPort();
+        LPort lowPortWest = new LPort(layeredGraph);
         lowPortWest.setSide(PortSide.WEST);
         lowPortWest.setNode(lowerSideDummy);
 
-        LPort lowPortEast = new LPort();
+        LPort lowPortEast = new LPort(layeredGraph);
         lowPortEast.setSide(PortSide.EAST);
         lowPortEast.setNode(lowerSideDummy);
 
-        LPort highPortWest = new LPort();
+        LPort highPortWest = new LPort(layeredGraph);
         highPortWest.setSide(PortSide.WEST);
         highPortWest.setNode(upperSideDummy);
 
-        LPort highPortEast = new LPort();
+        LPort highPortEast = new LPort(layeredGraph);
         highPortEast.setSide(PortSide.EAST);
         highPortEast.setNode(upperSideDummy);
 
@@ -171,8 +171,8 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
 
         if (startIndex < endIndex) {
             // create connection-edges to successor, if not last index.
-            LEdge lowerEdge = new LEdge();
-            LEdge upperEdge = new LEdge();
+            LEdge lowerEdge = new LEdge(layeredGraph);
+            LEdge upperEdge = new LEdge(layeredGraph);
 
             lowerEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);
             upperEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_SIDE);

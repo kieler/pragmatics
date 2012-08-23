@@ -58,8 +58,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
     /** factor for layer spacing. */
     private static final double LAYER_SPACE_FAC = 0.2;
     
-    /** the minimal angle that short edges must have (for smaller angles a spline is created). */
-    private static final double MINIMAL_ANGLE = Math.PI / 3;   // SUPPRESS CHECKSTYLE MagicNumber
+    /** the maximal angle that short edges may have (for larger angles a spline is created). */
+    private static final double MAXIMAL_ANGLE = Math.PI / 6;   // SUPPRESS CHECKSTYLE MagicNumber
     
     /** amounts of points treated the same way. */
     private static final int HIGH_LIMIT = 7;
@@ -168,7 +168,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
         double radians = startToEnd.toRadians();
 
         // if the minimalAngle criteria is not met, create a short spline
-        if ((radians < MINIMAL_ANGLE || radians > Math.PI - MINIMAL_ANGLE)) {
+        if (radians > MAXIMAL_ANGLE || radians < -MAXIMAL_ANGLE) {
             BezierSpline spline = generateShortSpline(startVec, endVec);
             for (KVector v : spline.getInnerPoints()) {
                 edge.getBendPoints().add(v);

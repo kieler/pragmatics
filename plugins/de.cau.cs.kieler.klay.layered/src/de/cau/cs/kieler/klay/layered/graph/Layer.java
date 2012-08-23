@@ -49,6 +49,7 @@ public class Layer extends LGraphElement implements Iterable<LNode> {
      * @param graph the owning layered graph
      */
     public Layer(final LGraph graph) {
+        super(graph.hashCodeCounter());
         this.owner = graph;
     }
     

@@ -116,7 +116,7 @@ public class InvertedPortProcessor extends AbstractAlgorithm implements ILayoutP
                     LEdge[] edgeArray = edges.toArray(new LEdge[edges.size()]);
                     
                     for (LEdge edge : edgeArray) {
-                        createEastPortSideDummies(port, edge, unassignedNodes);
+                        createEastPortSideDummies(layeredGraph, port, edge, unassignedNodes);
                     }
                 }
                 
@@ -129,7 +129,7 @@ public class InvertedPortProcessor extends AbstractAlgorithm implements ILayoutP
                     LEdge[] edgeArray = edges.toArray(new LEdge[edges.size()]);
                     
                     for (LEdge edge : edgeArray) {
-                        createWestPortSideDummies(port, edge, unassignedNodes);
+                        createWestPortSideDummies(layeredGraph, port, edge, unassignedNodes);
                     }
                 }
             }
@@ -147,32 +147,33 @@ public class InvertedPortProcessor extends AbstractAlgorithm implements ILayoutP
      * Creates the necessary dummy nodes for an input port on the east side of a node,
      * provided that the edge connects two different nodes.
      * 
+     * @param layeredGraph the layered graph.
      * @param eastwardPort the offending port.
      * @param edge the edge connected to the port.
      * @param layerNodeList list of unassigned nodes belonging to the layer of the node the
      *                      port belongs to. The new dummy node is added to this list and
      *                      must be assigned to the layer later.
      */
-    private void createEastPortSideDummies(final LPort eastwardPort, final LEdge edge,
-            final List<LNode> layerNodeList) {
+    private void createEastPortSideDummies(final LGraph layeredGraph, final LPort eastwardPort,
+            final LEdge edge, final List<LNode> layerNodeList) {
         
         if (edge.getSource().getNode() == eastwardPort.getNode()) {
             return;
         }
         
         // Dummy node in the same layer
-        LNode dummy = new LNode();
+        LNode dummy = new LNode(layeredGraph);
         dummy.setProperty(Properties.ORIGIN, edge);
         dummy.setProperty(Properties.NODE_TYPE,
                 NodeType.LONG_EDGE);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(dummy);
         
-        LPort dummyInput = new LPort();
+        LPort dummyInput = new LPort(layeredGraph);
         dummyInput.setNode(dummy);
         dummyInput.setSide(PortSide.WEST);
         
-        LPort dummyOutput = new LPort();
+        LPort dummyOutput = new LPort(layeredGraph);
         dummyOutput.setNode(dummy);
         dummyOutput.setSide(PortSide.EAST);
         
@@ -180,7 +181,7 @@ public class InvertedPortProcessor extends AbstractAlgorithm implements ILayoutP
         edge.setTarget(dummyInput);
         
         // Connect the dummy with the original port
-        LEdge dummyEdge = new LEdge();
+        LEdge dummyEdge = new LEdge(layeredGraph);
         dummyEdge.copyProperties(edge);
         dummyEdge.setSource(dummyOutput);
         dummyEdge.setTarget(eastwardPort);
@@ -193,32 +194,33 @@ public class InvertedPortProcessor extends AbstractAlgorithm implements ILayoutP
      * Creates the necessary dummy nodes for an output port on the west side of a node,
      * provided that the edge connects two different nodes.
      * 
+     * @param layeredGraph the layered graph
      * @param westwardPort the offending port.
      * @param edge the edge connected to the port.
      * @param layerNodeList list of unassigned nodes belonging to the layer of the node the
      *                      port belongs to. The new dummy node is added to this list and
      *                      must be assigned to the layer later.
      */
-    private void createWestPortSideDummies(final LPort westwardPort, final LEdge edge,
-            final List<LNode> layerNodeList) {
+    private void createWestPortSideDummies(final LGraph layeredGraph, final LPort westwardPort,
+            final LEdge edge, final List<LNode> layerNodeList) {
         
         if (edge.getTarget().getNode() == westwardPort.getNode()) {
             return;
         }
         
         // Dummy node in the same layer
-        LNode dummy = new LNode();
+        LNode dummy = new LNode(layeredGraph);
         dummy.setProperty(Properties.ORIGIN, edge);
         dummy.setProperty(Properties.NODE_TYPE,
                 NodeType.LONG_EDGE);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(dummy);
         
-        LPort dummyInput = new LPort();
+        LPort dummyInput = new LPort(layeredGraph);
         dummyInput.setNode(dummy);
         dummyInput.setSide(PortSide.WEST);
         
-        LPort dummyOutput = new LPort();
+        LPort dummyOutput = new LPort(layeredGraph);
         dummyOutput.setNode(dummy);
         dummyOutput.setSide(PortSide.EAST);
         
@@ -226,7 +228,7 @@ public class InvertedPortProcessor extends AbstractAlgorithm implements ILayoutP
         edge.setSource(dummyOutput);
         
         // Connect the dummy with the original port
-        LEdge dummyEdge = new LEdge();
+        LEdge dummyEdge = new LEdge(layeredGraph);
         dummyEdge.copyProperties(edge);
         dummyEdge.setSource(westwardPort);
         dummyEdge.setTarget(dummyInput);

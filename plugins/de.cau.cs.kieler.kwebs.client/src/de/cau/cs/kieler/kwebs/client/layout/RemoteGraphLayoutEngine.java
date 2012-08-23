@@ -271,11 +271,11 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         KIdentifier identifier = resultGraph.getData(KIdentifier.class);
         if (identifier != null) {
             Statistics statistics = new Statistics();
-            statistics.fromString(identifier.getProperty(Statistics.STATISTICS));
+            statistics.parse(identifier.getProperty(Statistics.STATISTICS));
             statistics.setTimeTotal(timeTotal);
             statistics.setTimeNetwork(networkTotal);
             statistics.setTimeLocalSupplemental(timeTotal - networkTotal);
-            LayoutHistory.getInstance().addStatistic(statistics);
+            LayoutHistory.INSTANCE.addStatistic(statistics);
         }
     }
 

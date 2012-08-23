@@ -210,7 +210,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                         // However, this will not happen here, because edges are only reversed for
                         // nodes that are part of a cycle and thus already have both an input and
                         // an output collector port.
-                        edge.reverse(true);
+                        edge.reverse(layeredGraph, true);
                         layeredGraph.setProperty(Properties.CYCLIC, true);
                     }
                 }                

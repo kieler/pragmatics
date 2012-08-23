@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.components.ComponentsProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
@@ -122,17 +123,20 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void doLayout(final KNode kgraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Layered layout", 1);
+        
+        // Create the hash code counter used to create all graph elements; this is used to ensure
+        // that all hash codes are unique, but predictable independently of the object instances.
+        HashCodeCounter hashCodeCounter = new HashCodeCounter();
 
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
         IGraphImporter<KNode> graphImporter;
 
-        // Check if hierarchy handling for a compound graph is requested, choose importer
-        // accordingly
+        // Check if hierarchy handling for a compound graph is requested, choose importer accordingly
         boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
         if (isCompound) {
-            graphImporter = new CompoundKGraphImporter();
+            graphImporter = new CompoundKGraphImporter(hashCodeCounter);
         } else {
-            graphImporter = new KGraphImporter();
+            graphImporter = new KGraphImporter(hashCodeCounter);
         }
 
         LGraph layeredGraph = graphImporter.importGraph(kgraph);
@@ -180,8 +184,11 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     public List<LGraph> doLayoutTest(final KNode kgraph,
             final IKielerProgressMonitor progressMonitor,
             final Class<? extends ILayoutProcessor> phase) {
-        
         progressMonitor.begin("Layered layout test", 1);
+        
+        // Create the hash code counter used to create all graph elements; this is used to ensure
+        // that all hash codes are unique, but predictable independently of the object instances.
+        HashCodeCounter hashCodeCounter = new HashCodeCounter();
 
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
         IGraphImporter<KNode> graphImporter;
@@ -190,9 +197,9 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // accordingly
         boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
         if (isCompound) {
-            graphImporter = new CompoundKGraphImporter();
+            graphImporter = new CompoundKGraphImporter(hashCodeCounter);
         } else {
-            graphImporter = new KGraphImporter();
+            graphImporter = new KGraphImporter(hashCodeCounter);
         }
 
         LGraph layeredGraph = graphImporter.importGraph(kgraph);
