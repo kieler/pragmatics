@@ -14,7 +14,8 @@
 package de.cau.cs.kieler.kiml.options;
 
 /**
- * Definition of placement positions for edge labels.
+ * Definition of placement positions for edge labels. To be accessed using
+ * {@link LayoutOptions#EDGE_LABEL_PLACEMENT}.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating proposed yellow 2012-07-10 msp
