@@ -200,27 +200,22 @@ public abstract class AbstractService {
         // Test if the user graphs are within configured tolerances
         List<KNode> graphs = inTransData.getTargetGraphs();
         if (testMaxGraphs && graphs.size() > maxGraphs) {
-            Logger.log(
-                Severity.WARNING,
-                "Too many graphs in request, maximum number is " + maxGraphs
-            );
+            Logger.log(Severity.WARNING,
+                "Too many graphs in request, maximum number is " + maxGraphs);
             throw new RemoteServiceException(
-                "Too many graphs in request, maximum number is " + maxGraphs
-            );
+                "Too many graphs in request, maximum number is " + maxGraphs);
         }
         if (testMaxElements) {
             for (KNode layout : graphs) {
                 if (Graphs.countElements(layout) > maxElements) {
-                    Logger.log(
-                        Severity.WARNING,
-                        "Too many elements in graph, maximum number is " + maxElements
-                    );
+                    Logger.log(Severity.WARNING,
+                        "Too many elements in graph, maximum number is " + maxElements);
                     throw new RemoteServiceException(
-                        "Too many elements in graph, maximum number is " + maxElements
-                    );
+                        "Too many elements in graph, maximum number is " + maxElements);
                 }
             }
         }
+        
         // Parse the transmitted layout options and annotate the layout structure
         if (options != null) {
             for (KNode layout : graphs) {
@@ -298,8 +293,7 @@ public abstract class AbstractService {
         int labels = 0;
         int edges = 0;
         for (KNode layout : layoutGraphs) {
-            List<KGraphElement> elements = Graphs.getAllElementsOfType(layout, KGraphElement.class);
-            for (KGraphElement element : elements) {
+            for (KGraphElement element : Graphs.getAllElementsOfType(layout, KGraphElement.class)) {
                 if (element instanceof KNode) {
                     nodes++;
                 } else if (element instanceof KPort) {
@@ -324,11 +318,12 @@ public abstract class AbstractService {
             identifier = KLayoutDataFactoryImpl.eINSTANCE.createKIdentifier();
             sourceGraph.getData().add(identifier);
         }
-        identifier.setProperty(Statistics.STATISTICS, statistics);
+        identifier.setProperty(Statistics.STATISTICS, statistics.toString());
     }
 
     /**
-     * Annotate transformation data with the given layout options.
+     * Annotate transformation data with the given layout options. This is done so the user
+     * can control how graphs are imported and exported.
      *
      * @param transData a transformation data instance
      * @param options a list of layout options
@@ -350,10 +345,10 @@ public abstract class AbstractService {
     /**
      * Annotate the graph with the given layout options.
      *
-     * @param layout a layout graph
+     * @param graph a layout graph
      * @param options a list of layout options
      */
-    private void annotateGraph(final KNode layout, final List<GraphLayoutOption> options) {
+    private void annotateGraph(final KNode graph, final List<GraphLayoutOption> options) {
         LayoutDataService dataService = LayoutDataService.getInstance();
         for (GraphLayoutOption option : options) {
             LayoutOptionData<?> optionData = dataService.getOptionDataBySuffix(option.getId());
@@ -363,6 +358,7 @@ public abstract class AbstractService {
                 if (optionValue != null) {
                     if (optionData.getTargets().isEmpty()
                             || optionData.getTargets().contains(Target.PARENTS)) {
+                        // special support for algorithm ids and layout type ids
                         if (optionData.equals(LayoutOptions.ALGORITHM)) {
                             LayoutAlgorithmData algoData = dataService.getAlgorithmDataBySuffix(
                                     (String) optionValue);
@@ -376,170 +372,57 @@ public abstract class AbstractService {
                                 }
                             }
                         }
-                        Logger.log(Severity.DEBUG, "Setting layout option (PARENTS, "
-                            + optionValue.toString() + ")");
-                        annotateGraphParents(layout, optionData, optionValue);
+                        // annotate all parent nodes of the graph
+                        annotateGraphElement(graph, KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout(),
+                                optionData, optionValue);
+                        for (KNode node : Graphs.getAllElementsOfType(graph, KNode.class)) {
+                            if (node.getChildren().size() > 0) {
+                                annotateGraphElement(node,
+                                        KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout(),
+                                        optionData, optionValue);
+                            }
+                        }
                     }
                     if (optionData.getTargets().isEmpty()
                             || optionData.getTargets().contains(Target.NODES)) {
-                        Logger.log(Severity.DEBUG, "Setting layout option (NODES, "
-                            + optionValue.toString() + ")");
-                        annotateGraphNodes(layout, optionData, optionValue);
+                        // annotate all child nodes of the graph
+                        for (KNode node : Graphs.getAllElementsOfType(graph, KNode.class)) {
+                            annotateGraphElement(node,
+                                    KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout(),
+                                    optionData, optionValue);
+                        }
                     }
                     if (optionData.getTargets().isEmpty()
                             || optionData.getTargets().contains(Target.EDGES)) {
-                        Logger.log(Severity.DEBUG, "Setting layout option (EDGES, "
-                            + optionValue.toString() + ")");
-                        annotateGraphEdges(layout, optionData, optionValue);
+                        // annotate all edges of the graph
+                        for (KEdge edge : Graphs.getAllElementsOfType(graph, KEdge.class)) {
+                            annotateGraphElement(edge,
+                                    KLayoutDataPackageImpl.eINSTANCE.getKEdgeLayout(),
+                                    optionData, optionValue);
+                        }
                     }
                     if (optionData.getTargets().isEmpty()
                             || optionData.getTargets().contains(Target.PORTS)) {
-                        Logger.log(Severity.DEBUG, "Setting layout option (PORTS, "
-                            + optionValue.toString() + ")");
-                        annotateGraphPorts(layout, optionData, optionValue);
+                        // annotate all ports of the graph
+                        for (KPort port : Graphs.getAllElementsOfType(graph, KPort.class)) {
+                            annotateGraphElement(port,
+                                    KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout(),
+                                    optionData, optionValue);
+                        }
                     }
                     if (optionData.getTargets().isEmpty()
                             || optionData.getTargets().contains(Target.LABELS)) {
-                        Logger.log(Severity.DEBUG, "Setting layout option (LABELS, "
-                            + optionValue.toString() + ")");
-                        annotateGraphLabels(layout, optionData, optionValue);
+                        // annotate all labels of the graph
+                        for (KLabel label : Graphs.getAllElementsOfType(graph, KLabel.class)) {
+                            annotateGraphElement(label,
+                                    KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout(),
+                                    optionData, optionValue);
+                        }
                     }
                 }
             }
         }
 
-    }
-
-    /**
-     * Annotates the parent nodes of a given graph with the given layout option.
-     *
-     * @param annotateNode
-     *            the root node of the graph of which the parents are to be annotated
-     * @param layoutOption
-     *            the layout option to annotate the parents with
-     * @param layoutOptionValue
-     *            the value for the layout option
-     */
-    private void annotateGraphParents(final KNode annotateNode,
-        final IProperty<?> layoutOption, final Object layoutOptionValue) {
-        if (annotateNode == null || layoutOption == null || layoutOptionValue == null) {
-            return;
-        }
-        List<KNode> nodes = (List<KNode>) Graphs.getAllElementsOfType(annotateNode, KNode.class);
-        for (KNode node : nodes) {
-            if (node != null && node.getChildren().size() > 0) {
-                annotateGraphElement(
-                    node,
-                    KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout(),
-                    layoutOption,
-                    layoutOptionValue
-                );
-            }
-        }
-    }
-
-    /**
-     * Annotates the nodes of a given graph with the given layout option.
-     *
-     * @param annotateNode
-     *            the root node of the graph of which the parents are to be annotated
-     * @param layoutOption
-     *            the layout option to annotate the parents with
-     * @param layoutOptionValue
-     *            the value for the layout option
-     */
-    private void annotateGraphNodes(final KNode annotateNode,
-        final IProperty<?> layoutOption, final Object layoutOptionValue) {
-        if (annotateNode == null || layoutOption == null || layoutOptionValue == null) {
-            return;
-        }
-        List<KNode> nodes = (List<KNode>) Graphs.getAllElementsOfType(annotateNode, KNode.class);
-        for (KNode node : nodes) {
-            annotateGraphElement(
-                node,
-                KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout(),
-                layoutOption,
-                layoutOptionValue
-            );
-        }
-    }
-
-    /**
-     * Annotates the edges of a given graph with the given layout option.
-     *
-     * @param annotateNode
-     *            the root node of the graph of which the parents are to be annotated
-     * @param layoutOption
-     *            the layout option to annotate the parents with
-     * @param layoutOptionValue
-     *            the value for the layout option
-     */
-    private void annotateGraphEdges(final KNode annotateNode,
-        final IProperty<?> layoutOption, final Object layoutOptionValue) {
-        if (annotateNode == null || layoutOption == null || layoutOptionValue == null) {
-            return;
-        }
-        List<KEdge> edges = (List<KEdge>) Graphs.getAllElementsOfType(annotateNode, KEdge.class);
-        for (KEdge edge : edges) {
-            annotateGraphElement(
-                edge,
-                KLayoutDataPackageImpl.eINSTANCE.getKEdgeLayout(),
-                layoutOption,
-                layoutOptionValue
-            );
-        }
-    }
-
-    /**
-     * Annotates the ports of a given graph with the given layout option.
-     *
-     * @param annotateNode
-     *            the root node of the graph of which the parents are to be annotated
-     * @param layoutOption
-     *            the layout option to annotate the parents with
-     * @param layoutOptionValue
-     *            the value for the layout option
-     */
-    private void annotateGraphPorts(final KNode annotateNode,
-        final IProperty<?> layoutOption, final Object layoutOptionValue) {
-        if (annotateNode == null || layoutOption == null || layoutOptionValue == null) {
-            return;
-        }
-        List<KPort> ports = (List<KPort>) Graphs.getAllElementsOfType(annotateNode, KPort.class);
-        for (KPort port : ports) {
-            annotateGraphElement(
-                port,
-                KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout(),
-                layoutOption,
-                layoutOptionValue
-            );
-        }
-    }
-
-    /**
-     * Annotates the labels of a given graph with the given layout option.
-     *
-     * @param annotateNode
-     *            the root node of the graph of which the parents are to be annotated
-     * @param layoutOption
-     *            the layout option to annotate the parents with
-     * @param layoutOptionValue
-     *            the value for the layout option
-     */
-    private void annotateGraphLabels(final KNode annotateNode,
-        final IProperty<?> layoutOption, final Object layoutOptionValue) {
-        if (annotateNode == null || layoutOption == null || layoutOptionValue == null) {
-            return;
-        }
-        List<KLabel> labels = (List<KLabel>) Graphs.getAllElementsOfType(annotateNode, KLabel.class);
-        for (KLabel label : labels) {
-            annotateGraphElement(
-                label,
-                KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout(),
-                layoutOption,
-                layoutOptionValue
-            );
-        }
     }
 
     /**

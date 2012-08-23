@@ -19,6 +19,7 @@ import java.util.StringTokenizer;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.core.util.IDataObject;
 
 /**
  * Class for holding measured statistical data about a layout process. The measurement is a shared
@@ -28,9 +29,10 @@ import de.cau.cs.kieler.core.properties.Property;
  *
  * @author swe
  */
-public class Statistics {
+public class Statistics implements IDataObject {
 
-    // Property definition
+    /** The serial version UID. */
+    private static final long serialVersionUID = -7040834807209302754L;
 
     /** The statistics property. */
     public static final IProperty<String> STATISTICS = new Property<String>(
@@ -441,7 +443,7 @@ public class Statistics {
      * @param string
      *            string representation from statistical data
      */
-    public void fromString(final String string) {
+    public void parse(final String string) {
         Class<Statistics> statisticsClass = Statistics.class;
         if (string != null) {
             StringTokenizer st = new StringTokenizer(string, ";");           
