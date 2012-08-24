@@ -15,6 +15,8 @@ package de.cau.cs.kieler.kiml.options;
 
 /**
  * Definition of size constraints.
+ * 
+ * FIXME an enumeration seems not to be a good idea for this type of constraint; maybe a bit vector?
  *
  * @kieler.rating proposed yellow 2012-01-17 msp
  * @author msp

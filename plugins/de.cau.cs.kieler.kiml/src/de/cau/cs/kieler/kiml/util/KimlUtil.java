@@ -132,15 +132,20 @@ public final class KimlUtil {
      * 
      * @param port port to analyze
      * @param direction the overall layout direction
-     * @return port placement
+     * @return the port side relative to its containing node
      */
     public static PortSide calcPortSide(final KPort port, final Direction direction) {
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
-        
-        // check direction-dependent criterion
+
+        // if the node has zero size, we cannot decide anything
         KShapeLayout nodeLayout = port.getNode().getData(KShapeLayout.class);
-        float xpos = portLayout.getXpos(), ypos = portLayout.getYpos();
         float nodeWidth = nodeLayout.getWidth(), nodeHeight = nodeLayout.getHeight();
+        if (nodeWidth <= 0 && nodeHeight <= 0) {
+            return PortSide.UNDEFINED;
+        }
+
+        // check direction-dependent criterion
+        float xpos = portLayout.getXpos(), ypos = portLayout.getYpos();
         switch (direction) {
         case LEFT:
         case RIGHT:
