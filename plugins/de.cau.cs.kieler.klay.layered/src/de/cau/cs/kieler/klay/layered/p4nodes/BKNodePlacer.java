@@ -112,6 +112,11 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
     /** Flag which switches debug output of the algorithm on or off. */
     private boolean debug = false;
+    
+    /** In the compaction step, nodes connected with north south dummies
+     *  are compacted in a way which doesn't leave enough space for e.g., arrowheads.
+     *  Thus, a small offset is added to give north south dummies enough space. */
+    private static final double NORTH_SOUTH_SPACING = 10.0;
 
     private boolean addBalancedLayout = false;
 
@@ -557,6 +562,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                 postShift = lowerBound - rootPortPos;
             }
             
+            bal.getPostShift().put(root, postShift);
+            
             // Apply a general shift to all nodes of the block, which results from
             // nodes which would be placed higher than the top border of the block
             bal.getInnerShift().put(root, bal.getInnerShift().get(root) + postShift);
@@ -676,10 +683,13 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                     // Get the node which is top/bottom to the node to be placed to check,
                     // whether the current node conflicts with it
                     LNode u = null;
+                    LNode x = null;
                     if (bal.getVDir() == VDirection.RIGHT) {
                         u = bal.getRoot().get(w.getLayer().getNodes().get(w.getIndex() + 1));
+                        x = w.getLayer().getNodes().get(w.getIndex() + 1);
                     } else {
                         u = bal.getRoot().get(w.getLayer().getNodes().get(w.getIndex() - 1));
+                        x = w.getLayer().getNodes().get(w.getIndex() - 1);
                     }
 
                     // Check whether the comparison node is already placed, place it if not
@@ -716,7 +726,20 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                     } else {
                         // If they are on the class, calculate a y position for the current block,
                         // using the information from the comparison node
+                        
+                        // Determine the available space in the current layer, by taking node sizes,
+                        // and special node types into account
                         double spacing = normalSpacing;
+                        double wSize = w.getMargin().top + w.getSize().y + w.getMargin().bottom
+                                + bal.getInnerShift().get(w);
+                        double xSize = x.getMargin().top + x.getSize().y + x.getMargin().bottom
+                                + bal.getInnerShift().get(x);
+                        if (w.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                            wSize += NORTH_SOUTH_SPACING;
+                        }
+                        if (x.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                            xSize += NORTH_SOUTH_SPACING;
+                        }
                         if ((!(blockContainsNorthSouthDummy(bal, v)
                                         && blockContainsRegularNode(bal, u))
                                 && !(blockContainsNorthSouthDummy(bal, u)
@@ -724,17 +747,20 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                             && (bal.getBlockSize().get(v) == 0.0 || bal.getBlockSize().get(u) == 0.0))) {
                             spacing = smallSpacing;
                         }
+                        
                         if (bal.getVDir() == VDirection.RIGHT) {
                             bal.getY().put(
                                     v,
-                                    Math.min(bal.getY().get(v), bal.getY().get(u) - spacing
-                                            - bal.getBlockSize().get(v)));
+                                    Math.min(bal.getY().get(v),
+                                            (bal.getY().get(u) + bal.getInnerShift().get(x)) - spacing
+                                            - wSize));
 
                         } else {
                             bal.getY().put(
                                     v,
-                                    Math.max(bal.getY().get(v), bal.getY().get(u) + spacing
-                                            + bal.getBlockSize().get(u)));
+                                    Math.max(bal.getY().get(v),
+                                            (bal.getY().get(u) + bal.getInnerShift().get(x)) + spacing
+                                            + xSize));
                         }
                     }
                 }
@@ -1045,6 +1071,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
         /** The value by which a node must be shifted to stay straight inside a block. */
         private HashMap<LNode, Double> innerShift;
+        
+        private HashMap<LNode, Double> postShift;
 
         /** The root node of a class, mapped from block root nodes to class root nodes. */
         private HashMap<LNode, LNode> sink;
@@ -1075,6 +1103,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             blockSize = Maps.newHashMapWithExpectedSize(nodeCount);
             align = Maps.newHashMapWithExpectedSize(nodeCount);
             innerShift = Maps.newHashMapWithExpectedSize(nodeCount);
+            postShift = Maps.newHashMapWithExpectedSize(nodeCount);
             sink = Maps.newHashMapWithExpectedSize(nodeCount);
             shift = Maps.newHashMapWithExpectedSize(nodeCount);
             y = Maps.newHashMapWithExpectedSize(nodeCount);
@@ -1110,6 +1139,13 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
          */
         public HashMap<LNode, Double> getInnerShift() {
             return innerShift;
+        }
+
+        /**
+         * @return the postShift
+         */
+        public HashMap<LNode, Double> getPostShift() {
+            return postShift;
         }
 
         /**
