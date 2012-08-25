@@ -54,6 +54,10 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
         }
         
         IPath inputPath = es.getProperty(PartTrigger.EDITOR_INPUT_PATH);
+        if (inputPath == null) { // Fix of KIELER-2135
+            return;
+        }
+        
         String id = inputPath.toPortableString().replace(":", "");
         // the replacement is needed since the secondary view ids seem to be required
         //  to be free of ':', which will be violated on windows determining them this way. 
