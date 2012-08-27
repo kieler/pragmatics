@@ -61,10 +61,10 @@ public class GraphTestUtil {
      * @return a list of KNodes
      */
     public static List<GraphTestObject> loadGraphs(TestPath[] bundleTestPaths) {
-        //Initialise a List of GraphTestObject
+        // Initialise a List of GraphTestObject
         List<GraphTestObject> graphTestObject = new ArrayList<GraphTestObject>();
         for (TestPath testPath : bundleTestPaths) {
-            //For each TestPath load the graph files contained in its appropriate folder 
+            // For each TestPath load the graph files contained in its appropriate folder
             graphTestObject.addAll(loadGraphsHandler(testPath.getFolder(),
                     testPath.isLoadSubfolder(), testPath.isDoLayout()));
         }

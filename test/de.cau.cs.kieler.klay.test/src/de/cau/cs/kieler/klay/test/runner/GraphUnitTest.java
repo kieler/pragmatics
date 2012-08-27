@@ -30,7 +30,6 @@ public class GraphUnitTest extends KlayAutomatedJUnitTest {
     private GraphTestObject graphObject;
 
     public GraphUnitTest(final GraphTestObject testObject) {
-        super(testObject);
         graphObject = testObject;
     }
 
@@ -38,7 +37,7 @@ public class GraphUnitTest extends KlayAutomatedJUnitTest {
      * {@inheritDoc}
      */
     protected TestPath[] getBundleTestPath() {
-        
+
         TestPath[] testPaths = { new TestPath("Esterel", true, false),
                 new TestPath("Esterel", false, false) };
         return testPaths;

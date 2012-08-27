@@ -26,6 +26,8 @@ import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 import de.cau.cs.kieler.klay.test.utils.GraphTestUtil;
 
 /**
+ * The class KlayAutomatedJUnitTest enables the integration of several KLAY execution runs into a
+ * JUnit plugin test.
  * 
  * @author Wahbi
  */
@@ -36,15 +38,10 @@ public abstract class KlayAutomatedJUnitTest {
     private static List<GraphTestObject> graphsList = new LinkedList<GraphTestObject>();
 
     /**
-     * @param file
-     */
-    public KlayAutomatedJUnitTest(GraphTestObject file) {
-    }
-    
-    /**
+     * Gets all graph files and provides the parameters for the consecutive tests run by the
+     * KlayTestRunner.
      * 
-     * 
-     * @return a Collection of GraphTestObject Objects 
+     * @return a Collection of GraphTestObject Objects
      */
     @Parameters
     public static Collection<Object[]> getGraphs() {
