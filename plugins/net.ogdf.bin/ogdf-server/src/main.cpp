@@ -255,7 +255,7 @@ bool ReadGraph(istream& in, Graph& G, ClusterGraph& CG,
 	switch (graphInputFormat) {
 	case OGML: {
 		OgmlParser parser;
-		bool parseDone = parser.read(&in, G, CG, GA);
+		bool parseDone = parser.read(in, G, CG, GA);
 		return parseDone;
 	}
 	case GML: {
@@ -340,8 +340,8 @@ void WriteEdgeLayout(ostream& os, GraphAttributes& GA, edge e) {
 void WriteLabelLayout(ostream& os, GraphAttributes& GA, LabelInterface& LI,
 		edge e) {
 	EdgeLabel<double>& label = LI.getLabel(e);
-	for (int type = 0; type < labelNum; ++type) {
-		eLabelTyp labelType = (eLabelTyp) type;
+	for (int type = 0; type < elNumLabels; ++type) {
+		eLabelType labelType = (eLabelType) type;
 		if (label.usedLabel(labelType)) {
 			os << GA.labelEdge(e) << EDGE_LABEL_SUFFIX << type << "=("
 					<< label.getX(labelType) << "," << label.getY(labelType) << ")"

@@ -64,7 +64,9 @@
 #define OPTION_EDGE_LENGTH "edgeLength"
 #define OPTION_FAILS "fails"
 #define OPTION_FINENESS "fineness"
+#define OPTION_GLOBAL_ITERATIONS "globalIterations"
 #define OPTION_GRAVITATIONAL_CONSTANT "gravitationalConstant"
+#define OPTION_GRID_DISTANCE "gridDistance"
 #define OPTION_INITIAL_TEMPERATURE "initialTemperature"
 #define OPTION_ITERATIONS "iterations"
 #define OPTION_LABEL_EDGE_DISTANCE "labelEdgeDistance"
@@ -72,6 +74,7 @@
 #define OPTION_LAYER_DISTANCE "layerDistance"
 #define OPTION_LAYOUT_DIRECTION "layoutDirection"
 #define OPTION_LAYOUTER "layouter"
+#define OPTION_LOCAL_ITERATIONS "localIterations"
 #define OPTION_LEVEL_DISTANCE "levelDistance"
 #define OPTION_MAXIMAL_DISTURBANCE "maximalDisturbance"
 #define OPTION_MIN_CLIQUE_SIZE "minCliqueSize"
@@ -80,6 +83,8 @@
 #define OPTION_MIN_DIST_LEVEL "minDistLevel"
 #define OPTION_MIN_DIST_SIBLING "minDistSibling"
 #define OPTION_MINIMAL_TEMPERATURE "minimalTemperature"
+#define OPTION_MULTILEVEL_UNNAL "multilevelUntilNumNodesAreLess"
+#define OPTION_MULTIPOLE_PREC "multipolePrec"
 #define OPTION_NEW_INITIAL_PLACEMENT "newInitialPlacement"
 #define OPTION_NODE_DISTANCE "nodeDistance"
 #define OPTION_NOISE "noise"
@@ -91,6 +96,8 @@
 #define OPTION_PAGE_RATIO "pageRatio"
 #define OPTION_PREPROCESS_CLIQUES "preprocessCliques"
 #define OPTION_QUALITY_VS_SPEED "qualityVsSpeed"
+#define OPTION_RADIAL "radial"
+#define OPTION_RANDOMIZE "randomize"
 #define OPTION_RANDOM_SEED "randomSeed"
 #define OPTION_ROTATION_ANGLE "rotationAngle"
 #define OPTION_ROTATION_SENSITIVITY "rotationSensitivity"
@@ -98,9 +105,12 @@
 #define OPTION_SEPARATION "separation"
 #define OPTION_SIBLING_DISTANCE "siblingDistance"
 #define OPTION_SPEED "speed"
+#define OPTION_STOP_TOLERANCE "stopTolerance"
 #define OPTION_SUBTREE_DISTANCE "subtreeDistance"
 #define OPTION_TRANSPOSE "transpose"
 #define OPTION_TREE_DISTANCE "treeDistance"
+#define OPTION_UPWARD "upward"
+#define OPTION_USE_LAYOUT "useLayout"
 
 enum LayouterType {
 	NO_LAYOUTER,
@@ -113,7 +123,13 @@ enum LayouterType {
 	CIRCULAR,
 	TREE,
 	RADIAL_TREE,
-	UPWARD_PLANARIZATION
+	UPWARD_PLANARIZATION,
+	FAST_MULTIPOLE,
+	FAST_MULTIPOLE_MULTILEVEL,
+	KAMADA_KAWAI,
+	STRESS_MAJORIZATION,
+	DOMINANCE,
+	VISIBILITY
 };
 
 #define LABEL_TYPE_END1 0
