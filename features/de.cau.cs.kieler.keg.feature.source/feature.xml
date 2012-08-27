@@ -4,7 +4,7 @@
       label="KIELER Editor for Graphs"
       version="0.5.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
-      plugin="de.cau.cs.kieler.keg">
+      plugin="de.cau.cs.kieler.keg.source">
 
    <description>
       A generic graph editor for graph algorithm engineering. The feature includes layout algorithms, graph analysis, and importing / exporting of different graph formats.
