@@ -218,9 +218,10 @@
          </dependency>
       </layoutOption>
       <layoutOption
+            advanced="true"
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy"
-            default="LINEAR_SEGMENTS"
+            default="BRANDES_KOEPF"
             description="Strategy for Node Placement"
             id="de.cau.cs.kieler.klay.layered.nodePlace"
             name="Node Placement"

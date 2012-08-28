@@ -567,7 +567,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         }
         
         // copy the bend points of the edge if they are needed by anyone
-        if (layeredGraph.getProperty(Properties.CROSSMIN)
+        if (layeredGraph.getProperty(Properties.CROSS_MIN)
                 == CrossingMinimizationStrategy.INTERACTIVE
                 && !edgeLayout.getBendPoints().isEmpty()) {
             KVectorChain bendpoints = new KVectorChain();
