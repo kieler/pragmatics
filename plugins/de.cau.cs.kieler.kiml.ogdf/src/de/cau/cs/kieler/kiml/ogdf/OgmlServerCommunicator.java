@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.math.BigInteger;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -29,6 +28,8 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+
+import com.google.common.collect.Maps;
 
 import net.ogdf.bin.OgdfServer;
 import net.ogdf.bin.OgdfServer.Cleanup;
@@ -57,8 +58,6 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
@@ -69,41 +68,21 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
- * The base wrapper class for all OGDF layouters.
+ * Communication with the OGDF server process using the OGML format.
  * 
  * @author mri
  * @author msp
  */
-public abstract class OgdfLayouter {
+public class OgmlServerCommunicator {
 
     /** default value for border spacing. */
     public static final float DEF_BORDER_SPACING = 15.0f;
-
-    /** label edge distance property. */
-    public static final IProperty<Float> LABEL_EDGE_DIST = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance", 15.0f);
-
-    /** label margin distance property. */
-    public static final IProperty<Float> LABEL_MARGIN_DIST = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance", 15.0f);
-    
-    /** label placement property. */
-    public static final IProperty<Boolean> PLACE_LABELS = new Property<Boolean>(
-            "de.cau.cs.kieler.kiml.ogdf.option.placeLabels", true);
-
-    /** the ogdf server option for the layouter. */
-    private static final String OGDF_OPTION_LAYOUTER = "layouter";
 
     /** the input format for the ogdf server. */
     public static final String INPUT_FORMAT = "OGML";
     /** the separator used to separate chunks of data sent to the ogdf-server process. */
     private static final String CHUNK_KEYWORD = "[CHUNK]\n";
 
-    /** the resource set used for serialization of the graph. */
-    private ResourceSet resourceSet;
-
-    /** the name of the layouter. */
-    private String name;
     /** the current id for the generation of node ids. */
     private int nodeIdCounter = 0;
     /** the current id for the generation of edge ids. */
@@ -117,16 +96,6 @@ public abstract class OgdfLayouter {
     private List<String> optionBuffer = new LinkedList<String>();
     /** the buffer for additional serialized information about the graph. */
     private List<String> infoBuffer = new LinkedList<String>();
-
-    /**
-     * Contructs an OgdfLayouter.
-     * 
-     * @param theName
-     *            the name of the layouter as used in the ogdf server
-     */
-    public OgdfLayouter(final String theName) {
-        name = theName;
-    }
 
     /**
      * Resets all temporary counters, buffers and maps.
@@ -145,10 +114,9 @@ public abstract class OgdfLayouter {
 
     private static final int SUBTASK_WORK = 1;
     private static final int LAYOUT_WORK = SUBTASK_WORK + SUBTASK_WORK + SUBTASK_WORK + SUBTASK_WORK;
-    static final float MAP_LOAD_FACTOR = 0.75f;
 
     /**
-     * Layouts the given graph.
+     * Send a layout request to the OGDF server.
      * 
      * @param layoutNode
      *            the node representing the graph
@@ -157,7 +125,7 @@ public abstract class OgdfLayouter {
      * @param ogdfServer
      *            the OGDF server process interface
      */
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor,
+    public void requestLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor,
             final OgdfServer ogdfServer) {
         progressMonitor.begin("OGDF Layout", LAYOUT_WORK);
         // if the graph is empty there is no need to layout
@@ -165,21 +133,12 @@ public abstract class OgdfLayouter {
             progressMonitor.done();
             return;
         }
-        addOption(OGDF_OPTION_LAYOUTER, name);
 
-        // create the resource set used for serialization of the graph
-        if (resourceSet == null) {
-            resourceSet = new ResourceSetImpl();
-            resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
-                    .put("ogml", new OgmlResourceFactoryImpl());
-        }
         // start the OGDF server process, or retrieve the previously used process
         ogdfServer.initialize(INPUT_FORMAT);
 
         // set the random number generator seed
         setRandomSeed(layoutNode);
-        // prepare the algorithm for use and pre-process the graph
-        prepareLayouter(layoutNode);
         // prepare the label layout
         prepareLabelLayout(layoutNode);
         // transform the graph
@@ -198,8 +157,6 @@ public abstract class OgdfLayouter {
                     progressMonitor.subTask(SUBTASK_WORK));
             // apply the layout back to the KGraph
             applyLayout(layoutNode, layoutInformation, progressMonitor.subTask(SUBTASK_WORK));
-            // perform post-processing
-            postProcess(layoutNode);
             // clean up the OGDF server process
             ogdfServer.cleanup(Cleanup.NORMAL);
 
@@ -231,23 +188,6 @@ public abstract class OgdfLayouter {
     }
 
     /**
-     * Sets the layout specific options and modules depending on the options defined in the node.
-     * 
-     * @param layoutNode
-     *            the parent node
-     */
-    protected abstract void prepareLayouter(final KNode layoutNode);
-
-    /**
-     * Performs post-processing on the given node. The default implementation does nothing.
-     * 
-     * @param layoutNode
-     *            the parent node
-     */
-    protected void postProcess(final KNode layoutNode) {
-    }
-
-    /**
      * Adds an option for the next layout.
      * 
      * @param key
@@ -255,7 +195,7 @@ public abstract class OgdfLayouter {
      * @param value
      *            the value
      */
-    protected void addOption(final String key, final Object value) {
+    public void addOption(final String key, final Object value) {
         optionBuffer.add(key + "=" + value.toString());
     }
 
@@ -267,7 +207,7 @@ public abstract class OgdfLayouter {
      * @param value
      *            the value
      */
-    protected void addInformation(final String key, final Object value) {
+    private void addInformation(final String key, final Object value) {
         infoBuffer.add(key + "=" + value.toString());
     }
 
@@ -277,20 +217,23 @@ public abstract class OgdfLayouter {
      * @param layoutNode
      *            the parent layout node
      */
-    protected void prepareLabelLayout(final KNode layoutNode) {
+    private void prepareLabelLayout(final KNode layoutNode) {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
-        // edgeDistance
-        float edgeDistance = parentLayout.getProperty(LABEL_EDGE_DIST);
-        if (edgeDistance < 0) {
-            edgeDistance = LABEL_EDGE_DIST.getDefault();
+        boolean processLabels = parentLayout.getProperty(AlgorithmSetup.PLACE_LABELS);
+        if (processLabels) {
+            // edgeDistance
+            float edgeDistance = parentLayout.getProperty(AlgorithmSetup.LABEL_EDGE_DIST);
+            if (edgeDistance < 0) {
+                edgeDistance = AlgorithmSetup.LABEL_EDGE_DIST.getDefault();
+            }
+            addOption(OgdfServer.OPTION_LABEL_EDGE_DISTANCE, edgeDistance);
+            // marginDistance
+            float marginDistance = parentLayout.getProperty(AlgorithmSetup.LABEL_MARGIN_DIST);
+            if (marginDistance < 0) {
+                marginDistance = AlgorithmSetup.LABEL_MARGIN_DIST.getDefault();
+            }
+            addOption(OgdfServer.OPTION_LABEL_MARGIN_DISTANCE, marginDistance);
         }
-        addOption(OgdfServer.OPTION_LABEL_EDGE_DISTANCE, edgeDistance);
-        // marginDistance
-        float marginDistance = parentLayout.getProperty(LABEL_MARGIN_DIST);
-        if (marginDistance < 0) {
-            marginDistance = LABEL_MARGIN_DIST.getDefault();
-        }
-        addOption(OgdfServer.OPTION_LABEL_MARGIN_DISTANCE, marginDistance);
     }
 
     /**
@@ -306,6 +249,7 @@ public abstract class OgdfLayouter {
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Transform KGraph to OGML", 1);
         boolean umlGraph = false;
+        
         // create the graph
         OgmlFactory factory = OgmlFactoryImpl.eINSTANCE;
         DocumentRoot root = factory.createDocumentRoot();
@@ -319,16 +263,19 @@ public abstract class OgdfLayouter {
         graph.setLayout(layout);
         StylesType styles = factory.createStylesType();
         layout.setStyles(styles);
+        
         // transform nodes (only top level)
         for (KNode node : parentNode.getChildren()) {
             String id = generateId(node);
             NodeType ogmlNode = factory.createNodeType();
             ogmlNode.setId(id);
+            
             // create node label for storage of node id
             LabelType label = factory.createLabelType();
             label.setId("l" + id);
             label.setContent(id);
             ogmlNode.getLabel().add(label);
+            
             // set layout information
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             NodeLayoutType ogmlNodeLayout = factory.createNodeLayoutType();
@@ -343,13 +290,18 @@ public abstract class OgdfLayouter {
             shape.setHeight(BigInteger.valueOf(Math.round(nodeLayout.getHeight())));
             ogmlNodeLayout.setShape(shape);
             styles.getNodeStyle().add(ogmlNodeLayout);
+            
             // add the node
             structure.getNode().add(ogmlNode);
         }
+        
         // transform edges
+        boolean processLabels = parentNode.getData(KShapeLayout.class).getProperty(
+                AlgorithmSetup.PLACE_LABELS);
         for (KNode sourceNode : parentNode.getChildren()) {
             for (KEdge edge : sourceNode.getOutgoingEdges()) {
                 KNode targetNode = edge.getTarget();
+                
                 // ignore cross-hierarchy edges
                 if (targetNode.getParent() == parentNode) {
                     KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
@@ -362,39 +314,44 @@ public abstract class OgdfLayouter {
                     ogmlTarget.setIdRef(node2IdMap.get(targetNode));
                     ogmlEdge.getSource().add(ogmlSource);
                     ogmlEdge.getTarget().add(ogmlTarget);
+                    
                     // create edge label for storage of edge id
                     LabelType ogdfLabel = factory.createLabelType();
                     ogdfLabel.setId("l" + id);
                     ogdfLabel.setContent(id);
                     ogmlEdge.getLabel().add(ogdfLabel);
+                    
                     // store labels as additional information
-                    boolean makeMult1 = false, makeMult2 = false;
-                    for (KLabel label : edge.getLabels()) {
-                        KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-                        EdgeLabelPlacement placement =
-                                labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
-                        int labelType = OgdfServer.LABEL_TYPE_NAME;
-                        switch (placement) {
-                        case HEAD:
-                            if (makeMult2) {
-                                labelType = OgdfServer.LABEL_TYPE_MULT2;
-                            } else {
-                                labelType = OgdfServer.LABEL_TYPE_END2;
+                    if (processLabels) {
+                        boolean makeMult1 = false, makeMult2 = false;
+                        for (KLabel label : edge.getLabels()) {
+                            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                            EdgeLabelPlacement placement =
+                                    labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+                            int labelType = OgdfServer.LABEL_TYPE_NAME;
+                            switch (placement) {
+                            case HEAD:
+                                if (makeMult2) {
+                                    labelType = OgdfServer.LABEL_TYPE_MULT2;
+                                } else {
+                                    labelType = OgdfServer.LABEL_TYPE_END2;
+                                }
+                                makeMult2 = !makeMult2;
+                                break;
+                            case TAIL:
+                                if (makeMult1) {
+                                    labelType = OgdfServer.LABEL_TYPE_MULT1;
+                                } else {
+                                    labelType = OgdfServer.LABEL_TYPE_END1;
+                                }
+                                makeMult1 = !makeMult1;
+                                break;
                             }
-                            makeMult2 = !makeMult2;
-                            break;
-                        case TAIL:
-                            if (makeMult1) {
-                                labelType = OgdfServer.LABEL_TYPE_MULT1;
-                            } else {
-                                labelType = OgdfServer.LABEL_TYPE_END1;
-                            }
-                            makeMult1 = !makeMult1;
-                            break;
+                            addInformation(id + OgdfServer.EDGE_LABEL_SUFFIX + labelType,
+                                    "(" + labelLayout.getWidth() + "," + labelLayout.getHeight() + ")");
                         }
-                        addInformation(id + OgdfServer.EDGE_LABEL_SUFFIX + labelType, "("
-                                + labelLayout.getWidth() + "," + labelLayout.getHeight() + ")");
                     }
+                    
                     // detect an uml-graph
                     de.cau.cs.kieler.kiml.options.EdgeType edgeType =
                             edgeLayout.getProperty(LayoutOptions.EDGE_TYPE);
@@ -415,11 +372,13 @@ public abstract class OgdfLayouter {
                                 OgdfServer.EDGE_TYPE_GENERALIZATION);
                         break;
                     }
+                    
                     // add the edge
                     structure.getEdge().add(ogmlEdge);
                 }
             }
         }
+        
         addInformation(OgdfServer.INFO_UML_GRAPH, umlGraph);
         progressMonitor.done();
         return root;
@@ -500,10 +459,11 @@ public abstract class OgdfLayouter {
      * @param progressMonitor
      *            the progress monitor
      */
-    protected void applyLayout(final KNode parentNode,
+    private void applyLayout(final KNode parentNode,
             final Map<String, KVectorChain> layoutInformation,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Apply layout", 1);
+        
         // get the parent node layout
         KShapeLayout parentNodeLayout = parentNode.getData(KShapeLayout.class);
         KVectorChain boundingBox = layoutInformation.get("graph");
@@ -516,11 +476,13 @@ public abstract class OgdfLayouter {
         float boundingBoxY = (float) bbLocation.y;
         float boundingBoxWidth = (float) bbShape.x;
         float boundingBoxHeight = (float) bbShape.y;
+        
         // get the border spacing
         float borderSpacing = parentNodeLayout.getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
             borderSpacing = DEF_BORDER_SPACING;
         }
+        
         // calculate offsets
         float offsetX = (float) -boundingBoxX + borderSpacing;
         float offsetY = (float) -boundingBoxY + borderSpacing;
@@ -535,8 +497,9 @@ public abstract class OgdfLayouter {
                         (float) shape.x, (float) shape.y);
             }
         }
+        
         // apply edge layout
-        boolean processLabels = parentNodeLayout.getProperty(PLACE_LABELS);
+        boolean processLabels = parentNodeLayout.getProperty(AlgorithmSetup.PLACE_LABELS);
         for (Map.Entry<String, KEdge> entry : id2EdgeMap.entrySet()) {
             KEdge kedge = entry.getValue();
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
@@ -546,6 +509,7 @@ public abstract class OgdfLayouter {
             if (ogdfEdgeLayout != null && ogdfEdgeLayout.size() >= 2) {
                 Iterator<KVector> bendIt = ogdfEdgeLayout.iterator();
                 KVector sourceBend = bendIt.next();
+                
                 // set the source point
                 KPoint sourcePoint =
                         toKPoint((float) sourceBend.x, (float) sourceBend.y, offsetX, offsetY);
@@ -558,6 +522,7 @@ public abstract class OgdfLayouter {
                     portLayout.setYpos(sourcePoint.getY() - sourceLayout.getYpos()
                             - portLayout.getHeight() / 2);
                 }
+                
                 // set the bend points
                 while (bendIt.hasNext()) {
                     KVector bend = bendIt.next();
@@ -578,6 +543,7 @@ public abstract class OgdfLayouter {
                     }
                 }
             }
+            
             // set label layout
             if (processLabels) {
                 boolean makeMult1 = false, makeMult2 = false;
@@ -615,6 +581,7 @@ public abstract class OgdfLayouter {
                 }
             }
         }
+        
         // get the insets
         KInsets insets = parentNodeLayout.getInsets();
         // set the width/height of the graph
@@ -641,12 +608,19 @@ public abstract class OgdfLayouter {
             final IKielerProgressMonitor progressMonitor, final OgdfServer ogdfServer)
             throws IOException {
         progressMonitor.begin("Serialize OGML graph", 1);
-        Resource resource = resourceSet.createResource(URI.createURI("http:///My.ogml"));
+        ResourceSet resourceSet = new ResourceSetImpl();
+        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
+                .put("ogml", new OgmlResourceFactoryImpl());
+        
+        Resource resource = resourceSet.createResource(URI.createURI("output.ogml"));
         resource.getContents().add(root);
+        
         // write OGML graph to the process
         resource.save(outputStream, null);
+        
         // write the buffers to the process
         writeBuffers(outputStream);
+        
         progressMonitor.done();
     }
 
@@ -691,8 +665,8 @@ public abstract class OgdfLayouter {
                     + " Try increasing the timeout value in the preferences"
                     + " (KIELER / Layout / OGDF).");
         }
-        Map<String, KVectorChain> layoutInformation = new HashMap<String, KVectorChain>(
-                (int) (outputData.size() / MAP_LOAD_FACTOR) + 1);
+        Map<String, KVectorChain> layoutInformation = Maps.newHashMapWithExpectedSize(
+                outputData.size());
         for (Map.Entry<String, String> entry : outputData.entrySet()) {
             try {
                 KVectorChain pointList = new KVectorChain();

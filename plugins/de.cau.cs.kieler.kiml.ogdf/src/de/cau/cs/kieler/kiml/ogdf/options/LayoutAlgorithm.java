@@ -39,6 +39,18 @@ public enum LayoutAlgorithm {
     /** The radial tree layout algorithm. */
     RADIAL_TREE,
     /** The upward-planarization layout algorithm. */
-    UPWARD_PLANARIZATION;
+    UPWARD_PLANARIZATION,
+    /** */
+    FAST_MULTIPOLE,
+    /** */
+    FAST_MULTIPOLE_MULTILEVEL,
+    /** */
+    KAMADA_KAWAI,
+    /** */
+    STRESS_MAJORIZATION,
+    /** */
+    DOMINANCE,
+    /** */
+    VISIBILITY;
     
 }
