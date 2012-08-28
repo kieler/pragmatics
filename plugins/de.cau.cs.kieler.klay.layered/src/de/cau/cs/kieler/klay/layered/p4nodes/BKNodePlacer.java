@@ -760,7 +760,9 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                             bal.getY().put(
                                     v,
                                     Math.max(bal.getY().get(v),
-                                            (bal.getY().get(u) + bal.getInnerShift().get(x))
+                                            (bal.getY().get(u) 
+                                                    + bal.getInnerShift().get(x)
+                                                    + x.getMargin().top)
                                              + spacing + xSize));
                         }
                     }
