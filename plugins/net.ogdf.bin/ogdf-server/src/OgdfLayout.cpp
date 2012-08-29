@@ -41,6 +41,12 @@
 #include <ogdf/orthogonal/OrthoRep.h>
 #include <ogdf/orthogonal/OrthoLayout.h>
 #include <ogdf/planarity/PlanarizationLayout.h>
+#include <ogdf/planarity/BoyerMyrvold.h>
+#include <ogdf/planarlayout/FPPLayout.h>
+#include <ogdf/planarlayout/SchnyderLayout.h>
+#include <ogdf/planarlayout/PlanarStraightLayout.h>
+#include <ogdf/planarlayout/MixedModelLayout.h>
+#include <ogdf/planarlayout/PlanarDrawLayout.h>
 #include <ogdf/energybased/FMMMLayout.h>
 #include <ogdf/energybased/DavidsonHarelLayout.h>
 #include <ogdf/energybased/SpringEmbedderFR.h>
@@ -49,6 +55,7 @@
 #include <ogdf/energybased/FastMultipoleEmbedder.h>
 #include <ogdf/energybased/StressMajorizationSimple.h>
 #include <ogdf/misclayout/CircularLayout.h>
+#include <ogdf/misclayout/BalloonLayout.h>
 #include <ogdf/tree/TreeLayout.h>
 #include <ogdf/tree/RadialTreeLayout.h>
 #include <ogdf/upward/UpwardPlanarizationLayout.h>
@@ -268,6 +275,18 @@ LayouterType GetLayouterTypeByName(const string& name) {
 		return DOMINANCE;
 	} else if (name == "VISIBILITY") {
 		return VISIBILITY;
+	} else if (name == "FRAYSSEIX_PACH_POLLACK") {
+		return FRAYSSEIX_PACH_POLLACK;
+	} else if (name == "SCHNYDER") {
+		return SCHNYDER;
+	} else if (name == "CANONICAL_ORDER") {
+		return CANONICAL_ORDER;
+	} else if (name == "MIXED_MODEL") {
+		return MIXED_MODEL;
+	} else if (name == "CONVEX_GRID") {
+		return CONVEX_GRID;
+	} else if (name == "BALLOON") {
+		return BALLOON;
 	} else {
 		return NO_LAYOUTER;
 	}
@@ -441,40 +460,42 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		string layouterName;
 		GetOptionSafe(OPTION_LAYOUTER, layouterName, options);
 		LayouterType layouterType = GetLayouterTypeByName(layouterName);
+
 		// set the random seed
 		int randomSeed;
 		if (GetOption(OPTION_RANDOM_SEED, randomSeed, options)) {
 			srand(randomSeed);
 		}
+
 		// perform the layout
 		switch (layouterType) {
 		case SUGIYAMA: {
-			SugiyamaLayout layouter;
+			SugiyamaLayout layout;
 			FastHierarchyLayout* fastHierarchyLayout = new FastHierarchyLayout;
-			layouter.setLayout(fastHierarchyLayout);
+			layout.setLayout(fastHierarchyLayout);
 			int fails;
 			if (GetOption(OPTION_FAILS, fails, options)) {
-				layouter.fails(fails);
+				layout.fails(fails);
 			}
 			int runs;
 			if (GetOption(OPTION_RUNS, runs, options)) {
-				layouter.runs(runs);
+				layout.runs(runs);
 			}
 			bool transpose;
 			if (GetOption(OPTION_TRANSPOSE, transpose, options)) {
-				layouter.transpose(transpose);
+				layout.transpose(transpose);
 			}
 			bool arrangeCCs;
 			if (GetOption(OPTION_ARRANGE_CC, arrangeCCs, options)) {
-				layouter.arrangeCCs(arrangeCCs);
+				layout.arrangeCCs(arrangeCCs);
 			}
 			double minDistCC;
 			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options)) {
-				layouter.minDistCC(minDistCC);
+				layout.minDistCC(minDistCC);
 			}
 			double pageRatio;
 			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
-				layouter.pageRatio(pageRatio);
+				layout.pageRatio(pageRatio);
 			}
 			double nodeDistance;
 			if (GetOption(OPTION_NODE_DISTANCE, nodeDistance, options)) {
@@ -484,26 +505,24 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			if (GetOption(OPTION_LAYER_DISTANCE, layerDistance, options)) {
 				fastHierarchyLayout->layerDistance(layerDistance);
 			}
-			// needs to be called with an GraphAttributes argument to invoke the
-			// correct polymorphic method
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
 		case PLANARIZATION: {
-			PlanarizationLayout layouter;
+			PlanarizationLayout layout;
 			OrthoLayout* orthoLayout = new OrthoLayout();
-			layouter.setPlanarLayouter(orthoLayout);
+			layout.setPlanarLayouter(orthoLayout);
 			double pageRatio;
 			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
-				layouter.pageRatio(pageRatio);
+				layout.pageRatio(pageRatio);
 			}
 			bool preprocessCliques;
 			if (GetOption(OPTION_PREPROCESS_CLIQUES, preprocessCliques, options)) {
-				layouter.preprocessCliques(preprocessCliques);
+				layout.preprocessCliques(preprocessCliques);
 			}
 			int minCliqueSize;
 			if (GetOption(OPTION_MIN_CLIQUE_SIZE, minCliqueSize, options)) {
-				layouter.minCliqueSize(minCliqueSize);
+				layout.minCliqueSize(minCliqueSize);
 			}
 			double separation;
 			if (GetOption(OPTION_SEPARATION, separation, options)) {
@@ -535,215 +554,215 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 				DeriveUMLGraph(G, *GA, *UMLG, information);
 				delete GA;
 				LGA = UMLG;
-				layouter.call(*UMLG);
+				layout.call(*UMLG);
 			} else {
-				layouter.call(*LGA);
+				layout.call(*LGA);
 			}
 			break;
 		}
 		case FMMM: {
-			FMMMLayout layouter;
-			layouter.useHighLevelOptions(true);
+			FMMMLayout layout;
+			layout.useHighLevelOptions(true);
 			double unitEdgeLength;
 			if (GetOption(OPTION_EDGE_LENGTH, unitEdgeLength, options)) {
-				layouter.unitEdgeLength(unitEdgeLength);
+				layout.unitEdgeLength(unitEdgeLength);
 			}
 			bool newInitialPlacement;
 			if (GetOption(OPTION_NEW_INITIAL_PLACEMENT, newInitialPlacement,
 					options)) {
-				layouter.newInitialPlacement(newInitialPlacement);
+				layout.newInitialPlacement(newInitialPlacement);
 			}
 			int qvs;
 			if (GetOption(OPTION_QUALITY_VS_SPEED, qvs, options)) {
 				TRANSFORM_QUALITY_VS_SPEED(qualityVsSpeed, qvs);
-				layouter.qualityVersusSpeed(qualityVsSpeed);
+				layout.qualityVersusSpeed(qualityVsSpeed);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
 		case DAVIDSON_HAREL: {
-			DavidsonHarelLayout layouter;
+			DavidsonHarelLayout layout;
 			int costs;
 			if (GetOption(OPTION_COSTS, costs, options)) {
 				TRANSFORM_COSTS(theCosts, costs);
-				layouter.fixSettings(theCosts);
+				layout.fixSettings(theCosts);
 			}
 			int speed;
 			if (GetOption(OPTION_SPEED, speed, options)) {
 				TRANSFORM_SPEED(theSpeed, speed);
-				layouter.setSpeed(theSpeed);
+				layout.setSpeed(theSpeed);
 			}
 			double edgeLength;
 			if (GetOption(OPTION_EDGE_LENGTH, edgeLength, options)) {
-				layouter.setPreferredEdgeLength(edgeLength);
+				layout.setPreferredEdgeLength(edgeLength);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
 		case FRUCHTERMAN_REINGOLD: {
-			SpringEmbedderFR layouter;
+			SpringEmbedderFR layout;
 			int iterations;
 			if (GetOption(OPTION_ITERATIONS, iterations, options)) {
-				layouter.iterations(iterations);
+				layout.iterations(iterations);
 			}
 			double fineness;
 			if (GetOption(OPTION_FINENESS, fineness, options)) {
-				layouter.fineness(fineness);
+				layout.fineness(fineness);
 			}
 			bool noise;
 			if (GetOption(OPTION_NOISE, noise, options)) {
-				layouter.noise(noise);
+				layout.noise(noise);
 			}
 			double minDistCC;
 			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options)) {
-				layouter.minDistCC(minDistCC);
+				layout.minDistCC(minDistCC);
 			}
 			double pageRatio;
 			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
-				layouter.pageRatio(pageRatio);
+				layout.pageRatio(pageRatio);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
 		case GEM: {
-			GEMLayout layouter;
+			GEMLayout layout;
 			int numberOfRounds;
 			if (GetOption(OPTION_NUMBER_OF_ROUNDS, numberOfRounds, options)) {
-				layouter.numberOfRounds(numberOfRounds);
+				layout.numberOfRounds(numberOfRounds);
 			}
 			double minimalTemperature;
 			if (GetOption(OPTION_MINIMAL_TEMPERATURE, minimalTemperature,
 					options)) {
-				layouter.minimalTemperature(minimalTemperature);
+				layout.minimalTemperature(minimalTemperature);
 			}
 			double initialTemperature;
 			if (GetOption(OPTION_INITIAL_TEMPERATURE, initialTemperature,
 					options)) {
-				layouter.initialTemperature(initialTemperature);
+				layout.initialTemperature(initialTemperature);
 			}
 			double gravitationalConstant;
 			if (GetOption(OPTION_GRAVITATIONAL_CONSTANT, gravitationalConstant,
 					options)) {
-				layouter.gravitationalConstant(gravitationalConstant);
+				layout.gravitationalConstant(gravitationalConstant);
 			}
 			double desiredLength;
 			if (GetOption(OPTION_DESIRED_LENGTH, desiredLength, options)) {
-				layouter.desiredLength(desiredLength);
+				layout.desiredLength(desiredLength);
 			}
 			double maximalDisturbance;
 			if (GetOption(OPTION_MAXIMAL_DISTURBANCE, maximalDisturbance,
 					options)) {
-				layouter.maximalDisturbance(maximalDisturbance);
+				layout.maximalDisturbance(maximalDisturbance);
 			}
 			double rotationAngle;
 			if (GetOption(OPTION_ROTATION_ANGLE, rotationAngle, options)) {
-				layouter.rotationAngle(rotationAngle);
+				layout.rotationAngle(rotationAngle);
 			}
 			double oscillationAngle;
 			if (GetOption(OPTION_OSCILLATION_ANGLE, oscillationAngle, options)) {
-				layouter.oscillationAngle(oscillationAngle);
+				layout.oscillationAngle(oscillationAngle);
 			}
 			double rotationSensitivity;
 			if (GetOption(OPTION_ROTATION_SENSITIVITY, rotationSensitivity,
 					options)) {
-				layouter.rotationSensitivity(rotationSensitivity);
+				layout.rotationSensitivity(rotationSensitivity);
 			}
 			double oscillationSensitivity;
 			if (GetOption(OPTION_OSCILLATION_SENSITIVITY,
 					oscillationSensitivity, options)) {
-				layouter.oscillationSensitivity(oscillationSensitivity);
+				layout.oscillationSensitivity(oscillationSensitivity);
 			}
 			int attractionFormula;
 			if (GetOption(OPTION_ATTRACTION_FORMULA, attractionFormula, options)) {
-				layouter.attractionFormula(attractionFormula);
+				layout.attractionFormula(attractionFormula);
 			}
 			double minDistCC;
 			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options)) {
-				layouter.minDistCC(minDistCC);
+				layout.minDistCC(minDistCC);
 			}
 			double pageRatio;
 			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
-				layouter.pageRatio(pageRatio);
+				layout.pageRatio(pageRatio);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
 		case CIRCULAR: {
-			CircularLayout layouter;
+			CircularLayout layout;
 			double minDistCircle;
 			if (GetOption(OPTION_MIN_DIST_CIRCLE, minDistCircle, options)) {
-				layouter.minDistCircle(minDistCircle);
+				layout.minDistCircle(minDistCircle);
 			}
 			double minDistLevel;
 			if (GetOption(OPTION_MIN_DIST_LEVEL, minDistLevel, options)) {
-				layouter.minDistLevel(minDistLevel);
+				layout.minDistLevel(minDistLevel);
 			}
 			double minDistSibling;
 			if (GetOption(OPTION_MIN_DIST_SIBLING, minDistSibling, options)) {
-				layouter.minDistSibling(minDistSibling);
+				layout.minDistSibling(minDistSibling);
 			}
 			double minDistCC;
 			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options)) {
-				layouter.minDistCC(minDistCC);
+				layout.minDistCC(minDistCC);
 			}
 			double pageRatio;
 			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
-				layouter.pageRatio(pageRatio);
+				layout.pageRatio(pageRatio);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
 		case TREE: {
-			TreeLayout layouter;
+			TreeLayout layout;
 			double siblingDistance;
 			if (GetOption(OPTION_SIBLING_DISTANCE, siblingDistance, options)) {
-				layouter.siblingDistance(siblingDistance);
+				layout.siblingDistance(siblingDistance);
 			}
 			double subtreeDistance;
 			if (GetOption(OPTION_SUBTREE_DISTANCE, subtreeDistance, options)) {
-				layouter.subtreeDistance(subtreeDistance);
+				layout.subtreeDistance(subtreeDistance);
 			}
 			double levelDistance;
 			if (GetOption(OPTION_LEVEL_DISTANCE, levelDistance, options)) {
-				layouter.levelDistance(levelDistance);
+				layout.levelDistance(levelDistance);
 			}
 			double treeDistance;
 			if (GetOption(OPTION_TREE_DISTANCE, treeDistance, options)) {
-				layouter.treeDistance(treeDistance);
+				layout.treeDistance(treeDistance);
 			}
 			bool orthogonal;
 			if (GetOption(OPTION_ORTHOGONAL, orthogonal, options)) {
-				layouter.orthogonalLayout(orthogonal);
+				layout.orthogonalLayout(orthogonal);
 			}
 			int orientation;
 			if (GetOption(OPTION_ORIENTATION, orientation, options)) {
 				TRANSFORM_ORIENTATION(theOrientation, orientation);
-				layouter.orientation(theOrientation);
+				layout.orientation(theOrientation);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
 		case RADIAL_TREE: {
-			RadialTreeLayout layouter;
+			RadialTreeLayout layout;
 			double levelDistance;
 			if (GetOption(OPTION_LEVEL_DISTANCE, levelDistance, options)) {
-				layouter.levelDistance(levelDistance);
+				layout.levelDistance(levelDistance);
 			}
 			double ccDistance;
 			if (GetOption(OPTION_CC_DISTANCE, ccDistance, options)) {
-				layouter.connectedComponentDistance(ccDistance);
+				layout.connectedComponentDistance(ccDistance);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
 		case UPWARD_PLANARIZATION: {
-			UpwardPlanarizationLayout layouter;
+			UpwardPlanarizationLayout layout;
 			LayerBasedUPRLayout* layerBasedUPRLayout =
 					new LayerBasedUPRLayout();
 			FastHierarchyLayout* fastHierarchyLayout =
 					new FastHierarchyLayout();
 			layerBasedUPRLayout->setLayout(fastHierarchyLayout);
-			layouter.setUPRLayout(layerBasedUPRLayout);
+			layout.setUPRLayout(layerBasedUPRLayout);
 			double nodeDistance;
 			if (GetOption(OPTION_NODE_DISTANCE, nodeDistance, options)) {
 				fastHierarchyLayout->nodeDistance(nodeDistance);
@@ -752,126 +771,184 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			if (GetOption(OPTION_LAYER_DISTANCE, layerDistance, options)) {
 				fastHierarchyLayout->layerDistance(layerDistance);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
 		case FAST_MULTIPOLE: {
-			FastMultipoleEmbedder layouter;
+			FastMultipoleEmbedder layout;
 			int multipolePrec;
 			if (GetOption(OPTION_MULTIPOLE_PREC, multipolePrec, options)) {
-				layouter.setMultipolePrec(multipolePrec);
+				layout.setMultipolePrec(multipolePrec);
 			}
 			int iterations;
 			if (GetOption(OPTION_ITERATIONS, iterations, options)) {
-				layouter.setNumIterations(iterations);
+				layout.setNumIterations(iterations);
 			}
 			bool randomize;
 			if (GetOption(OPTION_RANDOMIZE, randomize, options)) {
-				layouter.setRandomize(randomize);
+				layout.setRandomize(randomize);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
 		case FAST_MULTIPOLE_MULTILEVEL: {
-			FastMultipoleMultilevelEmbedder layouter;
+			FastMultipoleMultilevelEmbedder layout;
 			int bound;
 			if (GetOption(OPTION_MULTILEVEL_UNNAL, bound, options)) {
-				layouter.multilevelUntilNumNodesAreLess(bound);
+				layout.multilevelUntilNumNodesAreLess(bound);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
 		case KAMADA_KAWAI: {
-			SpringEmbedderKK layouter;
+			SpringEmbedderKK layout;
 			double edgeLength;
 			if (GetOption(OPTION_EDGE_LENGTH, edgeLength, options)) {
-				layouter.setDesLength(edgeLength);
+				layout.setDesLength(edgeLength);
 			}
 			int localIterations;
 			if (GetOption(OPTION_LOCAL_ITERATIONS, localIterations, options)) {
-				layouter.setMaxLocalIterations(localIterations);
-				layouter.computeMaxIterations(false);
+				layout.setMaxLocalIterations(localIterations);
+				layout.computeMaxIterations(false);
 			}
 			int globalIterations;
 			if (GetOption(OPTION_GLOBAL_ITERATIONS, globalIterations, options)) {
-				layouter.setMaxGlobalIterations(globalIterations);
-				layouter.computeMaxIterations(false);
+				layout.setMaxGlobalIterations(globalIterations);
+				layout.computeMaxIterations(false);
 			}
 			bool useLayout;
 			if (GetOption(OPTION_USE_LAYOUT, useLayout, options)) {
-				layouter.setUseLayout(useLayout);
+				layout.setUseLayout(useLayout);
 			}
 			double stopTolerance;
 			if (GetOption(OPTION_STOP_TOLERANCE, stopTolerance, options)) {
-				layouter.setStopTolerance(stopTolerance);
+				layout.setStopTolerance(stopTolerance);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
 		case STRESS_MAJORIZATION: {
-			StressMajorization layouter;
+			StressMajorization layout;
 			int iterations;
 			if (GetOption(OPTION_ITERATIONS, iterations, options)) {
-				layouter.setIterations(iterations);
+				layout.setIterations(iterations);
 			}
 			int localIterations;
 			if (GetOption(OPTION_LOCAL_ITERATIONS, localIterations, options)) {
-				layouter.setMaxLocalIterations(localIterations);
-				layouter.computeMaxIterations(false);
+				layout.setMaxLocalIterations(localIterations);
+				layout.computeMaxIterations(false);
 			}
 			int globalIterations;
 			if (GetOption(OPTION_GLOBAL_ITERATIONS, globalIterations, options)) {
-				layouter.setMaxGlobalIterations(globalIterations);
-				layouter.computeMaxIterations(false);
+				layout.setMaxGlobalIterations(globalIterations);
+				layout.computeMaxIterations(false);
 			}
 			bool useLayout;
 			if (GetOption(OPTION_USE_LAYOUT, useLayout, options)) {
-				layouter.setUseLayout(useLayout);
+				layout.setUseLayout(useLayout);
 			}
 			double stopTolerance;
 			if (GetOption(OPTION_STOP_TOLERANCE, stopTolerance, options)) {
-				layouter.setStopTolerance(stopTolerance);
+				layout.setStopTolerance(stopTolerance);
 			}
 			bool upward;
 			if (GetOption(OPTION_UPWARD, upward, options)) {
-				layouter.upward(upward);
+				layout.upward(upward);
 			}
 			bool radial;
 			if (GetOption(OPTION_RADIAL, radial, options)) {
-				layouter.radial(radial);
+				layout.radial(radial);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
 		case DOMINANCE: {
-			DominanceLayout layouter;
+			DominanceLayout layout;
 			int gridDistance;
 			if (GetOption(OPTION_GRID_DISTANCE, gridDistance, options)) {
-				layouter.setMinGridDistance(gridDistance);
+				layout.setMinGridDistance(gridDistance);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
 		case VISIBILITY: {
-			VisibilityLayout layouter;
+			VisibilityLayout layout;
 			int gridDistance;
 			if (GetOption(OPTION_GRID_DISTANCE, gridDistance, options)) {
-				layouter.setMinGridDistance(gridDistance);
+				layout.setMinGridDistance(gridDistance);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
+			break;
+		}
+		case FRAYSSEIX_PACH_POLLACK: {
+			FPPLayout layout;
+			double separation;
+			if (GetOption(OPTION_SEPARATION, separation, options)) {
+				layout.separation(separation);
+			}
+			layout.call(*LGA);
+			break;
+		}
+		case SCHNYDER: {
+			SchnyderLayout layout;
+			double separation;
+			if (GetOption(OPTION_SEPARATION, separation, options)) {
+				layout.separation(separation);
+			}
+			layout.call(*LGA);
+			break;
+		}
+		case CANONICAL_ORDER: {
+			BoyerMyrvold planarity;
+			if (!planarity.isPlanar(G)) {
+				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
+			}
+			PlanarStraightLayout layout;
+			layout.call(*LGA);
+			break;
+		}
+		case MIXED_MODEL: {
+			BoyerMyrvold planarity;
+			if (!planarity.isPlanar(G)) {
+				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
+			}
+			MixedModelLayout layout;
+			layout.call(*LGA);
+			break;
+		}
+		case CONVEX_GRID: {
+			BoyerMyrvold planarity;
+			if (!planarity.isPlanar(G)) {
+				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
+			}
+			PlanarDrawLayout layout;
+			layout.call(*LGA);
+			break;
+		}
+		case BALLOON: {
+			BalloonLayout layout;
+			layout.call(*LGA);
 			break;
 		}
 		default:
 			throw runtime_error("The specified layouter does not exist.");
 		}
+
 		// add the edge intersections with the nodes bounding box as bend points
 		LGA->addNodeCenter2Bends(1);
+
 		// perform the label layout
 		LI = new LabelInterface(*LGA);
 		TransferLabels(G, *LGA, *LI, information);
 		ELabelPosSimple simpleLabelLayout;
-		GetOption(OPTION_LABEL_EDGE_DISTANCE, simpleLabelLayout.m_edgeDistance, options);
-		GetOption(OPTION_LABEL_MARGIN_DISTANCE, simpleLabelLayout.m_marginDistance, options);
+		double edgeDistance;
+		if (GetOption(OPTION_LABEL_EDGE_DISTANCE, edgeDistance, options)) {
+			simpleLabelLayout.m_edgeDistance = edgeDistance;
+		}
+		double marginDistance;
+		if (GetOption(OPTION_LABEL_MARGIN_DISTANCE, marginDistance, options)) {
+			simpleLabelLayout.m_marginDistance = marginDistance;
+		}
 		simpleLabelLayout.m_midOnEdge = false;
 		simpleLabelLayout.call(*LGA, *LI);
 		return LGA;

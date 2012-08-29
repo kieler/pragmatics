@@ -51,6 +51,18 @@ public enum LayoutAlgorithm {
     /** */
     DOMINANCE,
     /** */
-    VISIBILITY;
+    VISIBILITY,
+    /** */
+    FRAYSSEIX_PACH_POLLACK,
+    /** */
+    SCHNYDER,
+    /** */
+    CANONICAL_ORDER,
+    /** */
+    MIXED_MODEL,
+    /** */
+    CONVEX_GRID,
+    /** */
+    BALLOON;
     
 }
