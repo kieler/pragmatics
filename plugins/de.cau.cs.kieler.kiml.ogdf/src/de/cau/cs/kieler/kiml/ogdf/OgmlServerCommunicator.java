@@ -137,10 +137,6 @@ public class OgmlServerCommunicator {
         // start the OGDF server process, or retrieve the previously used process
         ogdfServer.initialize(INPUT_FORMAT);
 
-        // set the random number generator seed
-        setRandomSeed(layoutNode);
-        // prepare the label layout
-        prepareLabelLayout(layoutNode);
         // transform the graph
         DocumentRoot root = transformGraph(layoutNode, progressMonitor.subTask(SUBTASK_WORK));
 
@@ -170,24 +166,6 @@ public class OgmlServerCommunicator {
     }
 
     /**
-     * Set the random number generator seed.
-     * 
-     * @param node
-     *            parent node from which the seed option is taken
-     */
-    private void setRandomSeed(final KNode node) {
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        Integer seed = nodeLayout.getProperty(LayoutOptions.RANDOM_SEED);
-        if (seed == null) {
-            addOption(OgdfServer.OPTION_RANDOM_SEED, 1);
-        } else if (seed == 0) {
-            addOption(OgdfServer.OPTION_RANDOM_SEED, (int) System.currentTimeMillis());
-        } else {
-            addOption(OgdfServer.OPTION_RANDOM_SEED, seed);
-        }
-    }
-
-    /**
      * Adds an option for the next layout.
      * 
      * @param key
@@ -209,31 +187,6 @@ public class OgmlServerCommunicator {
      */
     private void addInformation(final String key, final Object value) {
         infoBuffer.add(key + "=" + value.toString());
-    }
-
-    /**
-     * Prepare the label layout.
-     * 
-     * @param layoutNode
-     *            the parent layout node
-     */
-    private void prepareLabelLayout(final KNode layoutNode) {
-        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
-        boolean processLabels = parentLayout.getProperty(AlgorithmSetup.PLACE_LABELS);
-        if (processLabels) {
-            // edgeDistance
-            float edgeDistance = parentLayout.getProperty(AlgorithmSetup.LABEL_EDGE_DIST);
-            if (edgeDistance < 0) {
-                edgeDistance = AlgorithmSetup.LABEL_EDGE_DIST.getDefault();
-            }
-            addOption(OgdfServer.OPTION_LABEL_EDGE_DISTANCE, edgeDistance);
-            // marginDistance
-            float marginDistance = parentLayout.getProperty(AlgorithmSetup.LABEL_MARGIN_DIST);
-            if (marginDistance < 0) {
-                marginDistance = AlgorithmSetup.LABEL_MARGIN_DIST.getDefault();
-            }
-            addOption(OgdfServer.OPTION_LABEL_MARGIN_DISTANCE, marginDistance);
-        }
     }
 
     /**

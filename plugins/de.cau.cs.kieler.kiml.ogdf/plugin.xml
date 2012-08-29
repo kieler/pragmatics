@@ -256,6 +256,7 @@
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
          <knownOption
+               default="400"
                option="de.cau.cs.kieler.kiml.ogdf.option.iterations">
          </knownOption>
          <knownOption
@@ -505,7 +506,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Upward planarization layout by Chimani, Gutwenger, Mutzel and Wong '10. While usual layer-based methods first determine a layering and then minimize crossings, this approach aims at directly computing an upward planar representation (UPR), where edge crossings are represented by dummy vertices. A layering is then derived from this UPR, which also induces a node order in each layer. This leads to significantly less edge crossings compared to former methods, while the overall edge direction is still preserved."
+            description="Upward planarization layout by Chimani, Gutwenger, Mutzel and Wong '10. While usual layer-based methods first determine a layering and then minimize crossings, this approach aims at directly computing an upward planar representation (UPR), where edge crossings are represented by dummy vertices. A layering is then derived from this UPR, which also induces a node order in each layer. This leads to significantly less edge crossings compared to former methods, while the overall edge direction is still preserved. The input graph must be connected."
             id="de.cau.cs.kieler.kiml.ogdf.upwardPlanarization"
             name="Upward-Planarization"
             parameter="UPWARD_PLANARIZATION"
@@ -544,10 +545,195 @@
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
       </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="The Fast-Multipole-Embedder layout algorithm."
+            id="de.cau.cs.kieler.kiml.ogdf.fastMultipole"
+            name="Fast Multipole"
+            parameter="FAST_MULTIPOLE"
+            type="de.cau.cs.kieler.type.force">
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.multipolePrec">
+         </knownOption>
+         <knownOption
+               default="100"
+               option="de.cau.cs.kieler.kiml.ogdf.option.iterations">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.interactive">
+         </knownOption>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="The Fast-Multipole-Multilevel-Embedder layout algorithm."
+            id="de.cau.cs.kieler.kiml.ogdf.fastMultipoleMultilevel"
+            name="Fast Multipole Multilevel"
+            parameter="FAST_MULTIPOLE_MULTILEVEL"
+            type="de.cau.cs.kieler.type.force">
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="The spring-embedder layout algorithm after Kamada and Kawai &apos;89."
+            id="de.cau.cs.kieler.kiml.ogdf.kamadaKawai"
+            name="Kamada-Kawai"
+            parameter="KAMADA_KAWAI"
+            type="de.cau.cs.kieler.type.force">
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <knownOption
+               default="30"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.stopTolerance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="Stress majorization layout that allows radial constraints based on shortest path distances. The implementation is based on Brandes and Pich &apos;09."
+            id="de.cau.cs.kieler.kiml.ogdf.stressMajorization"
+            name="Stress Majorization"
+            parameter="STRESS_MAJORIZATION"
+            type="de.cau.cs.kieler.type.force">
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <knownOption
+               default="300"
+               option="de.cau.cs.kieler.kiml.ogdf.option.iterations">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.stopTolerance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.upward">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.radial">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="Dominance layout method."
+            id="de.cau.cs.kieler.kiml.ogdf.dominance"
+            name="Dominance"
+            parameter="DOMINANCE"
+            type="">
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <knownOption
+               default="10"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="Visibility layout method."
+            id="de.cau.cs.kieler.kiml.ogdf.visibility"
+            name="Visibility"
+            parameter="VISIBILITY"
+            type="">
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <knownOption
+               default="10"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+      </layoutAlgorithm>
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="400"
             description="The number of iterations performed by the algorithm"
             id="de.cau.cs.kieler.kiml.ogdf.option.iterations"
             lowerBound="1"
@@ -875,6 +1061,46 @@
             name="Place Labels"
             type="boolean"
             variance="0">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="4"
+            description="The number of coefficients for expansions"
+            id="de.cau.cs.kieler.kiml.ogdf.option.multipolePrec"
+            lowerBound="1"
+            name="Precision"
+            type="int"
+            upperBound="100"
+            variance="2.0">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.001"
+            description="Tolerance below which the system is regarded stable and the optimization is stopped"
+            id="de.cau.cs.kieler.kiml.ogdf.option.stopTolerance"
+            lowerBound="0.00001"
+            name="Stop Tolerance"
+            type="float"
+            upperBound="100.0"
+            variance="0.01">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="true"
+            description="Add upward constraints"
+            id="de.cau.cs.kieler.kiml.ogdf.option.upward"
+            name="Upward"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            description="Add radial constraints"
+            id="de.cau.cs.kieler.kiml.ogdf.option.radial"
+            name="Radial"
+            type="boolean">
       </layoutOption>
    </extension>
 

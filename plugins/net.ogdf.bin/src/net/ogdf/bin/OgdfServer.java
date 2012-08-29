@@ -94,8 +94,12 @@ public class OgdfServer {
     public static final String OPTION_FAILS = "fails";
     /** the option for the fineness. */
     public static final String OPTION_FINENESS = "fineness";
+    /** the option for the number of global iterations. */
+    public static final String OPTION_GLOBAL_ITERATIONS = "globalIterations";
     /** the option for the gravitational constant. */
     public static final String OPTION_GRAVITATIONAL_CONSTANT = "gravitationalConstant";
+    /** the option for the grid distance. */
+    public static final String OPTION_GRID_DISTANCE = "gridDistance";
     /** the option for the initial temperature. */
     public static final String OPTION_INITIAL_TEMPERATURE = "initialTemperature";
     /** the option for the number of iterations. */
@@ -112,6 +116,8 @@ public class OgdfServer {
     public static final String OPTION_LAYOUTER = "layouter";
     /** the option for the level distance. */
     public static final String OPTION_LEVEL_DISTANCE = "levelDistance";
+    /** the option for the number of local iterations. */
+    public static final String OPTION_LOCAL_ITERATIONS = "localIterations";
     /** the option for the maximal disturbance. */
     public static final String OPTION_MAXIMAL_DISTURBANCE = "maximalDisturbance";
     /** the option for the minimal clique size. */
@@ -126,6 +132,10 @@ public class OgdfServer {
     public static final String OPTION_MIN_DIST_SIBLING = "minDistSibling";
     /** the option for the minimal temperature. */
     public static final String OPTION_MINIMAL_TEMPERATURE = "minimalTemperature";
+    /** the option for the bound for the number of nodes for the multilevel step. */
+    public static final String OPTION_MULTILEVEL_UNNAL = "multilevelUntilNumNodesAreLess";
+    /** the option for the number of coefficients for expansion. */
+    public static final String OPTION_MULTIPOLE_PREC = "multipolePrec";
     /** the option for a new initial node placement. */
     public static final String OPTION_NEW_INITIAL_PLACEMENT = "newInitialPlacement";
     /** the option for the node distance. */
@@ -148,6 +158,10 @@ public class OgdfServer {
     public static final String OPTION_PREPROCESS_CLIQUES = "preprocessCliques";
     /** the option for the quality-vs-speed option set. */
     public static final String OPTION_QUALITY_VS_SPEED = "qualityVsSpeed";
+    /** the option for radial constraints. */
+    public static final String OPTION_RADIAL = "radial";
+    /** the option for randomization of the layout. */
+    public static final String OPTION_RANDOMIZE = "randomize";
     /** the option for the random seed. */
     public static final String OPTION_RANDOM_SEED = "randomSeed";
     /** the option for the rotation angle. */
@@ -162,12 +176,18 @@ public class OgdfServer {
     public static final String OPTION_SIBLING_DISTANCE = "siblingDistance";
     /** the option for the speed option set. */
     public static final String OPTION_SPEED = "speed";
+    /** the option for the stop tolerance. */
+    public static final String OPTION_STOP_TOLERANCE = "stopTolerance";
     /** the option for the subtree distance. */
     public static final String OPTION_SUBTREE_DISTANCE = "subtreeDistance";
     /** the option for the transposition. */
     public static final String OPTION_TRANSPOSE = "transpose";
     /** the option for the tree distance. */
     public static final String OPTION_TREE_DISTANCE = "treeDistance";
+    /** the option for upward constraints. */
+    public static final String OPTION_UPWARD = "upward";
+    /** the option for usage of the given layout. */
+    public static final String OPTION_USE_LAYOUT = "useLayout";
 
     /** the 'north' direction. */
     public static final int DIRECTION_NORTH = 0;

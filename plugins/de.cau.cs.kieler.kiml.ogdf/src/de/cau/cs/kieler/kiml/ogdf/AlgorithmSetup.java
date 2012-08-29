@@ -34,6 +34,7 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
+ * Setup for OGDF layout algorithm configurations.
  * 
  * @author msp
  */
@@ -41,176 +42,206 @@ public final class AlgorithmSetup {
 
     // general options used for multiple algorithms
     
-    /** label edge distance property. */
+    /** label edge distance option. */
     public static final IProperty<Float> LABEL_EDGE_DIST = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance", 15.0f);
-    /** label margin distance property. */
+    /** label margin distance option. */
     public static final IProperty<Float> LABEL_MARGIN_DIST = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance", 15.0f);
-    /** label placement property. */
+    /** label placement option. */
     public static final IProperty<Boolean> PLACE_LABELS = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.placeLabels", true);
     
-    /** 'aspectRatio' property. */
+    /** 'aspectRatio' option. */
     private static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO, 1.3f);
-    /** factor for 'minDistCC' property. */
+    /** factor for 'minDistCC' option. */
     private static final IProperty<Float> MIN_DIST_CC = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0f);
-    /** factor for 'layerDistance' property. */
+    /** factor for 'layerDistance' option. */
     private static final IProperty<Float> LAYER_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0f);
+    /** 'iterations' option. */
+    private static final IProperty<Integer> ITERATIONS = new Property<Integer>(
+            "de.cau.cs.kieler.kiml.ogdf.option.iterations");
+    /** 'stopTolerance' option. */
+    private static final IProperty<Float> STOP_TOLERANCE = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.stopTolerance", 0.001f);
 
     // options for Sugiyama layouter
     
-    /** 'nodeDistance' property. */
+    /** 'nodeDistance' option. */
     private static final IProperty<Float> NODE_DISTANCE = new Property<Float>(LayoutOptions.SPACING,
             16.0f);
-    /** 'fails' property. */
+    /** 'fails' option. */
     private static final IProperty<Integer> FAILS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.fails", 4);
-    /** 'runs' property. */
+    /** 'runs' option. */
     private static final IProperty<Integer> RUNS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.runs", 15);
-    /** 'transpose' property. */
+    /** 'transpose' option. */
     private static final IProperty<Boolean> TRANSPOSE = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.transpose", true);
     
     // options for planarization layouter
     
-    /** 'separation' property. */
+    /** 'separation' option. */
     private static final IProperty<Float> SEPARATION = new Property<Float>(
             LayoutOptions.SPACING, 20.0f, 1.0f);
-    /** 'preprocessCliques' property. */
+    /** 'preprocessCliques' option. */
     private static final IProperty<Boolean> PREPROCESS_CLIQUES = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.preprocessCliques", false);
-    /** 'minCliqueSize' property. */
+    /** 'minCliqueSize' option. */
     private static final IProperty<Integer> MIN_CLIQUE_SIZE = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.minCliqueSize", 10);
-    /** 'costAssoc' property. */
+    /** 'costAssoc' option. */
     private static final IProperty<Integer> COST_ASSOC = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.costAssoc", 1);
-    /** 'costGen' property. */
+    /** 'costGen' option. */
     private static final IProperty<Integer> COST_GEN = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.costGen", 4);
 
     // options for FMMM layouter
     
-    /** 'quality vs speed' property. */
+    /** 'quality vs speed' option. */
     private static final IProperty<QualityVsSpeed> QUALITY_VS_SPEED = new Property<QualityVsSpeed>(
             "de.cau.cs.kieler.kiml.ogdf.option.qualityVsSpeed", QualityVsSpeed.BEAUTIFULANDFAST);
-    /** 'new initial placement' property. */
+    /** 'new initial placement' option. */
     private static final IProperty<Boolean> NEW_INITIAL_PLACEMENT = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement", false);
     
     // options for Davidson & Harel layouter
     
-    /** 'spacing' property. */
+    /** 'spacing' option. */
     private static final IProperty<Float> DH_SPACING = new Property<Float>(
             LayoutOptions.SPACING, 80.0f);
-    /** costs property. */
+    /** 'costs' option. */
     private static final IProperty<Costs> COSTS = new Property<Costs>(
             "de.cau.cs.kieler.kiml.ogdf.option.costs", Costs.STANDARD);
-    /** speed property. */
+    /** 'speed' option. */
     private static final IProperty<Speed> SPEED = new Property<Speed>(
             "de.cau.cs.kieler.kiml.ogdf.option.speed", Speed.MEDIUM);
     
     // options for Fruchterman & Reingold layouter
     
-    /** 'iterations' property. */
-    private static final IProperty<Integer> ITERATIONS = new Property<Integer>(
-            "de.cau.cs.kieler.kiml.ogdf.option.iterations", 400);
-    /** 'fineness' property. */
+    /** 'fineness' option. */
     private static final IProperty<Float> FINENESS = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.fineness", 0.51f);
-    /** 'noise' property. */
+    /** 'noise' option. */
     private static final IProperty<Boolean> NOISE = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.noise", true);
-    /** 'minDistCC' property. */
+    /** 'minDistCC' option. */
     private static final IProperty<Float> FR_SPACING = new Property<Float>(
             LayoutOptions.SPACING, 20.0f);
     
     // options for GEM layouter
     
-    /** 'desiredLength' property. */
+    /** 'desiredLength' option. */
     private static final IProperty<Float> DESIRED_LENGTH = new Property<Float>(
             LayoutOptions.SPACING, 30.0f);
-    /** 'numberOfRounds' property. */
+    /** 'numberOfRounds' option. */
     private static final IProperty<Integer> NUMBER_OF_ROUNDS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.numberOfRounds", 20000);
-    /** 'minimalTemperature' property. */
+    /** 'minimalTemperature' option. */
     private static final IProperty<Float> MINIMAL_TEMPERATURE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.minimalTemperature", 0.005f);
-    /** 'initialTemperature' property. */
+    /** 'initialTemperature' option. */
     private static final IProperty<Float> INITIAL_TEMPERATURE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.initialTemperature", 10.0f);
-    /** 'gravitationalConstant' property. */
+    /** 'gravitationalConstant' option. */
     private static final IProperty<Float> GRAVITATIONAL_CONSTANT = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.gravitationalConstant", 0.0625f);
-    /** 'maximalDisturbance' property. */
+    /** 'maximalDisturbance' option. */
     private static final IProperty<Float> MAXIMAL_DISTURBANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance", 0.0f);
-    /** 'rotationAngle' property. */
+    /** 'rotationAngle' option. */
     private static final IProperty<Float> ROTATION_ANGLE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.rotationAngle", 0.33f);
-    /** 'oscillationAngle' property. */
+    /** 'oscillationAngle' option. */
     private static final IProperty<Float> OSCILLATION_ANGLE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.oscillationAngle", 0.5f);
-    /** 'rotationSensitivity' property. */
+    /** 'rotationSensitivity' option. */
     private static final IProperty<Float> ROTATION_SENSITIVITY = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.rotationSensitivity", 0.01f);
-    /** 'oscillationSensitivity' property. */
+    /** 'oscillationSensitivity' option. */
     private static final IProperty<Float> OSCILLATION_SENSITIVITY = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.oscillationSensitivity", 0.3f);
-    /** 'attractionFormula' property. */
+    /** 'attractionFormula' option. */
     private static final IProperty<AttractionFormula> ATTRACTION_FORMULA =
             new Property<AttractionFormula>("de.cau.cs.kieler.kiml.ogdf.option.attractionFormula",
                     AttractionFormula.FRUCHTERMAN_REINGOLD);
     
     // options for circular layouter
     
-    /** 'minDistCircle' property. */
+    /** 'minDistCircle' option. */
     private static final IProperty<Float> MIN_DIST_CIRCLE = new Property<Float>(
             LayoutOptions.SPACING, 20.0f);
-    /** factor for 'minDistLevel' property. */
+    /** factor for 'minDistLevel' option. */
     private static final IProperty<Float> MIN_DIST_LEVEL = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0f);
-    /** factor for 'minDistSibling' property. */
+    /** factor for 'minDistSibling' option. */
     private static final IProperty<Float> MIN_DIST_SIBLING = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance", 1.0f);
     
     // options for tree layouter
     
-    /** 'edgeRouting' property. */
+    /** 'edgeRouting' option. */
     private static final IProperty<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
             LayoutOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
-    /** 'siblingDistance' property. */
+    /** 'siblingDistance' option. */
     private static final IProperty<Float> SIBLING_DISTANCE = new Property<Float>(
             LayoutOptions.SPACING, 20.0f);
-    /** factor for 'levelDistance' property. */
+    /** factor for 'levelDistance' option. */
     private static final IProperty<Float> LEVEL_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0f);
-    /** factor for 'subtreeDistance' property. */
+    /** factor for 'subtreeDistance' option. */
     private static final IProperty<Float> SUBTREE_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance", 1.0f);
-    /** factor for 'treeDistance' property. */
+    /** factor for 'treeDistance' option. */
     private static final IProperty<Float> TREE_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0f);
     
     // options for radial tree layouter
     
-    /** 'levelDistance' property. */
+    /** 'levelDistance' option. */
     private static final IProperty<Float> TREE_SPACING = new Property<Float>(
             LayoutOptions.SPACING, 50.0f);
-    /** factor for 'ccDistance' property. */
+    /** factor for 'ccDistance' option. */
     private static final IProperty<Float> CC_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0f);
     
     // options for upward planarization layouter
     
-    /** 'spacing' property. */
+    /** 'spacing' option. */
     private static final IProperty<Float> UPL_SPACING = new Property<Float>(LayoutOptions.SPACING,
             16.0f);
+    
+    // options for fast multipole layouter
+    
+    /** 'multipolePrec' option. */
+    private static final IProperty<Integer> MULTIPOLE_PREC = new Property<Integer>(
+            "de.cau.cs.kieler.kiml.ogdf.option.multipolePrec", 4);
+    
+    // options for the Kamada & Kawai layouter
+    
+    /** 'edgeLength' option. */
+    private static final IProperty<Float> KK_SPACING = new Property<Float>(LayoutOptions.SPACING,
+            30.0f);
+    
+    // options for the stress majorization layouter
+    
+    /** 'upward' option. */
+    private static final IProperty<Boolean> UPWARD = new Property<Boolean>(
+            "de.cau.cs.kieler.kiml.ogdf.option.upward", true);
+    /** 'radial' option. */
+    private static final IProperty<Boolean> RADIAL = new Property<Boolean>(
+            "de.cau.cs.kieler.kiml.ogdf.option.radial", false);
+    
+    // options for dominance and visibility layouter
+    
+    /** 'gridDistance' option. */
+    private static final IProperty<Float> GRID_DISTANCE = new Property<Float>(LayoutOptions.SPACING,
+            10.0f);
     
     /**
      * Hidden constructor to prevent instantiation.
@@ -218,12 +249,44 @@ public final class AlgorithmSetup {
     private AlgorithmSetup() {
     }
     
+    /**
+     * Set up the server communicator for the given algorithm.
+     * 
+     * @param algorithm an OGDF layout algorithm
+     * @param comm the server communicator able to set option mappings
+     * @param layoutNode the parent node of the layout graph
+     */
     public static void setup(final LayoutAlgorithm algorithm, final OgmlServerCommunicator comm,
             final KNode layoutNode) {
         comm.addOption(OgdfServer.OPTION_LAYOUTER, algorithm);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
-        switch (algorithm) {
         
+        Integer seed = parentLayout.getProperty(LayoutOptions.RANDOM_SEED);
+        if (seed == null) {
+            comm.addOption(OgdfServer.OPTION_RANDOM_SEED, 1);
+        } else if (seed == 0) {
+            comm.addOption(OgdfServer.OPTION_RANDOM_SEED, (int) System.currentTimeMillis());
+        } else {
+            comm.addOption(OgdfServer.OPTION_RANDOM_SEED, seed);
+        }
+        
+        boolean processLabels = parentLayout.getProperty(PLACE_LABELS);
+        if (processLabels) {
+            // edgeDistance
+            float edgeDistance = parentLayout.getProperty(LABEL_EDGE_DIST);
+            if (edgeDistance < 0) {
+                edgeDistance = LABEL_EDGE_DIST.getDefault();
+            }
+            comm.addOption(OgdfServer.OPTION_LABEL_EDGE_DISTANCE, edgeDistance);
+            // marginDistance
+            float marginDistance = parentLayout.getProperty(LABEL_MARGIN_DIST);
+            if (marginDistance < 0) {
+                marginDistance = LABEL_MARGIN_DIST.getDefault();
+            }
+            comm.addOption(OgdfServer.OPTION_LABEL_MARGIN_DISTANCE, marginDistance);
+        }
+        
+        switch (algorithm) {
         case SUGIYAMA: {
             // pageRatio
             float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
@@ -359,8 +422,10 @@ public final class AlgorithmSetup {
             float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
             comm.addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
             // iterations
-            int iterations = parentLayout.getProperty(ITERATIONS);
-            comm.addOption(OgdfServer.OPTION_ITERATIONS, iterations);
+            Integer iterations = parentLayout.getProperty(ITERATIONS);
+            if (iterations != null) {
+                comm.addOption(OgdfServer.OPTION_ITERATIONS, iterations);
+            }
             // fineness
             float fineness = parentLayout.getProperty(FINENESS);
             comm.addOption(OgdfServer.OPTION_FINENESS, fineness);
@@ -504,18 +569,66 @@ public final class AlgorithmSetup {
             break;
         }
         
-        case FAST_MULTIPOLE:
+        case FAST_MULTIPOLE: {
+            // multipolePrec
+            int multipolePrec = parentLayout.getProperty(MULTIPOLE_PREC);
+            comm.addOption(OgdfServer.OPTION_MULTIPOLE_PREC, multipolePrec);
+            // iterations
+            Integer iterations = parentLayout.getProperty(ITERATIONS);
+            if (iterations != null) {
+                comm.addOption(OgdfServer.OPTION_ITERATIONS, iterations);
+            }
+            // randomize
+            boolean interactive = parentLayout.getProperty(LayoutOptions.INTERACTIVE);
+            comm.addOption(OgdfServer.OPTION_RANDOMIZE, !interactive);
             break;
+        }
+        
         case FAST_MULTIPOLE_MULTILEVEL:
+            // no options are currently available
             break;
-        case KAMADA_KAWAI:
+            
+        case KAMADA_KAWAI: {
+            // edge length
+            float edgeLength = parentLayout.getProperty(KK_SPACING);
+            comm.addOption(OgdfServer.OPTION_EDGE_LENGTH, edgeLength);
+            // stop tolerance
+            float stopTolerance = parentLayout.getProperty(STOP_TOLERANCE);
+            comm.addOption(OgdfServer.OPTION_STOP_TOLERANCE, stopTolerance);
             break;
-        case STRESS_MAJORIZATION:
+        }
+        
+        case STRESS_MAJORIZATION: {
+            // iterations
+            Integer iterations = parentLayout.getProperty(ITERATIONS);
+            if (iterations != null) {
+                comm.addOption(OgdfServer.OPTION_ITERATIONS, iterations);
+            }
+            // stop tolerance
+            float stopTolerance = parentLayout.getProperty(STOP_TOLERANCE);
+            comm.addOption(OgdfServer.OPTION_STOP_TOLERANCE, stopTolerance);
+            // upward constraints
+            boolean upward = parentLayout.getProperty(UPWARD);
+            comm.addOption(OgdfServer.OPTION_UPWARD, upward);
+            // radial constraints
+            boolean radial = parentLayout.getProperty(RADIAL);
+            comm.addOption(OgdfServer.OPTION_RADIAL, radial);
             break;
-        case DOMINANCE:
+        }
+        
+        case DOMINANCE: {
+            // grid distance
+            float distance = parentLayout.getProperty(GRID_DISTANCE);
+            comm.addOption(OgdfServer.OPTION_GRID_DISTANCE, Math.round(distance));
             break;
-        case VISIBILITY:
+        }
+        
+        case VISIBILITY: {
+            // grid distance
+            float distance = parentLayout.getProperty(GRID_DISTANCE);
+            comm.addOption(OgdfServer.OPTION_GRID_DISTANCE, Math.round(distance));
             break;
+        }
             
         default:
             throw new IllegalStateException("Invalid value set for layout algorithm selection.");

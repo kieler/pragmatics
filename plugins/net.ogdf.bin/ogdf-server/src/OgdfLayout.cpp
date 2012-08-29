@@ -790,10 +790,12 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			int localIterations;
 			if (GetOption(OPTION_LOCAL_ITERATIONS, localIterations, options)) {
 				layouter.setMaxLocalIterations(localIterations);
+				layouter.computeMaxIterations(false);
 			}
 			int globalIterations;
 			if (GetOption(OPTION_GLOBAL_ITERATIONS, globalIterations, options)) {
 				layouter.setMaxGlobalIterations(globalIterations);
+				layouter.computeMaxIterations(false);
 			}
 			bool useLayout;
 			if (GetOption(OPTION_USE_LAYOUT, useLayout, options)) {
@@ -815,10 +817,12 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			int localIterations;
 			if (GetOption(OPTION_LOCAL_ITERATIONS, localIterations, options)) {
 				layouter.setMaxLocalIterations(localIterations);
+				layouter.computeMaxIterations(false);
 			}
 			int globalIterations;
 			if (GetOption(OPTION_GLOBAL_ITERATIONS, globalIterations, options)) {
 				layouter.setMaxGlobalIterations(globalIterations);
+				layouter.computeMaxIterations(false);
 			}
 			bool useLayout;
 			if (GetOption(OPTION_USE_LAYOUT, useLayout, options)) {
@@ -862,14 +866,12 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		}
 		// add the edge intersections with the nodes bounding box as bend points
 		LGA->addNodeCenter2Bends(1);
-		// perform the label layout -- TODO make label processing optional
+		// perform the label layout
 		LI = new LabelInterface(*LGA);
 		TransferLabels(G, *LGA, *LI, information);
 		ELabelPosSimple simpleLabelLayout;
-		GetOption(OPTION_LABEL_EDGE_DISTANCE, simpleLabelLayout.m_edgeDistance,
-				options);
-		GetOption(OPTION_LABEL_MARGIN_DISTANCE,
-				simpleLabelLayout.m_edgeDistance, options);
+		GetOption(OPTION_LABEL_EDGE_DISTANCE, simpleLabelLayout.m_edgeDistance, options);
+		GetOption(OPTION_LABEL_MARGIN_DISTANCE, simpleLabelLayout.m_marginDistance, options);
 		simpleLabelLayout.m_midOnEdge = false;
 		simpleLabelLayout.call(*LGA, *LI);
 		return LGA;
