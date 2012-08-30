@@ -10,7 +10,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Sugiyama&apos;s layout algorithm, based on Gansner et al. &apos;93 and Sander &apos;96. This method emphasizes the direction of edges by reversing as few edges as possible. Nodes are arranged in horizontal layers."
+            description="Sugiyama&apos;s layout algorithm, based on Gansner et al. 1993 and Sander 1996. This method emphasizes the direction of edges by reversing as few edges as possible. Nodes are arranged in horizontal layers."
             id="de.cau.cs.kieler.kiml.ogdf.Sugiyama"
             name="Sugiyama"
             parameter="SUGIYAMA"
@@ -143,7 +143,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="The fast multipole multilevel layout algorithm, after Hachul and Juenger &apos;04. This force-directed drawing method is suited also for very large graphs. It is based on a combination of an efficient multilevel scheme and a strategy for approximating the repusive forces in the system by rapidly evaluating potential fields."
+            description="The fast multipole multilevel layout algorithm, after Hachul and Juenger 2004. This force-directed drawing method is suited also for very large graphs. It is based on a combination of an efficient multilevel scheme and a strategy for approximating the repusive forces in the system by rapidly evaluating potential fields."
             id="de.cau.cs.kieler.kiml.ogdf.fmmm"
             name="FMMM"
             parameter="FMMM"
@@ -187,7 +187,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Force-based algorithm after Davidson and Harel &apos;96, applying the paradigm of simulated annealing. This is applicable for undirected graphs with straight-line connections."
+            description="Force-based algorithm after Davidson and Harel 1996, applying the paradigm of simulated annealing. This is applicable for undirected graphs with straight-line connections."
             id="de.cau.cs.kieler.kiml.ogdf.DavidsonHarel"
             name="Davidson-Harel"
             parameter="DAVIDSON_HAREL"
@@ -231,7 +231,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Force-based algorithm after Fruchterman and Reingold &apos;91. This is a modification of the spring-embedder model of Eades for undirected graphs with straight edges. The heuristic strives for uniform edge lengths, and is developed in analogy to forces in natural systems."
+            description="Force-based algorithm after Fruchterman and Reingold 1991. This is a modification of the spring-embedder model of Eades for undirected graphs with straight edges. The heuristic strives for uniform edge lengths, and is developed in analogy to forces in natural systems."
             id="de.cau.cs.kieler.kiml.ogdf.FruchtermanReingold"
             name="Fruchterman-Reingold"
             parameter="FRUCHTERMAN_REINGOLD"
@@ -283,7 +283,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Energy-based &quot;Graph Embedder&quot; algorithm after Frick, Ludwig and Mehldau &apos;95. The method is based on the spring-embedder paradigm and contains several heuristics to improve the convergence, including local temperatures, gravitational forces, and the detection of rotations and oscillations."
+            description="Energy-based &quot;Graph Embedder&quot; algorithm after Frick, Ludwig, and Mehldau 1995. The method is based on the spring-embedder paradigm and contains several heuristics to improve the convergence, including local temperatures, gravitational forces, and the detection of rotations and oscillations."
             id="de.cau.cs.kieler.kiml.ogdf.gem"
             name="GEM"
             parameter="GEM"
@@ -366,7 +366,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Circular layout after Dogrusoz, Madden and Madden &apos;97. The layouts emphasize natural group structures inherent in a graph&apos;s topology, which is well suited for ring and star network topologies. The nodes are clustered by biconnectivity or node degree and are positioned on radiating circles."
+            description="Circular layout after Dogrusoz, Madden and Madden 1997. The layouts emphasize natural group structures inherent in a graph&apos;s topology, which is well suited for ring and star network topologies. The nodes are clustered by biconnectivity or node degree and are positioned on radiating circles."
             id="de.cau.cs.kieler.kiml.ogdf.circular"
             name="Circular"
             parameter="CIRCULAR"
@@ -610,7 +610,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="The spring-embedder layout algorithm after Kamada and Kawai &apos;89."
+            description="The spring-embedder layout algorithm after Kamada and Kawai 1989."
             id="de.cau.cs.kieler.kiml.ogdf.kamadaKawai"
             name="Kamada-Kawai"
             parameter="KAMADA_KAWAI"
@@ -639,7 +639,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Stress majorization layout that allows radial constraints based on shortest path distances. The implementation is based on Brandes and Pich &apos;09."
+            description="Stress majorization layout that allows radial constraints based on shortest path distances. The implementation is based on Brandes and Pich 2009."
             id="de.cau.cs.kieler.kiml.ogdf.stressMajorization"
             name="Stress Majorization"
             parameter="STRESS_MAJORIZATION"
@@ -734,7 +734,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description=""
+            description="The layout algorithm by de Fraysseix, Pach, and Pollack 1990. This algorithm draws a planar graph straight-line without crossings. The algorithm runs in three phases. In the ﬁrst phase, the graph is augmented by adding new artiﬁcial edges to get a triangulated plane graph. Then, a so-called shelling order (also called canonical ordering) for triangulated planar graphs is computed. In the third phase the vertices are placed incrementally according to the shelling order."
             id="de.cau.cs.kieler.kiml.ogdf.fraysseixPachPollack"
             name="Fraysseix-Pach-Pollack"
             parameter="FRAYSSEIX_PACH_POLLACK"
@@ -760,7 +760,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description=""
+            description="The layout algorithm by Schnyder 1990. This algorithm draws a planar graph straight-line without crossings. The algorithm runs in three phases. In the ﬁrst phase, the graph is augmented by adding new artiﬁcial edges to get a triangulated plane graph. Then, a partition of the set of interior edges in three trees (also called Schnyder trees) with special orientation properties is derived. In the third step, the actual coordinates are computed."
             id="de.cau.cs.kieler.kiml.ogdf.schnyder"
             name="Schnyder"
             parameter="SCHNYDER"
@@ -786,7 +786,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description=""
+            description="A straight-line drawing algorithm for planar graphs after Kant 1996. The algorithm runs in several phases. In the first phase, the graph is augmented by adding edges to achieve a certain connectivity (e.g., biconnected or triconnected). Then, a shelling order of the the resulting graph is computed."
             id="de.cau.cs.kieler.kiml.ogdf.canonicalOrder"
             name="Canonical Order"
             parameter="CANONICAL_ORDER"
@@ -804,11 +804,14 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.baseRatio">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description=""
+            description="The Mixed-Model layout algorithm by Gutwenger and Mutzel 1998, which is based upon ideas by Kant. In particular, Kant's algorithm has been changed concerning the placement phase and the vertex boxes, and it has been generalized to work for connected planar graphs. This algorithm draws a d-planar graph on a grid such that every edge has at most three bends and the minimum angle between two edges is at least 2/d radians. The algorithm runs in several phases. In the preprocessing phase, vertices with degree one are temporarily deleted and the graph is being augmented to a biconnected planar graph using a planar biconnectivity augmentation module. Then, a shelling order for biconnected plane graphs is computed. In the next step, boxes around each vertex are defined in such a way that the incident edges appear regularly along the box. Finally, the coordinates of the vertex boxes are computed taking the degree-one vertices into account."
             id="de.cau.cs.kieler.kiml.ogdf.mixedModel"
             name="Mixed Model"
             parameter="MIXED_MODEL"
@@ -830,7 +833,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description=""
+            description="A straight-line drawing algorithm for planar graphs after Chrobak and Kant 1997. The algorithm runs in several phases. In the first phase, the graph is augmented by adding edges to achieve a certain connectivity (e.g., biconnected or triconnected). Then, a shelling order of the the resulting graph is computed."
             id="de.cau.cs.kieler.kiml.ogdf.convexGrid"
             name="Convex Grid"
             parameter="CONVEX_GRID"
@@ -847,6 +850,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.baseRatio">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -1241,6 +1247,18 @@
             id="de.cau.cs.kieler.kiml.ogdf.option.radial"
             name="Radial"
             type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.33"
+            description="Ratio of the nodes on the external face giving a limit for the number of nodes placed on the base line."
+            id="de.cau.cs.kieler.kiml.ogdf.option.baseRatio"
+            lowerBound="0.0001"
+            name="Base Ratio"
+            type="float"
+            upperBound="1.0"
+            variance="0.15">
       </layoutOption>
    </extension>
 

@@ -78,6 +78,8 @@ public class OgdfServer {
     public static final String OPTION_ARRANGE_CC = "arrangeCCs";
     /** the option for the attraction formula. */
     public static final String OPTION_ATTRACTION_FORMULA = "attractionFormula";
+    /** the option for the base ratio. */
+    public static final String OPTION_BASE_RATIO = "baseRatio";
     /** the option for the connected component distance. */
     public static final String OPTION_CC_DISTANCE = "ccDistance";
     /** the option for association edge costs. */

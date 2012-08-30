@@ -1,7 +1,7 @@
 /**
- * @file
- * @author  mri (mri@informatik.uni-kiel.de)
- * @version 0.1.0.qualifier
+ * @file    OgdfLayout.cpp
+ * @author  mri@informatik.uni-kiel.de, msp@informatik.uni-kiel.de
+ * @version 0.2.0
  *
  * @section LICENSE
  *
@@ -67,19 +67,20 @@ using namespace std;
 using namespace ogdf;
 
 /*
- * Locals
+ * Message stored for the last error that occurred while invoking OGDF layout.
  */
-
 string lastLayoutError = "";
 
 /*
- * Helper functions for displaying ogdf errors
+ * Create a message for an arbitrary C++ exception.
  */
-
 string ogdfExceptionToString(const char* name, Exception& e) {
 	return name;
 }
 
+/*
+ * Create a message for a "precondition violated" exception.
+ */
 string ogdfPreconditionExceptionToString(PreconditionViolatedException& e) {
 	string result = ogdfExceptionToString("PreconditionViolatedException", e);
 	result += ": ";
@@ -128,6 +129,9 @@ string ogdfPreconditionExceptionToString(PreconditionViolatedException& e) {
 	return result;
 }
 
+/*
+ * Create a message for an "algorithm failure" exception.
+ */
 string ogdfAlgorithmExceptionToString(AlgorithmFailureException& e) {
 	string result = ogdfExceptionToString("AlgorithmFailureException", e);
 	result += ": ";
@@ -162,6 +166,9 @@ string ogdfAlgorithmExceptionToString(AlgorithmFailureException& e) {
 	return result;
 }
 
+/*
+ * Create a message for a "library not supported" exception.
+ */
 string ogdfLibraryExceptionToString(LibraryNotSupportedException& e) {
 	string result = ogdfExceptionToString("LibraryNotSupportedException", e);
 	result += ": ";
@@ -185,9 +192,9 @@ string ogdfLibraryExceptionToString(LibraryNotSupportedException& e) {
 }
 
 /*
- * Helper functions and macros for receiving options
+ * Retrieve a string value from the transmitted layout options.
+ * Returns true if the option is available, and false otherwise.
  */
-
 bool GetOption(const string& key, string& value, StringMap& options) {
 	StringMap::iterator it = options.find(key);
 	if (it == options.end()) {
@@ -197,6 +204,10 @@ bool GetOption(const string& key, string& value, StringMap& options) {
 	return true;
 }
 
+/*
+ * Retrieve an integer value from the transmitted layout options.
+ * Returns true if the option is available, and false otherwise.
+ */
 bool GetOption(const string& key, int& value, StringMap& options) {
 	string s;
 	if (!GetOption(key, s, options)) {
@@ -206,6 +217,10 @@ bool GetOption(const string& key, int& value, StringMap& options) {
 	return true;
 }
 
+/*
+ * Retrieve a floating point value from the transmitted layout options.
+ * Returns true if the option is available, and false otherwise.
+ */
 bool GetOption(const string& key, double& value, StringMap& options) {
 	string s;
 	if (!GetOption(key, s, options)) {
@@ -215,6 +230,10 @@ bool GetOption(const string& key, double& value, StringMap& options) {
 	return true;
 }
 
+/*
+ * Retrieve a Boolean value from the transmitted layout options.
+ * Returns true if the option is available, and false otherwise.
+ */
 bool GetOption(const string& key, bool& value, StringMap& options) {
 	string s;
 	if (!GetOption(key, s, options)) {
@@ -224,6 +243,10 @@ bool GetOption(const string& key, bool& value, StringMap& options) {
 	return true;
 }
 
+/*
+ * Retrieve an (x,y) coordinate value from the transmitted layout options.
+ * Returns true if the option is available, and false otherwise.
+ */
 bool GetOption(const string& key, double& x, double& y, StringMap& options) {
 	string s;
 	if (!GetOption(key, s, options)) {
@@ -239,9 +262,15 @@ bool GetOption(const string& key, double& x, double& y, StringMap& options) {
 	return true;
 }
 
+/*
+ * Retrieve a layout option and throw an error if it is not available.
+ */
 #define GetOptionSafe(key, value, options) if (!GetOption(key, value, options))\
 	{throw runtime_error(string("Missing option: ") + key);}
 
+/*
+ * Get the layouter type enumeration value for a serialized name.
+ */
 LayouterType GetLayouterTypeByName(const string& name) {
 	if (name == "SUGIYAMA") {
 		return SUGIYAMA;
@@ -292,6 +321,10 @@ LayouterType GetLayouterTypeByName(const string& name) {
 	}
 }
 
+/*
+ * Transform an integer value t into an OGDF label type n. Execute the exit
+ * command e if the type is not known.
+ */
 #define TRANSFORM_LABEL_TYPE(n, t, e) eLabelType n;\
     switch(t) {\
     case LABEL_TYPE_END1:\
@@ -313,6 +346,9 @@ LayouterType GetLayouterTypeByName(const string& name) {
         e;\
     }
 
+/*
+ * Transform an integer value t into an OGDF orthogonal direction n.
+ */
 #define TRANSFORM_DIRECTION(n, t) OrthoDir n;\
     switch(t) {\
     case DIRECTION_NORTH:\
@@ -332,6 +368,9 @@ LayouterType GetLayouterTypeByName(const string& name) {
         break;\
     }
 
+/*
+ * Transform an integer value t into a "quality vs. speed" value for FMMM layout.
+ */
 #define TRANSFORM_QUALITY_VS_SPEED(n, t) FMMMLayout::QualityVsSpeed n;\
     switch(t) {\
     case GORGEOUS_AND_EFFICIENT:\
@@ -346,6 +385,9 @@ LayouterType GetLayouterTypeByName(const string& name) {
         break; \
     }
 
+/*
+ * Transform an integer value t into a "costs" value for Davidson-Harel layout.
+ */
 #define TRANSFORM_COSTS(n, t) DavidsonHarelLayout::SettingsParameter n;\
     switch(t) {\
     case COSTS_REPULSE:\
@@ -360,6 +402,9 @@ LayouterType GetLayouterTypeByName(const string& name) {
         break;\
     }
 
+/*
+ * Transform an integer value t into a "speed" value for Davidson-Harel layout.
+ */
 #define TRANSFORM_SPEED(n, t) DavidsonHarelLayout::SpeedParameter n;\
     switch(t) {\
     case SPEED_FAST:\
@@ -374,6 +419,9 @@ LayouterType GetLayouterTypeByName(const string& name) {
         break;\
     }
 
+/*
+ * Transform an integer value t into an OGDF orientation direction n.
+ */
 #define TRANSFORM_ORIENTATION(n, t) Orientation n;\
     switch(t) {\
     case ORIENTATION_LEFT_TO_RIGHT:\
@@ -392,9 +440,8 @@ LayouterType GetLayouterTypeByName(const string& name) {
     }
 
 /**
- * Helper functions for transforming and creating graph structures
+ * Derive a UML graph from a plain graph.
  */
-
 void DeriveUMLGraph(Graph& G, GraphAttributes& GA, UMLGraph& UMLG,
 		StringMap& information) {
 	// process nodes
@@ -428,6 +475,9 @@ void DeriveUMLGraph(Graph& G, GraphAttributes& GA, UMLGraph& UMLG,
 	}
 }
 
+/*
+ * Transfer labels from the transmitted graph information to the given OGDF label interface.
+ */
 void TransferLabels(Graph& G, GraphAttributes& GA, LabelInterface& LI,
 		StringMap& information) {
 	edge e;
@@ -448,9 +498,8 @@ void TransferLabels(Graph& G, GraphAttributes& GA, LabelInterface& LI,
 }
 
 /*
- * Interface implementation
+ * Perform layout on the given graph.
  */
-
 GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		LabelInterface*& LI, StringMap& options, StringMap& information) {
 	// the graph attributes with applied layout
@@ -544,8 +593,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			bool isUMLGraph;
 			if (GetOption(INFO_UML_GRAPH, isUMLGraph, information)
 					&& isUMLGraph) {
-				// an UML graph is required to utilize the full functionality of
-				// the layouter
+				// an UML graph is required to utilize the full functionality of the layouter
 				UMLGraph* UMLG = new UMLGraph(G, GraphAttributes::nodeGraphics
 						| GraphAttributes::edgeGraphics
 						| GraphAttributes::nodeLabel
@@ -904,6 +952,10 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
 			}
 			PlanarStraightLayout layout;
+			double baseRatio;
+			if (GetOption(OPTION_BASE_RATIO, baseRatio, options)) {
+				layout.baseRatio(baseRatio);
+			}
 			layout.call(*LGA);
 			break;
 		}
@@ -922,6 +974,10 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
 			}
 			PlanarDrawLayout layout;
+			double baseRatio;
+			if (GetOption(OPTION_BASE_RATIO, baseRatio, options)) {
+				layout.baseRatio(baseRatio);
+			}
 			layout.call(*LGA);
 			break;
 		}
@@ -954,11 +1010,9 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		return LGA;
 
 	} catch (DynamicCastFailedException& e) {
-		lastLayoutError
-				= ogdfExceptionToString("DynamicCastFailedException", e);
+		lastLayoutError = ogdfExceptionToString("DynamicCastFailedException", e);
 	} catch (InsufficientMemoryException& e) {
-		lastLayoutError = ogdfExceptionToString("InsufficientMemoryException",
-				e);
+		lastLayoutError = ogdfExceptionToString("InsufficientMemoryException", e);
 	} catch (NoStdComparerException& e) {
 		lastLayoutError = ogdfExceptionToString("NoStdComparerException", e);
 	} catch (PreconditionViolatedException& e) {
@@ -974,6 +1028,9 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 	return 0;
 }
 
+/*
+ * Return the message stored for the last error that occurred while executing layout.
+ */
 const string& GetLastLayoutError() {
 	return lastLayoutError;
 }

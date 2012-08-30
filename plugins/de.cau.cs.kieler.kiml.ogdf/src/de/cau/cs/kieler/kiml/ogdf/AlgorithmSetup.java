@@ -234,6 +234,12 @@ public final class AlgorithmSetup {
     /** 'separation' option. */
     private static final float DEF_GRID_SEPARATION = 30.0f;
     
+    // options for the canonical order layouter
+    
+    /** 'baseRatio' option. */
+    private static final IProperty<Float> BASE_RATIO = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.baseRatio", 0.33f);
+    
     /**
      * Hidden constructor to prevent instantiation.
      */
@@ -658,6 +664,7 @@ public final class AlgorithmSetup {
         }
         
         case FRAYSSEIX_PACH_POLLACK: {
+            // separation
             float separation = parentLayout.getProperty(LayoutOptions.SPACING);
             if (separation < 0) {
                 separation = DEF_GRID_SEPARATION;
@@ -667,6 +674,7 @@ public final class AlgorithmSetup {
         }
         
         case SCHNYDER: {
+            // separation
             float separation = parentLayout.getProperty(LayoutOptions.SPACING);
             if (separation < 0) {
                 separation = DEF_GRID_SEPARATION;
@@ -676,14 +684,20 @@ public final class AlgorithmSetup {
         }
         
         case CANONICAL_ORDER: {
+            // base ratio
+            float baseRatio = parentLayout.getProperty(BASE_RATIO);
+            comm.addOption(OgdfServer.OPTION_BASE_RATIO, baseRatio);
             break;
         }
         
-        case MIXED_MODEL: {
+        case MIXED_MODEL:
+            // no options are currently available
             break;
-        }
         
         case CONVEX_GRID: {
+            // base ratio
+            float baseRatio = parentLayout.getProperty(BASE_RATIO);
+            comm.addOption(OgdfServer.OPTION_BASE_RATIO, baseRatio);
             break;
         }
         

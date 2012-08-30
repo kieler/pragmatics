@@ -1,7 +1,7 @@
 /**
- * @file
- * @author  mri (mri@informatik.uni-kiel.de)
- * @version 0.1.0.qualifier
+ * @file    OgdfLayout.h
+ * @author  mri@informatik.uni-kiel.de
+ * @version 0.1.0
  *
  * @section LICENSE
  *
@@ -37,7 +37,7 @@
 #include <ogdf/labeling/ELabelInterface.h>
 
 /*
- * Options
+ * Options and enumerations
  */
 
 #define INFO_UML_GRAPH "umlGraph"
@@ -56,6 +56,7 @@
 
 #define OPTION_ARRANGE_CC "arrangeCCs"
 #define OPTION_ATTRACTION_FORMULA "attractionFormula"
+#define OPTION_BASE_RATIO "baseRatio"
 #define OPTION_CC_DISTANCE "ccDistance"
 #define OPTION_COST_ASSOC "costAssoc"
 #define OPTION_COST_GEN "costGen"
