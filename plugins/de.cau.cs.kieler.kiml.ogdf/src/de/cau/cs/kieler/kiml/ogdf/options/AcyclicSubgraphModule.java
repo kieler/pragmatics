@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kiml.ogdf.options;
 import net.ogdf.bin.OgdfServer;
 
 /**
- * Enumeration of available acyclic subgraph modules.
+ * Enumeration of available acyclic subgraph modules for Sugiyama layout.
  * 
  * @author msp
  */

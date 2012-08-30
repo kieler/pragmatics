@@ -27,6 +27,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ogdf.options.AcyclicSubgraphModule;
 import de.cau.cs.kieler.kiml.ogdf.options.AttractionFormula;
 import de.cau.cs.kieler.kiml.ogdf.options.Costs;
+import de.cau.cs.kieler.kiml.ogdf.options.CrossMinModule;
+import de.cau.cs.kieler.kiml.ogdf.options.EdgeInsertionModule;
 import de.cau.cs.kieler.kiml.ogdf.options.LayoutAlgorithm;
 import de.cau.cs.kieler.kiml.ogdf.options.QualityVsSpeed;
 import de.cau.cs.kieler.kiml.ogdf.options.RankingModule;
@@ -69,6 +71,9 @@ public final class AlgorithmSetup {
     /** 'stopTolerance' option. */
     private static final IProperty<Float> STOP_TOLERANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.stopTolerance", 0.001f);
+    /** 'runs' option. */
+    private static final IProperty<Integer> RUNS = new Property<Integer>(
+            "de.cau.cs.kieler.kiml.ogdf.option.runs", 0);
 
     // options for Sugiyama layouter
     
@@ -77,9 +82,6 @@ public final class AlgorithmSetup {
     /** 'fails' option. */
     private static final IProperty<Integer> FAILS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.fails", 4);
-    /** 'runs' option. */
-    private static final IProperty<Integer> RUNS = new Property<Integer>(
-            "de.cau.cs.kieler.kiml.ogdf.option.runs", 15);
     /** 'transpose' option. */
     private static final IProperty<Boolean> TRANSPOSE = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.transpose", true);
@@ -93,6 +95,9 @@ public final class AlgorithmSetup {
     /** 'width' option. */
     private static final IProperty<Integer> WIDTH = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.width", 7);
+    /** 'crossMin' option. */
+    private static final IProperty<CrossMinModule> CROSS_MIN = new Property<CrossMinModule>(
+            "de.cau.cs.kieler.kiml.ogdf.option.crossMin", CrossMinModule.BARYCENTER);
     
     // options for planarization layouter
     
@@ -110,6 +115,10 @@ public final class AlgorithmSetup {
     /** 'costGen' option. */
     private static final IProperty<Integer> COST_GEN = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.costGen", 4);
+    /** 'edgeInsertion' option. */
+    private static final IProperty<EdgeInsertionModule> EDGE_INSERTION
+            = new Property<EdgeInsertionModule>("de.cau.cs.kieler.kiml.ogdf.option.edgeInsertion",
+                    EdgeInsertionModule.FIXED_EMB);
 
     // options for FMMM layouter
     
@@ -311,6 +320,9 @@ public final class AlgorithmSetup {
             comm.addOption(OgdfServer.OPTION_FAILS, fails);
             // number of runs
             int runs = parentLayout.getProperty(RUNS);
+            if (runs <= 0) {
+                runs = 15;    // SUPPRESS CHECKSTYLE MagicNumber
+            }
             comm.addOption(OgdfServer.OPTION_RUNS, runs);
             // transpose
             boolean transpose = parentLayout.getProperty(TRANSPOSE);
@@ -335,6 +347,9 @@ public final class AlgorithmSetup {
             // width of the ranking
             int width = parentLayout.getProperty(WIDTH);
             comm.addOption(OgdfServer.OPTION_WIDTH, width);
+            // crossing minimization module
+            CrossMinModule crossMinModule = parentLayout.getProperty(CROSS_MIN);
+            comm.addOption(OgdfServer.OPTION_CROSS_MIN_MODULE, crossMinModule.toServerParam());
             break;
         }
             
@@ -378,6 +393,13 @@ public final class AlgorithmSetup {
             // cost for generalization edges
             int costGen = parentLayout.getProperty(COST_GEN);
             comm.addOption(OgdfServer.OPTION_COST_GEN, costGen);
+            // number of runs
+            int runs = parentLayout.getProperty(RUNS);
+            comm.addOption(OgdfServer.OPTION_RUNS, runs);
+            // edge insertion module
+            EdgeInsertionModule edgeInsertionModule = parentLayout.getProperty(EDGE_INSERTION);
+            comm.addOption(OgdfServer.OPTION_EDGE_INSERTION_MODULE,
+                    edgeInsertionModule.toServerParam());
             break;
         }
             

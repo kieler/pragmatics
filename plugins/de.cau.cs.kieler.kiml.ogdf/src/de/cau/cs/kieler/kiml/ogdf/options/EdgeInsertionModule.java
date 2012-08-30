@@ -16,18 +16,18 @@ package de.cau.cs.kieler.kiml.ogdf.options;
 import net.ogdf.bin.OgdfServer;
 
 /**
- * Enumeration of available ranking modules for Sugiyama layout.
+ * Enumeration of available edge insertion modules for planarization layout.
  * 
  * @author msp
  */
-public enum RankingModule {
+public enum EdgeInsertionModule {
     
-    /** the longest path ranking module. */
-    LONGEST_PATH,
-    /** the Coffman-Graham ranking module. */
-    COFFMAN_GRAHAM,
-    /** the optimal ranking module. */
-    OPTIMAL;
+    /** fixed embedding edge insertion module. */
+    FIXED_EMB,
+    /** variable embedding edge insertion module. */
+    VARIABLE_EMB,
+    /** multi-edge approximation edge insertion module. */
+    MULTIEDGE_APPROX;
     
     /**
      * Return a server parameter for the enumeration value.
@@ -36,13 +36,13 @@ public enum RankingModule {
      */
     public int toServerParam() {
         switch (this) {
-        case COFFMAN_GRAHAM:
-            return OgdfServer.RANKING_COFFMAN_GRAHAM;
-        case OPTIMAL:
-            return OgdfServer.RANKING_OPTIMAL;
-        case LONGEST_PATH:
+        case VARIABLE_EMB:
+            return OgdfServer.EDGE_INSERTION_VARIABLE_EMB;
+        case MULTIEDGE_APPROX:
+            return OgdfServer.EDGE_INSERTION_MULTIEDGE_APPROX;
+        case FIXED_EMB:
         default:
-            return OgdfServer.RANKING_LONGEST_PATH;
+            return OgdfServer.EDGE_INSERTION_FIXED_EMB;
         }
     }
 

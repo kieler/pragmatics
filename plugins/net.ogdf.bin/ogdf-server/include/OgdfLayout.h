@@ -69,7 +69,9 @@
 #define OPTION_COST_ASSOC "costAssoc"
 #define OPTION_COST_GEN "costGen"
 #define OPTION_COSTS "costs"
+#define OPTION_CROSS_MIN_MODULE "crossingMinimizationModule"
 #define OPTION_DESIRED_LENGTH "desiredLength"
+#define OPTION_EDGE_INSERTION_MODULE "edgeInsertionModule"
 #define OPTION_EDGE_LENGTH "edgeLength"
 #define OPTION_FAILS "fails"
 #define OPTION_FINENESS "fineness"
@@ -201,6 +203,22 @@ enum LayouterType {
  */
 #define ACYCLIC_SUBGRAPH_DFS    0
 #define ACYCLIC_SUBGRAPH_GREEDY 1
+
+/*
+ * Definition of crossing minimization modules for Sugiyama layout.
+ */
+#define CROSS_MIN_BARYCENTER    0
+#define CROSS_MIN_GREEDY_INSERT 1
+#define CROSS_MIN_GREEDY_SWITCH 2
+#define CROSS_MIN_MEDIAN        3
+#define CROSS_MIN_SIFTING       4
+
+/*
+ * Definition of edge insertion modules for planarization layout.
+ */
+#define EDGE_INSERTION_FIXED_EMB        0
+#define EDGE_INSERTION_VARIABLE_EMB     1
+#define EDGE_INSERTION_MULTIEDGE_APPROX 2
 
 
 /** the type for the string map. */

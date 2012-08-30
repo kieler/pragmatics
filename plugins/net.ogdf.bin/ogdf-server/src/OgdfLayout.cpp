@@ -32,6 +32,7 @@
 #include <ogdf/basic/Graph_d.h>
 #include <ogdf/basic/GraphAttributes.h>
 #include <ogdf/basic/UMLGraph.h>
+#include <ogdf/basic/extended_graph_alg.h>
 #include <ogdf/module/LayoutModule.h>
 #include <ogdf/module/UMLLayoutModule.h>
 #include <ogdf/labeling/ELabelInterface.h>
@@ -42,15 +43,22 @@
 #include <ogdf/layered/CoffmanGrahamRanking.h>
 #include <ogdf/layered/OptimalRanking.h>
 #include <ogdf/layered/GreedyCycleRemoval.h>
+#include <ogdf/layered/GreedyInsertHeuristic.h>
+#include <ogdf/layered/GreedySwitchHeuristic.h>
+#include <ogdf/layered/MedianHeuristic.h>
+#include <ogdf/layered/SiftingHeuristic.h>
 #include <ogdf/orthogonal/OrthoRep.h>
 #include <ogdf/orthogonal/OrthoLayout.h>
 #include <ogdf/planarity/PlanarizationLayout.h>
-#include <ogdf/planarity/BoyerMyrvold.h>
+#include <ogdf/planarity/FastPlanarSubgraph.h>
 #include <ogdf/planarlayout/FPPLayout.h>
 #include <ogdf/planarlayout/SchnyderLayout.h>
 #include <ogdf/planarlayout/PlanarStraightLayout.h>
 #include <ogdf/planarlayout/MixedModelLayout.h>
 #include <ogdf/planarlayout/PlanarDrawLayout.h>
+#include <ogdf/planarity/VariableEmbeddingInserter.h>
+#include <ogdf/planarity/VariableEmbeddingInserter2.h>
+#include <ogdf/planarity/MultiEdgeApproxInserter.h>
 #include <ogdf/energybased/FMMMLayout.h>
 #include <ogdf/energybased/DavidsonHarelLayout.h>
 #include <ogdf/energybased/SpringEmbedderFR.h>
@@ -525,17 +533,18 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		case SUGIYAMA: {
 			SugiyamaLayout layout;
 			AcyclicSubgraphModule* acyclicSubgraphModule = NULL;
-			int acyclicSubgraph;
-			if (GetOption(OPTION_ACYCLIC_SUBGRAPH_MODULE, acyclicSubgraph, options)) {
-				switch (acyclicSubgraph) {
+			int acyclicSubgraphOption;
+			if (GetOption(OPTION_ACYCLIC_SUBGRAPH_MODULE, acyclicSubgraphOption, options)) {
+				switch (acyclicSubgraphOption) {
 				case ACYCLIC_SUBGRAPH_GREEDY:
 					acyclicSubgraphModule = new GreedyCycleRemoval;
 					break;
+				// default: ACYCLIC_SUBGRAPH_DFS
 				}
 			}
-			int ranking;
-			if (GetOption(OPTION_RANKING_MODULE, ranking, options)) {
-				switch (ranking) {
+			int rankingOption;
+			if (GetOption(OPTION_RANKING_MODULE, rankingOption, options)) {
+				switch (rankingOption) {
 				case RANKING_COFFMAN_GRAHAM: {
 					CoffmanGrahamRanking* ranking = new CoffmanGrahamRanking;
 					int width;
@@ -556,7 +565,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 					layout.setRanking(ranking);
 					break;
 				}
-				default:
+				default: // RANKING_LONGEST_PATH
 					if (acyclicSubgraphModule != NULL) {
 						LongestPathRanking* ranking = new LongestPathRanking;
 						ranking->setSubgraph(acyclicSubgraphModule);
@@ -564,14 +573,38 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 					}
 				}
 			}
-			FastHierarchyLayout* fastHierarchyLayout = new FastHierarchyLayout;
-			layout.setLayout(fastHierarchyLayout);
+			int crossMinOption;
+			if (GetOption(OPTION_CROSS_MIN_MODULE, crossMinOption, options)) {
+				switch (crossMinOption) {
+				case CROSS_MIN_GREEDY_INSERT: {
+					GreedyInsertHeuristic* crossMin = new GreedyInsertHeuristic;
+					layout.setCrossMin(crossMin);
+					break;
+				}
+				case CROSS_MIN_GREEDY_SWITCH: {
+					GreedySwitchHeuristic* crossMin = new GreedySwitchHeuristic;
+					layout.setCrossMin(crossMin);
+					break;
+				}
+				case CROSS_MIN_MEDIAN: {
+					MedianHeuristic* crossMin = new MedianHeuristic;
+					layout.setCrossMin(crossMin);
+					break;
+				}
+				case CROSS_MIN_SIFTING: {
+					SiftingHeuristic* crossMin = new SiftingHeuristic;
+					layout.setCrossMin(crossMin);
+					break;
+				}
+				// default: CROSS_MIN_BARYCENTER
+				}
+			}
 			int fails;
-			if (GetOption(OPTION_FAILS, fails, options)) {
+			if (GetOption(OPTION_FAILS, fails, options) && fails > 0) {
 				layout.fails(fails);
 			}
 			int runs;
-			if (GetOption(OPTION_RUNS, runs, options)) {
+			if (GetOption(OPTION_RUNS, runs, options) && runs > 0) {
 				layout.runs(runs);
 			}
 			bool transpose;
@@ -583,20 +616,22 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 				layout.arrangeCCs(arrangeCCs);
 			}
 			double minDistCC;
-			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options)) {
+			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options) && minDistCC >= 0) {
 				layout.minDistCC(minDistCC);
 			}
 			double pageRatio;
-			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
+			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options) && pageRatio > 0) {
 				layout.pageRatio(pageRatio);
 			}
+			FastHierarchyLayout* hierarchyLayout = new FastHierarchyLayout;
+			layout.setLayout(hierarchyLayout);
 			double nodeDistance;
-			if (GetOption(OPTION_NODE_DISTANCE, nodeDistance, options)) {
-				fastHierarchyLayout->nodeDistance(nodeDistance);
+			if (GetOption(OPTION_NODE_DISTANCE, nodeDistance, options) && nodeDistance >= 0) {
+				hierarchyLayout->nodeDistance(nodeDistance);
 			}
 			double layerDistance;
-			if (GetOption(OPTION_LAYER_DISTANCE, layerDistance, options)) {
-				fastHierarchyLayout->layerDistance(layerDistance);
+			if (GetOption(OPTION_LAYER_DISTANCE, layerDistance, options) && layerDistance >= 0) {
+				hierarchyLayout->layerDistance(layerDistance);
 			}
 			layout.call(*LGA);
 			break;
@@ -604,10 +639,30 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 
 		case PLANARIZATION: {
 			PlanarizationLayout layout;
-			OrthoLayout* orthoLayout = new OrthoLayout();
-			layout.setPlanarLayouter(orthoLayout);
+			int runs;
+			if (GetOption(OPTION_RUNS, runs, options) && runs >= 0) {
+				FastPlanarSubgraph* planarSubgraph = new FastPlanarSubgraph;
+				planarSubgraph->runs(runs);
+				layout.setSubgraph(planarSubgraph);
+			}
+			int edgeInsertionOption;
+			if (GetOption(OPTION_EDGE_INSERTION_MODULE, edgeInsertionOption, options)) {
+				switch (edgeInsertionOption) {
+				case EDGE_INSERTION_VARIABLE_EMB: {
+					VariableEmbeddingInserter* edgeInsertion = new VariableEmbeddingInserter;
+					layout.setInserter(edgeInsertion);
+					break;
+				}
+				case EDGE_INSERTION_MULTIEDGE_APPROX: {
+					MultiEdgeApproxInserter* edgeInsertion = new MultiEdgeApproxInserter;
+					layout.setInserter(edgeInsertion);
+					break;
+				}
+				// default: EDGE_INSERTION_FIXED_EMB
+				}
+			}
 			double pageRatio;
-			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
+			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options) && pageRatio > 0) {
 				layout.pageRatio(pageRatio);
 			}
 			bool preprocessCliques;
@@ -618,8 +673,10 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			if (GetOption(OPTION_MIN_CLIQUE_SIZE, minCliqueSize, options)) {
 				layout.minCliqueSize(minCliqueSize);
 			}
+			OrthoLayout* orthoLayout = new OrthoLayout();
+			layout.setPlanarLayouter(orthoLayout);
 			double separation;
-			if (GetOption(OPTION_SEPARATION, separation, options)) {
+			if (GetOption(OPTION_SEPARATION, separation, options) && separation >= 0) {
 				orthoLayout->separation(separation);
 			}
 			int direction;
@@ -992,8 +1049,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			break;
 		}
 		case CANONICAL_ORDER: {
-			BoyerMyrvold planarity;
-			if (!planarity.isPlanar(G)) {
+			if (!isPlanar(G)) {
 				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
 			}
 			PlanarStraightLayout layout;
@@ -1005,8 +1061,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			break;
 		}
 		case MIXED_MODEL: {
-			BoyerMyrvold planarity;
-			if (!planarity.isPlanar(G)) {
+			if (!isPlanar(G)) {
 				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
 			}
 			MixedModelLayout layout;
@@ -1014,8 +1069,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			break;
 		}
 		case CONVEX_GRID: {
-			BoyerMyrvold planarity;
-			if (!planarity.isPlanar(G)) {
+			if (!isPlanar(G)) {
 				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
 			}
 			PlanarDrawLayout layout;

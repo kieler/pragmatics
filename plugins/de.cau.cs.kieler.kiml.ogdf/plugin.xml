@@ -54,6 +54,7 @@
                option="de.cau.cs.kieler.kiml.ogdf.option.fails">
          </knownOption>
          <knownOption
+               default="15"
                option="de.cau.cs.kieler.kiml.ogdf.option.runs">
          </knownOption>
          <knownOption
@@ -87,6 +88,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.width">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.crossMin">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -122,6 +126,10 @@
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
+         </knownOption>
+         <knownOption
                default="15"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
@@ -152,6 +160,12 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.runs">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.edgeInsertion">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -1050,10 +1064,10 @@
             <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="15"
-            description="Determines how many times the crossing minimization is repeated. Each repetition (except for the first) starts with randomly permuted nodes on each layer. Deterministic behaviour can be achieved by setting runs to 1"
+            default="0"
+            description="Determines how many times the crossing minimization phase (Sugiyama) or planar subgraph phase (Planarization) is repeated."
             id="de.cau.cs.kieler.kiml.ogdf.option.runs"
-            lowerBound="1"
+            lowerBound="0"
             name="Runs"
             type="int"
             upperBound="1000"
@@ -1305,6 +1319,24 @@
                option="de.cau.cs.kieler.kiml.ogdf.option.ranking"
                value="COFFMAN_GRAHAM">
          </dependency>
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.CrossMinModule"
+            default="BARYCENTER"
+            description="The module for crossing minimization used in the layer-sweep method"
+            id="de.cau.cs.kieler.kiml.ogdf.option.crossMin"
+            name="Crossing Min. Module"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.EdgeInsertionModule"
+            default="FIXED_EMB"
+            description="The module for edge insertion used for planarization"
+            id="de.cau.cs.kieler.kiml.ogdf.option.edgeInsertion"
+            name="Edge Insertion Module"
+            type="enum">
       </layoutOption>
    </extension>
 

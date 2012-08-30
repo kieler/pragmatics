@@ -90,8 +90,12 @@ public class OgdfServer {
     public static final String OPTION_COST_GEN = "costGen";
     /** the option for costs. */
     public static final String OPTION_COSTS = "costs";
+    /** the option for selection of the crossing minimization module. */
+    public static final String OPTION_CROSS_MIN_MODULE = "crossingMinimizationModule";
     /** the option for the desired edge length. */
     public static final String OPTION_DESIRED_LENGTH = "desiredLength";
+    /** the option for selection of the edge insertion module. */
+    public static final String OPTION_EDGE_INSERTION_MODULE = "edgeInsertionModule";
     /** the option for the edge length. */
     public static final String OPTION_EDGE_LENGTH = "edgeLength";
     /** the option for the number of fail runs. */
@@ -252,6 +256,25 @@ public class OgdfServer {
     public static final int RANKING_COFFMAN_GRAHAM = 1;
     /** the optimal ranking module. */
     public static final int RANKING_OPTIMAL = 2;
+    
+    /** the barycenter crossing minimization module. */
+    public static final int CROSS_MIN_BARYCENTER = 0;
+    /** the greedy insert crossing minimization module. */
+    public static final int CROSS_MIN_GREEDY_INSERT = 1;
+    /** the greedy switch crossing minimization module. */
+    public static final int CROSS_MIN_GREEDY_SWITCH = 2;
+    /** the median crossing minimization module. */
+    public static final int CROSS_MIN_MEDIAN = 3;
+    /** the sifting crossing minimization module. */
+    public static final int CROSS_MIN_SIFTING = 4;
+    
+    /** the fixed embedding edge insertion module. */
+    public static final int EDGE_INSERTION_FIXED_EMB = 0;
+    /** the variable embedding edge insertion module. */
+    public static final int EDGE_INSERTION_VARIABLE_EMB = 1;
+    /** the multi-edge approximation edge insertion module. */
+    public static final int EDGE_INSERTION_MULTIEDGE_APPROX = 2;
+    
     
     /**
      * A helper enumeration for identifying the operating system.
