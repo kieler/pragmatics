@@ -74,6 +74,8 @@ public class OgdfServer {
     /** the second multiplicity label type. */
     public static final int LABEL_TYPE_MULT2 = 4;
 
+    /** the option for selection of the acyclic subgraph module. */
+    public static final String OPTION_ACYCLIC_SUBGRAPH_MODULE = "acyclicSubgraphModule";
     /** the option for arranging connected components. */
     public static final String OPTION_ARRANGE_CC = "arrangeCCs";
     /** the option for the attraction formula. */
@@ -166,6 +168,8 @@ public class OgdfServer {
     public static final String OPTION_RANDOMIZE = "randomize";
     /** the option for the random seed. */
     public static final String OPTION_RANDOM_SEED = "randomSeed";
+    /** the option for selection of the ranking module. */
+    public static final String OPTION_RANKING_MODULE = "rankingModule";
     /** the option for the rotation angle. */
     public static final String OPTION_ROTATION_ANGLE = "rotationAngle";
     /** the option for the rotation sensitivity. */
@@ -190,6 +194,8 @@ public class OgdfServer {
     public static final String OPTION_UPWARD = "upward";
     /** the option for usage of the given layout. */
     public static final String OPTION_USE_LAYOUT = "useLayout";
+    /** the option for the width of a ranking. */
+    public static final String OPTION_WIDTH = "width";
 
     /** the 'north' direction. */
     public static final int DIRECTION_NORTH = 0;
@@ -234,7 +240,18 @@ public class OgdfServer {
     public static final int ATTRACTION_FORMULA_FR = 1;
     /** the 'GEM' attraction formula. */
     public static final int ATTRACTION_FORMULA_GEM = 2;
+    
+    /** the DFS-based acyclic subgraph module. */
+    public static final int ACYCLIC_SUBGRAPH_DFS = 0;
+    /** the greedy acyclic subgraph module. */
+    public static final int ACYCLIC_SUBGRAPH_GREEDY = 1;
 
+    /** the longest path ranking module. */
+    public static final int RANKING_LONGEST_PATH = 0;
+    /** the Coffman-Graham ranking module. */
+    public static final int RANKING_COFFMAN_GRAHAM = 1;
+    /** the optimal ranking module. */
+    public static final int RANKING_OPTIMAL = 2;
     
     /**
      * A helper enumeration for identifying the operating system.

@@ -13,24 +13,33 @@
  */
 package de.cau.cs.kieler.kiml.ogdf.options;
 
+import net.ogdf.bin.OgdfServer;
+
 /**
  * Definition of attraction formula option for the GEM layouter.
  * 
  * @author mri
  */
 public enum AttractionFormula {
+    
     /** the Fruchterman-Reingold method. */
     FRUCHTERMAN_REINGOLD,
     /** the GEM method. */
     GEM;
     
     /**
-     * Returns the enumeration value related to the given ordinal.
+     * Return a server parameter for the enumeration value.
      * 
-     * @param i ordinal value
-     * @return the related enumeration value
+     * @return a server parameter
      */
-    public static AttractionFormula valueOf(final int i) {
-        return values()[i];
+    public int toServerParam() {
+        switch (this) {
+        case FRUCHTERMAN_REINGOLD:
+            return OgdfServer.ATTRACTION_FORMULA_FR;
+        case GEM:
+        default:
+            return OgdfServer.ATTRACTION_FORMULA_GEM;
+        }
     }
+    
 }

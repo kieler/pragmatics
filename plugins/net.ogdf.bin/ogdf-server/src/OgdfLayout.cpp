@@ -38,6 +38,10 @@
 #include <ogdf/labeling/ELabelPosSimple.h>
 #include <ogdf/layered/SugiyamaLayout.h>
 #include <ogdf/layered/FastHierarchyLayout.h>
+#include <ogdf/layered/LongestPathRanking.h>
+#include <ogdf/layered/CoffmanGrahamRanking.h>
+#include <ogdf/layered/OptimalRanking.h>
+#include <ogdf/layered/GreedyCycleRemoval.h>
 #include <ogdf/orthogonal/OrthoRep.h>
 #include <ogdf/orthogonal/OrthoLayout.h>
 #include <ogdf/planarity/PlanarizationLayout.h>
@@ -520,6 +524,46 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		switch (layouterType) {
 		case SUGIYAMA: {
 			SugiyamaLayout layout;
+			AcyclicSubgraphModule* acyclicSubgraphModule = NULL;
+			int acyclicSubgraph;
+			if (GetOption(OPTION_ACYCLIC_SUBGRAPH_MODULE, acyclicSubgraph, options)) {
+				switch (acyclicSubgraph) {
+				case ACYCLIC_SUBGRAPH_GREEDY:
+					acyclicSubgraphModule = new GreedyCycleRemoval;
+					break;
+				}
+			}
+			int ranking;
+			if (GetOption(OPTION_RANKING_MODULE, ranking, options)) {
+				switch (ranking) {
+				case RANKING_COFFMAN_GRAHAM: {
+					CoffmanGrahamRanking* ranking = new CoffmanGrahamRanking;
+					int width;
+					if (GetOption(OPTION_WIDTH, width, options) && width > 0) {
+						ranking->width(width);
+					}
+					if (acyclicSubgraphModule != NULL) {
+						ranking->setSubgraph(acyclicSubgraphModule);
+					}
+					layout.setRanking(ranking);
+					break;
+				}
+				case RANKING_OPTIMAL: {
+					OptimalRanking* ranking = new OptimalRanking;
+					if (acyclicSubgraphModule != NULL) {
+						ranking->setSubgraph(acyclicSubgraphModule);
+					}
+					layout.setRanking(ranking);
+					break;
+				}
+				default:
+					if (acyclicSubgraphModule != NULL) {
+						LongestPathRanking* ranking = new LongestPathRanking;
+						ranking->setSubgraph(acyclicSubgraphModule);
+						layout.setRanking(ranking);
+					}
+				}
+			}
 			FastHierarchyLayout* fastHierarchyLayout = new FastHierarchyLayout;
 			layout.setLayout(fastHierarchyLayout);
 			int fails;
@@ -557,6 +601,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+
 		case PLANARIZATION: {
 			PlanarizationLayout layout;
 			OrthoLayout* orthoLayout = new OrthoLayout();
@@ -1025,7 +1070,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		lastLayoutError = e.what();
 	}
 	delete LGA;
-	return 0;
+	return NULL;
 }
 
 /*

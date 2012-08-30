@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -16,18 +16,18 @@ package de.cau.cs.kieler.kiml.ogdf.options;
 import net.ogdf.bin.OgdfServer;
 
 /**
- * Definition of the "quality vs. speed" option for the FMMM layout algorithm.
+ * Enumeration of available ranking modules.
  * 
- * @author mri
+ * @author msp
  */
-public enum QualityVsSpeed {
+public enum RankingModule {
     
-    /** best quality, worst speed. */
-    GORGEOUSANDEFFICIENT,
-    /** medium quality, medium speed. */
-    BEAUTIFULANDFAST,
-    /** worst quality, best speed. */
-    NICEANDINCREDIBLESPEED;
+    /** the longest path ranking module. */
+    LONGEST_PATH,
+    /** the Coffman-Graham ranking module. */
+    COFFMAN_GRAHAM,
+    /** the optimal ranking module. */
+    OPTIMAL;
     
     /**
      * Return a server parameter for the enumeration value.
@@ -36,14 +36,14 @@ public enum QualityVsSpeed {
      */
     public int toServerParam() {
         switch (this) {
-        case GORGEOUSANDEFFICIENT:
-            return OgdfServer.GORGEOUS_AND_EFFICIENT;
-        case NICEANDINCREDIBLESPEED:
-            return OgdfServer.NICE_AND_INCREDIBLE_SPEED;
-        case BEAUTIFULANDFAST:
+        case COFFMAN_GRAHAM:
+            return OgdfServer.RANKING_COFFMAN_GRAHAM;
+        case OPTIMAL:
+            return OgdfServer.RANKING_OPTIMAL;
+        case LONGEST_PATH:
         default:
-            return OgdfServer.BEAUTIFUL_AND_FAST;
+            return OgdfServer.RANKING_LONGEST_PATH;
         }
     }
-    
+
 }

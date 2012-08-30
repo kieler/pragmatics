@@ -13,12 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.ogdf.options;
 
+import net.ogdf.bin.OgdfServer;
+
 /**
  * Definition of the speed option for the Davidson-Harel layouter.
  * 
  * @author mri
  */
 public enum Speed {
+    
     /** fast speed. */
     FAST,
     /** medium speed. */
@@ -27,12 +30,20 @@ public enum Speed {
     HQ;
     
     /**
-     * Returns the enumeration value related to the given ordinal.
+     * Return a server parameter for the enumeration value.
      * 
-     * @param i ordinal value
-     * @return the related enumeration value
+     * @return a server parameter
      */
-    public static Speed valueOf(final int i) {
-        return values()[i];
+    public int toServerParam() {
+        switch (this) {
+        case FAST:
+            return OgdfServer.SPEED_FAST;
+        case HQ:
+            return OgdfServer.SPEED_HQ;
+        case MEDIUM:
+        default:
+            return OgdfServer.SPEED_MEDIUM;
+        }
     }
+    
 }

@@ -7,6 +7,11 @@
             id="de.cau.cs.kieler.kiml.categories.ogdf"
             name="OGDF">
       </category>
+      <layoutType
+            description="Algorithms that require a planar or upward planar graph. Most of these algorithms are theoretically interesting, but not practically usable."
+            id="de.cau.cs.kieler.kiml.ogdf.type.planar"
+            name="Planar">
+      </layoutType>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
@@ -73,6 +78,15 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.acyclicSubgraph">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.ranking">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.width">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -678,7 +692,7 @@
             id="de.cau.cs.kieler.kiml.ogdf.dominance"
             name="Dominance"
             parameter="DOMINANCE"
-            type="">
+            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
@@ -708,7 +722,7 @@
             id="de.cau.cs.kieler.kiml.ogdf.visibility"
             name="Visibility"
             parameter="VISIBILITY"
-            type="">
+            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
@@ -738,7 +752,7 @@
             id="de.cau.cs.kieler.kiml.ogdf.fraysseixPachPollack"
             name="Fraysseix-Pach-Pollack"
             parameter="FRAYSSEIX_PACH_POLLACK"
-            type="">
+            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
@@ -764,7 +778,7 @@
             id="de.cau.cs.kieler.kiml.ogdf.schnyder"
             name="Schnyder"
             parameter="SCHNYDER"
-            type="">
+            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
@@ -790,7 +804,7 @@
             id="de.cau.cs.kieler.kiml.ogdf.canonicalOrder"
             name="Canonical Order"
             parameter="CANONICAL_ORDER"
-            type="">
+            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
@@ -815,7 +829,7 @@
             id="de.cau.cs.kieler.kiml.ogdf.mixedModel"
             name="Mixed Model"
             parameter="MIXED_MODEL"
-            type="">
+            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
@@ -837,7 +851,7 @@
             id="de.cau.cs.kieler.kiml.ogdf.convexGrid"
             name="Convex Grid"
             parameter="CONVEX_GRID"
-            type="">
+            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
@@ -861,8 +875,7 @@
             description=""
             id="de.cau.cs.kieler.kiml.ogdf.balloon"
             name="Balloon"
-            parameter="BALLOON"
-            type="">
+            parameter="BALLOON">
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
@@ -1259,6 +1272,39 @@
             type="float"
             upperBound="1.0"
             variance="0.15">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.AcyclicSubgraphModule"
+            default="DFS"
+            description="The module for finding an acyclic subgraph"
+            id="de.cau.cs.kieler.kiml.ogdf.option.acyclicSubgraph"
+            name="Acyclic Subgraph Module"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.RankingModule"
+            default="LONGEST_PATH"
+            description="The module for computing a layering (ranking) of the graph"
+            id="de.cau.cs.kieler.kiml.ogdf.option.ranking"
+            name="Layering Module"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="7"
+            description="The maximal width of the Coffman-Graham layering"
+            id="de.cau.cs.kieler.kiml.ogdf.option.width"
+            lowerBound="1"
+            name="Layering Width"
+            type="int"
+            variance="7.0">
+         <dependency
+               option="de.cau.cs.kieler.kiml.ogdf.option.ranking"
+               value="COFFMAN_GRAHAM">
+         </dependency>
       </layoutOption>
    </extension>
 

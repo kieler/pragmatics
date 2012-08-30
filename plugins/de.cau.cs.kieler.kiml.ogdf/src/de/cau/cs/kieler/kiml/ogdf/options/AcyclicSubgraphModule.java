@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -16,18 +16,16 @@ package de.cau.cs.kieler.kiml.ogdf.options;
 import net.ogdf.bin.OgdfServer;
 
 /**
- * Definition of the "quality vs. speed" option for the FMMM layout algorithm.
+ * Enumeration of available acyclic subgraph modules.
  * 
- * @author mri
+ * @author msp
  */
-public enum QualityVsSpeed {
+public enum AcyclicSubgraphModule {
     
-    /** best quality, worst speed. */
-    GORGEOUSANDEFFICIENT,
-    /** medium quality, medium speed. */
-    BEAUTIFULANDFAST,
-    /** worst quality, best speed. */
-    NICEANDINCREDIBLESPEED;
+    /** depth-first-search based acyclic subgraph module. */
+    DFS,
+    /** greedy algorithm for the acyclic subgraph problem. */
+    GREEDY;
     
     /**
      * Return a server parameter for the enumeration value.
@@ -36,14 +34,12 @@ public enum QualityVsSpeed {
      */
     public int toServerParam() {
         switch (this) {
-        case GORGEOUSANDEFFICIENT:
-            return OgdfServer.GORGEOUS_AND_EFFICIENT;
-        case NICEANDINCREDIBLESPEED:
-            return OgdfServer.NICE_AND_INCREDIBLE_SPEED;
-        case BEAUTIFULANDFAST:
+        case GREEDY:
+            return OgdfServer.ACYCLIC_SUBGRAPH_GREEDY;
+        case DFS:
         default:
-            return OgdfServer.BEAUTIFUL_AND_FAST;
+            return OgdfServer.ACYCLIC_SUBGRAPH_DFS;
         }
     }
-    
+
 }

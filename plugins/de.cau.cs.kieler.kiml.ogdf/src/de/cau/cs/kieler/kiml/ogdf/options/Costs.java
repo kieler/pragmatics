@@ -13,12 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.ogdf.options;
 
+import net.ogdf.bin.OgdfServer;
+
 /**
  * Definition of the costs option for the Davidson-Harel layouter.
  * 
  * @author mri
  */
 public enum Costs {
+    
     /** standard costs. */
     STANDARD,
     /** repulse costs. */
@@ -27,12 +30,20 @@ public enum Costs {
     PLANAR;
     
     /**
-     * Returns the enumeration value related to the given ordinal.
+     * Return a server parameter for the enumeration value.
      * 
-     * @param i ordinal value
-     * @return the related enumeration value
+     * @return a server parameter
      */
-    public static Costs valueOf(final int i) {
-        return values()[i];
+    public int toServerParam() {
+        switch (this) {
+        case REPULSE:
+            return OgdfServer.COSTS_REPULSE;
+        case PLANAR:
+            return OgdfServer.COSTS_PLANAR;
+        case STANDARD:
+        default:
+            return OgdfServer.COSTS_STANDARD;
+        }
     }
+    
 }

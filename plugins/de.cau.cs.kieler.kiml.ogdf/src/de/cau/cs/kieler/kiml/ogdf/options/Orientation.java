@@ -19,6 +19,7 @@ package de.cau.cs.kieler.kiml.ogdf.options;
  * @author mri
  */
 public enum Orientation {
+    
     /** top-to-bottom. */
     TOP_TO_BOTTOM,
     /** bottom-to-top. */
@@ -28,13 +29,4 @@ public enum Orientation {
     /** right-to-left. */
     RIGHT_TO_LEFT;
     
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static Orientation valueOf(final int i) {
-        return values()[i];
-    }
 }

@@ -36,17 +36,21 @@
 #include <ogdf/cluster/ClusterGraphAttributes.h>
 #include <ogdf/labeling/ELabelInterface.h>
 
-/*
- * Options and enumerations
- */
 
+/* Marks the input graph as UML graph, which is handled differently by some algorithms. */
 #define INFO_UML_GRAPH "umlGraph"
 
+/*
+ * Definition of edge types.
+ */
 #define EDGE_TYPE_SUFFIX "type"
 #define EDGE_TYPE_ASSOCIATION 0
 #define EDGE_TYPE_DEPENDENCY 1
 #define EDGE_TYPE_GENERALIZATION  2
 
+/*
+ * Definition of edge label positions.
+ */
 #define EDGE_LABEL_SUFFIX  "label"
 #define LABEL_TYPE_END1 0
 #define LABEL_TYPE_MULT1 1
@@ -54,6 +58,10 @@
 #define LABEL_TYPE_END2 3
 #define LABEL_TYPE_MULT2 4
 
+/*
+ * Definition of layout options.
+ */
+#define OPTION_ACYCLIC_SUBGRAPH_MODULE "acyclicSubgraphModule"
 #define OPTION_ARRANGE_CC "arrangeCCs"
 #define OPTION_ATTRACTION_FORMULA "attractionFormula"
 #define OPTION_BASE_RATIO "baseRatio"
@@ -100,6 +108,7 @@
 #define OPTION_RADIAL "radial"
 #define OPTION_RANDOMIZE "randomize"
 #define OPTION_RANDOM_SEED "randomSeed"
+#define OPTION_RANKING_MODULE "rankingModule"
 #define OPTION_ROTATION_ANGLE "rotationAngle"
 #define OPTION_ROTATION_SENSITIVITY "rotationSensitivity"
 #define OPTION_RUNS "runs"
@@ -112,7 +121,11 @@
 #define OPTION_TREE_DISTANCE "treeDistance"
 #define OPTION_UPWARD "upward"
 #define OPTION_USE_LAYOUT "useLayout"
+#define OPTION_WIDTH "width"
 
+/*
+ * Definition of available layout algorithms.
+ */
 enum LayouterType {
 	NO_LAYOUTER,
 	SUGIYAMA,
@@ -139,33 +152,56 @@ enum LayouterType {
 	BALLOON
 };
 
-#define LABEL_TYPE_END1 0
-#define LABEL_TYPE_MULT1 1
-#define LABEL_TYPE_NAME 2
-#define LABEL_TYPE_END2 3
-#define LABEL_TYPE_MULT2 4
-
+/*
+ * Definition of orthogonal directions.
+ */
 #define DIRECTION_NORTH 0
 #define DIRECTION_SOUTH 1
 #define DIRECTION_WEST 2
 #define DIRECTION_EAST 3
 
+/*
+ * Definition of "quality vs. speed" values for FMMM layout.
+ */
 #define GORGEOUS_AND_EFFICIENT 0
 #define BEAUTIFUL_AND_FAST 1
 #define NICE_AND_INCREDIBLE_SPEED 2
 
+/*
+ * Definition of "costs" values for Davidson-Harel layout.
+ */
 #define COSTS_STANDARD 0
 #define COSTS_REPULSE 1
 #define COSTS_PLANAR 2
 
+/*
+ * Definition of "speed" values for Davidson-Harel layout.
+ */
 #define SPEED_FAST 0
 #define SPEED_MEDIUM 1
 #define SPEED_HQ 2
 
+/*
+ * Definition of OGDF orientation directions.
+ */
 #define ORIENTATION_TOP_TO_BOTTOM 0
 #define ORIENTATION_BOTTOM_TO_TOP 1
 #define ORIENTATION_LEFT_TO_RIGHT 2
 #define ORIENTATION_RIGHT_TO_LEFT 3
+
+/*
+ * Definition of ranking modules for Sugiyama layout.
+ */
+#define RANKING_LONGEST_PATH   0
+#define RANKING_COFFMAN_GRAHAM 1
+#define RANKING_OPTIMAL        2
+
+/*
+ * Definition of acyclic subgraph modules for Sugiyama layout.
+ */
+#define ACYCLIC_SUBGRAPH_DFS    0
+#define ACYCLIC_SUBGRAPH_GREEDY 1
+
 
 /** the type for the string map. */
 typedef std::map<std::string, std::string> StringMap;

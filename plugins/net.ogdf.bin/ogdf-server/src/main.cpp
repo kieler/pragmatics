@@ -227,11 +227,11 @@ void HandleRequest(chunk_istream& in, ostream& out,
 	bool graphRead = ReadGraph(in, G, CG, *GA, graphInputFormat);
 	// read the layout options
 	in.nextChunk();
-	map < string, string > options;
+	map<string, string> options;
 	ReadKeyValuePairs(in, options);
 	// read additionalInformation
 	in.nextChunk();
-	map < string, string > information;
+	map<string, string> information;
 	ReadKeyValuePairs(in, information);
 	if (graphRead) {
 		// perform the layout

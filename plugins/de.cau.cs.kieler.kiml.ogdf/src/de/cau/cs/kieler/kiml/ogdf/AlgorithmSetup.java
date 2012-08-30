@@ -24,10 +24,12 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.UnsupportedGraphException;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.ogdf.options.AcyclicSubgraphModule;
 import de.cau.cs.kieler.kiml.ogdf.options.AttractionFormula;
 import de.cau.cs.kieler.kiml.ogdf.options.Costs;
 import de.cau.cs.kieler.kiml.ogdf.options.LayoutAlgorithm;
 import de.cau.cs.kieler.kiml.ogdf.options.QualityVsSpeed;
+import de.cau.cs.kieler.kiml.ogdf.options.RankingModule;
 import de.cau.cs.kieler.kiml.ogdf.options.Speed;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
@@ -81,6 +83,16 @@ public final class AlgorithmSetup {
     /** 'transpose' option. */
     private static final IProperty<Boolean> TRANSPOSE = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.transpose", true);
+    /** 'acyclicSubgraphModule' option. */
+    private static final IProperty<AcyclicSubgraphModule> ACYCLIC_SUBGRAPH
+            = new Property<AcyclicSubgraphModule>("de.cau.cs.kieler.kiml.ogdf.option.acyclicSubgraph",
+                    AcyclicSubgraphModule.DFS);
+    /** 'rankingModule' option. */
+    private static final IProperty<RankingModule> RANKING = new Property<RankingModule>(
+            "de.cau.cs.kieler.kiml.ogdf.option.ranking", RankingModule.LONGEST_PATH);
+    /** 'width' option. */
+    private static final IProperty<Integer> WIDTH = new Property<Integer>(
+            "de.cau.cs.kieler.kiml.ogdf.option.width", 7);
     
     // options for planarization layouter
     
@@ -305,13 +317,24 @@ public final class AlgorithmSetup {
             comm.addOption(OgdfServer.OPTION_TRANSPOSE, transpose);
             // arrange connected components
             Boolean arrangeCCs = parentLayout.getProperty(LayoutOptions.SEPARATE_CC);
-            comm.addOption(OgdfServer.OPTION_ARRANGE_CC, arrangeCCs != null && arrangeCCs.booleanValue());
+            comm.addOption(OgdfServer.OPTION_ARRANGE_CC,
+                    arrangeCCs != null && arrangeCCs.booleanValue());
             // minimal distance of connected components
             float minDistCCFactor = parentLayout.getProperty(MIN_DIST_CC);
             comm.addOption(OgdfServer.OPTION_MIN_DIST_CC, nodeDistance * minDistCCFactor);
             // layer distance
             float layerDistanceFactor = parentLayout.getProperty(LAYER_DISTANCE);
             comm.addOption(OgdfServer.OPTION_LAYER_DISTANCE, nodeDistance * layerDistanceFactor);
+            // acyclic subgraph module
+            AcyclicSubgraphModule acyclicSubgraphModule = parentLayout.getProperty(ACYCLIC_SUBGRAPH);
+            comm.addOption(OgdfServer.OPTION_ACYCLIC_SUBGRAPH_MODULE,
+                    acyclicSubgraphModule.toServerParam());
+            // ranking module
+            RankingModule rankingModule = parentLayout.getProperty(RANKING);
+            comm.addOption(OgdfServer.OPTION_RANKING_MODULE, rankingModule.toServerParam());
+            // width of the ranking
+            int width = parentLayout.getProperty(WIDTH);
+            comm.addOption(OgdfServer.OPTION_WIDTH, width);
             break;
         }
             
@@ -361,20 +384,7 @@ public final class AlgorithmSetup {
         case FMMM: {
             // quality vs. speed
             QualityVsSpeed qualityVsSpeed = parentLayout.getProperty(QUALITY_VS_SPEED);
-            int qvs;
-            switch (qualityVsSpeed) {
-            case GORGEOUSANDEFFICIENT:
-                qvs = OgdfServer.GORGEOUS_AND_EFFICIENT;
-                break;
-            case NICEANDINCREDIBLESPEED:
-                qvs = OgdfServer.NICE_AND_INCREDIBLE_SPEED;
-                break;
-            case BEAUTIFULANDFAST:
-            default:
-                qvs = OgdfServer.BEAUTIFUL_AND_FAST;
-                break;
-            }
-            comm.addOption(OgdfServer.OPTION_QUALITY_VS_SPEED, qvs);
+            comm.addOption(OgdfServer.OPTION_QUALITY_VS_SPEED, qualityVsSpeed.toServerParam());
             // new initial placement
             boolean newInitialPlacement = parentLayout.getProperty(NEW_INITIAL_PLACEMENT);
             comm.addOption(OgdfServer.OPTION_NEW_INITIAL_PLACEMENT, newInitialPlacement);
@@ -390,36 +400,10 @@ public final class AlgorithmSetup {
             comm.addOption(OgdfServer.OPTION_EDGE_LENGTH, desiredEdgeLength);
             // costs
             Costs costs = parentLayout.getProperty(COSTS);
-            int theCosts;
-            switch (costs) {
-            case REPULSE:
-                theCosts = OgdfServer.COSTS_REPULSE;
-                break;
-            case PLANAR:
-                theCosts = OgdfServer.COSTS_PLANAR;
-                break;
-            case STANDARD:
-            default:
-                theCosts = OgdfServer.COSTS_STANDARD;
-                break;
-            }
-            comm.addOption(OgdfServer.OPTION_COSTS, theCosts);
+            comm.addOption(OgdfServer.OPTION_COSTS, costs.toServerParam());
             // speed
             Speed speed = parentLayout.getProperty(SPEED);
-            int theSpeed;
-            switch (speed) {
-            case FAST:
-                theSpeed = OgdfServer.SPEED_FAST;
-                break;
-            case HQ:
-                theSpeed = OgdfServer.SPEED_HQ;
-                break;
-            case MEDIUM:
-            default:
-                theSpeed = OgdfServer.SPEED_MEDIUM;
-                break;
-            }
-            comm.addOption(OgdfServer.OPTION_SPEED, theSpeed);
+            comm.addOption(OgdfServer.OPTION_SPEED, speed.toServerParam());
             break;
         }
             
@@ -486,14 +470,7 @@ public final class AlgorithmSetup {
             comm.addOption(OgdfServer.OPTION_OSCILLATION_SENSITIVITY, oscillationSensitivity);
             // attraction formula
             AttractionFormula attractionFormula = parentLayout.getProperty(ATTRACTION_FORMULA);
-            switch (attractionFormula) {
-            case FRUCHTERMAN_REINGOLD:
-                comm.addOption(OgdfServer.OPTION_ATTRACTION_FORMULA, 1);
-                break;
-            case GEM:
-                comm.addOption(OgdfServer.OPTION_ATTRACTION_FORMULA, 2);
-                break;
-            }
+            comm.addOption(OgdfServer.OPTION_ATTRACTION_FORMULA, attractionFormula.toServerParam());
             // minimal distance of connected components
             float minDistCCFactor = parentLayout.getProperty(MIN_DIST_CC);
             comm.addOption(OgdfServer.OPTION_MIN_DIST_CC, desiredLength * minDistCCFactor);
