@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.test.runner;
+package de.cau.cs.kieler.klay.test;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -22,14 +22,20 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
-import de.cau.cs.kieler.klay.test.utils.GraphTestUtil;
+import de.cau.cs.kieler.klay.test.utils.*;
+import de.cau.cs.kieler.klay.test.runner.KlayTestRunner;
 
 /**
  * The class KlayAutomatedJUnitTest enables the integration of several KLAY execution runs into a
  * JUnit plugin test.
  * 
- * @author Wahbi
+ * A new test plugin has to have a class C extending KlayAutomatedJUnitTest. The new class C has to
+ * have "Test" in its name to be found as a JUnit class by the build system.
+ * 
+ * Test model files must be provided with the bundle implementing the KiemAutomatedJUnitTest
+ * abstract class in a bundle directory specified by getBundleTestPath().
+ * 
+ * @author wah
  */
 @RunWith(KlayTestRunner.class)
 public abstract class KlayAutomatedJUnitTest {
@@ -94,87 +100,4 @@ public abstract class KlayAutomatedJUnitTest {
 
     // ------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------
-
-    /**
-     * The test folder properties
-     * 
-     * @author Wahbi
-     */
-    public class TestPath {
-
-        /** the folder containing the graph files */
-        private String folder;
-        /** if subfolder = true load graphs in subfolder */
-        private boolean loadSubfolder;
-        /** if doLayout = true apply layout on graphs */
-        private boolean doLayout;
-
-        /**
-         * The constructor
-         * 
-         * @param folder
-         * @param subfolder
-         * @param doLayout
-         */
-        public TestPath(String folder, boolean subfolder, boolean doLayout) {
-            this.folder = folder;
-            this.loadSubfolder = subfolder;
-            this.doLayout = doLayout;
-        }
-
-        /**
-         * Return the folder
-         * 
-         * @return the folder
-         */
-        public String getFolder() {
-            return folder;
-        }
-
-        /**
-         * Set the folder
-         * 
-         * @param folder
-         *            the folder to set
-         */
-        public void setFolder(String folder) {
-            this.folder = folder;
-        }
-
-        /**
-         * Return true if load the subfolder and else otherwise
-         * 
-         * @return the subfolder
-         */
-        public boolean isLoadSubfolder() {
-            return loadSubfolder;
-        }
-
-        /**
-         * Set the loadSubFolder
-         * 
-         * @param subfolder
-         *            the subfolder to set
-         */
-        public void setLoadSubfolder(boolean subfolder) {
-            this.loadSubfolder = subfolder;
-        }
-
-        /**
-         * Return true if apply the layout and else otherwise
-         * 
-         * @return the doLayout
-         */
-        public boolean isDoLayout() {
-            return doLayout;
-        }
-
-        /**
-         * @param doLayout
-         *            the doLayout to set
-         */
-        public void setDoLayout(boolean doLayout) {
-            this.doLayout = doLayout;
-        }
-    }
 }

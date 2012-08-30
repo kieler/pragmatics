@@ -11,25 +11,31 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.test.runner;
+package de.cau.cs.kieler.klay.test;
 
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
+import de.cau.cs.kieler.klay.test.utils.TestPath;
 
 /**
  * An Example test Class
  * 
  * @author Wahbi
  */
-public class GraphUnitTest extends KlayAutomatedJUnitTest {
+public class KlayTestExample extends KlayAutomatedJUnitTest {
 
-    // Object containing the current graphTestObject(File,KNode)
+    // Object containing the current graphTestObject that contains both, a File and a KNode.
     private GraphTestObject graphObject;
 
-    public GraphUnitTest(final GraphTestObject testObject) {
+    /**
+     * Instantiates a new KlayTestExample test and set the graphObject to the current graph to test.
+     * 
+     * @param testObject
+     */
+    public KlayTestExample(final GraphTestObject testObject) {
         graphObject = testObject;
     }
 
@@ -43,11 +49,17 @@ public class GraphUnitTest extends KlayAutomatedJUnitTest {
         return testPaths;
     }
 
+    /**
+     * A dummy test method that tests if the current graphFile equals a given file name..
+     */
     @Test
     public void testA() {
         assertTrue(graphObject.getFile().getName().equals("backhoe-adapted.kids"));
     }
 
+    /**
+     * A dummy test method that tests if the current graphFile equals a given file name..
+     */
     @Test
     public void testB() {
         assertTrue(graphObject.getFile().getName().equals("backhoe-adapted.kids"));

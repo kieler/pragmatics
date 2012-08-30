@@ -18,24 +18,26 @@ import java.io.File;
 import de.cau.cs.kieler.core.kgraph.KNode;
 
 /**
- * This Object represents a Graph file
+ * This Object represents a Graph file and the graph contained therein.
  * 
- * @author Wahbi
+ * @author wah
  */
 public class GraphTestObject {
 
+    /* The Graph file */
     private File file;
+    /* The graph contained */
     private KNode knode;
 
     /**
-     * The constructor
+     * The constructor of the class with two parameters to initialize the graph file and the graph
+     * contained therein
      * 
      * @param file
+     *            the Graph file
      * @param knode
+     *            the graph contained
      */
-    public GraphTestObject() {
-    }
-
     public GraphTestObject(File file, KNode knode) {
         this.file = file;
         this.knode = knode;
@@ -60,6 +62,8 @@ public class GraphTestObject {
     }
 
     /**
+     * Set the graph file
+     * 
      * @param file
      *            the file to set
      */
@@ -68,6 +72,8 @@ public class GraphTestObject {
     }
 
     /**
+     * Set the the graph contained(KNode)
+     * 
      * @param knode
      *            the knode to set
      */

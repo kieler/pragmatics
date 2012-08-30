@@ -18,16 +18,26 @@ import java.util.List;
 import org.junit.runners.model.FrameworkMethod;
 
 import de.cau.cs.kieler.core.test.runners.KielerTestRunner;
+import de.cau.cs.kieler.klay.test.KlayAutomatedJUnitTest;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 
 /**
  * This test runner is used by the GraphAutomatedTest.
  * 
- * @author Wahbi
+ * In the initialize() method it calls the GraphAutomatedTestInitialization() explicitly that will
+ * load the graphs to test with the appropriate options.
+ * 
+ * It further provides names for the tests derived from their corresponding file's path names.
+ * 
+ * @author wah
  */
 public class KlayTestRunner extends KielerTestRunner {
 
     /**
+     * Instantiates a new KielerTestRunner. It further does the initialization with a first instance
+     * of the class to test (parameter values given to the constructor are NULL) and afterwards
+     * calls the method for getting the parameters for the parameterized test run.
+     * 
      * @param klass
      * @throws Throwable
      */
@@ -41,6 +51,8 @@ public class KlayTestRunner extends KielerTestRunner {
     @Override
     public void initialize(Object object) {
         if (object instanceof KlayAutomatedJUnitTest)
+            // the object is always a KlayAutomatedJUnitTest that is why we don't need to throw an
+            // exception
             ((KlayAutomatedJUnitTest) object).GraphAutomatedTestInitialization();
     }
 
@@ -50,6 +62,7 @@ public class KlayTestRunner extends KielerTestRunner {
     @Override
     public String getRunnerName(List<Object[]> parameterObjectList, int parameterIndex) {
         Object[] objectArray = parameterObjectList.get(parameterIndex);
+        // The objectArray is always affected with a GraphTestObject that is why this method is save
         GraphTestObject file = (GraphTestObject) objectArray[0];
         return file.getFile().toString();
     }
