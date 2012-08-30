@@ -304,7 +304,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
         
         // check which crossing minimization strategy to use
-        CrossingMinimizationStrategy crossminStrategy = parentLayout.getProperty(Properties.CROSSMIN);
+        CrossingMinimizationStrategy crossminStrategy = parentLayout.getProperty(Properties.CROSS_MIN);
         switch (crossminStrategy) {
         case INTERACTIVE:
             if (!(crossingMinimizer instanceof InteractiveCrossingMinimizer)) {
@@ -318,7 +318,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
         
         // check with node placement strategy to use
-        NodePlacementStrategy nodePlaceStrategy = parentLayout.getProperty(Properties.NODEPLACE);
+        NodePlacementStrategy nodePlaceStrategy = parentLayout.getProperty(Properties.NODE_PLACER);
         switch (nodePlaceStrategy) {
         case LINEAR_SEGMENTS:
             if (!(nodePlacer instanceof LinearSegmentsNodePlacer)) {

@@ -685,11 +685,11 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                     LNode u = null;
                     LNode x = null;
                     if (bal.getVDir() == VDirection.RIGHT) {
-                        u = bal.getRoot().get(w.getLayer().getNodes().get(w.getIndex() + 1));
                         x = w.getLayer().getNodes().get(w.getIndex() + 1);
+                        u = bal.getRoot().get(x);
                     } else {
-                        u = bal.getRoot().get(w.getLayer().getNodes().get(w.getIndex() - 1));
                         x = w.getLayer().getNodes().get(w.getIndex() - 1);
+                        u = bal.getRoot().get(x);
                     }
 
                     // Check whether the comparison node is already placed, place it if not
@@ -730,10 +730,9 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                         // Determine the available space in the current layer, by taking node sizes,
                         // and special node types into account
                         double spacing = normalSpacing;
-                        double wSize = w.getMargin().top + w.getSize().y + w.getMargin().bottom
+                        double wSize = w.getSize().y + w.getMargin().bottom
                                 + bal.getInnerShift().get(w);
-                        double xSize = x.getMargin().top + x.getSize().y + x.getMargin().bottom
-                                + bal.getInnerShift().get(x);
+                        double xSize = x.getSize().y + x.getMargin().bottom;
                         if (w.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
                             wSize += NORTH_SOUTH_SPACING;
                         }
@@ -752,15 +751,19 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                             bal.getY().put(
                                     v,
                                     Math.min(bal.getY().get(v),
-                                            (bal.getY().get(u) + bal.getInnerShift().get(x)) - spacing
-                                            - wSize));
+                                             (bal.getY().get(u)
+                                                     + bal.getInnerShift().get(x)
+                                                     - x.getMargin().top)
+                                              - spacing - wSize));
 
                         } else {
                             bal.getY().put(
                                     v,
                                     Math.max(bal.getY().get(v),
-                                            (bal.getY().get(u) + bal.getInnerShift().get(x)) + spacing
-                                            + xSize));
+                                            (bal.getY().get(u) 
+                                                    + bal.getInnerShift().get(x)
+                                                    + x.getMargin().top)
+                                             + spacing + xSize));
                         }
                     }
                 }
