@@ -98,6 +98,8 @@ public class OgdfServer {
     public static final String OPTION_EDGE_INSERTION_MODULE = "edgeInsertionModule";
     /** the option for the edge length. */
     public static final String OPTION_EDGE_LENGTH = "edgeLength";
+    /** the option for selection of the embedder module. */
+    public static final String OPTION_EMBEDDER_MODULE = "embedderModule";
     /** the option for the number of fail runs. */
     public static final String OPTION_FAILS = "fails";
     /** the option for the fineness. */
@@ -200,80 +202,6 @@ public class OgdfServer {
     public static final String OPTION_USE_LAYOUT = "useLayout";
     /** the option for the width of a ranking. */
     public static final String OPTION_WIDTH = "width";
-
-    /** the 'north' direction. */
-    public static final int DIRECTION_NORTH = 0;
-    /** the 'south' direction. */
-    public static final int DIRECTION_SOUTH = 1;
-    /** the 'west' direction. */
-    public static final int DIRECTION_WEST = 2;
-    /** the 'east' direction. */
-    public static final int DIRECTION_EAST = 3;
-
-    /** the 'gorgeous-and-efficient' qvs. */
-    public static final int GORGEOUS_AND_EFFICIENT = 0;
-    /** the 'beautiful-and-fast' qvs. */
-    public static final int BEAUTIFUL_AND_FAST = 1;
-    /** the 'nice-and-incredible-speed' qvs. */
-    public static final int NICE_AND_INCREDIBLE_SPEED = 2;
-
-    /** the 'standard' costs. */
-    public static final int COSTS_STANDARD = 0;
-    /** the 'repulse' costs. */
-    public static final int COSTS_REPULSE = 1;
-    /** the 'planar' costs. */
-    public static final int COSTS_PLANAR = 2;
-
-    /** the 'fast' speed. */
-    public static final int SPEED_FAST = 0;
-    /** the 'medium' speed. */
-    public static final int SPEED_MEDIUM = 1;
-    /** the 'hq' speed. */
-    public static final int SPEED_HQ = 2;
-
-    /** the 'top-to-bottom' orientation. */
-    public static final int ORIENTATION_TOP_TO_BOTTOM = 0;
-    /** the 'bottom-to-top' orientation. */
-    public static final int ORIENTATION_BOTTOM_TO_TOP = 1;
-    /** the 'left-to-right' orientation. */
-    public static final int ORIENTATION_LEFT_TO_RIGHT = 2;
-    /** the 'right-to-left' orientation. */
-    public static final int ORIENTATION_RIGHT_TO_LEFT = 3;
-
-    /** the 'Fruchterman-Reingold' attraction formula. */
-    public static final int ATTRACTION_FORMULA_FR = 1;
-    /** the 'GEM' attraction formula. */
-    public static final int ATTRACTION_FORMULA_GEM = 2;
-    
-    /** the DFS-based acyclic subgraph module. */
-    public static final int ACYCLIC_SUBGRAPH_DFS = 0;
-    /** the greedy acyclic subgraph module. */
-    public static final int ACYCLIC_SUBGRAPH_GREEDY = 1;
-
-    /** the longest path ranking module. */
-    public static final int RANKING_LONGEST_PATH = 0;
-    /** the Coffman-Graham ranking module. */
-    public static final int RANKING_COFFMAN_GRAHAM = 1;
-    /** the optimal ranking module. */
-    public static final int RANKING_OPTIMAL = 2;
-    
-    /** the barycenter crossing minimization module. */
-    public static final int CROSS_MIN_BARYCENTER = 0;
-    /** the greedy insert crossing minimization module. */
-    public static final int CROSS_MIN_GREEDY_INSERT = 1;
-    /** the greedy switch crossing minimization module. */
-    public static final int CROSS_MIN_GREEDY_SWITCH = 2;
-    /** the median crossing minimization module. */
-    public static final int CROSS_MIN_MEDIAN = 3;
-    /** the sifting crossing minimization module. */
-    public static final int CROSS_MIN_SIFTING = 4;
-    
-    /** the fixed embedding edge insertion module. */
-    public static final int EDGE_INSERTION_FIXED_EMB = 0;
-    /** the variable embedding edge insertion module. */
-    public static final int EDGE_INSERTION_VARIABLE_EMB = 1;
-    /** the multi-edge approximation edge insertion module. */
-    public static final int EDGE_INSERTION_MULTIEDGE_APPROX = 2;
     
     
     /**
@@ -347,9 +275,11 @@ public class OgdfServer {
     public static final String EXECUTABLE_PATH_WIN64 = EXECUTABLE_PATH_BIN
             + "/win64/ogdf-server.exe";
     /** the relative path for the osx32 executable. */
-    public static final String EXECUTABLE_PATH_OSX32 = EXECUTABLE_PATH_BIN + "/osx32/ogdf-server";
+    public static final String EXECUTABLE_PATH_OSX32 = EXECUTABLE_PATH_BIN
+            + "/osx32/ogdf-server";
     /** the relative path for the osx64 executable. */
-    public static final String EXECUTABLE_PATH_OSX64 = EXECUTABLE_PATH_BIN + "/osx64/ogdf-server";
+    public static final String EXECUTABLE_PATH_OSX64 = EXECUTABLE_PATH_BIN
+            + "/osx64/ogdf-server";
     /** the relative path for the solaris executable. */
     public static final String EXECUTABLE_PATH_SOLARIS = EXECUTABLE_PATH_BIN
             + "/solaris/ogdf-server";

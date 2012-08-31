@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.ogdf.options;
 
-import net.ogdf.bin.OgdfServer;
-
 /**
  * Enumeration of available ranking modules for Sugiyama layout.
  * 
@@ -28,22 +26,5 @@ public enum RankingModule {
     COFFMAN_GRAHAM,
     /** the optimal ranking module. */
     OPTIMAL;
-    
-    /**
-     * Return a server parameter for the enumeration value.
-     * 
-     * @return a server parameter
-     */
-    public int toServerParam() {
-        switch (this) {
-        case COFFMAN_GRAHAM:
-            return OgdfServer.RANKING_COFFMAN_GRAHAM;
-        case OPTIMAL:
-            return OgdfServer.RANKING_OPTIMAL;
-        case LONGEST_PATH:
-        default:
-            return OgdfServer.RANKING_LONGEST_PATH;
-        }
-    }
 
 }

@@ -73,6 +73,7 @@
 #define OPTION_DESIRED_LENGTH "desiredLength"
 #define OPTION_EDGE_INSERTION_MODULE "edgeInsertionModule"
 #define OPTION_EDGE_LENGTH "edgeLength"
+#define OPTION_EMBEDDER_MODULE "embedderModule"
 #define OPTION_FAILS "fails"
 #define OPTION_FINENESS "fineness"
 #define OPTION_GLOBAL_ITERATIONS "globalIterations"
@@ -219,6 +220,16 @@ enum LayouterType {
 #define EDGE_INSERTION_FIXED_EMB        0
 #define EDGE_INSERTION_VARIABLE_EMB     1
 #define EDGE_INSERTION_MULTIEDGE_APPROX 2
+
+/*
+ * Definition of embedder modules for planarization layout. */
+#define EMBEDDER_SIMPLE                    0
+#define EMBEDDER_MAX_FACE                  1
+#define EMBEDDER_MAX_FACE_LAYERS           2
+#define EMBEDDER_MIN_DEPTH                 3
+#define EMBEDDER_MIN_DEPTH_MAX_FACE        4
+#define EMBEDDER_MIN_DEPTH_MAX_FACE_LAYERS 5
+#define EMBEDDER_PIZZONIA_TAMASSIA         6
 
 
 /** the type for the string map. */

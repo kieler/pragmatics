@@ -51,6 +51,12 @@
 #include <ogdf/orthogonal/OrthoLayout.h>
 #include <ogdf/planarity/PlanarizationLayout.h>
 #include <ogdf/planarity/FastPlanarSubgraph.h>
+#include <ogdf/planarity/EmbedderMaxFace.h>
+#include <ogdf/planarity/EmbedderMaxFaceLayers.h>
+#include <ogdf/planarity/EmbedderMinDepth.h>
+#include <ogdf/planarity/EmbedderMinDepthMaxFace.h>
+#include <ogdf/planarity/EmbedderMinDepthMaxFaceLayers.h>
+#include <ogdf/planarity/EmbedderMinDepthPiTa.h>
 #include <ogdf/planarlayout/FPPLayout.h>
 #include <ogdf/planarlayout/SchnyderLayout.h>
 #include <ogdf/planarlayout/PlanarStraightLayout.h>
@@ -530,6 +536,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 
 		// perform the layout
 		switch (layouterType) {
+
+		//-------------------------------------------------------------------//
 		case SUGIYAMA: {
 			SugiyamaLayout layout;
 			AcyclicSubgraphModule* acyclicSubgraphModule = NULL;
@@ -637,6 +645,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			break;
 		}
 
+		//-------------------------------------------------------------------//
 		case PLANARIZATION: {
 			PlanarizationLayout layout;
 			int runs;
@@ -659,6 +668,42 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 					break;
 				}
 				// default: EDGE_INSERTION_FIXED_EMB
+				}
+			}
+			int embedderOption;
+			if (GetOption(OPTION_EMBEDDER_MODULE, embedderOption, options)) {
+				switch (embedderOption) {
+				case EMBEDDER_MAX_FACE: {
+					EmbedderMaxFace* embedder = new EmbedderMaxFace;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MAX_FACE_LAYERS: {
+					EmbedderMaxFaceLayers* embedder = new EmbedderMaxFaceLayers;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH: {
+					EmbedderMinDepth* embedder = new EmbedderMinDepth;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE: {
+					EmbedderMinDepthMaxFace* embedder = new EmbedderMinDepthMaxFace;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE_LAYERS: {
+					EmbedderMinDepthMaxFaceLayers* embedder = new EmbedderMinDepthMaxFaceLayers;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_PIZZONIA_TAMASSIA: {
+					EmbedderMinDepthPiTa* embedder = new EmbedderMinDepthPiTa;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				// default: EMBEDDER_SIMPLE
 				}
 			}
 			double pageRatio;
@@ -710,6 +755,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			}
 			break;
 		}
+
+		//-------------------------------------------------------------------//
 		case FMMM: {
 			FMMMLayout layout;
 			layout.useHighLevelOptions(true);
@@ -730,6 +777,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case DAVIDSON_HAREL: {
 			DavidsonHarelLayout layout;
 			int costs;
@@ -749,6 +798,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case FRUCHTERMAN_REINGOLD: {
 			SpringEmbedderFR layout;
 			int iterations;
@@ -774,6 +825,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case GEM: {
 			GEMLayout layout;
 			int numberOfRounds;
@@ -824,7 +877,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			}
 			int attractionFormula;
 			if (GetOption(OPTION_ATTRACTION_FORMULA, attractionFormula, options)) {
-				layout.attractionFormula(attractionFormula);
+				// attractionFormula == 0: Fruchterman / Reingold; attractionFormula == 1: GEM
+				layout.attractionFormula(attractionFormula + 1);
 			}
 			double minDistCC;
 			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options)) {
@@ -837,6 +891,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case CIRCULAR: {
 			CircularLayout layout;
 			double minDistCircle;

@@ -29,7 +29,10 @@ import de.cau.cs.kieler.kiml.ogdf.options.AttractionFormula;
 import de.cau.cs.kieler.kiml.ogdf.options.Costs;
 import de.cau.cs.kieler.kiml.ogdf.options.CrossMinModule;
 import de.cau.cs.kieler.kiml.ogdf.options.EdgeInsertionModule;
+import de.cau.cs.kieler.kiml.ogdf.options.EmbedderModule;
 import de.cau.cs.kieler.kiml.ogdf.options.LayoutAlgorithm;
+import de.cau.cs.kieler.kiml.ogdf.options.OgdfDirection;
+import de.cau.cs.kieler.kiml.ogdf.options.Orientation;
 import de.cau.cs.kieler.kiml.ogdf.options.QualityVsSpeed;
 import de.cau.cs.kieler.kiml.ogdf.options.RankingModule;
 import de.cau.cs.kieler.kiml.ogdf.options.Speed;
@@ -46,219 +49,227 @@ public final class AlgorithmSetup {
 
     // general options used for multiple algorithms
     
-    /** label edge distance option. */
+    /** Spacing of edge labels to the edge. */
     public static final IProperty<Float> LABEL_EDGE_DIST = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance", 15.0f);
-    /** label margin distance option. */
+    /** Distance of edge labels to the nodes. */
     public static final IProperty<Float> LABEL_MARGIN_DIST = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance", 15.0f);
-    /** label placement option. */
+    /** Whether edge labels shall be processed. */
     public static final IProperty<Boolean> PLACE_LABELS = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.placeLabels", true);
     
-    /** 'aspectRatio' option. */
-    private static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
+    /** The targeted aspect ratio for the whole drawing. */
+    public static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO, 1.3f);
-    /** factor for 'minDistCC' option. */
-    private static final IProperty<Float> MIN_DIST_CC = new Property<Float>(
+    /** Factor for the spacing between connected components. */
+    public static final IProperty<Float> MIN_DIST_CC = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0f);
-    /** factor for 'layerDistance' option. */
-    private static final IProperty<Float> LAYER_DISTANCE = new Property<Float>(
+    /** Factor for the minimal distance between father and child components. */
+    public static final IProperty<Float> LAYER_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0f);
-    /** 'iterations' option. */
-    private static final IProperty<Integer> ITERATIONS = new Property<Integer>(
+    /** The number of iterations performed by the algorithm. */
+    public static final IProperty<Integer> ITERATIONS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.iterations");
-    /** 'stopTolerance' option. */
-    private static final IProperty<Float> STOP_TOLERANCE = new Property<Float>(
+    /** Tolerance below which the system is regarded stable and the optimization is stopped. */
+    public static final IProperty<Float> STOP_TOLERANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.stopTolerance", 0.001f);
-    /** 'runs' option. */
-    private static final IProperty<Integer> RUNS = new Property<Integer>(
+    /** Determines how many times the crossing minimization phase (Sugiyama) or planar subgraph
+     *  phase (Planarization) is repeated. */
+    public static final IProperty<Integer> RUNS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.runs", 0);
 
     // options for Sugiyama layouter
     
-    /** 'nodeDistance' option. */
+    /** Default value for the 'nodeDistance' option. */
     private static final float DEF_NODE_DISTANCE = 16.0f;
-    /** 'fails' option. */
-    private static final IProperty<Integer> FAILS = new Property<Integer>(
+    /** The number of times that the number of crossings may not decrease after a complete top-down
+     *  bottom-up traversal, before a run is terminated. */
+    public static final IProperty<Integer> FAILS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.fails", 4);
-    /** 'transpose' option. */
-    private static final IProperty<Boolean> TRANSPOSE = new Property<Boolean>(
+    /** Determines whether the transpose step is performed after each 2-layer crossing minimization. */
+    public static final IProperty<Boolean> TRANSPOSE = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.transpose", true);
-    /** 'acyclicSubgraphModule' option. */
-    private static final IProperty<AcyclicSubgraphModule> ACYCLIC_SUBGRAPH
+    /** The module for finding an acyclic subgraph. */
+    public static final IProperty<AcyclicSubgraphModule> ACYCLIC_SUBGRAPH
             = new Property<AcyclicSubgraphModule>("de.cau.cs.kieler.kiml.ogdf.option.acyclicSubgraph",
                     AcyclicSubgraphModule.DFS);
-    /** 'rankingModule' option. */
-    private static final IProperty<RankingModule> RANKING = new Property<RankingModule>(
+    /** The module for computing a layering (ranking) of the graph. */
+    public static final IProperty<RankingModule> RANKING = new Property<RankingModule>(
             "de.cau.cs.kieler.kiml.ogdf.option.ranking", RankingModule.LONGEST_PATH);
-    /** 'width' option. */
-    private static final IProperty<Integer> WIDTH = new Property<Integer>(
+    /** The maximal width of the Coffman-Graham layering. */
+    public static final IProperty<Integer> WIDTH = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.width", 7);
-    /** 'crossMin' option. */
-    private static final IProperty<CrossMinModule> CROSS_MIN = new Property<CrossMinModule>(
+    /** The module for crossing minimization used in the layer-sweep method. */
+    public static final IProperty<CrossMinModule> CROSS_MIN = new Property<CrossMinModule>(
             "de.cau.cs.kieler.kiml.ogdf.option.crossMin", CrossMinModule.BARYCENTER);
     
     // options for planarization layouter
     
-    /** 'separation' option. */
+    /** Default value for the 'separation' option. */
     private static final float DEF_PLAN_SEPARATION = 20.0f;
-    /** 'preprocessCliques' option. */
-    private static final IProperty<Boolean> PREPROCESS_CLIQUES = new Property<Boolean>(
+    /** If set to true, a preprocessing for cliques (complete subgraphs) is performed and cliques
+     *  will be laid out in a special form (straight-line, not orthogonal). */
+    public static final IProperty<Boolean> PREPROCESS_CLIQUES = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.preprocessCliques", false);
-    /** 'minCliqueSize' option. */
-    private static final IProperty<Integer> MIN_CLIQUE_SIZE = new Property<Integer>(
+    /** If preprocessing of cliques is enabled, this option determines the minimal size of cliques. */
+    public static final IProperty<Integer> MIN_CLIQUE_SIZE = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.minCliqueSize", 10);
-    /** 'costAssoc' option. */
-    private static final IProperty<Integer> COST_ASSOC = new Property<Integer>(
+    /** Defines the costs for association edges. */
+    public static final IProperty<Integer> COST_ASSOC = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.costAssoc", 1);
-    /** 'costGen' option. */
-    private static final IProperty<Integer> COST_GEN = new Property<Integer>(
+    /** Defines the costs for generalization edges. */
+    public static final IProperty<Integer> COST_GEN = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.costGen", 4);
-    /** 'edgeInsertion' option. */
-    private static final IProperty<EdgeInsertionModule> EDGE_INSERTION
+    /** The module for edge insertion used for planarization. */
+    public static final IProperty<EdgeInsertionModule> EDGE_INSERTION
             = new Property<EdgeInsertionModule>("de.cau.cs.kieler.kiml.ogdf.option.edgeInsertion",
                     EdgeInsertionModule.FIXED_EMB);
+    /** The module for choosing an embedding for the graph. */
+    public static final IProperty<EmbedderModule> EMBEDDER
+            = new Property<EmbedderModule>("de.cau.cs.kieler.kiml.ogdf.option.embedder",
+                    EmbedderModule.SIMPLE);
 
     // options for FMMM layouter
     
-    /** 'quality vs speed' option. */
-    private static final IProperty<QualityVsSpeed> QUALITY_VS_SPEED = new Property<QualityVsSpeed>(
+    /** Specifies whether the algorithm prioritizes quality or speed. */
+    public static final IProperty<QualityVsSpeed> QUALITY_VS_SPEED = new Property<QualityVsSpeed>(
             "de.cau.cs.kieler.kiml.ogdf.option.qualityVsSpeed", QualityVsSpeed.BEAUTIFULANDFAST);
-    /** 'new initial placement' option. */
-    private static final IProperty<Boolean> NEW_INITIAL_PLACEMENT = new Property<Boolean>(
+    /** Sets whether the initial placement is different on every algorithm call. */
+    public static final IProperty<Boolean> NEW_INITIAL_PLACEMENT = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement", false);
     
     // options for Davidson & Harel layouter
     
-    /** 'spacing' option. */
+    /** Default value for the 'spacing' option. */
     private static final float DEF_DESIRED_EDGE_LENGTH = 80.0f;
-    /** 'costs' option. */
-    private static final IProperty<Costs> COSTS = new Property<Costs>(
+    /** Defines the costs used in the Davidson-Harel algorithm. */
+    public static final IProperty<Costs> COSTS = new Property<Costs>(
             "de.cau.cs.kieler.kiml.ogdf.option.costs", Costs.STANDARD);
-    /** 'speed' option. */
-    private static final IProperty<Speed> SPEED = new Property<Speed>(
+    /** Defines the temperature and the number of iterations. */
+    public static final IProperty<Speed> SPEED = new Property<Speed>(
             "de.cau.cs.kieler.kiml.ogdf.option.speed", Speed.MEDIUM);
     
     // options for Fruchterman & Reingold layouter
     
-    /** 'fineness' option. */
-    private static final IProperty<Float> FINENESS = new Property<Float>(
+    /** The fineness option used in the Fruchterman-Reingold algorithm. */
+    public static final IProperty<Float> FINENESS = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.fineness", 0.51f);
-    /** 'noise' option. */
-    private static final IProperty<Boolean> NOISE = new Property<Boolean>(
+    /** If set to true, small random perturbations are performed. */
+    public static final IProperty<Boolean> NOISE = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.noise", true);
-    /** 'minDistCC' option. */
+    /** Default value for the 'minDistCC' option. */
     private static final float DEF_MIN_DIST_CC = 20.0f;
     
     // options for GEM layouter
     
-    /** 'desiredLength' option. */
+    /** Default value for the 'desiredLength' option. */
     private static final float DEF_DESIRED_LENGTH = 30.0f;
-    /** 'numberOfRounds' option. */
-    private static final IProperty<Integer> NUMBER_OF_ROUNDS = new Property<Integer>(
+    /** The maximal number of rounds per node. */
+    public static final IProperty<Integer> NUMBER_OF_ROUNDS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.numberOfRounds", 20000);
-    /** 'minimalTemperature' option. */
-    private static final IProperty<Float> MINIMAL_TEMPERATURE = new Property<Float>(
+    /** The minimal temperature. */
+    public static final IProperty<Float> MINIMAL_TEMPERATURE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.minimalTemperature", 0.005f);
-    /** 'initialTemperature' option. */
-    private static final IProperty<Float> INITIAL_TEMPERATURE = new Property<Float>(
+    /** The initial temperature. */
+    public static final IProperty<Float> INITIAL_TEMPERATURE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.initialTemperature", 10.0f);
-    /** 'gravitationalConstant' option. */
-    private static final IProperty<Float> GRAVITATIONAL_CONSTANT = new Property<Float>(
+    /** The gravitational constant. */
+    public static final IProperty<Float> GRAVITATIONAL_CONSTANT = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.gravitationalConstant", 0.0625f);
-    /** 'maximalDisturbance' option. */
-    private static final IProperty<Float> MAXIMAL_DISTURBANCE = new Property<Float>(
+    /** The maximal disturbance. */
+    public static final IProperty<Float> MAXIMAL_DISTURBANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance", 0.0f);
-    /** 'rotationAngle' option. */
-    private static final IProperty<Float> ROTATION_ANGLE = new Property<Float>(
+    /** The opening angle for rotations. */
+    public static final IProperty<Float> ROTATION_ANGLE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.rotationAngle", 0.33f);
-    /** 'oscillationAngle' option. */
-    private static final IProperty<Float> OSCILLATION_ANGLE = new Property<Float>(
+    /** The opening angle for oscillations (in radians). */
+    public static final IProperty<Float> OSCILLATION_ANGLE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.oscillationAngle", 0.5f);
-    /** 'rotationSensitivity' option. */
-    private static final IProperty<Float> ROTATION_SENSITIVITY = new Property<Float>(
+    /** The rotation sensitivity. */
+    public static final IProperty<Float> ROTATION_SENSITIVITY = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.rotationSensitivity", 0.01f);
-    /** 'oscillationSensitivity' option. */
-    private static final IProperty<Float> OSCILLATION_SENSITIVITY = new Property<Float>(
+    /** The oscillation sensitivity. */
+    public static final IProperty<Float> OSCILLATION_SENSITIVITY = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.oscillationSensitivity", 0.3f);
-    /** 'attractionFormula' option. */
-    private static final IProperty<AttractionFormula> ATTRACTION_FORMULA =
+    /** The used formula for attraction. */
+    public static final IProperty<AttractionFormula> ATTRACTION_FORMULA =
             new Property<AttractionFormula>("de.cau.cs.kieler.kiml.ogdf.option.attractionFormula",
                     AttractionFormula.FRUCHTERMAN_REINGOLD);
     
     // options for circular layouter
     
-    /** 'minDistCircle' option. */
+    /** Default value for the 'minDistCircle' option. */
     private static final float DEF_MIN_DIST_CIRCLE = 20.0f;
-    /** factor for 'minDistLevel' option. */
-    private static final IProperty<Float> MIN_DIST_LEVEL = new Property<Float>(
+    /** Factor for the minimal distance between father and child components. */
+    public static final IProperty<Float> MIN_DIST_LEVEL = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0f);
     /** factor for 'minDistSibling' option. */
-    private static final IProperty<Float> MIN_DIST_SIBLING = new Property<Float>(
+    public static final IProperty<Float> MIN_DIST_SIBLING = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance", 1.0f);
     
     // options for tree layouter
     
-    /** 'siblingDistance' option. */
+    /** Default value for the 'siblingDistance' option. */
     private static final float DEF_SIBLING_DISTANCE = 20.0f;
     /** factor for 'levelDistance' option. */
-    private static final IProperty<Float> LEVEL_DISTANCE = new Property<Float>(
+    public static final IProperty<Float> LEVEL_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0f);
-    /** factor for 'subtreeDistance' option. */
-    private static final IProperty<Float> SUBTREE_DISTANCE = new Property<Float>(
+    /** Factor for the horizontal spacing between adjacent subtrees. */
+    public static final IProperty<Float> SUBTREE_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance", 1.0f);
     /** factor for 'treeDistance' option. */
-    private static final IProperty<Float> TREE_DISTANCE = new Property<Float>(
+    public static final IProperty<Float> TREE_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0f);
     
     // options for radial tree layouter
     
-    /** 'levelDistance' option. */
+    /** Default value for the 'levelDistance' option. */
     private static final float DEF_TREE_SPACING = 50.0f;
     /** factor for 'ccDistance' option. */
-    private static final IProperty<Float> CC_DISTANCE = new Property<Float>(
+    public static final IProperty<Float> CC_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0f);
     
     // options for upward planarization layouter
     
-    /** 'spacing' option. */
+    /** Default value for the 'spacing' option. */
     private static final float DEF_UPL_SPACING = 16.0f;
     
     // options for fast multipole layouter
     
-    /** 'multipolePrec' option. */
-    private static final IProperty<Integer> MULTIPOLE_PREC = new Property<Integer>(
+    /** The number of coefficients for expansions. */
+    public static final IProperty<Integer> MULTIPOLE_PREC = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.multipolePrec", 4);
     
     // options for the Kamada & Kawai layouter
     
-    /** 'edgeLength' option. */
+    /** Default value for the 'edgeLength' option. */
     private static final float DEF_KK_EDGE_LENGTH = 30.0f;
     
     // options for the stress majorization layouter
     
-    /** 'upward' option. */
-    private static final IProperty<Boolean> UPWARD = new Property<Boolean>(
+    /** Add upward constraints. */
+    public static final IProperty<Boolean> UPWARD = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.upward", true);
-    /** 'radial' option. */
-    private static final IProperty<Boolean> RADIAL = new Property<Boolean>(
+    /** Add radial constraints. */
+    public static final IProperty<Boolean> RADIAL = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.radial", false);
     
     // options for dominance and visibility layouters
     
-    /** 'gridDistance' option. */
+    /** Default value for the 'gridDistance' option. */
     private static final float DEF_GRID_DISTANCE = 10.0f;
     
     // options for FPP and Schnyder layouters
     
-    /** 'separation' option. */
+    /** Default value for the 'separation' option. */
     private static final float DEF_GRID_SEPARATION = 30.0f;
     
     // options for the canonical order layouter
     
-    /** 'baseRatio' option. */
-    private static final IProperty<Float> BASE_RATIO = new Property<Float>(
+    /** Ratio of the nodes on the external face giving a limit for the number of nodes placed
+     *  on the base line. */
+    public static final IProperty<Float> BASE_RATIO = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.baseRatio", 0.33f);
     
     /**
@@ -340,16 +351,16 @@ public final class AlgorithmSetup {
             // acyclic subgraph module
             AcyclicSubgraphModule acyclicSubgraphModule = parentLayout.getProperty(ACYCLIC_SUBGRAPH);
             comm.addOption(OgdfServer.OPTION_ACYCLIC_SUBGRAPH_MODULE,
-                    acyclicSubgraphModule.toServerParam());
+                    acyclicSubgraphModule.ordinal());
             // ranking module
             RankingModule rankingModule = parentLayout.getProperty(RANKING);
-            comm.addOption(OgdfServer.OPTION_RANKING_MODULE, rankingModule.toServerParam());
+            comm.addOption(OgdfServer.OPTION_RANKING_MODULE, rankingModule.ordinal());
             // width of the ranking
             int width = parentLayout.getProperty(WIDTH);
             comm.addOption(OgdfServer.OPTION_WIDTH, width);
             // crossing minimization module
             CrossMinModule crossMinModule = parentLayout.getProperty(CROSS_MIN);
-            comm.addOption(OgdfServer.OPTION_CROSS_MIN_MODULE, crossMinModule.toServerParam());
+            comm.addOption(OgdfServer.OPTION_CROSS_MIN_MODULE, crossMinModule.ordinal());
             break;
         }
             
@@ -365,22 +376,8 @@ public final class AlgorithmSetup {
             comm.addOption(OgdfServer.OPTION_SEPARATION, separation);
             // layout direction
             Direction direction = parentLayout.getProperty(LayoutOptions.DIRECTION);
-            int layoutDirection;
-            switch (direction) {
-            case UP:
-                layoutDirection = OgdfServer.DIRECTION_SOUTH;
-                break;
-            case LEFT:
-                layoutDirection = OgdfServer.DIRECTION_WEST;
-                break;
-            case RIGHT:
-                layoutDirection = OgdfServer.DIRECTION_EAST;
-                break;
-            default:
-                layoutDirection = OgdfServer.DIRECTION_NORTH;
-                break;
-            }
-            comm.addOption(OgdfServer.OPTION_LAYOUT_DIRECTION, layoutDirection);
+            OgdfDirection ogdfDirection = OgdfDirection.fromKielerDirection(direction);
+            comm.addOption(OgdfServer.OPTION_LAYOUT_DIRECTION, ogdfDirection.ordinal());
             // preprocess cliques
             boolean preprocessCliques = parentLayout.getProperty(PREPROCESS_CLIQUES);
             comm.addOption(OgdfServer.OPTION_PREPROCESS_CLIQUES, preprocessCliques);
@@ -398,15 +395,17 @@ public final class AlgorithmSetup {
             comm.addOption(OgdfServer.OPTION_RUNS, runs);
             // edge insertion module
             EdgeInsertionModule edgeInsertionModule = parentLayout.getProperty(EDGE_INSERTION);
-            comm.addOption(OgdfServer.OPTION_EDGE_INSERTION_MODULE,
-                    edgeInsertionModule.toServerParam());
+            comm.addOption(OgdfServer.OPTION_EDGE_INSERTION_MODULE, edgeInsertionModule.ordinal());
+            // embedder module
+            EmbedderModule embedderModule = parentLayout.getProperty(EMBEDDER);
+            comm.addOption(OgdfServer.OPTION_EMBEDDER_MODULE, embedderModule.ordinal());
             break;
         }
             
         case FMMM: {
             // quality vs. speed
             QualityVsSpeed qualityVsSpeed = parentLayout.getProperty(QUALITY_VS_SPEED);
-            comm.addOption(OgdfServer.OPTION_QUALITY_VS_SPEED, qualityVsSpeed.toServerParam());
+            comm.addOption(OgdfServer.OPTION_QUALITY_VS_SPEED, qualityVsSpeed.ordinal());
             // new initial placement
             boolean newInitialPlacement = parentLayout.getProperty(NEW_INITIAL_PLACEMENT);
             comm.addOption(OgdfServer.OPTION_NEW_INITIAL_PLACEMENT, newInitialPlacement);
@@ -422,10 +421,10 @@ public final class AlgorithmSetup {
             comm.addOption(OgdfServer.OPTION_EDGE_LENGTH, desiredEdgeLength);
             // costs
             Costs costs = parentLayout.getProperty(COSTS);
-            comm.addOption(OgdfServer.OPTION_COSTS, costs.toServerParam());
+            comm.addOption(OgdfServer.OPTION_COSTS, costs.ordinal());
             // speed
             Speed speed = parentLayout.getProperty(SPEED);
-            comm.addOption(OgdfServer.OPTION_SPEED, speed.toServerParam());
+            comm.addOption(OgdfServer.OPTION_SPEED, speed.ordinal());
             break;
         }
             
@@ -492,7 +491,7 @@ public final class AlgorithmSetup {
             comm.addOption(OgdfServer.OPTION_OSCILLATION_SENSITIVITY, oscillationSensitivity);
             // attraction formula
             AttractionFormula attractionFormula = parentLayout.getProperty(ATTRACTION_FORMULA);
-            comm.addOption(OgdfServer.OPTION_ATTRACTION_FORMULA, attractionFormula.toServerParam());
+            comm.addOption(OgdfServer.OPTION_ATTRACTION_FORMULA, attractionFormula.ordinal());
             // minimal distance of connected components
             float minDistCCFactor = parentLayout.getProperty(MIN_DIST_CC);
             comm.addOption(OgdfServer.OPTION_MIN_DIST_CC, desiredLength * minDistCCFactor);
@@ -524,21 +523,8 @@ public final class AlgorithmSetup {
         case TREE: {
             // direction
             Direction direction = parentLayout.getProperty(LayoutOptions.DIRECTION);
-            int orientation;
-            switch (direction) {
-            case LEFT:
-                orientation = OgdfServer.ORIENTATION_RIGHT_TO_LEFT;
-                break;
-            case UP:
-                orientation = OgdfServer.ORIENTATION_TOP_TO_BOTTOM;
-                break;
-            case DOWN:
-                orientation = OgdfServer.ORIENTATION_BOTTOM_TO_TOP;
-                break;
-            default:
-                orientation = OgdfServer.ORIENTATION_LEFT_TO_RIGHT;
-            }
-            comm.addOption(OgdfServer.OPTION_ORIENTATION, orientation);
+            Orientation orientation = Orientation.fromDirection(direction);
+            comm.addOption(OgdfServer.OPTION_ORIENTATION, orientation.ordinal());
             // edge routing
             EdgeRouting edgeRouting = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
             boolean orthogonal = edgeRouting == EdgeRouting.ORTHOGONAL;

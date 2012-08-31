@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.ogdf.options;
 
-import net.ogdf.bin.OgdfServer;
-
 /**
  * Definition of the "quality vs. speed" option for the FMMM layout algorithm.
  * 
@@ -28,22 +26,5 @@ public enum QualityVsSpeed {
     BEAUTIFULANDFAST,
     /** worst quality, best speed. */
     NICEANDINCREDIBLESPEED;
-    
-    /**
-     * Return a server parameter for the enumeration value.
-     * 
-     * @return a server parameter
-     */
-    public int toServerParam() {
-        switch (this) {
-        case GORGEOUSANDEFFICIENT:
-            return OgdfServer.GORGEOUS_AND_EFFICIENT;
-        case NICEANDINCREDIBLESPEED:
-            return OgdfServer.NICE_AND_INCREDIBLE_SPEED;
-        case BEAUTIFULANDFAST:
-        default:
-            return OgdfServer.BEAUTIFUL_AND_FAST;
-        }
-    }
     
 }

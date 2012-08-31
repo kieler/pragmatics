@@ -167,6 +167,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.edgeInsertion">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.embedder">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -929,7 +932,7 @@
       <layoutOption
             appliesTo="parents"
             default="15"
-            description="Spacing of labels to the edges"
+            description="Spacing of edge labels to the edge"
             id="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance"
             lowerBound="0"
             name="Label Spacing"
@@ -951,7 +954,7 @@
             advanced="true"
             appliesTo="parents"
             default="4"
-            description="The number of times that the number of crossings may not decrease after a complete top-down bottom-up traversal, before a run is terminated."
+            description="The number of times that the number of crossings may not decrease after a complete top-down bottom-up traversal, before a run is terminated"
             id="de.cau.cs.kieler.kiml.ogdf.option.fails"
             lowerBound="1"
             name="Fails"
@@ -1002,7 +1005,7 @@
       <layoutOption
             appliesTo="parents"
             default="false"
-            description="Sets whether the initial placement of the choosen is different on every algorithm call"
+            description="Sets whether the initial placement is different on every algorithm call"
             id="de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement"
             name="New Initial Placement"
             type="boolean">
@@ -1011,7 +1014,7 @@
             advanced="true"
             appliesTo="parents"
             default="false"
-            description="If set to true, a preprocessing for cliques (complete subgraphs) is performed and cliques will be laid out in a special form (straight-line, not orthogonal). The preprocessing may reduce running time and improve layout quality if the input graphs contains dense subgraphs"
+            description="If set to true, a preprocessing for cliques (complete subgraphs) is performed and cliques will be laid out in a special form (straight-line, not orthogonal). The preprocessing may reduce running time and improve layout quality if the input graphs contains dense subgraphs."
             id="de.cau.cs.kieler.kiml.ogdf.option.preprocessCliques"
             name="Preprocess Cliques"
             type="boolean">
@@ -1041,7 +1044,7 @@
             advanced="true"
             appliesTo="parents"
             default="1"
-            description="Defines the costs for an association edge"
+            description="Defines the costs for association edges"
             id="de.cau.cs.kieler.kiml.ogdf.option.costAssoc"
             lowerBound="1"
             name="Cost for Association Edges"
@@ -1152,7 +1155,7 @@
             advanced="true"
             appliesTo="parents"
             default="1.571"
-            description="The opening angle for oscillations (in PI)"
+            description="The opening angle for oscillations (in radians)"
             id="de.cau.cs.kieler.kiml.ogdf.option.oscillationAngle"
             lowerBound="0.0"
             name="Oscillation Angle"
@@ -1279,7 +1282,7 @@
             advanced="true"
             appliesTo="parents"
             default="0.33"
-            description="Ratio of the nodes on the external face giving a limit for the number of nodes placed on the base line."
+            description="Ratio of the nodes on the external face giving a limit for the number of nodes placed on the base line"
             id="de.cau.cs.kieler.kiml.ogdf.option.baseRatio"
             lowerBound="0.0001"
             name="Base Ratio"
@@ -1336,6 +1339,15 @@
             description="The module for edge insertion used for planarization"
             id="de.cau.cs.kieler.kiml.ogdf.option.edgeInsertion"
             name="Edge Insertion Module"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.EmbedderModule"
+            default="SIMPLE"
+            description="The module for choosing an embedding for the graph"
+            id="de.cau.cs.kieler.kiml.ogdf.option.embedder"
+            name="Embedder Module"
             type="enum">
       </layoutOption>
    </extension>

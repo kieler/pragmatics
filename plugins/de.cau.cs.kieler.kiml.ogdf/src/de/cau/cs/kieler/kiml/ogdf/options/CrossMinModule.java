@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.ogdf.options;
 
-import net.ogdf.bin.OgdfServer;
-
 /**
  * Enumeration of available crossing minimization modules for Sugiyama layout.
  * 
@@ -32,26 +30,5 @@ public enum CrossMinModule {
     MEDIAN,
     /** sifting crossing minimization module. */
     SIFTING;
-    
-    /**
-     * Return a server parameter for the enumeration value.
-     * 
-     * @return a server parameter
-     */
-    public int toServerParam() {
-        switch (this) {
-        case GREEDY_INSERT:
-            return OgdfServer.CROSS_MIN_GREEDY_INSERT;
-        case GREEDY_SWITCH:
-            return OgdfServer.CROSS_MIN_GREEDY_SWITCH;
-        case MEDIAN:
-            return OgdfServer.CROSS_MIN_MEDIAN;
-        case SIFTING:
-            return OgdfServer.CROSS_MIN_SIFTING;
-        case BARYCENTER:
-        default:
-            return OgdfServer.CROSS_MIN_BARYCENTER;
-        }
-    }
 
 }

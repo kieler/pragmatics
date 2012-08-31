@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.ogdf.options;
 
-import net.ogdf.bin.OgdfServer;
-
 /**
  * Enumeration of available acyclic subgraph modules for Sugiyama layout.
  * 
@@ -26,20 +24,5 @@ public enum AcyclicSubgraphModule {
     DFS,
     /** greedy algorithm for the acyclic subgraph problem. */
     GREEDY;
-    
-    /**
-     * Return a server parameter for the enumeration value.
-     * 
-     * @return a server parameter
-     */
-    public int toServerParam() {
-        switch (this) {
-        case GREEDY:
-            return OgdfServer.ACYCLIC_SUBGRAPH_GREEDY;
-        case DFS:
-        default:
-            return OgdfServer.ACYCLIC_SUBGRAPH_DFS;
-        }
-    }
 
 }

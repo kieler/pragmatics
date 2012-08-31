@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.ogdf.options;
 
-import net.ogdf.bin.OgdfServer;
-
 /**
  * Enumeration of available edge insertion modules for planarization layout.
  * 
@@ -28,22 +26,5 @@ public enum EdgeInsertionModule {
     VARIABLE_EMB,
     /** multi-edge approximation edge insertion module. */
     MULTIEDGE_APPROX;
-    
-    /**
-     * Return a server parameter for the enumeration value.
-     * 
-     * @return a server parameter
-     */
-    public int toServerParam() {
-        switch (this) {
-        case VARIABLE_EMB:
-            return OgdfServer.EDGE_INSERTION_VARIABLE_EMB;
-        case MULTIEDGE_APPROX:
-            return OgdfServer.EDGE_INSERTION_MULTIEDGE_APPROX;
-        case FIXED_EMB:
-        default:
-            return OgdfServer.EDGE_INSERTION_FIXED_EMB;
-        }
-    }
 
 }
