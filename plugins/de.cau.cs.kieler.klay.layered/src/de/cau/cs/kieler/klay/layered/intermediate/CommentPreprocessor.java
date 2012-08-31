@@ -44,7 +44,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  * 
  * @author msp
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public class CommentPreprocessor extends AbstractAlgorithm implements ILayoutProcessor {
@@ -95,7 +95,7 @@ public class CommentPreprocessor extends AbstractAlgorithm implements ILayoutPro
                         }
                     }
                     for (LEdge re : revEdges) {
-                        re.reverse(true);
+                        re.reverse(layeredGraph, true);
                     }
                 }
             }

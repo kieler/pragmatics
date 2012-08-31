@@ -74,9 +74,8 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      */
     public static boolean isNoLayout(final EditPart editPart) {
         if (editPart instanceof IGraphicalEditPart) {
-            Boolean result = (Boolean) EclipseLayoutConfig.getOption(editPart,
-                    ((IGraphicalEditPart) editPart).getNotationView().getElement(),
-                    LayoutOptions.NO_LAYOUT);
+            Boolean result = (Boolean) EclipseLayoutConfig.getValue(LayoutOptions.NO_LAYOUT,
+                    editPart, ((IGraphicalEditPart) editPart).getNotationView().getElement());
             if (result != null) {
                 return result;
             }
@@ -107,11 +106,14 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             
             View notationView = focusEditPart.getNotationView();
             context.setProperty(NOTATION_VIEW, notationView);
-            // labels usually have no own domain model element, so they must not take the domain options
-            if (context.getProperty(LayoutContext.DOMAIN_MODEL) == null
-                    && !(focusEditPart instanceof LabelEditPart)) {
+            if (context.getProperty(LayoutContext.DOMAIN_MODEL) == null) {
                 EObject object = notationView.getElement();
-                context.setProperty(LayoutContext.DOMAIN_MODEL, object);
+                // put the EObject into the context only if the edit part has its own model element
+                if (focusEditPart.getParent() == null
+                        || !(focusEditPart.getParent().getModel() instanceof View)
+                        || ((View) focusEditPart.getParent().getModel()).getElement() != object) {
+                    context.setProperty(LayoutContext.DOMAIN_MODEL, object);
+                }
             }
             
             // determine the target type and container / containment edit parts
@@ -218,10 +220,14 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
         } else if (editPart instanceof ConnectionEditPart) {
             partTarget = EnumSet.of(LayoutOptionData.Target.EDGES);
             EditPart sourcePart = ((ConnectionEditPart) editPart).getSource();
+            EditPart parentPart;
             if (sourcePart instanceof AbstractBorderItemEditPart) {
-                containerEditPart.set((IGraphicalEditPart) sourcePart.getParent().getParent());
+                parentPart = sourcePart.getParent().getParent();
             } else {
-                containerEditPart.set((IGraphicalEditPart) sourcePart.getParent());
+                parentPart = sourcePart.getParent();
+            }
+            if (parentPart instanceof IGraphicalEditPart) {
+                containerEditPart.set((IGraphicalEditPart) parentPart);
             }
             
         } else if (editPart instanceof LabelEditPart) {

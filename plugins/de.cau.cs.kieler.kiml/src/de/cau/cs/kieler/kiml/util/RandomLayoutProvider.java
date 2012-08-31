@@ -27,9 +27,11 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
- * Layout provider that computes random layouts.
+ * Layout provider that computes random layouts. Can be useful to demonstrate the difference
+ * between a good layout and an extremely bad one.
  *
- * @kieler.rating 2011-01-13 proposed yellow msp
+ * @kieler.rating yellow 2012-08-10 review KI-23 by cds, sgu
+ * @kieler.design proposed by msp
  * @author msp
  */
 public class RandomLayoutProvider extends AbstractLayoutProvider {
@@ -48,7 +50,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Random Layout", 1);
-        if (parentNode.getChildren().size() == 0) {
+        if (parentNode.getChildren().isEmpty()) {
             progressMonitor.done();
             return;
         }
@@ -90,13 +92,13 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
      * 
      * @param parent the parent node of the graph
      * @param random the random number generator
-     * @param aspectRatio desired aspect ratio
+     * @param aspectRatio desired aspect ratio (must not be 0)
      * @param spacing desired object spacing
      * @param offset offset to the border
      */
     private void randomize(final KNode parent, final Random random, final float aspectRatio,
             final float spacing, final float offset) {
-        // determine width and height of the drawing
+        // determine width and height of the drawing and count the number of edges
         float nodesArea = 0.0f, maxWidth = 0.0f, maxHeight = 0.0f;
         int m = 1;
         for (KNode node : parent.getChildren()) {
@@ -109,6 +111,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
             nodesArea += width * height;
         }
         int n = parent.getChildren().size();
+        // a heuristic formula that determines an area in which nodes are randomly distributed
         float drawArea = nodesArea + 2 * spacing * spacing * m * n;
         float areaSqrt = (float) Math.sqrt(drawArea);
         float drawWidth = Math.max(areaSqrt * aspectRatio, maxWidth);
@@ -141,11 +144,14 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         KimlUtil.resizeNode(parent, totalWidth, totalHeight, false);
     }
     
+    /** the maximal number of generated bend points for each edge. */
     private static final int MAX_BENDS = 5;
+    /** a factor for the distance between source and target node, determines how much edge
+     *  bend point may deviate from the straight line between those nodes. */
     private static final float RAND_FACT = 0.2f;
     
     /**
-     * Randomize the given edge.
+     * Randomize the given edge by adding bend points in the area between the source and target node.
      * 
      * @param edge an edge
      * @param source the source node
@@ -158,10 +164,12 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
             final Random random, final float drawWidth, final float drawHeight) {
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         
+        // determine position and size of source element
         KShapeLayout sourceLayout = source.getData(KShapeLayout.class);
-        float sourceX = sourceLayout.getXpos(), sourceY = sourceLayout.getYpos(),
-                sourceWidth = sourceLayout.getWidth() / 2,
-                sourceHeight = sourceLayout.getHeight() / 2;
+        float sourceX = sourceLayout.getXpos();
+        float sourceY = sourceLayout.getYpos();
+        float sourceWidth = sourceLayout.getWidth() / 2;
+        float sourceHeight = sourceLayout.getHeight() / 2;
         if (edge.getSourcePort() != null) {
             KShapeLayout portLayout = edge.getSourcePort().getData(KShapeLayout.class);
             sourceWidth = portLayout.getWidth() / 2;
@@ -172,10 +180,12 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         sourceX += sourceWidth;
         sourceY += sourceHeight;
         
+        // determine position and size of target element
         KShapeLayout targetLayout = target.getData(KShapeLayout.class);
-        float targetX = targetLayout.getXpos(), targetY = targetLayout.getYpos(),
-                targetWidth = targetLayout.getWidth() / 2,
-                targetHeight = targetLayout.getHeight() / 2;
+        float targetX = targetLayout.getXpos();
+        float targetY = targetLayout.getYpos();
+        float targetWidth = targetLayout.getWidth() / 2;
+        float targetHeight = targetLayout.getHeight() / 2;
         if (edge.getTargetPort() != null) {
             KShapeLayout portLayout = edge.getTargetPort().getData(KShapeLayout.class);
             targetWidth = portLayout.getWidth() / 2;
@@ -186,6 +196,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         targetX += targetWidth;
         targetY += targetHeight;
         
+        // set the source point onto the border of the source element
         float sourcePX = targetX;
         if (targetX > sourceX + sourceWidth) {
             sourcePX = sourceX + sourceWidth;
@@ -205,6 +216,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         KPoint sourcePoint = edgeLayout.getSourcePoint();
         sourcePoint.setPos(sourcePX, sourcePY);
         
+        // set the target point onto the border of the target element
         float targetPX = sourceX;
         if (sourceX > targetY + targetWidth) {
             targetPX = targetY + targetWidth;
@@ -224,6 +236,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         KPoint targetPoint = edgeLayout.getTargetPoint();
         targetPoint.setPos(targetPX, targetPY);
         
+        // add a random number of bend points
         edgeLayout.getBendPoints().clear();
         int bendsNum = random.nextInt(MAX_BENDS);
         if (source == target) {
@@ -237,6 +250,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         float yincr = ydiff / (bendsNum + 1);
         float x = sourcePX, y = sourcePY;
         for (int i = 0; i < bendsNum; i++) {
+            // determine coordinates that deviate from the straight connection by a random amount
             x += xincr;
             y += yincr;
             float randx = x + random.nextFloat() * maxRand - maxRand / 2;

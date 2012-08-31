@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.components.ComponentsProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
@@ -85,7 +86,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author msp
  * @author cds
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public class LayeredLayoutProvider extends AbstractLayoutProvider {
@@ -122,17 +123,20 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void doLayout(final KNode kgraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Layered layout", 1);
+        
+        // Create the hash code counter used to create all graph elements; this is used to ensure
+        // that all hash codes are unique, but predictable independently of the object instances.
+        HashCodeCounter hashCodeCounter = new HashCodeCounter();
 
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
         IGraphImporter<KNode> graphImporter;
 
-        // Check if hierarchy handling for a compound graph is requested, choose importer
-        // accordingly
+        // Check if hierarchy handling for a compound graph is requested, choose importer accordingly
         boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
         if (isCompound) {
-            graphImporter = new CompoundKGraphImporter();
+            graphImporter = new CompoundKGraphImporter(hashCodeCounter);
         } else {
-            graphImporter = new KGraphImporter();
+            graphImporter = new KGraphImporter(hashCodeCounter);
         }
 
         LGraph layeredGraph = graphImporter.importGraph(kgraph);
@@ -152,7 +156,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
 
         // pack the components back into one graph
-        layeredGraph = componentsProcessor.pack(components);
+        layeredGraph = componentsProcessor.combine(components);
 
         // apply the layout results to the original graph
         graphImporter.applyLayout(layeredGraph);
@@ -180,8 +184,11 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     public List<LGraph> doLayoutTest(final KNode kgraph,
             final IKielerProgressMonitor progressMonitor,
             final Class<? extends ILayoutProcessor> phase) {
-        
         progressMonitor.begin("Layered layout test", 1);
+        
+        // Create the hash code counter used to create all graph elements; this is used to ensure
+        // that all hash codes are unique, but predictable independently of the object instances.
+        HashCodeCounter hashCodeCounter = new HashCodeCounter();
 
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
         IGraphImporter<KNode> graphImporter;
@@ -190,9 +197,9 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // accordingly
         boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
         if (isCompound) {
-            graphImporter = new CompoundKGraphImporter();
+            graphImporter = new CompoundKGraphImporter(hashCodeCounter);
         } else {
-            graphImporter = new KGraphImporter();
+            graphImporter = new KGraphImporter(hashCodeCounter);
         }
 
         LGraph layeredGraph = graphImporter.importGraph(kgraph);
@@ -297,7 +304,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
         
         // check which crossing minimization strategy to use
-        CrossingMinimizationStrategy crossminStrategy = parentLayout.getProperty(Properties.CROSSMIN);
+        CrossingMinimizationStrategy crossminStrategy = parentLayout.getProperty(Properties.CROSS_MIN);
         switch (crossminStrategy) {
         case INTERACTIVE:
             if (!(crossingMinimizer instanceof InteractiveCrossingMinimizer)) {
@@ -311,7 +318,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
         
         // check with node placement strategy to use
-        NodePlacementStrategy nodePlaceStrategy = parentLayout.getProperty(Properties.NODEPLACE);
+        NodePlacementStrategy nodePlaceStrategy = parentLayout.getProperty(Properties.NODE_PLACER);
         switch (nodePlaceStrategy) {
         case LINEAR_SEGMENTS:
             if (!(nodePlacer instanceof LinearSegmentsNodePlacer)) {
@@ -390,11 +397,14 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      */
     private List<ILayoutProcessor> getIntermediateProcessorList(final int slotIndex) {
         // fetch the set of layout processors configured for the given slot
-        Set<LayoutProcessorStrategy> processors = intermediateProcessingConfiguration
+        EnumSet<LayoutProcessorStrategy> processors = intermediateProcessingConfiguration
                 .getProcessors(slotIndex);
         List<ILayoutProcessor> result = new ArrayList<ILayoutProcessor>(processors.size());
 
-        // iterate through the layout processors and add them to the result list
+        // iterate through the layout processors and add them to the result list; the EnumSet
+        // guarantees that we iterate over the processors in the order in which they occur in
+        // the LayoutProcessorStrategy, thereby satisfying all of their runtime order
+        // dependencies without having to sort them in any way
         for (LayoutProcessorStrategy processor : processors) {
             // check if an instance of the given layout processor is already in the cache
             ILayoutProcessor processorImpl = intermediateLayoutProcessorCache.get(processor);

@@ -37,7 +37,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * </dl>
  * 
  * @author msp
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayoutPhase {
@@ -82,7 +82,7 @@ public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayou
         }
         // reverse the gathered edges
         for (LEdge edge : revEdges) {
-            edge.reverse(true);
+            edge.reverse(layeredGraph, true);
         }
         
         // perform an additional check for cycles - maybe we missed something
@@ -95,7 +95,7 @@ public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayou
         }
         // again, reverse the edges that were marked
         for (LEdge edge : revEdges) {
-            edge.reverse(true);
+            edge.reverse(layeredGraph, true);
         }
         
         revEdges.clear();

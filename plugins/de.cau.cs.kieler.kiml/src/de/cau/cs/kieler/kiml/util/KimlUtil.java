@@ -13,9 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.util;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
@@ -135,15 +132,20 @@ public final class KimlUtil {
      * 
      * @param port port to analyze
      * @param direction the overall layout direction
-     * @return port placement
+     * @return the port side relative to its containing node
      */
     public static PortSide calcPortSide(final KPort port, final Direction direction) {
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
-        
-        // check direction-dependent criterion
+
+        // if the node has zero size, we cannot decide anything
         KShapeLayout nodeLayout = port.getNode().getData(KShapeLayout.class);
-        float xpos = portLayout.getXpos(), ypos = portLayout.getYpos();
         float nodeWidth = nodeLayout.getWidth(), nodeHeight = nodeLayout.getHeight();
+        if (nodeWidth <= 0 && nodeHeight <= 0) {
+            return PortSide.UNDEFINED;
+        }
+
+        // check direction-dependent criterion
+        float xpos = portLayout.getXpos(), ypos = portLayout.getYpos();
         switch (direction) {
         case LEFT:
         case RIGHT:
@@ -207,66 +209,6 @@ public final class KimlUtil {
         return 0;
     }
     
-    /**
-     * Returns a sorted list of the ports of the given node. This requires port
-     * sides to be already calculated.
-     * 
-     * @param node a node
-     * @return sorted list of ports
-     */
-    public static KPort[] getSortedPorts(final KNode node) {
-        KPort[] ports = node.getPorts().toArray(new KPort[node.getPorts().size()]);
-        Arrays.sort(ports, new Comparator<KPort>() {
-            public int compare(final KPort port1, final KPort port2) {
-                KShapeLayout port1Layout = port1.getData(KShapeLayout.class);
-                PortSide port1Side = port1Layout.getProperty(LayoutOptions.PORT_SIDE);
-                KShapeLayout port2Layout = port2.getData(KShapeLayout.class);
-                PortSide port2Side = port2Layout.getProperty(LayoutOptions.PORT_SIDE);
-                int result = 0;
-                switch (port1Side) {
-                case NORTH:
-                    if (port2Side == PortSide.NORTH) {
-                        result = Float.compare(port1Layout.getXpos(), port2Layout.getXpos());
-                    } else {
-                        result = -1;
-                    }
-                    break;
-                case EAST:
-                    if (port2Side == PortSide.NORTH) {
-                        result = 1;
-                    } else if (port2Side == PortSide.EAST) {
-                        result = Float.compare(port1Layout.getYpos(), port2Layout.getYpos());
-                    } else {
-                        result = -1;
-                    }
-                    break;
-                case SOUTH:
-                    if (port2Side == PortSide.NORTH || port2Side == PortSide.EAST) {
-                        result = 1;
-                    } else if (port2Side == PortSide.SOUTH) {
-                        result = Float.compare(port2Layout.getXpos(), port1Layout.getXpos());
-                    } else {
-                        result = -1;
-                    }
-                    break;
-                case WEST:
-                    if (port2Side == PortSide.NORTH || port2Side == PortSide.EAST
-                            || port2Side == PortSide.SOUTH) {
-                        result = 1;
-                    } else if (port2Side == PortSide.WEST) {
-                        result = Float.compare(port2Layout.getYpos(), port1Layout.getYpos());
-                    } else {
-                        result = -1;
-                    }
-                    break;
-                }
-                return result;
-            }
-        });
-        
-        return ports;
-    }
-
     /** minimal size of a node. */
     private static final float MIN_NODE_SIZE = 20.0f;
 

@@ -24,14 +24,11 @@ import de.cau.cs.kieler.core.math.KVector;
  * KIELER projects.
  * 
  * @author wah
- * 
  */
 public class KVectorTest {
 
     /**
-     * 
      * Test equals from KVector class.
-     * 
      */
     @Test
     public void testEquals() {
@@ -53,9 +50,7 @@ public class KVectorTest {
     }
 
     /**
-     * 
      * Test add and sub from KVector class.
-     * 
      */
     @Test
     public void testAddAndSub() {
@@ -71,9 +66,7 @@ public class KVectorTest {
     }
 
     /**
-     * 
      * Test scale from KVector class.
-     * 
      */
     @Test
     public void testScale() {
@@ -92,9 +85,7 @@ public class KVectorTest {
     }
 
     /**
-     * 
      * Test translate from KVector class.
-     * 
      */
     @Test
     public void testTranslate() {
@@ -106,65 +97,67 @@ public class KVectorTest {
     }
 
     /**
-     * 
      * Test normalize from KVector class.
-     * 
-     */
-    // @Test
-    // public void testNormalize() {
-    // // init a KVectors
-    // KVector v = new KVector(1, 2);
-    // KVector n = new KVector(1, 2).normalize();
-    // assertTrue(v.equals(n));
-    //
-    // }
-
-    /**
-     * 
-     * Test toDegrees from KVector class.
-     * 
      */
     @Test
-    public void testToDegrees() {
-        // init a KVector
-        // test the 45Degree
-        KVector v = new KVector(10, 10);
-        assertEquals(v.toDegrees(), 45, 0.00001);
-        // test the 0 Degree
-        v = new KVector(0, 50);
-        assertEquals(v.toDegrees(), 0, 0.00001);
-        // test the 90 Degree
-        v = new KVector(50, 0);
-        assertEquals(v.toDegrees(), 90, 0.00001);
-        // test the 180 Degree
-        v = new KVector(0, -50);
-        assertEquals(v.toDegrees(), 180, 0.00001);
-        // test the 270 Degree
-        v = new KVector(-50, 0);
-        assertEquals(v.toDegrees(), 270, 0.00001);
-
+    public void testNormalize() {
+        // init a KVectors
+        KVector v = new KVector(2, 0);
+        KVector n = new KVector(1, 0);
+        assertTrue(n.equals(v.normalize()));
+        v = new KVector(0, 2);
+        n = new KVector(0, 1);
+        assertTrue(n.equals(v.normalize()));
     }
 
     /**
-     * 
+     * Test toDegrees from KVector class.
+     */
+    @Test
+    public void testToDegrees() {
+        KVector v;
+        // test 0 degrees
+        v = new KVector(10, 0);
+        assertEquals(0, v.toDegrees(), 0.00001);
+        // test 45 degrees
+        v = new KVector(10, 10);
+        assertEquals(45, v.toDegrees(), 0.00001);
+        // test 90 degrees
+        v = new KVector(0, 10);
+        assertEquals(90, v.toDegrees(), 0.00001);
+        // test 135 degrees
+        v = new KVector(-10, 10);
+        assertEquals(135, v.toDegrees(), 0.00001);
+        // test 180 degrees
+        v = new KVector(-10, 0);
+        assertEquals(180, v.toDegrees(), 0.00001);
+        // test 225 degrees
+        v = new KVector(-10, -10);
+        assertEquals(225, v.toDegrees(), 0.00001);
+        // test 270 degrees
+        v = new KVector(0, -10);
+        assertEquals(270, v.toDegrees(), 0.00001);
+        // test 315 degrees
+        v = new KVector(10, -10);
+        assertEquals(315, v.toDegrees(), 0.00001);
+    }
+
+    /**
      * Test distance from KVector class.
-     * 
      */
     @Test
     public void testDistance() {
         // init 2 KVectors
         KVector v1 = new KVector(5, 50);
         KVector v2 = new KVector(5, 50);
-        assertEquals(v1.distance(v2), 0, 0);
+        assertEquals(0, v1.distance(v2), 0);
         v1 = new KVector(0, 20);
         v2 = new KVector(0, 50);
-        assertEquals(v1.distance(v2), 30, 0);
+        assertEquals(30, v1.distance(v2), 0);
     }
 
     /**
-     * 
      * Test parse from KVector class.
-     * 
      */
     @Test
     public void testParse() {
@@ -185,16 +178,12 @@ public class KVectorTest {
     }
 
     /**
-     * 
      * Test applyBounds from KVector class.
-     * 
      */
     @Test
     public void testApplyBounds() {
         /*
-         * 
          * test if vt.x > lowx and vt.y > lowy (the result must be the same vt)
-         * 
          */
         // init KVector v
         KVector v = new KVector(30, 30);
@@ -207,10 +196,9 @@ public class KVectorTest {
         // test if vt.x > lowx (the result must be the same vt)
         vt.applyBounds(v_lower_bound.x, v_lower_bound.y, v_upper_bound.x, v_upper_bound.y);
         assertTrue(vt.equals(v));
+        
         /*
-         * 
          * test if vt.x < lowx and vt.y < lowy (the result must be the vt(lowx,lowy))
-         * 
          */
         // reinitialize vt
         vt = v;
@@ -221,10 +209,9 @@ public class KVectorTest {
         // test if vt.x < lowx and vt.y < lowy (the result must be the vt(lowx,lowy))
         vt.applyBounds(v_lower_bound.x, v_lower_bound.y, v_upper_bound.x, v_upper_bound.y);
         assertTrue(vt.equals(v_lower_bound));
+        
         /*
-         * 
          * test if vt.x > highx and vt.y > highy (the result must be the vt(highx,highy))
-         * 
          */
         // reinitialize vt
         vt = v;

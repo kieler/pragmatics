@@ -1,14 +1,16 @@
 #!/bin/bash
 
 # Backup script for the KWebS server
-# Version 0.00
+# Version 0.01
 #
 # Author swe
-# Last edit 10.08.2011
-
-# !!!!!
+# Last edit 03.08.2012
+#
 # Please remember making this script executable by
 # doing chmod u+x kwebs_backup.sh
+
+# !!!!!
+# This script will remove everything contained in the directory ../kwebs-backup
 # !!!!!
 
 KWEBS_BACKUP=../kwebs-backup
@@ -25,12 +27,11 @@ fi
 # Backup user server configuration file
 if [ -f kwebs.user ];
 then
-    mv kwebs.user ../kwebs-backup
+    cp -v kwebs.user $KWEBS_BACKUP/
 fi
 
 # Backup server configuration and content folder
 if [ -d server ];
 then
-    mkdir -p $KWEBS_BACKUP/server
-    mv server/* $KWEBS_BACKUP/server
+    cp -v -r server $KWEBS_BACKUP/
 fi

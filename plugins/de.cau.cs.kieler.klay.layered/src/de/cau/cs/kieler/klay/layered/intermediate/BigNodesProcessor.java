@@ -43,7 +43,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * FIXME this doesn't work yet, since a postprocessor is needed that reverts the changes made here
  * @author pdo
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  */
 public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -160,18 +160,18 @@ public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProce
                 // expand node by one dummy node per iteration
                 for (int d = 1; d < width[node.id]; d++) {
                     // create new dummy node
-                    LNode dummy = new LNode();
+                    LNode dummy = new LNode(layeredGraph);
                     dummy.id = dummyID++;
                     // set size
                     dummy.getSize().y = node.getSize().y;
                     dummy.getSize().x = minWidth;
                     // add ports to connect it with the previous node
-                    LPort outPort = new LPort();
-                    LPort inPort = new LPort();
+                    LPort outPort = new LPort(layeredGraph);
+                    LPort inPort = new LPort(layeredGraph);
                     outPort.setNode((d == 1) ? node : dummyNodes.getLast());
                     inPort.setNode(dummy);
                     // add edge to connect it with the previous node
-                    LEdge edge = new LEdge();
+                    LEdge edge = new LEdge(layeredGraph);
                     edge.setSource(outPort);
                     edge.setTarget(inPort);
                     // fixation edges should be handled as a straight line

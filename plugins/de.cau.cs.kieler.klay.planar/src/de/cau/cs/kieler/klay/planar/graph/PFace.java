@@ -250,9 +250,9 @@ public class PFace extends PGraphElement {
 
         // run counter clockwise
         List<PEdge> path = Lists.newLinkedList();
-        PNode currentNode = startWithCorner.getFirst();
+        PNode startNode = startWithCorner.getFirst();
+        PNode currentNode = startNode;
         PEdge currentEdge = startEdge;
-        path.add(currentEdge);
         boolean isRect = true;
 
         OrthogonalAngle currentAngle = null;
@@ -271,30 +271,23 @@ public class PFace extends PGraphElement {
                 // run with both variants along the face side check if the ccw one has longer path
                 // if not wantsCCW is false
             }
-            Pair<PEdge, OrthogonalAngle> pair = null;
-            if (wantsCCW) {
-                pair = nextCCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
-                        true);
-                if (path.contains(pair.getFirst())) {
-                    pair = nextCWEdgeWithAngle(currentNode, currentEdge,
-                            ortho.getAngles(currentNode), true);
-                }
-            } else {
-                pair = nextCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
-                        true);
-                if (path.contains(pair.getFirst())) {
-                    pair = nextCCWEdgeWithAngle(currentNode, currentEdge,
-                            ortho.getAngles(currentNode), true);
-                }
+            Pair<PEdge, OrthogonalAngle> pair = nextPathElement(ortho, wantsCCW, path, currentEdge,
+                    currentNode);
+            if (!wantsCCW) {
                 wantsCCW = true;
             }
-
+            path.add(pair.getFirst());
             currentEdge = pair.getFirst();
-            path.add(currentEdge);
             checkAngle = pair.getSecond();
+            // If a full angles is on the path, we can immediately stop the calculation
+            // the face is not in rect shape.
+            if (checkAngle == OrthogonalAngle.FULL) {
+                return false;
+            }
+
             currentNode = currentEdge.getOppositeNode(currentNode);
             if (currentAngle != null) {
-                // if a angle between two face edges change, the face is not in rectangular shape.
+                // if an angle between two face edges change, the face is not in rectangular shape.
                 if (checkAngle != OrthogonalAngle.STRAIGHT && checkAngle != currentAngle) {
                     isRect = false;
                     break;
@@ -305,14 +298,14 @@ public class PFace extends PGraphElement {
                 }
             }
 
-        } while (startEdge != currentEdge);
+        } while (startEdge != currentEdge || startNode != currentNode);
 
         return isRect;
     }
 
     /**
-     * Checks for a wanted direction if a startEdge with successor startNode is in the wanted
-     * direction.
+     * Checks for a wanted direction (ccw or cw ) whether a startEdge with successor startNode is in
+     * the wanted direction.
      * 
      * @param startNode
      *            the checked node, the node shell be successor of the edge in the direction.
@@ -327,56 +320,72 @@ public class PFace extends PGraphElement {
     public Pair<Integer, Integer> calcPathWithDirection(final PNode startNode,
             final PEdge startEdge, final OrthogonalRepresentation ortho, final boolean wantsCCW) {
 
+        // visited elements of the path.
         List<PEdge> path = Lists.newLinkedList();
         PEdge currentEdge = startEdge;
         PNode currentNode = startNode;
         Pair<PEdge, OrthogonalAngle> pair;
         int direction = 0;
         do {
-            if (wantsCCW) {
-                pair = nextCCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
-                        true);
-                if (path.contains(pair.getFirst())) {
-                    pair = nextCWEdgeWithAngle(currentNode, currentEdge,
-                            ortho.getAngles(currentNode), true);
-                }
-            } else {
-                pair = nextCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
-                        false);
-                if (path.contains(pair.getFirst())) {
-                    pair = nextCCWEdgeWithAngle(currentNode, currentEdge,
-                            ortho.getAngles(currentNode), true);
-                }
-            }
-
+            pair = nextPathElement(ortho, wantsCCW, path, currentEdge, currentNode);
+            path.add(pair.getFirst());
             currentEdge = pair.getFirst();
-            path.add(currentEdge);
             currentNode = currentEdge.getOppositeNode(currentNode);
             switch (pair.getSecond()) {
             case LEFT:
-                if (wantsCCW) {
-                    direction--;
-                } else {
-                    direction++;
-                }
+                direction--;
                 break;
-            case STRAIGHT: // nothing to do
+            case STRAIGHT:
+                // nothing to do
                 break;
             case RIGHT:
-                if (wantsCCW) {
-                    direction++;
-                } else {
-                    direction--;
-                }
+                direction++;
                 break;
             case FULL:
-                throw new InconsistentGraphModelException(
-                        "PFace, isInDirection: full angles aren't supported yet!");
+                direction += 2;
+                break;
             }
-        } while (startEdge != currentEdge);
-
+        } while (startNode != currentNode || startEdge != currentEdge);
         return new Pair<Integer, Integer>(Integer.valueOf(path.size()), Integer.valueOf(direction));
+    }
 
+    /**
+     * Gets the next edge with angle on the path around the face.
+     * 
+     * @param ortho
+     *            orthogonal representation
+     * @param wantsCCW
+     *            determines the order, true for ccw, false for cw.
+     * @param path
+     *            the currentPath with visited elements.
+     * @param currentEdge
+     *            the current edge in the path.
+     * @param currentNode
+     *            the current node in the path.
+     * @return a edge with its orthogonal angle to the previous edge.
+     */
+    private Pair<PEdge, OrthogonalAngle> nextPathElement(final OrthogonalRepresentation ortho,
+            final boolean wantsCCW, final List<PEdge> path, final PEdge currentEdge,
+            final PNode currentNode) {
+
+        Pair<PEdge, OrthogonalAngle> pair;
+        if (wantsCCW) {
+            pair = nextCCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
+                    true);
+            if (isCutvertex(currentNode) && path.contains(pair.getFirst())) {
+                pair = nextCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
+                        true);
+            }
+
+        } else {
+            pair = nextCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
+                    false);
+            if (isCutvertex(currentNode) && path.contains(pair.getFirst())) {
+                pair = nextCCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
+                        true);
+            }
+        }
+        return pair;
     }
 
     /**
@@ -387,7 +396,8 @@ public class PFace extends PGraphElement {
      * @param ortho
      *            {@link OrthogonalRepresentation}
      * @param wantsCCW
-     * @return
+     *            checks in ccw direction
+     * @return the path length
      */
     public int calcPathLength(final PNode startNode, final PEdge startEdge,
             final OrthogonalRepresentation ortho, final boolean wantsCCW) {
@@ -400,14 +410,14 @@ public class PFace extends PGraphElement {
             if (wantsCCW) {
                 pair = nextCCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
                         true);
-                if (path.contains(pair.getFirst())) {
+                if (isCutvertex(currentNode) && path.contains(pair.getFirst())) {
                     pair = nextCWEdgeWithAngle(currentNode, currentEdge,
                             ortho.getAngles(currentNode), true);
                 }
             } else {
                 pair = nextCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
                         false);
-                if (path.contains(pair.getFirst())) {
+                if (isCutvertex(currentNode) && path.contains(pair.getFirst())) {
                     pair = nextCCWEdgeWithAngle(currentNode, currentEdge,
                             ortho.getAngles(currentNode), true);
                 }
@@ -417,31 +427,44 @@ public class PFace extends PGraphElement {
             path.add(currentEdge);
             currentNode = currentEdge.getOppositeNode(currentNode);
 
-        } while (startEdge != currentEdge);
+        } while (startEdge != currentEdge || startNode != currentNode);
 
         return path.size();
     }
 
     /**
+     * A cutvertex is a vertex that divides a graph into two components if it is removed. Here it is
+     * identified if it contains more than two adjacent edge that are adjacent to this face.
+     * 
      * @param currentNode
-     * @return
+     *            possibly a cutvertex.
+     * @return true if the node is adjacent to more than two nodes, otherwise false.
      */
     public boolean isCutvertex(final PNode currentNode) {
-        // at first handle exact 4 node edges.
+        // TODO an other name, this is not a cutvertex, even more a vertex with more than two
+        // adjacent
+        // edges.
+        // At first handle exact 4 node edges.
         if (currentNode.getAdjacentEdgeCount() != 4) {
             return false;
         }
+
         int count = 0;
         for (PEdge edge : currentNode.adjacentEdges()) {
             if (isAdjacent(edge)) {
                 count++;
             }
         }
-        // TODO cutvertex can also consists of 3 edges, then with a cut edge.
-        return count == 4;
 
+        //cutvertex can also consists of 3 edges, then with a cut edge.
+        return count > 2;
     }
 
+    /**
+     * Checks all adjacent nodes of the face if one of them is a cutvertex.
+     * 
+     * @return true if it is a cutvertex, false otherwise.
+     */
     public boolean containsCutvertex() {
         for (PNode node : this.adjacentNodes()) {
             if (isCutvertex(node)) {
@@ -472,9 +495,14 @@ public class PFace extends PGraphElement {
             final PEdge startEdge, final List<Pair<PEdge, OrthogonalAngle>> angles,
             final boolean wantsCCWAngle) {
 
+        if (angles.size() == 1) {
+            return angles.get(0);
+        }
+
         int directionCounter = 0;
         int startIndex = 0;
         int targetIndex = 0;
+
         // get start edge index.
         for (int i = 0; i < angles.size(); i++) {
             if (angles.get(i).getFirst() == startEdge) {
@@ -528,6 +556,10 @@ public class PFace extends PGraphElement {
             final PEdge startEdge, final List<Pair<PEdge, OrthogonalAngle>> angles,
             final boolean wantsCCWAngle) {
 
+        if (angles.size() == 1) {
+            return angles.get(0);
+        }
+
         int directionCounter = 0;
         int startIndex = 0;
         int targetIndex = 0;
@@ -554,7 +586,7 @@ public class PFace extends PGraphElement {
             directionCounter += angles.get(currentIndex).getSecond().ordinal() + 1;
             currentIndex = (currentIndex + 1) % angles.size();
         }
-        
+
         if (!wantsCCWAngle) {
             directionCounter = 4 - directionCounter;
         }

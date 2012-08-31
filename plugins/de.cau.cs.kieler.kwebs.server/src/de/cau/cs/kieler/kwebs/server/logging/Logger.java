@@ -80,11 +80,11 @@ public final class Logger {
         /** Debug mode. Only in this mode debugging messages are logged. */
         DEBUG
     }
-    
+
     /** The current run mode of the logger. */
     private Mode runMode
         = Mode.NORMAL;
-    
+
     /** Map of qualified class or package name to log level. */
     private static Map<String, Severity> logLevel
         = new HashMap<String, Severity>();
@@ -150,7 +150,7 @@ public final class Logger {
      * Returns the default log level which is used to determine if a message
      * should be logged when no log level specification was made for the
      * class or package the log method caller is in.
-     * 
+     *
      * @return the default log level
      */
     public static Severity getDefaultLogLevel() {
@@ -161,33 +161,33 @@ public final class Logger {
      * Sets the default log level which is used to determine if a message
      * should be logged when no log level specification was made for the
      * class or package the log method caller is in.
-     * 
+     *
      * @param thedafaultLogLevel
      *            the new default log level
      */
     public static void setDefaultLogLevel(final Severity thedafaultLogLevel) {
         defaultLogLevel = thedafaultLogLevel;
     }
-    
+
     /**
      * Returns the run mode of this logger.
-     * 
+     *
      * @return the run mode
      */
     public static Mode getRunMode() {
-        return INSTANCE.runMode;        
+        return INSTANCE.runMode;
     }
-    
+
     /**
      * Sets the run mode of this logger.
-     * 
+     *
      * @param therunMode
      *            the new run mode
      */
     public static void setRunMode(final Mode therunMode) {
-        INSTANCE.runMode = therunMode;        
+        INSTANCE.runMode = therunMode;
     }
-    
+
     /**
      * Log a message with {@code Severity.INFO}.
      *
@@ -326,7 +326,7 @@ public final class Logger {
             throwable
         );
     }
-    
+
     /** The used date formatter. */
     private static final SimpleDateFormat DATE_FORMATTER
         = new SimpleDateFormat("yyyy-dd-MM HH:mm:ss Z");
@@ -361,7 +361,7 @@ public final class Logger {
         }
         Severity severity = theseverity;
         if (severity == null) {
-            // Use UNDEFINED log level if the caller did not specify a log level. 
+            // Use UNDEFINED log level if the caller did not specify a log level.
             severity = Severity.UNDEFINED;
         }
         // Get the defined level from which on the logging events of the calling
@@ -372,7 +372,7 @@ public final class Logger {
         if (filterLevel == null) {
             filterLevel = defaultLogLevel;
         }
-        if (severity != Severity.ALWAYS 
+        if (severity != Severity.ALWAYS
             && (severity != Severity.DEBUG || INSTANCE.runMode != Mode.DEBUG)
             && severity.compareTo(filterLevel) < 0) {
             return;
@@ -447,7 +447,7 @@ public final class Logger {
 
     /**
      * Removes a listener.
-     * 
+     *
      * @param listener
      *            the listener to be removed
      */
@@ -459,7 +459,7 @@ public final class Logger {
 
     /**
      * Removes the first listener of the specified class.
-     * 
+     *
      * @param listener
      *            the class of the listener to be removed
      */
@@ -649,6 +649,71 @@ public final class Logger {
             }
         }
 
+    }
+
+    // Helper methods for xtend where access to static enums is currently not possible
+
+    /**
+     * Returns the severity value UNDEFINED.
+     *
+     * @return the severity value UNDEFINED
+     */
+    public static Severity getSeverity_UNDEFINED() {
+        return Severity.UNDEFINED;
+    }
+
+    /**
+     * Returns the severity value ALWAYS.
+     *
+     * @return the severity value ALWAYS
+     */
+    public static Severity getSeverity_ALWAYS() {
+        return Severity.ALWAYS;
+    }
+
+    /**
+     * Returns the severity value DEBUG.
+     *
+     * @return the severity value DEBUG
+     */
+    public static Severity getSeverity_DEBUG() {
+        return Severity.DEBUG;
+    }
+
+    /**
+     * Returns the severity value INFO.
+     *
+     * @return the severity value INFO
+     */
+    public static Severity getSeverity_INFO() {
+        return Severity.INFO;
+    }
+
+    /**
+     * Returns the severity value WARNING.
+     *
+     * @return the severity value WARNING
+     */
+    public static Severity getSeverity_WARNING() {
+        return Severity.WARNING;
+    }
+
+    /**
+     * Returns the severity value FAILURE.
+     *
+     * @return the severity value FAILURE
+     */
+    public static Severity getSeverity_FAILURE() {
+        return Severity.FAILURE;
+    }
+
+    /**
+     * Returns the severity value CRITICAL.
+     *
+     * @return the severity value CRITICAL
+     */
+    public static Severity getSeverity_CRITICAL() {
+        return Severity.CRITICAL;
     }
 
 }

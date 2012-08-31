@@ -147,10 +147,13 @@ public abstract class AbstractServerConfigDialog extends Dialog {
         
         Group trustStoreGroup = new Group(parent, SWT.NULL);
         trustStoreGroup.setText("HTTPS Authentication");
+
+        //CHECKSTYLEOFF MagicNumber - Superfluous while configuring UI components
         trustStoreGroup.setLayout(new GridLayout(3, false));
         gd = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
         gd.verticalIndent = 10;
         trustStoreGroup.setLayoutData(gd);
+        //CHECKSTYLEON MagicNumber
         
         label = new Label(trustStoreGroup, SWT.NULL);
         label.setText("Trust Store:");
@@ -192,12 +195,14 @@ public abstract class AbstractServerConfigDialog extends Dialog {
 
         // Only enabled on HTTPS connections
         truststorePass.setEnabled(false);
-        
+
+        //CHECKSTYLEOFF MagicNumber - Superfluous while configuring UI components
         checkButton = new Button(parent, SWT.NONE);
         checkButton.setText("Check Connection");
         gd = new GridData(SWT.RIGHT, SWT.BEGINNING, true, false, 2, 1);
         gd.verticalIndent = 10;
         checkButton.setLayoutData(gd);
+        //CHECKSTYLEON MagicNumber
 
         checkButton.addSelectionListener(
             new SelectionAdapter() {
@@ -357,8 +362,11 @@ public abstract class AbstractServerConfigDialog extends Dialog {
         if (tmp != null) {
             try {
                 address = new URI(tmp);
+            //CHECKSTYLEOFF EmptyBlock
             } catch (Exception e) {
+                // Return null on invalid address
             }
+            //CHECKSTYLEON EmptyBlock
         }
         return address;
     }

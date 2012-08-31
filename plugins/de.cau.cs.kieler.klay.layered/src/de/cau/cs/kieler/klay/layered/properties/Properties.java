@@ -332,10 +332,6 @@ public final class Properties {
     public static final Property<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
 
-    /** defines the minimal angle a short edge may have. */
-    public static final IProperty<Float> MIN_EDGE_ANGLE = new Property<Float>(
-            "de.cau.cs.kieler.klay.layered.minimalAngle", 0.0f);
-
     /** whether nodes shall be distributed during layer assignment. */
     public static final IProperty<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.distributeNodes", false);
@@ -350,13 +346,14 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.nodeLayering", LayeringStrategy.NETWORK_SIMPLEX);
 
     /** property to choose a crossing minimization strategy. */
-    public static final IProperty<CrossingMinimizationStrategy> CROSSMIN 
+    public static final IProperty<CrossingMinimizationStrategy> CROSS_MIN 
         = new Property<CrossingMinimizationStrategy>(
             "de.cau.cs.kieler.klay.layered.crossMin", CrossingMinimizationStrategy.LAYER_SWEEP);
 
     /** property to choose a node placement strategy. */
-    public static final IProperty<NodePlacementStrategy> NODEPLACE = new Property<NodePlacementStrategy>(
-            "de.cau.cs.kieler.klay.layered.nodePlace", NodePlacementStrategy.LINEAR_SEGMENTS);
+    public static final IProperty<NodePlacementStrategy> NODE_PLACER
+            = new Property<NodePlacementStrategy>("de.cau.cs.kieler.klay.layered.nodePlace",
+                    NodePlacementStrategy.BRANDES_KOEPF);
 
     /** property to choose a node placement strategy. */
     public static final IProperty<Boolean> EDGE_BENDS = new Property<Boolean>(

@@ -24,9 +24,9 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
+import de.cau.cs.kieler.core.ui.KielerModelException;
 
 /**
  * Effect that realizes the focusing of element selected in KLighD views in related tree viewers.<br>

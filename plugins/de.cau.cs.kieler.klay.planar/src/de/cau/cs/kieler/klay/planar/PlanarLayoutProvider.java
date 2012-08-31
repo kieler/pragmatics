@@ -27,7 +27,7 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
-import de.cau.cs.kieler.klay.planar.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.planar.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.planar.p1planar.BoyerMyrvoldPlanarSubgraphBuilder;
 import de.cau.cs.kieler.klay.planar.p1planar.EdgeInsertionPlanarization;
 import de.cau.cs.kieler.klay.planar.p1planar.LRPlanarSubgraphBuilder;
@@ -63,10 +63,12 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
 
     /** connected components processor. */
     private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
-    /** intermediate layout processor strategy. */
-    private IntermediateProcessingStrategy intermediateProcessingStrategy = new IntermediateProcessingStrategy();
+
+    /** intermediate layout processor configuration. */
+    private IntermediateProcessingConfiguration intermediateProcessingConfiguration = new IntermediateProcessingConfiguration();
+
     /** collection of instantiated intermediate modules. */
-    private Map<IntermediateLayoutProcessor, ILayoutProcessor> intermediateLayoutProcessorCache = new HashMap<IntermediateLayoutProcessor, ILayoutProcessor>();
+    private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache = new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
 
     /** list of layout processors that compose the current algorithm. */
     private List<ILayoutProcessor> algorithm = new LinkedList<ILayoutProcessor>();
@@ -79,7 +81,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
      *            properties of the graph.
      * @return intermediate processing strategy. May be {@code null}.
      */
-    private IntermediateProcessingStrategy getIntermediateProcessingStrategy(final PGraph graph) {
+    private IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph graph) {
         return null;
     }
 
@@ -94,12 +96,12 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
      */
     private List<ILayoutProcessor> getIntermediateProcessorList(final int slotIndex) {
         // fetch the set of layout processors configured for the given slot
-        Set<IntermediateLayoutProcessor> processors = intermediateProcessingStrategy
+        Set<LayoutProcessorStrategy> processors = intermediateProcessingConfiguration
                 .getProcessors(slotIndex);
         List<ILayoutProcessor> result = new ArrayList<ILayoutProcessor>(processors.size());
 
         // iterate through the layout processors and add them to the result list
-        for (IntermediateLayoutProcessor processor : processors) {
+        for (LayoutProcessorStrategy processor : processors) {
             // check if an instance of the given layout processor is already in the cache
             ILayoutProcessor processorImpl = intermediateLayoutProcessorCache.get(processor);
 
@@ -162,8 +164,8 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         }
 
         // update intermediate processor strategy
-        intermediateProcessingStrategy.clear();
-        intermediateProcessingStrategy
+        intermediateProcessingConfiguration.clear();
+        intermediateProcessingConfiguration
                 .addAll(subgraphBuilder.getIntermediateProcessingStrategy(graph))
                 .addAll(edgeInserter.getIntermediateProcessingStrategy(graph))
                 .addAll(orthogonalizer.getIntermediateProcessingStrategy(graph))
@@ -173,19 +175,19 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         // construct the list of processors that make up the algorithm
         algorithm.clear();
         algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_1));
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
         algorithm.add(subgraphBuilder);
         algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_2));
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
         algorithm.add(edgeInserter);
         algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_3));
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
         algorithm.add(orthogonalizer);
         algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_4));
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
         algorithm.add(compactor);
         algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.AFTER_PHASE_4));
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.AFTER_PHASE_4));
     }
 
     // ======================================= Layout ===============================

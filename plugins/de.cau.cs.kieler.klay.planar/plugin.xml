@@ -19,6 +19,10 @@
                default="40"
                option="de.cau.cs.kieler.spacing">
          </knownOption>
+         <knownOption
+               default="20"
+               option="de.cau.cs.kieler.borderSpacing">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"

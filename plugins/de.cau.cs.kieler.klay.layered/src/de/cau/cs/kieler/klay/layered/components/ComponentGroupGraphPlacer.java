@@ -34,10 +34,10 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * the top-left to the bottom-right corner.</p>
  * 
  * @author cds
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-class ComponentGroupGraphPlacer extends GraphPlacer {
+class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Variables
@@ -55,17 +55,18 @@ class ComponentGroupGraphPlacer extends GraphPlacer {
      * {@inheritDoc}
      */
     public LGraph combine(final List<LGraph> components) {
-        // Create a new layered graph
-        LGraph result = new LGraph();
-        
         // Check if there are any components to be placed
         if (components.isEmpty()) {
-            return result;
+            return new LGraph();
         }
         
+        // Create a new layered graph
+        LGraph firstComponent = components.get(0);
+        LGraph result = new LGraph(firstComponent);
+        
         // Set the graph properties
-        result.copyProperties(components.get(0));
-        result.getInsets().copy(components.get(0).getInsets());
+        result.copyProperties(firstComponent);
+        result.getInsets().copy(firstComponent.getInsets());
         
         // Construct component groups
         for (LGraph component : components) {

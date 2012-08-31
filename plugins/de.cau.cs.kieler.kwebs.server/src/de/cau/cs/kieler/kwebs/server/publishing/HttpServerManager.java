@@ -163,7 +163,7 @@ class HttpServerManager extends AbstractServerManager {
         }
         server = HttpServer.create(
             new InetSocketAddress(host, port),
-            Integer.parseInt(config.getConfigProperty(Configuration.SERVER_BACKLOG))
+            Integer.parseInt(Configuration.INSTANCE.getConfigProperty(Configuration.SERVER_BACKLOG))
         );
     }
 

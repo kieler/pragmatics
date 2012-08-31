@@ -31,6 +31,7 @@ import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
 import de.cau.cs.kieler.klay.planar.p1planar.PlanarityTestStrategy;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
+import de.cau.cs.kieler.klay.planar.p3compact.RectShapeEdgeProperties;
 
 /**
  * Container for property definitions.
@@ -82,6 +83,7 @@ public final class Properties {
     public static final IProperty<EdgeType> EDGE_TYPE = new Property<EdgeType>("edgeType",
             EdgeType.NONE);
 
+    /** Relative length of an edge. */
     public static final IProperty<Integer> RELATIVE_LENGTH = new Property<Integer>(
             "relativeEdgeLength");
 
@@ -98,8 +100,8 @@ public final class Properties {
     // =========================== USER INTERFACE OPTIONS =================================
 
     /** property for planar testing algorithm. */
-    public static final IProperty<PlanarityTestStrategy> PLANAR_TESTING_ALGORITHM = new Property<PlanarityTestStrategy>(
-            "de.cau.cs.kieler.klay.planar.planarityTest",
+    public static final IProperty<PlanarityTestStrategy> PLANAR_TESTING_ALGORITHM 
+        = new Property<PlanarityTestStrategy>("de.cau.cs.kieler.klay.planar.planarityTest",
             PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM);
 
     /** the aspect ratio for packing connected components. */
@@ -118,41 +120,26 @@ public final class Properties {
             DEF_SPACING);
 
     /** A property that indicates the orthogonal representation of a graph. */
-    public static final IProperty<OrthogonalRepresentation> ORTHO_REPRESENTATION = new Property<OrthogonalRepresentation>(
-            "de.cau.cs.kieler.klay.planar.orthogonal.representation",
+    public static final IProperty<OrthogonalRepresentation> ORTHO_REPRESENTATION 
+        = new Property<OrthogonalRepresentation>("de.cau.cs.kieler.klay.planar.orthogonal.representation",
             new OrthogonalRepresentation());
 
     /** A property that indicates the grid representation of a graph. */
-    public static final IProperty<GridRepresentation> GRID_REPRESENTATION = new Property<GridRepresentation>(
-            "de.cau.cs.kieler.klay.planar.grid");
+    public static final IProperty<GridRepresentation> GRID_REPRESENTATION 
+        = new Property<GridRepresentation>("de.cau.cs.kieler.klay.planar.grid");
 
     /** Indicates a nodes during the algorithm as a bend point. */
-    public static final IProperty<OrthogonalAngle> BENDPOINT = new Property<OrthogonalRepresentation.OrthogonalAngle>(
-            "de.cau.cs.kieler.klay.planar.bendpoint");
+    public static final IProperty<OrthogonalAngle> BENDPOINT
+        = new Property<OrthogonalRepresentation.OrthogonalAngle>("de.cau.cs.kieler.klay.planar.bendpoint");
 
-    /** Next edge of an edge connected by the corner of the currentEdge. */
-    public static final IProperty<PEdge> RECT_SHAPE_NEXT = new Property<PEdge>(
-            "de.cau.cs.kieler.klay.planar.rect_shape_next");
+    /** Stores all properties that are added while the rectangular shape processor. */
+    public static final IProperty<RectShapeEdgeProperties> RECT_SHAPE_PROPERTIES 
+        = new Property<RectShapeEdgeProperties>("de.cau.cs.kieler.klay.planar.rect_shape_properties");
 
-    /** Corner is the next node of a edge while walking around the face edges. */
-    public static final IProperty<PNode> RECT_SHAPE_CORNER = new Property<PNode>(
-            "de.cau.cs.kieler.klay.planar.rect_shape_corner");
-
-    /** Turn of an edge during the rectangular shape processor. */
-    public static final IProperty<Integer> RECT_SHAPE_TURN = new Property<Integer>(
-            "de.cau.cs.kieler.klay.planar.rect_shape_turn");
-
-    /** Front edge of a edge. */
-    public static final IProperty<PEdge> RECT_SHAPE_FRONT = new Property<PEdge>(
-            "de.cau.cs.kieler.klay.planar.rect_shape_front");
-
-    /** Face side index; 0 left, 1 top, 2 right, 3 bottom. */
-    public static final IProperty<Integer> RECT_SHAPE_SIDE_INDEX = new Property<Integer>(
-            "de.cau.cs.kieler.klay.planar.rect_shape_side_index");
-
-    /** Path length to the front of a edge. */
-    public static final IProperty<Integer> RECT_SHAPE_PATH_LENGTH = new Property<Integer>(
-            "de.cau.cs.kieler.klay.planar.rect_shape_path_length");
+    /** A cut edge is passed in both directions and hence it needs two edge properties. */
+    public static final IProperty<Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>> RECT_SHAPE_CUTEDGE
+        = new Property<Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>>(
+            "de.cau.cs.kieler.klay.planar.rect_shape_cutedge");
 
     /** Indicates whether is the external face is a dummy or the original face. */
     public static final IProperty<Boolean> RECT_SHAPE_TRANS_EXTERNAL = new Property<Boolean>(

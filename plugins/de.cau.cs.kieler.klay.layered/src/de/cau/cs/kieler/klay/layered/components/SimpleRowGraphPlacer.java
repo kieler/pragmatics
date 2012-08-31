@@ -29,14 +29,14 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * be used in the presence of such connections.
  * 
  * <p>This was the first algorithm implemented to place the different connected components of a graph,
- * and was formerly the implementation of the {@link ComponentsProcessor#pack(List)} method.</p>
+ * and was formerly the implementation of the {@link ComponentsProcessor#combine(List)} method.</p>
  * 
  * @author msp
  * @author cds
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-class SimpleRowGraphPlacer extends GraphPlacer {
+class SimpleRowGraphPlacer extends AbstractGraphPlacer {
 
     /**
      * {@inheritDoc}
@@ -50,7 +50,7 @@ class SimpleRowGraphPlacer extends GraphPlacer {
             }
             graph.getLayers().clear();
             return graph;
-        } else if (components.size() <= 0) {
+        } else if (components.isEmpty()) {
             return new LGraph();
         }
         
@@ -78,9 +78,10 @@ class SimpleRowGraphPlacer extends GraphPlacer {
             }
         });
         
-        LGraph result = new LGraph();
-        result.copyProperties(components.get(0));
-        result.getInsets().copy(components.get(0).getInsets());
+        LGraph firstComponent = components.get(0);
+        LGraph result = new LGraph(firstComponent);
+        result.copyProperties(firstComponent);
+        result.getInsets().copy(firstComponent.getInsets());
         
         // determine the maximal row width by the maximal box width and the total area
         double maxRowWidth = 0.0f;

@@ -48,7 +48,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see HierarchicalPortDummySizeProcessor
  * @see HierarchicalPortOrthogonalEdgeRouter
  * @author cds
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public class HierarchicalPortPositionProcessor extends AbstractAlgorithm implements ILayoutProcessor {
@@ -112,7 +112,7 @@ public class HierarchicalPortPositionProcessor extends AbstractAlgorithm impleme
             }
 
             // Apply the node's new Y coordinate
-            node.getPosition().y = finalYCoordinate;
+            node.getPosition().y = finalYCoordinate - node.getProperty(Properties.PORT_ANCHOR).y;
             node.borderToContentAreaCoordinates(false, true);
         }
     }

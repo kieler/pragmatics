@@ -97,7 +97,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see PortListSorter
  * @see SelfLoopProcessor
  * @author cds
- * @kieler.design proposed by msp
+ * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILayoutProcessor {
@@ -150,7 +150,8 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     portList.add(port);
                 }
 
-                createDummyNodes(portList, northDummyNodes, southDummyNodes, barycenterAssociates);
+                createDummyNodes(layeredGraph, portList, northDummyNodes, southDummyNodes,
+                        barycenterAssociates);
                 
                 int insertPoint = pointer;
                 LNode successor = node;
@@ -177,7 +178,8 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     portList.add(0, port);
                 }
                 
-                createDummyNodes(portList, southDummyNodes, null, barycenterAssociates);
+                createDummyNodes(layeredGraph, portList, southDummyNodes, null,
+                        barycenterAssociates);
                 
                 LNode predecessor = node;
                 for (LNode dummy : southDummyNodes) {
@@ -206,6 +208,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
      * Returns a list of dummy nodes for the given ports. The list of ports must be
      * sorted by position from left to right.
      * 
+     * @param layeredGraph the layered graph.
      * @param ports the list of ports to create dummy nodes for.
      * @param dummyNodes all created dummy nodes are added to this list.
      * @param opposingSideDummyNodes all dummy nodes created due to north-south self-loops
@@ -215,8 +218,9 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
      *                             are put in this list to remember to include them in the
      *                             barycenter calculations later.
      */
-    private void createDummyNodes(final List<LPort> ports, final List<LNode> dummyNodes,
-            final List<LNode> opposingSideDummyNodes, final List<LNode> barycenterAssociates) {
+    private void createDummyNodes(final LGraph layeredGraph, final List<LPort> ports,
+            final List<LNode> dummyNodes, final List<LNode> opposingSideDummyNodes,
+            final List<LNode> barycenterAssociates) {
         
         // We'll assemble lists of ports with only incoming, ports with only outgoing
         // and ports with both, incoming and outgoing edges
@@ -265,12 +269,12 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         // we always route north->south self-loops east to the node. This could later
         // change, though.
         for (LEdge edge : northSouthSelfLoopEdges) {
-            createDummyNode(edge, dummyNodes, opposingSideDummyNodes, PortSide.EAST);
+            createDummyNode(layeredGraph, edge, dummyNodes, opposingSideDummyNodes, PortSide.EAST);
         }
         
         // Second, create the dummy nodes that handle same-side self-loops
         for (LEdge edge : sameSideSelfLoopEdges) {
-            createDummyNode(edge, dummyNodes);
+            createDummyNode(layeredGraph, edge, dummyNodes);
         }
         
         // Iterate through the lists of input and output ports while both lists still
@@ -290,7 +294,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
             }
             
             // Otherwise, create a dummy node for them
-            barycenterAssociates.add(createDummyNode(inPort, outPort, dummyNodes));
+            barycenterAssociates.add(createDummyNode(layeredGraph, inPort, outPort, dummyNodes));
             
             inPortsIndex++;
             outPortsIndex--;
@@ -298,18 +302,21 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         
         // Give the rest of input and output ports their dummy nodes
         while (inPortsIndex < inPorts.size()) {
-            barycenterAssociates.add(createDummyNode(inPorts.get(inPortsIndex), null, dummyNodes));
+            barycenterAssociates.add(createDummyNode(layeredGraph,
+                    inPorts.get(inPortsIndex), null, dummyNodes));
             inPortsIndex++;
         }
         
         while (outPortsIndex >= 0) {
-            barycenterAssociates.add(createDummyNode(null, outPorts.get(outPortsIndex), dummyNodes));
+            barycenterAssociates.add(createDummyNode(layeredGraph,
+                    null, outPorts.get(outPortsIndex), dummyNodes));
             outPortsIndex--;
         }
         
         // in / out ports get their own dummy nodes
         for (LPort inOutPort : inOutPorts) {
-            barycenterAssociates.add(createDummyNode(inOutPort, inOutPort, dummyNodes));
+            barycenterAssociates.add(createDummyNode(layeredGraph,
+                    inOutPort, inOutPort, dummyNodes));
         }
     }
     
@@ -320,15 +327,16 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
      * port. The dummy's port have their {@code ORIGIN} property set to the port whose
      * edges have been rerouted to them.
      * 
+     * @param layeredGraph the layered graph.
      * @param inPort the input port whose edges to reroute. May be {@code null}.
      * @param outPort the output port whose edges to reroute. May be {@code null}.
      * @param dummyNodes list the created dummy node should be added to.
      * @return the created dummy node.
      */
-    private LNode createDummyNode(final LPort inPort, final LPort outPort,
+    private LNode createDummyNode(final LGraph layeredGraph, final LPort inPort, final LPort outPort,
             final List<LNode> dummyNodes) {
         
-        LNode dummy = new LNode();
+        LNode dummy = new LNode(layeredGraph);
         dummy.setProperty(Properties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
@@ -336,7 +344,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         
         // Input port
         if (inPort != null) {
-            LPort dummyInputPort = new LPort();
+            LPort dummyInputPort = new LPort(layeredGraph);
             dummyInputPort.setProperty(Properties.ORIGIN, inPort);
             dummy.setProperty(Properties.ORIGIN, inPort.getNode());
             dummyInputPort.setSide(PortSide.WEST);
@@ -353,7 +361,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
         
         // Output port
         if (outPort != null) {
-            LPort dummyOutputPort = new LPort();
+            LPort dummyOutputPort = new LPort(layeredGraph);
             dummy.setProperty(Properties.ORIGIN, outPort.getNode());
             dummyOutputPort.setProperty(Properties.ORIGIN, outPort);
             dummyOutputPort.setSide(PortSide.EAST);
@@ -381,23 +389,25 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
      * {@code ORIGIN} property is set to the edge. The dummy node has two ports, one for each
      * port the node was connected to. Their {@code ORIGIN} property is set accordingly.
      * 
+     * @param layeredGraph the layered graph.
      * @param selfLoop the self-loop edge.
      * @param dummyNodes list the created dummy node should be added to.
      */
-    private void createDummyNode(final LEdge selfLoop, final List<LNode> dummyNodes) {
-        LNode dummy = new LNode();
+    private void createDummyNode(final LGraph layeredGraph, final LEdge selfLoop,
+            final List<LNode> dummyNodes) {
+        LNode dummy = new LNode(layeredGraph);
         dummy.setProperty(Properties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         dummy.setProperty(Properties.ORIGIN, selfLoop);
         
         // Input port
-        LPort dummyInputPort = new LPort();
+        LPort dummyInputPort = new LPort(layeredGraph);
         dummyInputPort.setProperty(Properties.ORIGIN, selfLoop.getTarget());
         dummyInputPort.setSide(PortSide.WEST);
         dummyInputPort.setNode(dummy);
         
         // Output port
-        LPort dummyOutputPort = new LPort();
+        LPort dummyOutputPort = new LPort(layeredGraph);
         dummyOutputPort.setProperty(Properties.ORIGIN, selfLoop.getSource());
         dummyOutputPort.setSide(PortSide.EAST);
         dummyOutputPort.setNode(dummy);
@@ -417,31 +427,33 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
      * only one port, on the specified side of the node. Their {@code ORIGIN} property is set
      * accordingly.
      * 
+     * @param layeredGraph the layered graph.
      * @param selfLoop the self-loop edge.
      * @param northDummyNodes list the created northern dummy node should be added to.
      * @param southDummyNodes list the created southern dummy node should be added to.
      * @param portSide on which sides on the dummy nodes the self-loop ports should be
      *                 placed.
      */
-    private void createDummyNode(final LEdge selfLoop, final List<LNode> northDummyNodes,
-            final List<LNode> southDummyNodes, final PortSide portSide) {
+    private void createDummyNode(final LGraph layeredGraph, final LEdge selfLoop,
+            final List<LNode> northDummyNodes, final List<LNode> southDummyNodes,
+            final PortSide portSide) {
         
         // North dummy
-        LNode northDummy = new LNode();
+        LNode northDummy = new LNode(layeredGraph);
         northDummy.setProperty(Properties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
         northDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
-        LPort northDummyOutputPort = new LPort();
+        LPort northDummyOutputPort = new LPort(layeredGraph);
         northDummyOutputPort.setProperty(Properties.ORIGIN, selfLoop.getSource());
         northDummyOutputPort.setSide(portSide);
         northDummyOutputPort.setNode(northDummy);
         
         // South dummy
-        LNode southDummy = new LNode();
+        LNode southDummy = new LNode(layeredGraph);
         southDummy.setProperty(Properties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
         southDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
-        LPort southDummyInputPort = new LPort();
+        LPort southDummyInputPort = new LPort(layeredGraph);
         southDummyInputPort.setProperty(Properties.ORIGIN, selfLoop.getTarget());
         southDummyInputPort.setSide(portSide);
         southDummyInputPort.setNode(southDummy);
