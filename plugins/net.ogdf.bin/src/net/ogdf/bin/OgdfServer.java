@@ -182,6 +182,8 @@ public class OgdfServer {
     public static final String OPTION_ROTATION_SENSITIVITY = "rotationSensitivity";
     /** the option for the number of runs. */
     public static final String OPTION_RUNS = "runs";
+    /** the option for scale function factor. */
+    public static final String OPTION_SCALE_FUNCTION_FACTOR = "scaleFunctionFactor";
     /** the option for the separation. */
     public static final String OPTION_SEPARATION = "separation";
     /** the option for the sibling distance. */

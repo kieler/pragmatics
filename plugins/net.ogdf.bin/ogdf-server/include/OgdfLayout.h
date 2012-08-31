@@ -115,6 +115,7 @@
 #define OPTION_ROTATION_ANGLE "rotationAngle"
 #define OPTION_ROTATION_SENSITIVITY "rotationSensitivity"
 #define OPTION_RUNS "runs"
+#define OPTION_SCALE_FUNCTION_FACTOR "scaleFunctionFactor"
 #define OPTION_SEPARATION "separation"
 #define OPTION_SIBLING_DISTANCE "siblingDistance"
 #define OPTION_SPEED "speed"

@@ -310,6 +310,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.scaleFunctionFactor">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -1089,21 +1092,21 @@
             advanced="true"
             appliesTo="parents"
             default="1.047"
-            description="The opening angle for rotations"
+            description="The opening angle for rotations in radians (between 0 and pi/2)"
             id="de.cau.cs.kieler.kiml.ogdf.option.rotationAngle"
             lowerBound="0.0"
             name="Rotation Angle"
             type="float"
-            upperBound="3.14"
+            upperBound="1.57"
             variance="0.3">
       </layoutOption>
       <layoutOption
             advanced="true"
             appliesTo="parents"
             default="0.01"
-            description="The rotation sensitivity"
+            description="The rotation sensitivity (between 0 and 1)"
             id="de.cau.cs.kieler.kiml.ogdf.option.rotationSensitivity"
-            lowerBound="0.00001"
+            lowerBound="0.0"
             name="Rotation Sensitivity"
             type="float"
             upperBound="1.0"
@@ -1154,23 +1157,26 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="1.571"
-            description="The opening angle for oscillations (in radians)"
+            default="1.57"
+            description="The opening angle for oscillations in radians (between 0 and pi/2)"
             id="de.cau.cs.kieler.kiml.ogdf.option.oscillationAngle"
             lowerBound="0.0"
             name="Oscillation Angle"
             type="float"
-            upperBound="3.14"
+            upperBound="1.57"
             variance="0.3">
       </layoutOption>
       <layoutOption
             advanced="true"
             appliesTo="parents"
             default="0.3"
-            description="The oscillation sensitivity"
+            description="The oscillation sensitivity (between 0 and 1)"
             id="de.cau.cs.kieler.kiml.ogdf.option.oscillationSensitivity"
+            lowerBound="0.0"
             name="Oscillation Sensitivity"
-            type="float">
+            type="float"
+            upperBound="1.0"
+            variance="0.01">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -1349,6 +1355,18 @@
             id="de.cau.cs.kieler.kiml.ogdf.option.embedder"
             name="Embedder Module"
             type="enum">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="8.0"
+            description="Factor for scaling the bounding box of the initial layout"
+            id="de.cau.cs.kieler.kiml.ogdf.option.scaleFunctionFactor"
+            lowerBound="0.001"
+            name="Scale Factor"
+            type="float"
+            upperBound="100.0"
+            variance="4.0">
       </layoutOption>
    </extension>
 

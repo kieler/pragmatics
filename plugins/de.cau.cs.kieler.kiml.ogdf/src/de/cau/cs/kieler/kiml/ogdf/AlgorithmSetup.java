@@ -160,6 +160,9 @@ public final class AlgorithmSetup {
             "de.cau.cs.kieler.kiml.ogdf.option.noise", true);
     /** Default value for the 'minDistCC' option. */
     private static final float DEF_MIN_DIST_CC = 20.0f;
+    /** Factor for scaling the bounding box of the initial layout. */
+    public static final IProperty<Float> SCALE_FUNCTION_FACTOR = new Property<Float>(
+            "de.cau.cs.kieler.kiml.ogdf.option.scaleFunctionFactor", 8.0f);
     
     // options for GEM layouter
     
@@ -180,12 +183,12 @@ public final class AlgorithmSetup {
     /** The maximal disturbance. */
     public static final IProperty<Float> MAXIMAL_DISTURBANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance", 0.0f);
-    /** The opening angle for rotations. */
+    /** The opening angle for rotations (in radians). */
     public static final IProperty<Float> ROTATION_ANGLE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.rotationAngle", 0.33f);
+            "de.cau.cs.kieler.kiml.ogdf.option.rotationAngle", 1.047f);
     /** The opening angle for oscillations (in radians). */
     public static final IProperty<Float> OSCILLATION_ANGLE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.oscillationAngle", 0.5f);
+            "de.cau.cs.kieler.kiml.ogdf.option.oscillationAngle", 1.57f);
     /** The rotation sensitivity. */
     public static final IProperty<Float> ROTATION_SENSITIVITY = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.rotationSensitivity", 0.01f);
@@ -449,6 +452,9 @@ public final class AlgorithmSetup {
                 minDistCC = DEF_MIN_DIST_CC;
             }
             comm.addOption(OgdfServer.OPTION_MIN_DIST_CC, minDistCC);
+            // scale function factor
+            float scaleFactor = parentLayout.getProperty(SCALE_FUNCTION_FACTOR);
+            comm.addOption(OgdfServer.OPTION_SCALE_FUNCTION_FACTOR, scaleFactor);
             break;
         }
             

@@ -792,7 +792,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 				layout.setSpeed(theSpeed);
 			}
 			double edgeLength;
-			if (GetOption(OPTION_EDGE_LENGTH, edgeLength, options)) {
+			if (GetOption(OPTION_EDGE_LENGTH, edgeLength, options) && edgeLength >= 0) {
 				layout.setPreferredEdgeLength(edgeLength);
 			}
 			layout.call(*LGA);
@@ -815,12 +815,16 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 				layout.noise(noise);
 			}
 			double minDistCC;
-			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options)) {
+			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options) && minDistCC >= 0) {
 				layout.minDistCC(minDistCC);
 			}
 			double pageRatio;
-			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
+			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options) && pageRatio > 0) {
 				layout.pageRatio(pageRatio);
+			}
+			double scaleFunctionFactor;
+			if (GetOption(OPTION_SCALE_FUNCTION_FACTOR, scaleFunctionFactor, options) && scaleFunctionFactor > 0) {
+				layout.scaleFunctionFactor(scaleFunctionFactor);
 			}
 			layout.call(*LGA);
 			break;
@@ -881,11 +885,11 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 				layout.attractionFormula(attractionFormula + 1);
 			}
 			double minDistCC;
-			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options)) {
+			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options) && minDistCC >= 0) {
 				layout.minDistCC(minDistCC);
 			}
 			double pageRatio;
-			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
+			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options) && pageRatio > 0) {
 				layout.pageRatio(pageRatio);
 			}
 			layout.call(*LGA);
@@ -896,44 +900,46 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		case CIRCULAR: {
 			CircularLayout layout;
 			double minDistCircle;
-			if (GetOption(OPTION_MIN_DIST_CIRCLE, minDistCircle, options)) {
+			if (GetOption(OPTION_MIN_DIST_CIRCLE, minDistCircle, options) && minDistCircle >= 0) {
 				layout.minDistCircle(minDistCircle);
 			}
 			double minDistLevel;
-			if (GetOption(OPTION_MIN_DIST_LEVEL, minDistLevel, options)) {
+			if (GetOption(OPTION_MIN_DIST_LEVEL, minDistLevel, options) && minDistLevel >= 0) {
 				layout.minDistLevel(minDistLevel);
 			}
 			double minDistSibling;
-			if (GetOption(OPTION_MIN_DIST_SIBLING, minDistSibling, options)) {
+			if (GetOption(OPTION_MIN_DIST_SIBLING, minDistSibling, options) && minDistSibling >= 0) {
 				layout.minDistSibling(minDistSibling);
 			}
 			double minDistCC;
-			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options)) {
+			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options) && minDistCC >= 0) {
 				layout.minDistCC(minDistCC);
 			}
 			double pageRatio;
-			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
+			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options) && pageRatio > 0) {
 				layout.pageRatio(pageRatio);
 			}
 			layout.call(*LGA);
 			break;
 		}
+
+		//-------------------------------------------------------------------//
 		case TREE: {
 			TreeLayout layout;
 			double siblingDistance;
-			if (GetOption(OPTION_SIBLING_DISTANCE, siblingDistance, options)) {
+			if (GetOption(OPTION_SIBLING_DISTANCE, siblingDistance, options) && siblingDistance >= 0) {
 				layout.siblingDistance(siblingDistance);
 			}
 			double subtreeDistance;
-			if (GetOption(OPTION_SUBTREE_DISTANCE, subtreeDistance, options)) {
+			if (GetOption(OPTION_SUBTREE_DISTANCE, subtreeDistance, options) && subtreeDistance >= 0) {
 				layout.subtreeDistance(subtreeDistance);
 			}
 			double levelDistance;
-			if (GetOption(OPTION_LEVEL_DISTANCE, levelDistance, options)) {
+			if (GetOption(OPTION_LEVEL_DISTANCE, levelDistance, options) && levelDistance >= 0) {
 				layout.levelDistance(levelDistance);
 			}
 			double treeDistance;
-			if (GetOption(OPTION_TREE_DISTANCE, treeDistance, options)) {
+			if (GetOption(OPTION_TREE_DISTANCE, treeDistance, options) && treeDistance >= 0) {
 				layout.treeDistance(treeDistance);
 			}
 			bool orthogonal;
@@ -948,19 +954,23 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+
+		//-------------------------------------------------------------------//
 		case RADIAL_TREE: {
 			RadialTreeLayout layout;
 			double levelDistance;
-			if (GetOption(OPTION_LEVEL_DISTANCE, levelDistance, options)) {
+			if (GetOption(OPTION_LEVEL_DISTANCE, levelDistance, options) && levelDistance >= 0) {
 				layout.levelDistance(levelDistance);
 			}
 			double ccDistance;
-			if (GetOption(OPTION_CC_DISTANCE, ccDistance, options)) {
+			if (GetOption(OPTION_CC_DISTANCE, ccDistance, options) && ccDistance >= 0) {
 				layout.connectedComponentDistance(ccDistance);
 			}
 			layout.call(*LGA);
 			break;
 		}
+
+		//-------------------------------------------------------------------//
 		case UPWARD_PLANARIZATION: {
 			UpwardPlanarizationLayout layout;
 			LayerBasedUPRLayout* layerBasedUPRLayout =
@@ -980,6 +990,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case FAST_MULTIPOLE: {
 			FastMultipoleEmbedder layout;
 			int multipolePrec;
@@ -997,6 +1009,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case FAST_MULTIPOLE_MULTILEVEL: {
 			FastMultipoleMultilevelEmbedder layout;
 			int bound;
@@ -1006,6 +1020,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case KAMADA_KAWAI: {
 			SpringEmbedderKK layout;
 			double edgeLength;
@@ -1033,6 +1049,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case STRESS_MAJORIZATION: {
 			StressMajorization layout;
 			int iterations;
@@ -1068,6 +1086,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case DOMINANCE: {
 			DominanceLayout layout;
 			int gridDistance;
@@ -1077,6 +1097,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case VISIBILITY: {
 			VisibilityLayout layout;
 			int gridDistance;
@@ -1086,6 +1108,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case FRAYSSEIX_PACH_POLLACK: {
 			FPPLayout layout;
 			double separation;
@@ -1095,6 +1119,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case SCHNYDER: {
 			SchnyderLayout layout;
 			double separation;
@@ -1104,6 +1130,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case CANONICAL_ORDER: {
 			if (!isPlanar(G)) {
 				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
@@ -1116,6 +1144,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case MIXED_MODEL: {
 			if (!isPlanar(G)) {
 				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
@@ -1124,6 +1154,8 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case CONVEX_GRID: {
 			if (!isPlanar(G)) {
 				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
@@ -1136,11 +1168,14 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case BALLOON: {
 			BalloonLayout layout;
 			layout.call(*LGA);
 			break;
 		}
+
 		default:
 			throw runtime_error("The specified layouter does not exist.");
 		}
