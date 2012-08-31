@@ -578,6 +578,13 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.runs">
+         </knownOption>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"

@@ -581,6 +581,9 @@ public final class AlgorithmSetup {
             // layer distance
             float layerDistanceFactor = parentLayout.getProperty(LAYER_DISTANCE);
             comm.addOption(OgdfServer.OPTION_LAYER_DISTANCE, nodeDistance * layerDistanceFactor);
+            // number of runs
+            int runs = parentLayout.getProperty(RUNS);
+            comm.addOption(OgdfServer.OPTION_RUNS, runs);
             break;
         }
         

@@ -47,6 +47,7 @@
 #include <ogdf/layered/GreedySwitchHeuristic.h>
 #include <ogdf/layered/MedianHeuristic.h>
 #include <ogdf/layered/SiftingHeuristic.h>
+#include <ogdf/layered/DfsAcyclicSubgraph.h>
 #include <ogdf/orthogonal/OrthoRep.h>
 #include <ogdf/orthogonal/OrthoLayout.h>
 #include <ogdf/planarity/PlanarizationLayout.h>
@@ -80,6 +81,9 @@
 #include <ogdf/upward/LayerBasedUPRLayout.h>
 #include <ogdf/upward/DominanceLayout.h>
 #include <ogdf/upward/VisibilityLayout.h>
+#include <ogdf/upward/SubgraphUpwardPlanarizer.h>
+#include <ogdf/upward/FUPSSimple.h>
+
 
 using namespace std;
 using namespace ogdf;
@@ -973,6 +977,14 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		//-------------------------------------------------------------------//
 		case UPWARD_PLANARIZATION: {
 			UpwardPlanarizationLayout layout;
+			int runs;
+			if (GetOption(OPTION_RUNS, runs, options) && runs >= 0) {
+				SubgraphUpwardPlanarizer* upwardPlanarizer = new SubgraphUpwardPlanarizer;
+				layout.setUpwardPlanarizer(upwardPlanarizer);
+				FUPSSimple* fups = new FUPSSimple;
+				fups->runs(runs);
+				upwardPlanarizer->setSubgraph(fups);
+			}
 			LayerBasedUPRLayout* layerBasedUPRLayout =
 					new LayerBasedUPRLayout();
 			FastHierarchyLayout* fastHierarchyLayout =
@@ -980,11 +992,11 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			layerBasedUPRLayout->setLayout(fastHierarchyLayout);
 			layout.setUPRLayout(layerBasedUPRLayout);
 			double nodeDistance;
-			if (GetOption(OPTION_NODE_DISTANCE, nodeDistance, options)) {
+			if (GetOption(OPTION_NODE_DISTANCE, nodeDistance, options) && nodeDistance >= 0) {
 				fastHierarchyLayout->nodeDistance(nodeDistance);
 			}
 			double layerDistance;
-			if (GetOption(OPTION_LAYER_DISTANCE, layerDistance, options)) {
+			if (GetOption(OPTION_LAYER_DISTANCE, layerDistance, options) && layerDistance >= 0) {
 				fastHierarchyLayout->layerDistance(layerDistance);
 			}
 			layout.call(*LGA);
