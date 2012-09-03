@@ -759,8 +759,9 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         for (int j = end - 1; j >= insx; j--) {
             array[j + 1] = array[j];
         }
-
-        array[insx] = n;
+        if (array.length == 0) {
+            array[insx] = n;
+        }
     }
 
     /**

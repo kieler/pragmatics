@@ -75,7 +75,7 @@ public class EffectsWorker extends Thread {
                         monitoredEffects.clear();
                         final ICombination comCache = this.nextMonitoredCombination;
                         this.nextMonitoredCombination = null;
-                        Display.getDefault().asyncExec(new Runnable() {
+                        Display.getDefault().syncExec(new Runnable() {
                            
                             public void run() {
                                 try {
@@ -91,7 +91,9 @@ public class EffectsWorker extends Thread {
                                             for (IEffect effect: monitoredEffectsCache) {
                                                 monitor.subTask("Processing " + effect.getName());
                                                 effect.execute();
-                                                effects.remove(effect);
+                                                synchronized (effects) {
+                                                    effects.remove(effect);
+                                                }
                                                 monitor.worked(1);
                                             }
                                             monitor.done();
