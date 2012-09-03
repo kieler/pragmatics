@@ -58,11 +58,14 @@
 #include <ogdf/planarity/EmbedderMinDepthMaxFace.h>
 #include <ogdf/planarity/EmbedderMinDepthMaxFaceLayers.h>
 #include <ogdf/planarity/EmbedderMinDepthPiTa.h>
+#include <ogdf/planarity/PlanarizationGridLayout.h>
 #include <ogdf/planarlayout/FPPLayout.h>
 #include <ogdf/planarlayout/SchnyderLayout.h>
 #include <ogdf/planarlayout/PlanarStraightLayout.h>
 #include <ogdf/planarlayout/MixedModelLayout.h>
 #include <ogdf/planarlayout/PlanarDrawLayout.h>
+#include <ogdf/planarlayout/MMCBDoubleGrid.h>
+#include <ogdf/planarlayout/MMCBLocalStretch.h>
 #include <ogdf/planarity/VariableEmbeddingInserter.h>
 #include <ogdf/planarity/VariableEmbeddingInserter2.h>
 #include <ogdf/planarity/MultiEdgeApproxInserter.h>
@@ -1007,11 +1010,11 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		case FAST_MULTIPOLE: {
 			FastMultipoleEmbedder layout;
 			int multipolePrec;
-			if (GetOption(OPTION_MULTIPOLE_PREC, multipolePrec, options)) {
+			if (GetOption(OPTION_MULTIPOLE_PREC, multipolePrec, options) && multipolePrec >= 0) {
 				layout.setMultipolePrec(multipolePrec);
 			}
 			int iterations;
-			if (GetOption(OPTION_ITERATIONS, iterations, options)) {
+			if (GetOption(OPTION_ITERATIONS, iterations, options) && iterations > 0) {
 				layout.setNumIterations(iterations);
 			}
 			bool randomize;
@@ -1026,7 +1029,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		case FAST_MULTIPOLE_MULTILEVEL: {
 			FastMultipoleMultilevelEmbedder layout;
 			int bound;
-			if (GetOption(OPTION_MULTILEVEL_UNNAL, bound, options)) {
+			if (GetOption(OPTION_MULTILEVEL_UNNAL, bound, options) && bound >= 0) {
 				layout.multilevelUntilNumNodesAreLess(bound);
 			}
 			layout.call(*LGA);
@@ -1037,7 +1040,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		case KAMADA_KAWAI: {
 			SpringEmbedderKK layout;
 			double edgeLength;
-			if (GetOption(OPTION_EDGE_LENGTH, edgeLength, options)) {
+			if (GetOption(OPTION_EDGE_LENGTH, edgeLength, options) && edgeLength >= 0) {
 				layout.setDesLength(edgeLength);
 			}
 			int localIterations;
@@ -1055,7 +1058,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 				layout.setUseLayout(useLayout);
 			}
 			double stopTolerance;
-			if (GetOption(OPTION_STOP_TOLERANCE, stopTolerance, options)) {
+			if (GetOption(OPTION_STOP_TOLERANCE, stopTolerance, options) && stopTolerance > 0) {
 				layout.setStopTolerance(stopTolerance);
 			}
 			layout.call(*LGA);
@@ -1084,7 +1087,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 				layout.setUseLayout(useLayout);
 			}
 			double stopTolerance;
-			if (GetOption(OPTION_STOP_TOLERANCE, stopTolerance, options)) {
+			if (GetOption(OPTION_STOP_TOLERANCE, stopTolerance, options) && stopTolerance > 0) {
 				layout.setStopTolerance(stopTolerance);
 			}
 			bool upward;
@@ -1102,8 +1105,16 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		//-------------------------------------------------------------------//
 		case DOMINANCE: {
 			DominanceLayout layout;
+			int runs;
+			if (GetOption(OPTION_RUNS, runs, options) && runs >= 0) {
+				SubgraphUpwardPlanarizer* upwardPlanarizer = new SubgraphUpwardPlanarizer;
+				layout.setUpwardPlanarizer(upwardPlanarizer);
+				FUPSSimple* fups = new FUPSSimple;
+				fups->runs(runs);
+				upwardPlanarizer->setSubgraph(fups);
+			}
 			int gridDistance;
-			if (GetOption(OPTION_GRID_DISTANCE, gridDistance, options)) {
+			if (GetOption(OPTION_GRID_DISTANCE, gridDistance, options) && gridDistance >= 0) {
 				layout.setMinGridDistance(gridDistance);
 			}
 			layout.call(*LGA);
@@ -1113,8 +1124,16 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		//-------------------------------------------------------------------//
 		case VISIBILITY: {
 			VisibilityLayout layout;
+			int runs;
+			if (GetOption(OPTION_RUNS, runs, options) && runs >= 0) {
+				SubgraphUpwardPlanarizer* upwardPlanarizer = new SubgraphUpwardPlanarizer;
+				layout.setUpwardPlanarizer(upwardPlanarizer);
+				FUPSSimple* fups = new FUPSSimple;
+				fups->runs(runs);
+				upwardPlanarizer->setSubgraph(fups);
+			}
 			int gridDistance;
-			if (GetOption(OPTION_GRID_DISTANCE, gridDistance, options)) {
+			if (GetOption(OPTION_GRID_DISTANCE, gridDistance, options) && gridDistance >= 0) {
 				layout.setMinGridDistance(gridDistance);
 			}
 			layout.call(*LGA);
@@ -1125,7 +1144,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		case FRAYSSEIX_PACH_POLLACK: {
 			FPPLayout layout;
 			double separation;
-			if (GetOption(OPTION_SEPARATION, separation, options)) {
+			if (GetOption(OPTION_SEPARATION, separation, options) && separation >= 0) {
 				layout.separation(separation);
 			}
 			layout.call(*LGA);
@@ -1136,7 +1155,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		case SCHNYDER: {
 			SchnyderLayout layout;
 			double separation;
-			if (GetOption(OPTION_SEPARATION, separation, options)) {
+			if (GetOption(OPTION_SEPARATION, separation, options) && separation >= 0) {
 				layout.separation(separation);
 			}
 			layout.call(*LGA);
@@ -1149,20 +1168,50 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
 			}
 			PlanarStraightLayout layout;
+			int embedderOption;
+			if (GetOption(OPTION_EMBEDDER_MODULE, embedderOption, options)) {
+				switch (embedderOption) {
+				case EMBEDDER_MAX_FACE: {
+					EmbedderMaxFace* embedder = new EmbedderMaxFace;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MAX_FACE_LAYERS: {
+					EmbedderMaxFaceLayers* embedder = new EmbedderMaxFaceLayers;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH: {
+					EmbedderMinDepth* embedder = new EmbedderMinDepth;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE: {
+					EmbedderMinDepthMaxFace* embedder = new EmbedderMinDepthMaxFace;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE_LAYERS: {
+					EmbedderMinDepthMaxFaceLayers* embedder = new EmbedderMinDepthMaxFaceLayers;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_PIZZONIA_TAMASSIA: {
+					EmbedderMinDepthPiTa* embedder = new EmbedderMinDepthPiTa;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				// default: EMBEDDER_SIMPLE
+				}
+			}
 			double baseRatio;
-			if (GetOption(OPTION_BASE_RATIO, baseRatio, options)) {
+			if (GetOption(OPTION_BASE_RATIO, baseRatio, options) && baseRatio >= 0) {
 				layout.baseRatio(baseRatio);
 			}
-			layout.call(*LGA);
-			break;
-		}
-		
-		//-------------------------------------------------------------------//
-		case MIXED_MODEL: {
-			if (!isPlanar(G)) {
-				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
+			double separation;
+			if (GetOption(OPTION_SEPARATION, separation, options) && separation >= 0) {
+				layout.separation(separation);
 			}
-			MixedModelLayout layout;
 			layout.call(*LGA);
 			break;
 		}
@@ -1173,9 +1222,137 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
 			}
 			PlanarDrawLayout layout;
+			int embedderOption;
+			if (GetOption(OPTION_EMBEDDER_MODULE, embedderOption, options)) {
+				switch (embedderOption) {
+				case EMBEDDER_MAX_FACE: {
+					EmbedderMaxFace* embedder = new EmbedderMaxFace;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MAX_FACE_LAYERS: {
+					EmbedderMaxFaceLayers* embedder = new EmbedderMaxFaceLayers;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH: {
+					EmbedderMinDepth* embedder = new EmbedderMinDepth;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE: {
+					EmbedderMinDepthMaxFace* embedder = new EmbedderMinDepthMaxFace;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE_LAYERS: {
+					EmbedderMinDepthMaxFaceLayers* embedder = new EmbedderMinDepthMaxFaceLayers;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_PIZZONIA_TAMASSIA: {
+					EmbedderMinDepthPiTa* embedder = new EmbedderMinDepthPiTa;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				// default: EMBEDDER_SIMPLE
+				}
+			}
 			double baseRatio;
-			if (GetOption(OPTION_BASE_RATIO, baseRatio, options)) {
+			if (GetOption(OPTION_BASE_RATIO, baseRatio, options) && baseRatio >= 0) {
 				layout.baseRatio(baseRatio);
+			}
+			double separation;
+			if (GetOption(OPTION_SEPARATION, separation, options) && separation >= 0) {
+				layout.separation(separation);
+			}
+			layout.call(*LGA);
+			break;
+		}
+		
+		//-------------------------------------------------------------------//
+		case MIXED_MODEL: {
+			PlanarizationGridLayout layout;
+			int runs;
+			if (GetOption(OPTION_RUNS, runs, options) && runs >= 0) {
+				FastPlanarSubgraph* planarSubgraph = new FastPlanarSubgraph;
+				planarSubgraph->runs(runs);
+				layout.setSubgraph(planarSubgraph);
+			}
+			int edgeInsertionOption;
+			if (GetOption(OPTION_EDGE_INSERTION_MODULE, edgeInsertionOption, options)) {
+				switch (edgeInsertionOption) {
+				case EDGE_INSERTION_VARIABLE_EMB: {
+					VariableEmbeddingInserter* edgeInsertion = new VariableEmbeddingInserter;
+					layout.setInserter(edgeInsertion);
+					break;
+				}
+				case EDGE_INSERTION_MULTIEDGE_APPROX: {
+					MultiEdgeApproxInserter* edgeInsertion = new MultiEdgeApproxInserter;
+					layout.setInserter(edgeInsertion);
+					break;
+				}
+				// default: EDGE_INSERTION_FIXED_EMB
+				}
+			}
+			MixedModelLayout* mixedModel = new MixedModelLayout;
+			layout.setPlanarLayouter(mixedModel);
+			int embedderOption;
+			if (GetOption(OPTION_EMBEDDER_MODULE, embedderOption, options)) {
+				switch (embedderOption) {
+				case EMBEDDER_MAX_FACE: {
+					EmbedderMaxFace* embedder = new EmbedderMaxFace;
+					mixedModel->setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MAX_FACE_LAYERS: {
+					EmbedderMaxFaceLayers* embedder = new EmbedderMaxFaceLayers;
+					mixedModel->setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH: {
+					EmbedderMinDepth* embedder = new EmbedderMinDepth;
+					mixedModel->setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE: {
+					EmbedderMinDepthMaxFace* embedder = new EmbedderMinDepthMaxFace;
+					mixedModel->setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE_LAYERS: {
+					EmbedderMinDepthMaxFaceLayers* embedder = new EmbedderMinDepthMaxFaceLayers;
+					mixedModel->setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_PIZZONIA_TAMASSIA: {
+					EmbedderMinDepthPiTa* embedder = new EmbedderMinDepthPiTa;
+					mixedModel->setEmbedder(embedder);
+					break;
+				}
+				// default: EMBEDDER_SIMPLE
+				}
+			}
+			int crossBeautifOption;
+			if (GetOption(OPTION_CROSS_BEAUTIF_MODULE, crossBeautifOption, options)) {
+				switch (crossBeautifOption) {
+				case CROSS_BEAUTIF_DOUBLE_GRID: {
+					MMCBDoubleGrid* crossBeautifier = new MMCBDoubleGrid;
+					mixedModel->setCrossingsBeautifier(crossBeautifier);
+					break;
+				}
+				case CROSS_BEAUTIF_LOCAL_STRETCH: {
+					MMCBLocalStretch* crossBeautifier = new MMCBLocalStretch;
+					mixedModel->setCrossingsBeautifier(crossBeautifier);
+					break;
+				}
+				// default: case CROSS_BEAUTIF_NONE
+				}
+			}
+			double separation;
+			if (GetOption(OPTION_SEPARATION, separation, options) && separation >= 0) {
+				mixedModel->separation(separation);
+				layout.separation(separation);
 			}
 			layout.call(*LGA);
 			break;

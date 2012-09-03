@@ -90,6 +90,8 @@ public class OgdfServer {
     public static final String OPTION_COST_GEN = "costGen";
     /** the option for costs. */
     public static final String OPTION_COSTS = "costs";
+    /** the option for selection of the crossing beautifier module. */
+    public static final String OPTION_CROSS_BEAUTIF_MODULE = "crossingBeautifierModule";
     /** the option for selection of the crossing minimization module. */
     public static final String OPTION_CROSS_MIN_MODULE = "crossingMinimizationModule";
     /** the option for the desired edge length. */

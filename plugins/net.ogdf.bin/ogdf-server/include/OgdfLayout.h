@@ -70,6 +70,7 @@
 #define OPTION_COST_GEN "costGen"
 #define OPTION_COSTS "costs"
 #define OPTION_CROSS_MIN_MODULE "crossingMinimizationModule"
+#define OPTION_CROSS_BEAUTIF_MODULE "crossingBeautifierModule"
 #define OPTION_DESIRED_LENGTH "desiredLength"
 #define OPTION_EDGE_INSERTION_MODULE "edgeInsertionModule"
 #define OPTION_EDGE_LENGTH "edgeLength"
@@ -223,7 +224,8 @@ enum LayouterType {
 #define EDGE_INSERTION_MULTIEDGE_APPROX 2
 
 /*
- * Definition of embedder modules for planarization layout. */
+ * Definition of embedder modules for planarization layout.
+ */
 #define EMBEDDER_SIMPLE                    0
 #define EMBEDDER_MAX_FACE                  1
 #define EMBEDDER_MAX_FACE_LAYERS           2
@@ -231,6 +233,13 @@ enum LayouterType {
 #define EMBEDDER_MIN_DEPTH_MAX_FACE        4
 #define EMBEDDER_MIN_DEPTH_MAX_FACE_LAYERS 5
 #define EMBEDDER_PIZZONIA_TAMASSIA         6
+
+/*
+ * Definition of crossing beautifier modules for mixed model layout.
+ */
+#define CROSS_BEAUTIF_NONE          0
+#define CROSS_BEAUTIF_DOUBLE_GRID   1
+#define CROSS_BEAUTIF_LOCAL_STRETCH 2
 
 
 /** the type for the string map. */

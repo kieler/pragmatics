@@ -27,6 +27,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ogdf.options.AcyclicSubgraphModule;
 import de.cau.cs.kieler.kiml.ogdf.options.AttractionFormula;
 import de.cau.cs.kieler.kiml.ogdf.options.Costs;
+import de.cau.cs.kieler.kiml.ogdf.options.CrossBeautifModule;
 import de.cau.cs.kieler.kiml.ogdf.options.CrossMinModule;
 import de.cau.cs.kieler.kiml.ogdf.options.EdgeInsertionModule;
 import de.cau.cs.kieler.kiml.ogdf.options.EmbedderModule;
@@ -263,17 +264,17 @@ public final class AlgorithmSetup {
     /** Default value for the 'gridDistance' option. */
     private static final float DEF_GRID_DISTANCE = 10.0f;
     
-    // options for FPP and Schnyder layouters
+    // options for FPP and Schnyder and other grid-based layouters
     
     /** Default value for the 'separation' option. */
     private static final float DEF_GRID_SEPARATION = 30.0f;
-    
-    // options for the canonical order layouter
-    
     /** Ratio of the nodes on the external face giving a limit for the number of nodes placed
      *  on the base line. */
     public static final IProperty<Float> BASE_RATIO = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.option.baseRatio", 0.33f);
+    /** */
+    public static final IProperty<CrossBeautifModule> CROSS_BEAUTIF = new Property<CrossBeautifModule>(
+            "de.cau.cs.kieler.kiml.ogdf.option.crossingBeautifier", CrossBeautifModule.LOCAL_STRETCH);
     
     /**
      * Hidden constructor to prevent instantiation.
@@ -644,6 +645,9 @@ public final class AlgorithmSetup {
                 distance = DEF_GRID_DISTANCE;
             }
             comm.addOption(OgdfServer.OPTION_GRID_DISTANCE, Math.round(distance));
+            // number of runs
+            int runs = parentLayout.getProperty(RUNS);
+            comm.addOption(OgdfServer.OPTION_RUNS, runs);
             break;
         }
         
@@ -654,6 +658,9 @@ public final class AlgorithmSetup {
                 distance = DEF_GRID_DISTANCE;
             }
             comm.addOption(OgdfServer.OPTION_GRID_DISTANCE, Math.round(distance));
+            // number of runs
+            int runs = parentLayout.getProperty(RUNS);
+            comm.addOption(OgdfServer.OPTION_RUNS, runs);
             break;
         }
         
@@ -678,24 +685,61 @@ public final class AlgorithmSetup {
         }
         
         case CANONICAL_ORDER: {
+            // separation
+            float separation = parentLayout.getProperty(LayoutOptions.SPACING);
+            if (separation < 0) {
+                separation = DEF_GRID_SEPARATION;
+            }
+            comm.addOption(OgdfServer.OPTION_SEPARATION, separation);
             // base ratio
             float baseRatio = parentLayout.getProperty(BASE_RATIO);
             comm.addOption(OgdfServer.OPTION_BASE_RATIO, baseRatio);
+            // embedder module
+            EmbedderModule embedderModule = parentLayout.getProperty(EMBEDDER);
+            comm.addOption(OgdfServer.OPTION_EMBEDDER_MODULE, embedderModule.ordinal());
             break;
         }
         
-        case MIXED_MODEL:
-            // no options are currently available
-            break;
-        
         case CONVEX_GRID: {
+            // separation
+            float separation = parentLayout.getProperty(LayoutOptions.SPACING);
+            if (separation < 0) {
+                separation = DEF_GRID_SEPARATION;
+            }
+            comm.addOption(OgdfServer.OPTION_SEPARATION, separation);
             // base ratio
             float baseRatio = parentLayout.getProperty(BASE_RATIO);
             comm.addOption(OgdfServer.OPTION_BASE_RATIO, baseRatio);
+            // embedder module
+            EmbedderModule embedderModule = parentLayout.getProperty(EMBEDDER);
+            comm.addOption(OgdfServer.OPTION_EMBEDDER_MODULE, embedderModule.ordinal());
+            break;
+        }
+        
+        case MIXED_MODEL: {
+            // separation
+            float separation = parentLayout.getProperty(LayoutOptions.SPACING);
+            if (separation < 0) {
+                separation = DEF_GRID_SEPARATION;
+            }
+            comm.addOption(OgdfServer.OPTION_SEPARATION, separation);
+            // number of runs
+            int runs = parentLayout.getProperty(RUNS);
+            comm.addOption(OgdfServer.OPTION_RUNS, runs);
+            // edge insertion module
+            EdgeInsertionModule edgeInsertionModule = parentLayout.getProperty(EDGE_INSERTION);
+            comm.addOption(OgdfServer.OPTION_EDGE_INSERTION_MODULE, edgeInsertionModule.ordinal());
+            // embedder module
+            EmbedderModule embedderModule = parentLayout.getProperty(EMBEDDER);
+            comm.addOption(OgdfServer.OPTION_EMBEDDER_MODULE, embedderModule.ordinal());
+            // crossing beautification module
+            CrossBeautifModule crossBeautifModule = parentLayout.getProperty(CROSS_BEAUTIF);
+            comm.addOption(OgdfServer.OPTION_CROSS_BEAUTIF_MODULE, crossBeautifModule.ordinal());
             break;
         }
         
         case BALLOON: {
+            // no specific options available
             break;
         }
         
