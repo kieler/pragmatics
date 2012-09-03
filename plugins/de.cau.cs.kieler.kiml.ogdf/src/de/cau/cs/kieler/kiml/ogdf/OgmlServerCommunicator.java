@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
@@ -255,8 +256,8 @@ public class OgmlServerCommunicator {
             for (KEdge edge : sourceNode.getOutgoingEdges()) {
                 KNode targetNode = edge.getTarget();
                 
-                // ignore cross-hierarchy edges
-                if (targetNode.getParent() == parentNode) {
+                // ignore cross-hierarchy edges and self-loops
+                if (targetNode.getParent() == parentNode && sourceNode != targetNode) {
                     KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                     String id = generateId(edge);
                     EdgeType ogmlEdge = factory.createEdgeType();
@@ -417,33 +418,37 @@ public class OgmlServerCommunicator {
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Apply layout", 1);
         
-        // get the parent node layout
-        KShapeLayout parentNodeLayout = parentNode.getData(KShapeLayout.class);
-        KVectorChain boundingBox = layoutInformation.get("graph");
-        if (boundingBox == null || boundingBox.size() != 2) {
-            throw new OgdfServerException("Malformed layout data received from ogdf server.");
-        }
-        KVector bbLocation = boundingBox.getFirst();
-        KVector bbShape = boundingBox.getLast();
-        float boundingBoxX = (float) bbLocation.x;
-        float boundingBoxY = (float) bbLocation.y;
-        float boundingBoxWidth = (float) bbShape.x;
-        float boundingBoxHeight = (float) bbShape.y;
-        
         // get the border spacing
+        KShapeLayout parentNodeLayout = parentNode.getData(KShapeLayout.class);
         float borderSpacing = parentNodeLayout.getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
             borderSpacing = DEF_BORDER_SPACING;
         }
         
-        // calculate offsets
-        float offsetX = (float) -boundingBoxX + borderSpacing;
-        float offsetY = (float) -boundingBoxY + borderSpacing;
+        // calculate offsets and parent size
+        float boundingBoxWidth = Float.NaN;
+        float boundingBoxHeight = Float.NaN;
+        float offsetX = borderSpacing;
+        float offsetY = borderSpacing;
+        KVectorChain boundingBox = layoutInformation.get("graph");
+        if (boundingBox != null && boundingBox.size() == 2) {
+            KVector bbShape = boundingBox.getLast();
+            boundingBoxWidth = (float) bbShape.x;
+            boundingBoxHeight = (float) bbShape.y;
+            KVector bbLocation = boundingBox.getFirst();
+            if (!Double.isNaN(bbLocation.x)) {
+                offsetX -= (float) bbLocation.x;
+            }
+            if (!Double.isNaN(bbLocation.y)) {
+                offsetY -= (float) bbLocation.y;
+            }
+        }
+
         // apply node layout
         for (Map.Entry<KNode, String> entry : node2IdMap.entrySet()) {
             KShapeLayout nodeLayout = entry.getKey().getData(KShapeLayout.class);
             KVectorChain ogdfNodeLayout = layoutInformation.get(entry.getValue());
-            if (ogdfNodeLayout != null && ogdfNodeLayout.size() == 2) {
+            if (ogdfNodeLayout != null && ogdfNodeLayout.size() == 2 && !ogdfNodeLayout.isNaN()) {
                 KVector location = ogdfNodeLayout.getFirst();
                 KVector shape = ogdfNodeLayout.getLast();
                 toKShape(nodeLayout, (float) location.x + offsetX, (float) location.y + offsetY,
@@ -459,7 +464,7 @@ public class OgmlServerCommunicator {
             EList<KPoint> kbends = edgeLayout.getBendPoints();
             kbends.clear();
             KVectorChain ogdfEdgeLayout = layoutInformation.get(entry.getKey());
-            if (ogdfEdgeLayout != null && ogdfEdgeLayout.size() >= 2) {
+            if (ogdfEdgeLayout != null && ogdfEdgeLayout.size() >= 2 && !ogdfEdgeLayout.isNaN()) {
                 Iterator<KVector> bendIt = ogdfEdgeLayout.iterator();
                 KVector sourceBend = bendIt.next();
                 
@@ -523,10 +528,10 @@ public class OgmlServerCommunicator {
                         makeMult1 = !makeMult1;
                         break;
                     }
-                    KVectorChain ogdfLabelLayout =
-                            layoutInformation.get(entry.getKey() + OgdfServer.EDGE_LABEL_SUFFIX
-                                    + labelType);
-                    if (ogdfLabelLayout != null && ogdfLabelLayout.size() > 0) {
+                    KVectorChain ogdfLabelLayout = layoutInformation.get(entry.getKey()
+                            + OgdfServer.EDGE_LABEL_SUFFIX + labelType);
+                    if (ogdfLabelLayout != null && ogdfLabelLayout.size() == 1
+                            && !ogdfLabelLayout.isNaN()) {
                         KVector labelPos = ogdfLabelLayout.getFirst();
                         toKShape(labelLayout, (float) labelPos.x + offsetX, (float) labelPos.y
                                 + offsetY, labelLayout.getWidth(), labelLayout.getHeight());
@@ -538,9 +543,11 @@ public class OgmlServerCommunicator {
         // get the insets
         KInsets insets = parentNodeLayout.getInsets();
         // set the width/height of the graph
-        float width = boundingBoxWidth + 2 * borderSpacing + insets.getLeft() + insets.getRight();
-        float height = boundingBoxHeight + 2 * borderSpacing + insets.getTop() + insets.getBottom();
-        KimlUtil.resizeNode(parentNode, width, height, false);
+        if (!(Double.isNaN(boundingBoxWidth) || Double.isNaN(boundingBoxHeight))) {
+            float width = boundingBoxWidth + 2 * borderSpacing + insets.getLeft() + insets.getRight();
+            float height = boundingBoxHeight + 2 * borderSpacing + insets.getTop() + insets.getBottom();
+            KimlUtil.resizeNode(parentNode, width, height, false);
+        }
         progressMonitor.done();
     }
 
@@ -621,16 +628,32 @@ public class OgmlServerCommunicator {
         Map<String, KVectorChain> layoutInformation = Maps.newHashMapWithExpectedSize(
                 outputData.size());
         for (Map.Entry<String, String> entry : outputData.entrySet()) {
-            try {
-                KVectorChain pointList = new KVectorChain();
-                pointList.parse(entry.getValue());
-                layoutInformation.put(entry.getKey(), pointList);
-            } catch (IllegalArgumentException exception) {
-                // the vector chain could not be parsed - ignore the entry
+            KVectorChain pointList = new KVectorChain();
+            StringTokenizer tokenizer = new StringTokenizer(entry.getValue(), ",() \t");
+            while (tokenizer.countTokens() >= 2) {
+                double x = parseDouble(tokenizer.nextToken());
+                double y = parseDouble(tokenizer.nextToken());
+                pointList.add(new KVector(x, y));
             }
+            layoutInformation.put(entry.getKey(), pointList);
         }
         progressMonitor.done();
         return layoutInformation;
+    }
+    
+    /**
+     * Parse a double value ignoring illegal string values.
+     * 
+     * @param string a string value
+     * @return the corresponding double, or NaN if the string is illegal
+     */
+    private static double parseDouble(final String string) {
+        try {
+            return Double.parseDouble(string);
+        } catch (NumberFormatException exception) {
+            // the vector chain could not be parsed - return NaN
+            return Double.NaN;
+        }
     }
     
 }

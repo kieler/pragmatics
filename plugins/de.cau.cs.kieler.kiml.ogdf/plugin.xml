@@ -28,6 +28,9 @@
                feature="EDGE_LABELS"
                priority="-4">
          </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
+         </supportedFeature>
          <supportedDiagram
                priority="9"
                type="de.cau.cs.kieler.layout.diagrams.general">
@@ -117,6 +120,9 @@
                feature="EDGE_LABELS"
                priority="-4">
          </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
+         </supportedFeature>
          <knownOption
                default="UP"
                option="de.cau.cs.kieler.direction">
@@ -192,6 +198,9 @@
                feature="EDGE_LABELS"
                priority="-4">
          </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
+         </supportedFeature>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.qualityVsSpeed">
          </knownOption>
@@ -231,6 +240,9 @@
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
          </supportedFeature>
          <knownOption
                default="80"
@@ -275,6 +287,9 @@
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
          </supportedFeature>
          <knownOption
                default="15"
@@ -330,6 +345,9 @@
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
          </supportedFeature>
          <supportedDiagram
                priority="8"
@@ -414,6 +432,9 @@
                feature="EDGE_LABELS"
                priority="-4">
          </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
+         </supportedFeature>
          <knownOption
                default="15"
                option="de.cau.cs.kieler.borderSpacing">
@@ -460,6 +481,9 @@
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
          </supportedFeature>
          <knownOption
                default="15"
@@ -595,8 +619,16 @@
             parameter="FAST_MULTIPOLE"
             type="de.cau.cs.kieler.type.force">
          <supportedFeature
+               feature="MULTI_EDGES"
+               priority="-2">
+         </supportedFeature>
+         <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED"
+               priority="-5">
          </supportedFeature>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.multipolePrec">
@@ -631,8 +663,16 @@
             parameter="FAST_MULTIPOLE_MULTILEVEL"
             type="de.cau.cs.kieler.type.force">
          <supportedFeature
+               feature="MULTI_EDGES"
+               priority="-2">
+         </supportedFeature>
+         <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED"
+               priority="-5">
          </supportedFeature>
          <knownOption
                default="1"
@@ -656,6 +696,10 @@
             name="Kamada-Kawai"
             parameter="KAMADA_KAWAI"
             type="de.cau.cs.kieler.type.force">
+         <supportedFeature
+               feature="MULTI_EDGES"
+               priority="-2">
+         </supportedFeature>
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
@@ -685,6 +729,10 @@
             name="Stress Majorization"
             parameter="STRESS_MAJORIZATION"
             type="de.cau.cs.kieler.type.force">
+         <supportedFeature
+               feature="MULTI_EDGES"
+               priority="-2">
+         </supportedFeature>
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
@@ -720,6 +768,9 @@
             name="Dominance"
             parameter="DOMINANCE"
             type="de.cau.cs.kieler.kiml.ogdf.type.planar">
+         <supportedFeature
+               feature="MULTI_EDGES">
+         </supportedFeature>
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
@@ -757,6 +808,9 @@
             name="Visibility"
             parameter="VISIBILITY"
             type="de.cau.cs.kieler.kiml.ogdf.type.planar">
+         <supportedFeature
+               feature="MULTI_EDGES">
+         </supportedFeature>
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
@@ -850,6 +904,9 @@
                feature="EDGE_LABELS"
                priority="-4">
          </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
+         </supportedFeature>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
@@ -882,6 +939,9 @@
                feature="EDGE_LABELS"
                priority="-4">
          </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
+         </supportedFeature>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
@@ -911,6 +971,10 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.crossingBeautifier">
          </knownOption>
+         <knownOption
+               default="1.3"
+               option="de.cau.cs.kieler.aspectRatio">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -923,6 +987,9 @@
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
          </supportedFeature>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
@@ -952,8 +1019,16 @@
             name="Balloon"
             parameter="BALLOON">
          <supportedFeature
+               feature="MULTI_EDGES"
+               priority="-2">
+         </supportedFeature>
+         <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED"
+               priority="-5">
          </supportedFeature>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">

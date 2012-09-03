@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.UnsupportedGraphException;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ogdf.options.AcyclicSubgraphModule;
@@ -571,7 +572,7 @@ public final class AlgorithmSetup {
             // the layouter crashes on not connected graphs
             if (!isConnected(layoutNode)) {
                 throw new UnsupportedGraphException(
-                        "The upward planarization layout algorithm does not support non-connected graphs.");
+                        "The Upward-Planarization layout algorithm does not support non-connected graphs.");
             }
             // node distance
             float nodeDistance = parentLayout.getProperty(LayoutOptions.SPACING);
@@ -608,6 +609,11 @@ public final class AlgorithmSetup {
             break;
             
         case KAMADA_KAWAI: {
+            // the layouter returns NaN values on not connected graphs
+            if (!isConnected(layoutNode)) {
+                throw new UnsupportedGraphException(
+                        "The Kamada-Kawai layout algorithm does not support non-connected graphs.");
+            }
             // edge length
             float edgeLength = parentLayout.getProperty(LayoutOptions.SPACING);
             if (edgeLength < 0) {
@@ -621,6 +627,11 @@ public final class AlgorithmSetup {
         }
         
         case STRESS_MAJORIZATION: {
+            // the layouter returns NaN values on not connected graphs
+            if (!isConnected(layoutNode)) {
+                throw new UnsupportedGraphException(
+                        "The Stress Majorization layout algorithm does not support non-connected graphs.");
+            }
             // iterations
             Integer iterations = parentLayout.getProperty(ITERATIONS);
             if (iterations != null) {
@@ -639,6 +650,11 @@ public final class AlgorithmSetup {
         }
         
         case DOMINANCE: {
+            // the layouter crashes on not connected graphs
+            if (!isConnected(layoutNode)) {
+                throw new UnsupportedGraphException(
+                        "The Dominance layout algorithm does not support non-connected graphs.");
+            }
             // grid distance
             float distance = parentLayout.getProperty(LayoutOptions.SPACING);
             if (distance < 0) {
@@ -652,6 +668,11 @@ public final class AlgorithmSetup {
         }
         
         case VISIBILITY: {
+            // the layouter crashes on not connected graphs
+            if (!isConnected(layoutNode)) {
+                throw new UnsupportedGraphException(
+                        "The Visibility layout algorithm does not support non-connected graphs.");
+            }
             // grid distance
             float distance = parentLayout.getProperty(LayoutOptions.SPACING);
             if (distance < 0) {
@@ -665,6 +686,16 @@ public final class AlgorithmSetup {
         }
         
         case FRAYSSEIX_PACH_POLLACK: {
+            // the layouter crashes if there are multi-edges
+            if (hasMultiEdges(layoutNode)) {
+                throw new UnsupportedGraphException(
+                        "The Fraysseix-Pach-Pollack layout algorithm does not support multi-edges.");
+            }
+            // the layouter crashes on not connected graphs
+            if (!isConnected(layoutNode)) {
+                throw new UnsupportedGraphException(
+                        "The Fraysseix-Pach-Pollack layout algorithm does not support non-connected graphs."); // SUPPRESS CHECKSTYLE LineLength
+            }
             // separation
             float separation = parentLayout.getProperty(LayoutOptions.SPACING);
             if (separation < 0) {
@@ -675,6 +706,11 @@ public final class AlgorithmSetup {
         }
         
         case SCHNYDER: {
+            // the layouter returns NaN values on not connected graphs
+            if (!isConnected(layoutNode)) {
+                throw new UnsupportedGraphException(
+                        "The Schnyder layout algorithm does not support non-connected graphs.");
+            }
             // separation
             float separation = parentLayout.getProperty(LayoutOptions.SPACING);
             if (separation < 0) {
@@ -685,6 +721,11 @@ public final class AlgorithmSetup {
         }
         
         case CANONICAL_ORDER: {
+            // the layouter hangs if there are multi-edges
+            if (hasMultiEdges(layoutNode)) {
+                throw new UnsupportedGraphException(
+                        "The Canonical Order layout algorithm does not support multi-edges.");
+            }
             // separation
             float separation = parentLayout.getProperty(LayoutOptions.SPACING);
             if (separation < 0) {
@@ -701,6 +742,11 @@ public final class AlgorithmSetup {
         }
         
         case CONVEX_GRID: {
+            // the layouter hangs if there are multi-edges
+            if (hasMultiEdges(layoutNode)) {
+                throw new UnsupportedGraphException(
+                        "The Convex Grid layout algorithm does not support multi-edges.");
+            }
             // separation
             float separation = parentLayout.getProperty(LayoutOptions.SPACING);
             if (separation < 0) {
@@ -717,12 +763,20 @@ public final class AlgorithmSetup {
         }
         
         case MIXED_MODEL: {
+            // the layouter crashes if there are multi-edges
+            if (hasMultiEdges(layoutNode)) {
+                throw new UnsupportedGraphException(
+                        "The Mixed Model layout algorithm does not support multi-edges.");
+            }
             // separation
             float separation = parentLayout.getProperty(LayoutOptions.SPACING);
             if (separation < 0) {
                 separation = DEF_GRID_SEPARATION;
             }
             comm.addOption(OgdfServer.OPTION_SEPARATION, separation);
+            // page ratio
+            float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
+            comm.addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
             // number of runs
             int runs = parentLayout.getProperty(RUNS);
             comm.addOption(OgdfServer.OPTION_RUNS, runs);
@@ -751,19 +805,18 @@ public final class AlgorithmSetup {
     /**
      * Determine whether the graph defined by the given parent node is connected.
      * 
-     * @param node
-     *            the parent node of the graph
+     * @param graph the parent node of the graph
      * @return whether the graph is connected
      */
-   private static boolean isConnected(final KNode node) {
+   private static boolean isConnected(final KNode graph) {
        // empty graphs are connected
-       if (node.getChildren().size() == 0) {
+       if (graph.getChildren().size() == 0) {
            return true;
        }
        // mark all nodes connected to a random node
        Set<KNode> marker = new HashSet<KNode>();
        LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
-       nodeQueue.offer(node.getChildren().get(0));
+       nodeQueue.offer(graph.getChildren().get(0));
        do {
            KNode currentNode = nodeQueue.poll();
            if (!marker.contains(currentNode)) {
@@ -777,12 +830,36 @@ public final class AlgorithmSetup {
            }
        } while (!nodeQueue.isEmpty());
        // if there is still a not marked node the graph is not connected
-       for (KNode currentNode : node.getChildren()) {
+       for (KNode currentNode : graph.getChildren()) {
            if (!marker.contains(currentNode)) {
                return false;
            }
        }
        return true;
+   }
+   
+   /**
+    * Determine whether the graph defined by the given parent node has any multi-edges.
+    * 
+    * @param graph the parent node of the graph
+    * @return whether the graph contains a multi-edge
+    */
+   private static boolean hasMultiEdges(final KNode graph) {
+       HashSet<Pair<KNode, KNode>> edgeSet = new HashSet<Pair<KNode, KNode>>();
+       for (KNode source : graph.getChildren()) {
+           for (KEdge edge : source.getOutgoingEdges()) {
+               KNode target = edge.getTarget();
+               // self-loops are ignored by the server communicator
+               if (source != target) {
+                   Pair<KNode, KNode> pair = Pair.create(source, target);
+                   if (edgeSet.contains(pair) || edgeSet.contains(Pair.create(target, source))) {
+                       return true;
+                   }
+                   edgeSet.add(pair);
+               }
+           }
+       }
+       return false;
    }
 
 }

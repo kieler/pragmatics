@@ -1354,6 +1354,10 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 				mixedModel->separation(separation);
 				layout.separation(separation);
 			}
+			double pageRatio;
+			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options) && pageRatio > 0) {
+				layout.pageRatio(pageRatio);
+			}
 			layout.call(*LGA);
 			break;
 		}
