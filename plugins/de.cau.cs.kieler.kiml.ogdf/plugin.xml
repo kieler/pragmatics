@@ -691,7 +691,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="The spring-embedder layout algorithm after Kamada and Kawai 1989."
+            description="The spring-embedder layout algorithm after Kamada and Kawai 1989. The input graph must be connected."
             id="de.cau.cs.kieler.kiml.ogdf.kamadaKawai"
             name="Kamada-Kawai"
             parameter="KAMADA_KAWAI"
@@ -724,7 +724,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Stress majorization layout that allows radial constraints based on shortest path distances. The implementation is based on Brandes and Pich 2009."
+            description="Stress majorization layout that allows radial constraints based on shortest path distances. The implementation is based on Brandes and Pich 2009. The input graph must be connected."
             id="de.cau.cs.kieler.kiml.ogdf.stressMajorization"
             name="Stress Majorization"
             parameter="STRESS_MAJORIZATION"
@@ -763,7 +763,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Dominance layout method."
+            description="Dominance layout method. The input graph must be connected."
             id="de.cau.cs.kieler.kiml.ogdf.dominance"
             name="Dominance"
             parameter="DOMINANCE"
@@ -803,7 +803,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Visibility layout method."
+            description="Visibility layout method. The input graph must be connected."
             id="de.cau.cs.kieler.kiml.ogdf.visibility"
             name="Visibility"
             parameter="VISIBILITY"
@@ -843,7 +843,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="The layout algorithm by de Fraysseix, Pach, and Pollack 1990. This algorithm draws a planar graph straight-line without crossings. The algorithm runs in three phases. In the ﬁrst phase, the graph is augmented by adding new artiﬁcial edges to get a triangulated plane graph. Then, a so-called shelling order (also called canonical ordering) for triangulated planar graphs is computed. In the third phase the vertices are placed incrementally according to the shelling order."
+            description="The layout algorithm by de Fraysseix, Pach, and Pollack 1990. This algorithm draws a planar graph straight-line without crossings. The algorithm runs in three phases. In the ﬁrst phase, the graph is augmented by adding new artiﬁcial edges to get a triangulated plane graph. Then, a so-called shelling order (also called canonical ordering) for triangulated planar graphs is computed. In the third phase the vertices are placed incrementally according to the shelling order. The input graph must be planar and connected and must not contain multi-edges."
             id="de.cau.cs.kieler.kiml.ogdf.fraysseixPachPollack"
             name="Fraysseix-Pach-Pollack"
             parameter="FRAYSSEIX_PACH_POLLACK"
@@ -869,7 +869,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="The layout algorithm by Schnyder 1990. This algorithm draws a planar graph straight-line without crossings. The algorithm runs in three phases. In the ﬁrst phase, the graph is augmented by adding new artiﬁcial edges to get a triangulated plane graph. Then, a partition of the set of interior edges in three trees (also called Schnyder trees) with special orientation properties is derived. In the third step, the actual coordinates are computed."
+            description="The layout algorithm by Schnyder 1990. This algorithm draws a planar graph straight-line without crossings. The algorithm runs in three phases. In the ﬁrst phase, the graph is augmented by adding new artiﬁcial edges to get a triangulated plane graph. Then, a partition of the set of interior edges in three trees (also called Schnyder trees) with special orientation properties is derived. In the third step, the actual coordinates are computed. The input graph must be planar and connected and must not contain multi-edges."
             id="de.cau.cs.kieler.kiml.ogdf.schnyder"
             name="Schnyder"
             parameter="SCHNYDER"
@@ -895,7 +895,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="A straight-line drawing algorithm for planar graphs after Kant 1996. The algorithm runs in several phases. In the first phase, the graph is augmented by adding edges to achieve a certain connectivity (e.g., biconnected or triconnected). Then, a shelling order of the the resulting graph is computed."
+            description="A straight-line drawing algorithm for planar graphs after Kant 1996. The algorithm runs in several phases. In the first phase, the graph is augmented by adding edges to achieve a certain connectivity (e.g., biconnected or triconnected). Then, a shelling order of the the resulting graph is computed. The input graph must be planar and must not contain multi-edges."
             id="de.cau.cs.kieler.kiml.ogdf.canonicalOrder"
             name="Canonical Order"
             parameter="CANONICAL_ORDER"
@@ -930,7 +930,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="The Mixed-Model layout algorithm by Gutwenger and Mutzel 1998, which is based upon ideas by Kant. In particular, Kant's algorithm has been changed concerning the placement phase and the vertex boxes, and it has been generalized to work for connected planar graphs. This algorithm draws a d-planar graph on a grid such that every edge has at most three bends and the minimum angle between two edges is at least 2/d radians. The algorithm runs in several phases. In the preprocessing phase, vertices with degree one are temporarily deleted and the graph is being augmented to a biconnected planar graph using a planar biconnectivity augmentation module. Then, a shelling order for biconnected plane graphs is computed. In the next step, boxes around each vertex are defined in such a way that the incident edges appear regularly along the box. Finally, the coordinates of the vertex boxes are computed taking the degree-one vertices into account."
+            description="The Mixed-Model layout algorithm by Gutwenger and Mutzel 1998, which is based upon ideas by Kant. In particular, Kant's algorithm has been changed concerning the placement phase and the vertex boxes, and it has been generalized to work for connected planar graphs. This algorithm draws a d-planar graph on a grid such that every edge has at most three bends and the minimum angle between two edges is at least 2/d radians. The algorithm runs in several phases. In the preprocessing phase, vertices with degree one are temporarily deleted and the graph is being augmented to a biconnected planar graph using a planar biconnectivity augmentation module. Then, a shelling order for biconnected plane graphs is computed. In the next step, boxes around each vertex are defined in such a way that the incident edges appear regularly along the box. Finally, the coordinates of the vertex boxes are computed taking the degree-one vertices into account. The input graph must not contain multi-edges."
             id="de.cau.cs.kieler.kiml.ogdf.mixedModel"
             name="Mixed Model"
             parameter="MIXED_MODEL"
@@ -979,7 +979,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="A straight-line drawing algorithm for planar graphs after Chrobak and Kant 1997. The algorithm runs in several phases. In the first phase, the graph is augmented by adding edges to achieve a certain connectivity (e.g., biconnected or triconnected). Then, a shelling order of the the resulting graph is computed."
+            description="A straight-line drawing algorithm for planar graphs after Chrobak and Kant 1997. The algorithm runs in several phases. In the first phase, the graph is augmented by adding edges to achieve a certain connectivity (e.g., biconnected or triconnected). Then, a shelling order of the the resulting graph is computed. The input graph must be planar and must not contain multi-edges."
             id="de.cau.cs.kieler.kiml.ogdf.convexGrid"
             name="Convex Grid"
             parameter="CONVEX_GRID"

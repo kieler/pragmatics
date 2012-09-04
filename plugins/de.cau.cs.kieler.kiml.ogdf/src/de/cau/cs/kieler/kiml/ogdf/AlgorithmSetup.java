@@ -706,6 +706,11 @@ public final class AlgorithmSetup {
         }
         
         case SCHNYDER: {
+            // the layouter returns NaN values if there are multi-edges
+            if (hasMultiEdges(layoutNode)) {
+                throw new UnsupportedGraphException(
+                        "The Fraysseix-Pach-Pollack layout algorithm does not support multi-edges.");
+            }
             // the layouter returns NaN values on not connected graphs
             if (!isConnected(layoutNode)) {
                 throw new UnsupportedGraphException(

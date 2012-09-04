@@ -43,7 +43,7 @@ public class OgdfServer {
     public static enum Cleanup {
         /** normal cleanup. */
         NORMAL,
-        /** read error output and stop the OGDF process. */
+        /** read error output and stop the OGDF process and the watcher thread. */
         ERROR,
         /** stop the OGDF process and the watcher thread. */
         STOP;
@@ -376,7 +376,7 @@ public class OgdfServer {
      * @param inputFormat
      *            the graph input format for the ogdf server
      */
-    public void initialize(final String inputFormat) {
+    public synchronized void initialize(final String inputFormat) {
         if (watchdog == null) {
             // start the watcher thread for timeout checking
             watchdog = new Watchdog();
@@ -392,6 +392,10 @@ public class OgdfServer {
                 process = Runtime.getRuntime().exec(new String[] { executable, inputFormat });
             } catch (IOException exception) {
                 throw new OgdfServerException("Failed to start ogdf server process.", exception);
+            } finally {
+                if (process == null) {
+                    cleanup(Cleanup.STOP);
+                }
             }
         }
     }
@@ -440,10 +444,10 @@ public class OgdfServer {
      */
     public Map<String, String> readOutputData() {
         Map<String, String> data = new HashMap<String, String>();
-        String error = "";
         BufferedReader reader = new BufferedReader(new InputStreamReader(output()));
         ParseState state = ParseState.TYPE;
         boolean parseMore = true;
+        StringBuilder error = null;
         
         while (parseMore) {
             String line = null;
@@ -463,6 +467,7 @@ public class OgdfServer {
                     state = ParseState.DATA;
                 } else if (line.equals("ERROR")) {
                     state = ParseState.ERROR;
+                    error = new StringBuilder();
                 }
                 break;
                 
@@ -479,12 +484,13 @@ public class OgdfServer {
                 
             case ERROR:
                 if (line.equals("DONE")) {
-                    throw new OgdfServerException(error);
+                    cleanup(Cleanup.STOP);
+                    throw new OgdfServerException(error.toString());
                 } else {
                     if (error.length() > 0) {
-                        error += "\n";
+                        error.append('\n');
                     }
-                    error += line;
+                    error.append(line);
                 }
                 break;
             }
@@ -503,12 +509,12 @@ public class OgdfServer {
      * 
      * @param c the cleanup option
      */
-    public void cleanup(final Cleanup c) {
+    public synchronized void cleanup(final Cleanup c) {
         StringBuilder error = null;
         if (process != null) {
             InputStream errorStream = process.getErrorStream();
             try {
-                if (c == Cleanup.ERROR) {
+                if (c == Cleanup.ERROR && ogdfStream != null) {
                     // wait a bit so the process can either terminate or generate error
                     Thread.sleep(PROC_ERROR_TIME);
                     // read the error stream to display a meaningful error message
@@ -554,20 +560,21 @@ public class OgdfServer {
             }
         }
         
-        if (error == null) {
-            synchronized (nextJob) {
-                // reset the stream to indicate that the job is done
-                ogdfStream = null;
-                if (watchdog != null) {
-                    // wake the watcher if it is still waiting for timeout
-                    watchdog.interrupt();
-                    // if requested, reset the watcher to indicate that it should terminate
-                    if (c == Cleanup.STOP) {
-                        watchdog = null;
-                    }
+        synchronized (nextJob) {
+            // reset the stream to indicate that the job is done
+            ogdfStream = null;
+            if (watchdog != null) {
+                Watchdog myWatchdog = watchdog;
+                // if requested, reset the watcher to indicate that it should terminate
+                if (c == Cleanup.ERROR || c == Cleanup.STOP) {
+                    watchdog = null;
                 }
+                // wake the watcher if it is still waiting for timeout
+                myWatchdog.interrupt();
             }
-        } else if (error.length() > 0) {
+        }
+        
+        if (error != null && error.length() > 0) {
             // an error output could be read from OGDF, so display that to the user
             throw new OgdfServerException("OGDF error: " + error.toString());
         }
@@ -601,7 +608,7 @@ public class OgdfServer {
                             // wait for notification by the main thread
                             nextJob.wait();
                         } catch (InterruptedException ex) {
-                            // an interrupt can happen when a shutdown is requested
+                            // the watchdog thread is interrupted: shutdown is requested
                             if (watchdog == null) {
                                 return;
                             }
@@ -626,16 +633,11 @@ public class OgdfServer {
                 
                 if (!interrupted) {
                     synchronized (nextJob) {
-                        // timeout has occurred! close the stream so the main thread will wake
+                        // timeout has occurred! kill the process so the main thread will wake
                         Process myProcess = process;
                         if (myProcess != null) {
-                            try {
-                                myProcess.getInputStream().close();
-                                myProcess.getErrorStream().close();
-                                ogdfStream = null;
-                            } catch (IOException ex) {
-                                // ignore exception
-                            }
+                            ogdfStream = null;
+                            myProcess.destroy();
                         }
                     }
                 }
