@@ -183,6 +183,9 @@ public class LayouterHintDialog extends Dialog {
         return composite;
     }
     
+    /** minimal width of the selection area. */
+    private static final int SELECTION_WIDTH = 220;
+    
     /**
      * Create the dialog area that displays the selection tree and filter text.
      * 
@@ -252,7 +255,9 @@ public class LayouterHintDialog extends Dialog {
         });
         
         composite.setLayout(new GridLayout());
-        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+        gridData.minimumWidth = SELECTION_WIDTH;
+        composite.setLayoutData(gridData);
         return composite;
     }
     

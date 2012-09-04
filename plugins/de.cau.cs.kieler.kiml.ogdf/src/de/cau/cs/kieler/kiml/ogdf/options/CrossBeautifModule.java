@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -14,17 +14,17 @@
 package de.cau.cs.kieler.kiml.ogdf.options;
 
 /**
- * Definition of the speed option for the Davidson-Harel layouter.
+ * Definition of crossing beautifier modules for mixed model layout.
  * 
- * @author mri
+ * @author msp
  */
-public enum Speed {
+public enum CrossBeautifModule {
     
-    /** fast speed. */
-    FAST,
-    /** medium speed. */
-    MEDIUM,
-    /** high quality. */
-    HQ;
-    
+    /** no beautification of crossings. */
+    NONE,
+    /** beautification of crossings using grid doubling. */
+    DOUBLE_GRID,
+    /** beautification of crossings using local stretch. */
+    LOCAL_STRETCH;
+
 }

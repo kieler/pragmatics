@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -14,17 +14,17 @@
 package de.cau.cs.kieler.kiml.ogdf.options;
 
 /**
- * Definition of the speed option for the Davidson-Harel layouter.
+ * Enumeration of available edge insertion modules for planarization layout.
  * 
- * @author mri
+ * @author msp
  */
-public enum Speed {
+public enum EdgeInsertionModule {
     
-    /** fast speed. */
-    FAST,
-    /** medium speed. */
-    MEDIUM,
-    /** high quality. */
-    HQ;
-    
+    /** fixed embedding edge insertion module. */
+    FIXED_EMB,
+    /** variable embedding edge insertion module. */
+    VARIABLE_EMB,
+    /** multi-edge approximation edge insertion module. */
+    MULTIEDGE_APPROX;
+
 }
