@@ -572,7 +572,7 @@ public final class AlgorithmSetup {
             // the layouter crashes on not connected graphs
             if (!isConnected(layoutNode)) {
                 throw new UnsupportedGraphException(
-                        "The Upward-Planarization layout algorithm does not support non-connected graphs.");
+                        "The Upward-Planarization layout algorithm does not support non-connected graphs."); // SUPPRESS CHECKSTYLE LineLength
             }
             // node distance
             float nodeDistance = parentLayout.getProperty(LayoutOptions.SPACING);
@@ -630,7 +630,7 @@ public final class AlgorithmSetup {
             // the layouter returns NaN values on not connected graphs
             if (!isConnected(layoutNode)) {
                 throw new UnsupportedGraphException(
-                        "The Stress Majorization layout algorithm does not support non-connected graphs.");
+                        "The Stress Majorization layout algorithm does not support non-connected graphs."); // SUPPRESS CHECKSTYLE LineLength
             }
             // iterations
             Integer iterations = parentLayout.getProperty(ITERATIONS);
