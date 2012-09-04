@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import de.cau.cs.kieler.kiml.ILayoutData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
@@ -32,13 +33,13 @@ import de.cau.cs.kieler.kiml.LayoutTypeData;
 public class LayouterHintProvider implements ITreeContentProvider {
 
     /** the layout services used for this provider. */
-    private LayoutDataService layoutServices;
+    private LayoutDataService layoutDataService;
     /** the filter map that stores visibility information. */
     private final Map<Object, Boolean> filterMap = new HashMap<Object, Boolean>();
     /** the current filter value. */
     private String filterValue;
     /** the current best filter match. */
-    private String bestFilterMatch;
+    private ILayoutData bestFilterMatch;
     
     /**
      * {@inheritDoc}
@@ -51,9 +52,9 @@ public class LayouterHintProvider implements ITreeContentProvider {
      */
     public Object[] getElements(final Object inputElement) {
         if (inputElement instanceof LayoutDataService) {
-            layoutServices = (LayoutDataService) inputElement;
+            layoutDataService = (LayoutDataService) inputElement;
         }
-        return layoutServices.getTypeData().toArray();
+        return layoutDataService.getTypeData().toArray();
     }
 
     /**
@@ -73,7 +74,7 @@ public class LayouterHintProvider implements ITreeContentProvider {
     public Object getParent(final Object element) {
         if (element instanceof LayoutAlgorithmData) {
             LayoutAlgorithmData layouterData = (LayoutAlgorithmData) element;
-            return layoutServices.getTypeData(layouterData.getType());
+            return layoutDataService.getTypeData(layouterData.getType());
         }
         return null;
     }
@@ -120,31 +121,38 @@ public class LayouterHintProvider implements ITreeContentProvider {
             if (filterValue != null && filterValue.length() > 0) {
                 if (element instanceof LayoutTypeData) {
                     LayoutTypeData typeData = (LayoutTypeData) element;
-                    result = typeData.getName().toLowerCase().contains(filterValue);
+                    result = !typeData.getLayouters().isEmpty();
                     if (result) {
-                        for (LayoutAlgorithmData layouterData : typeData.getLayouters()) {
-                            filterMap.put(layouterData, Boolean.TRUE);
-                        }
-                        if (bestFilterMatch == null) {
-                            bestFilterMatch = typeData.getId();
+                        String typeName = typeData.getName().toLowerCase();
+                        result = typeName.contains(filterValue);
+                        if (result) {
+                            for (LayoutAlgorithmData layouterData : typeData.getLayouters()) {
+                                filterMap.put(layouterData, Boolean.TRUE);
+                            }
+                            if (bestFilterMatch == null
+                                    || typeName.startsWith(filterValue)
+                                    && !bestFilterMatch.getName().toLowerCase()
+                                        .startsWith(filterValue)) {
+                                bestFilterMatch = typeData;
+                            }
                         } else {
-                            bestFilterMatch = "";
+                            boolean hasFilteredChild = false;
+                            for (LayoutAlgorithmData layouterData : typeData.getLayouters()) {
+                                hasFilteredChild |= applyFilter(layouterData);
+                            }
+                            result = hasFilteredChild;
                         }
-                    } else {
-                        boolean hasFilteredChild = false;
-                        for (LayoutAlgorithmData layouterData : typeData.getLayouters()) {
-                            hasFilteredChild |= applyFilter(layouterData);
-                        }
-                        result = hasFilteredChild;
                     }
                 } else if (element instanceof LayoutAlgorithmData) {
                     LayoutAlgorithmData layouterData = (LayoutAlgorithmData) element;
-                    if (layouterData.getName().toLowerCase().contains(filterValue)) {
+                    String layouterName = layouterData.getName().toLowerCase();
+                    if (layouterName.contains(filterValue)) {
                         result = Boolean.TRUE;
-                        if (bestFilterMatch == null) {
-                            bestFilterMatch = layouterData.getId();
-                        } else {
-                            bestFilterMatch = "";
+                        if (bestFilterMatch == null
+                                || layouterName.startsWith(filterValue)
+                                && !bestFilterMatch.getName().toLowerCase()
+                                    .startsWith(filterValue)) {
+                            bestFilterMatch = layouterData;                            
                         }
                     } else {
                         String category = LayoutDataService.getInstance().getCategoryName(
@@ -152,6 +160,8 @@ public class LayouterHintProvider implements ITreeContentProvider {
                         result = category != null && category.toLowerCase().contains(filterValue);
                     }
                 }
+            } else if (element instanceof LayoutTypeData) {
+                result = !((LayoutTypeData) element).getLayouters().isEmpty();
             } else {
                 result = Boolean.TRUE;
             }
@@ -165,7 +175,7 @@ public class LayouterHintProvider implements ITreeContentProvider {
      * 
      * @return the best filter match
      */
-    public String getBestFilterMatch() {
+    public ILayoutData getBestFilterMatch() {
         return bestFilterMatch;
     }
 
