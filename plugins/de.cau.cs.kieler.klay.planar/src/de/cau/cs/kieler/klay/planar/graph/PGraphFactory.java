@@ -328,6 +328,10 @@ public class PGraphFactory {
             }
         }
 
+        
+        // set graph elements coordinates
+        
+        
         // arrange nodes if minSpacing of nodes is not ensured for the horizontal and
         // vertical direction!
         // horizontal go through: take lower and upper nodes and go horizontal. check

@@ -259,7 +259,7 @@ public class PFace extends PGraphElement {
         OrthogonalAngle checkAngle = null;
         boolean wantsCCW = true;
         do {
-            if (isCutvertex(currentNode)) {
+            if (isMultiNode(currentNode)) {
                 // special case, if a node is passed more than once.
                 int ccwPath = calcPathLength(currentNode, currentEdge, ortho, true);
                 int cwPath = calcPathLength(currentNode, currentEdge, ortho, false);
@@ -372,7 +372,7 @@ public class PFace extends PGraphElement {
         if (wantsCCW) {
             pair = nextCCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
                     true);
-            if (isCutvertex(currentNode) && path.contains(pair.getFirst())) {
+            if (isMultiNode(currentNode) && path.contains(pair.getFirst())) {
                 pair = nextCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
                         true);
             }
@@ -380,7 +380,7 @@ public class PFace extends PGraphElement {
         } else {
             pair = nextCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
                     false);
-            if (isCutvertex(currentNode) && path.contains(pair.getFirst())) {
+            if (isMultiNode(currentNode) && path.contains(pair.getFirst())) {
                 pair = nextCCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
                         true);
             }
@@ -410,14 +410,14 @@ public class PFace extends PGraphElement {
             if (wantsCCW) {
                 pair = nextCCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
                         true);
-                if (isCutvertex(currentNode) && path.contains(pair.getFirst())) {
+                if (isMultiNode(currentNode) && path.contains(pair.getFirst())) {
                     pair = nextCWEdgeWithAngle(currentNode, currentEdge,
                             ortho.getAngles(currentNode), true);
                 }
             } else {
                 pair = nextCWEdgeWithAngle(currentNode, currentEdge, ortho.getAngles(currentNode),
                         false);
-                if (isCutvertex(currentNode) && path.contains(pair.getFirst())) {
+                if (isMultiNode(currentNode) && path.contains(pair.getFirst())) {
                     pair = nextCCWEdgeWithAngle(currentNode, currentEdge,
                             ortho.getAngles(currentNode), true);
                 }
@@ -433,22 +433,13 @@ public class PFace extends PGraphElement {
     }
 
     /**
-     * A cutvertex is a vertex that divides a graph into two components if it is removed. Here it is
-     * identified if it contains more than two adjacent edge that are adjacent to this face.
+     * A multi node has more than two incident edges that are also adjacent to the face.
      * 
      * @param currentNode
      *            possibly a cutvertex.
      * @return true if the node is adjacent to more than two nodes, otherwise false.
      */
-    public boolean isCutvertex(final PNode currentNode) {
-        // TODO an other name, this is not a cutvertex, even more a vertex with more than two
-        // adjacent
-        // edges.
-        // At first handle exact 4 node edges.
-        if (currentNode.getAdjacentEdgeCount() != 4) {
-            return false;
-        }
-
+    public boolean isMultiNode(final PNode currentNode) {
         int count = 0;
         for (PEdge edge : currentNode.adjacentEdges()) {
             if (isAdjacent(edge)) {
@@ -467,7 +458,7 @@ public class PFace extends PGraphElement {
      */
     public boolean containsCutvertex() {
         for (PNode node : this.adjacentNodes()) {
-            if (isCutvertex(node)) {
+            if (isMultiNode(node)) {
                 return true;
             }
         }

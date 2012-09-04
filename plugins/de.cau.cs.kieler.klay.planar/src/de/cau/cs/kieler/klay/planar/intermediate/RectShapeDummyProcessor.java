@@ -127,33 +127,54 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
             PEdge startEdge = determineStartEdge(face);
             PEdge currentEdge = startEdge;
             PEdge next = null;
-            RectShapeEdgeProperties edgeProperties = currentEdge
-                    .getProperty(Properties.RECT_SHAPE_PROPERTIES);
+            RectShapeEdgeProperties edgeProperties = getProperties(currentEdge, null);
+
             PNode corner = edgeProperties.getCorner();
             PNode startNode = corner;
 
             do {
-                if (edgeProperties == null) {
-                    // Edge with two edge properties!
-                    edgeProperties = currentEdge.getProperty(Properties.RECT_SHAPE_CUTEDGE)
-                            .getFirst();
-                }
                 if (edgeProperties.getTurn() == 1 || edgeProperties.getTurn() == 2) {
                     addArtificial(currentEdge, edgeProperties, false);
                 }
                 next = edgeProperties.getNext();
                 currentEdge = next;
-                edgeProperties = currentEdge.getProperty(Properties.RECT_SHAPE_PROPERTIES);
+                edgeProperties = getProperties(currentEdge, corner);
                 corner = edgeProperties.getCorner();
             } while (currentEdge != startEdge || corner != startNode);
         }
     }
 
     /**
-     * Determines an arbitrary edge, but with longest path to the front. Since we need to find to a
-     * front the first edge in ccw order and this is the edge with the longest path to it. The first
-     * edge in ccw order is needed since at the inserting step the front is split into two edges and
-     * this works only correct when we start with the ccw first edge with the front.
+     * Filters the {@link RectShapeEdgeProperties} of an edges. A cutedge is passed twice,
+     * so that there are two property container. The correct one is determined by the given 
+     * corner, if no corner is given, the first property container is taken.
+     * @param edge, for which we need to filter the properties container.
+     * @param corner, <code>null</code> allowed, if it the edge is a cutedge, used to 
+     * filter the correct properties container.
+     * @return the {@link RectShapeEdgeProperties} property object of the given edge.
+     */
+    private RectShapeEdgeProperties getProperties(final PEdge edge, final PNode corner) {
+        RectShapeEdgeProperties edgeProperties = edge.getProperty(Properties.RECT_SHAPE_PROPERTIES);
+        if (edgeProperties == null) {
+            Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProps = edge
+                    .getProperty(Properties.RECT_SHAPE_CUTEDGE);
+            if (corner == null) {
+                return cutEdgeProps.getFirst();
+            }
+            if (cutEdgeProps.getFirst().getCorner() == corner) {
+                return cutEdgeProps.getSecond();
+            } else {
+                return cutEdgeProps.getFirst();
+            }
+        }
+        return edgeProperties;
+    }
+
+    /**
+     * Determines an arbitrary edge (no cutedge), but with longest path to the front. Since we need
+     * to find to a front the first edge in ccw order and this is the edge with the longest path to
+     * it. The first edge in ccw order is needed since at the inserting step the front is split into
+     * two edges and this works only correct when we start with the ccw first edge with the front.
      * 
      * @param face
      *            the surrounding face, for which the startEdge is calculated.
@@ -171,62 +192,30 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
 
             RectShapeEdgeProperties edgeProperties = currentEdge
                     .getProperty(Properties.RECT_SHAPE_PROPERTIES);
-            if (edgeProperties == null) {
-                Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProps = currentEdge
-                        .getProperty(Properties.RECT_SHAPE_CUTEDGE);
-                RectShapeEdgeProperties firstProps = cutEdgeProps.getFirst();
-                if (firstProps.getTurn() == 2) {
-                    edgeProperties = firstProps;
-                } else {
-                    edgeProperties = cutEdgeProps.getSecond();
-                }
-            }
 
-            if (edgeProperties.getTurn() == 1 || edgeProperties.getTurn() == 2) {
-                // ensures that no cut vertex is used as startEdge
+            if (edgeProperties == null || edgeProperties.getTurn() == 1) {
+                // ensures that no multinode is a corner of the startEdge
                 startEdge = currentEdge;
                 break;
             }
         }
         if (startEdge == null) {
-            throw new InconsistentGraphModelException("RectShapeProcessor: "
-                    + "startEdge is not defined!");
+            throw new InconsistentGraphModelException("RectShapeProcessor, determineStartEdge: "
+                    + "beginning edge is not defined!");
         }
 
-        // Choose as startEdge a edge that has the longest path to its front.
+        // Choose as startEdge an edge that has the longest path to its front.
         // This is needed to ensure the counter clockwise order while adding dummies.
-        RectShapeEdgeProperties startEdgeProperties = currentEdge
-                .getProperty(Properties.RECT_SHAPE_PROPERTIES);
-        if (startEdgeProperties == null) {
-            Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProps = currentEdge
-                    .getProperty(Properties.RECT_SHAPE_CUTEDGE);
-            RectShapeEdgeProperties firstProps = cutEdgeProps.getFirst();
-            if (firstProps.getTurn() == 2) {
-                startEdgeProperties = firstProps;
-            } else {
-                startEdgeProperties = cutEdgeProps.getSecond();
-            }
-        }
+
+        RectShapeEdgeProperties startEdgeProperties = getProperties(currentEdge, null);
+
         PEdge startFront = startEdgeProperties.getFront();
         int maxPathLength = startEdgeProperties.getPathLength();
         PNode startNode = startEdgeProperties.getCorner();
         PNode corner = startNode;
-        RectShapeEdgeProperties properties = currentEdge
-                .getProperty(Properties.RECT_SHAPE_PROPERTIES);
+        RectShapeEdgeProperties properties = startEdgeProperties;
         PEdge resultEdge = startEdge;
         do {
-            if (properties == null) {
-                Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProps = currentEdge
-                        .getProperty(Properties.RECT_SHAPE_CUTEDGE);
-                RectShapeEdgeProperties firstProps = cutEdgeProps.getFirst();
-                if (firstProps.getTurn() == 2) {
-                    properties = firstProps;
-                } else {
-                    properties = cutEdgeProps.getSecond();
-                }
-            }
-            // TODO Think about the correction of that, turn means full angle but the other
-            // properties can contain a a left (1) angle. shell both be tested or what????
             if (properties.getTurn() == 1 || properties.getTurn() == 2) {
                 PEdge front = properties.getFront();
                 int newPathLength = properties.getPathLength();
@@ -236,8 +225,9 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
                 }
             }
             currentEdge = properties.getNext();
-            properties = currentEdge.getProperty(Properties.RECT_SHAPE_PROPERTIES);
+            properties = getProperties(currentEdge, corner);
             corner = properties.getCorner();
+
         } while (currentEdge != startEdge || corner != startNode);
 
         return resultEdge;
@@ -373,7 +363,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
         // Iterate around the face edges and set the edge properties.
         do {
 
-            if (face.isCutvertex(corner)) {
+            if (face.isMultiNode(corner)) {
                 isMultiAdjacentNode = true;
                 // special case, if a node is passed more than twice.
                 int ccwPath = face.calcPathLength(corner, currentEdge, this.orthogonal, true);
@@ -389,27 +379,50 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
 
             // Find next edge in the path.
             Pair<PEdge, OrthogonalAngle> pair = null;
-            if (wantsCCW && !isExternal) {
-                pair = face.nextCCWEdgeWithAngle(corner, currentEdge,
-                        this.orthogonal.getAngles(corner), true);
+            if (wantsCCW) {
+                if (isExternal) {
+                    // On a external face we need to go clockwise.
+                    pair = face.nextCWEdgeWithAngle(corner, currentEdge,
+                            this.orthogonal.getAngles(corner), true);
+                    if (isMultiAdjacentNode) {
+                        for (Pair<PEdge, PEdge> currPre : path) {
+                            if (currPre.getFirst() == pair.getFirst()) {
+                                pair = face.nextCCWEdgeWithAngle(corner, currentEdge,
+                                        this.orthogonal.getAngles(corner), true);
+                                break;
+                            }
+                        }
+                        isMultiAdjacentNode = false;
+                    }
+                } else {
+                    pair = face.nextCCWEdgeWithAngle(corner, currentEdge,
+                            this.orthogonal.getAngles(corner), true);
+                    if (isMultiAdjacentNode) {
+                        for (Pair<PEdge, PEdge> currPre : path) {
+                            if (currPre.getFirst() == pair.getFirst()) {
+                                pair = face.nextCWEdgeWithAngle(corner, currentEdge,
+                                        this.orthogonal.getAngles(corner), true);
+                                break;
+                            }
+                        }
+                        isMultiAdjacentNode = false;
+                    }
+                }
             } else {
                 pair = face.nextCWEdgeWithAngle(corner, currentEdge,
                         this.orthogonal.getAngles(corner), true);
-            }
-            if (isMultiAdjacentNode) {
-                for (Pair<PEdge, PEdge> currPre : path) {
-                    if (currPre.getFirst() == pair.getFirst() && currPre.getSecond() == currentEdge) {
-                        if (wantsCCW && !isExternal) {
-                            pair = face.nextCWEdgeWithAngle(corner, currentEdge,
-                                    this.orthogonal.getAngles(corner), true);
-                        } else {
+                if (isMultiAdjacentNode) {
+                    for (Pair<PEdge, PEdge> currPre : path) {
+                        if (currPre.getFirst() == pair.getFirst()
+                                && currPre.getSecond() == currentEdge) {
                             pair = face.nextCCWEdgeWithAngle(corner, currentEdge,
                                     this.orthogonal.getAngles(corner), true);
+                            break;
                         }
-                        break;
                     }
+                    isMultiAdjacentNode = false;
                 }
-                isMultiAdjacentNode = false;
+                wantsCCW = true;
             }
             if (!wantsCCW) {
                 wantsCCW = true;
@@ -419,6 +432,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
             properties.setCorner(corner);
 
             next = pair.getFirst();
+            path.add(new Pair<PEdge, PEdge>(next, currentEdge));
             properties.setNext(next);
 
             int edgeTurn = determineTurn(pair.getSecond(), isExternal);
@@ -468,11 +482,15 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
                 counter++;
             }
             if (currentEdge == startEdge && startNode == corner) {
-                counter++;
+                path.clear();
+                counter = 1;
             }
+
+            // runs at least twice along a full angle node.
             if (counter == 3) {
                 finish = true;
             }
+
         } while (!finish);
     }
 
