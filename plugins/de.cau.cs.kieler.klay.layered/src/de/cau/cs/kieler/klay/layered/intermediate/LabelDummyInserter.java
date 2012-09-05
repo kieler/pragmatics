@@ -53,7 +53,7 @@ public class LabelDummyInserter extends AbstractAlgorithm implements ILayoutProc
                             LPort targetPort = edge.getTarget();
                             
                             // Create dummy node
-                            LNode dummyNode = new LNode();
+                            LNode dummyNode = new LNode(layeredGraph);
                             dummyNode.setProperty(Properties.ORIGIN, label);
                             dummyNode.setProperty(Properties.NODE_TYPE, NodeType.LABEL);
                             dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
@@ -66,18 +66,18 @@ public class LabelDummyInserter extends AbstractAlgorithm implements ILayoutProc
                             dummyNode.getSize().y = label.getSize().y;
                             
                             // Create dummy ports
-                            LPort dummyInput = new LPort();
+                            LPort dummyInput = new LPort(layeredGraph);
                             dummyInput.setSide(PortSide.WEST);
                             dummyInput.setNode(dummyNode);
                             
-                            LPort dummyOutput = new LPort();
+                            LPort dummyOutput = new LPort(layeredGraph);
                             dummyOutput.setSide(PortSide.EAST);
                             dummyOutput.setNode(dummyNode);
                             
                             edge.setTarget(dummyInput);
                             
                             // Create dummy edge
-                            LEdge dummyEdge = new LEdge();
+                            LEdge dummyEdge = new LEdge(layeredGraph);
                             dummyEdge.copyProperties(edge);
                             dummyEdge.setSource(dummyOutput);
                             dummyEdge.setTarget(targetPort);

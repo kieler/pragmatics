@@ -43,6 +43,15 @@ public class LEdge extends LGraphElement {
     private LPort target;
     /** labels assigned to this edge. */
     private final List<LLabel> labels = new LinkedList<LLabel>();
+    
+    /**
+     * Creates an edge.
+     * 
+     * @param graph the graph for which the edge is created
+     */
+    public LEdge(final LGraph graph) {
+        super(graph.hashCodeCounter());
+    }
 
     /**
      * {@inheritDoc}
@@ -60,23 +69,27 @@ public class LEdge extends LGraphElement {
      * edge that was marked as being reversed is then unmarked, and the other way around) This
      * does not change any properties on the connected ports.
      * 
+     * @param layeredGraph
+     *         the layered graph
      * @param adaptPorts
      *         If true and a connected port is a collector port (a port used to merge edges),
      *         the corresponding opposite port is used instead of the original one.
      */
-    public void reverse(final boolean adaptPorts) {
+    public void reverse(final LGraph layeredGraph, final boolean adaptPorts) {
         LPort oldSource = getSource();
         LPort oldTarget = getTarget();
         
         setSource(null);
         setTarget(null);
         if (adaptPorts && oldTarget.getProperty(Properties.INPUT_COLLECT)) {
-            setSource(Util.provideCollectorPort(oldTarget.getNode(), PortType.OUTPUT, PortSide.EAST));
+            setSource(Util.provideCollectorPort(layeredGraph, oldTarget.getNode(),
+                    PortType.OUTPUT, PortSide.EAST));
         } else {
             setSource(oldTarget);
         }
         if (adaptPorts && oldSource.getProperty(Properties.OUTPUT_COLLECT)) {
-            setTarget(Util.provideCollectorPort(oldSource.getNode(), PortType.INPUT, PortSide.WEST));
+            setTarget(Util.provideCollectorPort(layeredGraph, oldSource.getNode(),
+                    PortType.INPUT, PortSide.WEST));
         } else {
             setTarget(oldSource);
         }

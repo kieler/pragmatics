@@ -340,7 +340,8 @@ public abstract class AnalysisService {
     }
     
     /**
-     * Perform the given analysis on a graph using a prepared cache.
+     * Perform the given analysis on a graph using a prepared cache. Analysis dependencies are
+     * resolved before the given analysis is executed.
      * 
      * @param graph the parent node of the graph to analyze
      * @param analysisId analysis identifier
@@ -362,90 +363,111 @@ public abstract class AnalysisService {
     }
     
     /**
-     * Perform the given analysis on a graph using a prepared cache.
+     * Perform the given analysis on a graph using a prepared cache. Analysis dependencies are
+     * resolved before the given analysis is executed.
      * 
      * @param graph the parent node of the graph to analyze
-     * @param analysis the analysis to execute
+     * @param primalAnalysisData the analysis to execute
      * @param monitor a progress monitor
      * @param resultCache the result cache with stored values
      * @return the analysis result value
      */
-    public Object analyze(final KNode graph, final AnalysisData analysis,
+    public Object analyze(final KNode graph, final AnalysisData primalAnalysisData,
             final IKielerProgressMonitor monitor, final Map<String, Object> resultCache) {
-        List<AnalysisData> analysesSequence = getExecutionOrder(analysis);
-        monitor.begin("Graph analyses", analysesSequence.size());
-        for (AnalysisData ad : analysesSequence) {
-            if (monitor.isCanceled()) {
-                resultCache.put(ad.getId(), new AnalysisFailed(AnalysisFailed.Type.Canceled));
-            } else if (resultCache.containsKey(ad.getId())) {
-                monitor.worked(1);
-            } else {
-                try {
-                    IAnalysis a = ad.getInstancePool().fetch();
-                    Object o = a.doAnalysis(graph, resultCache, monitor.subTask(1));
-                    resultCache.put(ad.getId(), o);
-                    ad.getInstancePool().release(a);
-                } catch (Exception e) {
-                    resultCache.put(ad.getId(), new AnalysisFailed(AnalysisFailed.Type.Failed, e));
-                }
-            }
-        }
-        monitor.done();
-        return resultCache.get(analysis.getId());
+        List<AnalysisData> analysesSequence = getExecutionOrder(primalAnalysisData);
+        doAnalyze(graph, analysesSequence, monitor, resultCache);
+        return resultCache.get(primalAnalysisData.getId());
     }
 
     /**
-     * Perform the given analyses on a graph and create a results cache.
+     * Perform the given analyses on a graph and create a results cache. Analysis dependencies are
+     * resolved before the given analyses are executed.
      *
      * @param graph the parent node of the graph to analyze
      * @param analyses the analyses to execute
      * @param monitor a progress monitor
      * @return the analyses results
      */
-    public Map<String, Object> analyze(final KNode graph, final List<AnalysisData> analyses,
+    public Map<String, Object> analyze(final KNode graph, final Collection<AnalysisData> analyses,
             final IKielerProgressMonitor monitor) {
         List<AnalysisData> analysesSequence = getExecutionOrder(analyses);
-        monitor.begin("Graph analyses", analysesSequence.size());
         Map<String, Object> resultCache = Maps.newHashMapWithExpectedSize(analysesSequence.size());
-        for (AnalysisData ad : analysesSequence) {
+        doAnalyze(graph, analysesSequence, monitor, resultCache);
+        return resultCache;
+    }
+
+    /**
+     * Perform the given analyses on a graph and create a results cache. Analysis dependencies must
+     * be resolved using {@link #getExecutionOrder(Collection)} before this method is called.
+     *
+     * @param graph the parent node of the graph to analyze
+     * @param analyses the analyses to execute, in correct order and with resolved dependencies
+     * @param monitor a progress monitor
+     * @return the analyses results
+     */
+    public Map<String, Object> analyzePresorted(final KNode graph, final List<AnalysisData> analyses,
+            final IKielerProgressMonitor monitor) {
+        Map<String, Object> resultCache = Maps.newHashMapWithExpectedSize(analyses.size());
+        doAnalyze(graph, analyses, monitor, resultCache);
+        return resultCache;
+    }
+    
+    /**
+     * Iterate over the given sequence of analyses and execute them.
+     * 
+     * @param graph the parent node of the graph to analyze
+     * @param analysesSequence the analyses to execute, in correct order
+     * @param monitor a progress monitor
+     * @param resultCache the result cache with stored values
+     */
+    private void doAnalyze(final KNode graph, final List<AnalysisData> analysesSequence,
+            final IKielerProgressMonitor monitor, final Map<String, Object> resultCache) {
+        monitor.begin("Graph analyses", analysesSequence.size());
+        for (AnalysisData analysisData : analysesSequence) {
             if (monitor.isCanceled()) {
-                resultCache.put(ad.getId(), new AnalysisFailed(AnalysisFailed.Type.Canceled));
+                resultCache.put(analysisData.getId(), new AnalysisFailed(AnalysisFailed.Type.Canceled));
+            } else if (resultCache.containsKey(analysisData.getId())) {
+                monitor.worked(1);
             } else {
                 try {
-                    IAnalysis a = ad.getInstancePool().fetch();
-                    Object o = a.doAnalysis(graph, resultCache, monitor.subTask(1));
-                    resultCache.put(ad.getId(), o);
-                    ad.getInstancePool().release(a);
-                } catch (Exception e) {
-                    resultCache.put(ad.getId(), new AnalysisFailed(AnalysisFailed.Type.Failed, e));
+                    IAnalysis analysis = analysisData.getInstancePool().fetch();
+                    Object result = analysis.doAnalysis(graph, resultCache, monitor.subTask(1));
+                    resultCache.put(analysisData.getId(), result);
+                    analysisData.getInstancePool().release(analysis);
+                } catch (Exception exception) {
+                    resultCache.put(analysisData.getId(), new AnalysisFailed(
+                            AnalysisFailed.Type.Failed, exception));
                 }
             }
         }
         monitor.done();
-        return resultCache;
     }
     
     /**
      * Takes one or more analyses and returns a list that includes the given analyses and their
      * dependencies in an order so that all dependencies of an analysis are listed before it.
+     * Note that the underlying implementation is not thread-safe, so threads must synchronize
+     * on the analysis service.
      * 
      * @param analyses
      *            the analyses
      * @return the modified and sorted list of analyses
      */
-    public List<AnalysisData> getExecutionOrder(final AnalysisData... analyses) {
+    public synchronized List<AnalysisData> getExecutionOrder(final AnalysisData... analyses) {
         return dependencyGraph.dependencySort(Arrays.asList(analyses));
     }
 
     /**
-     * Takes a list of analyses and returns a list that includes the given analyses and their
+     * Takes a collection of analyses and returns a list that includes the given analyses and their
      * dependencies in an order so that all dependencies of an analysis are listed before it.
+     * Note that the underlying implementation is not thread-safe, so threads must synchronize
+     * on the analysis service.
      * 
      * @param analyses
      *            the analyses
      * @return the modified and sorted list of analyses
      */
-    public List<AnalysisData> getExecutionOrder(final List<AnalysisData> analyses) {
+    public synchronized List<AnalysisData> getExecutionOrder(final Collection<AnalysisData> analyses) {
         return dependencyGraph.dependencySort(analyses);
     }
 

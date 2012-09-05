@@ -20,7 +20,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -75,6 +74,8 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                     }
                 }
             }
+            maxx = Math.max(maxx, nodeLayout.getXpos() + nodeLayout.getWidth());
+            maxy = Math.max(maxy, nodeLayout.getYpos() + nodeLayout.getHeight());
             
             // set the fixed position of the node labels, or leave them as they are
             for (KLabel label : node.getLabels()) {
@@ -83,10 +84,10 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                 if (pos != null) {
                     labelLayout.applyVector(pos);
                 }
-                maxx = KielerMath.maxf(maxx, nodeLayout.getXpos() + nodeLayout.getWidth(),
-                        nodeLayout.getXpos() + labelLayout.getXpos() + labelLayout.getWidth());
-                maxy = KielerMath.maxf(maxy, nodeLayout.getYpos() + nodeLayout.getHeight(),
-                        nodeLayout.getYpos() + labelLayout.getYpos() + labelLayout.getHeight());
+                maxx = Math.max(maxx, nodeLayout.getXpos() + labelLayout.getXpos()
+                        + labelLayout.getWidth());
+                maxy = Math.max(maxy, nodeLayout.getYpos() + labelLayout.getYpos()
+                        + labelLayout.getHeight());
             }
                 
             // set the fixed position of the ports, or leave them as they are
@@ -96,6 +97,10 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                 if (pos != null) {
                     portLayout.applyVector(pos);
                 }
+                float portx = nodeLayout.getXpos() + portLayout.getXpos();
+                float porty = nodeLayout.getYpos() + portLayout.getYpos();
+                maxx = Math.max(maxx, portx + portLayout.getWidth());
+                maxy = Math.max(maxy, porty + portLayout.getHeight());
                 
                 // set the fixed position of the port labels, or leave them as they are
                 for (KLabel label : port.getLabels()) {
@@ -104,12 +109,8 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                     if (pos != null) {
                         labelLayout.applyVector(pos);
                     }
-                    float portx = nodeLayout.getXpos() + portLayout.getXpos();
-                    float porty = nodeLayout.getYpos() + portLayout.getYpos();
-                    maxx = KielerMath.maxf(maxx, portx + portLayout.getWidth(),
-                            portx + labelLayout.getXpos() + labelLayout.getWidth());
-                    maxy = KielerMath.maxf(maxy, porty + portLayout.getHeight(),
-                            porty + labelLayout.getYpos() + labelLayout.getHeight());
+                    maxx = Math.max(maxx, portx + labelLayout.getXpos() + labelLayout.getWidth());
+                    maxy = Math.max(maxy, porty + labelLayout.getYpos() + labelLayout.getHeight());
                 }
             }
             

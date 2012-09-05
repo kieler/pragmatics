@@ -116,7 +116,7 @@ public class CompoundGraphLayerCrossingMinimizer {
             int maximalDepth = 0;
 
             // prepare an LNode as key representing the layeredGraph in HashMaps
-            LNode graphKey = new LNode();
+            LNode graphKey = new LNode(layeredGraph);
             graphKey.setProperty(Properties.ORIGIN, layeredGraph);
             
             for (NodeGroup nodeGroup : layer) {

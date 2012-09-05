@@ -7,10 +7,15 @@
             id="de.cau.cs.kieler.kiml.categories.ogdf"
             name="OGDF">
       </category>
+      <layoutType
+            description="Algorithms that require a planar or upward planar graph. Most of these algorithms are theoretically interesting, but not practically usable."
+            id="de.cau.cs.kieler.kiml.ogdf.type.planar"
+            name="Planar">
+      </layoutType>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Sugiyama&apos;s layout algorithm, based on Gansner et al. &apos;93 and Sander &apos;96. This method emphasizes the direction of edges by reversing as few edges as possible. Nodes are arranged in horizontal layers."
+            description="Sugiyama&apos;s layout algorithm, based on Gansner et al. 1993 and Sander 1996. This method emphasizes the direction of edges by reversing as few edges as possible. Nodes are arranged in horizontal layers."
             id="de.cau.cs.kieler.kiml.ogdf.Sugiyama"
             name="Sugiyama"
             parameter="SUGIYAMA"
@@ -22,6 +27,9 @@
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
          </supportedFeature>
          <supportedDiagram
                priority="9"
@@ -49,6 +57,7 @@
                option="de.cau.cs.kieler.kiml.ogdf.option.fails">
          </knownOption>
          <knownOption
+               default="15"
                option="de.cau.cs.kieler.kiml.ogdf.option.runs">
          </knownOption>
          <knownOption
@@ -73,6 +82,18 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.acyclicSubgraph">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.ranking">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.width">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.crossMin">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -99,6 +120,9 @@
                feature="EDGE_LABELS"
                priority="-4">
          </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
+         </supportedFeature>
          <knownOption
                default="UP"
                option="de.cau.cs.kieler.direction">
@@ -106,6 +130,10 @@
          <knownOption
                default="20"
                option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
          </knownOption>
          <knownOption
                default="15"
@@ -139,11 +167,20 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.runs">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.edgeInsertion">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.embedder">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="The fast multipole multilevel layout algorithm, after Hachul and Juenger &apos;04. This force-directed drawing method is suited also for very large graphs. It is based on a combination of an efficient multilevel scheme and a strategy for approximating the repusive forces in the system by rapidly evaluating potential fields."
+            description="The fast multipole multilevel layout algorithm, after Hachul and Juenger 2004. This force-directed drawing method is suited also for very large graphs. It is based on a combination of an efficient multilevel scheme and a strategy for approximating the repusive forces in the system by rapidly evaluating potential fields."
             id="de.cau.cs.kieler.kiml.ogdf.fmmm"
             name="FMMM"
             parameter="FMMM"
@@ -160,6 +197,9 @@
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
          </supportedFeature>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.qualityVsSpeed">
@@ -187,7 +227,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Force-based algorithm after Davidson and Harel &apos;96, applying the paradigm of simulated annealing. This is applicable for undirected graphs with straight-line connections."
+            description="Force-based algorithm after Davidson and Harel 1996, applying the paradigm of simulated annealing. This is applicable for undirected graphs with straight-line connections."
             id="de.cau.cs.kieler.kiml.ogdf.DavidsonHarel"
             name="Davidson-Harel"
             parameter="DAVIDSON_HAREL"
@@ -200,6 +240,9 @@
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
          </supportedFeature>
          <knownOption
                default="80"
@@ -231,7 +274,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Force-based algorithm after Fruchterman and Reingold &apos;91. This is a modification of the spring-embedder model of Eades for undirected graphs with straight edges. The heuristic strives for uniform edge lengths, and is developed in analogy to forces in natural systems."
+            description="Force-based algorithm after Fruchterman and Reingold 1991. This is a modification of the spring-embedder model of Eades for undirected graphs with straight edges. The heuristic strives for uniform edge lengths, and is developed in analogy to forces in natural systems."
             id="de.cau.cs.kieler.kiml.ogdf.FruchtermanReingold"
             name="Fruchterman-Reingold"
             parameter="FRUCHTERMAN_REINGOLD"
@@ -245,6 +288,9 @@
                feature="EDGE_LABELS"
                priority="-4">
          </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
+         </supportedFeature>
          <knownOption
                default="15"
                option="de.cau.cs.kieler.borderSpacing">
@@ -256,6 +302,7 @@
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
          <knownOption
+               default="400"
                option="de.cau.cs.kieler.kiml.ogdf.option.iterations">
          </knownOption>
          <knownOption
@@ -278,11 +325,14 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.scaleFunctionFactor">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Energy-based &quot;Graph Embedder&quot; algorithm after Frick, Ludwig and Mehldau &apos;95. The method is based on the spring-embedder paradigm and contains several heuristics to improve the convergence, including local temperatures, gravitational forces, and the detection of rotations and oscillations."
+            description="Energy-based &quot;Graph Embedder&quot; algorithm after Frick, Ludwig, and Mehldau 1995. The method is based on the spring-embedder paradigm and contains several heuristics to improve the convergence, including local temperatures, gravitational forces, and the detection of rotations and oscillations."
             id="de.cau.cs.kieler.kiml.ogdf.gem"
             name="GEM"
             parameter="GEM"
@@ -295,6 +345,9 @@
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
          </supportedFeature>
          <supportedDiagram
                priority="8"
@@ -365,7 +418,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Circular layout after Dogrusoz, Madden and Madden &apos;97. The layouts emphasize natural group structures inherent in a graph&apos;s topology, which is well suited for ring and star network topologies. The nodes are clustered by biconnectivity or node degree and are positioned on radiating circles."
+            description="Circular layout after Dogrusoz, Madden and Madden 1997. The layouts emphasize natural group structures inherent in a graph&apos;s topology, which is well suited for ring and star network topologies. The nodes are clustered by biconnectivity or node degree and are positioned on radiating circles."
             id="de.cau.cs.kieler.kiml.ogdf.circular"
             name="Circular"
             parameter="CIRCULAR"
@@ -378,6 +431,9 @@
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
          </supportedFeature>
          <knownOption
                default="15"
@@ -425,6 +481,9 @@
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
          </supportedFeature>
          <knownOption
                default="15"
@@ -505,7 +564,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            description="Upward planarization layout by Chimani, Gutwenger, Mutzel and Wong '10. While usual layer-based methods first determine a layering and then minimize crossings, this approach aims at directly computing an upward planar representation (UPR), where edge crossings are represented by dummy vertices. A layering is then derived from this UPR, which also induces a node order in each layer. This leads to significantly less edge crossings compared to former methods, while the overall edge direction is still preserved."
+            description="Upward planarization layout by Chimani, Gutwenger, Mutzel and Wong '10. While usual layer-based methods first determine a layering and then minimize crossings, this approach aims at directly computing an upward planar representation (UPR), where edge crossings are represented by dummy vertices. A layering is then derived from this UPR, which also induces a node order in each layer. This leads to significantly less edge crossings compared to former methods, while the overall edge direction is still preserved. The input graph must be connected."
             id="de.cau.cs.kieler.kiml.ogdf.upwardPlanarization"
             name="Upward-Planarization"
             parameter="UPWARD_PLANARIZATION"
@@ -543,11 +602,458 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.runs">
+         </knownOption>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="The Fast-Multipole-Embedder layout algorithm."
+            id="de.cau.cs.kieler.kiml.ogdf.fastMultipole"
+            name="Fast Multipole"
+            parameter="FAST_MULTIPOLE"
+            preview="images/fast-mp.png"
+            type="de.cau.cs.kieler.type.force">
+         <supportedFeature
+               feature="MULTI_EDGES"
+               priority="-2">
+         </supportedFeature>
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED"
+               priority="-5">
+         </supportedFeature>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.multipolePrec">
+         </knownOption>
+         <knownOption
+               default="100"
+               option="de.cau.cs.kieler.kiml.ogdf.option.iterations">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.interactive">
+         </knownOption>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="The Fast-Multipole-Multilevel-Embedder layout algorithm."
+            id="de.cau.cs.kieler.kiml.ogdf.fastMultipoleMultilevel"
+            name="Fast Multipole Multilevel"
+            parameter="FAST_MULTIPOLE_MULTILEVEL"
+            preview="images/fast-mp-ml.png"
+            type="de.cau.cs.kieler.type.force">
+         <supportedFeature
+               feature="MULTI_EDGES"
+               priority="-2">
+         </supportedFeature>
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED"
+               priority="-5">
+         </supportedFeature>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="The spring-embedder layout algorithm after Kamada and Kawai 1989. The input graph must be connected."
+            id="de.cau.cs.kieler.kiml.ogdf.kamadaKawai"
+            name="Kamada-Kawai"
+            parameter="KAMADA_KAWAI"
+            preview="images/kamada-kawai.png"
+            type="de.cau.cs.kieler.type.force">
+         <supportedFeature
+               feature="MULTI_EDGES"
+               priority="-2">
+         </supportedFeature>
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <knownOption
+               default="30"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.stopTolerance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="Stress majorization layout that allows radial constraints based on shortest path distances. The implementation is based on Brandes and Pich 2009. The input graph must be connected."
+            id="de.cau.cs.kieler.kiml.ogdf.stressMajorization"
+            name="Stress Majorization"
+            parameter="STRESS_MAJORIZATION"
+            preview="images/stress-majorization.png"
+            type="de.cau.cs.kieler.type.force">
+         <supportedFeature
+               feature="MULTI_EDGES"
+               priority="-2">
+         </supportedFeature>
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <knownOption
+               default="300"
+               option="de.cau.cs.kieler.kiml.ogdf.option.iterations">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.stopTolerance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.upward">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.radial">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="Dominance layout method. The input graph must be connected."
+            id="de.cau.cs.kieler.kiml.ogdf.dominance"
+            name="Dominance"
+            parameter="DOMINANCE"
+            preview="images/dominance.png"
+            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
+         <supportedFeature
+               feature="MULTI_EDGES">
+         </supportedFeature>
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <knownOption
+               default="10"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.runs">
+         </knownOption>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="Visibility layout method. The input graph must be connected."
+            id="de.cau.cs.kieler.kiml.ogdf.visibility"
+            name="Visibility"
+            parameter="VISIBILITY"
+            preview="images/visibility.png"
+            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
+         <supportedFeature
+               feature="MULTI_EDGES">
+         </supportedFeature>
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <knownOption
+               default="10"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.runs">
+         </knownOption>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="The layout algorithm by de Fraysseix, Pach, and Pollack 1990. This algorithm draws a planar graph straight-line without crossings. The algorithm runs in three phases. In the ﬁrst phase, the graph is augmented by adding new artiﬁcial edges to get a triangulated plane graph. Then, a so-called shelling order (also called canonical ordering) for triangulated planar graphs is computed. In the third phase the vertices are placed incrementally according to the shelling order. The input graph must be planar and connected and must not contain multi-edges."
+            id="de.cau.cs.kieler.kiml.ogdf.fraysseixPachPollack"
+            name="Fraysseix-Pach-Pollack"
+            parameter="FRAYSSEIX_PACH_POLLACK"
+            preview="images/fpp.png"
+            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <knownOption
+               default="30"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="The layout algorithm by Schnyder 1990. This algorithm draws a planar graph straight-line without crossings. The algorithm runs in three phases. In the ﬁrst phase, the graph is augmented by adding new artiﬁcial edges to get a triangulated plane graph. Then, a partition of the set of interior edges in three trees (also called Schnyder trees) with special orientation properties is derived. In the third step, the actual coordinates are computed. The input graph must be planar and connected and must not contain multi-edges."
+            id="de.cau.cs.kieler.kiml.ogdf.schnyder"
+            name="Schnyder"
+            parameter="SCHNYDER"
+            preview="images/schnyder.png"
+            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <knownOption
+               default="30"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="A straight-line drawing algorithm for planar graphs after Kant 1996. The algorithm runs in several phases. In the first phase, the graph is augmented by adding edges to achieve a certain connectivity (e.g., biconnected or triconnected). Then, a shelling order of the the resulting graph is computed. The input graph must be planar and must not contain multi-edges."
+            id="de.cau.cs.kieler.kiml.ogdf.canonicalOrder"
+            name="Canonical Order"
+            parameter="CANONICAL_ORDER"
+            preview="images/canonical-order.png"
+            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
+         </supportedFeature>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.baseRatio">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.embedder">
+         </knownOption>
+         <knownOption
+               default="30"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="The Mixed-Model layout algorithm by Gutwenger and Mutzel 1998, which is based upon ideas by Kant. In particular, Kant&apos;s algorithm has been changed concerning the placement phase and the vertex boxes, and it has been generalized to work for connected planar graphs. This algorithm draws a d-planar graph on a grid such that every edge has at most three bends and the minimum angle between two edges is at least 2/d radians. The algorithm runs in several phases. In the preprocessing phase, vertices with degree one are temporarily deleted and the graph is being augmented to a biconnected planar graph using a planar biconnectivity augmentation module. Then, a shelling order for biconnected plane graphs is computed. In the next step, boxes around each vertex are defined in such a way that the incident edges appear regularly along the box. Finally, the coordinates of the vertex boxes are computed taking the degree-one vertices into account. The input graph must not contain multi-edges."
+            id="de.cau.cs.kieler.kiml.ogdf.mixedModel"
+            name="Mixed Model"
+            parameter="MIXED_MODEL"
+            preview="images/mixed-model.png"
+            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
+         </supportedFeature>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               default="30"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.runs">
+         </knownOption>
+         <knownOption
+               default="1"
+               option="de.cau.cs.kieler.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.edgeInsertion">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.embedder">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.crossingBeautifier">
+         </knownOption>
+         <knownOption
+               default="1.3"
+               option="de.cau.cs.kieler.aspectRatio">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            description="A straight-line drawing algorithm for planar graphs after Chrobak and Kant 1997. The algorithm runs in several phases. In the first phase, the graph is augmented by adding edges to achieve a certain connectivity (e.g., biconnected or triconnected). Then, a shelling order of the the resulting graph is computed. The input graph must be planar and must not contain multi-edges."
+            id="de.cau.cs.kieler.kiml.ogdf.convexGrid"
+            name="Convex Grid"
+            parameter="CONVEX_GRID"
+            preview="images/convex-grid.png"
+            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED">
+         </supportedFeature>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.baseRatio">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.embedder">
+         </knownOption>
+         <knownOption
+               default="30"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            id="de.cau.cs.kieler.kiml.ogdf.balloon"
+            name="Balloon"
+            parameter="BALLOON"
+            preview="images/balloon.png">
+         <supportedFeature
+               feature="MULTI_EDGES"
+               priority="-2">
+         </supportedFeature>
+         <supportedFeature
+               feature="EDGE_LABELS"
+               priority="-4">
+         </supportedFeature>
+         <supportedFeature
+               feature="DISCONNECTED"
+               priority="-5">
+         </supportedFeature>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="400"
             description="The number of iterations performed by the algorithm"
             id="de.cau.cs.kieler.kiml.ogdf.option.iterations"
             lowerBound="1"
@@ -570,7 +1076,7 @@
       <layoutOption
             appliesTo="parents"
             default="15"
-            description="Spacing of labels to the edges"
+            description="Spacing of edge labels to the edge"
             id="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance"
             lowerBound="0"
             name="Label Spacing"
@@ -592,7 +1098,7 @@
             advanced="true"
             appliesTo="parents"
             default="4"
-            description="The number of times that the number of crossings may not decrease after a complete top-down bottom-up traversal, before a run is terminated."
+            description="The number of times that the number of crossings may not decrease after a complete top-down bottom-up traversal, before a run is terminated"
             id="de.cau.cs.kieler.kiml.ogdf.option.fails"
             lowerBound="1"
             name="Fails"
@@ -643,7 +1149,7 @@
       <layoutOption
             appliesTo="parents"
             default="false"
-            description="Sets whether the initial placement of the choosen is different on every algorithm call"
+            description="Sets whether the initial placement is different on every algorithm call"
             id="de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement"
             name="New Initial Placement"
             type="boolean">
@@ -652,7 +1158,7 @@
             advanced="true"
             appliesTo="parents"
             default="false"
-            description="If set to true, a preprocessing for cliques (complete subgraphs) is performed and cliques will be laid out in a special form (straight-line, not orthogonal). The preprocessing may reduce running time and improve layout quality if the input graphs contains dense subgraphs"
+            description="If set to true, a preprocessing for cliques (complete subgraphs) is performed and cliques will be laid out in a special form (straight-line, not orthogonal). The preprocessing may reduce running time and improve layout quality if the input graphs contains dense subgraphs."
             id="de.cau.cs.kieler.kiml.ogdf.option.preprocessCliques"
             name="Preprocess Cliques"
             type="boolean">
@@ -682,7 +1188,7 @@
             advanced="true"
             appliesTo="parents"
             default="1"
-            description="Defines the costs for an association edge"
+            description="Defines the costs for association edges"
             id="de.cau.cs.kieler.kiml.ogdf.option.costAssoc"
             lowerBound="1"
             name="Cost for Association Edges"
@@ -705,10 +1211,10 @@
             <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="15"
-            description="Determines how many times the crossing minimization is repeated. Each repetition (except for the first) starts with randomly permuted nodes on each layer. Deterministic behaviour can be achieved by setting runs to 1"
+            default="0"
+            description="Determines how many times the crossing minimization phase (Sugiyama) or planar subgraph phase (Planarization) is repeated."
             id="de.cau.cs.kieler.kiml.ogdf.option.runs"
-            lowerBound="1"
+            lowerBound="0"
             name="Runs"
             type="int"
             upperBound="1000"
@@ -727,21 +1233,21 @@
             advanced="true"
             appliesTo="parents"
             default="1.047"
-            description="The opening angle for rotations"
+            description="The opening angle for rotations in radians (between 0 and pi/2)"
             id="de.cau.cs.kieler.kiml.ogdf.option.rotationAngle"
             lowerBound="0.0"
             name="Rotation Angle"
             type="float"
-            upperBound="3.14"
+            upperBound="1.57"
             variance="0.3">
       </layoutOption>
       <layoutOption
             advanced="true"
             appliesTo="parents"
             default="0.01"
-            description="The rotation sensitivity"
+            description="The rotation sensitivity (between 0 and 1)"
             id="de.cau.cs.kieler.kiml.ogdf.option.rotationSensitivity"
-            lowerBound="0.00001"
+            lowerBound="0.0"
             name="Rotation Sensitivity"
             type="float"
             upperBound="1.0"
@@ -792,23 +1298,26 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="1.571"
-            description="The opening angle for oscillations (in PI)"
+            default="1.57"
+            description="The opening angle for oscillations in radians (between 0 and pi/2)"
             id="de.cau.cs.kieler.kiml.ogdf.option.oscillationAngle"
             lowerBound="0.0"
             name="Oscillation Angle"
             type="float"
-            upperBound="3.14"
+            upperBound="1.57"
             variance="0.3">
       </layoutOption>
       <layoutOption
             advanced="true"
             appliesTo="parents"
             default="0.3"
-            description="The oscillation sensitivity"
+            description="The oscillation sensitivity (between 0 and 1)"
             id="de.cau.cs.kieler.kiml.ogdf.option.oscillationSensitivity"
+            lowerBound="0.0"
             name="Oscillation Sensitivity"
-            type="float">
+            type="float"
+            upperBound="1.0"
+            variance="0.01">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -875,6 +1384,140 @@
             name="Place Labels"
             type="boolean"
             variance="0">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="4"
+            description="The number of coefficients for expansions"
+            id="de.cau.cs.kieler.kiml.ogdf.option.multipolePrec"
+            lowerBound="1"
+            name="Precision"
+            type="int"
+            upperBound="100"
+            variance="2.0">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.001"
+            description="Tolerance below which the system is regarded stable and the optimization is stopped"
+            id="de.cau.cs.kieler.kiml.ogdf.option.stopTolerance"
+            lowerBound="0.00001"
+            name="Stop Tolerance"
+            type="float"
+            upperBound="100.0"
+            variance="0.01">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="true"
+            description="Add upward constraints"
+            id="de.cau.cs.kieler.kiml.ogdf.option.upward"
+            name="Upward"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            description="Add radial constraints"
+            id="de.cau.cs.kieler.kiml.ogdf.option.radial"
+            name="Radial"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.33"
+            description="Ratio of the nodes on the external face giving a limit for the number of nodes placed on the base line"
+            id="de.cau.cs.kieler.kiml.ogdf.option.baseRatio"
+            lowerBound="0.0001"
+            name="Base Ratio"
+            type="float"
+            upperBound="1.0"
+            variance="0.15">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.AcyclicSubgraphModule"
+            default="DFS"
+            description="The module for finding an acyclic subgraph"
+            id="de.cau.cs.kieler.kiml.ogdf.option.acyclicSubgraph"
+            name="Acyclic Subgraph Module"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.RankingModule"
+            default="LONGEST_PATH"
+            description="The module for computing a layering (ranking) of the graph"
+            id="de.cau.cs.kieler.kiml.ogdf.option.ranking"
+            name="Layering Module"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="7"
+            description="The maximal width of the Coffman-Graham layering"
+            id="de.cau.cs.kieler.kiml.ogdf.option.width"
+            lowerBound="1"
+            name="Layering Width"
+            type="int"
+            variance="7.0">
+         <dependency
+               option="de.cau.cs.kieler.kiml.ogdf.option.ranking"
+               value="COFFMAN_GRAHAM">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.CrossMinModule"
+            default="BARYCENTER"
+            description="The module for crossing minimization used in the layer-sweep method"
+            id="de.cau.cs.kieler.kiml.ogdf.option.crossMin"
+            name="Crossing Min. Module"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.EdgeInsertionModule"
+            default="FIXED_EMB"
+            description="The module for edge insertion used for planarization"
+            id="de.cau.cs.kieler.kiml.ogdf.option.edgeInsertion"
+            name="Edge Insertion Module"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.EmbedderModule"
+            default="SIMPLE"
+            description="The module for choosing an embedding for the graph"
+            id="de.cau.cs.kieler.kiml.ogdf.option.embedder"
+            name="Embedder Module"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="8.0"
+            description="Factor for scaling the bounding box of the initial layout"
+            id="de.cau.cs.kieler.kiml.ogdf.option.scaleFunctionFactor"
+            lowerBound="0.001"
+            name="Scale Factor"
+            type="float"
+            upperBound="100.0"
+            variance="4.0">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.CrossBeautifModule"
+            default="LOCAL_STRETCH"
+            description="The module for crossing beautification"
+            id="de.cau.cs.kieler.kiml.ogdf.option.crossingBeautifier"
+            name="Crossing Beautifier"
+            type="enum">
       </layoutOption>
    </extension>
 

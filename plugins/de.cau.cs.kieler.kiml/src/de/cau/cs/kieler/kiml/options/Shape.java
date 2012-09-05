@@ -16,8 +16,9 @@ package de.cau.cs.kieler.kiml.options;
 /**
  * Definition of node shapes.
  * 
+ * FIXME this isn't supported by any layout algorithm yet!
+ * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating proposed yellow 2012-07-10 msp
  * @author msp
  */
 public enum Shape {

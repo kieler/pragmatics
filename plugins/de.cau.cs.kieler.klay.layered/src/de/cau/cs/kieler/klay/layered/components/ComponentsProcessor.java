@@ -113,7 +113,7 @@ public class ComponentsProcessor extends AbstractAlgorithm {
                 Pair<List<LNode>, Set<PortSide>> componentData = dfs(node, null);
                 
                 if (componentData != null) {
-                    LGraph newGraph = new LGraph();
+                    LGraph newGraph = new LGraph(graph);
                     
                     newGraph.copyProperties(graph);
                     newGraph.setProperty(Properties.EXT_PORT_CONNECTIONS, componentData.getSecond());

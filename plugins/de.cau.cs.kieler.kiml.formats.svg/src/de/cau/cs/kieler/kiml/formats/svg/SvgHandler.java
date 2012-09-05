@@ -19,6 +19,8 @@ import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
@@ -30,21 +32,32 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationException;
  * @author msp
  */
 public class SvgHandler implements ITransformationHandler<SVGGraphics2D> {
+    
+    /** the identifier of the SVG format. */
+    public static final String ID = "org.w3.svg";
+    
+    /** whether to use CSS style properties in SVG output, as opposed to plain attributes. */
+    public static final IProperty<Boolean> USE_CSS = new Property<Boolean>(
+            "de.cau.cs.kieler.svg.css", false);
 
     /**
      * {@inheritDoc}
      */
-    public void deserialize(String serializedGraph, TransformationData<SVGGraphics2D, KNode> transData) {
+    public void deserialize(final String serializedGraph,
+            final TransformationData<SVGGraphics2D, KNode> transData) {
         throw new UnsupportedOperationException("SVG parsing is not supported.");
     }
 
     /**
      * {@inheritDoc}
      */
-    public String serialize(SVGGraphics2D graphics) {
+    public String serialize(final TransformationData<KNode, SVGGraphics2D> transData) {
         StringWriter writer = new StringWriter();
+        boolean useCss = transData.getProperty(USE_CSS);
         try {
-            graphics.stream(writer, true);
+            for (SVGGraphics2D graphics : transData.getTargetGraphs()) {
+                graphics.stream(writer, useCss);
+            }
         } catch (SVGGraphics2DIOException e) {
             throw new TransformationException(e);
         }

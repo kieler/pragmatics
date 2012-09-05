@@ -346,13 +346,14 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.nodeLayering", LayeringStrategy.NETWORK_SIMPLEX);
 
     /** property to choose a crossing minimization strategy. */
-    public static final IProperty<CrossingMinimizationStrategy> CROSSMIN 
+    public static final IProperty<CrossingMinimizationStrategy> CROSS_MIN 
         = new Property<CrossingMinimizationStrategy>(
             "de.cau.cs.kieler.klay.layered.crossMin", CrossingMinimizationStrategy.LAYER_SWEEP);
 
     /** property to choose a node placement strategy. */
-    public static final IProperty<NodePlacementStrategy> NODEPLACE = new Property<NodePlacementStrategy>(
-            "de.cau.cs.kieler.klay.layered.nodePlace", NodePlacementStrategy.LINEAR_SEGMENTS);
+    public static final IProperty<NodePlacementStrategy> NODE_PLACER
+            = new Property<NodePlacementStrategy>("de.cau.cs.kieler.klay.layered.nodePlace",
+                    NodePlacementStrategy.BRANDES_KOEPF);
 
     /** property to choose a node placement strategy. */
     public static final IProperty<Boolean> EDGE_BENDS = new Property<Boolean>(

@@ -249,7 +249,10 @@ public abstract class AbstractService {
             }
 
             // Serialize the resulting graph
-            serializedResult = inhandler.serialize(inTransData.getSourceGraph());
+            TransformationData<KNode, I> outTransData = new TransformationData<KNode, I>();
+            annotateTransData(outTransData, options);
+            outTransData.getTargetGraphs().add(inTransData.getSourceGraph());
+            serializedResult = inhandler.serialize(outTransData);
 
         } else {
             StringBuilder outGraphBuilder = new StringBuilder();
@@ -266,9 +269,7 @@ public abstract class AbstractService {
                 }
 
                 // Serialize the resulting graphs
-                for (O outgraph : outTransData.getTargetGraphs()) {
-                    outGraphBuilder.append(outhandler.serialize(outgraph));
-                }
+                outGraphBuilder.append(outhandler.serialize(outTransData));
 
             }
             serializedResult = outGraphBuilder.toString();

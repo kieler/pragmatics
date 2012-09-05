@@ -28,7 +28,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
  * This processor adds for every bend point of every edge a dummy node to the graph.
- *
+ * 
  * @author pkl
  */
 public class BendDummyProcessor extends AbstractAlgorithm implements ILayoutProcessor {
@@ -43,7 +43,7 @@ public class BendDummyProcessor extends AbstractAlgorithm implements ILayoutProc
      * {@inheritDoc}
      */
     public void process(final PGraph pgraph) {
-        getMonitor().begin("Rectangular shaping", 1);
+        getMonitor().begin("Add bend dummies", 1);
         this.graph = pgraph;
         this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
 
@@ -58,8 +58,16 @@ public class BendDummyProcessor extends AbstractAlgorithm implements ILayoutProc
         getMonitor().done();
     }
 
+    /**
+     * Goes through the bend points of the orthogonal representation and adds for each 
+     * bend a new node on the edge the bend lies on.
+     * @param edge
+     */
     private void addBendDummies(final PEdge edge) {
         OrthogonalAngle[] bends = this.orthogonal.getBends(edge);
+        if (bends == null) {
+            return;
+        }
         List<Pair<PEdge, OrthogonalAngle>> list;
         for (int i = bends.length - 1; i >= 0; i--) {
             Pair<PNode, PEdge> pair = this.graph.addNode(edge);

@@ -97,6 +97,15 @@ public class LPort extends LShape {
             return port.side == PortSide.WEST;
         }
     };
+    
+    /**
+     * Creates a port.
+     * 
+     * @param graph the graph for which the label is created
+     */
+    public LPort(final LGraph graph) {
+        super(graph);
+    }
 
     /**
      * {@inheritDoc}

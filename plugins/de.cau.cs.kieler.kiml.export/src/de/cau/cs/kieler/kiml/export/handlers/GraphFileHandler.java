@@ -213,7 +213,7 @@ public class GraphFileHandler {
         transData.setSourceGraph(kgraph);
         IGraphTransformer<KNode, T> transformer = transHandler.getExporter();
         transformer.transform(transData);
-        return transHandler.serialize(transData.getTargetGraphs().get(0));
+        return transHandler.serialize(transData);
     }
 
     /**

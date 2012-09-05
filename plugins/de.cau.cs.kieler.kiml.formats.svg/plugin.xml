@@ -7,32 +7,24 @@
             class="de.cau.cs.kieler.kiml.formats.svg.SvgHandler"
             description="Scalable Vector Graphics (for export only)"
             extensions="svg"
-            id="de.cau.cs.kieler.kiml.formats.svg"
+            id="org.w3.svg"
             name="SVG">
       </handler>
    </extension>
    <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="menu:org.eclipse.ui.main.menu">
-         <menu
-               label="Test">
-            <command
-                  commandId="de.cau.cs.kieler.kiml.formats.svg.test"
-                  label="Make SVG..."
-                  style="push">
-            </command>
-         </menu>
-      </menuContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">
-      <command
-            defaultHandler="de.cau.cs.kieler.kiml.formats.svg.Test"
-            id="de.cau.cs.kieler.kiml.formats.svg.test"
-            name="Test">
-      </command>
+         point="de.cau.cs.kieler.kiml.layoutProviders">
+      <layoutOption
+            default="1.0"
+            id="de.cau.cs.kieler.svg.scale"
+            name="SVG Rendering Scale"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            default="false"
+            id="de.cau.cs.kieler.svg.css"
+            name="Use CSS in SVG Output"
+            type="boolean">
+      </layoutOption>
    </extension>
 
 </plugin>

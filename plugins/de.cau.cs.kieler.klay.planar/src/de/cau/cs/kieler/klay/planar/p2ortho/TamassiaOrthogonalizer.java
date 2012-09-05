@@ -107,7 +107,6 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         // Creating source nodes for every graph node
         for (PNode node : this.graph.getNodes()) {
             int supply = MAX_DEGREE - node.getAdjacentEdgeCount();
-
             // Check if node has a valid degree
             if (supply < 0) {
                 throw new InconsistentGraphModelException("The node " + node.id
@@ -158,7 +157,17 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                 throw new InconsistentGraphModelException(
                         "Attempted to link non-existent face by an edge.");
             }
-
+            // Same face need no arc.
+            if (left == right) {
+                PNode faceNode = faceMapping.get(left);
+                int supply = faceNode.getProperty(IFlowNetworkSolver.SUPPLY).intValue();
+                if (left == graph.getExternalFace()) {
+                    faceNode.setProperty(IFlowNetworkSolver.SUPPLY, supply - 1);
+                } else {
+                    faceNode.setProperty(IFlowNetworkSolver.SUPPLY, supply + 1);
+                }
+                continue;
+            }
             PEdge edgeLeft = network.addEdge(faceMapping.get(left), faceMapping.get(right), true);
             edgeLeft.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
             edgeLeft.setProperty(IPathFinder.PATHCOST, 1);
@@ -246,8 +255,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
             PNode node = (PNode) arc.getSource().getProperty(NETWORK_TO_GRAPH);
             PFace face = (PFace) arc.getTarget().getProperty(NETWORK_TO_GRAPH);
 
-            List<Pair<PEdge, OrthogonalAngle>> nodeList;
-            nodeList = orthogonal.getAngles(node);
+            List<Pair<PEdge, OrthogonalAngle>> nodeList = orthogonal.getAngles(node);
             if (nodeList == null) {
                 nodeList = Lists.newLinkedList();
                 for (PEdge edge : node.adjacentEdges()) {
@@ -256,30 +264,112 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                 orthogonal.setAngles(node, nodeList);
             }
 
-            int numEdges = 0;
-            for (Pair<PEdge, OrthogonalAngle> pair : nodeList) {
-                PEdge edge = pair.getFirst();
-                if (((node == edge.getSource()) && (face == edge.getRightFace()))
-                        || ((node == edge.getTarget()) && (face == edge.getLeftFace()))) {
-                    numEdges++;
+            // Identifying a cutvertex while checking if left and right face of a adjacent edge
+            // is the same.
+            boolean isCutVertex = false;
+            for (PEdge edge : node.adjacentEdges()) {
+                if (edge.getLeftFace() == edge.getRightFace()) {
+                    isCutVertex = true;
+                    break;
                 }
             }
 
-            int i = numEdges;
-            for (Pair<PEdge, OrthogonalAngle> pair : nodeList) {
-                PEdge edge = pair.getFirst();
-                if (((node == edge.getSource()) && (face == edge.getRightFace()))
-                        || ((node == edge.getTarget()) && (face == edge.getLeftFace()))) {
-                    i--;
-                    if (i > 0) {
-                        pair.setSecond(OrthogonalAngle.LEFT);
-                    } else {
-                        int angle = arc.getProperty(IFlowNetworkSolver.FLOW) - numEdges;
+            if (!isCutVertex) {
+                // Map normally calculated flow of arc to the corresponding edge angle.
+                for (Pair<PEdge, OrthogonalAngle> pair : nodeList) {
+                    PEdge edge = pair.getFirst();
+                    if (((node == edge.getSource()) && (face == edge.getRightFace()))
+                            || ((node == edge.getTarget()) && (face == edge.getLeftFace()))) {
+                        int angle = arc.getProperty(IFlowNetworkSolver.FLOW) - 1;
                         if (angle < 0) {
+                            // TODO if happen, inspect!!! Error prone.
                             angle = 0;
                         }
                         pair.setSecond(OrthogonalAngle.map(angle));
                     }
+                }
+            }
+        }
+
+        // Flow in node arcs define angles in nodes, handling cut vertices.
+        for (PEdge arc : this.nodeArcs) {
+            PNode node = (PNode) arc.getSource().getProperty(NETWORK_TO_GRAPH);
+            PFace face = (PFace) arc.getTarget().getProperty(NETWORK_TO_GRAPH);
+
+            List<Pair<PEdge, OrthogonalAngle>> nodeList = orthogonal.getAngles(node);
+            if (nodeList == null) {
+                nodeList = Lists.newLinkedList();
+                for (PEdge edge : node.adjacentEdges()) {
+                    nodeList.add(new Pair<PEdge, OrthogonalAngle>(edge, null));
+                }
+                orthogonal.setAngles(node, nodeList);
+            }
+
+            // Identifying a cutvertex while checking if left and right face of a adjacent edge
+            // is the same.
+            boolean isCutVertex = false;
+            for (PEdge edge : node.adjacentEdges()) {
+                if (edge.getLeftFace() == edge.getRightFace()) {
+                    isCutVertex = true;
+                    break;
+                }
+            }
+
+            if (isCutVertex) {
+                int totalEdgeCount = node.getAdjacentEdgeCount();
+
+                switch (totalEdgeCount) {
+                case 4:
+                    for (Pair<PEdge, OrthogonalAngle> pair : nodeList) {
+                        pair.setSecond(OrthogonalAngle.LEFT);
+                    }
+                    break;
+                    
+                case 3:
+                    // Count the adjacent face edges.
+                    int adjacentFaceEdgeCount = 0;
+                    for (PEdge edge : node.adjacentEdges()) {
+                        if (edge.getLeftFace() == face || edge.getRightFace() == face) {
+                            adjacentFaceEdgeCount++;
+                        }
+                    }
+                    if (adjacentFaceEdgeCount == totalEdgeCount) {
+                        // More or less arbitrary added these angles.
+                        nodeList.get(0).setSecond(OrthogonalAngle.STRAIGHT);
+                        nodeList.get(1).setSecond(OrthogonalAngle.LEFT);
+                        nodeList.get(2).setSecond(OrthogonalAngle.LEFT);
+                    } else {
+                        // Assuming that only one edge is cutedge.
+                        int angleCount = 0;
+                        int cutEdgeIndex = -1;
+                        for (int i = 0; i < nodeList.size(); i++) {
+                            // Count the angles of the other edges.
+                            if (nodeList.get(i).getFirst().getLeftFace() != nodeList.get(i)
+                                    .getFirst().getRightFace()) {
+                                angleCount += nodeList.get(i).getSecond().ordinal() + 1;
+                            } else {
+                                cutEdgeIndex = i;
+                            }
+                        } 
+                        
+                        // Since all other angles of the adjacent 
+                        nodeList.get(cutEdgeIndex).setSecond(
+                                OrthogonalAngle.map((4 - angleCount) - 1));
+                    }
+                    break;
+                    
+                case 2:
+                    for (Pair<PEdge, OrthogonalAngle> pair : nodeList) {
+                        pair.setSecond(OrthogonalAngle.STRAIGHT);
+                    }
+                    break;
+                    
+                case 1:
+                    nodeList.get(0).setSecond(OrthogonalAngle.FULL);
+                    break;
+                    
+                default:
+                    throw new InconsistentGraphModelException("ladida du bist doof!");
                 }
             }
         }
@@ -302,7 +392,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         this.graph = pgraph;
 
         // Solve flow network and compute orthogonal representation
-        PGraph network = this.createFlowNetwork();
+        PGraph network = createFlowNetwork();
         new SuccessiveShortestPathFlowSolver().findFlow(network);
         pgraph.setProperty(Properties.ORTHO_REPRESENTATION, computeAngles(network));
         if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {

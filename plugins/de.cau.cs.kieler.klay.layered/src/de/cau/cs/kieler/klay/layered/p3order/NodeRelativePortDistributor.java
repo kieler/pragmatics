@@ -252,6 +252,9 @@ public class NodeRelativePortDistributor implements IPortDistributor {
                 sortPorts(node, portBarycenter);
             }
             node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+        } else {
+            // sort the ports by their current position vector
+            sortPortsByPosition(node);
         }
         
         // update the port ranks after reordering
@@ -259,7 +262,7 @@ public class NodeRelativePortDistributor implements IPortDistributor {
     }
 
     /**
-     * Sort the ports of a node using relative position values.
+     * Sort the ports of a node using the given relative position values.
      * 
      * @param node
      *            a node
@@ -294,6 +297,59 @@ public class NodeRelativePortDistributor implements IPortDistributor {
                         return Float.compare(pos1, pos2);
                     }
                 }
+            }
+        });
+    }
+    
+    /**
+     * Sort the ports of a node using their own position vector.
+     * 
+     * @param node a node
+     */
+    private static void sortPortsByPosition(final LNode node) {
+        Collections.sort(node.getPorts(), new Comparator<LPort>() {
+            public int compare(final LPort port1, final LPort port2) {
+                PortSide port1Side = port1.getSide();
+                PortSide port2Side = port2.getSide();
+                int result = 0;
+                switch (port1Side) {
+                case NORTH:
+                    if (port2Side == PortSide.NORTH) {
+                        result = Double.compare(port1.getPosition().x, port2.getPosition().x);
+                    } else {
+                        result = -1;
+                    }
+                    break;
+                case EAST:
+                    if (port2Side == PortSide.NORTH) {
+                        result = 1;
+                    } else if (port2Side == PortSide.EAST) {
+                        result = Double.compare(port1.getPosition().y, port2.getPosition().y);
+                    } else {
+                        result = -1;
+                    }
+                    break;
+                case SOUTH:
+                    if (port2Side == PortSide.NORTH || port2Side == PortSide.EAST) {
+                        result = 1;
+                    } else if (port2Side == PortSide.SOUTH) {
+                        result = Double.compare(port2.getPosition().x, port1.getPosition().x);
+                    } else {
+                        result = -1;
+                    }
+                    break;
+                case WEST:
+                    if (port2Side == PortSide.NORTH || port2Side == PortSide.EAST
+                            || port2Side == PortSide.SOUTH) {
+                        result = 1;
+                    } else if (port2Side == PortSide.WEST) {
+                        result = Double.compare(port2.getPosition().y, port1.getPosition().y);
+                    } else {
+                        result = -1;
+                    }
+                    break;
+                }
+                return result;
             }
         });
     }
