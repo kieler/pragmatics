@@ -35,6 +35,13 @@
             implementation="de.cau.cs.kieler.kwebs.server.web.WebContentHandler"
             path="/">
       </supportHandler>
+      <preFilters>
+         <layoutFilter
+               description="This filter tests the requests for conformity on the allowed number and size of graphs that are transmitted in a layout request."
+               implementation="de.cau.cs.kieler.kwebs.server.service.filter.GraphConstraints"
+               priority="1">
+         </layoutFilter>
+      </preFilters>
    </extension>
    <extension
          point="de.cau.cs.kieler.kwebs.server.logging">

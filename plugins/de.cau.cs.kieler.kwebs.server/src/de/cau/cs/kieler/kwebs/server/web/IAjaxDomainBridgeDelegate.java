@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
- * Copyright 2011 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *     + Department of Computer Science
  *         + Real-Time and Embedded Systems Group
@@ -14,20 +14,29 @@
 
 package de.cau.cs.kieler.kwebs.server.web;
 
+import java.net.URLConnection;
+
 /**
- * Interface for dynamic web content providers. 
+ * Interface for delegating content retrieval when AJAX requests must be 'tunneled' by the
+ * server due to security reasons.
+ *  
+ * @author swe
  *
- * @author  swe
  */
-public interface IDynamicWebContentProvider {
-    
+public interface IAjaxDomainBridgeDelegate {
+
     /**
-     * This method is used by the dispatch handler to invoke a dynamic web content handler.
      * 
      * @param processingExchange
-     *            the exchange DTO that holds information about the request itself and the
-     *            {@link ResourceInformation} instance to deliver the result of processing the request
+     * @return
      */
-    void handleRequest(final ResourceProcessingExchange processingExchange);
+    String getMimetype(final ResourceProcessingExchange processingExchange);
+    
+    /**
+     * 
+     * @param processingExchange
+     * @return
+     */
+    URLConnection getConnection(final ResourceProcessingExchange processingExchange);
     
 }
