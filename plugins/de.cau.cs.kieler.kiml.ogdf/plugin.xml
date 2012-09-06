@@ -944,7 +944,7 @@
             name="Mixed Model"
             parameter="MIXED_MODEL"
             preview="images/mixed-model.png"
-            type="de.cau.cs.kieler.kiml.ogdf.type.planar">
+            type="de.cau.cs.kieler.type.orthogonal">
          <supportedFeature
                feature="EDGE_LABELS"
                priority="-4">
