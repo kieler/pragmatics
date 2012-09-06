@@ -243,39 +243,41 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
             // make sure the remote layout data is active, since it's needed for deserialization
             LayoutDataService.setMode(LayoutDataService.REMOTEDATASERVICE);
         }
-        String label = "Remote Graph Layout (" + client.getServerConfig().getAddress() + ")";
-        double networkStart = 0;
-        double networkTotal = 0;
-        double timeStart = 0;
-        double timeTotal = 0;
-        KNode resultGraph = null;
-        String sourceXMI = null;
-        String resultXMI = null;
-        timeStart = System.nanoTime();
-        progressMonitor.begin(label, 1);
+        progressMonitor.begin("Remote Graph Layout (" + client.getServerConfig().getAddress() + ")", 1);
+        long timeStart = System.nanoTime();
+        
+        // serialize the input graph
         Graphs.annotateGraphWithUniqueID(layoutGraph);
-        sourceXMI = kgraphHandler.serialize(layoutGraph);
+        TransformationData<KNode, KNode> outTransData = new TransformationData<KNode, KNode>();
+        outTransData.getTargetGraphs().add(layoutGraph);
+        String sourceXMI = kgraphHandler.serialize(outTransData);
+        
         try { 
-            networkStart = System.nanoTime();
-            resultXMI = client.graphLayout(sourceXMI, KGraphHandler.FORMAT, null);
-            networkTotal = (System.nanoTime() - networkStart);
-            TransformationData<KNode, KNode> transData = new TransformationData<KNode, KNode>();
-            kgraphHandler.deserialize(resultXMI, transData);
-            resultGraph = transData.getSourceGraph();
+            // send layout request to the server
+            long networkStart = System.nanoTime();
+            String resultXMI = client.graphLayout(sourceXMI, KGraphHandler.FORMAT, null);
+            long networkTotal = System.nanoTime() - networkStart;
+            
+            // parse the resulting graph
+            TransformationData<KNode, KNode> inTransData = new TransformationData<KNode, KNode>();
+            kgraphHandler.deserialize(resultXMI, inTransData);
+            KNode resultGraph = inTransData.getSourceGraph();
             Graphs.duplicateGraphLayoutByUniqueID(resultGraph, layoutGraph);
+            
+            // gather execution time statistics
+            long timeTotal = System.nanoTime() - timeStart;
+            KIdentifier identifier = resultGraph.getData(KIdentifier.class);
+            if (identifier != null) {
+                Statistics statistics = new Statistics();
+                statistics.parse(identifier.getProperty(Statistics.STATISTICS));
+                statistics.setTimeTotal(timeTotal);
+                statistics.setTimeNetwork(networkTotal);
+                statistics.setTimeLocalSupplemental(timeTotal - networkTotal);
+                LayoutHistory.INSTANCE.addStatistic(statistics);
+            }
+            progressMonitor.done();
         } catch (Exception e) {
             throw new RemoteServiceException("Error occurred while doing remote layout", e);
-        }        
-        progressMonitor.done();
-        timeTotal = (System.nanoTime() - timeStart);
-        KIdentifier identifier = resultGraph.getData(KIdentifier.class);
-        if (identifier != null) {
-            Statistics statistics = new Statistics();
-            statistics.parse(identifier.getProperty(Statistics.STATISTICS));
-            statistics.setTimeTotal(timeTotal);
-            statistics.setTimeNetwork(networkTotal);
-            statistics.setTimeLocalSupplemental(timeTotal - networkTotal);
-            LayoutHistory.INSTANCE.addStatistic(statistics);
         }
     }
 
