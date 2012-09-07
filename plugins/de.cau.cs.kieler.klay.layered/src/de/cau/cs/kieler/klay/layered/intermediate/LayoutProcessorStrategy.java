@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.intermediate.LabelSideSelector.Mode;
 
 /**
  * Definition of available intermediate layout processors for the layered layouter.
@@ -259,7 +258,7 @@ public enum LayoutProcessorStrategy {
             return new EndLabelProcessor();
             
         case LABEL_SIDE_SELECTOR:
-            return new LabelSideSelector(Mode.ALWAYS_DOWN);
+            return new LabelSideSelector();
         
         default:
             return null;

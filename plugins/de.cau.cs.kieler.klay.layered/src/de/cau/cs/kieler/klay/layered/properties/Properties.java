@@ -358,6 +358,11 @@ public final class Properties {
     /** property to choose a node placement strategy. */
     public static final IProperty<Boolean> EDGE_BENDS = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.edgeBends", true);
+    
+    /** property to choose an edge placement strategy. */
+    public static final IProperty<EdgeLabelSideSelectionStrategy> EDGE_LABEL_SIDE =
+            new Property<EdgeLabelSideSelectionStrategy>("de.cau.cs.kieler.klay.layered.LabelSide",
+                                                         EdgeLabelSideSelectionStrategy.SMART);
 
     /** property to switch debug mode on or off. */
     public static final IProperty<Boolean> DEBUG_MODE = new Property<Boolean>(

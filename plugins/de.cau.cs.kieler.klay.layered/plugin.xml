@@ -117,6 +117,10 @@
                default="true"
                option="de.cau.cs.kieler.klay.layered.edgeBends">
          </knownOption>
+         <knownOption
+               default="SMART"
+               option="de.cau.cs.kieler.klay.layered.LabelSide">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
@@ -246,6 +250,19 @@
          <dependency
                option="de.cau.cs.kieler.klay.layered.nodePlace"
                value="BRANDES_KOEPF">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelectionStrategy"
+            default="SMART"
+            description="Method to decide on edge label sides."
+            id="de.cau.cs.kieler.klay.layered.LabelSide"
+            name="Label Side"
+            type="enum">
+         <dependency
+               option="de.cau.cs.kieler.edgeRouting"
+               value="ORTHOGONAL">
          </dependency>
       </layoutOption>
    </extension>
