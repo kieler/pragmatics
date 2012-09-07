@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.LabelSideSelector.Mode;
 
 /**
  * Definition of available intermediate layout processors for the layered layouter.
@@ -73,6 +74,8 @@ public enum LayoutProcessorStrategy {
     PORT_LIST_SORTER,
     /** Inserts dummy nodes to take care of northern and southern ports. */
     NORTH_SOUTH_PORT_PREPROCESSOR,
+    /** Decides, on which side of an edge the edge labels should be placed. */ 
+    LABEL_SIDE_SELECTOR,
     /** Tries to switch the label dummy nodes which the middle most dummy node
      *  of a long edge. */
     LABEL_DUMMY_SWITCHER,
@@ -254,6 +257,9 @@ public enum LayoutProcessorStrategy {
             
         case END_LABEL_PROCESSOR:
             return new EndLabelProcessor();
+            
+        case LABEL_SIDE_SELECTOR:
+            return new LabelSideSelector(Mode.ALWAYS_DOWN);
         
         default:
             return null;

@@ -79,6 +79,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      *   - For hierarchical ports:
      *     - HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR
      *   
+     *   - For edge labels:
+     *      - LABEL_SIDE_SELECTOR
+     *   
      *   - For center edge labels:
      *      - LABEL_DUMMY_SWITCHER
      * 
@@ -176,7 +179,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 EnumSet.of(LayoutProcessorStrategy.LABEL_DUMMY_INSERTER),
                 
                 // Before Phase 3
-                EnumSet.of(LayoutProcessorStrategy.LABEL_DUMMY_SWITCHER),
+                EnumSet.of(LayoutProcessorStrategy.LABEL_SIDE_SELECTOR,
+                           LayoutProcessorStrategy.LABEL_DUMMY_SWITCHER),
                 
                 // Before Phase 4
                 null,
