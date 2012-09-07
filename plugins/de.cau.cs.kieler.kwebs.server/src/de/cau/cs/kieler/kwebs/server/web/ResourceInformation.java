@@ -17,13 +17,14 @@ package de.cau.cs.kieler.kwebs.server.web;
 import com.sun.net.httpserver.Headers;
 
 /**
- * Holder class for caching already processed requests to the web interface of KWebS.
+ * 
  *
  * @author swe
+ * 
  */
-public class CacheData {
+public class ResourceInformation {
 
-    /** Name of the cached resource. Needed for sending content as downloadable attachment. */
+    /** Name of the resource. Needed for sending content as downloadable attachment. */
     private String name;
 
     /** The MIME type of the resource. */
@@ -35,52 +36,63 @@ public class CacheData {
     /** The content of the resource. */
     private byte[] content;
 
-    /** The date of the resource, date of file for example. Used to invalidate cache. */
+    /** 
+     * The date of the resource, date of file for example. May be used
+     * to invalidate this resource after a given age. 
+     */
     private long timestamp;
 
     /** */
     private final Headers additionalHeaders
         = new Headers();
-
+    
+    //////////
+    
+    /**
+     * 
+     */
+    public ResourceInformation() {
+        this(null, null, null, System.currentTimeMillis());
+    }
+    
     /**
      * Constructs a data container intended for caching of at runtime of the layout service
      * generated web content. The date of modification is set to the current system time.
      *
-     * @param thename
+     * @param name
      *            the name of the resource
-     * @param themimetype
+     * @param mimetype
      *            the MIME type of the resource
-     * @param thecontent
+     * @param content
      *            the content of the resource
      */
-    public CacheData(final String thename, final String themimetype, final byte[] thecontent) {
-        this(thename, themimetype, thecontent, System.currentTimeMillis());
-        name = thename;
-        mimetype = themimetype;
-        content = thecontent;
+    public ResourceInformation(final String name, final String mimetype, final byte[] content) {
+        this(name, mimetype, content, System.currentTimeMillis());
     }
 
     /**
      * Constructs a data container intended for caching of at runtime of the layout service
      * generated web content.
      *
-     * @param thename
+     * @param name
      *            the name of the resource
-     * @param themimetype
+     * @param mimetype
      *            the MIME type of the resource
-     * @param thecontent
+     * @param content
      *            the content of the resource
-     * @param thetimestamp
+     * @param timestamp
      *            the date of last modification of the cached resource.
      */
-    public CacheData(final String thename, final String themimetype, final byte[] thecontent,
-        final long thetimestamp) {
-        name = thename;
-        mimetype = themimetype;
-        content = thecontent;
-        timestamp = thetimestamp;
+    public ResourceInformation(final String name, final String mimetype, final byte[] content,
+        final long timestamp) {
+        this.name = name;
+        this.mimetype = mimetype;
+        this.content = content;
+        this.timestamp = timestamp;
     }
 
+    //////////
+    
     /**
      * Returns the name of the cached resource.
      *

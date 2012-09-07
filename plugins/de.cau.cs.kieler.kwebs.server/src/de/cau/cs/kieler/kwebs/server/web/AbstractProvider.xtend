@@ -17,7 +17,7 @@ package de.cau.cs.kieler.kwebs.server.web
 import java.io.UnsupportedEncodingException
 
 /**
- * This class implements a web content provider for displaying the service meta data in HTML format.
+ * This class serves as a base implementation for classes providing web frontend components.
  *
  * @author  swe
  */
@@ -32,14 +32,17 @@ abstract class AbstractProvider
      *            the request data holder
      */
     override void handleRequest(
-    	RequestData requestData
+    	ResourceProcessingExchange processingExchange
     ) 
     {  
-    	if (providerOverride(requestData)) {
+    	
+    	if (providerOverride(processingExchange)) {
     		return
     	}
-        try {            
-            requestData.setContent(
+        
+        try {       
+        	     
+            processingExchange.getResourceInformation().setContent(
 				'''
 				<!DOCTYPE html>
 				<html>
@@ -47,7 +50,7 @@ abstract class AbstractProvider
 						<title>KIELER Web Service For Layout</title>
 						<meta http-equiv='content-type' content='text/html; charset=utf-8'>
 						<link rel='stylesheet' type='text/css' href='styles/styles.css'/>
-						«getHeaders(requestData)»
+						«getHeaders(processingExchange)»
 					</head>
 					<body>
 						<div class='layout' align='center'>
@@ -88,7 +91,7 @@ abstract class AbstractProvider
 									<td class='body'>
 										<div align='left'>
 											<p>
-												«getBody(requestData)»
+												«getBody(processingExchange)»
 											</p>
 										</div>
 									</td>
@@ -107,27 +110,30 @@ abstract class AbstractProvider
 				</html>
 				'''.toString.getBytes("UTF-8")
             );
-            requestData.setCharset("UTF-8")
+            
+            processingExchange.getResourceInformation().setCharset("UTF-8")
+            
         } catch (UnsupportedEncodingException e) {
             // Nothing to do since exception is never thrown due to the fact
-            // that utf-8 is a requirement for every java runtime
+            // that UTF-8 is a requirement for every java runtime
         }
+        
     }
 	
 	/**
 	 * 
 	 */
-	def CharSequence getHeaders(RequestData requestData)
+	def CharSequence getHeaders(ResourceProcessingExchange processingExchange)
 	
 	/**
 	 * 
 	 */
-	def CharSequence getBody(RequestData requestData)
+	def CharSequence getBody(ResourceProcessingExchange processingExchange)
 	
 	/**
 	 * 
 	 */
-	def boolean providerOverride(RequestData requestData)
+	def boolean providerOverride(ResourceProcessingExchange processingExchange)
 	
 	//////////
 	

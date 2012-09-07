@@ -11,7 +11,6 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-//<textarea id='interface' cols='75' rows='50' wrap='off' readonly='readonly'></textarea>
 package de.cau.cs.kieler.kwebs.server.web
 
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration
@@ -29,7 +28,7 @@ class ServiceinterfaceProvider
      *
      */
     override CharSequence getHeaders(
-        RequestData requestData
+    	ResourceProcessingExchange processingExchange
     )
     {
         return
@@ -43,7 +42,7 @@ class ServiceinterfaceProvider
                         .replace(/</g,   "&lt;")
                         .replace(/>/g,   "&gt;")
                         .replace(/"/g, "&quot;");
-            }
+            	}
             </script>
             <link rel="stylesheet" href="scripts/styles/gc.css">
             <style type='text/css'>
@@ -84,16 +83,33 @@ class ServiceinterfaceProvider
     private static String WSDL_SUFFIX
         = "?WSDL"
 
+    /**  */
+    private static String WSDL_ADAPTER_URL
+        = "AjaxDomainBridge.html?handler=WsdlDelegate"
+
     /**
      *
      */
-    //ToDo: url via configuration since it can not be automatically detected
     override CharSequence getBody(
-        RequestData requestData
+    	ResourceProcessingExchange processingExchange
     )
     {
-        val Configuration config = Configuration::INSTANCE
-        val String        url    = config.getConfigProperty(Configuration::JAXWS_HTTP_PUBLIC_ADDRESS) + WSDL_SUFFIX
+    	
+		val Configuration config       = Configuration::INSTANCE
+		val boolean       publishHTTP  = config.getConfigPropertyAsBoolean(
+			Configuration::JAXWS_PUBLISH_HTTP, false
+		) 
+		val boolean       publishHTTPS = config.getConfigPropertyAsBoolean(
+			Configuration::JAXWS_PUBLISH_HTTPS, false
+		)
+		val String        url    	   = 
+			if (publishHTTP)
+				config.getConfigProperty(Configuration::JAXWS_HTTP_ADDRESS) + WSDL_SUFFIX
+			else if (publishHTTPS)
+				config.getConfigProperty(Configuration::JAXWS_HTTPS_ADDRESS) + WSDL_SUFFIX
+			else
+				null
+				
         return
             '''
             <p class='title'>
@@ -103,64 +119,79 @@ class ServiceinterfaceProvider
                 As KWebS uses a SOAP web service, you need the interface definition in order to use its features. The server provides it
                 in form of a document based on the web service description language (WSDL). The interface definition is the same either
                 for HTTP or for HTTPS based access and you can use the tools provided by the web service framework you want to use to
-                generate the necessary implementation skeletons. You can generate the client skeleton code from the service interface
-                definition that is located <a href='«url»'>here</a>.
-            </p>
-            <p>
-                The following listing gives you a first impression of the functionality KWebS provides:
-                <br/>
-                <br/>
-                <div align='center'>
-                    <pre>
-                        <code id='interface'>
-                        </code>
-                    </pre>
-                </div>
-            </p>
-            <script type='text/javascript'>
-                try {
-                    Ajax_Call(
-                        AJAX_OPT_CREATEREQUEST, null, AJAX_GET, "«url»", null, AJAX_ASYNC,
-                        function(r){
-                            var elem = document.getElementById('interface');
-                            if (elem != null) {
-                                ««« This fixes the problem that JAX-WS generates a comment in the WSDL that
-                                ««« is not correctly indended
-                                var lines   = hljs.highlight("xml", r.responseText.replace(/<!-- Published by JAX-WS RI.*-->/, "\n\n")).value.split("\n");
-                                var content = "";
-                                var leads   = (lines.length + "").length;
-                                var pad     = " ";
-                                while (pad.length < leads) {
-                                    pad += " ";
-                                }
-                                for (var i = 0; i < lines.length; i++) {
-                                    content += //"<span style='margin:0px;padding:0px;background-color:"
-                                             //+ (i % 2 == 0 ? "#fafafa" : "#c0ffc0" )
-                                             /*+ ";'>" +*/ (pad + i).slice(-leads) + ".    " + lines[i]/* + "</span>*/ + "\n";
-                                }
-                                elem.innerHTML = content;
-                            } else {
-                                throw "DOM element for displaying the interface definition not found.";
-                            }
-                        }
-                    );
-                } catch (e) {
-                    alert("An error occured while trying to display the interface definition:\n\n" + e);
-                }
-            </script>
-            <p>
-                <div class='small' align='center'>
-                	Thanks to the guys from software maniacs for their great syntax highlighting that can be found <a class='small' href='http://softwaremaniacs.org/soft/highlight/en/'>here</a>.
-                </div>
-            </p>
-            '''
+                generate the necessary implementation skeletons. «
+                	if (url != null)
+                		'''
+                		You can generate the client skeleton code from the service interface definition
+                		that is located <a href='«url»'>here</a>.'''
+					else
+						'''
+						At the moment the server is configured not to publish the service either via
+						HTTP or HTTPS so no location is available to download or display the service interface.'''
+				»
+            </p>«
+            	if (url != null) {
+		            '''
+		            <p>
+		                The following listing gives you a first impression of the functionality KWebS provides:
+		                <br/>
+		                <br/>
+		                <div align='center'>
+		                    <pre>
+		                        <code id='interface'>
+		                        </code>
+		                    </pre>
+		                </div>
+		            </p>
+		            <script type='text/javascript'>
+		                try {
+		                    if (!Ajax_IsBrowserAjaxCapable()) {
+		                        alert("Your browser does not support AJAX. The service interface can not be displayed.");
+		                    } else {
+		                        Ajax_Call(
+		                            AJAX_OPT_CREATEREQUEST, null, AJAX_GET, "«WSDL_ADAPTER_URL»", null, AJAX_ASYNC,
+		                            function(r){
+		                                var elem = document.getElementById('interface');
+		                                if (elem != null) {
+		                                    ««« This fixes the problem that JAX-WS generates a comment in the WSDL that
+		                                    ««« is not correctly indended
+		                                    var lines   = hljs.highlight("xml", r.responseText.replace(/<!-- Published by JAX-WS RI.*-->/, "\n\n")).value.split("\n");
+		                                    var content = "";
+		                                    var leads   = (lines.length + "").length;
+		                                    var pad     = " ";
+		                                    while (pad.length < leads) {
+		                                        pad += " ";
+		                                    }
+		                                    for (var i = 0; i < lines.length; i++) {
+		                                        content += //"<span style='margin:0px;padding:0px;background-color:"
+		                                                 //+ (i % 2 == 0 ? "#fafafa" : "#c0ffc0" )
+		                                                 /*+ ";'>" +*/ (pad + i).slice(-leads) + ".    " + lines[i]/* + "</span>*/ + "\n";
+		                                    }
+		                                    elem.innerHTML = content;
+		                                } else {
+		                                    throw "DOM element for displaying the interface definition not found.";
+		                                }
+		                            }
+		                        );
+		                    }
+		                } catch (e) {
+		                    alert("An error occured while trying to display the interface definition:\n\n" + e);
+		                }
+		            </script>
+		            <p>
+		                <div class='small' align='center'>
+		                    Thanks to the guys from software maniacs for their great syntax highlighting that can be found <a class='small' href='http://softwaremaniacs.org/soft/highlight/en/'>here</a>.
+		                </div>
+		            </p>'''
+		        }
+            »'''
     }
 
     /**
      *
      */
     override boolean providerOverride(
-        RequestData requestData
+    	ResourceProcessingExchange processingExchange
     )
     {
         return false

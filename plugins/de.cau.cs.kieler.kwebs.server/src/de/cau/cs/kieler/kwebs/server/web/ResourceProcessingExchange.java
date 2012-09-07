@@ -14,6 +14,7 @@
 
 package de.cau.cs.kieler.kwebs.server.web;
 
+import java.net.HttpURLConnection;
 import java.util.Map;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -24,7 +25,7 @@ import com.sun.net.httpserver.HttpExchange;
  *
  * @author  swe
  */
-public class RequestData extends CacheData {
+public class ResourceProcessingExchange {
 
     /** The {@link HttpExchange} instance delivered by the HTTP server. */
     private HttpExchange exchange;
@@ -36,25 +37,33 @@ public class RequestData extends CacheData {
     private Map<String, String> params;
     
     /** Whether the generated response content is cacheable or not. */
-    private boolean cacheable
+    private boolean isResourceCacheable
         = true;
+    
+    /** The result code as signaled by the provider. Defaulted to 200 (OK). */
+    private int resultCode
+        = HttpURLConnection.HTTP_OK;
+    
+    /** */
+    private final ResourceInformation resourceInformation
+        = new ResourceInformation();
+
+    //////////
     
     /**
      * 
-     * @param theexchange
-     * @param theresource
-     * @param thename
-     * @param themimetype
-     * @param theparams
+     * @param exchange
+     * @param resource
+     * @param params
      */
-    public RequestData(final HttpExchange theexchange, final String theresource, final String thename, 
-        final String themimetype, final Map<String, String> theparams) {
-        super(thename, themimetype, null);
-        exchange = theexchange;
-        resource = theresource;
-        setMimetype(themimetype);
-        params = theparams;
+    public ResourceProcessingExchange(final HttpExchange exchange,
+            final String resource, final Map<String, String> params) {
+        this.exchange = exchange;
+        this.resource = resource;
+        this.params = params;
     }
+
+    //////////
     
     /**
      * Returns the {@link HttpExchange} associated with the request.
@@ -119,27 +128,45 @@ public class RequestData extends CacheData {
      * 
      * @return whether the generated content is cacheable
      */
-    public boolean getCacheable() {
-        return cacheable;
+    public boolean isResourceCacheable() {
+        return isResourceCacheable;
     }
 
     /**
      * Sets whether the generated content is cacheable.
      * 
-     * @param cacheable
+     * @param isResourceCacheable
      *            whether the generated content is cacheable
      */
-    public void setCacheable(final boolean cacheable) {
-        this.cacheable = cacheable;
+    public void setResourceCacheable(final boolean isResourceCacheable) {
+        this.isResourceCacheable = isResourceCacheable;
     }
-        
+    
     /**
-     * Returns a cacheable representation of this holder instance.
+     * Returns the result code that should be transmitted in the HTTP response.
      * 
-     * @return a cacheable representation of this holder instance
+     * @return the result code that should be transmitted in the HTTP response
      */
-    public CacheData toCacheData() {
-        return new CacheData(getName(), getMimetype(), getContent());
+    public int getResultCode() {
+        return resultCode;
+    }
+
+    /**
+     * Sets the result code that should be transmitted in the HTTP response.
+     * 
+     * @param resultCode 
+     *            the result code that should be transmitted in the HTTP response
+     */
+    public void setResultCode(final int resultCode) {
+        this.resultCode = resultCode;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public ResourceInformation getResourceInformation() {
+        return resourceInformation;
     }
     
 }
