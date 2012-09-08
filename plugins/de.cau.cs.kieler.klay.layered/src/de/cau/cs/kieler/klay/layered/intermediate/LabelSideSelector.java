@@ -94,11 +94,37 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
     }
 
     private void directionUp(final List<LNode> nodes) {
-        
+        for (LNode node : nodes) {
+            for (LEdge edge : node.getOutgoingEdges()) {
+                LSide side = LSide.UP;
+                if (edge.getSource().getNode().getLayer().getIndex()
+                        <= edge.getTarget().getNode().getLayer().getIndex()) {
+                    side = LSide.UP;
+                } else {
+                    side = LSide.DOWN;
+                }
+                for (LLabel label : edge.getLabels()) {
+                    label.setSide(side);
+                }
+            }
+        }
     }
 
     private void directionDown(final List<LNode> nodes) {
-        
+        for (LNode node : nodes) {
+            for (LEdge edge : node.getOutgoingEdges()) {
+                LSide side = LSide.UP;
+                if (edge.getSource().getNode().getLayer().getIndex()
+                        <= edge.getTarget().getNode().getLayer().getIndex()) {
+                    side = LSide.DOWN;
+                } else {
+                    side = LSide.UP;
+                }
+                for (LLabel label : edge.getLabels()) {
+                    label.setSide(side);
+                }
+            }
+        }
     }
     
     private void smart(final List<LNode> nodes) {
