@@ -13,18 +13,26 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.collect.Maps;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LLabel.LSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelectionStrategy;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -35,8 +43,6 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
 
     /**
      * The constructor for this processor.
-     * 
-     * @param strategy The side placement strategy given by a layout option.
      */
     public LabelSideSelector() {
     }
@@ -128,7 +134,56 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
     }
     
     private void smart(final List<LNode> nodes) {
-        
+        HashMap<LNode, LSide> nodeMarkers = Maps.newHashMapWithExpectedSize(nodes.size());
+        for (LNode node : nodes) {
+            List<LPort> eastPorts = getPortsBySide(node, PortSide.EAST);
+            for (LPort eastPort : eastPorts) {
+                for (LEdge edge : eastPort.getOutgoingEdges()) {
+                    LSide chosenSide = LSide.UP;
+                    LNode targetNode = edge.getTarget().getNode();
+                    if (targetNode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
+                            || targetNode.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
+                        targetNode = targetNode.getProperty(Properties.LONG_EDGE_TARGET).getNode();
+                    }
+                    if (nodeMarkers.containsKey(targetNode)) {
+                        chosenSide = nodeMarkers.get(targetNode);
+                    } else {
+                        if (eastPorts.size() == 2) {
+                            if (eastPort == eastPorts.get(0)) {
+                                chosenSide = LSide.UP;
+                            } else {
+                                chosenSide = LSide.DOWN;
+                            }
+                        } else {
+                            chosenSide = LSide.UP;
+                        }
+                    }
+                    for (LLabel label : edge.getLabels()) {
+                        label.setSide(chosenSide);
+                        nodeMarkers.put(targetNode, chosenSide);
+                    }
+                }
+            }
+        }
     }
 
+    private List<LPort> getPortsBySide(final LNode node, final PortSide portSide) {
+        List<LPort> result = new LinkedList<LPort>();
+        for (LPort port : node.getPorts(portSide)) {
+            result.add(port);
+        }
+        Collections.sort(result, new Comparator<LPort>() {
+            public int compare(final LPort o1, final LPort o2) {
+                if (o1.getPosition().y < o2.getPosition().y) {
+                    return -1;
+                } else if (o1.getPosition().y == o2.getPosition().y) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            }
+        });
+        return result;
+    }
+    
 }
