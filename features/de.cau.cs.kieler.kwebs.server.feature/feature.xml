@@ -5,7 +5,7 @@
       version="0.2.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
-   <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KWebS">
+   <description url="http://rtsys.informatik.uni-kiel.de/confluence/x/nQEF">
       The KIELER KWebS server feature contains all neccesary plugins
 and features for building
 the layout web server. This feature uses
