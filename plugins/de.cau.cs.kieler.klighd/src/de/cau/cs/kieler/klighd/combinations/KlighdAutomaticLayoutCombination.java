@@ -38,9 +38,13 @@ public class KlighdAutomaticLayoutCombination extends AbstractCombination {
     public void execute(final KlighdStatusState state) {
         if (state.getStatus() == Status.CREATE_SUCCESS || state.getStatus() == Status.UPDATE) {
             IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
-            boolean animation = preferenceStore.getBoolean(LayoutHandler.PREF_ANIMATION);
             boolean zoomToFit = preferenceStore.getBoolean(LayoutHandler.PREF_ZOOM);
             boolean progressDialog = preferenceStore.getBoolean(LayoutHandler.PREF_PROGRESS);
+            
+            boolean animation = false;
+            if (state.getStatus() == Status.UPDATE) {
+                animation = preferenceStore.getBoolean(LayoutHandler.PREF_ANIMATION);
+            }
             
             schedule(new KlighdLayoutEffect(state.getViewId(), state.getViewer(), zoomToFit,
                     progressDialog, false, animation));
