@@ -128,7 +128,7 @@ Layout providers can be grouped using categories, and they can be given a type t
          <attribute name="preview" type="string">
             <annotation>
                <documentation>
-                  An optional preview image that will appear on selection dialogs for layout algorithms.
+                  An optional preview image that will appear on selection dialogs for layout algorithms. The recommended image size is 300x200 pixels.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>

@@ -39,6 +39,30 @@ public enum LayoutAlgorithm {
     /** The radial tree layout algorithm. */
     RADIAL_TREE,
     /** The upward-planarization layout algorithm. */
-    UPWARD_PLANARIZATION;
+    UPWARD_PLANARIZATION,
+    /** The fast multipole layout algorithm. */
+    FAST_MULTIPOLE,
+    /** The fast multipole multilevel layout algorithm. */
+    FAST_MULTIPOLE_MULTILEVEL,
+    /** The Kamada-Kawai layout algorithm. */
+    KAMADA_KAWAI,
+    /** The stress majorization layout algorithm. */
+    STRESS_MAJORIZATION,
+    /** The dominance layout algorithm. */
+    DOMINANCE,
+    /** The visibility layout algorithm. */
+    VISIBILITY,
+    /** The Fraysseix-Pach-Pollack layout algorithm. */
+    FRAYSSEIX_PACH_POLLACK,
+    /** The Schnyder layout algorithm. */
+    SCHNYDER,
+    /** The canonical order layout algorithm by Kant. */
+    CANONICAL_ORDER,
+    /** The mixed model layout algorithm by Gutwenger and Mutzel. */
+    MIXED_MODEL,
+    /** The convex grid layout algorithm by Chrobak and Kant. */
+    CONVEX_GRID,
+    /** The balloon layout algorithm. */
+    BALLOON;
     
 }

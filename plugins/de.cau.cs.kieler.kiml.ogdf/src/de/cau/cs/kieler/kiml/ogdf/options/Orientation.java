@@ -13,12 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.ogdf.options;
 
+import de.cau.cs.kieler.kiml.options.Direction;
+
 /**
  * Definition of orientation of a layouter.
  * 
  * @author mri
  */
 public enum Orientation {
+    
     /** top-to-bottom. */
     TOP_TO_BOTTOM,
     /** bottom-to-top. */
@@ -29,12 +32,22 @@ public enum Orientation {
     RIGHT_TO_LEFT;
     
     /**
-     * Returns the enumeration value related to the given ordinal.
+     * Create an OGDF orientation from a layout direction.
      * 
-     * @param i ordinal value
-     * @return the related enumeration value
+     * @param direction a layout direction
+     * @return the corresponding orientation
      */
-    public static Orientation valueOf(final int i) {
-        return values()[i];
+    public static Orientation fromDirection(final Direction direction) {
+        switch (direction) {
+        case LEFT:
+            return RIGHT_TO_LEFT;
+        case UP:
+            return TOP_TO_BOTTOM;
+        case DOWN:
+            return BOTTOM_TO_TOP;
+        default:
+            return LEFT_TO_RIGHT;
+        }
     }
+    
 }

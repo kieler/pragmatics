@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
- * Copyright 2011 by
+ * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *     + Department of Computer Science
  *         + Real-Time and Embedded Systems Group
@@ -41,6 +41,7 @@ import de.cau.cs.kieler.kwebs.util.Resources;
  *
  * @author swe
  */
+//ToDo: condider result code from providers
 public class WebContentHandler implements HttpHandler {
 
     /** Document root inside server plug in for static web content. */
@@ -55,14 +56,14 @@ public class WebContentHandler implements HttpHandler {
     private Map<String, IDynamicWebContentProvider> dynamicWebContentProviders
         = new HashMap<String, IDynamicWebContentProvider>();
 
-    /** Caching already generated content. */
-    private Map<URI, CacheData> contentCache
-        = new HashMap<URI, CacheData>();
+    /** Cache of already generated, cacheable resources. */
+    private Map<URI, ResourceInformation> cachedResources
+        = new HashMap<URI, ResourceInformation>();
 
-    /** Whether generated pages shall be chached or not. */
+    /** Whether resources can be cached or not. */
     private final boolean cachingEnabled
         = !Configuration.INSTANCE.getConfigPropertyAsBoolean(
-            Configuration.FRONTEND_DISBALE_CACHING, false
+            Configuration.FRONTEND_DISABLE_CACHING, false
         );
 
     /**
@@ -77,62 +78,124 @@ public class WebContentHandler implements HttpHandler {
      * @throws IOException
      *             when an exception occurs in handling the exchange
      */
+
     public void handle(final HttpExchange exchange) throws IOException {
-        // Trying to get already cached content.
-        // If none available, call the appropriate request handler
-        // and cache the result, if allowed.
-        URI uri = exchange.getRequestURI();
-        CacheData cacheData = null;
+        
+        URI                 uri                 = exchange.getRequestURI();
+        ResourceInformation resourceInformation = null;
+
+        // Trying to get already cached content. If none available, call 
+        // the appropriate request handler and cache the result, if allowed.
+
         if (cachingEnabled) {
-            cacheData = contentCache.get(uri);
+            resourceInformation = cachedResources.get(uri);
         }
-        if (cacheData == null) {
-            RequestData requestData = buildRequestData(exchange);
+        
+        // This request has not been processed before or caching is disabled
+        if (resourceInformation == null) {
+
+            ResourceProcessingExchange processingExchange 
+                = buildResourceProcessingExchange(exchange);
+            
             // Do forward to index page on invalid request
-            if (requestData.getResource() == null || requestData.getResource().length() == 0) {
+            if (processingExchange.getResource() == null 
+                    || processingExchange.getResource().length() == 0) {
+            
                 Logger.log(Severity.INFO, "Forwarding request to index page");
+                
                 forward(exchange, "index.html");
+                
                 return;
+                    
             }
-            if (handleStatic(requestData) || handleDynamic(requestData)) {
-                cacheData = requestData.toCacheData();
-                if (cachingEnabled && requestData.getCacheable()) {
-                    contentCache.put(uri, cacheData);
+            
+            if (handleStaticResource(processingExchange) 
+                    || handleGeneratedResource(processingExchange)) {
+                                    
+                // Do caching only if the generated response is valid, 
+                // meaning the HTTP result code is 200 (OK)
+                
+                if (processingExchange.getResultCode() == HttpURLConnection.HTTP_OK) { 
+                
+                    resourceInformation = processingExchange.getResourceInformation();
+                    
+                    if (processingExchange.isResourceCacheable()) {
+                        cachedResources.put(uri, resourceInformation);
+                    }
+                    
                 }
+                
             } else {
+                
                 Logger.log(Severity.INFO, "Invalid request: " + uri.toString());
+                
                 notfound(exchange);
+                
                 return;
+                
             }
+                
         }
+        
+        // Check if we actually have a resource
+        
+        if (resourceInformation == null) {
+            
+            notfound(exchange);
+            
+            return;
+            
+        }
+        
         // Build the response
-        byte[] content = cacheData.getContent();
-        String mimetype = cacheData.getMimetype();
-        String charset = cacheData.getCharset();
-        Headers headers = exchange.getResponseHeaders();
+        
+        byte[]  content  = resourceInformation.getContent();
+        String  mimetype = resourceInformation.getMimetype();
+        String  charset  = resourceInformation.getCharset();
+        Headers headers  = exchange.getResponseHeaders();
+        
         int responseLength = 0;
-        int responseCode = HttpURLConnection.HTTP_OK;
+        int responseCode   = HttpURLConnection.HTTP_OK;
+        
         if (content != null && mimetype != null) {
+        
             headers.add(
                 "Content-type",
                 mimetype
                 + (charset != null ? ";charset=" + charset : "")
             );
+            
             if (mimetype == "application/octet-stream") {
-                headers.add("Content-Disposition", "attachment; filename=" + cacheData.getName());
+                
+                headers.add(
+                    "Content-Disposition", "attachment; filename=" + resourceInformation.getName()
+                );
+                
                 headers.add("Content-Transfer-Encoding", "binary");
+                
             }
-            headers.putAll(cacheData.getAdditionalHeaders());
+            
+            headers.putAll(resourceInformation.getAdditionalHeaders());
+            
             responseLength = content.length;
+            
         } else {
+            
             notfound(exchange);
+            
             return;
+            
         }
+                
         // Send the response
+                
         exchange.sendResponseHeaders(responseCode, responseLength);
+        
         OutputStream os = exchange.getResponseBody();
+
         os.write(content);
         os.close();
+                
     }
 
     /**
@@ -140,20 +203,27 @@ public class WebContentHandler implements HttpHandler {
      * @param exchange
      * @return
      */
-    private RequestData buildRequestData(final HttpExchange exchange) {
+    private ResourceProcessingExchange buildResourceProcessingExchange(final HttpExchange exchange) {
+        
         // The context under which this handler is registered
         String context = exchange.getHttpContext().getPath();
+        
         // The URI for the requested resource. It begins with the
         // context under which this handler is registered
         String uri = exchange.getRequestURI().toString();
+        
         // The requested resource, e.g. URI without the context at the beginning
         String resource = null;
+        
         // Query parameter
         String query = null;
+        
         // The name of the requested resource
         String name = null;
+        
         // The MIME type of the requested resource
         String mimetype = null;
+        
         // Determining the above values
         try {
             resource = uri.substring(context.length());
@@ -177,40 +247,55 @@ public class WebContentHandler implements HttpHandler {
                 e
             );
         }
-        return new RequestData(exchange, resource, name, mimetype, queryToMap(query));
+        
+        final ResourceProcessingExchange processingExchange 
+            = new ResourceProcessingExchange(exchange, resource, queryToMap(query));
+        
+        processingExchange.getResourceInformation().setName(name);
+        processingExchange.getResourceInformation().setMimetype(mimetype);
+        
+        return processingExchange;
+        
     }
 
     /**
      *
-     * @param requestData
+     * @param processingExchange
      * @return
      */
-    private boolean handleStatic(final RequestData requestData) {
-        requestData.setContent(null);
+    private boolean handleStaticResource(final ResourceProcessingExchange processingExchange) {
+        
+        final ResourceInformation resourceInformation 
+            = processingExchange.getResourceInformation();
+        
+        resourceInformation.setContent(null);
+        
         try {
-            requestData.setContent(
+            resourceInformation.setContent(
                 Resources.readFileOrPluginResourceAsByteArray(
-                    Application.PLUGIN_ID, WEBCONTENT_ROOT + "/" + requestData.getResource()
+                    Application.PLUGIN_ID, WEBCONTENT_ROOT + "/" + processingExchange.getResource()
                 )
             );
-            requestData.setMimetype(guessMimeType(requestData.getResource()));
+            resourceInformation.setMimetype(guessMimeType(processingExchange.getResource()));
         } catch (Exception e) {
             // Ignore Exception, invalid resource is signaled by method result and handled by caller
         }
-        return (requestData.getContent() != null);
+        
+        return (resourceInformation.getContent() != null);
+        
     }
 
     /**
      *
-     * @param requestData
+     * @param processingExchange
      * @return
      */
-    private boolean handleDynamic(final RequestData requestData) {
-        if (requestData.getResource() == null) {
+    private boolean handleGeneratedResource(final ResourceProcessingExchange processingExchange) {
+        if (processingExchange.getResource() == null) {
             return false;
         }
-        String pkg = requestData.getResource();
-        String cls = requestData.getResource();
+        String pkg = processingExchange.getResource();
+        String cls = processingExchange.getResource();
         String ext = "";
         int lastIndex = pkg.lastIndexOf("/");
         if (lastIndex > -1 && lastIndex < pkg.length() - 1) {
@@ -229,9 +314,6 @@ public class WebContentHandler implements HttpHandler {
         }
         pkg = (DYNAMIC_BASEPACKAGE + (pkg.length() > 0 ? "." : "") + pkg).replace("/", ".");
         cls = cls.substring(0, 1).toUpperCase() + cls.substring(1).toLowerCase() + "Provider";
-//System.out.println("P " + pkg);
-//System.out.println("C " + cls);
-//System.out.println("E " + ext);
         String providerName = pkg + "." + cls;
         if (!dynamicWebContentProviders.containsKey(providerName)) {
             try {
@@ -248,7 +330,7 @@ public class WebContentHandler implements HttpHandler {
             dynamicWebContentProviders.get(providerName);
         if (contentProvider != null) {
             try {
-                contentProvider.handleRequest(requestData);
+                contentProvider.handleRequest(processingExchange);
                 return true;
             } catch (Exception e) {
                 Logger.log(
@@ -350,6 +432,20 @@ public class WebContentHandler implements HttpHandler {
      * @return the MIME type.
      */
     public static String guessMimeType(final String resource) {
+        return guessMimeType(resource, "application/octet-stream");
+    }
+    
+    /**
+     * Method which guesses the MIME type of a resource. If no concrete MIME type could be guessed,
+     * the given default MIME type is returned.
+     *
+     * @param resource
+     *            resource for which the MIME type is to be guessed.
+     * @param defauld
+     *            the default to be returned if no MIME type could be guessed.
+     * @return the MIME type.
+     */
+    public static String guessMimeType(final String resource, final String defauld) {
         String type = null;
         try {
             String path = resource.replaceAll("\\\\", "/");
@@ -374,7 +470,7 @@ public class WebContentHandler implements HttpHandler {
         } catch (Exception e) {
             // Ignore, return default MIME type
         }
-        return (type != null ? type : "application/octet-stream");
+        return (type != null ? type : defauld);
     }
 
 }

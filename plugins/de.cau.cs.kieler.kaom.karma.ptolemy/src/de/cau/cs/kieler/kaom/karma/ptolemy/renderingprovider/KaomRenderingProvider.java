@@ -101,7 +101,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
             return createPtolemyFigure(PtolemyFetcher.getPtolemyInstance(object));
         } else if (input.equals("MonitorValue")) {
             this.hideCompartment(part, true);
-            return figureProvider.createMonitorValue(object);
+            return figureProvider.getDefaultFigure();
         } else if (input.equals("compound")) {
             //this.unhideCompartment(part);
             return figureProvider.getDefaultFigure();

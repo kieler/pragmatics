@@ -29,7 +29,7 @@ class ContactProvider
 	 * 
 	 */
 	override CharSequence getHeaders(
-		RequestData requestData
+    	ResourceProcessingExchange processingExchange
 	) 
 	{
 		return ''''''
@@ -39,7 +39,7 @@ class ContactProvider
      * 
      */
 	override CharSequence getBody(
-		RequestData requestData
+    	ResourceProcessingExchange processingExchange
 	) 
 	{
 		val Configuration config = Configuration::INSTANCE
@@ -77,7 +77,7 @@ class ContactProvider
      * 
      */
 	override boolean providerOverride(
-		RequestData requestData
+    	ResourceProcessingExchange processingExchange
 	) 
 	{
 		return false

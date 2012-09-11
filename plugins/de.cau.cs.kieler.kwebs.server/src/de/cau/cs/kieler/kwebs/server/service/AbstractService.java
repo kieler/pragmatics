@@ -14,9 +14,14 @@
 
 package de.cau.cs.kieler.kwebs.server.service;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 
@@ -46,10 +51,12 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.Statistics;
-import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
+import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilter;
+import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilterData;
+import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilters;
 import de.cau.cs.kieler.kwebs.util.Graphs;
 
 /**
@@ -63,49 +70,142 @@ import de.cau.cs.kieler.kwebs.util.Graphs;
  */
 public abstract class AbstractService {
 
+    //////////
+    
     /** The layout engine used. */
     private static RecursiveGraphLayoutEngine layoutEngine
         = new RecursiveGraphLayoutEngine();
+    
+    //ToDo: Make filter chains configurable declatively
+    /** */
+    private final LayoutFilters preFilters
+        = new LayoutFilters();
 
-    /** Default value for maximum number of graphs transmitted in a single request. */
-    private static final int MAXNUMBER_GRAPHS = 5;
-
-    /** Default value for maximum number of elements a single graph may contain. */
-    private static final int MAXNUMBER_ELEMENTS = 5000;
-
-    /**
-     * Value for maximum number of graphs transmitted in a single request
-     * initially set to default value.
-     */
-    private int maxGraphs = Configuration.INSTANCE.getConfigPropertyAsInteger(
-        Configuration.MAXNUMBER_GRAPHS, MAXNUMBER_GRAPHS
-    );
-
-    /** Whether to test on number of transmitted graphs. */
-    private boolean testMaxGraphs = Configuration.INSTANCE.getConfigPropertyAsBoolean(
-        Configuration.TESTMAXNUMBER_GRAPHS, true
-    );
-
-    /**
-     * Value for maximum number of elements a single graph may contain
-     * initially set to default value.
-     */
-    private int maxElements = Configuration.INSTANCE.getConfigPropertyAsInteger(
-        Configuration.MAXELEMENTS_GRAPHS, MAXNUMBER_ELEMENTS
-    );
-
-    /** Whether to test on number elements contained in the transmitted graphs. */
-    private boolean testMaxElements = Configuration.INSTANCE.getConfigPropertyAsBoolean(
-        Configuration.TESTMAXELEMENTS_GRAPHS, true
-    );
-
+    /** */
+    private final LayoutFilters postFilters
+        = new LayoutFilters();
+    
+    //////////
+    
     /**
      * Protected constructor. Initialized the layout data services.
      */
     protected AbstractService() {
+        
         ServerLayoutDataService.create();
+        
+        initFilters();
+        
     }
 
+    /** */
+    private static final String EXTENSIONPOINT_ID
+        = "de.cau.cs.kieler.kwebs.server.configuration";
+
+    /** */
+    private static final String ELEMENT_PREFILTERS
+        = "preFilters";
+
+    /** */
+    private static final String ELEMENT_POSTFILTERS
+        = "postFilters";
+
+    /** */
+    private static final String ELEMENT_LAYOUTFILTER
+        = "layoutFilter";
+
+    /** */
+    private static final String ATTRIBUTE_DESCRIPTION
+        = "description";
+
+    /** */
+    private static final String ATTRIBUTE_PRIORITY
+        = "priority";
+
+    /** */
+    private static final String ATTRIBUTE_IMPLEMENTATION
+        = "implementation";
+
+    /**
+     * 
+     */
+    private void initFilters() {
+        
+        IExtensionRegistry registry = Platform.getExtensionRegistry();
+        
+        if (registry == null) {
+            return;
+        }
+        
+        for (IConfigurationElement element : registry.getConfigurationElementsFor(EXTENSIONPOINT_ID)) {
+            
+            if (
+                element.getName().equals(ELEMENT_PREFILTERS)
+                ||
+                element.getName().equals(ELEMENT_POSTFILTERS)
+            ) {
+        
+                for (IConfigurationElement filter : element.getChildren(ELEMENT_LAYOUTFILTER)) {
+                    
+                    try {
+                        
+                        final int priority 
+                            = Integer.parseInt(filter.getAttribute(ATTRIBUTE_PRIORITY));
+                        final String description 
+                            = filter.getAttribute(ATTRIBUTE_DESCRIPTION);
+                        final LayoutFilter instance 
+                            = (LayoutFilter) filter.createExecutableExtension(ATTRIBUTE_IMPLEMENTATION);
+                        
+                        instance.setPriority(priority);
+                        instance.setDescription(description);
+                        
+                        if (element.getName().equals(ELEMENT_PREFILTERS)) {
+                            
+                            Logger.log(
+                                Severity.INFO, 
+                                "Added pre processing filter '" 
+                                + instance.getClass().getSimpleName() 
+                                + "'."
+                            );
+                            
+                            preFilters.addSegment(instance);
+                            
+                        } else {
+
+                            Logger.log(
+                                Severity.INFO, 
+                                "Added post processing filter '" 
+                                + instance.getClass().getSimpleName() 
+                                + "'."
+                            );
+                            
+                            postFilters.addSegment(instance);
+                            
+                        }
+                        
+                    } catch (CoreException e) {
+                        Logger.log(Severity.CRITICAL, "Could not create filter.", e);
+                    }
+                    
+                }
+                
+            } 
+            
+        }
+        
+        final Comparator<LayoutFilter> comparator = new Comparator<LayoutFilter>() {
+            public int compare(final LayoutFilter filter1, final LayoutFilter filter2) {
+                return filter1.getPriority() - filter2.getPriority();
+            }
+        };
+        
+//        preFilters.sortSegments(comparator);
+//        postFilters.sortSegments(comparator);
+        
+    }
+    
+    //////////
+    
     /**
      * Base implementation of layout functionality.
      *
@@ -175,6 +275,7 @@ public abstract class AbstractService {
     private <I, O> String layout(final String serializedGraph,
             final ITransformationHandler<I> inhandler, final ITransformationHandler<O> outhandler,
             final List<GraphLayoutOption> options) {
+        
         // Start measuring the total time of the operation
         double operationStarted = System.nanoTime();
 
@@ -184,8 +285,9 @@ public abstract class AbstractService {
             annotateTransData(inTransData, options);
         }
         inhandler.deserialize(serializedGraph, inTransData);
+        
+        // The input was empty, so return an empty graph
         if (inTransData.getSourceGraph() == null) {
-            // The input was empty, so return an empty graph
             return "";
         }
 
@@ -197,23 +299,14 @@ public abstract class AbstractService {
             messageIter.remove();
         }
 
-        // Test if the user graphs are within configured tolerances
         List<KNode> graphs = inTransData.getTargetGraphs();
-        if (testMaxGraphs && graphs.size() > maxGraphs) {
-            Logger.log(Severity.WARNING,
-                "Too many graphs in request, maximum number is " + maxGraphs);
-            throw new RemoteServiceException(
-                "Too many graphs in request, maximum number is " + maxGraphs);
-        }
-        if (testMaxElements) {
-            for (KNode layout : graphs) {
-                if (Graphs.countElements(layout) > maxElements) {
-                    Logger.log(Severity.WARNING,
-                        "Too many elements in graph, maximum number is " + maxElements);
-                    throw new RemoteServiceException(
-                        "Too many elements in graph, maximum number is " + maxElements);
-                }
-            }
+
+        // Create filter DTO
+        LayoutFilterData filterData = new LayoutFilterData(graphs, options);
+        
+        // Apply request pre processing filters
+        if (!preFilters.apply(filterData)) {
+            throw new RemoteServiceException("Request did not pass pre-filters.");
         }
         
         // Parse the transmitted layout options and annotate the layout structure
@@ -249,7 +342,10 @@ public abstract class AbstractService {
             }
 
             // Serialize the resulting graph
-            serializedResult = inhandler.serialize(inTransData.getSourceGraph());
+            TransformationData<KNode, I> outTransData = new TransformationData<KNode, I>();
+            annotateTransData(outTransData, options);
+            outTransData.getTargetGraphs().add(inTransData.getSourceGraph());
+            serializedResult = inhandler.serialize(outTransData);
 
         } else {
             StringBuilder outGraphBuilder = new StringBuilder();
@@ -266,14 +362,21 @@ public abstract class AbstractService {
                 }
 
                 // Serialize the resulting graphs
-                for (O outgraph : outTransData.getTargetGraphs()) {
-                    outGraphBuilder.append(outhandler.serialize(outgraph));
-                }
+                outGraphBuilder.append(outhandler.serialize(outTransData));
 
             }
             serializedResult = outGraphBuilder.toString();
         }
+        
+        //ToDo: Set statistics in filter dto
+        
+        // Apply request post processing filters
+        if (!postFilters.apply(filterData)) {
+            throw new RemoteServiceException("Request did not pass post-filters.");
+        }
+        
         return serializedResult;
+        
     }
 
     /**

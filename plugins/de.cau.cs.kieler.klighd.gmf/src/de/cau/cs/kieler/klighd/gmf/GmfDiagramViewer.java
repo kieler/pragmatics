@@ -84,4 +84,11 @@ public class GmfDiagramViewer extends AbstractViewer<Diagram> {
         return graphicalViewer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void setZoomToFit(final boolean zoomToFit) {
+        // TODO Auto-generated method stub
+    }
+
 }

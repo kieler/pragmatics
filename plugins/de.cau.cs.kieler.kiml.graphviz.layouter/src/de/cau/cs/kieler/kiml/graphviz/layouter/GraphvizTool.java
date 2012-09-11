@@ -108,7 +108,7 @@ public class GraphvizTool {
      * @param arguments command line arguments to be added to the default list of arguments.
      *                  May be {@code null} or empty.
      */
-    public void initialize(final List<String> arguments) {
+    public synchronized void initialize(final List<String> arguments) {
         if (watchdog == null) {
             // start the watcher thread for timeout checking
             watchdog = new Watchdog();
@@ -226,12 +226,12 @@ public class GraphvizTool {
      * 
      * @param c the cleanup option
      */
-    public void cleanup(final Cleanup c) {
+    public synchronized void cleanup(final Cleanup c) {
         StringBuilder error = null;
         if (process != null) {
             InputStream errorStream = process.getErrorStream();
             try {
-                if (c == Cleanup.ERROR) {
+                if (c == Cleanup.ERROR && graphvizStream != null) {
                     // wait a bit so the process can either terminate or generate error
                     Thread.sleep(PROC_ERROR_TIME);
                     // read the error stream to display a meaningful error message
@@ -408,16 +408,11 @@ public class GraphvizTool {
                 
                 if (!interrupted) {
                     synchronized (nextJob) {
-                        // timeout has occurred! close the stream so the main thread will wake
+                        // timeout has occurred! kill the process so the main thread will wake
                         Process myProcess = process;
                         if (myProcess != null) {
-                            try {
-                                myProcess.getInputStream().close();
-                                myProcess.getErrorStream().close();
-                                graphvizStream = null;
-                            } catch (IOException ex) {
-                                // ignore exception
-                            }
+                            graphvizStream = null;
+                            myProcess.destroy();
                         }
                     }
                 }
