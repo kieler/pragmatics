@@ -13,10 +13,11 @@
  */
 package de.cau.cs.kieler.klay.planar.intermediate;
 
+import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
 
 /**
- * Represents the pgraph elements as a grid. The entries here are the graph nodes which are
+ * Represents the {@link PGraph} elements as a grid. The entries here are the graph nodes which are
  * connected by the graph edges.
  * 
  * @author pkl

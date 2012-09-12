@@ -75,7 +75,7 @@ public class OrthogonalRepresentation {
             default:
                 throw new IllegalArgumentException(
                         "Orthogonal Represenstation: the mapping fails because"
-                                + "of a unknown angle int:" + angleInt);
+                                + "of an unknown angle int: " + angleInt);
             }
         }
     }

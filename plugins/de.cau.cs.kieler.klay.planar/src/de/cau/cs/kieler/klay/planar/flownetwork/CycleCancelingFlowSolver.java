@@ -37,7 +37,7 @@ public class CycleCancelingFlowSolver extends AbstractAlgorithm implements IFlow
     /**
      * {@inheritDoc}
      */
-    public void findFlow(final PGraph network) {
+    public void calcFlow(final PGraph network) {
         // erzeuge einen feasible flow x im Netzwerk;
         this.graph = network;
 

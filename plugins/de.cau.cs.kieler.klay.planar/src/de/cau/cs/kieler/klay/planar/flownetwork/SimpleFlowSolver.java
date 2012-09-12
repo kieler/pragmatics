@@ -37,7 +37,7 @@ public class SimpleFlowSolver extends AbstractAlgorithm implements IFlowNetworkS
      * dealt as infinite. Additionally a source and a target node are needed, which contains only
      * outgoing or incoming edges respectively.
      */
-    public void findFlow(final PGraph network) {
+    public void calcFlow(final PGraph network) {
 
         PNode source = null;
         PNode sink = null;

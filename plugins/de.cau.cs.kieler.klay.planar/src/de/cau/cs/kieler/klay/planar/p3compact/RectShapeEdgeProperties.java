@@ -22,6 +22,9 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
  */
 public class RectShapeEdgeProperties {
 
+    /** Uses this to identify a non set front, null is not suitable in that case.*/
+    public static final PEdge EMPTY_FRONT = new PEdge();
+
     /** Corner is the next node of a edge while walking around the face edges. */
     private PNode corner = null;
 

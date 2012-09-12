@@ -53,6 +53,88 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
     }
 
     /**
+     * Inserts a list of given pairs of nodes (that present edges) into a given planar embedding of
+     * a graph.
+     * 
+     * Takes a planar graph and adds some more edges to the graph. These missing edges would make
+     * the graph non-planar, so this algorithm adds them and inserts dummy nodes on the edge
+     * crossings, the so graph stays planar.
+     * 
+     * @param graph
+     *            the planar subgraph containing a list of the edges to be inserted into the graph
+     * 
+     */
+    public void process(final PGraph graph) {
+        List<PEdge> edges = graph.getProperty(Properties.INSERTABLE_EDGES);
+        if (edges != null) {
+            // initialize path finder
+            AbstractPathFinder dijkstra = new DijkstraPathFinder();
+
+            for (PEdge insertingEdge : edges) {
+
+                // get the dual graph of the given graph
+                PGraph dualGraph = new PGraphFactory().createDualGraph(graph);
+
+                // insert the original nodes in the dual graph
+                PNode dualStartNode = dualGraph.addNode();
+                PNode dualTargetNode = dualGraph.addNode();
+
+                PNode source = insertingEdge.getSource();
+                PNode target = insertingEdge.getTarget();
+
+                // find the faces around source and target
+                HashSet<PFace> sourceFaces = findSurroundingFaces(source);
+                HashSet<PFace> targetFaces = findSurroundingFaces(target);
+
+                // connect the start node with the start faces for 0 cost
+                for (PFace sFace : sourceFaces) {
+                    PNode newDualNode = (PNode) sFace.getProperty(Properties.TODUALGRAPH);
+                    PEdge newDualEdge = dualGraph.addEdge(dualStartNode, newDualNode, true);
+                    newDualEdge.setProperty(IPathFinder.PATHCOST, 0);
+                }
+
+                // connect the target node with the target faces for 0 cost
+                for (PFace tFace : targetFaces) {
+                    PNode newDualNode = (PNode) tFace.getProperty(Properties.TODUALGRAPH);
+                    PEdge newDualEdge = dualGraph.addEdge(newDualNode, dualTargetNode, true);
+                    newDualEdge.setProperty(IPathFinder.PATHCOST, 0);
+                }
+
+                // find the shortest path through dual graph via dijkstra
+                List<PEdge> dualEdgePath = dijkstra.findPath(dualStartNode, dualTargetNode);
+
+                // get a path of faces in the original graph
+                LinkedList<PFace> shortestFacePath = getShortestFacePath(dualEdgePath);
+
+                // find the borders to cross
+                LinkedList<PEdge> crossingBorders = findCrossingBorders(shortestFacePath);
+
+                // the node path with new nodes for the crossing edges
+                ArrayList<PNode> path = buildPathFromBorders(crossingBorders, source, target, graph);
+
+                // connect the node path
+                int pathNodeCounter = 0;
+
+                List<PEdge> sourcePreEdges = getSourcePreEdges(path, shortestFacePath);
+                List<PEdge> targetPreEdges = getTargetPreEdges(path, shortestFacePath);
+
+                while (pathNodeCounter < path.size() - 1) {
+                    // connecting new normal nodes
+                    PNode src = path.get(pathNodeCounter);
+                    PNode dst = path.get(pathNodeCounter + 1);
+
+                    PEdge newEdge = graph.addEdge(src, dst);
+
+                    // bring new edges in right order
+                    reinsertEdges(newEdge, sourcePreEdges.get(pathNodeCounter), src);
+                    reinsertEdges(newEdge, targetPreEdges.get(pathNodeCounter), dst);
+                    pathNodeCounter++;
+                }
+            }
+        }
+    }
+
+    /**
      * builds a path of nodes, depending on the edges to cross.
      * 
      * @param crossingBorders
@@ -267,88 +349,6 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
             }
         }
         return null;
-    }
-
-    /**
-     * Inserts a list of given pairs of nodes (that present edges) into a given planar embedding of
-     * a graph.
-     * 
-     * Takes a planar graph and adds some more edges to the graph. These missing edges would make
-     * the graph non-planar, so this algorithm adds them and inserts dummy nodes on the edge
-     * crossings, the so graph stays planar.
-     * 
-     * @param graph
-     *            the planar subgraph containing a list of the edges to be inserted into the graph
-     * 
-     */
-    public void process(final PGraph graph) {
-        List<PEdge> edges = graph.getProperty(Properties.INSERTABLE_EDGES);
-        if (edges != null) {
-            // initialize path finder
-            AbstractPathFinder dijkstra = new DijkstraPathFinder();
-
-            for (PEdge insertingEdge : edges) {
-
-                // get the dual graph of the given graph
-                PGraph dualGraph = new PGraphFactory().createDualGraph(graph);
-
-                // insert the original nodes in the dual graph
-                PNode dualStartNode = dualGraph.addNode();
-                PNode dualTargetNode = dualGraph.addNode();
-
-                PNode source = insertingEdge.getSource();
-                PNode target = insertingEdge.getTarget();
-
-                // find the faces around source and target
-                HashSet<PFace> sourceFaces = findSurroundingFaces(source);
-                HashSet<PFace> targetFaces = findSurroundingFaces(target);
-
-                // connect the start node with the start faces for 0 cost
-                for (PFace sFace : sourceFaces) {
-                    PNode newDualNode = (PNode) sFace.getProperty(Properties.TODUALGRAPH);
-                    PEdge newDualEdge = dualGraph.addEdge(dualStartNode, newDualNode, true);
-                    newDualEdge.setProperty(IPathFinder.PATHCOST, 0);
-                }
-
-                // connect the target node with the target faces for 0 cost
-                for (PFace tFace : targetFaces) {
-                    PNode newDualNode = (PNode) tFace.getProperty(Properties.TODUALGRAPH);
-                    PEdge newDualEdge = dualGraph.addEdge(newDualNode, dualTargetNode, true);
-                    newDualEdge.setProperty(IPathFinder.PATHCOST, 0);
-                }
-
-                // find the shortest path through dual graph via dijkstra
-                List<PEdge> dualEdgePath = dijkstra.findPath(dualStartNode, dualTargetNode);
-
-                // get a path of faces in the original graph
-                LinkedList<PFace> shortestFacePath = getShortestFacePath(dualEdgePath);
-
-                // find the borders to cross
-                LinkedList<PEdge> crossingBorders = findCrossingBorders(shortestFacePath);
-
-                // the node path with new nodes for the crossing edges
-                ArrayList<PNode> path = buildPathFromBorders(crossingBorders, source, target, graph);
-
-                // connect the node path
-                int pathNodeCounter = 0;
-
-                List<PEdge> sourcePreEdges = getSourcePreEdges(path, shortestFacePath);
-                List<PEdge> targetPreEdges = getTargetPreEdges(path, shortestFacePath);
-
-                while (pathNodeCounter < path.size() - 1) {
-                    // connecting new normal nodes
-                    PNode src = path.get(pathNodeCounter);
-                    PNode dst = path.get(pathNodeCounter + 1);
-
-                    PEdge newEdge = graph.addEdge(src, dst);
-
-                    // bring new edges in right order
-                    reinsertEdges(newEdge, sourcePreEdges.get(pathNodeCounter), src);
-                    reinsertEdges(newEdge, targetPreEdges.get(pathNodeCounter), dst);
-                    pathNodeCounter++;
-                }
-            }
-        }
     }
 
 }

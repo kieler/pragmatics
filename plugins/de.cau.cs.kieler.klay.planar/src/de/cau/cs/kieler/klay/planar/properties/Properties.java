@@ -100,8 +100,8 @@ public final class Properties {
     // =========================== USER INTERFACE OPTIONS =================================
 
     /** property for planar testing algorithm. */
-    public static final IProperty<PlanarityTestStrategy> PLANAR_TESTING_ALGORITHM 
-        = new Property<PlanarityTestStrategy>("de.cau.cs.kieler.klay.planar.planarityTest",
+    public static final IProperty<PlanarityTestStrategy> PLANAR_TESTING_ALGORITHM = new Property<PlanarityTestStrategy>(
+            "de.cau.cs.kieler.klay.planar.planarityTest",
             PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM);
 
     /** the aspect ratio for packing connected components. */
@@ -120,32 +120,31 @@ public final class Properties {
             DEF_SPACING);
 
     /** A property that indicates the orthogonal representation of a graph. */
-    public static final IProperty<OrthogonalRepresentation> ORTHO_REPRESENTATION 
-        = new Property<OrthogonalRepresentation>("de.cau.cs.kieler.klay.planar.orthogonal.representation",
+    public static final IProperty<OrthogonalRepresentation> ORTHO_REPRESENTATION = new Property<OrthogonalRepresentation>(
+            "de.cau.cs.kieler.klay.planar.orthogonal.representation",
             new OrthogonalRepresentation());
 
     /** A property that indicates the grid representation of a graph. */
-    public static final IProperty<GridRepresentation> GRID_REPRESENTATION 
-        = new Property<GridRepresentation>("de.cau.cs.kieler.klay.planar.grid");
+    public static final IProperty<GridRepresentation> GRID_REPRESENTATION = new Property<GridRepresentation>(
+            "de.cau.cs.kieler.klay.planar.grid");
 
     /** Indicates a nodes during the algorithm as a bend point. */
-    public static final IProperty<OrthogonalAngle> BENDPOINT
-        = new Property<OrthogonalRepresentation.OrthogonalAngle>("de.cau.cs.kieler.klay.planar.bendpoint");
+    public static final IProperty<OrthogonalAngle> BENDPOINT = new Property<OrthogonalRepresentation.OrthogonalAngle>(
+            "de.cau.cs.kieler.klay.planar.bendpoint");
 
     /** Stores all properties that are added while the rectangular shape processor. */
-    public static final IProperty<RectShapeEdgeProperties> RECT_SHAPE_PROPERTIES 
-        = new Property<RectShapeEdgeProperties>("de.cau.cs.kieler.klay.planar.rect_shape_properties");
+    public static final IProperty<RectShapeEdgeProperties> RECT_SHAPE_PROPERTIES = new Property<RectShapeEdgeProperties>(
+            "de.cau.cs.kieler.klay.planar.rect_shape_properties");
 
     /** A cut edge is passed in both directions and hence it needs two edge properties. */
-    public static final IProperty<Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>> RECT_SHAPE_CUTEDGE
-        = new Property<Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>>(
+    public static final IProperty<Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>> RECT_SHAPE_CUTEDGE = new Property<Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>>(
             "de.cau.cs.kieler.klay.planar.rect_shape_cutedge");
 
     /** Indicates whether is the external face is a dummy or the original face. */
     public static final IProperty<Boolean> RECT_SHAPE_TRANS_EXTERNAL = new Property<Boolean>(
             "de.cau.cs.kieler.klay.planar.rect_shape_trans_external");
 
-    /** A edge adjacent to the set face with a node as counter clockwise corner. */
+    /** An edge adjacent to the set face with a node as counter clockwise corner. */
     public static final IProperty<Pair<PNode, PEdge>> FACE_DIRECTION = new Property<Pair<PNode, PEdge>>(
             "de.cau.cs.kieler.klay.planar.face_direction");
 
