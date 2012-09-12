@@ -37,7 +37,6 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
-import de.cau.cs.kieler.klay.planar.util.PUtil;
 
 /**
  * A compaction algorithm that minimizes the length of horizontal and vertical edge segments
@@ -79,7 +78,8 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             // Before Phase 3
             null,
             // Before Phase 4
-            EnumSet.of(LayoutProcessorStrategy.BEND_DUMMY, LayoutProcessorStrategy.RECT_SHAPE_DUMMY),
+            EnumSet.of(LayoutProcessorStrategy.BEND_DUMMY,
+                    LayoutProcessorStrategy.RECT_SHAPE_DUMMY, LayoutProcessorStrategy.FACE_SIDES),
             // After Phase 4
             EnumSet.of(LayoutProcessorStrategy.GRID_DRAWING,
                     LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
@@ -102,10 +102,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     public void process(final PGraph pgraph) {
 
         this.graph = pgraph;
-        // FIXME think about the deletion of the orthogonal representation and put it instead
-        // on the graph direct and the bend-point nodes can be marked with a
-        // it is definitively the better way. But give a info at the docu what happens with
-        // the orthogonal representation of the book!!!
 
         // TODO think about: the input graph has to have at least 4 nodes, otherwise
         // it would not make any sense to do the flownetwork step.
@@ -113,27 +109,23 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
         // x -- x -- x
         // Think about other exceptions and try to work on them.
 
-        // used to create the flownetwork
-        // findExternalFace();
+        // Used to create the flownetwork
         this.externalFace = pgraph.getExternalFace();
-        // helps to create the flow network
-        PUtil.defineFaceSideEdges(graph);
         // Create networks, start with side 0 for horizontal and 1 for vertical.
         IFlowNetworkSolver solver = new SimpleFlowSolver();
 
-        // side 0 is the left face side, thus it is vertical.
+        // Side 0 is the left face side, thus it is vertical.
         PGraph verticalNetwork = createFlowNetwork(0);
-        solver.findFlow(verticalNetwork);
+        solver.calcFlow(verticalNetwork);
+        // Assign edge length based on flow of the flow network
         addFlowAsLength(verticalNetwork);
 
-        // side 1 is the top face side, thus it is horizontal.
+        // Side 1 is the top face side, thus it is horizontal.
         PGraph horizontalNetwork = createFlowNetwork(1);
-        solver.findFlow(horizontalNetwork);
+        solver.calcFlow(horizontalNetwork);
+        // Assign edge length based on flow of the flow network
         addFlowAsLength(horizontalNetwork);
-        // Assign coordinates based on flow
-        // filter edges meaning using the horizontal and vertical segments to
-        // determine the edge size.
-        // faceside
+
     }
 
     /**

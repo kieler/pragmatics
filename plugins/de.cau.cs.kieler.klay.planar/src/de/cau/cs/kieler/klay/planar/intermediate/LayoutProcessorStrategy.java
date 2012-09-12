@@ -20,10 +20,7 @@ import de.cau.cs.kieler.klay.planar.p1planar.EdgeInsertionPlanarization;
  * Definition of available intermediate layout processors for the layered layouter. This enumeration
  * also serves as a factory for intermediate layout processors.
  * 
- * @author cds
- * @author ima
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @author pkl
  */
 public enum LayoutProcessorStrategy {
 
@@ -50,6 +47,9 @@ public enum LayoutProcessorStrategy {
 
     /** Before performing the Tamassia compaction, rectangular shapes of the faces are required. */
     RECT_SHAPE_DUMMY,
+
+    /** The sides of each face have to be calculated before the compaction can be computed. */
+    FACE_SIDES,
 
     // After Phase 4
     /** Adds coordinates to the vertices and bends in the graph to be a grid drawing. */
@@ -88,6 +88,8 @@ public enum LayoutProcessorStrategy {
             return new BendDummyProcessor();
         case RECT_SHAPE_DUMMY:
             return new RectShapeDummyProcessor();
+        case FACE_SIDES:
+            return new FaceSidesProcessor();
         case GRID_DRAWING:
             return new GridDrawingProcessor();
         case RECT_SHAPE_DUMMY_REMOVER:

@@ -77,6 +77,10 @@ public class PEdge extends PGraphElement {
         this.isDirected = directed;
     }
 
+    public PEdge() {
+        super(-1, null);
+    }
+
     // ======================== Getters and Setters ================================================
 
     /**

@@ -40,7 +40,7 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
     /**
      * {@inheritDoc}
      */
-    public void findFlow(final PGraph network) {
+    public void calcFlow(final PGraph network) {
         // Add source and sink nodes
         PNode source = network.addNode();
         PNode sink = network.addNode();
