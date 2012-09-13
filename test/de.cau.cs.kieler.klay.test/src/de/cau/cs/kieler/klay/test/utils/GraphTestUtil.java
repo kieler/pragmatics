@@ -72,7 +72,7 @@ public final class GraphTestUtil {
         List<GraphTestObject> graphTestObject = new ArrayList<GraphTestObject>();
         for (TestPath testPath : bundleTestPaths) {
             // For each TestPath load the graph files contained in its appropriate folder
-            graphTestObject.addAll(loadGraphs(testPath.getFolder(), testPath.isLoadSubfolder(),
+            graphTestObject.addAll(loadGMFGraphs(testPath.getFolder(), testPath.isLoadSubfolder(),
                     testPath.isDoLayout()));
         }
         return graphTestObject;
@@ -86,7 +86,7 @@ public final class GraphTestUtil {
      * @return a list of KNode
      */
     public static List<GraphTestObject> loadGraphs(String folder) {
-        return loadGraphs(folder, false, false);
+        return loadGMFGraphs(folder, false, false);
     }
 
     /**
@@ -99,7 +99,7 @@ public final class GraphTestUtil {
      * @return a list of KNode
      */
     public static List<GraphTestObject> loadGraphs(String folder, boolean subfolder) {
-        return loadGraphs(folder, subfolder, false);
+        return loadGMFGraphs(folder, subfolder, false);
     }
 
     /**
@@ -114,7 +114,7 @@ public final class GraphTestUtil {
      *            if true, apply automatic layout to loaded graphs
      * @return a list of KNode
      */
-    public static List<GraphTestObject> loadGraphs(String folder, boolean subfolder,
+    public static List<GraphTestObject> loadGMFGraphs(String folder, boolean subfolder,
             boolean doLayout) {
         // the root folder where graphs are located
         File rootFolder = new File(SOURCE_GRAPHS_DIRECTORY, folder);
