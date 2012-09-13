@@ -84,6 +84,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             EnumSet.of(LayoutProcessorStrategy.GRID_DRAWING,
                     LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
                     LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.GIOTTO_DUMMY_REMOVER,
                     LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER));
 
     /**

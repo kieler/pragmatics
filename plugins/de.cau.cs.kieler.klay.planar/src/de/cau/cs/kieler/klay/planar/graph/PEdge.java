@@ -123,7 +123,7 @@ public class PEdge extends PGraphElement {
      * @param src
      *            the new source node
      */
-    void setSource(final PNode src) {
+    public void setSource(final PNode src) {
         this.source = src;
     }
 
@@ -143,7 +143,7 @@ public class PEdge extends PGraphElement {
      * @param dst
      *            the new target node
      */
-    void setTarget(final PNode dst) {
+    public void setTarget(final PNode dst) {
         this.target = dst;
     }
 

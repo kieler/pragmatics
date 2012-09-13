@@ -128,8 +128,8 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
                             currentEdge = edge;
                             startEdge = currentEdge;
                             if (visitedFace == externalFace) {
+                                // same side and same corner
                                 corner = edgesAndCorners.get(currentEdge);
-                                // same side
                                 sideIndex = i;
                             } else {
                                 corner = currentEdge.getOppositeNode(edgesAndCorners

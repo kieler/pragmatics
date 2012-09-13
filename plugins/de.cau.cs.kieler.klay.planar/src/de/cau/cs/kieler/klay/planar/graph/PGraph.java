@@ -211,6 +211,19 @@ public class PGraph extends PNode {
     }
 
     /**
+     * Adds a already existing node back to the graph. Think carefully about the usage of that
+     * method, since if the node does not exist in the graph before the nodeIndex order is
+     * incorrect.
+     * 
+     * @param node
+     *            the insertable node
+     */
+    public void addNode(final PNode node) {
+        this.nodes.add(node);
+        this.changedFaces = true;
+    }
+
+    /**
      * Add a new node to the graph. This adds a node of a specific type on the given {@code PEdge}
      * to the graph. The edge will be split into two edges and all references to the new node in
      * neighboring edges and faces will be set correctly.
@@ -418,31 +431,6 @@ public class PGraph extends PNode {
     }
 
     /**
-     * Changes the source or/and target of a edge.
-     * 
-     * @param edge
-     *            , selected PEdge
-     * @param source
-     *            , new source node, set {@code null} if no new source is wanted.
-     * @param target
-     *            , new target node, set {@code null} if no new target is wanted.
-     */
-    public void changeEdge(final PEdge edge, final PNode source, final PNode target) {
-        // TODO support null as input and fix embedding,
-        // used at bendpoints maybe you can merge this method with bridgeOverEdge?!
-        if (source != null && target != null) {
-            edge.getSource().unlinkEdge(edge);
-            edge.getTarget().unlinkEdge(edge);
-            edge.setSource(source);
-            edge.setTarget(target);
-            source.linkEdge(edge);
-            target.linkEdge(edge);
-        }
-        this.edges.add(edge);
-        this.changedFaces = true;
-    }
-
-    /**
      * Remove an edge from the graph. The edge will be removed together will all references to the
      * edge in neighboring nodes.
      * 
@@ -528,7 +516,7 @@ public class PGraph extends PNode {
     /**
      * Set the flag that indicates that the graph model has changed.
      */
-    void setChangedFaces() {
+    public void setChangedFaces() {
         this.changedFaces = true;
     }
 

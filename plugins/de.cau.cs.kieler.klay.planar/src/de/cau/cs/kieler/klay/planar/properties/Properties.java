@@ -28,10 +28,10 @@ import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
+import de.cau.cs.kieler.klay.planar.intermediate.RectShapeEdgeProperties;
 import de.cau.cs.kieler.klay.planar.p1planar.PlanarityTestStrategy;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
-import de.cau.cs.kieler.klay.planar.p3compact.RectShapeEdgeProperties;
 
 /**
  * Container for property definitions.
@@ -77,15 +77,27 @@ public final class Properties {
     public static final IProperty<Boolean> PLANAR_DUMMY_NODE = new Property<Boolean>(
             "de.cau.cs.kieler.klay.planar.planardummynode");
 
+    public static final IProperty<List<Integer>> HIGH_DEGREE_POSITIONS = new Property<List<Integer>>(
+            "de.cau.cs.kieler.klay.planar.highdegreepositions");
+    
+    
     // =========================== EDGE PROPERTIES ========================================
 
     /** Edge type. */
     public static final IProperty<EdgeType> EDGE_TYPE = new Property<EdgeType>("edgeType",
             EdgeType.NONE);
 
-    /** Relative length of an edge. */
+    /** Relative length of an edge. Generally used at the grid drawing. */
     public static final IProperty<Integer> RELATIVE_LENGTH = new Property<Integer>(
             "relativeEdgeLength");
+
+    /** A property assigning the grid position of the start endpoint. */
+    public static final IProperty<Pair<Integer, Integer>> START_POSITION = new Property<Pair<Integer, Integer>>(
+            "de.cau.cs.kieler.klay.planar.properties.startposition");
+
+    /** A property assigning the grid position of the target endpoint. */
+    public static final IProperty<Pair<Integer, Integer>> TARGET_POSITION = new Property<Pair<Integer, Integer>>(
+            "de.cau.cs.kieler.klay.planar.properties.targetposition");
 
     // =========================== FACE PROPERTIES ========================================
 
@@ -147,6 +159,22 @@ public final class Properties {
     /** An edge adjacent to the set face with a node as counter clockwise corner. */
     public static final IProperty<Pair<PNode, PEdge>> FACE_DIRECTION = new Property<Pair<PNode, PEdge>>(
             "de.cau.cs.kieler.klay.planar.face_direction");
+
+    // ---------------------- Giotto Planarization ----------------------------------------
+    /**
+     * Saves the involved dummy nodes in a list. This property is usually given to a node that with
+     * a higher degree of 4 and the dummies are the added dummies to avoid nodes with degree higer
+     * 4.
+     */
+    public static final IProperty<List<PNode>> EXPANSION_CYCLE = new Property<List<PNode>>(
+            "de.cau.cs.kieler.klay.planar.expansion_cylce");
+
+    /**
+     * Denotes a node or an edge to be a expansion cylce dummy; a dummy for avoiding node degrees
+     * higher 4.
+     */
+    public static final IProperty<PNode> EXPANSION_CYCLE_ROOT = new Property<PNode>(
+            "de.cau.cs.kieler.klay.planar.expansion_cylce_dummy");
 
     /**
      * Hidden default constructor.

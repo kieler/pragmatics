@@ -19,7 +19,7 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
-import de.cau.cs.kieler.klay.planar.p3compact.RectShapeEdgeProperties;
+import de.cau.cs.kieler.klay.planar.intermediate.RectShapeEdgeProperties;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
@@ -50,7 +50,7 @@ public class PUtil {
 
         if (edge.getBendPoints().size() > 1) {
 
-            int[] sourceCoordinates = grid.search(edge.getSource());
+            int[] sourceCoordinates = grid.getPosition(edge.getSource());
 
             double startX = (double) sourceCoordinates[0];
             double startY = (double) sourceCoordinates[1];

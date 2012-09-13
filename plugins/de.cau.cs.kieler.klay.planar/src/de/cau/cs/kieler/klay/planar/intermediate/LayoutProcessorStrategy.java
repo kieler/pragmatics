@@ -37,6 +37,9 @@ public enum LayoutProcessorStrategy {
     // Before Phase 3
     /** The external face has to be determined for the Tamassia orthogonalization . */
     EXT_FACE,
+    
+    /** This processor adds dummies if needed to ensure a maximal node degree of 4.*/
+    GIOTTO,
 
     // Before Phase 4
     /**
@@ -61,6 +64,9 @@ public enum LayoutProcessorStrategy {
     /** Removes bend dummy nodes which are added by the {@link BendDummyProcessor} processor. */
     BEND_DUMMY_REMOVER,
 
+    /** Removes the dummies inserted by the GIOTTO high degree processor.*/
+    GIOTTO_DUMMY_REMOVER,
+    
     /** Removes planar dummy nodes which are added by the {@link EdgeInsertionPlanarization} phase. */
     PLANAR_DUMMY_REMOVER;
 
@@ -84,6 +90,8 @@ public enum LayoutProcessorStrategy {
         switch (this) {
         case EXT_FACE:
             return new ExternalFaceProcessor();
+        case GIOTTO:
+            return new GiottoNodeDegreeProcessor();
         case BEND_DUMMY:
             return new BendDummyProcessor();
         case RECT_SHAPE_DUMMY:
@@ -96,6 +104,8 @@ public enum LayoutProcessorStrategy {
             return new RectShapeDummyRemover();
         case BEND_DUMMY_REMOVER:
             return new BendDummyRemover();
+        case GIOTTO_DUMMY_REMOVER:
+            return new GiottoDummyRemover();
         case PLANAR_DUMMY_REMOVER:
             return new PlanarDummyRemover();
         default:

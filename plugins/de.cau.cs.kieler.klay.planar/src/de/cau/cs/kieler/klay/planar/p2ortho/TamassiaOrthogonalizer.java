@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.planar.p2ortho;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -87,15 +88,27 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
     private OrthogonalRepresentation orthogonal;
 
+    
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
+    // Before Phase 1
+            null,
+            // Before Phase 2
+            null,
+            // Before Phase 3
+            EnumSet.of(LayoutProcessorStrategy.EXT_FACE, LayoutProcessorStrategy.GIOTTO),
+            // Before Phase 4
+            null,
+            // After Phase 4
+            null);
+
     // --------------------------------- Methods --------------------------------------------------
+
     /**
      * {@inheritDoc}
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pgraph) {
-        IntermediateProcessingConfiguration strategy = new IntermediateProcessingConfiguration();
-        strategy.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_3,
-                LayoutProcessorStrategy.EXT_FACE);
-        return strategy;
+        return new IntermediateProcessingConfiguration(INTERMEDIATE_PROCESSING_CONFIGURATION);
     }
 
     /**
