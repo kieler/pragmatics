@@ -38,62 +38,71 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * This algorithm is an implementation for solving the node placement problem
- * which is posed in phase 4 of the KLay Layered algorithm. Inspired by
+ * <p>This algorithm is an implementation for solving the node placement problem
+ * which is posed in phase 4 of the KLay Layered algorithm. Inspired by</p>
  * <ul>
  *   <li> Ulrik Brandes and Boris K&ouml;pf, Fast and simple horizontal coordinate assignment.
  *     In <i>Proceedings of the 9th International Symposium on Graph Drawing (GD'01)</i>,
  *     LNCS vol. 2265, pp. 33-36, Springer, 2002. </li>
  * </ul>
  * 
- * The original algorithm was extended to be able to cope with ports, node sizes, and
+ * <dl>
+ * <dt>Precondition:</dt>
+ * <dd>The graph has a proper layering with optimized nodes ordering; Ports are properly arranged</dd>
+ * <dt>Postcondition:</dt>
+ * <dd>Each node is assigned a vertical coordinate such that no two nodes overlap; The size of each
+ * layer is set according to the area occupied by contained nodes; The height of the graph is set to
+ * the maximal layer height</dd>
+ * </dl>
+ * 
+ * <p>The original algorithm was extended to be able to cope with ports, node sizes, and
  * node margins, and was made more stable in general.
  * The algorithm is structured in five steps, which include two new steps which were
  * not included in the original algorithm by Brandes and Koepf. The middle three steps
  * are executed four times, traversing the graph in all combinations of TOP or BOTTOM
- * and LEFT or RIGHT.
+ * and LEFT or RIGHT.</p>
  * 
- * Although we have, in KLay Layered, the general idea of layouting from left to right
+ * <p>Although we have, in KLay Layered, the general idea of layouting from left to right
  * and transforming in the desired direction later, we decided to keep the terminology
  * from the original algorithm which thinks of a layout from top to bottom. When placing
  * coordinates, we have to differ from the original algorithm, since node placement in
- * KLay Layered has to assign y-coordinates and not x-coordinates.
+ * KLay Layered has to assign y-coordinates and not x-coordinates.</p>
  * 
- * The algorithm:
+ * <h4>The algorithm:</h4>
  * 
- * The first step checks the graphs' edges and marks short edges which cross long edges
+ * <p>The first step checks the graphs' edges and marks short edges which cross long edges
  * (called type 1 conflict). The algorithm indents to draw long edges as straight
  * as possible, thus trying to solve the marked conflicts in a way which keep the
- * long edge straight.
+ * long edge straight.</p>
  * 
  * ============ TOP, BOTTOM x LEFT, RIGHT ============
  * 
- * The second step traverses the graph in the given directions and tries to group
+ * <p>The second step traverses the graph in the given directions and tries to group
  * connected nodes into (horizontal) blocks. These blocks, respectively the contained
  * nodes, will be drawn straight when the algorithm is finished. Here, type 1 conflicts
  * are resolved, so that the dummy nodes of a long edge share the same block if possible,
- * such that the long edge is drawn straightly.
+ * such that the long edge is drawn straightly.</p>
  * 
- * The third step contains the addition of node size and port positions to the original
+ * <p>The third step contains the addition of node size and port positions to the original
  * algorithm. Each block is investigated from TOP to BOTTOM. Nodes are moved inside the
  * blocks, such that the port of the edge going to the next node is on the same level as
  * that next node. Furthermore, the size of the block is calculated, regarding node sizes
- * and new space needed due to node movement.
+ * and new space needed due to node movement.</p>
  * 
- * In the fourth step, actual y-coordinates are determined. The blocks are placed, start
+ * <p>In the fourth step, actual y-coordinates are determined. The blocks are placed, start
  * block and direction determined by the directions of the current iteration. 
- * It is tried to place the blocks as compact as possible by grouping blocks.
+ * It is tried to place the blocks as compact as possible by grouping blocks.</p>
  *  
  * ======================= END =======================
  * 
- * The action of the last step depends on a layout option. If "Less Edge Bends" is set to
+ * <p>The action of the last step depends on a layout option. If "Less Edge Bends" is set to
  * true, one of the four calculated layouts is selected and applied, choosing the layout 
  * which uses the least space. If it is false, a balanced layout is chosen by calculating
- * a median layout of all four layouts.
+ * a median layout of all four layouts.</p>
  * 
- * In rare cases, it is possible that one or more layouts is not correct, e.g. having nodes
+ * <p>In rare cases, it is possible that one or more layouts is not correct, e.g. having nodes
  * which overlap each other or violating the layer ordering constraint. If the algorithm
- * detects that, the respective layout is discarded and another one is chosen.
+ * detects that, the respective layout is discarded and another one is chosen.</p>
  * 
  * @author jjc
  * @kieler.design 2012-08-10 chsch grh
@@ -904,8 +913,15 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      */
     private List<LNode> allUpperNeighbors(final LNode node) {
         List<LNode> result = new LinkedList<LNode>();
+        int maxPriority = 0;
         for (LEdge edge : node.getIncomingEdges()) {
-            if (node.getLayer() != edge.getSource().getNode().getLayer()) {
+            if (edge.getProperty(Properties.PRIORITY) > maxPriority) {
+                maxPriority = edge.getProperty(Properties.PRIORITY);
+            }
+        }
+        for (LEdge edge : node.getIncomingEdges()) {
+            if (node.getLayer() != edge.getSource().getNode().getLayer()
+                    && edge.getProperty(Properties.PRIORITY) == maxPriority) {
                 result.add(edge.getSource().getNode());
             }
         }
@@ -923,8 +939,15 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
      */
     private List<LNode> allLowerNeighbors(final LNode node) {
         List<LNode> result = new LinkedList<LNode>();
+        int maxPriority = 0;
         for (LEdge edge : node.getOutgoingEdges()) {
-            if (node.getLayer() != edge.getTarget().getNode().getLayer()) {
+            if (edge.getProperty(Properties.PRIORITY) > maxPriority) {
+                maxPriority = edge.getProperty(Properties.PRIORITY);
+            }
+        }
+        for (LEdge edge : node.getOutgoingEdges()) {
+            if (node.getLayer() != edge.getTarget().getNode().getLayer()
+                    && edge.getProperty(Properties.PRIORITY) == maxPriority) {
                 result.add(edge.getTarget().getNode());
             }
         }
