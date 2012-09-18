@@ -45,6 +45,8 @@ public enum LayoutProcessorStrategy {
     COMMENT_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
+    /** Increases node size for the placement of end labels. */
+    LABEL_NODE_SIZE_ADJUSTER,
     
     // Before Phase 2
     
@@ -112,6 +114,8 @@ public enum LayoutProcessorStrategy {
     HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER,
     /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
     LONG_EDGE_JOINER,
+    /** Removes dummy nodes which were introduced for center labels. */
+    LABEL_DUMMY_REMOVER,
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
     NORTH_SOUTH_PORT_POSTPROCESSOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
@@ -125,8 +129,6 @@ public enum LayoutProcessorStrategy {
     DOWN_DIR_POSTPROCESSOR,
     /** Mirrors and transposes the graph to perform a bottom-up drawing. */
     UP_DIR_POSTPROCESSOR,
-    /** Removes dummy nodes which were introduced for center labels. */
-    LABEL_DUMMY_REMOVER,
     /** Place end labels on edges. */
     END_LABEL_PROCESSOR;
     
@@ -259,6 +261,9 @@ public enum LayoutProcessorStrategy {
             
         case LABEL_SIDE_SELECTOR:
             return new LabelSideSelector();
+            
+        case LABEL_NODE_SIZE_ADJUSTER:
+            return new LabelNodeSizeAdjuster();
         
         default:
             return null;

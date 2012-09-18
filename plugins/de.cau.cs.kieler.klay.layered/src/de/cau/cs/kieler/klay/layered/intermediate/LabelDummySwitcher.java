@@ -47,6 +47,15 @@ public class LabelDummySwitcher extends AbstractAlgorithm implements ILayoutProc
                 if (node.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
                     // Move to beginning of long edge if necessary
                     LPort source = node.getProperty(Properties.LONG_EDGE_SOURCE);
+                    for (LEdge incomingEdge : node.getIncomingEdges()) {
+                        source = incomingEdge.getSource();
+                        while (source.getNode().getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
+                            || source.getNode().getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
+                            for (LEdge incomingEdge2 : source.getNode().getIncomingEdges()) {
+                                source = incomingEdge2.getSource();
+                            }
+                        }
+                    }
 
                     // Collect all nodes of the long edge
                     LNode target = source.getOutgoingEdges().get(0).getTarget()

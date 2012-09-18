@@ -46,26 +46,41 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                 for (LEdge edge : node.getOutgoingEdges()) {
                     for (LLabel label : edge.getLabels()) {
                         if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                                == EdgeLabelPlacement.HEAD) {
-                            LPort port = edge.getSource();
-                            if (label.getSide() == LSide.UP) {
-                                label.getPosition().x = port.getAbsoluteAnchor().x;
-                                label.getPosition().y = port.getAbsoluteAnchor().y
-                                        - label.getSize().y - LABEL_DISTANCE;
-                            } else {
-                                label.getPosition().x = port.getAbsoluteAnchor().x;
-                                label.getPosition().y = port.getAbsoluteAnchor().y + LABEL_DISTANCE;
-                            }
-                        } else if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                                == EdgeLabelPlacement.HEAD
+                            ||
+                            label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
                                 == EdgeLabelPlacement.TAIL) {
-                            LPort port = edge.getTarget();
+                            LPort port = edge.getSource();
+                            if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                                == EdgeLabelPlacement.TAIL) {
+                                port = edge.getTarget();
+                            }
                             if (label.getSide() == LSide.UP) {
-                                label.getPosition().x = port.getAbsoluteAnchor().x - label.getSize().x;
-                                label.getPosition().y = port.getAbsoluteAnchor().y
-                                        - label.getSize().y - LABEL_DISTANCE;
+                                switch (port.getSide()) {
+                                case WEST:
+                                    label.getPosition().x = port.getAbsoluteAnchor().x
+                                                            - label.getSize().x;
+                                    label.getPosition().y = port.getAbsoluteAnchor().y
+                                                            - label.getSize().y - LABEL_DISTANCE;
+                                    break;
+                                case EAST:
+                                    label.getPosition().x = port.getAbsoluteAnchor().x;
+                                    label.getPosition().y = port.getAbsoluteAnchor().y
+                                            - label.getSize().y - LABEL_DISTANCE;
+                                    break;
+                                }
                             } else {
-                                label.getPosition().x = port.getAbsoluteAnchor().x - label.getSize().x;
-                                label.getPosition().y = port.getAbsoluteAnchor().y + LABEL_DISTANCE;
+                                switch (port.getSide()) {
+                                case WEST:
+                                    label.getPosition().x = port.getAbsoluteAnchor().x
+                                                            - label.getSize().x;
+                                    label.getPosition().y = port.getAbsoluteAnchor().y + LABEL_DISTANCE;
+                                    break;
+                                case EAST:
+                                    label.getPosition().x = port.getAbsoluteAnchor().x;
+                                    label.getPosition().y = port.getAbsoluteAnchor().y + LABEL_DISTANCE;
+                                    break;
+                                }
                             }
                         }
                     }
