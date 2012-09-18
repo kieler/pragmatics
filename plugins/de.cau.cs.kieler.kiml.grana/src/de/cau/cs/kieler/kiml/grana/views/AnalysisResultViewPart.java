@@ -28,7 +28,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.ui.CoreUIPlugin;
+import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 import de.cau.cs.kieler.kiml.grana.ui.HtmlResultGenerator;
 import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
 import de.cau.cs.kieler.kiml.grana.visualization.VisualizationService;
@@ -75,7 +75,7 @@ public class AnalysisResultViewPart extends ViewPart {
             // activate the view visualization method
             VisualizationService.getInstance().setActive(ViewVisualizationMethod.class, true);
         } catch (SWTError e) {
-            IStatus status = new Status(IStatus.ERROR, CoreUIPlugin.PLUGIN_ID,
+            IStatus status = new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID,
                     "Could not instantiate Browser.", e);
             StatusManager.getManager().handle(status, StatusManager.LOG);
         }

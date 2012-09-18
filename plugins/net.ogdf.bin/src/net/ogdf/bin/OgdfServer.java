@@ -43,7 +43,7 @@ public class OgdfServer {
     public static enum Cleanup {
         /** normal cleanup. */
         NORMAL,
-        /** read error output and stop the OGDF process. */
+        /** read error output and stop the OGDF process and the watcher thread. */
         ERROR,
         /** stop the OGDF process and the watcher thread. */
         STOP;
@@ -74,10 +74,14 @@ public class OgdfServer {
     /** the second multiplicity label type. */
     public static final int LABEL_TYPE_MULT2 = 4;
 
+    /** the option for selection of the acyclic subgraph module. */
+    public static final String OPTION_ACYCLIC_SUBGRAPH_MODULE = "acyclicSubgraphModule";
     /** the option for arranging connected components. */
     public static final String OPTION_ARRANGE_CC = "arrangeCCs";
     /** the option for the attraction formula. */
     public static final String OPTION_ATTRACTION_FORMULA = "attractionFormula";
+    /** the option for the base ratio. */
+    public static final String OPTION_BASE_RATIO = "baseRatio";
     /** the option for the connected component distance. */
     public static final String OPTION_CC_DISTANCE = "ccDistance";
     /** the option for association edge costs. */
@@ -86,16 +90,28 @@ public class OgdfServer {
     public static final String OPTION_COST_GEN = "costGen";
     /** the option for costs. */
     public static final String OPTION_COSTS = "costs";
+    /** the option for selection of the crossing beautifier module. */
+    public static final String OPTION_CROSS_BEAUTIF_MODULE = "crossingBeautifierModule";
+    /** the option for selection of the crossing minimization module. */
+    public static final String OPTION_CROSS_MIN_MODULE = "crossingMinimizationModule";
     /** the option for the desired edge length. */
     public static final String OPTION_DESIRED_LENGTH = "desiredLength";
+    /** the option for selection of the edge insertion module. */
+    public static final String OPTION_EDGE_INSERTION_MODULE = "edgeInsertionModule";
     /** the option for the edge length. */
     public static final String OPTION_EDGE_LENGTH = "edgeLength";
+    /** the option for selection of the embedder module. */
+    public static final String OPTION_EMBEDDER_MODULE = "embedderModule";
     /** the option for the number of fail runs. */
     public static final String OPTION_FAILS = "fails";
     /** the option for the fineness. */
     public static final String OPTION_FINENESS = "fineness";
+    /** the option for the number of global iterations. */
+    public static final String OPTION_GLOBAL_ITERATIONS = "globalIterations";
     /** the option for the gravitational constant. */
     public static final String OPTION_GRAVITATIONAL_CONSTANT = "gravitationalConstant";
+    /** the option for the grid distance. */
+    public static final String OPTION_GRID_DISTANCE = "gridDistance";
     /** the option for the initial temperature. */
     public static final String OPTION_INITIAL_TEMPERATURE = "initialTemperature";
     /** the option for the number of iterations. */
@@ -112,6 +128,8 @@ public class OgdfServer {
     public static final String OPTION_LAYOUTER = "layouter";
     /** the option for the level distance. */
     public static final String OPTION_LEVEL_DISTANCE = "levelDistance";
+    /** the option for the number of local iterations. */
+    public static final String OPTION_LOCAL_ITERATIONS = "localIterations";
     /** the option for the maximal disturbance. */
     public static final String OPTION_MAXIMAL_DISTURBANCE = "maximalDisturbance";
     /** the option for the minimal clique size. */
@@ -126,6 +144,10 @@ public class OgdfServer {
     public static final String OPTION_MIN_DIST_SIBLING = "minDistSibling";
     /** the option for the minimal temperature. */
     public static final String OPTION_MINIMAL_TEMPERATURE = "minimalTemperature";
+    /** the option for the bound for the number of nodes for the multilevel step. */
+    public static final String OPTION_MULTILEVEL_UNNAL = "multilevelUntilNumNodesAreLess";
+    /** the option for the number of coefficients for expansion. */
+    public static final String OPTION_MULTIPOLE_PREC = "multipolePrec";
     /** the option for a new initial node placement. */
     public static final String OPTION_NEW_INITIAL_PLACEMENT = "newInitialPlacement";
     /** the option for the node distance. */
@@ -148,71 +170,43 @@ public class OgdfServer {
     public static final String OPTION_PREPROCESS_CLIQUES = "preprocessCliques";
     /** the option for the quality-vs-speed option set. */
     public static final String OPTION_QUALITY_VS_SPEED = "qualityVsSpeed";
+    /** the option for radial constraints. */
+    public static final String OPTION_RADIAL = "radial";
+    /** the option for randomization of the layout. */
+    public static final String OPTION_RANDOMIZE = "randomize";
     /** the option for the random seed. */
     public static final String OPTION_RANDOM_SEED = "randomSeed";
+    /** the option for selection of the ranking module. */
+    public static final String OPTION_RANKING_MODULE = "rankingModule";
     /** the option for the rotation angle. */
     public static final String OPTION_ROTATION_ANGLE = "rotationAngle";
     /** the option for the rotation sensitivity. */
     public static final String OPTION_ROTATION_SENSITIVITY = "rotationSensitivity";
     /** the option for the number of runs. */
     public static final String OPTION_RUNS = "runs";
+    /** the option for scale function factor. */
+    public static final String OPTION_SCALE_FUNCTION_FACTOR = "scaleFunctionFactor";
     /** the option for the separation. */
     public static final String OPTION_SEPARATION = "separation";
     /** the option for the sibling distance. */
     public static final String OPTION_SIBLING_DISTANCE = "siblingDistance";
     /** the option for the speed option set. */
     public static final String OPTION_SPEED = "speed";
+    /** the option for the stop tolerance. */
+    public static final String OPTION_STOP_TOLERANCE = "stopTolerance";
     /** the option for the subtree distance. */
     public static final String OPTION_SUBTREE_DISTANCE = "subtreeDistance";
     /** the option for the transposition. */
     public static final String OPTION_TRANSPOSE = "transpose";
     /** the option for the tree distance. */
     public static final String OPTION_TREE_DISTANCE = "treeDistance";
-
-    /** the 'north' direction. */
-    public static final int DIRECTION_NORTH = 0;
-    /** the 'south' direction. */
-    public static final int DIRECTION_SOUTH = 1;
-    /** the 'west' direction. */
-    public static final int DIRECTION_WEST = 2;
-    /** the 'east' direction. */
-    public static final int DIRECTION_EAST = 3;
-
-    /** the 'gorgeous-and-efficient' qvs. */
-    public static final int GORGEOUS_AND_EFFICIENT = 0;
-    /** the 'beautiful-and-fast' qvs. */
-    public static final int BEAUTIFUL_AND_FAST = 1;
-    /** the 'nice-and-incredible-speed' qvs. */
-    public static final int NICE_AND_INCREDIBLE_SPEED = 2;
-
-    /** the 'standard' costs. */
-    public static final int COSTS_STANDARD = 0;
-    /** the 'repulse' costs. */
-    public static final int COSTS_REPULSE = 1;
-    /** the 'planar' costs. */
-    public static final int COSTS_PLANAR = 2;
-
-    /** the 'fast' speed. */
-    public static final int SPEED_FAST = 0;
-    /** the 'medium' speed. */
-    public static final int SPEED_MEDIUM = 1;
-    /** the 'hq' speed. */
-    public static final int SPEED_HQ = 2;
-
-    /** the 'top-to-bottom' orientation. */
-    public static final int ORIENTATION_TOP_TO_BOTTOM = 0;
-    /** the 'bottom-to-top' orientation. */
-    public static final int ORIENTATION_BOTTOM_TO_TOP = 1;
-    /** the 'left-to-right' orientation. */
-    public static final int ORIENTATION_LEFT_TO_RIGHT = 2;
-    /** the 'right-to-left' orientation. */
-    public static final int ORIENTATION_RIGHT_TO_LEFT = 3;
-
-    /** the 'Fruchterman-Reingold' attraction formula. */
-    public static final int ATTRACTION_FORMULA_FR = 1;
-    /** the 'GEM' attraction formula. */
-    public static final int ATTRACTION_FORMULA_GEM = 2;
-
+    /** the option for upward constraints. */
+    public static final String OPTION_UPWARD = "upward";
+    /** the option for usage of the given layout. */
+    public static final String OPTION_USE_LAYOUT = "useLayout";
+    /** the option for the width of a ranking. */
+    public static final String OPTION_WIDTH = "width";
+    
     
     /**
      * A helper enumeration for identifying the operating system.
@@ -285,9 +279,11 @@ public class OgdfServer {
     public static final String EXECUTABLE_PATH_WIN64 = EXECUTABLE_PATH_BIN
             + "/win64/ogdf-server.exe";
     /** the relative path for the osx32 executable. */
-    public static final String EXECUTABLE_PATH_OSX32 = EXECUTABLE_PATH_BIN + "/osx32/ogdf-server";
+    public static final String EXECUTABLE_PATH_OSX32 = EXECUTABLE_PATH_BIN
+            + "/osx32/ogdf-server";
     /** the relative path for the osx64 executable. */
-    public static final String EXECUTABLE_PATH_OSX64 = EXECUTABLE_PATH_BIN + "/osx64/ogdf-server";
+    public static final String EXECUTABLE_PATH_OSX64 = EXECUTABLE_PATH_BIN
+            + "/osx64/ogdf-server";
     /** the relative path for the solaris executable. */
     public static final String EXECUTABLE_PATH_SOLARIS = EXECUTABLE_PATH_BIN
             + "/solaris/ogdf-server";
@@ -380,7 +376,7 @@ public class OgdfServer {
      * @param inputFormat
      *            the graph input format for the ogdf server
      */
-    public void initialize(final String inputFormat) {
+    public synchronized void initialize(final String inputFormat) {
         if (watchdog == null) {
             // start the watcher thread for timeout checking
             watchdog = new Watchdog();
@@ -396,6 +392,10 @@ public class OgdfServer {
                 process = Runtime.getRuntime().exec(new String[] { executable, inputFormat });
             } catch (IOException exception) {
                 throw new OgdfServerException("Failed to start ogdf server process.", exception);
+            } finally {
+                if (process == null) {
+                    cleanup(Cleanup.STOP);
+                }
             }
         }
     }
@@ -444,10 +444,10 @@ public class OgdfServer {
      */
     public Map<String, String> readOutputData() {
         Map<String, String> data = new HashMap<String, String>();
-        String error = "";
         BufferedReader reader = new BufferedReader(new InputStreamReader(output()));
         ParseState state = ParseState.TYPE;
         boolean parseMore = true;
+        StringBuilder error = null;
         
         while (parseMore) {
             String line = null;
@@ -467,6 +467,7 @@ public class OgdfServer {
                     state = ParseState.DATA;
                 } else if (line.equals("ERROR")) {
                     state = ParseState.ERROR;
+                    error = new StringBuilder();
                 }
                 break;
                 
@@ -483,12 +484,13 @@ public class OgdfServer {
                 
             case ERROR:
                 if (line.equals("DONE")) {
-                    throw new OgdfServerException(error);
+                    cleanup(Cleanup.STOP);
+                    throw new OgdfServerException(error.toString());
                 } else {
                     if (error.length() > 0) {
-                        error += "\n";
+                        error.append('\n');
                     }
-                    error += line;
+                    error.append(line);
                 }
                 break;
             }
@@ -507,12 +509,12 @@ public class OgdfServer {
      * 
      * @param c the cleanup option
      */
-    public void cleanup(final Cleanup c) {
+    public synchronized void cleanup(final Cleanup c) {
         StringBuilder error = null;
         if (process != null) {
             InputStream errorStream = process.getErrorStream();
             try {
-                if (c == Cleanup.ERROR) {
+                if (c == Cleanup.ERROR && ogdfStream != null) {
                     // wait a bit so the process can either terminate or generate error
                     Thread.sleep(PROC_ERROR_TIME);
                     // read the error stream to display a meaningful error message
@@ -558,20 +560,21 @@ public class OgdfServer {
             }
         }
         
-        if (error == null) {
-            synchronized (nextJob) {
-                // reset the stream to indicate that the job is done
-                ogdfStream = null;
-                if (watchdog != null) {
-                    // wake the watcher if it is still waiting for timeout
-                    watchdog.interrupt();
-                    // if requested, reset the watcher to indicate that it should terminate
-                    if (c == Cleanup.STOP) {
-                        watchdog = null;
-                    }
+        synchronized (nextJob) {
+            // reset the stream to indicate that the job is done
+            ogdfStream = null;
+            if (watchdog != null) {
+                Watchdog myWatchdog = watchdog;
+                // if requested, reset the watcher to indicate that it should terminate
+                if (c == Cleanup.ERROR || c == Cleanup.STOP) {
+                    watchdog = null;
                 }
+                // wake the watcher if it is still waiting for timeout
+                myWatchdog.interrupt();
             }
-        } else if (error.length() > 0) {
+        }
+        
+        if (error != null && error.length() > 0) {
             // an error output could be read from OGDF, so display that to the user
             throw new OgdfServerException("OGDF error: " + error.toString());
         }
@@ -605,7 +608,7 @@ public class OgdfServer {
                             // wait for notification by the main thread
                             nextJob.wait();
                         } catch (InterruptedException ex) {
-                            // an interrupt can happen when a shutdown is requested
+                            // the watchdog thread is interrupted: shutdown is requested
                             if (watchdog == null) {
                                 return;
                             }
@@ -630,16 +633,11 @@ public class OgdfServer {
                 
                 if (!interrupted) {
                     synchronized (nextJob) {
-                        // timeout has occurred! close the stream so the main thread will wake
+                        // timeout has occurred! kill the process so the main thread will wake
                         Process myProcess = process;
                         if (myProcess != null) {
-                            try {
-                                myProcess.getInputStream().close();
-                                myProcess.getErrorStream().close();
-                                ogdfStream = null;
-                            } catch (IOException ex) {
-                                // ignore exception
-                            }
+                            ogdfStream = null;
+                            myProcess.destroy();
                         }
                     }
                 }

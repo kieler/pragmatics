@@ -66,8 +66,8 @@ linux64: $(BIN_DIR)/$$@/$(BIN) $?
 
 # run this target on a SunOS machine
 solaris: CC = /opt/gnu/pkg/gcc-4.4.2/bin/g++
-solaris: LOPTS =
-solaris: LIBS =
+solaris: LOPTS = -L/usr/ccs/lib/
+solaris: LIBS = -lmalloc
 solaris: $(BIN_DIR)/$$@/$(BIN) $?
 
 clean:

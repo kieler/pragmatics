@@ -186,7 +186,8 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
     // ======================== Algorithm ==========================================
 
     /**
-     * {@inheritDoc} * Determines a planar embedding of the graph. If the Graph is fully planar,
+     * {@inheritDoc} 
+     * Determines a planar embedding of the graph. If the Graph is fully planar,
      * this algorithm computes a complete planar embedding of the graph. If the graph is not planar,
      * it determines a planar embedding of a maximal planar subgraph and returns a list of edges,
      * whose addition will cause non-planarity and therefore could not be inserted.This guarantees

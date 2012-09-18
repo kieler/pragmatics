@@ -29,7 +29,7 @@ class IndexProvider
 	 * 
 	 */
 	override CharSequence getHeaders(
-		RequestData requestData
+    	ResourceProcessingExchange processingExchange
 	) 
 	{
 		return ''''''
@@ -39,7 +39,7 @@ class IndexProvider
      * 
      */
 	override CharSequence getBody(
-		RequestData requestData
+    	ResourceProcessingExchange processingExchange
 	) 
 	{
 		val Configuration config = Configuration::INSTANCE
@@ -80,7 +80,7 @@ class IndexProvider
      * 
      */
 	override boolean providerOverride(
-		RequestData requestData
+    	ResourceProcessingExchange processingExchange
 	) 
 	{
 		return false

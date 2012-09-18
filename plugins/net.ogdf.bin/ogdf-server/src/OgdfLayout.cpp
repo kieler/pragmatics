@@ -1,7 +1,7 @@
 /**
- * @file
- * @author  mri (mri@informatik.uni-kiel.de)
- * @version 0.1.0.qualifier
+ * @file    OgdfLayout.cpp
+ * @author  mri@informatik.uni-kiel.de, msp@informatik.uni-kiel.de
+ * @version 0.2.0
  *
  * @section LICENSE
  *
@@ -32,42 +32,80 @@
 #include <ogdf/basic/Graph_d.h>
 #include <ogdf/basic/GraphAttributes.h>
 #include <ogdf/basic/UMLGraph.h>
+#include <ogdf/basic/extended_graph_alg.h>
 #include <ogdf/module/LayoutModule.h>
 #include <ogdf/module/UMLLayoutModule.h>
 #include <ogdf/labeling/ELabelInterface.h>
 #include <ogdf/labeling/ELabelPosSimple.h>
 #include <ogdf/layered/SugiyamaLayout.h>
 #include <ogdf/layered/FastHierarchyLayout.h>
+#include <ogdf/layered/LongestPathRanking.h>
+#include <ogdf/layered/CoffmanGrahamRanking.h>
+#include <ogdf/layered/OptimalRanking.h>
+#include <ogdf/layered/GreedyCycleRemoval.h>
+#include <ogdf/layered/GreedyInsertHeuristic.h>
+#include <ogdf/layered/GreedySwitchHeuristic.h>
+#include <ogdf/layered/MedianHeuristic.h>
+#include <ogdf/layered/SiftingHeuristic.h>
+#include <ogdf/layered/DfsAcyclicSubgraph.h>
 #include <ogdf/orthogonal/OrthoRep.h>
 #include <ogdf/orthogonal/OrthoLayout.h>
 #include <ogdf/planarity/PlanarizationLayout.h>
+#include <ogdf/planarity/FastPlanarSubgraph.h>
+#include <ogdf/planarity/EmbedderMaxFace.h>
+#include <ogdf/planarity/EmbedderMaxFaceLayers.h>
+#include <ogdf/planarity/EmbedderMinDepth.h>
+#include <ogdf/planarity/EmbedderMinDepthMaxFace.h>
+#include <ogdf/planarity/EmbedderMinDepthMaxFaceLayers.h>
+#include <ogdf/planarity/EmbedderMinDepthPiTa.h>
+#include <ogdf/planarity/PlanarizationGridLayout.h>
+#include <ogdf/planarlayout/FPPLayout.h>
+#include <ogdf/planarlayout/SchnyderLayout.h>
+#include <ogdf/planarlayout/PlanarStraightLayout.h>
+#include <ogdf/planarlayout/MixedModelLayout.h>
+#include <ogdf/planarlayout/PlanarDrawLayout.h>
+#include <ogdf/planarlayout/MMCBDoubleGrid.h>
+#include <ogdf/planarlayout/MMCBLocalStretch.h>
+#include <ogdf/planarity/VariableEmbeddingInserter.h>
+#include <ogdf/planarity/VariableEmbeddingInserter2.h>
+#include <ogdf/planarity/MultiEdgeApproxInserter.h>
 #include <ogdf/energybased/FMMMLayout.h>
 #include <ogdf/energybased/DavidsonHarelLayout.h>
 #include <ogdf/energybased/SpringEmbedderFR.h>
+#include <ogdf/energybased/SpringEmbedderKK.h>
 #include <ogdf/energybased/GEMLayout.h>
+#include <ogdf/energybased/FastMultipoleEmbedder.h>
+#include <ogdf/energybased/StressMajorizationSimple.h>
 #include <ogdf/misclayout/CircularLayout.h>
+#include <ogdf/misclayout/BalloonLayout.h>
 #include <ogdf/tree/TreeLayout.h>
 #include <ogdf/tree/RadialTreeLayout.h>
 #include <ogdf/upward/UpwardPlanarizationLayout.h>
 #include <ogdf/upward/LayerBasedUPRLayout.h>
+#include <ogdf/upward/DominanceLayout.h>
+#include <ogdf/upward/VisibilityLayout.h>
+#include <ogdf/upward/SubgraphUpwardPlanarizer.h>
+#include <ogdf/upward/FUPSSimple.h>
+
 
 using namespace std;
 using namespace ogdf;
 
 /*
- * Locals
+ * Message stored for the last error that occurred while invoking OGDF layout.
  */
-
 string lastLayoutError = "";
 
 /*
- * Helper functions for displaying ogdf errors
+ * Create a message for an arbitrary C++ exception.
  */
-
 string ogdfExceptionToString(const char* name, Exception& e) {
 	return name;
 }
 
+/*
+ * Create a message for a "precondition violated" exception.
+ */
 string ogdfPreconditionExceptionToString(PreconditionViolatedException& e) {
 	string result = ogdfExceptionToString("PreconditionViolatedException", e);
 	result += ": ";
@@ -116,6 +154,9 @@ string ogdfPreconditionExceptionToString(PreconditionViolatedException& e) {
 	return result;
 }
 
+/*
+ * Create a message for an "algorithm failure" exception.
+ */
 string ogdfAlgorithmExceptionToString(AlgorithmFailureException& e) {
 	string result = ogdfExceptionToString("AlgorithmFailureException", e);
 	result += ": ";
@@ -150,6 +191,9 @@ string ogdfAlgorithmExceptionToString(AlgorithmFailureException& e) {
 	return result;
 }
 
+/*
+ * Create a message for a "library not supported" exception.
+ */
 string ogdfLibraryExceptionToString(LibraryNotSupportedException& e) {
 	string result = ogdfExceptionToString("LibraryNotSupportedException", e);
 	result += ": ";
@@ -173,9 +217,9 @@ string ogdfLibraryExceptionToString(LibraryNotSupportedException& e) {
 }
 
 /*
- * Helper functions and macros for receiving options
+ * Retrieve a string value from the transmitted layout options.
+ * Returns true if the option is available, and false otherwise.
  */
-
 bool GetOption(const string& key, string& value, StringMap& options) {
 	StringMap::iterator it = options.find(key);
 	if (it == options.end()) {
@@ -185,6 +229,10 @@ bool GetOption(const string& key, string& value, StringMap& options) {
 	return true;
 }
 
+/*
+ * Retrieve an integer value from the transmitted layout options.
+ * Returns true if the option is available, and false otherwise.
+ */
 bool GetOption(const string& key, int& value, StringMap& options) {
 	string s;
 	if (!GetOption(key, s, options)) {
@@ -194,6 +242,10 @@ bool GetOption(const string& key, int& value, StringMap& options) {
 	return true;
 }
 
+/*
+ * Retrieve a floating point value from the transmitted layout options.
+ * Returns true if the option is available, and false otherwise.
+ */
 bool GetOption(const string& key, double& value, StringMap& options) {
 	string s;
 	if (!GetOption(key, s, options)) {
@@ -203,6 +255,10 @@ bool GetOption(const string& key, double& value, StringMap& options) {
 	return true;
 }
 
+/*
+ * Retrieve a Boolean value from the transmitted layout options.
+ * Returns true if the option is available, and false otherwise.
+ */
 bool GetOption(const string& key, bool& value, StringMap& options) {
 	string s;
 	if (!GetOption(key, s, options)) {
@@ -212,6 +268,10 @@ bool GetOption(const string& key, bool& value, StringMap& options) {
 	return true;
 }
 
+/*
+ * Retrieve an (x,y) coordinate value from the transmitted layout options.
+ * Returns true if the option is available, and false otherwise.
+ */
 bool GetOption(const string& key, double& x, double& y, StringMap& options) {
 	string s;
 	if (!GetOption(key, s, options)) {
@@ -227,9 +287,15 @@ bool GetOption(const string& key, double& x, double& y, StringMap& options) {
 	return true;
 }
 
+/*
+ * Retrieve a layout option and throw an error if it is not available.
+ */
 #define GetOptionSafe(key, value, options) if (!GetOption(key, value, options))\
 	{throw runtime_error(string("Missing option: ") + key);}
 
+/*
+ * Get the layouter type enumeration value for a serialized name.
+ */
 LayouterType GetLayouterTypeByName(const string& name) {
 	if (name == "SUGIYAMA") {
 		return SUGIYAMA;
@@ -251,12 +317,40 @@ LayouterType GetLayouterTypeByName(const string& name) {
 		return RADIAL_TREE;
 	} else if (name == "UPWARD_PLANARIZATION") {
 		return UPWARD_PLANARIZATION;
+	} else if (name == "FAST_MULTIPOLE") {
+		return FAST_MULTIPOLE;
+	} else if (name == "FAST_MULTIPOLE_MULTILEVEL") {
+		return FAST_MULTIPOLE_MULTILEVEL;
+	} else if (name == "KAMADA_KAWAI") {
+		return KAMADA_KAWAI;
+	} else if (name == "STRESS_MAJORIZATION") {
+		return STRESS_MAJORIZATION;
+	} else if (name == "DOMINANCE") {
+		return DOMINANCE;
+	} else if (name == "VISIBILITY") {
+		return VISIBILITY;
+	} else if (name == "FRAYSSEIX_PACH_POLLACK") {
+		return FRAYSSEIX_PACH_POLLACK;
+	} else if (name == "SCHNYDER") {
+		return SCHNYDER;
+	} else if (name == "CANONICAL_ORDER") {
+		return CANONICAL_ORDER;
+	} else if (name == "MIXED_MODEL") {
+		return MIXED_MODEL;
+	} else if (name == "CONVEX_GRID") {
+		return CONVEX_GRID;
+	} else if (name == "BALLOON") {
+		return BALLOON;
 	} else {
 		return NO_LAYOUTER;
 	}
 }
 
-#define TRANSFORM_LABEL_TYPE(n, t, e) eLabelTyp n;\
+/*
+ * Transform an integer value t into an OGDF label type n. Execute the exit
+ * command e if the type is not known.
+ */
+#define TRANSFORM_LABEL_TYPE(n, t, e) eLabelType n;\
     switch(t) {\
     case LABEL_TYPE_END1:\
         n = elEnd1;\
@@ -277,6 +371,9 @@ LayouterType GetLayouterTypeByName(const string& name) {
         e;\
     }
 
+/*
+ * Transform an integer value t into an OGDF orthogonal direction n.
+ */
 #define TRANSFORM_DIRECTION(n, t) OrthoDir n;\
     switch(t) {\
     case DIRECTION_NORTH:\
@@ -296,6 +393,9 @@ LayouterType GetLayouterTypeByName(const string& name) {
         break;\
     }
 
+/*
+ * Transform an integer value t into a "quality vs. speed" value for FMMM layout.
+ */
 #define TRANSFORM_QUALITY_VS_SPEED(n, t) FMMMLayout::QualityVsSpeed n;\
     switch(t) {\
     case GORGEOUS_AND_EFFICIENT:\
@@ -310,6 +410,9 @@ LayouterType GetLayouterTypeByName(const string& name) {
         break; \
     }
 
+/*
+ * Transform an integer value t into a "costs" value for Davidson-Harel layout.
+ */
 #define TRANSFORM_COSTS(n, t) DavidsonHarelLayout::SettingsParameter n;\
     switch(t) {\
     case COSTS_REPULSE:\
@@ -324,6 +427,9 @@ LayouterType GetLayouterTypeByName(const string& name) {
         break;\
     }
 
+/*
+ * Transform an integer value t into a "speed" value for Davidson-Harel layout.
+ */
 #define TRANSFORM_SPEED(n, t) DavidsonHarelLayout::SpeedParameter n;\
     switch(t) {\
     case SPEED_FAST:\
@@ -338,6 +444,9 @@ LayouterType GetLayouterTypeByName(const string& name) {
         break;\
     }
 
+/*
+ * Transform an integer value t into an OGDF orientation direction n.
+ */
 #define TRANSFORM_ORIENTATION(n, t) Orientation n;\
     switch(t) {\
     case ORIENTATION_LEFT_TO_RIGHT:\
@@ -356,9 +465,8 @@ LayouterType GetLayouterTypeByName(const string& name) {
     }
 
 /**
- * Helper functions for transforming and creating graph structures
+ * Derive a UML graph from a plain graph.
  */
-
 void DeriveUMLGraph(Graph& G, GraphAttributes& GA, UMLGraph& UMLG,
 		StringMap& information) {
 	// process nodes
@@ -392,12 +500,15 @@ void DeriveUMLGraph(Graph& G, GraphAttributes& GA, UMLGraph& UMLG,
 	}
 }
 
+/*
+ * Transfer labels from the transmitted graph information to the given OGDF label interface.
+ */
 void TransferLabels(Graph& G, GraphAttributes& GA, LabelInterface& LI,
 		StringMap& information) {
 	edge e;
 	forall_edges(e, G) {
 		string label = GA.labelEdge(e).cstr();
-		for (int type = 0; type < labelNum; ++type) {
+		for (int type = 0; type < elNumLabels; ++type) {
 			double width, height;
 			// 48 + digit = ascii representation of the digit
 			if (GetOption(label + EDGE_LABEL_SUFFIX + (char)(48 + type), width, height, information)) {
@@ -412,9 +523,8 @@ void TransferLabels(Graph& G, GraphAttributes& GA, LabelInterface& LI,
 }
 
 /*
- * Interface implementation
+ * Perform layout on the given graph.
  */
-
 GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		LabelInterface*& LI, StringMap& options, StringMap& information) {
 	// the graph attributes with applied layout
@@ -424,72 +534,201 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		string layouterName;
 		GetOptionSafe(OPTION_LAYOUTER, layouterName, options);
 		LayouterType layouterType = GetLayouterTypeByName(layouterName);
+
 		// set the random seed
 		int randomSeed;
 		if (GetOption(OPTION_RANDOM_SEED, randomSeed, options)) {
 			srand(randomSeed);
 		}
+
 		// perform the layout
 		switch (layouterType) {
+
+		//-------------------------------------------------------------------//
 		case SUGIYAMA: {
-			SugiyamaLayout layouter;
-			FastHierarchyLayout* fastHierarchyLayout = new FastHierarchyLayout;
-			layouter.setLayout(fastHierarchyLayout);
+			SugiyamaLayout layout;
+			AcyclicSubgraphModule* acyclicSubgraphModule = NULL;
+			int acyclicSubgraphOption;
+			if (GetOption(OPTION_ACYCLIC_SUBGRAPH_MODULE, acyclicSubgraphOption, options)) {
+				switch (acyclicSubgraphOption) {
+				case ACYCLIC_SUBGRAPH_GREEDY:
+					acyclicSubgraphModule = new GreedyCycleRemoval;
+					break;
+				// default: ACYCLIC_SUBGRAPH_DFS
+				}
+			}
+			int rankingOption;
+			if (GetOption(OPTION_RANKING_MODULE, rankingOption, options)) {
+				switch (rankingOption) {
+				case RANKING_COFFMAN_GRAHAM: {
+					CoffmanGrahamRanking* ranking = new CoffmanGrahamRanking;
+					int width;
+					if (GetOption(OPTION_WIDTH, width, options) && width > 0) {
+						ranking->width(width);
+					}
+					if (acyclicSubgraphModule != NULL) {
+						ranking->setSubgraph(acyclicSubgraphModule);
+					}
+					layout.setRanking(ranking);
+					break;
+				}
+				case RANKING_OPTIMAL: {
+					OptimalRanking* ranking = new OptimalRanking;
+					if (acyclicSubgraphModule != NULL) {
+						ranking->setSubgraph(acyclicSubgraphModule);
+					}
+					layout.setRanking(ranking);
+					break;
+				}
+				default: // RANKING_LONGEST_PATH
+					if (acyclicSubgraphModule != NULL) {
+						LongestPathRanking* ranking = new LongestPathRanking;
+						ranking->setSubgraph(acyclicSubgraphModule);
+						layout.setRanking(ranking);
+					}
+				}
+			}
+			int crossMinOption;
+			if (GetOption(OPTION_CROSS_MIN_MODULE, crossMinOption, options)) {
+				switch (crossMinOption) {
+				case CROSS_MIN_GREEDY_INSERT: {
+					GreedyInsertHeuristic* crossMin = new GreedyInsertHeuristic;
+					layout.setCrossMin(crossMin);
+					break;
+				}
+				case CROSS_MIN_GREEDY_SWITCH: {
+					GreedySwitchHeuristic* crossMin = new GreedySwitchHeuristic;
+					layout.setCrossMin(crossMin);
+					break;
+				}
+				case CROSS_MIN_MEDIAN: {
+					MedianHeuristic* crossMin = new MedianHeuristic;
+					layout.setCrossMin(crossMin);
+					break;
+				}
+				case CROSS_MIN_SIFTING: {
+					SiftingHeuristic* crossMin = new SiftingHeuristic;
+					layout.setCrossMin(crossMin);
+					break;
+				}
+				// default: CROSS_MIN_BARYCENTER
+				}
+			}
 			int fails;
-			if (GetOption(OPTION_FAILS, fails, options)) {
-				layouter.fails(fails);
+			if (GetOption(OPTION_FAILS, fails, options) && fails > 0) {
+				layout.fails(fails);
 			}
 			int runs;
-			if (GetOption(OPTION_RUNS, runs, options)) {
-				layouter.runs(runs);
+			if (GetOption(OPTION_RUNS, runs, options) && runs > 0) {
+				layout.runs(runs);
 			}
 			bool transpose;
 			if (GetOption(OPTION_TRANSPOSE, transpose, options)) {
-				layouter.transpose(transpose);
+				layout.transpose(transpose);
 			}
 			bool arrangeCCs;
 			if (GetOption(OPTION_ARRANGE_CC, arrangeCCs, options)) {
-				layouter.arrangeCCs(arrangeCCs);
+				layout.arrangeCCs(arrangeCCs);
 			}
 			double minDistCC;
-			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options)) {
-				layouter.minDistCC(minDistCC);
+			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options) && minDistCC >= 0) {
+				layout.minDistCC(minDistCC);
 			}
 			double pageRatio;
-			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
-				layouter.pageRatio(pageRatio);
+			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options) && pageRatio > 0) {
+				layout.pageRatio(pageRatio);
 			}
+			FastHierarchyLayout* hierarchyLayout = new FastHierarchyLayout;
+			layout.setLayout(hierarchyLayout);
 			double nodeDistance;
-			if (GetOption(OPTION_NODE_DISTANCE, nodeDistance, options)) {
-				fastHierarchyLayout->nodeDistance(nodeDistance);
+			if (GetOption(OPTION_NODE_DISTANCE, nodeDistance, options) && nodeDistance >= 0) {
+				hierarchyLayout->nodeDistance(nodeDistance);
 			}
 			double layerDistance;
-			if (GetOption(OPTION_LAYER_DISTANCE, layerDistance, options)) {
-				fastHierarchyLayout->layerDistance(layerDistance);
+			if (GetOption(OPTION_LAYER_DISTANCE, layerDistance, options) && layerDistance >= 0) {
+				hierarchyLayout->layerDistance(layerDistance);
 			}
-			// needs to be called with an GraphAttributes argument to invoke the
-			// correct polymorphic method
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
+
+		//-------------------------------------------------------------------//
 		case PLANARIZATION: {
-			PlanarizationLayout layouter;
-			OrthoLayout* orthoLayout = new OrthoLayout();
-			layouter.setPlanarLayouter(orthoLayout);
+			PlanarizationLayout layout;
+			int runs;
+			if (GetOption(OPTION_RUNS, runs, options) && runs >= 0) {
+				FastPlanarSubgraph* planarSubgraph = new FastPlanarSubgraph;
+				planarSubgraph->runs(runs);
+				layout.setSubgraph(planarSubgraph);
+			}
+			int edgeInsertionOption;
+			if (GetOption(OPTION_EDGE_INSERTION_MODULE, edgeInsertionOption, options)) {
+				switch (edgeInsertionOption) {
+				case EDGE_INSERTION_VARIABLE_EMB: {
+					VariableEmbeddingInserter* edgeInsertion = new VariableEmbeddingInserter;
+					layout.setInserter(edgeInsertion);
+					break;
+				}
+				case EDGE_INSERTION_MULTIEDGE_APPROX: {
+					MultiEdgeApproxInserter* edgeInsertion = new MultiEdgeApproxInserter;
+					layout.setInserter(edgeInsertion);
+					break;
+				}
+				// default: EDGE_INSERTION_FIXED_EMB
+				}
+			}
+			int embedderOption;
+			if (GetOption(OPTION_EMBEDDER_MODULE, embedderOption, options)) {
+				switch (embedderOption) {
+				case EMBEDDER_MAX_FACE: {
+					EmbedderMaxFace* embedder = new EmbedderMaxFace;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MAX_FACE_LAYERS: {
+					EmbedderMaxFaceLayers* embedder = new EmbedderMaxFaceLayers;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH: {
+					EmbedderMinDepth* embedder = new EmbedderMinDepth;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE: {
+					EmbedderMinDepthMaxFace* embedder = new EmbedderMinDepthMaxFace;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE_LAYERS: {
+					EmbedderMinDepthMaxFaceLayers* embedder = new EmbedderMinDepthMaxFaceLayers;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_PIZZONIA_TAMASSIA: {
+					EmbedderMinDepthPiTa* embedder = new EmbedderMinDepthPiTa;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				// default: EMBEDDER_SIMPLE
+				}
+			}
 			double pageRatio;
-			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
-				layouter.pageRatio(pageRatio);
+			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options) && pageRatio > 0) {
+				layout.pageRatio(pageRatio);
 			}
 			bool preprocessCliques;
 			if (GetOption(OPTION_PREPROCESS_CLIQUES, preprocessCliques, options)) {
-				layouter.preprocessCliques(preprocessCliques);
+				layout.preprocessCliques(preprocessCliques);
 			}
 			int minCliqueSize;
 			if (GetOption(OPTION_MIN_CLIQUE_SIZE, minCliqueSize, options)) {
-				layouter.minCliqueSize(minCliqueSize);
+				layout.minCliqueSize(minCliqueSize);
 			}
+			OrthoLayout* orthoLayout = new OrthoLayout();
+			layout.setPlanarLayouter(orthoLayout);
 			double separation;
-			if (GetOption(OPTION_SEPARATION, separation, options)) {
+			if (GetOption(OPTION_SEPARATION, separation, options) && separation >= 0) {
 				orthoLayout->separation(separation);
 			}
 			int direction;
@@ -508,8 +747,7 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 			bool isUMLGraph;
 			if (GetOption(INFO_UML_GRAPH, isUMLGraph, information)
 					&& isUMLGraph) {
-				// an UML graph is required to utilize the full functionality of
-				// the layouter
+				// an UML graph is required to utilize the full functionality of the layouter
 				UMLGraph* UMLG = new UMLGraph(G, GraphAttributes::nodeGraphics
 						| GraphAttributes::edgeGraphics
 						| GraphAttributes::nodeLabel
@@ -518,249 +756,646 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 				DeriveUMLGraph(G, *GA, *UMLG, information);
 				delete GA;
 				LGA = UMLG;
-				layouter.call(*UMLG);
+				layout.call(*UMLG);
 			} else {
-				layouter.call(*GA);
+				layout.call(*LGA);
 			}
 			break;
 		}
+
+		//-------------------------------------------------------------------//
 		case FMMM: {
-			FMMMLayout layouter;
-			layouter.useHighLevelOptions(true);
+			FMMMLayout layout;
+			layout.useHighLevelOptions(true);
 			double unitEdgeLength;
 			if (GetOption(OPTION_EDGE_LENGTH, unitEdgeLength, options)) {
-				layouter.unitEdgeLength(unitEdgeLength);
+				layout.unitEdgeLength(unitEdgeLength);
 			}
 			bool newInitialPlacement;
 			if (GetOption(OPTION_NEW_INITIAL_PLACEMENT, newInitialPlacement,
 					options)) {
-				layouter.newInitialPlacement(newInitialPlacement);
+				layout.newInitialPlacement(newInitialPlacement);
 			}
 			int qvs;
 			if (GetOption(OPTION_QUALITY_VS_SPEED, qvs, options)) {
 				TRANSFORM_QUALITY_VS_SPEED(qualityVsSpeed, qvs);
-				layouter.qualityVersusSpeed(qualityVsSpeed);
+				layout.qualityVersusSpeed(qualityVsSpeed);
 			}
-			layouter.call(*LGA);
+			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case DAVIDSON_HAREL: {
-			DavidsonHarelLayout layouter;
+			DavidsonHarelLayout layout;
 			int costs;
 			if (GetOption(OPTION_COSTS, costs, options)) {
 				TRANSFORM_COSTS(theCosts, costs);
-				layouter.fixSettings(theCosts);
+				layout.fixSettings(theCosts);
 			}
 			int speed;
 			if (GetOption(OPTION_SPEED, speed, options)) {
 				TRANSFORM_SPEED(theSpeed, speed);
-				layouter.setSpeed(theSpeed);
+				layout.setSpeed(theSpeed);
 			}
 			double edgeLength;
-			if (GetOption(OPTION_EDGE_LENGTH, edgeLength, options)) {
-				layouter.setPreferredEdgeLength(edgeLength);
+			if (GetOption(OPTION_EDGE_LENGTH, edgeLength, options) && edgeLength >= 0) {
+				layout.setPreferredEdgeLength(edgeLength);
 			}
-			layouter.call(*GA);
+			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case FRUCHTERMAN_REINGOLD: {
-			SpringEmbedderFR layouter;
+			SpringEmbedderFR layout;
 			int iterations;
 			if (GetOption(OPTION_ITERATIONS, iterations, options)) {
-				layouter.iterations(iterations);
+				layout.iterations(iterations);
 			}
 			double fineness;
 			if (GetOption(OPTION_FINENESS, fineness, options)) {
-				layouter.fineness(fineness);
+				layout.fineness(fineness);
 			}
 			bool noise;
 			if (GetOption(OPTION_NOISE, noise, options)) {
-				layouter.noise(noise);
+				layout.noise(noise);
 			}
 			double minDistCC;
-			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options)) {
-				layouter.minDistCC(minDistCC);
+			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options) && minDistCC >= 0) {
+				layout.minDistCC(minDistCC);
 			}
 			double pageRatio;
-			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
-				layouter.pageRatio(pageRatio);
+			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options) && pageRatio > 0) {
+				layout.pageRatio(pageRatio);
 			}
-			layouter.call(*GA);
+			double scaleFunctionFactor;
+			if (GetOption(OPTION_SCALE_FUNCTION_FACTOR, scaleFunctionFactor, options) && scaleFunctionFactor > 0) {
+				layout.scaleFunctionFactor(scaleFunctionFactor);
+			}
+			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case GEM: {
-			GEMLayout layouter;
+			GEMLayout layout;
 			int numberOfRounds;
 			if (GetOption(OPTION_NUMBER_OF_ROUNDS, numberOfRounds, options)) {
-				layouter.numberOfRounds(numberOfRounds);
+				layout.numberOfRounds(numberOfRounds);
 			}
 			double minimalTemperature;
 			if (GetOption(OPTION_MINIMAL_TEMPERATURE, minimalTemperature,
 					options)) {
-				layouter.minimalTemperature(minimalTemperature);
+				layout.minimalTemperature(minimalTemperature);
 			}
 			double initialTemperature;
 			if (GetOption(OPTION_INITIAL_TEMPERATURE, initialTemperature,
 					options)) {
-				layouter.initialTemperature(initialTemperature);
+				layout.initialTemperature(initialTemperature);
 			}
 			double gravitationalConstant;
 			if (GetOption(OPTION_GRAVITATIONAL_CONSTANT, gravitationalConstant,
 					options)) {
-				layouter.gravitationalConstant(gravitationalConstant);
+				layout.gravitationalConstant(gravitationalConstant);
 			}
 			double desiredLength;
 			if (GetOption(OPTION_DESIRED_LENGTH, desiredLength, options)) {
-				layouter.desiredLength(desiredLength);
+				layout.desiredLength(desiredLength);
 			}
 			double maximalDisturbance;
 			if (GetOption(OPTION_MAXIMAL_DISTURBANCE, maximalDisturbance,
 					options)) {
-				layouter.maximalDisturbance(maximalDisturbance);
+				layout.maximalDisturbance(maximalDisturbance);
 			}
 			double rotationAngle;
 			if (GetOption(OPTION_ROTATION_ANGLE, rotationAngle, options)) {
-				layouter.rotationAngle(rotationAngle);
+				layout.rotationAngle(rotationAngle);
 			}
 			double oscillationAngle;
 			if (GetOption(OPTION_OSCILLATION_ANGLE, oscillationAngle, options)) {
-				layouter.oscillationAngle(oscillationAngle);
+				layout.oscillationAngle(oscillationAngle);
 			}
 			double rotationSensitivity;
 			if (GetOption(OPTION_ROTATION_SENSITIVITY, rotationSensitivity,
 					options)) {
-				layouter.rotationSensitivity(rotationSensitivity);
+				layout.rotationSensitivity(rotationSensitivity);
 			}
 			double oscillationSensitivity;
 			if (GetOption(OPTION_OSCILLATION_SENSITIVITY,
 					oscillationSensitivity, options)) {
-				layouter.oscillationSensitivity(oscillationSensitivity);
+				layout.oscillationSensitivity(oscillationSensitivity);
 			}
 			int attractionFormula;
 			if (GetOption(OPTION_ATTRACTION_FORMULA, attractionFormula, options)) {
-				layouter.attractionFormula(attractionFormula);
+				// attractionFormula == 0: Fruchterman / Reingold; attractionFormula == 1: GEM
+				layout.attractionFormula(attractionFormula + 1);
 			}
 			double minDistCC;
-			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options)) {
-				layouter.minDistCC(minDistCC);
+			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options) && minDistCC >= 0) {
+				layout.minDistCC(minDistCC);
 			}
 			double pageRatio;
-			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
-				layouter.pageRatio(pageRatio);
+			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options) && pageRatio > 0) {
+				layout.pageRatio(pageRatio);
 			}
-			layouter.call(*GA);
+			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
 		case CIRCULAR: {
-			CircularLayout layouter;
+			CircularLayout layout;
 			double minDistCircle;
-			if (GetOption(OPTION_MIN_DIST_CIRCLE, minDistCircle, options)) {
-				layouter.minDistCircle(minDistCircle);
+			if (GetOption(OPTION_MIN_DIST_CIRCLE, minDistCircle, options) && minDistCircle >= 0) {
+				layout.minDistCircle(minDistCircle);
 			}
 			double minDistLevel;
-			if (GetOption(OPTION_MIN_DIST_LEVEL, minDistLevel, options)) {
-				layouter.minDistLevel(minDistLevel);
+			if (GetOption(OPTION_MIN_DIST_LEVEL, minDistLevel, options) && minDistLevel >= 0) {
+				layout.minDistLevel(minDistLevel);
 			}
 			double minDistSibling;
-			if (GetOption(OPTION_MIN_DIST_SIBLING, minDistSibling, options)) {
-				layouter.minDistSibling(minDistSibling);
+			if (GetOption(OPTION_MIN_DIST_SIBLING, minDistSibling, options) && minDistSibling >= 0) {
+				layout.minDistSibling(minDistSibling);
 			}
 			double minDistCC;
-			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options)) {
-				layouter.minDistCC(minDistCC);
+			if (GetOption(OPTION_MIN_DIST_CC, minDistCC, options) && minDistCC >= 0) {
+				layout.minDistCC(minDistCC);
 			}
 			double pageRatio;
-			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options)) {
-				layouter.pageRatio(pageRatio);
+			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options) && pageRatio > 0) {
+				layout.pageRatio(pageRatio);
 			}
-			layouter.call(*GA);
+			layout.call(*LGA);
 			break;
 		}
+
+		//-------------------------------------------------------------------//
 		case TREE: {
-			TreeLayout layouter;
+			TreeLayout layout;
 			double siblingDistance;
-			if (GetOption(OPTION_SIBLING_DISTANCE, siblingDistance, options)) {
-				layouter.siblingDistance(siblingDistance);
+			if (GetOption(OPTION_SIBLING_DISTANCE, siblingDistance, options) && siblingDistance >= 0) {
+				layout.siblingDistance(siblingDistance);
 			}
 			double subtreeDistance;
-			if (GetOption(OPTION_SUBTREE_DISTANCE, subtreeDistance, options)) {
-				layouter.subtreeDistance(subtreeDistance);
+			if (GetOption(OPTION_SUBTREE_DISTANCE, subtreeDistance, options) && subtreeDistance >= 0) {
+				layout.subtreeDistance(subtreeDistance);
 			}
 			double levelDistance;
-			if (GetOption(OPTION_LEVEL_DISTANCE, levelDistance, options)) {
-				layouter.levelDistance(levelDistance);
+			if (GetOption(OPTION_LEVEL_DISTANCE, levelDistance, options) && levelDistance >= 0) {
+				layout.levelDistance(levelDistance);
 			}
 			double treeDistance;
-			if (GetOption(OPTION_TREE_DISTANCE, treeDistance, options)) {
-				layouter.treeDistance(treeDistance);
+			if (GetOption(OPTION_TREE_DISTANCE, treeDistance, options) && treeDistance >= 0) {
+				layout.treeDistance(treeDistance);
 			}
 			bool orthogonal;
 			if (GetOption(OPTION_ORTHOGONAL, orthogonal, options)) {
-				layouter.orthogonalLayout(orthogonal);
+				layout.orthogonalLayout(orthogonal);
 			}
 			int orientation;
 			if (GetOption(OPTION_ORIENTATION, orientation, options)) {
 				TRANSFORM_ORIENTATION(theOrientation, orientation);
-				layouter.orientation(theOrientation);
+				layout.orientation(theOrientation);
 			}
-			layouter.call(*GA);
+			layout.call(*LGA);
 			break;
 		}
+
+		//-------------------------------------------------------------------//
 		case RADIAL_TREE: {
-			RadialTreeLayout layouter;
+			RadialTreeLayout layout;
 			double levelDistance;
-			if (GetOption(OPTION_LEVEL_DISTANCE, levelDistance, options)) {
-				layouter.levelDistance(levelDistance);
+			if (GetOption(OPTION_LEVEL_DISTANCE, levelDistance, options) && levelDistance >= 0) {
+				layout.levelDistance(levelDistance);
 			}
 			double ccDistance;
-			if (GetOption(OPTION_CC_DISTANCE, ccDistance, options)) {
-				layouter.connectedComponentDistance(ccDistance);
+			if (GetOption(OPTION_CC_DISTANCE, ccDistance, options) && ccDistance >= 0) {
+				layout.connectedComponentDistance(ccDistance);
 			}
-			layouter.call(*GA);
+			layout.call(*LGA);
 			break;
 		}
+
+		//-------------------------------------------------------------------//
 		case UPWARD_PLANARIZATION: {
-			UpwardPlanarizationLayout layouter;
+			UpwardPlanarizationLayout layout;
+			int runs;
+			if (GetOption(OPTION_RUNS, runs, options) && runs >= 0) {
+				SubgraphUpwardPlanarizer* upwardPlanarizer = new SubgraphUpwardPlanarizer;
+				layout.setUpwardPlanarizer(upwardPlanarizer);
+				FUPSSimple* fups = new FUPSSimple;
+				fups->runs(runs);
+				upwardPlanarizer->setSubgraph(fups);
+			}
 			LayerBasedUPRLayout* layerBasedUPRLayout =
 					new LayerBasedUPRLayout();
 			FastHierarchyLayout* fastHierarchyLayout =
 					new FastHierarchyLayout();
 			layerBasedUPRLayout->setLayout(fastHierarchyLayout);
-			layouter.setUPRLayout(layerBasedUPRLayout);
+			layout.setUPRLayout(layerBasedUPRLayout);
 			double nodeDistance;
-			if (GetOption(OPTION_NODE_DISTANCE, nodeDistance, options)) {
+			if (GetOption(OPTION_NODE_DISTANCE, nodeDistance, options) && nodeDistance >= 0) {
 				fastHierarchyLayout->nodeDistance(nodeDistance);
 			}
 			double layerDistance;
-			if (GetOption(OPTION_LAYER_DISTANCE, layerDistance, options)) {
+			if (GetOption(OPTION_LAYER_DISTANCE, layerDistance, options) && layerDistance >= 0) {
 				fastHierarchyLayout->layerDistance(layerDistance);
 			}
-			layouter.call(*GA);
+			layout.call(*LGA);
 			break;
 		}
+		
+		//-------------------------------------------------------------------//
+		case FAST_MULTIPOLE: {
+			FastMultipoleEmbedder layout;
+			int multipolePrec;
+			if (GetOption(OPTION_MULTIPOLE_PREC, multipolePrec, options) && multipolePrec >= 0) {
+				layout.setMultipolePrec(multipolePrec);
+			}
+			int iterations;
+			if (GetOption(OPTION_ITERATIONS, iterations, options) && iterations > 0) {
+				layout.setNumIterations(iterations);
+			}
+			bool randomize;
+			if (GetOption(OPTION_RANDOMIZE, randomize, options)) {
+				layout.setRandomize(randomize);
+			}
+			layout.call(*LGA);
+			break;
+		}
+		
+		//-------------------------------------------------------------------//
+		case FAST_MULTIPOLE_MULTILEVEL: {
+			FastMultipoleMultilevelEmbedder layout;
+			int bound;
+			if (GetOption(OPTION_MULTILEVEL_UNNAL, bound, options) && bound >= 0) {
+				layout.multilevelUntilNumNodesAreLess(bound);
+			}
+			layout.call(*LGA);
+			break;
+		}
+		
+		//-------------------------------------------------------------------//
+		case KAMADA_KAWAI: {
+			SpringEmbedderKK layout;
+			double edgeLength;
+			if (GetOption(OPTION_EDGE_LENGTH, edgeLength, options) && edgeLength >= 0) {
+				layout.setDesLength(edgeLength);
+			}
+			int localIterations;
+			if (GetOption(OPTION_LOCAL_ITERATIONS, localIterations, options)) {
+				layout.setMaxLocalIterations(localIterations);
+				layout.computeMaxIterations(false);
+			}
+			int globalIterations;
+			if (GetOption(OPTION_GLOBAL_ITERATIONS, globalIterations, options)) {
+				layout.setMaxGlobalIterations(globalIterations);
+				layout.computeMaxIterations(false);
+			}
+			bool useLayout;
+			if (GetOption(OPTION_USE_LAYOUT, useLayout, options)) {
+				layout.setUseLayout(useLayout);
+			}
+			double stopTolerance;
+			if (GetOption(OPTION_STOP_TOLERANCE, stopTolerance, options) && stopTolerance > 0) {
+				layout.setStopTolerance(stopTolerance);
+			}
+			layout.call(*LGA);
+			break;
+		}
+		
+		//-------------------------------------------------------------------//
+		case STRESS_MAJORIZATION: {
+			StressMajorization layout;
+			int iterations;
+			if (GetOption(OPTION_ITERATIONS, iterations, options)) {
+				layout.setIterations(iterations);
+			}
+			int localIterations;
+			if (GetOption(OPTION_LOCAL_ITERATIONS, localIterations, options)) {
+				layout.setMaxLocalIterations(localIterations);
+				layout.computeMaxIterations(false);
+			}
+			int globalIterations;
+			if (GetOption(OPTION_GLOBAL_ITERATIONS, globalIterations, options)) {
+				layout.setMaxGlobalIterations(globalIterations);
+				layout.computeMaxIterations(false);
+			}
+			bool useLayout;
+			if (GetOption(OPTION_USE_LAYOUT, useLayout, options)) {
+				layout.setUseLayout(useLayout);
+			}
+			double stopTolerance;
+			if (GetOption(OPTION_STOP_TOLERANCE, stopTolerance, options) && stopTolerance > 0) {
+				layout.setStopTolerance(stopTolerance);
+			}
+			bool upward;
+			if (GetOption(OPTION_UPWARD, upward, options)) {
+				layout.upward(upward);
+			}
+			bool radial;
+			if (GetOption(OPTION_RADIAL, radial, options)) {
+				layout.radial(radial);
+			}
+			layout.call(*LGA);
+			break;
+		}
+		
+		//-------------------------------------------------------------------//
+		case DOMINANCE: {
+			DominanceLayout layout;
+			int runs;
+			if (GetOption(OPTION_RUNS, runs, options) && runs >= 0) {
+				SubgraphUpwardPlanarizer* upwardPlanarizer = new SubgraphUpwardPlanarizer;
+				layout.setUpwardPlanarizer(upwardPlanarizer);
+				FUPSSimple* fups = new FUPSSimple;
+				fups->runs(runs);
+				upwardPlanarizer->setSubgraph(fups);
+			}
+			int gridDistance;
+			if (GetOption(OPTION_GRID_DISTANCE, gridDistance, options) && gridDistance >= 0) {
+				layout.setMinGridDistance(gridDistance);
+			}
+			layout.call(*LGA);
+			break;
+		}
+		
+		//-------------------------------------------------------------------//
+		case VISIBILITY: {
+			VisibilityLayout layout;
+			int runs;
+			if (GetOption(OPTION_RUNS, runs, options) && runs >= 0) {
+				SubgraphUpwardPlanarizer* upwardPlanarizer = new SubgraphUpwardPlanarizer;
+				layout.setUpwardPlanarizer(upwardPlanarizer);
+				FUPSSimple* fups = new FUPSSimple;
+				fups->runs(runs);
+				upwardPlanarizer->setSubgraph(fups);
+			}
+			int gridDistance;
+			if (GetOption(OPTION_GRID_DISTANCE, gridDistance, options) && gridDistance >= 0) {
+				layout.setMinGridDistance(gridDistance);
+			}
+			layout.call(*LGA);
+			break;
+		}
+		
+		//-------------------------------------------------------------------//
+		case FRAYSSEIX_PACH_POLLACK: {
+			FPPLayout layout;
+			double separation;
+			if (GetOption(OPTION_SEPARATION, separation, options) && separation >= 0) {
+				layout.separation(separation);
+			}
+			layout.call(*LGA);
+			break;
+		}
+		
+		//-------------------------------------------------------------------//
+		case SCHNYDER: {
+			SchnyderLayout layout;
+			double separation;
+			if (GetOption(OPTION_SEPARATION, separation, options) && separation >= 0) {
+				layout.separation(separation);
+			}
+			layout.call(*LGA);
+			break;
+		}
+		
+		//-------------------------------------------------------------------//
+		case CANONICAL_ORDER: {
+			if (!isPlanar(G)) {
+				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
+			}
+			PlanarStraightLayout layout;
+			int embedderOption;
+			if (GetOption(OPTION_EMBEDDER_MODULE, embedderOption, options)) {
+				switch (embedderOption) {
+				case EMBEDDER_MAX_FACE: {
+					EmbedderMaxFace* embedder = new EmbedderMaxFace;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MAX_FACE_LAYERS: {
+					EmbedderMaxFaceLayers* embedder = new EmbedderMaxFaceLayers;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH: {
+					EmbedderMinDepth* embedder = new EmbedderMinDepth;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE: {
+					EmbedderMinDepthMaxFace* embedder = new EmbedderMinDepthMaxFace;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE_LAYERS: {
+					EmbedderMinDepthMaxFaceLayers* embedder = new EmbedderMinDepthMaxFaceLayers;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_PIZZONIA_TAMASSIA: {
+					EmbedderMinDepthPiTa* embedder = new EmbedderMinDepthPiTa;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				// default: EMBEDDER_SIMPLE
+				}
+			}
+			double baseRatio;
+			if (GetOption(OPTION_BASE_RATIO, baseRatio, options) && baseRatio >= 0) {
+				layout.baseRatio(baseRatio);
+			}
+			double separation;
+			if (GetOption(OPTION_SEPARATION, separation, options) && separation >= 0) {
+				layout.separation(separation);
+			}
+			layout.call(*LGA);
+			break;
+		}
+		
+		//-------------------------------------------------------------------//
+		case CONVEX_GRID: {
+			if (!isPlanar(G)) {
+				throw PreconditionViolatedException(pvcPlanar, __FILE__, __LINE__);
+			}
+			PlanarDrawLayout layout;
+			int embedderOption;
+			if (GetOption(OPTION_EMBEDDER_MODULE, embedderOption, options)) {
+				switch (embedderOption) {
+				case EMBEDDER_MAX_FACE: {
+					EmbedderMaxFace* embedder = new EmbedderMaxFace;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MAX_FACE_LAYERS: {
+					EmbedderMaxFaceLayers* embedder = new EmbedderMaxFaceLayers;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH: {
+					EmbedderMinDepth* embedder = new EmbedderMinDepth;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE: {
+					EmbedderMinDepthMaxFace* embedder = new EmbedderMinDepthMaxFace;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE_LAYERS: {
+					EmbedderMinDepthMaxFaceLayers* embedder = new EmbedderMinDepthMaxFaceLayers;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_PIZZONIA_TAMASSIA: {
+					EmbedderMinDepthPiTa* embedder = new EmbedderMinDepthPiTa;
+					layout.setEmbedder(embedder);
+					break;
+				}
+				// default: EMBEDDER_SIMPLE
+				}
+			}
+			double baseRatio;
+			if (GetOption(OPTION_BASE_RATIO, baseRatio, options) && baseRatio >= 0) {
+				layout.baseRatio(baseRatio);
+			}
+			double separation;
+			if (GetOption(OPTION_SEPARATION, separation, options) && separation >= 0) {
+				layout.separation(separation);
+			}
+			layout.call(*LGA);
+			break;
+		}
+		
+		//-------------------------------------------------------------------//
+		case MIXED_MODEL: {
+			PlanarizationGridLayout layout;
+			int runs;
+			if (GetOption(OPTION_RUNS, runs, options) && runs >= 0) {
+				FastPlanarSubgraph* planarSubgraph = new FastPlanarSubgraph;
+				planarSubgraph->runs(runs);
+				layout.setSubgraph(planarSubgraph);
+			}
+			int edgeInsertionOption;
+			if (GetOption(OPTION_EDGE_INSERTION_MODULE, edgeInsertionOption, options)) {
+				switch (edgeInsertionOption) {
+				case EDGE_INSERTION_VARIABLE_EMB: {
+					VariableEmbeddingInserter* edgeInsertion = new VariableEmbeddingInserter;
+					layout.setInserter(edgeInsertion);
+					break;
+				}
+				case EDGE_INSERTION_MULTIEDGE_APPROX: {
+					MultiEdgeApproxInserter* edgeInsertion = new MultiEdgeApproxInserter;
+					layout.setInserter(edgeInsertion);
+					break;
+				}
+				// default: EDGE_INSERTION_FIXED_EMB
+				}
+			}
+			MixedModelLayout* mixedModel = new MixedModelLayout;
+			layout.setPlanarLayouter(mixedModel);
+			int embedderOption;
+			if (GetOption(OPTION_EMBEDDER_MODULE, embedderOption, options)) {
+				switch (embedderOption) {
+				case EMBEDDER_MAX_FACE: {
+					EmbedderMaxFace* embedder = new EmbedderMaxFace;
+					mixedModel->setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MAX_FACE_LAYERS: {
+					EmbedderMaxFaceLayers* embedder = new EmbedderMaxFaceLayers;
+					mixedModel->setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH: {
+					EmbedderMinDepth* embedder = new EmbedderMinDepth;
+					mixedModel->setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE: {
+					EmbedderMinDepthMaxFace* embedder = new EmbedderMinDepthMaxFace;
+					mixedModel->setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_MIN_DEPTH_MAX_FACE_LAYERS: {
+					EmbedderMinDepthMaxFaceLayers* embedder = new EmbedderMinDepthMaxFaceLayers;
+					mixedModel->setEmbedder(embedder);
+					break;
+				}
+				case EMBEDDER_PIZZONIA_TAMASSIA: {
+					EmbedderMinDepthPiTa* embedder = new EmbedderMinDepthPiTa;
+					mixedModel->setEmbedder(embedder);
+					break;
+				}
+				// default: EMBEDDER_SIMPLE
+				}
+			}
+			int crossBeautifOption;
+			if (GetOption(OPTION_CROSS_BEAUTIF_MODULE, crossBeautifOption, options)) {
+				switch (crossBeautifOption) {
+				case CROSS_BEAUTIF_DOUBLE_GRID: {
+					MMCBDoubleGrid* crossBeautifier = new MMCBDoubleGrid;
+					mixedModel->setCrossingsBeautifier(crossBeautifier);
+					break;
+				}
+				case CROSS_BEAUTIF_LOCAL_STRETCH: {
+					MMCBLocalStretch* crossBeautifier = new MMCBLocalStretch;
+					mixedModel->setCrossingsBeautifier(crossBeautifier);
+					break;
+				}
+				// default: case CROSS_BEAUTIF_NONE
+				}
+			}
+			double separation;
+			if (GetOption(OPTION_SEPARATION, separation, options) && separation >= 0) {
+				mixedModel->separation(separation);
+				layout.separation(separation);
+			}
+			double pageRatio;
+			if (GetOption(OPTION_PAGE_RATIO, pageRatio, options) && pageRatio > 0) {
+				layout.pageRatio(pageRatio);
+			}
+			layout.call(*LGA);
+			break;
+		}
+		
+		//-------------------------------------------------------------------//
+		case BALLOON: {
+			BalloonLayout layout;
+			layout.call(*LGA);
+			break;
+		}
+
 		default:
 			throw runtime_error("The specified layouter does not exist.");
 		}
+
 		// add the edge intersections with the nodes bounding box as bend points
 		LGA->addNodeCenter2Bends(1);
-		// perform the label layout -- TODO make label processing optional
+
+		// perform the label layout
 		LI = new LabelInterface(*LGA);
 		TransferLabels(G, *LGA, *LI, information);
 		ELabelPosSimple simpleLabelLayout;
-		GetOption(OPTION_LABEL_EDGE_DISTANCE, simpleLabelLayout.m_edgeDistance,
-				options);
-		GetOption(OPTION_LABEL_MARGIN_DISTANCE,
-				simpleLabelLayout.m_edgeDistance, options);
+		double edgeDistance;
+		if (GetOption(OPTION_LABEL_EDGE_DISTANCE, edgeDistance, options)) {
+			simpleLabelLayout.m_edgeDistance = edgeDistance;
+		}
+		double marginDistance;
+		if (GetOption(OPTION_LABEL_MARGIN_DISTANCE, marginDistance, options)) {
+			simpleLabelLayout.m_marginDistance = marginDistance;
+		}
 		simpleLabelLayout.m_midOnEdge = false;
 		simpleLabelLayout.call(*LGA, *LI);
 		return LGA;
 
 	} catch (DynamicCastFailedException& e) {
-		lastLayoutError
-				= ogdfExceptionToString("DynamicCastFailedException", e);
+		lastLayoutError = ogdfExceptionToString("DynamicCastFailedException", e);
 	} catch (InsufficientMemoryException& e) {
-		lastLayoutError = ogdfExceptionToString("InsufficientMemoryException",
-				e);
+		lastLayoutError = ogdfExceptionToString("InsufficientMemoryException", e);
 	} catch (NoStdComparerException& e) {
 		lastLayoutError = ogdfExceptionToString("NoStdComparerException", e);
 	} catch (PreconditionViolatedException& e) {
@@ -773,9 +1408,12 @@ GraphAttributes* Layout(Graph& G, ClusterGraph& CG, ClusterGraphAttributes* GA,
 		lastLayoutError = e.what();
 	}
 	delete LGA;
-	return 0;
+	return NULL;
 }
 
+/*
+ * Return the message stored for the last error that occurred while executing layout.
+ */
 const string& GetLastLayoutError() {
 	return lastLayoutError;
 }

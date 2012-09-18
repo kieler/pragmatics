@@ -24,6 +24,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
+import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
 import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartDelegate;
 
 /**
@@ -62,9 +63,15 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
     @Override
     public void handleNotificationEvent(final Notification notification) {
         super.handleNotificationEvent(notification);
-        util.handleNotificationEvent(notification, super.getFigure(), this.getModelElement(), this);
+        IFigure figure = super.getFigure();
+        util.handleNotificationEvent(notification, figure, this.getModelElement(), this);
+        if (figure instanceof SplineConnection) {
+            //((SplineConnection) figure).drawJoinPointDecoration(this);
+        	((SplineConnection) figure).setPart(this);
+        }
+        
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -88,6 +95,11 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
         if (updateTriggerFigure) {
             updateTriggerFigure = false;
             util.updateFigure(figure, this.getModelElement(), this, true);
+            if (figure instanceof SplineConnection) {
+                //((SplineConnection) figure).drawJoinPointDecoration(this);
+            	((SplineConnection) figure).setPart(this);
+            }
+
         }
         return figure;
     }

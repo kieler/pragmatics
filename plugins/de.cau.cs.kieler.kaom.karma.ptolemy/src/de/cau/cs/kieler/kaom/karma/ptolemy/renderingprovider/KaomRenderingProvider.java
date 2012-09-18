@@ -101,7 +101,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
             return createPtolemyFigure(PtolemyFetcher.getPtolemyInstance(object));
         } else if (input.equals("MonitorValue")) {
             this.hideCompartment(part, true);
-            return figureProvider.createMonitorValue(object);
+            return figureProvider.getDefaultFigure();
         } else if (input.equals("compound")) {
             //this.unhideCompartment(part);
             return figureProvider.getDefaultFigure();
@@ -128,7 +128,21 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 connection.setLineWidthFloat(LINE_WIDTH);
                 connection.setSplineMode(SplineConnection.SPLINE_OFF);
                 final ConnectionEditPart cPart = (ConnectionEditPart) part;
-
+                //code will be used again for debug purposes.
+                /*
+                connection.setJoinPointDecoration(new IJoinPointFactory() {
+					
+					public IFigure getNewJoinPointDecorator() {
+						RectangleFigure defaultFigure = new RectangleFigure();
+				        defaultFigure.setLineWidth(1);
+				        defaultFigure.setForegroundColor(ColorConstants.black);
+				        defaultFigure.setBackgroundColor(ColorConstants.red);
+				        defaultFigure.getBounds().setSize(7, 7);
+				        return defaultFigure;
+					}
+				});
+				*/
+                
                 // Encapsulate setting the BendpointRadius and Smoothness in an emf operation.
                 // Eclipse needs it that way.
                 AbstractEMFOperation emfOp = new AbstractEMFOperation(cPart.getEditingDomain(),
@@ -327,6 +341,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
         }
 
     }
+    
 
     /**
      * {@inheritDoc}

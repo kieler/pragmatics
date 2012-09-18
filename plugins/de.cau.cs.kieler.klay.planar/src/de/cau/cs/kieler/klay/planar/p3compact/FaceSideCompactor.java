@@ -35,7 +35,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
 /**
  * It is a try of my own. The idea is to calculate the number of edges of every side of a face and
  * then calculate the edge-length depending of the face -side-edge-number.
- * 
+ * ONLY EXPERIMENTAL
  * @author pkl
  */
 public class FaceSideCompactor extends AbstractAlgorithm implements ILayoutPhase {

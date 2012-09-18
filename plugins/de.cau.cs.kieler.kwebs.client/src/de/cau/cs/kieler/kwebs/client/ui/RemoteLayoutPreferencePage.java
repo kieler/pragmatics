@@ -171,7 +171,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
 
     /** Reference to to the KWebS project page. */
     private static final String KWEBS_PROJECTPAGE 
-        = "http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KWebS";
+        = "http://rtsys.informatik.uni-kiel.de/confluence/x/nQEF";
 
     /**
      * {@inheritDoc}

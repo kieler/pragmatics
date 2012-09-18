@@ -14,30 +14,24 @@
 
 package de.cau.cs.kieler.kwebs.server.publishing;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
 
 import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsServer;
 
-import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
-import de.cau.cs.kieler.kwebs.util.Resources;
+import de.cau.cs.kieler.kwebs.server.security.ServerSSLContextFactory;
 
 /**
  * Manager for publishing a service object over HTTPS.
@@ -65,47 +59,27 @@ final class HttpsServerManager extends HttpServerManager {
      * @throws UnrecoverableKeyException
      * @throws KeyManagementException
      * @throws URISyntaxException
+     * @throws IllegalStateException if no server SSL context is available
      */
     protected synchronized void createServer() throws NoSuchAlgorithmException,
         KeyStoreException, CertificateException, IOException,
         UnrecoverableKeyException, KeyManagementException, URISyntaxException {
+        
         if (server != null) {
             throw new AlreadyPublishedException();
         }
-        SSLContext sslContext
-            = SSLContext.getInstance("TLS");
-        KeyManagerFactory keyManagerFactory
-            = KeyManagerFactory.getInstance(
-                  KeyManagerFactory.getDefaultAlgorithm()
-              );
-        KeyStore keyStore
-            = KeyStore.getInstance("JKS");
-        TrustManagerFactory trustManagerFactory
-            = TrustManagerFactory.getInstance(
-                  TrustManagerFactory.getDefaultAlgorithm()
-              );
-        String keystoreFile = Configuration.INSTANCE.
-            getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PATH);
-        String keystorePass = Configuration.INSTANCE.
-            getConfigProperty(Configuration.HTTPSKEYSTORE_JKS_PASS);
-        byte[] keystoreData = Resources.readFileOrPluginResourceAsByteArray(
-            Application.PLUGIN_ID, keystoreFile
-        );
-        keyStore.load(
-            new ByteArrayInputStream(keystoreData),
-            keystorePass.toCharArray()
-        );
-        keyManagerFactory.init(
-            keyStore, keystorePass.toCharArray()
-        );
-        trustManagerFactory.init(keyStore);
-        sslContext.init(
-            keyManagerFactory.getKeyManagers(),
-                trustManagerFactory.getTrustManagers(),
-                    new SecureRandom()
-        );
-        HttpsConfigurator httpsConfigurator
-            = new HttpsConfigurator(sslContext);
+        
+        SSLContext sslContext = ServerSSLContextFactory.INSTANCE.create();
+        
+        // The factory could not provide a SSL context.
+        if (sslContext == null) {
+            throw new IllegalStateException(
+                "No server SSL context available."
+            ); 
+        }
+        
+        HttpsConfigurator httpsConfigurator = new HttpsConfigurator(sslContext);
+        
         String host = address.getHost();
         if (host == null) {
             Logger.log(Severity.WARNING,
@@ -114,6 +88,7 @@ final class HttpsServerManager extends HttpServerManager {
             );
             host = HTTPS_DEFAULTHOST;
         }
+        
         int port = address.getPort();
         if (port == -1) {
             Logger.log(Severity.WARNING,
@@ -122,11 +97,14 @@ final class HttpsServerManager extends HttpServerManager {
             );
             port = HTTPS_DEFAULTPORT;
         }
+        
         server = HttpsServer.create(
             new InetSocketAddress(host, port),
             Integer.parseInt(Configuration.INSTANCE.getConfigProperty(Configuration.SERVER_BACKLOG))
         );
+        
         ((HttpsServer) server).setHttpsConfigurator(httpsConfigurator);
+        
     }
 
 }

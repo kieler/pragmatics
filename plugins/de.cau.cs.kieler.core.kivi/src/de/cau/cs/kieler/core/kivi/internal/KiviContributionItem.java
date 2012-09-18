@@ -40,7 +40,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.keys.BindingService;
-import org.eclipse.ui.internal.menus.InternalMenuService;
+import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
@@ -110,7 +110,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
      * This will remove the warning about discouraged access due to restrictions on internal menu
      * code.
      */
-    private InternalMenuService menuService;
+    private WorkbenchMenuService menuService;
 
     // dunno how to get the formatter to make a linebreak here
     // CHECKSTYLEOFF MaximumLineLength
@@ -163,7 +163,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
     public void initialize(final IServiceLocator theServiceLocator) {
         this.serviceLocator = theServiceLocator;
         this.commandService = (ICommandService) serviceLocator.getService(ICommandService.class);
-        this.menuService = (InternalMenuService) serviceLocator.getService(IMenuService.class);
+        this.menuService = (WorkbenchMenuService) serviceLocator.getService(IMenuService.class);
         this.evaluationService = (IEvaluationService) serviceLocator
                 .getService(IEvaluationService.class);
         

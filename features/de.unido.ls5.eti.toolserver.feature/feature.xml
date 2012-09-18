@@ -5,7 +5,7 @@
       version="1.5.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
-   <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KWebS">
+   <description url="http://rtsys.informatik.uni-kiel.de/confluence/x/nQEF">
       This feature contains the plugins needed for the jETI embedded
 tool server used in the KIELER layout server. This feature uses
 libraries from the jETI project from the TU Dortmund.

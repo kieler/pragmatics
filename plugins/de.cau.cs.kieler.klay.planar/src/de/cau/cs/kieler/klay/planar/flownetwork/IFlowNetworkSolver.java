@@ -75,7 +75,7 @@ public interface IFlowNetworkSolver extends IAlgorithm {
      * @param network
      *            the network to work on
      */
-    void findFlow(PGraph network);
+    void calcFlow(PGraph network);
 
     /**
      * Interface for algorithms to solve the maximum flow problem in a flow network. The maximum

@@ -58,7 +58,7 @@ class ProvidedlayoutProvider
      * 
      */
 	override CharSequence getHeaders(
-		RequestData requestData
+    	ResourceProcessingExchange processingExchange
 	) 
 	{
 		return 
@@ -112,35 +112,35 @@ class ProvidedlayoutProvider
      * 
      */
 	override CharSequence getBody(
-		RequestData requestData
+    	ResourceProcessingExchange processingExchange
 	) 
 	{		
-        val Map<String, String> params = requestData.params
+        val Map<String, String> params = processingExchange.getParams()
         if (params.containsKey(PARAM_ALGORITHM)) {
-            return generateForAlgorithm(requestData)
+            return generateForAlgorithm(processingExchange)
         } else if (params.containsKey(PARAM_OPTION)) {
-            return generateForOption(requestData, null, false)
+            return generateForOption(processingExchange, null, false)
         } else if (params.containsKey(PARAM_FORMAT)) {
-            return generateForFormat(requestData)
+            return generateForFormat(processingExchange)
         } else if (params.containsKey(PARAM_PREVIEWIMAGE)) {
             Logger::log(//FIXME Xtend2 can not handle static enum members            	
             	"Preview image handled without override."
             )
             return ''''''
         } 
-        return generateOverview(requestData)            
+        return generateOverview(processingExchange)            
 	}
     
     /**
      * 
      */
     override boolean providerOverride(
-		RequestData requestData
+    	ResourceProcessingExchange processingExchange
 	) 
 	{
-        val Map<String, String> params = requestData.params
+        val Map<String, String> params = processingExchange.getParams()
 		if (params.containsKey(PARAM_PREVIEWIMAGE)) {
-            generateForPreviewImage(requestData)
+            generateForPreviewImage(processingExchange)
             return true
         } 
         return false
@@ -153,10 +153,10 @@ class ProvidedlayoutProvider
      *            the data of the request
      */
     def private CharSequence generateForAlgorithm(
-		RequestData requestData
+    	ResourceProcessingExchange processingExchange
 	) 
 	{
-        val Map<String, String> params = requestData.params
+        val Map<String, String> params = processingExchange.getParams()
         val String 				id 	   = params.get(PARAM_ALGORITHM)
         if (id == null) {
             return ''''''
@@ -202,7 +202,7 @@ class ProvidedlayoutProvider
 					</table>
 				</div>
 			</p>
-			«generateBackButton(requestData)»
+			«generateBackButton(processingExchange)»
         	'''
     }
 
@@ -212,7 +212,7 @@ class ProvidedlayoutProvider
      *            the data of the request
      */
     def private CharSequence generateOverview(
-		RequestData requestData
+    	ResourceProcessingExchange processingExchange
 	) 
 	{
 		val EList<LayoutAlgorithm> algorithmns = serviceData.layoutAlgorithms
@@ -238,7 +238,7 @@ class ProvidedlayoutProvider
 					<table class='advertisement'>
 						<tr>
 							<td align='left'>
-								«generateForOption(requestData, LayoutOptions::ALGORITHM.id, true)»
+								«generateForOption(processingExchange, LayoutOptions::ALGORITHM.id, true)»
 							</td>
 						</tr>
 					</table>
@@ -323,12 +323,12 @@ class ProvidedlayoutProvider
      *            create full page or simply add the raw algorithm description
      */
     def private CharSequence generateForOption(
-		RequestData requestData, 
-        String      algorithmId,
-        boolean     rawAppend
+    	ResourceProcessingExchange processingExchange,
+        String      			   algorithmId,
+        boolean     			   rawAppend
 	) 
 	{
-        val Map<String, String> params = requestData.params
+        val Map<String, String> params = processingExchange.getParams()
         val String              id     = if (params.get(PARAM_OPTION) != null) params.get(PARAM_OPTION) else algorithmId
         if (id == null) {
             return ''''''
@@ -364,7 +364,7 @@ class ProvidedlayoutProvider
 			    </p>
 			    '''
 			}»
-			«if (!rawAppend) generateBackButton(requestData)»'''
+			«if (!rawAppend) generateBackButton(processingExchange)»'''
     }
     
     /**
@@ -374,10 +374,10 @@ class ProvidedlayoutProvider
      *            the data of the request
      */
     def private generateForFormat(
-		RequestData requestData
+		ResourceProcessingExchange processingExchange
 	) 
 	{
-        val Map<String, String> params = requestData.params
+        val Map<String, String> params = processingExchange.getParams()
         val String 				id     = params.get(PARAM_FORMAT)
         if (id == null) {
             return ''''''
@@ -398,7 +398,7 @@ class ProvidedlayoutProvider
 					«generateHypertext(format.description)»
 				</p>'''
 	        }»
-	        «generateBackButton(requestData)»'''
+	        «generateBackButton(processingExchange)»'''
     }
     
     /** Path to the image which is shown when a preview image is not given by a plug in. */
@@ -411,10 +411,10 @@ class ProvidedlayoutProvider
      *            the data of the request
      */
     def private CharSequence generateForPreviewImage(
-		RequestData requestData
+		ResourceProcessingExchange processingExchange
 	) 
 	{
-        val Map<String, String> params = requestData.params
+        val Map<String, String> params = processingExchange.getParams()
         val String 			    id     = params.get(PARAM_PREVIEWIMAGE)
         if (id == null) {
             return ''''''
@@ -424,9 +424,9 @@ class ProvidedlayoutProvider
             data = Resources::readFileOrPluginResourceAsByteArray(Application::PLUGIN_ID, PREVIEWIMAGE_UNAVAILABLE)
         }
         if (data != null) {
-            requestData.setContent(data)
-            requestData.setMimetype(
-                WebContentHandler::guessMimeType(requestData.getResource())
+            processingExchange.getResourceInformation().setContent(data)
+            processingExchange.getResourceInformation().setMimetype(
+                WebContentHandler::guessMimeType(processingExchange.getResource())
             )
         }
     }
@@ -443,7 +443,7 @@ class ProvidedlayoutProvider
      *            the response buffer to append to
      */
     def private CharSequence generateBackButton(
-		RequestData requestData
+		ResourceProcessingExchange processingExchange
 	) 
 	{
 //        val Headers headers = requestData.exchange.requestHeaders
@@ -460,6 +460,8 @@ class ProvidedlayoutProvider
 «««				        <input type="submit" value="Back"/>
 «««				    </form>
 					<form action="javascript:history.back();" method="POST">
+				        <input type="submit" value="Back"/>
+				    </form>
 				</div>
 			</p>'''
     }

@@ -2,7 +2,7 @@
 <feature
       id="net.ogdf.bin.feature"
       label="OGDF Server Binaries"
-      version="1.1.0.qualifier"
+      version="2.0.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       os="linux,macosx,solaris,win32"
       arch="sparc,x86,x86_64">
@@ -13,7 +13,7 @@ that allow to reuse and replace particular algorithm phases by
 using a dedicated module mechanism. It includes sophisticated
 data structures that are commonly used in graph drawing, equipped
 with rich public interfaces. This feature is built with the release
-version 2010.10 (Sassafras) of OGDF. It provides a program that
+version 2012.07 (Sakura) of OGDF. It provides a program that
 can be executed as layout server with standard I/O communication.
    </description>
 
@@ -635,8 +635,7 @@ instead of this License. But first, please read &lt;http://www.gnu.org/philosoph
          id="net.ogdf.bin"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="net.ogdf.ogml"
