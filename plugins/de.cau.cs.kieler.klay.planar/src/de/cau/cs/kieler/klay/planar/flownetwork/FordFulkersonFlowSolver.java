@@ -35,7 +35,7 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
     /**
      * {@inheritDoc}
      */
-    public void findFlow(final PGraph network) {
+    public void calcFlow(final PGraph network) {
 
         // Add source and sink nodes
         PNode source = network.addNode();

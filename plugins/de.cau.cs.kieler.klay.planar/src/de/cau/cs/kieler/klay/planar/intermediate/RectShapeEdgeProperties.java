@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.planar.p3compact;
+package de.cau.cs.kieler.klay.planar.intermediate;
 
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
@@ -21,6 +21,9 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
  * @author pkl
  */
 public class RectShapeEdgeProperties {
+
+    /** Uses this to identify a non set front, null is not suitable in that case.*/
+    public static final PEdge EMPTY_FRONT = new PEdge();
 
     /** Corner is the next node of a edge while walking around the face edges. */
     private PNode corner = null;

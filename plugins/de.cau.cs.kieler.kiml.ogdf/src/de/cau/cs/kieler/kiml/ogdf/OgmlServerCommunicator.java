@@ -80,9 +80,11 @@ public class OgmlServerCommunicator {
     public static final float DEF_BORDER_SPACING = 15.0f;
 
     /** the input format for the ogdf server. */
-    public static final String INPUT_FORMAT = "OGML";
+    private static final String INPUT_FORMAT = "OGML";
     /** the separator used to separate chunks of data sent to the ogdf-server process. */
     private static final String CHUNK_KEYWORD = "[CHUNK]\n";
+    /** the minimal distance of bend points. */
+    private static final double MIN_POINT_DIST = 2.0;
 
     /** the current id for the generation of node ids. */
     private int nodeIdCounter = 0;
@@ -482,23 +484,31 @@ public class OgmlServerCommunicator {
                 }
                 
                 // set the bend points
+                KVector lastBend = sourceBend;
                 while (bendIt.hasNext()) {
                     KVector bend = bendIt.next();
-                    KPoint point = toKPoint((float) bend.x, (float) bend.y, offsetX, offsetY);
-                    if (bendIt.hasNext()) {
-                        kbends.add(point);
-                    } else {
-                        // set the target point
-                        edgeLayout.setTargetPoint(point);
-                        if (kedge.getTargetPort() != null) {
-                            KShapeLayout portLayout = kedge.getTargetPort().getData(KShapeLayout.class);
-                            KShapeLayout targetLayout = kedge.getTarget().getData(KShapeLayout.class);
-                            portLayout.setXpos(point.getX() - targetLayout.getXpos()
-                                    - portLayout.getWidth() / 2);
-                            portLayout.setYpos(point.getY() - targetLayout.getYpos()
-                                    - portLayout.getHeight() / 2);
+                    if (Math.abs(bend.x - lastBend.x) + Math.abs(bend.y - lastBend.y)
+                            >= MIN_POINT_DIST) { 
+                        if (bendIt.hasNext()) {
+                            kbends.add(toKPoint((float) bend.x, (float) bend.y, offsetX, offsetY));
                         }
+                    } else if (!bendIt.hasNext()) {
+                        kbends.remove(kbends.size() - 1);
                     }
+                    lastBend = bend;
+                }
+                
+                // set the target point
+                KPoint targetPoint =
+                        toKPoint((float) lastBend.x, (float) lastBend.y, offsetX, offsetY);
+                edgeLayout.setTargetPoint(targetPoint);
+                if (kedge.getTargetPort() != null) {
+                    KShapeLayout portLayout = kedge.getTargetPort().getData(KShapeLayout.class);
+                    KShapeLayout targetLayout = kedge.getTarget().getData(KShapeLayout.class);
+                    portLayout.setXpos(targetPoint.getX() - targetLayout.getXpos()
+                            - portLayout.getWidth() / 2);
+                    portLayout.setYpos(targetPoint.getY() - targetLayout.getYpos()
+                            - portLayout.getHeight() / 2);
                 }
             }
             

@@ -49,6 +49,7 @@ import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kwebs.GraphLayoutOption;
+import de.cau.cs.kieler.kwebs.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.Statistics;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
@@ -305,7 +306,7 @@ public abstract class AbstractService {
         
         // Apply request pre processing filters
         if (!preFilters.apply(filterData)) {
-            //ToDo: handle filter messages and return appropriate error
+            throw new RemoteServiceException("Request did not pass pre-filters.");
         }
         
         // Parse the transmitted layout options and annotate the layout structure
@@ -371,7 +372,7 @@ public abstract class AbstractService {
         
         // Apply request post processing filters
         if (!postFilters.apply(filterData)) {
-            //ToDo: handle filter messages and return appropriate error
+            throw new RemoteServiceException("Request did not pass post-filters.");
         }
         
         return serializedResult;

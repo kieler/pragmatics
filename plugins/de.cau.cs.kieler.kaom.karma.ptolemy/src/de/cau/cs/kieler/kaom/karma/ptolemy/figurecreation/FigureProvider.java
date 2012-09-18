@@ -47,14 +47,8 @@ import org.w3c.dom.Document;
 import ptolemy.vergil.icon.EditorIcon;
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
-import de.cau.cs.kieler.core.annotations.NamedObject;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.core.ui.util.CoreUiUtil;
-import de.cau.cs.kieler.kvid.KvidUtil;
-import de.cau.cs.kieler.kvid.data.DataObject;
-import de.cau.cs.kieler.kvid.data.KvidUri;
-import de.cau.cs.kieler.kvid.datadistributor.DataDistributor;
-import de.cau.cs.kieler.kvid.datadistributor.IDataListener;
 import diva.canvas.CanvasUtilities;
 import diva.canvas.Figure;
 import diva.canvas.toolbox.ImageFigure;
@@ -258,82 +252,6 @@ public class FigureProvider {
                 + "0,-3.550781 8.419921,-9.826172 -8.419921,-8.9648439 0,-3.4277344 z\" />"
                 + "</svg>";
         return createSvg(accsvg);
-    }
-
-    /**
-     * Method for creating a custom monitorvalue figure.
-     * 
-     * @param object
-     *            the modelelement
-     * @return the monitorvalue figure
-     */
-    public IFigure createMonitorValue(final EObject object) {
-        MonitorValueFigure monitor = new MonitorValueFigure(object);
-        monitor.setLineWidth(1);
-        monitor.setForegroundColor(ColorConstants.black);
-        monitor.setBackgroundColor(ColorConstants.white);
-        return monitor;
-    }
-
-    /**
-     * a monitor figure using the kvid mechanism of displaying its value.
-     * 
-     * @author ckru
-     * 
-     */
-    private static class MonitorValueFigure extends RectangleFigure implements IDataListener {
-
-        private Label value;
-
-        private String referredDataUri;
-
-        private static final int LABELSIZE_WIDTH = 140;
-        private static final int LABELSIZE_HEIGHT = 10;
-        private static final int LABELLOCATION_X = 70;
-        private static final int LABELLOCATION_Y = 10;
-
-        /**
-         * constructs this figure and adds a label that displays the current value.
-         * 
-         * @param object
-         *            the model element.
-         */
-        public MonitorValueFigure(final EObject object) {
-            value = new Label();
-            value.getBounds().setSize(LABELSIZE_WIDTH, LABELSIZE_HEIGHT);
-            value.getBounds().setLocation(LABELLOCATION_X, LABELLOCATION_Y);
-            this.setLayoutManager(new BorderLayout());
-            this.add(value);
-            String uri = object.eResource().getURIFragment(object);
-            uri = KvidUtil.fragmentUri2PtolemyUri(uri, object.eResource());
-            if (object instanceof de.cau.cs.kieler.kaom.Entity) {
-                de.cau.cs.kieler.kaom.Entity entity = (de.cau.cs.kieler.kaom.Entity) object;
-                NamedObject port = entity.getChildPorts().get(0);
-                uri += ":" + port.getName();
-                referredDataUri = uri;
-                DataDistributor.getInstance().registerDataListener(this);
-            }
-
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void triggerDataChanged(final boolean isHistoryValue) {
-            DataObject data = DataDistributor.getInstance().getDataObjectByURI(
-                    new KvidUri(referredDataUri));
-            if (data != null) {
-                value.setText(data.getData().toString());
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void triggerWrapup() {
-            value.setText("");
-        }
-
     }
 
     // Position of the label inside the outer rectangle to make it centered somehow.

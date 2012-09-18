@@ -14,6 +14,8 @@
 package de.cau.cs.kieler.klay.planar.p2ortho;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +85,61 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
      * arcs, one for each direction.
      */
     private LinkedList<Pair<PEdge, PEdge>> faceArcs;
+
+    private OrthogonalRepresentation orthogonal;
+
+    
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
+    // Before Phase 1
+            null,
+            // Before Phase 2
+            null,
+            // Before Phase 3
+            EnumSet.of(LayoutProcessorStrategy.EXT_FACE, LayoutProcessorStrategy.GIOTTO),
+            // Before Phase 4
+            null,
+            // After Phase 4
+            null);
+
+    // --------------------------------- Methods --------------------------------------------------
+
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pgraph) {
+        return new IntermediateProcessingConfiguration(INTERMEDIATE_PROCESSING_CONFIGURATION);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * This takes a planar graph and computes an orthogonal representation defining the shape of the
+     * orthogonal graph.
+     * 
+     * @param pgraph
+     *            the graph to draw as orthogonal graph
+     */
+    public void process(final PGraph pgraph) {
+        getMonitor().begin("Orthogonalization", 1);
+
+        // Initialization
+        this.graph = pgraph;
+        this.orthogonal = new OrthogonalRepresentation();
+
+        // Create flow network and solve it
+        PGraph network = createFlowNetwork();
+        new SuccessiveShortestPathFlowSolver().calcFlow(network);
+
+        // compute bends and angles
+        computeBends(network);
+        computeAngles(network);
+        pgraph.setProperty(Properties.ORTHO_REPRESENTATION, this.orthogonal);
+        if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {
+            testOrthoRep();
+        }
+        getMonitor().done();
+    }
 
     /**
      * Create the flow network base upon the graph. The flow network contains a source node for
@@ -185,13 +242,11 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
     }
 
     /**
-     * Compute bend points and edge angles based on flow in flow network.
+     * Compute bend points on the flow of the flow network.
      * 
-     * @return an orthogonal representation encoding the graph shape
+     * @param network
      */
-    private OrthogonalRepresentation computeAngles(final PGraph network) {
-        OrthogonalRepresentation orthogonal = new OrthogonalRepresentation();
-
+    private void computeBends(final PGraph network) {
         // Flow in face arcs define bends in edges
         for (Pair<PEdge, PEdge> pair : this.faceArcs) {
             PFace face1 = (PFace) pair.getFirst().getSource().getProperty(NETWORK_TO_GRAPH);
@@ -237,172 +292,144 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
             for (PEdge edge : face1.getEdges(face2)) {
                 if (crossingEdge == edge) {
                     if ((face1 == edge.getRightFace()) && (face2 == edge.getLeftFace())) {
-                        orthogonal.setBends(edge, bends1);
+                        this.orthogonal.setBends(edge, bends1);
                     } else if ((face1 == edge.getLeftFace()) && (face2 == edge.getRightFace())) {
-                        orthogonal.setBends(edge, bends2);
+                        this.orthogonal.setBends(edge, bends2);
                     } else {
                         throw new InconsistentGraphModelException(
                                 "The flow network has not been build correctly.");
                     }
-                } else if (orthogonal.getBends(edge) == null) {
-                    orthogonal.setBends(edge, new OrthogonalAngle[0]);
+                } else if (this.orthogonal.getBends(edge) == null) {
+                    this.orthogonal.setBends(edge, new OrthogonalAngle[0]);
                 }
             }
         }
-
-        // Flow in node arcs define angles in nodes.
-        for (PEdge arc : this.nodeArcs) {
-            PNode node = (PNode) arc.getSource().getProperty(NETWORK_TO_GRAPH);
-            PFace face = (PFace) arc.getTarget().getProperty(NETWORK_TO_GRAPH);
-
-            List<Pair<PEdge, OrthogonalAngle>> nodeList = orthogonal.getAngles(node);
-            if (nodeList == null) {
-                nodeList = Lists.newLinkedList();
-                for (PEdge edge : node.adjacentEdges()) {
-                    nodeList.add(new Pair<PEdge, OrthogonalAngle>(edge, null));
-                }
-                orthogonal.setAngles(node, nodeList);
-            }
-
-            // Identifying a cutvertex while checking if left and right face of a adjacent edge
-            // is the same.
-            boolean isCutVertex = false;
-            for (PEdge edge : node.adjacentEdges()) {
-                if (edge.getLeftFace() == edge.getRightFace()) {
-                    isCutVertex = true;
-                    break;
-                }
-            }
-
-            if (!isCutVertex) {
-                // Map normally calculated flow of arc to the corresponding edge angle.
-                for (Pair<PEdge, OrthogonalAngle> pair : nodeList) {
-                    PEdge edge = pair.getFirst();
-                    if (((node == edge.getSource()) && (face == edge.getRightFace()))
-                            || ((node == edge.getTarget()) && (face == edge.getLeftFace()))) {
-                        int angle = arc.getProperty(IFlowNetworkSolver.FLOW) - 1;
-                        if (angle < 0) {
-                            // TODO if happen, inspect!!! Error prone.
-                            angle = 0;
-                        }
-                        pair.setSecond(OrthogonalAngle.map(angle));
-                    }
-                }
-            }
-        }
-
-        // Flow in node arcs define angles in nodes, handling cut vertices.
-        for (PEdge arc : this.nodeArcs) {
-            PNode node = (PNode) arc.getSource().getProperty(NETWORK_TO_GRAPH);
-            PFace face = (PFace) arc.getTarget().getProperty(NETWORK_TO_GRAPH);
-
-            List<Pair<PEdge, OrthogonalAngle>> nodeList = orthogonal.getAngles(node);
-            if (nodeList == null) {
-                nodeList = Lists.newLinkedList();
-                for (PEdge edge : node.adjacentEdges()) {
-                    nodeList.add(new Pair<PEdge, OrthogonalAngle>(edge, null));
-                }
-                orthogonal.setAngles(node, nodeList);
-            }
-
-            // Identifying a cutvertex while checking if left and right face of a adjacent edge
-            // is the same.
-            boolean isCutVertex = false;
-            for (PEdge edge : node.adjacentEdges()) {
-                if (edge.getLeftFace() == edge.getRightFace()) {
-                    isCutVertex = true;
-                    break;
-                }
-            }
-
-            if (isCutVertex) {
-                int totalEdgeCount = node.getAdjacentEdgeCount();
-
-                switch (totalEdgeCount) {
-                case 4:
-                    for (Pair<PEdge, OrthogonalAngle> pair : nodeList) {
-                        pair.setSecond(OrthogonalAngle.LEFT);
-                    }
-                    break;
-                    
-                case 3:
-                    // Count the adjacent face edges.
-                    int adjacentFaceEdgeCount = 0;
-                    for (PEdge edge : node.adjacentEdges()) {
-                        if (edge.getLeftFace() == face || edge.getRightFace() == face) {
-                            adjacentFaceEdgeCount++;
-                        }
-                    }
-                    if (adjacentFaceEdgeCount == totalEdgeCount) {
-                        // More or less arbitrary added these angles.
-                        nodeList.get(0).setSecond(OrthogonalAngle.STRAIGHT);
-                        nodeList.get(1).setSecond(OrthogonalAngle.LEFT);
-                        nodeList.get(2).setSecond(OrthogonalAngle.LEFT);
-                    } else {
-                        // Assuming that only one edge is cutedge.
-                        int angleCount = 0;
-                        int cutEdgeIndex = -1;
-                        for (int i = 0; i < nodeList.size(); i++) {
-                            // Count the angles of the other edges.
-                            if (nodeList.get(i).getFirst().getLeftFace() != nodeList.get(i)
-                                    .getFirst().getRightFace()) {
-                                angleCount += nodeList.get(i).getSecond().ordinal() + 1;
-                            } else {
-                                cutEdgeIndex = i;
-                            }
-                        } 
-                        
-                        // Since all other angles of the adjacent 
-                        nodeList.get(cutEdgeIndex).setSecond(
-                                OrthogonalAngle.map((4 - angleCount) - 1));
-                    }
-                    break;
-                    
-                case 2:
-                    for (Pair<PEdge, OrthogonalAngle> pair : nodeList) {
-                        pair.setSecond(OrthogonalAngle.STRAIGHT);
-                    }
-                    break;
-                    
-                case 1:
-                    nodeList.get(0).setSecond(OrthogonalAngle.FULL);
-                    break;
-                    
-                default:
-                    throw new InconsistentGraphModelException("ladida du bist doof!");
-                }
-            }
-        }
-        return orthogonal;
     }
 
     /**
-     * {@inheritDoc}
+     * Compute edge angles based on flow in flow network. Flow in node arcs define angles in nodes.
      * 
-     * This takes a planar graph and computes an orthogonal representation defining the shape of the
-     * orthogonal graph.
-     * 
-     * @param pgraph
-     *            the graph to draw as orthogonal graph
+     * @return an orthogonal representation encoding the graph shape.
      */
-    public void process(final PGraph pgraph) {
-        getMonitor().begin("Orthogonalization", 1);
+    private void computeAngles(final PGraph network) {
 
-        // Initialization
-        this.graph = pgraph;
+        for (PEdge arc : this.nodeArcs) {
+            PNode node = (PNode) arc.getSource().getProperty(NETWORK_TO_GRAPH);
+            PFace face = (PFace) arc.getTarget().getProperty(NETWORK_TO_GRAPH);
 
-        // Solve flow network and compute orthogonal representation
-        PGraph network = createFlowNetwork();
-        new SuccessiveShortestPathFlowSolver().findFlow(network);
-        pgraph.setProperty(Properties.ORTHO_REPRESENTATION, computeAngles(network));
-        if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {
-            testOrthoRep();
+            List<Pair<PEdge, OrthogonalAngle>> nodeList = this.orthogonal.getAngles(node);
+            if (nodeList == null) {
+                nodeList = Lists.newLinkedList();
+                for (PEdge edge : node.adjacentEdges()) {
+                    nodeList.add(new Pair<PEdge, OrthogonalAngle>(edge, null));
+                }
+                this.orthogonal.setAngles(node, nodeList);
+            }
+
+            // Map normally calculated flow of arc to the corresponding edge angle.
+            for (Pair<PEdge, OrthogonalAngle> pair : nodeList) {
+                PEdge edge = pair.getFirst();
+                if (((node == edge.getSource()) && (face == edge.getRightFace()))
+                        || ((node == edge.getTarget()) && (face == edge.getLeftFace()))) {
+                    int angle = arc.getProperty(IFlowNetworkSolver.FLOW) - 1;
+                    pair.setSecond(OrthogonalAngle.map(angle));
+                    // TODO check whether break is ok, meaning many times getting here to
+                    // get the last edge of the nodelist.
+                    break;
+                }
+            }
         }
-        getMonitor().done();
+
+        // TODO think about this, the problem here is that the compute flow network step,
+        // computes only once a nodearc for a full angle node. But the flow is need by
+        // the node before and the full angle node, thus one of them has a null angledata
+        // for the cutedge connecting the before node and the full angle node.
+
+        // Cutedges are only count once by the flow network, but we need to set it two times so,
+        // that in some cases maximal one angle per angle-data is null. Hence, we need a post
+        // processing step, that complete the angle data, depending on the before calculated.
+        Collection<PNode> nodes = graph.getNodes();
+        for (PNode node : nodes) {
+            List<Pair<PEdge, OrthogonalAngle>> angles = this.orthogonal.getAngles(node);
+            Pair<PEdge, OrthogonalAngle> missingAnglePair = null;
+            int missingCounter = 0;
+            for (Pair<PEdge, OrthogonalAngle> pair : angles) {
+                if (pair.getSecond() == null) {
+                    missingAnglePair = pair;
+                    missingCounter++;
+                }
+
+            }
+
+            if (missingAnglePair != null) {
+                if (missingCounter > 1) {
+                    // 4 edges -> every edge needs a left angle.
+                    switch (angles.size()) {
+                    case SUM_OF_ANGLES:
+                        for (Pair<PEdge, OrthogonalAngle> pair : angles) {
+                            pair.setSecond(OrthogonalAngle.LEFT);
+                        }
+                        break;
+                    case 3:
+                        Pair<PEdge, OrthogonalAngle> knownAnglePair = null;
+                        for (Pair<PEdge, OrthogonalAngle> pair : angles) {
+                            if (pair.getSecond() != null) {
+                                knownAnglePair = pair;
+                                break;
+                            }
+                        }
+                        if (knownAnglePair.getSecond() == OrthogonalAngle.STRAIGHT) {
+                            // set all others to left because 4 - 2 = 2, a left angle for the
+                            // remaining
+                            // angle-data.
+                            for (Pair<PEdge, OrthogonalAngle> pair : angles) {
+                                if (pair.getSecond() == null) {
+                                    pair.setSecond(OrthogonalAngle.LEFT);
+                                }
+                            }
+                        } else {
+                            // the one has to have a left angle.
+                            Pair<PEdge, OrthogonalAngle> unknownAnglePair = null;
+                            Pair<PEdge, OrthogonalAngle> unknownAnglePair2 = null;
+
+                            for (Pair<PEdge, OrthogonalAngle> pair : angles) {
+                                if (pair.getSecond() == null) {
+                                    if (unknownAnglePair != null) {
+                                        unknownAnglePair2 = pair;
+                                    } else {
+                                        unknownAnglePair = pair;
+                                    }
+                                }
+                            }
+                            // more or less arbitrary set.
+                            unknownAnglePair.setSecond(OrthogonalAngle.LEFT);
+                            unknownAnglePair2.setSecond(OrthogonalAngle.STRAIGHT);
+                        }
+
+                        break;
+                    default:
+                        new IllegalStateException();
+                    }
+                    continue;
+                } else {
+                    // count all other angles and set 360° - their angles to the missing entry.
+                    int angleCounter = 0;
+                    for (Pair<PEdge, OrthogonalAngle> pair : angles) {
+                        if (pair != missingAnglePair) {
+                            angleCounter += pair.getSecond().ordinal() + 1;
+                        }
+
+                    }
+                    missingAnglePair.setSecond(OrthogonalAngle
+                            .map(SUM_OF_ANGLES - angleCounter - 1));
+                }
+            }
+        }
     }
 
     /**
-     * 
+     * Checks the orthogoanalization of correctness, meaning if the sum of all angles is equal to
+     * the the constant SUM_OF_ANGLES = 4 (360 degree).
      */
     private void testOrthoRep() {
         OrthogonalRepresentation ortho = graph.getProperty(Properties.ORTHO_REPRESENTATION);
@@ -419,16 +446,6 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                                 + node.toString() + "is not 4.");
             }
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pgraph) {
-        IntermediateProcessingConfiguration strategy = new IntermediateProcessingConfiguration();
-        strategy.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_3,
-                LayoutProcessorStrategy.EXT_FACE);
-        return strategy;
     }
 
 }

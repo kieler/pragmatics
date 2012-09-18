@@ -36,9 +36,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  */
 public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
-    /**
-     * 
-     */
+    /** The bottom side. */
     private static final int BOTTOM_SIDE = 3;
 
     private GridRepresentation grid;

@@ -32,9 +32,46 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * with cages.
  * 
  * @author ocl
- * @author pkl
  */
 public class QuodOrthogonalizer extends AbstractAlgorithm implements ILayoutPhase {
+
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pgraph) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * This takes a planar graph and computes an orthogonal representation defining the shape of the
+     * orthogonal graph.
+     * 
+     * @param graph
+     *            the graph to draw as orthogonal graph
+     */
+    public void process(final PGraph graph) {
+        // Replace high-degree nodes with cages
+        LinkedList<Cage> cages = new LinkedList<Cage>();
+        for (PNode node : graph.getNodes()) {
+            if (node.getAdjacentEdgeCount() > TamassiaOrthogonalizer.MAX_DEGREE) {
+                cages.add(new Cage(node));
+            }
+        }
+
+        TamassiaOrthogonalizer orthogonalizer = new TamassiaOrthogonalizer();
+        orthogonalizer.process(graph);
+        OrthogonalRepresentation orthogonal = graph.getProperty(Properties.ORTHO_REPRESENTATION);
+
+        // TODO force cages as rectangles
+
+        // Remove the cages from the graph
+        for (Cage cage : cages) {
+            cage.remove();
+        }
+        graph.setProperty(Properties.ORTHO_REPRESENTATION, orthogonal);
+    }
 
     // ======================== Helper Classes =====================================================
 
@@ -114,43 +151,5 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements ILayoutPhas
 
     // ======================== Algorithm ==========================================================
     // TODO does leaving the cage nodes in the graph influence the flow network?
-
-    /**
-     * {@inheritDoc}
-     * 
-     * This takes a planar graph and computes an orthogonal representation defining the shape of the
-     * orthogonal graph.
-     * 
-     * @param graph
-     *            the graph to draw as orthogonal graph
-     */
-    public void process(final PGraph graph) {
-        // Replace high-degree nodes with cages
-        LinkedList<Cage> cages = new LinkedList<Cage>();
-        for (PNode node : graph.getNodes()) {
-            if (node.getAdjacentEdgeCount() > TamassiaOrthogonalizer.MAX_DEGREE) {
-                cages.add(new Cage(node));
-            }
-        }
-
-        TamassiaOrthogonalizer orthogonalizer = new TamassiaOrthogonalizer();
-        orthogonalizer.process(graph);
-        OrthogonalRepresentation orthogonal = graph.getProperty(Properties.ORTHO_REPRESENTATION);
-
-        // TODO force cages as rectangles
-
-        // Remove the cages from the graph
-        for (Cage cage : cages) {
-            cage.remove();
-        }
-        graph.setProperty(Properties.ORTHO_REPRESENTATION, orthogonal);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pgraph) {
-        return null;
-    }
 
 }

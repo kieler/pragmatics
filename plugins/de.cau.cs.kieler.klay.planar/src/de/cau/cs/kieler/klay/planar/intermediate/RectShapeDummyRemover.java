@@ -72,8 +72,9 @@ public class RectShapeDummyRemover extends AbstractAlgorithm implements ILayoutP
             }
         }
 
-        PEdge removableEdge = null;
+        PEdge removableEdge;
         for (PNode dummy : dummyNodes) {
+            removableEdge = null;
             for (PEdge edge : dummy.adjacentEdges()) {
                 if (edge.hasProperties() && edge.getProperty(Properties.RECT_SHAPE_DUMMY) != null) {
                     // Only the rect shape dummy edge has this property.
@@ -82,7 +83,9 @@ public class RectShapeDummyRemover extends AbstractAlgorithm implements ILayoutP
                 }
             }
 
-            graph.removeEdge(removableEdge);
+            if (removableEdge != null) {
+                graph.removeEdge(removableEdge);
+            }
             Iterator<PEdge> edgeIt;
             switch (dummy.getAdjacentEdgeCount()) {
             case 0:

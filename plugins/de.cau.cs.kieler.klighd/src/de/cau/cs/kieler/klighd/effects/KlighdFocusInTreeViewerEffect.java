@@ -24,9 +24,7 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.core.ui.KielerModelException;
 
 /**
  * Effect that realizes the focusing of element selected in KLighD views in related tree viewers.<br>
@@ -92,20 +90,21 @@ public class KlighdFocusInTreeViewerEffect extends AbstractEffect {
             });
         } else {
             if (this.element == null && this.treeViewer == null) {
-                throw new WrappedException(new KielerModelException(
-                        "KLighD: Cannot execute this effect, since the necessary data are null!\n "
-                                + "Do you call it the right way?", this));
+                throw new IllegalArgumentException("KLighD: Cannot execute effect "
+                        + this.getClass().getSimpleName()
+                        + ", since the necessary data are null!\n "
+                        + "Do you call it the right way?");
             }
             if (this.element == null) {
-                throw new WrappedException(new KielerModelException(
+                throw new IllegalArgumentException(
                         "KLighD: failed to set selection of "
                                 + this.treeViewer.getClass().getName() + " to null element!\n"
-                                + "Do you call this effect the right way?", this));
+                                + "Do you call this effect the right way?");
             }
             if (this.treeViewer == null) {
-                throw new WrappedException(new KielerModelException(
+                throw new IllegalArgumentException(
                         "KLighD: No tree viewer known to set the selection to " + this.element
-                                + " in!\n" + "Do you call this effect the right way?", this));
+                                + " in!\n" + "Do you call this effect the right way?");
             }
         }
     }
