@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.options.Alignment;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;

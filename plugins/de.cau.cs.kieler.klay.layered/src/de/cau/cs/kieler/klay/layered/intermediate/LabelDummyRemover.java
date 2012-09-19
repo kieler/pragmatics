@@ -83,6 +83,12 @@ public class LabelDummyRemover extends AbstractAlgorithm implements ILayoutProce
                         for (KVector bendPoint : droppedEdge.getBendPoints()) {
                             survivingBendPoints.add(new KVector(bendPoint));
                         }
+                        
+                        //Join their labels
+                        List<LLabel> survivingLabels = survivingEdge.getLabels();
+                        for (LLabel label2: droppedEdge.getLabels()) {
+                            survivingLabels.add(label2);
+                        }
                     }
                     
                     // Remove the node

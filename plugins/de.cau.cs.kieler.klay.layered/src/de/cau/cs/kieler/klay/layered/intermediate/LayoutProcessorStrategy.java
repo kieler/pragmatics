@@ -67,6 +67,11 @@ public enum LayoutProcessorStrategy {
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
     PORT_SIDE_PROCESSOR,
+    /** Decides, on which side of an edge the edge labels should be placed. */ 
+    LABEL_SIDE_SELECTOR,
+    /** Tries to switch the label dummy nodes which the middle most dummy node
+     *  of a long edge. */
+    LABEL_DUMMY_SWITCHER,
     /** Takes a layered graph and inserts dummy nodes for edges connected to inverted ports. */
     INVERTED_PORT_PROCESSOR,
     /** Takes care of self loops. */
@@ -75,11 +80,6 @@ public enum LayoutProcessorStrategy {
     PORT_LIST_SORTER,
     /** Inserts dummy nodes to take care of northern and southern ports. */
     NORTH_SOUTH_PORT_PREPROCESSOR,
-    /** Decides, on which side of an edge the edge labels should be placed. */ 
-    LABEL_SIDE_SELECTOR,
-    /** Tries to switch the label dummy nodes which the middle most dummy node
-     *  of a long edge. */
-    LABEL_DUMMY_SWITCHER,
    
     
     // Before Phase 4
@@ -114,10 +114,10 @@ public enum LayoutProcessorStrategy {
     HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER,
     /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
     LONG_EDGE_JOINER,
-    /** Removes dummy nodes which were introduced for center labels. */
-    LABEL_DUMMY_REMOVER,
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
     NORTH_SOUTH_PORT_POSTPROCESSOR,
+    /** Removes dummy nodes which were introduced for center labels. */
+    LABEL_DUMMY_REMOVER,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
     /** Removes dummy nodes and -edges from compound graph representation,
