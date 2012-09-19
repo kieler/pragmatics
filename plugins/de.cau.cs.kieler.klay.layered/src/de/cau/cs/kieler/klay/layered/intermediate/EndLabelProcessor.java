@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.HashMap;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -35,14 +37,21 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
 
     // TODO: offer as layout option
     /** Distance of a label to its edge. */
-    private static final int LABEL_DISTANCE = 1;
-
+    private static final int LABEL_DISTANCE = 0;
+    
+    private HashMap<LNode, Double> northOffset; 
+    
+    private HashMap<LNode, Double> southOffset;
+    
     /**
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph) {
+        northOffset = new HashMap<LNode, Double>();
+        southOffset = new HashMap<LNode, Double>();
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
+                System.out.println();
                 for (LEdge edge : node.getOutgoingEdges()) {
                     for (LLabel label : edge.getLabels()) {
                         if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
@@ -54,6 +63,12 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                             if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
                                 == EdgeLabelPlacement.TAIL) {
                                 port = edge.getTarget();
+                            }
+                            if (!northOffset.containsKey(port.getNode())) {
+                                northOffset.put(port.getNode(), 0.0);
+                            }
+                            if (!southOffset.containsKey(port.getNode())) {
+                                southOffset.put(port.getNode(), 0.0);
                             }
                             if (label.getSide() == LSide.UP) {
                                 switch (port.getSide()) {
@@ -68,6 +83,23 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                                     label.getPosition().y = port.getAbsoluteAnchor().y
                                             - label.getSize().y - LABEL_DISTANCE;
                                     break;
+                                case NORTH:
+                                    label.getPosition().x = port.getAbsoluteAnchor().x
+                                    - label.getSize().x;
+                                    label.getPosition().y = port.getAbsoluteAnchor().y
+                                                            - label.getSize().y - LABEL_DISTANCE
+                                                            - northOffset.get(port.getNode());
+                                    northOffset.put(node,
+                                            northOffset.get(port.getNode()) + label.getSize().y);
+                                    break;
+                                case SOUTH:
+                                    label.getPosition().x = port.getAbsoluteAnchor().x
+                                    - label.getSize().x;
+                                    label.getPosition().y = port.getAbsoluteAnchor().y
+                                            + southOffset.get(port.getNode());
+                                    southOffset.put(node,
+                                            southOffset.get(port.getNode()) + label.getSize().y);
+                                    break;
                                 }
                             } else {
                                 switch (port.getSide()) {
@@ -79,6 +111,21 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                                 case EAST:
                                     label.getPosition().x = port.getAbsoluteAnchor().x;
                                     label.getPosition().y = port.getAbsoluteAnchor().y + LABEL_DISTANCE;
+                                    break;
+                                case NORTH:
+                                    label.getPosition().x = port.getAbsoluteAnchor().x;
+                                    label.getPosition().y = port.getAbsoluteAnchor().y
+                                            - label.getSize().y - LABEL_DISTANCE
+                                            - northOffset.get(node);
+                                    northOffset.put(node,
+                                            northOffset.get(port.getNode()) + label.getSize().y);
+                                    break;
+                                case SOUTH:
+                                    label.getPosition().x = port.getAbsoluteAnchor().x;
+                                    label.getPosition().y = port.getAbsoluteAnchor().y +
+                                            southOffset.get(port.getNode());
+                                    southOffset.put(node,
+                                            southOffset.get(port.getNode()) + label.getSize().y);
                                     break;
                                 }
                             }
