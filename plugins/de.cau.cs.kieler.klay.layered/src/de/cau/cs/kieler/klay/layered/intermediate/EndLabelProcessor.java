@@ -14,8 +14,11 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -39,9 +42,14 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
     /** Distance of a label to its edge. */
     private static final int LABEL_DISTANCE = 0;
     
+    /** Offset introduced by GMF to ports, results have to be adjusted by this factor. */
+    private static final int PORT_LABEL_DISTANCE = 3;
+    
     private HashMap<LNode, Double> northOffset; 
     
     private HashMap<LNode, Double> southOffset;
+    
+    private HashMap<LPort, Double> portLabelOffsetHint;
     
     /**
      * {@inheritDoc}
@@ -49,6 +57,7 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
     public void process(final LGraph layeredGraph) {
         northOffset = new HashMap<LNode, Double>();
         southOffset = new HashMap<LNode, Double>();
+        portLabelOffsetHint = new HashMap<LPort, Double>();
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 System.out.println();
@@ -64,184 +73,168 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                                 == EdgeLabelPlacement.TAIL) {
                                 port = edge.getTarget();
                             }
+                            double portLabelOffsetX = 0.0;
+                            double portLabelOffsetY = 0.0;
+                            if (true) {
+                                for (LLabel portLabel : port.getLabels()) {
+                                    portLabelOffsetX = Math.max(portLabelOffsetX, portLabel.getSize().x)
+                                                                + PORT_LABEL_DISTANCE;
+                                    portLabelOffsetY = Math.max(portLabelOffsetY, portLabel.getSize().y)
+                                                                + PORT_LABEL_DISTANCE;
+                                }
+                            }
+                            
                             if (!northOffset.containsKey(port.getNode())) {
                                 northOffset.put(port.getNode(), 0.0);
                             }
                             if (!southOffset.containsKey(port.getNode())) {
                                 southOffset.put(port.getNode(), 0.0);
                             }
+                            if (!portLabelOffsetHint.containsKey(port)) {
+                                portLabelOffsetHint.put(port, 0.0);
+                            }
                             if (label.getSide() == LSide.UP) {
                                 switch (port.getSide()) {
                                 case WEST:
                                     label.getPosition().x = port.getAbsoluteAnchor().x
-                                                            - label.getSize().x;
+                                                            - label.getSize().x
+                                                            - portLabelOffsetX;
                                     label.getPosition().y = port.getAbsoluteAnchor().y
                                                             - label.getSize().y - LABEL_DISTANCE;
                                     break;
                                 case EAST:
-                                    label.getPosition().x = port.getAbsoluteAnchor().x;
+                                    label.getPosition().x = port.getAbsoluteAnchor().x
+                                                            + portLabelOffsetX;
                                     label.getPosition().y = port.getAbsoluteAnchor().y
                                             - label.getSize().y - LABEL_DISTANCE;
                                     break;
                                 case NORTH:
                                     label.getPosition().x = port.getAbsoluteAnchor().x
-                                    - label.getSize().x;
+                                                            - label.getSize().x;
                                     label.getPosition().y = port.getAbsoluteAnchor().y
                                                             - label.getSize().y - LABEL_DISTANCE
-                                                            - northOffset.get(port.getNode());
+                                                            - northOffset.get(port.getNode())
+                                                            - portLabelOffsetY;
+                                    portLabelOffsetHint.put(port, northOffset.get(node));
                                     northOffset.put(node,
-                                            northOffset.get(port.getNode()) + label.getSize().y);
+                                            northOffset.get(port.getNode())
+                                                            + label.getSize().y
+                                                            + portLabelOffsetY);
                                     break;
                                 case SOUTH:
                                     label.getPosition().x = port.getAbsoluteAnchor().x
                                     - label.getSize().x;
                                     label.getPosition().y = port.getAbsoluteAnchor().y
-                                            + southOffset.get(port.getNode());
+                                                            + southOffset.get(port.getNode())
+                                                            + portLabelOffsetY;
+                                    portLabelOffsetHint.put(port, southOffset.get(node));
                                     southOffset.put(node,
-                                            southOffset.get(port.getNode()) + label.getSize().y);
+                                            southOffset.get(port.getNode())
+                                                            + label.getSize().y
+                                                            + portLabelOffsetY);
                                     break;
                                 }
                             } else {
                                 switch (port.getSide()) {
                                 case WEST:
                                     label.getPosition().x = port.getAbsoluteAnchor().x
-                                                            - label.getSize().x;
+                                                            - label.getSize().x
+                                                            - portLabelOffsetX;
                                     label.getPosition().y = port.getAbsoluteAnchor().y + LABEL_DISTANCE;
                                     break;
                                 case EAST:
-                                    label.getPosition().x = port.getAbsoluteAnchor().x;
+                                    label.getPosition().x = port.getAbsoluteAnchor().x
+                                                            + portLabelOffsetX;
                                     label.getPosition().y = port.getAbsoluteAnchor().y + LABEL_DISTANCE;
                                     break;
                                 case NORTH:
                                     label.getPosition().x = port.getAbsoluteAnchor().x;
                                     label.getPosition().y = port.getAbsoluteAnchor().y
-                                            - label.getSize().y - LABEL_DISTANCE
-                                            - northOffset.get(node);
+                                                            - label.getSize().y - LABEL_DISTANCE
+                                                            - northOffset.get(node)
+                                                            -portLabelOffsetY;
+                                    portLabelOffsetHint.put(port, northOffset.get(node));
                                     northOffset.put(node,
-                                            northOffset.get(port.getNode()) + label.getSize().y);
+                                            northOffset.get(port.getNode())
+                                                            + label.getSize().y
+                                                            + portLabelOffsetY);
                                     break;
                                 case SOUTH:
                                     label.getPosition().x = port.getAbsoluteAnchor().x;
-                                    label.getPosition().y = port.getAbsoluteAnchor().y +
-                                            southOffset.get(port.getNode());
+                                    label.getPosition().y = port.getAbsoluteAnchor().y
+                                                            + southOffset.get(port.getNode())
+                                                            + portLabelOffsetY;
+                                    portLabelOffsetHint.put(port, southOffset.get(node));
                                     southOffset.put(node,
-                                            southOffset.get(port.getNode()) + label.getSize().y);
+                                            southOffset.get(port.getNode())
+                                            + label.getSize().y
+                                            + portLabelOffsetY);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    List<LPort> ports = new LinkedList<LPort>();
+                    ports.add(edge.getSource());
+                    ports.add(edge.getTarget());
+                    for (LPort port : ports) {
+                        for (LLabel portLabel : port.getLabels()) {
+                            if (portLabel.getSide() == LSide.UP) {
+                                switch (port.getSide()) {
+                                case WEST:
+                                    portLabel.getPosition().x = - portLabel.getSize().x;
+                                    portLabel.getPosition().y = - portLabel.getSize().y
+                                                                + PORT_LABEL_DISTANCE;
+                                    break;
+                                case EAST:
+                                    portLabel.getPosition().x = port.getSize().x;
+                                    portLabel.getPosition().y = - portLabel.getSize().y
+                                                                + PORT_LABEL_DISTANCE;
+                                    break;
+                                case NORTH:
+                                    portLabel.getPosition().x = - port.getSize().x / 2
+                                                                - portLabel.getSize().x;
+                                    portLabel.getPosition().y = - port.getSize().y
+                                                                - portLabel.getSize().y
+                                                                - portLabelOffsetHint.get(port);
+                                    break;
+                                case SOUTH:
+                                    portLabel.getPosition().x = - port.getSize().x / 2
+                                                                - portLabel.getSize().x;
+                                    portLabel.getPosition().y = port.getSize().y
+                                                                + portLabelOffsetHint.get(port);
+                                    break;
+                                }
+                            } else {
+                                switch (port.getSide()) {
+                                case WEST:
+                                    portLabel.getPosition().x = - portLabel.getSize().x;
+                                    portLabel.getPosition().y = port.getSize().y 
+                                                                - PORT_LABEL_DISTANCE;
+                                    break;
+                                case EAST:
+                                    portLabel.getPosition().x = port.getSize().x;
+                                    portLabel.getPosition().y = port.getSize().y
+                                                                - PORT_LABEL_DISTANCE;
+                                    break;
+                                case NORTH:
+                                    portLabel.getPosition().x = port.getSize().x / 2;
+                                    portLabel.getPosition().y = - port.getSize().y
+                                                                - portLabel.getSize().y
+                                                                - portLabelOffsetHint.get(port);
+                                    break;
+                                case SOUTH:
+                                    portLabel.getPosition().x = port.getSize().x / 2;
+                                    portLabel.getPosition().y = port.getSize().y
+                                                                + portLabelOffsetHint.get(port);
                                     break;
                                 }
                             }
                         }
                     }
                 }
-
-                // // Handle ports and their edges on the west side of the node.
-                // // Thus, tail labels will be placed.
-                // Iterable<LPort> westPorts = node.getPorts(PortSide.WEST);
-                // int westPortCount = 0;
-                // // When only two edges are present, the labels shall be placed
-                // // above and below the lines.
-                // // To achieve that, the "higher" port has to be determined by
-                // // finding the port with the smallest y coordinate.
-                // LPort higherPort = null;
-                // double higherPortPos = Double.POSITIVE_INFINITY;
-                // for (LPort westPort : westPorts) {
-                // westPortCount++;
-                // if (westPort.getAbsoluteAnchor().y < higherPortPos) {
-                // higherPort = westPort;
-                // higherPortPos = westPort.getAbsoluteAnchor().y;
-                // }
-                // }
-                // if (westPortCount == 2) {
-                // for (LPort westPort : westPorts) {
-                // for (LEdge edge : westPort.getIncomingEdges()) {
-                // for (LLabel label : edge.getLabels()) {
-                // if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                // == EdgeLabelPlacement.TAIL) {
-                // double portPosX = westPort.getAbsoluteAnchor().x;
-                // double portPosY = westPort.getAbsoluteAnchor().y;
-                // if (westPort.equals(higherPort)) {
-                // label.getPosition().x = portPosX - label.getSize().x;
-                // label.getPosition().y = portPosY - label.getSize().y
-                // - LABEL_DISTANCE;
-                // } else {
-                // label.getPosition().x = portPosX - label.getSize().x;
-                // label.getPosition().y = portPosY + LABEL_DISTANCE;
-                // }
-                // }
-                // }
-                // }
-                // }
-                // } else {
-                // for (LPort westPort : westPorts) {
-                // for (LEdge edge : westPort.getIncomingEdges()) {
-                // for (LLabel label : edge.getLabels()) {
-                // if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                // == EdgeLabelPlacement.TAIL) {
-                // double portPosX = westPort.getAbsoluteAnchor().x;
-                // double portPosY = westPort.getAbsoluteAnchor().y;
-                // label.getPosition().x = portPosX - label.getSize().x;
-                // label.getPosition().y = portPosY + LABEL_DISTANCE;
-                // }
-                // }
-                // }
-                // }
-                // }
-                //
-                // // Handle ports and their edges on the east side of a node
-                // // Thus, head labels will be placed
-                // Iterable<LPort> eastPorts = node.getPorts(PortSide.EAST);
-                // int eastPortCount = 0;
-                // // When only two edges are present, the labels shall be placed
-                // // above and below the lines.
-                // // To achieve that, the "higher" port has to be determined by
-                // // finding the port with the smallest y coordinate.
-                // higherPort = null;
-                // higherPortPos = Double.POSITIVE_INFINITY;
-                // for (LPort eastPort : eastPorts) {
-                // eastPortCount++;
-                // if (eastPort.getAbsoluteAnchor().y < higherPortPos) {
-                // higherPort = eastPort;
-                // higherPortPos = eastPort.getAbsoluteAnchor().y;
-                // }
-                // }
-                // if (eastPortCount == 2) {
-                // for (LPort eastPort : eastPorts) {
-                // for (LEdge edge : eastPort.getOutgoingEdges()) {
-                // for (LLabel label : edge.getLabels()) {
-                // if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                // == EdgeLabelPlacement.HEAD) {
-                // double portPosX = eastPort.getAbsoluteAnchor().x;
-                // double portPosY = eastPort.getAbsoluteAnchor().y;
-                // if (eastPort.equals(higherPort)) {
-                // label.getPosition().x = portPosX;
-                // label.getPosition().y = portPosY - label.getSize().y
-                // - LABEL_DISTANCE;
-                // } else {
-                // label.getPosition().x = portPosX;
-                // label.getPosition().y = portPosY + LABEL_DISTANCE;
-                // }
-                // }
-                // }
-                // }
-                // }
-                // } else {
-                // for (LPort eastPort : eastPorts) {
-                // for (LEdge edge : eastPort.getOutgoingEdges()) {
-                // for (LLabel label : edge.getLabels()) {
-                // if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                // == EdgeLabelPlacement.HEAD) {
-                // double portPosX = eastPort.getAbsoluteAnchor().x;
-                // double portPosY = eastPort.getAbsoluteAnchor().y;
-                // label.getPosition().x = portPosX;
-                // label.getPosition().y = portPosY + LABEL_DISTANCE;
-                // }
-                // }
-                // }
-                // }
-                // }
             }
-
         }
-
     }
 
 }

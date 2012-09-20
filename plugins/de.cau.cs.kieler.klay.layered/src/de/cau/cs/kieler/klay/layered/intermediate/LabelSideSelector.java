@@ -85,6 +85,12 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
                 for (LLabel label : edge.getLabels()) {
                     label.setSide(LSide.UP);
                 }
+                for (LLabel portLabel : edge.getSource().getLabels()) {
+                    portLabel.setSide(LSide.UP);
+                }
+                for (LLabel portLabel : edge.getTarget().getLabels()) {
+                    portLabel.setSide(LSide.UP);
+                }
             }
         }
     }
@@ -94,6 +100,12 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
             for (LEdge edge : node.getOutgoingEdges()) {
                 for (LLabel label : edge.getLabels()) {
                     label.setSide(LSide.DOWN);
+                }
+                for (LLabel portLabel : edge.getSource().getLabels()) {
+                    portLabel.setSide(LSide.DOWN);
+                }
+                for (LLabel portLabel : edge.getTarget().getLabels()) {
+                    portLabel.setSide(LSide.DOWN);
                 }
             }
         }
@@ -112,6 +124,12 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
                 for (LLabel label : edge.getLabels()) {
                     label.setSide(side);
                 }
+                for (LLabel portLabel : edge.getSource().getLabels()) {
+                    portLabel.setSide(side);
+                }
+                for (LLabel portLabel : edge.getTarget().getLabels()) {
+                    portLabel.setSide(side);
+                }
             }
         }
     }
@@ -128,6 +146,12 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
                 }
                 for (LLabel label : edge.getLabels()) {
                     label.setSide(side);
+                }
+                for (LLabel portLabel : edge.getSource().getLabels()) {
+                    portLabel.setSide(side);
+                }
+                for (LLabel portLabel : edge.getTarget().getLabels()) {
+                    portLabel.setSide(side);
                 }
             }
         }
@@ -161,6 +185,12 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
                     for (LLabel label : edge.getLabels()) {
                         label.setSide(chosenSide);
                         nodeMarkers.put(targetNode, chosenSide);
+                    }
+                    for (LLabel portLabel : edge.getSource().getLabels()) {
+                        portLabel.setSide(chosenSide);
+                    }
+                    for (LLabel portLabel : edge.getTarget().getLabels()) {
+                        portLabel.setSide(chosenSide);
                     }
                 }
             }

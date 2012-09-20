@@ -115,6 +115,20 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
                     // Calculate the port's upper left corner's x and y coordinate
                     double portX = port.getPosition().x + node.getPosition().x;
                     double portY = port.getPosition().y + node.getPosition().y;
+                    double portLabelX = 0;
+                    double portLabelY = 0;
+                    
+                    //TODO: add layout option 
+                    if (true) {
+                        for (LLabel label : port.getLabels()) {
+                            if (portLabelX < label.getSize().x) {
+                                portLabelX = label.getSize().x;
+                            }
+                            if (portLabelY < label.getSize().y) {
+                                portLabelY = label.getSize().y;
+                            }
+                        }
+                    }
                     
                     for (LEdge edge : port.getOutgoingEdges()) {
                         // For each edge, the head labels of outgoing edges ...
@@ -123,8 +137,8 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
                                     == EdgeLabelPlacement.HEAD) {
                                 elementBox.x = portX;
                                 elementBox.y = portY;
-                                elementBox.width = label.getSize().x;
-                                elementBox.height = label.getSize().y;
+                                elementBox.width = label.getSize().x + portLabelX;
+                                elementBox.height = label.getSize().y + portLabelY;
                                 
                                 Rectangle2D.union(boundingBox, elementBox, boundingBox);
                             }
