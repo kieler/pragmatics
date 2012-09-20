@@ -36,11 +36,13 @@ import de.cau.cs.kieler.klay.planar.util.MappedIterable;
  * @author pkl
  */
 public class PFace extends PGraphElement {
-    // TODO is left/right face correct according to source/target?
 
     /** Generated Version UID for Serialization. */
     private static final long serialVersionUID = 595562864080000947L;
-
+    
+    /** Around a face in ccw direction is four times right. */
+    private static final int CCW_DIRECTION = 4;
+    
     // ======================== Attributes =========================================================
 
     /** The nodes of this face. */
@@ -286,6 +288,30 @@ public class PFace extends PGraphElement {
     }
 
     /**
+     * Determines a startEdge and a startNode that is counterclockwise the next node to the edge.
+     * 
+     * @return tuple of corner and edge, in ccw direction.
+     */
+    public Pair<PNode, PEdge> determineCCWDirection() {
+        List<PEdge> cutEdges = getCutEdges();
+
+        if (cutEdges.isEmpty()) {
+            int calculatedDirection = -1;
+            PEdge startEdge = adjacentEdges().iterator().next();
+            calculatedDirection = calcPathWithDirection(startEdge.getSource(), startEdge);
+            if (calculatedDirection == CCW_DIRECTION) {
+                return new Pair<PNode, PEdge>(startEdge.getSource(), startEdge);
+            }
+            return new Pair<PNode, PEdge>(startEdge.getTarget(), startEdge);
+        }
+
+        // Taking a cut edge, brings always the correct direction, no matter if the source or target
+        // is chosen, since it is passed twice at a walkaround of a face.
+        PEdge first = cutEdges.get(0);
+        return new Pair<PNode, PEdge>(first.getSource(), first);
+    }
+    
+    /**
      * Checks for a wanted direction (ccw or cw ) whether a startEdge with successor startNode is in
      * the wanted direction.
      * 
@@ -295,7 +321,7 @@ public class PFace extends PGraphElement {
      *            the checked edge.
      * @return the calculated direction.
      */
-    public int calcPathWithDirection(final PNode startNode, final PEdge startEdge) {
+    private int calcPathWithDirection(final PNode startNode, final PEdge startEdge) {
 
         PEdge currentEdge = startEdge;
         PNode corner = startNode;

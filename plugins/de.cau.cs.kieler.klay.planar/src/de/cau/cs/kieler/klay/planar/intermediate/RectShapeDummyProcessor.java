@@ -15,10 +15,8 @@ package de.cau.cs.kieler.klay.planar.intermediate;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
@@ -42,8 +40,7 @@ import de.cau.cs.kieler.klay.planar.util.PUtil;
  */
 public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
-    /** Around a face in ccw direction is four times right. */
-    private static final int CCW_DIRECTION = 4;
+
 
     /** The external face has at this point exact 5 adjacent edges. */
     private static final int EXTERNAL_EDGE_COUNT = 6;
@@ -70,7 +67,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
         PFace externalFace = this.graph.getExternalFace();
 
         // Calculates a start edge and its corner in counter clockwise direction.
-        Pair<PNode, PEdge> startWithCorner = determineCCWDirection(externalFace);
+        Pair<PNode, PEdge> startWithCorner = externalFace.determineCCWDirection();
 
         // Swaps corner in clockwise direction.
         startWithCorner.setFirst(startWithCorner.getSecond().getOppositeNode(
@@ -91,94 +88,6 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
     }
 
     /**
-     * Runs counter clockwise around every face and store at each found new face a startEdge and a
-     * corner in counterclockwise direction to determine the counterclockwise direction.
-     * 
-     */
-    public void determineFaceDirections() {
-
-        Set<PFace> visitedFaces = Sets.newHashSet();
-
-        List<PFace> completedFaces = Lists.newArrayList();
-
-        PFace externalFace = this.graph.getExternalFace();
-        PFace currentFace = externalFace;
-
-        // take the face with minimum adjacent edge count.
-        for (PFace face : graph.getFaces()) {
-            if (face.getAdjacentEdgeCount() < currentFace.getAdjacentEdgeCount()) {
-                currentFace = face;
-            }
-        }
-
-        // Determine startEdge and succeeding corner of the external face.
-        Pair<PNode, PEdge> startWithCorner = determineCCWDirection(currentFace);
-        currentFace.setProperty(Properties.FACE_DIRECTION, startWithCorner);
-        visitedFaces.add(currentFace);
-
-        while (currentFace != null) {
-
-            startWithCorner = currentFace.getProperty(Properties.FACE_DIRECTION);
-            PNode startNode = startWithCorner.getFirst();
-            PNode corner = startNode;
-            PEdge currentEdge = startWithCorner.getSecond();
-            PEdge startEdge = currentEdge;
-            PFace foundFace;
-            boolean isExternal = currentFace == externalFace;
-            do {
-                foundFace = null;
-                // checks if the faces adjacent to an edge are are known, if not calculate
-                // a new startnode, startedge for it.
-                if (currentEdge.getLeftFace() != currentFace
-                        && !visitedFaces.contains(currentEdge.getLeftFace())) {
-                    foundFace = currentEdge.getLeftFace();
-                } else if (currentEdge.getRightFace() != currentFace
-                        && !visitedFaces.contains(currentEdge.getRightFace())) {
-                    foundFace = currentEdge.getRightFace();
-                }
-                if (foundFace != null) {
-                    if (isExternal) {
-                        // same direction
-                        foundFace.setProperty(Properties.FACE_DIRECTION, new Pair<PNode, PEdge>(
-                                corner, currentEdge));
-                    } else {
-                        // opposite direction
-                        foundFace.setProperty(Properties.FACE_DIRECTION, new Pair<PNode, PEdge>(
-                                currentEdge.getOppositeNode(corner), currentEdge));
-                    }
-                    visitedFaces.add(foundFace);
-                }
-
-                // Find next edge.
-                Pair<PEdge, OrthogonalAngle> pair = currentFace.nextAdjacentElement(currentEdge,
-                        corner);
-                currentEdge = pair.getFirst();
-                corner = currentEdge.getOppositeNode(corner);
-
-            } while (corner != startNode || startEdge != currentEdge);
-            if (visitedFaces.size() == this.graph.getFaceCount()) {
-                // finish
-                return;
-            }
-
-            completedFaces.add(currentFace);
-            // choose next face
-            currentFace = null;
-            for (PFace visitedFace : visitedFaces) {
-                if (completedFaces.contains(visitedFace)) {
-                    continue;
-                }
-                currentFace = visitedFace;
-                break;
-            }
-        }
-
-        // let the external face don't be in ccw direction, instead in cw direction.
-        Pair<PNode, PEdge> extProps = externalFace.getProperty(Properties.FACE_DIRECTION);
-        extProps.setFirst(extProps.getSecond().getOppositeNode(extProps.getFirst()));
-    }
-
-    /**
      * Transforms the external face, if it is not in rectangular shape. The idea is to put a
      * rectangular around the external face and let the new rectangular be the external face.
      * Connect the old external face with the new one and one can treat the old external face like a
@@ -189,9 +98,10 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
      * for all left angle corners of the face so that in addition the face is in rectangular shape.
      */
     private void transformExternalFace() {
-        //TODO let the external face at least connect every edge with front equals an edge of the rectangle.
-        //instead of two or 4. therfor for that 
-        
+        // TODO let the external face at least connect every edge with front equals an edge of the
+        // rectangle.
+        // instead of two or 4. therfor for that
+
         PFace face = this.graph.getExternalFace();
 
         setEdgeProperties(face, true);
@@ -250,7 +160,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
 
         // determine the face side for setting the edge to the correct edge on the external
         // rectangle.
-        //TODO merge this step and the below one
+        // TODO merge this step and the below one
         do {
             int edgeturn = properties.getTurn();
             next = properties.getNext();
@@ -282,13 +192,10 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
 
         } while (currentEdge != startEdge || currentNode != startNode);
 
-        
-        //determines the start edge. It must be the first edge in clockwise direction 
+        // determines the start edge. It must be the first edge in clockwise direction
         // with undefined front corresponding to a given side.
-        int wantedSideIndex = 0;
-        int startSideIndex = 3;
         // calc start edge
-        
+
         // add two edge make the external face to an internal one.
         List<Integer> usedSides = Lists.newLinkedList();
         int countAdded = 0;
@@ -337,7 +244,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
                     }
                 }
                 // Calculates a start edge and its corner in counter clockwise direction.
-                Pair<PNode, PEdge> startWithCorner = determineCCWDirection(pface);
+                Pair<PNode, PEdge> startWithCorner = pface.determineCCWDirection();
 
                 // Swaps corner in clockwise direction.
                 startWithCorner.setFirst(startWithCorner.getSecond().getOppositeNode(
@@ -366,10 +273,10 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
 
             Iterable<PFace> graphFaces = this.graph.getFaces();
 
-            //TODO es sollte gehen, dass am anfang alle faces auf rect shape geprüft werden,
+            // TODO es sollte gehen, dass am anfang alle faces auf rect shape geprüft werden,
             // alle nicht shape in structure gespeichert und nur einmal auf diese dieser process
             // ausgeführt wird. wie in ausarbeitung beschrieben.
-            
+
             // Check whether a face is not in rect shape, if so, start the process,
             // if all edges are in rect shape, we are finished!
             for (PFace checkFace : graphFaces) {
@@ -380,7 +287,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
                 }
 
                 // Calcs a startedge and its corner in counter clockwise direction.
-                Pair<PNode, PEdge> startWithCorner = determineCCWDirection(checkFace);
+                Pair<PNode, PEdge> startWithCorner = checkFace.determineCCWDirection();
                 checkFace.setProperty(Properties.FACE_DIRECTION, startWithCorner);
 
                 // Do a pre-selection, note: the new external face is already in rect shape.
@@ -429,7 +336,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
         for (PFace f : graph.getFaces()) {
             Pair<PNode, PEdge> startWithCorner = f.getProperty(Properties.FACE_DIRECTION);
             if (startWithCorner == null) {
-                Pair<PNode, PEdge> props = determineCCWDirection(f);
+                Pair<PNode, PEdge> props = f.determineCCWDirection();
                 f.setProperty(Properties.FACE_DIRECTION, props);
             }
         }
@@ -677,32 +584,6 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
                     "RectShapeProcessor, determineTurn: unknown angle index!");
         }
         return edgeTurn;
-    }
-
-    /**
-     * Determines a startEdge and a startNode that is counterclockwise the next node to the edge.
-     * 
-     * @param face
-     *            for which the ccw direction is determined.
-     * @return tuple of corner and edge, in ccw direction.
-     */
-    private Pair<PNode, PEdge> determineCCWDirection(final PFace face) {
-        List<PEdge> cutEdges = face.getCutEdges();
-
-        if (cutEdges.isEmpty()) {
-            int calculatedDirection = -1;
-            PEdge startEdge = face.adjacentEdges().iterator().next();
-            calculatedDirection = face.calcPathWithDirection(startEdge.getSource(), startEdge);
-            if (calculatedDirection == CCW_DIRECTION) {
-                return new Pair<PNode, PEdge>(startEdge.getSource(), startEdge);
-            }
-            return new Pair<PNode, PEdge>(startEdge.getTarget(), startEdge);
-        }
-
-        // Taking a cut edge, brings always the correct direction, no matter if the source or target
-        // is chosen, since it is passed twice at a walkaround of a face.
-        PEdge first = cutEdges.get(0);
-        return new Pair<PNode, PEdge>(first.getSource(), first);
     }
 
     /**

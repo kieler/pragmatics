@@ -172,6 +172,7 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
                     }
                 }
             } // end of while
+            
             visitedEdges.clear();
             completedFaces.add(currentFace);
 
@@ -273,7 +274,8 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
 
     /**
      * Filters startNode, the node that lies on the left side and on the bottom side, meaning the
-     * leftmost and lower most node! @ return pair of node and edge.
+     * leftmost and lower most node! 
+     * @return pair of node and edge.
      */
     private Pair<PNode, PEdge> determineStartPosition() {
         PFace externalFace = this.graph.getExternalFace();
