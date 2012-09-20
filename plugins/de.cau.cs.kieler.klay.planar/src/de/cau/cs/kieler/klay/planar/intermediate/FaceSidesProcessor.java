@@ -66,7 +66,7 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
         PEdge startEdge = startWithCorner.getSecond();
         PEdge currentEdge = startEdge;
 
-        PNode startNode = startEdge.getOppositeNode(startWithCorner.getFirst());
+        PNode startNode = startEdge.getSource();
         PNode corner = startNode;
 
         while (currentFace != null) {
@@ -84,7 +84,7 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
                 // first get the current edge to determine the direction of the next edge,
                 // if the next edge a face edge handle edge convenient,
                 Pair<PEdge, OrthogonalAngle> pair = currentFace.nextCWEdgeWithAngle(corner,
-                        currentEdge, true);
+                        currentEdge);
                 currentEdge = pair.getFirst();
 
                 corner = currentEdge.getOppositeNode(corner);
@@ -146,5 +146,7 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
             }
         }
     }
+    
+    //TODO introduce a check, if all faces contains at least one edge onto every face side.
 
 }

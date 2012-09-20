@@ -142,10 +142,10 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
      */
     private void addFlowAsLength(final PGraph network) {
 
-        for (PEdge edge : network.getEdges()) {
-            PEdge sourceEdge = ((PEdge) edge.getProperty(NETWORKTOGRAPH));
+        for (PEdge arc : network.getEdges()) {
+            PEdge sourceEdge = ((PEdge) arc.getProperty(NETWORKTOGRAPH));
             sourceEdge.setProperty(Properties.RELATIVE_LENGTH,
-                    edge.getProperty(IFlowNetworkSolver.FLOW));
+                    arc.getProperty(IFlowNetworkSolver.FLOW));
         }
 
     }
