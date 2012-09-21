@@ -28,6 +28,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.properties.PortLabelPlacement;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -108,9 +109,7 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
                     }
                 }
                 
-                // Do the same for end labels on edges connected to the node
-                // TODO: maybe consider port labels here if the placement strategy requires
-                // this
+                // Do the same for end labels and port labels on edges connected to the node
                 for (LPort port : node.getPorts()) {
                     // Calculate the port's upper left corner's x and y coordinate
                     double portX = port.getPosition().x + node.getPosition().x;
@@ -118,8 +117,9 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
                     double portLabelX = 0;
                     double portLabelY = 0;
                     
-                    //TODO: add layout option 
-                    if (true) {
+                    //TODO: maybe leave space for manually placed ports 
+                    if (layeredGraph.getProperty(Properties.PORT_LABEL_PLACEMENT)
+                            == PortLabelPlacement.OUTSIDE) {
                         for (LLabel label : port.getLabels()) {
                             if (portLabelX < label.getSize().x) {
                                 portLabelX = label.getSize().x;

@@ -30,6 +30,8 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.properties.PortLabelPlacement;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * 
@@ -75,7 +77,8 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                             }
                             double portLabelOffsetX = 0.0;
                             double portLabelOffsetY = 0.0;
-                            if (true) {
+                            if (layeredGraph.getProperty(Properties.PORT_LABEL_PLACEMENT) 
+                                    == PortLabelPlacement.OUTSIDE) {
                                 for (LLabel portLabel : port.getLabels()) {
                                     portLabelOffsetX = Math.max(portLabelOffsetX, portLabel.getSize().x)
                                                                 + PORT_LABEL_DISTANCE;
@@ -179,54 +182,77 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                     ports.add(edge.getTarget());
                     for (LPort port : ports) {
                         for (LLabel portLabel : port.getLabels()) {
-                            if (portLabel.getSide() == LSide.UP) {
-                                switch (port.getSide()) {
-                                case WEST:
-                                    portLabel.getPosition().x = - portLabel.getSize().x;
-                                    portLabel.getPosition().y = - portLabel.getSize().y
-                                                                + PORT_LABEL_DISTANCE;
-                                    break;
-                                case EAST:
-                                    portLabel.getPosition().x = port.getSize().x;
-                                    portLabel.getPosition().y = - portLabel.getSize().y
-                                                                + PORT_LABEL_DISTANCE;
-                                    break;
-                                case NORTH:
-                                    portLabel.getPosition().x = - port.getSize().x / 2
-                                                                - portLabel.getSize().x;
-                                    portLabel.getPosition().y = - port.getSize().y
-                                                                - portLabel.getSize().y
-                                                                - portLabelOffsetHint.get(port);
-                                    break;
-                                case SOUTH:
-                                    portLabel.getPosition().x = - port.getSize().x / 2
-                                                                - portLabel.getSize().x;
-                                    portLabel.getPosition().y = port.getSize().y
-                                                                + portLabelOffsetHint.get(port);
-                                    break;
+                            if (layeredGraph.getProperty(Properties.PORT_LABEL_PLACEMENT)
+                                    == PortLabelPlacement.OUTSIDE) {
+                                if (portLabel.getSide() == LSide.UP) {
+                                    switch (port.getSide()) {
+                                    case WEST:
+                                        portLabel.getPosition().x = - portLabel.getSize().x;
+                                        portLabel.getPosition().y = - portLabel.getSize().y
+                                                                    + PORT_LABEL_DISTANCE;
+                                        break;
+                                    case EAST:
+                                        portLabel.getPosition().x = port.getSize().x;
+                                        portLabel.getPosition().y = - portLabel.getSize().y
+                                                                    + PORT_LABEL_DISTANCE;
+                                        break;
+                                    case NORTH:
+                                        portLabel.getPosition().x = - port.getSize().x / 2
+                                                                    - portLabel.getSize().x;
+                                        portLabel.getPosition().y = - port.getSize().y
+                                                                    - portLabel.getSize().y
+                                                                    - portLabelOffsetHint.get(port);
+                                        break;
+                                    case SOUTH:
+                                        portLabel.getPosition().x = - port.getSize().x / 2
+                                                                    - portLabel.getSize().x;
+                                        portLabel.getPosition().y = port.getSize().y
+                                                                    + portLabelOffsetHint.get(port);
+                                        break;
+                                    }
+                                } else {
+                                    switch (port.getSide()) {
+                                    case WEST:
+                                        portLabel.getPosition().x = - portLabel.getSize().x;
+                                        portLabel.getPosition().y = port.getSize().y 
+                                                                    - PORT_LABEL_DISTANCE;
+                                        break;
+                                    case EAST:
+                                        portLabel.getPosition().x = port.getSize().x;
+                                        portLabel.getPosition().y = port.getSize().y
+                                                                    - PORT_LABEL_DISTANCE;
+                                        break;
+                                    case NORTH:
+                                        portLabel.getPosition().x = port.getSize().x / 2;
+                                        portLabel.getPosition().y = - port.getSize().y
+                                                                    - portLabel.getSize().y
+                                                                    - portLabelOffsetHint.get(port);
+                                        break;
+                                    case SOUTH:
+                                        portLabel.getPosition().x = port.getSize().x / 2;
+                                        portLabel.getPosition().y = port.getSize().y
+                                                                    + portLabelOffsetHint.get(port);
+                                        break;
+                                    }
                                 }
-                            } else {
+                            } else if (layeredGraph.getProperty(Properties.PORT_LABEL_PLACEMENT) 
+                                    == PortLabelPlacement.INSIDE) {
                                 switch (port.getSide()) {
                                 case WEST:
-                                    portLabel.getPosition().x = - portLabel.getSize().x;
-                                    portLabel.getPosition().y = port.getSize().y 
-                                                                - PORT_LABEL_DISTANCE;
+                                    portLabel.getPosition().x = port.getSize().x + 1;
+                                    portLabel.getPosition().y = 0;
                                     break;
                                 case EAST:
-                                    portLabel.getPosition().x = port.getSize().x;
-                                    portLabel.getPosition().y = port.getSize().y
-                                                                - PORT_LABEL_DISTANCE;
+                                    portLabel.getPosition().x = - portLabel.getSize().x - 1;
+                                    portLabel.getPosition().y = 0;
                                     break;
                                 case NORTH:
-                                    portLabel.getPosition().x = port.getSize().x / 2;
-                                    portLabel.getPosition().y = - port.getSize().y
-                                                                - portLabel.getSize().y
-                                                                - portLabelOffsetHint.get(port);
+                                    portLabel.getPosition().x = - portLabel.getSize().x / 2;
+                                    portLabel.getPosition().y = port.getSize().y;
                                     break;
                                 case SOUTH:
-                                    portLabel.getPosition().x = port.getSize().x / 2;
-                                    portLabel.getPosition().y = port.getSize().y
-                                                                + portLabelOffsetHint.get(port);
+                                    portLabel.getPosition().x = - portLabel.getSize().x / 2;
+                                    portLabel.getPosition().y = - portLabel.getSize().y;
                                     break;
                                 }
                             }
