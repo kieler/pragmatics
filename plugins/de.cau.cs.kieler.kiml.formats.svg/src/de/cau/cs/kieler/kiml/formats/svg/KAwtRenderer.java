@@ -96,7 +96,7 @@ public class KAwtRenderer {
 
     /** property for output scaling, to be put in parent node's shape layout. */
     public static final IProperty<Float> SCALE = new Property<Float>(
-            "de.cau.cs.kieler.awt.scale", 1.0f);
+            "de.cau.cs.kieler.svg.scale", 1.0f);
 
     /** default font size for nodes. */
     private static final int NODE_FONT_SIZE = 9;

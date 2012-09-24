@@ -125,37 +125,40 @@ public class MatrixHandler implements ITransformationHandler<Matrix> {
     /**
      * {@inheritDoc}
      */
-    public String serialize(final Matrix graph) {
+    public String serialize(final TransformationData<KNode, Matrix> transData) {
         StringBuilder builder = new StringBuilder();
-        if (graph.getLayout() == null) {
-            if (graph.getList() != null) {
-                // serialize the graph in coordinate format
-                builder.append("%%MatrixMarket matrix coordinate pattern general\n");
-                builder.append(graph.getRows()).append(' ').append(graph.getColumns()).append(' ');
-                builder.append(graph.getList().size()).append('\n');
-                for (Matrix.Entry entry : graph.getList()) {
-                    builder.append(entry.i + 1).append(' ').append(entry.j + 1).append('\n');
-                }
-            } else if (graph.getMatrix() != null) {
-                // serialize the graph in array format
-                builder.append("%%MatrixMarket matrix array integer general\n");
-                builder.append(graph.getRows()).append(' ').append(graph.getColumns()).append('\n');
-                int[][] m = graph.getMatrix();
-                for (int j = 0; j < graph.getColumns(); j++) {
-                    for (int i = 0; i < graph.getRows(); i++) {
-                        builder.append(m[i][j]).append('\n');
+        for (Matrix matrix : transData.getTargetGraphs()) {
+            if (matrix.getLayout() == null) {
+                if (matrix.getList() != null) {
+                    // serialize the graph in coordinate format
+                    builder.append("%%MatrixMarket matrix coordinate pattern general\n");
+                    builder.append(matrix.getRows()).append(' ').append(matrix.getColumns());
+                    builder.append(' ').append(matrix.getList().size()).append('\n');
+                    for (Matrix.Entry entry : matrix.getList()) {
+                        builder.append(entry.i + 1).append(' ').append(entry.j + 1).append('\n');
+                    }
+                } else if (matrix.getMatrix() != null) {
+                    // serialize the graph in array format
+                    builder.append("%%MatrixMarket matrix array integer general\n");
+                    builder.append(matrix.getRows()).append(' ').append(matrix.getColumns());
+                    builder.append('\n');
+                    int[][] m = matrix.getMatrix();
+                    for (int j = 0; j < matrix.getColumns(); j++) {
+                        for (int i = 0; i < matrix.getRows(); i++) {
+                            builder.append(m[i][j]).append('\n');
+                        }
                     }
                 }
-            }
-        } else {
-            // serialize the layout of the graph
-            builder.append("%%KIELER matrix layout\n");
-            for (KVectorChain chain : graph.getLayout()) {
-                for (KVector vector : chain) {
-                    builder.append(toString(vector.x)).append(' ');
-                    builder.append(toString(vector.y)).append(' ');
+            } else {
+                // serialize the layout of the graph
+                builder.append("%%KIELER matrix layout\n");
+                for (KVectorChain chain : matrix.getLayout()) {
+                    for (KVector vector : chain) {
+                        builder.append(toString(vector.x)).append(' ');
+                        builder.append(toString(vector.y)).append(' ');
+                    }
+                    builder.append('\n');
                 }
-                builder.append('\n');
             }
         }
         return builder.toString();

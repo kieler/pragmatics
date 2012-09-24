@@ -19,6 +19,7 @@ package de.cau.cs.kieler.kiml.ogdf.options;
  * @author mri
  */
 public enum Speed {
+    
     /** fast speed. */
     FAST,
     /** medium speed. */
@@ -26,13 +27,4 @@ public enum Speed {
     /** high quality. */
     HQ;
     
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static Speed valueOf(final int i) {
-        return values()[i];
-    }
 }

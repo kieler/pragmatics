@@ -125,7 +125,7 @@ public class Matrix {
     /**
      * Return the adjacency list.
      * 
-     * @return the adjacency list, or {@code null}
+     * @return the adjacency list, or {@code null} if the matrix is not stored in coordinate format
      */
     public List<Entry> getList() {
         return list;
@@ -134,7 +134,7 @@ public class Matrix {
     /**
      * Return the adjacency matrix.
      * 
-     * @return the adjacency matrix, or {@code null}
+     * @return the adjacency matrix, or {@code null} if the matrix is not stored in array format
      */
     public int[][] getMatrix() {
         return matrix;
@@ -163,7 +163,7 @@ public class Matrix {
      * contain only one vector for the node positions, and the last elements contain the
      * coordinates for edge line segments.
      * 
-     * @return the layout specification
+     * @return the layout specification, or {@code null} if no layout was set for the matrix.
      */
     public List<KVectorChain> getLayout() {
         return layout;

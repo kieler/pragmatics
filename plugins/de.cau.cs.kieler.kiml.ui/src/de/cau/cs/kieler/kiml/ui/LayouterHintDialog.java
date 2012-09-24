@@ -13,12 +13,16 @@
  */
 package de.cau.cs.kieler.kiml.ui;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -45,6 +49,7 @@ import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ILayoutData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutTypeData;
 
 /**
  * A dialog to browse and select layout algorithms or layout types.
@@ -62,10 +67,10 @@ public class LayouterHintDialog extends Dialog {
     private Label descriptionLabel;
     /** the label for displaying the preview image. */
     private Label imageLabel;
-    /** the tree viewer for layout algorithm selection. */
-    private TreeViewer treeViewer;
-    /** the content provider that is used to filter the layouters. */
-    private LayouterHintProvider contentProvider;
+    /** the selection provider for layout algorithms and types. */
+    private ISelectionProvider selectionProvider;
+    /** the cached preview images. */
+    private Map<ILayoutData, Image> imageCache = new HashMap<ILayoutData, Image>();
     
     /**
      * Creates a layout hint dialog.
@@ -92,36 +97,12 @@ public class LayouterHintDialog extends Dialog {
      */
     @Override
     public boolean close() {
-        IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-        Object element = selection.getFirstElement();
-        if (element instanceof ILayoutData) {
-            layouterHint = ((ILayoutData) element).getId();
-        } else {
-            layouterHint = contentProvider.getBestFilterMatch();
+        imageLabel.setImage(null);
+        for (Image image : imageCache.values()) {
+            image.dispose();
         }
-        if (imageLabel.getImage() != null) {
-            imageLabel.getImage().dispose();
-            imageLabel.setImage(null);
-        }
+        imageCache.clear();
         return super.close();
-    }
-    
-    /**
-     * Update the currently displayed value by changing the tree selection and
-     * updating the description area.
-     * 
-     * @param value the current value string
-     */
-    private void updateValue(final String value) {
-        LayoutDataService layoutServices = LayoutDataService.getInstance();
-        ILayoutData layoutData = layoutServices.getAlgorithmData(value);
-        if (layoutData == null) {
-            layoutData = layoutServices.getTypeData(value);
-        }
-        if (layoutData != null) {
-            treeViewer.setSelection(new StructuredSelection(layoutData));
-            updateValue(layoutData);
-        }
     }
     
     /**
@@ -131,6 +112,8 @@ public class LayouterHintDialog extends Dialog {
      * @param layoutData the currently selected layout data
      */
     private void updateValue(final ILayoutData layoutData) {
+        layouterHint = layoutData.getId();
+
         String name = layoutData.getName();
         if (name == null || name.length() == 0) {
             name = layoutData instanceof LayoutAlgorithmData
@@ -143,18 +126,17 @@ public class LayouterHintDialog extends Dialog {
             description = Messages.getString("kiml.ui.60");
         }
         descriptionLabel.setText(description);
-        Image newImage = null;
-        ImageDescriptor descriptor = null;
-        if (layoutData instanceof LayoutAlgorithmData) {
-            descriptor = (ImageDescriptor) ((LayoutAlgorithmData) layoutData).getPreviewImage();       
-            if (descriptor != null) {
-                newImage = descriptor.createImage();
+        Image image = imageCache.get(layoutData);
+        if (image == null && layoutData instanceof LayoutAlgorithmData) {
+            Object descriptor = ((LayoutAlgorithmData) layoutData).getPreviewImage();       
+            if (descriptor instanceof ImageDescriptor) {
+                image = ((ImageDescriptor) descriptor).createImage(false);
+                if (image != null) {
+                    imageCache.put(layoutData, image);
+                }
             }
         }
-        if (imageLabel.getImage() != null) {
-            imageLabel.getImage().dispose();
-        }
-        imageLabel.setImage(newImage);
+        imageLabel.setImage(image);
         imageLabel.getParent().layout();
     }
     
@@ -166,22 +148,24 @@ public class LayouterHintDialog extends Dialog {
         Composite composite = (Composite) super.createDialogArea(parent);
         ((GridLayout) composite.getLayout()).numColumns = 2;
         createSelectionTree(composite);
-        createDescriptionArea(composite);
-        updateValue(layouterHint);
+        createDescriptionArea(composite);    
         
-        // add a selection listener to the tree so that the selected element is displayed
-        treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(final SelectionChangedEvent event) {
-                IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-                Object element = selection.getFirstElement();
-                if (element instanceof ILayoutData) {
-                    updateValue((ILayoutData) element);
-                }
+        // set the initial selection according to the current layouter hint
+        if (layouterHint != null) {
+            LayoutDataService layoutServices = LayoutDataService.getInstance();
+            ILayoutData layoutData = layoutServices.getAlgorithmData(layouterHint);
+            if (layoutData == null) {
+                layoutData = layoutServices.getTypeData(layouterHint);
             }
-        });
-        
+            if (layoutData != null) {
+                selectionProvider.setSelection(new StructuredSelection(layoutData));
+            }
+        }
         return composite;
     }
+    
+    /** minimal width of the selection area. */
+    private static final int SELECTION_WIDTH = 220;
     
     /**
      * Create the dialog area that displays the selection tree and filter text.
@@ -199,11 +183,20 @@ public class LayouterHintDialog extends Dialog {
         filterText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_GRAY));
         
         // create tree viewer
-        treeViewer = new TreeViewer(composite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
-        contentProvider = new LayouterHintProvider();
+        final TreeViewer treeViewer = new TreeViewer(composite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
+        final LayouterHintProvider contentProvider = new LayouterHintProvider();
         treeViewer.setContentProvider(contentProvider);
         treeViewer.setLabelProvider(new LabelProvider());
-        treeViewer.setSorter(new ViewerSorter());
+        treeViewer.setSorter(new ViewerSorter() {
+            public int category(final Object element) {
+                if (element instanceof LayoutTypeData) {
+                    LayoutTypeData typeData = (LayoutTypeData) element;
+                    // the "Other" layout type has empty identifier and is put to the bottom
+                    return typeData.getId().length() == 0 ? 1 : 0;
+                }
+                return super.category(element);
+            }
+        });
         treeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         treeViewer.setInput(LayoutDataService.getInstance());
         treeViewer.expandAll();
@@ -229,6 +222,10 @@ public class LayouterHintDialog extends Dialog {
                     contentProvider.updateFilter(filterText.getText());
                     treeViewer.refresh();
                     treeViewer.expandAll();
+                    ILayoutData selected = contentProvider.getBestFilterMatch();
+                    if (selected != null) {
+                        treeViewer.setSelection(new StructuredSelection(selected));
+                    }
                 }
             }
         });
@@ -251,8 +248,23 @@ public class LayouterHintDialog extends Dialog {
             }
         });
         
+        // add a selection listener to the tree so that the selected element is displayed
+        treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(final SelectionChangedEvent event) {
+                IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+                Object element = selection.getFirstElement();
+                if (element instanceof ILayoutData) {
+                    updateValue((ILayoutData) element);
+                }
+            }
+        });
+        
         composite.setLayout(new GridLayout());
-        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+        gridData.minimumWidth = SELECTION_WIDTH;
+        composite.setLayoutData(gridData);
+        
+        selectionProvider = treeViewer;
         return composite;
     }
     

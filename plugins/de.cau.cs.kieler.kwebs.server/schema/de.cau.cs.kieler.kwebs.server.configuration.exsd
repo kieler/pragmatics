@@ -19,6 +19,8 @@
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="supportHandler"/>
+            <element ref="preFilters"/>
+            <element ref="postFilters"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -78,6 +80,51 @@
                </documentation>
             </annotation>
          </attribute>
+      </complexType>
+   </element>
+
+   <element name="layoutFilter">
+      <complexType>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="implementation" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilter:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="preFilters">
+      <complexType>
+         <sequence>
+            <element ref="layoutFilter"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="postFilters">
+      <complexType>
+         <sequence>
+            <element ref="layoutFilter"/>
+         </sequence>
       </complexType>
    </element>
 

@@ -45,7 +45,11 @@ public enum GraphFeature {
     /**
      * Edges that connect nodes from different clusters, but not the cluster parent nodes.
      */
-    CLUSTERS;
+    CLUSTERS,
+    /**
+     * Multiple connected components.
+     */
+    DISCONNECTED;
     
     /**
      * Returns the enumeration value related to the given ordinal.

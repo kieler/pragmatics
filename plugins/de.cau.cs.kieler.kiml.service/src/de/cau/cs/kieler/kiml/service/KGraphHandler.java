@@ -53,9 +53,11 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
      * {@inheritDoc}
      */
     @Override
-    public String serialize(final KNode graph) {
-        KimlUtil.persistDataElements(graph);
-        return super.serialize(graph);
+    public String serialize(final TransformationData<KNode, KNode> transData) {
+        for (KNode graph : transData.getTargetGraphs()) {
+            KimlUtil.persistDataElements(graph);
+        }
+        return super.serialize(transData);
     }
 
     /**

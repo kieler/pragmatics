@@ -22,14 +22,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.service.AnalysisService;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
@@ -37,6 +36,8 @@ import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
 
 /**
  * This class provides static methods to start an analysis of a given diagram.
@@ -140,12 +141,12 @@ public final class DiagramAnalyzer {
 
         } else {
             // perform analysis without a progress bar
-            MonitoredOperation.runInUI(new Runnable() {
+            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                 // first phase: build the graph
                 public void run() {
                     layoutMapping.set(manager.buildLayoutGraph(editorPart, editPart));
                 }
-            }, true);
+            });
             
             // second phase: analyze the graph
             KNode graph = layoutMapping.get().getLayoutGraph();

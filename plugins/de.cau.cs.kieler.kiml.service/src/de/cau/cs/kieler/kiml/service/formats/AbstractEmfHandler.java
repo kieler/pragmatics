@@ -64,14 +64,13 @@ public abstract class AbstractEmfHandler<T extends EObject> implements ITransfor
     /**
      * {@inheritDoc}
      */
-    public String serialize(final T graph) {
+    public String serialize(final TransformationData<KNode, T> transData) {
         try {
             ByteArrayOutputStream target = new ByteArrayOutputStream();
-            serializeBinary(graph, target, null);
-            target.flush();
-            String result = target.toString("UTF-8");
-            target.close();
-            return result;
+            for (T graph : transData.getTargetGraphs()) {
+                serializeBinary(graph, target, null);                
+            }
+            return target.toString("UTF-8");
         } catch (IOException e) {
             throw new TransformationException(e);
         }
