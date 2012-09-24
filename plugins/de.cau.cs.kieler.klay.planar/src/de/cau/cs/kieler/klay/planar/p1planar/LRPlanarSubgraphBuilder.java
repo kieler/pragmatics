@@ -201,76 +201,6 @@ public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayou
     // ====================== Methods =====================================
 
     /**
-     * Helper method for the planarity test. It instantiates all necessary attributes of this class
-     * respectively for the planarity test and planar embedding and initializes them with their
-     * default values. If the attributes already exist (i.e. they were created by a previous
-     * function call) and if their size fits for the nodes and edges of the current graph, then the
-     * old instances will be reused as far as possible to save memory space.
-     * 
-     * @param numNodes
-     *            the number of nodes in the graph
-     * @param numEdges
-     *            the number of edges in the graph
-     * @param mode
-     *            the mode of attribute instantiation. If {@code mode = false}, then only the
-     *            attributes required for the {@code testPlanarity()} will be created. Otherwise,
-     *            all attributes necessary for {@code planarSubgraph()} will be instantiated.
-     */
-    private void initialize(final int numNodes, final int numEdges, final boolean mode) {
-
-        roots.clear();
-        crossingEdges.clear();
-
-        if (dfsSource == null || numEdges > dfsSource.length) {
-            dfsSource = new PNode[numEdges];
-            dfsTarget = new PNode[numEdges];
-            lowpt = new int[numEdges];
-            lowpt2 = new int[numEdges];
-            nestingDepth = new int[numEdges];
-            ref = new PEdge[numEdges];
-            side = new int[numEdges];
-            Arrays.fill(side, 1);
-            lowptEdge = new PEdge[numEdges];
-        } else {
-            Arrays.fill(dfsSource, null);
-            Arrays.fill(side, 1);
-            Arrays.fill(ref, null);
-        }
-        if (height == null || numNodes > height.length) {
-            height = new int[numNodes];
-            Arrays.fill(height, -1);
-            parentEdge = new PEdge[numNodes];
-        } else {
-            Arrays.fill(height, -1);
-            Arrays.fill(parentEdge, null);
-        }
-        if (conflicts == null) {
-            conflicts = new Stack<Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>>>();
-        } else {
-            conflicts.clear();
-        }
-        if (stackBottom == null || numEdges > stackBottom.size()) {
-            stackBottom = new ArrayList<Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>>>(numEdges);
-            for (int i = 0; i < numEdges; i++) {
-                stackBottom.add(null);
-            }
-        } else {
-            Collections.fill(stackBottom, null);
-        }
-        if (mode) {
-            if (initialRef == null || numNodes > initialRef.length) {
-                initialRef = new PEdge[numNodes];
-                leftRef = new PEdge[numNodes];
-                rightRef = new PEdge[numNodes];
-            } else {
-                Arrays.fill(initialRef, null);
-                Arrays.fill(leftRef, null);
-                Arrays.fill(rightRef, null);
-            }
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pGraph) {
@@ -358,6 +288,77 @@ public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayou
 
         getMonitor().done();
         pgraph.setProperty(Properties.INSERTABLE_EDGES, removedEdges);
+    }
+
+    
+    /**
+     * Helper method for the planarity test. It instantiates all necessary attributes of this class
+     * respectively for the planarity test and planar embedding and initializes them with their
+     * default values. If the attributes already exist (i.e. they were created by a previous
+     * function call) and if their size fits for the nodes and edges of the current graph, then the
+     * old instances will be reused as far as possible to save memory space.
+     * 
+     * @param numNodes
+     *            the number of nodes in the graph
+     * @param numEdges
+     *            the number of edges in the graph
+     * @param mode
+     *            the mode of attribute instantiation. If {@code mode = false}, then only the
+     *            attributes required for the {@code testPlanarity()} will be created. Otherwise,
+     *            all attributes necessary for {@code planarSubgraph()} will be instantiated.
+     */
+    private void initialize(final int numNodes, final int numEdges, final boolean mode) {
+
+        roots.clear();
+        crossingEdges.clear();
+
+        if (dfsSource == null || numEdges > dfsSource.length) {
+            dfsSource = new PNode[numEdges];
+            dfsTarget = new PNode[numEdges];
+            lowpt = new int[numEdges];
+            lowpt2 = new int[numEdges];
+            nestingDepth = new int[numEdges];
+            ref = new PEdge[numEdges];
+            side = new int[numEdges];
+            Arrays.fill(side, 1);
+            lowptEdge = new PEdge[numEdges];
+        } else {
+            Arrays.fill(dfsSource, null);
+            Arrays.fill(side, 1);
+            Arrays.fill(ref, null);
+        }
+        if (height == null || numNodes > height.length) {
+            height = new int[numNodes];
+            Arrays.fill(height, -1);
+            parentEdge = new PEdge[numNodes];
+        } else {
+            Arrays.fill(height, -1);
+            Arrays.fill(parentEdge, null);
+        }
+        if (conflicts == null) {
+            conflicts = new Stack<Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>>>();
+        } else {
+            conflicts.clear();
+        }
+        if (stackBottom == null || numEdges > stackBottom.size()) {
+            stackBottom = new ArrayList<Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>>>(numEdges);
+            for (int i = 0; i < numEdges; i++) {
+                stackBottom.add(null);
+            }
+        } else {
+            Collections.fill(stackBottom, null);
+        }
+        if (mode) {
+            if (initialRef == null || numNodes > initialRef.length) {
+                initialRef = new PEdge[numNodes];
+                leftRef = new PEdge[numNodes];
+                rightRef = new PEdge[numNodes];
+            } else {
+                Arrays.fill(initialRef, null);
+                Arrays.fill(leftRef, null);
+                Arrays.fill(rightRef, null);
+            }
+        }
     }
 
     /**

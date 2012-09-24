@@ -222,7 +222,7 @@ public class PNode extends PShape {
      *            the edge to add
      * @return the port the edge was linked to
      */
-    void linkEdge(final PEdge edge) {
+    public void linkEdge(final PEdge edge) {
         this.edges.add(edge);
     }
 
@@ -233,7 +233,7 @@ public class PNode extends PShape {
      * @param edge
      *            the edge to remove
      */
-    void unlinkEdge(final PEdge edge) {
+    public void unlinkEdge(final PEdge edge) {
         this.edges.remove(edge);
     }
 
@@ -487,14 +487,15 @@ public class PNode extends PShape {
     }
 
     /**
-     * 
+     * Unlinks all edges.
      */
     public void unlinkAll() {
         this.edges.clear();
     }
 
     /**
-     * @param linkEdges
+     * links all edges of the collection.
+     * @param linkEdges, to be linkable edges.
      */
     public void linkEdges(final Collection<PEdge> linkEdges) {
         this.edges.addAll(linkEdges);

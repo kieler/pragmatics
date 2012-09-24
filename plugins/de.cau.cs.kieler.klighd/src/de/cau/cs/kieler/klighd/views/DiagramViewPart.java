@@ -26,6 +26,7 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -58,7 +59,7 @@ public class DiagramViewPart extends ViewPart {
 
     /** the default name for this view. */
     public static final String DEFAULT_NAME = "Light Diagram";
-
+    
     /** the viewer for this view part. */
     private ContextViewer viewer;
 
@@ -66,10 +67,11 @@ public class DiagramViewPart extends ViewPart {
      * {@inheritDoc}
      */
     @Override
-    public void createPartControl(final Composite parent) {
-        addLayoutButton();
+    public void createPartControl(final Composite parent) {        
+        
+        addButtons();
         // create a context viewer
-        viewer = new ContextViewer(parent, getViewSite().getSecondaryId());
+        viewer = new ContextViewer(parent, getViewSite().getSecondaryId(), this);
         // install a drop handler for the view
         installDropHandler(parent);
         viewer.setModel("No model selected.", false);
@@ -162,8 +164,23 @@ public class DiagramViewPart extends ViewPart {
 
         });
     }
+    
 
-    private void addLayoutButton() {
+    private void addButtons() {
+        this.getViewSite()
+                .getActionBars()
+                .getToolBarManager()
+                .add(new Action("Refresh diagram", KlighdPlugin
+                        .getImageDescriptor("icons/full/elcl16/refresh.gif")) {
+                    public void runWithEvent(final Event event) {
+                        DiagramViewManager.getInstance().updateView(viewer.getViewPartId());
+                    }
+                });
+//        DiagramViewPart.this.getViewSite().getActionBars().getToolBarManager()
+//                .add(new Action("Zoom to fit", IAction.AS_CHECK_BOX) {
+//                    public void run() {
+//                    }
+//                });
         new LayoutAction("Arrange", KimlUiPlugin.getImageDescriptor("icons/menu16/kieler-arrange.gif"));
         new LayoutAction("Arrange rightward", Direction.RIGHT, "icons/full/elcl16/forward_nav.gif");
         new LayoutAction("Arrange downward", Direction.DOWN, "icons/full/elcl16/downward_nav.gif");

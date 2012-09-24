@@ -13,17 +13,18 @@
  */
 package de.cau.cs.kieler.klay.planar.intermediate;
 
+import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
 
 /**
- * Represents the pgraph elements as a grid. The entries here are the graph nodes which are
+ * Represents the {@link PGraph} elements as a grid. The entries here are the graph nodes which are
  * connected by the graph edges.
  * 
  * @author pkl
  */
 public class GridRepresentation {
 
-    private PNode[][] grid;
+    private PNode[][] nodePositions;
 
     private final int height;
 
@@ -40,7 +41,7 @@ public class GridRepresentation {
     public GridRepresentation(final int width, final int height) {
         this.width = width;
         this.height = height;
-        this.grid = new PNode[width][height];
+        this.nodePositions = new PNode[width][height];
     }
 
     /**
@@ -50,8 +51,8 @@ public class GridRepresentation {
      *            , the node to remove from grid.
      */
     public void remove(final PNode node) {
-        int[] coordinates = search(node);
-        grid[coordinates[0]][coordinates[1]] = null;
+        int[] coordinates = getPosition(node);
+        nodePositions[coordinates[0]][coordinates[1]] = null;
     }
 
     /**
@@ -64,7 +65,7 @@ public class GridRepresentation {
      * @return the found PNode.
      */
     public PNode get(final int x, final int y) {
-        return this.grid[x][y];
+        return this.nodePositions[x][y];
     }
 
     /**
@@ -78,7 +79,7 @@ public class GridRepresentation {
      *            {@link PNode}
      */
     public void set(final int x, final int y, final PNode node) {
-        this.grid[x][y] = node;
+        this.nodePositions[x][y] = node;
     }
 
     /**
@@ -91,11 +92,11 @@ public class GridRepresentation {
      * @return the grid position of the node, first element is the x coordinate, second is the y
      *         coordinate.
      */
-    public int[] search(final PNode node) {
+    public int[] getPosition(final PNode node) {
         int[] result = { 0, 0 };
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                if (grid[x][y] == node) {
+                if (nodePositions[x][y] == node) {
                     result[0] = x;
                     result[1] = y;
                     return result;
