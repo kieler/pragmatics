@@ -217,6 +217,10 @@ litigation.
       <update label="KIELER Nightly Builds" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"/>
    </url>
 
+   <includes
+         id="de.cau.cs.kieler.core.annotations.feature"
+         version="0.0.0"/>
+
    <requires>
       <import feature="com.google.guava.runtime.feature" version="10.0.1" match="compatible"/>
       <import feature="org.eclipse.xtext.runtime" version="2.3.0.v201206120633" match="compatible"/>
@@ -226,13 +230,6 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.kgraph"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -261,13 +258,6 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.core.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -303,20 +293,6 @@ litigation.
 
    <plugin
          id="edu.umd.cs.piccolo"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.service"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
