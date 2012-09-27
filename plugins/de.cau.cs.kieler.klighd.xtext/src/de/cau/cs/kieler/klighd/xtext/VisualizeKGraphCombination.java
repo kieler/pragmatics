@@ -35,7 +35,9 @@ public class VisualizeKGraphCombination extends UpdateXtextModelKLighDCombinatio
     public void execute(final XtextModelChangeState state) {
         // I chose the language name as the filter criterion as e.g. the resource provided by the
         //  trigger state won't by available for 'CLOSE' event firings.
-        if (!state.getEditor().getLanguageName().equals("de.cau.cs.kieler.core.kgraph.text.KGraph")) {
+        if (state.getEditor() == null
+                || !state.getEditor().getLanguageName()
+                        .equals("de.cau.cs.kieler.core.kgraph.text.KGraph")) {
             return;
         }
         super.execute(state);

@@ -35,6 +35,7 @@ import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.LocationScheme;
+import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 
 /**
@@ -104,22 +105,31 @@ public abstract class VisualizeChosenElementCombination extends AbstractCombinat
      * 
      */
     public void execute(final ButtonState buttonState) {
-        if (buttonState.getButtonId().equals(buttonId)) {
-            if (visibilityExpression.getEditorInputPath() != null
-                    && visibilityExpression.getElement() != null) {
-                this.schedule(new KlighdDiagramEffect(visibilityExpression.getEditorInputPath()
-                        .toOSString().replace(":", ""), visibilityExpression.getEditorInputPath()
-                        .lastSegment(), visibilityExpression.getElement(), buttonState.getEditor()));
-            } else {
-                // this case is needed if the buttonSate was fired by an Xtext quickfix provider
-                if (buttonState.getEditor() != null
-                        && buttonState.getParameters().get("element") != null) {
-                    IPath editorInputPath = ((FileEditorInput) buttonState.getEditor()
-                            .getEditorInput()).getPath();
-                    this.schedule(new KlighdDiagramEffect(editorInputPath.toOSString().replace(":",
-                            ""), editorInputPath.lastSegment(), (EObject) buttonState
-                            .getParameters().get("element"), buttonState.getEditor()));
-                }
+        if (!buttonState.getButtonId().equals(buttonId)) {
+            return;
+        }
+                
+        if (visibilityExpression.getEditorInputPath() != null
+                && visibilityExpression.getElement() != null) {
+            this.schedule(new KlighdDiagramEffect(visibilityExpression.getEditorInputPath()
+                    .toOSString().replace(":", ""), visibilityExpression.getEditorInputPath()
+                    .lastSegment(), visibilityExpression.getElement(), buttonState.getEditor()));
+        } else {
+            // this case is needed if the buttonSate was fired by an Xtext quickfix provider
+            if (buttonState.getEditor() != null
+                    && buttonState.getParameters().get("element") != null) {
+                IPath editorInputPath = ((FileEditorInput) buttonState.getEditor().getEditorInput())
+                        .getPath();
+                
+                KlighdDiagramEffect effect = new KlighdDiagramEffect(
+                        editorInputPath.toOSString().replace(":", ""), editorInputPath
+                                .lastSegment(), (EObject) buttonState.getParameters()
+                                .get("element"), buttonState.getEditor());
+                // TODO: it seems to be reasonable to hand over the element as well as the editor by
+                // means of an IProperty as well.
+                effect.setProperty(ViewContext.MODEL_ACCESS, buttonState.getParameters()
+                        .get("modelAccess"));
+                this.schedule(effect);
             }
         }
     }
