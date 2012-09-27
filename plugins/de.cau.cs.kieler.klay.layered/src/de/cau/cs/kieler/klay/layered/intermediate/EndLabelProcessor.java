@@ -18,10 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -35,46 +33,73 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * 
+ * This intermediate processor does the necessary calculations for an absolute positioning
+ * of all end and port labels. It uses the port sides and the side choice made before
+ * to find this positioning.
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>a layered graph; no dummy nodes;
+ *   labels are marked with a placement side; nodes have port sides.</dd>
+ *   <dt>Postcondition:</dt><dd>edge and port labels have absolute coordinates.</dd>
+ *   <dt>Slots:</dt><dd>After phase 5.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link LongEdgeJoiner}</dd>
+ *                                   <dd>{@link NorthSouthPortPostProcessor}</dd>
+ *                                   <dd>{@link LabelDummyRemover}</dd>
+ *                                   <dd>{@link ReverseEdgeRestorer}</dd>
+ * </dl>
+ * 
  * @author jjc
- * @kieler.design 2012-08-10 chsch grh
  */
 public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
-    // TODO: offer as layout option
     /** Distance of a label to its edge. */
     private static final int LABEL_DISTANCE = 0;
     
     /** Offset introduced by GMF to ports, results have to be adjusted by this factor. */
     private static final int PORT_LABEL_DISTANCE = 3;
     
+    /** In case of northern ports, labels have to be stacked to avoid overlaps.
+     * The necessary offset is stored here. */
     private HashMap<LNode, Double> northOffset; 
     
+    /** The stacking offset for southern labels is stored here. */
     private HashMap<LNode, Double> southOffset;
     
+    /** Port labels have to be stacked on northern or southern ports as well if
+     * placed outside. This offset is memorized here. */
     private HashMap<LPort, Double> portLabelOffsetHint;
     
     /**
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph) {
+        // Initialize the offset maps
         northOffset = new HashMap<LNode, Double>();
         southOffset = new HashMap<LNode, Double>();
         portLabelOffsetHint = new HashMap<LPort, Double>();
+        
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                System.out.println();
                 for (LEdge edge : node.getOutgoingEdges()) {
                     for (LLabel label : edge.getLabels()) {
+                        // Only consider end labels
                         if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                                == EdgeLabelPlacement.HEAD
-                            ||
+                                == EdgeLabelPlacement.TAIL
+                                ||
                             label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                                == EdgeLabelPlacement.TAIL) {
+                                == EdgeLabelPlacement.HEAD) {
+                            
                             LPort port = edge.getSource();
+                            
+                            // When a tail label is present, the target port is used
+                            // for orientation
                             if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                                == EdgeLabelPlacement.TAIL) {
+                                == EdgeLabelPlacement.HEAD) {
                                 port = edge.getTarget();
                             }
+                            
+                            // Calculate, how many space the end label has to keep clear for a
+                            // port label
                             double portLabelOffsetX = 0.0;
                             double portLabelOffsetY = 0.0;
                             if (layeredGraph.getProperty(Properties.PORT_LABEL_PLACEMENT) 
@@ -87,6 +112,7 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                                 }
                             }
                             
+                            // Initialize offset with zero if no offset was present
                             if (!northOffset.containsKey(port.getNode())) {
                                 northOffset.put(port.getNode(), 0.0);
                             }
@@ -96,6 +122,10 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                             if (!portLabelOffsetHint.containsKey(port)) {
                                 portLabelOffsetHint.put(port, 0.0);
                             }
+                            
+                            // Calculate end label position based on side choice
+                            // Port side undefined can be left out, because there would be no reasonable
+                            // way of handling them
                             if (label.getSide() == LSide.UP) {
                                 switch (port.getSide()) {
                                 case WEST:
@@ -177,6 +207,8 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                             }
                         }
                     }
+                    
+                    // Handle port labels of all ports of the edge
                     List<LPort> ports = new LinkedList<LPort>();
                     ports.add(edge.getSource());
                     ports.add(edge.getTarget());
