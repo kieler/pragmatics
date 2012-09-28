@@ -68,7 +68,6 @@ public abstract class KlayAutomatedJUnitTest {
     public void GraphAutomatedTestInitialization() {
         graphsList.clear();
         graphsList = GraphTestUtil.loadGraphs(getBundleTestPath());
-
     }
 
     /**

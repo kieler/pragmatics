@@ -116,7 +116,7 @@ public final class GraphTestUtil {
      */
     public static List<GraphTestObject> loadGMFGraphs(String folder, boolean subfolder,
             boolean doLayout) {
-        // the root folder where graphs are located
+       
         File rootFolder = new File(SOURCE_GRAPHS_DIRECTORY, folder);
 
         // test if the root folder is readable by the application
@@ -125,19 +125,19 @@ public final class GraphTestUtil {
             // load files from the directory
             List<File> graphFiles = loadFilesFromDirectory(rootFolder,
                     subfolder);
-
             // Test if there is files
             if (graphFiles.size() > 0) {
-
                 List<GraphTestObject> graphObjects = new ArrayList<GraphTestObject>();
                 for (File gfile : graphFiles) {
-
                     LayoutMapping<?> mapping = getLayoutMappingForGraphFile(gfile);
                     // apply layout when applyLayout = true
+                   
                     if (doLayout)
                         DiagramLayoutEngine.INSTANCE.layout(mapping, new BasicProgressMonitor());
+                         
                     // add the KNode to the list
                     graphObjects.add(new GraphTestObject(gfile, mapping.getLayoutGraph()));
+
                 }
 
                 return graphObjects;

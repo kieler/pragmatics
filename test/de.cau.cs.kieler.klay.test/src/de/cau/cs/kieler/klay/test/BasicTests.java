@@ -28,7 +28,7 @@ import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 import de.cau.cs.kieler.klay.test.utils.TestPath;
 
 /**
- * An Example test Class
+ * A Basic test Class that tests if Nodes overlaps and if Nodes and Edges overlaps
  * 
  * @author Wahbi
  */
@@ -50,8 +50,7 @@ public class BasicTests extends KlayAutomatedJUnitTest {
      * {@inheritDoc}
      */
     protected TestPath[] getBundleTestPath() {
-
-        TestPath[] testPaths = { new TestPath("keg/testtest", false, false) };
+        TestPath[] testPaths = { new TestPath("keg/testtest", false, true) };
         return testPaths;
     }
 
@@ -93,8 +92,6 @@ public class BasicTests extends KlayAutomatedJUnitTest {
                 assertTrue(!hasNodeEdgeOverlaps(node1, node2));
             }
         }
-          
-        
     }
 
     /**
@@ -115,9 +112,7 @@ public class BasicTests extends KlayAutomatedJUnitTest {
                 layout2.getYpos() + layout2.getHeight());
         return (x2 >= x1 && y2 >= y1);
     }
-    
-    
-    
+
     /**
      * Check if there is overlaps between the second node and edges from the first node.
      * 
@@ -139,7 +134,7 @@ public class BasicTests extends KlayAutomatedJUnitTest {
             KPoint p1 = edgeLayout.getSourcePoint();
             for (KPoint p2 : edgeLayout.getBendPoints()) {
                 if (hasNodeEdgeIntersection(p1, p2, node2)) {
-                   return true;
+                    return true;
                 }
                 p1 = p2;
             }
@@ -150,7 +145,7 @@ public class BasicTests extends KlayAutomatedJUnitTest {
         }
         return false;
     }
-    
+
     /**
      * Returns whether the line segment intersects the nodes bounding box.
      * 
@@ -189,12 +184,12 @@ public class BasicTests extends KlayAutomatedJUnitTest {
                 return hasIntersection(p1, p2, xpos + width, ypos, xpos + width, ypos + height);
             } else if ((outcode & TOP) > 0) {
                 return hasIntersection(p1, p2, xpos, ypos, xpos + width, ypos);
-            } else /* if ((p1OutCode & BOTTOM) > 0) */ {
+            } else /* if ((p1OutCode & BOTTOM) > 0) */{
                 return hasIntersection(p1, p2, xpos, ypos + height, xpos + width, ypos + height);
             }
         }
     }
-    
+
     /**
      * Returns whether two line segments have an intersection.
      * 
@@ -212,36 +207,32 @@ public class BasicTests extends KlayAutomatedJUnitTest {
      *            the y-coordinate of the end point of the second line segment
      * @return true if the line segments intersect else false
      */
-    private static boolean hasIntersection(final KPoint p1, final KPoint p2,
-            final float x1, final float y1, final float x2, final float y2) {
-        float s =
-                (y2 - y1) * (p2.getX() - p1.getX()) - (x2 - x1)
-                        * (p2.getY() - p1.getY());
+    private static boolean hasIntersection(final KPoint p1, final KPoint p2, final float x1,
+            final float y1, final float x2, final float y2) {
+        float s = (y2 - y1) * (p2.getX() - p1.getX()) - (x2 - x1) * (p2.getY() - p1.getY());
         // are the line segments parallel?
         if (s == 0) {
             return false;
         }
         float a1 = (x2 - x1) * (p1.getY() - y1) - (y2 - y1) * (p1.getX() - x1);
-        float a2 =
-                (p2.getX() - p1.getX()) * (p1.getY() - y1)
-                        - (p2.getY() - p1.getY()) * (p1.getX() - x1);
+        float a2 = (p2.getX() - p1.getX()) * (p1.getY() - y1) - (p2.getY() - p1.getY())
+                * (p1.getX() - x1);
         float t1 = a1 / s;
         float t2 = a2 / s;
         // the line segments intersect when t1 and t2 lie in the interval (0,1)
         return 0.0f < t1 && t1 < 1 && 0 < t2 && t2 < 1;
     }
-    
+
     /** outcode constants. */
     private static final int LEFT = 1;
     private static final int RIGHT = 2;
     private static final int BOTTOM = 4;
     private static final int TOP = 8;
-    
+
     /**
-     * Compute the outcode for the point and rectangle that is the nodes
-     * bounding box.<br>
-     * The outcode belongs to the Cohen-Sutherland algorithm and is shown in the
-     * following illustration:<br>
+     * Compute the outcode for the point and rectangle that is the nodes bounding box.<br>
+     * The outcode belongs to the Cohen-Sutherland algorithm and is shown in the following
+     * illustration:<br>
      * <br>
      * <code>
      * 1001|1000|1010<br>
@@ -273,7 +264,7 @@ public class BasicTests extends KlayAutomatedJUnitTest {
         }
         return code;
     }
-    
+
     /**
      * Computes the opposite outcode.
      * 
