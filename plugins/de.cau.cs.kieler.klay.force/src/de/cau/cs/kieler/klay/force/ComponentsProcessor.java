@@ -50,6 +50,8 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  * </p>
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class ComponentsProcessor extends AbstractAlgorithm {
 

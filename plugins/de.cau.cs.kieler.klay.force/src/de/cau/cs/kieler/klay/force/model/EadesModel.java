@@ -22,6 +22,8 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  * A force model after the Eades approach.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class EadesModel extends AbstractForceModel {
 
