@@ -73,32 +73,9 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
 
     private void fillGrid() {
 
-        PEdge currentEdge = null;
-        PNode currentNode = null;
-
-        boolean found = false;
-        PFace externalFace = this.graph.getExternalFace();
-        List<PEdge>[] sides = externalFace.getProperty(Properties.FACE_SIDES);
-        // filter startNode, the node that lies on the left side and on the bottom side,
-        // meaning the leftmost and lower most node!
-        out: for (PEdge leftSideEdge : sides[0]) {
-            for (PEdge bottomSideEdge : sides[BOTTOM_SIDE]) {
-                found = leftSideEdge.getSource() == bottomSideEdge.getSource()
-                        || leftSideEdge.getSource() == bottomSideEdge.getTarget();
-                if (found) {
-                    currentNode = leftSideEdge.getSource();
-                    currentEdge = leftSideEdge;
-                    break out;
-                }
-                found = leftSideEdge.getTarget() == bottomSideEdge.getSource()
-                        || leftSideEdge.getTarget() == bottomSideEdge.getTarget();
-                if (found) {
-                    currentNode = leftSideEdge.getTarget();
-                    currentEdge = leftSideEdge;
-                    break out;
-                }
-            }
-        }
+        Pair<PNode, PEdge> pair = determineStartPosition();
+        PNode currentNode = pair.getFirst();
+        PEdge currentEdge = pair.getSecond();
 
         int gridX = 0;
         int gridY = 0;
@@ -111,8 +88,8 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
         // Store the visited target-nodes / faces from the current face/node.
         // Is needed to check if a edge already exists to the target.
         List<PEdge> visitedEdges = Lists.newArrayList();
-        // visitedEdges.add(currentEdge);
 
+        PFace externalFace = this.graph.getExternalFace();
         PFace currentFace = externalFace;
         Map<PFace, Pair<PEdge, Integer>> knownFaces = Maps.newHashMap();
         knownFaces.put(currentFace, new Pair<PEdge, Integer>(currentEdge, 0));
@@ -120,7 +97,7 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
         List<PFace> completedFaces = Lists.newArrayList();
 
         int sideIndex = 0;
-
+        boolean found;
         while (currentFace != null) {
 
             found = true;
@@ -195,6 +172,7 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
                     }
                 }
             } // end of while
+            
             visitedEdges.clear();
             completedFaces.add(currentFace);
 
@@ -207,9 +185,9 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
                 }
 
                 currentFace = knownFace.getKey();
-                Pair<PEdge, Integer> pair = knownFace.getValue();
-                currentEdge = pair.getFirst();
-                sideIndex = pair.getSecond();
+                Pair<PEdge, Integer> knownPair = knownFace.getValue();
+                currentEdge = knownPair.getFirst();
+                sideIndex = knownPair.getSecond();
                 // FIXME use the side of the currentEdge, to make it more performant,
                 // instead of iterating over all grid items.
 
@@ -292,6 +270,32 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
             }
         }
         graph.setProperty(Properties.GRID_REPRESENTATION, grid);
+    }
+
+    /**
+     * Filters startNode, the node that lies on the left side and on the bottom side, meaning the
+     * leftmost and lower most node! 
+     * @return pair of node and edge.
+     */
+    private Pair<PNode, PEdge> determineStartPosition() {
+        PFace externalFace = this.graph.getExternalFace();
+        List<PEdge>[] sides = externalFace.getProperty(Properties.FACE_SIDES);
+
+        for (PEdge leftSideEdge : sides[0]) {
+            for (PEdge bottomSideEdge : sides[BOTTOM_SIDE]) {
+                if (leftSideEdge.getSource() == bottomSideEdge.getSource()
+                        || leftSideEdge.getSource() == bottomSideEdge.getTarget()) {
+                    return new Pair<PNode, PEdge>(leftSideEdge.getSource(), leftSideEdge);
+                }
+                if (leftSideEdge.getTarget() == bottomSideEdge.getSource()
+                        || leftSideEdge.getTarget() == bottomSideEdge.getTarget()) {
+                    return new Pair<PNode, PEdge>(leftSideEdge.getTarget(), leftSideEdge);
+                }
+            }
+        }
+
+        throw new IllegalStateException("Leftest lowermost edge / node is not defined");
+
     }
 
     /**

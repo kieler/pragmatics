@@ -12,7 +12,9 @@ var runtimeProject = "../${projectName}"
 Workflow {
     bean = StandaloneSetup {
 		platformUri = "${runtimeProject}/.."
-        registerGeneratedEPackage = "de.cau.cs.kieler.kiml.graphviz.dot.dot.DotPackage"
+		// chsch: the following registration doesn't make sense to me, as the file isn't available
+		//  after the execution of the DirectoryCleaner
+        // registerGeneratedEPackage = "de.cau.cs.kieler.kiml.graphviz.dot.dot.DotPackage"
 	}
 	
 	component = DirectoryCleaner {

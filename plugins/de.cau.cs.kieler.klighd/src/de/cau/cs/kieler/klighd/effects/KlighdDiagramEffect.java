@@ -46,7 +46,7 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
     /** the workbench part the element to be shown has been selected in. */
     private transient IWorkbenchPart sourceWorkbenchPart = null;
     
-    // the following fields are valid AFTER the effect executed
+    // the following fields are valid AFTER the effect has been executed
 
     /** the created/updated view. */
     private transient DiagramViewPart view = null;
