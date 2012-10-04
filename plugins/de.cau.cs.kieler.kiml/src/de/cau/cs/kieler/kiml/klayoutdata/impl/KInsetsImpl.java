@@ -40,7 +40,6 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * </p>
  *
  * @generated
- * @kieler.design 2011-03-14 reviewed by cmot, cds
  */
 public class KInsetsImpl extends EObjectImpl implements KInsets {
     /**
