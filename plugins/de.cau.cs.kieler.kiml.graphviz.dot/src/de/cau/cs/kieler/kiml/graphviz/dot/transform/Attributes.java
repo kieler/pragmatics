@@ -20,6 +20,8 @@ import de.cau.cs.kieler.core.properties.Property;
  * Definition of Graphviz attributes.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public final class Attributes {
     
