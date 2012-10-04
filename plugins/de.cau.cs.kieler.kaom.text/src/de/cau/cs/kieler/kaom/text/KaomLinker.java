@@ -36,6 +36,7 @@ import de.cau.cs.kieler.kaom.KaomPackage;
  * It doesn't create proxies but setups cross references and their EOpposites immediately.
  * 
  * @author chsch
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomLinker extends AbstractCleaningLinker {
 

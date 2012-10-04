@@ -17,6 +17,7 @@ package de.cau.cs.kieler.kaom.text;
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  * 
  * @author chsch
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomRuntimeModule extends de.cau.cs.kieler.kaom.text.AbstractKaomRuntimeModule {
     

@@ -31,6 +31,7 @@ import de.cau.cs.kieler.kaom.KaomPackage;
  * 
  * @author chsch
  * @author msp
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomTransientValueService extends DefaultTransientValueService {
 

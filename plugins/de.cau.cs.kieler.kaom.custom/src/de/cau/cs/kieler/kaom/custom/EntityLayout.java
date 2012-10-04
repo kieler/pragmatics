@@ -25,6 +25,8 @@ import org.eclipse.draw2d.geometry.Rectangle;
  * A layout manager for entities.
  * 
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class EntityLayout extends AbstractHintLayout {
 
