@@ -91,6 +91,8 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * Renderer for KGraph and KRendering models on AWT graphics.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class KAwtRenderer {
 
