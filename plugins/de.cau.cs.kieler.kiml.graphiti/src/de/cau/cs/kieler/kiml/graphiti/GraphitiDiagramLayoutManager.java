@@ -51,6 +51,8 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * @author atr
  * @author soh
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 @SuppressWarnings("restriction")
 public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<PictogramElement> {
