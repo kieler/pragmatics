@@ -69,8 +69,9 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 /**
  * A view that displays layout options for selected objects.
  *
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LayoutViewPart extends ViewPart implements ISelectionListener {
 

@@ -33,8 +33,9 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 /**
  * An action that applies the selected layout option as default for the whole diagram.
  *
- * @kieler.rating 2010-01-26 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class DiagramDefaultAction extends Action {
     

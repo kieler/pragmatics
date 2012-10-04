@@ -51,6 +51,7 @@ import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
  * {@code layoutManagers} extension point.
  * 
  * @author msp
+ * @kieler.design proposed by msp
  * @kieler.rating yellow 2012-07-05 review KI-18 by cmot, sgu
  */
 public class DiagramLayoutEngine {

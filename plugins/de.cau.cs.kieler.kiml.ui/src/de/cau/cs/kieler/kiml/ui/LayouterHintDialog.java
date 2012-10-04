@@ -54,8 +54,9 @@ import de.cau.cs.kieler.kiml.LayoutTypeData;
 /**
  * A dialog to browse and select layout algorithms or layout types.
  *
- * @kieler.rating 2011-01-24 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LayouterHintDialog extends Dialog {
 
