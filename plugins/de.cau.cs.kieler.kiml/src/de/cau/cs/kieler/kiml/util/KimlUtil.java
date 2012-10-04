@@ -45,6 +45,7 @@ import de.cau.cs.kieler.kiml.options.SizeConstraint;
 /**
  * Utility methods for KGraphs and layout data.
  * 
+ * @kieler.design proposed by msp
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
