@@ -35,7 +35,6 @@ import de.cau.cs.kieler.karma.IRenderingProvider.CollapseStatus;
 import de.cau.cs.kieler.karma.SwitchableFigure;
 
 /**
- * 
  * With this effect you can manually trigger a new karma rendering. This behaves as if a condition
  * has just been evaluated to true and sets a new rendering according to the given parameters.
  * 
@@ -44,7 +43,8 @@ import de.cau.cs.kieler.karma.SwitchableFigure;
  * result.
  * 
  * @author ckru
- * 
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class KarmaEffect extends AbstractEffect {
 

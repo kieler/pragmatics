@@ -24,9 +24,11 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.ResizableCompartmentEditPolicy;
 
 /**
+ * A resizable editpolicy for resizable compartments.
  * 
  * @author ckru
- * 
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class AdvancedRenderingResizableCompartmentEditPolicy extends ResizableCompartmentEditPolicy {
 

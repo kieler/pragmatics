@@ -31,7 +31,8 @@ import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartDelegate;
  * EditPart for using KARMA with Labels.
  * 
  * @author ckru
- * 
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class AdvancedRenderingLabelEditPart extends LabelEditPart implements IAdvancedRenderingEditPart {
 

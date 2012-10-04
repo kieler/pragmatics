@@ -26,11 +26,11 @@ import org.eclipse.swt.graphics.Image;
 import de.cau.cs.kieler.karma.SwitchableFigure;
 
 /**
- * 
  * A SwitchableFigure that switches the displayed figure according to collapse status change.
  * 
  * @author ckru
- * 
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 //Its necessary here to use some internal draw 2d figures
 @SuppressWarnings("restriction")
