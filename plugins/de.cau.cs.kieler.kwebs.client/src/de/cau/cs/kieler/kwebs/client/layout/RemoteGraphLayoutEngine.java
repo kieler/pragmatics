@@ -144,7 +144,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                         throw new IllegalStateException("Client object could not be generated");
                     }
                     RemoteLayoutDataService.resetInstance();
-                    LayoutDataService.setMode(LayoutDataService.REMOTEDATASERVICE);
+                    LayoutDataService.setMode(RemoteLayoutDataService.class.getCanonicalName());
                     RemoteLayoutDataService.getInstance().initializeWithClient(client);
                 }
             } else {
@@ -241,7 +241,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
             }
         } else {
             // make sure the remote layout data is active, since it's needed for deserialization
-            LayoutDataService.setMode(LayoutDataService.REMOTEDATASERVICE);
+            LayoutDataService.setMode(RemoteLayoutDataService.class.getCanonicalName());
         }
         progressMonitor.begin("Remote Graph Layout (" + client.getServerConfig().getAddress() + ")", 1);
         long timeStart = System.nanoTime();

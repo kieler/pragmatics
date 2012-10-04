@@ -52,7 +52,7 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
      */
     public static synchronized void create() {
         RemoteLayoutDataService lds = LayoutDataService.getInstanceOf(
-                LayoutDataService.REMOTEDATASERVICE);
+                RemoteLayoutDataService.class.getCanonicalName());
         if (lds == null) {
             lds = new RemoteLayoutDataService();
             LayoutDataService.addService(lds);
@@ -63,10 +63,8 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
      * 
      */
     public static synchronized void resetInstance() {
-        RemoteLayoutDataService lds =
-            LayoutDataService.getInstanceOf(
-                LayoutDataService.REMOTEDATASERVICE
-        );
+        RemoteLayoutDataService lds = LayoutDataService.getInstanceOf(
+                    RemoteLayoutDataService.class.getCanonicalName());
         // Remember current mode
         String currentMode = LayoutDataService.getMode();
         if (lds != null) {          
@@ -88,9 +86,7 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
      * @return the singleton instance.
      */
     public static synchronized RemoteLayoutDataService getInstance() {
-        return LayoutDataService.getInstanceOf(
-            LayoutDataService.REMOTEDATASERVICE
-        );
+        return LayoutDataService.getInstanceOf(RemoteLayoutDataService.class.getCanonicalName());
     }
 
     /**

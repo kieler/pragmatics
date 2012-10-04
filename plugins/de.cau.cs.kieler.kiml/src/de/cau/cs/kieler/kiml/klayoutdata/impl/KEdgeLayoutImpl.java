@@ -48,7 +48,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
  * </p>
  *
  * @generated
- * @kieler.design 2011-03-14 reviewed by cmot, cds
  */
 public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
     /**

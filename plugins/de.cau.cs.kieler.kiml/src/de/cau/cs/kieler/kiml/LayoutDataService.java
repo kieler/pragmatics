@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -52,14 +51,6 @@ public class LayoutDataService {
     public static final String ECLIPSEDATASERVICE
             = "de.cau.cs.kieler.kiml.ui.service.EclipseLayoutDataService"; //$NON-NLS-1$
 
-    /** Mode constant for remote data service instance. */
-    public static final String REMOTEDATASERVICE
-            = "de.cau.cs.kieler.kwebs.client.layout.RemoteLayoutDataService"; //$NON-NLS-1$
-
-    /** Mode constant for server data service instance. */
-    public static final String SERVICEDATASERVICE
-            = "de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService"; //$NON-NLS-1$
-
     /** the instance of the registry class. */
     private Registry registry = null;
     /** mapping of layout provider identifiers to their data instances. */
@@ -78,10 +69,6 @@ public class LayoutDataService {
     /** additional map of layout type suffixes to data instances. */
     private final Map<String, LayoutTypeData> typeSuffixMap = Maps.newHashMap();
 
-    /** The list of valid layout data service identifiers. */
-    private static List<String> validDataServices = Lists.newArrayList(ECLIPSEDATASERVICE,
-            REMOTEDATASERVICE, SERVICEDATASERVICE);
-
     /** Map of registered data services indexed by class name. */
     private static Map<String, LayoutDataService> instances = Maps.newHashMap();
 
@@ -95,20 +82,6 @@ public class LayoutDataService {
     }
 
     /**
-     * Returns the service type.
-     * 
-     * @param object a data service
-     * @return the service type
-     */
-    private static String getType(final LayoutDataService object) {
-        String type = null;
-        if (object != null) {
-            type = object.getClass().getCanonicalName();
-        }
-        return type;
-    }
-
-    /**
      * Registers a layout data service instance created by a specific subclass and assigns it an
      * instance of the registry.
      * 
@@ -116,21 +89,19 @@ public class LayoutDataService {
      *            an instance created by a subclass
      */
     protected static synchronized void addService(final LayoutDataService subInstance) {
-        String type = getType(subInstance);
-        if (validDataServices.contains(type)) {
-            if (!instances.containsKey(type)) {
-                if (current == null) {
-                    current = subInstance;
-                }
-                subInstance.registry = subInstance.new Registry();
-                instances.put(type, subInstance);
+        String type = subInstance.getClass().getCanonicalName();
+        if (!instances.containsKey(type)) {
+            if (current == null) {
+                current = subInstance;
             }
+            subInstance.registry = subInstance.new Registry();
+            instances.put(type, subInstance);
         }
     }
 
     /**
      * Removes a layout data service instance. The instance belonging to the currently selected mode
-     * can not be removed.
+     * cannot be removed.
      * 
      * @param subInstance
      *            the sub instance to be removed
@@ -138,73 +109,64 @@ public class LayoutDataService {
      *             if the instance belonging to the currently selected mode is to be removed or the
      *             sub instance is not supported
      */
-    public static synchronized void removeService(final LayoutDataService subInstance) {
-        String type = getType(subInstance);
-        if (!validDataServices.contains(type)) {
-            throw new IllegalArgumentException("Layout data service instance of class " + type
-                    + " not supported");
-        }
+    protected static synchronized void removeService(final LayoutDataService subInstance) {
+        String type = subInstance.getClass().getCanonicalName();
         if (subInstance == current) {
-            throw new IllegalArgumentException("Currently active layout data service cant be removed");
+            throw new IllegalArgumentException(
+                    "The currently active layout data service cannot be removed.");
         }
         instances.remove(type);
     }
 
     /**
-     * Returns the current operation mode of the layout data service. The returned mode is either
-     * {@code LayoutDataService.ECLIPSEDATASERVICE}, {@code LayoutDataService.REMOTEDATASERVICE} or
-     * {@code LayoutDataService.SERVERDATASERVICE} or {@code null} if no layout data service has
-     * been registered yet.
+     * Returns the current operation mode of the layout data service. The returned mode is
+     * identified by the fully qualified class name of the respective service subclass,
+     * or {@code null} if no layout data service has been registered yet. The default
+     * mode for use in Eclipse is {@link #ECLIPSEDATASERVICE}.
      * 
-     * @return the mode of operation or {@code null}
+     * @return the name of the currently active data service class, or {@code null}
      */
     public static synchronized String getMode() {
-        return (current != null ? getType(current) : null);
+        return (current != null ? current.getClass().getCanonicalName() : null);
     }
 
     /**
-     * Sets the mode to {@code mode} where {@code mode} has to be an element of
-     * {@code LayoutDataService.ECLIPSEDATASERVICE}, {@code LayoutDataService.REMOTEDATASERVICE} or
-     * {@code LayoutDataService.SERVERDATASERVICE}.
+     * Sets the current operation mode of the layout data service. The mode is identified by
+     * the fully qualified class name of the respective service subclass. The default
+     * mode for use in Eclipse is {@link #ECLIPSEDATASERVICE}.
      * 
-     * @param mode
-     *            the mode to be set
-     * 
+     * @param mode the name of the data service class to be activated
      * @throws IllegalArgumentException
-     *             if the given mode is not valid or the according layout data service has not been
-     *             registered yet
+     *             if the according layout data service class has not been registered yet
      */
     public static synchronized void setMode(final String mode) {
-        if (validDataServices.contains(mode) && instances.containsKey(mode)) {
+        if (instances.containsKey(mode)) {
             current = instances.get(mode);
         } else {
             throw new IllegalArgumentException("Mode " + mode
-                    + " not supported or layout data service was not" + " registered before");
+                    + " not supported or layout data service was not registered before.");
         }
     }
 
     /**
-     * Returns the layout data service instance belonging to the currently selected mode.
+     * Returns the layout data service instance according to the currently selected mode.
      * 
-     * @return the layout data service instance belonging to the currently selected mode
+     * @return the current layout data service instance
      */
     public static LayoutDataService getInstance() {
         return current;
     }
 
     /**
-     * Returns the instance of a layout data service specified by it's fully qualified class name.
+     * Returns the instance of a layout data service specified by its fully qualified class name.
      * 
-     * @param <T>
-     *            type of the returned instance
-     * @param type
-     *            fully qualified class name of the data service instance
-     * @return the data service instance or {@code null} if no such instance has been registered or
-     *         the given type is not valid specifier.
+     * @param <T> type of the returned instance
+     * @param type fully qualified class name of the data service instance
+     * @return the data service instance, or {@code null} if no such instance has been registered
      */
     @SuppressWarnings("unchecked")
     public static <T extends LayoutDataService> T getInstanceOf(final String type) {
-        if (validDataServices.contains(type) && instances.containsKey(type)) {
+        if (instances.containsKey(type)) {
             return (T) instances.get(type);
         }
         return null;

@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.menus.WorkbenchMenuService;
@@ -118,6 +119,8 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
     private static Map<String, KeyBinding> bindings = new HashMap<String, KeyBinding>();
     // CHECKSTYLEON MaximumLineLength
 
+    private IHandlerService handlerService;
+    
     /**
      * 
      * @author chsch
@@ -161,7 +164,7 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
         this.menuService = (WorkbenchMenuService) serviceLocator.getService(IMenuService.class);
         this.evaluationService = (IEvaluationService) serviceLocator
                 .getService(IEvaluationService.class);
-        
+        this.handlerService = (IHandlerService) serviceLocator.getService(IHandlerService.class);
         if (this.getId().endsWith("menu")) {
             this.location = InternalLocationScheme.MENU;
         } else if (this.getId().endsWith("popup")) {
@@ -252,7 +255,7 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
                 // define a Handler for the command
                 ButtonHandler buttonHandler = new ButtonHandler();
                 cmd.setHandler(buttonHandler);
-
+                handlerService.activateHandler(cmd.getId(), buttonHandler);
                 //System.out.println("Created command " + cmd.getId() + " " + cmd.isDefined());
                 // now specify the button
                 CommandContributionItemParameter parameter = new CommandContributionItemParameter(

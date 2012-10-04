@@ -37,7 +37,6 @@ import org.eclipse.emf.ecore.EObject;
  * <!-- end-user-doc -->
  * @see de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage
  * @generated
- * @kieler.design 2011-03-14 reviewed by cmot, cds
  */
 public class KLayoutDataAdapterFactory extends AdapterFactoryImpl {
     /**

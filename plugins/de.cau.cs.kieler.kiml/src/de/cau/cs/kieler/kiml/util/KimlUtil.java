@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.util;
 
+import java.util.Iterator;
+
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
@@ -26,8 +28,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -108,6 +108,76 @@ public final class KimlUtil {
         label.setText("");
         label.setParent(element);
         return label;
+    }
+    
+    /**
+     * Ensures that each element contained in the given graph is attributed correctly for
+     * usage in KIML.
+     * 
+     * @param graph the parent node of a graph 
+     */
+    public static void validate(final KNode graph) {
+        KLayoutDataFactory layoutFactory = KLayoutDataFactory.eINSTANCE;
+        Iterator<EObject> contentIter = graph.eAllContents();
+        while (contentIter.hasNext()) {
+            EObject element = contentIter.next();
+            // Make sure nodes are OK
+            if (element instanceof KNode) {
+                KNode node = (KNode) element;
+                KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+                if (nodeLayout == null) {
+                    nodeLayout = layoutFactory.createKShapeLayout();                   
+                    node.getData().add(nodeLayout);
+                } 
+                if (nodeLayout.getInsets() == null) {
+                    nodeLayout.setInsets(layoutFactory.createKInsets());
+                }
+            // Make sure ports are OK           
+            } else if (element instanceof KPort) {
+                KPort port = (KPort) element;
+                KShapeLayout portLayout = port.getData(KShapeLayout.class);
+                if (portLayout == null) {
+                    port.getData().add(layoutFactory.createKShapeLayout());
+                }
+            // Make sure labels are OK
+            } else if (element instanceof KLabel) {
+                KLabel label = (KLabel) element;
+                KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                if (labelLayout == null) {
+                    label.getData().add(layoutFactory.createKShapeLayout());
+                }
+                if (label.getText() == null) {
+                    label.setText("");
+                }
+            // Make sure edges are OK
+            } else if (element instanceof KEdge) {
+                KEdge edge = (KEdge) element;
+                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                if (edgeLayout == null) {
+                    edgeLayout = layoutFactory.createKEdgeLayout();
+                    edge.getData().add(edgeLayout);
+                }
+                if (edgeLayout.getSourcePoint() == null) {
+                    edgeLayout.setSourcePoint(layoutFactory.createKPoint());
+                }
+                if (edgeLayout.getTargetPoint() == null) {
+                    edgeLayout.setTargetPoint(layoutFactory.createKPoint());
+                }
+                // ports and edges are not opposite, so check whether they are connected properly
+                KPort sourcePort = edge.getSourcePort();
+                if (sourcePort != null) {
+                    if (!sourcePort.getEdges().contains(edge)) {
+                        sourcePort.getEdges().add(edge);
+                    }
+                }
+                KPort targetPort = edge.getTargetPort();
+                if (targetPort != null) {
+                    if (!targetPort.getEdges().contains(edge)) {
+                        targetPort.getEdges().add(edge);
+                    }
+                }
+            }
+        }
     }
     
     /**
@@ -506,8 +576,7 @@ public final class KimlUtil {
      * Persists all KGraphData elements of a KGraph by serializing the contained properties into
      * {@link de.cau.cs.kieler.core.kgraph.PersistentEntry} tuples.
      *
-     * @param graph
-     *            the root element of the graph to persist elements of.
+     * @param graph the root element of the graph to persist elements of.
      */
     public static void persistDataElements(final KNode graph) {
         TreeIterator<EObject> iterator = graph.eAllContents();
@@ -521,10 +590,12 @@ public final class KimlUtil {
 
     /**
      * Loads all {@link de.cau.cs.kieler.core.properties.IProperty} of KGraphData elements of a
-     * KGraph by deserializing {@link de.cau.cs.kieler.core.kgraph.PersistentEntry} tuples.
+     * KGraph by deserializing {@link PersistentEntry} tuples.
+     * Values are parsed using layout option data obtained from the {@link LayoutDataService}.
+     * Options that cannot be resolved immediately (e.g. because the extension points have not
+     * been read yet) are stored as {@link LayoutOptionProxy}.
      * 
-     * @param graph
-     *            the root element of the graph to load elements of.
+     * @param graph the root element of the graph to load elements of.
      */
     public static void loadDataElements(final KNode graph) {
         LayoutDataService dataService = LayoutDataService.getInstance();
@@ -538,21 +609,17 @@ public final class KimlUtil {
                     String value = persistentEntry.getValue();
                     if (key != null && value != null) {
                         LayoutOptionData<?> layoutOptionData = null;
-                        // Try to get the layout option from the data service.
-                        if (dataService != null) { 
-                            layoutOptionData = dataService.getOptionData(key);
-                        }
-                        // If we have a valid layout option, parse its value.
+                        // try to get the layout option from the data service.
+                        layoutOptionData = dataService.getOptionData(key);
+                        // if we have a valid layout option, parse its value.
                         if (layoutOptionData != null) {
-                            Object layoutOptionValue = layoutOptionData.parseValue(
-                                    persistentEntry.getValue());
+                            Object layoutOptionValue = layoutOptionData.parseValue(value);
                             if (layoutOptionValue != null) {
                                 kgraphData.setProperty(layoutOptionData, layoutOptionValue);
                             }
-                        // Unknown options are wrapped by a dynamically instantiated one.
                         } else {
-                            IProperty<String> property = new Property<String>(key);
-                            kgraphData.setProperty(property, value);
+                            // the layout option could not be resolved, so create a proxy
+                            LayoutOptionProxy.setProxyValue(kgraphData, key, value);
                         }
                     }
                 }
