@@ -26,6 +26,8 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
  * a diagram editor was reinitialized.
  * 
  * @author soh
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LayoutAfterDiagramReinitCombination extends AbstractCombination {
 
