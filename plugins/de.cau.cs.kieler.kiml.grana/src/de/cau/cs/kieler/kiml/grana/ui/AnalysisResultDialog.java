@@ -36,6 +36,7 @@ import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
  * The dialog for presenting the results of a set of analyses.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class AnalysisResultDialog extends Dialog {
 

@@ -19,6 +19,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * This class represents a concrete visualization.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class Visualization {
 

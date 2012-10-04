@@ -23,6 +23,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * The class which represents an analysis batch.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class Batch {
 

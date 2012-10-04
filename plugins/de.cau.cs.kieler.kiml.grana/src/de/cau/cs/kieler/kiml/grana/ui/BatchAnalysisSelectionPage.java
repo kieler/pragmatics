@@ -26,6 +26,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * of them for the batch run.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class BatchAnalysisSelectionPage extends WizardPage implements
         ISelectionListener {

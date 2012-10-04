@@ -40,6 +40,7 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
  * editor and using KIML to build the graph structure.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
 

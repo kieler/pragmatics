@@ -27,6 +27,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * A view management effect for graph analysis.
  * 
  * @author msp
+ * @kieler.ignore (excluded from review process)
  */
 public class AnalysisEffect extends AbstractEffect {
 

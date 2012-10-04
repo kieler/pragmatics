@@ -20,9 +20,8 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * interface that has to be implemented at the loss of functionality.
  * 
  * @author mri
- * 
- * @param <S>
- *            the result type of the visualization
+ * @kieler.ignore (excluded from review process)
+ * @param <S> the result type of the visualization
  */
 public abstract class AbstractSimpleVisualizer<S> implements
         IVisualizer<S, Object> {

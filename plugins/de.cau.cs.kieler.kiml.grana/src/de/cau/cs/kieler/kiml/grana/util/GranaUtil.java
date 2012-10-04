@@ -26,6 +26,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * A utility class for grana handlers.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public final class GranaUtil {
 

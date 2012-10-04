@@ -19,11 +19,9 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * The interface for all analysis result visualizer.
  * 
  * @author mri
- * 
- * @param <S>
- *            the return type of the visualization
- * @param <T>
- *            the parameter type for the visualization
+ * @kieler.ignore (excluded from review process)
+ * @param <S> the return type of the visualization
+ * @param <T> the parameter type for the visualization
  */
 public interface IVisualizer<S, T> {
 

@@ -21,6 +21,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * The interface for listeners on the selection of an {AnalysisSelectionViewer}.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public interface ISelectionListener {
 
@@ -31,4 +32,5 @@ public interface ISelectionListener {
      *            the selected analyses
      */
     void selectionChanged(final List<AnalysisData> selectedAnalyses);
+    
 }
