@@ -19,6 +19,8 @@ import de.cau.cs.kieler.kiml.options.Direction;
  * Definition of orientation of a layouter.
  * 
  * @author mri
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public enum Orientation {
     
