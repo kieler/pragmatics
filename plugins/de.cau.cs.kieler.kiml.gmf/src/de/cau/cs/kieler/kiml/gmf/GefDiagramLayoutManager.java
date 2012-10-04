@@ -33,6 +33,7 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
  * This variant is tuned for GMF diagram editors, since it does not provide automatic zooming
  * for other diagram editors.
  *
+ * @kieler.design proposed by msp
  * @kieler.rating yellow 2012-07-19 review KI-20 by cds, jjc
  * @param <T> the type of diagram part that is handled by this diagram layout manager
  * @author msp
