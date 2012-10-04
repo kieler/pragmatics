@@ -28,6 +28,8 @@ import de.cau.cs.kieler.core.properties.Property;
  *
  * @author bdu
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class Genome extends MapPropertyHolder implements Comparable<Genome> {
 
