@@ -31,6 +31,8 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * An analysis on the density (number of nodes and edges) of the biconnected components.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class BiconnectedComponentDensityAnalysis implements IAnalysis {
     
