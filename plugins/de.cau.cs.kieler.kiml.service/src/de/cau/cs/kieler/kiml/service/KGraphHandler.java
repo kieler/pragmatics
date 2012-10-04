@@ -60,6 +60,7 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
             final TransformationData<KNode, KNode> transData) {
         super.deserialize(serializedGraph, transData);
         if (transData.getSourceGraph() != null) {
+            // load layout options from their serialized form
             KimlUtil.loadDataElements(transData.getSourceGraph());
         }
     }

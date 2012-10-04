@@ -576,8 +576,7 @@ public final class KimlUtil {
      * Persists all KGraphData elements of a KGraph by serializing the contained properties into
      * {@link de.cau.cs.kieler.core.kgraph.PersistentEntry} tuples.
      *
-     * @param graph
-     *            the root element of the graph to persist elements of.
+     * @param graph the root element of the graph to persist elements of.
      */
     public static void persistDataElements(final KNode graph) {
         TreeIterator<EObject> iterator = graph.eAllContents();
@@ -591,10 +590,12 @@ public final class KimlUtil {
 
     /**
      * Loads all {@link de.cau.cs.kieler.core.properties.IProperty} of KGraphData elements of a
-     * KGraph by deserializing {@link de.cau.cs.kieler.core.kgraph.PersistentEntry} tuples.
+     * KGraph by deserializing {@link PersistentEntry} tuples.
+     * Values are parsed using layout option data obtained from the {@link LayoutDataService}.
+     * Options that cannot be resolved immediately (e.g. because the extension points have not
+     * been read yet) are stored as {@link LayoutOptionProxy}.
      * 
-     * @param graph
-     *            the root element of the graph to load elements of.
+     * @param graph the root element of the graph to load elements of.
      */
     public static void loadDataElements(final KNode graph) {
         LayoutDataService dataService = LayoutDataService.getInstance();
@@ -608,17 +609,17 @@ public final class KimlUtil {
                     String value = persistentEntry.getValue();
                     if (key != null && value != null) {
                         LayoutOptionData<?> layoutOptionData = null;
-                        // Try to get the layout option from the data service.
-                        if (dataService != null) { 
-                            layoutOptionData = dataService.getOptionData(key);
-                        }
-                        // If we have a valid layout option, parse its value.
+                        // try to get the layout option from the data service.
+                        layoutOptionData = dataService.getOptionData(key);
+                        // if we have a valid layout option, parse its value.
                         if (layoutOptionData != null) {
-                            Object layoutOptionValue = layoutOptionData.parseValue(
-                                    persistentEntry.getValue());
+                            Object layoutOptionValue = layoutOptionData.parseValue(value);
                             if (layoutOptionValue != null) {
                                 kgraphData.setProperty(layoutOptionData, layoutOptionValue);
                             }
+                        } else {
+                            // the layout option could not be resolved, so create a proxy
+                            LayoutOptionProxy.setProxyValue(kgraphData, key, value);
                         }
                     }
                 }
