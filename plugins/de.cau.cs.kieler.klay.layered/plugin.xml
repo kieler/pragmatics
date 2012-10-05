@@ -130,7 +130,7 @@
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy"
             default="GREEDY"
-            description="Strategy for cycle breaking."
+            description="Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines which edges to reverse to break the cycles. Reversed edges will end up pointing to the opposite direction of regular edges (that is, reversed edges will point left if edges usually point right)."
             id="de.cau.cs.kieler.klay.layered.cycleBreaking"
             name="Cycle Breaking"
             type="enum"
