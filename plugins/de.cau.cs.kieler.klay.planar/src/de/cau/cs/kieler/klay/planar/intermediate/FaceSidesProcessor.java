@@ -88,10 +88,17 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
 
                 // determine side index. only left or straight angles are allowed because of the
                 // rectangular shape of the faces. A left angle changes the side.
-                if (pair.getSecond().ordinal() == 0) {
+                if (pair.getSecond().ordinal() == OrthogonalAngle.LEFT.ordinal()) {
                     sideIndex = (sideIndex + 1) % FACE_SIDES_NUMBER;
+                } else if (pair.getSecond().ordinal() == OrthogonalAngle.RIGHT.ordinal()) {
+                    sideIndex = (sideIndex > 0) ? (sideIndex - 1) : FACE_SIDES_NUMBER-1;
+                } else if (pair.getSecond().ordinal() == OrthogonalAngle.FULL.ordinal()) {
+                    sideIndex = (sideIndex + 2) % FACE_SIDES_NUMBER;
                 }
 
+
+                
+                
                 PFace lf = currentEdge.getLeftFace();
                 PFace rf = currentEdge.getRightFace();
 
@@ -137,8 +144,7 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
 
                 if (pair.getSecond().ordinal() == 2) {
                     // error TODO make assertion with useful description!
-                    // TODO add a cutedge to both sides, the current and the opposite
-                    int i = 0;
+                    // TODO add a cut edge to both sides, the current and the opposite
                 }
 
                 faceSides[sideIndex].add(currentEdge);

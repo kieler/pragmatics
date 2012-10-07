@@ -77,6 +77,7 @@ public final class Properties {
     public static final IProperty<Boolean> PLANAR_DUMMY_NODE = new Property<Boolean>(
             "de.cau.cs.kieler.klay.planar.planardummynode");
 
+    /** first x and y coordinate and last x and y coordinate of a high degree node.*/
     public static final IProperty<List<Integer>> HIGH_DEGREE_POSITIONS = new Property<List<Integer>>(
             "de.cau.cs.kieler.klay.planar.highdegreepositions");
     
@@ -160,7 +161,7 @@ public final class Properties {
     public static final IProperty<Pair<PNode, PEdge>> FACE_DIRECTION = new Property<Pair<PNode, PEdge>>(
             "de.cau.cs.kieler.klay.planar.face_direction");
 
-    // ---------------------- Giotto Planarization ----------------------------------------
+    // ---------------------- High-degree node handling ----------------------------------------
     /**
      * Saves the involved dummy nodes in a list. This property is usually given to a node that with
      * a higher degree of 4 and the dummies are the added dummies to avoid nodes with degree higer
@@ -171,11 +172,20 @@ public final class Properties {
 
     /**
      * Denotes a node or an edge to be a expansion cylce dummy; a dummy for avoiding node degrees
-     * higher 4.
+     * higher 4. Usually dummies of that cycle are equipped with this property to identify them
+     * as dummies. The stored node is the original high-degree node.
      */
-    public static final IProperty<PNode> EXPANSION_CYCLE_ROOT = new Property<PNode>(
-            "de.cau.cs.kieler.klay.planar.expansion_cylce_dummy");
+    public static final IProperty<PNode> EXPANSION_CYCLE_ORIGIN = new Property<PNode>(
+            "de.cau.cs.kieler.klay.planar.expansion_cylce_origin");
 
+    /**
+     * Identifies an expansion cycle face.
+     */
+    public static final IProperty<Boolean> EXPANSION_CYCLE_FACE = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.planar.expansion_cylce_face");
+
+        
+    
     /**
      * Hidden default constructor.
      */

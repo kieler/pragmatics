@@ -40,8 +40,6 @@ import de.cau.cs.kieler.klay.planar.util.PUtil;
  */
 public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
-
-
     /** The external face has at this point exact 5 adjacent edges. */
     private static final int EXTERNAL_EDGE_COUNT = 6;
 
@@ -243,13 +241,13 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
                         continue out;
                     }
                 }
-                // Calculates a start edge and its corner in counter clockwise direction.
-                Pair<PNode, PEdge> startWithCorner = pface.determineCCWDirection();
-
-                // Swaps corner in clockwise direction.
-                startWithCorner.setFirst(startWithCorner.getSecond().getOppositeNode(
-                        startWithCorner.getFirst()));
-                pface.setProperty(Properties.FACE_DIRECTION, startWithCorner);
+                // // Calculates a start edge and its corner in counter clockwise direction.
+                // Pair<PNode, PEdge> startWithCorner = pface.determineCCWDirection();
+                //
+                // // Swaps corner in clockwise direction.
+                // startWithCorner.setFirst(startWithCorner.getSecond().getOppositeNode(
+                // startWithCorner.getFirst()));
+                // pface.setProperty(Properties.FACE_DIRECTION, startWithCorner);
 
                 this.graph.setExternalFace(pface);
             }
@@ -281,14 +279,18 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
             // if all edges are in rect shape, we are finished!
             for (PFace checkFace : graphFaces) {
 
-                // The External face needs no processing.
-                if (checkFace == graph.getExternalFace()) {
-                    continue;
-                }
-
                 // Calcs a startedge and its corner in counter clockwise direction.
                 Pair<PNode, PEdge> startWithCorner = checkFace.determineCCWDirection();
                 checkFace.setProperty(Properties.FACE_DIRECTION, startWithCorner);
+
+                // The External face needs no processing.
+                if (checkFace == graph.getExternalFace()) {
+                    // Swap start direction since the external face is passed clockwise.
+                    startWithCorner.setFirst(startWithCorner.getSecond().getOppositeNode(
+                            startWithCorner.getFirst()));
+                    checkFace.setProperty(Properties.FACE_DIRECTION, startWithCorner);
+                    continue;
+                }
 
                 // Do a pre-selection, note: the new external face is already in rect shape.
                 if (checkFace.isInRectShape()) {
