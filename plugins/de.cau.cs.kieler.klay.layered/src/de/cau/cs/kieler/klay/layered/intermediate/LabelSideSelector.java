@@ -126,6 +126,12 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
         }
     }
 
+    /**
+     * Strategy that chooses a side depending on the direction of an edge, in this case
+     * UP direction-wise.
+     * 
+     * @param nodes All nodes of the graph
+     */
     private void directionUp(final List<LNode> nodes) {
         for (LNode node : nodes) {
             for (LEdge edge : node.getOutgoingEdges()) {
@@ -155,6 +161,12 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
         }
     }
 
+    /**
+     * Strategy that chooses a side depending on the direction of an edge, in this case
+     * DOWN direction-wise.
+     * 
+     * @param nodes All nodes of the graph
+     */
     private void directionDown(final List<LNode> nodes) {
         for (LNode node : nodes) {
             for (LEdge edge : node.getOutgoingEdges()) {
@@ -185,7 +197,7 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
     }
     
     /**
-     * Chooses label sides depending on certain pattern.
+     * Chooses label sides depending on certain patterns.
      * 
      * @param nodes All nodes of the graph
      */
@@ -201,9 +213,12 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
                             || targetNode.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
                         targetNode = targetNode.getProperty(Properties.LONG_EDGE_TARGET).getNode();
                     }
+                    // Markers make sure that no overlaps will be created
                     if (nodeMarkers.containsKey(targetNode)) {
                         chosenSide = nodeMarkers.get(targetNode);
                     } else {
+                        // Patterns are applied, the only current pattern is a node with
+                        // two outgoing edges
                         if (eastPorts.size() == 2) {
                             if (eastPort == eastPorts.get(0)) {
                                 chosenSide = LSide.UP;

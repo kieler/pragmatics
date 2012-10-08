@@ -63,12 +63,12 @@ public enum LayoutProcessorStrategy {
     HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR,
     /** Removes layering constraint dummy edges from compound graphs. */
     COMPOUND_DUMMY_EDGE_REMOVER,
+    /** Decides, on which side of an edge the edge labels should be placed. */ 
+    LABEL_SIDE_SELECTOR,
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
     PORT_SIDE_PROCESSOR,
-    /** Decides, on which side of an edge the edge labels should be placed. */ 
-    LABEL_SIDE_SELECTOR,
     /** Tries to switch the label dummy nodes which the middle most dummy node
      *  of a long edge. */
     LABEL_DUMMY_SWITCHER,
