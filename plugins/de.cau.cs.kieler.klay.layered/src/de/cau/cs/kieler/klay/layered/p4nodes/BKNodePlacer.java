@@ -33,6 +33,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -175,7 +176,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
 
         // Regard possible other layout options.
         debug = layeredGraph.getProperty(Properties.DEBUG_MODE);
-        addBalancedLayout = !layeredGraph.getProperty(Properties.EDGE_BENDS);
+        addBalancedLayout = layeredGraph.getProperty(Properties.FIXED_ALIGNMENT)
+                == FixedAlignment.BALANCED;
 
         // Phase which marks type 1 conflicts, no difference between the directions so only
         // one run is required.
@@ -216,10 +218,25 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
         // the first one of the competing layouts is selected.
         BKAlignedLayout chosenLayout = null;
         LinkedList<BKAlignedLayout> layouts = new LinkedList<BKAlignedLayout>();
-        layouts.add(lefttop);
-        layouts.add(righttop);
-        layouts.add(leftbottom);
-        layouts.add(rightbottom);
+        switch (layeredGraph.getProperty(Properties.FIXED_ALIGNMENT)) {
+        case LEFTDOWN:
+            layouts.add(lefttop);
+            break;
+        case LEFTUP:
+            layouts.add(leftbottom);
+            break;
+        case RIGHTDOWN:
+            layouts.add(righttop);
+            break;
+        case RIGHTUP:
+            layouts.add(rightbottom); 
+            break;
+        default:
+            layouts.add(lefttop);
+            layouts.add(righttop);
+            layouts.add(leftbottom);
+            layouts.add(rightbottom); 
+        }
         
         BKAlignedLayout balanced = new BKAlignedLayout(nodeCount, null, null);
 
