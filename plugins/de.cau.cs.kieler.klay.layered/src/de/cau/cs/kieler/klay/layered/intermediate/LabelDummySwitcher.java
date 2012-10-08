@@ -16,6 +16,8 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -115,15 +117,18 @@ public class LabelDummySwitcher extends AbstractAlgorithm implements ILayoutProc
         // Store information about first node
         Layer oneLayer = one.getLayer();
         int inLayerPosition = one.getIndex();
-        List<LEdge> oneIncomingEdges = oneIncomingPort.getIncomingEdges();
-        List<LEdge> oneOutgoingEdges = oneOutgoingPort.getOutgoingEdges();
+        List<LEdge> oneIncomingEdges = Lists.newLinkedList(oneIncomingPort.getIncomingEdges());
+        List<LEdge> oneOutgoingEdges = Lists.newLinkedList(oneOutgoingPort.getOutgoingEdges());
+        List<LEdge> otherIncomingEdges = Lists.newLinkedList(otherIncomingPort.getIncomingEdges());
+        List<LEdge> otherOutgoingEdges = Lists.newLinkedList(otherOutgoingPort.getOutgoingEdges());
 
         // Set values of first node to values from second node
         one.setLayer(other.getIndex(), other.getLayer());
-        for (LEdge edge : otherIncomingPort.getIncomingEdges()) {
+        
+        for (LEdge edge : otherIncomingEdges) {
             edge.setTarget(oneIncomingPort);
         }
-        for (LEdge edge : otherOutgoingPort.getOutgoingEdges()) {
+        for (LEdge edge : otherOutgoingEdges) {
             edge.setSource(oneOutgoingPort);
         }
 

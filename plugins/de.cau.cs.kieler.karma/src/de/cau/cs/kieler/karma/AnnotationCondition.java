@@ -29,7 +29,8 @@ import de.cau.cs.kieler.core.annotations.StringAnnotation;
  * Condition that works on annotations.
  * 
  * @author ckru
- * 
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class AnnotationCondition extends ICustomCondition<EObject> {
 

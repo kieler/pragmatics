@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * result {@code (int compoundNodes)}.
  * 
  * @author cds
+ * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class CompoundNodeCountAnalysis implements IAnalysis {

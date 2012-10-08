@@ -53,7 +53,8 @@ import de.cau.cs.kieler.karma.conditions.IEditPartSensitiveCondition;
  * eliminate redundant code from AdvancedRenderingEditParts.
  * 
  * @author ckru
- * 
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class AdvancedRenderingEditPartDelegate {
 

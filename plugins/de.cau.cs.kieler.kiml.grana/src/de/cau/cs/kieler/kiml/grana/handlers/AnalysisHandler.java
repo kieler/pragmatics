@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * perform and performing them on a graphical diagram.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class AnalysisHandler extends AbstractHandler {
 

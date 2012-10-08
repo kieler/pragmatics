@@ -20,6 +20,7 @@ import de.cau.cs.kieler.core.annotations.text.formatting.AnnotationsValueConvert
  * Realizes the mapping of special terminal symbols to model content.
  * 
  * @author chsch
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomValueConverter extends AnnotationsValueConverter {
 

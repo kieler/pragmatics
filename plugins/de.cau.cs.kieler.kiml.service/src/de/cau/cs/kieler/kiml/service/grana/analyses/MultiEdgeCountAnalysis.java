@@ -37,6 +37,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * if that number is bigger than 1.
  * 
  * @author cds
+ * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class MultiEdgeCountAnalysis implements IAnalysis {

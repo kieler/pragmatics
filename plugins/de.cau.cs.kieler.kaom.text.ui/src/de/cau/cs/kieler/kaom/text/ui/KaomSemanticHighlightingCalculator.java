@@ -27,6 +27,7 @@ import de.cau.cs.kieler.core.annotations.text.ui.AnnotationsSemanticHighlighting
  * that can be specialized in order to added KAOM specific highlighting configurations. 
  * 
  * @author chsch
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomSemanticHighlightingCalculator extends AnnotationsSemanticHighlightingCalculator {
 

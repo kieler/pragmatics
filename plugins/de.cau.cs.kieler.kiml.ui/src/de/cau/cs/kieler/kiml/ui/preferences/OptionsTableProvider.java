@@ -29,8 +29,9 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 /**
  * Provider class for the options tables. Contains a label provider and a content provider.
  *
- * @kieler.rating 2010-01-26 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class OptionsTableProvider extends LabelProvider implements ITableLabelProvider,
         IStructuredContentProvider {

@@ -27,9 +27,17 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kiml.service.formats.TransformationException;
 
 /**
- * Transformation handler for SVG format.
+ * Transformation handler for SVG format. The handler supports two options:
+ * <ul>
+ *   <li>{@link SvgHandler#USE_CSS} switches usage of CSS properties on or off.</li>
+ *   <li>{@link KAwtRenderer#SCALE} defines a scale factor for all coordinates, which is useful
+ *     for increasing precision, since the AWT graphics interface only supports integer
+ *     coordinates.</li>
+ * </ul>
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class SvgHandler implements ITransformationHandler<SVGGraphics2D> {
     

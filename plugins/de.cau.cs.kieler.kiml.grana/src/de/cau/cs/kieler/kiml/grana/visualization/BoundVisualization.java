@@ -19,6 +19,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * This class binds an analysis result to a visualization.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class BoundVisualization {
 

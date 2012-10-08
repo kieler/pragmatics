@@ -37,6 +37,8 @@ import de.cau.cs.kieler.karma.util.expandcollapsebutton.AdvancedRenderingResizab
  * EditPart for using KARMA with BorderedShapeNodes.
  * 
  * @author ckru
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBorderedShapeEditPart
         implements IAdvancedRenderingEditPart {

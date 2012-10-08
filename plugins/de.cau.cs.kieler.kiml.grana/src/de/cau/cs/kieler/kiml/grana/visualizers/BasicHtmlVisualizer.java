@@ -24,6 +24,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * 
  * @author mri
  * @author cds
+ * @kieler.ignore (excluded from review process)
  */
 public class BasicHtmlVisualizer implements IVisualizer<String, Object> {
 

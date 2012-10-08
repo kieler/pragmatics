@@ -28,8 +28,9 @@ import de.cau.cs.kieler.kiml.ui.Messages;
 /**
  * A cell editor that opens a dialog to select a layout algorithm or type.
  *
- * @kieler.rating 2011-01-24 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LayouterHintCellEditor extends DialogCellEditor {
     

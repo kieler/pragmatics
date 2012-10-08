@@ -23,6 +23,8 @@ import de.cau.cs.kieler.core.math.KVector;
  * 
  * @author owo
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class FNode extends FParticle {
 

@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportConstants;
  * A wizard page to import files from the file system.
  * 
  * @author cds
+ * @kieler.design proposed by msp
  * @kieler.rating yellow 2010-03-14
  *      reviewed by haf, msp, pkl
  */

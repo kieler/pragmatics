@@ -28,6 +28,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * currently selected graph analyses and saves the results to a file.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class BatchWizard extends Wizard {
 

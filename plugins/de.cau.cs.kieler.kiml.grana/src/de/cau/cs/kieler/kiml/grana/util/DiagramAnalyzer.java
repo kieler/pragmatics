@@ -43,6 +43,7 @@ import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
  * This class provides static methods to start an analysis of a given diagram.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public final class DiagramAnalyzer {
 

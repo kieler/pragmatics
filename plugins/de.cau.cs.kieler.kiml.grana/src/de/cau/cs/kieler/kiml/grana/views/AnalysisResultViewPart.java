@@ -37,6 +37,7 @@ import de.cau.cs.kieler.kiml.grana.visualization.VisualizationService;
  * A view that is an alternative way to display analysis results.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class AnalysisResultViewPart extends ViewPart {
 

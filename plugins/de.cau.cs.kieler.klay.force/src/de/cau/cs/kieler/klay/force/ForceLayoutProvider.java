@@ -31,6 +31,8 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  * Layout provider for the force layout algorithms.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class ForceLayoutProvider extends AbstractLayoutProvider {
 

@@ -20,10 +20,11 @@ import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 
 /**
- * 
  * This condition is true if the annotation identified by the key exists in a given EObject.
- * @author ckru
  * 
+ * @author ckru
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class AnnotationExistsCondition extends ICustomCondition<EObject> {
     

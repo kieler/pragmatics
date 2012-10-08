@@ -79,7 +79,8 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
      */
     public static void create() {
         if (LayoutDataService.getInstance() == null
-            || LayoutDataService.getInstanceOf(LayoutDataService.SERVICEDATASERVICE) == null) {
+            || LayoutDataService.getInstanceOf(
+                    ServerLayoutDataService.class.getCanonicalName()) == null) {
             ServerLayoutDataService lds = new ServerLayoutDataService();
             LayoutDataService.addService(lds);
             lds.loadLayoutProviderExtensions();
@@ -93,9 +94,7 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
      *         has not been registered yet
      */
     public static ServerLayoutDataService getInstance() {
-        return LayoutDataService.getInstanceOf(
-            LayoutDataService.SERVICEDATASERVICE
-        );
+        return LayoutDataService.getInstanceOf(ServerLayoutDataService.class.getCanonicalName());
     }
 
     /**

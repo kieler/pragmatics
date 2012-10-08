@@ -20,7 +20,9 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle.
  * 
- * @author generated
+ * @author ckru
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class KarmaPlugin extends AbstractUIPlugin {
 
@@ -36,24 +38,18 @@ public class KarmaPlugin extends AbstractUIPlugin {
     public KarmaPlugin() {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
+    /**
+     * {@inheritDoc}
      */
-    // SUPPRESS CHECKSTYLE NEXT Method Javadoc
     @Override
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
+    /**
+     * {@inheritDoc}
      */
-    // SUPPRESS CHECKSTYLE NEXT Method Javadoc
     @Override
     public void stop(final BundleContext context) throws Exception {
         plugin = null;
@@ -68,4 +64,5 @@ public class KarmaPlugin extends AbstractUIPlugin {
     public static KarmaPlugin getDefault() {
         return plugin;
     }
+    
 }

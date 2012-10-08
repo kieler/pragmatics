@@ -28,9 +28,13 @@ import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 
 /**
- * Exporter for matrices from the KGraph format.
+ * Exporter for matrices from the KGraph format. The option {@link LayoutOptions#NO_LAYOUT}
+ * can be used to suppress creation of a graph layout in matrix format, hence only the graph structure
+ * is exported in that case.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class MatrixExporter implements IGraphTransformer<KNode, Matrix> {
 

@@ -35,6 +35,8 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationData;
  * Graph exporter for the GML format.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
 

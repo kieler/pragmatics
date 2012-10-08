@@ -28,6 +28,8 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * analysis to derive layout option values.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class EvolLayoutConfig implements ILayoutConfig {
     

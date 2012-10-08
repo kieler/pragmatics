@@ -25,6 +25,8 @@ import de.cau.cs.kieler.klay.force.model.ForceModelStrategy;
  * Property definitions for the force layouter.
  * 
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public final class Properties {
     

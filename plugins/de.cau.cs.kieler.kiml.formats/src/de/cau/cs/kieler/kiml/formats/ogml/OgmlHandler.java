@@ -33,6 +33,8 @@ import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
  * Transformer for OGML.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class OgmlHandler extends AbstractEmfHandler<DocumentRoot> {
 

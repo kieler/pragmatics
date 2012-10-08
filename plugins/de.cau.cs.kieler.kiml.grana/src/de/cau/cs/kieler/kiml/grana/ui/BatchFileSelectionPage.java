@@ -34,6 +34,7 @@ import de.cau.cs.kieler.kiml.grana.GranaPlugin;
  * files.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class BatchFileSelectionPage extends WizardExportResourcesPage {
 

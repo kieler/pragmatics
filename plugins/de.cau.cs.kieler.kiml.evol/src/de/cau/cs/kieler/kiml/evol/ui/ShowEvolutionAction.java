@@ -41,6 +41,8 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
  * Handler for opening the evolution dialog.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class ShowEvolutionAction extends Action {
     

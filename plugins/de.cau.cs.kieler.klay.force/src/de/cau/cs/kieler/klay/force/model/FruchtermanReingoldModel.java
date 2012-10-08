@@ -25,6 +25,8 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  * @author msp
  * @author tmn
  * @author fhol
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class FruchtermanReingoldModel extends AbstractForceModel {
 

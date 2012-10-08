@@ -54,7 +54,8 @@ import de.cau.cs.kieler.core.util.Pair;
  * data accordingly.
  * 
  * @author ckru
- * 
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public final class ConditionProvider {
 

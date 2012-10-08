@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
  * The activator class controls the plug-in life cycle.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class GranaPlugin extends AbstractUIPlugin {
 

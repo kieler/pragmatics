@@ -17,6 +17,8 @@ package de.cau.cs.kieler.kiml.formats.gml.serializer;
  * Syntactic sequencer for GML.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class GMLSyntacticSequencer extends AbstractGMLSyntacticSequencer {
 }

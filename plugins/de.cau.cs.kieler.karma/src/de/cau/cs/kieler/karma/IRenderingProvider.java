@@ -26,7 +26,8 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
  * Class for providing figures represented by a string.
  * 
  * @author ckru
- * 
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public interface IRenderingProvider {
 

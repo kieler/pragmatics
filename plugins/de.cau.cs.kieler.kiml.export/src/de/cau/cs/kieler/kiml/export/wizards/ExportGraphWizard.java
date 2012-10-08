@@ -30,9 +30,10 @@ import de.cau.cs.kieler.kiml.export.ExportPlugin;
 import de.cau.cs.kieler.kiml.export.handlers.GraphFileHandler;
 
 /**
- * A wizard for Exporting graphs from workspace.
+ * A wizard for exporting graphs from workspace.
  * 
  * @author wah
+ * @kieler.ignore (excluded from review process)
  */
 public class ExportGraphWizard extends Wizard implements IExportWizard {
 

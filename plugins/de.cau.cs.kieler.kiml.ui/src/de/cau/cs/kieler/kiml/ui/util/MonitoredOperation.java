@@ -33,8 +33,9 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
  * tracking compared to the usual synchronous tracking of the workbench progress service.
  * Just implement {@link #execute(IProgressMonitor)} and call {@link #runMonitored()}.
  *
- * @kieler.rating 2010-01-14 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public abstract class MonitoredOperation {
 

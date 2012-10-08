@@ -36,6 +36,8 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  * Manages the transformation of KGraphs to FGraphs.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class KGraphImporter implements IGraphImporter<KNode> {
     

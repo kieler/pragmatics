@@ -27,6 +27,8 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * certain minimal value.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class NodeSeparationMetric implements IAnalysis {
     

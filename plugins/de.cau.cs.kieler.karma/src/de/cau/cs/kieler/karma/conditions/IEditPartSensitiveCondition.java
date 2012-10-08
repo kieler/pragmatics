@@ -19,13 +19,13 @@ import org.eclipse.gef.EditPart;
 import de.cau.cs.kieler.karma.ICustomCondition;
 
 /**
- * 
  * This condition additional to an EObject also has an EditPart which can be used to 
  * determinate the result. This has to be initialized with an EditPart before it can be used.
  * 
  * @author ckru
- *
- * @param <T>
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
+ * @param <T> type of condition
  */
 public abstract class IEditPartSensitiveCondition<T> extends ICustomCondition<T> {
 

@@ -53,12 +53,16 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 /**
  * Transformer for OGML.
  * 
- * <b>Layout Options:</b> By convention any layout option related to a graph element is specified by
+ * <ul>
+ * <li><b>Layout Options:</b> By convention any layout option related to a graph element is specified by
  * using OGML's {@link DataType} element and connected to this explicit element. The layout option
  * is stored in the {@link String} value of the {@link DataType} element as a key-value pair of the
- * form "option-id=value".
+ * form "option-id=value".</li>
+ * </ul>
  * 
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
 
