@@ -37,12 +37,17 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  *
+ * This intermediate processor is used to select the side of port and edge labels.
+ * 
+ * It is chosen between the sides UP and DOWN based on different strategies selected by
+ * a layout option.
+ *
  * @author jjc
  */
 public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
-     * The constructor for this processor.
+     * The (empty) constructor for this processor.
      */
     public LabelSideSelector() {
     }
@@ -79,6 +84,11 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
         getMonitor().done();
     }
     
+    /**
+     * Strategy which marks all labels for an UP placement.
+     * 
+     * @param nodes All nodes of the graph
+     */
     private void alwaysUp(final List<LNode> nodes) {
         for (LNode node : nodes) {
             for (LEdge edge : node.getOutgoingEdges()) {
@@ -95,6 +105,11 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
         }
     }
     
+    /**
+     * Strategy which marks all labels for an DOWN placement.
+     * 
+     * @param nodes All nodes of the graph
+     */
     private void alwaysDown(final List<LNode> nodes) {
         for (LNode node : nodes) {
             for (LEdge edge : node.getOutgoingEdges()) {
@@ -115,8 +130,14 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
         for (LNode node : nodes) {
             for (LEdge edge : node.getOutgoingEdges()) {
                 LSide side = LSide.UP;
-                if (edge.getSource().getNode().getLayer().getIndex()
-                        <= edge.getTarget().getNode().getLayer().getIndex()) {
+                LNode target = edge.getTarget().getNode();
+                if (target.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
+                        || target.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
+                    target = target.getProperty(Properties.LONG_EDGE_TARGET).getNode();
+                }
+                if ((node.getLayer().getIndex()
+                        < target.getLayer().getIndex()
+                        && !edge.getProperty(Properties.REVERSED))) {
                     side = LSide.UP;
                 } else {
                     side = LSide.DOWN;
@@ -138,8 +159,14 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
         for (LNode node : nodes) {
             for (LEdge edge : node.getOutgoingEdges()) {
                 LSide side = LSide.UP;
-                if (edge.getSource().getNode().getLayer().getIndex()
-                        <= edge.getTarget().getNode().getLayer().getIndex()) {
+                LNode target = edge.getTarget().getNode();
+                if (target.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
+                        || target.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
+                    target = target.getProperty(Properties.LONG_EDGE_TARGET).getNode();
+                }
+                if ((node.getLayer().getIndex()
+                        < target.getLayer().getIndex()
+                        && !edge.getProperty(Properties.REVERSED))) {
                     side = LSide.DOWN;
                 } else {
                     side = LSide.UP;
@@ -157,6 +184,11 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
         }
     }
     
+    /**
+     * Chooses label sides depending on certain pattern.
+     * 
+     * @param nodes All nodes of the graph
+     */
     private void smart(final List<LNode> nodes) {
         HashMap<LNode, LSide> nodeMarkers = Maps.newHashMapWithExpectedSize(nodes.size());
         for (LNode node : nodes) {
@@ -197,6 +229,14 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
         }
     }
 
+    /**
+     * Get all ports on a certain side of a node.
+     * They are sorted descending by their position on the node.
+     * 
+     * @param node The node to consider
+     * @param portSide The chosen side
+     * @return A list of all ports on the chosen side of the node
+     */
     private List<LPort> getPortsBySide(final LNode node, final PortSide portSide) {
         List<LPort> result = new LinkedList<LPort>();
         for (LPort port : node.getPorts(portSide)) {
