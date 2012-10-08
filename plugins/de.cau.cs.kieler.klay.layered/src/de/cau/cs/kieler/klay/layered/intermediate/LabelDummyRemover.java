@@ -30,9 +30,10 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
+ * Processor that removes the inserted center label dummies and places the labels on their
+ * position.
  *
  * @author jjc
- * @kieler.design 2012-08-10 chsch grh
  */
 public class LabelDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -64,10 +65,9 @@ public class LabelDummyRemover extends AbstractAlgorithm implements ILayoutProce
                         node.getPorts(PortSide.EAST).iterator().next().getOutgoingEdges();
                     int edgeCount = inputPortEdges.size();
                     
-                    // TODO rework doc here
                     // The following code assumes that edges with the same indices in the two
                     // lists originate from the same long edge, which is true for the current
-                    // implementation of LongEdgeSplitter and HyperedgeDummyMerger
+                    // implementation of LabelDummyInserter
                     while (edgeCount-- > 0) {
                         // Get the two edges
                         LEdge survivingEdge = inputPortEdges.get(0);
@@ -82,6 +82,12 @@ public class LabelDummyRemover extends AbstractAlgorithm implements ILayoutProce
                         KVectorChain survivingBendPoints = survivingEdge.getBendPoints();
                         for (KVector bendPoint : droppedEdge.getBendPoints()) {
                             survivingBendPoints.add(new KVector(bendPoint));
+                        }
+                        
+                        //Join their labels
+                        List<LLabel> survivingLabels = survivingEdge.getLabels();
+                        for (LLabel label2: droppedEdge.getLabels()) {
+                            survivingLabels.add(label2);
                         }
                     }
                     
