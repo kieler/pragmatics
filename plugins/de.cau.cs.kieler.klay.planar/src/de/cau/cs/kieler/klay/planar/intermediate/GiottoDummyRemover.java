@@ -79,6 +79,11 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
 
             // add bend point to the end or to the start of the edge.
             for (PEdge edge : hDNode.adjacentEdges()) {
+                
+//                if(edge.getProperty(Properties.START_POSITION) != null)
+                
+                
+                
                 // order of the bendpoints.
                 boolean wantsFirst = edge.getSource() == hDNode;
                 if (wantsFirst) {
@@ -87,13 +92,13 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
                     edge.getBendPoints().addLast(smallX, bigY);
                 }
             }
-            
+
             // set the high degree node to only one grid position.
-            int newX = (int) Math.floor((bigX - smallX)/2);
+            int newX = (int) Math.floor((bigX - smallX) / 2);
             positions.set(0, newX);
             positions.set(2, newX);
 
-            int newY = (int) Math.floor((bigY - smallY)/2);
+            int newY = (int) Math.floor((bigY - smallY) / 2);
             positions.set(1, newY);
             positions.set(3, newY);
         }

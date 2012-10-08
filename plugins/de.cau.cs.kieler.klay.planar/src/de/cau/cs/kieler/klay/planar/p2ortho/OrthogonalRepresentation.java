@@ -30,6 +30,7 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
  * 
  * @author ocl
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public class OrthogonalRepresentation {
 

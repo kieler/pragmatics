@@ -19,6 +19,7 @@ import de.cau.cs.kieler.core.math.KVector;
  * Abstract superclass for {@link PGraphElement}s that can have a position and a size.
  * 
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public abstract class PShape extends PGraphElement {
 
