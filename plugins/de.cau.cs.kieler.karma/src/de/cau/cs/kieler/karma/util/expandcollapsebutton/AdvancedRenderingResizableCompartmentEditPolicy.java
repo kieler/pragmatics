@@ -28,7 +28,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editpolicies.ResizableCompartmentEditP
  * 
  * @author ckru
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.ignored
  */
 public class AdvancedRenderingResizableCompartmentEditPolicy extends ResizableCompartmentEditPolicy {
 
