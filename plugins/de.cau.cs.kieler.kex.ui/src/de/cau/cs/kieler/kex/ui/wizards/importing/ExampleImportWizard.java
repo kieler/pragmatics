@@ -30,9 +30,11 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
@@ -46,7 +48,10 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.ui.KEXUIPlugin;
+import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
  * This wizard contains all elements for an kex import wizard.
@@ -256,8 +261,8 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
         
         // Open direct opens
         if (!worker.cancelled && !worker.directOpens.isEmpty() && destinationPage.openImports()) {
-            IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-            IWorkbenchPage page = win.getActivePage();
+            IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+            IWorkbenchPage page = window.getActivePage();
             
             for (String path : worker.directOpens) {
                 IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
@@ -270,11 +275,20 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
                                 .findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
                     }
                     try {
-                        page.openEditor(new FileEditorInput(files[0]), defaultEditor.getId());
-                        if (destinationPage.autoLayout()) {
-                            DiagramLayoutEngine.INSTANCE.layout(PlatformUI.getWorkbench()
-                                    .getActiveWorkbenchWindow().getPartService()
-                                    .getActivePart(), null, false, true, false, true);
+                        IEditorPart editorPart = page.openEditor(new FileEditorInput(files[0]),
+                                defaultEditor.getId());
+                        if (destinationPage.autoLayout() && EclipseLayoutInfoService.getInstance()
+                                .getManager(editorPart, null) != null) {
+                            IPreferenceStore preferenceStore = KimlUiPlugin.getDefault()
+                                    .getPreferenceStore();
+                            boolean animation = preferenceStore.getBoolean(
+                                    LayoutHandler.PREF_ANIMATION);
+                            boolean zoomToFit = preferenceStore.getBoolean(
+                                    LayoutHandler.PREF_ZOOM);
+                            boolean progressDialog = preferenceStore.getBoolean(
+                                    LayoutHandler.PREF_PROGRESS);
+                            DiagramLayoutEngine.INSTANCE.layout(editorPart, null, animation,
+                                    progressDialog, false, zoomToFit);
                         }
                     } catch (PartInitException e) {
                         IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID,

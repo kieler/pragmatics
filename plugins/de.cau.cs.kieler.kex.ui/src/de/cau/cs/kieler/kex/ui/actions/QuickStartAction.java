@@ -31,8 +31,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -49,7 +51,10 @@ import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.SourceType;
 import de.cau.cs.kieler.kex.ui.KEXUIPlugin;
+import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
  * This class contains the contents to run a quick start example.
@@ -222,13 +227,20 @@ public class QuickStartAction implements IIntroAction {
                                         IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
                     }
                     try {
-                        page.openEditor(new FileEditorInput(files[0]),
+                        IEditorPart editorPart = page.openEditor(new FileEditorInput(files[0]),
                                 defaultEditor.getId());
-                        if (autoLayout) {
-                            DiagramLayoutEngine.INSTANCE.layout(PlatformUI
-                                    .getWorkbench().getActiveWorkbenchWindow()
-                                    .getPartService().getActivePart(), null,
-                                    false, true, false, true);
+                        if (autoLayout && EclipseLayoutInfoService.getInstance()
+                                .getManager(editorPart, null) != null) {
+                            IPreferenceStore preferenceStore = KimlUiPlugin.getDefault()
+                                    .getPreferenceStore();
+                            boolean animation = preferenceStore.getBoolean(
+                                    LayoutHandler.PREF_ANIMATION);
+                            boolean zoomToFit = preferenceStore.getBoolean(
+                                    LayoutHandler.PREF_ZOOM);
+                            boolean progressDialog = preferenceStore.getBoolean(
+                                    LayoutHandler.PREF_PROGRESS);
+                            DiagramLayoutEngine.INSTANCE.layout(editorPart, null, animation,
+                                    progressDialog, false, zoomToFit);
                         }
                     } catch (PartInitException e) {
                         IStatus status = new Status(IStatus.WARNING,
