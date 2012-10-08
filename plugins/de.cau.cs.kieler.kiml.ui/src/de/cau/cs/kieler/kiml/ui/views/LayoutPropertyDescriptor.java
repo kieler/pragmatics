@@ -35,9 +35,15 @@ import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
  * A property descriptor for layout options.
+ * 
+ * <p>Here's a small peculiarity concerning the descriptions of layout options: calling
+ * {@link #getDescription()} only returns the first sentence of an option's description,
+ * to be displayed in the status bar. To retrieve the full description, call
+ * {@link #getFullDescription()}.</p>
  *
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LayoutPropertyDescriptor implements IPropertyDescriptor {
 
@@ -179,6 +185,25 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * {@inheritDoc}
      */
     public String getDescription() {
+        // We only return the first sentence of the description. The longer description
+        // can be retrieved by calling getLongDescription.
+        String description = optionData.getDescription();
+        int firstPeriodIndex = description.indexOf('.');
+        
+        if (firstPeriodIndex > 0) {
+            return description.substring(0, firstPeriodIndex + 1);
+        } else {
+            return description;
+        }
+    }
+    
+    /**
+     * Returns the option's full description. This is in contrast to {@link #getDescription()},
+     * which only returns the description's first sentence.
+     * 
+     * @return the full description.
+     */
+    public String getLongDescription() {
         return optionData.getDescription();
     }
 

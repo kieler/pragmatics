@@ -28,6 +28,8 @@ import org.osgi.framework.Bundle;
  * Service for smart layout rules.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public final class SmartLayoutService {
     

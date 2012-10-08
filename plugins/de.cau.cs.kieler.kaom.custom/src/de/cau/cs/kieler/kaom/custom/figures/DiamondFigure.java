@@ -23,7 +23,8 @@ import org.eclipse.draw2d.geometry.Rectangle;
  * This class represents diamond figures.
  *
  * @author schm
- * @kieler.ignore (excluded from review process)
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class DiamondFigure extends Shape {
 

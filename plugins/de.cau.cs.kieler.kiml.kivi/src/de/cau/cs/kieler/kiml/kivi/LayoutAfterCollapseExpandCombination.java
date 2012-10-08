@@ -31,6 +31,8 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
  * diagram has changed.
  * 
  * @author haf
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LayoutAfterCollapseExpandCombination extends AbstractCombination {
 

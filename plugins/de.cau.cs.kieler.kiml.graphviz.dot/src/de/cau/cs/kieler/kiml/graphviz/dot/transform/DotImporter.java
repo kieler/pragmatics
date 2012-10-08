@@ -61,6 +61,8 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * A transformer for Graphviz Dot.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
     

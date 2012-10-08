@@ -27,6 +27,8 @@ import de.cau.cs.kieler.kiml.service.grana.analyses.AreaAnalysis;
  * value means that the aspect ratio is closer to the optimal value (the golden ratio).
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class AspectRatioMetric implements IAnalysis {
     

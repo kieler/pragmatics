@@ -22,11 +22,11 @@ import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
 import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 
 /**
- *
  * This effect requests a reevaluation of the rendering associated with a given model element.
  * 
  * @author ckru
- *
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class ReevaluateRenderingEffect extends AbstractEffect {
 

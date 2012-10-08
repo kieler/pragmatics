@@ -17,7 +17,9 @@ package de.cau.cs.kieler.kiml.formats.gml;
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  * 
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
-public class GMLRuntimeModule extends de.cau.cs.kieler.kiml.formats.gml.AbstractGMLRuntimeModule {
+public class GMLRuntimeModule extends AbstractGMLRuntimeModule {
 
 }

@@ -53,6 +53,7 @@ import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
  * An extension of the layout info service for diagram layout managers and preference handling.
  *
  * @author msp
+ * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public final class EclipseLayoutInfoService extends LayoutInfoService implements IAdapterFactory {

@@ -68,6 +68,8 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * 
  * @author msp
  * @author mri
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
 

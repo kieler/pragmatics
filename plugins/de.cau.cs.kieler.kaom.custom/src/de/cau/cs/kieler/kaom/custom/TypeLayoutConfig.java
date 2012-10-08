@@ -27,6 +27,8 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * A semantic layout configuration for the diagram type of entities.
  *
  * @author ckru
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class TypeLayoutConfig extends SemanticLayoutConfig {
     

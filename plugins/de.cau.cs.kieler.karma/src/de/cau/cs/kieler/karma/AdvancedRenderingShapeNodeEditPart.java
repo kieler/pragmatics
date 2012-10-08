@@ -29,8 +29,10 @@ import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartDelegate;
 
 /**
  * EditPart for using KARMA with ShapeNodes.
- * .
+ * 
  * @author ckru
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPart implements
         IAdvancedRenderingEditPart {

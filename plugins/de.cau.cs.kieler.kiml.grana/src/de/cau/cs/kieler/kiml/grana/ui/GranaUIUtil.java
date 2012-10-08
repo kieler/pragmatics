@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
  * A utility class for Grana UI functionality.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public final class GranaUIUtil {
 

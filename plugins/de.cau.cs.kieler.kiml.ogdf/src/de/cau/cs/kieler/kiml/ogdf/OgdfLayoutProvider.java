@@ -26,6 +26,8 @@ import de.cau.cs.kieler.kiml.ogdf.options.LayoutAlgorithm;
  * 
  * @author msp
  * @author mri
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class OgdfLayoutProvider extends AbstractLayoutProvider {
 

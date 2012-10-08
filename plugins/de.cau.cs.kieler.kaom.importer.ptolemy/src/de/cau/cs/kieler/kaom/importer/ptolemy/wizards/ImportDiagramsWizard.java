@@ -41,6 +41,7 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImportPlugin;
  * A wizard to import diagrams exported from Ptolemy2.
  * 
  * @author cds
+ * @kieler.design proposed by msp
  * @kieler.rating yellow 2010-03-14
  *      reviewed by haf, msp, pkl
  */

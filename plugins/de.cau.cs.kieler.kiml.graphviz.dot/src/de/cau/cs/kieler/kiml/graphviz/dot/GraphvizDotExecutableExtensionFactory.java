@@ -30,6 +30,8 @@ import com.google.inject.Injector;
  * {@link org.eclipse.xtext.ui.guice.AbstractGuiceAwareExecutableExtensionFactory}.
  * 
  * @author msp (original code by Sven Efftinge)
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class GraphvizDotExecutableExtensionFactory implements IExecutableExtensionFactory,
         IExecutableExtension {

@@ -26,7 +26,9 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  * {@link #reset()} must be called explicitly once before.
  *
  * @kieler.design 2011-07-08 reviewed by swe, ima, msp
+ * @kieler.rating proposed yellow by msp
  * @author bdu
+ * @author msp
  */
 public abstract class AbstractEvolutionaryAlgorithm {
     

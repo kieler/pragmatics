@@ -31,7 +31,8 @@ import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartDelegate;
  * EditPart for using KARMA with Connections.
  * 
  * @author ckru
- * 
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNodeEditPart implements
         IAdvancedRenderingEditPart {

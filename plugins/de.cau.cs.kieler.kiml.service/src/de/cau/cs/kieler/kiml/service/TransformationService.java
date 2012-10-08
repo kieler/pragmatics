@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
  * Service class for graph transformations.
  *
  * @author msp
+ * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public abstract class TransformationService {

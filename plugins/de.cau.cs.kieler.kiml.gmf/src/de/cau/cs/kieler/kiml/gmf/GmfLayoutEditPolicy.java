@@ -74,8 +74,9 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * Edit policy used to apply layout. This edit policy creates a {@link GmfLayoutCommand} to directly
  * manipulate layout data in the GMF notation model.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  * @see org.eclipse.gmf.runtime.diagram.ui.editpolicies.XYLayoutEditPolicy
  * @see org.eclipse.gmf.runtime.diagram.ui.editpolicies.ConnectionBendpointEditPolicy
  * @see org.eclipse.gmf.runtime.diagram.ui.editpolicies.GraphicalNodeEditPolicy

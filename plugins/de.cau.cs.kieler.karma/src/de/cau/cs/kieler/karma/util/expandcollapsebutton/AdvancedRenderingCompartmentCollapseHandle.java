@@ -43,12 +43,12 @@ import org.eclipse.gmf.runtime.notation.View;
 import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 
 /**
- * 
  * This class is basically the same as the standard gmf CompartmentCollapseHandle. In addition it
  * provides the potential to exchange or influence the Collapse/Expand button.
  * 
  * @author ckru
- * 
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 //taken from original eclipse code, blame them
 @SuppressWarnings("restriction")

@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * The dialog that shows a selection of graph analyses to the user to select from.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class AnalysisSelectionDialog extends Dialog implements ISelectionListener {
 

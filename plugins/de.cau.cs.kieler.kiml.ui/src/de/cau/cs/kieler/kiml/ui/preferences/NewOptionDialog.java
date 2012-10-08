@@ -48,8 +48,9 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 /**
  * A dialog to add new default layout options in the preference page.
  *
- * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class NewOptionDialog extends Dialog {
     

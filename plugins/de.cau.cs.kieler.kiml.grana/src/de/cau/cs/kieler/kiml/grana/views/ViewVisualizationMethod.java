@@ -24,6 +24,7 @@ import de.cau.cs.kieler.kiml.grana.visualization.IVisualizationMethod;
  * A visualization method which updates the result view.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class ViewVisualizationMethod implements IVisualizationMethod {
 

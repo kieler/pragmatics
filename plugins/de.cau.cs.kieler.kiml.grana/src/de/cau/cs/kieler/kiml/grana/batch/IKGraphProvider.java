@@ -20,9 +20,8 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * The interface for KGraph providers.
  * 
  * @author mri
- * 
- * @param <T>
- *            the parameter type
+ * @kieler.ignore (excluded from review process)
+ * @param <T> the parameter type
  */
 public interface IKGraphProvider<T> {
 

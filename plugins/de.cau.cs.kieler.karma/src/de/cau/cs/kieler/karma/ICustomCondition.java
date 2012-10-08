@@ -20,9 +20,9 @@ import de.cau.cs.kieler.core.util.ICondition;
  * Interface for conditions that can be used with an extension point.
  * 
  * @author ckru
- * 
- * @param <T>
- *            the type for which the condition is used
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
+ * @param <T> the type for which the condition is used
  */
 public abstract class ICustomCondition<T> implements ICondition<T> {
     

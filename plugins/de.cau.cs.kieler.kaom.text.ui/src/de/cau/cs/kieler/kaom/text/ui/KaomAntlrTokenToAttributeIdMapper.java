@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.annotations.text.ui.AnnotationsAntlrTokenToAttribut
  * specific highlight mappings.
  * 
  * @author chsch
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomAntlrTokenToAttributeIdMapper extends AnnotationsAntlrTokenToAttributeIdMapper {
 

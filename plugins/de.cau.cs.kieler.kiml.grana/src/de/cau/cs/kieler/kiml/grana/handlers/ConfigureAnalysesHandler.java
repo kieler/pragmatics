@@ -31,6 +31,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * The handler which responsibility is to configure the analyses selection.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class ConfigureAnalysesHandler extends AbstractHandler {
 

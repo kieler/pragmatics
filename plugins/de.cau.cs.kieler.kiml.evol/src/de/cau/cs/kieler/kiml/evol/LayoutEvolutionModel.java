@@ -42,6 +42,8 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
  * might be a feasible approach for this.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
     

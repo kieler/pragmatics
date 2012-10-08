@@ -21,6 +21,8 @@ import java.io.Serializable;
  * @author bdu
  * @author msp
  * @param <T> the type of contained values
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class TypeInfo<T extends Comparable<? super T>> implements Serializable {
     

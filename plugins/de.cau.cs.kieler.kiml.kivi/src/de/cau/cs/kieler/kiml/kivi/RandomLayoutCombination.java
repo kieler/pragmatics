@@ -37,6 +37,8 @@ import de.cau.cs.kieler.kiml.util.RandomLayoutProvider;
  * Add a button that triggers a Random layout onto the whole diagram once.
  * 
  * @author haf
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class RandomLayoutCombination extends AbstractCombination {
 

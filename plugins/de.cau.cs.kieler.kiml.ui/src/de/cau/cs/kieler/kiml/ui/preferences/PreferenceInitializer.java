@@ -24,8 +24,9 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 /**
  * Preference initializer for the KIML plugins.
  *
- * @kieler.rating 2010-04-28 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 

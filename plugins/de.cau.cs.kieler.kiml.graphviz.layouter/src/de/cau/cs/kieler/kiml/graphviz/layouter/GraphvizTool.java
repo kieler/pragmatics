@@ -35,8 +35,9 @@ import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePag
 /**
  * Handler for accessing Graphviz via a separate process.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class GraphvizTool {
     

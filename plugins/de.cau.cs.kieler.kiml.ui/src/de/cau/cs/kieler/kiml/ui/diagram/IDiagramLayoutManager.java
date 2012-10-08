@@ -34,6 +34,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * diagram part, which should also match the generic type of the implementation.
  * 
  * @param <T> the type of diagram part that is handled by this diagram layout manager
+ * @kieler.design proposed by msp
  * @kieler.rating yellow 2012-07-19 review KI-20 by cds, jjc
  * @author msp
  */

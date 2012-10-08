@@ -44,6 +44,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * 
  * @author msp
  * @author cds
+ * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class HyperedgeCrossingsAnalysis implements IAnalysis {

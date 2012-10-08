@@ -25,6 +25,8 @@ import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
  *
  * @author mri
  * @author bdu
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class EdgeBendsMetric implements IAnalysis {
 

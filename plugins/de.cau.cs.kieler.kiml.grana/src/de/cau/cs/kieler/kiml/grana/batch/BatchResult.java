@@ -24,6 +24,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * batch run.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class BatchResult {
 

@@ -46,8 +46,9 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationData;
  * The actual Graphviz layout that is applied is determined by the parameter
  * passed in the {@link #initialize(String)} method.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class GraphvizLayoutProvider extends AbstractLayoutProvider {
 
