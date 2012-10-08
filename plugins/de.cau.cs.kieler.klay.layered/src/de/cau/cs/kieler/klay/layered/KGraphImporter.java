@@ -717,6 +717,15 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                         }
                     }
                 }
+                
+                // set port labels
+                for (LPort lport : lnode.getPorts()) {
+                    for (LLabel label : lport.getLabels()) {
+                        KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
+                        KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+                        klabelLayout.applyVector(label.getPosition());
+                    }
+                }
             } else if (origin instanceof KPort) {
                 // It's an external port. Set its position
                 KPort kport = (KPort) origin;

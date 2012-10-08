@@ -45,6 +45,8 @@ public enum LayoutProcessorStrategy {
     COMMENT_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
+    /** Increases node size for the placement of end labels. */
+    LABEL_NODE_SIZE_ADJUSTER,
     
     // Before Phase 2
     
@@ -61,10 +63,15 @@ public enum LayoutProcessorStrategy {
     HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR,
     /** Removes layering constraint dummy edges from compound graphs. */
     COMPOUND_DUMMY_EDGE_REMOVER,
+    /** Decides, on which side of an edge the edge labels should be placed. */ 
+    LABEL_SIDE_SELECTOR,
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
     PORT_SIDE_PROCESSOR,
+    /** Tries to switch the label dummy nodes which the middle most dummy node
+     *  of a long edge. */
+    LABEL_DUMMY_SWITCHER,
     /** Takes a layered graph and inserts dummy nodes for edges connected to inverted ports. */
     INVERTED_PORT_PROCESSOR,
     /** Takes care of self loops. */
@@ -73,9 +80,6 @@ public enum LayoutProcessorStrategy {
     PORT_LIST_SORTER,
     /** Inserts dummy nodes to take care of northern and southern ports. */
     NORTH_SOUTH_PORT_PREPROCESSOR,
-    /** Tries to switch the label dummy nodes which the middle most dummy node
-     *  of a long edge. */
-    LABEL_DUMMY_SWITCHER,
    
     
     // Before Phase 4
@@ -112,6 +116,8 @@ public enum LayoutProcessorStrategy {
     LONG_EDGE_JOINER,
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
     NORTH_SOUTH_PORT_POSTPROCESSOR,
+    /** Removes dummy nodes which were introduced for center labels. */
+    LABEL_DUMMY_REMOVER,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
     /** Removes dummy nodes and -edges from compound graph representation,
@@ -123,8 +129,6 @@ public enum LayoutProcessorStrategy {
     DOWN_DIR_POSTPROCESSOR,
     /** Mirrors and transposes the graph to perform a bottom-up drawing. */
     UP_DIR_POSTPROCESSOR,
-    /** Removes dummy nodes which were introduced for center labels. */
-    LABEL_DUMMY_REMOVER,
     /** Place end labels on edges. */
     END_LABEL_PROCESSOR;
     
@@ -254,6 +258,12 @@ public enum LayoutProcessorStrategy {
             
         case END_LABEL_PROCESSOR:
             return new EndLabelProcessor();
+            
+        case LABEL_SIDE_SELECTOR:
+            return new LabelSideSelector();
+            
+        case LABEL_NODE_SIZE_ADJUSTER:
+            return new LabelNodeSizeAdjuster();
         
         default:
             return null;

@@ -31,9 +31,10 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
+ * Processor that inserts dummy nodes into edges that have a center label to reserve space
+ * for them.
  * 
  * @author jjc
- * @kieler.design 2012-08-10 chsch grh
  */
 public class LabelDummyInserter extends AbstractAlgorithm implements ILayoutProcessor {
 
