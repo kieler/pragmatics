@@ -51,6 +51,7 @@ import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.ManualIterator;
  * 
  * @author ocl
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayoutPhase {
 

@@ -21,6 +21,7 @@ package de.cau.cs.kieler.klay.planar.util;
  * @param <E>
  *            the type of the function result
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public interface IFunction<T, E> {
 

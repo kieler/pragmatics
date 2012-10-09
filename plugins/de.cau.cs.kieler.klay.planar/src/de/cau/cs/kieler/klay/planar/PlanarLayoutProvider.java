@@ -42,6 +42,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * @author ocl
  * @author pdo
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public class PlanarLayoutProvider extends AbstractLayoutProvider {
 

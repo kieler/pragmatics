@@ -19,6 +19,7 @@ import de.cau.cs.kieler.klay.planar.graph.IEmbeddingConstraint.IConstraintTreeLe
  * A leaf in a constraint tree for embedding constraints.
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 class PConstraintTreeLeaf implements IConstraintTreeLeaf {
 

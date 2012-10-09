@@ -28,6 +28,7 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder.IShortestPathFinder;
  * negative cycles.
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public class BellmanFordPathFinder extends AbstractPathFinder implements IShortestPathFinder {
 

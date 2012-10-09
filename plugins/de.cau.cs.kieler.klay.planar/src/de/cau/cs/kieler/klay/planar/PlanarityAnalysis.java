@@ -29,6 +29,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * be removed in order to obtain a planar subgraph.
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public class PlanarityAnalysis implements IAnalysis {
 

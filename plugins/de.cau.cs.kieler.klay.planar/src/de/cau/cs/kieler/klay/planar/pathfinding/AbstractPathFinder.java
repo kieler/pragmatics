@@ -25,6 +25,7 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
  * Algorithm to find a path between two nodes in a graph.
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public abstract class AbstractPathFinder extends AbstractAlgorithm implements IPathFinder {
 

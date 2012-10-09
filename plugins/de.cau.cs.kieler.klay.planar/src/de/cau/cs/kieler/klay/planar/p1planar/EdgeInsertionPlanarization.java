@@ -41,6 +41,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author cku
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  * 
  */
 public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILayoutPhase {

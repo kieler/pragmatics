@@ -27,6 +27,7 @@ import de.cau.cs.kieler.core.util.ICondition;
  * @param <T>
  *            the type of the elements
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public class FilteredIterable<T> implements Iterable<T> {
 

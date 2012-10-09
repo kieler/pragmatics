@@ -23,6 +23,7 @@ import java.util.Iterator;
  * @param <E>
  *            the type of elements in the resulting iterable
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public class MappedIterable<T, E> implements Iterable<E> {
 

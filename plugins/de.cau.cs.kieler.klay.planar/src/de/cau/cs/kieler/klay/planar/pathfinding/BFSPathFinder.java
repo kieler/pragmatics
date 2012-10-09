@@ -26,6 +26,7 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
  * Use a Breadth First Search to find a path between two nodes in any graph.
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public class BFSPathFinder extends AbstractPathFinder {
 

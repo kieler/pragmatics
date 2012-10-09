@@ -21,6 +21,7 @@ import de.cau.cs.kieler.klay.planar.graph.IEmbeddingConstraint.IConstraintTreeNo
  * An inner node in a constraint tree for embedding constraints.
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 class PConstraintTreeNode implements IConstraintTreeNode {
 

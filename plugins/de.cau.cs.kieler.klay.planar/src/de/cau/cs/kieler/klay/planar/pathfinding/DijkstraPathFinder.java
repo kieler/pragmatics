@@ -30,6 +30,7 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder.IShortestPathFinder;
  * Use Dijkstra's Algorithm to find the shortest path between two nodes in any graph.
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public class DijkstraPathFinder extends AbstractPathFinder implements IShortestPathFinder {
 

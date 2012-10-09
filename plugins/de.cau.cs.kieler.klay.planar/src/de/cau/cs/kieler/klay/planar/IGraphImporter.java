@@ -21,6 +21,7 @@ import de.cau.cs.kieler.klay.planar.graph.PGraph;
  * @param <T>
  *            the type of graph that this importer can transform into a force graph.
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public interface IGraphImporter<T> {
 

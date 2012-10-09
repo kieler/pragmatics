@@ -53,6 +53,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * </p>
  * 
  * @author msp
+ * @kieler.rating proposed yellow by pkl
  */
 public class ComponentsProcessor extends AbstractAlgorithm {
 
