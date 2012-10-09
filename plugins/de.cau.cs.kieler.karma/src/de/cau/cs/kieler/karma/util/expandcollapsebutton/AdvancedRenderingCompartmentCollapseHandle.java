@@ -48,7 +48,7 @@ import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
  * 
  * @author ckru
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.ignored
  */
 //taken from original eclipse code, blame them
 @SuppressWarnings("restriction")

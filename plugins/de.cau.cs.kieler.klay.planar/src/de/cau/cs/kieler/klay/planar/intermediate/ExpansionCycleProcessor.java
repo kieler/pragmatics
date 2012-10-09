@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
@@ -30,10 +31,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author pkl
  */
-public class GiottoNodeDegreeProcessor extends AbstractAlgorithm implements ILayoutProcessor {
-
-    // TODO getExternal face calcs wrong result if the external face consists exact 4 nodes and
-    // internal the dummy node has more than 4 adjacnet edges.
+public class ExpansionCycleProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
@@ -56,9 +54,9 @@ public class GiottoNodeDegreeProcessor extends AbstractAlgorithm implements ILay
             int edgeCount = 0;
             List<PEdge> edges = (LinkedList<PEdge>) higherDegreeNode.adjacentEdges();
 
-            // add first dummy of the expansion cylce.
+            // add first dummy of the expansion cycle.
             PNode dummyNode = pgraph.addNode();
-            dummyNode.setProperty(Properties.EXPANSION_CYCLE_ROOT, higherDegreeNode);
+            dummyNode.setProperty(Properties.EXPANSION_CYCLE_ORIGIN, higherDegreeNode);
             dummies.add(dummyNode);
             PEdge changableEdge = edges.get(0);
 
@@ -76,12 +74,12 @@ public class GiottoNodeDegreeProcessor extends AbstractAlgorithm implements ILay
             do {
 
                 dummyNode = pgraph.addNode();
-                dummyNode.setProperty(Properties.EXPANSION_CYCLE_ROOT, higherDegreeNode);
+                dummyNode.setProperty(Properties.EXPANSION_CYCLE_ORIGIN, higherDegreeNode);
                 dummies.add(dummyNode);
 
                 // add a dummy to connect the dummy nodes (first of the embedding).
                 PEdge dummyEdge = pgraph.addEdge(prevNode, dummyNode);
-                dummyEdge.setProperty(Properties.EXPANSION_CYCLE_ROOT, higherDegreeNode);
+                dummyEdge.setProperty(Properties.EXPANSION_CYCLE_ORIGIN, higherDegreeNode);
                 // change end of the edge of the higher degree node to the new dummy
                 changableEdge = edges.get(edgeCount);
                 edgeCount++;
@@ -100,7 +98,7 @@ public class GiottoNodeDegreeProcessor extends AbstractAlgorithm implements ILay
                 if (currentDegree == 0) {
                     // the last dummy has to be connected to the start degree.
                     dummyEdge = pgraph.addEdge(dummyNode, dummies.get(0));
-                    dummyEdge.setProperty(Properties.EXPANSION_CYCLE_ROOT, higherDegreeNode);
+                    dummyEdge.setProperty(Properties.EXPANSION_CYCLE_ORIGIN, higherDegreeNode);
                     break;
                 }
 
@@ -111,10 +109,15 @@ public class GiottoNodeDegreeProcessor extends AbstractAlgorithm implements ILay
             higherDegreeNode.setProperty(Properties.EXPANSION_CYCLE, dummies);
         }
 
+        // computes the faces of the processor.
         pgraph.getFaces();
-        
+
+        // adds a property to the expansion cycle faces to identify them.
+        markExpCycleFaces(pgraph);
+
         getMonitor().done();
     }
+
 
     /**
      * Changes the source or/and target of an edge.
@@ -136,5 +139,24 @@ public class GiottoNodeDegreeProcessor extends AbstractAlgorithm implements ILay
         graph.setChangedFaces();
 
     }
+    /**
+     * Sets a property to all expansion cycle faces, to identify them at the flow network creation.
+     */
+    private void markExpCycleFaces(PGraph graph) {
+        for (PFace face : graph.getFaces()) {
+            boolean wantsMark = true;
+            for (PNode node : face.adjacentNodes()) {
+                PNode expCycleOrigin = node.getProperty(Properties.EXPANSION_CYCLE_ORIGIN);
+                if (expCycleOrigin == null) {
+                    wantsMark = false;
+                    break;
+                }
+            }
+            if (wantsMark) {
+                face.setProperty(Properties.EXPANSION_CYCLE_FACE, Boolean.TRUE);
+            }
+        }
+    }
+    
 
 }

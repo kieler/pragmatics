@@ -61,7 +61,48 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
 
         calcMetrics(highDegreeNodes);
 
+//        calcQuod(highDegreeNodes);
+
         getMonitor().done();
+    }
+
+    /**
+     * 
+     */
+    private void calcQuod(Set<PNode> highDegreeNodes) {
+        for (PNode hDNode : highDegreeNodes) {
+            List<Integer> positions = hDNode.getProperty(Properties.HIGH_DEGREE_POSITIONS);
+            int smallX = positions.get(0).intValue();
+            int smallY = positions.get(1).intValue();
+            int bigX = positions.get(2).intValue();
+            int bigY = positions.get(3).intValue();
+
+            // add bend point to the end or to the start of the edge.
+            for (PEdge edge : hDNode.adjacentEdges()) {
+                
+//                if(edge.getProperty(Properties.START_POSITION) != null)
+                
+                
+                
+                // order of the bendpoints.
+                boolean wantsFirst = edge.getSource() == hDNode;
+                if (wantsFirst) {
+                    edge.getBendPoints().addFirst(smallX, bigX);
+                } else {
+                    edge.getBendPoints().addLast(smallX, bigY);
+                }
+            }
+
+            // set the high degree node to only one grid position.
+            int newX = (int) Math.floor((bigX - smallX) / 2);
+            positions.set(0, newX);
+            positions.set(2, newX);
+
+            int newY = (int) Math.floor((bigY - smallY) / 2);
+            positions.set(1, newY);
+            positions.set(3, newY);
+        }
+
     }
 
     /**
@@ -87,7 +128,7 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
                 for (PEdge edge : dummyNode.adjacentEdges()) {
 
                     // search for original edges.
-                    if (edge.getProperty(Properties.EXPANSION_CYCLE_ROOT) == null) {
+                    if (edge.getProperty(Properties.EXPANSION_CYCLE_ORIGIN) == null) {
                         // add old high degree node and set the position of the edge endpoint.
                         if (edge.getSource() == dummyNode) {
                             edge.setSource(hDNode);
@@ -155,7 +196,7 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
     private Set<PNode> filterHighDegreeNodes() {
         Set<PNode> highDegreeNodes = Sets.newHashSet();
         for (PNode node : graph.getNodes()) {
-            PNode highDegreeNode = node.getProperty(Properties.EXPANSION_CYCLE_ROOT);
+            PNode highDegreeNode = node.getProperty(Properties.EXPANSION_CYCLE_ORIGIN);
             if (highDegreeNode != null) {
                 highDegreeNodes.add(highDegreeNode);
             }

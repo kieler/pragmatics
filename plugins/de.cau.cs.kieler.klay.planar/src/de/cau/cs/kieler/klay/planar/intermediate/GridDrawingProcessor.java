@@ -129,6 +129,7 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
                 grid.set(gridX, gridY, currentNode);
                 visitedEdges.add(currentEdge);
                 // choose next edge
+                //TODO face sides adjust that only the next side edge can be taken.
                 out: for (int i = 0; i < faceSides.length; i++) {
                     // start at the current sideIndex and walk around until edge is found
                     for (PEdge edge : faceSides[(i + sideIndex) % faceSides.length]) {

@@ -91,7 +91,7 @@ public enum LayoutProcessorStrategy {
         case EXT_FACE:
             return new ExternalFaceProcessor();
         case GIOTTO:
-            return new GiottoNodeDegreeProcessor();
+            return new ExpansionCycleProcessor();
         case BEND_DUMMY:
             return new BendDummyProcessor();
         case RECT_SHAPE_DUMMY:

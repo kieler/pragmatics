@@ -30,6 +30,7 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
  * 
  * @author ocl
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public class OrthogonalRepresentation {
 
@@ -49,9 +50,6 @@ public class OrthogonalRepresentation {
 
         /** A 360 degree angle, or full circle. */
         FULL;
-
-        /** The index of a full angle. */
-        public static final int FULL_ANGLE_INDEX = 3;
 
         /**
          * Maps ordinal to the enum.

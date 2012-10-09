@@ -27,6 +27,7 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
  * common interface for implementations of path finding algorithms.
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public interface IPathFinder extends IAlgorithm {
 
