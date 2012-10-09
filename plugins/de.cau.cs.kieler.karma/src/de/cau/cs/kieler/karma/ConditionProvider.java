@@ -55,7 +55,7 @@ import de.cau.cs.kieler.core.util.Pair;
  * 
  * @author ckru
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-07-06 review KI-11 by chsch, pkl
  */
 public final class ConditionProvider {
 

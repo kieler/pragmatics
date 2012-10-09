@@ -29,6 +29,7 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
  * Solve the maximum flow problem in flow networks using the Ford-Fulkerson algorithm.
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by msp
  */
 public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaximumFlowSolver {
 

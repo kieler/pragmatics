@@ -14,9 +14,10 @@
 package de.cau.cs.kieler.klay.planar.graph;
 
 /**
- * A label in the layered graph structure.
+ * A label in the graph structure.
  * 
- * @author jjc
+ * @author pkl
+ * 
  */
 public class PLabel extends PShape {
 

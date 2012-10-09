@@ -33,6 +33,7 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
  * 
  * @author ocl
  * @author pkl
+ * @kieler.rating proposed yellow by msp
  */
 public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implements
         IMinimumCostFlowSolver {

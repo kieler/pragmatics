@@ -88,7 +88,6 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
     private OrthogonalRepresentation orthogonal;
 
-    
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
     // Before Phase 1
@@ -225,6 +224,14 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                 }
                 continue;
             }
+
+            // Expansion cycle faces should not contain any bendpoints at their bounding edges.
+            // Thus, there are no arcs for that faces in the flow network.
+            if (left.getProperty(Properties.EXPANSION_CYCLE_FACE) != null
+                    || right.getProperty(Properties.EXPANSION_CYCLE_FACE) != null) {
+                continue;
+            }
+            
             PEdge edgeLeft = network.addEdge(faceMapping.get(left), faceMapping.get(right), true);
             edgeLeft.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
             edgeLeft.setProperty(IPathFinder.PATHCOST, 1);

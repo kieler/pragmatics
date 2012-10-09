@@ -21,6 +21,7 @@ package de.cau.cs.kieler.klay.planar.graph;
  * it is still valid.
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public interface IEmbeddingConstraint {
 
