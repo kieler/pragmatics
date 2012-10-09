@@ -71,7 +71,7 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
             // Set the mode temporarily to local mode since the
             // RemoteLayoutDataService instance can only be removed
             // if it is not the currently active instance.
-            LayoutDataService.setMode(ECLIPSEDATASERVICE);            
+            LayoutDataService.setMode(ECLIPSE_DATA_SERVICE);            
             LayoutDataService.removeService(lds);
         }
         // Create new RemoteLayoutDataService instance and register it

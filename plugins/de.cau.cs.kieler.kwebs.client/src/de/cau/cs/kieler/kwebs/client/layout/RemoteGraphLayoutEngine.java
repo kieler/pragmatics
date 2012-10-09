@@ -92,7 +92,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
         try {
             if (remoteLayout) {
                 if (serverConfigs.countConfigs() == 0) {
-                    LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
+                    LayoutDataService.setMode(LayoutDataService.ECLIPSE_DATA_SERVICE);
                     int result = displayMessage(
                         "No Services configured",
                         "You do not have any layout service configured."
@@ -108,7 +108,7 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                     return false; 
                 }
                 if (LayoutServiceClients.getInstance().countClients() == 0) {
-                    LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
+                    LayoutDataService.setMode(LayoutDataService.ECLIPSE_DATA_SERVICE);
                     int result = displayMessage(
                         "No Client Features installed",
                         "You do not have any client features installed for doing remote layout."
@@ -148,13 +148,13 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                     RemoteLayoutDataService.getInstance().initializeWithClient(client);
                 }
             } else {
-                LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
+                LayoutDataService.setMode(LayoutDataService.ECLIPSE_DATA_SERVICE);
                 client = null;                  
             }
             return true;
         } catch (Exception e) {
             if (remoteLayout) {
-                LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
+                LayoutDataService.setMode(LayoutDataService.ECLIPSE_DATA_SERVICE);
                 client = null;
                 int result = displayMessage(
                     "Error Occured", 

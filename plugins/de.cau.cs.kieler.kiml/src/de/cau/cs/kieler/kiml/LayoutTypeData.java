@@ -17,10 +17,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Data type used to store information for a layout type.
+ * Data type used to store information for a layout type. A layout type defines the basic
+ * graph drawing approach employed by a layout algorithm, for instance the layer-based
+ * approach ({@link #TYPE_LAYERED}) or the force-based approach ({@link #TYPE_FORCE}).
+ * The type of an algorithm can be left empty, in which case it is displayed as "Other"
+ * in the user interface.
  *
  * @kieler.design 2011-02-01 reviewed by cmot, soh
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
 public class LayoutTypeData implements ILayoutData {

@@ -102,7 +102,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
         // dispose all cached Graphviz instances to ensure creation of new processes
         for (LayoutAlgorithmData data : LayoutDataService.getInstance().getAlgorithmData()) {
             if ("de.cau.cs.kieler.kiml.categories.graphviz".equals(data.getCategory())) {
-                data.getProviderPool().clear();
+                data.getInstancePool().clear();
             }
         }
         return super.performOk();

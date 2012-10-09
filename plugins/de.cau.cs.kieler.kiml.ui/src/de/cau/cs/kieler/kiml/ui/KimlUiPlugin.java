@@ -166,7 +166,7 @@ public class KimlUiPlugin extends AbstractUIPlugin {
         EclipseTransformationService.create();
         EclipseAnalysisService.create();
         // start with local layouter initially.
-        LayoutDataService.setMode(LayoutDataService.ECLIPSEDATASERVICE);
+        LayoutDataService.setMode(LayoutDataService.ECLIPSE_DATA_SERVICE);
     }
 
     /**
@@ -180,7 +180,7 @@ public class KimlUiPlugin extends AbstractUIPlugin {
         }
         LayoutDataService layoutDataService = LayoutDataService.getInstance();
         for (LayoutAlgorithmData algoData : layoutDataService.getAlgorithmData()) {
-            algoData.getProviderPool().clear();
+            algoData.getInstancePool().clear();
         }
         plugin = null;
         if (images != null) {

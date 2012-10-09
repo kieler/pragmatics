@@ -60,7 +60,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         if (!layoutNode.getChildren().isEmpty()
                 && !layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
             LayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
-            AbstractLayoutProvider layoutProvider = algorithmData.getProviderPool().fetch();
+            AbstractLayoutProvider layoutProvider = algorithmData.getInstancePool().fetch();
             // if the layout provider supports hierarchy, it is expected to layout the children
             int nodeCount;
             if (layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)
@@ -81,7 +81,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
 
             // perform layout on the current hierarchy level
             layoutProvider.doLayout(layoutNode, progressMonitor.subTask(nodeCount));
-            algorithmData.getProviderPool().release(layoutProvider);
+            algorithmData.getInstancePool().release(layoutProvider);
         }
     }
 

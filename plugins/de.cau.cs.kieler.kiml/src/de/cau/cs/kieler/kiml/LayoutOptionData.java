@@ -32,7 +32,7 @@ import de.cau.cs.kieler.core.util.Pair;
  * 
  * @param <T> data type for the option data
  * @kieler.design 2011-02-01 reviewed by cmot, soh
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
 public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparable<IProperty<?>> {
@@ -366,7 +366,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     }
     
     /** choices for boolean type options. */
-    public static final String[] BOOLEAN_CHOICES = { "false", "true" };
+    private static final String[] BOOLEAN_CHOICES = { "false", "true" };
 
     /**
      * Creates an array of choices that can be selected by the user to set a
