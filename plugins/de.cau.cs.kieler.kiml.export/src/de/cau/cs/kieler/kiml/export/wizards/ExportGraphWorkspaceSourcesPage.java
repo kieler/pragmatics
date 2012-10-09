@@ -171,7 +171,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      * 
      * @return target directory
      */
-    public IPath getTargetWorksapceDirectory() {
+    public IPath getTargetWorkspaceDirectory() {
 
         return getTargetContainerPath();
     }
