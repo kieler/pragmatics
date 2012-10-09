@@ -261,9 +261,6 @@ public enum LayoutProcessorStrategy {
             
         case LABEL_SIDE_SELECTOR:
             return new LabelSideSelector();
-            
-        case LABEL_NODE_SIZE_ADJUSTER:
-            return new LabelNodeSizeAdjuster();
         
         default:
             return null;
