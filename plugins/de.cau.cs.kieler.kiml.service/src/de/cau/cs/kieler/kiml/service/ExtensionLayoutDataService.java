@@ -37,7 +37,7 @@ import de.cau.cs.kieler.kiml.options.GraphFeature;
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2012-10-10 review KI-25 by chsch, bdu
  */
 public abstract class ExtensionLayoutDataService extends LayoutDataService {
     
@@ -118,7 +118,8 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     
     /**
      * Returns the extensions responsible for providing layout meta data. This method
-     * can be overridden by subclasses.
+     * can be overridden by subclasses in order to get extensions from a different source
+     * than the Eclipse platform.
      * 
      * @return the extensions responsible for providing layout meta data
      */
@@ -140,7 +141,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     /**
      * Loads and registers all layout provider extensions from the extension point.
      */
-    protected void loadLayoutProviderExtensions() {    
+    protected final void loadLayoutProviderExtensions() {    
         List<String[]> knownOptions = new LinkedList<String[]>();
         List<String[]> dependencies = new LinkedList<String[]>();
         
@@ -214,6 +215,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     
     /**
      * Create a layout algorithm data instance and configure it with platform-specific extensions.
+     * Subclasses can override this to create more detailed information.
      * 
      * @param element a configuration element to use for configuration
      * @return a new layout algorithm data instance
@@ -228,7 +230,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
      * @param element a configuration element from an extension
      * @return a factory for layout provider instances
      */
-    protected IFactory<AbstractLayoutProvider> getLayoutProviderFactory(
+    private IFactory<AbstractLayoutProvider> getLayoutProviderFactory(
             final IConfigurationElement element) {
         return new IFactory<AbstractLayoutProvider>() {
             public AbstractLayoutProvider create() {
@@ -253,7 +255,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
      * @param element a configuration element from an extension
      * @return a class, or {@code null} if none could be loaded
      */
-    protected Class<?> loadClass(final IConfigurationElement element) {
+    private Class<?> loadClass(final IConfigurationElement element) {
         String className = element.getAttribute(ATTRIBUTE_CLASS);
         if (className != null && className.length() > 0) {
             Bundle contributor = Platform.getBundle(element.getContributor().getName());
@@ -359,8 +361,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     }
     
     /** Plug-in id of the KIML plug-in. */
-    private static final String PLUGIN_ID
-        = "de.cau.cs.kieler.kiml";
+    private static final String PLUGIN_ID = "de.cau.cs.kieler.kiml";
     
     /**
      * Load a layout option from a configuration element.

@@ -34,7 +34,7 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
  * 
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-10-10 review KI-25 by chsch, bdu
  */
 public class EclipseLayoutDataService extends ExtensionLayoutDataService {
 

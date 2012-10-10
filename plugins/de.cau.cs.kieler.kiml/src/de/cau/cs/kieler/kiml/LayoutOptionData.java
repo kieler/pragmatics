@@ -540,6 +540,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         case FLOAT:
             clazz = Float.class;
             break;
+        default:
+            // the class cannot be derived from the type and must be set with setOptionClass(Class)
         }
     }
 
