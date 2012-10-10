@@ -49,7 +49,7 @@ public final class LayoutOptionProxy implements IPropertyValueProxy {
         IProperty<LayoutOptionProxy> property = new Property<LayoutOptionProxy>(key);
         LayoutOptionProxy proxy = new LayoutOptionProxy();
         proxy.value = value;
-        propertyHolder.setProperty(property, value);
+        propertyHolder.setProperty(property, proxy);
     }
     
     /**
