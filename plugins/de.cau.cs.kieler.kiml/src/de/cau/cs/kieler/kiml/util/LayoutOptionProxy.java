@@ -25,7 +25,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  *
  * @author msp
  */
-public class LayoutOptionProxy implements IPropertyValueProxy {
+public final class LayoutOptionProxy implements IPropertyValueProxy {
     
     /** the serialized layout option value. */
     private String value;
@@ -40,6 +40,7 @@ public class LayoutOptionProxy implements IPropertyValueProxy {
     /**
      * Create a layout option proxy with given key and value strings.
      * 
+     * @param propertyHolder the property holder in which to store the new value
      * @param key the layout option identifier string
      * @param value the serialized value
      */
@@ -55,7 +56,7 @@ public class LayoutOptionProxy implements IPropertyValueProxy {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public <T> T resolveValue(IProperty<T> property) {
+    public <T> T resolveValue(final IProperty<T> property) {
         LayoutOptionData<?> optionData = LayoutDataService.getInstance().getOptionData(
                 property.getId());
         if (optionData != null) {

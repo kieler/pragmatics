@@ -134,13 +134,16 @@ public class LayoutPropertySource implements IPropertySource {
     public Object getPropertyValue(final Object id) {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         LayoutOptionData<?> optionData = layoutServices.getOptionData((String) id);
-        Object value;
-        if (LayoutOptions.ALGORITHM.getId().equals(id)) {
-            value = layoutContext.getProperty(DefaultLayoutConfig.CONTENT_ALGO).getId();
-        } else {
-            value = layoutConfig.getValue(optionData, layoutContext);
+        if (optionData != null) {
+            Object value;
+            if (LayoutOptions.ALGORITHM.getId().equals(id)) {
+                value = layoutContext.getProperty(DefaultLayoutConfig.CONTENT_ALGO).getId();
+            } else {
+                value = layoutConfig.getValue(optionData, layoutContext);
+            }
+            return translateValue(value, optionData);
         }
-        return translateValue(value, optionData);
+        return null;
     }
     
     /**
@@ -195,36 +198,38 @@ public class LayoutPropertySource implements IPropertySource {
         if (editingDomain == null) {
             throw new UnsupportedOperationException(Messages.getString("kiml.ui.67"));
         }
-        Runnable modelChange = new Runnable() {
-            public void run() {
-                Object value = thevalue;
-                LayoutOptionData<?> optionData = LayoutDataService.getInstance()
-                        .getOptionData((String) id);
-                switch (optionData.getType()) {
-                case STRING:
-                    break;
-                case BOOLEAN:
-                    value = Boolean.valueOf((Integer) value == 1);
-                    break;
-                case ENUM:
-                    value = optionData.getEnumValue((Integer) value);
-                    break;
-                case REMOTE_ENUM:
-                    value = optionData.getChoices()[(Integer) value];
-                    break;
-                default:
-                    value = optionData.parseValue((String) value);
+        final LayoutOptionData<?> optionData = LayoutDataService.getInstance()
+                .getOptionData((String) id);
+        if (optionData != null) {
+            Runnable modelChange = new Runnable() {
+                public void run() {
+                    Object value = thevalue;
+                    switch (optionData.getType()) {
+                    case STRING:
+                        break;
+                    case BOOLEAN:
+                        value = Boolean.valueOf((Integer) value == 1);
+                        break;
+                    case ENUM:
+                        value = optionData.getEnumValue((Integer) value);
+                        break;
+                    case REMOTE_ENUM:
+                        value = optionData.getChoices()[(Integer) value];
+                        break;
+                    default:
+                        value = optionData.parseValue((String) value);
+                    }
+                    layoutConfig.setValue(optionData, layoutContext, value);
                 }
-                layoutConfig.setValue(optionData, layoutContext, value);
-            }
-        };
-        KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.11"));
-
-        // if the selected option can affect other options, refresh the whole layout view
-        if (dependencyOptions.contains(id)) {
-            LayoutViewPart layoutView = LayoutViewPart.findView();
-            if (layoutView != null) {
-                layoutView.refresh();
+            };
+            KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.11"));
+    
+            // if the selected option can affect other options, refresh the whole layout view
+            if (dependencyOptions.contains(id)) {
+                LayoutViewPart layoutView = LayoutViewPart.findView();
+                if (layoutView != null) {
+                    layoutView.refresh();
+                }
             }
         }
     }
@@ -253,18 +258,20 @@ public class LayoutPropertySource implements IPropertySource {
         }
         final LayoutOptionData<?> optionData = LayoutDataService.getInstance()
                 .getOptionData((String) id);
-        Runnable modelChange = new Runnable() {
-            public void run() {
-                layoutConfig.setValue(optionData, layoutContext, null);
-            }
-        };
-        KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.12"));
-        
-        // if the selected option can affect other options, refresh the whole layout view
-        if (dependencyOptions.contains(id)) {
-            LayoutViewPart layoutView = LayoutViewPart.findView();
-            if (layoutView != null) {
-                layoutView.refresh();
+        if (optionData != null) {
+            Runnable modelChange = new Runnable() {
+                public void run() {
+                    layoutConfig.setValue(optionData, layoutContext, null);
+                }
+            };
+            KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.12"));
+            
+            // if the selected option can affect other options, refresh the whole layout view
+            if (dependencyOptions.contains(id)) {
+                LayoutViewPart layoutView = LayoutViewPart.findView();
+                if (layoutView != null) {
+                    layoutView.refresh();
+                }
             }
         }
     }

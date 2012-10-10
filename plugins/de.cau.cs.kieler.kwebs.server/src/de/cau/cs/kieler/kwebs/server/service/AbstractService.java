@@ -93,7 +93,7 @@ public abstract class AbstractService {
     protected AbstractService() {
         
         ServerLayoutDataService.create();
-        
+        LayoutDataService.setMode(ServerLayoutDataService.class.getCanonicalName());
         initFilters();
         
     }
