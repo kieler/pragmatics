@@ -84,14 +84,16 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
         EObject element = context.getProperty(LayoutContext.DOMAIN_MODEL);
         if (element != null) {
             // set layout algorithm hint for the content of the selected element
-            if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null) {
+            if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null
+                    && algorithmData != null) {
                 String hint = (String) getSemanticValue(element, algorithmData);
                 if (hint != null) {
                     context.setProperty(DefaultLayoutConfig.CONTENT_HINT, hint);
                 }
             }
             // set diagram type for the content of the selected element
-            if (context.getProperty(DefaultLayoutConfig.CONTENT_DIAGT) == null) {
+            if (context.getProperty(DefaultLayoutConfig.CONTENT_DIAGT) == null
+                    && diagTypeData != null) {
                 String diagType = (String) getSemanticValue(element, diagTypeData);
                 if (diagType != null) {
                     context.setProperty(DefaultLayoutConfig.CONTENT_DIAGT, diagType);
@@ -102,14 +104,16 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
         EObject containerElem = context.getProperty(LayoutContext.CONTAINER_DOMAIN_MODEL);
         if (containerElem != null) {
             // set layout algorithm hint for the container of the selected element
-            if (context.getProperty(DefaultLayoutConfig.CONTAINER_HINT) == null) {
+            if (context.getProperty(DefaultLayoutConfig.CONTAINER_HINT) == null
+                    && algorithmData != null) {
                 String hint = (String) getSemanticValue(containerElem, algorithmData);
                 if (hint != null) {
                     context.setProperty(DefaultLayoutConfig.CONTAINER_HINT, hint);
                 }
             }
             // set diagram type for the container of the selected element
-            if (context.getProperty(DefaultLayoutConfig.CONTAINER_DIAGT) == null) {
+            if (context.getProperty(DefaultLayoutConfig.CONTAINER_DIAGT) == null
+                    && diagTypeData != null) {
                 String diagType = (String) getSemanticValue(containerElem, diagTypeData);
                 if (diagType != null) {
                     context.setProperty(DefaultLayoutConfig.CONTAINER_DIAGT, diagType);
@@ -145,8 +149,10 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
                     } else {
                         optionData = layoutDataService.getOptionData(property.getId());
                     }
-                    Object value = getSemanticValue(element, optionData);
-                    graphData.setProperty(property, value);
+                    if (optionData != null) {
+                        Object value = getSemanticValue(element, optionData);
+                        graphData.setProperty(property, value);
+                    }
                 }
             }
         }
@@ -168,7 +174,9 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
                     } else {
                         optionData = layoutDataService.getOptionData(property.getId());
                     }
-                    setSemanticValue(element, optionData, null);
+                    if (optionData != null) {
+                        setSemanticValue(element, optionData, null);
+                    }
                 }
             }
         }

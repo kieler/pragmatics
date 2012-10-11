@@ -285,7 +285,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             for (Entry<String, Object> entry : infoService.getOptionValues(diagramType).entrySet()) {
                 if (entry.getValue() != null) {
                     LayoutOptionData<?> optionData = dataService.getOptionData(entry.getKey());
-                    graphData.setProperty(optionData, entry.getValue());
+                    if (optionData != null) {
+                        graphData.setProperty(optionData, entry.getValue());
+                    }
                 }
             }
         }
@@ -296,7 +298,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
                     modelElement.eClass()).entrySet()) {
                 if (entry.getValue() != null) {
                     LayoutOptionData<?> optionData = dataService.getOptionData(entry.getKey());
-                    graphData.setProperty(optionData, entry.getValue());
+                    if (optionData != null) {
+                        graphData.setProperty(optionData, entry.getValue());
+                    }
                 }
             }
         }
@@ -307,7 +311,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             for (Entry<String, Object> entry : infoService.getOptionValues(clazzName).entrySet()) {
                 if (entry.getValue() != null) {
                     LayoutOptionData<?> optionData = dataService.getOptionData(entry.getKey());
-                    graphData.setProperty(optionData, entry.getValue());
+                    if (optionData != null) {
+                        graphData.setProperty(optionData, entry.getValue());
+                    }
                 }
             }
         }
