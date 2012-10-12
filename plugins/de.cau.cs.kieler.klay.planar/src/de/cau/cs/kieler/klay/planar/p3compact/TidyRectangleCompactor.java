@@ -84,6 +84,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             EnumSet.of(LayoutProcessorStrategy.GRID_DRAWING,
                     LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
                     LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.QUOD_DUMMY_REMOVER,
                     LayoutProcessorStrategy.GIOTTO_DUMMY_REMOVER,
                     LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER));
 
@@ -91,7 +92,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
      * {@inheritDoc}
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pgraph) {
-        // TODO Auto-generated method stub
         return new IntermediateProcessingConfiguration(INTERMEDIATE_PROCESSING_CONFIGURATION);
     }
 
@@ -103,13 +103,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     public void process(final PGraph pgraph) {
 
         this.graph = pgraph;
-
-        // TODO think about: the input graph has to have at least 4 nodes, otherwise
-        // it would not make any sense to do the flownetwork step.
-        // Then it would be meaningful to set the edge-sizes to the same value.
-        // x -- x -- x
-        // Think about other exceptions and try to work on them.
-
+        
         // Used to create the flownetwork
         this.externalFace = pgraph.getExternalFace();
         // Create networks, start with side 0 for horizontal and 1 for vertical.

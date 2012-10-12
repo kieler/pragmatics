@@ -32,11 +32,12 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * Nodes with a higher degree as 4 are replaced by a expansion cycle of dummy nodes. This processor
  * searches such dummies, replaces them with the original node and adds edge coordinates to the
  * original edges connected with each dummy. These coordinates determine the position of the edge in
- * the grid.
+ * the grid. The difference to the Giotto approach is, that this one lets the high-degree node sizes
+ * unchanged, and adds bends at the positions the high-degree adjacent edges would cross.
  * 
  * @author pkl
  */
-public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
+public class QuodDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
 
     /** The processed graph. */
     private PGraph graph;
@@ -51,7 +52,7 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
      * {@inheritDoc}
      */
     public void process(final PGraph pgraph) {
-        getMonitor().begin("Giotto Dummy Removing", 1);
+        getMonitor().begin("Quod Dummy Removing", 1);
         this.graph = pgraph;
         this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
         this.grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
@@ -59,9 +60,9 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
         // stores the found higher 4 degree nodes.
         Set<PNode> highDegreeNodes = filterHighDegreeNodes();
 
-        //FIXME grid size should depend on the average size of all nodes?
-        // if a layout is triggered twice, the node should not further be increased...
         calcMetrics(highDegreeNodes);
+
+        calcQuod(highDegreeNodes);
 
         getMonitor().done();
     }
@@ -92,14 +93,15 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
                     if (edge.getProperty(Properties.EXPANSION_CYCLE_ORIGIN) == null) {
                         // add old high degree node and set the position of the edge endpoint.
                         if (edge.getSource() == dummyNode) {
+                            int[] pos = grid.getPosition(edge.getSource());
                             edge.setSource(hDNode);
                             edge.setProperty(Properties.START_POSITION, new Pair<Integer, Integer>(
-                                    Integer.valueOf(position[0]), Integer.valueOf(position[1])));
+                                    Integer.valueOf(pos[0]), Integer.valueOf(pos[1])));
                         } else {
+                            int[] pos = grid.getPosition(edge.getTarget());
                             edge.setTarget(hDNode);
                             edge.setProperty(Properties.TARGET_POSITION,
-                                    new Pair<Integer, Integer>(Integer.valueOf(position[0]),
-                                            Integer.valueOf(position[1])));
+                                    new Pair<Integer, Integer>( Integer.valueOf(pos[0]), Integer.valueOf(pos[1])));
                         }
                         hDNode.linkEdge(edge);
                     } else {
@@ -149,6 +151,44 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
         }
     }
 
+    /**
+     * 
+     */
+    private void calcQuod(Set<PNode> highDegreeNodes) {
+        for (PNode hDNode : highDegreeNodes) {
+            List<Integer> positions = hDNode.getProperty(Properties.HIGH_DEGREE_POSITIONS);
+            float smallX = positions.get(0).intValue();
+            float smallY = positions.get(1).intValue();
+            float bigX = positions.get(2).intValue();
+            float bigY = positions.get(3).intValue();
+
+            // add bend point to the end or to the start of the edge.
+            for (PEdge edge : hDNode.adjacentEdges()) {
+
+                // order of the bendpoints.
+                Pair<Integer, Integer> startPos = edge.getProperty(Properties.START_POSITION);
+                if (startPos != null) {
+                    edge.getBendPoints().addFirst(startPos.getFirst(), startPos.getSecond());
+                } else {
+                    Pair<Integer, Integer> targetPos = edge.getProperty(Properties.TARGET_POSITION);
+                    if (targetPos == null) {
+                    }
+                    edge.getBendPoints().addLast(targetPos.getFirst(), targetPos.getSecond());
+                }
+            }
+
+            // set the high degree node to only one grid position.
+            int newX = (int) (Math.ceil((bigX - smallX) / 2) + smallX);
+            positions.set(0, newX);
+            positions.set(2, newX);
+
+            int newY = (int) (Math.ceil((bigY - smallY) / 2) + smallY);
+            positions.set(1, newY);
+            positions.set(3, newY);
+        }
+
+    }
+    
     /**
      * filters the nodes with a higher degree of 4 from the dummy nodes.
      * 
