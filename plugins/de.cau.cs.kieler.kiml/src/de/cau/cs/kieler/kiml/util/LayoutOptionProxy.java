@@ -31,10 +31,12 @@ public final class LayoutOptionProxy implements IPropertyValueProxy {
     private String value;
     
     /**
-     * Hidden constructor (use {@link #setProxyValue(IPropertyHolder, String, String)} to create
-     * instances).
+     * Create a layout option proxy for the given value.
+     * 
+     * @param value the serialized layout option value
      */
-    private LayoutOptionProxy() {
+    public LayoutOptionProxy(final String value) {
+        this.value = value;
     }
     
     /**
@@ -47,8 +49,7 @@ public final class LayoutOptionProxy implements IPropertyValueProxy {
     public static void setProxyValue(final IPropertyHolder propertyHolder, final String key,
             final String value) {
         IProperty<LayoutOptionProxy> property = new Property<LayoutOptionProxy>(key);
-        LayoutOptionProxy proxy = new LayoutOptionProxy();
-        proxy.value = value;
+        LayoutOptionProxy proxy = new LayoutOptionProxy(value);
         propertyHolder.setProperty(property, proxy);
     }
     
@@ -57,8 +58,12 @@ public final class LayoutOptionProxy implements IPropertyValueProxy {
      */
     @SuppressWarnings("unchecked")
     public <T> T resolveValue(final IProperty<T> property) {
-        LayoutOptionData<?> optionData = LayoutDataService.getInstance().getOptionData(
-                property.getId());
+        LayoutOptionData<?> optionData;
+        if (property instanceof LayoutOptionData<?>) {
+            optionData = (LayoutOptionData<?>) property;
+        } else {
+            optionData = LayoutDataService.getInstance().getOptionData(property.getId());
+        }
         if (optionData != null) {
             return (T) optionData.parseValue(value);
         }
