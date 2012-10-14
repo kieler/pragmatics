@@ -95,7 +95,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
             // Before Phase 2
             null,
             // Before Phase 3
-            EnumSet.of(LayoutProcessorStrategy.EXT_FACE, LayoutProcessorStrategy.GIOTTO),
+            EnumSet.of(LayoutProcessorStrategy.EXT_FACE, LayoutProcessorStrategy.EXPANSION_CYCLE),
             // Before Phase 4
             null,
             // After Phase 4
