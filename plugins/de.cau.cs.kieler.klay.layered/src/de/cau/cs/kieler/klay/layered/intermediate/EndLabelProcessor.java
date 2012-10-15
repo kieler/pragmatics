@@ -32,10 +32,9 @@ import de.cau.cs.kieler.klay.layered.properties.PortLabelPlacement;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * 
- * This intermediate processor does the necessary calculations for an absolute positioning
- * of all end and port labels. It uses the port sides and the side choice made before
- * to find this positioning.
+ * <p>This intermediate processor does the necessary calculations for an absolute positioning
+ * of all end and port labels. It uses the port sides and the side choice made before to find
+ * this positioning.</p>
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph; no dummy nodes;
@@ -49,6 +48,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  * 
  * @author jjc
+ * @kieler.rating proposed yellow cds
  */
 public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -58,15 +58,19 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
     /** Offset introduced by GMF to ports, results have to be adjusted by this factor. */
     private static final int PORT_LABEL_DISTANCE = 3;
     
-    /** In case of northern ports, labels have to be stacked to avoid overlaps.
-     * The necessary offset is stored here. */
+    /**
+     * In case of northern ports, labels have to be stacked to avoid overlaps.
+     * The necessary offset is stored here.
+     */
     private HashMap<LNode, Double> northOffset; 
     
     /** The stacking offset for southern labels is stored here. */
     private HashMap<LNode, Double> southOffset;
     
-    /** Port labels have to be stacked on northern or southern ports as well if
-     * placed outside. This offset is memorized here. */
+    /**
+     * Port labels have to be stacked on northern or southern ports as well if
+     * placed outside. This offset is memorized here.
+     */
     private HashMap<LPort, Double> portLabelOffsetHint;
     
     /**
@@ -185,7 +189,7 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                                     label.getPosition().y = port.getAbsoluteAnchor().y
                                                             - label.getSize().y - LABEL_DISTANCE
                                                             - northOffset.get(node)
-                                                            -portLabelOffsetY;
+                                                            - portLabelOffsetY;
                                     portLabelOffsetHint.put(port, northOffset.get(node));
                                     northOffset.put(node,
                                             northOffset.get(port.getNode())
@@ -219,24 +223,24 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                                 if (portLabel.getSide() == LSide.UP) {
                                     switch (port.getSide()) {
                                     case WEST:
-                                        portLabel.getPosition().x = - portLabel.getSize().x;
-                                        portLabel.getPosition().y = - portLabel.getSize().y
+                                        portLabel.getPosition().x = -portLabel.getSize().x;
+                                        portLabel.getPosition().y = -portLabel.getSize().y
                                                                     + PORT_LABEL_DISTANCE;
                                         break;
                                     case EAST:
                                         portLabel.getPosition().x = port.getSize().x;
-                                        portLabel.getPosition().y = - portLabel.getSize().y
+                                        portLabel.getPosition().y = -portLabel.getSize().y
                                                                     + PORT_LABEL_DISTANCE;
                                         break;
                                     case NORTH:
-                                        portLabel.getPosition().x = - port.getSize().x / 2
+                                        portLabel.getPosition().x = -port.getSize().x / 2
                                                                     - portLabel.getSize().x;
-                                        portLabel.getPosition().y = - port.getSize().y
+                                        portLabel.getPosition().y = -port.getSize().y
                                                                     - portLabel.getSize().y
                                                                     - portLabelOffsetHint.get(port);
                                         break;
                                     case SOUTH:
-                                        portLabel.getPosition().x = - port.getSize().x / 2
+                                        portLabel.getPosition().x = -port.getSize().x / 2
                                                                     - portLabel.getSize().x;
                                         portLabel.getPosition().y = port.getSize().y
                                                                     + portLabelOffsetHint.get(port);
@@ -245,7 +249,7 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                                 } else {
                                     switch (port.getSide()) {
                                     case WEST:
-                                        portLabel.getPosition().x = - portLabel.getSize().x;
+                                        portLabel.getPosition().x = -portLabel.getSize().x;
                                         portLabel.getPosition().y = port.getSize().y 
                                                                     - PORT_LABEL_DISTANCE;
                                         break;
@@ -256,7 +260,7 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                                         break;
                                     case NORTH:
                                         portLabel.getPosition().x = port.getSize().x / 2;
-                                        portLabel.getPosition().y = - port.getSize().y
+                                        portLabel.getPosition().y = -port.getSize().y
                                                                     - portLabel.getSize().y
                                                                     - portLabelOffsetHint.get(port);
                                         break;
@@ -275,16 +279,16 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                                     portLabel.getPosition().y = 0;
                                     break;
                                 case EAST:
-                                    portLabel.getPosition().x = - portLabel.getSize().x - 1;
+                                    portLabel.getPosition().x = -portLabel.getSize().x - 1;
                                     portLabel.getPosition().y = 0;
                                     break;
                                 case NORTH:
-                                    portLabel.getPosition().x = - portLabel.getSize().x / 2;
+                                    portLabel.getPosition().x = -portLabel.getSize().x / 2;
                                     portLabel.getPosition().y = port.getSize().y;
                                     break;
                                 case SOUTH:
-                                    portLabel.getPosition().x = - portLabel.getSize().x / 2;
-                                    portLabel.getPosition().y = - portLabel.getSize().y;
+                                    portLabel.getPosition().x = -portLabel.getSize().x / 2;
+                                    portLabel.getPosition().y = -portLabel.getSize().y;
                                     break;
                                 }
                             }

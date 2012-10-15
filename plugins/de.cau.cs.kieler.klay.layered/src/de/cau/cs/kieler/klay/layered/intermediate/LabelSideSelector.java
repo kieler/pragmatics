@@ -36,11 +36,16 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- *
- * This intermediate processor is used to select the side of port and edge labels.
+ * <p>This intermediate processor is used to select the side of port and edge labels. It is chosen
+ * between the sides UP and DOWN based on different strategies selected by a layout option.</p>
  * 
- * It is chosen between the sides UP and DOWN based on different strategies selected by
- * a layout option.
+ * <dl>
+ *   <dt>Precondition:</dt><dd>a properly layered graph.</dd>
+ *   <dt>Postcondition:</dt><dd>the placement side is chosen for each label, and each label is
+ *     annotated accordingly.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 3.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
+ * </dl>
  *
  * @author jjc
  */
@@ -58,6 +63,7 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
     public void process(final LGraph layeredGraph) {
         EdgeLabelSideSelectionStrategy mode = layeredGraph.getProperty(Properties.EDGE_LABEL_SIDE);
         getMonitor().begin("Label side selection (" + mode + ")", 1);
+        
         List<LNode> nodes = new LinkedList<LNode>();
         for (Layer layer : layeredGraph.getLayers()) {
             nodes.addAll(layer.getNodes());
