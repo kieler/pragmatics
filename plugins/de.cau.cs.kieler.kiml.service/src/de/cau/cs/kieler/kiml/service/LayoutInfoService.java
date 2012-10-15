@@ -32,6 +32,7 @@ import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
+import de.cau.cs.kieler.core.properties.IPropertyValueProxy;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
@@ -39,6 +40,7 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.SemanticLayoutConfig;
+import de.cau.cs.kieler.kiml.util.LayoutOptionProxy;
 
 /**
  * Service class for layout information such as registered diagram types and
@@ -226,24 +228,27 @@ public abstract class LayoutInfoService {
                 }
             } else if (ELEMENT_OPTION.equals(element.getName())) {
                 // register a layout option from the extension
-                String clazz = element.getAttribute(ATTRIBUTE_CLASS);
-                String option = element.getAttribute(ATTRIBUTE_OPTION);
+                String classId = element.getAttribute(ATTRIBUTE_CLASS);
+                String optionId = element.getAttribute(ATTRIBUTE_OPTION);
                 String valueString = element.getAttribute(ATTRIBUTE_VALUE);
-                if (clazz == null || clazz.length() == 0) {
+                if (classId == null || classId.length() == 0) {
                     reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_CLASS, null);
-                } else if (option == null || option.length() == 0) {
+                } else if (optionId == null || optionId.length() == 0) {
                     reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_OPTION, null);
                 } else {
-                    LayoutOptionData<?> optionData = layoutDataService.getOptionData(option);
+                    LayoutOptionData<?> optionData = layoutDataService.getOptionData(optionId);
                     if (optionData != null) {
                         try {
                             Object value = optionData.parseValue(valueString);
                             if (value != null) {
-                                addOptionValue(clazz, option, value);
+                                addOptionValue(classId, optionId, value);
                             }
                         } catch (IllegalStateException exception) {
                             reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_VALUE, exception);
                         }
+                    } else if (valueString != null) {
+                        // the layout option could not be resolved, so create a proxy
+                        addOptionValue(classId, optionId, new LayoutOptionProxy(valueString));
                     }
 
                 }
@@ -379,6 +384,17 @@ public abstract class LayoutInfoService {
     public final Map<String, Object> getOptionValues(final String objectId) {
         Map<String, Object> optionsMap = id2OptionsMap.get(objectId);
         if (optionsMap != null) {
+            LayoutDataService dataService = LayoutDataService.getInstance();
+            for (Map.Entry<String, Object> entry : optionsMap.entrySet()) {
+                Object value = entry.getValue();
+                if (value instanceof IPropertyValueProxy) {
+                    value = ((IPropertyValueProxy) value).resolveValue(
+                            dataService.getOptionData(entry.getKey()));
+                    if (value != null) {
+                        entry.setValue(value);
+                    }
+                }
+            }
             return Collections.unmodifiableMap(optionsMap);
         }
         return Collections.emptyMap();
@@ -398,7 +414,15 @@ public abstract class LayoutInfoService {
     public final Object getOptionValue(final String objectId, final String optionId) {
         Map<String, Object> optionsMap = id2OptionsMap.get(objectId);
         if (optionsMap != null) {
-            return optionsMap.get(optionId);
+            Object value = optionsMap.get(optionId);
+            if (value instanceof IPropertyValueProxy) {
+                value = ((IPropertyValueProxy) value).resolveValue(
+                        LayoutDataService.getInstance().getOptionData(optionId));
+                if (value != null) {
+                    optionsMap.put(optionId, value);
+                }
+            }
+            return value;
         }
         return null;
     }
@@ -413,6 +437,7 @@ public abstract class LayoutInfoService {
      */
     public final Map<String, Object> getOptionValues(final EClass clazz) {
         if (clazz != null) {
+            LayoutDataService dataService = LayoutDataService.getInstance();
             HashMap<String, Object> options = new HashMap<String, Object>();
             LinkedList<EClass> classes = new LinkedList<EClass>();
             classes.add(clazz);
@@ -420,7 +445,19 @@ public abstract class LayoutInfoService {
                 EClass c = classes.removeFirst();
                 Map<String, Object> optionsMap = id2OptionsMap.get(c.getInstanceTypeName());
                 if (optionsMap != null) {
-                    options.putAll(optionsMap);
+                    for (Map.Entry<String, Object> entry : optionsMap.entrySet()) {
+                        Object value = entry.getValue();
+                        if (value instanceof IPropertyValueProxy) {
+                            value = ((IPropertyValueProxy) value).resolveValue(
+                                    dataService.getOptionData(entry.getKey()));
+                            if (value != null) {
+                                entry.setValue(value);
+                            }
+                        }
+                        if (value != null) {
+                            options.put(entry.getKey(), value);
+                        }
+                    }
                 }
                 classes.addAll(c.getESuperTypes());
             } while (!classes.isEmpty());
@@ -442,6 +479,7 @@ public abstract class LayoutInfoService {
      */
     public final Object getOptionValue(final EClass clazz, final String optionId) {
         if (clazz != null) {
+            LayoutDataService dataService = LayoutDataService.getInstance();
             LinkedList<EClass> classes = new LinkedList<EClass>();
             classes.add(clazz);
             do {
@@ -449,6 +487,13 @@ public abstract class LayoutInfoService {
                 Map<String, Object> optionsMap = id2OptionsMap.get(c.getInstanceTypeName());
                 if (optionsMap != null) {
                     Object value = optionsMap.get(optionId);
+                    if (value instanceof IPropertyValueProxy) {
+                        value = ((IPropertyValueProxy) value).resolveValue(
+                                dataService.getOptionData(optionId));
+                        if (value != null) {
+                            optionsMap.put(optionId, value);
+                        }
+                    }
                     if (value != null) {
                         return value;
                     }

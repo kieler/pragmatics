@@ -78,8 +78,7 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
      * Initialize the singleton instance from the extension points.
      */
     public static void create() {
-        if (LayoutDataService.getInstance() == null
-            || LayoutDataService.getInstanceOf(
+        if (LayoutDataService.getInstanceOf(
                     ServerLayoutDataService.class.getCanonicalName()) == null) {
             ServerLayoutDataService lds = new ServerLayoutDataService();
             LayoutDataService.addService(lds);

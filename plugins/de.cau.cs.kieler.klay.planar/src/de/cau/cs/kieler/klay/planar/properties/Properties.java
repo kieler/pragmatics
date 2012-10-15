@@ -32,6 +32,7 @@ import de.cau.cs.kieler.klay.planar.intermediate.RectShapeEdgeProperties;
 import de.cau.cs.kieler.klay.planar.p1planar.PlanarityTestStrategy;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
+import de.cau.cs.kieler.klay.planar.p3compact.HighDegreeNodeStrategy;
 
 /**
  * Container for property definitions.
@@ -117,6 +118,10 @@ public final class Properties {
             "de.cau.cs.kieler.klay.planar.planarityTest",
             PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM);
 
+    /** property that indicates a high degree node strategy. */
+    public static final IProperty<HighDegreeNodeStrategy> HIGH_DEGREE_NODE_STRATEGY = new Property<HighDegreeNodeStrategy>(
+            "de.cau.cs.kieler.klay.planar.hdstrategy", HighDegreeNodeStrategy.QUOD);
+    
     /** the aspect ratio for packing connected components. */
     public static final Property<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);

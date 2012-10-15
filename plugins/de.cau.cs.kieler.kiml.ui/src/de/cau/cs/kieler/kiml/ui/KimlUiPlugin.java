@@ -161,12 +161,13 @@ public class KimlUiPlugin extends AbstractUIPlugin {
         super.start(context);
         plugin = this;
         images = new Images();
+        
         EclipseLayoutDataService.create();
+        // start with local layouter initially.
+        LayoutDataService.setMode(LayoutDataService.ECLIPSE_DATA_SERVICE);
         EclipseLayoutInfoService.create();
         EclipseTransformationService.create();
         EclipseAnalysisService.create();
-        // start with local layouter initially.
-        LayoutDataService.setMode(LayoutDataService.ECLIPSE_DATA_SERVICE);
     }
 
     /**

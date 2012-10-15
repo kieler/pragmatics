@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kwebs.util;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
@@ -57,21 +58,26 @@ public final class Graphs {
     public static void duplicateGraphLayoutByUniqueID(final KNode sourceGraph,
             final KNode targetGraph) {
         HashMap<String, KGraphElement> targetMap = createHashmapByUniqueID(targetGraph);
-        TreeIterator<EObject> iterator = sourceGraph.eAllContents();
-        while (iterator.hasNext()) {
-            EObject eObject = iterator.next();
-            if (eObject instanceof KGraphElement) {
-                KGraphElement sourceElement = (KGraphElement) eObject;
-                KIdentifier kidentifier = sourceElement.getData(KIdentifier.class);
-                if (kidentifier != null) {
-                    KGraphElement targetElement = targetMap.get(kidentifier.getId());
-                    if (targetElement != null) {
-                        moveGraphElementLayout(sourceElement, targetElement);
-                    }
+        LinkedList<KGraphElement> elementQueue = new LinkedList<KGraphElement>();
+        elementQueue.add(sourceGraph);
+        do {
+            // move the layout of the first graph element in the list
+            KGraphElement sourceElement = elementQueue.removeFirst();
+            KIdentifier kidentifier = sourceElement.getData(KIdentifier.class);
+            if (kidentifier != null) {
+                KGraphElement targetElement = targetMap.get(kidentifier.getId());
+                if (targetElement != null) {
+                    moveGraphElementLayout(sourceElement, targetElement);
                 }
             }
-        }
-        moveGraphElementLayout(sourceGraph, targetGraph);
+            
+            // find all child elements of the graph element
+            for (EObject content : sourceElement.eContents()) {
+                if (content instanceof KGraphElement) {
+                    elementQueue.addLast((KGraphElement) content);
+                }
+            }
+        } while (!elementQueue.isEmpty());
     }
 
     /**

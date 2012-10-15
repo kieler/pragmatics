@@ -33,6 +33,7 @@ import de.cau.cs.kieler.klay.planar.p1planar.EdgeInsertionPlanarization;
 import de.cau.cs.kieler.klay.planar.p1planar.LRPlanarSubgraphBuilder;
 import de.cau.cs.kieler.klay.planar.p1planar.PlanarityTestStrategy;
 import de.cau.cs.kieler.klay.planar.p2ortho.TamassiaOrthogonalizer;
+import de.cau.cs.kieler.klay.planar.p3compact.HighDegreeNodeStrategy;
 import de.cau.cs.kieler.klay.planar.p3compact.TidyRectangleCompactor;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
@@ -154,6 +155,8 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
      * @param graph
      */
     private void updateModules(final PGraph graph) {
+
+        // check which planarity test algorithm should be used
         if (graph.getProperty(Properties.PLANAR_TESTING_ALGORITHM) == PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM) {
             if (!(this.subgraphBuilder instanceof BoyerMyrvoldPlanarSubgraphBuilder)) {
                 this.subgraphBuilder = new BoyerMyrvoldPlanarSubgraphBuilder();
@@ -164,13 +167,34 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
             }
         }
 
+        // check which high-degree node algorithm should be used
+        IntermediateProcessingConfiguration adjustedStrategy = compactor
+                .getIntermediateProcessingStrategy(graph);
+
+        LayoutProcessorStrategy removableProcessor = null;
+        HighDegreeNodeStrategy property = graph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) ;
+        if (property == HighDegreeNodeStrategy.QUOD) {
+            removableProcessor = LayoutProcessorStrategy.GIOTTO_DUMMY_REMOVER;
+        } else {
+            removableProcessor = LayoutProcessorStrategy.QUOD_DUMMY_REMOVER;
+        }
+
+        Set<LayoutProcessorStrategy> processors = adjustedStrategy
+                .getProcessors(IntermediateProcessingConfiguration.AFTER_PHASE_4);
+        for (LayoutProcessorStrategy strategy : processors) {
+            if(strategy == removableProcessor){
+                adjustedStrategy.removeLayoutProcessor(IntermediateProcessingConfiguration.AFTER_PHASE_4, strategy);
+                break;
+            }
+        }
+
         // update intermediate processor strategy
         intermediateProcessingConfiguration.clear();
         intermediateProcessingConfiguration
                 .addAll(subgraphBuilder.getIntermediateProcessingStrategy(graph))
                 .addAll(edgeInserter.getIntermediateProcessingStrategy(graph))
                 .addAll(orthogonalizer.getIntermediateProcessingStrategy(graph))
-                .addAll(compactor.getIntermediateProcessingStrategy(graph))
+                .addAll(adjustedStrategy)
                 .addAll(this.getIntermediateProcessingStrategy(graph));
 
         // construct the list of processors that make up the algorithm

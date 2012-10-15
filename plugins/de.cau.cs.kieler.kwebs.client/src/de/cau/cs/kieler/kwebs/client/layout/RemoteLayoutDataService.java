@@ -63,21 +63,25 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
      * 
      */
     public static synchronized void resetInstance() {
-        RemoteLayoutDataService lds = LayoutDataService.getInstanceOf(
-                    RemoteLayoutDataService.class.getCanonicalName());
+        String remoteMode = RemoteLayoutDataService.class.getCanonicalName();
+        RemoteLayoutDataService remoteService = LayoutDataService.getInstanceOf(remoteMode);
         // Remember current mode
         String currentMode = LayoutDataService.getMode();
-        if (lds != null) {          
+        if (remoteService != null) {          
             // Set the mode temporarily to local mode since the
             // RemoteLayoutDataService instance can only be removed
             // if it is not the currently active instance.
-            LayoutDataService.setMode(ECLIPSE_DATA_SERVICE);            
-            LayoutDataService.removeService(lds);
+            if (remoteMode.equals(currentMode)) {
+                LayoutDataService.setMode(ECLIPSE_DATA_SERVICE);
+            }
+            LayoutDataService.removeService(remoteService);
         }
         // Create new RemoteLayoutDataService instance and register it
         create();
-        // Switch back to original mode
-        LayoutDataService.setMode(currentMode);
+        if (currentMode != null) {
+            // Switch back to original mode
+            LayoutDataService.setMode(currentMode);
+        }
     }
 
     /**

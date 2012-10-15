@@ -98,9 +98,9 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                         "You do not have any layout service configured."
                         + " Doing layout remotely is not possible at the moment."
                         + " You can configure layout services by double clicking on the tray icon."
-                        + " The layout was temporarily set back to local."
-                        + " Do you want to switch to local mode permanently ?",
-                        SWT.YES | SWT.NO
+                        + " The layout was temporarily set back to local.",
+                        "Do you want to switch to local mode permanently?",
+                        SWT.YES | SWT.NO, null
                     );               
                     if (result == SWT.YES) {
                         SwitchLayoutMode.toLocal();
@@ -113,13 +113,11 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                         "No Client Features installed",
                         "You do not have any client features installed for doing remote layout."
                         + " The client features required for doing layout with KWebS are"
-                        + " available at the KIELER update site:"
-                        + "\n\n"
-                        + "http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"
-                        + "\n\n"
-                        + "The layout was temporarily set back to local."
-                        + " Do you want to switch to local mode permanently ?",
-                        SWT.YES | SWT.NO
+                        + " available at the KIELER update site:\n"
+                        + "http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/\n"
+                        + "The layout was temporarily set back to local.",
+                        "Do you want to switch to local mode permanently ?",
+                        SWT.YES | SWT.NO, null
                     );               
                     if (result == SWT.YES) {
                         SwitchLayoutMode.toLocal();
@@ -152,26 +150,26 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
                 client = null;                  
             }
             return true;
-        } catch (Exception e) {
+        } catch (Exception exception) {
             if (remoteLayout) {
                 LayoutDataService.setMode(LayoutDataService.ECLIPSE_DATA_SERVICE);
                 client = null;
                 int result = displayMessage(
                     "Error Occured", 
                     "The remote layout could not be initialized properly."
-                    + " The error occurred was\n\n"
-                    + "\"" + e.getMessage() + "\".\n\n"
+                    + " The error occurred was\n\""
+                    + exception.getMessage() + "\"\n"
                     + "Perhaps the configured layout server is not available at"
                     + " the moment or the configuration you selected is not"
-                    + " accurate. The layout was temporarily set back to local."
-                    + " Do you want to switch to local mode permanently ?",
-                    SWT.YES | SWT.NO
+                    + " accurate. The layout was temporarily set back to local.",
+                    "Do you want to switch to local mode permanently ?",
+                    SWT.YES | SWT.NO, exception
                 );               
                 if (result == SWT.YES) {
                     SwitchLayoutMode.toLocal();
                 }
             } else {
-                throw new LocalServiceException("Local layout failed", e);
+                throw new LocalServiceException("Local layout failed", exception);
             }
         }
         return false;
@@ -184,42 +182,37 @@ public class RemoteGraphLayoutEngine implements IGraphLayoutEngine, IPropertyCha
      *            the title of the dialog
      * @param message
      *            the message to be displayed
+     * @param question
+     *            the question to ask in the dialog
      * @param style
      *            the style, e.g. visible buttons
+     * @param exception
+     *            an optional exception that occurred (shown when no shell is open)
      * @return the constant defining which button the user clicked on
      */
-    private int displayMessage(final String title, final String message, final int style) {
+    private int displayMessage(final String title, final String message, final String question,
+            final int style, final Throwable exception) {
         final Maybe<Integer> result = new Maybe<Integer>(SWT.ERROR);
         final Display display = PlatformUI.getWorkbench().getDisplay();
-        final Maybe<Shell> maybe = new Maybe<Shell>();
+        final Maybe<Shell> shell = new Maybe<Shell>();
         display.syncExec(
             new Runnable() {
                 public void run() {
-                    maybe.set(display.getActiveShell());
+                    shell.set(display.getActiveShell());
                 }                        
             }
         );
-        final Shell shell = maybe.get();
-        if (shell == null) {
-            StatusManager.getManager().handle(
-                new Status(
-                    IStatus.WARNING, 
-                    KwebsClientPlugin.PLUGIN_ID, 
-                    "Shell object is null, can not display error dialog. Error is:"
-                    + "\n\n"
-                    + title
-                    + "\n\n"
-                    + message, 
-                    null
-                )
-            );
+        if (shell.get() == null) {
+            IStatus status = new Status(IStatus.ERROR, KwebsClientPlugin.PLUGIN_ID, message,
+                    exception);
+            StatusManager.getManager().handle(status);
         } else {
             display.syncExec(
                 new Runnable() {
                     public void run() {
-                        MessageBox box = new MessageBox(shell, style);
+                        MessageBox box = new MessageBox(shell.get(), style);
                         box.setText(title);
-                        box.setMessage(message);
+                        box.setMessage(message + " " + question);
                         result.set(box.open());
                     }
                 }

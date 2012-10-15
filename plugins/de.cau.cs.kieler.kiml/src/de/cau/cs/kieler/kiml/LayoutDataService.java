@@ -52,7 +52,8 @@ public class LayoutDataService {
             = "de.cau.cs.kieler.kiml.ui.service.EclipseLayoutDataService"; //$NON-NLS-1$
 
     /** the instance of the registry class. */
-    private Registry registry = null;
+    private Registry registry;
+    
     /** mapping of layout provider identifiers to their data instances. */
     private final Map<String, LayoutAlgorithmData> layoutAlgorithmMap = Maps.newLinkedHashMap();
     /** mapping of layout option identifiers to their data instances. */
@@ -69,11 +70,11 @@ public class LayoutDataService {
     /** additional map of layout type suffixes to data instances. */
     private final Map<String, LayoutTypeData> typeSuffixMap = Maps.newHashMap();
 
-    /** Map of registered data services indexed by class name. */
-    private static Map<String, LayoutDataService> instances = Maps.newHashMap();
-
+    /** map of registered data services indexed by class name. */
+    private static final Map<String, LayoutDataService> INSTANCES = Maps.newHashMap();
+    
     /** the the currently used layout data service. */
-    private static LayoutDataService current;
+    private static LayoutDataService current = new LayoutDataService();
 
     /**
      * The default constructor is shown only to subclasses.
@@ -90,16 +91,12 @@ public class LayoutDataService {
      */
     protected static synchronized void addService(final LayoutDataService subInstance) {
         String type = subInstance.getClass().getCanonicalName();
-        if (instances.containsKey(type)) {
+        if (INSTANCES.containsKey(type)) {
             throw new IllegalArgumentException("The layout data service class is already registered."
                     + " Remove the old instance first before adding a new instance.");
-        } else {
-            if (current == null) {
-                current = subInstance;
-            }
-            subInstance.registry = subInstance.new Registry();
-            instances.put(type, subInstance);
         }
+        subInstance.registry = subInstance.new Registry();
+        INSTANCES.put(type, subInstance);
     }
 
     /**
@@ -118,7 +115,7 @@ public class LayoutDataService {
             throw new IllegalArgumentException(
                     "The currently active layout data service cannot be removed.");
         }
-        instances.remove(type);
+        INSTANCES.remove(type);
     }
 
     /**
@@ -130,7 +127,11 @@ public class LayoutDataService {
      * @return the name of the currently active data service class, or {@code null}
      */
     public static synchronized String getMode() {
-        return (current != null ? current.getClass().getCanonicalName() : null);
+        String mode = current.getClass().getCanonicalName();
+        if (INSTANCES.containsKey(mode)) {
+            return mode;
+        }
+        return null;
     }
 
     /**
@@ -143,12 +144,12 @@ public class LayoutDataService {
      *             if the according layout data service class has not been registered yet
      */
     public static synchronized void setMode(final String mode) {
-        if (instances.containsKey(mode)) {
-            current = instances.get(mode);
-        } else {
+        LayoutDataService modeInstance = INSTANCES.get(mode);
+        if (modeInstance == null) {
             throw new IllegalArgumentException("Mode " + mode
                     + " not supported or layout data service was not registered before.");
         }
+        current = modeInstance;
     }
 
     /**
@@ -170,26 +171,16 @@ public class LayoutDataService {
      */
     @SuppressWarnings("unchecked")
     public static <T extends LayoutDataService> T getInstanceOf(final String type) {
-        if (instances.containsKey(type)) {
-            return (T) instances.get(type);
+        if (INSTANCES.containsKey(type)) {
+            return (T) INSTANCES.get(type);
         }
         return null;
     }
 
     /**
-     * Returns the instance of the registry class associated with the current layout data service.
-     * 
-     * @return the registry instance, or {@code null} if either no layout data service has been
-     *         registered yet or it has been removed
+     * Class used to register the layout services. The access methods are not thread-safe, so use
+     * only a single thread to register layout meta-data.
      */
-    public static final Registry getRegistry() {
-        if (current != null) {
-            return current.registry;
-        }
-        return null;
-    }
-
-    /** Class used to register the layout services. */
     public final class Registry {
 
         /**
@@ -255,6 +246,15 @@ public class LayoutDataService {
             categoryMap.put(id, name);
         }
 
+    }
+
+    /**
+     * Returns the instance of the registry class associated with the this layout data service.
+     * 
+     * @return the registry instance, or {@code null} if the service instance has not been registered
+     */
+    protected final Registry getRegistry() {
+        return registry;
     }
 
     /**

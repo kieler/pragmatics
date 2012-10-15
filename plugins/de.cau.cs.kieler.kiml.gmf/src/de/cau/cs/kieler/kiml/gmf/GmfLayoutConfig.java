@@ -155,7 +155,8 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 @SuppressWarnings("unchecked")
                 LayoutOptionData<String> algorithmOptionData = (LayoutOptionData<String>)
                         LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM.getId());
-                if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null) {
+                if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null
+                        && algorithmOptionData != null) {
                     // get a layout hint for the content of the focused edit part
                     String contentLayoutHint = getValue(algorithmOptionData, PREFIX, notationView);
                     if (contentLayoutHint == null) {

@@ -25,39 +25,45 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  *
  * @author msp
  */
-public class LayoutOptionProxy implements IPropertyValueProxy {
+public final class LayoutOptionProxy implements IPropertyValueProxy {
     
     /** the serialized layout option value. */
     private String value;
     
     /**
-     * Hidden constructor (use {@link #setProxyValue(IPropertyHolder, String, String)} to create
-     * instances).
+     * Create a layout option proxy for the given value.
+     * 
+     * @param value the serialized layout option value
      */
-    private LayoutOptionProxy() {
+    public LayoutOptionProxy(final String value) {
+        this.value = value;
     }
     
     /**
      * Create a layout option proxy with given key and value strings.
      * 
+     * @param propertyHolder the property holder in which to store the new value
      * @param key the layout option identifier string
      * @param value the serialized value
      */
     public static void setProxyValue(final IPropertyHolder propertyHolder, final String key,
             final String value) {
         IProperty<LayoutOptionProxy> property = new Property<LayoutOptionProxy>(key);
-        LayoutOptionProxy proxy = new LayoutOptionProxy();
-        proxy.value = value;
-        propertyHolder.setProperty(property, value);
+        LayoutOptionProxy proxy = new LayoutOptionProxy(value);
+        propertyHolder.setProperty(property, proxy);
     }
     
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public <T> T resolveValue(IProperty<T> property) {
-        LayoutOptionData<?> optionData = LayoutDataService.getInstance().getOptionData(
-                property.getId());
+    public <T> T resolveValue(final IProperty<T> property) {
+        LayoutOptionData<?> optionData;
+        if (property instanceof LayoutOptionData<?>) {
+            optionData = (LayoutOptionData<?>) property;
+        } else {
+            optionData = LayoutDataService.getInstance().getOptionData(property.getId());
+        }
         if (optionData != null) {
             return (T) optionData.parseValue(value);
         }
