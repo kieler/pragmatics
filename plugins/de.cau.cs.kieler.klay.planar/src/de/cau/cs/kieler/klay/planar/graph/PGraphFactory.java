@@ -39,6 +39,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author ocl
  * @author pkl
+ * 
  */
 public class PGraphFactory {
 
@@ -53,9 +54,6 @@ public class PGraphFactory {
 
     /** Spacing between the nodes. */
     private float spacing;
-
-    /** The graph on which it is worked. */
-    private PGraph pGraph;
 
     /**
      * Create an empty graph instance. The resulting graph will not contain any edges or nodes.
@@ -129,8 +127,6 @@ public class PGraphFactory {
      * @return a copy of the given graph
      */
     public PGraph createGraphCopy(final PGraph pgraph) {
-        // TODO check for embedding constraints (ports)
-        // TODO recurse over children in compound nodes
         PGraph copy = new PGraph();
         HashMap<PNode, PNode> nodes = new HashMap<PNode, PNode>(pgraph.getNodeCount() * 2);
 
@@ -192,12 +188,6 @@ public class PGraphFactory {
      * @return a graph corresponding to {@code kgraph}
      */
     public PGraph createGraphFromKGraph(final KNode kgraph) {
-        // TODO check for directed/undirected edges
-        // TODO check for embedding constraints (ports)
-        // TODO recurse over children in compound nodes
-
-        // TODO the embedding of the graph is not the same as in the diagram.
-        // See kite example as example. Should this be the same?
         PGraph pgraph = new PGraph();
         HashMap<KNode, PNode> map = new HashMap<KNode, PNode>(kgraph.getChildren().size() * 2);
         pgraph.setProperty(Properties.ORIGIN, kgraph);
@@ -298,7 +288,6 @@ public class PGraphFactory {
      */
     public void applyLayout(final PGraph pgraph) {
 
-        this.pGraph = pgraph;
         GridRepresentation grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
         float borderSpacing = pgraph.getProperty(Properties.BORDER_SPACING);
 
@@ -336,8 +325,6 @@ public class PGraphFactory {
         // each node
         updateCoordinates();
 
-        // TODO check two high-degree nodes connected directed to each other (Quod)!
-
         // map all PNode edges with bendpoints and source and target coordinates
         // to the original kedges
         for (PEdge edge : pgraph.getEdges()) {
@@ -353,8 +340,6 @@ public class PGraphFactory {
             KVectorChain bendPoints = edge.getBendPoints();
 
             // set source and target position
-            // TODO Needed for GIOTTO: Think about it!
-
             if (pgraph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) == HighDegreeNodeStrategy.GIOTTO) {
                 Pair<Integer, Integer> startPos = edge.getProperty(Properties.START_POSITION);
                 if (startPos != null) {
@@ -416,9 +401,6 @@ public class PGraphFactory {
                 int startY = hdPos.get(1);
                 int widthX = hdPos.get(2) + 1 - startX;
                 int heightY = hdPos.get(3) + 1 - startY;
-
-                // TODO take this to set the correct positions and the width of the GIOTTO approach
-                // really long.
 
                 // Remove high-degree node from grid.
                 grid.removeHDNode(node);
@@ -565,7 +547,7 @@ public class PGraphFactory {
         // for (int i = 0; i <= x; i++) {
         // for (int y = 0; y < grid.getHeight(); y++) {
         // if (grid.get(i, y) != null) {
-        // // TODO this is not enough, because the bendpoints aren't adjusted!!!!
+        // // to do: this is not enough, because the bendpoints aren't adjusted!!!!
         // KShapeLayout nodeLayout = ((KNode) grid.get(i, y).getProperty(
         // Properties.ORIGIN)).getData(KShapeLayout.class);
         // nodeLayout.setYpos(nodeLayout.getXpos() - restDistance);

@@ -141,40 +141,41 @@ public class PUtil {
      */
     public static RectShapeEdgeProperties getProperties(final PEdge edge, final PNode corner) {
         RectShapeEdgeProperties edgeProperties = edge.getProperty(Properties.RECT_SHAPE_PROPERTIES);
-        if (edgeProperties == null) {
-            Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProps = edge
-                    .getProperty(Properties.RECT_SHAPE_CUTEDGE);
-            if (cutEdgeProps != null) {
-                if (cutEdgeProps.getSecond() == null) {
-                    // Create new second propert
-                    edgeProperties = new RectShapeEdgeProperties();
-                    cutEdgeProps.setSecond(edgeProperties);
-                    edge.setProperty(Properties.RECT_SHAPE_CUTEDGE, cutEdgeProps);
-                    return edgeProperties;
+        if (edgeProperties != null) {
+            return edgeProperties;
+        }
+
+        Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProps = edge
+                .getProperty(Properties.RECT_SHAPE_CUTEDGE);
+        if (cutEdgeProps != null) {
+            if (cutEdgeProps.getSecond() == null) {
+                // Create new second propert
+                edgeProperties = new RectShapeEdgeProperties();
+                cutEdgeProps.setSecond(edgeProperties);
+                edge.setProperty(Properties.RECT_SHAPE_CUTEDGE, cutEdgeProps);
+                return edgeProperties;
+            } else {
+                if (corner == null) {
+                    return cutEdgeProps.getFirst();
+                }
+                if (cutEdgeProps.getFirst().getCorner() == corner) {
+                    return cutEdgeProps.getSecond();
                 } else {
-                    if (corner == null) {
-                        return cutEdgeProps.getFirst();
-                    }
-                    if (cutEdgeProps.getFirst().getCorner() == corner) {
-                        return cutEdgeProps.getSecond();
-                    } else {
-                        return cutEdgeProps.getFirst();
-                    }
+                    return cutEdgeProps.getFirst();
                 }
             }
+        }
 
-            // Else Create new properties.
-            edgeProperties = new RectShapeEdgeProperties();
+        // Else Create new properties.
+        edgeProperties = new RectShapeEdgeProperties();
 
-            if (edge.getLeftFace() == edge.getRightFace()) {
-                cutEdgeProps = new Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>(
-                        edgeProperties, null);
-                cutEdgeProps.setFirst(edgeProperties);
-                edge.setProperty(Properties.RECT_SHAPE_CUTEDGE, cutEdgeProps);
-            } else {
-                edge.setProperty(Properties.RECT_SHAPE_PROPERTIES, edgeProperties);
-            }
-
+        if (edge.getLeftFace() == edge.getRightFace()) {
+            cutEdgeProps = new Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>(
+                    edgeProperties, null);
+            cutEdgeProps.setFirst(edgeProperties);
+            edge.setProperty(Properties.RECT_SHAPE_CUTEDGE, cutEdgeProps);
+        } else {
+            edge.setProperty(Properties.RECT_SHAPE_PROPERTIES, edgeProperties);
         }
 
         return edgeProperties;
