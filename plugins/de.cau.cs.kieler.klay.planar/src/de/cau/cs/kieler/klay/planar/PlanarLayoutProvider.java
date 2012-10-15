@@ -194,7 +194,8 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
                 .addAll(subgraphBuilder.getIntermediateProcessingStrategy(graph))
                 .addAll(edgeInserter.getIntermediateProcessingStrategy(graph))
                 .addAll(orthogonalizer.getIntermediateProcessingStrategy(graph))
-                .addAll(adjustedStrategy)
+                .addAll(compactor
+                        .getIntermediateProcessingStrategy(graph))
                 .addAll(this.getIntermediateProcessingStrategy(graph));
 
         // construct the list of processors that make up the algorithm

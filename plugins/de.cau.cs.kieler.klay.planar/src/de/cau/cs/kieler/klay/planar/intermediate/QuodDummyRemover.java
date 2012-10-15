@@ -91,21 +91,24 @@ public class QuodDummyRemover extends AbstractAlgorithm implements ILayoutProces
 
                     // search for original edges.
                     if (edge.getProperty(Properties.EXPANSION_CYCLE_ORIGIN) == null) {
-                        // add old high degree node and set the position of the edge endpoint.
+                        // add original high-degree node and set the position of the edge endpoint.
                         if (edge.getSource() == dummyNode) {
                             int[] pos = grid.getPosition(edge.getSource());
                             edge.setSource(hDNode);
                             edge.setProperty(Properties.START_POSITION, new Pair<Integer, Integer>(
                                     Integer.valueOf(pos[0]), Integer.valueOf(pos[1])));
-                        } else {
+                        }
+                        if (edge.getTarget() == dummyNode) {
                             int[] pos = grid.getPosition(edge.getTarget());
                             edge.setTarget(hDNode);
-                            edge.setProperty(Properties.TARGET_POSITION,
-                                    new Pair<Integer, Integer>( Integer.valueOf(pos[0]), Integer.valueOf(pos[1])));
+                            edge.setProperty(
+                                    Properties.TARGET_POSITION,
+                                    new Pair<Integer, Integer>(Integer.valueOf(pos[0]), Integer
+                                            .valueOf(pos[1])));
                         }
                         hDNode.linkEdge(edge);
                     } else {
-                        // dummy edges are removed.
+                        // dummy edges are removed
                         graph.removeEdge(edge);
                     }
                 }
@@ -169,10 +172,9 @@ public class QuodDummyRemover extends AbstractAlgorithm implements ILayoutProces
                 Pair<Integer, Integer> startPos = edge.getProperty(Properties.START_POSITION);
                 if (startPos != null) {
                     edge.getBendPoints().addFirst(startPos.getFirst(), startPos.getSecond());
-                } else {
-                    Pair<Integer, Integer> targetPos = edge.getProperty(Properties.TARGET_POSITION);
-                    if (targetPos == null) {
-                    }
+                }
+                Pair<Integer, Integer> targetPos = edge.getProperty(Properties.TARGET_POSITION);
+                if (targetPos != null) {
                     edge.getBendPoints().addLast(targetPos.getFirst(), targetPos.getSecond());
                 }
             }
@@ -188,7 +190,7 @@ public class QuodDummyRemover extends AbstractAlgorithm implements ILayoutProces
         }
 
     }
-    
+
     /**
      * filters the nodes with a higher degree of 4 from the dummy nodes.
      * 
