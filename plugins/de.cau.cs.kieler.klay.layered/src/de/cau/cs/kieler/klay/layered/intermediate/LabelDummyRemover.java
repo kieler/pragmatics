@@ -30,10 +30,20 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * Processor that removes the inserted center label dummies and places the labels on their
- * position.
+ * <p>Processor that removes the inserted center label dummies and places the labels on their
+ * position.</p>
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>a layered graph; nodes are placed; edges are routed; center labels
+ *     are represented by center label dummy nodes.</dd>
+ *   <dt>Postcondition:</dt><dd>labels are placed; there are no dummy nodes of type
+ *     {@link de.cau.cs.kieler.klay.layered.properties.NodeType#LABEL}.</dd>
+ *   <dt>Slots:</dt><dd>After phase 5.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link HierarchicalPortOrthogonalEdgeRouter}</dd>
+ * </dl>
  *
  * @author jjc
+ * @kieler.rating yellow proposed cds
  */
 public class LabelDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
 

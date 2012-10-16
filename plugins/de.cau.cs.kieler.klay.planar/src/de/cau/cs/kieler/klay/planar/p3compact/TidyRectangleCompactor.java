@@ -69,8 +69,8 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
 
     private PNode sink;
 
-    /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
+    /** Intermediate processing configuration with Quod high-degree strategy. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_QUOD = new IntermediateProcessingConfiguration(
     // Before Phase 1
             null,
             // Before Phase 2
@@ -85,6 +85,23 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                     LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
                     LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
                     LayoutProcessorStrategy.QUOD_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER));
+
+    /** Intermediate processing configuration with Giotto high-degree strategy. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO = new IntermediateProcessingConfiguration(
+            // Before Phase 1
+            null,
+            // Before Phase 2
+            null,
+            // Before Phase 3
+            null,
+            // Before Phase 4
+            EnumSet.of(LayoutProcessorStrategy.BEND_DUMMY,
+                    LayoutProcessorStrategy.RECT_SHAPE_DUMMY, LayoutProcessorStrategy.FACE_SIDES),
+            // After Phase 4
+            EnumSet.of(LayoutProcessorStrategy.GRID_DRAWING,
+                    LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
                     LayoutProcessorStrategy.GIOTTO_DUMMY_REMOVER,
                     LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER));
 
@@ -92,7 +109,17 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
      * {@inheritDoc}
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pgraph) {
-        return new IntermediateProcessingConfiguration(INTERMEDIATE_PROCESSING_CONFIGURATION);
+
+        // check which high-degree node algorithm should be used
+
+        if (pgraph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) == HighDegreeNodeStrategy.GIOTTO) {
+            return new IntermediateProcessingConfiguration(
+                    INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO);
+        } else {
+            return new IntermediateProcessingConfiguration(
+                    INTERMEDIATE_PROCESSING_CONFIGURATION_QUOD);
+        }
+
     }
 
     // ======================== Algorithm ==========================================================
@@ -103,7 +130,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     public void process(final PGraph pgraph) {
 
         this.graph = pgraph;
-        
+
         // Used to create the flownetwork
         this.externalFace = pgraph.getExternalFace();
         // Create networks, start with side 0 for horizontal and 1 for vertical.

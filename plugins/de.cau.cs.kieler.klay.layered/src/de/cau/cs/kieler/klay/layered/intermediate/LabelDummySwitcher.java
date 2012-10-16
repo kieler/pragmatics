@@ -32,10 +32,19 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * Processor that switches label dummy nodes in the middle of the list of dummy nodes
- * as good as possible.
+ * <p>Processor that switches label dummy nodes in the middle of the list of dummy nodes
+ * as good as possible.</p>
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>a properly layered graph with center labels represented by
+ *     center label dummy nodes.</dd>
+ *   <dt>Postcondition:</dt><dd>center label dummy nodes are the centermost dummies of a long edge.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 3.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link LongEdgeSplitter}, {@link LabelSideSelector}</dd>
+ * </dl>
  * 
  * @author jjc
+ * @kieler.rating yellow proposed cds
  */
 public class LabelDummySwitcher extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -63,6 +72,7 @@ public class LabelDummySwitcher extends AbstractAlgorithm implements ILayoutProc
                                 .getTarget()
                                 .getNode();
                     }
+                    
                     int middle = longEdge.size() / 2;
                     if (longEdge.size() > 0) {
                         nodesToSwap.add(new Pair<LNode, LNode>(node, longEdge.get(middle)));
@@ -83,6 +93,12 @@ public class LabelDummySwitcher extends AbstractAlgorithm implements ILayoutProc
         }
     }
 
+    /**
+     * Swaps the two given dummy nodes.
+     * 
+     * @param one the first dummy node.
+     * @param other the second dummy node.
+     */
     private void swapNodes(final LNode one, final LNode other) {
         // Detect incoming and outgoing ports of the nodes
         // Since they are dummy nodes, they can simply be found by looking where

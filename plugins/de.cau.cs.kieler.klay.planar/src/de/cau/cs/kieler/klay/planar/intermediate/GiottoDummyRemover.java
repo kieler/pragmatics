@@ -25,7 +25,6 @@ import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
-import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
@@ -41,9 +40,6 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
     /** The processed graph. */
     private PGraph graph;
 
-    /** The orthogonal representation of that graph. */
-    private OrthogonalRepresentation orthogonal;
-
     /** The grid representation of that graph. */
     private GridRepresentation grid;
 
@@ -53,13 +49,12 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
     public void process(final PGraph pgraph) {
         getMonitor().begin("Giotto Dummy Removing", 1);
         this.graph = pgraph;
-        this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
         this.grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
 
         // stores the found higher 4 degree nodes.
         Set<PNode> highDegreeNodes = filterHighDegreeNodes();
 
-        //FIXME grid size should depend on the average size of all nodes?
+        // FIXME grid size should depend on the average size of all nodes?
         // if a layout is triggered twice, the node should not further be increased...
         calcMetrics(highDegreeNodes);
 
@@ -69,15 +64,15 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
     /**
      * @param highDegreeNodes
      */
-    private void calcMetrics(Set<PNode> highDegreeNodes) {
+    private void calcMetrics(final Set<PNode> highDegreeNodes) {
         for (PNode hDNode : highDegreeNodes) {
 
-            // reinsert the node again.
+            // reinsert the node again
             graph.addNode(hDNode);
 
             List<int[]> hDNodePositions = Lists.newLinkedList();
 
-            // summarize the dummies to the high degree node.
+            // merge the dummies to the high degree node
             List<PNode> dummyNodes = hDNode.getProperty(Properties.EXPANSION_CYCLE);
             for (PNode dummyNode : dummyNodes) {
 
@@ -85,17 +80,18 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
                 // save position
                 hDNodePositions.add(position);
 
-                // link the edges back to the high degree node.
+                // link the edges back to the high degree node
                 for (PEdge edge : dummyNode.adjacentEdges()) {
 
-                    // search for original edges.
+                    // set bend-point property to original edge.
                     if (edge.getProperty(Properties.EXPANSION_CYCLE_ORIGIN) == null) {
                         // add old high degree node and set the position of the edge endpoint.
                         if (edge.getSource() == dummyNode) {
                             edge.setSource(hDNode);
                             edge.setProperty(Properties.START_POSITION, new Pair<Integer, Integer>(
                                     Integer.valueOf(position[0]), Integer.valueOf(position[1])));
-                        } else {
+                        }
+                        if (edge.getTarget() == dummyNode) {
                             edge.setTarget(hDNode);
                             edge.setProperty(Properties.TARGET_POSITION,
                                     new Pair<Integer, Integer>(Integer.valueOf(position[0]),
@@ -103,17 +99,19 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
                         }
                         hDNode.linkEdge(edge);
                     } else {
-                        // dummy edges are removed.
+                        // dummy edges are removed
                         graph.removeEdge(edge);
                     }
                 }
                 dummyNode.unlinkAll();
                 graph.removeNode(dummyNode);
                 grid.remove(dummyNode);
-                grid.set(position[0], position[1], hDNode);
+
+                // TODO hier ansetzen!
+                // grid.set(position[0], position[1], hDNode);
             }
 
-            // calculate position and size of the highDegreeNode.
+            // calculate position and size of the highDegreeNode
             int smallestX = Integer.MAX_VALUE;
             int smallestY = Integer.MAX_VALUE;
             int biggestX = -1;
@@ -146,6 +144,7 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
             positions.add(Integer.valueOf(biggestX));
             positions.add(Integer.valueOf(biggestY));
             hDNode.setProperty(Properties.HIGH_DEGREE_POSITIONS, positions);
+            grid.set(smallestX, smallestY, hDNode);
         }
     }
 
