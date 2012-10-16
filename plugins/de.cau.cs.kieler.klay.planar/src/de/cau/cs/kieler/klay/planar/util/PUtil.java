@@ -134,12 +134,13 @@ public class PUtil {
      * 
      * @param edge
      *            , for which we need to filter the properties container.
-     * @param corner
+     * @param preCurrConnector
      *            , <code>null</code> allowed, if it the edge is a cutedge, used to filter the
-     *            correct properties container.
+     *            correct properties container. This node is the one between the previous edge
+     *            and the current given edge. This is not the corner.
      * @return the {@link RectShapeEdgeProperties} property object of the given edge.
      */
-    public static RectShapeEdgeProperties getProperties(final PEdge edge, final PNode corner) {
+    public static RectShapeEdgeProperties getProperties(final PEdge edge, final PNode preCurrConnector) {
         RectShapeEdgeProperties edgeProperties = edge.getProperty(Properties.RECT_SHAPE_PROPERTIES);
         if (edgeProperties != null) {
             return edgeProperties;
@@ -155,10 +156,10 @@ public class PUtil {
                 edge.setProperty(Properties.RECT_SHAPE_CUTEDGE, cutEdgeProps);
                 return edgeProperties;
             } else {
-                if (corner == null) {
+                if (preCurrConnector == null) {
                     return cutEdgeProps.getFirst();
                 }
-                if (cutEdgeProps.getFirst().getCorner() == corner) {
+                if (cutEdgeProps.getFirst().getCorner() == preCurrConnector) {
                     return cutEdgeProps.getSecond();
                 } else {
                     return cutEdgeProps.getFirst();
