@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
+import java.util.EnumSet;
+
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellEditorValidator;
@@ -108,7 +110,16 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                 return optionData.getChoices()[(Integer) element];
             case REMOTE_ENUMSET:
             case ENUMSET:
-                // TODO Implement
+                EnumSet set = (EnumSet) element;
+                if (set.isEmpty()) {
+                    return "";
+                }
+                
+                StringBuilder builder = new StringBuilder();
+                for (Object o : set) {
+                    builder.append(", " + ((Enum) o).name());
+                }
+                return builder.substring(2);
             default:
                 return element.toString();
             }
@@ -173,7 +184,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             return new ComboBoxCellEditor(parent, optionData.getChoices(), SWT.READ_ONLY);
         case REMOTE_ENUMSET:
         case ENUMSET:
-            // TODO Implement
+            return new MultipleOptionsCellEditor(parent, optionData.getChoices());
         case OBJECT:
             return new TextCellEditor(parent);
         default:

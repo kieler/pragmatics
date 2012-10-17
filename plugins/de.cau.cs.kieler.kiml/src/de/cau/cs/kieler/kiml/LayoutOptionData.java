@@ -105,7 +105,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             case REMOTE_ENUM:
                 return REMOTEENUM_LITERAL;
             case REMOTE_ENUMSET:
-            	return REMOTEENUMSET_LITERAL;
+                return REMOTEENUMSET_LITERAL;
             default:
                 return toString();
             }
@@ -155,7 +155,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     
     /**
      * Checks whether the enumeration class is set correctly. This method must
-     * not be called for options other than of type 'enum'.
+     * not be called for options other than of type {@code enum} and {@code enumset}.
      */
     private void checkEnumClass() {
         if (clazz == null || !clazz.isEnum()) {
@@ -253,13 +253,13 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         } else if (ENUM_LITERAL.equalsIgnoreCase(typeLiteral)) {
             type = Type.ENUM;
         } else if (ENUMSET_LITERAL.equalsIgnoreCase(typeLiteral)) {
-        	type = Type.ENUMSET;
+            type = Type.ENUMSET;
         } else if (OBJECT_LITERAL.equalsIgnoreCase(typeLiteral)) {
             type = Type.OBJECT;
         } else if (REMOTEENUM_LITERAL.equalsIgnoreCase(typeLiteral)) {
             type = Type.REMOTE_ENUM;
         } else if (REMOTEENUMSET_LITERAL.equalsIgnoreCase(typeLiteral)) {
-        	type = Type.REMOTE_ENUMSET;
+            type = Type.REMOTE_ENUMSET;
         } else {
             throw new IllegalArgumentException("The given type literal is invalid.");
         }
@@ -272,7 +272,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * @return an instance of the corresponding correctly typed value, or
      *         {@code null} if the given value string is invalid
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public T parseValue(final String valueString) {
         if (valueString == null || valueString.length() == 0 || valueString.equals("null")) {
             return null;
@@ -295,26 +295,11 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
                 return null;
             }
         case ENUM:
-            try {
-                checkEnumClass();
-                @SuppressWarnings("rawtypes")
-                Enum<?> value = Enum.valueOf((Class<? extends Enum>) clazz, valueString);
-                return (T) value;
-            } catch (IllegalArgumentException exception) {
-                // the value could not be parsed as enumeration constant, try as integer
-                try {
-                    int index = Integer.parseInt(valueString);
-                    Object[] constants = clazz.getEnumConstants();
-                    if (index >= 0 && index < constants.length) {
-                        return (T) constants[index];
-                    }
-                } catch (NumberFormatException e) {
-                    // ignore exception and return null
-                }
-                return null;
-            }
+            checkEnumClass();
+            return (T) enumForString(valueString);
         case ENUMSET:
-        	// TODO Implement
+            checkEnumClass();
+            return (T) enumSetForStringArray((Class<? extends Enum>) clazz, valueString);
         case OBJECT:
             try {
                 IDataObject value = createDataInstance();
@@ -332,9 +317,74 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             }
             return null;
         case REMOTE_ENUMSET:
-        	// TODO Implement
+            // TODO Implement
         default:
             throw new IllegalStateException("Invalid type set for this layout option.");
+        }
+    }
+    
+    /**
+     * Tries to turn the given string representation into a set over the enumeration of
+     * the type given by the class type parameter. The parameter is supposed to be the
+     * {@link #clazz} attribute, but has to be given here explicitly for type inference
+     * reasons. The string consists of multiple parts divided by whitespace, with each
+     * part following the convention specified in the comment of {@link #enumForString(String)}.
+     * 
+     * @param leClazz the enumeration class.
+     * @param leString the string to convert.
+     * @return the enumeration set.
+     */
+    private <E extends Enum<E>> EnumSet<E> enumSetForStringArray(final Class<E> leClazz,
+            final String leString) {
+        
+        EnumSet<E> set = EnumSet.noneOf(leClazz);
+        
+        // break the value string into its different components (separated by whitespace)
+        // and iterate over them
+        String[] components = leString.split("\\s+");
+        for (String component : components) {
+            Object o = enumForString(component);
+            
+            if (o == null) {
+                // we were unable to get the enumeration instance, so the whole enumset
+                // is pointless; let's all take a moment of silence to mourn
+                return null;
+            } else {
+                // add the enumeration object to the set
+                set.add(leClazz.cast(o));
+            }
+        }
+        
+        return set;
+    }
+
+    /**
+     * Tries to turn the given string representation into an enumeration of the type given by
+     * the {@link #clazz} attribute. The string may either specify one of the named items of
+     * the enumeration, or a number referring to one of the enumeration's items by its ordinal
+     * number.
+     * 
+     * @param leString the string to convert to an enumeration.
+     * @return the enumeration.
+     */
+    @SuppressWarnings("unchecked")
+    private Object enumForString(final String leString) {
+        try {
+            @SuppressWarnings("rawtypes")
+            Enum<?> value = Enum.valueOf((Class<? extends Enum>) clazz, leString);
+            return value;
+        } catch (IllegalArgumentException exception) {
+            // the value could not be parsed as enumeration constant, try as integer
+            try {
+                int index = Integer.parseInt(leString);
+                Object[] constants = clazz.getEnumConstants();
+                if (index >= 0 && index < constants.length) {
+                    return constants[index];
+                }
+            } catch (NumberFormatException e) {
+                // ignore exception and return null
+            }
+            return null;
         }
     }
 
@@ -359,7 +409,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * 
      * @return a default-default value, depending on the option type
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public T getDefaultDefault() {
         switch (type) {
         case STRING:
@@ -372,11 +422,11 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             return (T) Float.valueOf(0.0f);
         case ENUM:
             checkEnumClass();
-            @SuppressWarnings({ "rawtypes" })
             Enum<?>[] enums = ((Class<Enum>) clazz).getEnumConstants();
             return (T) enums[0];
         case ENUMSET:
-            // TODO Implement
+            checkEnumClass();
+            return (T) EnumSet.noneOf(((Class<Enum>) clazz));
         case OBJECT:
             return null;
         case REMOTE_ENUM:
@@ -399,26 +449,27 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * 
      * @return an array of values to be displayed for the user
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public String[] getChoices() {
         if (choices == null) {
             switch (type) {
             case ENUM:
+            case ENUMSET:
                 checkEnumClass();
-                @SuppressWarnings({ "unchecked", "rawtypes" })
                 Enum<?>[] enums = ((Class<Enum>) clazz).getEnumConstants();
                 choices = new String[enums.length];
                 for (int i = 0; i < enums.length; i++) {
                     choices[i] = enums[i].toString();
                 }
                 break;
-            case ENUMSET:
-                // TODO Implement
             case BOOLEAN:
                 choices = BOOLEAN_CHOICES;
                 break;
             case REMOTE_ENUM:
                 checkRemoteEnumoptions();
-                return choices;
+                break;
+            case REMOTE_ENUMSET:
+                // TODO Implement
             default:
                 choices = new String[0];
             }
@@ -435,12 +486,11 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     public Enum<?> getEnumValue(final int intValue) {
         switch (type) {
         case ENUM:
+        case ENUMSET:
             checkEnumClass();
             @SuppressWarnings({ "unchecked", "rawtypes" })
             Enum<?>[] enums = ((Class<? extends Enum>) clazz).getEnumConstants();
             return enums[intValue]; 
-        case ENUMSET:
-            // TODO Implement
         default:
             return null;
         }
