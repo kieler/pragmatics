@@ -170,7 +170,9 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
                     return images.getPropFalse();
                 }
             case REMOTE_ENUM:
+            case REMOTE_ENUMSET:
             case ENUM:
+            case ENUMSET:
                 return images.getPropChoice();
             case INT:
                 return images.getPropInt();
@@ -199,6 +201,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
                         && entry.value instanceof Integer) {
                     return entry.optionData.getEnumValue((Integer) entry.value).toString();
                 } else {
+                    // TODO Check if we need something special for enum sets here as well.
                     return entry.value.toString();
                 }
             }

@@ -368,6 +368,9 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                     case ENUM:
                         entry.setValue(optionData.parseValue(result.toUpperCase()));
                         break;
+                    case REMOTE_ENUMSET:
+                    case ENUMSET:
+                        // TODO Implement
                     default:
                         entry.setValue(optionData.parseValue(result));
                     }

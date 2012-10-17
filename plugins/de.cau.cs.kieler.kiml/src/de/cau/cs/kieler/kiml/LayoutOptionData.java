@@ -47,10 +47,14 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     public static final String FLOAT_LITERAL = "float";
     /** literal value constant for enumerations. */
     public static final String ENUM_LITERAL = "enum";
+    /** literal value constant for enumeration sets. */
+    public static final String ENUMSET_LITERAL = "enumset";
     /** literal value constant for data objects. */
     public static final String OBJECT_LITERAL = "object";
-    /** literal value constant for enumeration coming from remote layout. */
+    /** literal value constant for enumerations coming from remote layout. */
     public static final String REMOTEENUM_LITERAL = "remoteenum";
+    /** literal value constant for enumeration sets coming from remote layout. */
+    public static final String REMOTEENUMSET_LITERAL = "remoteenumset";
     /** default name for layout options for which no name is given. */
     public static final String DEFAULT_OPTION_NAME = "<Unnamed Option>";
 
@@ -68,10 +72,14 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         FLOAT,
         /** enumeration type. */
         ENUM,
+        /** enumeration set type. */
+        ENUMSET,
         /** {@link IDataObject} type. */
         OBJECT,
         /** remote enumeration type. */
-        REMOTE_ENUM;         
+        REMOTE_ENUM,
+        /** remote enumeration set type. */
+        REMOTE_ENUMSET;         
         
         /**
          * Returns a user-friendly literal for the enumeration value.
@@ -90,10 +98,14 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
                 return FLOAT_LITERAL;
             case ENUM:
                 return ENUM_LITERAL;
+            case ENUMSET:
+                return ENUMSET_LITERAL;
             case OBJECT:
                 return OBJECT_LITERAL;
             case REMOTE_ENUM:
                 return REMOTEENUM_LITERAL;
+            case REMOTE_ENUMSET:
+            	return REMOTEENUMSET_LITERAL;
             default:
                 return toString();
             }
@@ -240,10 +252,14 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             type = Type.FLOAT;
         } else if (ENUM_LITERAL.equalsIgnoreCase(typeLiteral)) {
             type = Type.ENUM;
+        } else if (ENUMSET_LITERAL.equalsIgnoreCase(typeLiteral)) {
+        	type = Type.ENUMSET;
         } else if (OBJECT_LITERAL.equalsIgnoreCase(typeLiteral)) {
             type = Type.OBJECT;
         } else if (REMOTEENUM_LITERAL.equalsIgnoreCase(typeLiteral)) {
             type = Type.REMOTE_ENUM;
+        } else if (REMOTEENUMSET_LITERAL.equalsIgnoreCase(typeLiteral)) {
+        	type = Type.REMOTE_ENUMSET;
         } else {
             throw new IllegalArgumentException("The given type literal is invalid.");
         }
@@ -297,6 +313,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
                 }
                 return null;
             }
+        case ENUMSET:
+        	// TODO Implement
         case OBJECT:
             try {
                 IDataObject value = createDataInstance();
@@ -313,6 +331,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
                 }
             }
             return null;
+        case REMOTE_ENUMSET:
+        	// TODO Implement
         default:
             throw new IllegalStateException("Invalid type set for this layout option.");
         }
@@ -355,11 +375,15 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             @SuppressWarnings({ "rawtypes" })
             Enum<?>[] enums = ((Class<Enum>) clazz).getEnumConstants();
             return (T) enums[0];
+        case ENUMSET:
+            // TODO Implement
         case OBJECT:
             return null;
         case REMOTE_ENUM:
-             checkRemoteEnumoptions();
-             return (T) choices[0];
+            checkRemoteEnumoptions();
+            return (T) choices[0];
+        case REMOTE_ENUMSET:
+            // TODO Implement
         default:
             throw new IllegalStateException("Invalid type set for this layout option.");
         }
@@ -387,6 +411,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
                     choices[i] = enums[i].toString();
                 }
                 break;
+            case ENUMSET:
+                // TODO Implement
             case BOOLEAN:
                 choices = BOOLEAN_CHOICES;
                 break;
@@ -413,6 +439,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             @SuppressWarnings({ "unchecked", "rawtypes" })
             Enum<?>[] enums = ((Class<? extends Enum>) clazz).getEnumConstants();
             return enums[intValue]; 
+        case ENUMSET:
+            // TODO Implement
         default:
             return null;
         }

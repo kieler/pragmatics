@@ -54,6 +54,10 @@ public class LayoutOptionValidator implements IInputValidator {
                 }
             }
             return getChoicesMessage(choices);
+        case REMOTE_ENUMSET:
+        case ENUMSET:
+            // TODO Implement
+            return null;
         case INT:
             try {
                 Integer.parseInt(trimmedText);

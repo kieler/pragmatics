@@ -67,7 +67,9 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                     return images.getPropFalse();
                 }
             case REMOTE_ENUM:
+            case REMOTE_ENUMSET:
             case ENUM:
+            case ENUMSET:
                 return images.getPropChoice();
             case INT:
                 return images.getPropInt();
@@ -102,9 +104,11 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                 }
             case BOOLEAN:
             case REMOTE_ENUM:
-                return optionData.getChoices()[(Integer) element];
             case ENUM:
                 return optionData.getChoices()[(Integer) element];
+            case REMOTE_ENUMSET:
+            case ENUMSET:
+                // TODO Implement
             default:
                 return element.toString();
             }
@@ -167,6 +171,9 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         case REMOTE_ENUM:
         case ENUM:
             return new ComboBoxCellEditor(parent, optionData.getChoices(), SWT.READ_ONLY);
+        case REMOTE_ENUMSET:
+        case ENUMSET:
+            // TODO Implement
         case OBJECT:
             return new TextCellEditor(parent);
         default:
