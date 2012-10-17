@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
+import de.cau.cs.kieler.klay.planar.p3compact.HighDegreeNodeStrategy;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
@@ -38,6 +39,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author ocl
  * @author pkl
+ * 
  */
 public class PGraphFactory {
 
@@ -52,9 +54,6 @@ public class PGraphFactory {
 
     /** Spacing between the nodes. */
     private float spacing;
-
-    /** The graph on which it is worked. */
-    private PGraph pGraph;
 
     /**
      * Create an empty graph instance. The resulting graph will not contain any edges or nodes.
@@ -128,8 +127,6 @@ public class PGraphFactory {
      * @return a copy of the given graph
      */
     public PGraph createGraphCopy(final PGraph pgraph) {
-        // TODO check for embedding constraints (ports)
-        // TODO recurse over children in compound nodes
         PGraph copy = new PGraph();
         HashMap<PNode, PNode> nodes = new HashMap<PNode, PNode>(pgraph.getNodeCount() * 2);
 
@@ -191,12 +188,6 @@ public class PGraphFactory {
      * @return a graph corresponding to {@code kgraph}
      */
     public PGraph createGraphFromKGraph(final KNode kgraph) {
-        // TODO check for directed/undirected edges
-        // TODO check for embedding constraints (ports)
-        // TODO recurse over children in compound nodes
-
-        // TODO the embedding of the graph is not the same as in the diagram.
-        // See kite example as example. Should this be the same?
         PGraph pgraph = new PGraph();
         HashMap<KNode, PNode> map = new HashMap<KNode, PNode>(kgraph.getChildren().size() * 2);
         pgraph.setProperty(Properties.ORIGIN, kgraph);
@@ -225,8 +216,10 @@ public class PGraphFactory {
                 }
                 PNode source = map.get(kedge.getSource());
                 PNode target = map.get(kedge.getTarget());
+
                 // FIXME planarization fails if there are multi-edges or
                 // self-loops, so suppress them
+
                 if (!source.isAdjacent(target) && source != target) {
                     PEdge edge = pgraph.addEdge(source, target, true);
                     edge.setProperty(Properties.ORIGIN, kedge);
@@ -295,7 +288,6 @@ public class PGraphFactory {
      */
     public void applyLayout(final PGraph pgraph) {
 
-        this.pGraph = pgraph;
         GridRepresentation grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
         float borderSpacing = pgraph.getProperty(Properties.BORDER_SPACING);
 
@@ -303,7 +295,7 @@ public class PGraphFactory {
         this.spacing = (userSpacing == null) ? 0 : userSpacing.floatValue();
 
         // check whether minimum spacing is smaller than the size of each node.
-        // if so adjust spacing.
+        // if so adjust spacing
         for (PNode node : pgraph.getNodes()) {
             KNode knode = (KNode) node.getProperty(Properties.ORIGIN);
             KShapeLayout data = knode.getData(KShapeLayout.class);
@@ -318,60 +310,71 @@ public class PGraphFactory {
         this.startX = borderSpacing;
         this.startY = borderSpacing;
 
-        // first determine nodes coordinates.
+        // first determine nodes coordinates
         for (int x = 0; x < grid.getWidth(); x++) {
             for (int y = 0; y < grid.getHeight(); y++) {
                 PNode pNode = grid.get(x, y);
                 if (pNode != null && pNode.getProperty(Properties.HIGH_DEGREE_POSITIONS) == null) {
-                    grid.get(x, y).setPostion(((float) mapToRealX(x)), ((float) mapToRealY(y)));
+                    grid.get(x, y).setPostion(((float) mapNodeToRealX(x)),
+                            ((float) mapNodeToRealY(y)));
                 }
             }
         }
 
         // update coordinates of each row and col with respect to the width and height of
-        // each node.
+        // each node
         updateCoordinates();
-
-        // map bendpoints.
-        for (PEdge edge : pGraph.getEdges()) {
-            for (KVector vec : edge.getBendPoints()) {
-                vec.x = mapToRealX(vec.x);
-                vec.y = mapToRealY(vec.y);
-            }
-        }
 
         // map all PNode edges with bendpoints and source and target coordinates
         // to the original kedges
         for (PEdge edge : pgraph.getEdges()) {
+
+            // Set bend-points in correct
+            for (KVector vec : edge.getBendPoints()) {
+                vec.x = mapEdgeToRealX(vec.x);
+                vec.y = mapEdgeToRealY(vec.y);
+            }
+
             KEdge originEdge = (KEdge) edge.getProperty(Properties.ORIGIN);
             KEdgeLayout edgeLayout = originEdge.getData(KEdgeLayout.class);
             KVectorChain bendPoints = edge.getBendPoints();
 
             // set source and target position
-            Pair<Integer, Integer> startPos = edge.getProperty(Properties.START_POSITION);
-            if (startPos != null) {
-                double x = mapToRealX(startPos.getFirst().intValue());
-                double y = mapToRealY(startPos.getSecond().intValue());
-                bendPoints.addFirst(x, y);
+            if (pgraph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) == HighDegreeNodeStrategy.GIOTTO) {
+                Pair<Integer, Integer> startPos = edge.getProperty(Properties.START_POSITION);
+                if (startPos != null) {
+                    bendPoints.addFirst(mapEdgeToRealX(startPos.getFirst().intValue()),
+                            mapEdgeToRealY(startPos.getSecond().intValue()));
+                } else {
+                    KNode source = (KNode) edge.getSource().getProperty(Properties.ORIGIN);
+                    bendPoints.addFirst(source.getData(KShapeLayout.class).createVector());
+                }
+
+                Pair<Integer, Integer> targetPos = edge.getProperty(Properties.TARGET_POSITION);
+                if (targetPos != null) {
+                    bendPoints.addLast(mapEdgeToRealX(targetPos.getFirst().intValue()),
+                            mapEdgeToRealY(targetPos.getSecond().intValue()));
+                } else {
+                    KNode target = (KNode) edge.getTarget().getProperty(Properties.ORIGIN);
+                    bendPoints.addLast(target.getData(KShapeLayout.class).createVector());
+                }
+
             } else {
+
+                // Note: each node is a unique grid position
+                // int[] sourcePos = grid.getPosition(edge.getSource());
+                // bendPoints.addFirst(mapEdgeToRealX(sourcePos[0]), mapEdgeToRealY(sourcePos[1]));
+                // int[] targetPos = grid.getPosition(edge.getTarget());
+                // bendPoints.addLast(mapEdgeToRealX(targetPos[0]), mapEdgeToRealY(targetPos[1]));
+
                 KNode source = (KNode) edge.getSource().getProperty(Properties.ORIGIN);
                 bendPoints.addFirst(source.getData(KShapeLayout.class).createVector());
-            }
-
-            Pair<Integer, Integer> targetPos = edge.getProperty(Properties.TARGET_POSITION);
-            if (targetPos != null) {
-                double x = mapToRealX(targetPos.getFirst().intValue());
-                double y = mapToRealY(targetPos.getSecond().intValue());
-                bendPoints.addLast(x, y);
-            } else {
                 KNode target = (KNode) edge.getTarget().getProperty(Properties.ORIGIN);
                 bendPoints.addLast(target.getData(KShapeLayout.class).createVector());
             }
-
             // apply the bend points
             edgeLayout.applyVectorChain(bendPoints);
         }
-
         // moves all original nodes to the left/top to let the edges walk to the center
         // of the nodes.
         for (int x = 0; x < grid.getWidth(); x++) {
@@ -382,8 +385,9 @@ public class PGraphFactory {
                         // search for the pnodes that represents a knode.
                         KShapeLayout nodeLayout = ((KNode) grid.get(x, y).getProperty(
                                 Properties.ORIGIN)).getData(KShapeLayout.class);
-                        nodeLayout.setXpos(((float) mapToRealX(x)) - nodeLayout.getWidth() / 2);
-                        nodeLayout.setYpos(((float) mapToRealY(y)) - nodeLayout.getHeight() / 2);
+                        nodeLayout.setXpos(((float) mapNodeToRealX(x)) - nodeLayout.getWidth() / 2);
+                        nodeLayout
+                                .setYpos(((float) mapNodeToRealY(y)) - nodeLayout.getHeight() / 2);
                     }
                 }
             }
@@ -395,18 +399,37 @@ public class PGraphFactory {
             if (hdPos != null) {
                 int startX = hdPos.get(0);
                 int startY = hdPos.get(1);
-                int widthX = hdPos.get(2)+1 - startX;
-                int heightY = hdPos.get(3)+1 - startY;
+                int widthX = hdPos.get(2) + 1 - startX;
+                int heightY = hdPos.get(3) + 1 - startY;
+
+                // Remove high-degree node from grid.
+                grid.removeHDNode(node);
+
+                // Sets the hdnode to a single position.
+                grid.set(startX, startY, node);
 
                 KShapeLayout nodeLayout = ((KNode) node.getProperty(Properties.ORIGIN))
                         .getData(KShapeLayout.class);
-                nodeLayout.setXpos(((float) mapToRealX(startX)) - nodeLayout.getWidth() / 2);
-                nodeLayout.setYpos(((float) mapToRealY(startY)) - nodeLayout.getHeight() / 2);
+                nodeLayout.setXpos(((float) mapNodeToRealX(startX)) - nodeLayout.getWidth() / 2);
+                nodeLayout.setYpos(((float) mapNodeToRealY(startY)) - nodeLayout.getHeight() / 2);
                 float gap = spacing - nodeLayout.getWidth();
                 nodeLayout.setWidth(nodeLayout.getWidth() * widthX + (widthX - 1) * gap);
                 gap = spacing - nodeLayout.getHeight();
                 nodeLayout.setHeight(nodeLayout.getHeight() * heightY + (heightY - 1) * gap);
+
             }
+        }
+
+        for (PEdge edge : pgraph.getEdges()) {
+            KEdge originEdge = (KEdge) edge.getProperty(Properties.ORIGIN);
+            KEdgeLayout edgeLayout = originEdge.getData(KEdgeLayout.class);
+            System.out.println(edge.toString() + ": " + edgeLayout.toString());
+        }
+
+        for (PNode node : pgraph.getNodes()) {
+            KShapeLayout nodeLayout = ((KNode) node.getProperty(Properties.ORIGIN))
+                    .getData(KShapeLayout.class);
+            System.out.println(node.toString() + ": " + nodeLayout.toString());
         }
     }
 
@@ -524,7 +547,7 @@ public class PGraphFactory {
         // for (int i = 0; i <= x; i++) {
         // for (int y = 0; y < grid.getHeight(); y++) {
         // if (grid.get(i, y) != null) {
-        // // TODO this is not enough, because the bendpoints aren't adjusted!!!!
+        // // to do: this is not enough, because the bendpoints aren't adjusted!!!!
         // KShapeLayout nodeLayout = ((KNode) grid.get(i, y).getProperty(
         // Properties.ORIGIN)).getData(KShapeLayout.class);
         // nodeLayout.setYpos(nodeLayout.getXpos() - restDistance);
@@ -549,24 +572,49 @@ public class PGraphFactory {
     }
 
     /**
-     * maps the relative coordinates to real pixel coordinates on the screen.
+     * Maps the relative coordinates to real pixel coordinates on the screen.
      * 
      * @param x
      *            relative coordinate
      * @return real coordinate
      */
-    private double mapToRealX(final double x) {
+    private double mapNodeToRealX(final double x) {
         return this.startX + x * this.spacing;
     }
 
     /**
-     * maps the relative coordinates to real pixel coordinates on the screen.
+     * Maps the relative coordinates to real pixel coordinates on the screen. Edges needs a point to
+     * the middle of a node.
+     * 
+     * @param x
+     *            relative coordinate
+     * @return real coordinate
+     */
+    private double mapEdgeToRealX(final double x) {
+        return this.startX + x * this.spacing;
+    }
+
+    /**
+     * Maps the relative coordinates to real pixel coordinates on the screen.
      * 
      * @param y
      *            relative coordinate
      * @return real coordinate
      */
-    private double mapToRealY(final double y) {
+    private double mapNodeToRealY(final double y) {
         return this.startY + y * this.spacing;
     }
+
+    /**
+     * Maps the relative coordinates to real pixel coordinates on the screen. Edges needs a point to
+     * the middle of a node.
+     * 
+     * @param y
+     *            relative coordinate
+     * @return real coordinate
+     */
+    private double mapEdgeToRealY(final double y) {
+        return this.startY + y * this.spacing;
+    }
+
 }

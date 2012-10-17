@@ -56,6 +56,21 @@ public class GridRepresentation {
     }
 
     /**
+     * Removes a high-degree node from the grid. A high-degree node has more than one grid postion.
+     * 
+     * @param node
+     */
+    public void removeHDNode(final PNode hdNode) {
+        for (int x = 0; x < getWidth(); x++) {
+            for (int y = 0; y < getHeight(); y++) {
+                if (get(x, y) == hdNode) {
+                    nodePositions[x][y] = null;
+                }
+            }
+        }
+    }
+
+    /**
      * Gives the entry of the grid for a position.
      * 
      * @param x
