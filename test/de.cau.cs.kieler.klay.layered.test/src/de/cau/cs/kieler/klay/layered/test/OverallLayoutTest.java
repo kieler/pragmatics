@@ -59,14 +59,14 @@ public class OverallLayoutTest {
         node1.getData(KShapeLayout.class).setWidth(30);
         node1.getData(KShapeLayout.class).setHeight(30);
         node1.getData(KShapeLayout.class).setProperty(LayoutOptions.SIZE_CONSTRAINT,
-                SizeConstraint.FIXED);
+                SizeConstraint.fixed());
         
         KNode node2 = KimlUtil.createInitializedNode();
         node2.setParent(parentNode);
         node2.getData(KShapeLayout.class).setWidth(30);
         node2.getData(KShapeLayout.class).setHeight(30);
         node2.getData(KShapeLayout.class).setProperty(LayoutOptions.SIZE_CONSTRAINT,
-                SizeConstraint.FIXED);
+                SizeConstraint.fixed());
         
         KEdge edge1 = KimlUtil.createInitializedEdge();
         edge1.setSource(node1);
