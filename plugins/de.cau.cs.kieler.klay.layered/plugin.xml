@@ -125,9 +125,6 @@
                default="OUTSIDE"
                option="de.cau.cs.kieler.klay.layered.portLabelPlacement">
          </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.sizeConstraintBeta">
-         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
@@ -285,15 +282,6 @@
                option="de.cau.cs.kieler.edgeRouting"
                value="ORTHOGONAL">
          </dependency>
-      </layoutOption>
-      <layoutOption
-            appliesTo="nodes"
-            class="de.cau.cs.kieler.kiml.options.SizeConstraint"
-            default=""
-            description="Whether the size of a node is fixed, or how to minimize its size"
-            id="de.cau.cs.kieler.sizeConstraintBeta"
-            name="Size Constraint BETA"
-            type="enumset">
       </layoutOption>
    </extension>
 
