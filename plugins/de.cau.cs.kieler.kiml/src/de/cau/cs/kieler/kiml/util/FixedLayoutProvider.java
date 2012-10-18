@@ -26,7 +26,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.SizeConstraint;
 
 /**
  * A layout provider that sets fixed positions for all elements. These positions are taken
@@ -66,7 +65,8 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             if (pos != null) {
                 nodeLayout.applyVector(pos);
                 // set the fixed size of the node
-                if (nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT) != SizeConstraint.FIXED) {
+                // TODO Think about whether this makes sense with the new size constraint options.
+                if (!nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT).isEmpty()) {
                     float width = nodeLayout.getProperty(LayoutOptions.MIN_WIDTH);
                     float height = nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT);
                     if (width > 0 && height > 0) {

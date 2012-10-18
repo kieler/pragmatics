@@ -14,35 +14,49 @@
 package de.cau.cs.kieler.kiml.options;
 
 /**
- * Definition of size constraints.
+ * Things to take into account when determining the size of a node. Each item of this enumeration
+ * corresponds to something a layout algorithm should pay attention to when calculating node sizes.
+ * Usually, one will use a combination of these values in an {@code EnumSet} instance, with the
+ * empty set meaning that node sizes are fixed.
  * 
- * FIXME an enumeration seems not to be a good idea for this type of constraint; maybe a bit vector?
+ * <p><i>Note:</i> Layout algorithms may only support a subset of these options.</p>
  *
  * @author msp
+ * @author cds
  */
 public enum SizeConstraint {
     
     /**
-     * The size shall not be changed (except if the node has a nested subgraph).
+     * The number of ports and their position should be taken into account when determining the
+     * size of nodes. The sum of port widths and heights and the minimum spacing between ports
+     * is a lower bound for the node size.
      */
-    FIXED,
+    PORTS,
+    
     /**
-     * Minimize the size, but consider ports in calculation. The sum of port widths and heights
-     * is a lower bound for the node size, and the default minimal size and corresponding layout
-     * options are also considered (see {@link #MIN_DEFAULT}).
+     * Ports labels are taken into account when determining the size of nodes. Depending on where
+     * the labels are positioned the node will be made large enough to avoid overlaps and to try
+     * to place labels in as unambiguous a way as possible.
      */
-    MIN_PORTS,
+    PORT_LABELS,
+    
     /**
-     * Minimize the size to a default value. The minimal value given by layout options
-     * (see {@link #MIN_OPTION}) are also considered.
+     * A node's labels are taken into account.
      */
-    MIN_DEFAULT,
+    NODE_LABELS,
+    
     /**
-     * Minimize the size to the value given by the layout options {@link LayoutOptions#MIN_WIDTH}
-     * and {@link LayoutOptions#MIN_HEIGHT}. These values are usually determined automatically
-     * and depend on the specific diagram viewer.
+     * If set, a node's size will be at least the minimum size set on it. If no minimum size is set,
+     * the behaviour depends on whether the {@link #DEFAULT_MINIMUM_SIZE} constraint is set as well.
      */
-    MIN_OPTION;
+    MINIMUM_SIZE,
+    
+    /**
+     * If no minimum size is set on an element, the minimum size options are assumed to be some
+     * default value.
+     */
+    DEFAULT_MINIMUM_SIZE;
+    
     
     /**
      * Returns the enumeration value related to the given ordinal.
@@ -53,25 +67,4 @@ public enum SizeConstraint {
     public static SizeConstraint valueOf(final int i) {
         return values()[i];
     }
-    
-    /**
-     * Whether the node size shall be minimized and ports are considered when calculating
-     * the minimal size.
-     * 
-     * @return true if ports are considered
-     */
-    public boolean arePortsConsidered() {
-        return this == MIN_PORTS;
-    }
-    
-    /**
-     * Whether the node size shall be minimized and the default minimal size value is considered
-     * when calculating the minimal size.
-     * 
-     * @return true if the default minimal size is considered
-     */
-    public boolean isDefSizeConsidered() {
-        return this == MIN_PORTS || this == MIN_DEFAULT;
-    }
-
 }

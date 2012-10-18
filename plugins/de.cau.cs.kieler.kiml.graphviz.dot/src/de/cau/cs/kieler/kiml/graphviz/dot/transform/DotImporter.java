@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.graphviz.dot.transform;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -259,7 +260,9 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
             } else if (Attributes.FIXEDSIZE.equals(name)) {
                 Boolean fixedSize = Boolean.valueOf(value);
                 target.setProperty(LayoutOptions.SIZE_CONSTRAINT,
-                        fixedSize ? SizeConstraint.FIXED : SizeConstraint.MIN_DEFAULT);
+                        fixedSize
+                            ? EnumSet.noneOf(SizeConstraint.class)
+                            : EnumSet.of(SizeConstraint.MINIMUM_SIZE));
             } else if (Attributes.CONCENTRATE.equals(name)) {
                 target.setProperty(Attributes.CONCENTRATE_PROP, Boolean.valueOf(value));
             } else if (Attributes.DAMPING.equals(name)) {

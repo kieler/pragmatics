@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.ui.service;
 
 import java.util.Map.Entry;
+import java.util.EnumSet;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
@@ -205,19 +206,19 @@ public class EclipseLayoutConfig implements ILayoutConfig {
      * @return {@code FIXED} if the selected node has no children, and {@code MIN_PORTS} or
      *          {@code MIN_DEFAULT} otherwise
      */
-    private SizeConstraint getSizeConstraintValue(final LayoutContext context) {
+    private EnumSet<SizeConstraint> getSizeConstraintValue(final LayoutContext context) {
         Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
         if (targets != null && targets.contains(LayoutOptionData.Target.NODES)) {
             if (!targets.contains(LayoutOptionData.Target.PARENTS)) {
-                return SizeConstraint.FIXED;
+                return EnumSet.noneOf(SizeConstraint.class);
             }
             Boolean hasPorts = context.getProperty(DefaultLayoutConfig.HAS_PORTS);
             if (hasPorts != null && hasPorts) {
-                return SizeConstraint.MIN_PORTS;
+                return EnumSet.of(SizeConstraint.PORTS);
             }
-            return SizeConstraint.MIN_DEFAULT;
+            return EnumSet.of(SizeConstraint.MINIMUM_SIZE);
         }
-        return null;
+        return EnumSet.noneOf(SizeConstraint.class);
     }
     
     /**
