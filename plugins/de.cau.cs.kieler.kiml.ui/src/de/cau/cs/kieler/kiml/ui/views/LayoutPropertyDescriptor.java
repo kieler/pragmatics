@@ -86,6 +86,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
          * {@inheritDoc}
          */
         @Override
+        @SuppressWarnings("rawtypes")
         public String getText(final Object element) {
             switch (optionData.getType()) {
             case STRING:
