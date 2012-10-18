@@ -149,7 +149,7 @@ public class RectShapeEdgeProperties {
     /**
      * @param next the next to set
      */
-    public void setNext(PEdge next) {
+    public void setNext(final PEdge next) {
         this.next = next;
     }
 
@@ -163,7 +163,7 @@ public class RectShapeEdgeProperties {
     /**
      * @param previousFront the previousFront to set
      */
-    public void setPreviousFront(PEdge previousFront) {
+    public void setPreviousFront(final PEdge previousFront) {
         this.previousFront = previousFront;
     }
 

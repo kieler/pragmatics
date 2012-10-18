@@ -182,6 +182,15 @@ public class PGraph extends PNode {
         return addNode(edge, NodeType.NORMAL);
     }
 
+    /**
+     * Adds a node with into an edge orientated at the targetnode with node type NORMAL.
+     * 
+     * @param edge
+     *            the splittable edge
+     * @param targetNode
+     *            defines the embedding of the new node * @return pair of the new node and the new
+     *            dummy edge with which it the edge is split.
+     * */
     public Pair<PNode, PEdge> addNode(final PEdge edge, final PNode targetNode) {
         return addNode(edge, NodeType.NORMAL, targetNode);
     }
@@ -789,10 +798,15 @@ public class PGraph extends PNode {
     }
 
     /**
+     * Adds a node to the given edge. The target node indicates the embedding.
+     * 
      * @param edge
+     *            that should be split to insert a new node
      * @param type
+     *            the type of the new node
      * @param targetNode
-     * @return
+     *            defines the embedding
+     * @return pair of the new node and the new dummy edge with which it the edge is split.
      */
     public Pair<PNode, PEdge> addNode(final PEdge edge, final NodeType type, final PNode targetNode) {
         if (!(edge.getSource() instanceof PNode && edge.getTarget() instanceof PNode)) {

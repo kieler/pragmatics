@@ -33,6 +33,9 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  */
 public class ExpansionCycleProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
+    /** Nodes with a higher degree than four are called high-degree nodes. */
+    private static final int HIGH_DEGREE_BORDER = 4;
+
     /**
      * {@inheritDoc}
      */
@@ -42,7 +45,7 @@ public class ExpansionCycleProcessor extends AbstractAlgorithm implements ILayou
         // filter nodes with degree higher than 4.
         List<PNode> hiDeNodes = Lists.newLinkedList();
         for (PNode node : pgraph.getNodes()) {
-            if (node.getAdjacentEdgeCount() > 4) {
+            if (node.getAdjacentEdgeCount() > HIGH_DEGREE_BORDER) {
                 hiDeNodes.add(node);
             }
         }
@@ -118,12 +121,17 @@ public class ExpansionCycleProcessor extends AbstractAlgorithm implements ILayou
         getMonitor().done();
     }
 
-
     /**
      * Changes the source or/and target of an edge.
      * 
+     * @param graph
+     *            pgraph environment
      * @param edge
-     *            , selected PEdge
+     *            the changable edge
+     * @param newNode
+     *            new node
+     * @param oldEndPoint
+     *            old node which should be removed
      */
     public void switchEdge(final PGraph graph, final PEdge edge, final PNode newNode,
             final PNode oldEndPoint) {
@@ -139,10 +147,15 @@ public class ExpansionCycleProcessor extends AbstractAlgorithm implements ILayou
         graph.setChangedFaces();
 
     }
+
     /**
      * Sets a property to all expansion cycle faces, to identify them at the flow network creation.
+     * 
+     * @param graph
+     *            , the graph for which the expansion cycle faces should be marked
+     * 
      */
-    private void markExpCycleFaces(PGraph graph) {
+    private void markExpCycleFaces(final PGraph graph) {
         for (PFace face : graph.getFaces()) {
             boolean wantsMark = true;
             for (PNode node : face.adjacentNodes()) {
@@ -157,6 +170,5 @@ public class ExpansionCycleProcessor extends AbstractAlgorithm implements ILayou
             }
         }
     }
-    
 
 }

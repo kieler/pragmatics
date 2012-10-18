@@ -115,6 +115,17 @@ public class OrthogonalRepresentation {
     }
 
     /**
+     * Removes all bend-data of an edge. Secondly the edge is removed from the orthogonal
+     * representation.
+     * 
+     * @param edge
+     *            to be removed edge
+     */
+    public void removeBendEntry(final PEdge edge) {
+        this.bendData.remove(edge);
+    }
+
+    /**
      * Get the angles in a node in the graph.
      * 
      * @param node
@@ -137,6 +148,17 @@ public class OrthogonalRepresentation {
      */
     public void setAngles(final PNode node, final List<Pair<PEdge, OrthogonalAngle>> angles) {
         this.angleData.put(node, angles);
+    }
+
+    /**
+     * Removes all angle-data of a node. Secondly the node is removed from the orthogonal
+     * representation.
+     * 
+     * @param node
+     *            to be removed node
+     */
+    public void removeAngleEntry(final PNode node) {
+        this.angleData.remove(node);
     }
 
 }

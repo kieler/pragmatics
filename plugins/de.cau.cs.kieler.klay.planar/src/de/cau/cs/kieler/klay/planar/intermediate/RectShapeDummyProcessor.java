@@ -306,7 +306,14 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
             do {
                 if ((edgeProperties.getTurn() == 1 || edgeProperties.getTurn() == 2)
                         && edgeProperties.getFront() != RectShapeEdgeProperties.EMPTY_FRONT) {
-                    addArtificial(currentEdge, edgeProperties, false, face.adjacentEdges());
+                    if (edgeProperties.getFront() == startEdge) {
+                        startNode = startEdge.getOppositeNode(startNode);
+                        addArtificial(currentEdge, edgeProperties, false, face.adjacentEdges());
+                        startNode = startEdge.getOppositeNode(startNode);
+                    } else {
+                        addArtificial(currentEdge, edgeProperties, false, face.adjacentEdges());
+
+                    }
                 }
                 next = edgeProperties.getNext();
                 currentEdge = next;
@@ -506,7 +513,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
             }
 
             // runs at least twice along a full angle node.
-            if (counter == 3) {
+            if (counter > 2) {
                 finish = true;
             }
 
@@ -555,11 +562,14 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
      * @param edge
      *            currentEdge
      * @param edgeProperties
-     *            of that edge, cutedges have two edge properties.
+     *            of that edge, cutedges have two edge properties
      * @param isExternal
+     *            indicates whether the face is external or not
+     * @param faceEdges
+     *            all edges of the face
      */
     private void addArtificial(final PEdge edge, final RectShapeEdgeProperties edgeProperties,
-            final boolean isExternal, Iterable<PEdge> faceEdges) {
+            final boolean isExternal, final Iterable<PEdge> faceEdges) {
         PNode corner = edgeProperties.getCorner();
         PEdge front = edgeProperties.getFront();
         RectShapeEdgeProperties frontProperties = front
@@ -677,7 +687,8 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
 
             backDirectionProps.setPreviousEdge(virtualEdge);
 
-            Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProp = new Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>(
+            Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProp 
+                = new Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>(
                     vEdgeProperties1, vEdgeProperties2);
             virtualEdge.setProperty(Properties.RECT_SHAPE_CUTEDGE, cutEdgeProp);
 

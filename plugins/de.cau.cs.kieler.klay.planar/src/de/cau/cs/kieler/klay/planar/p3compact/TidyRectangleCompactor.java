@@ -70,7 +70,8 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     private PNode sink;
 
     /** Intermediate processing configuration with Quod high-degree strategy. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_QUOD = new IntermediateProcessingConfiguration(
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_QUOD 
+        = new IntermediateProcessingConfiguration(
     // Before Phase 1
             null,
             // Before Phase 2
@@ -88,7 +89,8 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                     LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER));
 
     /** Intermediate processing configuration with Giotto high-degree strategy. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO = new IntermediateProcessingConfiguration(
+    private static final IntermediateProcessingConfiguration 
+        INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO = new IntermediateProcessingConfiguration(
             // Before Phase 1
             null,
             // Before Phase 2

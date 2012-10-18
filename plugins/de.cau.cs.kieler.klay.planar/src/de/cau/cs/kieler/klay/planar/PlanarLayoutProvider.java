@@ -63,14 +63,16 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
     /** phase 4: algorithm for compaction. */
     private ILayoutPhase compactor = new TidyRectangleCompactor();
 
-    /** connected components processor. */
-    private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
+//    /** connected components processor. */
+//    private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
 
     /** intermediate layout processor configuration. */
-    private IntermediateProcessingConfiguration intermediateProcessingConfiguration = new IntermediateProcessingConfiguration();
+    private IntermediateProcessingConfiguration intermediateProcessingConfiguration 
+        = new IntermediateProcessingConfiguration();
 
     /** collection of instantiated intermediate modules. */
-    private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache = new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
+    private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache 
+        = new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
 
     /** list of layout processors that compose the current algorithm. */
     private List<ILayoutProcessor> algorithm = new LinkedList<ILayoutProcessor>();
@@ -157,7 +159,8 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
     private void updateModules(final PGraph graph) {
 
         // check which planarity test algorithm should be used
-        if (graph.getProperty(Properties.PLANAR_TESTING_ALGORITHM) == PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM) {
+        if (graph.getProperty(Properties.PLANAR_TESTING_ALGORITHM) 
+                == PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM) {
             if (!(this.subgraphBuilder instanceof BoyerMyrvoldPlanarSubgraphBuilder)) {
                 this.subgraphBuilder = new BoyerMyrvoldPlanarSubgraphBuilder();
             }
@@ -172,7 +175,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
                 .getIntermediateProcessingStrategy(graph);
 
         LayoutProcessorStrategy removableProcessor = null;
-        HighDegreeNodeStrategy property = graph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) ;
+        HighDegreeNodeStrategy property = graph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY);
         if (property == HighDegreeNodeStrategy.QUOD) {
             removableProcessor = LayoutProcessorStrategy.GIOTTO_DUMMY_REMOVER;
         } else {
@@ -182,8 +185,9 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         Set<LayoutProcessorStrategy> processors = adjustedStrategy
                 .getProcessors(IntermediateProcessingConfiguration.AFTER_PHASE_4);
         for (LayoutProcessorStrategy strategy : processors) {
-            if(strategy == removableProcessor){
-                adjustedStrategy.removeLayoutProcessor(IntermediateProcessingConfiguration.AFTER_PHASE_4, strategy);
+            if (strategy == removableProcessor) {
+                adjustedStrategy.removeLayoutProcessor(
+                        IntermediateProcessingConfiguration.AFTER_PHASE_4, strategy);
                 break;
             }
         }
@@ -194,23 +198,26 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
                 .addAll(subgraphBuilder.getIntermediateProcessingStrategy(graph))
                 .addAll(edgeInserter.getIntermediateProcessingStrategy(graph))
                 .addAll(orthogonalizer.getIntermediateProcessingStrategy(graph))
-                .addAll(compactor
-                        .getIntermediateProcessingStrategy(graph))
+                .addAll(compactor.getIntermediateProcessingStrategy(graph))
                 .addAll(this.getIntermediateProcessingStrategy(graph));
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
         algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
+                .addAll(getIntermediateProcessorList(
+                        IntermediateProcessingConfiguration.BEFORE_PHASE_1));
         algorithm.add(subgraphBuilder);
         algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
+                .addAll(getIntermediateProcessorList(
+                        IntermediateProcessingConfiguration.BEFORE_PHASE_2));
         algorithm.add(edgeInserter);
         algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
+                .addAll(getIntermediateProcessorList(
+                        IntermediateProcessingConfiguration.BEFORE_PHASE_3));
         algorithm.add(orthogonalizer);
         algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
+                .addAll(getIntermediateProcessorList(
+                        IntermediateProcessingConfiguration.BEFORE_PHASE_4));
         algorithm.add(compactor);
         algorithm
                 .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.AFTER_PHASE_4));

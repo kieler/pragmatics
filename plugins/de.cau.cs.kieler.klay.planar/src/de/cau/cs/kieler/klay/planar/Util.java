@@ -67,12 +67,16 @@ public final class Util {
     }
 
     /**
-     * 
+     * Removes the old temp directory.
      */
     public static void clearTmpDir() {
         String path = Util.getDebugOutputPath();
         for (File innerFile : new File(path).listFiles()) {
-            innerFile.delete();
+            try {
+                innerFile.delete();
+            } catch (SecurityException e) {
+                // nothing to do.
+            }
         }
 
     }
@@ -102,7 +106,9 @@ public final class Util {
             graph.writeDotGraph(new FileWriter(new File(path + File.separator + debugFileName
                     + ".dot")), directed);
         } catch (IOException e) {
-            // do nothing
+            // nothing to do
+        } catch (SecurityException se) {
+            // nothing to do
         }
     }
 
@@ -113,7 +119,9 @@ public final class Util {
      * put every found node to the result.
      * 
      * @param graph
+     *            the graph on which the bfs should be done
      * @param startNode
+     *            the root node of the bfs
      * @return a sorted listed from source to the furthermost apart node.
      */
     public static List<PNode> bfsNodes(final PGraph graph, final PNode startNode) {

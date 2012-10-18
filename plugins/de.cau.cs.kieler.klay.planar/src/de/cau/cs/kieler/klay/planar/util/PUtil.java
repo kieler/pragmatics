@@ -28,7 +28,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author pkl
  */
-public class PUtil {
+public final class PUtil {
 
     /**
      * Adds a {@link KVectorChain} of bendpoints to the edge bendpoints. Additionally orders them to
@@ -136,11 +136,12 @@ public class PUtil {
      *            , for which we need to filter the properties container.
      * @param preCurrConnector
      *            , <code>null</code> allowed, if it the edge is a cutedge, used to filter the
-     *            correct properties container. This node is the one between the previous edge
-     *            and the current given edge. This is not the corner.
+     *            correct properties container. This node is the one between the previous edge and
+     *            the current given edge. This is not the corner.
      * @return the {@link RectShapeEdgeProperties} property object of the given edge.
      */
-    public static RectShapeEdgeProperties getProperties(final PEdge edge, final PNode preCurrConnector) {
+    public static RectShapeEdgeProperties getProperties(final PEdge edge,
+            final PNode preCurrConnector) {
         RectShapeEdgeProperties edgeProperties = edge.getProperty(Properties.RECT_SHAPE_PROPERTIES);
         if (edgeProperties != null) {
             return edgeProperties;
@@ -180,6 +181,10 @@ public class PUtil {
         }
 
         return edgeProperties;
+    }
+
+    private PUtil() {
+        // Should not be called.
     }
 
 }

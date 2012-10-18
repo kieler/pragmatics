@@ -39,10 +39,10 @@ public class PFace extends PGraphElement {
 
     /** Generated Version UID for Serialization. */
     private static final long serialVersionUID = 595562864080000947L;
-    
+
     /** Around a face in ccw direction is four times right. */
     private static final int CCW_DIRECTION = 4;
-    
+
     // ======================== Attributes =========================================================
 
     /** The nodes of this face. */
@@ -243,8 +243,8 @@ public class PFace extends PGraphElement {
         }
         Pair<PNode, PEdge> startWithCorner = getProperty(Properties.FACE_DIRECTION);
         if (startWithCorner == null) {
-            throw new InconsistentGraphModelException(
-                    "PFace, isInRectShape: to use this method, the property FACE_DIRECTION has to be defined!");
+            throw new InconsistentGraphModelException("PFace, isInRectShape: to use this method, "
+                    + "the property FACE_DIRECTION has to be defined!");
         }
 
         PEdge startEdge = startWithCorner.getSecond();
@@ -310,7 +310,7 @@ public class PFace extends PGraphElement {
         PEdge first = cutEdges.get(0);
         return new Pair<PNode, PEdge>(first.getSource(), first);
     }
-    
+
     /**
      * Checks for a wanted direction (ccw or cw ) whether a startEdge with successor startNode is in
      * the wanted direction.
@@ -429,8 +429,7 @@ public class PFace extends PGraphElement {
      * @return the next edge after the given start edge adjacent to node and with the counter
      *         clockwise angle.
      */
-    public Pair<PEdge, OrthogonalAngle> nextCCWEdgeWithAngle(final PNode node,
-            final PEdge startEdge) {
+    public Pair<PEdge, OrthogonalAngle> nextCCWEdgeWithAngle(final PNode node, final PEdge startEdge) {
 
         OrthogonalRepresentation ortho = getParent().getProperty(Properties.ORTHO_REPRESENTATION);
         List<Pair<PEdge, OrthogonalAngle>> angles = ortho.getAngles(node);
@@ -482,8 +481,7 @@ public class PFace extends PGraphElement {
      * @return the next edge after the given start edge adjacent to node and with the counter
      *         clockwise angle.
      */
-    public Pair<PEdge, OrthogonalAngle> nextCWEdgeWithAngle(final PNode node,
-            final PEdge startEdge) {
+    public Pair<PEdge, OrthogonalAngle> nextCWEdgeWithAngle(final PNode node, final PEdge startEdge) {
         OrthogonalRepresentation ortho = getParent().getProperty(Properties.ORTHO_REPRESENTATION);
         List<Pair<PEdge, OrthogonalAngle>> angles = ortho.getAngles(node);
 

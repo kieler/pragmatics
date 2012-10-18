@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.planar.intermediate;
 
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
-import de.cau.cs.kieler.klay.planar.p1planar.EdgeInsertionPlanarization;
 
 /**
  * Definition of available intermediate layout processors for the layered layouter. This enumeration
@@ -38,9 +37,15 @@ public enum LayoutProcessorStrategy {
     /** The external face has to be determined for the Tamassia orthogonalization . */
     EXT_FACE,
 
+    /** Creates dummy cages for full angles. */
+    FULL_ANGLE,
+
+    /** Removes dummy cages for full angles. */
+    FULL_ANGLE_REMOVER,
+
     /**
-     * This processor adds dummies if needed to ensure a maximal node degree of four by creation of an
-     * expansion cylce.
+     * This processor adds dummies if needed to ensure a maximal node degree of four by creation of
+     * an expansion cylce.
      */
     EXPANSION_CYCLE,
 
@@ -98,6 +103,10 @@ public enum LayoutProcessorStrategy {
             return new ExternalFaceProcessor();
         case EXPANSION_CYCLE:
             return new ExpansionCycleProcessor();
+        case FULL_ANGLE:
+            return new FullAngleDummyProcessor();
+        case FULL_ANGLE_REMOVER:
+            return new FullAngleDummyRemover();
         case BEND_DUMMY:
             return new BendDummyProcessor();
         case RECT_SHAPE_DUMMY:

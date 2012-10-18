@@ -83,6 +83,7 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
         // Initialize more efficient Dijkstra path finder.
         // Condition describes residual network.
         pathFinder = new DijkstraPathFinder();
+        
         ICondition<Pair<PNode, PEdge>> cond = new ICondition<Pair<PNode, PEdge>>() {
             public boolean evaluate(final Pair<PNode, PEdge> object) {
                 PNode node = object.getFirst();
@@ -118,8 +119,19 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
 
             // Update flow along path
             for (PEdge edge : path) {
+
                 int flow = edge.getProperty(FLOW);
                 edge.setProperty(FLOW, flow + value);
+
+                // Special handling of fullangles nodes. they should do not effect the bends.
+//                PGraphElement element = edge.getSource().getProperty(Properties.NETWORK_TO_GRAPH);
+//                if (element instanceof PNode) {
+//                    if (((PNode) element).getAdjacentEdgeCount() == 1
+//                            && !graph.getExternalFace().isAdjacent(((PNode) element))) {
+//                        value = 0;
+//                        edge.setProperty(CAPACITY, edge.getProperty(FLOW));
+//                    }
+//                }
             }
 
             pathFinder.reset();
@@ -129,5 +141,4 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
         network.removeNode(source);
         network.removeNode(sink);
     }
-
 }
