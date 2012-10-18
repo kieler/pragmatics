@@ -413,18 +413,17 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             graphAttrs.add(createAttribute(Attributes.RANKSEP, rankSepFactor * minSpacing / DPI));
             // set layout direction
             switch (parentLayout.getProperty(LayoutOptions.DIRECTION)) {
-            case DOWN:
-                graphAttrs.add(createAttribute(Attributes.RANKDIR, "TB"));
-                break;
             case UP:
                 graphAttrs.add(createAttribute(Attributes.RANKDIR, "BT"));
                 break;
             case LEFT:
                 graphAttrs.add(createAttribute(Attributes.RANKDIR, "RL"));
                 break;
-            default:
+            case RIGHT:
                 graphAttrs.add(createAttribute(Attributes.RANKDIR, "LR"));
                 break;
+            default: //DOWN
+                graphAttrs.add(createAttribute(Attributes.RANKDIR, "TB"));
             }
             // set aspect ratio (formerly crashed dot, but doesn't seem to anymore; see KIELER-1799)
             float aspectRatio = parentLayout.getProperty(LayoutOptions.ASPECT_RATIO);
