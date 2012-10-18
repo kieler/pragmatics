@@ -327,8 +327,9 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * Tries to turn the given string representation into a set over the enumeration of
      * the type given by the class type parameter. The parameter is supposed to be the
      * {@link #clazz} attribute, but has to be given here explicitly for type inference
-     * reasons. The string consists of multiple parts divided by whitespace, with each
-     * part following the convention specified in the comment of {@link #enumForString(String)}.
+     * reasons. The string consists of multiple parts, with each part following the
+     * convention specified in the comment of {@link #enumForString(String)}. The format
+     * of the string is something like {@code [a, b, c]}.
      * 
      * @param leClazz the enumeration class.
      * @param leString the string to convert.
@@ -339,10 +340,15 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         
         EnumSet<E> set = EnumSet.noneOf(leClazz);
         
-        // break the value string into its different components (separated by whitespace)
-        // and iterate over them
-        String[] components = leString.split("\\s+");
+        // break the value string into its different components and iterate over them;
+        // the string will be of the form "[a, b, c]"
+        String[] components = leString.split("[\\[\\]\\s,]+");
         for (String component : components) {
+            // Check for empty strings
+            if (component.trim().length() == 0) {
+                continue;
+            }
+            
             Object o = enumForString(component);
             
             if (o == null) {

@@ -200,7 +200,7 @@ public class LayoutPropertySource implements IPropertySource {
 
         case REMOTE_ENUMSET:
             // TODO Implement
-            
+            return value;
         case OBJECT:
             return value.toString();
         default:
@@ -242,6 +242,7 @@ public class LayoutPropertySource implements IPropertySource {
                             elementString.append(" ").append(s);
                         }
                         value = optionData.parseValue(elementString.toString());
+                        break;
                     case REMOTE_ENUMSET:
                         // TODO: Implement
                         break;

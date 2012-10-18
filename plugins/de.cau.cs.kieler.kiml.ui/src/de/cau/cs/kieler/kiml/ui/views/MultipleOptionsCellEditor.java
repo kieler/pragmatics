@@ -78,14 +78,20 @@ public class MultipleOptionsCellEditor extends DialogCellEditor {
     @Override
     protected void updateContents(final Object value) {
         if (value instanceof String[]) {
-            StringBuilder text = new StringBuilder();
+            String[] strArray = (String[]) value;
             
-            for (String item : ((String[]) value)) {
-                text.append(", " + item);
+            if (strArray.length == 0) {
+                super.updateContents("");
+            } else {
+                // Build textual representation
+                StringBuilder text = new StringBuilder();
+                for (String item : strArray) {
+                    text.append(", " + item);
+                }
+                
+                // Drop the leading ", " and update the label
+                super.updateContents(text.substring(2));
             }
-            
-            // Drop the leading ", " and update the label
-            super.updateContents(text.substring(2));
         }
     }
 
@@ -111,8 +117,9 @@ public class MultipleOptionsCellEditor extends DialogCellEditor {
             }
             
             return stringResult;
+        } else {
+            return new String[0];
         }
-        return new String[0];
     }
 
 }

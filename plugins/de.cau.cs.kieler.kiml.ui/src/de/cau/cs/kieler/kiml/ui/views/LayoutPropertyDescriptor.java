@@ -110,16 +110,33 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                 return optionData.getChoices()[(Integer) element];
             case REMOTE_ENUMSET:
             case ENUMSET:
-                EnumSet set = (EnumSet) element;
-                if (set.isEmpty()) {
-                    return "";
+                if (element instanceof String) {
+                    return (String) element;
+                } else if (element instanceof String[]) {
+                    String[] arr = (String[]) element;
+                    if (arr.length == 0) {
+                        return "";
+                    } else {
+                        StringBuilder builder = new StringBuilder();
+                        
+                        for (String s : arr) {
+                            builder.append(", ").append(s);
+                        }
+                        
+                        return builder.substring(2);
+                    }
+                } else if (element instanceof EnumSet) {
+                    EnumSet set = (EnumSet) element;
+                    if (set.isEmpty()) {
+                        return "";
+                    }
+                    
+                    StringBuilder builder = new StringBuilder();
+                    for (Object o : set) {
+                        builder.append(", " + ((Enum) o).name());
+                    }
+                    return builder.substring(2);
                 }
-                
-                StringBuilder builder = new StringBuilder();
-                for (Object o : set) {
-                    builder.append(", " + ((Enum) o).name());
-                }
-                return builder.substring(2);
             default:
                 return element.toString();
             }
