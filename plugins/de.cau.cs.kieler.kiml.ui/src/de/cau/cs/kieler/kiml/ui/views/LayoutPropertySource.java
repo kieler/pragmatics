@@ -156,6 +156,7 @@ public class LayoutPropertySource implements IPropertySource {
      * @param optionData the corresponding layout option data
      * @return a cell editor value
      */
+    @SuppressWarnings("rawtypes")
     private static Object translateValue(final Object value, final LayoutOptionData<?> optionData) {
         if (value == null) {
             return "";
