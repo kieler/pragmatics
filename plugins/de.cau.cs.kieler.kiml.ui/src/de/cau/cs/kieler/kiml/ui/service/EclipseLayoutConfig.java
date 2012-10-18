@@ -210,15 +210,15 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
         if (targets != null && targets.contains(LayoutOptionData.Target.NODES)) {
             if (!targets.contains(LayoutOptionData.Target.PARENTS)) {
-                return EnumSet.noneOf(SizeConstraint.class);
+                return SizeConstraint.fixed();
             }
             Boolean hasPorts = context.getProperty(DefaultLayoutConfig.HAS_PORTS);
             if (hasPorts != null && hasPorts) {
-                return EnumSet.of(SizeConstraint.PORTS);
+                return SizeConstraint.defaultMinimumSizeWithPorts();
             }
-            return EnumSet.of(SizeConstraint.MINIMUM_SIZE);
+            return SizeConstraint.defaultMinimumSize();
         }
-        return EnumSet.noneOf(SizeConstraint.class);
+        return SizeConstraint.fixed();
     }
     
     /**

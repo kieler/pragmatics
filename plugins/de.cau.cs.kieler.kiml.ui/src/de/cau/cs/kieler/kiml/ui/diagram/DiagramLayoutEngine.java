@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.ui.diagram;
 
-import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -411,7 +410,7 @@ public class DiagramLayoutEngine {
                                     LayoutContext.GRAPH_ELEM, true);
                             // do not change the size of the child node
                             vlc.setValue(LayoutOptions.SIZE_CONSTRAINT, child,
-                                    LayoutContext.GRAPH_ELEM, EnumSet.noneOf(SizeConstraint.class));
+                                    LayoutContext.GRAPH_ELEM, SizeConstraint.fixed());
                             // do not move the ports of the child node
                             vlc.setValue(LayoutOptions.PORT_CONSTRAINTS, child,
                                     LayoutContext.GRAPH_ELEM, PortConstraints.FIXED_POS);

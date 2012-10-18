@@ -484,7 +484,7 @@ public final class KimlUtil {
         }
         
         // set fixed size option for the node: now the size is assumed to stay as determined here
-        nodeLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT, EnumSet.noneOf(SizeConstraint.class));
+        nodeLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
         
         return new KVector(widthRatio, heightRatio);
     }

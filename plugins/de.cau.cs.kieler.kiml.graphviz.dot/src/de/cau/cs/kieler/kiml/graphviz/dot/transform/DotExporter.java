@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.graphviz.dot.transform;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -802,7 +801,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                                 }
                                 KimlUtil.resizeNode(parentNode, width, height, false);
                                 parentLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT,
-                                        EnumSet.noneOf(SizeConstraint.class));
+                                        SizeConstraint.fixed());
                                 break attr_loop;
                             } catch (NumberFormatException exception) {
                                 // ignore exception

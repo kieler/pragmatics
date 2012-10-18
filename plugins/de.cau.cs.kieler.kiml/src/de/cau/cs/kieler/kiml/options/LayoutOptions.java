@@ -244,8 +244,7 @@ public final class LayoutOptions {
      */
     public static final IProperty<EnumSet<SizeConstraint>> SIZE_CONSTRAINT =
             new Property<EnumSet<SizeConstraint>>(
-                    "de.cau.cs.kieler.sizeConstraint",
-                    EnumSet.noneOf(SizeConstraint.class));
+                    "de.cau.cs.kieler.sizeConstraint", SizeConstraint.fixed());
     
     /**
      * Overall spacing between elements. This is mostly interpreted as the minimal distance

@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.options;
 
+import java.util.EnumSet;
+
 /**
  * Things to take into account when determining the size of a node. Each item of this enumeration
  * corresponds to something a layout algorithm should pay attention to when calculating node sizes.
@@ -66,5 +68,35 @@ public enum SizeConstraint {
      */
     public static SizeConstraint valueOf(final int i) {
         return values()[i];
+    }
+    
+    
+    /**
+     * Returns an empty enum set over this enumeration, which corresponds to fixed size constraints.
+     * 
+     * @return set over this enumeration representing fixed size constraints.
+     */
+    public static EnumSet<SizeConstraint> fixed() {
+        return EnumSet.noneOf(SizeConstraint.class);
+    }
+    
+    /**
+     * Returns a set containing the common combination of {@link #MINIMUM_SIZE} and
+     * {@link #DEFAULT_MINIMUM_SIZE}.
+     * 
+     * @return set with default minimum size constraint combination.
+     */
+    public static EnumSet<SizeConstraint> defaultMinimumSize() {
+        return EnumSet.of(MINIMUM_SIZE, DEFAULT_MINIMUM_SIZE);
+    }
+    
+    /**
+     * Returns a set containing the common combination of {@link #MINIMUM_SIZE},
+     * {@link #DEFAULT_MINIMUM_SIZE}, and {@link #PORTS}.
+     * 
+     * @return set with default minimum size constraint combination with ports.
+     */
+    public static EnumSet<SizeConstraint> defaultMinimumSizeWithPorts() {
+        return EnumSet.of(PORTS, MINIMUM_SIZE, DEFAULT_MINIMUM_SIZE);
     }
 }
