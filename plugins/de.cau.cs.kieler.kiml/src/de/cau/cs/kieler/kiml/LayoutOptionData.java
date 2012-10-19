@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml;
 
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -317,7 +318,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             }
             return null;
         case REMOTE_ENUMSET:
-            // TODO Implement
+            checkRemoteEnumoptions();
+            return (T) remoteEnumSetForStringArray(valueString);
         default:
             throw new IllegalStateException("Invalid type set for this layout option.");
         }
@@ -358,6 +360,48 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             } else {
                 // add the enumeration object to the set
                 set.add(leClazz.cast(o));
+            }
+        }
+        
+        return set;
+    }
+    
+    /**
+     * Tries to turn the given string representation into a set over the possible string
+     * choices given by the remote enumset. The string consists of multiple parts, with
+     * each part following the convention specified in the comment of
+     * {@link #enumForString(String)}. The format of the string is something like
+     * {@code [a, b, c]}.
+     * 
+     * @param leString the string to convert.
+     * @return the set.
+     */
+    private Set<String> remoteEnumSetForStringArray(final String leString) {
+        Set<String> set = new HashSet<String>();
+        
+        // break the value string into its different components and iterate over them;
+        // the string will be of the form "[a, b, c]"
+        String[] components = leString.split("[\\[\\]\\s,]+");
+        for (String component : components) {
+            // Check for empty strings
+            if (component.trim().length() == 0) {
+                continue;
+            }
+            
+            // Check if we have a valid option
+            boolean found = false;
+            int i;
+            for (i = 0; i < choices.length; i++) {
+                if (choices[i].equalsIgnoreCase(component)) {
+                    found = true;
+                    break;
+                }
+            }
+            
+            if (found) {
+                set.add(choices[i]);
+            } else {
+                return null;
             }
         }
         
@@ -439,7 +483,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             checkRemoteEnumoptions();
             return (T) choices[0];
         case REMOTE_ENUMSET:
-            // TODO Implement
+            checkRemoteEnumoptions();
+            return (T) new HashSet<String>();
         default:
             throw new IllegalStateException("Invalid type set for this layout option.");
         }
@@ -475,7 +520,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
                 checkRemoteEnumoptions();
                 break;
             case REMOTE_ENUMSET:
-                // TODO Implement
+                checkRemoteEnumoptions();
+                break;
             default:
                 choices = new String[0];
             }

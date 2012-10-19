@@ -400,8 +400,24 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
                     optionData.setType(LayoutOptionData.Type.REMOTE_ENUM);
                     optionData.parseRemoteEnumValues(element.getAttribute(ATTRIBUTE_ENUMVALUES));
                 }
-//            } else if (optionType.equals(LayoutOptionData.REMOTEENUMSET_LITERAL)) {
-                // TODO Implement
+            } else if (optionType.equals(LayoutOptionData.REMOTEENUMSET_LITERAL)) {
+                // Compatibility fix. KIML needs the concrete enumeration instances.
+                // If the implementation is not from the main KIML plug-in, fall back
+                // to standard remote enumeration.
+                String implementation = element.getAttribute(ATTRIBUTE_IMPLEMENTATION);
+                if (implementation != null) {
+                    try {
+                        Class<?> enumClass = Platform.getBundle(PLUGIN_ID).loadClass(implementation);
+                        optionData.setType(LayoutOptionData.Type.ENUMSET);
+                        optionData.setOptionClass(enumClass);
+                    } catch (Exception e) {
+                        optionData.setType(LayoutOptionData.Type.UNDEFINED);
+                    }
+                }
+                if (optionData.getType().equals(LayoutOptionData.Type.UNDEFINED)) {
+                    optionData.setType(LayoutOptionData.Type.REMOTE_ENUMSET);
+                    optionData.parseRemoteEnumValues(element.getAttribute(ATTRIBUTE_ENUMVALUES));
+                }
             } else {
                 optionData.setType(optionType);
                 optionData.setOptionClass(loadClass(element));

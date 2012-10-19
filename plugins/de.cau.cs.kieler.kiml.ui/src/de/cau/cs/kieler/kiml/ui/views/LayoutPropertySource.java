@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -188,20 +187,22 @@ public class LayoutPropertySource implements IPropertySource {
             }
             return value;
         case ENUMSET:
-            EnumSet set = (EnumSet) value;
+        case REMOTE_ENUMSET:
+            Set set = (Set) value;
             String[] result = new String[set.size()];
             
             Iterator iterator = set.iterator();
             for (int i = 0; iterator.hasNext(); i++) {
-                Enum e = (Enum) iterator.next();
-                result[i] = e.name();
+                Object o = iterator.next();
+                
+                if (o instanceof Enum) {
+                    result[i] = ((Enum) o).name();
+                } else {
+                    result[i] = ((String) o);
+                }
             }
             
             return result;
-
-        case REMOTE_ENUMSET:
-            // TODO Implement
-            return value;
         case OBJECT:
             return value.toString();
         default:
@@ -235,17 +236,15 @@ public class LayoutPropertySource implements IPropertySource {
                         value = optionData.getChoices()[(Integer) value];
                         break;
                     case ENUMSET:
+                    case REMOTE_ENUMSET:
                         // The returned value is a string array that we will turn into a string
                         // of elements separated by whitespace. We can then use LayoutOptionData
-                        // to obtain a proper EnumSet
+                        // to obtain a proper set
                         StringBuilder elementString = new StringBuilder();
                         for (String s : (String[]) value) {
                             elementString.append(" ").append(s);
                         }
                         value = optionData.parseValue(elementString.toString());
-                        break;
-                    case REMOTE_ENUMSET:
-                        // TODO: Implement
                         break;
                     default:
                         value = optionData.parseValue((String) value);
