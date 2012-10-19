@@ -27,6 +27,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.klay.planar.PConstants;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
 import de.cau.cs.kieler.klay.planar.p3compact.HighDegreeNodeStrategy;
@@ -340,7 +341,8 @@ public class PGraphFactory {
             KVectorChain bendPoints = edge.getBendPoints();
 
             // set source and target position
-            if (pgraph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) == HighDegreeNodeStrategy.GIOTTO) {
+            if (pgraph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) 
+                    == HighDegreeNodeStrategy.GIOTTO) {
                 Pair<Integer, Integer> startPos = edge.getProperty(Properties.START_POSITION);
                 if (startPos != null) {
                     bendPoints.addFirst(mapEdgeToRealX(startPos.getFirst().intValue()),
@@ -397,21 +399,21 @@ public class PGraphFactory {
         for (PNode node : pgraph.getNodes()) {
             List<Integer> hdPos = node.getProperty(Properties.HIGH_DEGREE_POSITIONS);
             if (hdPos != null) {
-                int startX = hdPos.get(0);
-                int startY = hdPos.get(1);
-                int widthX = hdPos.get(2) + 1 - startX;
-                int heightY = hdPos.get(3) + 1 - startY;
+                int x = hdPos.get(PConstants.X_COR);
+                int y = hdPos.get(PConstants.Y_COR);
+                int widthX = hdPos.get(PConstants.WIDTH_POS) + 1 - x;
+                int heightY = hdPos.get(PConstants.HEIGHT_POS) + 1 - y;
 
                 // Remove high-degree node from grid.
                 grid.removeHDNode(node);
 
                 // Sets the hdnode to a single position.
-                grid.set(startX, startY, node);
+                grid.set(x, y, node);
 
                 KShapeLayout nodeLayout = ((KNode) node.getProperty(Properties.ORIGIN))
                         .getData(KShapeLayout.class);
-                nodeLayout.setXpos(((float) mapNodeToRealX(startX)) - nodeLayout.getWidth() / 2);
-                nodeLayout.setYpos(((float) mapNodeToRealY(startY)) - nodeLayout.getHeight() / 2);
+                nodeLayout.setXpos(((float) mapNodeToRealX(x)) - nodeLayout.getWidth() / 2);
+                nodeLayout.setYpos(((float) mapNodeToRealY(y)) - nodeLayout.getHeight() / 2);
                 float gap = spacing - nodeLayout.getWidth();
                 nodeLayout.setWidth(nodeLayout.getWidth() * widthX + (widthX - 1) * gap);
                 gap = spacing - nodeLayout.getHeight();

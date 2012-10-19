@@ -27,6 +27,7 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
  * @author ocl
  * @kieler.rating proposed yellow by pkl
  */
+@SuppressWarnings("deprecation")
 public abstract class AbstractPathFinder extends AbstractAlgorithm implements IPathFinder {
 
     /**

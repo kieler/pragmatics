@@ -77,6 +77,9 @@ public class PEdge extends PGraphElement {
         this.isDirected = directed;
     }
 
+    /**
+     * Can be used to define dummy edges.
+     */
     public PEdge() {
         super(-1, null);
     }

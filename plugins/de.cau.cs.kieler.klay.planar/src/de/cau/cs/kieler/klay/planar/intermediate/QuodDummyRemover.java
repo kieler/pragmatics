@@ -22,10 +22,10 @@ import com.google.common.collect.Sets;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
+import de.cau.cs.kieler.klay.planar.PConstants;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
-import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
@@ -42,9 +42,6 @@ public class QuodDummyRemover extends AbstractAlgorithm implements ILayoutProces
     /** The processed graph. */
     private PGraph graph;
 
-    /** The orthogonal representation of that graph. */
-    private OrthogonalRepresentation orthogonal;
-
     /** The grid representation of that graph. */
     private GridRepresentation grid;
 
@@ -54,7 +51,6 @@ public class QuodDummyRemover extends AbstractAlgorithm implements ILayoutProces
     public void process(final PGraph pgraph) {
         getMonitor().begin("Quod Dummy Removing", 1);
         this.graph = pgraph;
-        this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
         this.grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
 
         // stores the found higher 4 degree nodes.
@@ -62,15 +58,18 @@ public class QuodDummyRemover extends AbstractAlgorithm implements ILayoutProces
 
         calcMetrics(highDegreeNodes);
 
-        calcQuod(highDegreeNodes);
+        calcNodePosition(highDegreeNodes);
 
         getMonitor().done();
     }
 
     /**
+     * Calculates the positions and sizes of high-degree nodes.
+     * 
      * @param highDegreeNodes
+     *            set of high-degree nodes.
      */
-    private void calcMetrics(Set<PNode> highDegreeNodes) {
+    private void calcMetrics(final Set<PNode> highDegreeNodes) {
         for (PNode hDNode : highDegreeNodes) {
 
             // reinsert the node again.
@@ -155,15 +154,15 @@ public class QuodDummyRemover extends AbstractAlgorithm implements ILayoutProces
     }
 
     /**
-     * 
+     * Calculates the high-degree node position.
      */
-    private void calcQuod(Set<PNode> highDegreeNodes) {
+    private void calcNodePosition(final Set<PNode> highDegreeNodes) {
         for (PNode hDNode : highDegreeNodes) {
             List<Integer> positions = hDNode.getProperty(Properties.HIGH_DEGREE_POSITIONS);
-            float smallX = positions.get(0).intValue();
-            float smallY = positions.get(1).intValue();
-            float bigX = positions.get(2).intValue();
-            float bigY = positions.get(3).intValue();
+            float smallX = positions.get(PConstants.X_COR).intValue();
+            float smallY = positions.get(PConstants.Y_COR).intValue();
+            float bigX = positions.get(PConstants.WIDTH_POS).intValue();
+            float bigY = positions.get(PConstants.HEIGHT_POS).intValue();
 
             // add bend point to the end or to the start of the edge.
             for (PEdge edge : hDNode.adjacentEdges()) {
@@ -181,12 +180,12 @@ public class QuodDummyRemover extends AbstractAlgorithm implements ILayoutProces
 
             // set the high degree node to only one grid position.
             int newX = (int) (Math.ceil((bigX - smallX) / 2) + smallX);
-            positions.set(0, newX);
-            positions.set(2, newX);
+            positions.set(PConstants.X_COR, newX);
+            positions.set(PConstants.WIDTH_POS, newX);
 
             int newY = (int) (Math.ceil((bigY - smallY) / 2) + smallY);
-            positions.set(1, newY);
-            positions.set(3, newY);
+            positions.set(PConstants.Y_COR, newY);
+            positions.set(PConstants.HEIGHT_POS, newY);
         }
 
     }

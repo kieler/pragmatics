@@ -32,6 +32,7 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder.IShortestPathFinder;
  * @author ocl
  * @kieler.rating proposed yellow by pkl
  */
+@SuppressWarnings("deprecation")
 public class DijkstraPathFinder extends AbstractPathFinder implements IShortestPathFinder {
 
     /**
@@ -121,6 +122,7 @@ public class DijkstraPathFinder extends AbstractPathFinder implements IShortestP
      *            works backward and that is in general to the root!
      * @param target
      *            , targetNode
+     * @return returns the the edge from source to target.
      */
     public List<PEdge> findReversePath(final PNode source, final PNode target) {
         // Initialize array

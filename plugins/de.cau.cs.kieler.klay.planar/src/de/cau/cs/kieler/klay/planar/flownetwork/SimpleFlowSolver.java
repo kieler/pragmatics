@@ -65,13 +65,19 @@ public class SimpleFlowSolver extends AbstractAlgorithm implements IFlowNetworkS
         List<PNode> bfsNodeList = Util.bfsNodes(network, source);
         for (PNode node : bfsNodeList) {
 
+            //TODO check if this also works!
+            // source or target node has not to check!
+          if (node == source  || node == sink) {
+              continue;
+          }
+            
             Iterator<PEdge> incomingIterator = node.incomingEdges().iterator();
             Iterator<PEdge> outgoingIterator = node.outgoingEdges().iterator();
 
-            // source or target node has not to check!
-            if (!incomingIterator.hasNext() || !outgoingIterator.hasNext()) {
-                continue;
-            }
+//            // source or target node has not to check!
+//            if (!incomingIterator.hasNext() || !outgoingIterator.hasNext()) {
+//                continue;
+//            }
 
             // count incoming flow;
             int incomingFlow = countFlow(incomingIterator);
@@ -90,9 +96,9 @@ public class SimpleFlowSolver extends AbstractAlgorithm implements IFlowNetworkS
 
             } else if (additionalFlow < 0) {
                 // calc shortest path to sink.
-                List<PEdge> reversePath = new DijkstraPathFinder().findPath(node, sink);
+                List<PEdge> path = new DijkstraPathFinder().findPath(node, sink);
                 // add additional flow to all flow edges along that path
-                for (PEdge pEdge : reversePath) {
+                for (PEdge pEdge : path) {
                     pEdge.setProperty(IFlowNetworkSolver.FLOW,
                             pEdge.getProperty(IFlowNetworkSolver.FLOW) - additionalFlow);
                     // additionalFlow is negative so we have to subtract it to add it.

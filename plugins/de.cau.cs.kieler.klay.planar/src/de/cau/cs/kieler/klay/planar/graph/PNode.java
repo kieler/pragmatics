@@ -40,6 +40,8 @@ import de.cau.cs.kieler.klay.planar.util.MappedIterable;
  * @author ocl
  * @author cku
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
+ * 
  */
 public class PNode extends PShape {
 
@@ -220,7 +222,6 @@ public class PNode extends PShape {
      * 
      * @param edge
      *            the edge to add
-     * @return the port the edge was linked to
      */
     public void linkEdge(final PEdge edge) {
         this.edges.add(edge);
@@ -302,6 +303,7 @@ public class PNode extends PShape {
      * 
      * @return iterable object containing incoming edges
      */
+    @SuppressWarnings("deprecation")
     public Iterable<PEdge> incomingEdges() {
         final PNode instance = this;
         return new FilteredIterable<PEdge>(this.edges, new ICondition<PEdge>() {
@@ -318,6 +320,7 @@ public class PNode extends PShape {
      * 
      * @return {@link Iterable}, iterable object containing outgoing edges
      */
+    @SuppressWarnings("deprecation")
     public Iterable<PEdge> outgoingEdges() {
         final PNode instance = this;
         return new FilteredIterable<PEdge>(this.edges, new ICondition<PEdge>() {
@@ -473,6 +476,14 @@ public class PNode extends PShape {
         return super.getAllProperties() != null && !super.getAllProperties().isEmpty();
     }
 
+    /**
+     * Sets the original position of a node with the given x and y parameters.
+     * 
+     * @param x
+     *            x-coordinate
+     * @param y
+     *            y-coordinate
+     */
     public void setPostion(final Float x, final Float y) {
         if (hasProperties() && getProperty(Properties.ORIGIN) instanceof KNode) {
             KShapeLayout nodeLayout = ((KNode) getProperty(Properties.ORIGIN))
@@ -495,7 +506,9 @@ public class PNode extends PShape {
 
     /**
      * links all edges of the collection.
-     * @param linkEdges, to be linkable edges.
+     * 
+     * @param linkEdges
+     *            to be linkable edges
      */
     public void linkEdges(final Collection<PEdge> linkEdges) {
         this.edges.addAll(linkEdges);
