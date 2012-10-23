@@ -27,6 +27,7 @@ import de.cau.cs.kieler.klay.planar.util.PUtil;
  * Removes the dummy bend nodes of the graph and updates the grid representation.
  * 
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public class BendDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
 

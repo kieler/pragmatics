@@ -30,6 +30,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * This processor adds for every bend point of every edge a dummy node to the graph.
  * 
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public class BendDummyProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
