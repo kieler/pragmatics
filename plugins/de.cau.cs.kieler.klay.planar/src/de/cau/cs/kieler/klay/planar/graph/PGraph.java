@@ -861,4 +861,42 @@ public class PGraph extends PNode {
 
     }
 
+    /**
+     * Adds a new edge to the faces of the graph. Usually used to insert a dummy edge.
+     * 
+     * @param newEdge
+     *            the edge which is to insert
+     * @param leftFace
+     *            the new left face of the new edge
+     * @param rightFace
+     *            the right face of the new edge
+     */
+    public void updateFaces(final PEdge newEdge, final PFace leftFace, final PFace rightFace) {
+        if (leftFace != null) {
+            newEdge.setLeftFace(leftFace);
+            leftFace.addEdge(newEdge);
+        }
+
+        if (rightFace != null) {
+            rightFace.addEdge(newEdge);
+            newEdge.setRightFace(rightFace);
+        }
+    }
+
+    /**
+     * Gives a face for a given face id.
+     * 
+     * @param faceId
+     *            the id for which the face is searched.
+     * @return the found PFace, null if no face is found.
+     */
+    public PFace getFace(final int faceId) {
+        for (PFace face : this.faces) {
+            if (face.id == faceId) {
+                return face;
+            }
+        }
+        return null;
+    }
+
 }

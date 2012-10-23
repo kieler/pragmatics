@@ -110,6 +110,11 @@ public class FullAngleDummyRemover extends AbstractAlgorithm implements ILayoutP
             }
         }
 
+        if (originalEdge == null) {
+            throw new IllegalStateException("FullAngleDummyRemover, updateEdge(...)"
+                    + "there exists no original edge for the dummyNode!");
+        }
+
         // set original endpoint to the original edge instead of the dummy node.
         if (originalEdge.getSource() == dummyNode) {
             originalEdge.setSource(edgeSplitDummy.getOppositeNode(dummyNode));

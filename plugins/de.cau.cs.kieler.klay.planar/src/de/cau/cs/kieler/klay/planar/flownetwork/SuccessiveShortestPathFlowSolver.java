@@ -15,8 +15,9 @@ package de.cau.cs.kieler.klay.planar.flownetwork;
 
 import java.util.List;
 
+import com.google.common.base.Predicate;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver.IMinimumCostFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -84,8 +85,8 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
         // Condition describes residual network.
         pathFinder = new DijkstraPathFinder();
         
-        ICondition<Pair<PNode, PEdge>> cond = new ICondition<Pair<PNode, PEdge>>() {
-            public boolean evaluate(final Pair<PNode, PEdge> object) {
+        Predicate<Pair<PNode, PEdge>> cond = new Predicate<Pair<PNode, PEdge>>() {
+            public boolean apply(final Pair<PNode, PEdge> object) {
                 PNode node = object.getFirst();
                 PEdge edge = object.getSecond();
                 int cap = 0;
@@ -119,19 +120,8 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
 
             // Update flow along path
             for (PEdge edge : path) {
-
                 int flow = edge.getProperty(FLOW);
                 edge.setProperty(FLOW, flow + value);
-
-                // Special handling of fullangles nodes. they should do not effect the bends.
-//                PGraphElement element = edge.getSource().getProperty(Properties.NETWORK_TO_GRAPH);
-//                if (element instanceof PNode) {
-//                    if (((PNode) element).getAdjacentEdgeCount() == 1
-//                            && !graph.getExternalFace().isAdjacent(((PNode) element))) {
-//                        value = 0;
-//                        edge.setProperty(CAPACITY, edge.getProperty(FLOW));
-//                    }
-//                }
             }
 
             pathFinder.reset();

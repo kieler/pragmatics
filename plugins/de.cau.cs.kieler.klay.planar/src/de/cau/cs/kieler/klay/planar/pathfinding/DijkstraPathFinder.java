@@ -20,7 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import de.cau.cs.kieler.core.util.ICondition;
+import com.google.common.base.Predicate;
+
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
@@ -32,14 +33,13 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder.IShortestPathFinder;
  * @author ocl
  * @kieler.rating proposed yellow by pkl
  */
-@SuppressWarnings("deprecation")
 public class DijkstraPathFinder extends AbstractPathFinder implements IShortestPathFinder {
 
     /**
      * {@inheritDoc}
      */
     public List<PEdge> findPath(final PNode source, final PNode target,
-            final ICondition<Pair<PNode, PEdge>> condition) {
+            final Predicate<Pair<PNode, PEdge>> condition) {
 
         // Initialize array
         int size = source.getParent().getNodeCount();
@@ -94,7 +94,7 @@ public class DijkstraPathFinder extends AbstractPathFinder implements IShortestP
                 }
 
                 // Check edge condition
-                if (!condition.evaluate(new Pair<PNode, PEdge>(neighbor, edge))) {
+                if (!condition.apply(new Pair<PNode, PEdge>(neighbor, edge))) {
                     continue;
                 }
 

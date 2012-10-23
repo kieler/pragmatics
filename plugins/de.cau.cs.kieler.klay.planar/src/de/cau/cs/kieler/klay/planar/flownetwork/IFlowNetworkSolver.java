@@ -24,6 +24,7 @@ import de.cau.cs.kieler.klay.planar.graph.PGraph;
  * 
  * @author ocl
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public interface IFlowNetworkSolver extends IAlgorithm {
 

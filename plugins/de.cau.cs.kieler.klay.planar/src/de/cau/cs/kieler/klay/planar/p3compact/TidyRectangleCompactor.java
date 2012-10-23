@@ -46,6 +46,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * the chapter 5.4 of the Graph Drawing book of Di Battista, Eades, Tamassia and Tollis.
  * 
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayoutPhase {
 
@@ -227,7 +228,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
 
         PFace targetFace = null;
 
-        // --------------------------------------------------------------------------------------------
         // Doing a loopstep for the first face-side. Afterwards the while loop is used.
         // Creates edges for consecutive face-nodes.
         for (PEdge edge : currentSide) {
@@ -252,7 +252,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             }
         }
 
-        // --------------------------------------------------------------------------------------------
         // Traverse the graph by running through the faces and join consecutive face by an edge.
         // two faces are consecutive if they share a horizontal or vertical edge.
 

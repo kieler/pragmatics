@@ -18,13 +18,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.klay.planar.graph.IEmbeddingConstraint.ConstraintType;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
@@ -78,9 +77,6 @@ public class PNode extends PShape {
     /** The type of the node. */
     private NodeType type;
 
-    /** The embedding constraint applied to this node. */
-    private IEmbeddingConstraint constraint;
-
     /** The list of edges adjacent to the node. */
     private LinkedList<PEdge> edges;
 
@@ -111,7 +107,6 @@ public class PNode extends PShape {
     PNode(final int id, final PGraph parent, final NodeType t) {
         super(id, parent);
         this.type = t;
-        this.constraint = null;
         this.setEdges(new LinkedList<PEdge>());
     }
 
@@ -238,40 +233,6 @@ public class PNode extends PShape {
         this.edges.remove(edge);
     }
 
-    /**
-     * Check if the node has any embedding constraints.
-     * 
-     * @return true if any constraints were applied to the node
-     */
-    public boolean hasEmbeddingConstraint() {
-        return this.constraint == null;
-    }
-
-    /**
-     * Get the root of the constraint tree applied to this node. Returns null if no embedding
-     * constraints were applied to this node.
-     * 
-     * @return the embeddig constraint tree root
-     */
-    public IEmbeddingConstraint getEmbeddingConstraint() {
-        return this.constraint;
-    }
-
-    /**
-     * Add an embedding constraint to the node. An empty constraint tree will be created for the
-     * node, with the root node of the given type. The added constraint will then be returned for
-     * further use. Any previous embedding constraints on this node will be lost, since a node can
-     * has only one embedding constraint at a time.
-     * 
-     * @param constraintType
-     *            the type of embedding constraint.
-     * @return the embedding constraint tree root
-     */
-    public IEmbeddingConstraint applyEmbeddingConstraint(final ConstraintType constraintType) {
-        this.constraint = new PConstraintTreeNode(constraintType);
-        return this.constraint;
-    }
-
     // ======================== Iterators =================================================
 
     /**
@@ -303,11 +264,10 @@ public class PNode extends PShape {
      * 
      * @return iterable object containing incoming edges
      */
-    @SuppressWarnings("deprecation")
     public Iterable<PEdge> incomingEdges() {
         final PNode instance = this;
-        return new FilteredIterable<PEdge>(this.edges, new ICondition<PEdge>() {
-            public boolean evaluate(final PEdge object) {
+        return new FilteredIterable<PEdge>(this.edges, new Predicate<PEdge>() {
+            public boolean apply(final PEdge object) {
                 return object.isDirected() && object.getTarget() == instance;
             }
         });
@@ -320,11 +280,10 @@ public class PNode extends PShape {
      * 
      * @return {@link Iterable}, iterable object containing outgoing edges
      */
-    @SuppressWarnings("deprecation")
     public Iterable<PEdge> outgoingEdges() {
         final PNode instance = this;
-        return new FilteredIterable<PEdge>(this.edges, new ICondition<PEdge>() {
-            public boolean evaluate(final PEdge object) {
+        return new FilteredIterable<PEdge>(this.edges, new Predicate<PEdge>() {
+            public boolean apply(final PEdge object) {
                 return object.isDirected() && object.getSource() == instance;
             }
         });

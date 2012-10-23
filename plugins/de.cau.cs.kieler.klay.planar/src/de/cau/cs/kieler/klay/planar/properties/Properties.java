@@ -181,7 +181,8 @@ public final class Properties {
         RECT_SHAPE_CUTEDGE = new Property<Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>>(
             "de.cau.cs.kieler.klay.planar.rect_shape_cutedge");
 
-    /** Indicates whether is the external face is a dummy or the original face. */
+    /** Indicates whether is the external face is a dummy or the original face. True for dummy 
+     * rectangle and false for a original face.*/
     public static final IProperty<Boolean> RECT_SHAPE_TRANS_EXTERNAL = new Property<Boolean>(
             "de.cau.cs.kieler.klay.planar.rect_shape_trans_external");
 

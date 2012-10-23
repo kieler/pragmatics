@@ -51,6 +51,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author ocl
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayoutPhase {
 
@@ -174,17 +175,6 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         for (PFace face : faces) {
             int supply = -1 * face.getAdjacentEdgeCount();
 
-            // Each cutedge / full angle counts twice, filtered by finding nodes with only one
-            // connected edge.
-            // if (face == this.graph.getExternalFace()) {
-            // for (PNode node : face.adjacentNodes()) {
-            // if (node.getAdjacentEdgeCount() == 1) {
-            // supply++;
-            // }
-            // }
-            // }
-            // supply *= ;
-
             if (face == graph.getExternalFace()) {
                 supply -= MAX_DEGREE;
             } else {
@@ -219,7 +209,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                 throw new InconsistentGraphModelException(
                         "Attempted to link non-existent face by an edge.");
             }
-            // Same face need no arc.
+            // Same face needs no arc.
             if (left == right) {
                 PNode faceNode = faceMapping.get(left);
                 int supply = faceNode.getProperty(IFlowNetworkSolver.SUPPLY).intValue();
@@ -348,19 +338,12 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                         || ((node == edge.getTarget()) && (face == edge.getLeftFace()))) {
                     int angle = arc.getProperty(IFlowNetworkSolver.FLOW) - 1;
                     pair.setSecond(OrthogonalAngle.map(angle));
-                    // TODO check whether break is ok, meaning many times getting here to
-                    // get the last edge of the nodelist.
                     break;
                 }
             }
         }
 
-        // TODO think about this, the problem here is that the compute flow network step,
-        // computes only once a nodearc for a full angle node. But the flow is need by
-        // the node before and the full angle node, thus one of them has a null angledata
-        // for the cutedge connecting the before node and the full angle node.
-
-        // Cutedges are only count once by the flow network, but we need to set it two times so,
+        // Cutedges are only count once by the flow network, but we need to set it two times, so
         // that in some cases maximal one angle per angle-data is null. Hence, we need a post
         // processing step, that complete the angle data, depending on the before calculated.
         Collection<PNode> nodes = graph.getNodes();
@@ -385,7 +368,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                             pair.setSecond(OrthogonalAngle.LEFT);
                         }
                         break;
-                     // SUPPRESS CHECKSTYLE NEXT MagicNumber
+                    // SUPPRESS CHECKSTYLE NEXT MagicNumber
                     case 3:
                         Pair<PEdge, OrthogonalAngle> knownAnglePair = null;
                         for (Pair<PEdge, OrthogonalAngle> pair : angles) {
@@ -394,10 +377,14 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                                 break;
                             }
                         }
+                        if (knownAnglePair == null) {
+                            throw new IllegalStateException(
+                                    "TamassiaOrthogonalizer, computeAngles(): the "
+                                            + "object knownAnglePair must not be null.");
+                        }
                         if (knownAnglePair.getSecond() == OrthogonalAngle.STRAIGHT) {
                             // set all others to left because 4 - 2 = 2, a left angle for the
-                            // remaining
-                            // angle-data.
+                            // remaining angle-data.
                             for (Pair<PEdge, OrthogonalAngle> pair : angles) {
                                 if (pair.getSecond() == null) {
                                     pair.setSecond(OrthogonalAngle.LEFT);
@@ -424,7 +411,10 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
                         break;
                     default:
-                        throw new IllegalStateException();
+                        throw new IllegalStateException("TamassiaOrthogonalizer, computeAngles(): "
+                                + "Missing angles may only occure if the sum "
+                                + "of angles around a node" + "is 3 or 4 but, it is "
+                                + angles.size() + "!");
                     }
                     continue;
                 } else {
