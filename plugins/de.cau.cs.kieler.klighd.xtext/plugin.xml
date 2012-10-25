@@ -20,6 +20,11 @@
             class="de.cau.cs.kieler.klighd.xtext.HighlightChosenElementInXtextEditorCombination"
             name="Highlight the (Xtext-)definitions of selected elements in KLighD diagrams">
       </combination>
+      <combination
+            active="true"
+            class="de.cau.cs.kieler.klighd.xtext.CropDiagramCombination"
+            name="Crop KLighD diagram by a box-based selection">
+      </combination>
    </extension>
 
 </plugin>
