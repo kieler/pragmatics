@@ -40,7 +40,7 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-10-26 review KI-29 by cmot, sgu
  */
 public class LayoutPropertySource implements IPropertySource {
     
@@ -102,6 +102,14 @@ public class LayoutPropertySource implements IPropertySource {
         return propertyDescriptors;
     }
     
+    /**
+     * Remove options that should not be visible from the given list. Options that have dependencies
+     * are only visible if the dependencies are met. A dependency is met if it has a target value
+     * that equals the actual value, or if it has no target value and the actual value is anything
+     * but {@code null}.
+     * 
+     * @param optionData a list of option meta data
+     */
     private void filterDependencies(final List<LayoutOptionData<?>> optionData) {
         // the layout algorithm option always affects other options
         dependencyOptions.add(LayoutOptions.ALGORITHM.getId());
@@ -162,9 +170,9 @@ public class LayoutPropertySource implements IPropertySource {
         }
         switch (optionData.getType()) {
         case INT:
-        case FLOAT:
+        case FLOAT:           // TextCellEditor
             return value.toString();
-        case BOOLEAN:
+        case BOOLEAN:         // ComboBoxCellEditor
             if (value instanceof Boolean) {
                 return Integer.valueOf(((Boolean) value) ? 1 : 0);
             } else if (value instanceof String) {
@@ -173,7 +181,7 @@ public class LayoutPropertySource implements IPropertySource {
                 return value;
             }
         case REMOTE_ENUM:
-        case ENUM:
+        case ENUM:            // ComboBoxCellEditor
             if (value instanceof Enum<?>) {
                 return ((Enum<?>) value).ordinal();
             } else if (value instanceof String) {
@@ -187,7 +195,7 @@ public class LayoutPropertySource implements IPropertySource {
             }
             return value;
         case ENUMSET:
-        case REMOTE_ENUMSET:
+        case REMOTE_ENUMSET:  // MultipleOptionsCellEditor
             Set set = (Set) value;
             String[] result = new String[set.size()];
             
@@ -203,7 +211,7 @@ public class LayoutPropertySource implements IPropertySource {
             }
             
             return result;
-        case OBJECT:
+        case OBJECT:          // TextCellEditor
             return value.toString();
         default:
             return value;
@@ -268,6 +276,7 @@ public class LayoutPropertySource implements IPropertySource {
      * {@inheritDoc}
      */
     public Object getEditableValue() {
+        // this feature is currently not required (see interface documentation)
         return null;
     }
 
@@ -307,10 +316,14 @@ public class LayoutPropertySource implements IPropertySource {
     }
     
     /**
-     * Returns an identifier for a displayed layout hint name.
+     * Returns an identifier for a displayed layout hint name. The result is the identifier of
+     * an algorithm whose name is a prefix of the displayed name. If there are multiple such
+     * algorithms, the one with the longest prefix is taken. If there is no such algorithm,
+     * the result is the identifier of a layout type whose name is a prefix of the displayed
+     * name. If there are multiple such types, the one with the longest prefix is taken.
      * 
      * @param displayedName a displayed name of a layout provider or a layout type
-     * @return the corresponding identifier, or the empty string if no match is found
+     * @return the corresponding identifier, or {@code null} if no match is found
      */
     public static String getLayoutHint(final String displayedName) {
         // look for a matching layout provider

@@ -31,7 +31,7 @@ import de.cau.cs.kieler.kiml.LayoutTypeData;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
-public class LayouterHintProvider implements ITreeContentProvider {
+public class AlgorithmContentProvider implements ITreeContentProvider {
 
     /** the layout services used for this provider. */
     private LayoutDataService layoutDataService;

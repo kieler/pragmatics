@@ -45,7 +45,7 @@ import de.cau.cs.kieler.kiml.ui.Messages;
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-10-26 review KI-29 by cmot, sgu
  */
 public class LayoutPropertyDescriptor implements IPropertyDescriptor {
 
@@ -166,7 +166,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         switch (optionData.getType()) {
         case STRING:
             if (LayoutOptions.ALGORITHM.equals(optionData)) {
-                return new LayouterHintCellEditor(parent);
+                return new AlgorithmCellEditor(parent);
             } else {
                 return new TextCellEditor(parent);
             }

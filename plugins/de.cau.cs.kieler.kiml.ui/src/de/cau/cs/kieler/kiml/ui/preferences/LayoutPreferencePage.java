@@ -47,7 +47,7 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.LayoutOptionValidator;
-import de.cau.cs.kieler.kiml.ui.LayouterHintDialog;
+import de.cau.cs.kieler.kiml.ui.AlgorithmSelectionDialog;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
@@ -349,8 +349,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         if (entry.getValue() != null) {
             if (optionData.equals(LayoutOptions.ALGORITHM)) {
                 // show a selection dialog for a layouter hint
-                LayouterHintDialog dialog = new LayouterHintDialog(shell, null);
-                if (dialog.open() == LayouterHintDialog.OK) {
+                AlgorithmSelectionDialog dialog = new AlgorithmSelectionDialog(shell, null);
+                if (dialog.open() == AlgorithmSelectionDialog.OK) {
                     String result = dialog.getSelectedHint();
                     if (result != null) {
                         entry.setValue(result);

@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
-import de.cau.cs.kieler.kiml.ui.LayouterHintDialog;
+import de.cau.cs.kieler.kiml.ui.AlgorithmSelectionDialog;
 
 /**
  * A cell editor that opens a dialog to select a subset from a given number of options.
@@ -108,7 +108,7 @@ public class MultipleOptionsCellEditor extends DialogCellEditor {
                 null);
         dialog.setInitialSelections((String[]) getValue());
         
-        if (dialog.open() == LayouterHintDialog.OK) {
+        if (dialog.open() == AlgorithmSelectionDialog.OK) {
             Object[] result = dialog.getResult();
             String[] stringResult = new String[result.length];
             

@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
-import de.cau.cs.kieler.kiml.ui.LayouterHintDialog;
+import de.cau.cs.kieler.kiml.ui.AlgorithmSelectionDialog;
 import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
@@ -30,16 +30,16 @@ import de.cau.cs.kieler.kiml.ui.Messages;
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-10-26 review KI-29 by cmot, sgu
  */
-public class LayouterHintCellEditor extends DialogCellEditor {
+public class AlgorithmCellEditor extends DialogCellEditor {
     
     /**
-     * Creates a layouter hint cell editor.
+     * Creates a layout algorithm cell editor.
      * 
      * @param parent the parent composite
      */
-    public LayouterHintCellEditor(final Composite parent) {
+    public AlgorithmCellEditor(final Composite parent) {
         super(parent);
     }
     
@@ -95,9 +95,9 @@ public class LayouterHintCellEditor extends DialogCellEditor {
      */
     @Override
     protected Object openDialogBox(final Control cellEditorWindow) {
-        LayouterHintDialog dialog = new LayouterHintDialog(cellEditorWindow.getShell(),
+        AlgorithmSelectionDialog dialog = new AlgorithmSelectionDialog(cellEditorWindow.getShell(),
                 (String) getValue());
-        if (dialog.open() == LayouterHintDialog.OK) {
+        if (dialog.open() == AlgorithmSelectionDialog.OK) {
             return dialog.getSelectedHint();
         }
         return null;

@@ -58,7 +58,7 @@ import de.cau.cs.kieler.kiml.LayoutTypeData;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class LayouterHintDialog extends Dialog {
+public class AlgorithmSelectionDialog extends Dialog {
 
     /** the current layouter hint as selected by the user. */
     private String layouterHint;
@@ -74,12 +74,12 @@ public class LayouterHintDialog extends Dialog {
     private Map<ILayoutData, Image> imageCache = new HashMap<ILayoutData, Image>();
     
     /**
-     * Creates a layout hint dialog.
+     * Creates a layout algorithm dialog.
      * 
      * @param parentShell the parent shell
      * @param currentHint the currently active layouter hint
      */
-    public LayouterHintDialog(final Shell parentShell, final String currentHint) {
+    public AlgorithmSelectionDialog(final Shell parentShell, final String currentHint) {
         super(parentShell);
         this.layouterHint = currentHint;
     }
@@ -185,7 +185,7 @@ public class LayouterHintDialog extends Dialog {
         
         // create tree viewer
         final TreeViewer treeViewer = new TreeViewer(composite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
-        final LayouterHintProvider contentProvider = new LayouterHintProvider();
+        final AlgorithmContentProvider contentProvider = new AlgorithmContentProvider();
         treeViewer.setContentProvider(contentProvider);
         treeViewer.setLabelProvider(new LabelProvider());
         treeViewer.setSorter(new ViewerSorter() {

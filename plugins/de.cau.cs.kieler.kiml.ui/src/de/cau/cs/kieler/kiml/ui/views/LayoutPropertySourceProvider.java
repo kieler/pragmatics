@@ -34,11 +34,12 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 
 /**
- * A property source provider used by the layout view.
+ * A property source provider used by the layout view. This provider queries the
+ * {@link LayoutOptionManager} in order to obtain the valid options for the current selection.
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2012-10-26 review KI-29 by cmot, sgu
  */
 public class LayoutPropertySourceProvider implements IPropertySourceProvider {
 
@@ -67,6 +68,8 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
     
     /**
      * {@inheritDoc}
+     * A property source is only created if a valid diagram layout manager is found for the given
+     * object in the {@link EclipseLayoutInfoService}.
      */
     public IPropertySource getPropertySource(final Object object) {
         if (propertySources.containsKey(object)) {
