@@ -58,7 +58,9 @@ public class BasicTests extends KlayAutomatedJUnitTest {
      * {@inheritDoc}
      */
     protected TestPath[] getBundleTestPath() {
-        TestPath[] testPaths = { new TestPath("crossing_minimization", false, true) };
+        TestPath[] testPaths = {
+            new TestPath("crossing_minimization", false, true, TestPath.Type.GMF)
+        };
         return testPaths;
     }
     

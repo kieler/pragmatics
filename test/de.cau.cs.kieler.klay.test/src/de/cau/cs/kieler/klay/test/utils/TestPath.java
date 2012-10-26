@@ -14,12 +14,20 @@
 package de.cau.cs.kieler.klay.test.utils;
 
 /**
- * The test folder properties. Define in which folder test framework to load the files and to set
- * the load option (load sub-folders, apply the layout algorithm)
+ * The test folder properties. Defines in which folder test framework to load the files and to set
+ * the load option (load sub-folders, apply the layout algorithm).
  * 
- * @author Wahbi
+ * @author wah
  */
 public class TestPath {
+    
+    /** Enumeration of graph types. */
+    public static enum Type {
+        /** KGraph files. */
+        KGRAPH,
+        /** GMF diagram files. */
+        GMF;
+    }
 
     /** the folder containing the graph files. */
     private String folder;
@@ -27,6 +35,8 @@ public class TestPath {
     private boolean loadSubfolder;
     /** if doLayout = true apply layout on graphs. */
     private boolean doLayout;
+    /** the type of graphs to load. */
+    private Type type;
 
     /**
      * The constructor of the Class This object is used to define in which folder test framework to
@@ -35,11 +45,14 @@ public class TestPath {
      * @param folder the folder containing the graph files
      * @param subfolder if true load graphs in subfolder
      * @param doLayout if true apply layout on graphs
+     * @param type the type of graphs to fetch
      */
-    public TestPath(final String folder, final boolean subfolder, final boolean doLayout) {
+    public TestPath(final String folder, final boolean subfolder, final boolean doLayout,
+            final Type type) {
         this.folder = folder;
         this.loadSubfolder = subfolder;
         this.doLayout = doLayout;
+        this.type = type;
     }
 
     /**
@@ -52,32 +65,12 @@ public class TestPath {
     }
 
     /**
-     * Set the folder.
-     * 
-     * @param folder
-     *            the folder to set
-     */
-    public void setFolder(final String folder) {
-        this.folder = folder;
-    }
-
-    /**
      * Return true if load the subfolder and else otherwise.
      * 
      * @return the subfolder
      */
     public boolean isLoadSubfolder() {
         return loadSubfolder;
-    }
-
-    /**
-     * Set the loadSubFolder.
-     * 
-     * @param subfolder
-     *            the subfolder to set
-     */
-    public void setLoadSubfolder(final boolean subfolder) {
-        this.loadSubfolder = subfolder;
     }
 
     /**
@@ -88,15 +81,14 @@ public class TestPath {
     public boolean isDoLayout() {
         return doLayout;
     }
-
+    
     /**
-     * Set the doLayout option. Set to True to apply the layout.
+     * Returns the type of graphs that shall be fetched.
      * 
-     * @param doLayout
-     *            the doLayout to set
+     * @return the graph type
      */
-    public void setDoLayout(final boolean doLayout) {
-        this.doLayout = doLayout;
+    public Type getType() {
+        return type;
     }
     
 }

@@ -43,7 +43,7 @@ import de.cau.cs.kieler.klay.test.utils.TestPath;
 public abstract class KlayAutomatedJUnitTest {
 
     /** The graph files. */
-    private static List<GraphTestObject> graphsList = new LinkedList<GraphTestObject>();
+    private static List<GraphTestObject> graphsList;
 
     /**
      * Gets all graph files and provides the parameters for the consecutive tests run by the
@@ -55,10 +55,12 @@ public abstract class KlayAutomatedJUnitTest {
     public static Collection<Object[]> getGraphs() {
         LinkedList<Object[]> graphFilesList = new LinkedList<Object[]>();
 
-        for (GraphTestObject file : graphsList) {
-            Object[] objectArray = new Object[1];
-            objectArray[0] = file;
-            graphFilesList.add(objectArray);
+        if (graphsList != null) {
+            for (GraphTestObject file : graphsList) {
+                Object[] objectArray = new Object[1];
+                objectArray[0] = file;
+                graphFilesList.add(objectArray);
+            }
         }
         return graphFilesList;
     }
@@ -77,7 +79,7 @@ public abstract class KlayAutomatedJUnitTest {
     @AfterClass
     public static void kiemAutomatedJUnitTestWrapup() {
         // Clear all static fields
-        graphsList.clear();
+        graphsList = null;
     }
 
     /**

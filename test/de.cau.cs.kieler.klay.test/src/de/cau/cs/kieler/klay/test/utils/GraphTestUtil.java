@@ -76,8 +76,16 @@ public final class GraphTestUtil {
         List<GraphTestObject> graphTestObject = new ArrayList<GraphTestObject>();
         for (TestPath testPath : bundleTestPaths) {
             // For each TestPath load the graph files contained in its appropriate folder
-            graphTestObject.addAll(loadGMFGraphs(testPath.getFolder(), testPath.isLoadSubfolder(),
-                    testPath.isDoLayout()));
+            switch (testPath.getType()) {
+            case GMF:
+                graphTestObject.addAll(loadGMFGraphs(testPath.getFolder(), testPath.isLoadSubfolder(),
+                        testPath.isDoLayout()));
+                break;
+            case KGRAPH:
+                graphTestObject.addAll(loadKGraphs(testPath.getFolder(), testPath.isLoadSubfolder(),
+                        testPath.isDoLayout()));
+                break;
+            }
         }
         return graphTestObject;
     }
