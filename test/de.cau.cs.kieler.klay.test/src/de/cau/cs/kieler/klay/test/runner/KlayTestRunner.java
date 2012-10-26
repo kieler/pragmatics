@@ -64,7 +64,7 @@ public class KlayTestRunner extends KielerTestRunner {
         Object[] objectArray = parameterObjectList.get(parameterIndex);
         // The objectArray is always affected with a GraphTestObject that is why this method is save
         GraphTestObject file = (GraphTestObject) objectArray[0];
-        return file.getFile().toString();
+        return file.getFile().getPath();
     }
 
     /**
@@ -75,7 +75,7 @@ public class KlayTestRunner extends KielerTestRunner {
             final FrameworkMethod method) {
         Object[] objectArray = parameterObjectList.get(parameterIndex);
         GraphTestObject file = (GraphTestObject) objectArray[0];
-        return method.getName().concat(" - ").concat(file.getFile().toString());
+        return method.getName().concat(" - ").concat(file.getFile().getName());
     }
 
 }

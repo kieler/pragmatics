@@ -13,17 +13,24 @@
  */
 package de.cau.cs.kieler.klay.test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*; // SUPPRESS CHECKSTYLE AvoidStarImport
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 import org.junit.Test;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 import de.cau.cs.kieler.klay.test.utils.TestPath;
 
@@ -31,6 +38,7 @@ import de.cau.cs.kieler.klay.test.utils.TestPath;
  * A basic test class that tests if nodes overlaps and if nodes and edges overlap.
  * 
  * @author wah
+ * @author msp
  */
 public class BasicTests extends KlayAutomatedJUnitTest {
 
@@ -50,46 +58,66 @@ public class BasicTests extends KlayAutomatedJUnitTest {
      * {@inheritDoc}
      */
     protected TestPath[] getBundleTestPath() {
-        TestPath[] testPaths = { new TestPath("keg/testtest", false, true) };
+        TestPath[] testPaths = { new TestPath("crossing_minimization", false, true) };
         return testPaths;
+    }
+    
+    /**
+     * Add all children and grandchildren contained in the given parent node to the list.
+     * 
+     * @param parentNode a parent node
+     * @param nodeList the list of gathered nodes
+     */
+    private static List<KNode> gatherNodes(final KNode parentNode, final List<KNode> nodeList) {
+        for (KNode child : parentNode.getChildren()) {
+            nodeList.add(child);
+            gatherNodes(child, nodeList);
+        }
+        return nodeList;
     }
 
     /**
-     * A Junit Method to test if two nodes overlaps.
+     * A Junit method to test if two nodes overlaps.
      */
     @Test
     public void testNodesOverlaps() {
-        // get the Knode from the current graph object
-        KNode parentNode = graphObject.getKnode();
-        ListIterator<KNode> nodeIter1 = parentNode.getChildren().listIterator();
+        // gather all nodes
+        List<KNode> nodeList = gatherNodes(graphObject.getKnode(), new LinkedList<KNode>());
+        
+        ListIterator<KNode> nodeIter1 = nodeList.listIterator();
         while (nodeIter1.hasNext()) {
             KNode node1 = nodeIter1.next();
             KShapeLayout nodeLayout1 = node1.getData(KShapeLayout.class);
-            ListIterator<KNode> nodeIter2 = parentNode.getChildren().listIterator(
-                    nodeIter1.nextIndex());
+            ListIterator<KNode> nodeIter2 = nodeList.listIterator(nodeIter1.nextIndex());
             while (nodeIter2.hasNext()) {
                 KNode node2 = nodeIter2.next();
-                KShapeLayout nodeLayout2 = node2.getData(KShapeLayout.class);
-
-                assertTrue(!hasNodeToNodeOverlaps(nodeLayout1, nodeLayout2));
+                if (!(KimlUtil.isDescendant(node1, node2) || KimlUtil.isDescendant(node2, node1))) {
+                    KShapeLayout nodeLayout2 = node2.getData(KShapeLayout.class);
+    
+                    assertFalse(hasNodeToNodeOverlaps(nodeLayout1, nodeLayout2));
+                }
             }
         }
     }
 
     /**
-     * A Junit Method to test if a node and Edge overlaps.
+     * A Junit method to test if a node and edge overlaps.
      */
     @Test
     public void testNodeEdgeOverlaps() {
-        KNode parentNode = graphObject.getKnode();
-        ListIterator<KNode> nodeIter1 = parentNode.getChildren().listIterator();
+        // gather all nodes
+        List<KNode> nodeList = gatherNodes(graphObject.getKnode(), new LinkedList<KNode>());
+        
+        ListIterator<KNode> nodeIter1 = nodeList.listIterator();
         while (nodeIter1.hasNext()) {
             KNode node1 = nodeIter1.next();
-            ListIterator<KNode> nodeIter2 = parentNode.getChildren().listIterator(
-                    nodeIter1.nextIndex());
+            ListIterator<KNode> nodeIter2 = nodeList.listIterator();
             while (nodeIter2.hasNext()) {
                 KNode node2 = nodeIter2.next();
-                assertTrue(!hasNodeEdgeOverlaps(node1, node2));
+                if (!(node1 == node2 || KimlUtil.isDescendant(node1, node2))) {
+                    
+                    assertFalse(hasNodeEdgeOverlaps(node1, node2));
+                }
             }
         }
     }
@@ -115,7 +143,7 @@ public class BasicTests extends KlayAutomatedJUnitTest {
     }
 
     /**
-     * Check if there is overlaps between the second node and edges from the first node.
+     * Check if there are overlaps between the second node and edges from the first node.
      * 
      * @param node1
      *            the first node
@@ -124,24 +152,35 @@ public class BasicTests extends KlayAutomatedJUnitTest {
      * @return true if overlaps and false otherwise
      */
     private boolean hasNodeEdgeOverlaps(final KNode node1, final KNode node2) {
-        if (node1 == node2) {
-            return false;
-        }
+        KShapeLayout node2Layout = node2.getData(KShapeLayout.class);
+        KVector node2Pos = node2Layout.createVector();
+        KimlUtil.toAbsolute(node2Pos, node2.getParent());
         for (KEdge edge : node1.getOutgoingEdges()) {
-            if (edge.getTarget() == node2) {
-                continue;
-            }
-            KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-            KPoint p1 = edgeLayout.getSourcePoint();
-            for (KPoint p2 : edgeLayout.getBendPoints()) {
-                if (hasNodeEdgeIntersection(p1, p2, node2)) {
-                    return true;
+            if (edge.getTarget() != node2) {
+                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                KVectorChain vectorChain = edgeLayout.createVectorChain();
+                // approximate spline if required
+                if (edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
+                    vectorChain = KielerMath.approximateSpline(vectorChain);
                 }
-                p1 = p2;
-            }
-            KPoint p2 = edgeLayout.getTargetPoint();
-            if (hasNodeEdgeIntersection(p1, p2, node2)) {
-                return true;
+                // transform to absolute coordinates
+                KNode referenceNode = edge.getSource();
+                if (!KimlUtil.isDescendant(edge.getTarget(), referenceNode)) {
+                    referenceNode = referenceNode.getParent();
+                }
+                KVector offset = new KVector();
+                KimlUtil.toAbsolute(offset, referenceNode);
+                
+                ListIterator<KVector> pointIter = vectorChain.listIterator();
+                KVector p1 = pointIter.next().add(offset);
+                while (pointIter.hasNext()) {
+                    KVector p2 = pointIter.next().add(offset);
+                    if (hasNodeEdgeIntersection(p1, p2, node2Pos, node2Layout.getWidth(),
+                            node2Layout.getHeight())) {
+                        return true;
+                    }
+                    p1 = p2;
+                }
             }
         }
         return false;
@@ -150,19 +189,17 @@ public class BasicTests extends KlayAutomatedJUnitTest {
     /**
      * Returns whether the line segment intersects the nodes bounding box.
      * 
-     * @param p1
-     *            the start point of the line segment
-     * @param p2
-     *            the end point of the line segment
-     * @param node
-     *            the node
+     * @param p1 the start point of the line segment
+     * @param p2 the end point of the line segment
+     * @param nodePos node position
+     * @param width node width
+     * @param height node height
      * @return true if the line segment intersects the nodes bounding box
      */
-    private static boolean hasNodeEdgeIntersection(final KPoint p1, final KPoint p2,
-            final KNode node) {
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        int p1OutCode = computeOutCode(p1, node);
-        int p2OutCode = computeOutCode(p2, node);
+    private static boolean hasNodeEdgeIntersection(final KVector p1, final KVector p2,
+            final KVector nodePos, final float width, final float height) {
+        int p1OutCode = computeOutCode(p1, nodePos, width, height);
+        int p2OutCode = computeOutCode(p2, nodePos, width, height);
 
         if (p1OutCode == 0 || p2OutCode == 0) {
             // the line segment has start- or endpoint inside the rectangle
@@ -175,18 +212,16 @@ public class BasicTests extends KlayAutomatedJUnitTest {
             return true;
         } else {
             int outcode = p1OutCode != TOP && p1OutCode > BOTTOM ? p2OutCode : p1OutCode;
-            float xpos = nodeLayout.getXpos();
-            float ypos = nodeLayout.getYpos();
-            float width = nodeLayout.getWidth();
-            float height = nodeLayout.getHeight();
             if ((outcode & LEFT) > 0) {
-                return hasIntersection(p1, p2, xpos, ypos, xpos, ypos + height);
+                return hasIntersection(p1, p2, nodePos.x, nodePos.y, nodePos.x, nodePos.y + height);
             } else if ((outcode & RIGHT) > 0) {
-                return hasIntersection(p1, p2, xpos + width, ypos, xpos + width, ypos + height);
+                return hasIntersection(p1, p2, nodePos.x + width, nodePos.y, nodePos.x + width,
+                        nodePos.y + height);
             } else if ((outcode & TOP) > 0) {
-                return hasIntersection(p1, p2, xpos, ypos, xpos + width, ypos);
+                return hasIntersection(p1, p2, nodePos.x, nodePos.y, nodePos.x + width, nodePos.y);
             } else /* if ((p1OutCode & BOTTOM) > 0) */ {
-                return hasIntersection(p1, p2, xpos, ypos + height, xpos + width, ypos + height);
+                return hasIntersection(p1, p2, nodePos.x, nodePos.y + height, nodePos.x + width,
+                        nodePos.y + height);
             }
         }
     }
@@ -194,32 +229,25 @@ public class BasicTests extends KlayAutomatedJUnitTest {
     /**
      * Returns whether two line segments have an intersection.
      * 
-     * @param p1
-     *            start point of the first line segment
-     * @param p2
-     *            end point of the first line segement
-     * @param x1
-     *            the x-coordinate of the start point of the second line segment
-     * @param y1
-     *            the y-coordinate of the start point of the second line segment
-     * @param x2
-     *            the x-coordinate of the end point of the second line segment
-     * @param y2
-     *            the y-coordinate of the end point of the second line segment
+     * @param p1 start point of the first line segment
+     * @param p2 end point of the first line segement
+     * @param x1 the x-coordinate of the start point of the second line segment
+     * @param y1 the y-coordinate of the start point of the second line segment
+     * @param x2 the x-coordinate of the end point of the second line segment
+     * @param y2 the y-coordinate of the end point of the second line segment
      * @return true if the line segments intersect else false
      */
-    private static boolean hasIntersection(final KPoint p1, final KPoint p2, final float x1,
-            final float y1, final float x2, final float y2) {
-        float s = (y2 - y1) * (p2.getX() - p1.getX()) - (x2 - x1) * (p2.getY() - p1.getY());
+    private static boolean hasIntersection(final KVector p1, final KVector p2, final double x1,
+            final double y1, final double x2, final double y2) {
+        double s = (y2 - y1) * (p2.x - p1.x) - (x2 - x1) * (p2.y - p1.y);
         // are the line segments parallel?
         if (s == 0) {
             return false;
         }
-        float a1 = (x2 - x1) * (p1.getY() - y1) - (y2 - y1) * (p1.getX() - x1);
-        float a2 = (p2.getX() - p1.getX()) * (p1.getY() - y1) - (p2.getY() - p1.getY())
-                * (p1.getX() - x1);
-        float t1 = a1 / s;
-        float t2 = a2 / s;
+        double a1 = (x2 - x1) * (p1.y - y1) - (y2 - y1) * (p1.x - x1);
+        double a2 = (p2.x - p1.x) * (p1.y - y1) - (p2.y - p1.y) * (p1.x - x1);
+        double t1 = a1 / s;
+        double t2 = a2 / s;
         // the line segments intersect when t1 and t2 lie in the interval (0,1)
         return 0.0f < t1 && t1 < 1 && 0 < t2 && t2 < 1;
     }
@@ -244,23 +272,23 @@ public class BasicTests extends KlayAutomatedJUnitTest {
      * </code> <br>
      * The box around the 0000 entry represents the rectangle.
      * 
-     * @param point
-     *            the point
-     * @param node
-     *            the node
+     * @param point the point
+     * @param nodePos node position
+     * @param width node width
+     * @param height node height
      * @return the outcode
      */
-    private static int computeOutCode(final KPoint point, final KNode node) {
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+    private static int computeOutCode(final KVector point, final KVector nodePos, final float width,
+            final float height) {
         int code = 0;
-        if (point.getY() > nodeLayout.getYpos() + nodeLayout.getHeight()) {
+        if (point.y > nodePos.y + height) {
             code |= TOP;
-        } else if (point.getY() < nodeLayout.getYpos()) {
+        } else if (point.y < nodePos.y) {
             code |= BOTTOM;
         }
-        if (point.getX() > nodeLayout.getXpos() + nodeLayout.getWidth()) {
+        if (point.x > nodePos.x + width) {
             code |= RIGHT;
-        } else if (point.getX() < nodeLayout.getXpos()) {
+        } else if (point.x < nodePos.x) {
             code |= LEFT;
         }
         return code;
@@ -269,8 +297,7 @@ public class BasicTests extends KlayAutomatedJUnitTest {
     /**
      * Computes the opposite outcode.
      * 
-     * @param outcode
-     *            the outcode
+     * @param outcode the outcode
      * @return the opposite outcode
      */
     private static int computeOppositeOutCode(final int outcode) {
