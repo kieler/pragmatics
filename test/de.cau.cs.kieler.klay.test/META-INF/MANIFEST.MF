@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Graph Test Framework
+Bundle-SymbolicName: de.cau.cs.kieler.klay.test
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.emf.transaction;bundle-version="1.4.0",
+ org.eclipse.gmf;bundle-version="1.4.1",
+ org.eclipse.gmf.runtime.diagram.ui;bundle-version="1.5.0",
+ org.junit,
+ de.cau.cs.kieler.core.test,
+ de.cau.cs.kieler.core.kgraph,
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.kiml,
+ de.cau.cs.kieler.kiml.ui
