@@ -59,7 +59,7 @@ public class BasicTests extends KlayAutomatedJUnitTest {
      */
     protected TestPath[] getBundleTestPath() {
         TestPath[] testPaths = {
-            new TestPath("crossing_minimization", false, true, TestPath.Type.GMF)
+            new TestPath("random", false, true, TestPath.Type.KGRAPH)
         };
         return testPaths;
     }

@@ -49,7 +49,7 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 public final class GraphTestUtil {
 
     /** the test graph root directory. */
-    private static final String SOURCE_GRAPHS_DIRECTORY = "/home/msp/shared/kieler/models/keg/klay_tests/";
+    private static final String SOURCE_GRAPHS_DIRECTORY = "/home/kieler/test_graphs/";
     /** the GMF file formats to load. */
     private static final ArrayList<String> GMF_GRAPHS_FORMATS = Lists.newArrayList(
             "kegdi", "kaod", "kids");
@@ -112,6 +112,7 @@ public final class GraphTestUtil {
 
             // load files from the directory
             List<File> graphFiles = loadFilesFromDirectory(rootFolder, subfolder, KGRAPH_FORMATS);
+            Collections.sort(graphFiles);
             List<GraphTestObject> graphObjects = new ArrayList<GraphTestObject>();
             for (File gfile : graphFiles) {
                 URI uri = URI.createFileURI(gfile.toString());
@@ -170,6 +171,7 @@ public final class GraphTestUtil {
 
             // load files from the directory
             List<File> graphFiles = loadFilesFromDirectory(rootFolder, subfolder, GMF_GRAPHS_FORMATS);
+            Collections.sort(graphFiles);
             List<GraphTestObject> graphObjects = new ArrayList<GraphTestObject>();
             for (File gfile : graphFiles) {
                 LayoutMapping<?> mapping = getLayoutMappingForGraphFile(gfile);
@@ -240,12 +242,14 @@ public final class GraphTestUtil {
         };
         // load files from directory
         File[] listOfFiles = folder.listFiles(filter);
-        for (int i = 0; i < listOfFiles.length; i++) {
-            // load only folders and files with SOURCE_GRAPHS_FORMAT extension
-            if (listOfFiles[i].isFile()) {
-                files.add(listOfFiles[i]);
-            } else if (listOfFiles[i].isDirectory() && subfolder) {
-                files.addAll(loadFilesFromDirectory(listOfFiles[i], subfolder, extensions));
+        if (listOfFiles != null) {
+            for (int i = 0; i < listOfFiles.length; i++) {
+                // load only folders and files with SOURCE_GRAPHS_FORMAT extension
+                if (listOfFiles[i].isFile()) {
+                    files.add(listOfFiles[i]);
+                } else if (listOfFiles[i].isDirectory() && subfolder) {
+                    files.addAll(loadFilesFromDirectory(listOfFiles[i], subfolder, extensions));
+                }
             }
         }
         return files;
