@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,12 +31,15 @@ import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import com.google.common.collect.Lists;
+
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
-import de.cau.cs.kieler.klay.test.utils.TestPath;
 
 /**
  * Class to load graphs from a given folder and its subfolders (optional).
@@ -48,9 +50,12 @@ public final class GraphTestUtil {
 
     /** the test graph root directory. */
     private static final String SOURCE_GRAPHS_DIRECTORY = "D:\\Uni-Kiel\\kieler\\Examples\\";
-    /** the source file format to load. */
-    private static final ArrayList<String> SOURCE_GRAPHS_FORMAT = new ArrayList<String>(
-            Arrays.asList("kegdi", "kaod", "kids"));
+    /** the GMF file formats to load. */
+    private static final ArrayList<String> GMF_GRAPHS_FORMATS = Lists.newArrayList(
+            "kegdi", "kaod", "kids");
+    /** the KGraph file formats to load. */
+    private static final ArrayList<String> KGRAPH_FORMATS = Lists.newArrayList(
+            "kgraph", "kgx", "kgt");
 
     /**
      * A private constructor to prevent instantiation.
@@ -59,7 +64,7 @@ public final class GraphTestUtil {
     }
 
     /**
-     * Load all graphs under the given List of TestPaths.
+     * Load all graphs under the given list of  test paths.
      * 
      * @param bundleTestPaths
      *            a list of the test folder + properties
@@ -76,33 +81,67 @@ public final class GraphTestUtil {
         }
         return graphTestObject;
     }
-
+    
     /**
-     * Load all graphs under the given folder. Graphs under sub-folders are excluded.
-     * 
-     * @param folder
-     *            the folder where the graphs are located
-     * @return a list of KNode
-     */
-    public static List<GraphTestObject> loadGraphs(final String folder) {
-        return loadGMFGraphs(folder, false, false);
-    }
-
-    /**
-     * Load all graphs under the given folder and sub-folder(optional).
+     * Load all KGraphs under the given folder and sub-folder(optional) and apply the layout
+     * algorithm(optional).
      * 
      * @param folder
      *            the folder where the graphs are located
      * @param subfolder
-     *            if true, load all graphs under sub-folders
+     *            if true then load sub-folder graphs else only the given directory
+     * @param doLayout
+     *            if true, apply automatic layout to loaded graphs
      * @return a list of KNode
      */
-    public static List<GraphTestObject> loadGraphs(final String folder, final boolean subfolder) {
-        return loadGMFGraphs(folder, subfolder, false);
+    public static List<GraphTestObject> loadKGraphs(final String folder, final boolean subfolder,
+            final boolean doLayout) {
+       
+        File rootFolder = new File(SOURCE_GRAPHS_DIRECTORY, folder);
+
+        // test if the root folder is readable by the application
+        if (rootFolder.canRead()) {
+
+            // load files from the directory
+            List<File> graphFiles = loadFilesFromDirectory(rootFolder, subfolder, KGRAPH_FORMATS);
+            List<GraphTestObject> graphObjects = new ArrayList<GraphTestObject>();
+            for (File gfile : graphFiles) {
+                URI uri = URI.createFileURI(gfile.toString());
+                ResourceSet resourceSet = new ResourceSetImpl();
+                Resource resource = resourceSet.createResource(uri);
+
+                try {
+                    resource.load(Collections.emptyMap());
+                } catch (IOException e) {
+                    throw new WrappedException(e);
+                }
+                if (resource.getContents().isEmpty()
+                        || !(resource.getContents().get(0) instanceof KNode)) {
+                    throw new IllegalArgumentException("The selected file does not contain a graph: "
+                            + gfile);
+                }
+                KNode graph = (KNode) resource.getContents().get(0);
+                
+                // apply layout when applyLayout = true
+                if (doLayout) {
+                    EclipseLayoutInfoService.getInstance().getLayoutEngine().layout(graph,
+                            new BasicProgressMonitor());
+                }
+                     
+                // add the KNode to the list
+                graphObjects.add(new GraphTestObject(gfile, graph));
+            }
+
+            return graphObjects;
+
+        } else {
+            throw new IllegalArgumentException("The source graph directory (" + folder
+                    + ") cannot be read!");
+        }
     }
 
     /**
-     * Load all graphs under the given folder and sub-folder(optional) and apply the layout
+     * Load all GMF graphs under the given folder and sub-folder(optional) and apply the layout
      * algorithm(optional).
      * 
      * @param folder
@@ -122,30 +161,22 @@ public final class GraphTestUtil {
         if (rootFolder.canRead()) {
 
             // load files from the directory
-            List<File> graphFiles = loadFilesFromDirectory(rootFolder,
-                    subfolder);
-            // Test if there is files
-            if (graphFiles.size() > 0) {
-                List<GraphTestObject> graphObjects = new ArrayList<GraphTestObject>();
-                for (File gfile : graphFiles) {
-                    LayoutMapping<?> mapping = getLayoutMappingForGraphFile(gfile);
-                    // apply layout when applyLayout = true
-                   
-                    if (doLayout) {
-                        DiagramLayoutEngine.INSTANCE.layout(mapping, new BasicProgressMonitor());
-                    }
-                         
-                    // add the KNode to the list
-                    graphObjects.add(new GraphTestObject(gfile, mapping.getLayoutGraph()));
-
+            List<File> graphFiles = loadFilesFromDirectory(rootFolder, subfolder, GMF_GRAPHS_FORMATS);
+            List<GraphTestObject> graphObjects = new ArrayList<GraphTestObject>();
+            for (File gfile : graphFiles) {
+                LayoutMapping<?> mapping = getLayoutMappingForGraphFile(gfile);
+                
+                // apply layout when applyLayout = true
+                if (doLayout) {
+                    DiagramLayoutEngine.INSTANCE.layout(mapping, new BasicProgressMonitor());
                 }
-
-                return graphObjects;
-
-            } else {
-                throw new IllegalArgumentException("The given directory (" + folder
-                        + ") doesn't contain graph files!");
+                     
+                // add the KNode to the list
+                graphObjects.add(new GraphTestObject(gfile, mapping.getLayoutGraph()));
             }
+
+            return graphObjects;
+
         } else {
             throw new IllegalArgumentException("The source graph directory (" + folder
                     + ") cannot be read!");
@@ -184,10 +215,9 @@ public final class GraphTestUtil {
      * @return return the List of graph files
      */
     private static List<File> loadFilesFromDirectory(final File folder,
-            final boolean subfolder) {
+            final boolean subfolder, final List<String> extensions) {
         List<File> files = new ArrayList<File>();
-        // filter to select only files with SOURCE_GRAPHS_FORMAT extension or
-        // sub directories
+        // filter to select only files with SOURCE_GRAPHS_FORMAT extension or sub directories
         FileFilter filter = new FileFilter() {
             @Override
             public boolean accept(final File pathname) {
@@ -195,7 +225,7 @@ public final class GraphTestUtil {
                     return true;
                 }
                 if (getFileExtension(pathname.toString()) != null) {
-                    return SOURCE_GRAPHS_FORMAT.contains(getFileExtension(pathname.toString()));
+                    return extensions.contains(getFileExtension(pathname.toString()));
                 }
                 return false;
             }
@@ -207,8 +237,7 @@ public final class GraphTestUtil {
             if (listOfFiles[i].isFile()) {
                 files.add(listOfFiles[i]);
             } else if (listOfFiles[i].isDirectory() && subfolder) {
-                files.addAll(loadFilesFromDirectory(listOfFiles[i], subfolder));
-                // loadFilesFromDirectory(listOfFiles[i], files, subfolder);
+                files.addAll(loadFilesFromDirectory(listOfFiles[i], subfolder, extensions));
             }
         }
         return files;
@@ -230,7 +259,7 @@ public final class GraphTestUtil {
         try {
             resource.load(Collections.emptyMap());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new WrappedException(e);
         }
         if (resource.getContents().isEmpty() || !(resource.getContents().get(0) instanceof Diagram)) {
             throw new IllegalArgumentException("The selected file does not contain a diagram: "
@@ -239,29 +268,35 @@ public final class GraphTestUtil {
 
         // create a diagram edit part
         TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain(resourceSet);
-        final Maybe<DiagramEditPart> editPart = new Maybe<DiagramEditPart>();
-        final Maybe<RuntimeException> wrappedException = new Maybe<RuntimeException>();
+        final Maybe<LayoutMapping<?>> mapping = new Maybe<LayoutMapping<?>>();
+        final Maybe<Throwable> wrappedException = new Maybe<Throwable>();
         Display.getDefault().syncExec(new Runnable() {
             public void run() {
                 try {
                     Diagram diagram = (Diagram) resource.getContents().get(0);
                     OffscreenEditPartFactory offscreenFactory = OffscreenEditPartFactory
                             .getInstance();
-                    editPart.set(offscreenFactory.createDiagramEditPart(diagram, new Shell()));
-                } catch (RuntimeException re) {
-                    wrappedException.set(re);
+                    Shell shell = Display.getDefault().getActiveShell();
+                    if (shell == null) {
+                        shell = new Shell();
+                    }
+                    DiagramEditPart editPart = offscreenFactory.createDiagramEditPart(diagram, shell);
+
+                    // retrieve a kgraph representation of the diagram
+                    mapping.set(EclipseLayoutInfoService.getInstance()
+                            .getManager(null, editPart).buildLayoutGraph(null, editPart));
+                } catch (Throwable throwable) {
+                    wrappedException.set(throwable);
                 }
             }
         });
-        if (wrappedException.get() != null) {
-            throw wrappedException.get();
+        if (wrappedException.get() instanceof RuntimeException) {
+            throw (RuntimeException) wrappedException.get();
+        } else if (wrappedException.get() != null) {
+            throw new WrappedException(wrappedException.get());
         }
 
-        // retrieve a kgraph representation of the diagram
-        LayoutMapping<?> mapping = EclipseLayoutInfoService.getInstance()
-                .getManager(null, editPart.get()).buildLayoutGraph(null, editPart.get());
-
-        return mapping;
+        return mapping.get();
     }
     
 }
