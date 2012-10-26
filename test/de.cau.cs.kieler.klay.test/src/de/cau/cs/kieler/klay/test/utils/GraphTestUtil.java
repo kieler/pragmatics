@@ -44,17 +44,16 @@ import de.cau.cs.kieler.klay.test.utils.TestPath;
  * 
  * @author wah
  */
-
 public final class GraphTestUtil {
 
-    /** the test graph root directory */
+    /** the test graph root directory. */
     private static final String SOURCE_GRAPHS_DIRECTORY = "D:\\Uni-Kiel\\kieler\\Examples\\";
-    /** the source file format to load */
+    /** the source file format to load. */
     private static final ArrayList<String> SOURCE_GRAPHS_FORMAT = new ArrayList<String>(
             Arrays.asList("kegdi", "kaod", "kids"));
 
     /**
-     * A private constructor to prevent instantiation
+     * A private constructor to prevent instantiation.
      */
     private GraphTestUtil() {
     }
@@ -66,7 +65,7 @@ public final class GraphTestUtil {
      *            a list of the test folder + properties
      * @return a list of KNodes
      */
-    public static List<GraphTestObject> loadGraphs(TestPath[] bundleTestPaths) {
+    public static List<GraphTestObject> loadGraphs(final TestPath[] bundleTestPaths) {
         // Initialize a List of GraphTestObject to be filled in with GraphTestObjects from each
         // bundleTestPath
         List<GraphTestObject> graphTestObject = new ArrayList<GraphTestObject>();
@@ -85,7 +84,7 @@ public final class GraphTestUtil {
      *            the folder where the graphs are located
      * @return a list of KNode
      */
-    public static List<GraphTestObject> loadGraphs(String folder) {
+    public static List<GraphTestObject> loadGraphs(final String folder) {
         return loadGMFGraphs(folder, false, false);
     }
 
@@ -94,11 +93,11 @@ public final class GraphTestUtil {
      * 
      * @param folder
      *            the folder where the graphs are located
-     * @param subforlder
+     * @param subfolder
      *            if true, load all graphs under sub-folders
      * @return a list of KNode
      */
-    public static List<GraphTestObject> loadGraphs(String folder, boolean subfolder) {
+    public static List<GraphTestObject> loadGraphs(final String folder, final boolean subfolder) {
         return loadGMFGraphs(folder, subfolder, false);
     }
 
@@ -114,8 +113,8 @@ public final class GraphTestUtil {
      *            if true, apply automatic layout to loaded graphs
      * @return a list of KNode
      */
-    public static List<GraphTestObject> loadGMFGraphs(String folder, boolean subfolder,
-            boolean doLayout) {
+    public static List<GraphTestObject> loadGMFGraphs(final String folder, final boolean subfolder,
+            final boolean doLayout) {
        
         File rootFolder = new File(SOURCE_GRAPHS_DIRECTORY, folder);
 
@@ -132,8 +131,9 @@ public final class GraphTestUtil {
                     LayoutMapping<?> mapping = getLayoutMappingForGraphFile(gfile);
                     // apply layout when applyLayout = true
                    
-                    if (doLayout)
+                    if (doLayout) {
                         DiagramLayoutEngine.INSTANCE.layout(mapping, new BasicProgressMonitor());
+                    }
                          
                     // add the KNode to the list
                     graphObjects.add(new GraphTestObject(gfile, mapping.getLayoutGraph()));
@@ -159,7 +159,7 @@ public final class GraphTestUtil {
      *            the file name.
      * @return the file extension, in lower case.
      */
-    private static String getFileExtension(String file) {
+    private static String getFileExtension(final String file) {
         // get the last dot position
         int dotPos = file.lastIndexOf(".");
         if (dotPos >= 0) {
@@ -183,14 +183,14 @@ public final class GraphTestUtil {
      *            if true then load subfolder graphs else only the given directory
      * @return return the List of graph files
      */
-    private static List<File> loadFilesFromDirectory(File folder,
-            boolean subfolder) {
+    private static List<File> loadFilesFromDirectory(final File folder,
+            final boolean subfolder) {
         List<File> files = new ArrayList<File>();
         // filter to select only files with SOURCE_GRAPHS_FORMAT extension or
         // sub directories
         FileFilter filter = new FileFilter() {
             @Override
-            public boolean accept(File pathname) {
+            public boolean accept(final File pathname) {
                 if (pathname.isDirectory()) {
                     return true;
                 }
@@ -221,7 +221,7 @@ public final class GraphTestUtil {
      *            the file to convert into KNode
      * @return the KNode file
      */
-    private static LayoutMapping<?> getLayoutMappingForGraphFile(File file) {
+    private static LayoutMapping<?> getLayoutMappingForGraphFile(final File file) {
         // load the notation diagram element
         URI uri = URI.createFileURI(file.toString());
         ResourceSet resourceSet = new ResourceSetImpl();
@@ -263,4 +263,5 @@ public final class GraphTestUtil {
 
         return mapping;
     }
+    
 }

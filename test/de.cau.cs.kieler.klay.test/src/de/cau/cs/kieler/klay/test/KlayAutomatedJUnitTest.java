@@ -22,8 +22,10 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import de.cau.cs.kieler.klay.test.utils.*;
 import de.cau.cs.kieler.klay.test.runner.KlayTestRunner;
+import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
+import de.cau.cs.kieler.klay.test.utils.GraphTestUtil;
+import de.cau.cs.kieler.klay.test.utils.TestPath;
 
 /**
  * The class KlayAutomatedJUnitTest enables the integration of several KLAY execution runs into a
@@ -62,11 +64,10 @@ public abstract class KlayAutomatedJUnitTest {
     }
 
     /**
-     * Initialization - Load the graphs to be tested
+     * Initialization - Load the graphs to be tested.
      */
     @Before
-    public void GraphAutomatedTestInitialization() {
-        graphsList.clear();
+    public void graphAutomatedTestInitialization() {
         graphsList = GraphTestUtil.loadGraphs(getBundleTestPath());
     }
 
@@ -97,6 +98,4 @@ public abstract class KlayAutomatedJUnitTest {
      */
     protected abstract TestPath[] getBundleTestPath();
 
-    // ------------------------------------------------------------------------------
-    // ------------------------------------------------------------------------------
 }

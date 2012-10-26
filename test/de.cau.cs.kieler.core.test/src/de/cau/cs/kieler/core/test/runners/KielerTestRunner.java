@@ -99,8 +99,6 @@ public abstract class KielerTestRunner extends Parameterized {
      * 
      * @param klass
      *            the klass
-     * @throws Throwable
-     *             the throwable
      */
     public KielerTestRunner(final Class<?> clazz) throws Throwable {
         super(clazz);

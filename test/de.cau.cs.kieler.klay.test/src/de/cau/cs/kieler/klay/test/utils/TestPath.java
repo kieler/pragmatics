@@ -21,29 +21,29 @@ package de.cau.cs.kieler.klay.test.utils;
  */
 public class TestPath {
 
-    /** the folder containing the graph files */
+    /** the folder containing the graph files. */
     private String folder;
-    /** if subfolder = true load graphs in subfolder */
+    /** if subfolder = true load graphs in subfolder. */
     private boolean loadSubfolder;
-    /** if doLayout = true apply layout on graphs */
+    /** if doLayout = true apply layout on graphs. */
     private boolean doLayout;
 
     /**
      * The constructor of the Class This object is used to define in which folder test framework to
-     * load the files and to set the load option (load sub-folders, apply the layout algorithm)
+     * load the files and to set the load option (load sub-folders, apply the layout algorithm).
      * 
-     * @param folder
-     * @param subfolder
-     * @param doLayout
+     * @param folder the folder containing the graph files
+     * @param subfolder if true load graphs in subfolder
+     * @param doLayout if true apply layout on graphs
      */
-    public TestPath(String folder, boolean subfolder, boolean doLayout) {
+    public TestPath(final String folder, final boolean subfolder, final boolean doLayout) {
         this.folder = folder;
         this.loadSubfolder = subfolder;
         this.doLayout = doLayout;
     }
 
     /**
-     * Return the folder
+     * Return the folder.
      * 
      * @return the folder
      */
@@ -52,17 +52,17 @@ public class TestPath {
     }
 
     /**
-     * Set the folder
+     * Set the folder.
      * 
      * @param folder
      *            the folder to set
      */
-    public void setFolder(String folder) {
+    public void setFolder(final String folder) {
         this.folder = folder;
     }
 
     /**
-     * Return true if load the subfolder and else otherwise
+     * Return true if load the subfolder and else otherwise.
      * 
      * @return the subfolder
      */
@@ -71,17 +71,17 @@ public class TestPath {
     }
 
     /**
-     * Set the loadSubFolder
+     * Set the loadSubFolder.
      * 
      * @param subfolder
      *            the subfolder to set
      */
-    public void setLoadSubfolder(boolean subfolder) {
+    public void setLoadSubfolder(final boolean subfolder) {
         this.loadSubfolder = subfolder;
     }
 
     /**
-     * Return true if apply the layout and else otherwise
+     * Return true if apply the layout and else otherwise.
      * 
      * @return the doLayout
      */
@@ -95,7 +95,8 @@ public class TestPath {
      * @param doLayout
      *            the doLayout to set
      */
-    public void setDoLayout(boolean doLayout) {
+    public void setDoLayout(final boolean doLayout) {
         this.doLayout = doLayout;
     }
+    
 }

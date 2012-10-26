@@ -38,10 +38,9 @@ public class KlayTestRunner extends KielerTestRunner {
      * of the class to test (parameter values given to the constructor are NULL) and afterwards
      * calls the method for getting the parameters for the parameterized test run.
      * 
-     * @param klass
-     * @throws Throwable
+     * @param klass the klass
      */
-    public KlayTestRunner(Class<?> klass) throws Throwable {
+    public KlayTestRunner(final Class<?> klass) throws Throwable {
         super(klass);
     }
 
@@ -49,18 +48,19 @@ public class KlayTestRunner extends KielerTestRunner {
      * {@inheritDoc}
      */
     @Override
-    public void initialize(Object object) {
-        if (object instanceof KlayAutomatedJUnitTest)
+    public void initialize(final Object object) {
+        if (object instanceof KlayAutomatedJUnitTest) {
             // the object is always a KlayAutomatedJUnitTest that is why we don't need to throw an
             // exception
-            ((KlayAutomatedJUnitTest) object).GraphAutomatedTestInitialization();
+            ((KlayAutomatedJUnitTest) object).graphAutomatedTestInitialization();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getRunnerName(List<Object[]> parameterObjectList, int parameterIndex) {
+    public String getRunnerName(final List<Object[]> parameterObjectList, final int parameterIndex) {
         Object[] objectArray = parameterObjectList.get(parameterIndex);
         // The objectArray is always affected with a GraphTestObject that is why this method is save
         GraphTestObject file = (GraphTestObject) objectArray[0];
@@ -71,8 +71,8 @@ public class KlayTestRunner extends KielerTestRunner {
      * {@inheritDoc}
      */
     @Override
-    public String getTestName(List<Object[]> parameterObjectList, int parameterIndex,
-            FrameworkMethod method) {
+    public String getTestName(final List<Object[]> parameterObjectList, final int parameterIndex,
+            final FrameworkMethod method) {
         Object[] objectArray = parameterObjectList.get(parameterIndex);
         GraphTestObject file = (GraphTestObject) objectArray[0];
         return method.getName().concat(" - ").concat(file.getFile().toString());

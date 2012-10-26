@@ -28,9 +28,9 @@ import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 import de.cau.cs.kieler.klay.test.utils.TestPath;
 
 /**
- * A Basic test Class that tests if Nodes overlaps and if Nodes and Edges overlaps
+ * A basic test class that tests if nodes overlaps and if nodes and edges overlap.
  * 
- * @author Wahbi
+ * @author wah
  */
 public class BasicTests extends KlayAutomatedJUnitTest {
 
@@ -40,7 +40,7 @@ public class BasicTests extends KlayAutomatedJUnitTest {
     /**
      * Instantiates a new KlayTestExample test and set the graphObject to the current graph to test.
      * 
-     * @param testObject
+     * @param testObject the test object
      */
     public BasicTests(final GraphTestObject testObject) {
         graphObject = testObject;
@@ -55,7 +55,7 @@ public class BasicTests extends KlayAutomatedJUnitTest {
     }
 
     /**
-     * A Junit Method to test if two nodes overlaps
+     * A Junit Method to test if two nodes overlaps.
      */
     @Test
     public void testNodesOverlaps() {
@@ -77,7 +77,7 @@ public class BasicTests extends KlayAutomatedJUnitTest {
     }
 
     /**
-     * A Junit Method to test if a node and Edge overlaps
+     * A Junit Method to test if a node and Edge overlaps.
      */
     @Test
     public void testNodeEdgeOverlaps() {
@@ -103,7 +103,8 @@ public class BasicTests extends KlayAutomatedJUnitTest {
      *            the KShapeLayout of the first Node
      * @return true if the nodes overlaps and false otherwise
      */
-    private static boolean hasNodeToNodeOverlaps(KShapeLayout layout1, KShapeLayout layout2) {
+    private static boolean hasNodeToNodeOverlaps(final KShapeLayout layout1,
+            final KShapeLayout layout2) {
         float x1 = Math.max(layout1.getXpos(), layout2.getXpos());
         float x2 = Math.min(layout1.getXpos() + layout1.getWidth(),
                 layout2.getXpos() + layout2.getWidth());
@@ -184,7 +185,7 @@ public class BasicTests extends KlayAutomatedJUnitTest {
                 return hasIntersection(p1, p2, xpos + width, ypos, xpos + width, ypos + height);
             } else if ((outcode & TOP) > 0) {
                 return hasIntersection(p1, p2, xpos, ypos, xpos + width, ypos);
-            } else /* if ((p1OutCode & BOTTOM) > 0) */{
+            } else /* if ((p1OutCode & BOTTOM) > 0) */ {
                 return hasIntersection(p1, p2, xpos, ypos + height, xpos + width, ypos + height);
             }
         }
@@ -286,4 +287,5 @@ public class BasicTests extends KlayAutomatedJUnitTest {
         }
         return oppOutcode;
     }
+    
 }

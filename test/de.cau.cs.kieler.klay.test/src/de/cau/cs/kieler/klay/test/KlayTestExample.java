@@ -21,9 +21,9 @@ import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 import de.cau.cs.kieler.klay.test.utils.TestPath;
 
 /**
- * An Example test Class
+ * An Example test Class.
  * 
- * @author Wahbi
+ * @author wah
  */
 public class KlayTestExample extends KlayAutomatedJUnitTest {
 
@@ -33,7 +33,7 @@ public class KlayTestExample extends KlayAutomatedJUnitTest {
     /**
      * Instantiates a new KlayTestExample test and set the graphObject to the current graph to test.
      * 
-     * @param testObject
+     * @param testObject the test object
      */
     public KlayTestExample(final GraphTestObject testObject) {
         graphObject = testObject;

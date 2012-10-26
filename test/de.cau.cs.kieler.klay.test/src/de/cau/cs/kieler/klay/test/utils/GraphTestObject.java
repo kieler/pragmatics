@@ -31,20 +31,20 @@ public class GraphTestObject {
 
     /**
      * The constructor of the class with two parameters to initialize the graph file and the graph
-     * contained therein
+     * contained therein.
      * 
      * @param file
      *            the Graph file
      * @param knode
      *            the graph contained
      */
-    public GraphTestObject(File file, KNode knode) {
+    public GraphTestObject(final File file, final KNode knode) {
         this.file = file;
         this.knode = knode;
     }
 
     /**
-     * Return the graph file
+     * Return the graph file.
      * 
      * @return the file
      */
@@ -53,7 +53,7 @@ public class GraphTestObject {
     }
 
     /**
-     * Return the KNode
+     * Return the KNode.
      * 
      * @return the knode
      */
@@ -62,22 +62,23 @@ public class GraphTestObject {
     }
 
     /**
-     * Set the graph file
+     * Set the graph file.
      * 
      * @param file
      *            the file to set
      */
-    public void setFile(File file) {
+    public void setFile(final File file) {
         this.file = file;
     }
 
     /**
-     * Set the the graph contained(KNode)
+     * Set the the graph contained(KNode).
      * 
      * @param knode
      *            the knode to set
      */
-    public void setKnode(KNode knode) {
+    public void setKnode(final KNode knode) {
         this.knode = knode;
     }
+    
 }
