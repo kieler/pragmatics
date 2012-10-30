@@ -34,6 +34,8 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.keys.KeyBinding;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.commands.ICommandService;
@@ -47,6 +49,7 @@ import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.IWorkbenchContribution;
+import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -123,6 +126,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
             = new HashMap<IContributionItem, ButtonHandler>();
     private static Map<IContributionItem, ButtonHandler> oldButtonsHandlerMap;
     private static List<IContributionItem> buttons = new ArrayList<IContributionItem>();
+    private static Map<IContributionItem, IEvaluationReference> visibilities = new HashMap<IContributionItem, IEvaluationReference>();
 
     // CHECKSTYLEON MaximumLineLength
 
@@ -216,7 +220,6 @@ public class KiviContributionItem extends CompoundContributionItem implements
                     idButtonMap.put(config.getId(), separator);
                     buttonsHandlerMap.put(separator, new ButtonHandler());
                     buttons.add(separator);
-                    
                     Expression visibilityExpression = null;
                     // specify visibility for active editors
                     if (config.getActiveEditors() != null && config.getActiveEditors().length > 0) {
@@ -243,6 +246,14 @@ public class KiviContributionItem extends CompoundContributionItem implements
                     }
                     if (visibilityExpression != null) {
                         menuService.registerVisibleWhen(separator, visibilityExpression, null, null);
+                        
+                        if (!visibilities.containsKey(separator)) {
+                            ContributionItemUpdater listener = new ContributionItemUpdater(separator);
+                            IEvaluationReference ref = evaluationService.addEvaluationListener(
+                                    visibilityExpression, listener, "visibilityExpression");
+                            visibilities.put(separator, ref);
+                        }
+                        
                     }
                     
                 }
@@ -343,6 +354,14 @@ public class KiviContributionItem extends CompoundContributionItem implements
                 }
                 if (visibilityExpression != null) {
                     menuService.registerVisibleWhen(item, visibilityExpression, null, null);
+                    
+                    if (!visibilities.containsKey(item)) {
+                        ContributionItemUpdater listener = new ContributionItemUpdater(item);
+                        IEvaluationReference ref = evaluationService.addEvaluationListener(
+                                visibilityExpression, listener, "visibilityExpression");
+                        visibilities.put(item, ref);
+                    }
+                    
                 }
                 
                 // if (!config.getResponsiveCombination().isActive()) {
@@ -432,6 +451,36 @@ public class KiviContributionItem extends CompoundContributionItem implements
     }
     
     private static boolean softUpdate = false;
+    
+    private class ContributionItemUpdater implements IPropertyChangeListener {
+
+        private boolean visible = true;
+
+        private IContributionItem item;
+
+        public ContributionItemUpdater(IContributionItem item) {
+            this.item = item;
+        }
+
+        public void propertyChange(PropertyChangeEvent event) {
+            if (event.getProperty() == "visibilityExpression") {
+                if (event.getNewValue() != null
+                        && ((Boolean) event.getNewValue()).booleanValue() != visible) {
+                    this.visible = ((Boolean) event.getNewValue()).booleanValue();
+                    item.setVisible(visible);
+                    /*
+                     * IContributionManager parent = null; if (item instanceof ContributionItem) {
+                     * parent = ((ContributionItem) item).getParent();
+                     * 
+                     * } else if (item instanceof MenuManager) { parent = ((MenuManager)
+                     * item).getParent(); } if (parent != null) { parent.markDirty();
+                     * //managersAwaitingUpdates.add(parent); }
+                     */
+                }
+            }
+
+        }
+    }
     
     /**
      * Activate or deactivate soft update.
