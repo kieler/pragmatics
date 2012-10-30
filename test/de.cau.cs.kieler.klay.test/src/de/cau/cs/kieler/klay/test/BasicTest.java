@@ -40,7 +40,7 @@ import de.cau.cs.kieler.klay.test.utils.TestPath;
  * @author wah
  * @author msp
  */
-public class BasicTests extends KlayAutomatedJUnitTest {
+public class BasicTest extends KlayAutomatedJUnitTest {
 
     // Object containing the current graphTestObject that contains both, a File and a KNode.
     private GraphTestObject graphObject;
@@ -50,7 +50,7 @@ public class BasicTests extends KlayAutomatedJUnitTest {
      * 
      * @param testObject the test object
      */
-    public BasicTests(final GraphTestObject testObject) {
+    public BasicTest(final GraphTestObject testObject) {
         graphObject = testObject;
     }
 
