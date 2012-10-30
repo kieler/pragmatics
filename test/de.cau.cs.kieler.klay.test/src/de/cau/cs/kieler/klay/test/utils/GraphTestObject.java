@@ -60,25 +60,5 @@ public class GraphTestObject {
     public KNode getKnode() {
         return knode;
     }
-
-    /**
-     * Set the graph file.
-     * 
-     * @param file
-     *            the file to set
-     */
-    public void setFile(final File file) {
-        this.file = file;
-    }
-
-    /**
-     * Set the the graph contained(KNode).
-     * 
-     * @param knode
-     *            the knode to set
-     */
-    public void setKnode(final KNode knode) {
-        this.knode = knode;
-    }
     
 }

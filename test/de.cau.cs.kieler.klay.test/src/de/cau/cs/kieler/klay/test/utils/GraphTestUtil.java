@@ -48,8 +48,13 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
  */
 public final class GraphTestUtil {
 
-    /** the test graph root directory. */
-    private static final String SOURCE_GRAPHS_DIRECTORY = "models/keg/klay_tests/";
+    /**
+     * The test graph root directory. This is given relative to the working directory, which
+     * is the test plugin's root. The path below leads to the repository root and then into
+     * the {@code models} subfolder, which contains all test graphs.
+     */
+    private static final String SOURCE_GRAPHS_DIRECTORY = "../../models/keg/klay_tests/";
+    
     /** the GMF file formats to load. */
     private static final ArrayList<String> GMF_GRAPHS_FORMATS = Lists.newArrayList(
             "kegdi", "kaod", "kids");

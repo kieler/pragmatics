@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
@@ -46,8 +45,18 @@ public abstract class KlayAutomatedJUnitTest {
     private static List<GraphTestObject> graphsList;
 
     /**
+     * Initialization - Load the graphs to be tested. This is called in
+     * {@link KlayTestRunner#initialize(Object)}.
+     * 
+     * FIXME A static field is set in a method that is bound to a dummy instance. This is very bad.
+     */
+    public void graphAutomatedTestInitialization() {
+        graphsList = GraphTestUtil.loadGraphs(getBundleTestPath());
+    }
+
+    /**
      * Gets all graph files and provides the parameters for the consecutive tests run by the
-     * KlayTestRunner.
+     * {@link KlayTestRunner}.
      * 
      * @return a Collection of GraphTestObject Objects
      */
@@ -66,24 +75,18 @@ public abstract class KlayAutomatedJUnitTest {
     }
 
     /**
-     * Initialization - Load the graphs to be tested.
-     */
-    @Before
-    public void graphAutomatedTestInitialization() {
-        graphsList = GraphTestUtil.loadGraphs(getBundleTestPath());
-    }
-
-    /**
      * Wraps up klay pointer that is stored statically.
      */
     @AfterClass
-    public static void kiemAutomatedJUnitTestWrapup() {
+    public static void graphAutomatedTestWrapup() {
         // Clear all static fields
         graphsList = null;
     }
 
     /**
      * Important for scanning files is the Plugin ID.
+     * 
+     * FIXME Is this used anywhere?
      * 
      * @return the plugin id
      */

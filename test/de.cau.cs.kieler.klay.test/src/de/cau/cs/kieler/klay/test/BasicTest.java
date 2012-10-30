@@ -19,8 +19,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
@@ -31,6 +33,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 import de.cau.cs.kieler.klay.test.utils.TestPath;
 
@@ -59,9 +62,21 @@ public class BasicTest extends KlayAutomatedJUnitTest {
      */
     protected TestPath[] getBundleTestPath() {
         TestPath[] testPaths = {
-            new TestPath("random", false, true, TestPath.Type.KGRAPH)
+            new TestPath("random", false, false, TestPath.Type.KGRAPH)
         };
         return testPaths;
+    }
+    
+    /**
+     * Perform automatic layout before testing. This is done here instead of specifying layout
+     * in the test paths in order to guarantee that the correct layout algorithm is chosen.
+     * Currently only the KLay Layered algorithm is tested, since the others cannot guarantee
+     * to pass the basic tests yet.
+     */
+    @Before
+    public void layout() {
+        LayeredLayoutProvider layered = new LayeredLayoutProvider();
+        layered.doLayout(graphObject.getKnode(), new BasicProgressMonitor());
     }
     
     /**
