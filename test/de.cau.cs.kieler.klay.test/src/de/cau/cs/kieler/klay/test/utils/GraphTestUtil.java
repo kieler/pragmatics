@@ -49,7 +49,7 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 public final class GraphTestUtil {
 
     /** the test graph root directory. */
-    private static final String SOURCE_GRAPHS_DIRECTORY = "/home/kieler/test_graphs/";
+    private static final String SOURCE_GRAPHS_DIRECTORY = "models/keg/klay_tests/";
     /** the GMF file formats to load. */
     private static final ArrayList<String> GMF_GRAPHS_FORMATS = Lists.newArrayList(
             "kegdi", "kaod", "kids");
