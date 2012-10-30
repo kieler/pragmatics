@@ -144,8 +144,8 @@ public final class GraphTestUtil {
             return graphObjects;
 
         } else {
-            throw new IllegalArgumentException("The source graph directory (" + folder
-                    + ") cannot be read!");
+            throw new IllegalArgumentException("The source graph directory ("
+                    + rootFolder.getAbsolutePath() + ") cannot be read!");
         }
     }
 
@@ -188,8 +188,8 @@ public final class GraphTestUtil {
             return graphObjects;
 
         } else {
-            throw new IllegalArgumentException("The source graph directory (" + folder
-                    + ") cannot be read!");
+            throw new IllegalArgumentException("The source graph directory ("
+                    + rootFolder.getAbsolutePath() + ") cannot be read!");
         }
     }
 
