@@ -234,7 +234,6 @@ public final class GraphTestUtil {
         List<File> files = new ArrayList<File>();
         // filter to select only files with SOURCE_GRAPHS_FORMAT extension or sub directories
         FileFilter filter = new FileFilter() {
-            @Override
             public boolean accept(final File pathname) {
                 if (pathname.isDirectory()) {
                     return true;
