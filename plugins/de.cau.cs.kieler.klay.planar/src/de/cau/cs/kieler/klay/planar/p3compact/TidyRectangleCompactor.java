@@ -87,12 +87,13 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                     LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
                     LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
                     LayoutProcessorStrategy.QUOD_DUMMY_REMOVER,
-                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER));
+                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.SELFLOOP_DUMMY_REMOVER));
 
     /** Intermediate processing configuration with Giotto high-degree strategy. */
-    private static final IntermediateProcessingConfiguration 
-        INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO = new IntermediateProcessingConfiguration(
-            // Before Phase 1
+   private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO 
+        = new IntermediateProcessingConfiguration(
+    // Before Phase 1
             null,
             // Before Phase 2
             null,
@@ -106,7 +107,8 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                     LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
                     LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
                     LayoutProcessorStrategy.GIOTTO_DUMMY_REMOVER,
-                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER));
+                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.SELFLOOP_DUMMY_REMOVER));
 
     /**
      * {@inheritDoc}
@@ -183,7 +185,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
      * @return PGraph, the resulting flownetwork
      */
     private PGraph createFlowNetwork(final int startSide) {
-        PGraph flowNetwork = new PGraphFactory().createEmptyGraph();
+        PGraph flowNetwork = PGraphFactory.createEmptyGraph();
 
         BiMap<PFace, PNode> faceMap = HashBiMap.create();
 

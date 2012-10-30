@@ -30,6 +30,7 @@ import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.intermediate.FullAngleDummyEntry;
 import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
 import de.cau.cs.kieler.klay.planar.intermediate.RectShapeEdgeProperties;
+import de.cau.cs.kieler.klay.planar.intermediate.SelfLoopDummyContainer;
 import de.cau.cs.kieler.klay.planar.p1planar.PlanarityTestStrategy;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
@@ -99,7 +100,6 @@ public final class Properties {
         = new Property<FullAngleDummyEntry>(
             "de.cau.cs.kieler.klay.planar.properties.fullangledummy");
 
-
     /** Edge type. */
     public static final IProperty<EdgeType> EDGE_TYPE = new Property<EdgeType>("edgeType",
             EdgeType.NONE);
@@ -120,7 +120,8 @@ public final class Properties {
 
     // =========================== FACE PROPERTIES ========================================
     /** Face-sides, contains the bounding edges with respect to their side. */
-    public static final IProperty<List<PEdge>[]> FACE_SIDES = new Property<List<PEdge>[]>(
+    public static final IProperty<List<PEdge>[]> FACE_SIDES 
+        = new Property<List<PEdge>[]>(
             "de.cau.cs.kieler.klay.planar.faceSides");
 
     /** priority of nodes or edges. */
@@ -177,12 +178,14 @@ public final class Properties {
             "de.cau.cs.kieler.klay.planar.rect_shape_properties");
 
     /** A cut edge is passed in both directions and hence it needs two edge properties. */
-    public static final IProperty<Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>> 
-        RECT_SHAPE_CUTEDGE = new Property<Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>>(
+    public static final IProperty<Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>> RECT_SHAPE_CUTEDGE 
+        = new Property<Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>>(
             "de.cau.cs.kieler.klay.planar.rect_shape_cutedge");
 
-    /** Indicates whether is the external face is a dummy or the original face. True for dummy 
-     * rectangle and false for a original face.*/
+    /**
+     * Indicates whether is the external face is a dummy or the original face. True for dummy
+     * rectangle and false for a original face.
+     */
     public static final IProperty<Boolean> RECT_SHAPE_TRANS_EXTERNAL = new Property<Boolean>(
             "de.cau.cs.kieler.klay.planar.rect_shape_trans_external");
 
@@ -212,6 +215,20 @@ public final class Properties {
      */
     public static final IProperty<Boolean> EXPANSION_CYCLE_FACE = new Property<Boolean>(
             "de.cau.cs.kieler.klay.planar.expansion_cylce_face");
+
+    /**
+     * Dummies which are inserted by the SelfLoopDummyProcessor are equipped with that property to
+     * identify them, so that they can be removed by the SelfLoopDummyRemover.
+     */
+    public static final IProperty<PNode> SELFLOOP_DUMMY = new Property<PNode>(
+            "de.cau.cs.kieler.klay.planar.selfloop_dummy");
+
+    /**
+     * Nodes containing self-loops are connected with dummies to avoid such loops. The relation to
+     * the original node is stored in the self loop dummy container.
+     */
+    public static final IProperty<SelfLoopDummyContainer> SELFLOOP_DUMMIES 
+        = new Property<SelfLoopDummyContainer>("de.cau.cs.kieler.klay.planar.selfloop_dummies");
 
     /**
      * Hidden default constructor.

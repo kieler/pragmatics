@@ -84,7 +84,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION 
         = new IntermediateProcessingConfiguration(
-    // Before Phase 1
+            // Before Phase 1
             null,
             // Before Phase 2
             null,
@@ -125,6 +125,9 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         PGraph network = createFlowNetwork();
         new SuccessiveShortestPathFlowSolver().calcFlow(network);
 
+        // special cutedge handling
+        // handlingCutEdges(network);
+
         // compute bends and angles
         computeBends(network);
         computeAngles(network);
@@ -136,6 +139,28 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
     }
 
     /**
+     * @param network
+     */
+    private void handlingCutEdges(final PGraph network) {
+
+        // internal faces containing at least one cutedge
+        Map<PFace, PEdge> cutEdgeFaces = Maps.newHashMap();
+
+        // search for a cutEdge within an internal face
+        PFace externalFace = this.graph.getExternalFace();
+        for (PEdge edge : this.graph.adjacentEdges()) {
+            PFace leftFace = edge.getLeftFace();
+            if (leftFace == edge.getRightFace() && externalFace != leftFace) {
+                cutEdgeFaces.put(leftFace, edge);
+            }
+        }
+
+        // increase flow along the an non cutedge of the face such that there is one more bend point
+        // on the edge
+
+    }
+
+    /**
      * Create the flow network base upon the graph. The flow network contains a source node for
      * every node in the graph and a sink node for every face. It contains an arc for every node and
      * every face adjacent to a face in the graph. The minimum cost flow problem on the resulting
@@ -144,7 +169,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
      * @return the flow network to compute the minimal number of bends
      */
     private PGraph createFlowNetwork() {
-        PGraph network = new PGraphFactory().createEmptyGraph();
+        PGraph network = PGraphFactory.createEmptyGraph();
         network.setProperty(Properties.ORIGIN, this.graph);
         // Contains original nodes as keys and network nodes as value.
         Map<PNode, PNode> nodeMapping = Maps.newHashMap();
