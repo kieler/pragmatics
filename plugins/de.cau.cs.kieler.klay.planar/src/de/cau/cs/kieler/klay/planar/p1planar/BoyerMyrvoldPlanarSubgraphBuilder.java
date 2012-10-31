@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.planar.p1planar;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -26,6 +27,7 @@ import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
+import de.cau.cs.kieler.klay.planar.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 import de.cau.cs.kieler.klay.planar.util.ManuallyIterable;
 import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.Direction;
@@ -55,7 +57,18 @@ import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.ManualIterator;
  */
 public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayoutPhase {
 
-    // ======================== Attributes =============================
+    /** Intermediate Processing Configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
+    // Before Phase 1
+            EnumSet.of(LayoutProcessorStrategy.SELF_LOOP),
+            // Before Phase 2
+            null,
+            // Before Phase 3
+            null,
+            // Before Phase 4
+            null,
+            // After Phase 4
+            null);
 
     // /** Minimum number of needed graph-nodes to process the algorithm. */
     // private static final int MINIMUM_NODE_COUNT = 3;
@@ -181,18 +194,17 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
      * {@inheritDoc}
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pGraph) {
-        return null;
+        return new IntermediateProcessingConfiguration(INTERMEDIATE_PROCESSING_CONFIGURATION);
     }
 
     // ======================== Algorithm ==========================================
 
     /**
-     * {@inheritDoc} 
-     * Determines a planar embedding of the graph. If the Graph is fully planar,
-     * this algorithm computes a complete planar embedding of the graph. If the graph is not planar,
-     * it determines a planar embedding of a maximal planar subgraph and returns a list of edges,
-     * whose addition will cause non-planarity and therefore could not be inserted.This guarantees
-     * to find a planar embedding for a subgraph in time linear to the number of nodes in the graph.
+     * {@inheritDoc} Determines a planar embedding of the graph. If the Graph is fully planar, this
+     * algorithm computes a complete planar embedding of the graph. If the graph is not planar, it
+     * determines a planar embedding of a maximal planar subgraph and returns a list of edges, whose
+     * addition will cause non-planarity and therefore could not be inserted.This guarantees to find
+     * a planar embedding for a subgraph in time linear to the number of nodes in the graph.
      */
     public void process(final PGraph thegraph) {
         getMonitor().begin("Planar Subgraph Building", 1);

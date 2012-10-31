@@ -177,6 +177,15 @@ public class PEdge extends PGraphElement {
     }
 
     /**
+     * Gets the right face without checking for a newer one.
+     * 
+     * @return the right face
+     */
+    public PFace getSimpleRightFace() {
+        return rightFace;
+    }
+
+    /**
      * Set the face on the right side of the edge.
      * 
      * @param face
@@ -196,6 +205,15 @@ public class PEdge extends PGraphElement {
             throw new IncompatibleGraphTypeException();
         }
         ((PGraph) this.getParent()).generateFaces();
+        return leftFace;
+    }
+
+    /**
+     * Gets the left face without checking for a newer one.
+     * 
+     * @return the left face
+     */
+    public PFace getSimpleLeftFace() {
         return leftFace;
     }
 

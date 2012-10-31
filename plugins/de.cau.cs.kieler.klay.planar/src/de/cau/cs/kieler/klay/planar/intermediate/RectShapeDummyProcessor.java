@@ -217,7 +217,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
                     edgeProperties.setFront(faceSides[index]);
                     usedSides.add(Integer.valueOf(index));
 
-                    addArtificial(currentEdge, edgeProperties, true, null);
+                    addArtificial(currentEdge, edgeProperties, true);
                     countAdded++;
                     if (countAdded == 2) {
                         break;
@@ -295,6 +295,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
             // turn(e) = 2 such that there is a full turn,
             // insert a vertex project(e) (dummy) along edge front(e)
 
+            // takes the edge with the longest path to the front
             Pair<PEdge, RectShapeEdgeProperties> start = determineStart(face);
             PEdge startEdge = start.getFirst();
             PEdge currentEdge = startEdge;
@@ -308,10 +309,10 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
                         && edgeProperties.getFront() != RectShapeEdgeProperties.EMPTY_FRONT) {
                     if (edgeProperties.getFront() == startEdge) {
                         startNode = startEdge.getOppositeNode(startNode);
-                        addArtificial(currentEdge, edgeProperties, false, notRectFaces);
+                        addArtificial(currentEdge, edgeProperties, false);
                         startNode = startEdge.getOppositeNode(startNode);
                     } else {
-                        addArtificial(currentEdge, edgeProperties, false, notRectFaces);
+                        addArtificial(currentEdge, edgeProperties, false);
 
                     }
                 }
@@ -562,11 +563,9 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
      *            of that edge, cutedges have two edge properties
      * @param isExternal
      *            indicates whether the face is external or not
-     * @param faces
-     *            non rectangular faces.
      */
     private void addArtificial(final PEdge edge, final RectShapeEdgeProperties edgeProperties,
-            final boolean isExternal, final List<PFace> faces) {
+            final boolean isExternal) {
         PNode corner = edgeProperties.getCorner();
         PEdge front = edgeProperties.getFront();
         RectShapeEdgeProperties frontProperties = front
@@ -615,19 +614,6 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
         // Fix embedding and/or angles of successor node
         fixSuccessorNode(virtualEdge.getOppositeNode(projectE), front.getOppositeNode(projectE),
                 virtualEdge);
-
-        // update faces
-        if (faces != null) {
-            PFace leftFace = front.getLeftFace();
-            PFace rightFace = front.getRightFace();
-            for (PFace face : faces) {
-                if (face.id == leftFace.id) {
-                    this.graph.updateFaces(virtualEdge, face, null);
-                } else if (face.id == rightFace.id) {
-                    this.graph.updateFaces(virtualEdge, null, face);
-                }
-            }
-        }
 
     }
 
@@ -722,7 +708,8 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
                 backDirectionProps.setPreviousEdge(virtualEdge);
             }
 
-            Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProp = new Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>(
+            Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProp 
+                = new Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>(
                     vEdgeProperties1, vEdgeProperties2);
             virtualEdge.setProperty(Properties.RECT_SHAPE_CUTEDGE, cutEdgeProp);
 
@@ -740,6 +727,11 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
             frontProperties.setFront(null);
 
         }
+
+        // update faces
+        this.graph.updateFaces(virtualEdge, front.getSimpleLeftFace(), null);
+        this.graph.updateFaces(virtualEdge, null, front.getSimpleRightFace());
+
     }
 
     /**

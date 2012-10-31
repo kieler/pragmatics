@@ -370,8 +370,13 @@ public class PGraph extends PNode {
         }
 
         PEdge edge = new PEdge(this.edgeIndex++, this, source, target, directed);
-        ((PNode) source).linkEdge(edge);
-        ((PNode) target).linkEdge(edge);
+        // handling selfloops
+        if (source == target) {
+            ((PNode) source).linkEdge(edge);
+        } else {
+            ((PNode) source).linkEdge(edge);
+            ((PNode) target).linkEdge(edge);
+        }
         this.edges.add(edge);
         this.changedFaces = true;
         return edge;

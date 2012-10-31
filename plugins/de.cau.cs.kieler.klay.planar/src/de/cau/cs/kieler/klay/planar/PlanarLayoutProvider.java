@@ -50,9 +50,6 @@ import de.cau.cs.kieler.klay.planar.util.PUtil;
 public class PlanarLayoutProvider extends AbstractLayoutProvider {
 
     // ======================== Variables ============================
-    /** Graph factory. */
-    private PGraphFactory factory = new PGraphFactory();
-
     /** phase 1: algorithm for planar testing and building a subgraph. */
     private ILayoutPhase subgraphBuilder = new BoyerMyrvoldPlanarSubgraphBuilder();
 
@@ -132,7 +129,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Orthogonal Layout", 1);
 
         // KGraph -> PGraph conversion
-        PGraph pgraph = this.factory.createGraphFromKGraph(kgraph);
+        PGraph pgraph = PGraphFactory.createGraphFromKGraph(kgraph);
 
         // update the modules
         updateModules(pgraph);
@@ -158,7 +155,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         // pgraph = componentsProcessor.pack(components);
 
         // apply the layout results to the original graph
-        this.factory.applyLayout(pgraph);
+        PGraphFactory.applyLayout(pgraph);
 
         progressMonitor.done();
     }

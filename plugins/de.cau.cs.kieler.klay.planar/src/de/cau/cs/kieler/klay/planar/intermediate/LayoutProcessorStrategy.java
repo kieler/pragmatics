@@ -30,7 +30,8 @@ public enum LayoutProcessorStrategy {
      */
 
     // Before Phase 1
-
+    /** Inserts dummies to avoid self loop edges. */
+    SELF_LOOP,
     // Before Phase 2
 
     // Before Phase 3
@@ -79,7 +80,10 @@ public enum LayoutProcessorStrategy {
     QUOD_DUMMY_REMOVER,
 
     /** Removes planar dummy nodes which are added by the {@link EdgeInsertionPlanarization} phase. */
-    PLANAR_DUMMY_REMOVER;
+    PLANAR_DUMMY_REMOVER,
+
+    /** Removes all selfloop dummies. */
+    SELFLOOP_DUMMY_REMOVER;
 
     /**
      * Returns the enumeration value related to the given ordinal.
@@ -101,6 +105,8 @@ public enum LayoutProcessorStrategy {
         switch (this) {
         case EXT_FACE:
             return new ExternalFaceProcessor();
+        case SELF_LOOP:
+            return new SelfLoopDummyProcessor();
         case EXPANSION_CYCLE:
             return new ExpansionCycleProcessor();
         case FULL_ANGLE:
@@ -125,6 +131,8 @@ public enum LayoutProcessorStrategy {
             return new QuodDummyRemover();
         case PLANAR_DUMMY_REMOVER:
             return new PlanarDummyRemover();
+        case SELFLOOP_DUMMY_REMOVER:
+            return new SelfLoopDummyRemover();
         default:
             return null;
         }

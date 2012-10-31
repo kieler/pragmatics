@@ -22,9 +22,9 @@ package de.cau.cs.kieler.klay.planar.p3compact;
 public enum HighDegreeNodeStrategy {
 
     /** The Giotto algorithm. */
-    GIOTTO,
+    QUOD,
 
     /** The Quod algorithm. */
-    QUOD;
+    GIOTTO;
 
 }

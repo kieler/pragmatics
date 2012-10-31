@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd.xtext
+package de.cau.cs.kieler.klighd.combinations
 
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kivi.AbstractCombination
@@ -22,7 +22,7 @@ import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 /**
  * 
  */
-class CropDiagramCombination extends AbstractCombination {
+class KlighdCropDiagramCombination extends AbstractCombination {
 
     /**
      * THE 'execute' method.
