@@ -60,22 +60,22 @@ public abstract class AbstractCombination implements ICombination {
     /**
      * Cache of execute methods to speed up reflection.
      */
-    private Map<Class<? extends Object>, Method> executeCache = Maps.newHashMap();
+    private final Map<Class<? extends Object>, Method> executeCache = Maps.newHashMap();
     
     /**
      * Effects that have been scheduled in one iteration of the handle method.
      */
-    private List<IEffect> effects = new ArrayList<IEffect>();
+    private final List<IEffect> effects = new ArrayList<IEffect>();
 
     /**
      * Undo effects that have to be executed to undo effects of last round.
      */
-    private List<IEffect> undoEffects = new ArrayList<IEffect>();
+    private final List<IEffect> undoEffects = new ArrayList<IEffect>();
 
     /**
      * Merged result of merging all effects and undoEffects.
      */
-    private List<IEffect> mergedEffects = new ArrayList<IEffect>();
+    private final List<IEffect> mergedEffects = new ArrayList<IEffect>();
 
     /**
      * The trigger state that actually triggered execution of the execute method.
@@ -107,99 +107,107 @@ public abstract class AbstractCombination implements ICombination {
      */
     public final void handle(final ITriggerState triggerState) {
         boolean debug = KiVi.getInstance().isDebug();
-
         this.triggeringState = triggerState;
         boolean found = true;
         if (triggerState instanceof EffectTriggerState<?>) {
             // potentially skip execution if wrong effect type
             found = false;
         }
-        // get the relevant execute method for the given triggerState
-        Method execute = getExecuteMethod(triggerState);
-        if (execute == null) {
-            effects.clear();
-            return;
-        }
-        // retrieve all TriggerStates that are parameters for the relevant execute method
-        Type[] types = execute.getGenericParameterTypes();
-        Object[] states = new Object[types.length];
-        for (int i = 0; i < types.length; i++) {
-            // trigger state without generic parameter, may also be directly an IEffect
-            if (types[i] instanceof Class) {
-                states[i] = KiVi.getInstance().getTriggerState((Class<?>) types[i]);
-                // we see an effect trigger parameter
-                if (IEffect.class.isAssignableFrom((Class<?>) types[i])) {
-                    IEffect effectParam = ((EffectTriggerState<?>) states[i]).getEffect();
-                    states[i] = effectParam;
+        mergedEffects.clear();
 
-                    if (types[i] == triggerState.getKeyClass()) {
-                        found = true;
-                    }
-                }
-            } else if (types[i] instanceof ParameterizedType) {
-                // explicit parameter case EffectTriggerState<SomeEffect>
-                ParameterizedType paramType = (ParameterizedType) types[i];
-                Type[] actualTypes = paramType.getActualTypeArguments();
-                if (actualTypes.length == 1 && actualTypes[0] instanceof Class<?>) {
-                    states[i] = KiVi.getInstance().getTriggerState((Class<?>) actualTypes[0]);
-                    if (states[i] == triggerState) {
-                        found = true;
-                    } else if (states[i] == null) {
-                        states[i] = new EffectTriggerState<IEffect>(null, false);
-                    }
-                }
-            }
-        }
-        if (!found) {
-            effects.clear();
-            return;
-        }
-
-        // remember old effects for undoing
-        if (enableRecording) {
-            for (IEffect effect : effects) {
-                undoEffects.add(0, new UndoEffect(effect));
-            }
-            if (undoEffects.size() > MAX_RECORD_LENGTH) {
-                String message = "The View Management Combination "
-                        + this.getClass().getName()
-                        + " records all effects it is scheduling. "
-                        + "However, the recorded list has already size "
-                        + undoEffects.size()
-                        + ". This looks like a potential memory leak. "
-                        + "You should either diable recording for this combination "
-                        + "or explicitly undoRecordedEffects from time to time!";
-                IStatus status = new Status(IStatus.WARNING, KiViPlugin.PLUGIN_ID, message);
-                StatusManager.getManager().handle(status);
-            }
-        }
-
-        // now we ask for new effects
-        effects = new ArrayList<IEffect>();
         try {
+            // get the relevant execute method for the given triggerState
+            Method execute = getExecuteMethod(triggerState);
+            if (execute == null) {
+                effects.clear();
+                return;
+            }
+            // retrieve all TriggerStates that are parameters for the relevant execute method
+            Type[] types = execute.getGenericParameterTypes();
+            Object[] states = new Object[types.length];
+            for (int i = 0; i < types.length; i++) {
+                // trigger state without generic parameter, may also be directly an IEffect
+                if (types[i] instanceof Class) {
+                    states[i] = KiVi.getInstance().getTriggerState((Class<?>) types[i]);
+                    // we see an effect trigger parameter
+                    if (IEffect.class.isAssignableFrom((Class<?>) types[i])) {
+                        IEffect effectParam = ((EffectTriggerState<?>) states[i]).getEffect();
+                        states[i] = effectParam;
+    
+                        if (types[i] == triggerState.getKeyClass()) {
+                            found = true;
+                        }
+                    }
+                } else if (types[i] instanceof ParameterizedType) {
+                    // explicit parameter case EffectTriggerState<SomeEffect>
+                    ParameterizedType paramType = (ParameterizedType) types[i];
+                    Type[] actualTypes = paramType.getActualTypeArguments();
+                    if (actualTypes.length == 1 && actualTypes[0] instanceof Class<?>) {
+                        states[i] = KiVi.getInstance().getTriggerState((Class<?>) actualTypes[0]);
+                        if (states[i] == triggerState) {
+                            found = true;
+                        } else if (states[i] == null) {
+                            states[i] = new EffectTriggerState<IEffect>(null, false);
+                        }
+                    }
+                }
+            }
+            if (!found) {
+                effects.clear();
+                return;
+            }
+    
+            // remember old effects for undoing
+            if (enableRecording) {
+                for (IEffect effect : effects) {
+                    undoEffects.add(0, new UndoEffect(effect));
+                }
+                if (undoEffects.size() > MAX_RECORD_LENGTH) {
+                    String message = "The View Management Combination "
+                            + this.getClass().getName()
+                            + " records all effects it is scheduling. "
+                            + "However, the recorded list has already size "
+                            + undoEffects.size()
+                            + ". This looks like a potential memory leak. "
+                            + "You should either diable recording for this combination "
+                            + "or explicitly undoRecordedEffects from time to time!";
+                    IStatus status = new Status(IStatus.WARNING, KiViPlugin.PLUGIN_ID, message);
+                    StatusManager.getManager().handle(status);
+                }
+            }
+    
+            // now we ask for new effects
+            effects.clear();
+            try {
+                if (debug) {
+                    System.out.println(this);
+                }
+                stateParameters = states;
+                execute.invoke(this, states);
+            } catch (IllegalArgumentException e) {
+                KiVi.error(e);
+            } catch (IllegalAccessException e) {
+                KiVi.error(e);
+            } catch (InvocationTargetException e) {
+                KiVi.error(e);
+            }
+    
+            // merge all scheduled effects and undo effects
+            mergeScheduledEffects();
+    
             if (debug) {
-                System.out.println(this);
+                for (IEffect effect : mergedEffects) {
+                    System.out.print(effect);
+                }
+                if (!mergedEffects.isEmpty()) {
+                    System.out.println();
+                }
             }
-            stateParameters = states;
-            execute.invoke(this, states);
-        } catch (IllegalArgumentException e) {
-            KiVi.error(e);
-        } catch (IllegalAccessException e) {
-            KiVi.error(e);
-        } catch (InvocationTargetException e) {
-            KiVi.error(e);
-        }
-
-        // merge all scheduled effects and undo effects
-        mergeScheduledEffects();
-
-        if (debug) {
-            for (IEffect effect : mergedEffects) {
-                System.out.print(effect);
-            }
-            if (!mergedEffects.isEmpty()) {
-                System.out.println();
-            }
+            
+        } finally {
+            // release references to passed states
+            stateParameters = null;
+            triggeringState = null;
         }
     }
 
@@ -207,9 +215,7 @@ public abstract class AbstractCombination implements ICombination {
      * {@inheritDoc}
      */
     public List<IEffect> getEffects() {
-        List<IEffect> result = mergedEffects;
-        mergedEffects = new ArrayList<IEffect>();
-        return result;
+        return mergedEffects;
     }
 
     /**
@@ -352,7 +358,8 @@ public abstract class AbstractCombination implements ICombination {
      * invoked. This can be used to conceptually go back from the states to the event, to find out
      * which state was constructed last.
      * 
-     * @return the trigger state that was constructed last
+     * @return the trigger state that was constructed last, or {@code null} if not called from
+     *          the execute method
      */
     protected final ITriggerState latestState() {
         return triggeringState;
@@ -366,7 +373,7 @@ public abstract class AbstractCombination implements ICombination {
      * the returned indices may change when more parameters are added to the execute method, or
      * when their order is modified.
      * 
-     * @return the index of the latest trigger state
+     * @return the index of the latest trigger state, or -1 if not called from the execute method
      */
     protected final int latestStateIndex() {
         if (triggeringState != null && stateParameters != null) {
@@ -488,6 +495,8 @@ public abstract class AbstractCombination implements ICombination {
  
     /**
      * {@inheritDoc}
+     * 
+     * The default implementation returns {@code false}.
      */
     public boolean runWithProgressMonitor() {
         return false;
@@ -496,7 +505,7 @@ public abstract class AbstractCombination implements ICombination {
     /**
      * {@inheritDoc}
      * 
-     * Default implementation returns toString().
+     * The default implementation returns {@code toString()}.
      */
     public String getName() {
         return toString();
