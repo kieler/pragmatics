@@ -343,15 +343,17 @@ public class KiVi {
             System.out.println(triggerState);
         }
         for (ICombination combo : relevantCombos) {
+            
             try {
+                // handle the given trigger state, possibly executing the combination
                 combo.handle(triggerState);
+                // fetch the list of effects created during execution
                 List<IEffect> effects = combo.getEffects();
+                // enqueue the effects for the effects worker thread
                 if (combo.runWithProgressMonitor()) {
-                    effectsWorker.addMonitoredEffects(effects);
-                    effectsWorker.setNextMonitoredCombination(combo);
-                }
-                for (IEffect effect : effects) {
-                    executeEffect(effect);
+                    effectsWorker.enqueueMonitoredEffects(effects, combo.getName());
+                } else {
+                    effectsWorker.enqueueEffects(effects);
                 }
                 // clear references to created effects in order to release system resources
                 effects.clear();
