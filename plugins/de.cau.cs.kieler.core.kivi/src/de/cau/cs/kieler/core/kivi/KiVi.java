@@ -353,6 +353,8 @@ public class KiVi {
                 for (IEffect effect : effects) {
                     executeEffect(effect);
                 }
+                // clear references to created effects in order to release system resources
+                effects.clear();
             } catch (UnsupportedPartException e) {
                 error(combo, triggerState, e);
             }

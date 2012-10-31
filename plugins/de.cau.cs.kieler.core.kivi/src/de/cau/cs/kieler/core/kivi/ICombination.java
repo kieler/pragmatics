@@ -29,7 +29,8 @@ public interface ICombination extends ITriggerListener {
 
     /**
      * Get the list of effects that are ready to be executed after the last triggering of an
-     * {@link ITriggerState}.
+     * {@link ITriggerState}. The returned list is always the same and may be modified by the caller.
+     * It is recommended to clear the list after use in order to release references to created effects.
      * 
      * @return list of effects that should be executed
      */
