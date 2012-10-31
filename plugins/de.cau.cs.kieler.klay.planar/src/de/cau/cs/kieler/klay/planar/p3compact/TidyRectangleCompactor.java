@@ -46,6 +46,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * the chapter 5.4 of the Graph Drawing book of Di Battista, Eades, Tamassia and Tollis.
  * 
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayoutPhase {
 
@@ -70,7 +71,8 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     private PNode sink;
 
     /** Intermediate processing configuration with Quod high-degree strategy. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_QUOD = new IntermediateProcessingConfiguration(
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_QUOD 
+        = new IntermediateProcessingConfiguration(
     // Before Phase 1
             null,
             // Before Phase 2
@@ -85,11 +87,13 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                     LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
                     LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
                     LayoutProcessorStrategy.QUOD_DUMMY_REMOVER,
-                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER));
+                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.SELFLOOP_DUMMY_REMOVER));
 
     /** Intermediate processing configuration with Giotto high-degree strategy. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO = new IntermediateProcessingConfiguration(
-            // Before Phase 1
+   private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO 
+        = new IntermediateProcessingConfiguration(
+    // Before Phase 1
             null,
             // Before Phase 2
             null,
@@ -103,7 +107,8 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                     LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
                     LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
                     LayoutProcessorStrategy.GIOTTO_DUMMY_REMOVER,
-                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER));
+                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.SELFLOOP_DUMMY_REMOVER));
 
     /**
      * {@inheritDoc}
@@ -180,7 +185,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
      * @return PGraph, the resulting flownetwork
      */
     private PGraph createFlowNetwork(final int startSide) {
-        PGraph flowNetwork = new PGraphFactory().createEmptyGraph();
+        PGraph flowNetwork = PGraphFactory.createEmptyGraph();
 
         BiMap<PFace, PNode> faceMap = HashBiMap.create();
 
@@ -225,7 +230,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
 
         PFace targetFace = null;
 
-        // --------------------------------------------------------------------------------------------
         // Doing a loopstep for the first face-side. Afterwards the while loop is used.
         // Creates edges for consecutive face-nodes.
         for (PEdge edge : currentSide) {
@@ -250,7 +254,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             }
         }
 
-        // --------------------------------------------------------------------------------------------
         // Traverse the graph by running through the faces and join consecutive face by an edge.
         // two faces are consecutive if they share a horizontal or vertical edge.
 

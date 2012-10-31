@@ -16,7 +16,6 @@ package de.cau.cs.kieler.klay.planar.intermediate;
 import java.util.Iterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -28,6 +27,7 @@ import de.cau.cs.kieler.klay.planar.util.PUtil;
  * Removes the dummy bend nodes of the graph and updates the grid representation.
  * 
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public class BendDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
 

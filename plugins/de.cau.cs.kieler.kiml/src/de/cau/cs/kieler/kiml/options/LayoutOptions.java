@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.options;
 
+import java.util.EnumSet;
+
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -169,6 +171,9 @@ public final class LayoutOptions {
     
     /**
      * What kind of edge routing style should be applied for the content of a parent node.
+     * Algorithms may also set this option to single edges in order to mark them as splines.
+     * The bend point list of edges with this option set to {@link EdgeRouting#SPLINES} must
+     * be interpreted as control points for a piecewise cubic spline.
      */
     public static final IProperty<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
             "de.cau.cs.kieler.edgeRouting", EdgeRouting.UNDEFINED);
@@ -236,12 +241,13 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.separateConnComp");
 
     /**
-     * Constraint for modifying node size. If set to {@link SizeConstraint#FIXED} and the node is
-     * empty, its size is not changed. Otherwise it is minimized considering some properties,
-     * depending on the chosen minimization level.
+     * Constraints for determining node sizes. Each member of the set specifies something that should
+     * be taken into account when calculating node sizes. The empty set corresponds to node sizes
+     * being fixed.
      */
-    public static final IProperty<SizeConstraint> SIZE_CONSTRAINT = new Property<SizeConstraint>(
-            "de.cau.cs.kieler.sizeConstraint", SizeConstraint.FIXED);
+    public static final IProperty<EnumSet<SizeConstraint>> SIZE_CONSTRAINT =
+            new Property<EnumSet<SizeConstraint>>(
+                    "de.cau.cs.kieler.sizeConstraint", SizeConstraint.fixed());
     
     /**
      * Overall spacing between elements. This is mostly interpreted as the minimal distance

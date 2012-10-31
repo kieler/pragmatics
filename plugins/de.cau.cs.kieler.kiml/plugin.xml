@@ -276,11 +276,11 @@
       <layoutOption
             appliesTo="nodes"
             class="de.cau.cs.kieler.kiml.options.SizeConstraint"
-            default="FIXED"
-            description="Whether the size of a node is fixed, or how to minimize its size"
+            default=""
+            description="What is taken into account when resizing nodes; no selection means that node sizes are fixed."
             id="de.cau.cs.kieler.sizeConstraint"
             name="Size Constraint"
-            type="enum">
+            type="enumset">
       </layoutOption>
       <layoutOption
             appliesTo="parents"

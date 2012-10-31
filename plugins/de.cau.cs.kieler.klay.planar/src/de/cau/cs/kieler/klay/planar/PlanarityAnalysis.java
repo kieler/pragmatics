@@ -43,7 +43,7 @@ public class PlanarityAnalysis implements IAnalysis {
         progressMonitor.begin("Planarity testing", 1);
 
         // KGraph -> PGraph conversion
-        PGraph graph = new PGraphFactory().createGraphFromKGraph(parentNode);
+        PGraph graph = PGraphFactory.createGraphFromKGraph(parentNode);
 
         ILayoutPhase tester = new BoyerMyrvoldPlanarSubgraphBuilder();
 

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutProviders">
+      <layoutAlgorithm
+            class="de.cau.cs.kieler.papyrus.sequence.SequenceDiagramLayoutProvider"
+            id="de.cau.cs.kieler.papyrus.sequence"
+            name="Sequence Diagram Layouter"
+            type="de.cau.cs.kieler.papyrus.sequence">
+         <knownOption
+               default="20"
+               option="de.cau.cs.kieler.borderSpacing">
+         </knownOption>
+         <knownOption
+               default="50"
+               option="de.cau.cs.kieler.papyrus.sequence.lifelineSpacing">
+         </knownOption>
+         <knownOption
+               default="50"
+               option="de.cau.cs.kieler.papyrus.sequence.messageSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.papyrus.sequence.lifelineSorting">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutOption
+            advanced="false"
+            appliesTo="parents"
+            default="20"
+            description="The border or margin width"
+            id="de.cau.cs.kieler.borderSpacing"
+            name="Border spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="false"
+            appliesTo="parents"
+            default="50"
+            description="The horizontal spacing between two neighbored lifelines"
+            id="de.cau.cs.kieler.papyrus.sequence.lifelineSpacing"
+            name="Lifeline spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="false"
+            appliesTo="parents"
+            default="40"
+            description="The vertical spacing between two message layers"
+            id="de.cau.cs.kieler.papyrus.sequence.messageSpacing"
+            name="Message spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="false"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy"
+            default="INTERACTIVE"
+            description="The sorting strategy that is used to order the lifelines horizontally"
+            id="de.cau.cs.kieler.papyrus.sequence.lifelineSorting"
+            name="Lifeline sorting"
+            type="enum">
+      </layoutOption>
+      <layoutType
+            description="Layout type for UML Sequence Diagrams"
+            id="de.cau.cs.kieler.papyrus.sequence"
+            name="Sequence">
+      </layoutType>
+   </extension>
+
+</plugin>

@@ -59,7 +59,7 @@
                feature="CLUSTERS">
          </supportedFeature>
          <knownOption
-               default="RIGHT"
+               default="DOWN"
                option="de.cau.cs.kieler.direction">
          </knownOption>
          <knownOption

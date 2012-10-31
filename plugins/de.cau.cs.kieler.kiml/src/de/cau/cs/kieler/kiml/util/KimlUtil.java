@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.util;
 
+import java.util.EnumSet;
 import java.util.Iterator;
 
 import org.eclipse.emf.common.util.TreeIterator;
@@ -50,12 +51,24 @@ import de.cau.cs.kieler.kiml.options.SizeConstraint;
  * @author msp
  */
 public final class KimlUtil {
+    
+    /**
+     * Default minimal width for nodes.
+     */
+    public static final float DEFAULT_MIN_WIDTH = 20.0f;
+    
+    /**
+     * Default minimal height for nodes.
+     */
+    public static final float DEFAULT_MIN_HEIGHT = 20.0f;
+    
 
     /**
      * Hidden constructor to avoid instantiation.
      */
     private KimlUtil() {
     }
+    
 
     /**
      * Creates a KNode, initializes some attributes, and returns it.
@@ -279,9 +292,6 @@ public final class KimlUtil {
         }
         return 0;
     }
-    
-    /** minimal size of a node. */
-    private static final float MIN_NODE_SIZE = 20.0f;
 
     /**
      * Sets the size of a given node, depending on the minimal size, the number of ports
@@ -293,14 +303,14 @@ public final class KimlUtil {
      */
     public static KVector resizeNode(final KNode node) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        SizeConstraint sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
-        if (sizeConstraint == SizeConstraint.FIXED) {
+        EnumSet<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+        if (sizeConstraint.isEmpty()) {
             return null;
         }
         
         float newWidth = 0, newHeight = 0;
 
-        if (sizeConstraint.arePortsConsidered()) {
+        if (sizeConstraint.contains(SizeConstraint.PORTS)) {
             PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
             float minNorth = 2, minEast = 2, minSouth = 2, minWest = 2;
             Direction direction = node.getParent() == null
@@ -353,11 +363,6 @@ public final class KimlUtil {
             newWidth = Math.max(minNorth, minSouth);
             newHeight = Math.max(minEast, minWest);
         }
-
-        if (sizeConstraint.isDefSizeConsidered()) {
-            newWidth = Math.max(newWidth, MIN_NODE_SIZE);
-            newHeight = Math.max(newHeight, MIN_NODE_SIZE);
-        }
         
         return resizeNode(node, newWidth, newHeight, true);
     }
@@ -373,15 +378,37 @@ public final class KimlUtil {
      */
     public static KVector resizeNode(final KNode node, final float newWidth, final float newHeight,
             final boolean movePorts) {
+        
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         if (nodeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
             // don't resize nodes that aren't laid out
             return null;
         }
+        EnumSet<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+        
         KVector oldSize = new KVector(nodeLayout.getWidth(), nodeLayout.getHeight());
-        KVector newSize = new KVector(
-                Math.max(newWidth, nodeLayout.getProperty(LayoutOptions.MIN_WIDTH)),
-                Math.max(newHeight, nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT)));
+        KVector newSize;
+        
+        // Calculate the new size
+        if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
+            float minWidth = nodeLayout.getProperty(LayoutOptions.MIN_WIDTH);
+            float minHeight = nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT);
+            
+            // If minimum width or height are not set, maybe default to default values
+            if (sizeConstraint.contains(SizeConstraint.DEFAULT_MINIMUM_SIZE)) {
+                if (minWidth <= 0) {
+                    minWidth = DEFAULT_MIN_WIDTH;
+                }
+                
+                if (minHeight <= 0) {
+                    minHeight = DEFAULT_MIN_HEIGHT;
+                }
+            }
+            
+            newSize = new KVector(Math.max(newWidth, minWidth), Math.max(newHeight, minHeight));
+        } else {
+            newSize = new KVector(newWidth, newHeight);
+        }
         
         float widthRatio = (float) (newSize.x / oldSize.x);
         float heightRatio = (float) (newSize.y / oldSize.y);
@@ -395,13 +422,16 @@ public final class KimlUtil {
                     : node.getParent().getData(KShapeLayout.class).getProperty(LayoutOptions.DIRECTION);
             boolean fixedPorts = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS)
                     == PortConstraints.FIXED_POS;
+            
             for (KPort port : node.getPorts()) {
                 KShapeLayout portLayout = port.getData(KShapeLayout.class);
                 PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+                
                 if (portSide == PortSide.UNDEFINED) {
                     portSide = calcPortSide(port, direction);
                     portLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
                 }
+                
                 switch (portSide) {
                 case NORTH:
                     if (!fixedPorts) {
@@ -439,6 +469,7 @@ public final class KimlUtil {
             float midy = labelLayout.getYpos() + labelLayout.getHeight() / 2;
             float widthPercent = midx / (float) oldSize.x;
             float heightPercent = midy / (float) oldSize.y;
+            
             if (widthPercent + heightPercent >= 1) {
                 if (widthPercent - heightPercent > 0 && midy >= 0) {
                     // label is on the right
@@ -453,7 +484,7 @@ public final class KimlUtil {
         }
         
         // set fixed size option for the node: now the size is assumed to stay as determined here
-        nodeLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.FIXED);
+        nodeLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
         
         return new KVector(widthRatio, heightRatio);
     }

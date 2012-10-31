@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
+import java.util.EnumSet;
+
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellEditorValidator;
@@ -43,7 +45,7 @@ import de.cau.cs.kieler.kiml.ui.Messages;
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-10-26 review KI-29 by cmot, sgu
  */
 public class LayoutPropertyDescriptor implements IPropertyDescriptor {
 
@@ -67,7 +69,9 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                     return images.getPropFalse();
                 }
             case REMOTE_ENUM:
+            case REMOTE_ENUMSET:
             case ENUM:
+            case ENUMSET:
                 return images.getPropChoice();
             case INT:
                 return images.getPropInt();
@@ -82,6 +86,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
          * {@inheritDoc}
          */
         @Override
+        @SuppressWarnings("rawtypes")
         public String getText(final Object element) {
             switch (optionData.getType()) {
             case STRING:
@@ -102,9 +107,37 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                 }
             case BOOLEAN:
             case REMOTE_ENUM:
-                return optionData.getChoices()[(Integer) element];
             case ENUM:
                 return optionData.getChoices()[(Integer) element];
+            case REMOTE_ENUMSET:
+            case ENUMSET:
+                if (element instanceof String) {
+                    return (String) element;
+                } else if (element instanceof String[]) {
+                    String[] arr = (String[]) element;
+                    if (arr.length == 0) {
+                        return "";
+                    } else {
+                        StringBuilder builder = new StringBuilder();
+                        
+                        for (String s : arr) {
+                            builder.append(", ").append(s);
+                        }
+                        
+                        return builder.substring(2);
+                    }
+                } else if (element instanceof EnumSet) {
+                    EnumSet set = (EnumSet) element;
+                    if (set.isEmpty()) {
+                        return "";
+                    }
+                    
+                    StringBuilder builder = new StringBuilder();
+                    for (Object o : set) {
+                        builder.append(", " + ((Enum) o).name());
+                    }
+                    return builder.substring(2);
+                }
             default:
                 return element.toString();
             }
@@ -133,7 +166,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         switch (optionData.getType()) {
         case STRING:
             if (LayoutOptions.ALGORITHM.equals(optionData)) {
-                return new LayouterHintCellEditor(parent);
+                return new AlgorithmCellEditor(parent);
             } else {
                 return new TextCellEditor(parent);
             }
@@ -167,6 +200,9 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         case REMOTE_ENUM:
         case ENUM:
             return new ComboBoxCellEditor(parent, optionData.getChoices(), SWT.READ_ONLY);
+        case REMOTE_ENUMSET:
+        case ENUMSET:
+            return new MultipleOptionsCellEditor(parent, optionData.getChoices());
         case OBJECT:
             return new TextCellEditor(parent);
         default:

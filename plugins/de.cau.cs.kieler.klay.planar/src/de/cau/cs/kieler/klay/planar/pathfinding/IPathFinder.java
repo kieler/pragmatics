@@ -15,9 +15,10 @@ package de.cau.cs.kieler.klay.planar.pathfinding;
 
 import java.util.List;
 
+import com.google.common.base.Predicate;
+
 import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
@@ -73,7 +74,7 @@ public interface IPathFinder extends IAlgorithm {
      *            a condition that defines if an edge can be entered from a specific node
      * @return the list of edges defining a path between {@code source} and {@code target}
      */
-    List<PEdge> findPath(PNode source, PNode target, ICondition<Pair<PNode, PEdge>> condition);
+    List<PEdge> findPath(PNode source, PNode target, Predicate<Pair<PNode, PEdge>> condition);
 
     /**
      * Interface for algorithms to find the shortest path in a graph.

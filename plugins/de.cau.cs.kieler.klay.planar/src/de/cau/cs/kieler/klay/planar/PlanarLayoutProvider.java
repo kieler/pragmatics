@@ -27,6 +27,7 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
+import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
 import de.cau.cs.kieler.klay.planar.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.planar.p1planar.BoyerMyrvoldPlanarSubgraphBuilder;
 import de.cau.cs.kieler.klay.planar.p1planar.EdgeInsertionPlanarization;
@@ -36,6 +37,7 @@ import de.cau.cs.kieler.klay.planar.p2ortho.TamassiaOrthogonalizer;
 import de.cau.cs.kieler.klay.planar.p3compact.HighDegreeNodeStrategy;
 import de.cau.cs.kieler.klay.planar.p3compact.TidyRectangleCompactor;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
+import de.cau.cs.kieler.klay.planar.util.PUtil;
 
 /**
  * Layout provider for an orthogonal layout.
@@ -48,9 +50,6 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
 public class PlanarLayoutProvider extends AbstractLayoutProvider {
 
     // ======================== Variables ============================
-    /** Graph factory. */
-    private PGraphFactory factory = new PGraphFactory();
-
     /** phase 1: algorithm for planar testing and building a subgraph. */
     private ILayoutPhase subgraphBuilder = new BoyerMyrvoldPlanarSubgraphBuilder();
 
@@ -63,14 +62,16 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
     /** phase 4: algorithm for compaction. */
     private ILayoutPhase compactor = new TidyRectangleCompactor();
 
-    /** connected components processor. */
-    private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
+    // /** connected components processor. */
+    // private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
 
     /** intermediate layout processor configuration. */
-    private IntermediateProcessingConfiguration intermediateProcessingConfiguration = new IntermediateProcessingConfiguration();
+    private IntermediateProcessingConfiguration intermediateProcessingConfiguration 
+        = new IntermediateProcessingConfiguration();
 
     /** collection of instantiated intermediate modules. */
-    private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache = new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
+    private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache 
+        = new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
 
     /** list of layout processors that compose the current algorithm. */
     private List<ILayoutProcessor> algorithm = new LinkedList<ILayoutProcessor>();
@@ -128,25 +129,33 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Orthogonal Layout", 1);
 
         // KGraph -> PGraph conversion
-        PGraph pgraph = this.factory.createGraphFromKGraph(kgraph);
+        PGraph pgraph = PGraphFactory.createGraphFromKGraph(kgraph);
 
         // update the modules
         updateModules(pgraph);
-
         // split the input graph into components
         // List<PGraph> components = componentsProcessor.split(pgraph);
 
         // perform the actual layout
         // for (PGraph comp : components) {
         // reset(progressMonitor.subTask(1.0f / components.size()));
-        layout(pgraph, null);
-        // }
 
+        // Exception handling for graphs with only one node and without an edge.
+        // Create a 1x1 grid and set the graph node to position (0,0).
+        // A node with no edges causes problems everytime the edge angles of a node a needed.
+        if (pgraph.getAdjacentEdgeCount() == 0 && pgraph.getNodeCount() == 1) {
+            GridRepresentation grid = new GridRepresentation(1, 1);
+            grid.set(0, 0, pgraph.getNodes().iterator().next());
+            pgraph.setProperty(Properties.GRID_REPRESENTATION, grid);
+        } else {
+            layout(pgraph, null);
+            // }
+        }
         // pack the components back into one graph
         // pgraph = componentsProcessor.pack(components);
 
         // apply the layout results to the original graph
-        this.factory.applyLayout(pgraph);
+        PGraphFactory.applyLayout(pgraph);
 
         progressMonitor.done();
     }
@@ -157,7 +166,8 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
     private void updateModules(final PGraph graph) {
 
         // check which planarity test algorithm should be used
-        if (graph.getProperty(Properties.PLANAR_TESTING_ALGORITHM) == PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM) {
+        if (graph.getProperty(Properties.PLANAR_TESTING_ALGORITHM)  
+                == PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM) {
             if (!(this.subgraphBuilder instanceof BoyerMyrvoldPlanarSubgraphBuilder)) {
                 this.subgraphBuilder = new BoyerMyrvoldPlanarSubgraphBuilder();
             }
@@ -172,7 +182,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
                 .getIntermediateProcessingStrategy(graph);
 
         LayoutProcessorStrategy removableProcessor = null;
-        HighDegreeNodeStrategy property = graph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) ;
+        HighDegreeNodeStrategy property = graph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY);
         if (property == HighDegreeNodeStrategy.QUOD) {
             removableProcessor = LayoutProcessorStrategy.GIOTTO_DUMMY_REMOVER;
         } else {
@@ -182,8 +192,9 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         Set<LayoutProcessorStrategy> processors = adjustedStrategy
                 .getProcessors(IntermediateProcessingConfiguration.AFTER_PHASE_4);
         for (LayoutProcessorStrategy strategy : processors) {
-            if(strategy == removableProcessor){
-                adjustedStrategy.removeLayoutProcessor(IntermediateProcessingConfiguration.AFTER_PHASE_4, strategy);
+            if (strategy == removableProcessor) {
+                adjustedStrategy.removeLayoutProcessor(
+                        IntermediateProcessingConfiguration.AFTER_PHASE_4, strategy);
                 break;
             }
         }
@@ -194,23 +205,22 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
                 .addAll(subgraphBuilder.getIntermediateProcessingStrategy(graph))
                 .addAll(edgeInserter.getIntermediateProcessingStrategy(graph))
                 .addAll(orthogonalizer.getIntermediateProcessingStrategy(graph))
-                .addAll(compactor
-                        .getIntermediateProcessingStrategy(graph))
+                .addAll(compactor.getIntermediateProcessingStrategy(graph))
                 .addAll(this.getIntermediateProcessingStrategy(graph));
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
         algorithm.add(subgraphBuilder);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
         algorithm.add(edgeInserter);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
         algorithm.add(orthogonalizer);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
         algorithm.add(compactor);
         algorithm
                 .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.AFTER_PHASE_4));
@@ -234,7 +244,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
         monitor.begin("Component Layout", algorithm.size());
 
         if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {
-            Util.clearTmpDir();
+            PUtil.clearTmpDir();
             // Debug Mode!
             // Prints the algorithm configuration and outputs the whole graph to a file
             // before each slot execution
@@ -255,7 +265,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
                 processor.reset(monitor.subTask(1));
                 processor.process(graph);
                 // graph debug output
-                Util.storeGraph(graph, slotIndex++, false);
+                PUtil.storeGraph(graph, slotIndex++, false);
             }
 
         } else {
