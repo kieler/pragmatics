@@ -98,8 +98,8 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
 
     /** list of connection edit parts that were found in the diagram. */
-    public static final IProperty<List<ConnectionEditPart>> CONNECTIONS = new Property<List<ConnectionEditPart>>(
-            "gmf.connections");
+    public static final IProperty<List<ConnectionEditPart>> CONNECTIONS = 
+            new Property<List<ConnectionEditPart>>("gmf.connections");
 
     /** editor part of the currently layouted diagram. */
     public static final IProperty<DiagramEditor> DIAGRAM_EDITOR = new Property<DiagramEditor>(
@@ -118,8 +118,8 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
             "gmf.applyLayoutCommandStack");
 
     /** the volatile layout config for static properties such as minimal node sizes. */
-    public static final IProperty<VolatileLayoutConfig> STATIC_CONFIG = new Property<VolatileLayoutConfig>(
-            "gmf.staticLayoutConfig");
+    public static final IProperty<VolatileLayoutConfig> STATIC_CONFIG = 
+            new Property<VolatileLayoutConfig>("gmf.staticLayoutConfig");
 
     private Map<EReference, KEdge> reference2EdgeMap;
 
@@ -162,6 +162,12 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
         }
     }
 
+    /**
+     * Special method to build a layoutGraph when the diagram is a sequence diagram.
+     * @param workbenchPart the workbenchPart
+     * @param diagramPart the diagramPart
+     * @return a layoutGraph  
+     */
     public LayoutMapping<IGraphicalEditPart> buildSequenceLayoutGraph(
             final IWorkbenchPart workbenchPart, final Object diagramPart) {
         DiagramEditor diagramEditor = null;
@@ -170,7 +176,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
         if (workbenchPart instanceof DiagramEditor) {
             diagramEditor = (DiagramEditor) workbenchPart;
         }
-
+        
         // choose the layout root edit part
         IGraphicalEditPart layoutRootPart = null;
         if (diagramPart instanceof ShapeNodeEditPart || diagramPart instanceof DiagramEditPart) {
@@ -253,7 +259,8 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
         return mapping;
     }
 
-    private void copyAnnotations(LayoutMapping<IGraphicalEditPart> mapping, KNode topNode) {
+    private void copyAnnotations(final LayoutMapping<IGraphicalEditPart> mapping,
+            final KNode topNode) {
         KShapeLayout nodelayout = topNode.getData(KShapeLayout.class);
         List<SequenceExecution> executions = nodelayout.getProperty(PapyrusProperties.EXECUTIONS);
         VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
@@ -266,8 +273,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
             }
         }
 
-        List<Object> attachedTo = nodelayout.getProperty(
-                PapyrusProperties.ATTACHED_TO);
+        List<Object> attachedTo = nodelayout.getProperty(PapyrusProperties.ATTACHED_TO);
         if (attachedTo != null) {
             List<Object> attTo = new LinkedList<Object>();
             BiMap<KGraphElement, IGraphicalEditPart> graphMap = mapping.getGraphMap();
@@ -277,11 +283,11 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
             staticConfig.setValue(PapyrusProperties.ATTACHED_TO, topNode, LayoutContext.GRAPH_ELEM,
                     attTo);
         }
-        
+
         String attachedElement = nodelayout.getProperty(PapyrusProperties.ATTACHED_ELEMENT);
         if (attachedElement != null) {
-            staticConfig.setValue(PapyrusProperties.ATTACHED_ELEMENT, topNode, LayoutContext.GRAPH_ELEM,
-                    attachedElement);
+            staticConfig.setValue(PapyrusProperties.ATTACHED_ELEMENT, topNode,
+                    LayoutContext.GRAPH_ELEM, attachedElement);
         }
     }
 
@@ -378,7 +384,8 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
                     boolean compExp = true;
                     IFigure compartmentFigure = compartment.getFigure();
                     if (compartmentFigure instanceof ResizableCompartmentFigure) {
-                        ResizableCompartmentFigure resizCompFigure = (ResizableCompartmentFigure) compartmentFigure;
+                        ResizableCompartmentFigure resizCompFigure = 
+                                (ResizableCompartmentFigure) compartmentFigure;
                         // check whether the compartment is collapsed
                         compExp = resizCompFigure.isExpanded();
                     }
@@ -543,7 +550,8 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
                     ListCompartmentEditPart lcEditPart = (ListCompartmentEditPart) child;
                     for (Object childObj : lcEditPart.getChildren()) {
                         if (childObj instanceof AbstractBorderedShapeEditPart) {
-                            AbstractBorderedShapeEditPart ioEditPart = (AbstractBorderedShapeEditPart) childObj;
+                            AbstractBorderedShapeEditPart ioEditPart = 
+                                    (AbstractBorderedShapeEditPart) childObj;
                             Rectangle ioBounds = getAbsoluteBounds(ioEditPart.getFigure());
 
                             KNode areaNode = KimlUtil.createInitializedNode();
@@ -568,7 +576,8 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
                 if (connObj instanceof ConnectionEditPart) {
                     ConnectionEditPart connedit = (ConnectionEditPart) connObj;
                     mapping.getProperty(CONNECTIONS).add(connedit);
-                    nodeLayout.setProperty(PapyrusProperties.ATTACHED_ELEMENT, connedit.getTarget().getClass().getSimpleName());
+                    nodeLayout.setProperty(PapyrusProperties.ATTACHED_ELEMENT, connedit.getTarget()
+                            .getClass().getSimpleName());
                     // If target is lifeline, attach to the nearest message
                     if (connedit.getTarget() instanceof ShapeNodeEditPart) {
                         float yPos = connedit.getConnectionFigure().getPoints().getLastPoint().y();
@@ -594,11 +603,11 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
     }
 
     /**
-     * Creates a SequnceExecution Object and cares about the initialization
+     * Creates a SequnceExecution Object and cares about the initialization.
      */
     private void createExecution(final LayoutMapping<IGraphicalEditPart> mapping,
-            final ShapeNodeEditPart lifelineEditPart, List<SequenceExecution> executions,
-            ShapeNodeEditPart childEditPart, String nodeType, KNode executionNode) {
+            final ShapeNodeEditPart lifelineEditPart, final List<SequenceExecution> executions,
+            final ShapeNodeEditPart childEditPart, final String nodeType, final KNode executionNode) {
 
         KShapeLayout executionLayout = executionNode.getData(KShapeLayout.class);
 
@@ -677,8 +686,8 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
      *            the point
      * @return the ConnectionEditPart of the searched message
      */
-    private ConnectionEditPart findMessageBelowPoint(ShapeNodeEditPart lifeline,
-            ConnectionEditPart skipConnection, float yPos) {
+    private ConnectionEditPart findMessageBelowPoint(final ShapeNodeEditPart lifeline,
+            final ConnectionEditPart skipConnection, final float yPos) {
         float minDiff = Float.MAX_VALUE;
         float low = 0;
         ConnectionEditPart next = null;
@@ -892,7 +901,6 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
     protected void processConnections(final LayoutMapping<IGraphicalEditPart> mapping) {
         reference2EdgeMap = new HashMap<EReference, KEdge>();
         for (ConnectionEditPart connection : mapping.getProperty(CONNECTIONS)) {
-
             boolean isOppositeEdge = false;
             EdgeLabelPlacement edgeLabelPlacement = EdgeLabelPlacement.UNDEFINED;
             KEdge edge;

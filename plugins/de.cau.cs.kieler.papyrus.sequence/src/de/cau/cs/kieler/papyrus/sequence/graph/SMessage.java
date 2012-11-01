@@ -79,8 +79,8 @@ public class SMessage extends SGraphElement {
 
     public void setTargetYPos(Float targetYPos) {
         this.targetYPos = targetYPos;
-        if (this.source.getGraph().getSizeY() < targetYPos) {
-            this.source.getGraph().setSizeY(targetYPos);
+        if (this.target.getGraph().getSizeY() < targetYPos) {
+            this.target.getGraph().setSizeY(targetYPos);
         }
     }
 }

@@ -132,7 +132,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     public void applyLayout(SGraph graph, List<SLifeline> lifelineOrder, KNode parentNode) {
         float xPos = borderSpacing;
 
-        // Empiric factor that is applied to message y coordinates in order to fix post-processing
+        // Empiric factor that is applied to message y-coordinates in order to fix post-processing
         // by the papyrus framework
         float edgeYCoordFactor = 1 + (28 / (graph.getSizeY() + messageSpacing));
 
@@ -209,6 +209,12 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
 
         // Set position for lifelines/nodes
         for (SLifeline lifeline : lifelineOrder) {
+            
+            // Dummy lifelines don't need any layout
+            if (lifeline.getName().equals("DummyLifeline")) {
+                continue;
+            }
+            
             KNode node = (KNode) lifeline.getProperty(Properties.ORIGIN);
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 
@@ -302,7 +308,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                 KPoint sourcePoint = edgeLayout.getSourcePoint();
                 sourcePoint.setY(message.getSourceYPos() * edgeYCoordFactor - 1);
                 sourcePoint.setX(nodeLayout.getXpos() + nodeLayout.getWidth() / 2);
-
+                
                 // Set execution coordinates according to connected messages coordinates
                 if (executions != null) {
                     for (SequenceExecution execution : executions) {
@@ -325,6 +331,14 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     KPoint targetPoint = edgeLayout.getTargetPoint();
                     targetPoint.setY(message.getTargetYPos() - borderSpacing);
                     interactionTargetPoints.add(targetPoint);
+                }
+                
+                // Handle lost-messages
+                if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.LOST) {
+                    // TODO handle this
+                    KPoint targetPoint = edgeLayout.getTargetPoint();
+//                    targetPoint.setY(message.getTargetYPos() - 10);
+                    targetPoint.setY(sourcePoint.getY());
                 }
             }
 
@@ -350,6 +364,13 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     nodeLayout
                             .setHeight(nodeLayout.getHeight()
                                     - (graph.getSizeY() + messageSpacing - (message.getTargetYPos() + lifelineHeader)));
+                } 
+
+                // Handle found-messages
+                if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.FOUND) {
+                    // TODO handle this
+                    KPoint sourcePoint = edgeLayout.getSourcePoint();
+                    sourcePoint.setY(message.getSourceYPos() - 10);
                 }
 
                 // Reset execution coordinates if the message is contained in an execution
@@ -397,11 +418,11 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                         KShapeLayout shapelayout = executionNode.getData(KShapeLayout.class);
                         if (execution.getType().equals("Duration")
                                 || execution.getType().equals("TimeConstraint")) {
-                            execution.setyPos(execution.getyPos() + 20); // FIXME constants? why?
+                            execution.setyPos(execution.getyPos() + 20); // FIXME lifeline header
                             execution.setMaxYPos(execution.getMaxYPos() + 20);
                         }
                         shapelayout.setXpos(execution.getxPos());
-                        shapelayout.setYpos(execution.getyPos() - 10); // TODO why??
+                        shapelayout.setYpos(execution.getyPos());
                         shapelayout.setWidth(execution.getMaxXPos() - execution.getxPos());
                         shapelayout.setHeight(execution.getMaxYPos() - execution.getyPos());
 
@@ -900,7 +921,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      */
     private void applyMessageYCoords(LGraph layeredGraph) {
         // Position of first layer of messages
-        float layerpos = messageSpacing;
+        float layerpos = 10 + messageSpacing;
 
         // Iterate the layers of nodes that represent messages
         for (int i = 0; i < layeredGraph.getLayers().size(); i++) {

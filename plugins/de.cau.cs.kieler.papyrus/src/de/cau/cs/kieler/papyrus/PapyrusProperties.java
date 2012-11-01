@@ -19,6 +19,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 
 public class PapyrusProperties {
+    
     public static final IProperty<String> MESSAGE_TYPE = new Property<String>(
             "de.cau.cs.kieler.papyrus.messageType");
 
