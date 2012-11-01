@@ -215,6 +215,7 @@ litigation.
 
    <requires>
       <import feature="org.eclipse.papyrus.sdk.feature" version="0.9.1" match="greaterOrEqual"/>
+      <import feature="de.cau.cs.kieler.kiml.gmf.feature" version="0.7.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
