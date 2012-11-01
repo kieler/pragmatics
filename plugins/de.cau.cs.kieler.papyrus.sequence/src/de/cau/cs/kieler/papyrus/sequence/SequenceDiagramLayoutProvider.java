@@ -361,9 +361,9 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                             - lifelineHeader / 2);
                 } else if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.DELETE) {
                     // Modify height of lifeline in order to end at the yPos of the delete-message
-                    nodeLayout
-                            .setHeight(nodeLayout.getHeight()
-                                    - (graph.getSizeY() + messageSpacing - (message.getTargetYPos() + lifelineHeader)));
+                    nodeLayout.setHeight(nodeLayout.getHeight() - (graph.getSizeY() + messageSpacing - 
+                            (message.getTargetYPos() + lifelineHeader)));
+                    System.out.println(nodeLayout.getHeight());
                 } 
 
                 // Handle found-messages
@@ -418,13 +418,40 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                         KShapeLayout shapelayout = executionNode.getData(KShapeLayout.class);
                         if (execution.getType().equals("Duration")
                                 || execution.getType().equals("TimeConstraint")) {
-                            execution.setyPos(execution.getyPos() + 20); // FIXME lifeline header
+                            execution.setyPos(execution.getyPos() + 20); // TODO constants
                             execution.setMaxYPos(execution.getMaxYPos() + 20);
                         }
                         shapelayout.setXpos(execution.getxPos());
-                        shapelayout.setYpos(execution.getyPos());
+                        shapelayout.setYpos(execution.getyPos() - 10);
                         shapelayout.setWidth(execution.getMaxXPos() - execution.getxPos());
                         shapelayout.setHeight(execution.getMaxYPos() - execution.getyPos());
+                        
+                        // Determine max and min y-pos of messages
+                        float lifelineHeight = nodeLayout.getHeight();
+                        float minYPos = lifelineHeight;
+                        float maxYPos = 0;
+                        for (Object messObj : execution.getMessages()) {
+                            if (messObj instanceof SMessage) {
+                                SMessage message = (SMessage) messObj;
+                                float messageYPos;
+                                if (message.getSource() == lifeline) {
+                                    messageYPos = message.getSourceYPos();
+                                } else {
+                                    messageYPos = message.getTargetYPos();
+                                }
+                                if (messageYPos < minYPos) {
+                                    minYPos = messageYPos;
+                                }
+                                if (messageYPos > maxYPos) {
+                                    maxYPos = messageYPos;
+                                }
+                            }
+                        }
+                        
+                        // Calculate conversion factor
+                        float effectiveHeight = lifelineHeight - 20;
+                        float executionHeight = maxYPos - minYPos;
+                        float executionFactor = effectiveHeight / executionHeight;
 
                         // Walk through execution's messages and adjust their position
                         for (Object messObj : execution.getMessages()) {
@@ -445,7 +472,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                                             .setY(edgeLayout.getSourcePoint().getY());
                                     edgeLayout.getBendPoints().get(1)
                                             .setY(edgeLayout.getTargetPoint().getY());
-
+                                    // TODO how to calculate this?
                                     edgeLayout.getTargetPoint().setX(
                                             newXPos + shapelayout.getWidth());
                                 } else if (mess.getSource() == lifeline) {
@@ -453,11 +480,26 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                                         newXPos += shapelayout.getWidth();
                                     }
                                     edgeLayout.getSourcePoint().setX(newXPos);
+                                    
+                                    // TODO document this
+                                    float relHeight = mess.getSourceYPos() - minYPos;
+                                    if (relHeight == 0) {
+                                        edgeLayout.getSourcePoint().setY(0);
+                                    } else {
+                                        edgeLayout.getSourcePoint().setY(30 + relHeight * executionFactor);
+                                    }
                                 } else {
                                     if (toLeft) {
                                         newXPos += shapelayout.getWidth();
                                     }
                                     edgeLayout.getTargetPoint().setX(newXPos);
+                                    
+                                    float relHeight = mess.getTargetYPos() - minYPos;
+                                    if (relHeight == 0) {
+                                        edgeLayout.getTargetPoint().setY(0);
+                                    } else {
+                                        edgeLayout.getTargetPoint().setY(30 + relHeight * executionFactor);
+                                    }
                                 }
                             }
                         }
