@@ -31,7 +31,7 @@ public class SCycleBreaker {
     private HashSet<LNode> split;
     private List<LNode> chain;
 
-    public void breakCycles(LGraph lgraph) {
+    public void breakCycles(final LGraph lgraph) {
         // The set of edges to be split after the cycle detecting phase
         split = new HashSet<LNode>();
         chain = new LinkedList<LNode>();
@@ -64,7 +64,7 @@ public class SCycleBreaker {
      * @param node
      *            the node to be split
      */
-    private void splitNode(LGraph lgraph, LNode node) {
+    private void splitNode(final LGraph lgraph, final LNode node) {
         // Create new LNode in the LayeredGraph
         LNode newNode = new LNode(lgraph);
         lgraph.getLayerlessNodes().add(newNode);
@@ -97,7 +97,7 @@ public class SCycleBreaker {
      * @param node
      *            the node to start with
      */
-    private void dfs(LNode node) {
+    private void dfs(final LNode node) {
         if (node.id == 2) {
             // This node was already visited in current path
             // Find uppermost LNode in current chain and add it to split
@@ -119,9 +119,9 @@ public class SCycleBreaker {
     }
 
     /**
-     * Find uppermost LNode in the current cyclic chain and add it to the set of LNodes to be split
+     * Find uppermost LNode in the current cyclic chain and add it to the set of LNodes to be split.
      */
-    private void addUppermostNode(LNode foundNode) {
+    private void addUppermostNode(final LNode foundNode) {
         LNode uppermost = null;
         float uppermostPos = Float.MAX_VALUE;
         int foundIndex = chain.indexOf(foundNode);

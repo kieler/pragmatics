@@ -40,7 +40,8 @@ public final class SeqProperties {
     public static final Property<Float> MESSAGE_SPACING = new Property<Float>(
             "de.cau.cs.kieler.papyrus.sequence.messageSpacing", 50.0f);
 
-    public static final Property<LifelineSortingStrategy> LIFELINE_SORTING = new Property<LifelineSortingStrategy>(
+    public static final Property<LifelineSortingStrategy> LIFELINE_SORTING = 
+            new Property<LifelineSortingStrategy>(
             "de.cau.cs.kieler.papyrus.sequence.lifelineSorting",
             LifelineSortingStrategy.INTERACTIVE);
 }

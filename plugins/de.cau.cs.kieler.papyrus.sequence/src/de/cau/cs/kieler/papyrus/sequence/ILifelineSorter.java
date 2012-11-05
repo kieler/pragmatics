@@ -20,5 +20,5 @@ import de.cau.cs.kieler.papyrus.sequence.graph.SGraph;
 import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
 
 public interface ILifelineSorter {
-    public List<SLifeline> sortLifelines(SGraph graph, LGraph lgraph);
+    List<SLifeline> sortLifelines(SGraph graph, LGraph lgraph);
 }
