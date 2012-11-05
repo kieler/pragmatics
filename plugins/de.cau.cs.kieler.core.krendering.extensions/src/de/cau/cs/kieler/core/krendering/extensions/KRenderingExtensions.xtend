@@ -27,6 +27,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.core.krendering.LineStyle
 import de.cau.cs.kieler.core.krendering.KLineStyle
 import de.cau.cs.kieler.core.krendering.KFontName
+import de.cau.cs.kieler.core.krendering.KRotation
 
 /**
  * This utility class contains various methods that are convenient while composing KRendering data.
@@ -104,6 +105,15 @@ class KRenderingExtensions {
         return rendering => [
             it.styles += renderingFactory.createKLineStyle => [
                 it.setLineStyle(style);
+            ];
+        ];
+    }
+    
+    def <T extends KRendering> T setRotation(T rendering, Float rotation) {
+        rendering.styles.removeAll(rendering.styles.filter(typeof(KRotation)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKRotation => [
+                it.setRotation(rotation);
             ];
         ];
     }
@@ -286,6 +296,12 @@ class KRenderingExtensions {
         ];
 	}
 	
+    public val PositionReferenceX LEFT = PositionReferenceX::LEFT;
+    public val PositionReferenceX RIGHT = PositionReferenceX::RIGHT;
+    
+    public val PositionReferenceY TOP = PositionReferenceY::TOP;
+    public val PositionReferenceY BOTTOM = PositionReferenceY::BOTTOM;
+    
     def KPosition createKPosition(PositionReferenceX px, float absoluteLR, float relativeLR,
                                   PositionReferenceY py, float absoluteTB, float relativeTB){
         return renderingFactory.createKPosition => [
