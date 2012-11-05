@@ -26,6 +26,8 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
  * A population has a list of individuals (genomes).
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class Population extends ArrayList<Genome> {
     

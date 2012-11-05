@@ -48,7 +48,7 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
      */
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void process(PGraph graph) {
+    public void process(final PGraph graph) {
         Set<VisitEntry> visitedFaces = Sets.newHashSet();
 
         Set<PFace> completedFaces = Sets.newHashSet();
@@ -62,7 +62,7 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
 
         PEdge currentEdge = startWithCorner.getSecond();
 
-        PNode corner = currentEdge.getSource();
+        PNode corner = currentEdge.getOppositeNode(startWithCorner.getFirst());
 
         visitedFaces.add(new VisitEntry(currentFace, currentEdge, corner, sideIndex));
 
@@ -77,9 +77,6 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
             PEdge startEdge = currentEdge;
             PNode startNode = corner;
 
-            // FIXME start with leftest lowermost edge to ensure the correct order of the face
-            // sides. Check how to do that, for internal faces.
-
             do {
                 Pair<PEdge, OrthogonalAngle> pair = currentFace.nextCWEdgeWithAngle(corner,
                         currentEdge);
@@ -88,8 +85,12 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
 
                 // determine side index. only left or straight angles are allowed because of the
                 // rectangular shape of the faces. A left angle changes the side.
-                if (pair.getSecond().ordinal() == 0) {
+                if (pair.getSecond().ordinal() == OrthogonalAngle.LEFT.ordinal()) {
                     sideIndex = (sideIndex + 1) % FACE_SIDES_NUMBER;
+                } else if (pair.getSecond().ordinal() == OrthogonalAngle.RIGHT.ordinal()) {
+                    sideIndex = (sideIndex > 0) ? (sideIndex - 1) : FACE_SIDES_NUMBER - 1;
+                } else if (pair.getSecond().ordinal() == OrthogonalAngle.FULL.ordinal()) {
+                    sideIndex = (sideIndex + 2) % FACE_SIDES_NUMBER;
                 }
 
                 PFace lf = currentEdge.getLeftFace();
@@ -136,9 +137,8 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
                 }
 
                 if (pair.getSecond().ordinal() == 2) {
-                    // error TODO make assertion with useful description!
-                    // TODO add a cutedge to both sides, the current and the opposite
-                    int i = 0;
+                    // error to do make assertion with useful description!
+                    // TODO add a cut edge to both sides, the current and the opposite
                 }
 
                 faceSides[sideIndex].add(currentEdge);
@@ -168,23 +168,6 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
      */
     private class VisitEntry {
 
-        /**
-         * @param face
-         *            the key face.
-         * @param startEdge
-         *            adjacent face edge.
-         * @param corner
-         *            incident to the startedge in cw order.
-         * @param sideIndex
-         *            the current face side index.
-         */
-        public VisitEntry(PFace face, PEdge startEdge, PNode corner, int sideIndex) {
-            this.face = face;
-            this.startEdge = startEdge;
-            this.corner = corner;
-            this.sideIndex = sideIndex;
-        }
-
         /** Current face, for which the properties are stored. */
         private PFace face;
 
@@ -196,6 +179,24 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
 
         /** The side on which the startEdge should lie. */
         private int sideIndex;
+
+        /**
+         * @param face
+         *            the key face.
+         * @param startEdge
+         *            adjacent face edge.
+         * @param corner
+         *            incident to the startedge in cw order.
+         * @param sideIndex
+         *            the current face side index.
+         */
+        public VisitEntry(final PFace face, final PEdge startEdge, final PNode corner,
+                final int sideIndex) {
+            this.face = face;
+            this.startEdge = startEdge;
+            this.corner = corner;
+            this.sideIndex = sideIndex;
+        }
 
     }
 

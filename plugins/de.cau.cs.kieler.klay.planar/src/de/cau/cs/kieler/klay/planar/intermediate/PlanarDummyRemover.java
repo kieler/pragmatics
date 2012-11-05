@@ -30,6 +30,7 @@ import de.cau.cs.kieler.klay.planar.util.PUtil;
  * four edges. These are formed to two crossing edges.
  * 
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public class PlanarDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
 

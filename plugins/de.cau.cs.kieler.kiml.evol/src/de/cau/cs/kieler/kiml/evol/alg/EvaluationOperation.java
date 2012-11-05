@@ -52,6 +52,8 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * Operation that evaluates individuals to determine their fitness.
  * 
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class EvaluationOperation extends AbstractAlgorithm implements IEvolutionaryOperation {
     

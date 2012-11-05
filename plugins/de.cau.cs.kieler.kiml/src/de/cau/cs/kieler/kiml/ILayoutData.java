@@ -15,50 +15,57 @@ package de.cau.cs.kieler.kiml;
 
 /**
  * Interface for data holder classes that describe the layout infrastructure.
+ * Implementing classes are used to store meta information and are accessed using
+ * {@link LayoutDataService}.
  *
  * @kieler.design 2011-02-01 reviewed by cmot, soh
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
 public interface ILayoutData {
     
     /**
-     * Returns the identifier.
+     * Returns the identifier, that is a unique string used to look up the layout data instance.
      * 
      *  @return the identifier
      */
     String getId();
     
     /**
-     * Sets the identifier.
+     * Sets the identifier. This is usually done while reading data from the respective
+     * extension point.
      *
      * @param id the identifier to set
      */
     void setId(String id);
     
     /**
-     * Returns the name.
+     * Returns the name, that is a user-friendly title that can be displayed in user interfaces.
+     * While the name should generally be short, longer text can be written in the description.
+     * In contrast to the identifier, the name can be ambiguous.
      *
      * @return the name
      */
     String getName();
     
     /**
-     * Sets the name.
+     * Sets the name. This is usually done while reading data from the respective
+     * extension point.
      *
      * @param name the name to set
      */
     void setName(String name);
     
     /**
-     * Returns the description.
+     * Returns the description for display in user interfaces.
      *
      * @return the description
      */
     String getDescription();
     
     /**
-     * Sets the description.
+     * Sets the description. This is usually done while reading data from the respective
+     * extension point.
      *
      * @param description the description to set
      */

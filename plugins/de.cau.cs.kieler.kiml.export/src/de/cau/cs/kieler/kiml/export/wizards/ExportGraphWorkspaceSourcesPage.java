@@ -43,6 +43,7 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseTransformationService;
  * the target folder.
  * 
  * @author wah
+ * @kieler.ignore (excluded from review process)
  */
 public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
 
@@ -170,7 +171,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      * 
      * @return target directory
      */
-    public IPath getTargetWorksapceDirectory() {
+    public IPath getTargetWorkspaceDirectory() {
 
         return getTargetContainerPath();
     }

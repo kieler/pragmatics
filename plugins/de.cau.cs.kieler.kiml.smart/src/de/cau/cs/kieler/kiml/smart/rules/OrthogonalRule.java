@@ -25,6 +25,8 @@ import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
  * Smart layout rule for orthogonalization layout.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class OrthogonalRule implements ISmartRule {
     

@@ -16,7 +16,8 @@ package de.cau.cs.kieler.klay.planar.pathfinding;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.util.ICondition;
+import com.google.common.base.Predicate;
+
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
@@ -28,6 +29,7 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder.IShortestPathFinder;
  * negative cycles.
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public class BellmanFordPathFinder extends AbstractPathFinder implements IShortestPathFinder {
 
@@ -35,7 +37,7 @@ public class BellmanFordPathFinder extends AbstractPathFinder implements IShorte
      * {@inheritDoc}
      */
     public List<PEdge> findPath(final PNode source, final PNode target,
-            final ICondition<Pair<PNode, PEdge>> condition) {
+            final Predicate<Pair<PNode, PEdge>> condition) {
 
         // Initialize array
         int size = source.getParent().getNodeCount();

@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
  * The interface for all classes which implement a serializer for batch results.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public interface IBatchResultSerializer {
 

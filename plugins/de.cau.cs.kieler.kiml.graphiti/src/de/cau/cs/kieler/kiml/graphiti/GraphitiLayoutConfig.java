@@ -53,6 +53,8 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
  * 
  * @author soh
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 @SuppressWarnings("restriction")
 public class GraphitiLayoutConfig implements IMutableLayoutConfig {
@@ -156,24 +158,31 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                 @SuppressWarnings("unchecked")
                 LayoutOptionData<String> algorithmOptionData = (LayoutOptionData<String>)
                         LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM.getId());
-                // get a layout hint for the content of the focused pictogram element
-                String contentLayoutHint = getValue(algorithmOptionData, PREFIX, pictogramElem);
-                if (contentLayoutHint == null && diagram != null) {
-                    contentLayoutHint = getValue(algorithmOptionData, DEF_PREFIX, diagram);
-                }
-                if (contentLayoutHint != null) {
-                    context.setProperty(DefaultLayoutConfig.CONTENT_HINT, contentLayoutHint);
+                if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null
+                        && algorithmOptionData != null) {
+                    // get a layout hint for the content of the focused pictogram element
+                    String contentLayoutHint = getValue(algorithmOptionData, PREFIX, pictogramElem);
+                    if (contentLayoutHint == null && diagram != null) {
+                        contentLayoutHint = getValue(algorithmOptionData, DEF_PREFIX, diagram);
+                    }
+                    if (contentLayoutHint != null) {
+                        context.setProperty(DefaultLayoutConfig.CONTENT_HINT, contentLayoutHint);
+                    }
                 }
                 
-                // get a layout hint for the container edit part
                 if (containerPe.get() != null) {
-                    String containerLayoutHint = getValue(algorithmOptionData, PREFIX,
-                            containerPe.get());
-                    if (containerLayoutHint == null && diagram != null) {
-                        containerLayoutHint = getValue(algorithmOptionData, DEF_PREFIX, diagram);
-                    }
-                    if (containerLayoutHint != null) {
-                        context.setProperty(DefaultLayoutConfig.CONTAINER_HINT, containerLayoutHint);
+                    if (context.getProperty(DefaultLayoutConfig.CONTAINER_HINT) == null
+                            && algorithmOptionData != null) {
+                        // get a layout hint for the container edit part
+                        String containerLayoutHint = getValue(algorithmOptionData, PREFIX,
+                                containerPe.get());
+                        if (containerLayoutHint == null && diagram != null) {
+                            containerLayoutHint = getValue(algorithmOptionData, DEF_PREFIX, diagram);
+                        }
+                        if (containerLayoutHint != null) {
+                            context.setProperty(DefaultLayoutConfig.CONTAINER_HINT,
+                                    containerLayoutHint);
+                        }
                     }
                     PictogramLink link = containerPe.get().getLink();
                     if (link != null && link.getBusinessObjects().size() > 0) {

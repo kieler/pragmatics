@@ -46,6 +46,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * the chapter 5.4 of the Graph Drawing book of Di Battista, Eades, Tamassia and Tollis.
  * 
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayoutPhase {
 
@@ -69,8 +70,29 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
 
     private PNode sink;
 
-    /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
+    /** Intermediate processing configuration with Quod high-degree strategy. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_QUOD 
+        = new IntermediateProcessingConfiguration(
+    // Before Phase 1
+            null,
+            // Before Phase 2
+            null,
+            // Before Phase 3
+            null,
+            // Before Phase 4
+            EnumSet.of(LayoutProcessorStrategy.BEND_DUMMY,
+                    LayoutProcessorStrategy.RECT_SHAPE_DUMMY, LayoutProcessorStrategy.FACE_SIDES),
+            // After Phase 4
+            EnumSet.of(LayoutProcessorStrategy.GRID_DRAWING,
+                    LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.QUOD_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.SELFLOOP_DUMMY_REMOVER));
+
+    /** Intermediate processing configuration with Giotto high-degree strategy. */
+   private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO 
+        = new IntermediateProcessingConfiguration(
     // Before Phase 1
             null,
             // Before Phase 2
@@ -85,14 +107,24 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                     LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
                     LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
                     LayoutProcessorStrategy.GIOTTO_DUMMY_REMOVER,
-                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER));
+                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER,
+                    LayoutProcessorStrategy.SELFLOOP_DUMMY_REMOVER));
 
     /**
      * {@inheritDoc}
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pgraph) {
-        // TODO Auto-generated method stub
-        return new IntermediateProcessingConfiguration(INTERMEDIATE_PROCESSING_CONFIGURATION);
+
+        // check which high-degree node algorithm should be used
+
+        if (pgraph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) == HighDegreeNodeStrategy.GIOTTO) {
+            return new IntermediateProcessingConfiguration(
+                    INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO);
+        } else {
+            return new IntermediateProcessingConfiguration(
+                    INTERMEDIATE_PROCESSING_CONFIGURATION_QUOD);
+        }
+
     }
 
     // ======================== Algorithm ==========================================================
@@ -103,12 +135,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     public void process(final PGraph pgraph) {
 
         this.graph = pgraph;
-
-        // TODO think about: the input graph has to have at least 4 nodes, otherwise
-        // it would not make any sense to do the flownetwork step.
-        // Then it would be meaningful to set the edge-sizes to the same value.
-        // x -- x -- x
-        // Think about other exceptions and try to work on them.
 
         // Used to create the flownetwork
         this.externalFace = pgraph.getExternalFace();
@@ -159,7 +185,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
      * @return PGraph, the resulting flownetwork
      */
     private PGraph createFlowNetwork(final int startSide) {
-        PGraph flowNetwork = new PGraphFactory().createEmptyGraph();
+        PGraph flowNetwork = PGraphFactory.createEmptyGraph();
 
         BiMap<PFace, PNode> faceMap = HashBiMap.create();
 
@@ -204,7 +230,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
 
         PFace targetFace = null;
 
-        // --------------------------------------------------------------------------------------------
         // Doing a loopstep for the first face-side. Afterwards the while loop is used.
         // Creates edges for consecutive face-nodes.
         for (PEdge edge : currentSide) {
@@ -229,7 +254,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             }
         }
 
-        // --------------------------------------------------------------------------------------------
         // Traverse the graph by running through the faces and join consecutive face by an edge.
         // two faces are consecutive if they share a horizontal or vertical edge.
 

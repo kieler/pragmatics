@@ -32,23 +32,40 @@ import java.awt.Component;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * Mouse event overridden to wrap an SWT MouseEvent as a Swing MouseEvent.
+ * Mouse event overridden to wrap an SWT MouseEvent as a Swing MouseEvent.<br>
+ * <br>
+ * chsch: Added support for SWT.COMMAND key mask.<br>
+ * Question: is the SWT.COMMAND used on OSX only? Or maybe on other platforms, too, denoting the
+ * windows key?<br>
+ * <br>
+ * Since on OSX 'COMMAND' is typically used for functionality provided by 'CTRL'-based key combinations
+ * in other OSs and Mac's 'CTRL' + click is hard linked with the context menu call - thus Mac's 'CTRL'
+ * is not usable for in this context - I realized an aliasing:<br>
+ * Mac's 'COMMAND' key (SWT.COMMAND) is mapped to InputEvent.CTRL_MASK (see implementations (!) below).
+ * <br>
+ * See also https://bugs.eclipse.org/bugs/show_bug.cgi?id=340711
  * 
- * @author Lance Good
+ * @author Lance Good, chsch
  */
 public class PSWTMouseEvent extends MouseEvent {
     private static final int SWT_BUTTON1 = 1;
     private static final int SWT_BUTTON2 = 2;
     private static final int SWT_BUTTON3 = 3;
 
+    private static final boolean OS_MACOSX = Platform.getOS().equals(Platform.OS_MACOSX);
+    
     private static final long serialVersionUID = 1L;
 
     private static Component fakeSrc = new Component() {
+
+        /** */
+        private static final long serialVersionUID = 1L;
     };
 
     /** Event being wrapped. */
@@ -103,7 +120,21 @@ public class PSWTMouseEvent extends MouseEvent {
 
     /** {@inheritDoc} */
     public boolean isControlDown() {
-        return (swtEvent.stateMask & SWT.CONTROL) != 0;
+        // chsch: since 'COMMAND' is typically used on OSX for functionality provided by
+        //  'CTRL'-based key combinations in other OSs and Mac's 'CTRL' + click is hard linked
+        //  with the context menu call - thus Mac's 'CTRL' is not usable - I realized an aliasing...
+        if (OS_MACOSX) {
+            return (swtEvent.stateMask & SWT.COMMAND) != 0;
+        } else {
+            return (swtEvent.stateMask & SWT.CONTROL) != 0;
+        }
+    }
+
+    /** {@inheritDoc} */
+    public boolean isMetaDown() {
+        // chsch: the Meta Key is currently not supported by SWT, see
+        //  https://bugs.eclipse.org/bugs/show_bug.cgi?id=340711
+        return false;
     }
 
     /** {@inheritDoc} */
@@ -120,10 +151,17 @@ public class PSWTMouseEvent extends MouseEvent {
                 modifiers = modifiers | InputEvent.ALT_MASK;
             }
             if ((swtEvent.stateMask & SWT.CONTROL) != 0) {
-                modifiers = modifiers | InputEvent.CTRL_MASK;
+                if (!OS_MACOSX) {
+                    modifiers = modifiers | InputEvent.CTRL_MASK;
+                }
             }
             if ((swtEvent.stateMask & SWT.SHIFT) != 0) {
                 modifiers = modifiers | InputEvent.SHIFT_MASK;
+            }
+            if ((swtEvent.stateMask & SWT.COMMAND) != 0) {
+                if (OS_MACOSX) {
+                    modifiers = modifiers | InputEvent.CTRL_MASK;
+                }
             }
             if (swtEvent.button == SWT_BUTTON1 || (swtEvent.stateMask & SWT.BUTTON1) != 0) {
                 modifiers = modifiers | InputEvent.BUTTON1_MASK;
@@ -148,10 +186,17 @@ public class PSWTMouseEvent extends MouseEvent {
                 modifiers = modifiers | InputEvent.ALT_DOWN_MASK;
             }
             if ((swtEvent.stateMask & SWT.CONTROL) != 0) {
-                modifiers = modifiers | InputEvent.CTRL_DOWN_MASK;
+                if (!OS_MACOSX) {
+                    modifiers = modifiers | InputEvent.CTRL_DOWN_MASK;
+                }
             }
             if ((swtEvent.stateMask & SWT.SHIFT) != 0) {
                 modifiers = modifiers | InputEvent.SHIFT_DOWN_MASK;
+            }
+            if ((swtEvent.stateMask & SWT.COMMAND) != 0) {
+                if (OS_MACOSX) {
+                    modifiers = modifiers | InputEvent.CTRL_MASK;
+                }
             }
             if (swtEvent.button == SWT_BUTTON1 || (swtEvent.stateMask & SWT.BUTTON1) != 0) {
                 modifiers = modifiers | InputEvent.BUTTON1_DOWN_MASK;

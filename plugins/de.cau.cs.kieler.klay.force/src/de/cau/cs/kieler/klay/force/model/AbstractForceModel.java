@@ -31,6 +31,8 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  * Superclass for force models.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public abstract class AbstractForceModel extends AbstractAlgorithm {
 

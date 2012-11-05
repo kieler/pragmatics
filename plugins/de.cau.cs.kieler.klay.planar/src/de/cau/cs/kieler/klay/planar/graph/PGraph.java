@@ -182,6 +182,15 @@ public class PGraph extends PNode {
         return addNode(edge, NodeType.NORMAL);
     }
 
+    /**
+     * Adds a node with into an edge orientated at the targetnode with node type NORMAL.
+     * 
+     * @param edge
+     *            the splittable edge
+     * @param targetNode
+     *            defines the embedding of the new node * @return pair of the new node and the new
+     *            dummy edge with which it the edge is split.
+     * */
     public Pair<PNode, PEdge> addNode(final PEdge edge, final PNode targetNode) {
         return addNode(edge, NodeType.NORMAL, targetNode);
     }
@@ -361,8 +370,13 @@ public class PGraph extends PNode {
         }
 
         PEdge edge = new PEdge(this.edgeIndex++, this, source, target, directed);
-        ((PNode) source).linkEdge(edge);
-        ((PNode) target).linkEdge(edge);
+        // handling selfloops
+        if (source == target) {
+            ((PNode) source).linkEdge(edge);
+        } else {
+            ((PNode) source).linkEdge(edge);
+            ((PNode) target).linkEdge(edge);
+        }
         this.edges.add(edge);
         this.changedFaces = true;
         return edge;
@@ -789,10 +803,15 @@ public class PGraph extends PNode {
     }
 
     /**
+     * Adds a node to the given edge. The target node indicates the embedding.
+     * 
      * @param edge
+     *            that should be split to insert a new node
      * @param type
+     *            the type of the new node
      * @param targetNode
-     * @return
+     *            defines the embedding
+     * @return pair of the new node and the new dummy edge with which it the edge is split.
      */
     public Pair<PNode, PEdge> addNode(final PEdge edge, final NodeType type, final PNode targetNode) {
         if (!(edge.getSource() instanceof PNode && edge.getTarget() instanceof PNode)) {
@@ -845,6 +864,44 @@ public class PGraph extends PNode {
 
         return new Pair<PNode, PEdge>(newNode, newedge);
 
+    }
+
+    /**
+     * Adds a new edge to the faces of the graph. Usually used to insert a dummy edge.
+     * 
+     * @param newEdge
+     *            the edge which is to insert
+     * @param leftFace
+     *            the new left face of the new edge
+     * @param rightFace
+     *            the right face of the new edge
+     */
+    public void updateFaces(final PEdge newEdge, final PFace leftFace, final PFace rightFace) {
+        if (leftFace != null) {
+            newEdge.setLeftFace(leftFace);
+            leftFace.addEdge(newEdge);
+        }
+
+        if (rightFace != null) {
+            rightFace.addEdge(newEdge);
+            newEdge.setRightFace(rightFace);
+        }
+    }
+
+    /**
+     * Gives a face for a given face id.
+     * 
+     * @param faceId
+     *            the id for which the face is searched.
+     * @return the found PFace, null if no face is found.
+     */
+    public PFace getFace(final int faceId) {
+        for (PFace face : this.faces) {
+            if (face.id == faceId) {
+                return face;
+            }
+        }
+        return null;
     }
 
 }

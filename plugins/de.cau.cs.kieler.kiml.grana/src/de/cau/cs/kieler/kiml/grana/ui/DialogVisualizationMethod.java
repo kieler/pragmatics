@@ -24,6 +24,7 @@ import de.cau.cs.kieler.kiml.grana.visualization.IVisualizationMethod;
  * A visualization method which displays the results in a dialog.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class DialogVisualizationMethod implements IVisualizationMethod {
 

@@ -15,8 +15,7 @@ package de.cau.cs.kieler.klay.planar.util;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import de.cau.cs.kieler.core.util.ICondition;
+import com.google.common.base.Predicate;
 
 /**
  * An iterable object that wraps another iterable. It uses a condition to filter certain elements
@@ -27,6 +26,7 @@ import de.cau.cs.kieler.core.util.ICondition;
  * @param <T>
  *            the type of the elements
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public class FilteredIterable<T> implements Iterable<T> {
 
@@ -36,7 +36,7 @@ public class FilteredIterable<T> implements Iterable<T> {
     private Iterable<T> iterable;
 
     /** The filter to use on each element. */
-    private ICondition<T> filter;
+    private Predicate<T> filter;
 
     // ======================== Constructor ========================================================
 
@@ -49,7 +49,7 @@ public class FilteredIterable<T> implements Iterable<T> {
      * @param cond
      *            the condition used to filter elements
      */
-    public FilteredIterable(final Iterable<T> iter, final ICondition<T> cond) {
+    public FilteredIterable(final Iterable<T> iter, final Predicate<T> cond) {
         this.iterable = iter;
         this.filter = cond;
     }
@@ -76,7 +76,7 @@ public class FilteredIterable<T> implements Iterable<T> {
                     T elem = null;
                     while (this.iter.hasNext()) {
                         elem = this.iter.next();
-                        if (filter.evaluate(elem)) {
+                        if (filter.apply(elem)) {
                             break;
                         } else {
                             elem = null;

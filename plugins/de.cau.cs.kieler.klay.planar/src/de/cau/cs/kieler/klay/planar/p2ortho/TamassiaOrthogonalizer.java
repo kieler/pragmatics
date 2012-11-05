@@ -24,7 +24,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
@@ -35,7 +34,6 @@ import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
-import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
@@ -53,17 +51,12 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author ocl
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayoutPhase {
 
     /** Sum of angles around a node. */
     private static final int SUM_OF_ANGLES = 4;
-
-    // ======================== Constants ==========================================================
-
-    /** Property to convert a node in the flow network to a node or face in the graph. */
-    public static final Property<PGraphElement> NETWORK_TO_GRAPH = new Property<PGraphElement>(
-            "de.cau.cs.kieler.klay.planar.properties.networktograph");
 
     /** The maximal node degree in an orthogonal layout. */
     public static final int MAX_DEGREE = 4;
@@ -88,17 +81,18 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
     private OrthogonalRepresentation orthogonal;
 
-    
     /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
-    // Before Phase 1
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION 
+        = new IntermediateProcessingConfiguration(
+            // Before Phase 1
             null,
             // Before Phase 2
             null,
             // Before Phase 3
-            EnumSet.of(LayoutProcessorStrategy.EXT_FACE, LayoutProcessorStrategy.GIOTTO),
+            EnumSet.of(LayoutProcessorStrategy.EXT_FACE, LayoutProcessorStrategy.EXPANSION_CYCLE,
+                    LayoutProcessorStrategy.FULL_ANGLE),
             // Before Phase 4
-            null,
+            EnumSet.of(LayoutProcessorStrategy.FULL_ANGLE_REMOVER),
             // After Phase 4
             null);
 
@@ -131,6 +125,9 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         PGraph network = createFlowNetwork();
         new SuccessiveShortestPathFlowSolver().calcFlow(network);
 
+        // special cutedge handling
+        // handlingCutEdges(network);
+
         // compute bends and angles
         computeBends(network);
         computeAngles(network);
@@ -142,6 +139,28 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
     }
 
     /**
+     * @param network
+     */
+    private void handlingCutEdges(final PGraph network) {
+
+        // internal faces containing at least one cutedge
+        Map<PFace, PEdge> cutEdgeFaces = Maps.newHashMap();
+
+        // search for a cutEdge within an internal face
+        PFace externalFace = this.graph.getExternalFace();
+        for (PEdge edge : this.graph.adjacentEdges()) {
+            PFace leftFace = edge.getLeftFace();
+            if (leftFace == edge.getRightFace() && externalFace != leftFace) {
+                cutEdgeFaces.put(leftFace, edge);
+            }
+        }
+
+        // increase flow along the an non cutedge of the face such that there is one more bend point
+        // on the edge
+
+    }
+
+    /**
      * Create the flow network base upon the graph. The flow network contains a source node for
      * every node in the graph and a sink node for every face. It contains an arc for every node and
      * every face adjacent to a face in the graph. The minimum cost flow problem on the resulting
@@ -150,8 +169,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
      * @return the flow network to compute the minimal number of bends
      */
     private PGraph createFlowNetwork() {
-        PGraph network = new PGraphFactory().createEmptyGraph();
-
+        PGraph network = PGraphFactory.createEmptyGraph();
+        network.setProperty(Properties.ORIGIN, this.graph);
         // Contains original nodes as keys and network nodes as value.
         Map<PNode, PNode> nodeMapping = Maps.newHashMap();
 
@@ -171,7 +190,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
             }
 
             PNode newnode = network.addNode(NodeType.NORMAL);
-            newnode.setProperty(NETWORK_TO_GRAPH, node);
+            newnode.setProperty(Properties.NETWORK_TO_GRAPH, node);
             newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply);
             nodeMapping.put(node, newnode);
         }
@@ -180,13 +199,14 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         Iterable<PFace> faces = this.graph.getFaces();
         for (PFace face : faces) {
             int supply = -1 * face.getAdjacentEdgeCount();
+
             if (face == graph.getExternalFace()) {
                 supply -= MAX_DEGREE;
             } else {
                 supply += MAX_DEGREE;
             }
             PNode newnode = network.addNode(NodeType.FACE);
-            newnode.setProperty(NETWORK_TO_GRAPH, face);
+            newnode.setProperty(Properties.NETWORK_TO_GRAPH, face);
             newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply);
             faceMapping.put(face, newnode);
 
@@ -214,7 +234,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                 throw new InconsistentGraphModelException(
                         "Attempted to link non-existent face by an edge.");
             }
-            // Same face need no arc.
+            // Same face needs no arc.
             if (left == right) {
                 PNode faceNode = faceMapping.get(left);
                 int supply = faceNode.getProperty(IFlowNetworkSolver.SUPPLY).intValue();
@@ -225,6 +245,14 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                 }
                 continue;
             }
+
+            // Expansion cycle faces should not contain any bendpoints at their bounding edges.
+            // Thus, there are no arcs for that faces in the flow network.
+            if (left.getProperty(Properties.EXPANSION_CYCLE_FACE) != null
+                    || right.getProperty(Properties.EXPANSION_CYCLE_FACE) != null) {
+                continue;
+            }
+
             PEdge edgeLeft = network.addEdge(faceMapping.get(left), faceMapping.get(right), true);
             edgeLeft.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
             edgeLeft.setProperty(IPathFinder.PATHCOST, 1);
@@ -249,13 +277,15 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
     private void computeBends(final PGraph network) {
         // Flow in face arcs define bends in edges
         for (Pair<PEdge, PEdge> pair : this.faceArcs) {
-            PFace face1 = (PFace) pair.getFirst().getSource().getProperty(NETWORK_TO_GRAPH);
-            if (face1 != pair.getSecond().getTarget().getProperty(NETWORK_TO_GRAPH)) {
+            PFace face1 = (PFace) pair.getFirst().getSource()
+                    .getProperty(Properties.NETWORK_TO_GRAPH);
+            if (face1 != pair.getSecond().getTarget().getProperty(Properties.NETWORK_TO_GRAPH)) {
                 throw new InconsistentGraphModelException(
                         "The flow network has not been build correctly.");
             }
-            PFace face2 = (PFace) pair.getSecond().getSource().getProperty(NETWORK_TO_GRAPH);
-            if (face2 != pair.getFirst().getTarget().getProperty(NETWORK_TO_GRAPH)) {
+            PFace face2 = (PFace) pair.getSecond().getSource()
+                    .getProperty(Properties.NETWORK_TO_GRAPH);
+            if (face2 != pair.getFirst().getTarget().getProperty(Properties.NETWORK_TO_GRAPH)) {
                 throw new InconsistentGraphModelException(
                         "The flow network has not been build correctly.");
             }
@@ -314,8 +344,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
     private void computeAngles(final PGraph network) {
 
         for (PEdge arc : this.nodeArcs) {
-            PNode node = (PNode) arc.getSource().getProperty(NETWORK_TO_GRAPH);
-            PFace face = (PFace) arc.getTarget().getProperty(NETWORK_TO_GRAPH);
+            PNode node = (PNode) arc.getSource().getProperty(Properties.NETWORK_TO_GRAPH);
+            PFace face = (PFace) arc.getTarget().getProperty(Properties.NETWORK_TO_GRAPH);
 
             List<Pair<PEdge, OrthogonalAngle>> nodeList = this.orthogonal.getAngles(node);
             if (nodeList == null) {
@@ -333,19 +363,12 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                         || ((node == edge.getTarget()) && (face == edge.getLeftFace()))) {
                     int angle = arc.getProperty(IFlowNetworkSolver.FLOW) - 1;
                     pair.setSecond(OrthogonalAngle.map(angle));
-                    // TODO check whether break is ok, meaning many times getting here to
-                    // get the last edge of the nodelist.
                     break;
                 }
             }
         }
 
-        // TODO think about this, the problem here is that the compute flow network step,
-        // computes only once a nodearc for a full angle node. But the flow is need by
-        // the node before and the full angle node, thus one of them has a null angledata
-        // for the cutedge connecting the before node and the full angle node.
-
-        // Cutedges are only count once by the flow network, but we need to set it two times so,
+        // Cutedges are only count once by the flow network, but we need to set it two times, so
         // that in some cases maximal one angle per angle-data is null. Hence, we need a post
         // processing step, that complete the angle data, depending on the before calculated.
         Collection<PNode> nodes = graph.getNodes();
@@ -370,6 +393,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                             pair.setSecond(OrthogonalAngle.LEFT);
                         }
                         break;
+                    // SUPPRESS CHECKSTYLE NEXT MagicNumber
                     case 3:
                         Pair<PEdge, OrthogonalAngle> knownAnglePair = null;
                         for (Pair<PEdge, OrthogonalAngle> pair : angles) {
@@ -378,10 +402,14 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                                 break;
                             }
                         }
+                        if (knownAnglePair == null) {
+                            throw new IllegalStateException(
+                                    "TamassiaOrthogonalizer, computeAngles(): the "
+                                            + "object knownAnglePair must not be null.");
+                        }
                         if (knownAnglePair.getSecond() == OrthogonalAngle.STRAIGHT) {
                             // set all others to left because 4 - 2 = 2, a left angle for the
-                            // remaining
-                            // angle-data.
+                            // remaining angle-data.
                             for (Pair<PEdge, OrthogonalAngle> pair : angles) {
                                 if (pair.getSecond() == null) {
                                     pair.setSecond(OrthogonalAngle.LEFT);
@@ -408,7 +436,10 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
                         break;
                     default:
-                        new IllegalStateException();
+                        throw new IllegalStateException("TamassiaOrthogonalizer, computeAngles(): "
+                                + "Missing angles may only occure if the sum "
+                                + "of angles around a node" + "is 3 or 4 but, it is "
+                                + angles.size() + "!");
                     }
                     continue;
                 } else {
@@ -424,6 +455,12 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
                             .map(SUM_OF_ANGLES - angleCounter - 1));
                 }
             }
+
+            if (angles.size() == 1) {
+                Pair<PEdge, OrthogonalAngle> pair = angles.get(0);
+                pair.setSecond(OrthogonalAngle.FULL);
+            }
+
         }
     }
 

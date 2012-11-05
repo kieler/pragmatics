@@ -19,27 +19,26 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * Singleton class for access to the KIML layout data. This class is used globally to retrieve data
- * for automatic layout through KIML. The class cannot be instantiated directly, but only through a
- * subclass that calls {@link createLayoutServices()}. The subclass is then responsible to add
- * appropriate data to the nested registry instance. Multiple instances of subclasses can register
- * themselves by calling {@link createLayoutServices(subInstance)}, where subInstance is the
- * instance of the subclass, but only one instance per subclass is allowed. Registering another
- * instance will overwrite the prior instance. The different instances are identified by class name
- * and the currently used instance can be determined by calling {@link getMode()}. You can switch
- * between the different instances by calling {@link setMode(final String mode)} where {@code mode}
- * is one of the predefined Strings ECLIPSEDATASERVICE, REMOTEDATASERVICE or SERVICEDATASERVICE. The
- * SERVICEDATASERVICE mode is intended to be used only by the KWebS server so using it inside the
- * KIELER modeling environment will introduce undefined behavior.
+ * for automatic layout through KIML. The class can only be instantiated by subclasses.
+ * The subclass is then responsible to add appropriate data to the nested registry instance.
+ * Multiple instances of subclasses can register themselves by calling
+ * {@link #addService(LayoutDataService)}, where the argument is the
+ * instance of the subclass, but only one instance per subclass is allowed.
+ * The different instances are identified by class name,
+ * and the currently used instance can be determined by calling {@link #getMode()}.
+ * You can switch between the different instances by calling {@link setMode(final String mode)},
+ * where {@code mode} the fully qualified class name of the respective subclass.
+ * {@link #ECLIPSE_DATA_SERVICE} is the default mode for use in Eclipse clients, since it reads
+ * the locally defined extensions of the 'layoutProviders' and 'layoutInfo' extension points.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  * @author swe
  */
@@ -49,19 +48,12 @@ public class LayoutDataService {
     public static final String DIAGRAM_TYPE_GENERAL = "de.cau.cs.kieler.layout.diagrams.general";
 
     /** Mode constant for local data service instance. */
-    public static final String ECLIPSEDATASERVICE
+    public static final String ECLIPSE_DATA_SERVICE
             = "de.cau.cs.kieler.kiml.ui.service.EclipseLayoutDataService"; //$NON-NLS-1$
 
-    /** Mode constant for remote data service instance. */
-    public static final String REMOTEDATASERVICE
-            = "de.cau.cs.kieler.kwebs.client.layout.RemoteLayoutDataService"; //$NON-NLS-1$
-
-    /** Mode constant for server data service instance. */
-    public static final String SERVICEDATASERVICE
-            = "de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService"; //$NON-NLS-1$
-
     /** the instance of the registry class. */
-    private Registry registry = null;
+    private Registry registry;
+    
     /** mapping of layout provider identifiers to their data instances. */
     private final Map<String, LayoutAlgorithmData> layoutAlgorithmMap = Maps.newLinkedHashMap();
     /** mapping of layout option identifiers to their data instances. */
@@ -78,34 +70,16 @@ public class LayoutDataService {
     /** additional map of layout type suffixes to data instances. */
     private final Map<String, LayoutTypeData> typeSuffixMap = Maps.newHashMap();
 
-    /** The list of valid layout data service identifiers. */
-    private static List<String> validDataServices = Lists.newArrayList(ECLIPSEDATASERVICE,
-            REMOTEDATASERVICE, SERVICEDATASERVICE);
-
-    /** Map of registered data services indexed by class name. */
-    private static Map<String, LayoutDataService> instances = Maps.newHashMap();
-
+    /** map of registered data services indexed by class name. */
+    private static final Map<String, LayoutDataService> INSTANCES = Maps.newHashMap();
+    
     /** the the currently used layout data service. */
-    private static LayoutDataService current;
+    private static LayoutDataService current = new LayoutDataService();
 
     /**
-     * The default constructor is hidden to prevent others from instantiating this class.
+     * The default constructor is shown only to subclasses.
      */
     protected LayoutDataService() {
-    }
-
-    /**
-     * Returns the service type.
-     * 
-     * @param object a data service
-     * @return the service type
-     */
-    private static String getType(final LayoutDataService object) {
-        String type = null;
-        if (object != null) {
-            type = object.getClass().getCanonicalName();
-        }
-        return type;
     }
 
     /**
@@ -116,21 +90,18 @@ public class LayoutDataService {
      *            an instance created by a subclass
      */
     protected static synchronized void addService(final LayoutDataService subInstance) {
-        String type = getType(subInstance);
-        if (validDataServices.contains(type)) {
-            if (!instances.containsKey(type)) {
-                if (current == null) {
-                    current = subInstance;
-                }
-                subInstance.registry = subInstance.new Registry();
-                instances.put(type, subInstance);
-            }
+        String type = subInstance.getClass().getCanonicalName();
+        if (INSTANCES.containsKey(type)) {
+            throw new IllegalArgumentException("The layout data service class is already registered."
+                    + " Remove the old instance first before adding a new instance.");
         }
+        subInstance.registry = subInstance.new Registry();
+        INSTANCES.put(type, subInstance);
     }
 
     /**
      * Removes a layout data service instance. The instance belonging to the currently selected mode
-     * can not be removed.
+     * cannot be removed.
      * 
      * @param subInstance
      *            the sub instance to be removed
@@ -138,92 +109,78 @@ public class LayoutDataService {
      *             if the instance belonging to the currently selected mode is to be removed or the
      *             sub instance is not supported
      */
-    public static synchronized void removeService(final LayoutDataService subInstance) {
-        String type = getType(subInstance);
-        if (!validDataServices.contains(type)) {
-            throw new IllegalArgumentException("Layout data service instance of class " + type
-                    + " not supported");
-        }
+    protected static synchronized void removeService(final LayoutDataService subInstance) {
+        String type = subInstance.getClass().getCanonicalName();
         if (subInstance == current) {
-            throw new IllegalArgumentException("Currently active layout data service cant be removed");
+            throw new IllegalArgumentException(
+                    "The currently active layout data service cannot be removed.");
         }
-        instances.remove(type);
+        INSTANCES.remove(type);
     }
 
     /**
-     * Returns the current operation mode of the layout data service. The returned mode is either
-     * {@code LayoutDataService.ECLIPSEDATASERVICE}, {@code LayoutDataService.REMOTEDATASERVICE} or
-     * {@code LayoutDataService.SERVERDATASERVICE} or {@code null} if no layout data service has
-     * been registered yet.
+     * Returns the current operation mode of the layout data service. The returned mode is
+     * identified by the fully qualified class name of the respective service subclass,
+     * or {@code null} if no layout data service has been registered yet. The default
+     * mode for use in Eclipse is {@link #ECLIPSE_DATA_SERVICE}.
      * 
-     * @return the mode of operation or {@code null}
+     * @return the name of the currently active data service class, or {@code null}
      */
     public static synchronized String getMode() {
-        return (current != null ? getType(current) : null);
+        String mode = current.getClass().getCanonicalName();
+        if (INSTANCES.containsKey(mode)) {
+            return mode;
+        }
+        return null;
     }
 
     /**
-     * Sets the mode to {@code mode} where {@code mode} has to be an element of
-     * {@code LayoutDataService.ECLIPSEDATASERVICE}, {@code LayoutDataService.REMOTEDATASERVICE} or
-     * {@code LayoutDataService.SERVERDATASERVICE}.
+     * Sets the current operation mode of the layout data service. The mode is identified by
+     * the fully qualified class name of the respective service subclass. The default
+     * mode for use in Eclipse is {@link #ECLIPSE_DATA_SERVICE}.
      * 
-     * @param mode
-     *            the mode to be set
-     * 
+     * @param mode the name of the data service class to be activated
      * @throws IllegalArgumentException
-     *             if the given mode is not valid or the according layout data service has not been
-     *             registered yet
+     *             if the according layout data service class has not been registered yet
      */
     public static synchronized void setMode(final String mode) {
-        if (validDataServices.contains(mode) && instances.containsKey(mode)) {
-            current = instances.get(mode);
-        } else {
+        LayoutDataService modeInstance = INSTANCES.get(mode);
+        if (modeInstance == null) {
             throw new IllegalArgumentException("Mode " + mode
-                    + " not supported or layout data service was not" + " registered before");
+                    + " not supported or layout data service was not registered before.");
         }
+        current = modeInstance;
     }
 
     /**
-     * Returns the layout data service instance belonging to the currently selected mode.
+     * Returns the layout data service instance according to the currently selected mode.
      * 
-     * @return the layout data service instance belonging to the currently selected mode
+     * @return the current layout data service instance, or {@code null} if none has
+     *          been registered yet
      */
     public static LayoutDataService getInstance() {
         return current;
     }
 
     /**
-     * Returns the instance of a layout data service specified by it's fully qualified class name.
+     * Returns the instance of a layout data service specified by its fully qualified class name.
      * 
-     * @param <T>
-     *            type of the returned instance
-     * @param type
-     *            fully qualified class name of the data service instance
-     * @return the data service instance or {@code null} if no such instance has been registered or
-     *         the given type is not valid specifier.
+     * @param <T> type of the returned instance
+     * @param type fully qualified class name of the data service instance
+     * @return the data service instance, or {@code null} if no such instance has been registered
      */
     @SuppressWarnings("unchecked")
     public static <T extends LayoutDataService> T getInstanceOf(final String type) {
-        if (validDataServices.contains(type) && instances.containsKey(type)) {
-            return (T) instances.get(type);
+        if (INSTANCES.containsKey(type)) {
+            return (T) INSTANCES.get(type);
         }
         return null;
     }
 
     /**
-     * Returns the instance of the registry class associated with the current layout data service.
-     * 
-     * @return the registry instance, or {@code null} if either no layout data service has been
-     *         registered yet or it has been removed
+     * Class used to register the layout services. The access methods are not thread-safe, so use
+     * only a single thread to register layout meta-data.
      */
-    public static final Registry getRegistry() {
-        if (current != null) {
-            return current.registry;
-        }
-        return null;
-    }
-
-    /** Class used to register the layout services. */
     public final class Registry {
 
         /**
@@ -262,7 +219,7 @@ public class LayoutDataService {
 
         /**
          * Registers the given layout type. If there is already a registered layout type instance
-         * with the same identifier, it is overwritten, but its contained layouters are copied.
+         * with the same identifier, it is overwritten, but its contained layout algorithms are copied.
          * 
          * @param typeData
          *            data instance of the layout type to register
@@ -277,7 +234,8 @@ public class LayoutDataService {
         }
 
         /**
-         * Registers the given category.
+         * Registers the given category. Categories are used to group layout algorithms according
+         * to the library they are contained in.
          * 
          * @param id
          *            identifier of the category
@@ -288,6 +246,15 @@ public class LayoutDataService {
             categoryMap.put(id, name);
         }
 
+    }
+
+    /**
+     * Returns the instance of the registry class associated with the this layout data service.
+     * 
+     * @return the registry instance, or {@code null} if the service instance has not been registered
+     */
+    protected final Registry getRegistry() {
+        return registry;
     }
 
     /**
@@ -317,7 +284,8 @@ public class LayoutDataService {
      * 
      * @param suffix
      *            a layout algorithm identifier suffix
-     * @return the first layout algorithm data that has the given suffix
+     * @return the first layout algorithm data that has the given suffix, or {@code null} if
+     *          no algorithm has that suffix
      */
     public final LayoutAlgorithmData getAlgorithmDataBySuffix(final String suffix) {
         LayoutAlgorithmData data = layoutAlgorithmMap.get(suffix);
@@ -363,7 +331,8 @@ public class LayoutDataService {
      * 
      * @param suffix
      *            a layout option identifier suffix
-     * @return the first layout option data that has the given suffix
+     * @return the first layout option data that has the given suffix, or {@code null} if
+     *          no option has that suffix
      */
     public final LayoutOptionData<?> getOptionDataBySuffix(final String suffix) {
         LayoutOptionData<?> data = layoutOptionMap.get(suffix);
@@ -435,7 +404,8 @@ public class LayoutDataService {
      * 
      * @param suffix
      *            a layout type identifier suffix
-     * @return the first layout type data that has the given suffix
+     * @return the first layout type data that has the given suffix, or {@code null} if
+     *          no layout type has that suffix
      */
     public final LayoutTypeData getTypeDataBySuffix(final String suffix) {
         LayoutTypeData data = layoutTypeMap.get(suffix);

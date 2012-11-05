@@ -24,8 +24,9 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 /**
  * Utility methods used for the KIML UI.
  *
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public final class KimlUiUtil {
     

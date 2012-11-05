@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.ui.service;
 
 import java.util.Map.Entry;
+import java.util.EnumSet;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
@@ -36,8 +37,9 @@ import de.cau.cs.kieler.kiml.service.LayoutInfoService;
 /**
  * A layout configuration for extension point configurations and user preferences.
  *
- * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class EclipseLayoutConfig implements ILayoutConfig {
     
@@ -204,19 +206,19 @@ public class EclipseLayoutConfig implements ILayoutConfig {
      * @return {@code FIXED} if the selected node has no children, and {@code MIN_PORTS} or
      *          {@code MIN_DEFAULT} otherwise
      */
-    private SizeConstraint getSizeConstraintValue(final LayoutContext context) {
+    private EnumSet<SizeConstraint> getSizeConstraintValue(final LayoutContext context) {
         Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
         if (targets != null && targets.contains(LayoutOptionData.Target.NODES)) {
             if (!targets.contains(LayoutOptionData.Target.PARENTS)) {
-                return SizeConstraint.FIXED;
+                return SizeConstraint.fixed();
             }
             Boolean hasPorts = context.getProperty(DefaultLayoutConfig.HAS_PORTS);
             if (hasPorts != null && hasPorts) {
-                return SizeConstraint.MIN_PORTS;
+                return SizeConstraint.defaultMinimumSizeWithPorts();
             }
-            return SizeConstraint.MIN_DEFAULT;
+            return SizeConstraint.defaultMinimumSize();
         }
-        return null;
+        return SizeConstraint.fixed();
     }
     
     /**
@@ -284,7 +286,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             for (Entry<String, Object> entry : infoService.getOptionValues(diagramType).entrySet()) {
                 if (entry.getValue() != null) {
                     LayoutOptionData<?> optionData = dataService.getOptionData(entry.getKey());
-                    graphData.setProperty(optionData, entry.getValue());
+                    if (optionData != null) {
+                        graphData.setProperty(optionData, entry.getValue());
+                    }
                 }
             }
         }
@@ -295,7 +299,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
                     modelElement.eClass()).entrySet()) {
                 if (entry.getValue() != null) {
                     LayoutOptionData<?> optionData = dataService.getOptionData(entry.getKey());
-                    graphData.setProperty(optionData, entry.getValue());
+                    if (optionData != null) {
+                        graphData.setProperty(optionData, entry.getValue());
+                    }
                 }
             }
         }
@@ -306,7 +312,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             for (Entry<String, Object> entry : infoService.getOptionValues(clazzName).entrySet()) {
                 if (entry.getValue() != null) {
                     LayoutOptionData<?> optionData = dataService.getOptionData(entry.getKey());
-                    graphData.setProperty(optionData, entry.getValue());
+                    if (optionData != null) {
+                        graphData.setProperty(optionData, entry.getValue());
+                    }
                 }
             }
         }

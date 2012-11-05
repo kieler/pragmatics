@@ -24,6 +24,7 @@ import de.cau.cs.kieler.kaom.text.services.KaomGrammarAccess;
  * This class contains custom formatting description for textual KAOM specifications.
  * 
  * @author chsch
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomFormatter extends AnnotationsFormatter {
 

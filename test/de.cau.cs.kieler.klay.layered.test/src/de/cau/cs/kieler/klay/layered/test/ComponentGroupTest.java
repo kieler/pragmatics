@@ -15,7 +15,7 @@ package de.cau.cs.kieler.klay.layered.test;
 
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*; // SUPPRESS CHECKSTYLE AvoidStarImport
 import org.junit.Test;
 
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -115,4 +115,5 @@ public class ComponentGroupTest {
         
         return graph;
     }
+    
 }

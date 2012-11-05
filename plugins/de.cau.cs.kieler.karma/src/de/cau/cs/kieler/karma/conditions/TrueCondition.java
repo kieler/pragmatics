@@ -18,9 +18,11 @@ import org.eclipse.emf.ecore.EObject;
 import de.cau.cs.kieler.karma.ICustomCondition;
 
 /**
- * A condition that is always true. Should mainly be used for testing purposes. 
+ * A condition that is always true. Should mainly be used for testing purposes.
+ *  
  * @author ckru
- *
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class TrueCondition extends ICustomCondition<EObject> {
 

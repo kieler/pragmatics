@@ -15,8 +15,9 @@ package de.cau.cs.kieler.klay.planar.flownetwork;
 
 import java.util.List;
 
+import com.google.common.base.Predicate;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver.IMinimumCostFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -33,6 +34,7 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
  * 
  * @author ocl
  * @author pkl
+ * @kieler.rating proposed yellow by msp
  */
 public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implements
         IMinimumCostFlowSolver {
@@ -82,8 +84,9 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
         // Initialize more efficient Dijkstra path finder.
         // Condition describes residual network.
         pathFinder = new DijkstraPathFinder();
-        ICondition<Pair<PNode, PEdge>> cond = new ICondition<Pair<PNode, PEdge>>() {
-            public boolean evaluate(final Pair<PNode, PEdge> object) {
+        
+        Predicate<Pair<PNode, PEdge>> cond = new Predicate<Pair<PNode, PEdge>>() {
+            public boolean apply(final Pair<PNode, PEdge> object) {
                 PNode node = object.getFirst();
                 PEdge edge = object.getSecond();
                 int cap = 0;
@@ -128,5 +131,4 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
         network.removeNode(source);
         network.removeNode(sink);
     }
-
 }

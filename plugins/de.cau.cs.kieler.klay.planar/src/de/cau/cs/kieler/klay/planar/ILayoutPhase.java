@@ -23,6 +23,7 @@ import de.cau.cs.kieler.klay.planar.graph.PGraph;
  * 
  * @see PlanarLayoutProvider
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  */
 public interface ILayoutPhase extends ILayoutProcessor {
 

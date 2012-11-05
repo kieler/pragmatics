@@ -22,6 +22,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * The basic visualizer for the CSV format.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class BasicCSVVisualizer extends AbstractSimpleVisualizer<String> {
 

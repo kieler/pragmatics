@@ -20,8 +20,9 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 /**
  * A validator for string input of layout option values by the user.
  *
- * @kieler.rating 2010-01-26 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LayoutOptionValidator implements IInputValidator {
 
@@ -45,7 +46,7 @@ public class LayoutOptionValidator implements IInputValidator {
         switch (optionData.getType()) {
         case BOOLEAN:
         case REMOTE_ENUM:
-        case ENUM:
+        case ENUM: {
             String[] choices = optionData.getChoices();
             for (int i = 0; i < choices.length; i++) {
                 if (choices[i].equalsIgnoreCase(trimmedText)) {
@@ -53,6 +54,32 @@ public class LayoutOptionValidator implements IInputValidator {
                 }
             }
             return getChoicesMessage(choices);
+        }
+        case REMOTE_ENUMSET:
+        case ENUMSET: {
+            String[] choices = optionData.getChoices();
+            
+            // Check if the elements of the string are valid
+            String[] elements = newText.split("\\s+");
+            for (String element : elements) {
+                boolean found = false;
+                
+                for (String choice : choices) {
+                    if (choice.equalsIgnoreCase(element)) {
+                        found = true;
+                        break;
+                    }
+                }
+                
+                // Check if we found the element in the list of choices
+                if (!found) {
+                    return getChoicesMessage(choices);
+                }
+            }
+            
+            // If we reach this statement, we found all elements
+            return null;
+        }
         case INT:
             try {
                 Integer.parseInt(trimmedText);

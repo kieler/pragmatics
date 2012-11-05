@@ -73,6 +73,7 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.Ptolemy2KaomTransformation;
  * only run once and be destroyed.
  * 
  * @author cds
+ * @kieler.design proposed by msp
  * @kieler.rating yellow 2010-03-14
  *      reviewed by haf, msp, pkl
  */

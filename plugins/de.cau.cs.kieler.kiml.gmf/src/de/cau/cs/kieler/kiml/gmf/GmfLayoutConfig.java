@@ -50,8 +50,9 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
 /**
  * A layout configuration that stores layout options in the notation model of GMF diagrams.
  *
- * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class GmfLayoutConfig implements IMutableLayoutConfig {
     
@@ -154,7 +155,8 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 @SuppressWarnings("unchecked")
                 LayoutOptionData<String> algorithmOptionData = (LayoutOptionData<String>)
                         LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM.getId());
-                if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null) {
+                if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null
+                        && algorithmOptionData != null) {
                     // get a layout hint for the content of the focused edit part
                     String contentLayoutHint = getValue(algorithmOptionData, PREFIX, notationView);
                     if (contentLayoutHint == null) {

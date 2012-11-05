@@ -52,6 +52,7 @@ import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
  * appropriate wizard and executing it.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class BatchHandler extends AbstractHandler {
 

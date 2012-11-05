@@ -34,6 +34,8 @@ import de.cau.cs.kieler.karma.KarmaPlugin;
  * Condition for evaluating whether a model element is in a collapsed state in the opened diagram. 
  * 
  * @author ckru
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class IsCollapsedCondition extends IEditPartSensitiveCondition<EObject> {
     

@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.util;
 
+import java.util.EnumSet;
+import java.util.Iterator;
+
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
@@ -26,8 +29,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -45,16 +46,29 @@ import de.cau.cs.kieler.kiml.options.SizeConstraint;
 /**
  * Utility methods for KGraphs and layout data.
  * 
+ * @kieler.design proposed by msp
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
 public final class KimlUtil {
+    
+    /**
+     * Default minimal width for nodes.
+     */
+    public static final float DEFAULT_MIN_WIDTH = 20.0f;
+    
+    /**
+     * Default minimal height for nodes.
+     */
+    public static final float DEFAULT_MIN_HEIGHT = 20.0f;
+    
 
     /**
      * Hidden constructor to avoid instantiation.
      */
     private KimlUtil() {
     }
+    
 
     /**
      * Creates a KNode, initializes some attributes, and returns it.
@@ -108,6 +122,76 @@ public final class KimlUtil {
         label.setText("");
         label.setParent(element);
         return label;
+    }
+    
+    /**
+     * Ensures that each element contained in the given graph is attributed correctly for
+     * usage in KIML.
+     * 
+     * @param graph the parent node of a graph 
+     */
+    public static void validate(final KNode graph) {
+        KLayoutDataFactory layoutFactory = KLayoutDataFactory.eINSTANCE;
+        Iterator<EObject> contentIter = graph.eAllContents();
+        while (contentIter.hasNext()) {
+            EObject element = contentIter.next();
+            // Make sure nodes are OK
+            if (element instanceof KNode) {
+                KNode node = (KNode) element;
+                KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+                if (nodeLayout == null) {
+                    nodeLayout = layoutFactory.createKShapeLayout();                   
+                    node.getData().add(nodeLayout);
+                } 
+                if (nodeLayout.getInsets() == null) {
+                    nodeLayout.setInsets(layoutFactory.createKInsets());
+                }
+            // Make sure ports are OK           
+            } else if (element instanceof KPort) {
+                KPort port = (KPort) element;
+                KShapeLayout portLayout = port.getData(KShapeLayout.class);
+                if (portLayout == null) {
+                    port.getData().add(layoutFactory.createKShapeLayout());
+                }
+            // Make sure labels are OK
+            } else if (element instanceof KLabel) {
+                KLabel label = (KLabel) element;
+                KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                if (labelLayout == null) {
+                    label.getData().add(layoutFactory.createKShapeLayout());
+                }
+                if (label.getText() == null) {
+                    label.setText("");
+                }
+            // Make sure edges are OK
+            } else if (element instanceof KEdge) {
+                KEdge edge = (KEdge) element;
+                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                if (edgeLayout == null) {
+                    edgeLayout = layoutFactory.createKEdgeLayout();
+                    edge.getData().add(edgeLayout);
+                }
+                if (edgeLayout.getSourcePoint() == null) {
+                    edgeLayout.setSourcePoint(layoutFactory.createKPoint());
+                }
+                if (edgeLayout.getTargetPoint() == null) {
+                    edgeLayout.setTargetPoint(layoutFactory.createKPoint());
+                }
+                // ports and edges are not opposite, so check whether they are connected properly
+                KPort sourcePort = edge.getSourcePort();
+                if (sourcePort != null) {
+                    if (!sourcePort.getEdges().contains(edge)) {
+                        sourcePort.getEdges().add(edge);
+                    }
+                }
+                KPort targetPort = edge.getTargetPort();
+                if (targetPort != null) {
+                    if (!targetPort.getEdges().contains(edge)) {
+                        targetPort.getEdges().add(edge);
+                    }
+                }
+            }
+        }
     }
     
     /**
@@ -208,9 +292,6 @@ public final class KimlUtil {
         }
         return 0;
     }
-    
-    /** minimal size of a node. */
-    private static final float MIN_NODE_SIZE = 20.0f;
 
     /**
      * Sets the size of a given node, depending on the minimal size, the number of ports
@@ -222,14 +303,14 @@ public final class KimlUtil {
      */
     public static KVector resizeNode(final KNode node) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        SizeConstraint sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
-        if (sizeConstraint == SizeConstraint.FIXED) {
+        EnumSet<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+        if (sizeConstraint.isEmpty()) {
             return null;
         }
         
         float newWidth = 0, newHeight = 0;
 
-        if (sizeConstraint.arePortsConsidered()) {
+        if (sizeConstraint.contains(SizeConstraint.PORTS)) {
             PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
             float minNorth = 2, minEast = 2, minSouth = 2, minWest = 2;
             Direction direction = node.getParent() == null
@@ -282,11 +363,6 @@ public final class KimlUtil {
             newWidth = Math.max(minNorth, minSouth);
             newHeight = Math.max(minEast, minWest);
         }
-
-        if (sizeConstraint.isDefSizeConsidered()) {
-            newWidth = Math.max(newWidth, MIN_NODE_SIZE);
-            newHeight = Math.max(newHeight, MIN_NODE_SIZE);
-        }
         
         return resizeNode(node, newWidth, newHeight, true);
     }
@@ -302,15 +378,37 @@ public final class KimlUtil {
      */
     public static KVector resizeNode(final KNode node, final float newWidth, final float newHeight,
             final boolean movePorts) {
+        
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         if (nodeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
             // don't resize nodes that aren't laid out
             return null;
         }
+        EnumSet<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+        
         KVector oldSize = new KVector(nodeLayout.getWidth(), nodeLayout.getHeight());
-        KVector newSize = new KVector(
-                Math.max(newWidth, nodeLayout.getProperty(LayoutOptions.MIN_WIDTH)),
-                Math.max(newHeight, nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT)));
+        KVector newSize;
+        
+        // Calculate the new size
+        if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
+            float minWidth = nodeLayout.getProperty(LayoutOptions.MIN_WIDTH);
+            float minHeight = nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT);
+            
+            // If minimum width or height are not set, maybe default to default values
+            if (sizeConstraint.contains(SizeConstraint.DEFAULT_MINIMUM_SIZE)) {
+                if (minWidth <= 0) {
+                    minWidth = DEFAULT_MIN_WIDTH;
+                }
+                
+                if (minHeight <= 0) {
+                    minHeight = DEFAULT_MIN_HEIGHT;
+                }
+            }
+            
+            newSize = new KVector(Math.max(newWidth, minWidth), Math.max(newHeight, minHeight));
+        } else {
+            newSize = new KVector(newWidth, newHeight);
+        }
         
         float widthRatio = (float) (newSize.x / oldSize.x);
         float heightRatio = (float) (newSize.y / oldSize.y);
@@ -324,13 +422,16 @@ public final class KimlUtil {
                     : node.getParent().getData(KShapeLayout.class).getProperty(LayoutOptions.DIRECTION);
             boolean fixedPorts = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS)
                     == PortConstraints.FIXED_POS;
+            
             for (KPort port : node.getPorts()) {
                 KShapeLayout portLayout = port.getData(KShapeLayout.class);
                 PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+                
                 if (portSide == PortSide.UNDEFINED) {
                     portSide = calcPortSide(port, direction);
                     portLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
                 }
+                
                 switch (portSide) {
                 case NORTH:
                     if (!fixedPorts) {
@@ -368,6 +469,7 @@ public final class KimlUtil {
             float midy = labelLayout.getYpos() + labelLayout.getHeight() / 2;
             float widthPercent = midx / (float) oldSize.x;
             float heightPercent = midy / (float) oldSize.y;
+            
             if (widthPercent + heightPercent >= 1) {
                 if (widthPercent - heightPercent > 0 && midy >= 0) {
                     // label is on the right
@@ -382,7 +484,7 @@ public final class KimlUtil {
         }
         
         // set fixed size option for the node: now the size is assumed to stay as determined here
-        nodeLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.FIXED);
+        nodeLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
         
         return new KVector(widthRatio, heightRatio);
     }
@@ -506,8 +608,7 @@ public final class KimlUtil {
      * Persists all KGraphData elements of a KGraph by serializing the contained properties into
      * {@link de.cau.cs.kieler.core.kgraph.PersistentEntry} tuples.
      *
-     * @param graph
-     *            the root element of the graph to persist elements of.
+     * @param graph the root element of the graph to persist elements of.
      */
     public static void persistDataElements(final KNode graph) {
         TreeIterator<EObject> iterator = graph.eAllContents();
@@ -521,10 +622,12 @@ public final class KimlUtil {
 
     /**
      * Loads all {@link de.cau.cs.kieler.core.properties.IProperty} of KGraphData elements of a
-     * KGraph by deserializing {@link de.cau.cs.kieler.core.kgraph.PersistentEntry} tuples.
+     * KGraph by deserializing {@link PersistentEntry} tuples.
+     * Values are parsed using layout option data obtained from the {@link LayoutDataService}.
+     * Options that cannot be resolved immediately (e.g. because the extension points have not
+     * been read yet) are stored as {@link LayoutOptionProxy}.
      * 
-     * @param graph
-     *            the root element of the graph to load elements of.
+     * @param graph the root element of the graph to load elements of.
      */
     public static void loadDataElements(final KNode graph) {
         LayoutDataService dataService = LayoutDataService.getInstance();
@@ -538,21 +641,19 @@ public final class KimlUtil {
                     String value = persistentEntry.getValue();
                     if (key != null && value != null) {
                         LayoutOptionData<?> layoutOptionData = null;
-                        // Try to get the layout option from the data service.
-                        if (dataService != null) { 
-                            layoutOptionData = dataService.getOptionData(key);
-                        }
-                        // If we have a valid layout option, parse its value.
+                        
+                        // try to get the layout option from the data service.
+                        layoutOptionData = dataService.getOptionData(key);
+                        
+                        // if we have a valid layout option, parse its value.
                         if (layoutOptionData != null) {
-                            Object layoutOptionValue = layoutOptionData.parseValue(
-                                    persistentEntry.getValue());
+                            Object layoutOptionValue = layoutOptionData.parseValue(value);
                             if (layoutOptionValue != null) {
                                 kgraphData.setProperty(layoutOptionData, layoutOptionValue);
                             }
-                        // Unknown options are wrapped by a dynamically instantiated one.
                         } else {
-                            IProperty<String> property = new Property<String>(key);
-                            kgraphData.setProperty(property, value);
+                            // the layout option could not be resolved, so create a proxy
+                            LayoutOptionProxy.setProxyValue(kgraphData, key, value);
                         }
                     }
                 }

@@ -64,6 +64,7 @@ import de.cau.cs.kieler.klay.planar.intermediate.LayoutProcessorStrategy;
  * 
  * @author cds
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  * 
  */
 public class IntermediateProcessingConfiguration {

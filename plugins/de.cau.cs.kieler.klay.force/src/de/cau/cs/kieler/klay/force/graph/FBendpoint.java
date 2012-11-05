@@ -19,6 +19,8 @@ package de.cau.cs.kieler.klay.force.graph;
  * @author tmn
  * @author owo
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class FBendpoint extends FParticle {
     

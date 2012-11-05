@@ -27,6 +27,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * result {@code (double ratio)}.
  * 
  * @author cds
+ * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class AspectRatioAnalysis implements IAnalysis {

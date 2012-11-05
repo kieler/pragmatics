@@ -39,7 +39,6 @@ import de.cau.cs.kieler.core.annotations.TypedStringAnnotation;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kaom.Entity;
 
-
 /**
  * Handles Ptolemy annotations and their associations with actors. For each model
  * transformation, a new instance must be created and the {@link #handleAnnotations()}
@@ -165,6 +164,7 @@ import de.cau.cs.kieler.kaom.Entity;
  * simpllistic and doesn't always give correct results.</p>
  * 
  * @author cds
+ * @kieler.design proposed by msp
  * @kieler.rating yellow 2012-06-15 KI-12 cmot, grh
  */
 public class PtolemyAnnotationHandler {

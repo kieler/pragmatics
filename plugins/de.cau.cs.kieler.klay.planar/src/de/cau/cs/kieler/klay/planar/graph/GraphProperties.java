@@ -24,6 +24,7 @@ package de.cau.cs.kieler.klay.planar.graph;
  * </p>
  * 
  * @author cds
+ * @kieler.rating proposed yellow by pkl
  */
 public enum GraphProperties {
 

@@ -20,6 +20,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * A special visualizer for arrays.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class ArrayResultVisualizer extends AbstractSimpleVisualizer<String> {
 

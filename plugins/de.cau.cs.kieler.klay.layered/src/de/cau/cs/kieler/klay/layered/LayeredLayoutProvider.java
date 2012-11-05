@@ -41,14 +41,14 @@ import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p2layers.InteractiveLayerer;
+import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer;
-import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.InteractiveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
-import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
+import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
@@ -317,7 +317,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             }
         }
         
-        // check with node placement strategy to use
+        // check which node placement strategy to use
         NodePlacementStrategy nodePlaceStrategy = parentLayout.getProperty(Properties.NODE_PLACER);
         switch (nodePlaceStrategy) {
         case LINEAR_SEGMENTS:

@@ -47,7 +47,7 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.LayoutOptionValidator;
-import de.cau.cs.kieler.kiml.ui.LayouterHintDialog;
+import de.cau.cs.kieler.kiml.ui.AlgorithmSelectionDialog;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
@@ -56,8 +56,9 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 /**
  * Preference page for general KIML preferences.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -348,8 +349,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         if (entry.getValue() != null) {
             if (optionData.equals(LayoutOptions.ALGORITHM)) {
                 // show a selection dialog for a layouter hint
-                LayouterHintDialog dialog = new LayouterHintDialog(shell, null);
-                if (dialog.open() == LayouterHintDialog.OK) {
+                AlgorithmSelectionDialog dialog = new AlgorithmSelectionDialog(shell, null);
+                if (dialog.open() == AlgorithmSelectionDialog.OK) {
                     String result = dialog.getSelectedHint();
                     if (result != null) {
                         entry.setValue(result);
@@ -365,8 +366,9 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                     switch (optionData.getType()) {
                     case REMOTE_ENUM:
                     case ENUM:
+                    case ENUMSET:
+                    case REMOTE_ENUMSET:
                         entry.setValue(optionData.parseValue(result.toUpperCase()));
-                        break;
                     default:
                         entry.setValue(optionData.parseValue(result));
                     }

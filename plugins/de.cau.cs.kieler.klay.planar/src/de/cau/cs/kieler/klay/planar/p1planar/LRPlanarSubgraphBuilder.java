@@ -54,6 +54,7 @@ import de.cau.cs.kieler.klay.planar.util.IFunction;
  * @see de.cau.cs.kieler.klay.planar.graph.impl.PEdge PEdge
  * 
  * @author pdo
+ * @kieler.rating proposed yellow by pkl
  */
 public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayoutPhase {
 

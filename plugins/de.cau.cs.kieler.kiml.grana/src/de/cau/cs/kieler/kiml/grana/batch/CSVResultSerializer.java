@@ -27,6 +27,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * A batch result serializer which saves the information as CSV.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class CSVResultSerializer implements IBatchResultSerializer {
 

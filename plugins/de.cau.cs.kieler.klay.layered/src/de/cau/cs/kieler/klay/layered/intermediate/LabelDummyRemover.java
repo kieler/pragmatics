@@ -30,9 +30,20 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
+ * <p>Processor that removes the inserted center label dummies and places the labels on their
+ * position.</p>
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>a layered graph; nodes are placed; edges are routed; center labels
+ *     are represented by center label dummy nodes.</dd>
+ *   <dt>Postcondition:</dt><dd>labels are placed; there are no dummy nodes of type
+ *     {@link de.cau.cs.kieler.klay.layered.properties.NodeType#LABEL}.</dd>
+ *   <dt>Slots:</dt><dd>After phase 5.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link HierarchicalPortOrthogonalEdgeRouter}</dd>
+ * </dl>
  *
  * @author jjc
- * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating yellow proposed cds
  */
 public class LabelDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -64,10 +75,9 @@ public class LabelDummyRemover extends AbstractAlgorithm implements ILayoutProce
                         node.getPorts(PortSide.EAST).iterator().next().getOutgoingEdges();
                     int edgeCount = inputPortEdges.size();
                     
-                    // TODO rework doc here
                     // The following code assumes that edges with the same indices in the two
                     // lists originate from the same long edge, which is true for the current
-                    // implementation of LongEdgeSplitter and HyperedgeDummyMerger
+                    // implementation of LabelDummyInserter
                     while (edgeCount-- > 0) {
                         // Get the two edges
                         LEdge survivingEdge = inputPortEdges.get(0);
@@ -82,6 +92,12 @@ public class LabelDummyRemover extends AbstractAlgorithm implements ILayoutProce
                         KVectorChain survivingBendPoints = survivingEdge.getBendPoints();
                         for (KVector bendPoint : droppedEdge.getBendPoints()) {
                             survivingBendPoints.add(new KVector(bendPoint));
+                        }
+                        
+                        //Join their labels
+                        List<LLabel> survivingLabels = survivingEdge.getLabels();
+                        for (LLabel label2: droppedEdge.getLabels()) {
+                            survivingLabels.add(label2);
                         }
                     }
                     

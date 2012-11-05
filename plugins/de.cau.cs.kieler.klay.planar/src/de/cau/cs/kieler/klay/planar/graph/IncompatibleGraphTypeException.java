@@ -21,6 +21,7 @@ package de.cau.cs.kieler.klay.planar.graph;
  * @see de.cau.cs.kieler.klay.planar.graph.IGraph {@code IGraph}
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public class IncompatibleGraphTypeException extends RuntimeException {
 

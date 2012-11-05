@@ -28,10 +28,27 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kiml.service.formats.TransformationException;
 
 /**
- * A transformer for matrices as defined by Matrix Market.
+ * A handler for matrices as defined by Matrix Market.
  * See {@link http://math.nist.gov/MatrixMarket/}.
+ * <p>
+ * The handler supports three format types:
+ * <ul>
+ *   <li><b>Coordinate format:</b> Each edge is given explicitly with source and target node index.</li>
+ *   <li><b>Array format:</b> The full adjacency matrix is written column-wise.</li>
+ *   <li><b>Layout format:</b> Does not specify the graph structure, but only its layout.
+ *     The first part contains coordinates for all nodes sorted by their index, while the
+ *     second part contains bend points for all edges.</li>
+ * </ul>
+ * The coordinate and array formats are supported for import and export, while the layout format
+ * is only supported for export. The default format for graph serialization is the layout format.
+ * This can be overridden using the {@link de.cau.cs.kieler.kiml.options.LayoutOptions#NO_LAYOUT}
+ * option: if defined, the output format is either coordinate or array, depending on the number
+ * of edges in the graph.
+ * </p>
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class MatrixHandler implements ITransformationHandler<Matrix> {
     

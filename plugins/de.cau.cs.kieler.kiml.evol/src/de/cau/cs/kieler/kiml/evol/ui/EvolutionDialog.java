@@ -71,6 +71,8 @@ import de.cau.cs.kieler.kiml.ui.util.KGraphRenderer;
  * The main user interface for evolutionary meta layout.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class EvolutionDialog extends Dialog {
     

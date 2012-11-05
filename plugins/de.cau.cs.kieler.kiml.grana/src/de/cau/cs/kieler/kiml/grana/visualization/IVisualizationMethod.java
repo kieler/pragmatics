@@ -20,6 +20,7 @@ import java.util.List;
  * of a specific visualization type and receives appropriate visualizations.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public interface IVisualizationMethod {
 

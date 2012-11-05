@@ -36,6 +36,8 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * A semantic layout configurations for annotations.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class AnnotationsLayoutConfig extends SemanticLayoutConfig {
     

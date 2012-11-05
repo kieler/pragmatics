@@ -37,6 +37,8 @@ import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
  * 
  * @author bdu
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class MutationOperation extends AbstractAlgorithm implements IEvolutionaryOperation {
 

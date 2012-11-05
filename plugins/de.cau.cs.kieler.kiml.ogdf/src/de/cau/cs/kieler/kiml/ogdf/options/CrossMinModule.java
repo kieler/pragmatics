@@ -17,6 +17,8 @@ package de.cau.cs.kieler.kiml.ogdf.options;
  * Enumeration of available crossing minimization modules for Sugiyama layout.
  * 
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public enum CrossMinModule {
     

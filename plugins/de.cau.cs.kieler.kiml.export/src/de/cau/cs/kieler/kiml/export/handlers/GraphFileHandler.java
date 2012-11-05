@@ -45,9 +45,10 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
  *  This class is responsible for transforming and exporting graphs from graphical diagrams.
  * 
  * @author wah
- * 
+ * @kieler.ignore (excluded from review process)
  */
 public class GraphFileHandler {
+    
     /** The source file to export.  */
     private IPath sourceFile;
     /** The target format to export file into ( without leading period ). */

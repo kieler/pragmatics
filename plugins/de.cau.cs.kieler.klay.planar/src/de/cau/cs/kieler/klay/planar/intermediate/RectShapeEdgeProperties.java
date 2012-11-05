@@ -43,7 +43,7 @@ public class RectShapeEdgeProperties {
     /** Face side index; 0 left, 1 top, 2 right, 3 bottom. */
     private int sideIndex = -1;
 
-    /** Path length to the front of a edge. */
+    /** Path length to the front of an edge. */
     private int pathLength = 0;
 
     /** Next edge of an edge connected by the corner of the currentEdge. */
@@ -149,7 +149,7 @@ public class RectShapeEdgeProperties {
     /**
      * @param next the next to set
      */
-    public void setNext(PEdge next) {
+    public void setNext(final PEdge next) {
         this.next = next;
     }
 
@@ -163,7 +163,7 @@ public class RectShapeEdgeProperties {
     /**
      * @param previousFront the previousFront to set
      */
-    public void setPreviousFront(PEdge previousFront) {
+    public void setPreviousFront(final PEdge previousFront) {
         this.previousFront = previousFront;
     }
 

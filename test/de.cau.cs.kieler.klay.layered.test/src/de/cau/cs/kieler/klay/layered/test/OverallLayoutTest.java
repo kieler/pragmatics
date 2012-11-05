@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*; // SUPPRESS CHECKSTYLE AvoidStarImport
 
 import java.util.LinkedList;
 import java.util.List;
@@ -42,8 +42,6 @@ import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
  */
 public class OverallLayoutTest {
     
-    // TODO: Add a test to check whether node sizes suffice to hold their ports.
-    
     /**
      * Create a simple test graph. The graph has at least two nodes and an edge, the nodes have
      * predefined sizes with fixed size constraint, but neither nodes nor edges have predefined
@@ -51,22 +49,23 @@ public class OverallLayoutTest {
      * 
      * @return a simple test graph
      */
-    private static final KNode createSimpleGraph() {
+    private static KNode createSimpleGraph() {
         KNode parentNode = KimlUtil.createInitializedNode();
+        // CHECKSTYLEOFF MagicNumber
         
         KNode node1 = KimlUtil.createInitializedNode();
         node1.setParent(parentNode);
         node1.getData(KShapeLayout.class).setWidth(30);
         node1.getData(KShapeLayout.class).setHeight(30);
         node1.getData(KShapeLayout.class).setProperty(LayoutOptions.SIZE_CONSTRAINT,
-                SizeConstraint.FIXED);
+                SizeConstraint.fixed());
         
         KNode node2 = KimlUtil.createInitializedNode();
         node2.setParent(parentNode);
         node2.getData(KShapeLayout.class).setWidth(30);
         node2.getData(KShapeLayout.class).setHeight(30);
         node2.getData(KShapeLayout.class).setProperty(LayoutOptions.SIZE_CONSTRAINT,
-                SizeConstraint.FIXED);
+                SizeConstraint.fixed());
         
         KEdge edge1 = KimlUtil.createInitializedEdge();
         edge1.setSource(node1);
@@ -79,6 +78,9 @@ public class OverallLayoutTest {
     private KNode simpleGraph;
     private IKielerProgressMonitor simpleMonitor;
     
+    /**
+     * Set up the test class.
+     */
     @Before
     public void setUp() {
         // create the layered layout provider

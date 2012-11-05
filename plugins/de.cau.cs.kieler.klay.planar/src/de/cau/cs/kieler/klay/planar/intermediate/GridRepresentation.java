@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.planar.intermediate;
 
-import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
 
 /**
@@ -53,6 +52,22 @@ public class GridRepresentation {
     public void remove(final PNode node) {
         int[] coordinates = getPosition(node);
         nodePositions[coordinates[0]][coordinates[1]] = null;
+    }
+
+    /**
+     * Removes a high-degree node from the grid. A high-degree node has more than one grid postion.
+     * 
+     * @param hdNode
+     *            the removing high-degree node
+     */
+    public void removeHDNode(final PNode hdNode) {
+        for (int x = 0; x < getWidth(); x++) {
+            for (int y = 0; y < getHeight(); y++) {
+                if (get(x, y) == hdNode) {
+                    nodePositions[x][y] = null;
+                }
+            }
+        }
     }
 
     /**

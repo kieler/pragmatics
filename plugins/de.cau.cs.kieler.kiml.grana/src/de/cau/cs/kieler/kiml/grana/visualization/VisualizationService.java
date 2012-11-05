@@ -34,6 +34,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * Singleton class for global access to the KIML GRANA result visualization.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public final class VisualizationService {
 

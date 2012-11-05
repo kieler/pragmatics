@@ -31,9 +31,18 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
+ * <p>Processor that inserts dummy nodes into edges that have a center label to reserve space
+ * for them.</p>
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>an unlayered acyclic graph.</dd>
+ *   <dt>Postcondition:</dt><dd>dummy nodes are inserted that represent center labels.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 2.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
+ * </dl>
  * 
  * @author jjc
- * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating yellow proposed cds
  */
 public class LabelDummyInserter extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -50,6 +59,7 @@ public class LabelDummyInserter extends AbstractAlgorithm implements ILayoutProc
                     for (LLabel label : edge.getLabels()) {
                         if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
                                 == EdgeLabelPlacement.CENTER) {
+                            
                             LPort targetPort = edge.getTarget();
                             
                             // Create dummy node

@@ -17,9 +17,9 @@ package de.cau.cs.kieler.kiml.service.grana.dependency;
  * The class representing an object dependency.
  * 
  * @author mri
- * 
- * @param <T>
- *            a comparable identifier type (commonly String or Integer)
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
+ * @param <T> a comparable identifier type (commonly String or Integer)
  */
 public class Dependency<T extends Comparable<T>> {
 

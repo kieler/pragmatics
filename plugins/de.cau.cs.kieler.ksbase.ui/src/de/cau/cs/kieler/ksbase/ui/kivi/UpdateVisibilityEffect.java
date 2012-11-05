@@ -58,7 +58,7 @@ public class UpdateVisibilityEffect extends AbstractEffect {
                 evaluationService.requestEvaluation("activeEditorId");
                 WorkbenchWindow b = (WorkbenchWindow) editorPart.getSite().getPage()
                         .getWorkbenchWindow();
-                ToolBarContributionItem it = (ToolBarContributionItem) b.getCoolBarManager().find(
+                ToolBarContributionItem it = (ToolBarContributionItem) b.getCoolBarManager2().find(
                         "de.cau.cs.kieler");
                 KiviContributionItem.setSoftUpdate(true);
                 it.getToolBarManager().update(true);

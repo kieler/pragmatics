@@ -41,6 +41,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author cku
  * @author pkl
+ * @kieler.rating proposed yellow by pkl
  * 
  */
 public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILayoutPhase {
@@ -73,7 +74,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
             for (PEdge insertingEdge : edges) {
 
                 // get the dual graph of the given graph
-                PGraph dualGraph = new PGraphFactory().createDualGraph(graph);
+                PGraph dualGraph = PGraphFactory.createDualGraph(graph);
 
                 // insert the original nodes in the dual graph
                 PNode dualStartNode = dualGraph.addNode();

@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.annotations.text.ui.AnnotationsHighlightingConfigur
  * order to add KAOM specific highlighting profiles.
  * 
  * @author chsch
+ * @kieler.ignore (excluded from review process)
  */
 public class KaomHighlightingConfiguration extends
 		AnnotationsHighlightingConfiguration {

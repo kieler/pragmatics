@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -88,6 +89,12 @@ public class LongEdgeJoiner extends AbstractAlgorithm implements ILayoutProcesso
                         KVectorChain survivingBendPoints = survivingEdge.getBendPoints();
                         for (KVector bendPoint : droppedEdge.getBendPoints()) {
                             survivingBendPoints.add(new KVector(bendPoint));
+                        }
+                        
+                        //Join their labels
+                        List<LLabel> survivingLabels = survivingEdge.getLabels();
+                        for (LLabel label: droppedEdge.getLabels()) {
+                            survivingLabels.add(label);
                         }
                     }
                     

@@ -15,8 +15,9 @@ package de.cau.cs.kieler.klay.planar.flownetwork;
 
 import java.util.List;
 
+import com.google.common.base.Predicate;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver.IMaximumFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -29,6 +30,8 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
  * Solve the maximum flow problem in flow networks using the Ford-Fulkerson algorithm.
  * 
  * @author ocl
+ * @author pkl
+ * @kieler.rating proposed yellow by msp
  */
 public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaximumFlowSolver {
 
@@ -66,8 +69,9 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
 
         // Initialize path finder and path condition
         IPathFinder pathFinder = new BFSPathFinder();
-        ICondition<Pair<PNode, PEdge>> cond = new ICondition<Pair<PNode, PEdge>>() {
-            public boolean evaluate(final Pair<PNode, PEdge> object) {
+       
+        Predicate<Pair<PNode, PEdge>> cond = new Predicate<Pair<PNode, PEdge>>() {
+            public boolean apply(final Pair<PNode, PEdge> object) {
                 PNode node = object.getFirst();
                 PEdge edge = object.getSecond();
                 int cap = 0;

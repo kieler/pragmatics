@@ -26,6 +26,7 @@ import java.util.Iterator;
  * @param <T>
  *            the type of the elements contained in the iterable object
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public class ManuallyIterable<T> implements Iterable<T> {
 

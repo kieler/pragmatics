@@ -34,8 +34,10 @@ import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
 /**
  * The Graphviz preference page.
  * 
- * @kieler.rating 2009-12-21 proposed yellow msp
  * @author ars
+ * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
         IWorkbenchPreferencePage {
@@ -100,7 +102,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
         // dispose all cached Graphviz instances to ensure creation of new processes
         for (LayoutAlgorithmData data : LayoutDataService.getInstance().getAlgorithmData()) {
             if ("de.cau.cs.kieler.kiml.categories.graphviz".equals(data.getCategory())) {
-                data.getProviderPool().clear();
+                data.getInstancePool().clear();
             }
         }
         return super.performOk();
