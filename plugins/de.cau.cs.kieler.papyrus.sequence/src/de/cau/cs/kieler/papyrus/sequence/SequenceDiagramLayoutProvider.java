@@ -49,6 +49,10 @@ import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
  * 
  */
 public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
+    /**
+     * 
+     */
+    private static final int FOURTY = 40;
     /** Vertical size of lifeline header. */
     private static final float LIFELINE_HEADER = 30;
     /** Vertical space above lifelines. */
@@ -59,7 +63,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     private static final int CONTAINMENT_OFFSET = 5;
     /**  */
     private static final int TWENTY = 20;
-    
+
     /** Lifeline ordering algorithm. */
     private ILifelineSorter lifelineSorter;
     /** Graph importer. */
@@ -141,11 +145,9 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
         // Arrange comments
         arrangeComments(graph);
 
-        List<KPoint> interactionTargetPoints = new LinkedList<KPoint>();
-
         // The height of all "normal-sized" (not affected by create or delete messages) lifelines
         float lifelinesHeight = LIFELINE_HEADER + graph.getSizeY() + messageSpacing;
-        
+
         // The height of the diagram (the surrounding interaction)
         float diagramHeight = graph.getSizeY() + messageSpacing + LIFELINE_HEADER + LIFELINE_Y_POS;
 
@@ -192,7 +194,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             List<SequenceExecution> executions = lifeline.getProperty(PapyrusProperties.EXECUTIONS);
 
             // Handle messages of the lifeline
-            handleMessages(diagramHeight, graph, interactionTargetPoints, lifeline, executions);
+            handleMessages(diagramHeight, graph, lifeline, executions);
 
             // Handle destruction if existing
             KNode destruction = lifeline.getDestruction();
@@ -215,7 +217,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
         if (areas != null) {
             // Check containments (hierarchy) of areas
             checkAreaContainment(areas);
-            
+
             handleAreas(areas);
         }
 
@@ -227,11 +229,6 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
         parentLayout.setWidth(graph.getSizeX());
         parentLayout.setHeight(diagramHeight);
         parentLayout.setPos(borderSpacing, borderSpacing);
-
-        // Set target x position of messages to surrounding interaction
-        for (KPoint targetPoint : interactionTargetPoints) {
-            targetPoint.setX(graph.getSizeX() + borderSpacing);
-        }
     }
 
     /**
@@ -337,8 +334,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     if (subArea.getMessages().size() > 0) {
                         // Calculate and set y-position by the area's messages
                         setAreaPositionByMessages(subArea);
-                        subAreaLayout.setYpos(subArea.getyPos() - area.getyPos()
-                                + LIFELINE_HEADER - messageSpacing / 2);
+                        subAreaLayout.setYpos(subArea.getyPos() - area.getyPos() + LIFELINE_HEADER
+                                - messageSpacing / 2);
                     } else {
                         // Calculate and set y-position by the available space
                         subAreaLayout.setYpos(lastPos);
@@ -381,7 +378,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                 KShapeLayout shapelayout = executionNode.getData(KShapeLayout.class);
                 if (execution.getType().equals("Duration")
                         || execution.getType().equals("TimeConstraint")) {
-                    execution.setyPos(execution.getyPos() + TWENTY); // TODO constants
+                    execution.setyPos(execution.getyPos() + TWENTY);
                     execution.setMaxYPos(execution.getMaxYPos() + TWENTY);
                 }
                 shapelayout.setXpos(execution.getxPos());
@@ -412,6 +409,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                 }
 
                 /*
+                 * TODO set executionFactor to one if the Papyrus team fixes the bug.
                  * Calculate conversion factor. Conversion is necessary because Papyrus stores the
                  * y-coordinates in a very strange way. When the message starts or ends at an
                  * execution, y-coordinates must be given relative to the execution. However, these
@@ -452,8 +450,6 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                             // Calculate the message's height relative to the execution
                             float relHeight = mess.getSourceYPos() - minYPos;
                             if (relHeight == 0) {
-                                // TODO this is only a workaround for a phaenomen that i
-                                // don't understand yet
                                 edgeLayout.getSourcePoint().setY(0);
                             } else {
                                 edgeLayout.getSourcePoint().setY(
@@ -468,8 +464,6 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                             // Calculate the message's height relative to the execution
                             float relHeight = mess.getTargetYPos() - minYPos;
                             if (relHeight == 0) {
-                                // TODO this is only a workaround for a phaenomen that i
-                                // don't understand yet
                                 edgeLayout.getTargetPoint().setY(0);
                             } else {
                                 edgeLayout.getTargetPoint().setY(
@@ -490,13 +484,35 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      * @param executions
      */
     private void handleMessages(final float diagramHeight, final SGraph graph,
-            final List<KPoint> interactionTargetPoints, final SLifeline lifeline,
-            final List<SequenceExecution> executions) {
+            final SLifeline lifeline, final List<SequenceExecution> executions) {
 
         KNode node = (KNode) lifeline.getProperty(Properties.ORIGIN);
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 
+        /*
+         * TODO Set this to one if Papyrus team fixes its bug.
+         * Workaround for Papyrus bug. Y-coordinates are stored in a strange way by Papyrus. When
+         * the message starts or ends at a lifeline, y-coordinates must be given relative to the
+         * lifeline. However, these relative coordinates must be scaled as if the lifeline was
+         * having the height of its surrounding interaction.
+         */
         float factor = (diagramHeight + TWENTY) / nodeLayout.getHeight();
+
+        // Resize node if there are any create or delete messages involved
+        for (SMessage message : lifeline.getIncomingMessages()) {
+            if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.CREATE) {
+                // Set lifeline's yPos to the yPos of the create-message
+                nodeLayout.setYpos(message.getTargetYPos() + LIFELINE_HEADER / 2);
+                // Modify height of lifeline in order to compensate yPos changes
+                nodeLayout.setHeight(nodeLayout.getHeight() + LIFELINE_Y_POS
+                        - message.getTargetYPos() - LIFELINE_HEADER / 2);
+            } else if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.DELETE) {
+                // Modify height of lifeline in order to end at the yPos of the delete-message
+                nodeLayout.setHeight(nodeLayout.getHeight()
+                        - (graph.getSizeY() + messageSpacing - message.getTargetYPos()));
+            }
+        }
+
         // Handle outgoing messages
         for (SMessage message : lifeline.getOutgoingMessages()) {
             KEdge edge = (KEdge) message.getProperty(Properties.ORIGIN);
@@ -525,17 +541,10 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             // Handle messages that lead to something else than a lifeline
             if (message.getTarget().getName().equals("DummyLifeline")) {
                 KPoint targetPoint = edgeLayout.getTargetPoint();
-                targetPoint.setY(message.getTargetYPos() - borderSpacing);
-                interactionTargetPoints.add(targetPoint);
-            }
+                float reverseFactor = nodeLayout.getHeight() / (diagramHeight + FOURTY);
+                targetPoint.setY(TWENTY + message.getTargetYPos() * reverseFactor);
 
-            // Handle lost-messages
-            if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.LOST) {
-                // TODO handle this
-
-                KPoint targetPoint = edgeLayout.getTargetPoint();
-                targetPoint.setY(message.getTargetYPos());
-                // targetPoint.setY(sourcePoint.getY());
+                // TODO if lost-message specify target-x-pos
             }
         }
 
@@ -544,28 +553,13 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             KEdge edge = (KEdge) message.getProperty(Properties.ORIGIN);
             KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
             KPoint targetPoint = edgeLayout.getTargetPoint();
-            targetPoint.setY(message.getTargetYPos() * factor);
             targetPoint.setX(nodeLayout.getXpos() + nodeLayout.getWidth() / 2);
+            targetPoint.setY(message.getTargetYPos() * factor);
 
-            // Resize lifeline if incoming message is a create or delete message
+            // Reset x-position of create message because it leads to the header and not the line
             if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.CREATE) {
                 targetPoint.setX(nodeLayout.getXpos());
-                // Set lifeline's yPos to the yPos of the create-message
-                nodeLayout.setYpos(message.getTargetYPos() + LIFELINE_Y_POS + LIFELINE_HEADER / 2);
-                // Modify height of lifeline in order to compensate yPos changes
-                nodeLayout.setHeight(nodeLayout.getHeight() - message.getTargetYPos()
-                        - LIFELINE_HEADER / 2);
-            } else if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.DELETE) {
-                // Modify height of lifeline in order to end at the yPos of the delete-message
-                nodeLayout.setHeight(nodeLayout.getHeight() - (graph.getSizeY() + messageSpacing 
-                        - (message.getTargetYPos() + LIFELINE_HEADER)));
-                // TODO apply messageYCoordinate fix here too
             }
-
-            // Handle found-messages
-//            if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.FOUND) {
-//                // TODO SourcePoint modifications doesn't have any effect
-//            }
 
             // Reset execution coordinates if the message is contained in an execution
             if (executions != null) {
@@ -1165,7 +1159,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      */
     private boolean isOverlapping(final int mess1source, final int mess1target,
             final int mess2source, final int mess2target) {
-        
+
         return isBetween(mess1source, mess2source, mess2target)
                 || isBetween(mess1target, mess2source, mess2target)
                 || isBetween(mess2source, mess1source, mess1target)
