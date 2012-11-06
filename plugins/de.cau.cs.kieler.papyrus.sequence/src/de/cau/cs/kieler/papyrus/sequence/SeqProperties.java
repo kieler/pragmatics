@@ -21,27 +21,47 @@ import de.cau.cs.kieler.papyrus.sequence.graph.SComment;
 import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
 import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
 
+/**
+ * Properties for sequence diagrams.
+ * 
+ * @author grh
+ * 
+ */
 public final class SeqProperties {
+    
+    private SeqProperties() {
+        // Hide the constructor
+    }
+    
+    /** The type of a message. */
     public static final IProperty<MessageType> MESSAGE_TYPE = new Property<MessageType>(
             "de.cau.cs.kieler.papyrus.sequence.messageType", MessageType.ASYNCHRONOUS);
 
+    /** The layer of a message in the layered graph. */
     public static final IProperty<Integer> MESSAGE_LAYER = new Property<Integer>(
             "de.cau.cs.kieler.papyrus.sequence.messageLayer");
 
+    /** The lifeline to which an element of the SGraph belongs. */
     public static final IProperty<SLifeline> BELONGS_TO_LIFELINE = new Property<SLifeline>(
             "de.cau.cs.kieler.papyrus.sequence.belongsToLifeline");
 
+    /** The list of comments in a SGraphElement. */
     public static final IProperty<List<SComment>> COMMENTS = new Property<List<SComment>>(
             "de.cau.cs.kieler.papyrus.sequence.comments");
 
+    /** The horizontal space between two neighbored lifelines. This property may be set by the user. */
     public static final Property<Float> LIFELINE_SPACING = new Property<Float>(
             "de.cau.cs.kieler.papyrus.sequence.lifelineSpacing", 50.0f);
 
+    /** The vertical space between two neighbored messages. This property may be set by the user. */
     public static final Property<Float> MESSAGE_SPACING = new Property<Float>(
             "de.cau.cs.kieler.papyrus.sequence.messageSpacing", 50.0f);
 
-    public static final Property<LifelineSortingStrategy> LIFELINE_SORTING = 
-            new Property<LifelineSortingStrategy>(
-            "de.cau.cs.kieler.papyrus.sequence.lifelineSorting",
+    /**
+     * The lifeline sorting strategy that should be used in the algorithm. This property may be set
+     * by the user.
+     */
+    public static final Property<LifelineSortingStrategy> LIFELINE_SORTING 
+    = new Property<LifelineSortingStrategy>("de.cau.cs.kieler.papyrus.sequence.lifelineSorting",
             LifelineSortingStrategy.INTERACTIVE);
 }

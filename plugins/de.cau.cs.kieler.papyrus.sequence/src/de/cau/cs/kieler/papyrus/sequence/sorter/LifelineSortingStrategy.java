@@ -14,15 +14,15 @@
 package de.cau.cs.kieler.papyrus.sequence.sorter;
 
 /**
- * Definition of available lifeline sorting strategies for the sequence diagram layouter
+ * Definition of available lifeline sorting strategies for the sequence diagram layouter.
  * 
  * @author grh
  */
 public enum LifelineSortingStrategy {
     
-    /** Sort the lifelines according to their x-coordinates */
+    /** Sort the lifelines according to their x-coordinates. */
     INTERACTIVE,
-    /** Sort the lifelines according to the layers of the associated messages */
+    /** Sort the lifelines according to the layers of the associated messages. */
     LAYER_BASED;
 
     /**

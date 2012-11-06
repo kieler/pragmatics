@@ -27,10 +27,20 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
 import de.cau.cs.kieler.papyrus.sequence.graph.SMessage;
 
+/**
+ * Heuristic implementation of cycle breaking.
+ * 
+ * @author grh
+ * 
+ */
 public class SCycleBreaker {
     private HashSet<LNode> split;
     private List<LNode> chain;
 
+    /**
+     * Break the cycles in the given layered graph.
+     * @param lgraph the layered graph
+     */
     public void breakCycles(final LGraph lgraph) {
         // The set of edges to be split after the cycle detecting phase
         split = new HashSet<LNode>();

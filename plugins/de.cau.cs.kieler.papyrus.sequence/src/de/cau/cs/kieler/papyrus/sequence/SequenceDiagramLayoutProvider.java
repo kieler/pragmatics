@@ -49,10 +49,6 @@ import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
  * 
  */
 public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
-    /**
-     * 
-     */
-    private static final int FOURTY = 40;
     /** Vertical size of lifeline header. */
     private static final float LIFELINE_HEADER = 30;
     /** Vertical space above lifelines. */
@@ -63,6 +59,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     private static final int CONTAINMENT_OFFSET = 5;
     /**  */
     private static final int TWENTY = 20;
+    /**  */
+    private static final int FOURTY = 40;
 
     /** Lifeline ordering algorithm. */
     private ILifelineSorter lifelineSorter;
@@ -232,8 +230,12 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
+     * Place the comment objects (comments, constraints) according to their calculated coordinates.
+     * 
      * @param graph
+     *            the Sequence Graph
      * @param xPos
+     *            the last lifeline's x-coordinate
      */
     private void placeComments(final SGraph graph, final float xPos) {
         float commentMaxExtraWidth = 0;
@@ -289,7 +291,10 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
+     * Calculate the position of the areas (interactionUse, combined fragment).
+     * 
      * @param areas
+     *            the list of areas in the graph
      */
     private void handleAreas(final List<SequenceArea> areas) {
 
@@ -359,8 +364,12 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
+     * Calculate and set the coordinates of the executions of the given lifeline.
+     * 
      * @param lifeline
+     *            the lifeline, whose executions are placed
      * @param executions
+     *            the list of executions
      */
     private void handleExecutions(final SLifeline lifeline, final List<SequenceExecution> executions) {
         KNode node = (KNode) lifeline.getProperty(Properties.ORIGIN);
@@ -409,8 +418,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                 }
 
                 /*
-                 * TODO set executionFactor to one if the Papyrus team fixes the bug.
-                 * Calculate conversion factor. Conversion is necessary because Papyrus stores the
+                 * TODO set executionFactor to one if the Papyrus team fixes the bug. Calculate
+                 * conversion factor. Conversion is necessary because Papyrus stores the
                  * y-coordinates in a very strange way. When the message starts or ends at an
                  * execution, y-coordinates must be given relative to the execution. However, these
                  * relative coordinates must be scaled as if the execution was having the height of
@@ -439,8 +448,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                                     .setY(edgeLayout.getSourcePoint().getY());
                             edgeLayout.getBendPoints().get(1)
                                     .setY(edgeLayout.getTargetPoint().getY());
-                            // TODO how to calculate this?
                             edgeLayout.getTargetPoint().setX(newXPos + shapelayout.getWidth());
+                            edgeLayout.getTargetPoint().setY(0);
                         } else if (mess.getSource() == lifeline) {
                             if (!toLeft) {
                                 newXPos += shapelayout.getWidth();
@@ -477,11 +486,16 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
+     * Handle the messages that are connected to the given lifeline.
+     * 
      * @param diagramHeight
+     *            the height of the whole diagram
      * @param graph
-     * @param interactionTargetPoints
+     *            the Sequence Graph
      * @param lifeline
+     *            the lifeline whose messages are handled
      * @param executions
+     *            the list of executions
      */
     private void handleMessages(final float diagramHeight, final SGraph graph,
             final SLifeline lifeline, final List<SequenceExecution> executions) {
@@ -490,11 +504,11 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 
         /*
-         * TODO Set this to one if Papyrus team fixes its bug.
-         * Workaround for Papyrus bug. Y-coordinates are stored in a strange way by Papyrus. When
-         * the message starts or ends at a lifeline, y-coordinates must be given relative to the
-         * lifeline. However, these relative coordinates must be scaled as if the lifeline was
-         * having the height of its surrounding interaction.
+         * TODO Set this to one if Papyrus team fixes its bug. Workaround for Papyrus bug.
+         * Y-coordinates are stored in a strange way by Papyrus. When the message starts or ends at
+         * a lifeline, y-coordinates must be given relative to the lifeline. However, these relative
+         * coordinates must be scaled as if the lifeline was having the height of its surrounding
+         * interaction.
          */
         float factor = (diagramHeight + TWENTY) / nodeLayout.getHeight();
 
