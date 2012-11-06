@@ -3,11 +3,20 @@
 <plugin>
    <extension
          point="de.cau.cs.kieler.kiml.layoutProviders">
+      <layoutType
+            description="Layout type for UML Sequence Diagrams"
+            id="de.cau.cs.kieler.papyrus.types.sequence"
+            name="UML Sequence Diagrams">
+      </layoutType>
       <layoutAlgorithm
             class="de.cau.cs.kieler.papyrus.sequence.SequenceDiagramLayoutProvider"
-            id="de.cau.cs.kieler.papyrus.sequence"
+            id="de.cau.cs.kieler.papyrus.sequence.layout"
             name="Sequence Diagram Layouter"
-            type="de.cau.cs.kieler.papyrus.sequence">
+            type="de.cau.cs.kieler.papyrus.types.sequence">
+         <supportedDiagram
+               priority="15"
+               type="de.cau.cs.kieler.papyrus.diagrams.sequenceDiagram">
+         </supportedDiagram>
          <knownOption
                default="20"
                option="de.cau.cs.kieler.borderSpacing">
@@ -61,11 +70,6 @@
             name="Lifeline sorting"
             type="enum">
       </layoutOption>
-      <layoutType
-            description="Layout type for UML Sequence Diagrams"
-            id="de.cau.cs.kieler.papyrus.sequence"
-            name="Sequence">
-      </layoutType>
    </extension>
 
 </plugin>
