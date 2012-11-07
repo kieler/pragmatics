@@ -69,8 +69,7 @@ public enum LayoutProcessorStrategy {
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
     PORT_SIDE_PROCESSOR,
-    /** Tries to switch the label dummy nodes which the middle most dummy node
-     *  of a long edge. */
+    /** Tries to switch the label dummy nodes which the middle most dummy node of a long edge. */
     LABEL_DUMMY_SWITCHER,
     /** Takes a layered graph and inserts dummy nodes for edges connected to inverted ports. */
     INVERTED_PORT_PROCESSOR,
@@ -120,8 +119,7 @@ public enum LayoutProcessorStrategy {
     LABEL_DUMMY_REMOVER,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
-    /** Removes dummy nodes and -edges from compound graph representation,
-     *  positioning of compound nodes. */
+    /** Removes dummy nodes and -edges from compound graph representation, positions compound nodes. */
     COMPOUND_GRAPH_RESTORER,
     /** Mirrors the graph to perform a right-to-left drawing. */
     LEFT_DIR_POSTPROCESSOR,
