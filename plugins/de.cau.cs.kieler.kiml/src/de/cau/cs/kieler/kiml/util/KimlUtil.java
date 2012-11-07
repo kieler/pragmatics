@@ -19,6 +19,9 @@ import java.util.Iterator;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -126,13 +129,23 @@ public final class KimlUtil {
     
     /**
      * Ensures that each element contained in the given graph is attributed correctly for
-     * usage in KIML.
+     * usage in KIML. {@link KGraphElement}
      * 
      * @param graph the parent node of a graph 
      */
     public static void validate(final KNode graph) {
         KLayoutDataFactory layoutFactory = KLayoutDataFactory.eINSTANCE;
-        Iterator<EObject> contentIter = graph.eAllContents();
+        
+        // construct an iterator that first returns the root node, i.e. 'graph',
+        //  and all contained {@link KGraphElement KGraphElements} afterwards
+        //  ({@link KGraphData} are omitted for performance reasons)
+        Iterator<KGraphElement> contentIter = Iterators.concat(
+                Lists.newArrayList(graph).iterator(),
+                Iterators.filter(graph.eAllContents(), KGraphElement.class));
+        
+        // Note that using an iterator and adding elements works here
+        //  as the eAllContents() iterator relies on the lists provided by eContents()
+        //  of EObjects that, in turn, provides a mirrored list of all contained elements.
         while (contentIter.hasNext()) {
             EObject element = contentIter.next();
             // Make sure nodes are OK
