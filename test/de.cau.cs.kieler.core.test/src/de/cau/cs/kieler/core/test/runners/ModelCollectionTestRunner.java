@@ -440,10 +440,11 @@ public class ModelCollectionTestRunner extends Suite {
             
             if (constructorParams.length > 1
                     || constructorParams.length == 1
-                    && !(constructorParams[0].equals(Object.class) || constructorParams[0]
-                            .equals(EObject.class))) {
+                    && !(constructorParams[0].equals(Object.class) || EObject.class
+                            .isAssignableFrom(constructorParams[0]))) {
                 errors.add(new Exception("Constructor of test class " + getTestClass().getName()
-                        + " should have at most one parameter of type Object or EObject."));
+                        + " should have at most one parameter of type Object or (a sub type of)"
+                        + " EObject."));
             }
         }
 
@@ -452,7 +453,7 @@ public class ModelCollectionTestRunner extends Suite {
         /**
          * Adds to {@code errors} for each method annotated with {@code @Test}that
          * is not a public, void instance method with zero arguments or one
-         * Object/EObject argument.
+         * Object/(a sub type of) EObject argument.
          * 
          * @param errors the error collecting list
          */
@@ -465,10 +466,11 @@ public class ModelCollectionTestRunner extends Suite {
                     final Class<?>[] methodParams = method.getParameterTypes();
                 boolean methodOK = (methodParams.length > 1 || (methodParams.length == 1
                         && (methodParams[0].equals(Object.class)
-                                || methodParams[0].equals(EObject.class))));
+                                || EObject.class.isAssignableFrom(methodParams[0]))));
                 if (!methodOK) {
                     errors.add(new Exception("Method " + testMethod.getMethod().getName()
-                            + " should have at most one parameter of type Object or EObject."));
+                            + " should have at most one parameter of type Object or (a sub type of)"
+                            + " EObject."));
                 }
                     
             }
@@ -567,7 +569,7 @@ public class ModelCollectionTestRunner extends Suite {
             final Class<?>[] methodParams = theMethod.getMethod().getParameterTypes();
             if (methodParams.length == 1
                     && (methodParams[0].equals(Object.class) || (methodParams[0]
-                            .equals(EObject.class) && theModel instanceof EObject))) {
+                            .isAssignableFrom(theModel.getClass())))) {
                 this.model = theModel;
             } else {
                 this.model = null;
