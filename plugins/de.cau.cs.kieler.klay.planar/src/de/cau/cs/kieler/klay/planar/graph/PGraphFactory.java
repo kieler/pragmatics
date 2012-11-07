@@ -24,10 +24,10 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.PConstants;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
@@ -289,19 +289,35 @@ public class PGraphFactory {
 
         GridRepresentation grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
         float borderSpacing = pgraph.getProperty(Properties.BORDER_SPACING);
-
+        HighDegreeNodeStrategy hdStrategy = pgraph
+                .getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY);
         PGraphFactory.determineSpacing(pgraph);
 
         PGraphFactory.startX = borderSpacing;
         PGraphFactory.startY = borderSpacing;
 
+        // handle high degree nodes!
+        PGraphFactory.performHDNodes(pgraph, grid);
+
         // first determine nodes coordinates
         for (int x = 0; x < grid.getWidth(); x++) {
             for (int y = 0; y < grid.getHeight(); y++) {
                 PNode pNode = grid.get(x, y);
-                if (pNode != null && pNode.getProperty(Properties.HIGH_DEGREE_POSITIONS) == null) {
-                    grid.get(x, y).setPostion(((float) PGraphFactory.mapNodeToRealX(x)),
-                            ((float) PGraphFactory.mapNodeToRealY(y)));
+                if (pNode != null) {
+                    if (pNode.getProperty(Properties.EXPANSION_CYCLE) == null
+                            || hdStrategy == HighDegreeNodeStrategy.QUOD) {
+                        pNode.setPostion(((float) PGraphFactory.mapNodeToRealX(x)),
+                                ((float) PGraphFactory.mapNodeToRealY(y)));
+                    } else if (hdStrategy == HighDegreeNodeStrategy.GIOTTO) {
+                        // set position to the middle point.
+                        float xCoordinate = (float) PGraphFactory.mapNodeToRealX(x);
+                        float yCoordinate = (float) PGraphFactory.mapNodeToRealY(y);
+                        KShapeLayout nodeLayout = ((KNode) pNode.getProperty(Properties.ORIGIN))
+                                .getData(KShapeLayout.class);
+                        pNode.setPostion(xCoordinate + nodeLayout.getWidth() / 2, yCoordinate
+                                + nodeLayout.getHeight() / 2);
+                    }
+
                 }
             }
         }
@@ -325,7 +341,8 @@ public class PGraphFactory {
             KVectorChain bendPoints = edge.getBendPoints();
 
             // set source and target position
-            if (pgraph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) == HighDegreeNodeStrategy.GIOTTO) {
+            if (pgraph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) 
+                    == HighDegreeNodeStrategy.GIOTTO) {
                 Pair<Integer, Integer> startPos = edge.getProperty(Properties.START_POSITION);
                 if (startPos != null) {
                     bendPoints.addFirst(
@@ -348,28 +365,13 @@ public class PGraphFactory {
 
             } else {
                 PNode source = edge.getSource();
-                if (source.getProperty(Properties.EXPANSION_CYCLE) != null) {
-                    KShapeLayout data = ((KNode) source.getProperty(Properties.ORIGIN))
-                            .getData(KShapeLayout.class);
-                    float posX = data.getXpos() + data.getWidth() / 2;
-                    float posY = data.getYpos() + data.getHeight() / 2;
-                    bendPoints.addFirst(posX, posY);
-                } else {
-                    bendPoints.addFirst(((KNode) source.getProperty(Properties.ORIGIN)).getData(
-                            KShapeLayout.class).createVector());
-                }
+                bendPoints.addFirst(((KNode) source.getProperty(Properties.ORIGIN)).getData(
+                        KShapeLayout.class).createVector());
 
                 PNode target = edge.getTarget();
-                if (target.getProperty(Properties.EXPANSION_CYCLE) != null) {
-                    KShapeLayout data = ((KNode) target.getProperty(Properties.ORIGIN))
-                            .getData(KShapeLayout.class);
-                    float posX = data.getXpos() + data.getWidth() / 2;
-                    float posY = data.getYpos() + data.getHeight() / 2;
-                    bendPoints.addLast(posX, posY);
-                } else {
-                    bendPoints.addLast(((KNode) target.getProperty(Properties.ORIGIN)).getData(
-                            KShapeLayout.class).createVector());
-                }
+
+                bendPoints.addLast(((KNode) target.getProperty(Properties.ORIGIN)).getData(
+                        KShapeLayout.class).createVector());
             }
             // apply the bend points
             edgeLayout.applyVectorChain(bendPoints);
@@ -393,7 +395,22 @@ public class PGraphFactory {
             }
         }
 
-        // handle high degree nodes!
+        if (pgraph.getProperty(LayoutOptions.DEBUG_MODE) == Boolean.TRUE) {
+            for (PEdge edge : pgraph.getEdges()) {
+                KEdge originEdge = (KEdge) edge.getProperty(Properties.ORIGIN);
+                KEdgeLayout edgeLayout = originEdge.getData(KEdgeLayout.class);
+                System.out.println(edge.toString() + ": " + edgeLayout.toString());
+            }
+
+            for (PNode node : pgraph.getNodes()) {
+                KShapeLayout nodeLayout = ((KNode) node.getProperty(Properties.ORIGIN))
+                        .getData(KShapeLayout.class);
+                System.out.println(node.toString() + ": " + nodeLayout.toString());
+            }
+        }
+    }
+
+    private static void performHDNodes(final PGraph pgraph, final GridRepresentation grid) {
         for (PNode node : pgraph.getNodes()) {
             List<Integer> hdPos = node.getProperty(Properties.HIGH_DEGREE_POSITIONS);
             if (hdPos != null) {
@@ -402,7 +419,7 @@ public class PGraphFactory {
                 int widthX = hdPos.get(PConstants.WIDTH_POS) + 1 - x;
                 int heightY = hdPos.get(PConstants.HEIGHT_POS) + 1 - y;
 
-                // Remove high-degree node from grid.
+                // Remove high-degree node dummies from grid.
                 grid.removeHDNode(node);
 
                 // Sets the hdnode to a single position.
@@ -414,24 +431,13 @@ public class PGraphFactory {
                         - nodeLayout.getWidth() / 2);
                 nodeLayout.setYpos(((float) PGraphFactory.mapNodeToRealY(y))
                         - nodeLayout.getHeight() / 2);
+                // TODO check if spacing is higher
                 float gap = spacing - nodeLayout.getWidth();
                 nodeLayout.setWidth(nodeLayout.getWidth() * widthX + (widthX - 1) * gap);
                 gap = spacing - nodeLayout.getHeight();
                 nodeLayout.setHeight(nodeLayout.getHeight() * heightY + (heightY - 1) * gap);
 
             }
-        }
-
-        for (PEdge edge : pgraph.getEdges()) {
-            KEdge originEdge = (KEdge) edge.getProperty(Properties.ORIGIN);
-            KEdgeLayout edgeLayout = originEdge.getData(KEdgeLayout.class);
-            System.out.println(edge.toString() + ": " + edgeLayout.toString());
-        }
-
-        for (PNode node : pgraph.getNodes()) {
-            KShapeLayout nodeLayout = ((KNode) node.getProperty(Properties.ORIGIN))
-                    .getData(KShapeLayout.class);
-            System.out.println(node.toString() + ": " + nodeLayout.toString());
         }
     }
 

@@ -34,7 +34,7 @@ public class ExternalFaceProcessor extends AbstractAlgorithm implements ILayoutP
      */
     public void process(final PGraph pGraph) {
         getMonitor().begin("external face processor", 1);
-
+        pGraph.setChangedFaces();
         Iterator<PFace> it = pGraph.getFaces().iterator();
         PFace externalFace = null;
         if (it.hasNext()) {

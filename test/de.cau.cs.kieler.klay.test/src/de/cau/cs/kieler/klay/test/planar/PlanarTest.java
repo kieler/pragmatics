@@ -11,9 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.test;
-
-import static org.junit.Assert.*; // SUPPRESS CHECKSTYLE AvoidStarImport
+package de.cau.cs.kieler.klay.test.planar;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -34,17 +32,17 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
+import de.cau.cs.kieler.klay.planar.PlanarLayoutProvider;
+import de.cau.cs.kieler.klay.test.KlayAutomatedJUnitTest;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 import de.cau.cs.kieler.klay.test.utils.TestPath;
 
 /**
  * A basic test class that tests if nodes overlaps and if nodes and edges overlap.
  * 
- * @author wah
- * @author msp
+ * @author pkl
  */
-public class BasicTest extends KlayAutomatedJUnitTest {
+public class PlanarTest extends KlayAutomatedJUnitTest {
 
     // Object containing the current graphTestObject that contains both, a File and a KNode.
     private GraphTestObject graphObject;
@@ -52,9 +50,10 @@ public class BasicTest extends KlayAutomatedJUnitTest {
     /**
      * Instantiates a new KlayTestExample test and set the graphObject to the current graph to test.
      * 
-     * @param testObject the test object
+     * @param testObject
+     *            the test object
      */
-    public BasicTest(final GraphTestObject testObject) {
+    public PlanarTest(final GraphTestObject testObject) {
         graphObject = testObject;
     }
 
@@ -62,29 +61,30 @@ public class BasicTest extends KlayAutomatedJUnitTest {
      * {@inheritDoc}
      */
     protected TestPath[] getBundleTestPath() {
-        TestPath[] testPaths = {
-            new TestPath("random", false, false, TestPath.Type.KGRAPH)
-        };
+        TestPath[] testPaths = { new TestPath("planarization/test/", false, false,
+                TestPath.Type.KGRAPH) };
         return testPaths;
     }
-    
+
     /**
-     * Perform automatic layout before testing. This is done here instead of specifying layout
-     * in the test paths in order to guarantee that the correct layout algorithm is chosen.
-     * Currently only the KLay Layered algorithm is tested, since the others cannot guarantee
-     * to pass the basic tests yet.
+     * Perform automatic layout before testing. This is done here instead of specifying layout in
+     * the test paths in order to guarantee that the correct layout algorithm is chosen. Currently
+     * only the KLay Layered algorithm is tested, since the others cannot guarantee to pass the
+     * basic tests yet.
      */
     @Before
     public void layout() {
-        LayeredLayoutProvider layered = new LayeredLayoutProvider();
-        layered.doLayout(graphObject.getKnode(), new BasicProgressMonitor());
+        PlanarLayoutProvider planar = new PlanarLayoutProvider();
+        planar.doLayout(graphObject.getKnode(), new BasicProgressMonitor());
     }
-    
+
     /**
      * Add all children and grandchildren contained in the given parent node to the list.
      * 
-     * @param parentNode a parent node
-     * @param nodeList the list of gathered nodes
+     * @param parentNode
+     *            a parent node
+     * @param nodeList
+     *            the list of gathered nodes
      */
     private static List<KNode> gatherNodes(final KNode parentNode, final List<KNode> nodeList) {
         for (KNode child : parentNode.getChildren()) {
@@ -101,7 +101,7 @@ public class BasicTest extends KlayAutomatedJUnitTest {
     public void testNodesOverlaps() {
         // gather all nodes
         List<KNode> nodeList = gatherNodes(graphObject.getKnode(), new LinkedList<KNode>());
-        
+
         ListIterator<KNode> nodeIter1 = nodeList.listIterator();
         while (nodeIter1.hasNext()) {
             KNode node1 = nodeIter1.next();
@@ -111,7 +111,7 @@ public class BasicTest extends KlayAutomatedJUnitTest {
                 KNode node2 = nodeIter2.next();
                 if (!(KimlUtil.isDescendant(node1, node2) || KimlUtil.isDescendant(node2, node1))) {
                     KShapeLayout nodeLayout2 = node2.getData(KShapeLayout.class);
-    
+
                     Assert.assertFalse(hasNodeToNodeOverlaps(nodeLayout1, nodeLayout2));
                 }
             }
@@ -125,7 +125,7 @@ public class BasicTest extends KlayAutomatedJUnitTest {
     public void testNodeEdgeOverlaps() {
         // gather all nodes
         List<KNode> nodeList = gatherNodes(graphObject.getKnode(), new LinkedList<KNode>());
-        
+
         ListIterator<KNode> nodeIter1 = nodeList.listIterator();
         while (nodeIter1.hasNext()) {
             KNode node1 = nodeIter1.next();
@@ -133,8 +133,8 @@ public class BasicTest extends KlayAutomatedJUnitTest {
             while (nodeIter2.hasNext()) {
                 KNode node2 = nodeIter2.next();
                 if (!(node1 == node2 || KimlUtil.isDescendant(node1, node2))) {
-                    
-                    assertFalse(hasNodeEdgeOverlaps(node1, node2));
+
+                    Assert.assertFalse(hasNodeEdgeOverlaps(node1, node2));
                 }
             }
         }
@@ -188,7 +188,7 @@ public class BasicTest extends KlayAutomatedJUnitTest {
                 }
                 KVector offset = new KVector();
                 KimlUtil.toAbsolute(offset, referenceNode);
-                
+
                 ListIterator<KVector> pointIter = vectorChain.listIterator();
                 KVector p1 = pointIter.next().add(offset);
                 while (pointIter.hasNext()) {
@@ -207,11 +207,16 @@ public class BasicTest extends KlayAutomatedJUnitTest {
     /**
      * Returns whether the line segment intersects the nodes bounding box.
      * 
-     * @param p1 the start point of the line segment
-     * @param p2 the end point of the line segment
-     * @param nodePos node position
-     * @param width node width
-     * @param height node height
+     * @param p1
+     *            the start point of the line segment
+     * @param p2
+     *            the end point of the line segment
+     * @param nodePos
+     *            node position
+     * @param width
+     *            node width
+     * @param height
+     *            node height
      * @return true if the line segment intersects the nodes bounding box
      */
     private static boolean hasNodeEdgeIntersection(final KVector p1, final KVector p2,
@@ -237,7 +242,7 @@ public class BasicTest extends KlayAutomatedJUnitTest {
                         nodePos.y + height);
             } else if ((outcode & TOP) > 0) {
                 return hasIntersection(p1, p2, nodePos.x, nodePos.y, nodePos.x + width, nodePos.y);
-            } else /* if ((p1OutCode & BOTTOM) > 0) */ {
+            } else /* if ((p1OutCode & BOTTOM) > 0) */{
                 return hasIntersection(p1, p2, nodePos.x, nodePos.y + height, nodePos.x + width,
                         nodePos.y + height);
             }
@@ -247,12 +252,18 @@ public class BasicTest extends KlayAutomatedJUnitTest {
     /**
      * Returns whether two line segments have an intersection.
      * 
-     * @param p1 start point of the first line segment
-     * @param p2 end point of the first line segement
-     * @param x1 the x-coordinate of the start point of the second line segment
-     * @param y1 the y-coordinate of the start point of the second line segment
-     * @param x2 the x-coordinate of the end point of the second line segment
-     * @param y2 the y-coordinate of the end point of the second line segment
+     * @param p1
+     *            start point of the first line segment
+     * @param p2
+     *            end point of the first line segement
+     * @param x1
+     *            the x-coordinate of the start point of the second line segment
+     * @param y1
+     *            the y-coordinate of the start point of the second line segment
+     * @param x2
+     *            the x-coordinate of the end point of the second line segment
+     * @param y2
+     *            the y-coordinate of the end point of the second line segment
      * @return true if the line segments intersect else false
      */
     private static boolean hasIntersection(final KVector p1, final KVector p2, final double x1,
@@ -290,14 +301,18 @@ public class BasicTest extends KlayAutomatedJUnitTest {
      * </code> <br>
      * The box around the 0000 entry represents the rectangle.
      * 
-     * @param point the point
-     * @param nodePos node position
-     * @param width node width
-     * @param height node height
+     * @param point
+     *            the point
+     * @param nodePos
+     *            node position
+     * @param width
+     *            node width
+     * @param height
+     *            node height
      * @return the outcode
      */
-    private static int computeOutCode(final KVector point, final KVector nodePos, final float width,
-            final float height) {
+    private static int computeOutCode(final KVector point, final KVector nodePos,
+            final float width, final float height) {
         int code = 0;
         if (point.y > nodePos.y + height) {
             code |= TOP;
@@ -315,7 +330,8 @@ public class BasicTest extends KlayAutomatedJUnitTest {
     /**
      * Computes the opposite outcode.
      * 
-     * @param outcode the outcode
+     * @param outcode
+     *            the outcode
      * @return the opposite outcode
      */
     private static int computeOppositeOutCode(final int outcode) {
@@ -332,5 +348,5 @@ public class BasicTest extends KlayAutomatedJUnitTest {
         }
         return oppOutcode;
     }
-    
+
 }

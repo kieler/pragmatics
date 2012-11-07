@@ -16,11 +16,13 @@ package de.cau.cs.kieler.klay.planar.p3compact;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
@@ -41,12 +43,12 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
 /**
  * A compaction algorithm that minimizes the length of horizontal and vertical edge segments
  * separately. It only works on simple orthogonal representations, i.e. orthogonal representation
- * where every face is represented as a rectangle. General orthogonal representations have to
- * reduced to a simple one prior to performing this algorithm. These compaction step results from
- * the chapter 5.4 of the Graph Drawing book of Di Battista, Eades, Tamassia and Tollis.
+ * where every face is represented as a rectangle. General orthogonal representations have to be
+ * reduced to a simple one prior to performing this algorithm. This implementation is based on the
+ * chapter 5.4 of the Graph Drawing book of Di Battista, Eades, Tamassia and Tollis.
  * 
  * @author pkl
- * @kieler.rating proposed yellow by pkl
+ *  @kieler.rating yellow 2012-11-01 review KI-30 by ima, cds
  */
 public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayoutPhase {
 
@@ -64,16 +66,19 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     /** The graph the algorithm works on. */
     private PGraph graph;
 
+    /** The external face of the current graph structure. */
     private PFace externalFace;
 
+    /** The source node of the flow network during this algorithm. */
     private PNode source;
 
+    /** The sink node of the flow network during this algorithm. */
     private PNode sink;
 
     /** Intermediate processing configuration with Quod high-degree strategy. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_QUOD 
         = new IntermediateProcessingConfiguration(
-    // Before Phase 1
+            // Before Phase 1
             null,
             // Before Phase 2
             null,
@@ -91,9 +96,9 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                     LayoutProcessorStrategy.SELFLOOP_DUMMY_REMOVER));
 
     /** Intermediate processing configuration with Giotto high-degree strategy. */
-   private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO 
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO 
         = new IntermediateProcessingConfiguration(
-    // Before Phase 1
+            // Before Phase 1
             null,
             // Before Phase 2
             null,
@@ -116,7 +121,6 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pgraph) {
 
         // check which high-degree node algorithm should be used
-
         if (pgraph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) == HighDegreeNodeStrategy.GIOTTO) {
             return new IntermediateProcessingConfiguration(
                     INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO);
@@ -159,11 +163,10 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
      * Maps the flow of the flow network to the edges of the original graph.
      * 
      * @param network
-     *            , containing edge flow
+     *            containing edge flow
      * @param isHorizontal
-     *            , meaning if the horizontal edge length of a graph has to determine, otherwise
-     *            vertical is assumed. And the vertical edge length of the original graph are
-     *            determined.
+     *            determines whether the horizontal (true) or vertical (false) edge lengths of the
+     *            graph are to be calculated
      * 
      */
     private void addFlowAsLength(final PGraph network) {
@@ -177,12 +180,14 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     }
 
     /**
-     * Creates the flow network. Create for all faces of the original graph nodes additionally two
-     * nodes are source and sink of the flow network. Depending on the direction (horizontal or
-     * vertical) the method generates edges from source to target over the face-nodes.
+     * Creates the flow network. Create for all faces of the original graph nodes two additional
+     * nodes that are the source and the sink of the flow network. Depending on the direction
+     * (horizontal or vertical) the method generates edges from source to target over the
+     * face-nodes.
      * 
      * @param startSide
-     * @return PGraph, the resulting flownetwork
+     *            the beginning face side index
+     * @return PGraph the resulting flownetwork
      */
     private PGraph createFlowNetwork(final int startSide) {
         PGraph flowNetwork = PGraphFactory.createEmptyGraph();
@@ -225,8 +230,8 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
         Map<PFace, PEdge> sinks = Maps.newHashMap();
 
         // Store the visited target-nodes / faces from the current face/node.
-        // Is needed to check if a edge already exists to the target.
-        List<PFace> visited = Lists.newLinkedList();
+        // Is needed to check if an edge already exists to the target.
+        Set<PFace> visited = Sets.newHashSet();
 
         PFace targetFace = null;
 
@@ -237,13 +242,8 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
                     .getRightFace();
             PEdge newEdge = flowNetwork.addEdge(source, faceMap.get(targetFace), true);
             newEdge.setProperty(NETWORKTOGRAPH, edge);
-            if (!visited.contains(targetFace)) {
-                visited.add(targetFace);
-            }
             sinks.put(targetFace, edge);
-
         }
-        visited.clear();
         completedFaces.add(currentFace);
         // Choose new sourceFace
         for (PFace face : sinks.keySet()) {
@@ -275,7 +275,7 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
             visited.clear();
             completedFaces.add(currentFace);
             isRunning = false;
-            // choose new sourceFace
+
             for (PFace face : sinks.keySet()) {
                 if (!completedFaces.contains(face)) {
                     currentFace = face;
@@ -298,14 +298,15 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     }
 
     /**
-     * Gives the opposite edges of a edge in a face. Example: If the given edge is on the left side
+     * Gives the opposite edges of an edge in a face. Example: If the given edge is on the left side
      * of a face the result is a list of edges of the right side of the face. Attention: This works
      * only for faces in rectangular shape, otherwise it would make no sense to use this method.
      * 
      * @param face
      *            the surrounding face
      * @param edge
-     * @return the edges of the other face-side.
+     *            the edge for which it should be the opposite found
+     * @return the edges of the other face-side
      */
     private List<PEdge> findOppositeEdges(final PFace face, final PEdge edge) {
         List<PEdge>[] faceSides = face.getProperty(Properties.FACE_SIDES);
