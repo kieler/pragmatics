@@ -97,6 +97,25 @@
       </option>
    </extension>
    <extension
+         id="de.cau.cs.kieler.papyrus.layout.sequence"
+         name="Sequence Diagram Layout"
+         point="de.cau.cs.kieler.kiml.layoutInfo">
+      <diagramType
+            id="de.cau.cs.kieler.papyrus.diagrams.sequenceDiagram"
+            name="Papyrus Sequence Diagrams">
+      </diagramType>
+      <option
+            class="org.eclipse.papyrus.uml.diagram.sequence.edit.parts.PackageEditPart"
+            option="de.cau.cs.kieler.diagramType"
+            value="de.cau.cs.kieler.papyrus.diagrams.sequenceDiagram">
+      </option>
+      <option
+            class="org.eclipse.papyrus.uml.diagram.sequence.edit.parts.InteractionEditPart"
+            option="de.cau.cs.kieler.diagramType"
+            value="de.cau.cs.kieler.papyrus.diagrams.sequenceDiagram">
+      </option>
+   </extension>
+   <extension
          point="de.cau.cs.kieler.kiml.layoutInfo">
       <option
             class="org.eclipse.papyrus.diagram.statemachine.custom.edit.part.CustomPackageEditPart"
