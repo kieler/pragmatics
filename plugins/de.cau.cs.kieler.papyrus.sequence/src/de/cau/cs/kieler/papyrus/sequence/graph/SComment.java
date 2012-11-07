@@ -24,6 +24,8 @@ import de.cau.cs.kieler.papyrus.sequence.SeqProperties;
  * Comment representation for SGraphs.
  * 
  * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
  * 
  */
 public class SComment extends SGraphElement {

@@ -23,6 +23,8 @@ import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
  * Interface for lifeline sorting algorithms.
  * 
  * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
  * 
  */
 public interface ILifelineSorter {

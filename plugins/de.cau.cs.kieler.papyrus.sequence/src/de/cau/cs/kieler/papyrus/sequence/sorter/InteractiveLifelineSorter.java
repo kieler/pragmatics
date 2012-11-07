@@ -25,6 +25,8 @@ import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
  * numbered as they are ordered before.
  * 
  * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
  * 
  */
 public class InteractiveLifelineSorter implements ILifelineSorter {

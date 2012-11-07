@@ -17,6 +17,8 @@ package de.cau.cs.kieler.papyrus.sequence.sorter;
  * Definition of available lifeline sorting strategies for the sequence diagram layouter.
  * 
  * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
  */
 public enum LifelineSortingStrategy {
     

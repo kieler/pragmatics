@@ -46,6 +46,8 @@ import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
  * Layout algorithm for Papyrus sequence diagrams.
  * 
  * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
  * 
  */
 public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
@@ -57,9 +59,9 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     private static final float AREA_HEADER_HEIGHT = 25;
     /** The offset of an area that contains another area (spacing between them). */
     private static final int CONTAINMENT_OFFSET = 5;
-    /**  */
+    /** Constant that is needed to calculate some offsets. */
     private static final int TWENTY = 20;
-    /**  */
+    /** Constant that is needed to calculate some offsets. */
     private static final int FOURTY = 40;
 
     /** Lifeline ordering algorithm. */

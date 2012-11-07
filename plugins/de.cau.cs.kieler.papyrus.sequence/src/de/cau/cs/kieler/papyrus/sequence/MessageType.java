@@ -15,8 +15,11 @@ package de.cau.cs.kieler.papyrus.sequence;
 
 /**
  * Enumeration of possible message types for sequence diagrams.
+ * 
  * @author grh
- *
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
+ * 
  */
 public enum MessageType {
     /** Standard messages for sequence diagrams. */

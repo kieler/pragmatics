@@ -31,6 +31,8 @@ import de.cau.cs.kieler.papyrus.sequence.graph.SMessage;
  * messages. The "source" lifeline is placed leftmost, the successor lifelines following.
  * 
  * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
  * 
  */
 public class LayerbasedLifelineSorter implements ILifelineSorter {

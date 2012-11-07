@@ -18,8 +18,11 @@ import java.util.List;
 
 /**
  * The graph representation for sequence diagrams.
+ * 
  * @author grh
- *
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
+ * 
  */
 public class SGraph extends SGraphElement {
     private static final long serialVersionUID = -7952451128297135991L;
@@ -30,14 +33,16 @@ public class SGraph extends SGraphElement {
 
     /**
      * Get the list of lifelines in the SGraph.
+     * 
      * @return the list of lifelines
      */
     public List<SLifeline> getLifelines() {
         return lifelines;
     }
-    
+
     /**
      * Get the list of comments in the SGraph.
+     * 
      * @return the list of comments
      */
     public List<SComment> getComments() {
@@ -46,7 +51,9 @@ public class SGraph extends SGraphElement {
 
     /**
      * Add a lifeline to the SGraph.
-     * @param lifeline the new lifeline
+     * 
+     * @param lifeline
+     *            the new lifeline
      */
     public void addLifeline(final SLifeline lifeline) {
         this.lifelines.add(lifeline);
@@ -55,7 +62,9 @@ public class SGraph extends SGraphElement {
 
     /**
      * Remove a lifeline from the SGraph.
-     * @param lifeline the lifeline to be removed
+     * 
+     * @param lifeline
+     *            the lifeline to be removed
      */
     public void removeLifeline(final SLifeline lifeline) {
         lifelines.remove(lifeline);
@@ -63,6 +72,7 @@ public class SGraph extends SGraphElement {
 
     /**
      * Get the horizontal size of the graph.
+     * 
      * @return the horizontal size
      */
     public float getSizeX() {
@@ -71,7 +81,9 @@ public class SGraph extends SGraphElement {
 
     /**
      * Set the horizontal size of the graph.
-     * @param sizeX the new horizontal size
+     * 
+     * @param sizeX
+     *            the new horizontal size
      */
     public void setSizeX(final float sizeX) {
         this.sizeX = sizeX;
@@ -79,6 +91,7 @@ public class SGraph extends SGraphElement {
 
     /**
      * Get the vertical size of the graph.
+     * 
      * @return the vertical size
      */
     public float getSizeY() {
@@ -87,12 +100,14 @@ public class SGraph extends SGraphElement {
 
     /**
      * Set the vertical size of the graph.
-     * @param sizeY the new vertical size
+     * 
+     * @param sizeY
+     *            the new vertical size
      */
     public void setSizeY(final float sizeY) {
         this.sizeY = sizeY;
     }
-    
+
     /**
      * 
      * {@inheritDoc}

@@ -17,6 +17,8 @@ package de.cau.cs.kieler.papyrus.sequence.graph;
  * Message representation for SGraphs.
  * 
  * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
  * 
  */
 public class SMessage extends SGraphElement {

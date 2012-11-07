@@ -31,6 +31,8 @@ import de.cau.cs.kieler.papyrus.sequence.graph.SMessage;
  * Heuristic implementation of cycle breaking.
  * 
  * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
  * 
  */
 public class SCycleBreaker {

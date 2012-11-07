@@ -44,6 +44,8 @@ import de.cau.cs.kieler.papyrus.SequenceExecution;
  * SGraph.
  * 
  * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
  * 
  */
 public class SGraphImporter {
@@ -95,7 +97,7 @@ public class SGraphImporter {
                 createMessages(sgraph, nodeMap, edgeMap, areas, node);
 
                 // Handle found messages (incoming messages)
-                createFoundMessages(sgraph, nodeMap, edgeMap, node);
+                createIncomingMessages(sgraph, nodeMap, edgeMap, node);
 
             } else if (nodeType.equals("3009") || nodeType.equals("3008")
                     || nodeType.equals("3024") || nodeType.equals("3020")) {
@@ -237,7 +239,7 @@ public class SGraphImporter {
     }
 
     /**
-     * Create a comment object for comments or constraints.
+     * Create a comment object for comments or constraints (which are handled like comments).
      * 
      * @param sgraph
      *            the Sequence Graph
@@ -338,7 +340,7 @@ public class SGraphImporter {
     }
 
     /**
-     * Initialize empty area.
+     * Check, where to place an empty area.
      * 
      * @param sgraph
      *            the Sequence Graph
@@ -407,19 +409,18 @@ public class SGraphImporter {
             final HashMap<KEdge, SMessage> edgeMap, final List<SequenceArea> areas, final KNode node) {
         for (KEdge edge : node.getOutgoingEdges()) {
             SLifeline sourceLL = nodeMap.get(edge.getSource());
-            if (sourceLL == null) {
-                SLifeline dummy = new SLifeline();
-                dummy.setName("DummyLifeline");
-                dummy.setGraph(sgraph);
-                sourceLL = dummy;
-            }
             SLifeline targetLL = nodeMap.get(edge.getTarget());
+
+            // Lost-messages and messages to the surrounding interaction don't have a lifeline, so
+            // create dummy lifeline
             if (targetLL == null) {
                 SLifeline dummy = new SLifeline();
                 dummy.setName("DummyLifeline");
                 dummy.setGraph(sgraph);
                 targetLL = dummy;
             }
+            
+            // Create message object
             SMessage message = new SMessage(sourceLL, targetLL);
             message.setProperty(Properties.ORIGIN, edge);
             message.setProperty(SeqProperties.COMMENTS, new LinkedList<SComment>());
@@ -494,8 +495,8 @@ public class SGraphImporter {
     }
 
     /**
-     * Walk through incoming edges and check if there are found messages. If so, create the
-     * corresponding SMessage.
+     * Walk through incoming edges and check if there are found messages or messages that come from
+     * the surrounding interaction. If so, create the corresponding SMessage.
      * 
      * @param sgraph
      *            the Sequence Graph
@@ -506,19 +507,22 @@ public class SGraphImporter {
      * @param node
      *            the KNode to search its incoming edges.
      */
-    private void createFoundMessages(final SGraph sgraph, final HashMap<KNode, SLifeline> nodeMap,
-            final HashMap<KEdge, SMessage> edgeMap, final KNode node) {
+    private void createIncomingMessages(final SGraph sgraph,
+            final HashMap<KNode, SLifeline> nodeMap, final HashMap<KEdge, SMessage> edgeMap,
+            final KNode node) {
         for (KEdge edge : node.getIncomingEdges()) {
             KEdgeLayout layout = edge.getData(KEdgeLayout.class);
 
             SLifeline sourceLL = nodeMap.get(edge.getSource());
             if (sourceLL == null) {
+                // Create dummy lifeline as source since the message has no source lifeline
                 SLifeline dummy = new SLifeline();
                 dummy.setName("DummyLifeline");
                 dummy.setGraph(sgraph);
                 sourceLL = dummy;
                 SLifeline targetLL = nodeMap.get(edge.getTarget());
 
+                // Create message object
                 SMessage message = new SMessage(sourceLL, targetLL);
                 message.setProperty(Properties.ORIGIN, edge);
                 message.setProperty(SeqProperties.COMMENTS, new LinkedList<SComment>());
@@ -564,7 +568,6 @@ public class SGraphImporter {
                         }
                     }
                 }
-                message.setTargetYPos(layout.getTargetPoint().getY());
                 message.setTargetYPos(layout.getTargetPoint().getY());
             }
         }

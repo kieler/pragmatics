@@ -29,6 +29,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * Lifeline representation for SGraphs.
  * 
  * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
  * 
  */
 public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
@@ -212,7 +214,7 @@ class MessageComparator implements Comparator<SMessage> {
 
     public int compare(final SMessage a, final SMessage b) {
 
-        if ((Double) base.get(a) < (Double) base.get(b)) {
+        if (base.get(a) < base.get(b)) {
             return -1;
         } else if ((Double) base.get(a) == (Double) base.get(b)) {
             return 0;
