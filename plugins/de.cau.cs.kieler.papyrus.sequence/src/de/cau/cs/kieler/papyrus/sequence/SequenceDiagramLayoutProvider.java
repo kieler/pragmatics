@@ -558,7 +558,11 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                 float reverseFactor = nodeLayout.getHeight() / (diagramHeight + FOURTY);
                 targetPoint.setY(TWENTY + message.getTargetYPos() * reverseFactor);
 
-                // TODO if lost-message specify target-x-pos
+                // Lost-messages end between its source and the next lifeline
+                if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.LOST) {
+                    targetPoint.setX(nodeLayout.getXpos() + nodeLayout.getWidth() + lifelineSpacing
+                            / 2);
+                }
             }
         }
 
@@ -593,8 +597,13 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             // Handle messages that come from something else than a lifeline
             if (message.getSource().getName().equals("DummyLifeline")) {
                 KPoint sourcePoint = edgeLayout.getSourcePoint();
-                sourcePoint.setY(message.getSourceYPos() - borderSpacing);
-                sourcePoint.setX(borderSpacing);
+                float reverseFactor = nodeLayout.getHeight() / (diagramHeight + FOURTY);
+                sourcePoint.setY(TWENTY + message.getSourceYPos() * reverseFactor);
+
+                // Found-messages start between its source and the previous lifeline
+                if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.FOUND) {
+                    sourcePoint.setX(nodeLayout.getXpos() - lifelineSpacing / 2);
+                }
             }
         }
     }
