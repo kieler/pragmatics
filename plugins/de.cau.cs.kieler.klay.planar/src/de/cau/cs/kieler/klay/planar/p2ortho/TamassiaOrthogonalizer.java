@@ -51,7 +51,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author ocl
  * @author pkl
- * @kieler.rating proposed yellow by pkl
+ * @kieler.rating yellow 2012-10-09 review KI-16 by ckru, cds
  */
 public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayoutPhase {
 

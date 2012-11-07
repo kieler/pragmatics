@@ -20,18 +20,19 @@ import de.cau.cs.kieler.klay.planar.graph.PGraph;
 
 /**
  * Interface for algorithms to solve problems in flow networks. Uses the Strategy design pattern to
- * provide a common interface for various implementation of algorithms working on flow networks.
+ * provide a common interface for various implementations of algorithms working on flow networks.
  * 
  * @author ocl
  * @author pkl
- * @kieler.rating proposed yellow by pkl
+ * @kieler.rating yellow 2012-11-01 review KI-30 by ima, cds
  */
 public interface IFlowNetworkSolver extends IAlgorithm {
 
     /**
      * A property assigning a supply or demand value to a node. A positive value denotes a supply
      * and a node with a supply is considered a source in the network. A negative value denotes a
-     * demand and a node with a demand is considered a sink in the network.
+     * demand and a node with a demand is considered a sink in the network. A supply of 0 does not
+     * affect anything.
      */
     Property<Integer> SUPPLY = new Property<Integer>(
             "de.cau.cs.kieler.klay.planar.properties.networksupply", 0);
@@ -58,7 +59,9 @@ public interface IFlowNetworkSolver extends IAlgorithm {
     Property<Integer> RESIDUAL_CAPACITY = new Property<Integer>(
             "de.cau.cs.kieler.klay.planar.properties.networkresidualcapacity", 0);
 
-    /** A property assigning a adjacent edge of two face nodes in the flow network. */
+    /** A property assigning an adjacent edge of two face nodes in the flow network.
+     * There are arcs for each neighbored faces. Faces are neighbored when they are separated by an edge.
+     * This edge of the original graph is stored in this property.*/
     Property<PEdge> CROSSING_EDGE = new Property<PEdge>(
             "de.cau.cs.kieler.klay.planar.properties.crossingedge");
 

@@ -34,7 +34,7 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
  * 
  * @author ocl
  * @author pkl
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-10-09 review KI-16 by ckru, cds
  */
 public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implements
         IMinimumCostFlowSolver {
@@ -84,7 +84,7 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
         // Initialize more efficient Dijkstra path finder.
         // Condition describes residual network.
         pathFinder = new DijkstraPathFinder();
-        
+
         Predicate<Pair<PNode, PEdge>> cond = new Predicate<Pair<PNode, PEdge>>() {
             public boolean apply(final Pair<PNode, PEdge> object) {
                 PNode node = object.getFirst();
