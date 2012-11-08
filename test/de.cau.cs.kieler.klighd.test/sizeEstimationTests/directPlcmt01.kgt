@@ -1,0 +1,19 @@
+KNode {
+	children:
+	KNode {
+		data:
+		KShapeLayout {
+			mapProperties:
+			"klighd.testing.expected.width" = "100.0"
+			"klighd.testing.expected.height" = "30.0"
+		}
+		Rectangle {
+			children:
+			Text Hello {
+				mapProperties:
+				"klighd.testing.width" = "100.0"
+				"klighd.testing.height" = "30.0"
+			}
+		}
+	}
+}

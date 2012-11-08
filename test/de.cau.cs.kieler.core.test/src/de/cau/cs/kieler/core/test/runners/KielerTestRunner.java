@@ -27,22 +27,22 @@ import org.junit.runners.model.TestClass;
 
 /**
  * This is a specialization and an extension of the {@link:Parameterized} test runner class. It
- * requires the implementing test class to provide a method, e.g., getParameters(). tagged with @Parameters
- * that returns a List of Object-Arrays (List<Object[]>). This List must contain the parameters of
- * the constructor for each test case.
- * 
- * There must be exactly one constructor. The constructor is called for each test case with the
- * parameters specified by the Object-Array. If there is just one parameter this corresponds to an
- * array with one Object element.
- * 
+ * requires the implementing test class to provide a method, e.g., getParameters(). tagged with
+ * '@Parameters' that returns a List of Object-Arrays (List<Object[]>). This List must contain the
+ * parameters of the constructor for each test case.<br>
+ * <br>
+ * The implementing test class must contain exactly one constructor. The constructor is called for
+ * each test case with the parameters specified by the Object-Array. If there is just one parameter
+ * this corresponds to an array with one Object element.<br>
+ * <br>
  * There is an initialize() method that is invoked with an instantiated object of the test class
  * with NULL-dummy-parameters. Be prepared to catch this instantiation in the constructor. This
  * enables the constructor to prepare some initialization data BEFORE the static method for getting
- * the parameters, e.g. getParameters(), is called.
- * 
+ * the parameters, e.g. getParameters(), is called.<br>
+ * <br>
  * This is an abstract class that should be extended by a specialized test runner class, e.g.
- * SpecializedTestRunner. Parameterized test classes then use this specialized test runner: @RunWith
- * SpecializedTestRunner.
+ * SpecializedTestRunner. Parameterized test classes then use this specialized test runner:
+ * '@RunWith(SpecializedTestRunner.class)'.<br>
  * 
  * @author cmot, chsch
  * @kieler.rating 2012-07-02 yellow KI-17 wah, chsch
@@ -97,8 +97,11 @@ public abstract class KielerTestRunner extends Parameterized {
      * of the class to test (parameter values given to the constructor are NULL) and afterwards
      * calls the method for getting the parameters for the parameterized test run.
      * 
-     * @param klass
-     *            the klass
+     * @param clazz
+     *            the test class
+     * 
+     * @throws Throwable
+     *             if the test doesn't comply with the validity requirements.
      */
     public KielerTestRunner(final Class<?> clazz) throws Throwable {
         super(clazz);
