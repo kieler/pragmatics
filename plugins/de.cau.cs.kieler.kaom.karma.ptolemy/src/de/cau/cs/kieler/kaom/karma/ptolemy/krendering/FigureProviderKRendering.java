@@ -64,11 +64,6 @@ import de.cau.cs.kieler.core.krendering.KYPosition;
 import de.cau.cs.kieler.core.krendering.impl.KRectangleImpl;
 import de.cau.cs.kieler.core.krendering.impl.KRenderingFactoryImpl;
 import de.cau.cs.kieler.core.ui.util.CoreUiUtil;
-import de.cau.cs.kieler.kvid.KvidUtil;
-import de.cau.cs.kieler.kvid.data.DataObject;
-import de.cau.cs.kieler.kvid.data.KvidUri;
-import de.cau.cs.kieler.kvid.datadistributor.DataDistributor;
-import de.cau.cs.kieler.kvid.datadistributor.IDataListener;
 import diva.canvas.CanvasUtilities;
 import diva.canvas.Figure;
 import diva.canvas.toolbox.ImageFigure;
@@ -332,7 +327,7 @@ public class FigureProviderKRendering {
      * @return the monitorvalue figure
      */
     public KRendering createMonitorValue(final EObject object) {
-        MonitorValueFigure monitor = new MonitorValueFigure(object);
+        KRendering monitor = this.getDefaultFigure();
         KLineWidth strokeWidth = factory.createKLineWidth();
         strokeWidth.setLineWidth(1);
         monitor.getStyles().add(strokeWidth);
@@ -341,79 +336,6 @@ public class FigureProviderKRendering {
         monitor.getStyles().add((KBackgroundColor) FigureParserKRendering.lookupColor("white", fill));
         monitor.getStyles().add((KForegroundColor) FigureParserKRendering.lookupColor("black", stroke));
         return monitor;
-    }
-
-    /**
-     * a monitor figure using the kvid mechanism of displaying its value.
-     * 
-     * @author ckru
-     * 
-     */
-    private class MonitorValueFigure extends KRectangleImpl implements IDataListener {
-
-        private KText value;
-
-        private String referredDataUri;
-
-        private static final int LABELSIZE_WIDTH = 140;
-        private static final int LABELSIZE_HEIGHT = 10;
-        private static final int LABELLOCATION_X = 70;
-        private static final int LABELLOCATION_Y = 10;
-
-        /**
-         * constructs this figure and adds a label that displays the current value.
-         * 
-         * @param object
-         *            the model element.
-         */
-        public MonitorValueFigure(final EObject object) {
-            super();
-
-            value = factory.createKText();
-
-            KDirectPlacementData placement = factory.createKDirectPlacementData();
-
-            KPosition topleft = makeTopLeftKPosition(LABELLOCATION_X, LABELLOCATION_Y);
-
-            KPosition bottomright = makeBottomRightKPosition(LABELLOCATION_X + LABELSIZE_WIDTH,
-                    LABELLOCATION_Y + LABELSIZE_HEIGHT);
-
-            placement.setTopLeft(topleft);
-            placement.setBottomRight(bottomright);
-
-            value.setPlacementData(placement);
-
-            this.getChildren().add(value);
-            String uri = object.eResource().getURIFragment(object);
-            uri = KvidUtil.fragmentUri2PtolemyUri(uri, object.eResource());
-            if (object instanceof de.cau.cs.kieler.kaom.Entity) {
-                de.cau.cs.kieler.kaom.Entity entity = (de.cau.cs.kieler.kaom.Entity) object;
-                NamedObject port = entity.getChildPorts().get(0);
-                uri += ":" + port.getName();
-                referredDataUri = uri;
-                DataDistributor.getInstance().registerDataListener(this);
-            }
-
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void triggerDataChanged(final boolean isHistoryValue) {
-            DataObject data = DataDistributor.getInstance().getDataObjectByURI(
-                    new KvidUri(referredDataUri));
-            if (data != null) {
-                value.setText(data.getData().toString());
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void triggerWrapup() {
-            value.setText("");
-        }
-
     }
 
     // Position of the label inside the outer rectangle to make it centered somehow.
