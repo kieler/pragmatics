@@ -490,6 +490,11 @@ public class PSWTCanvas extends Composite implements PComponent {
      * @param newHeight new height of the bounds
      */
     public void setBounds(final int x, final int y, final int newWidth, final int newHeight) {
+        if (newWidth == 0 || newHeight == 0) {
+            // chsch: introduced this check as the workbench sometimes determines width
+            //  and/or height of zero that results in an exception later on. 
+            return;
+        }
         camera.setBounds(camera.getX(), camera.getY(), newWidth, newHeight);
 
         if (backBufferNeedsResizing(newWidth, newHeight)) {

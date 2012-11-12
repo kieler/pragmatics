@@ -11,7 +11,6 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-
 package de.cau.cs.kieler.karma;
 
 import java.util.Collections;
@@ -32,7 +31,8 @@ import de.cau.cs.kieler.core.annotations.StringAnnotation;
  * Condition that works on annotations.
  * 
  * @author ckru
- * 
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class RecursiveAnnotationCondition extends ICustomCondition<EObject> {
 

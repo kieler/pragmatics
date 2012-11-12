@@ -17,8 +17,11 @@ package de.cau.cs.kieler.kiml.ogdf.options;
  * Definition of the costs option for the Davidson-Harel layouter.
  * 
  * @author mri
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public enum Costs {
+    
     /** standard costs. */
     STANDARD,
     /** repulse costs. */
@@ -26,13 +29,4 @@ public enum Costs {
     /** planar costs. */
     PLANAR;
     
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static Costs valueOf(final int i) {
-        return values()[i];
-    }
 }

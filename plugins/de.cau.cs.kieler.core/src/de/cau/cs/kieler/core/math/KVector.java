@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.util.IDataObject;
 /**
  * A simple 2D vector class which supports translation, scaling, normalization etc.
  * 
+ * @kieler.design proposed 2012-11-02 cds
  * @kieler.rating 2011-01-13 proposed yellow msp
  * @author uru
  * @author owo
@@ -466,6 +467,24 @@ public class KVector implements IDataObject, Cloneable {
             y = highy;
         }
         return this;
+    }
+    
+    /**
+     * Determine whether any of the two values are NaN.
+     * 
+     * @return true if x is NaN or y is NaN
+     */
+    public boolean isNaN() {
+        return Double.isNaN(x) || Double.isNaN(y);
+    }
+    
+    /**
+     * Determine whether any of the two values are infinite.
+     * 
+     * @return true if x is infinite or y is infinite
+     */
+    public boolean isInfinite() {
+        return Double.isInfinite(x) || Double.isInfinite(y);
     }
 
     /**

@@ -50,9 +50,18 @@ public class PortSideProcessor extends AbstractAlgorithm implements ILayoutProce
         // Iterate through the nodes of all layers
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
-                if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
-                    // We need to distribute the ports
-                    distributePorts(node);
+                if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+                    // Check whether there are ports with undefined side
+                    for (LPort port : node.getPorts()) {
+                        if (port.getSide() == PortSide.UNDEFINED) {
+                            setPortSide(port);
+                        }
+                    }
+                } else {
+                    // Distribute all ports and change constraints to fixed side
+                    for (LPort port : node.getPorts()) {
+                        setPortSide(port);
+                    }
                     node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
                 }
             }
@@ -64,19 +73,17 @@ public class PortSideProcessor extends AbstractAlgorithm implements ILayoutProce
     /**
      * Places input ports on the left side and output ports on the right side of nodes.
      * 
-     * @param node node with free port placement.
+     * @param port the port to set side and anchor position
      */
-    private void distributePorts(final LNode node) {
-        for (LPort port : node.getPorts()) {
-            if (port.getNetFlow() < 0) {
-                port.setSide(PortSide.EAST);
-                // adapt the anchor so outgoing edges are attached right
-                port.getAnchor().x = port.getSize().x;
-            } else {
-                port.setSide(PortSide.WEST);
-                // adapt the anchor so incoming edges are attached left
-                port.getAnchor().x = 0;
-            }
+    private void setPortSide(final LPort port) {
+        if (port.getNetFlow() < 0) {
+            port.setSide(PortSide.EAST);
+            // adapt the anchor so outgoing edges are attached right
+            port.getAnchor().x = port.getSize().x;
+        } else {
+            port.setSide(PortSide.WEST);
+            // adapt the anchor so incoming edges are attached left
+            port.getAnchor().x = 0;
         }
     }
 

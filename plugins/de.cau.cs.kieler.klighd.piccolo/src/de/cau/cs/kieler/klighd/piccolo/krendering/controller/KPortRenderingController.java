@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.krendering.KRectangle;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
 import de.cau.cs.kieler.core.krendering.KStyle;
+import de.cau.cs.kieler.core.krendering.KVisibility;
 import de.cau.cs.kieler.klighd.piccolo.krendering.KPortNode;
 import edu.umd.cs.piccolo.PNode;
 
@@ -76,6 +77,13 @@ public class KPortRenderingController extends AbstractRenderingController<KPort,
         color.setGreen(0);
         color.setBlue(0);
         rect.getStyles().add(color);
+        // added by chsch:
+        KVisibility visibility = factory.createKForegroundVisibility();
+        visibility.setVisible(false);
+        rect.getStyles().add(visibility);
+        visibility = factory.createKBackgroundVisibility();
+        visibility.setVisible(false);
+        rect.getStyles().add(visibility);
         return rect;
     }
     

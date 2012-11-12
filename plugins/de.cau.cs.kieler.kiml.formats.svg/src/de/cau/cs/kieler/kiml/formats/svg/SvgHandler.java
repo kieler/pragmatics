@@ -19,20 +19,34 @@ import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kiml.service.formats.TransformationException;
 
 /**
- * Transformation handler for SVG format.
+ * Transformation handler for SVG format. The handler supports two options:
+ * <ul>
+ *   <li>{@link SvgHandler#USE_CSS} switches usage of CSS properties on or off.</li>
+ *   <li>{@link KAwtRenderer#SCALE} defines a scale factor for all coordinates, which is useful
+ *     for increasing precision, since the AWT graphics interface only supports integer
+ *     coordinates.</li>
+ * </ul>
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class SvgHandler implements ITransformationHandler<SVGGraphics2D> {
     
     /** the identifier of the SVG format. */
     public static final String ID = "org.w3.svg";
+    
+    /** whether to use CSS style properties in SVG output, as opposed to plain attributes. */
+    public static final IProperty<Boolean> USE_CSS = new Property<Boolean>(
+            "de.cau.cs.kieler.svg.css", false);
 
     /**
      * {@inheritDoc}
@@ -45,10 +59,13 @@ public class SvgHandler implements ITransformationHandler<SVGGraphics2D> {
     /**
      * {@inheritDoc}
      */
-    public String serialize(final SVGGraphics2D graphics) {
+    public String serialize(final TransformationData<KNode, SVGGraphics2D> transData) {
         StringWriter writer = new StringWriter();
+        boolean useCss = transData.getProperty(USE_CSS);
         try {
-            graphics.stream(writer, true);
+            for (SVGGraphics2D graphics : transData.getTargetGraphs()) {
+                graphics.stream(writer, useCss);
+            }
         } catch (SVGGraphics2DIOException e) {
             throw new TransformationException(e);
         }

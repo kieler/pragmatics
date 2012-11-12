@@ -20,9 +20,9 @@ import java.util.List;
  * dependencies on other objects.
  * 
  * @author mri
- * 
- * @param <T>
- *            a comparable identifier type (commonly String or Integer)
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
+ * @param <T> a comparable identifier type (commonly String or Integer)
  */
 public interface IDepending<T extends Comparable<T>> {
 

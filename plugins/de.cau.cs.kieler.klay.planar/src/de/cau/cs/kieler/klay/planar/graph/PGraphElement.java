@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
  * @see de.cau.cs.kieler.klay.planar.graph.PGraph {@code PGraph}
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public abstract class PGraphElement extends MapPropertyHolder implements Comparable<PGraphElement> {
 

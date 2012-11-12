@@ -41,6 +41,11 @@
             class="de.cau.cs.kieler.klighd.combinations.KlighdFocusSelectedElementInTreeViewerCombination"
             name="Focus selected Element in tree viewer (KLighD)">
       </combination>
+      <combination
+            active="true"
+            class="de.cau.cs.kieler.klighd.combinations.KlighdCropDiagramCombination"
+            name="Crop KLighD diagram by a box-based selection">
+      </combination>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.ui.layoutManagers">
@@ -50,19 +55,14 @@
    </extension>
    <extension
          point="de.cau.cs.kieler.klighd.updateStrategies">
+      <!-- updateStrategy
+            class="de.cau.cs.kieler.klighd.krendering.UpdateStrategy"
+            id="de.cau.cs.kieler.klighd.krendering.UpdateStrategy">
+      </updateStrategy -->
       <updateStrategy
             class="de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy"
-            id="de.cau.cs.kieler.klighd.krendering.simpleUpdateStrategy">
+            id="de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy">
       </updateStrategy>
    </extension>
-   <!--
-   <extension
-         point="de.cau.cs.kieler.klighd.updateStrategies">
-      <updateStrategy
-            class="de.cau.cs.kieler.klighd.krendering.UpdateStrategy"
-            id="de.cau.cs.kieler.klighd.krendering.updateStrategy">
-      </updateStrategy>
-   </extension>
-   -->
 
 </plugin>

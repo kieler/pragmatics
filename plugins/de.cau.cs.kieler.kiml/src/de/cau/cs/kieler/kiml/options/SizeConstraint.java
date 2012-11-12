@@ -13,35 +13,52 @@
  */
 package de.cau.cs.kieler.kiml.options;
 
+import java.util.EnumSet;
+
 /**
- * Definition of size constraints.
+ * Things to take into account when determining the size of a node. Each item of this enumeration
+ * corresponds to something a layout algorithm should pay attention to when calculating node sizes.
+ * Usually, one will use a combination of these values in an {@code EnumSet} instance, with the
+ * empty set meaning that node sizes are fixed.
+ * 
+ * <p><i>Note:</i> Layout algorithms may only support a subset of these options.</p>
  *
- * @kieler.rating proposed yellow 2012-01-17 msp
  * @author msp
+ * @author cds
  */
 public enum SizeConstraint {
     
     /**
-     * The size shall not be changed (except if the node has a nested subgraph).
+     * The number of ports and their position should be taken into account when determining the
+     * size of nodes. The sum of port widths and heights and the minimum spacing between ports
+     * is a lower bound for the node size.
      */
-    FIXED,
+    PORTS,
+    
     /**
-     * Minimize the size, but consider ports in calculation. The sum of port widths and heights
-     * is a lower bound for the node size, and the default minimal size and corresponding layout
-     * options are also considered (see {@link #MIN_DEFAULT}).
+     * Ports labels are taken into account when determining the size of nodes. Depending on where
+     * the labels are positioned the node will be made large enough to avoid overlaps and to try
+     * to place labels in as unambiguous a way as possible.
      */
-    MIN_PORTS,
+    PORT_LABELS,
+    
     /**
-     * Minimize the size to a default value. The minimal value given by layout options
-     * (see {@link #MIN_OPTION}) are also considered.
+     * A node's labels are taken into account.
      */
-    MIN_DEFAULT,
+    NODE_LABELS,
+    
     /**
-     * Minimize the size to the value given by the layout options {@link LayoutOptions#MIN_WIDTH}
-     * and {@link LayoutOptions#MIN_HEIGHT}. These values are usually determined automatically
-     * and depend on the specific diagram viewer.
+     * If set, a node's size will be at least the minimum size set on it. If no minimum size is set,
+     * the behaviour depends on whether the {@link #DEFAULT_MINIMUM_SIZE} constraint is set as well.
      */
-    MIN_OPTION;
+    MINIMUM_SIZE,
+    
+    /**
+     * If no minimum size is set on an element, the minimum size options are assumed to be some
+     * default value.
+     */
+    DEFAULT_MINIMUM_SIZE;
+    
     
     /**
      * Returns the enumeration value related to the given ordinal.
@@ -53,24 +70,33 @@ public enum SizeConstraint {
         return values()[i];
     }
     
+    
     /**
-     * Whether the node size shall be minimized and ports are considered when calculating
-     * the minimal size.
+     * Returns an empty enum set over this enumeration, which corresponds to fixed size constraints.
      * 
-     * @return true if ports are considered
+     * @return set over this enumeration representing fixed size constraints.
      */
-    public boolean arePortsConsidered() {
-        return this == MIN_PORTS;
+    public static EnumSet<SizeConstraint> fixed() {
+        return EnumSet.noneOf(SizeConstraint.class);
     }
     
     /**
-     * Whether the node size shall be minimized and the default minimal size value is considered
-     * when calculating the minimal size.
+     * Returns a set containing the common combination of {@link #MINIMUM_SIZE} and
+     * {@link #DEFAULT_MINIMUM_SIZE}.
      * 
-     * @return true if the default minimal size is considered
+     * @return set with default minimum size constraint combination.
      */
-    public boolean isDefSizeConsidered() {
-        return this == MIN_PORTS || this == MIN_DEFAULT;
+    public static EnumSet<SizeConstraint> defaultMinimumSize() {
+        return EnumSet.of(MINIMUM_SIZE, DEFAULT_MINIMUM_SIZE);
     }
-
+    
+    /**
+     * Returns a set containing the common combination of {@link #MINIMUM_SIZE},
+     * {@link #DEFAULT_MINIMUM_SIZE}, and {@link #PORTS}.
+     * 
+     * @return set with default minimum size constraint combination with ports.
+     */
+    public static EnumSet<SizeConstraint> defaultMinimumSizeWithPorts() {
+        return EnumSet.of(PORTS, MINIMUM_SIZE, DEFAULT_MINIMUM_SIZE);
+    }
 }

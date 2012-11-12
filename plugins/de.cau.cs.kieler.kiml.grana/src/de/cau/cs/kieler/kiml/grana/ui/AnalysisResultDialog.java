@@ -29,13 +29,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.ui.CoreUIPlugin;
+import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
 
 /**
  * The dialog for presenting the results of a set of analyses.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class AnalysisResultDialog extends Dialog {
 
@@ -88,8 +89,7 @@ public class AnalysisResultDialog extends Dialog {
                 browser.setText(html);
             }
         } catch (SWTError e) {
-            IStatus status =
-                    new Status(IStatus.ERROR, CoreUIPlugin.PLUGIN_ID,
+            IStatus status = new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID,
                             "Could not instantiate Browser.", e);
             StatusManager.getManager().handle(status);
         }

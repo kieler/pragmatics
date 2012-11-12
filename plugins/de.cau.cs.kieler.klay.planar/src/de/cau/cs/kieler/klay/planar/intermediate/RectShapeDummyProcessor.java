@@ -15,10 +15,8 @@ package de.cau.cs.kieler.klay.planar.intermediate;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
@@ -31,6 +29,7 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
+import de.cau.cs.kieler.klay.planar.util.PUtil;
 
 /**
  * 
@@ -41,19 +40,16 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  */
 public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
-    /** Around a face in ccw direction is four times right. */
-    private static final int CCW_DIRECTION = 4;
-
     /** The external face has at this point exact 5 adjacent edges. */
     private static final int EXTERNAL_EDGE_COUNT = 6;
 
-    /** The number of face sides.*/
+    /** The number of face sides. */
     private static final int SIDE_NUMBER = 4;
 
-    /** Left is 0, top is 1, right is 2 and bottom is 3.*/
+    /** Left is 0, top is 1, right is 2 and bottom is 3. */
     private static final int BOTTOM_SIDE_INDEX = 3;
 
-    /** The processed graph.*/
+    /** The processed graph. */
     private PGraph graph;
 
     /** The orthogonal representation of that graph. */
@@ -66,11 +62,18 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
         getMonitor().begin("Rectangular shaping", 1);
         this.graph = pgraph;
         this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
+        PFace externalFace = this.graph.getExternalFace();
 
-        determineFaceDirections();
+        // Calculates a start edge and its corner in counter clockwise direction.
+        Pair<PNode, PEdge> startWithCorner = externalFace.determineCCWDirection();
+
+        // Swaps corner in clockwise direction.
+        startWithCorner.setFirst(startWithCorner.getSecond().getOppositeNode(
+                startWithCorner.getFirst()));
+        externalFace.setProperty(Properties.FACE_DIRECTION, startWithCorner);
 
         // Decompose faces into rectangles and transform external and internal face separately.
-        if (this.graph.getExternalFace().isInRectShape()) {
+        if (externalFace.isInRectShape()) {
             this.graph.setProperty(Properties.RECT_SHAPE_TRANS_EXTERNAL, Boolean.FALSE);
         } else {
             this.graph.setProperty(Properties.RECT_SHAPE_TRANS_EXTERNAL, Boolean.TRUE);
@@ -82,400 +85,15 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
         getMonitor().done();
     }
 
-    private void transformInternalFaces() {
-        boolean wantsFinish = false;
-        PFace face = null;
-        while (true) {
-            wantsFinish = true;
-
-            Iterable<PFace> graphFaces = this.graph.getFaces();
-            determineFaceDirections();
-
-            for (PFace checkFace : graphFaces) {
-
-                // do a pre-selection, note: the new external face is already in rect shape.
-                if (checkFace.isInRectShape()) {
-                    continue;
-                }
-                wantsFinish = false;
-                face = checkFace;
-                break;
-            }
-            if (wantsFinish) {
-                break;
-            }
-            // step 1 and 2
-            setEdgeProperties(face, false);
-
-            // step 3
-            determineFronts(face);
-
-            // step 4
-            // for each edge e, such that turn(e) = -1 (i.e., e and next(e) form a right turn),
-            // insert a vertex project(e) along edge front(e), and add edge extend(e) =
-            // (corner(e),
-            // project(e)). ...
-
-            PEdge startEdge = determineStartEdge(face);
-            PEdge currentEdge = startEdge;
-            PEdge next = null;
-            do {
-                if (currentEdge.getProperty(Properties.RECT_SHAPE_TURN).intValue() == 1) {
-                    addArtificial(currentEdge, false);
-                }
-                next = currentEdge.getProperty(Properties.RECT_SHAPE_NEXT);
-                currentEdge = next;
-            } while (currentEdge != startEdge);
-        }
-    }
-
-    /**
-     * Determines an arbitrary edge, but with longest path to the front.
-     * 
-     * @param face
-     * @return
-     */
-    private PEdge determineStartEdge(final PFace face) {
-
-        PEdge startEdge = null;
-        PEdge currentEdge = null;
-        Iterator<PEdge> edgeIt = face.adjacentEdges().iterator();
-        while (edgeIt.hasNext()) {
-            currentEdge = edgeIt.next();
-            if (currentEdge.getProperty(Properties.RECT_SHAPE_TURN).intValue() == 1) {
-                // ensures that no cut edge is used as startEdge
-                startEdge = currentEdge;
-                break;
-            }
-        }
-        if (startEdge == null) {
-            throw new InconsistentGraphModelException("RectShapeProcessor: "
-                    + "startEdge is not defined!");
-        }
-
-        // Choose as startEdge a edge that has the longest path to its front.
-        // This is needed to ensure the counter clockwise order while adding dummies.
-        PEdge startFront = startEdge.getProperty(Properties.RECT_SHAPE_FRONT);
-        int maxPathLength = startEdge.getProperty(Properties.RECT_SHAPE_PATH_LENGTH);
-        do {
-            currentEdge = currentEdge.getProperty(Properties.RECT_SHAPE_NEXT);
-            if (currentEdge.getProperty(Properties.RECT_SHAPE_TURN).intValue() == 1) {
-                PEdge front = currentEdge.getProperty(Properties.RECT_SHAPE_FRONT);
-                int newPathLength = currentEdge.getProperty(Properties.RECT_SHAPE_PATH_LENGTH)
-                        .intValue();
-                if (front == startFront && newPathLength > maxPathLength) {
-                    startEdge = currentEdge;
-                    maxPathLength = newPathLength;
-                }
-            }
-        } while (currentEdge != startEdge);
-
-        // arbitrary edge.
-
-        return startEdge;
-    }
-
-    /**
-     * Runs around the graph and search for the front of every edge that has a rect shape turn of 1.
-     * 
-     * @param face
-     */
-    private void determineFronts(final PFace face) {
-        PEdge startEdge;
-        PEdge currentEdge;
-        int turn;
-        int pathLength;
-        boolean wantsNewFront;
-        // step 3
-        // for each edge e, find the first edge e' following e counterclockwise, such that
-        // the sum of the turn value for all the edges between (included) and e' (excluded)
-        // is equal to 1, and set front(e) = e'.
-        for (PEdge edge : face.adjacentEdges()) {
-            if (edge.getProperty(Properties.RECT_SHAPE_TURN).intValue() != 1) {
-                continue;
-            }
-            startEdge = edge;
-            currentEdge = edge;
-            turn = 0;
-            pathLength = 0;
-            wantsNewFront = false;
-            do {
-                pathLength++;
-                turn += currentEdge.getProperty(Properties.RECT_SHAPE_TURN);
-                currentEdge = currentEdge.getProperty(Properties.RECT_SHAPE_NEXT);
-                if (turn == -1) {
-                    startEdge.setProperty(Properties.RECT_SHAPE_FRONT, currentEdge);
-                    startEdge.setProperty(Properties.RECT_SHAPE_PATH_LENGTH,
-                            Integer.valueOf(pathLength));
-                    wantsNewFront = true;
-                    break;
-                }
-            } while (currentEdge != startEdge);
-            if (!wantsNewFront) {
-                startEdge.setProperty(Properties.RECT_SHAPE_FRONT, null);
-            }
-        }
-
-    }
-
-    /**
-     * Sets the next edge, turn and corner of every edge.
-     * 
-     * @param face
-     * @param next
-     */
-    private void setEdgeProperties(final PFace face, final boolean isExternal) {
-
-        Pair<PNode, PEdge> startWithCorner = face.getProperty(Properties.FACE_DIRECTION);
-        if (startWithCorner == null) {
-            throw new InconsistentGraphModelException(
-                    "To use this method, the property FACE_DIRECTION has to be defined!");
-        }
-
-        PEdge startEdge = startWithCorner.getSecond();
-        // If isExternal go clockwise around the face adjacent edges.
-        PNode corner = isExternal ? startEdge.getOppositeNode(startWithCorner.getFirst())
-                : startWithCorner.getFirst();
-
-        List<PEdge> path = Lists.newLinkedList();
-        PEdge currentEdge = startEdge;
-        PEdge next = null;
-        // step 1
-        // for each edge e of f, let next(e) be the edge following e when traversing
-        // the boundary of f counterclockwise, and let corner(e) be the common vertex
-        // of e and next(e).
-        // step 2
-        // for each e of f, we set turn(e) = +1 if e and next(e) form a left turn,
-        // turn(e) = 0 if e and next(e) are aligned,
-        // and turn(e) = -1 if e and next(e) form a right turn.
-        boolean wantsCCW = true;
-        do {
-            currentEdge.setProperty(Properties.RECT_SHAPE_CORNER, corner);
-
-            if (face.isCutvertex(corner)) {
-                // special case, if a node is passed more than once.
-                int ccwPath = face.calcPathLength(corner, currentEdge, this.orthogonal, true);
-                int cwPath = face.calcPathLength(corner, currentEdge, this.orthogonal, false);
-                if (ccwPath < cwPath) {
-                    wantsCCW = false;
-                }
-                // check correct direction!
-                // run around the path and if path count == face edge count is everything fine.
-                // run with both variants along the face side check if the ccw one has longer path
-                // if not wantsCCW is false
-            }
-            Pair<PEdge, OrthogonalAngle> pair = null;
-            if (wantsCCW) {
-                if (isExternal) {
-                    pair = face.nextCWEdgeWithAngle(corner, currentEdge,
-                            this.orthogonal.getAngles(corner), true);
-                    if (path.contains(pair.getFirst())) {
-                        pair = face.nextCCWEdgeWithAngle(corner, currentEdge,
-                                this.orthogonal.getAngles(corner), true);
-                    }
-                } else {
-                    pair = face.nextCCWEdgeWithAngle(corner, currentEdge,
-                            this.orthogonal.getAngles(corner), true);
-                    if (path.contains(pair.getFirst())) {
-                        pair = face.nextCWEdgeWithAngle(corner, currentEdge,
-                                this.orthogonal.getAngles(corner), true);
-                    }
-                }
-            } else {
-                pair = face.nextCWEdgeWithAngle(corner, currentEdge,
-                        this.orthogonal.getAngles(corner), true);
-                if (path.contains(pair.getFirst())) {
-                    pair = face.nextCCWEdgeWithAngle(corner, currentEdge,
-                            this.orthogonal.getAngles(corner), true);
-                }
-                wantsCCW = true;
-            }
-            next = pair.getFirst();
-            currentEdge.setProperty(Properties.RECT_SHAPE_NEXT, next);
-
-            int edgeTurn = determineTurn(pair.getSecond(), isExternal);
-            currentEdge.setProperty(Properties.RECT_SHAPE_TURN, edgeTurn);
-
-            currentEdge = next;
-            corner = next.getOppositeNode(corner);
-
-        } while (currentEdge != startEdge);
-    }
-
-    private int determineTurn(final OrthogonalAngle angle, final boolean isExternal) {
-        int edgeTurn = 0;
-        switch (angle) {
-        case LEFT:
-            edgeTurn = isExternal ? -1 : 1;
-            break;
-        case STRAIGHT:
-            edgeTurn = 0;
-            break;
-        case RIGHT:
-            edgeTurn = isExternal ? 1 : -1;
-            break;
-        default:
-            // TODO Think about full angles.
-            new InconsistentGraphModelException(
-                    "RectShapeProcessor: full angle is not suppported at method determineTurn");
-        }
-        return edgeTurn;
-    }
-
-    /**
-     * Runs counter clockwise around every face and store at each found new face a startEdge and a
-     * corner in counterclockwise direction.
-     * 
-     */
-    public void determineFaceDirections() {
-
-        Set<PFace> visitedFaces = Sets.newHashSet();
-
-        List<PFace> completedFaces = Lists.newArrayList();
-
-        PFace externalFace = this.graph.getExternalFace();
-        PFace currentFace = externalFace;
-
-        PEdge startEdge = null;
-        PEdge currentEdge = null;
-        PNode currentNode = null;
-
-        // Determine startEdge and succeeding corner of the external face.
-        Pair<PNode, PEdge> startWithCorner = determineCCWDirection(currentFace);
-        currentFace.setProperty(Properties.FACE_DIRECTION, startWithCorner);
-        visitedFaces.add(currentFace);
-
-        while (currentFace != null) {
-
-            startWithCorner = currentFace.getProperty(Properties.FACE_DIRECTION);
-            currentNode = startWithCorner.getFirst();
-            currentEdge = startWithCorner.getSecond();
-            startEdge = currentEdge;
-            PFace foundFace;
-            do {
-                foundFace = null;
-                if (currentEdge.getLeftFace() != currentFace
-                        && !visitedFaces.contains(currentEdge.getLeftFace())) {
-                    foundFace = currentEdge.getLeftFace();
-                } else if (currentEdge.getRightFace() != currentFace
-                        && !visitedFaces.contains(currentEdge.getRightFace())) {
-                    foundFace = currentEdge.getRightFace();
-                }
-                if (foundFace != null) {
-                    if (currentFace == externalFace) {
-                        // same direction
-                        foundFace.setProperty(Properties.FACE_DIRECTION, new Pair<PNode, PEdge>(
-                                currentNode, currentEdge));
-                    } else {
-                        // opposite direction
-                        foundFace.setProperty(Properties.FACE_DIRECTION, new Pair<PNode, PEdge>(
-                                currentEdge.getOppositeNode(currentNode), currentEdge));
-                    }
-                    visitedFaces.add(foundFace);
-                }
-
-                // next edge and corner.
-                Pair<PEdge, OrthogonalAngle> nextEdgeWithAngle = currentFace.nextCCWEdgeWithAngle(
-                        currentNode, currentEdge, this.orthogonal.getAngles(currentNode), true);
-                currentEdge = nextEdgeWithAngle.getFirst();
-                currentNode = currentEdge.getOppositeNode(currentNode);
-
-            } while (currentEdge != startEdge);
-
-            if (visitedFaces.size() == this.graph.getFaceCount()) {
-                // finish
-                return;
-            }
-
-            completedFaces.add(currentFace);
-            // choose next face
-            currentFace = null;
-            for (PFace visitedFace : visitedFaces) {
-                if (completedFaces.contains(visitedFace)) {
-                    continue;
-                }
-                currentFace = visitedFace;
-                break;
-            }
-        }
-    }
-
-    /**
-     * @param face
-     * @return
-     */
-    private Pair<PNode, PEdge> determineCCWDirection(final PFace face) {
-        PEdge startEdge = face.adjacentEdges().iterator().next();
-        Pair<Integer, Integer> plAndDirection;
-        if (!face.containsCutvertex()) {
-            plAndDirection = face.calcPathWithDirection(startEdge.getSource(), startEdge,
-                    this.orthogonal, true);
-            if (plAndDirection.getSecond().intValue() == CCW_DIRECTION) {
-                return new Pair<PNode, PEdge>(startEdge.getSource(), startEdge);
-            }
-            return new Pair<PNode, PEdge>(startEdge.getTarget(), startEdge);
-        }
-
-        // handle face with cutvertex
-        Pair<Integer, Integer> plAndDirection1 = face.calcPathWithDirection(startEdge.getSource(),
-                startEdge, this.orthogonal, true);
-        Pair<Integer, Integer> plAndDirection2 = face.calcPathWithDirection(startEdge.getSource(),
-                startEdge, this.orthogonal, false);
-        if (plAndDirection1.getFirst().intValue() > plAndDirection2.getFirst().intValue()) {
-            if (plAndDirection1.getSecond().intValue() == CCW_DIRECTION) {
-                return new Pair<PNode, PEdge>(startEdge.getSource(), startEdge);
-            }
-        } else {
-            if (plAndDirection2.getSecond().intValue() == CCW_DIRECTION) {
-                return new Pair<PNode, PEdge>(startEdge.getSource(), startEdge);
-            }
-        }
-
-        plAndDirection1 = face.calcPathWithDirection(startEdge.getTarget(), startEdge,
-                this.orthogonal, true);
-        plAndDirection2 = face.calcPathWithDirection(startEdge.getTarget(), startEdge,
-                this.orthogonal, false);
-        if (plAndDirection1.getFirst().intValue() > plAndDirection2.getFirst().intValue()) {
-            if (plAndDirection1.getSecond().intValue() == CCW_DIRECTION) {
-                return new Pair<PNode, PEdge>(startEdge.getTarget(), startEdge);
-            }
-        } else {
-            if (plAndDirection2.getSecond().intValue() == CCW_DIRECTION) {
-                return new Pair<PNode, PEdge>(startEdge.getTarget(), startEdge);
-            }
-        }
-        throw new InconsistentGraphModelException(
-                "RectShapeProcessor, determineCCWDirection: should not happen!");
-
-        // check for cutvertex
-        // int firstLength = face.calcLengthWithDirection(startEdge.getSource(), startEdge,
-        // this.orthogonal,
-        // true);
-        // int firstLength = face.calcLengthWithDirection(startEdge.getSource(), startEdge,
-        // this.orthogonal,
-        // false);
-
-        //
-        // int secondLength = face.calcPathLength(startEdge.getTarget(), startEdge, this.orthogonal,
-        // true);
-        // if (firstLength < secondLength) {
-        // } else if (firstLength > secondLength) {
-        // return new Pair<PNode, PEdge>(startEdge.getSource(), startEdge);
-        // } else {
-        // if (face.calcPathWithDirection(startEdge.getSource(), startEdge, this.orthogonal, true))
-        // {
-        // return new Pair<PNode, PEdge>(startEdge.getSource(), startEdge);
-        // } else {
-        // return new Pair<PNode, PEdge>(startEdge.getTarget(), startEdge);
-        // }
-        // }
-    }
-
     /**
      * Transforms the external face, if it is not in rectangular shape. The idea is to put a
      * rectangular around the external face and let the new rectangular be the external face.
      * Connect the old external face with the new one and one can treat the old external face like a
-     * internal face.
+     * internal face. Therefore each edge gets some properties. Assuming we go clockwise around each
+     * face, then if we found a edge that form a right angle to its nextedge the face is not in
+     * rectangular shape. The corner is the node that is adjacent to the nextedge and the current
+     * one. Then a right angle corner gets a new dummy edge to the front of the corner. This is done
+     * for all left angle corners of the face so that in addition the face is in rectangular shape.
      */
     private void transformExternalFace() {
 
@@ -483,26 +101,29 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
 
         setEdgeProperties(face, true);
 
+        determineFronts(face);
+
         // add rectangle to the graph.
         PNode[] rectNodes = new PNode[SIDE_NUMBER];
         for (int i = 0; i < SIDE_NUMBER; i++) {
             rectNodes[i] = this.graph.addNode();
-            rectNodes[i].setProperty(Properties.RECT_SHAPE_DUMMY, Boolean.valueOf(true));
+            rectNodes[i].setProperty(Properties.RECT_SHAPE_DUMMY, Boolean.TRUE);
         }
 
+        // adds the rectangle around the graph
         PEdge[] faceSides = new PEdge[SIDE_NUMBER];
         for (int i = 0; i < SIDE_NUMBER; i++) {
             faceSides[i] = this.graph.addEdge(rectNodes[i], rectNodes[(i + 1) % SIDE_NUMBER]);
-            faceSides[i]
-                    .setProperty(Properties.RECT_SHAPE_CORNER, rectNodes[(i + 1) % SIDE_NUMBER]);
-            faceSides[i].setProperty(Properties.RECT_SHAPE_DUMMY, Boolean.valueOf(true));
+            RectShapeEdgeProperties edgeProps = new RectShapeEdgeProperties();
+            edgeProps.setCorner(rectNodes[(i + 1) % SIDE_NUMBER]);
+            faceSides[i].setProperty(Properties.RECT_SHAPE_PROPERTIES, edgeProps);
+            faceSides[i].setProperty(Properties.RECT_SHAPE_DUMMY, Boolean.TRUE);
             this.orthogonal.setBends(faceSides[i], new OrthogonalAngle[i]);
         }
 
+        // sets the orthogonal representation of the dummy rectangle
         for (int i = 0; i < SIDE_NUMBER; i++) {
-
             Iterator<PEdge> it = rectNodes[i].adjacentEdges().iterator();
-
             List<Pair<PEdge, OrthogonalAngle>> list = Lists.newLinkedList();
             if (i == 0) {
                 list.add(new Pair<PEdge, OrthogonalAngle>(it.next(), OrthogonalAngle.RIGHT));
@@ -520,16 +141,28 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
         // arbitrary startEdge
         PEdge startEdge = face.adjacentEdges().iterator().next();
         PEdge currentEdge = startEdge;
+
+        RectShapeEdgeProperties properties = currentEdge
+                .getProperty(Properties.RECT_SHAPE_PROPERTIES);
+        if (properties == null) {
+            properties = currentEdge.getProperty(Properties.RECT_SHAPE_CUTEDGE).getFirst();
+        }
+
+        PNode startNode = properties.getCorner();
+        PNode currentNode = startNode;
+
         PEdge next = null;
 
+        // determine the face side for setting the edge to the correct edge on the external
+        // rectangle.
+        // TODO merge this step and the below one
         do {
-            int edgeturn = currentEdge.getProperty(Properties.RECT_SHAPE_TURN);
-            next = currentEdge.getProperty(Properties.RECT_SHAPE_NEXT);
-            currentEdge.setProperty(Properties.RECT_SHAPE_SIDE_INDEX, Integer.valueOf(sideIndex));
-
+            int edgeturn = properties.getTurn();
+            next = properties.getNext();
+            properties.setSideIndex(sideIndex);
             switch (edgeturn) {
             // left
-            case -1:
+            case 1:
                 sideIndex = (sideIndex + 1) % SIDE_NUMBER;
                 break;
             // straight
@@ -537,35 +170,65 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
                 // sideIndex remains constant.
                 break;
             // right
-            case 1:
+            case -1:
                 sideIndex = sideIndex > 0 ? sideIndex - 1 : BOTTOM_SIDE_INDEX;
                 break;
+            case 2:
+                sideIndex = (sideIndex + 2) % SIDE_NUMBER;
+                break;
             default:
-                throw new InconsistentGraphModelException("Full-edges aren't supported yet!");
+                throw new InconsistentGraphModelException(
+                        "RectShapeDummyProcessor, trans ext: Unknown edge turn!");
             }
+
+            properties = PUtil.getProperties(next, currentNode);
             currentEdge = next;
-        } while (currentEdge != startEdge);
+            currentNode = properties.getCorner();
+
+        } while (currentEdge != startEdge || currentNode != startNode);
+
+        // determines the start edge. It must be the first edge in clockwise direction
+        // with undefined front corresponding to a given side.
+        // calc start edge
 
         // add two edge make the external face to an internal one.
-        int usedSide = -1;
+        List<Integer> usedSides = Lists.newLinkedList();
         int countAdded = 0;
+
+        RectShapeEdgeProperties edgeProperties = PUtil.getProperties(currentEdge, null);
+
+        startNode = edgeProperties.getCorner();
+
+        // Adds exact two edges that connects the new rectangular external face with the
+        // old external face.
         do {
-            int index = currentEdge.getProperty(Properties.RECT_SHAPE_SIDE_INDEX).intValue();
-            if (currentEdge.getProperty(Properties.RECT_SHAPE_TURN).intValue() == -1
-                    && currentEdge.getProperty(Properties.RECT_SHAPE_FRONT) == null
-                    && index != usedSide) {
-                currentEdge.setProperty(Properties.RECT_SHAPE_FRONT, faceSides[index]);
-                usedSide = index;
-                countAdded++;
-                addArtificial(currentEdge, true);
-                if (countAdded == 2) {
-                    break;
+            int index = edgeProperties.getSideIndex();
+            int turn = edgeProperties.getTurn();
+            if ((turn == 1 || turn == 2)
+                    && edgeProperties.getFront() == RectShapeEdgeProperties.EMPTY_FRONT) {
+
+                boolean wantsDummies = true;
+                for (Integer si : usedSides) {
+                    if (si.intValue() == index) {
+                        wantsDummies = false;
+                    }
+                }
+                if (wantsDummies) {
+                    edgeProperties.setFront(faceSides[index]);
+                    usedSides.add(Integer.valueOf(index));
+
+                    addArtificial(currentEdge, edgeProperties, true);
+                    countAdded++;
+                    if (countAdded == 2) {
+                        break;
+                    }
                 }
             }
-
-            next = currentEdge.getProperty(Properties.RECT_SHAPE_NEXT);
+            next = edgeProperties.getNext();
             currentEdge = next;
-        } while (currentEdge != startEdge);
+            edgeProperties = PUtil.getProperties(currentEdge, currentNode);
+            currentNode = edgeProperties.getCorner();
+        } while (currentEdge != startEdge || currentNode != startNode);
 
         // Set new external face.
         out: for (PFace pface : this.graph.getFaces()) {
@@ -581,15 +244,351 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
     }
 
     /**
+     * Transforms the all internal face to a rectangular shape. Therefore each edge gets some
+     * properties. Each face is traversed ounter clockwise, then if we find an edge that form a left
+     * angle to its nextedge the face is not in rectangular shape. The corner is the node that is
+     * adjacent to the nextedge and the current one. Then a left angle corner gets a new dummy edge
+     * to the front of the corner. This is done for all left angle corners of the face so that in
+     * addition the face is in rectangular shape. This bases on the compaction steps of the book
+     * Graph Drawing: Algorithms for the Visualization of Graphs by Battista et al.
+     */
+    private void transformInternalFaces() {
+
+        while (true) {
+            PFace currentFace = null;
+
+            // Check whether a face is not in rect shape, if so, start the process,
+            // if all edges are in rect shape, we are finished!
+            for (PFace checkFace : this.graph.getFaces()) {
+
+                // Calcs a startedge and its corner in counter clockwise direction.
+                Pair<PNode, PEdge> startWithCorner = checkFace.determineCCWDirection();
+                checkFace.setProperty(Properties.FACE_DIRECTION, startWithCorner);
+
+                // The External face needs no processing. For the special case there are a rectangle
+                // with exact two faces and only the rectangle edge.
+                if (checkFace == graph.getExternalFace()) {
+                    // Swap start direction since the external face is passed clockwise.
+                    startWithCorner.setFirst(startWithCorner.getSecond().getOppositeNode(
+                            startWithCorner.getFirst()));
+                    checkFace.setProperty(Properties.FACE_DIRECTION, startWithCorner);
+                    continue;
+                }
+
+                // Do a pre-selection, note: the new external face is already in rect shape.
+                if (!checkFace.isInRectShape()) {
+                    currentFace = checkFace;
+                    break;
+                }
+            }
+
+            // break condition, breaks out if all faces are in rectangular shape.
+            if (currentFace == null) {
+                break;
+            }
+
+            // step 1 and 2
+            setEdgeProperties(currentFace, false);
+
+            // step 3
+            determineFronts(currentFace);
+
+            // step 4
+            // for each edge e, such that turn(e) = 1 (i.e., e and next(e) form a left turn), or
+            // turn(e) = 2 such that there is a full turn,
+            // insert a vertex project(e) (dummy) along edge front(e)
+
+            // takes the edge with the longest path to the front
+            Pair<PEdge, RectShapeEdgeProperties> start = determineStart(currentFace);
+            PEdge startEdge = start.getFirst();
+            PEdge currentEdge = startEdge;
+            RectShapeEdgeProperties edgeProperties = start.getSecond();
+            PEdge next = edgeProperties.getNext();
+            PNode corner = edgeProperties.getCorner();
+            PNode startNode = corner;
+
+            do {
+                if ((edgeProperties.getTurn() == 1 || edgeProperties.getTurn() == 2)
+                        && edgeProperties.getFront() != RectShapeEdgeProperties.EMPTY_FRONT) {
+                    if (edgeProperties.getFront() == startEdge) {
+                        startNode = startEdge.getOppositeNode(startNode);
+                        addArtificial(currentEdge, edgeProperties, false);
+                        startNode = startEdge.getOppositeNode(startNode);
+                        
+                    } else {
+                        addArtificial(currentEdge, edgeProperties, false);
+
+                    }
+                }
+                next = edgeProperties.getNext();
+                currentEdge = next;
+                edgeProperties = PUtil.getProperties(currentEdge, corner);
+                corner = edgeProperties.getCorner();
+            } while (currentEdge != startEdge || corner != startNode);
+
+            // update face start properties
+            for (PFace f : graph.getFaces()) {
+                Pair<PNode, PEdge> startWithCorner = f.getProperty(Properties.FACE_DIRECTION);
+                if (startWithCorner == null) {
+                    Pair<PNode, PEdge> props = f.determineCCWDirection();
+                    f.setProperty(Properties.FACE_DIRECTION, props);
+                }
+            }
+        }
+    }
+
+    /**
+     * Determines the edge with the longest edge path to its front. This avoid edge crossings at the
+     * insertion of dummy vertices.
+     * 
+     * @param face
+     *            the surrounding face, for which the startEdge is calculated.
+     * @return the edge and the properties in clockwise direction.
+     */
+    private Pair<PEdge, RectShapeEdgeProperties> determineStart(final PFace face) {
+        int currentLongest = 0;
+        PEdge resultEdge = null;
+        RectShapeEdgeProperties resultProps = null;
+
+        for (PEdge edge : face.adjacentEdges()) {
+            RectShapeEdgeProperties edgeProperties = edge
+                    .getProperty(Properties.RECT_SHAPE_PROPERTIES);
+            if (edgeProperties == null) {
+                RectShapeEdgeProperties cutEdgeProps1 = PUtil.getProperties(edge, edge.getSource());
+                if (cutEdgeProps1.getPathLength() > currentLongest) {
+                    resultEdge = edge;
+                    resultProps = cutEdgeProps1;
+                    currentLongest = cutEdgeProps1.getPathLength();
+                }
+
+                RectShapeEdgeProperties cutEdgeProps2 = PUtil.getProperties(edge, edge.getTarget());
+                if (cutEdgeProps2.getPathLength() > currentLongest) {
+                    resultEdge = edge;
+                    resultProps = cutEdgeProps2;
+                    currentLongest = cutEdgeProps2.getPathLength();
+                }
+
+            } else {
+                if (edgeProperties.getPathLength() > currentLongest) {
+                    resultEdge = edge;
+                    resultProps = edgeProperties;
+                    currentLongest = edgeProperties.getPathLength();
+                }
+            }
+        }
+        return new Pair<PEdge, RectShapeEdgeProperties>(resultEdge, resultProps);
+    }
+
+    /**
+     * Runs around the graph and search for the front of every edge that has a rect shape turn of 1.
+     * 
+     * @param face
+     */
+    private void determineFronts(final PFace face) {
+
+        // step 3
+        // for each edge e, find the first edge e' following e counterclockwise, such that
+        // the sum of the turn value for all the edges between (included) and e' (excluded)
+        // is equal to 1, and set front(e) = e'.
+        for (PEdge edge : face.adjacentEdges()) {
+
+            RectShapeEdgeProperties edgeProperties = edge
+                    .getProperty(Properties.RECT_SHAPE_PROPERTIES);
+            if (edgeProperties == null) {
+                // Handling cut edges that contains two direction properties.
+                Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProps = edge
+                        .getProperty(Properties.RECT_SHAPE_CUTEDGE);
+                determineFront(edge, cutEdgeProps.getFirst());
+                determineFront(edge, cutEdgeProps.getSecond());
+            } else {
+                // Check for normal edge.
+                determineFront(edge, edgeProperties);
+            }
+        }
+
+    }
+
+    /**
+     * determines the front for a single edge with its edgeProperties.
      * 
      * @param edge
-     * @param isExternal
+     *            for which the front has to be determined.
+     * @param startEdgeProperties
+     *            the properties of the edge.
      */
-    private void addArtificial(final PEdge edge, final boolean isExternal) {
-        PNode corner = edge.getProperty(Properties.RECT_SHAPE_CORNER);
-        PEdge front = edge.getProperty(Properties.RECT_SHAPE_FRONT);
-        PNode frontCorner = front.getProperty(Properties.RECT_SHAPE_CORNER);
-        // add new node and new edge and set the orthogonal representation!
+    private void determineFront(final PEdge edge, final RectShapeEdgeProperties startEdgeProperties) {
+        if (startEdgeProperties.getTurn() == -1 || startEdgeProperties.getTurn() == 0) {
+            startEdgeProperties.setFront(RectShapeEdgeProperties.EMPTY_FRONT);
+            return;
+        }
+
+        PEdge startEdge = edge;
+        RectShapeEdgeProperties edgeProperties = startEdgeProperties;
+        PNode startNode = startEdgeProperties.getCorner();
+        PNode corner = startNode;
+        PEdge currentEdge = startEdge;
+        PEdge previousEdge = null;
+        int turn = 0;
+        int pathLength = 0;
+        boolean wantsNewFront = false;
+        do {
+            pathLength++;
+            turn += edgeProperties.getTurn();
+            previousEdge = currentEdge;
+            currentEdge = edgeProperties.getNext();
+            if (turn == -1) {
+                startEdgeProperties.setPreviousFront(previousEdge);
+                startEdgeProperties.setFront(currentEdge);
+                startEdgeProperties.setPathLength(pathLength);
+                wantsNewFront = true;
+                break;
+            }
+            edgeProperties = PUtil.getProperties(currentEdge, corner);
+            corner = edgeProperties.getCorner();
+        } while (currentEdge != startEdge || corner != startNode);
+        if (!wantsNewFront) {
+            startEdgeProperties.setFront(RectShapeEdgeProperties.EMPTY_FRONT);
+        }
+    }
+
+    /**
+     * Sets the next edge, turn and corner of every edge.
+     * 
+     * @param face
+     * @param next
+     */
+    private void setEdgeProperties(final PFace face, final boolean isExternal) {
+
+        clearOldProperties(face);
+
+        Pair<PNode, PEdge> startWithCorner = face.getProperty(Properties.FACE_DIRECTION);
+        if (startWithCorner == null) {
+            throw new InconsistentGraphModelException(
+                    "To use this method, the property FACE_DIRECTION has to be defined!");
+        }
+
+        PEdge startEdge = startWithCorner.getSecond();
+        PNode startNode = startWithCorner.getFirst();
+        PNode corner = startNode;
+        PEdge currentEdge = startEdge;
+        PEdge next = null;
+        // step 1
+        // for each edge e of f, let next(e) be the edge following e when traversing
+        // the boundary of f counterclockwise, and let corner(e) be the common vertex
+        // of e and next(e).
+        // step 2
+        // for each e of f, we set turn(e) = +1 if e and next(e) form a left turn,
+        // turn(e) = 0 if e and next(e) are aligned,
+        // and turn(e) = -1 if e and next(e) form a right turn.
+
+        // Initialize the first edge properties.
+        RectShapeEdgeProperties properties = PUtil.getProperties(currentEdge, null);
+
+        int counter = 0;
+        boolean finish = false;
+
+        // Iterate around the face edges and set the edge properties.
+        do {
+
+            Pair<PEdge, OrthogonalAngle> pair = face.nextAdjacentElement(currentEdge, corner);
+
+            // Add properties to current edge
+            properties.setCorner(corner);
+
+            next = pair.getFirst();
+            properties.setNext(next);
+
+            int edgeTurn = determineTurn(pair.getSecond(), isExternal);
+            properties.setTurn(edgeTurn);
+
+            properties = PUtil.getProperties(next, corner);
+            properties.setPreviousEdge(currentEdge);
+            currentEdge = next;
+            corner = next.getOppositeNode(corner);
+
+            // Workaround to handle a fullangle corner at the start of the iteration.
+            // There we go two times more along the path.
+            if (counter > 0) {
+                counter++;
+            } else if (currentEdge == startEdge && startNode == corner) {
+                counter = 1;
+            }
+
+            // runs at least twice along a full angle node.
+            if (counter > 2) {
+                finish = true;
+            }
+
+        } while (!finish);
+    }
+
+    /**
+     * Removes the old rect shape properties.
+     * 
+     * @param face
+     */
+    private void clearOldProperties(final PFace face) {
+        for (PEdge edge : face.adjacentEdges()) {
+            edge.setProperty(Properties.RECT_SHAPE_CUTEDGE, null);
+            edge.setProperty(Properties.RECT_SHAPE_PROPERTIES, null);
+        }
+
+    }
+
+    private int determineTurn(final OrthogonalAngle angle, final boolean isExternal) {
+        int edgeTurn = 0;
+        switch (angle) {
+        case LEFT:
+            edgeTurn = 1;
+            break;
+        case STRAIGHT:
+            edgeTurn = 0;
+            break;
+        case RIGHT:
+            edgeTurn = -1;
+            break;
+        case FULL:
+            edgeTurn = 2;
+            break;
+        default:
+            throw new InconsistentGraphModelException(
+                    "RectShapeProcessor, determineTurn: unknown angle index!");
+        }
+        return edgeTurn;
+    }
+
+    /**
+     * Inserts an artificial node to the front of the given edge and adds a edge from the edges
+     * corner to the new node. Updates all elements including orthogonal representation.
+     * 
+     * @param edge
+     *            currentEdge
+     * @param edgeProperties
+     *            of that edge, cutedges have two edge properties
+     * @param isExternal
+     *            indicates whether the face is external or not
+     * 
+     * 
+     */
+    private void addArtificial(final PEdge edge, final RectShapeEdgeProperties edgeProperties,
+            final boolean isExternal) {
+        PNode corner = edgeProperties.getCorner();
+        PEdge front = edgeProperties.getFront();
+        RectShapeEdgeProperties frontProperties = front
+                .getProperty(Properties.RECT_SHAPE_PROPERTIES);
+        RectShapeEdgeProperties backDirectionProps = null;
+        if (frontProperties == null) {
+            Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProp = front
+                    .getProperty(Properties.RECT_SHAPE_CUTEDGE);
+            frontProperties = cutEdgeProp.getFirst();
+            backDirectionProps = cutEdgeProp.getSecond();
+            if (frontProperties.getNext() == edgeProperties.getPreviousFront()) {
+                frontProperties = cutEdgeProp.getSecond();
+                backDirectionProps = cutEdgeProp.getFirst();
+            }
+        }
+        PNode frontCorner = frontProperties.getCorner();
+        // add new node and new edge and set the orthogonal representations
         Pair<PNode, PEdge> virtualPair = null;
         if (isExternal) {
             virtualPair = this.graph.addNode(front, front.getOppositeNode(frontCorner));
@@ -598,30 +597,19 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
         }
         PNode projectE = virtualPair.getFirst();
         PEdge virtualEdge = virtualPair.getSecond();
+
         // add rect shape dummy property to determine later the dummy elements.
         projectE.setProperty(Properties.RECT_SHAPE_DUMMY, true);
         PEdge newEdge = this.graph.addEdge(corner, projectE);
-        // if (isExternal) {
-        // newEdge.setProperty(Properties.RECT_SHAPE_CUT_EDGE, new Pair<PNode, PEdge>(null, null));
-        // }
+
         newEdge.setProperty(Properties.RECT_SHAPE_DUMMY, true);
-        front.setProperty(Properties.RECT_SHAPE_CORNER, projectE);
+        frontProperties.setCorner(projectE);
 
-        virtualEdge
-                .setProperty(Properties.RECT_SHAPE_CORNER, virtualEdge.getOppositeNode(projectE));
-        virtualEdge.setProperty(Properties.RECT_SHAPE_NEXT,
-                front.getProperty(Properties.RECT_SHAPE_NEXT));
-        virtualEdge.setProperty(Properties.RECT_SHAPE_TURN,
-                front.getProperty(Properties.RECT_SHAPE_TURN));
-        virtualEdge.setProperty(Properties.RECT_SHAPE_FRONT,
-                front.getProperty(Properties.RECT_SHAPE_FRONT));
-
-        front.setProperty(Properties.RECT_SHAPE_NEXT, virtualEdge);
-        front.setProperty(Properties.RECT_SHAPE_TURN, 0);
-        front.setProperty(Properties.RECT_SHAPE_FRONT, null);
+        // if the front is a cutedge the virtual edge next to the front needs to be a cutedge, too
+        updateFrontProperties(front, frontProperties, backDirectionProps, projectE, virtualEdge);
 
         // Fix embedding and/or angles of startNode
-        fixStartNode(edge, corner, newEdge, false);
+        fixStartNode(edge, corner, newEdge);
 
         // Fix embedding and/or angles of virtual node
         fixVirtualNode(front, virtualEdge, projectE, newEdge);
@@ -633,6 +621,124 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
         // Fix embedding and/or angles of successor node
         fixSuccessorNode(virtualEdge.getOppositeNode(projectE), front.getOppositeNode(projectE),
                 virtualEdge);
+
+    }
+
+    /**
+     * Updates the edge properties of the involved edges. Special focus is on the handling of
+     * cutedges. The front and the virtual edge properties are updated as well as the next of the
+     * previous edge and the previous of the next edge.
+     * 
+     * @param front
+     *            front edge
+     * @param frontProperties
+     *            front properties in the direction the path is traversed
+     * @param backDirectionProps
+     *            back direction in the counter direction of the traversed path
+     * @param projectE
+     *            the inserted dummy node
+     * @param virtualEdge
+     *            the virtual inserted edge, for which all edge properties have to be determined
+     */
+    private void updateFrontProperties(final PEdge front,
+            final RectShapeEdgeProperties frontProperties,
+            final RectShapeEdgeProperties backDirectionProps, final PNode projectE,
+            final PEdge virtualEdge) {
+        if (backDirectionProps != null) {
+
+            // handle front direction
+            RectShapeEdgeProperties vEdgeProperties1 = new RectShapeEdgeProperties();
+            vEdgeProperties1.setCorner(virtualEdge.getOppositeNode(projectE));
+
+            // need to differ edges containing a fullangle node and the one with more connected
+            // nodes,
+            // since the edge changes such that next of the front is the wrong if a fullangle
+            // node is handled.
+            if (vEdgeProperties1.getCorner().getAdjacentEdgeCount() == 1) {
+                // handling an edge incident to a full-angle node.
+                vEdgeProperties1.setNext(virtualEdge);
+            } else {
+                // The other case.
+
+                vEdgeProperties1.setNext(frontProperties.getNext());
+            }
+            vEdgeProperties1.setTurn(frontProperties.getTurn());
+            vEdgeProperties1.setFront(frontProperties.getFront());
+            vEdgeProperties1.setPreviousEdge(front);
+            frontProperties.setNext(virtualEdge);
+            frontProperties.setTurn(0);
+            frontProperties.setFront(null);
+
+            // for(PEdge edge : faceEdges){
+            // TODO hier front und prefront abgleichen und dann umsetzen auf die virtual edge
+            // auch fuer die andere direction machen sowie für ohne backDirectionProps..
+            // }
+
+            if (vEdgeProperties1.getCorner().getAdjacentEdgeCount() != 1) {
+                // update previous of next edge
+                PEdge nextEdge = vEdgeProperties1.getNext();
+                RectShapeEdgeProperties nextProps = PUtil.getProperties(nextEdge,
+                        virtualEdge.getOppositeNode(projectE));
+                nextProps.setPreviousEdge(virtualEdge);
+            }
+
+            // handle back direction of the virtual edge.
+            RectShapeEdgeProperties vEdgeProperties2 = new RectShapeEdgeProperties();
+            vEdgeProperties2.setCorner(projectE);
+            vEdgeProperties2.setNext(front);
+            vEdgeProperties2.setTurn(0);
+            vEdgeProperties2.setFront(null);
+
+            if (vEdgeProperties1.getCorner().getAdjacentEdgeCount() == 1) {
+                // handling an edge incident to a full-angle node.
+                vEdgeProperties2.setPreviousEdge(virtualEdge);
+            } else {
+                // The other case.
+                vEdgeProperties2.setPreviousEdge(backDirectionProps.getPreviousEdge());
+            }
+
+            if (vEdgeProperties1.getCorner().getAdjacentEdgeCount() != 1) {
+                // update next of previous edge
+                PEdge previousEdge = backDirectionProps.getPreviousEdge();
+
+                // determine edge in correct direction and set its next to virtual node
+                // instead of front.
+                RectShapeEdgeProperties prevProps = PUtil.getProperties(previousEdge,
+                        virtualEdge.getOppositeNode(projectE));
+                if (prevProps.getNext() == front) {
+                    prevProps.setNext(virtualEdge);
+                } else {
+                    prevProps = PUtil.getProperties(previousEdge, prevProps.getCorner());
+                    prevProps.setNext(virtualEdge);
+                }
+
+                backDirectionProps.setPreviousEdge(virtualEdge);
+            }
+
+            Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProp 
+                = new Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>(
+                    vEdgeProperties1, vEdgeProperties2);
+            virtualEdge.setProperty(Properties.RECT_SHAPE_CUTEDGE, cutEdgeProp);
+
+        } else {
+
+            RectShapeEdgeProperties vEdgeProperties = new RectShapeEdgeProperties();
+            vEdgeProperties.setCorner(virtualEdge.getOppositeNode(projectE));
+            vEdgeProperties.setNext(frontProperties.getNext());
+            vEdgeProperties.setTurn(frontProperties.getTurn());
+            vEdgeProperties.setFront(frontProperties.getFront());
+            vEdgeProperties.setPreviousEdge(front);
+            virtualEdge.setProperty(Properties.RECT_SHAPE_PROPERTIES, vEdgeProperties);
+            frontProperties.setNext(virtualEdge);
+            frontProperties.setTurn(0);
+            frontProperties.setFront(null);
+
+        }
+
+        // update faces
+        //this.graph.updateFaces(virtualEdge, front.getSimpleLeftFace(), null);
+        this.graph.updateFaces(virtualEdge, null, front.getSimpleRightFace());
+
     }
 
     /**
@@ -668,25 +774,23 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
      * @param newEdge
      *            the new edge between corner and projectE that has to be inserted.
      */
-    private void fixStartNode(final PEdge startEdge, final PNode corner, final PEdge newEdge,
-            final boolean isExternal) {
+    private void fixStartNode(final PEdge startEdge, final PNode corner, final PEdge newEdge) {
         // fix node embedding: is implicit done by graph.addEdge(..)
 
         // fix angles
         List<Pair<PEdge, OrthogonalAngle>> angles = this.orthogonal.getAngles(corner);
 
-        if (isExternal) {
-            // wanted order: startEdge, newEdge, successorEdge
-            corner.moveToStart(newEdge);
-            corner.moveToStart(startEdge);
-            angles.add(new Pair<PEdge, OrthogonalAngle>(newEdge, OrthogonalAngle.LEFT));
-            for (int i = 0; i < angles.size(); i++) {
-                if (angles.get(i).getFirst() == startEdge) {
-                    angles.get(i).setSecond(OrthogonalAngle.STRAIGHT);
-                } else {
-                    angles.get(i).setSecond(OrthogonalAngle.LEFT);
-                }
+        boolean containsFullAngle = false;
+        // Check if angles contains full edge.
+        for (Pair<PEdge, OrthogonalAngle> pair : angles) {
+            if (pair.getSecond() == OrthogonalAngle.FULL) {
+                containsFullAngle = true;
+                break;
             }
+        }
+        if (containsFullAngle) {
+            angles.get(0).setSecond(OrthogonalAngle.STRAIGHT);
+            angles.add(new Pair<PEdge, OrthogonalAngle>(newEdge, OrthogonalAngle.STRAIGHT));
         } else {
             // wanted order: startEdge, successorEdge, newEdge
             corner.moveToStart(startEdge);
@@ -697,7 +801,6 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
         }
 
         corner.orderAngles();
-
     }
 
     private void fixVirtualNode(final PEdge lastPathEdge, final PEdge virtualEdge,

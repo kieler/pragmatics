@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.util.IDataObject;
 /**
  * A chain of vectors. Can be used to describe polylines or similar constructs.
  * 
+ * @kieler.design proposed 2012-11-02 cds
  * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
@@ -233,6 +234,34 @@ public class KVectorChain extends LinkedList<KVector> implements IDataObject {
             } while (iter.hasNext());
         }
         return length;
+    }
+    
+    /**
+     * Determine whether any of the contained vectors is NaN.
+     * 
+     * @return true if one of the vectors is NaN
+     */
+    public boolean isNaN() {
+        for (KVector v : this) {
+            if (v.isNaN()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Determine whether any of the contained vectors is infinite.
+     * 
+     * @return true if one of the vectors is infinite
+     */
+    public boolean isInfinite() {
+        for (KVector v : this) {
+            if (v.isInfinite()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

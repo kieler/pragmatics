@@ -24,6 +24,8 @@ import de.cau.cs.kieler.kiml.formats.gml.services.GMLGrammarAccess;
  * This class contains custom formatting description.
  * 
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class GMLFormatter extends AbstractDeclarativeFormatter {
 

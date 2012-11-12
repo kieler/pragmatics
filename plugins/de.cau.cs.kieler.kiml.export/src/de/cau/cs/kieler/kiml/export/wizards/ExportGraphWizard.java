@@ -16,23 +16,32 @@ package de.cau.cs.kieler.kiml.export.wizards;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.export.ExportPlugin;
 import de.cau.cs.kieler.kiml.export.handlers.GraphFileHandler;
 
 /**
- * A wizard for Exporting graphs from workspace.
+ * A wizard for exporting graphs from workspace.
  * 
  * @author wah
+ * @kieler.ignore (excluded from review process)
  */
 public class ExportGraphWizard extends Wizard implements IExportWizard {
 
@@ -85,7 +94,7 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
             return false;
         }
 
-        if (!checkExistingTargetFiles()) {
+        if (!exportSelectedGraphs()) {
             return false;
         }
         
@@ -96,42 +105,77 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
     }
 
     /**
-     * if target file exists then ask for replace, ignore or cancel.
+     * Export the selected graphs. If the target file exists for a graph, then ask for replace,
+     * ignore, or cancel.
      * 
-     * @return true if ignore or replace and false if cancel
+     * @return true if the operation was finished, false if it was canceled by the user
      */
-    private boolean checkExistingTargetFiles() {
-        // for all selected files
-        for (IPath sourceFile : workspaceSourcesPage.getSourceFiles(null)) {
-            // get the target format selected from the user
-            String targetFormat = workspaceSourcesPage.getTargetFormat();
+    private boolean exportSelectedGraphs() {
+        // get the target format selected from the user
+        final String targetFormat = workspaceSourcesPage.getTargetFormat();
+        final IPath targetDirectory = workspaceSourcesPage.getTargetWorkspaceDirectory();
+        final Maybe<Boolean> result = new Maybe<Boolean>(true);
+        try {
+            getContainer().run(true, true, new IRunnableWithProgress() {
+                public void run(final IProgressMonitor monitor)
+                    throws InvocationTargetException, InterruptedException {
+                    List<IPath> files = workspaceSourcesPage.getSourceFiles(null);
+                    monitor.beginTask("Export graphs", files.size());
+                    
+                    // for all selected files
+                    for (IPath sourceFile : files) {
 
-            GraphFileHandler graphFileHandler = new GraphFileHandler(sourceFile, targetFormat,
-                    workspaceSourcesPage.getTargetWorksapceDirectory());
+                        final GraphFileHandler graphFileHandler = new GraphFileHandler(sourceFile,
+                                targetFormat, targetDirectory);
 
-            if (graphFileHandler.getAbsoluteTargetFile().exists()) {
+                        if (graphFileHandler.getAbsoluteTargetFile().exists()) {
 
-                String[] dialogButtonLabels = { "Ignore", "Replace", "Cancel" };
-                MessageDialog msgd = new MessageDialog(null, "Confirm", null, "A file named '"
-                        + graphFileHandler.getWorkspaceTargetFile().getName()
-                        + "' already exists in '"
-                        + workspaceSourcesPage.getTargetWorksapceDirectory()
-                        + "'. Do you want to replace it?", 0, dialogButtonLabels, 0);
-
-                switch (msgd.open()) {
-                case 2:// Cancel
-                    return false;
-
-                case 1:// Replace
-                    exportGraph(graphFileHandler);
-                    break;
-
+                            // display a confirmation dialog
+                            final Maybe<Integer> dialogSelection = new Maybe<Integer>();
+                            ExportGraphWizard.this.getShell().getDisplay().syncExec(new Runnable() {
+                                public void run() {
+                                    String[] dialogButtonLabels = { "Ignore", "Replace", "Cancel" };
+                                    MessageDialog msgd = new MessageDialog(
+                                            ExportGraphWizard.this.getShell(),
+                                            "Confirm", null,
+                                            "A file named '"
+                                            + graphFileHandler.getWorkspaceTargetFile().getName()
+                                            + "' already exists in '"
+                                            + targetDirectory
+                                            + "'. Do you want to replace it?", MessageDialog.NONE,
+                                            dialogButtonLabels, 0);
+                                    dialogSelection.set(msgd.open());
+                                }
+                            });
+                            
+                            switch (dialogSelection.get()) {
+                            case 2:// Cancel
+                                result.set(false);
+                                monitor.done();
+                                return;
+                            case 1:// Replace
+                                exportGraph(graphFileHandler);
+                                break;
+                            }
+                        } else {
+                            exportGraph(graphFileHandler);
+                        }
+                        monitor.worked(1);
+                    }
+                    
+                    monitor.done();
                 }
-            } else {
-                exportGraph(graphFileHandler);
+            });
+        } catch (Throwable exception) {
+            if (exception instanceof InvocationTargetException) {
+                exception = exception.getCause();
             }
+            IStatus status = new Status(Status.ERROR, ExportPlugin.PLUGIN_ID,
+                    "An error occurred while executing graph export.", exception);
+            StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.BLOCK);
+            result.set(false);
         }
-        return true;
+        return result.get();
     }
 
     /**
@@ -159,13 +203,13 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
      */
     private boolean checkTargetDirectory() {
         IPath targetPath = ResourcesPlugin.getWorkspace().getRoot().getLocation()
-                .append(workspaceSourcesPage.getTargetWorksapceDirectory());
+                .append(workspaceSourcesPage.getTargetWorkspaceDirectory());
         if (new File(targetPath.toString()).exists()) {
             return true;
         } else {
             if (MessageDialog.openConfirm(null,
                     Messages.ExportGraphWizard_title_createTargetFolder, workspaceSourcesPage
-                            .getTargetWorksapceDirectory().toString()
+                            .getTargetWorkspaceDirectory().toString()
                             + " "
                             + Messages.ExportGraphWizard_question_createTargetFolder)) {
                 return createTargetDirectory();
@@ -183,7 +227,7 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
      */
     private boolean createTargetDirectory() {
         IPath targetPath = ResourcesPlugin.getWorkspace().getRoot().getLocation()
-                .append(workspaceSourcesPage.getTargetWorksapceDirectory());
+                .append(workspaceSourcesPage.getTargetWorkspaceDirectory());
         return new File(targetPath.toString()).mkdirs();
     }
 

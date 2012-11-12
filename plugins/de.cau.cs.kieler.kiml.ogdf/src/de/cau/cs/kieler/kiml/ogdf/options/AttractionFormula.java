@@ -17,20 +17,14 @@ package de.cau.cs.kieler.kiml.ogdf.options;
  * Definition of attraction formula option for the GEM layouter.
  * 
  * @author mri
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public enum AttractionFormula {
+    
     /** the Fruchterman-Reingold method. */
     FRUCHTERMAN_REINGOLD,
     /** the GEM method. */
     GEM;
     
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static AttractionFormula valueOf(final int i) {
-        return values()[i];
-    }
 }

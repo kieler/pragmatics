@@ -26,8 +26,9 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 /**
  * A layout configurator that can be used to generate on-the-fly layout options.
  *
- * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating 2011-01-13 proposed yellow msp
  */
 public class VolatileLayoutConfig implements ILayoutConfig {
     

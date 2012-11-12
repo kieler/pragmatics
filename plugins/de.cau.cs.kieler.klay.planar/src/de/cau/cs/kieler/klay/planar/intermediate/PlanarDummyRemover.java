@@ -30,6 +30,7 @@ import de.cau.cs.kieler.klay.planar.util.PUtil;
  * four edges. These are formed to two crossing edges.
  * 
  * @author pkl
+ * @kieler.rating yellow 2012-11-01 review KI-30 by ima, cds
  */
 public class PlanarDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -60,7 +61,7 @@ public class PlanarDummyRemover extends AbstractAlgorithm implements ILayoutProc
     private void removePlanarDummies() {
         List<PNode> planarDummynodes = new LinkedList<PNode>();
         for (PNode node : graph.getNodes()) {
-            if (node.hasProperties() && node.getProperty(Properties.PLANAR_DUMMY_NODE) != null) {
+            if (node.getProperty(Properties.PLANAR_DUMMY_NODE) != null) {
                 planarDummynodes.add(node);
             }
         }
@@ -73,11 +74,11 @@ public class PlanarDummyRemover extends AbstractAlgorithm implements ILayoutProc
             PEdge fourth = iterator.next();
 
             // move the original edge over the dummy node from source to new target or vice versa
-            // according to the edge direction. Edge 0 and 2 are straight to each other so that
-            // we can move the edge from source 0 to target 2 or vice versa.
+            // according to the edge direction. Edge 1 and 3 are straight to each other so that
+            // we can move the edge from source 1 to target 3 or vice versa.
             doPlanarRemoveStep(dummyNode, first, third);
 
-            // do the same to the edges 1 and 3.
+            // do the same to the edges 2 and 4.
             doPlanarRemoveStep(dummyNode, second, fourth);
 
             graph.removeNode(dummyNode);
@@ -97,11 +98,11 @@ public class PlanarDummyRemover extends AbstractAlgorithm implements ILayoutProc
      *            {@link PEdge} adjacent to dummy node
      */
     private void doPlanarRemoveStep(final PNode dummyNode, final PEdge first, final PEdge second) {
-        if (first.hasProperties() && first.getProperty(Properties.ORIGIN) != null) {
+        if (first.getProperty(Properties.ORIGIN) != null) {
             first.getBendPoints().addAll(second.getBendPoints());
             graph.bridgeOverEdge(first, first.getOppositeNode(dummyNode),
                     second.getOppositeNode(dummyNode));
-        } else if (second.hasProperties() && second.getProperty(Properties.ORIGIN) != null) {
+        } else if (second.getProperty(Properties.ORIGIN) != null) {
             graph.bridgeOverEdge(second, second.getOppositeNode(dummyNode),
                     first.getOppositeNode(dummyNode));
             PUtil.addBendsToEdge(second, first.getBendPoints(), dummyNode, this.grid);

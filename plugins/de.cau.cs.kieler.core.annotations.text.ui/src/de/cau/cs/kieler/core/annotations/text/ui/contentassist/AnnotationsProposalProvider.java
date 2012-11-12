@@ -25,9 +25,11 @@ import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 
 import com.google.common.base.Strings;
 
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.impl.AnnotationImpl;
@@ -91,7 +93,7 @@ public class AnnotationsProposalProvider extends AbstractAnnotationsProposalProv
             final ICompletionProposalAcceptor acceptor) {
 
         if (kielerLayoutAvailable()) {
-            /* check if the prefix is an kieler annotation */
+            /* check if the prefix is a KIELER annotation */
             if (context.getCurrentModel() instanceof Annotation
                     && context.getCurrentModel().getClass().equals(AnnotationImpl.class)) {
 
@@ -110,7 +112,9 @@ public class AnnotationsProposalProvider extends AbstractAnnotationsProposalProv
                     // show the available choices for boolean and enumeration/
                     case BOOLEAN:
                     case REMOTE_ENUM:
+                    case REMOTE_ENUMSET:
                     case ENUM:
+                    case ENUMSET:
                         for (int j = 0; j < optionData.getChoices().length; j++) {
                             proposal = optionData.getChoices()[j];
                             acceptor.accept(createCompletionProposal(proposal, context));
@@ -121,6 +125,15 @@ public class AnnotationsProposalProvider extends AbstractAnnotationsProposalProv
                     //  corresponding default value
                      
                     case STRING:
+                        if (annotationName.equals(LayoutOptions.ALGORITHM.getId())) {
+                            String displayString = null;
+                            for (LayoutAlgorithmData data : layoutServices.getAlgorithmData()) {
+                                proposal = '"' + data.getId() + '"';
+                                displayString = data.getName();
+                                acceptor.accept(createCompletionProposal(proposal, displayString, null, context));
+                            }
+                            break;
+                        }
                     case FLOAT:
                     case INT:
                     case OBJECT:

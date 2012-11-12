@@ -31,9 +31,10 @@ import org.eclipse.swt.graphics.Image;
  * additional methods for example changing resizeability.
  * 
  * @author ckru
- * 
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
-// Its necessary to use some internal draw 2d figures here.
+// It's necessary to use some internal Draw2D figures here.
 @SuppressWarnings("restriction")
 public class SwitchableFigure extends Shape {
 

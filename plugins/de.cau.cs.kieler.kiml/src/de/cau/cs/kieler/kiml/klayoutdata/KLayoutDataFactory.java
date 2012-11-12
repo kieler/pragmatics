@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.EFactory;
  * <!-- end-user-doc -->
  * @see de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage
  * @generated
- * @kieler.design 2011-03-14 reviewed by cmot, cds
  */
 public interface KLayoutDataFactory extends EFactory {
     /**

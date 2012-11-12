@@ -32,8 +32,9 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 /**
  * A special layout data service for use in an Eclipse instance.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating yellow 2012-10-10 review KI-25 by chsch, bdu
  */
 public class EclipseLayoutDataService extends ExtensionLayoutDataService {
 

@@ -25,6 +25,8 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
  * associated bend points.
  * 
  * @author owo
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class FEdge extends MapPropertyHolder {
 

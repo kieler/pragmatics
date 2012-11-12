@@ -21,6 +21,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * method.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class ToStringVisualizer extends AbstractSimpleVisualizer<String> {
 

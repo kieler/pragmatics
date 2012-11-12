@@ -13,11 +13,18 @@
                option="de.cau.cs.kieler.klay.planar.planarityTest">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.klay.planar.hdstrategy">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.debugMode">
          </knownOption>
          <knownOption
                default="40"
                option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               default="20"
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -27,6 +34,15 @@
             description="Defines which algorithm to use for planar testing."
             id="de.cau.cs.kieler.klay.planar.planarityTest"
             name="Planar Testing Algorithm"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.planar.p3compact.HighDegreeNodeStrategy"
+            default="OGDF"
+            description="Defines which algorithm to use for handling high-degree nodes."
+            id="de.cau.cs.kieler.klay.planar.hdstrategy"
+            name="High Degree Strategy"
             type="enum">
       </layoutOption>
    </extension>

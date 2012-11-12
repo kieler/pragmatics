@@ -69,8 +69,9 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 /**
  * A view that displays layout options for selected objects.
  *
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating yellow 2012-10-26 review KI-29 by cmot, sgu
  */
 public class LayoutViewPart extends ViewPart implements ISelectionListener {
 
@@ -195,16 +196,16 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         
         // CHECKSTYLEON MagicNumber
         // set the stored value of the categories button
-        ActionContributionItem categoriesItem = (ActionContributionItem) actionBars
-                .getToolBarManager().find("categories");
+        ActionContributionItem categoriesItem =
+                (ActionContributionItem) toolBarManager.find("categories");
         if (categoriesItem != null) {
             categoriesItem.getAction().setChecked(preferenceStore.getBoolean(PREF_CATEGORIES));
             categoriesItem.getAction().run();
         }
         
         // set the stored value of the advanced button
-        ActionContributionItem advancedItem = (ActionContributionItem) actionBars
-                .getToolBarManager().find("filter");
+        ActionContributionItem advancedItem =
+                (ActionContributionItem) toolBarManager.find("filter");
         if (advancedItem != null) {
             advancedItem.getAction().setChecked(preferenceStore.getBoolean(PREF_ADVANCED));
             advancedItem.getAction().run();
@@ -410,6 +411,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                 String diagramTypeName = EclipseLayoutInfoService.getInstance()
                         .getDiagramTypeName(diagramType);
                 if (diagramTypeName != null) {
+                    // make the diagram type name plural, if it does not already end with "s"
                     String dtdText;
                     if (diagramTypeName.endsWith("s")) {
                         dtdText = Messages.getString("kiml.ui.34") + " " + diagramTypeName;
@@ -443,6 +445,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      */
     private String getReadableName(final boolean forDomainModel, final boolean plural) {
         if (!propSourceProvider.hasContent()) {
+            // the property source provider has no cached content, so we cannot get any context info
             return "";
         }
         
@@ -455,6 +458,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                 return null;
             }
             clazzName = diagramPart.getClass().getName();
+            // omit the suffix "EditPart" if found
             if (clazzName.endsWith("EditPart")) {
                 clazzName = clazzName.substring(0, clazzName.length() - "EditPart".length());
             }

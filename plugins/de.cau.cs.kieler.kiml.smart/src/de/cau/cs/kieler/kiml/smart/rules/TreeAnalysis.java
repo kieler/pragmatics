@@ -25,6 +25,8 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * Analysis for directed trees.
  *
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class TreeAnalysis implements IAnalysis {
     

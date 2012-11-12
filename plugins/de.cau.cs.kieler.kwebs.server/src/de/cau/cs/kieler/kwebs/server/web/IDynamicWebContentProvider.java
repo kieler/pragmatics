@@ -24,9 +24,10 @@ public interface IDynamicWebContentProvider {
     /**
      * This method is used by the dispatch handler to invoke a dynamic web content handler.
      * 
-     * @param requestData
-     *            the request data
+     * @param processingExchange
+     *            the exchange DTO that holds information about the request itself and the
+     *            {@link ResourceInformation} instance to deliver the result of processing the request
      */
-    void handleRequest(final RequestData requestData);
+    void handleRequest(final ResourceProcessingExchange processingExchange);
     
 }

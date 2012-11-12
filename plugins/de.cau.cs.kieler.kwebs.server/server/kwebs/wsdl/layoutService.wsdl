@@ -11,7 +11,7 @@
   <documentation>
     This document contains the interface description for the KIELER Web Service for Layout (KWebS). More details
     on how to use this service and how to set up your own server can be found at the project page at
-    http://layout.rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KWebS.
+    http://rtsys.informatik.uni-kiel.de/confluence/x/nQEF.
   </documentation>
 
   <!-- Abstract part of the web service definition -->

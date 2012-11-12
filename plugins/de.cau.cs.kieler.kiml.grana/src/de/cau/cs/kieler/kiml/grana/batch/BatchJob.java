@@ -25,9 +25,8 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * The class which represents an analysis batch job.
  * 
  * @author mri
- * 
- * @param <T>
- *            the type of the parameter
+ * @kieler.ignore (excluded from review process)
+ * @param <T> the type of the parameter
  */
 public class BatchJob<T> {
 

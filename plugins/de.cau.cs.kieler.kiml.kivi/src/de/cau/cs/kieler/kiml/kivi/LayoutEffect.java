@@ -44,6 +44,8 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
  * 
  * @author mmu
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class LayoutEffect extends AbstractEffect {
 

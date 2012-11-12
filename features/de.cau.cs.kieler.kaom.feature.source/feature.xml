@@ -4,7 +4,7 @@
       label="KIELER Actor Oriented Modeling"
       version="0.5.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
-      plugin="de.cau.cs.kieler.kaom">
+      plugin="de.cau.cs.kieler.kaom.source">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
       KIELER Actor Oriented Modeling: a generic metamodel that can be used to represent models from arbitrary data flow languages. An importer for Ptolemy models is included as well as a library of standard Ptolemy demos.

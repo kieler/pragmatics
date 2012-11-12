@@ -19,8 +19,9 @@ import java.util.ResourceBundle;
 /**
  * String externalization class for the KIML UI plugin.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public final class Messages {
 

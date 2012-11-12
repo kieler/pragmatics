@@ -21,12 +21,24 @@ package de.cau.cs.kieler.klay.layered.graph;
  * @kieler.rating proposed yellow by msp
  */
 public class LLabel extends LShape {
+    
+    /** Enum for the definition of a side of the edge to place the (edge) label to. 
+     *  Currently supported in orthogonal edge routing.
+     */
+    public enum LSide {
+        /** The label is placed above the edge. */
+        UP,
+        /** The label is placed below the edge. */
+        DOWN;
+    }
 
     /** the serial version UID. */
     private static final long serialVersionUID = -264988654527750053L;
     
     /** text of the label. */
     private String text;
+    
+    private LSide side;
     
     /**
      * Creates a label.
@@ -66,6 +78,20 @@ public class LLabel extends LShape {
      */
     public String getText() {
         return text;
+    }
+
+    /**
+     * @return the side
+     */
+    public LSide getSide() {
+        return side;
+    }
+
+    /**
+     * @param side the side to set
+     */
+    public void setSide(final LSide side) {
+        this.side = side;
     }
     
 }

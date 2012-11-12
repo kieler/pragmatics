@@ -24,6 +24,7 @@ import de.cau.cs.kieler.kiml.service.AnalysisService;
  * 
  * @author mri
  * @author cds
+ * @kieler.ignore (excluded from review process)
  */
 public final class HtmlResultGenerator {
 

@@ -14,25 +14,19 @@
 package de.cau.cs.kieler.kiml.ogdf.options;
 
 /**
- * Definition of the quality vs speed option for fmmm.
+ * Definition of the "quality vs. speed" option for the FMMM layout algorithm.
  * 
  * @author mri
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public enum QualityVsSpeed {
-    /** best quality worst speed. */
+    
+    /** best quality, worst speed. */
     GORGEOUSANDEFFICIENT,
-    /** medium quality medium speed. */
+    /** medium quality, medium speed. */
     BEAUTIFULANDFAST,
-    /** worst quality best speed. */
+    /** worst quality, best speed. */
     NICEANDINCREDIBLESPEED;
     
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static QualityVsSpeed valueOf(final int i) {
-        return values()[i];
-    }
 }

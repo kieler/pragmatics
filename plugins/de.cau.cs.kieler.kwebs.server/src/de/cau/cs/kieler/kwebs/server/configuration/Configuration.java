@@ -84,6 +84,10 @@ public final class Configuration extends Properties {
     public static final String REST_HTTP_ADDRESS
         = PREFIX + "rest.httpAddress";
 
+    /** REST HTTP service address from outside. */
+    public static final String REST_HTTP_PUBLIC_ADDRESS
+        = PREFIX + "rest.publicHttpAddress";
+
     // Preferences for HTTPS based publishing of the REST service
 
     /** Shall REST service be published via HTTPS? */
@@ -93,6 +97,10 @@ public final class Configuration extends Properties {
     /** REST HTTPS service address. */
     public static final String REST_HTTPS_ADDRESS
         = PREFIX + "rest.httpsAddress";
+
+    /** REST HTTPY service address from outside. */
+    public static final String REST_HTTPS_PUBLIC_ADDRESS
+        = PREFIX + "rest.publicHttpyAddress";
 
     // Preferences for the HTTPS configuration, the
     // HTTPS configuration is used for both JAXWS and REST service
@@ -197,6 +205,10 @@ public final class Configuration extends Properties {
     public static final String PUBLISH_SUPPORTSERVER
         = PREFIX + "publishSupportServer";
 
+    /** Address for the support server from outside. */
+    public static final String SUPPORTINGSERVER_PUBLIC_ADDRESS
+        = PREFIX + "publicSupportServerAddress";
+
     // Management preferences
 
     /** Port on which the server listens for management requests. */
@@ -264,7 +276,7 @@ public final class Configuration extends Properties {
         = PREFIX + "frontend.https.expose.truststore";
 
     /** Disable the caching of static web pages. */
-    public static final String FRONTEND_DISBALE_CACHING
+    public static final String FRONTEND_DISABLE_CACHING
         = PREFIX + "frontend.disable.caching";
 
     /** General information like address for the contact page. */

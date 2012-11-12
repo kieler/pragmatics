@@ -17,11 +17,13 @@ import java.util.Iterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
-import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
+import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
+ * Calculates the external face. The face with the most adjacent edges is chosen to be external, if
+ * there are more edges with the same adjacent edge count, take the first found.
  * 
  * @author pkl
  */
@@ -32,8 +34,7 @@ public class ExternalFaceProcessor extends AbstractAlgorithm implements ILayoutP
      */
     public void process(final PGraph pGraph) {
         getMonitor().begin("external face processor", 1);
-
-        // Creating sink nodes for every graph face
+        pGraph.setChangedFaces();
         Iterator<PFace> it = pGraph.getFaces().iterator();
         PFace externalFace = null;
         if (it.hasNext()) {
@@ -42,12 +43,12 @@ public class ExternalFaceProcessor extends AbstractAlgorithm implements ILayoutP
                 PFace face = it.next();
                 // Choose the one with the most connected elements.
                 if (face.getAdjacentNodeCount() > externalFace.getAdjacentNodeCount()) {
-                    externalFace = face;
+                    // expansion cycle face should not be set as external face.
+                    if (face.getProperty(Properties.EXPANSION_CYCLE_FACE) == null) {
+                        externalFace = face;
+                    }
                 }
             }
-        } else {
-            throw new InconsistentGraphModelException("TamassiaOrthogonalizer, createFlowNetwork: "
-                    + "the graph has to have at least one face!");
         }
         pGraph.setExternalFace(externalFace);
 

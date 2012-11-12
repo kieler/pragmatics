@@ -53,6 +53,7 @@ import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
  * The dialog that lets the user select a graph file format and a file to export a graph into.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class ExportDialog extends Dialog {
 

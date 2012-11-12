@@ -32,19 +32,36 @@ import java.awt.Component;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * Key event overridden to wrap an SWT KeyEvent as a swing KeyEvent.
- * 
- * @author Lance Good
+ * Key event overridden to wrap an SWT KeyEvent as a swing KeyEvent.<br>
+ * <b>
+ * chsch: Added support for SWT.COMMAND key mask.<br>
+ * Question: is the SWT.COMMAND used on OSX only? Or maybe on other platforms, too, denoting the
+ * windows key?<br>
+ * <br>
+ * Since on OSX 'COMMAND' is typically used for functionality provided by 'CTRL'-based key combinations
+ * in other OSs and Mac's 'CTRL' + click is hard linked with the context menu call - thus Mac's 'CTRL'
+ * is not usable for in this context - I realized an aliasing:<br>
+ * Mac's 'COMMAND' key (SWT.COMMAND) is mapped to InputEvent.CTRL_MASK (see implementations (!) below).
+ * <br>
+ * See also https://bugs.eclipse.org/bugs/show_bug.cgi?id=340711
+ *
+ * @author Lance Good, chsch
  */
 public class PSWTKeyEvent extends KeyEvent {
     private static final long serialVersionUID = 1L;
 
+    private static final boolean OS_MACOSX = Platform.getOS().equals(Platform.OS_MACOSX);
+    
     private static Component fakeSrc = new Component() {
+
+        /** */
+        private static final long serialVersionUID = 1205379003504325954L;
     };
 
     private org.eclipse.swt.events.KeyEvent swtEvent;
@@ -74,7 +91,21 @@ public class PSWTKeyEvent extends KeyEvent {
 
     /** {@inheritDoc} */
     public boolean isControlDown() {
-        return (swtEvent.stateMask & SWT.CONTROL) != 0;
+        // chsch: since 'COMMAND' is typically used on OSX for functionality provided by
+        //  'CTRL'-based key combinations in other OSs and Mac's 'CTRL' + click is hard linked
+        //  with the context menu call - thus Mac's 'CTRL' is not usable - I realized an aliasing...
+        if (OS_MACOSX) {
+            return (swtEvent.stateMask & SWT.COMMAND) != 0;
+        } else {
+            return (swtEvent.stateMask & SWT.CONTROL) != 0;
+        }
+    }
+
+    /** {@inheritDoc} */
+    public boolean isMetaDown() {
+        // chsch: the Meta Key is currently not supported by SWT, see
+        //  https://bugs.eclipse.org/bugs/show_bug.cgi?id=340711
+        return false;
     }
 
     /** {@inheritDoc} */
@@ -91,10 +122,17 @@ public class PSWTKeyEvent extends KeyEvent {
                 modifiers = modifiers | InputEvent.ALT_MASK;
             }
             if ((swtEvent.stateMask & SWT.CONTROL) != 0) {
-                modifiers = modifiers | InputEvent.CTRL_MASK;
+                if (!OS_MACOSX) {
+                    modifiers = modifiers | InputEvent.CTRL_MASK;
+                }
             }
             if ((swtEvent.stateMask & SWT.SHIFT) != 0) {
                 modifiers = modifiers | InputEvent.SHIFT_MASK;
+            }
+            if ((swtEvent.stateMask & SWT.COMMAND) != 0) {
+                if (OS_MACOSX) {
+                    modifiers = modifiers | InputEvent.CTRL_MASK;
+                }
             }
         }
 
@@ -110,10 +148,17 @@ public class PSWTKeyEvent extends KeyEvent {
                 modifiers = modifiers | InputEvent.ALT_DOWN_MASK;
             }
             if ((swtEvent.stateMask & SWT.CONTROL) != 0) {
-                modifiers = modifiers | InputEvent.CTRL_DOWN_MASK;
+                if (!OS_MACOSX) {
+                    modifiers = modifiers | InputEvent.CTRL_DOWN_MASK;
+                }
             }
             if ((swtEvent.stateMask & SWT.SHIFT) != 0) {
                 modifiers = modifiers | InputEvent.SHIFT_DOWN_MASK;
+            }
+            if ((swtEvent.stateMask & SWT.COMMAND) != 0) {
+                if (OS_MACOSX) {
+                    modifiers = modifiers | InputEvent.CTRL_MASK;
+                }
             }
         }
 

@@ -19,9 +19,8 @@ import java.util.Map;
  * The class that contains the results of a batch job.
  * 
  * @author mri
- * 
- * @param <T>
- *            the parameter type
+ * @kieler.ignore (excluded from review process)
+ * @param <T> the parameter type
  */
 public class BatchJobResult<T> {
 

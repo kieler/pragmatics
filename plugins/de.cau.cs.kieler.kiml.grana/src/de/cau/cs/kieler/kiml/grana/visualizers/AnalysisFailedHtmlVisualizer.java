@@ -21,6 +21,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisFailed;
  * The html visualizer for failed analyses.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class AnalysisFailedHtmlVisualizer extends
         AbstractSimpleVisualizer<String> {

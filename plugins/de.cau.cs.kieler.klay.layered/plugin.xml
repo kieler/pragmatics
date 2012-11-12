@@ -114,8 +114,16 @@
                option="de.cau.cs.kieler.klay.layered.nodePlace">
          </knownOption>
          <knownOption
-               default="true"
-               option="de.cau.cs.kieler.klay.layered.edgeBends">
+               default="NONE"
+               option="de.cau.cs.kieler.klay.layered.fixedAlignment">
+         </knownOption>
+         <knownOption
+               default="SMART"
+               option="de.cau.cs.kieler.klay.layered.LabelSide">
+         </knownOption>
+         <knownOption
+               default="OUTSIDE"
+               option="de.cau.cs.kieler.klay.layered.portLabelPlacement">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -130,7 +138,7 @@
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy"
             default="GREEDY"
-            description="Strategy for cycle breaking."
+            description="Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines which edges to reverse to break the cycles. Reversed edges will end up pointing to the opposite direction of regular edges (that is, reversed edges will point left if edges usually point right)."
             id="de.cau.cs.kieler.klay.layered.cycleBreaking"
             name="Cycle Breaking"
             type="enum"
@@ -218,9 +226,10 @@
          </dependency>
       </layoutOption>
       <layoutOption
+            advanced="true"
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy"
-            default="LINEAR_SEGMENTS"
+            default="BRANDES_KOEPF"
             description="Strategy for Node Placement"
             id="de.cau.cs.kieler.klay.layered.nodePlace"
             name="Node Placement"
@@ -237,14 +246,41 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="true"
-            description="Tells the BK node placer to try to reduce edge bends. Otherwise it tries a more balanced placement."
-            id="de.cau.cs.kieler.klay.layered.edgeBends"
-            name="Less Edge Bends"
-            type="boolean">
+            class="de.cau.cs.kieler.klay.layered.properties.FixedAlignment"
+            default="NONE"
+            description="Tells the BK node placer to use a certain alignment instead of taking the optimal result."
+            id="de.cau.cs.kieler.klay.layered.fixedAlignment"
+            name="Fixed Alignment"
+            type="enum">
          <dependency
                option="de.cau.cs.kieler.klay.layered.nodePlace"
                value="BRANDES_KOEPF">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelectionStrategy"
+            default="SMART"
+            description="Method to decide on edge label sides."
+            id="de.cau.cs.kieler.klay.layered.LabelSide"
+            name="Label Side"
+            type="enum">
+         <dependency
+               option="de.cau.cs.kieler.edgeRouting"
+               value="ORTHOGONAL">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.properties.PortLabelPlacement"
+            default="OUTSIDE"
+            description="Decides on a placement method for port labels."
+            id="de.cau.cs.kieler.klay.layered.portLabelPlacement"
+            name="Port Label Placement"
+            type="enum">
+         <dependency
+               option="de.cau.cs.kieler.edgeRouting"
+               value="ORTHOGONAL">
          </dependency>
       </layoutOption>
    </extension>

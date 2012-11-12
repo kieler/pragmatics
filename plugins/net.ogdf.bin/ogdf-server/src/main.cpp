@@ -1,7 +1,7 @@
 /**
- * @file
- * @author  mri (mri@informatik.uni-kiel.de)
- * @version 0.1.0.qualifier
+ * @file    main.cpp
+ * @author  mri@informatik.uni-kiel.de
+ * @version 0.1.0
  *
  * @section LICENSE
  *
@@ -41,25 +41,21 @@
 using namespace std;
 using namespace ogdf;
 
-/*
- * Definitions
- */
-
+/* Delete the given object if it has not been deleted yet. */
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(a) if(a) { delete a; a = 0; }
 #endif
 
+/* The keyword used to separate parts of the data transmission. */
 #define CHUNK_KEYWORD "[CHUNK]\n"
 
+/* Enumeration of graph input formats. */
 enum GraphInputFormat {
 	OGML, GML
 };
 
 #define ERROR_GRAPH_READ_FAILED  "Could not parse the received graph."
 
-/*
- * Function prototypes
- */
 
 /**
  * Handles a layout request, which consists of reading the graph and layout
@@ -214,6 +210,11 @@ int main(int argc, char* argv[]) {
 	}
 }
 
+/*
+ * Handles a layout request, which consists of reading the graph and layout
+ * options from the input stream, performing the actual layout using the OGDF
+ * library and writing the results back to an output stream.
+ */
 void HandleRequest(chunk_istream& in, ostream& out,
 		GraphInputFormat graphInputFormat) {
 	// read the graph
@@ -226,11 +227,11 @@ void HandleRequest(chunk_istream& in, ostream& out,
 	bool graphRead = ReadGraph(in, G, CG, *GA, graphInputFormat);
 	// read the layout options
 	in.nextChunk();
-	map < string, string > options;
+	map<string, string> options;
 	ReadKeyValuePairs(in, options);
 	// read additionalInformation
 	in.nextChunk();
-	map < string, string > information;
+	map<string, string> information;
 	ReadKeyValuePairs(in, information);
 	if (graphRead) {
 		// perform the layout
@@ -250,12 +251,15 @@ void HandleRequest(chunk_istream& in, ostream& out,
 	}
 }
 
+/*
+ * Reads a graph in the specified graph input format from the stream.
+ */
 bool ReadGraph(istream& in, Graph& G, ClusterGraph& CG,
 		ClusterGraphAttributes& GA, GraphInputFormat graphInputFormat) {
 	switch (graphInputFormat) {
 	case OGML: {
 		OgmlParser parser;
-		bool parseDone = parser.read(&in, G, CG, GA);
+		bool parseDone = parser.read(in, G, CG, GA);
 		return parseDone;
 	}
 	case GML: {
@@ -268,6 +272,10 @@ bool ReadGraph(istream& in, Graph& G, ClusterGraph& CG,
 	}
 }
 
+/*
+ * Reads key-value-pairs separated by newline from the stream and returns them
+ * in a map.
+ */
 void ReadKeyValuePairs(istream& in, map<string, string>& options) {
 	string buf;
 	while (in.good()) {
@@ -281,6 +289,10 @@ void ReadKeyValuePairs(istream& in, map<string, string>& options) {
 	}
 }
 
+/*
+ * Parses a key-value-pair from the buffer and adds it to the map of pairs.
+ * Returns whether the buffer could successfully be parsed.
+ */
 bool ReadKeyValuePair(string& buf, map<string, string>& pairs) {
 	size_t pos = buf.find_first_of('=');
 	if (pos == string::npos) {
@@ -295,6 +307,11 @@ bool ReadKeyValuePair(string& buf, map<string, string>& pairs) {
 	return true;
 }
 
+/*
+ * Writes the layout information for the given graph including the layout
+ * information for all nodes and edges as specified in the graph attributes
+ * to the output stream.
+ */
 void WriteGraphLayout(ostream& os, GraphAttributes& GA, Graph& G,
 		LabelInterface& LI) {
 	DRect bb = GA.boundingBox();
@@ -315,11 +332,19 @@ void WriteGraphLayout(ostream& os, GraphAttributes& GA, Graph& G,
 	os << "DONE" << endl;
 }
 
+/*
+ * Writes the layout information for a given node as specified in the graph
+ * attributes to the output stream.
+ */
 void WriteNodeLayout(ostream& os, GraphAttributes& GA, node v) {
 	os << GA.labelNode(v) << "=" << "(" << GA.x(v) << "," << GA.y(v) << "),"
 			<< "(" << GA.width(v) << "," << GA.height(v) << ")" << endl;
 }
 
+/*
+ * Writes the layout information for a given edge as specified in the graph
+ * attributes to the output stream.
+ */
 void WriteEdgeLayout(ostream& os, GraphAttributes& GA, edge e) {
 	DPolyline& bends = GA.bends(e);
 	bends.unify();
@@ -337,11 +362,15 @@ void WriteEdgeLayout(ostream& os, GraphAttributes& GA, edge e) {
 	os << endl;
 }
 
+/*
+ * Writes the layout information for the labels of a given edge as specified in
+ * the graph attributes and the label interface to the output stream.
+ */
 void WriteLabelLayout(ostream& os, GraphAttributes& GA, LabelInterface& LI,
 		edge e) {
 	EdgeLabel<double>& label = LI.getLabel(e);
-	for (int type = 0; type < labelNum; ++type) {
-		eLabelTyp labelType = (eLabelTyp) type;
+	for (int type = 0; type < elNumLabels; ++type) {
+		eLabelType labelType = (eLabelType) type;
 		if (label.usedLabel(labelType)) {
 			os << GA.labelEdge(e) << EDGE_LABEL_SUFFIX << type << "=("
 					<< label.getX(labelType) << "," << label.getY(labelType) << ")"
@@ -350,6 +379,9 @@ void WriteLabelLayout(ostream& os, GraphAttributes& GA, LabelInterface& LI,
 	}
 }
 
+/*
+ * Writes an error message to the output stream.
+ */
 void WriteError(ostream& os, const string& message) {
 	os << "ERROR" << endl << message << endl << "DONE" << endl;
 }

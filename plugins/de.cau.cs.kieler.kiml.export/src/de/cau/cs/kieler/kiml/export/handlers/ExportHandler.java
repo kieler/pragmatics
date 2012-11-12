@@ -51,6 +51,7 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
  * The handler that is responsible for exporting graphs from graphical diagrams.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class ExportHandler extends AbstractHandler {
 
@@ -107,7 +108,7 @@ public class ExportHandler extends AbstractHandler {
         transData.setSourceGraph(graph);
         IGraphTransformer<KNode, T> transformer = transHandler.getExporter();
         transformer.transform(transData);
-        return transHandler.serialize(transData.getTargetGraphs().get(0));
+        return transHandler.serialize(transData);
     }
     
     /**

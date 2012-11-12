@@ -17,6 +17,7 @@ package de.cau.cs.kieler.klay.planar.p1planar;
  * An enum layout option to choose a planarity test algorithm.
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public enum PlanarityTestStrategy {
 

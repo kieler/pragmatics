@@ -14,28 +14,16 @@
 package de.cau.cs.kieler.klighd.transformations;
 
 import java.lang.reflect.Method;
-//import java.util.Map;
-//
-//import com.google.common.collect.HashMultimap;
-//import com.google.common.collect.Maps;
-//import com.google.common.collect.Multimap;
+import java.util.Collections;
+import java.util.Set;
 
-import de.cau.cs.kieler.core.WrappedException;
-import de.cau.cs.kieler.core.ui.KielerModelException;
 import de.cau.cs.kieler.klighd.ITransformation;
 import de.cau.cs.kieler.klighd.TransformationContext;
+import de.cau.cs.kieler.klighd.TransformationOption;
 
 /**
  * An abstract base class for KLighD model transformations.<br>
  * Provides a {@code transform} method with a simpler signature.
- * 
- * chsch: Currently it is not clear for, whether we need the
- * getSourceElement/getTargetElement methods, since my current
- * transformation save the mapping immediately in the related context
- * so the context does not need to ask the transformation for that
- * (and actually does not do that).
- * However I might imaging that this feature is desirable in some context
- * so I leave the methods still in here.
  * 
  * @author mri
  * 
@@ -59,23 +47,44 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
         this.currentContext = transformationContext;
         this.currentContext.clear();
     }
+    
+    /**
+     * Getter.
+     * 
+     * @return the currently used transformation context or <code>null</code> if no one is set.
+     */
+    protected TransformationContext<S, T> getUsedContext() {
+        return this.currentContext;
+    }
 
     /**
-     * {@inheritDoc}
+     * Convenience getter.
+     * 
+     * @param option the option to evaluate the configuration state / the configured value.
+     * @return the configured value of {@link TransformationOption} option.
      */
-    public Object getSourceElement(final Object element,
-            final TransformationContext<S, T> transformationContext) {
-        return this.currentContext.getSourceElement(element);
+    public Object getOptionValue(final TransformationOption option) {
+        return this.getUsedContext().getOptionValue(option);
     }
     
     /**
-     * {@inheritDoc}
+     * Convenience getter.
+     * 
+     * @param option the option to evaluate the configuration state / the configured value.
+     * @return the configured value of {@link TransformationOption} option.
      */
-    public Object getTargetElement(final Object element,
-            final TransformationContext<S, T> transformationContext) {
-        return this.currentContext.getTargetElement(element);
+    public Boolean getOptionBooleanValue(final TransformationOption option) {
+        Object result = this.getUsedContext().getOptionValue(option);
+        if (result instanceof Boolean) {
+            return (Boolean) result; 
+        } else {
+            throw new IllegalArgumentException("KLighD transformation option handling: "
+                    + "The transformation " + this
+                    + " attempted to evaluate the non-Boolean valued transformation option "
+                    + option.getName() + "expecting a Boolean value.");
+        }
     }
-
+    
     /**
      * Method to put a pair of source target into the lookup table.<br>
      * Name, Parameter ordering, and return value (the target) are optimized for
@@ -92,11 +101,10 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
      */
     protected <D> D putToLookUpWith(final D derived, final Object source) {
         if (this.currentContext == null) {
-            throw new WrappedException(new KielerModelException("KLighD transformation "
+            throw new IllegalStateException("KLighD transformation "
                     + this.getClass().getCanonicalName()
                     + " uses 'putToLookUp(...) and probably does not invoke"
-                    + "'use(TransformationContxt)' at the beginning of its 'transform()' method",
-                    this));
+                    + "'use(TransformationContxt)' at the beginning of its 'transform()' method");
         }
         this.currentContext.addSourceTargetPair(source, derived);
         return derived;
@@ -158,6 +166,16 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
      */
     public boolean supports(final Object model) {
         return true;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * Concrete transformations are supposed to override this method in order to register
+     * {@link TransformationOption TransformationOptions}. 
+     */
+    public Set<TransformationOption> getTransformationOptions() {
+        return Collections.emptySet();
     }
 
 

@@ -29,8 +29,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
 /**
  * Request for automatic layout on a set of edit parts of a diagram.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class ApplyLayoutRequest extends Request {
 

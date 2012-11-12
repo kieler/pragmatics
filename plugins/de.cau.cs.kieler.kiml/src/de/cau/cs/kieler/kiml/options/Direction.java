@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.kiml.options;
 
 /**
- * Definition of layout directions.
+ * Definition of layout directions. To be accessed using {@link LayoutOptions#DIRECTION}.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating proposed yellow 2012-07-10 msp

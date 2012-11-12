@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klighd;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
@@ -29,7 +30,9 @@ import com.google.common.collect.Multimap;
  * @param <T>
  *            the type of the target model
  */
-public final class TransformationContext<S, T> {
+public class TransformationContext<S, T> {
+    // SUPPRESS CHECKSTYLE PREVIOUS FinalClass
+    //  chsch: Since I need a subclass of this one this class cannot be final.
 
     /**
      * Creates a transformation context for a given transformation.
@@ -46,7 +49,50 @@ public final class TransformationContext<S, T> {
             final ITransformation<S, T> transformation) {
         TransformationContext<S, T> transformationContext = new TransformationContext<S, T>();
         transformationContext.transformation = transformation;
+        for (TransformationOption option: transformationContext.getTransformationOptions()) {
+            transformationContext.configureOption(option, option.getInitialValue());
+        }
         return transformationContext;
+    }
+    
+    /**
+     * Creates an aliasing {@link TransformationContext} allowing to reuse parts of
+     * "third party" {@link ITransformation ITransformations}.
+     * 
+     * @param <S>
+     *            the type of the source model
+     * @param <T>
+     *            the type of the target model
+     * @param theOriginal
+     *            the original context to be aliased
+     * @return the intended transformation context
+     */
+    public static <S, T> TransformationContext<S, T> createAlias(
+            final TransformationContext<?, T> theOriginal) {
+        return new TransformationContext<S, T>() {
+            
+            private TransformationContext<?, T> original = theOriginal;
+            
+            /**
+             * Getter.
+             * 
+             * @param option the option to evaluate the configuration state / the configured value.
+             * @return the configured value of {@link TransformationOption} option.
+             */
+            public Object getOptionValue(final TransformationOption option) {
+                return this.original.getOptionValue(option);
+            }
+            
+            /**
+             * Put a pair of a model and a derived element into the lookup table.
+             * 
+             * @param derived the derived element
+             * @param model the model element
+             */
+            public void addSourceTargetPair(final Object model, final Object derived) {
+                this.original.addSourceTargetPair(model, derived);
+            }
+        };
     }
 
     /** the transformation in this context. */
@@ -69,6 +115,64 @@ public final class TransformationContext<S, T> {
      */
     public ITransformation<S, T> getTransformation() {
         return transformation;
+    }
+    
+    private Set<TransformationOption> transformationOptions = null;
+    
+    /**
+     * Returns the set of {@link TransformationOption TransformationOptions} declared by the
+     * transformation and forward to the users in the UI in order to allow them to influence the
+     * transformation result. The provider method of the transformation is ask only once in order
+     * to prevent any manipulation on the configured option at runtime.
+     * 
+     * @return the set of {@link TransformationOption TransformationOptions}
+     */
+    public Set<TransformationOption> getTransformationOptions() {
+        if (this.transformationOptions == null) {
+            this.transformationOptions = transformation.getTransformationOptions();
+        }
+        return this.transformationOptions;
+    }
+    
+    /** Memory of the configured transformation options to be evaluated by the transformation. */
+    private Map<TransformationOption, Object> configuredOptions = Maps.newHashMap();
+        
+    /**
+     *
+     * @param option the {@link TransformationOption} to set
+     * @param value the value of the {@link TransformationOption}
+     */
+    public void configureOption(final TransformationOption option, final Object value) {
+        
+        if (option == null || !this.transformationOptions.contains(option)) {
+            throw new IllegalArgumentException("KLighD transformation option handling: "
+                    + "Attempted to configure illegal option ("
+                    + (option == null ? null : option.getName())
+                    + "), which is not introduced by the transformation "
+                    + this.transformation + ".");
+        }
+        
+        if (value == null) {
+            configuredOptions.remove(option);
+        } else {
+            configuredOptions.put(option, value);
+        }
+    }
+    
+    /**
+     * Getter.
+     * 
+     * @param option the option to evaluate the configuration state / the configured value.
+     * @return the configured value of {@link TransformationOption} option.
+     */
+    public Object getOptionValue(final TransformationOption option) {
+        
+        if (option == null) {
+            throw new IllegalArgumentException("KLighD transformation option handling: "
+                    + "The transformation " + this.transformation
+                    + " attempted to evaluate the transformation option \"null\".");
+        }        
+        return this.configuredOptions.get(option);
     }
 
     /**

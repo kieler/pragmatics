@@ -17,27 +17,32 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.klay.planar.Util;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.pathfinding.DijkstraPathFinder;
+import de.cau.cs.kieler.klay.planar.util.PUtil;
 
 /**
- * A own implementation of flow solving.
+ * This flow solver iterates over all edges and updates the flow of each node according to the sum
+ * of incoming and outgoing edge flows. If the sum of the incoming edge flow is higher than the sum
+ * of the outgoing edge flow of a node, the shortest edge path to the sink node is increased with
+ * the flow gap in order to ensure the mass balancing. This ensures that each sum of incoming flow
+ * == sum of outgoing flow of each node. if the sum outgoing flow is higher than the sum of the
+ * incoming, the shortest edge path to the source node is increased, respectively. Works only with
+ * the assumption that the lower bound of every edge is 1 and edge cost = 1. No flow is already set
+ * or if set it isn't considered. The capacity of each edge is dealt as infinite. Additionally
+ * source and target node are needed, which contains only outgoing or incoming edges respectively.
  * 
  * @author pkl
+ * @kieler.rating yellow 2012-11-01 review KI-30 by ima, cds
  */
 public class SimpleFlowSolver extends AbstractAlgorithm implements IFlowNetworkSolver {
-    // TODO to comment
 
     /**
-     * {@inheritDoc} Works only with the assumption that the lower bound of every edge is 1 and edge
-     * cost = 1. No flow is already set or if set it isn't considered. The capacity of each edge is
-     * dealt as infinite. Additionally a source and a target node are needed, which contains only
-     * outgoing or incoming edges respectively.
+     * {@inheritDoc}
      */
-    public void findFlow(final PGraph network) {
+    public void calcFlow(final PGraph network) {
 
         PNode source = null;
         PNode sink = null;
@@ -52,50 +57,43 @@ public class SimpleFlowSolver extends AbstractAlgorithm implements IFlowNetworkS
             }
         }
 
-        // TODO Maybe check if source and sink are set or do it in a unit test
-        // Additionally check if the source.edges.flowcount == target.edges.flowcount!
-        // - only one source and target node are allowed to exist.
-
         // by default set flow of edges to 1
         for (PEdge edge : network.getEdges()) {
             edge.setProperty(IFlowNetworkSolver.FLOW, 1);
         }
 
-        // perform a bfs to order after bfs starting with the source.
-        List<PNode> bfsNodeList = Util.bfsNodes(network, source);
+        // Perform a bfs. Each found element is stored in the bfsNodeList, it is started with
+        // the source node.
+        List<PNode> bfsNodeList = PUtil.bfsNodes(network, source);
         for (PNode node : bfsNodeList) {
 
-            Iterator<PEdge> incomingIterator = node.incomingEdges().iterator();
-            Iterator<PEdge> outgoingIterator = node.outgoingEdges().iterator();
-
-            // source or target node has not to check!
-            if (!incomingIterator.hasNext() || !outgoingIterator.hasNext()) {
+            if (node == source || node == sink) {
                 continue;
             }
 
             // count incoming flow;
-            int incomingFlow = countFlow(incomingIterator);
+            int incomingFlow = countFlow(node.incomingEdges().iterator());
             // count outgoing flow;
-            int outgoingFlow = countFlow(outgoingIterator);
+            int outgoingFlow = countFlow(node.outgoingEdges().iterator());
 
-            int additionalFlow = outgoingFlow - incomingFlow;
-            if (additionalFlow > 0) {
+            int gap = outgoingFlow - incomingFlow;
+            if (gap > 0) {
                 // calc shortest path to source.
                 List<PEdge> reversePath = new DijkstraPathFinder().findReversePath(node, source);
                 // add additional flow to all flow edges along that path
                 for (PEdge pEdge : reversePath) {
                     pEdge.setProperty(IFlowNetworkSolver.FLOW,
-                            pEdge.getProperty(IFlowNetworkSolver.FLOW) + additionalFlow);
+                            pEdge.getProperty(IFlowNetworkSolver.FLOW) + gap);
                 }
 
-            } else if (additionalFlow < 0) {
+            } else if (gap < 0) {
                 // calc shortest path to sink.
-                List<PEdge> reversePath = new DijkstraPathFinder().findPath(node, sink);
+                List<PEdge> path = new DijkstraPathFinder().findPath(node, sink);
                 // add additional flow to all flow edges along that path
-                for (PEdge pEdge : reversePath) {
+                for (PEdge pEdge : path) {
+                    // gap is negative so we have to subtract it to add it.
                     pEdge.setProperty(IFlowNetworkSolver.FLOW,
-                            pEdge.getProperty(IFlowNetworkSolver.FLOW) - additionalFlow);
-                    // additionalFlow is negative so we have to subtract it to add it.
+                            pEdge.getProperty(IFlowNetworkSolver.FLOW) - gap);
                 }
 
             } else {

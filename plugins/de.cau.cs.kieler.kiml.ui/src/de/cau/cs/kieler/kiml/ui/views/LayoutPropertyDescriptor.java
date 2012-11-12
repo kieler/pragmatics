@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
+import java.util.EnumSet;
+
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellEditorValidator;
@@ -35,9 +37,15 @@ import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
  * A property descriptor for layout options.
+ * 
+ * <p>Here's a small peculiarity concerning the descriptions of layout options: calling
+ * {@link #getDescription()} only returns the first sentence of an option's description,
+ * to be displayed in the status bar. To retrieve the full description, call
+ * {@link #getFullDescription()}.</p>
  *
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating yellow 2012-10-26 review KI-29 by cmot, sgu
  */
 public class LayoutPropertyDescriptor implements IPropertyDescriptor {
 
@@ -61,7 +69,9 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                     return images.getPropFalse();
                 }
             case REMOTE_ENUM:
+            case REMOTE_ENUMSET:
             case ENUM:
+            case ENUMSET:
                 return images.getPropChoice();
             case INT:
                 return images.getPropInt();
@@ -76,6 +86,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
          * {@inheritDoc}
          */
         @Override
+        @SuppressWarnings("rawtypes")
         public String getText(final Object element) {
             switch (optionData.getType()) {
             case STRING:
@@ -96,9 +107,37 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                 }
             case BOOLEAN:
             case REMOTE_ENUM:
-                return optionData.getChoices()[(Integer) element];
             case ENUM:
                 return optionData.getChoices()[(Integer) element];
+            case REMOTE_ENUMSET:
+            case ENUMSET:
+                if (element instanceof String) {
+                    return (String) element;
+                } else if (element instanceof String[]) {
+                    String[] arr = (String[]) element;
+                    if (arr.length == 0) {
+                        return "";
+                    } else {
+                        StringBuilder builder = new StringBuilder();
+                        
+                        for (String s : arr) {
+                            builder.append(", ").append(s);
+                        }
+                        
+                        return builder.substring(2);
+                    }
+                } else if (element instanceof EnumSet) {
+                    EnumSet set = (EnumSet) element;
+                    if (set.isEmpty()) {
+                        return "";
+                    }
+                    
+                    StringBuilder builder = new StringBuilder();
+                    for (Object o : set) {
+                        builder.append(", " + ((Enum) o).name());
+                    }
+                    return builder.substring(2);
+                }
             default:
                 return element.toString();
             }
@@ -127,7 +166,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         switch (optionData.getType()) {
         case STRING:
             if (LayoutOptions.ALGORITHM.equals(optionData)) {
-                return new LayouterHintCellEditor(parent);
+                return new AlgorithmCellEditor(parent);
             } else {
                 return new TextCellEditor(parent);
             }
@@ -161,6 +200,9 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         case REMOTE_ENUM:
         case ENUM:
             return new ComboBoxCellEditor(parent, optionData.getChoices(), SWT.READ_ONLY);
+        case REMOTE_ENUMSET:
+        case ENUMSET:
+            return new MultipleOptionsCellEditor(parent, optionData.getChoices());
         case OBJECT:
             return new TextCellEditor(parent);
         default:
@@ -179,6 +221,25 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * {@inheritDoc}
      */
     public String getDescription() {
+        // We only return the first sentence of the description. The longer description
+        // can be retrieved by calling getLongDescription.
+        String description = optionData.getDescription();
+        int firstPeriodIndex = description.indexOf('.');
+        
+        if (firstPeriodIndex > 0) {
+            return description.substring(0, firstPeriodIndex + 1);
+        } else {
+            return description;
+        }
+    }
+    
+    /**
+     * Returns the option's full description. This is in contrast to {@link #getDescription()},
+     * which only returns the description's first sentence.
+     * 
+     * @return the full description.
+     */
+    public String getLongDescription() {
         return optionData.getDescription();
     }
 

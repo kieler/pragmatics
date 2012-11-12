@@ -37,7 +37,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 import de.cau.cs.kieler.kiml.grana.batch.Batch;
 import de.cau.cs.kieler.kiml.grana.batch.BatchJob;
@@ -46,12 +45,14 @@ import de.cau.cs.kieler.kiml.grana.batch.CSVResultSerializer;
 import de.cau.cs.kieler.kiml.grana.batch.DiagramKGraphProvider;
 import de.cau.cs.kieler.kiml.grana.batch.IBatchResultSerializer;
 import de.cau.cs.kieler.kiml.grana.ui.BatchWizard;
+import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
 
 /**
  * The handler which is responsible for setting up an analysis batch run by launching the
  * appropriate wizard and executing it.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class BatchHandler extends AbstractHandler {
 

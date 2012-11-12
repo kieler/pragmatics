@@ -40,6 +40,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * number of analyses specifed in these categories.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class AnalysisSelectionViewer extends Composite implements ISelectionChangedListener {
 

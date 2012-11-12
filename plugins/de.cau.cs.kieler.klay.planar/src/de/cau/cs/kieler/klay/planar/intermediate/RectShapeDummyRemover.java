@@ -72,17 +72,20 @@ public class RectShapeDummyRemover extends AbstractAlgorithm implements ILayoutP
             }
         }
 
-        PEdge removableEdge = null;
+        PEdge removableEdge;
         for (PNode dummy : dummyNodes) {
+            removableEdge = null;
             for (PEdge edge : dummy.adjacentEdges()) {
-                if (edge.hasProperties() && edge.getProperty(Properties.RECT_SHAPE_DUMMY) != null) {
+                if (edge.getProperty(Properties.RECT_SHAPE_DUMMY) != null) {
                     // Only the rect shape dummy edge has this property.
                     removableEdge = edge;
                     break;
                 }
             }
 
-            graph.removeEdge(removableEdge);
+            if (removableEdge != null) {
+                graph.removeEdge(removableEdge);
+            }
             Iterator<PEdge> edgeIt;
             switch (dummy.getAdjacentEdgeCount()) {
             case 0:
@@ -98,7 +101,7 @@ public class RectShapeDummyRemover extends AbstractAlgorithm implements ILayoutP
                 PEdge second = edgeIt.next();
 
                 // Check for origin is needed, because the original edge should is kept.
-                if (first.hasProperties() && first.getProperty(Properties.ORIGIN) != null) {
+                if (first.getProperty(Properties.ORIGIN) != null) {
                     graph.bridgeOverEdge(first, first.getOppositeNode(dummy),
                             second.getOppositeNode(dummy));
                 } else {
@@ -117,7 +120,7 @@ public class RectShapeDummyRemover extends AbstractAlgorithm implements ILayoutP
         // Dummy edges can be exist without dummy nodes.
         List<PEdge> dummyEdges = new LinkedList<PEdge>();
         for (PEdge pEdge : graph.getEdges()) {
-            if (pEdge.hasProperties() && pEdge.getProperty(Properties.RECT_SHAPE_DUMMY) != null) {
+            if (pEdge.getProperty(Properties.RECT_SHAPE_DUMMY) != null) {
                 dummyEdges.add(pEdge);
             }
         }

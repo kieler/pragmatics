@@ -25,10 +25,10 @@ import java.util.Stack;
  * A graph structure for expressing and resolving object dependencies.
  * 
  * @author mri
- * @param <S>
- *            the identifier type
- * @param <T>
- *            the object type
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
+ * @param <S> the identifier type
+ * @param <T> the object type
  */
 public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
 

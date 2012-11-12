@@ -30,6 +30,7 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
  * 
  * @author ocl
  * @author pkl
+ * @kieler.rating yellow 2012-10-09 review KI-16 by ckru, cds
  */
 public class OrthogonalRepresentation {
 
@@ -49,9 +50,6 @@ public class OrthogonalRepresentation {
 
         /** A 360 degree angle, or full circle. */
         FULL;
-
-        /** The index of a full angle. */
-        public static final int FULL_ANGLE_INDEX = 3;
 
         /**
          * Maps ordinal to the enum.
@@ -75,7 +73,7 @@ public class OrthogonalRepresentation {
             default:
                 throw new IllegalArgumentException(
                         "Orthogonal Represenstation: the mapping fails because"
-                                + "of a unknown angle int:" + angleInt);
+                                + "of an unknown angle int: " + angleInt);
             }
         }
     }
@@ -117,6 +115,17 @@ public class OrthogonalRepresentation {
     }
 
     /**
+     * Removes all bend-data of an edge. Secondly the edge is removed from the orthogonal
+     * representation.
+     * 
+     * @param edge
+     *            to be removed edge
+     */
+    public void removeBendEntry(final PEdge edge) {
+        this.bendData.remove(edge);
+    }
+
+    /**
      * Get the angles in a node in the graph.
      * 
      * @param node
@@ -139,6 +148,17 @@ public class OrthogonalRepresentation {
      */
     public void setAngles(final PNode node, final List<Pair<PEdge, OrthogonalAngle>> angles) {
         this.angleData.put(node, angles);
+    }
+
+    /**
+     * Removes all angle-data of a node. Secondly the node is removed from the orthogonal
+     * representation.
+     * 
+     * @param node
+     *            to be removed node
+     */
+    public void removeAngleEntry(final PNode node) {
+        this.angleData.remove(node);
     }
 
 }

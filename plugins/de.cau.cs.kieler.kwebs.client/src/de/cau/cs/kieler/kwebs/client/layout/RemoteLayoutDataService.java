@@ -52,7 +52,7 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
      */
     public static synchronized void create() {
         RemoteLayoutDataService lds = LayoutDataService.getInstanceOf(
-                LayoutDataService.REMOTEDATASERVICE);
+                RemoteLayoutDataService.class.getCanonicalName());
         if (lds == null) {
             lds = new RemoteLayoutDataService();
             LayoutDataService.addService(lds);
@@ -63,23 +63,25 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
      * 
      */
     public static synchronized void resetInstance() {
-        RemoteLayoutDataService lds =
-            LayoutDataService.getInstanceOf(
-                LayoutDataService.REMOTEDATASERVICE
-        );
+        String remoteMode = RemoteLayoutDataService.class.getCanonicalName();
+        RemoteLayoutDataService remoteService = LayoutDataService.getInstanceOf(remoteMode);
         // Remember current mode
         String currentMode = LayoutDataService.getMode();
-        if (lds != null) {          
+        if (remoteService != null) {          
             // Set the mode temporarily to local mode since the
             // RemoteLayoutDataService instance can only be removed
             // if it is not the currently active instance.
-            LayoutDataService.setMode(ECLIPSEDATASERVICE);            
-            LayoutDataService.removeService(lds);
+            if (remoteMode.equals(currentMode)) {
+                LayoutDataService.setMode(ECLIPSE_DATA_SERVICE);
+            }
+            LayoutDataService.removeService(remoteService);
         }
         // Create new RemoteLayoutDataService instance and register it
         create();
-        // Switch back to original mode
-        LayoutDataService.setMode(currentMode);
+        if (currentMode != null) {
+            // Switch back to original mode
+            LayoutDataService.setMode(currentMode);
+        }
     }
 
     /**
@@ -88,9 +90,7 @@ public final class RemoteLayoutDataService extends ServiceDataLayoutDataService 
      * @return the singleton instance.
      */
     public static synchronized RemoteLayoutDataService getInstance() {
-        return LayoutDataService.getInstanceOf(
-            LayoutDataService.REMOTEDATASERVICE
-        );
+        return LayoutDataService.getInstanceOf(RemoteLayoutDataService.class.getCanonicalName());
     }
 
     /**

@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import org.junit.Test;
 
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
-import de.cau.cs.kieler.klay.planar.Util;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
@@ -30,6 +29,7 @@ import de.cau.cs.kieler.klay.planar.p1planar.BoyerMyrvoldPlanarSubgraphBuilder;
 import de.cau.cs.kieler.klay.planar.p1planar.EdgeInsertionPlanarization;
 import de.cau.cs.kieler.klay.planar.p1planar.LRPlanarSubgraphBuilder;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
+import de.cau.cs.kieler.klay.planar.util.PUtil;
 
 /**
  * 
@@ -67,7 +67,7 @@ public class PlanarizationTest {
             }
         }
         System.out.println(pgraph.toString());
-        Util.storeGraph(pgraph, 0, false);
+        PUtil.storeGraph(pgraph, 0, false);
         System.out.println(pgraph.getFaceCount() + " faces after step " + 0);
         // checks if the implementation of BoyerMyrvold approach generates correct planar subgraphs.
         final PGraph bmSubgraph = testSubgraphBuilder(new BoyerMyrvoldPlanarSubgraphBuilder(),
@@ -77,9 +77,9 @@ public class PlanarizationTest {
         // 1);
         System.out.println(bmSubgraph.toString());
         System.out.println(bmSubgraph.getFaceCount() + " faces after step " + 1);
-        Util.storeGraph(bmSubgraph, 1, false);
+        PUtil.storeGraph(bmSubgraph, 1, false);
         testEdgeInserter(bmSubgraph, 1);
-        Util.storeGraph(bmSubgraph, 2, false);
+        PUtil.storeGraph(bmSubgraph, 2, false);
         System.out.println(bmSubgraph.toString());
         System.out.println(bmSubgraph.getFaceCount() + " faces after step " + 2);
         // testEdgeInserter(lrSubgraph, 1);

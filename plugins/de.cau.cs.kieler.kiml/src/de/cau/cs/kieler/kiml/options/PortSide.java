@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.kiml.options;
 
 /**
- * Definition of port sides on a node.
+ * Definition of port sides on a node. To be accessed using {@link LayoutOptions#PORT_SIDE}.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating proposed yellow 2012-07-10 msp

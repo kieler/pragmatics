@@ -26,6 +26,7 @@ import de.cau.cs.kieler.kiml.grana.GranaPlugin;
  * This page lets the user select a file for the results of the batch.
  * 
  * @author mri
+ * @kieler.ignore (excluded from review process)
  */
 public class BatchResultFilePage extends WizardNewFileCreationPage {
 

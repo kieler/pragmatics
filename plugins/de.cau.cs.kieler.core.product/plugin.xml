@@ -11,7 +11,7 @@
             name="KIELER">
          <property
                name="aboutText"
-               value="KIELER - a research project on enhancing the model-based design of complex systems.&#x0A;&#x0A;http://www.informatik.uni-kiel.de/rtsys/kieler/&#x0A;&#x0A;Copyright 2010 by Christian-Albrechts-University of Kiel, Department of Computer Science, Real-Time and Embedded Systems Group.">
+               value="KIELER - a research project on enhancing the model-based design of complex systems.&#x0A;&#x0A;http://www.informatik.uni-kiel.de/rtsys/kieler/&#x0A;&#x0A;Copyright 2012 by Christian-Albrechts-Universit&#228;t zu Kiel, Department of Computer Science, Real-Time and Embedded Systems Group.">
          </property>
          <property
                name="aboutImage"
@@ -57,6 +57,14 @@
                name="startupMessageRect"
                value="7,252,445,20">
          </property>
+          <property
+                name="cssTheme"
+                value="org.eclipse.e4.ui.css.theme.e4_default">
+          </property>
+          <property
+                name="applicationCSSResources"
+                value="platform:/plugin/org.eclipse.platform/images/">
+          </property>
       </product>
    </extension>
    <extension

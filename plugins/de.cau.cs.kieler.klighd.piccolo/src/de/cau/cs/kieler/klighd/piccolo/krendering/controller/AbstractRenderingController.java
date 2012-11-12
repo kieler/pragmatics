@@ -61,6 +61,8 @@ import de.cau.cs.kieler.core.krendering.KRectangle;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 import de.cau.cs.kieler.core.krendering.KRenderingRef;
+import de.cau.cs.kieler.core.krendering.KRotation;
+import de.cau.cs.kieler.core.krendering.KRoundedBendsPolyline;
 import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
 import de.cau.cs.kieler.core.krendering.KSpline;
 import de.cau.cs.kieler.core.krendering.KStackPlacement;
@@ -82,6 +84,7 @@ import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.VAlignment;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PEmptyNode;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTTracingText;
 import de.cau.cs.kieler.klighd.piccolo.util.NodeUtil;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PPath;
@@ -102,8 +105,8 @@ import edu.umd.cs.piccolox.swt.PSWTText;
 public abstract class AbstractRenderingController<S extends KGraphElement, T extends PNode> {
 
     /** the property for a rendering node's controller. */
-    private static final IProperty<Map<Object, PNodeController<?>>> CONTROLLER = new Property<Map<Object, PNodeController<?>>>(
-            "de.cau.cs.kieler.klighd.piccolo.controller");
+    private static final IProperty<Map<Object, PNodeController<?>>> CONTROLLER =
+            new Property<Map<Object, PNodeController<?>>>("de.cau.cs.kieler.klighd.piccolo.controller");
     /** the property for a rendering reference key. */
     private static final IProperty<Map<Object, Object>> KEY = new Property<Map<Object, Object>>(
             "de.cau.cs.kieler.klighd.piccolo.key");
@@ -257,34 +260,45 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
                         if (msg.getFeatureID(KStyle.class) == KRenderingPackage.KSTYLE__RENDERING) {
                             return;
                         }
-                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                            public void run() {
-                                // update the styles
-                                updateStyles();
-                            }
-                        });
+                        // PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                        // public void run() {
+                        // update the styles
+                        if (msg.getNewValue() != null) {
+                            // this test is supposed to reduce the huge amount of refreshs
+                            // introduced by the element-wise modifications performed by EMF Compare
+                            updateStyles();
+                        }
+                        // });
                         return;
                     }
 
                     // handle new, moved and removed styles
                     if (msg.getNotifier() instanceof KRendering
-                            && msg.getFeatureID(KRendering.class) == KRenderingPackage.KRENDERING__STYLES) {
-                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                            public void run() {
+                            && msg.getFeatureID(KRendering.class)
+                                == KRenderingPackage.KRENDERING__STYLES) {
+//                        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+//                            public void run() {
                                 // update the styles
-                                updateStyles();
+                        if (msg.getNewValue() != null) {
+                            // this test is supposed to reduce the huge amount of refreshs
+                            // introduced by the element-wise modifications performed by EMF Compare
+                            updateStyles();
                             }
-                        });
+//                        });
                         return;
                     }
 
                     // handle other changes by reevaluating the rendering
-                    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                        public void run() {
+//                    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+//                        public void run() {
                             // update the rendering
-                            updateRendering();
-                        }
-                    });
+                    if (msg.getNewValue() != null) {
+                        // this test is supposed to reduce the huge amount of refreshs
+                        //  introduced by the element-wise modifications performed by EMF Compare 
+                        updateRendering();
+                    }
+//                        }
+//                    });
                     break;
                 default:
                     break;
@@ -358,7 +372,12 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
 
     private void updateStyles(final KRendering rendering, final Styles styles,
             final List<KStyle> propagatedStyles, final Object key) {
+        
         PNodeController<?> controller = getMappedProperty(rendering, CONTROLLER, key);
+        if (controller == null) {
+            return;
+        }
+        
         List<KStyle> renderingStyles = rendering.getStyles();
 
         // determine the styles for this rendering
@@ -729,6 +748,12 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
                         key);
             }
 
+            // RoundedBendPolyline
+            public PNodeController<?> caseKRoundedBendsPolyline(final KRoundedBendsPolyline polyline) {
+                return createLine(polyline, styles, childPropagatedStyles, parent, initialBounds,
+                        key);
+            }
+
             // Polygon
             public PNodeController<?> caseKPolygon(final KPolygon polygon) {
                 return createPolygon(polygon, styles, childPropagatedStyles, parent, initialBounds,
@@ -961,10 +986,13 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
             final List<KStyle> propagatedStyles, final PNode parent, final PBounds initialBounds,
             final Object key) {
         // create the text
-        PSWTText textNode = new PSWTText(text.getText() != null ? text.getText() : "");
+        PSWTTracingText textNode = new PSWTTracingText(text);
         textNode.setGreekColor(null);
         textNode.setTransparent(true);  // supplement due to KIELER-2155
         initializeRenderingNode(textNode);
+        
+        // supplement (chsch)
+        textNode.setPickable(true);
 
         // create the alignment node wrapping the text
         final PAlignmentNode alignmentNode = new PAlignmentNode();
@@ -1023,9 +1051,18 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
         Point2D[] points = PlacementUtil.evaluatePolylinePlacement(
                 PlacementUtil.asPolylinePlacementData(line.getPlacementData()), initialBounds);
 
-        // create the spline or polyline
-        final PSWTAdvancedPath path = line instanceof KSpline ? PSWTAdvancedPath
-                .createSpline(points) : PSWTAdvancedPath.createPolyline(points);
+        final PSWTAdvancedPath path;
+        if (line instanceof KSpline) {
+            // create the spline
+            path = PSWTAdvancedPath.createSpline(points);
+        } else if (line instanceof KRoundedBendsPolyline) {
+            // create the rounded bends polyline
+            path = PSWTAdvancedPath.createRoundedBendPolyline(points,
+                    ((KRoundedBendsPolyline) line).getBendRadius());
+        } else {
+            // create the polyline
+            path = PSWTAdvancedPath.createPolyline(points);
+        }
 
         initializeRenderingNode(path);
         path.translate(initialBounds.x, initialBounds.y);
@@ -1070,6 +1107,10 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
                 if (line instanceof KSpline) {
                     // update spline
                     getNode().setPathToSpline(points);
+                } else if (line instanceof KRoundedBendsPolyline) {
+                    // update rounded bend polyline
+                    getNode().setPathToRoundedBendPolyline(points,
+                            ((KRoundedBendsPolyline) line).getBendRadius());
                 } else {
                     // update polyline
                     getNode().setPathToPolyline(points);
@@ -1318,8 +1359,8 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
             final PropertyChangeListener listener) {
         parent.addPropertyChangeListener(property, listener);
         @SuppressWarnings("unchecked")
-        List<Pair<String, PropertyChangeListener>> listeners = (List<Pair<String, PropertyChangeListener>>) node
-                .getAttribute(PROPERTY_LISTENER_KEY);
+        List<Pair<String, PropertyChangeListener>> listeners =
+                (List<Pair<String, PropertyChangeListener>>) node.getAttribute(PROPERTY_LISTENER_KEY);
         if (listeners == null) {
             listeners = Lists.newLinkedList();
             node.addAttribute(PROPERTY_LISTENER_KEY, listeners);
@@ -1335,8 +1376,8 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
      */
     protected void removeListeners(final PNode node) {
         @SuppressWarnings("unchecked")
-        List<Pair<String, PropertyChangeListener>> listeners = (List<Pair<String, PropertyChangeListener>>) node
-                .getAttribute(PROPERTY_LISTENER_KEY);
+        List<Pair<String, PropertyChangeListener>> listeners =
+                (List<Pair<String, PropertyChangeListener>>) node.getAttribute(PROPERTY_LISTENER_KEY);
         if (listeners != null && node.getParent() != null) {
             for (Pair<String, PropertyChangeListener> pair : listeners) {
                 node.getParent().removePropertyChangeListener(pair.getFirst(), pair.getSecond());
@@ -1448,6 +1489,14 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
                 public Boolean caseKLineStyle(final KLineStyle ls) {
                     if (theStyles.lineStyle == null) {
                         theStyles.lineStyle = ls;
+                    }
+                    return true;
+                }
+
+                // rotation
+                public Boolean caseKRotation(final KRotation r) {
+                    if (theStyles.rotation == null) {
+                        theStyles.rotation = r;
                     }
                     return true;
                 }
@@ -1564,6 +1613,13 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
                 controller.setLineStyle(LineStyle.SOLID);
                 break;
             }
+        }
+        
+        
+        // apply rotation
+        if (styles.rotation != null) {
+            KRotation rotation = styles.rotation;
+            controller.setRotation(rotation.getRotation());
         }
 
         // apply horizontal alignment
@@ -1736,6 +1792,8 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
         private KBackgroundVisibility backgroundVisibility = null;
         /** the line style. */
         private KLineStyle lineStyle = null;
+        /** the horizontal alignment. */
+        private KRotation rotation = null;
         /** the horizontal alignment. */
         private KHorizontalAlignment horizontalAlignment = null;
         /** the vertical alignment. */

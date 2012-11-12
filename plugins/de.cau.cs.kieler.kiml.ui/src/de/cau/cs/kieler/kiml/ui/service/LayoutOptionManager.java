@@ -51,6 +51,7 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
  * @author msp
  * @see de.cau.cs.kieler.kiml.options.LayoutOptions
  * @see de.cau.cs.kieler.kiml.config.ILayoutConfig
+ * @kieler.design proposed by msp
  * @kieler.rating yellow 2012-07-05 review KI-18 by cmot, sgu
  */
 public class LayoutOptionManager {

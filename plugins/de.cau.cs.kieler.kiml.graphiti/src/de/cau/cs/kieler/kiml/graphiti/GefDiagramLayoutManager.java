@@ -35,6 +35,8 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
  *
  * @param <T> the type of diagram part that is handled by this diagram layout manager
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 @SuppressWarnings("restriction")
 public abstract class GefDiagramLayoutManager<T> implements IDiagramLayoutManager<T> {

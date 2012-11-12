@@ -116,6 +116,20 @@ public class KlighdSelectionTrigger extends AbstractTrigger {
         }
         
         /**
+         * Returns an iterator on the selected representatives (KGEs+KRenderings).
+         * 
+         * @return a collection of the selected figures (KGEs+KRenderings).
+         */
+        public Iterator<EObject> getSelectedDiagramElements() {
+            return Iterators.transform(selections.iterator(),
+                    new Function<SelectionElement, EObject>() {
+                        public EObject apply(final SelectionElement input) {
+                            return (EObject) input.getDiagramElement();
+                        }
+                    });
+        }
+        
+        /**
          * Returns an iterator on the semantic elements behind the selected representatives (figures).
          * 
          * @return a collection of elements being represented by the selected figures.

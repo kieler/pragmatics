@@ -62,6 +62,8 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * Utility methods for the diagram layout manager for Graphiti based editors.
  * 
  * @author jayant
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public final class KimlGraphitiUtil {
 

@@ -51,6 +51,7 @@ import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
  * {@code layoutManagers} extension point.
  * 
  * @author msp
+ * @kieler.design proposed by msp
  * @kieler.rating yellow 2012-07-05 review KI-18 by cmot, sgu
  */
 public class DiagramLayoutEngine {
@@ -409,7 +410,7 @@ public class DiagramLayoutEngine {
                                     LayoutContext.GRAPH_ELEM, true);
                             // do not change the size of the child node
                             vlc.setValue(LayoutOptions.SIZE_CONSTRAINT, child,
-                                    LayoutContext.GRAPH_ELEM, SizeConstraint.FIXED);
+                                    LayoutContext.GRAPH_ELEM, SizeConstraint.fixed());
                             // do not move the ports of the child node
                             vlc.setValue(LayoutOptions.PORT_CONSTRAINTS, child,
                                     LayoutContext.GRAPH_ELEM, PortConstraints.FIXED_POS);

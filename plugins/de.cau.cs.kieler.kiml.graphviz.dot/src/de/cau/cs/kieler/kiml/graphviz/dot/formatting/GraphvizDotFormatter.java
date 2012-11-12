@@ -24,6 +24,8 @@ import de.cau.cs.kieler.kiml.graphviz.dot.services.GraphvizDotGrammarAccess;
  * This class contains custom formatting description.
  * 
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class GraphvizDotFormatter extends AbstractDeclarativeFormatter {
 

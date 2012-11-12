@@ -29,8 +29,9 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 /**
  * An action that removes all layout options from the current diagram.
  *
- * @kieler.rating 2010-01-26 proposed yellow msp
  * @author msp
+ * @kieler.design proposed by msp
+ * @kieler.rating proposed yellow by msp
  */
 public class RemoveOptionsAction extends Action {
     

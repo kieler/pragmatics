@@ -29,6 +29,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * be removed in order to obtain a planar subgraph.
  * 
  * @author ocl
+ * @kieler.rating proposed yellow by pkl
  */
 public class PlanarityAnalysis implements IAnalysis {
 
@@ -42,7 +43,7 @@ public class PlanarityAnalysis implements IAnalysis {
         progressMonitor.begin("Planarity testing", 1);
 
         // KGraph -> PGraph conversion
-        PGraph graph = new PGraphFactory().createGraphFromKGraph(parentNode);
+        PGraph graph = PGraphFactory.createGraphFromKGraph(parentNode);
 
         ILayoutPhase tester = new BoyerMyrvoldPlanarSubgraphBuilder();
 

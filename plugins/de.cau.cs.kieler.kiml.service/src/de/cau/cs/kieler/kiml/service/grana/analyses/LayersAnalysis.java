@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
  * of integers.
  * 
  * @author msp
+ * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class LayersAnalysis implements IAnalysis {

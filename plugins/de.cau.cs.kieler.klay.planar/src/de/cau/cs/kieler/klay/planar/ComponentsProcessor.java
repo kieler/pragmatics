@@ -53,6 +53,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * </p>
  * 
  * @author msp
+ * @kieler.rating proposed yellow by pkl
  */
 public class ComponentsProcessor extends AbstractAlgorithm {
 
@@ -261,14 +262,15 @@ public class ComponentsProcessor extends AbstractAlgorithm {
             node.getPosition().add(graphOffset);
             destGraph.getNodes().add(node);
         }
-        // TODO think about this
-        // for (PEdge edge : sourceGraph.getEdges()) {
-        // for (FBendpoint bendpoint : edge.getBendpoints()) {
-        // bendpoint.getPosition().add(graphOffset);
-        // }
-        // destGraph.getEdges().add(edge);
-        // }
-        // for (FLabel label : sourceGraph.getLabels()) {
+
+        for (PEdge edge : sourceGraph.getEdges()) {
+            for (KVector bendpoint : edge.getBendPoints()) {
+                bendpoint.add(graphOffset);
+            }
+            destGraph.getEdges().add(edge);
+        }
+        // labels aren't support yet.
+        // for (PLabel label : sourceGraph.getLabels()) {
         // label.getPosition().add(graphOffset);
         // destGraph.getLabels().add(label);
         // }
