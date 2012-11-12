@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
+import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
@@ -41,7 +42,7 @@ public final class PUtil {
     private PUtil() {
         // Should not be called.
     }
-    
+
     /**
      * Adds a {@link KVectorChain} of bendpoints to the edge bendpoints. Additionally orders them to
      * their correct positions.
@@ -305,6 +306,24 @@ public final class PUtil {
         }
         return result;
     }
-    
+
+    /**
+     * Counts the shared edges of two faces.
+     * 
+     * @param firstFace
+     *            the one face
+     * @param secondFace
+     *            the other face
+     * @return the number of shared edges.
+     */
+    public static int countSharedEdges(final PFace firstFace, final PFace secondFace) {
+        int count = 0;
+        for (PEdge edge : firstFace.adjacentEdges()) {
+            if (secondFace.isAdjacent(edge)) {
+                count++;
+            }
+        }
+        return count;
+    }
 
 }

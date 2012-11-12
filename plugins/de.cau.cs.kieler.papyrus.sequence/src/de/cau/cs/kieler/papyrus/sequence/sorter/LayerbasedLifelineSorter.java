@@ -26,12 +26,24 @@ import de.cau.cs.kieler.papyrus.sequence.graph.SGraph;
 import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
 import de.cau.cs.kieler.papyrus.sequence.graph.SMessage;
 
+/**
+ * Lifelinesorting algorithm that sorts the lifelines according to their uppermost outgoing
+ * messages. The "source" lifeline is placed leftmost, the successor lifelines following.
+ * 
+ * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
+ * 
+ */
 public class LayerbasedLifelineSorter implements ILifelineSorter {
     private int position;
-    List<SLifeline> lifelines = new LinkedList<SLifeline>();
-    List<SLifeline> sortedLifelines;
+    private List<SLifeline> lifelines = new LinkedList<SLifeline>();
+    private List<SLifeline> sortedLifelines;
 
-    public List<SLifeline> sortLifelines(SGraph graph, LGraph lgraph) {
+    /**
+     * Sorts the lifelines in a stairway-like fashion. {@inheritDoc}
+     */
+    public List<SLifeline> sortLifelines(final SGraph graph, final LGraph lgraph) {
         lifelines.addAll(graph.getLifelines());
         sortedLifelines = new LinkedList<SLifeline>();
 
@@ -47,7 +59,7 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
 
         while (!lifelines.isEmpty()) {
             // Find the message with the uppermost position whose source has not been set
-            SMessage m0 = find_uppermost_message(lgraph);
+            SMessage m0 = findUppermostMessage(lgraph);
             if (m0 == null) {
                 // Left lifelines are not connected by any message => assign positions arbitrarily
                 assignToNextPosition(lifelines.get(0));
@@ -66,14 +78,14 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
                 assignToNextPosition(x);
 
                 // Find the uppermost outgoing message of the next lifeline
-                m0 = find_uppermost_outgoing_message(lgraph, x);
+                m0 = findUppermostOutgoingMessage(lgraph, x);
             } while (m0 != null);
         }
 
         return sortedLifelines;
     }
 
-    private void assignToNextPosition(SLifeline lifeline) {
+    private void assignToNextPosition(final SLifeline lifeline) {
         if (!sortedLifelines.contains(lifeline)) {
             sortedLifelines.add(lifeline);
             lifeline.setPosition(position);
@@ -82,7 +94,7 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
         }
     }
 
-    private void addLayerToMessages(LGraph lgraph) {
+    private void addLayerToMessages(final LGraph lgraph) {
         for (Layer layer : lgraph.getLayers()) {
             int layerIndex = layer.getIndex();
             for (LNode node : layer.getNodes()) {
@@ -97,7 +109,7 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
     // Select lifeline x with outgoing message m_0 in the uppermost layer
     // If there are different messages in that layer, select lifeline with best incoming/outgoing
     // relation
-    private SMessage find_uppermost_message(LGraph lgraph) {
+    private SMessage findUppermostMessage(final LGraph lgraph) {
         List<LNode> candidates = new LinkedList<LNode>();
         for (Layer layer : lgraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
@@ -129,10 +141,10 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
         return null;
     }
 
-    private SMessage find_uppermost_outgoing_message(LGraph lgraph, SLifeline x) {
+    private SMessage findUppermostOutgoingMessage(final LGraph lgraph, final SLifeline lifeline) {
         SMessage uppermostMessage = null;
         int bestLayer = lgraph.getLayers().size();
-        for (SMessage outgoingMessage : x.getOutgoingMessages()) {
+        for (SMessage outgoingMessage : lifeline.getOutgoingMessages()) {
             if (((int) outgoingMessage.getProperty(SeqProperties.MESSAGE_LAYER)) < bestLayer) {
                 // check if target lifeline was already set
                 if (lifelines.contains(outgoingMessage.getTarget())) {

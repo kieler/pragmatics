@@ -19,6 +19,22 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.papyrus.sequence.graph.SGraph;
 import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
 
+/**
+ * Interface for lifeline sorting algorithms.
+ * 
+ * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
+ * 
+ */
 public interface ILifelineSorter {
-    public List<SLifeline> sortLifelines(SGraph graph, LGraph lgraph);
+    /**
+     * Sort the lifelines in the given SGraph. Some implementations may need the calculated layered
+     * graph for their computation too.
+     * 
+     * @param graph the Sequence Graph
+     * @param lgraph the layered graph
+     * @return a list of the lifelines in the calculated order
+     */
+    List<SLifeline> sortLifelines(SGraph graph, LGraph lgraph);
 }

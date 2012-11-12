@@ -20,12 +20,25 @@ import de.cau.cs.kieler.papyrus.sequence.ILifelineSorter;
 import de.cau.cs.kieler.papyrus.sequence.graph.SGraph;
 import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
 
-public class InteractiveLifelineSorter  implements ILifelineSorter {
+/**
+ * Lifeline sorting algorithm that respects the given order of the lifelines. The lifelines are
+ * numbered as they are ordered before.
+ * 
+ * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
+ * 
+ */
+public class InteractiveLifelineSorter implements ILifelineSorter {
 
-    public List<SLifeline> sortLifelines(SGraph graph, LGraph lgraph) {
+    /**
+     * Sort lifelines as they were sorted before layout.
+     * {@inheritDoc}
+     */
+    public List<SLifeline> sortLifelines(final SGraph graph, final LGraph lgraph) {
         List<SLifeline> lifelines = (List<SLifeline>) graph.getLifelines();
         java.util.Collections.sort(lifelines);
-        for (int i = 0; i < lifelines.size(); i++){
+        for (int i = 0; i < lifelines.size(); i++) {
             lifelines.get(i).setPosition(i);
         }
         return lifelines;

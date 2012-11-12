@@ -13,6 +13,14 @@
  */
 package de.cau.cs.kieler.papyrus.sequence.graph;
 
+/**
+ * Message representation for SGraphs.
+ * 
+ * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
+ * 
+ */
 public class SMessage extends SGraphElement {
     private static final long serialVersionUID = 6326794211792613083L;
     private SLifeline source;
@@ -21,7 +29,15 @@ public class SMessage extends SGraphElement {
     private Float targetYPos;
     private Float yPos;
 
-    public SMessage(SLifeline source, SLifeline target) {
+    /**
+     * Constructor that takes the source and target lifelines as arguments.
+     * 
+     * @param source
+     *            the source lifeline
+     * @param target
+     *            the target lifeline
+     */
+    public SMessage(final SLifeline source, final SLifeline target) {
         this.source = source;
         this.target = target;
         this.yPos = -1.0f;
@@ -29,58 +45,112 @@ public class SMessage extends SGraphElement {
         target.getIncomingMessages().add(this);
     }
 
+    /**
+     * Get the source lifeline of the message.
+     * 
+     * @return the source lifeline
+     */
     public SLifeline getSource() {
         return source;
     }
 
-    public void setSource(SLifeline source) {
+    /**
+     * Set the source lifeline of the message.
+     * 
+     * @param source
+     *            the new source lifeline
+     */
+    public void setSource(final SLifeline source) {
         this.source.getOutgoingMessages().remove(this);
         this.source = source;
         this.source.getOutgoingMessages().add(this);
     }
 
+    /**
+     * Get the target lifeline of the message.
+     * 
+     * @return the target lifeline
+     */
     public SLifeline getTarget() {
         return target;
     }
 
-    public void setTarget(SLifeline target) {
+    /**
+     * Set the target lifeline of the message.
+     * 
+     * @param target
+     *            the new target lifeline
+     */
+    public void setTarget(final SLifeline target) {
         this.target.getIncomingMessages().remove(this);
         this.target = target;
         this.target.getIncomingMessages().add(this);
     }
 
+    /**
+     * Get the vertical position of the message.
+     * 
+     * @return the vertical position
+     */
     public Float getYPos() {
         return yPos;
     }
 
-    public void setYPos(Float yPos) {
-        this.yPos = yPos;
-        this.sourceYPos = yPos;
-        this.targetYPos = yPos;
-        if (this.source.getGraph().getSizeY() < yPos) {
-            this.source.getGraph().setSizeY(yPos);
+    /**
+     * Set the vertical position of the message.
+     * 
+     * @param yPosition
+     *            the new vertical position
+     */
+    public void setYPos(final Float yPosition) {
+        this.yPos = yPosition;
+        this.sourceYPos = yPosition;
+        this.targetYPos = yPosition;
+        if (this.source.getGraph().getSizeY() < yPosition) {
+            this.source.getGraph().setSizeY(yPosition);
         }
     }
 
+    /**
+     * Get the vertical position at the source lifeline of the message.
+     * 
+     * @return the vertical position at the source lifeline
+     */
     public Float getSourceYPos() {
         return sourceYPos;
     }
 
-    public void setSourceYPos(Float sourceYPos) {
+    /**
+     * Set the vertical position at the source lifeline of the message.
+     * 
+     * @param sourceYPos
+     *            the new vertical position at the source lifeline
+     */
+    public void setSourceYPos(final Float sourceYPos) {
         this.sourceYPos = sourceYPos;
         if (this.source.getGraph().getSizeY() < sourceYPos) {
             this.source.getGraph().setSizeY(sourceYPos);
         }
     }
 
+    /**
+     * Get the vertical position at the target lifeline of the message.
+     * 
+     * @return the vertical position at the target lifeline
+     */
     public Float getTargetYPos() {
         return targetYPos;
     }
-
-    public void setTargetYPos(Float targetYPos) {
+    /**
+     * Set the vertical position at the target lifeline of the message.
+     * 
+     * @param targetYPos
+     *            the new vertical position at the target lifeline
+     */
+    public void setTargetYPos(final Float targetYPos) {
         this.targetYPos = targetYPos;
-        if (this.source.getGraph().getSizeY() < targetYPos) {
-            this.source.getGraph().setSizeY(targetYPos);
+        if (this.target.getGraph().getSizeY() < targetYPos) {
+            this.target.getGraph().setSizeY(targetYPos);
         }
     }
 }
