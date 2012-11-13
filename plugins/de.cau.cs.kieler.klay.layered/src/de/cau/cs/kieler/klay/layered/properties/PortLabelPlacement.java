@@ -14,10 +14,13 @@
 package de.cau.cs.kieler.klay.layered.properties;
 
 /**
+ * Definition of port label placement strategies. The chosen strategy determines whether port
+ * labels are placed inside or outside of the respective node.
  *
  * @author jjc
  */
 public enum PortLabelPlacement {
+    
     /** Port labels are placed outside of the node, beside the edge. */
     OUTSIDE,
     /** Port labels are placed inside of the node, next to the port. */

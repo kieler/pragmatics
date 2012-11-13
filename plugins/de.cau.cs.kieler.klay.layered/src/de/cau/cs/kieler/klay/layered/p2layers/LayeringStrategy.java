@@ -36,16 +36,5 @@ public enum LayeringStrategy {
      * a node, that movement is reflected in the layering of the graph.
      */
     INTERACTIVE;
-    
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i
-     *            ordinal value
-     * @return the related enumeration value
-     */
-    public static LayeringStrategy valueOf(final int i) {
-        return values()[i];
-    }
 
 }

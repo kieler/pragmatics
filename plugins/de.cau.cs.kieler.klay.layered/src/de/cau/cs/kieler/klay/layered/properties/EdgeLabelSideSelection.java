@@ -14,10 +14,13 @@
 package de.cau.cs.kieler.klay.layered.properties;
 
 /**
+ * Definition of edge label placement strategies. The chosen strategy determines on which side
+ * of an edge labels are placed.
  *
  * @author jjc
  */
-public enum EdgeLabelSideSelectionStrategy {
+public enum EdgeLabelSideSelection {
+    
     /** Labels are always placed above their edges. */
     ALWAYS_UP,
     /** Labels are always placed below their edges. */
@@ -28,4 +31,5 @@ public enum EdgeLabelSideSelectionStrategy {
     DIRECTION_DOWN,
     /** A heuristic is used to determine the side. */
     SMART;
+    
 }

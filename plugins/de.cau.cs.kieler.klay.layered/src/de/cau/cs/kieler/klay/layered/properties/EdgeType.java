@@ -22,9 +22,13 @@ package de.cau.cs.kieler.klay.layered.properties;
  */
 public enum EdgeType {
     
-    /** a normal edge is created from an edge of the original graph. */
+    /**
+     * a normal edge is created from an edge of the original graph.
+     */
     NORMAL,
-    /** a dummy edge created for the layering phase of compound graphs. */
+    /**
+     * a dummy edge created for the layering phase of compound graphs.
+     */
     COMPOUND_DUMMY,
     /**
      * a dummy edge created to connect COMPOUND_SIDE dummy nodes for the drawing of compound node
