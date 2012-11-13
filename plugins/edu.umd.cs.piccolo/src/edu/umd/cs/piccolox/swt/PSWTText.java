@@ -11,7 +11,9 @@ import java.awt.Paint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
@@ -79,8 +81,9 @@ public class PSWTText extends PNode {
     /** The amount of padding on each side of the text. */
     protected int padding = DEFAULT_PADDING;
 
-    /** Each element is one line of text. */
-    protected ArrayList lines = new ArrayList();
+    /** Each element is one line of text.
+      * @author chsch (modified) */
+    protected List<String> lines = new ArrayList<String>();
 
     /** Translation offset X. */
     protected double translateX = 0.0;
@@ -90,18 +93,32 @@ public class PSWTText extends PNode {
     
     protected boolean empty = true;
 
-    /** Default constructor for PSWTTest. */
+    /** Default constructor for PSWTTest.
+     * @author chsch (modified) 
+     */
     public PSWTText() {
-        this(DEFAULT_TEXT, DEFAULT_FONT);
+        this(Arrays.asList(DEFAULT_TEXT), DEFAULT_FONT);
     }
 
     /**
      * PSWTTest constructor with initial text.
      * 
      * @param str The initial text.
+     * @deprecated for use in KLighD - use {@link #PSWTText(List)}
      */
     public PSWTText(final String str) {
         this(str, DEFAULT_FONT);
+    }
+
+    /**
+     * PSWTTest constructor with initial text.
+     * 
+     * @author chsch
+     * 
+     * @param theLines The initial text.
+     */
+    public PSWTText(final List<String> theLines) {
+        this(theLines, DEFAULT_FONT);
     }
 
     /**
@@ -109,10 +126,26 @@ public class PSWTText extends PNode {
      * 
      * @param str The initial text.
      * @param font The font for this PSWTText component.
+     * @deprecated for use in KLighD - use {@link #PSWTText(List, Font)}
      */
     public PSWTText(final String str, final Font font) {
         setText(str);
         this.font = font;
+
+        recomputeBounds();
+    }
+
+    /**
+     * PSWTTest constructor with initial text and font.
+     * 
+     * @author chsch
+
+     * @param str The initial text.
+     * @param font The font for this PSWTText component.
+     */
+    public PSWTText(final List<String> lines, final Font font) {
+        this.font = font;
+        setText(lines);
 
         recomputeBounds();
     }
@@ -252,10 +285,11 @@ public class PSWTText extends PNode {
     public String getText() {
         StringBuffer result = new StringBuffer();
 
-        final Iterator lineIterator = lines.iterator();
+        final Iterator<String> lineIterator = lines.iterator();
         while (lineIterator.hasNext()) {
             result.append(lineIterator.next());
-            result.append('\n');
+            // chsch: modified
+            result.append(System.getProperty("line.separator"));
         }
 
         if (result.length() > 0) {
@@ -289,6 +323,7 @@ public class PSWTText extends PNode {
      * separated by a newline character.
      * 
      * @param str use this string.
+     * @deprecated for use by KLighD - use {@link #setText(List)}.
      */
     public void setText(final String str) {
         int pos = 0;
@@ -309,6 +344,19 @@ public class PSWTText extends PNode {
         
         empty = lines.size() == 0 || ((String) lines.get(0)).length() == 0;
         
+        recomputeBounds();
+    }
+    
+    /**
+     * Sets the text of this visual component.
+     * A multi-line text has to be given in form of a list of pre-splitted string parts. 
+     * 
+     * @author chsch
+     * @param theLines
+     */
+    public void setText(final List<String> theLines) {
+        lines = new ArrayList<String>(theLines);
+        empty = lines.isEmpty() || lines.get(0).equals("");
         recomputeBounds();
     }
 
@@ -469,7 +517,7 @@ public class PSWTText extends PNode {
 
         final FontMetrics fontMetrics = sg2.getSWTFontMetrics();
 
-        final Iterator lineIterator = lines.iterator();
+        final Iterator<String> lineIterator = lines.iterator();
         while (lineIterator.hasNext()) {
             line = (String) lineIterator.next();
             if (line.length() != 0) {
@@ -527,7 +575,7 @@ public class PSWTText extends PNode {
 
         boolean firstLine = true;
 
-        final Iterator lineIterator = lines.iterator();
+        final Iterator<String> lineIterator = lines.iterator();
         while (lineIterator.hasNext()) {
             String line = (String) lineIterator.next();
             Point lineBounds = gc.stringExtent(line);

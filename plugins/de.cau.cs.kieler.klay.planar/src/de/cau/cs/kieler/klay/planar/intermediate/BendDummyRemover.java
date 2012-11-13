@@ -26,8 +26,14 @@ import de.cau.cs.kieler.klay.planar.util.PUtil;
 /**
  * Removes the dummy bend nodes of the graph and updates the grid representation.
  * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>Edge bendpoint dummies exists.</dd>
+ *   <dt>Postcondition:</dt><dd>Removed the dummies and added the bends to the .</dd>
+ *   <dt>Slots:</dt><dd>After the compaction phase.</dd>
+ * </dl>
+ * 
  * @author pkl
- * @kieler.rating proposed yellow by pkl
+ * @kieler.rating yellow 2012-11-01 review KI-30 by ima, cds
  */
 public class BendDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
 
@@ -49,8 +55,9 @@ public class BendDummyRemover extends AbstractAlgorithm implements ILayoutProces
         // construct bendpoints for each node for which there is no original node.
         for (int x = 0; x < this.grid.getWidth(); x++) {
             for (int y = 0; y < this.grid.getHeight(); y++) {
-                if (this.grid.get(x, y) != null && this.grid.get(x, y).hasProperties()
-                        && (this.grid.get(x, y).getProperty(Properties.BENDPOINT) != null)) {
+                PNode gridNode = this.grid.get(x, y);
+                if (gridNode != null && gridNode.hasProperties()
+                        && (gridNode.getProperty(Properties.BENDPOINT) != null)) {
                     constructBendPointEdge(x, y);
                 }
             }
@@ -59,8 +66,9 @@ public class BendDummyRemover extends AbstractAlgorithm implements ILayoutProces
     }
 
     /**
-     * Removes a bend point dummy from the grid and adds it as bend point the edge, that is original
-     * meaning contains a {@link KEdge} as property, otherwise choose a arbitrary one.
+     * Removes a bend point dummy of the grid and adds it as a bend point to the edge. If the edge
+     * is original meaning it contains a {@link KEdge} as property, otherwise choose a arbitrary
+     * edge.
      * 
      * @param x
      *            index of the grid of the bend point dummy.
@@ -68,15 +76,19 @@ public class BendDummyRemover extends AbstractAlgorithm implements ILayoutProces
      *            index of the grid of the bend point dummy.
      */
     private void constructBendPointEdge(final int x, final int y) {
-        PNode currentNode = this.grid.get(x, y);
-        Iterator<PEdge> nodeIterator = currentNode.getEdges().iterator();
 
-        PEdge first = nodeIterator.next();
+        // get a node for grid coordinates
+        PNode currentNode = this.grid.get(x, y);
+        Iterator<PEdge> edgeIterator = currentNode.getEdges().iterator();
+
+        // an edge is divided by a bend, thus there are exact two connected edges
+        PEdge first = edgeIterator.next();
         PNode firstNode = first.getOppositeNode(currentNode);
-        PEdge second = nodeIterator.next();
+        PEdge second = edgeIterator.next();
         PNode secondNode = second.getOppositeNode(currentNode);
 
-        if (first.hasProperties() && first.getProperty(Properties.ORIGIN) != null) {
+        // Add the bends to the first if it is a original edge. Otherwise take the other edge.
+        if (first.getProperty(Properties.ORIGIN) != null) {
             first.getBendPoints().add(x, y);
             this.graph.bridgeOverEdge(first, firstNode, secondNode);
             PUtil.addBendsToEdge(first, second.getBendPoints(), null, this.grid);

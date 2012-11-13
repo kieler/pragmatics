@@ -20,7 +20,8 @@ import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 /**
- * 
+ * General realization of a primitive diagram cropping.
+ * Copies the selected view model part and throws it into a new KLighD view. 
  */
 class KlighdCropDiagramCombination extends AbstractCombination {
 

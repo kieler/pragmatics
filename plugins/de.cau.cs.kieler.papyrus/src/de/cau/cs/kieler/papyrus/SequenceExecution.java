@@ -18,12 +18,23 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 
+/**
+ * Data structure for execution specification elements in sequence diagrams.
+ * 
+ * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
+ * 
+ */
 public class SequenceExecution {
     private String type = "";
     private List<Object> messages;
     private float xPos, yPos, maxXPos, maxYPos;
     private KNode origin;
 
+    /**
+     * Constructor that initializes the execution object.
+     */
     public SequenceExecution() {
         messages = new LinkedList<Object>();
         xPos = 0;
@@ -32,62 +43,142 @@ public class SequenceExecution {
         maxYPos = 0;
     }
 
+    /**
+     * Get the type of the execution.
+     * 
+     * @return the type
+     */
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
+    /**
+     * Set the type of the execution.
+     * 
+     * @param type
+     *            the new type
+     */
+    public void setType(final String type) {
         this.type = type;
     }
 
+    /**
+     * Get the list of messages that are connected to the execution.
+     * 
+     * @return the list of messages
+     */
     public List<Object> getMessages() {
         return messages;
     }
 
-    public void addMessage(Object message) {
+    /**
+     * Add a message to the list of connected messages.
+     * 
+     * @param message
+     *            the new message
+     */
+    public void addMessage(final Object message) {
         this.messages.add(message);
     }
 
+    /**
+     * Get the origin KNode of the execution.
+     * 
+     * @return the origin
+     */
     public KNode getOrigin() {
         return origin;
     }
 
-    public void setOrigin(KNode origin) {
+    /**
+     * Set the origin KNode of the execution.
+     * 
+     * @param origin
+     *            the new origin
+     */
+    public void setOrigin(final KNode origin) {
         this.origin = origin;
     }
 
+    /**
+     * Get the horizontal position of the execution.
+     * 
+     * @return the horizontal position
+     */
     public float getxPos() {
         return xPos;
     }
 
-    public void setxPos(float xPos) {
+    /**
+     * Set the horizontal position of the execution.
+     * 
+     * @param xPos
+     *            the new horizontal position
+     */
+    public void setxPos(final float xPos) {
         this.xPos = xPos;
     }
 
+    /**
+     * Get the vertical position of the execution.
+     * 
+     * @return the vertical position
+     */
     public float getyPos() {
         return yPos;
     }
 
-    public void setyPos(float yPos) {
+    /**
+     * Set the vertical position of the execution.
+     * 
+     * @param yPos
+     *            the new vertical position
+     */
+    public void setyPos(final float yPos) {
         this.yPos = yPos;
     }
 
+    /**
+     * Get the lower border position of the execution.
+     * 
+     * @return the lower border
+     */
     public float getMaxYPos() {
         return maxYPos;
     }
 
-    public void setMaxYPos(float maxYPos) {
+    /**
+     * Set the lower border position of the execution.
+     * 
+     * @param maxYPos
+     *            the new lower border
+     */
+    public void setMaxYPos(final float maxYPos) {
         this.maxYPos = maxYPos;
     }
 
+    /**
+     * Get the right border position of the execution.
+     * 
+     * @return the right border
+     */
     public float getMaxXPos() {
         return maxXPos;
     }
 
-    public void setMaxXPos(float maxXPos) {
+    /**
+     * Set the right border position of the execution.
+     * 
+     * @param maxXPos
+     *            the new right border
+     */
+    public void setMaxXPos(final float maxXPos) {
         this.maxXPos = maxXPos;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String toString() {
         return "Origin: " + this.origin.getClass().getSimpleName() + ", Messages: " + this.messages
                 + ", Pos: (" + this.xPos + "/" + this.yPos + "), MaxPos: (" + this.maxXPos + "/"

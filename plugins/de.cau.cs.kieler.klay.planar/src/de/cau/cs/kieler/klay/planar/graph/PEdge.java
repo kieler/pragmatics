@@ -51,7 +51,7 @@ public class PEdge extends PGraphElement {
     private PFace rightFace;
 
     /** the bend points. */
-    private KVectorChain bendPoints = new KVectorChain();
+    private final KVectorChain bendPoints = new KVectorChain();
 
     // ======================== Constructor ========================================================
 
@@ -104,7 +104,7 @@ public class PEdge extends PGraphElement {
      * @return a {@code Collection} containing the nodes this edge connects
      */
     public Collection<PNode> getNodes() {
-        Collection<PNode> nodes = new LinkedList<PNode>();
+        final Collection<PNode> nodes = new LinkedList<PNode>();
         nodes.add(this.source);
         nodes.add(this.target);
         return nodes;
@@ -157,7 +157,7 @@ public class PEdge extends PGraphElement {
      * @return a {@code Collection} containing the faces formed by this edge
      */
     public Collection<PFace> getFaces() {
-        Collection<PFace> faces = new LinkedList<PFace>();
+        final Collection<PFace> faces = new LinkedList<PFace>();
         faces.add(this.leftFace);
         faces.add(this.rightFace);
         return faces;
@@ -233,7 +233,7 @@ public class PEdge extends PGraphElement {
      * @return the source docking point
      */
     public KVector getSourcePoint() {
-        KVector v = target.getPosition().differenceCreate(source.getPosition());
+        final KVector v = target.getPosition().differenceCreate(source.getPosition());
         clipVector(v, source.getSize().x, source.getSize().y);
         return v.add(source.getPosition());
     }
@@ -244,7 +244,7 @@ public class PEdge extends PGraphElement {
      * @return the target docking point
      */
     public KVector getTargetPoint() {
-        KVector v = source.getPosition().differenceCreate(target.getPosition());
+        final KVector v = source.getPosition().differenceCreate(target.getPosition());
         clipVector(v, target.getSize().x, target.getSize().y);
         return v.add(target.getPosition());
     }
@@ -269,8 +269,8 @@ public class PEdge extends PGraphElement {
      *            height of the rectangular box
      */
     private static void clipVector(final KVector v, final double width, final double height) {
-        double wh = width / 2, hh = height / 2;
-        double absx = Math.abs(v.x), absy = Math.abs(v.y);
+        final double wh = width / 2, hh = height / 2;
+        final double absx = Math.abs(v.x), absy = Math.abs(v.y);
         double xscale = 1, yscale = 1;
         if (absx > wh) {
             xscale = wh / absx;
@@ -332,15 +332,6 @@ public class PEdge extends PGraphElement {
      */
     public PNode getOppositeNode(final PNode node) {
         return node == source ? target : source;
-    }
-
-    /**
-     * Checks if the properties are not null and not empty.
-     * 
-     * @return true if it is not empty otherwise false.
-     */
-    public boolean hasProperties() {
-        return super.getAllProperties() != null && !super.getAllProperties().isEmpty();
     }
 
     /**

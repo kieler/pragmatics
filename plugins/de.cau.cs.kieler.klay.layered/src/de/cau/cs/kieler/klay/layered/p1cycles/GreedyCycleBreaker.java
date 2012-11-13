@@ -57,7 +57,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintProcessor
  * @author msp
  * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
 public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhase {
     
@@ -71,7 +71,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
     private int[] indeg;
     /** outdegree values for the nodes. */
     private int[] outdeg;
-    /** mark for the nodes. */
+    /** mark for the nodes, inducing an ordering of the nodes. */
     private int[] mark;
     /** list of source nodes. */
     private final LinkedList<LNode> sources = new LinkedList<LNode>();
@@ -96,16 +96,17 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
         Collection<LNode> nodes = layeredGraph.getLayerlessNodes();
 
         // initialize values for the algorithm (sum of priorities of incoming edges and outgoing
-        // edges per node, and the "layer" calculated for each node)
-        int unprocessedNodes = nodes.size();
-        indeg = new int[unprocessedNodes];
-        outdeg = new int[unprocessedNodes];
-        mark = new int[unprocessedNodes];
+        // edges per node, and the ordering calculated for each node)
+        int unprocessedNodeCount = nodes.size();
+        indeg = new int[unprocessedNodeCount];
+        outdeg = new int[unprocessedNodeCount];
+        mark = new int[unprocessedNodeCount];
         
-        // iterate over all nodes, ...
         int index = 0;
         for (LNode node : nodes) {
+            // the node id is used as index for the indeg, outdeg, and mark arrays
             node.id = index;
+            
             for (LPort port : node.getPorts()) {
                 // calculate the sum of edge priorities
                 for (LEdge edge : port.getIncomingEdges()) {
@@ -145,25 +146,25 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
         List<LNode> maxNodes = new ArrayList<LNode>();
         Random random = layeredGraph.getProperty(Properties.RANDOM);
         
-        while (unprocessedNodes > 0) {
-            // while we have sinks left...
+        while (unprocessedNodeCount > 0) {
+            // sinks are put to the right --> assign negative rank, which is later shifted to positive
             while (!sinks.isEmpty()) {
                 LNode sink = sinks.removeFirst();
                 mark[sink.id] = nextRight--;
                 updateNeighbors(sink);
-                unprocessedNodes--;
+                unprocessedNodeCount--;
             }
             
-            // while we have sources left...
+            // sources are put to the left --> assign positive rank
             while (!sources.isEmpty()) {
                 LNode source = sources.removeFirst();
                 mark[source.id] = nextLeft++;
                 updateNeighbors(source);
-                unprocessedNodes--;
+                unprocessedNodeCount--;
             }
             
             // while there are unprocessed nodes left that are neither sinks nor sources...
-            if (unprocessedNodes > 0) {
+            if (unprocessedNodeCount > 0) {
                 int maxOutflow = Integer.MIN_VALUE;
                 
                 // find the set of unprocessed node (=> mark == 0), with the largest out flow
@@ -179,18 +180,19 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                         }
                     }
                 }
+                assert maxOutflow > Integer.MIN_VALUE;
                 
-                // randomly select a node from the ones with maximal outflow
+                // randomly select a node from the ones with maximal outflow and put it left
                 LNode maxNode = maxNodes.get(random.nextInt(maxNodes.size()));
                 mark[maxNode.id] = nextLeft++;
                 updateNeighbors(maxNode);
-                unprocessedNodes--;
+                unprocessedNodeCount--;
             }
         }
 
-        // shift negative ranks
-        int shiftBase = nodes.size() + 1;
-        for (index = 0; index < nodes.size(); index++) {
+        // shift negative ranks to positive; this applies to sinks of the graph
+        int shiftBase = unprocessedNodeCount + 1;
+        for (index = 0; index < unprocessedNodeCount; index++) {
             if (mark[index] < 0) {
                 mark[index] += shiftBase;
             }

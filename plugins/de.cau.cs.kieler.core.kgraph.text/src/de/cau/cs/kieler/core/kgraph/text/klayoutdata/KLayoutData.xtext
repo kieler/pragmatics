@@ -37,7 +37,7 @@ KShapeLayout returns KShapeLayout:
         ('width' width=EFloat)?
         ('height' height=EFloat)?
         ('insets' insets=KInsets)?
-        ('mapProperties' ':' persistentEntries+=PersistentEntry ( ","? persistentEntries+=PersistentEntry)*)?
+        ('mapProperties' ':'? persistentEntries+=PersistentEntry ( ","? persistentEntries+=PersistentEntry)*)?
     '}';
 
 KInsets returns KInsets:
@@ -61,10 +61,10 @@ KEdgeLayout returns KEdgeLayout:
     {KEdgeLayout}
     'KEdgeLayout'
     '{'
-        ('sourcePoint' sourcePoint=KPoint)?
-        ('targetPoint' targetPoint=KPoint)?
+        ('sourcePoint' ':'? sourcePoint=KPoint)?
+        ('targetPoint' ':'? targetPoint=KPoint)?
         ('bendPoints' ':'? bendPoints+=KPoint ( ","? bendPoints+=KPoint)*)?
-        ('mapProperties'':'?  persistentEntries+=PersistentEntry ( ","? persistentEntries+=PersistentEntry)*)?
+        ('mapProperties' ':'?  persistentEntries+=PersistentEntry ( ","? persistentEntries+=PersistentEntry)*)?
     '}';
 
 KPoint returns KPoint:

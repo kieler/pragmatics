@@ -58,7 +58,8 @@ import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.ManualIterator;
 public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayoutPhase {
 
     /** Intermediate Processing Configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
+    private static final IntermediateProcessingConfiguration 
+        INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
     // Before Phase 1
             EnumSet.of(LayoutProcessorStrategy.SELF_LOOP),
             // Before Phase 2
@@ -210,6 +211,7 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
         getMonitor().begin("Planar Subgraph Building", 1);
         this.graph = thegraph;
         planarity();
+
         graph.setProperty(Properties.INSERTABLE_EDGES, this.missingEdges);
         getMonitor().done();
     }
@@ -227,6 +229,7 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
     public boolean testPlanarity(final PGraph g) {
         getMonitor().begin("Planarity Testing", 1);
         this.graph = g;
+        this.planarity();
         this.planarity();
         getMonitor().done();
         return this.planar;
@@ -585,6 +588,16 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
                         iter.getCurrent().moveToStart(edge);
                         break;
                     }
+                    // FIXME known problem: In some cases the algorithm results in the wrong
+                    // embedding. An example for this is set to the planarization model with the
+                    // name k_3_3.kedgi. The Node 5 has an embedding with edge end points 3,1,2,0.
+                    // This results to undesired edge crossings,and at the moment we do not
+                    // know how to fix it, swapping the moveToStart() and moveToEnd() methods does
+                    // not help.
+                    // Workaround: calling planarity() twice, makes the result correct. Thus
+                    // checking if the embedding is planar should be done, if not call again
+                    // planarity() on the result graph.
+
                 }
                 this.pertinentBackedges[iIter].clear();
                 Direction opp = (direction == Direction.FWD) ? Direction.REV : Direction.FWD;

@@ -132,17 +132,6 @@ public enum LayoutProcessorStrategy {
     
     
     /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static LayoutProcessorStrategy valueOf(final int i) {
-        return values()[i];
-    }
-    
-    
-    /**
      * Creates an instance of the layout processor described by this instance.
      * 
      * @return the layout processor.

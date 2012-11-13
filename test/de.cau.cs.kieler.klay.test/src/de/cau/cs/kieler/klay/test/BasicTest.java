@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -111,7 +112,7 @@ public class BasicTest extends KlayAutomatedJUnitTest {
                 if (!(KimlUtil.isDescendant(node1, node2) || KimlUtil.isDescendant(node2, node1))) {
                     KShapeLayout nodeLayout2 = node2.getData(KShapeLayout.class);
     
-                    assertFalse(hasNodeToNodeOverlaps(nodeLayout1, nodeLayout2));
+                    Assert.assertFalse(hasNodeToNodeOverlaps(nodeLayout1, nodeLayout2));
                 }
             }
         }

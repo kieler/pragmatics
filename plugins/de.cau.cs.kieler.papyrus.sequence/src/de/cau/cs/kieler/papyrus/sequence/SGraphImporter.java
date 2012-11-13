@@ -44,6 +44,8 @@ import de.cau.cs.kieler.papyrus.SequenceExecution;
  * SGraph.
  * 
  * @author grh
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
  * 
  */
 public class SGraphImporter {
@@ -95,7 +97,7 @@ public class SGraphImporter {
                 createMessages(sgraph, nodeMap, edgeMap, areas, node);
 
                 // Handle found messages (incoming messages)
-                createFoundMessages(sgraph, nodeMap, edgeMap, node);
+                createIncomingMessages(sgraph, nodeMap, edgeMap, node);
 
             } else if (nodeType.equals("3009") || nodeType.equals("3008")
                     || nodeType.equals("3024") || nodeType.equals("3020")) {
@@ -117,10 +119,10 @@ public class SGraphImporter {
         // Reset graph size to zero before layouting
         sgraph.setSizeX(0);
         sgraph.setSizeY(0);
-        
+
         // Copy the areas property to the SGraph
         sgraph.setProperty(PapyrusProperties.AREAS, areas);
-        
+
         return sgraph;
     }
 
@@ -149,7 +151,7 @@ public class SGraphImporter {
             }
             // Handle found messages (they have no source lifeline)
             for (SMessage message : lifeline.getIncomingMessages()) {
-                if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.FOUND) {
+                if (message.getSource().getName().equals("DummyLifeline")) {
                     LNode node = new LNode(lgraph);
                     node.getLabels().add(new LLabel(lgraph, "Node" + i++));
                     node.setProperty(Properties.ORIGIN, message);
@@ -237,7 +239,7 @@ public class SGraphImporter {
     }
 
     /**
-     * Create a comment object for comments or constraints.
+     * Create a comment object for comments or constraints (which are handled like comments).
      * 
      * @param sgraph
      *            the Sequence Graph
@@ -285,14 +287,60 @@ public class SGraphImporter {
         comment.setyPos(commentLayout.getYpos());
         comment.setWidth(commentLayout.getWidth());
         comment.setHeight(commentLayout.getHeight());
+
+        // Handle time observations
         if (nodeType.equals("3020")) {
             comment.setWidth(TWENTY); // FIXME workaround for time observations to have a width
+
+            // TODO it seems, the coordinates are not valid => check this
+
+//            System.out.println(commentLayout);
+
+            // Find lifeline that is next to the time observation
+            SLifeline nextLifeline = null;
+            float smallestDistance = Float.MAX_VALUE;
+            for (SLifeline lifeline : sgraph.getLifelines()) {
+                KNode llNode = (KNode) lifeline.getProperty(Properties.ORIGIN);
+                KShapeLayout nodeLayout = llNode.getData(KShapeLayout.class);
+                float distance = Math.abs((nodeLayout.getXpos() + nodeLayout.getWidth() / 2)
+                        - (commentLayout.getXpos() + commentLayout.getWidth() / 2));
+                if (distance < smallestDistance) {
+                    smallestDistance = distance;
+                    nextLifeline = lifeline;
+                }
+            }
+
+            // Find message on the calculated lifeline that is next to the time observation
+            SMessage nextMessage = null;
+            smallestDistance = Float.MAX_VALUE;
+            for (SMessage message : nextLifeline.getMessages()) {
+                KEdge edge = (KEdge) message.getProperty(Properties.ORIGIN);
+                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                float distance;
+                if (message.getSource() == nextLifeline) {
+                    distance = Math.abs((edgeLayout.getSourcePoint().getY())
+                            - (commentLayout.getYpos() + commentLayout.getHeight() / 2));
+                } else {
+                    distance = Math.abs((edgeLayout.getTargetPoint().getY())
+                            - (commentLayout.getYpos() + commentLayout.getHeight() / 2));
+                }
+                if (distance < smallestDistance) {
+                    smallestDistance = distance;
+                    nextMessage = message;
+                }
+            }
+
+            // Set both, lifeline and message of the comment to indicate that it should be drawn
+            // near to the event
+            comment.setLifeline(nextLifeline);
+            comment.setMessage(nextMessage);
         }
+
         sgraph.getComments().add(comment);
     }
 
     /**
-     * Initialize empty area.
+     * Check, where to place an empty area.
      * 
      * @param sgraph
      *            the Sequence Graph
@@ -361,19 +409,18 @@ public class SGraphImporter {
             final HashMap<KEdge, SMessage> edgeMap, final List<SequenceArea> areas, final KNode node) {
         for (KEdge edge : node.getOutgoingEdges()) {
             SLifeline sourceLL = nodeMap.get(edge.getSource());
-            if (sourceLL == null) {
-                SLifeline dummy = new SLifeline();
-                dummy.setName("DummyLifeline");
-                dummy.setGraph(sgraph);
-                sourceLL = dummy;
-            }
             SLifeline targetLL = nodeMap.get(edge.getTarget());
+
+            // Lost-messages and messages to the surrounding interaction don't have a lifeline, so
+            // create dummy lifeline
             if (targetLL == null) {
                 SLifeline dummy = new SLifeline();
                 dummy.setName("DummyLifeline");
                 dummy.setGraph(sgraph);
                 targetLL = dummy;
             }
+            
+            // Create message object
             SMessage message = new SMessage(sourceLL, targetLL);
             message.setProperty(Properties.ORIGIN, edge);
             message.setProperty(SeqProperties.COMMENTS, new LinkedList<SComment>());
@@ -416,6 +463,12 @@ public class SGraphImporter {
                 message.setProperty(SeqProperties.MESSAGE_TYPE, MessageType.LOST);
             }
 
+            // Outgoing messages to the surrounding interaction are drawn to the right and therefore
+            // their target lifeline should have highest position
+            if (targetLL.getName().equals("DummyLifeline") && !messageType.equals("4008")) {
+                targetLL.setPosition(sgraph.getLifelines().size() + 1);
+            }
+
             message.setSourceYPos(layout.getSourcePoint().getY());
             message.setTargetYPos(layout.getTargetPoint().getY());
 
@@ -442,8 +495,8 @@ public class SGraphImporter {
     }
 
     /**
-     * Walk through incoming edges and check if there are found messages. If so, create the
-     * corresponding SMessage.
+     * Walk through incoming edges and check if there are found messages or messages that come from
+     * the surrounding interaction. If so, create the corresponding SMessage.
      * 
      * @param sgraph
      *            the Sequence Graph
@@ -454,27 +507,22 @@ public class SGraphImporter {
      * @param node
      *            the KNode to search its incoming edges.
      */
-    private void createFoundMessages(final SGraph sgraph, final HashMap<KNode, SLifeline> nodeMap,
-            final HashMap<KEdge, SMessage> edgeMap, final KNode node) {
+    private void createIncomingMessages(final SGraph sgraph,
+            final HashMap<KNode, SLifeline> nodeMap, final HashMap<KEdge, SMessage> edgeMap,
+            final KNode node) {
         for (KEdge edge : node.getIncomingEdges()) {
             KEdgeLayout layout = edge.getData(KEdgeLayout.class);
-            // Append the message type of the edge to the message
-            String messageType = layout.getProperty(PapyrusProperties.MESSAGE_TYPE);
-            if (messageType.equals("4009")) {
-                SLifeline sourceLL = nodeMap.get(edge.getSource());
-                if (sourceLL == null) {
-                    SLifeline dummy = new SLifeline();
-                    dummy.setName("DummyLifeline");
-                    dummy.setGraph(sgraph);
-                    sourceLL = dummy;
-                }
+
+            SLifeline sourceLL = nodeMap.get(edge.getSource());
+            if (sourceLL == null) {
+                // Create dummy lifeline as source since the message has no source lifeline
+                SLifeline dummy = new SLifeline();
+                dummy.setName("DummyLifeline");
+                dummy.setGraph(sgraph);
+                sourceLL = dummy;
                 SLifeline targetLL = nodeMap.get(edge.getTarget());
-                if (targetLL == null) {
-                    SLifeline dummy = new SLifeline();
-                    dummy.setName("DummyLifeline");
-                    dummy.setGraph(sgraph);
-                    targetLL = dummy;
-                }
+
+                // Create message object
                 SMessage message = new SMessage(sourceLL, targetLL);
                 message.setProperty(Properties.ORIGIN, edge);
                 message.setProperty(SeqProperties.COMMENTS, new LinkedList<SComment>());
@@ -482,7 +530,25 @@ public class SGraphImporter {
                 // Put edge and message into the edge map
                 edgeMap.put(edge, message);
 
-                message.setProperty(SeqProperties.MESSAGE_TYPE, MessageType.FOUND);
+                // Append the message type of the edge to the message
+                String messageType = layout.getProperty(PapyrusProperties.MESSAGE_TYPE);
+                if (messageType.equals("4009")) {
+                    message.setProperty(SeqProperties.MESSAGE_TYPE, MessageType.FOUND);
+                } else {
+                    // Since incoming messages come from the left side of the surrounding
+                    // interaction, give its dummy lifeline position -1
+                    sourceLL.setPosition(-1);
+
+                    if (messageType.equals("4004")) {
+                        message.setProperty(SeqProperties.MESSAGE_TYPE, MessageType.ASYNCHRONOUS);
+                    } else if (messageType.equals("4006")) {
+                        message.setProperty(SeqProperties.MESSAGE_TYPE, MessageType.CREATE);
+                    } else if (messageType.equals("4007")) {
+                        message.setProperty(SeqProperties.MESSAGE_TYPE, MessageType.DELETE);
+                    } else if (messageType.equals("4003")) {
+                        message.setProperty(SeqProperties.MESSAGE_TYPE, MessageType.SYNCHRONOUS);
+                    }
+                }
 
                 // replace KEdge by its SMessage if it appears in one of the lifeline's
                 // executions
@@ -502,7 +568,6 @@ public class SGraphImporter {
                         }
                     }
                 }
-                message.setTargetYPos(layout.getTargetPoint().getY());
                 message.setTargetYPos(layout.getTargetPoint().getY());
             }
         }

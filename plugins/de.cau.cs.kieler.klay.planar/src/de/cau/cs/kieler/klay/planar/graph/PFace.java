@@ -46,10 +46,10 @@ public class PFace extends PGraphElement {
     // ======================== Attributes =========================================================
 
     /** The nodes of this face. */
-    private HashSet<PNode> nodes;
+    private final HashSet<PNode> nodes;
 
     /** The edges of this face. */
-    private HashSet<PEdge> edges;
+    private final HashSet<PEdge> edges;
 
     // ======================== Constructor ========================================================
 
@@ -178,7 +178,7 @@ public class PFace extends PGraphElement {
      * @param edge
      *            the new edge to add
      */
-    void addEdge(final PEdge edge) {
+    public void addEdge(final PEdge edge) {
         this.edges.add(edge);
     }
 
