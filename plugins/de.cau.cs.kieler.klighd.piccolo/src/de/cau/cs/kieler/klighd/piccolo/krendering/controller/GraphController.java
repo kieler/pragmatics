@@ -67,6 +67,7 @@ import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.activities.PInterpolatingActivity;
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
+import edu.umd.cs.piccolox.swt.PSWTCanvas;
 
 /**
  * The class which controls the transformation of a KGraph with attached KRendering data to Piccolo
@@ -92,6 +93,9 @@ public class GraphController {
     /** the property for the Piccolo representation of a node. */
     public static final IProperty<PNode> REP = new Property<PNode>("klighd.piccolo.prepresentation");
 
+    private PSWTCanvas canvas = null;
+    
+    
     /**
      * the property for identifying whether a node has been populated. If a node is populated, child
      * node have been created once.
@@ -147,8 +151,11 @@ public class GraphController {
      *            true if the visualization should be synchronized with the graph; false else
      * 
      *            review hint: setting to false will prevent the application of automatic layout
+     *  @param canvas
+     *            the canvas this graph is drawn on.
      */
-    public GraphController(final KNode graph, final PNode parent, final boolean sync) {
+    public GraphController(final KNode graph, final PNode parent, final boolean sync, 
+            final PSWTCanvas canvas) {
         // Review: kgraph nodes maintain context information,
         // these information is removed by this statement,
         // mainly needed if textual kgraph editor is used
@@ -157,6 +164,7 @@ public class GraphController {
         this.topNode = new KNodeTopNode(graph);
         parent.addChild(topNode);
         this.sync = sync;
+        this.canvas = canvas;
     }
 
     /**
@@ -802,7 +810,7 @@ public class GraphController {
         KNodeRenderingController renderingController = (KNodeRenderingController) nodeRep
                 .getAttribute(RENDERING_KEY);
         if (renderingController == null) {
-            renderingController = new KNodeRenderingController(nodeRep);
+            renderingController = new KNodeRenderingController(nodeRep, canvas);
             nodeRep.setChildArea(renderingController.getChildAreaNode());
             nodeRep.addAttribute(RENDERING_KEY, renderingController);
             renderingController.initialize(sync);
