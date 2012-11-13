@@ -33,7 +33,6 @@ import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.PtolemyInterface;
-import de.cau.cs.kieler.kaom.karma.ptolemy.Activator;
 import de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation.PtolemyFetcher;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -206,7 +205,7 @@ public class KRenderingProvider {
                     KRendering figure = figureProvider.createFigureFromSvg(doc);
                     return figure;
                 } else {
-                    Status myStatus = new Status(IStatus.WARNING, Activator.PLUGIN_ID,
+                    Status myStatus = new Status(IStatus.WARNING, "de.cau.cs.kieler.kaom.karma.ptolemy",
                             "couldn't get svg document from ptolemy");
                     StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
                     return null;//figureProvider.getErrorFigure();
