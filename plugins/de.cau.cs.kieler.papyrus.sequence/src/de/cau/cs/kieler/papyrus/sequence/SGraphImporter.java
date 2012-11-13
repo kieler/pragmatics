@@ -294,7 +294,7 @@ public class SGraphImporter {
 
             // TODO it seems, the coordinates are not valid => check this
 
-            System.out.println(commentLayout);
+//            System.out.println(commentLayout);
 
             // Find lifeline that is next to the time observation
             SLifeline nextLifeline = null;

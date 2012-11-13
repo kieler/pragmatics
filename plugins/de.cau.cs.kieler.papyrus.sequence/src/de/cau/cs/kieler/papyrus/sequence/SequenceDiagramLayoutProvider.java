@@ -576,9 +576,13 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             targetPoint.setX(nodeLayout.getXpos() + nodeLayout.getWidth() / 2);
             targetPoint.setY(message.getTargetYPos() * factor);
 
-            // Reset x-position of create message because it leads to the header and not the line
             if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.CREATE) {
+                // Reset x-position of create message because it leads to the header and not the line
                 targetPoint.setX(nodeLayout.getXpos());
+            } else if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.DELETE) {
+                // Reset y-position of delete message to end at the end of the lifeline
+                targetPoint.setY((nodeLayout.getHeight() + nodeLayout.getYpos() - LIFELINE_HEADER)
+                        * factor);
             }
 
             // Reset execution coordinates if the message is contained in an execution
