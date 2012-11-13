@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klay.planar.intermediate;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -86,7 +88,10 @@ public class QuodDummyRemover extends AbstractAlgorithm implements ILayoutProces
                 hDNodePositions.add(position);
 
                 // link the edges back to the high degree node.
-                for (PEdge edge : dummyNode.adjacentEdges()) {
+                List<PEdge> dummies = new LinkedList<PEdge>();
+                dummies.addAll((Collection<PEdge>) dummyNode.adjacentEdges());
+
+                for (PEdge edge : dummies) {
 
                     // search for original edges.
                     if (edge.getProperty(Properties.EXPANSION_CYCLE_ORIGIN) == null) {

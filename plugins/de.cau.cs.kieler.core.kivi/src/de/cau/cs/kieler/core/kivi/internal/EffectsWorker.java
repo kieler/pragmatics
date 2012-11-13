@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.kivi.IEffect;
@@ -124,8 +123,8 @@ public class EffectsWorker extends Thread {
         Display.getDefault().syncExec(new Runnable() {
             public void run() {
                 try {
-                    IProgressService ps = PlatformUI.getWorkbench().getProgressService();
-                    ps.busyCursorWhile(new IRunnableWithProgress() {
+                    PlatformUI.getWorkbench().getProgressService().run(
+                            false, false, new IRunnableWithProgress() {
                         public void run(final IProgressMonitor monitor)
                                 throws InvocationTargetException,
                                 InterruptedException {
