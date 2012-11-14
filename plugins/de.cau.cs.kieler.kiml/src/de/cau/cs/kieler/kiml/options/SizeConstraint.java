@@ -38,7 +38,8 @@ public enum SizeConstraint {
     /**
      * Ports labels are taken into account when determining the size of nodes. Depending on where
      * the labels are positioned the node will be made large enough to avoid overlaps and to try
-     * to place labels in as unambiguous a way as possible.
+     * to place labels in as unambiguous a way as possible. Setting this option doesn't make any
+     * sense if the {@link #PORTS} option is not set as well.
      */
     PORT_LABELS,
     
@@ -55,7 +56,7 @@ public enum SizeConstraint {
     
     /**
      * If no minimum size is set on an element, the minimum size options are assumed to be some
-     * default value.
+     * default value determined by the particular layout algorithm.
      */
     DEFAULT_MINIMUM_SIZE;
     
@@ -98,5 +99,15 @@ public enum SizeConstraint {
      */
     public static EnumSet<SizeConstraint> defaultMinimumSizeWithPorts() {
         return EnumSet.of(PORTS, MINIMUM_SIZE, DEFAULT_MINIMUM_SIZE);
+    }
+    
+    /**
+     * Returns a set containing all options defined in this enumeration, effectively giving
+     * the layout algorithm as much freedom as possible in determining the node size.
+     * 
+     * @return set with all available options.
+     */
+    public static EnumSet<SizeConstraint> free() {
+        return EnumSet.allOf(SizeConstraint.class);
     }
 }
