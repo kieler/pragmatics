@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.importWizards">
       <wizard
-            category="de.cau.cs.kieler"
+            category="de.cau.cs.kieler.kaom.wizards.import.category"
             class="de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramsWizard"
             icon="icons/importdiagram_icon.gif"
             id="de.cau.cs.kieler.kaom.importer.ptolemy.improved.importDiagramsWizard"

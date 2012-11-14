@@ -26,5 +26,21 @@
             config="de.cau.cs.kieler.kaom.custom.AnnotationsLayoutConfig">
       </semanticOption>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="de.cau.cs.kieler.kaom.wizards.new.category"
+            name="KIELER Actor-Oriented Modeling (KAOM)">
+      </category>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <category
+            id="de.cau.cs.kieler.kaom.wizards.import.category"
+            name="KIELER Actor-Oriented Modeling (KAOM)">
+      </category>
+   </extension>
 
 </plugin>
