@@ -28,15 +28,5 @@ public enum PortType {
     INPUT,
     /** output port type. */
     OUTPUT;
-    
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static PortType valueOf(final int i) {
-        return values()[i];
-    }
 
 }

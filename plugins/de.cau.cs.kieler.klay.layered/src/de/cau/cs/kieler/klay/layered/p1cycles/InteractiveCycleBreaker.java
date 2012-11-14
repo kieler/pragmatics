@@ -33,12 +33,12 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>none</dd>
- *   <dt>Postcondition:</dt><dd>the graph has no cycles
+ *   <dt>Postcondition:</dt><dd>the graph has no cycles</dd>
  * </dl>
  * 
  * @author msp
  * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
 public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayoutPhase {
 
@@ -89,6 +89,7 @@ public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayou
         // (could happen if some nodes have the same horizontal position)
         revEdges.clear();
         for (LNode node : layeredGraph.getLayerlessNodes()) {
+            // unvisited nodes have id = 1
             if (node.id > 0) {
                 findCycles(node, revEdges);
             }
@@ -109,19 +110,23 @@ public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayou
      * @param revEdges list of edges that will be reversed
      */
     private void findCycles(final LNode node1, final List<LEdge> revEdges) {
+        // nodes with negative id are part of the currently inspected path
         node1.id = -1;
         for (LPort port : node1.getPorts(PortType.OUTPUT)) {
             for (LEdge edge : port.getOutgoingEdges()) {
                 LNode node2 = edge.getTarget().getNode();
                 if (node1 != node2) {
                     if (node2.id < 0) {
+                        // a node of the current path is found --> cycle
                         revEdges.add(edge);
                     } else if (node2.id > 0) {
+                        // the node has not been visited yet --> expand the current path
                         findCycles(node2, revEdges);
                     }
                 }
             }
         }
+        // nodes with id = 0 have been already visited and are ignored if encountered again
         node1.id = 0;
     }
 

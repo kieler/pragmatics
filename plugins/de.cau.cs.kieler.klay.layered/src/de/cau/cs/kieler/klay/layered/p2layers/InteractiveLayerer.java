@@ -40,7 +40,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  *
  * @author msp
  * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
 public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhase {
 
@@ -71,20 +71,25 @@ public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhas
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             double minx = node.getPosition().x;
             double maxx = minx + node.getSize().x;
+            // look for a position in the sorted list where the node can be inserted
             ListIterator<LayerSpan> spanIter = currentSpans.listIterator();
             LayerSpan foundSpan = null;
             while (spanIter.hasNext()) {
                 LayerSpan span = spanIter.next();
                 if (span.start >= maxx) {
+                    // the next layer span is further right, so insert the node here
                     spanIter.previous();
                     break;
                 } else if (span.end > minx) {
+                    // the layer span has an intersection with the node
                     if (foundSpan == null) {
+                        // add the node to the current layer span
                         span.nodes.add(node);
                         span.start = Math.min(span.start, minx);
                         span.end = Math.max(span.end, maxx);
                         foundSpan = span;
                     } else {
+                        // merge the previously found layer span with the current one
                         foundSpan.nodes.addAll(span.nodes);
                         foundSpan.end = Math.max(foundSpan.end, span.end);
                         spanIter.remove();
@@ -92,6 +97,7 @@ public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhas
                 }
             }
             if (foundSpan == null) {
+                // no intersecting span was found, so create a new one
                 foundSpan = new LayerSpan();
                 foundSpan.start = minx;
                 foundSpan.end = maxx;

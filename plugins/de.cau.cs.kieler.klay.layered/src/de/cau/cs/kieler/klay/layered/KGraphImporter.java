@@ -73,6 +73,9 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
     // //////////////////////////////////////////////////////////////////////////////
     // Transformation KGraph -> LGraph
+    
+    /** the minimal spacing between edges, so edges won't overlap. */
+    private static final float MIN_EDGE_SPACING = 2.0f;
 
     /**
      * {@inheritDoc}
@@ -87,8 +90,21 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         layeredGraph.copyProperties(sourceShapeLayout);
         layeredGraph.checkProperties(Properties.OBJ_SPACING, Properties.BORDER_SPACING,
                 Properties.THOROUGHNESS, Properties.ASPECT_RATIO);
+        float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        if (spacing < 1) {
+            // Spacing values below 0 are transformed to the default value by checkProperties(..)
+            // Values between 0 and 1 are normalized to 1 here.
+            spacing = 1;
+            layeredGraph.setProperty(Properties.OBJ_SPACING, spacing);
+        }
+        if (layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR) * spacing < MIN_EDGE_SPACING) {
+            // Edge spacing is determined by the product of object spacing and edge spacing factor.
+            // Make sure the resulting edge spacing is at least 2 in order to avoid overlapping edges.
+            layeredGraph.setProperty(Properties.EDGE_SPACING_FACTOR, MIN_EDGE_SPACING / spacing);
+        }
         Direction direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
         if (direction == Direction.UNDEFINED) {
+            // The default layout direction is right.
             direction = Direction.RIGHT;
             layeredGraph.setProperty(LayoutOptions.DIRECTION, direction);
         }

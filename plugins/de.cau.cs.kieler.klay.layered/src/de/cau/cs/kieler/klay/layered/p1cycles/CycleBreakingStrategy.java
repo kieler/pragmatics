@@ -18,24 +18,19 @@ package de.cau.cs.kieler.klay.layered.p1cycles;
  * 
  * @author msp
  * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
 public enum CycleBreakingStrategy {
 
-    /** Applies a greedy heuristic to minimize the number of reversed edges. */
-    GREEDY,
-    /** Reacts on user interaction by respecting initial node positions. */
-    INTERACTIVE;
-    
     /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i
-     *            ordinal value
-     * @return the related enumeration value
+     * Applies a greedy heuristic to minimize the number of reversed edges.
      */
-    public static CycleBreakingStrategy valueOf(final int i) {
-        return values()[i];
-    }
+    GREEDY,
+    /**
+     * Reacts on user interaction by respecting initial node positions. The actual positions
+     * as given in the input diagram are considered here. This means that if the user moves
+     * a node, that movement is reflected in the decision which edges to reverse.
+     */
+    INTERACTIVE;
 
 }

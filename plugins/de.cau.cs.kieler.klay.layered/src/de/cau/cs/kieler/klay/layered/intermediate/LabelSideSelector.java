@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel.LSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelectionStrategy;
+import de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelection;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -61,7 +61,7 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph) {
-        EdgeLabelSideSelectionStrategy mode = layeredGraph.getProperty(Properties.EDGE_LABEL_SIDE);
+        EdgeLabelSideSelection mode = layeredGraph.getProperty(Properties.EDGE_LABEL_SIDE);
         getMonitor().begin("Label side selection (" + mode + ")", 1);
         
         List<LNode> nodes = new LinkedList<LNode>();
