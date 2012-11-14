@@ -37,7 +37,7 @@
   <extension
         point="org.eclipse.ui.commands">
      <command
-           categoryId="de.cau.cs.kieler.kiml"
+           categoryId="de.cau.cs.kieler.layout"
            defaultHandler="de.cau.cs.kieler.kiml.gmf.LayoutDiagramFileHandler"
            id="de.cau.cs.kieler.kiml.gmf.layoutDiagramFile"
            name="Layout Diagram File">
