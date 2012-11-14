@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            categoryId="de.cau.cs.kieler"
+            categoryId="org.eclipse.ui.category.file"
             defaultHandler="de.cau.cs.kieler.keg.importer.handlers.ImportHandler"
             id="de.cau.cs.kieler.keg.importer.importGraph"
             name="Import Graph">
@@ -73,12 +73,16 @@
    </extension>
    <extension
          point="org.eclipse.ui.importWizards">
+      <category
+            id="de.cau.cs.kieler.keg"
+            name="KIELER Editor for Graphs">
+      </category>
       <wizard
-            category="de.cau.cs.kieler"
+            category="de.cau.cs.kieler.keg"
             class="de.cau.cs.kieler.keg.importer.wizards.ImportGraphWizard"
             icon="icons/menu16/importdiagram.gif"
             id="de.cau.cs.kieler.keg.importer.graphImportWizard"
-            name="Graphs to KEG Graphs">
+            name="Graph Files to KEG Diagrams">
          <description>
             Import from common graph formats into the KEG file format.
          </description>
