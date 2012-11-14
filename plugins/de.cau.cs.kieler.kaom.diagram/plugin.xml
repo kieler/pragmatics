@@ -44,7 +44,7 @@
   	  <wizard
   	     name="%newWizardName"
   	     icon="icons/obj16/KaomDiagramFile.gif"
-  	     category="de.cau.cs.kieler"
+  	     category="de.cau.cs.kieler.kaom.wizards.new.category"
   	     class="de.cau.cs.kieler.kaom.diagram.part.KaomCreationWizard"
   	     id="de.cau.cs.kieler.kaom.diagram.part.KaomCreationWizardID">
   	  	 <description>%newWizardDesc</description>  
@@ -100,7 +100,6 @@
    <extension point="org.eclipse.ui.preferencePages" id="prefpages">
       <?gmfgen generated="true"?>
       <page
-            category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kaom.diagram.preferences.DiagramGeneralPreferencePage"
             id="de.cau.cs.kieler.kaom.diagram.general"
             name="%prefpage.de.cau.cs.kieler.kaom.diagram.general">
