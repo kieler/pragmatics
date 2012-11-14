@@ -49,6 +49,8 @@ public class KRenderingProvider {
             Annotation director = annotatable.getAnnotation("Director");
             if (director != null) {
                 return getDirectorRendering();
+            } else if ((annotatable instanceof Entity) && (((StringAnnotation) annotatable.getAnnotation("ptolemyClass")).getValue().equals("ptolemy.actor.lib.Accumulator"))) {
+                return figureProvider.createAccumulator();
             } else if ((annotatable instanceof Entity) && ((Entity) annotatable).getChildEntities().isEmpty()) {
                 return getPtolemySvgRendering(annotatable);
             } else {

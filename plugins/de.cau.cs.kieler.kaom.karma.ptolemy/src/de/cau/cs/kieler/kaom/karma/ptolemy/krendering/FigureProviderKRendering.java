@@ -37,6 +37,8 @@ import org.eclipse.gmf.runtime.draw2d.ui.internal.figures.ImageFigureEx;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Document;
@@ -51,6 +53,8 @@ import de.cau.cs.kieler.core.krendering.KBackgroundColor;
 import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KDirectPlacementData;
 import de.cau.cs.kieler.core.krendering.KForegroundColor;
+import de.cau.cs.kieler.core.krendering.KGridPlacementData;
+import de.cau.cs.kieler.core.krendering.KImage;
 import de.cau.cs.kieler.core.krendering.KLineWidth;
 import de.cau.cs.kieler.core.krendering.KPolygon;
 import de.cau.cs.kieler.core.krendering.KPolylinePlacementData;
@@ -103,7 +107,27 @@ public class FigureProviderKRendering {
         fig.getBounds().setSize(size.getCopy());
         fig.setSize(size.getCopy());
         */
-        KRendering figure = this.getDefaultFigure();//factory.createKImage();
+        KImage figure = factory.createKImage();
+        figure.setImageObject(image);
+        Rectangle rec = image.getBounds();
+        /*
+        KDirectPlacementData placement = factory.createKDirectPlacementData();
+
+        KPosition topleft = makeTopLeftKPosition(0, 0);
+       
+        ImageData data = image.getImageData();
+        KPosition bottomright = makeBottomRightKPosition(rec.width, rec.height);
+
+        placement.setTopLeft(topleft);
+        placement.setBottomRight(bottomright);
+*/
+        KGridPlacementData placement = factory.createKGridPlacementData();
+        placement.setHeightHint(rec.height);
+        placement.setWidthHint(rec.width);
+        
+        figure.setPlacementData(placement);
+        
+        
         return figure;
     }
 
@@ -306,7 +330,7 @@ public class FigureProviderKRendering {
     /**
      * A custom svg of an Accumulator since the ptolemy one is bugged.
      * 
-     * @return a ScalableImageFigure representing an Accumulator
+     * @return a KRendering representing an Accumulator
      */
     public KRendering createAccumulator() {
         String accsvg = "<svg height=\"41\" width=\"41\" >"

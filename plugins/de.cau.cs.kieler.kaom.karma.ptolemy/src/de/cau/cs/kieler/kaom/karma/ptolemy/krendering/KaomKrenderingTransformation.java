@@ -32,6 +32,7 @@ import de.cau.cs.kieler.core.krendering.KGridPlacementData;
 import de.cau.cs.kieler.core.krendering.KRectangle;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
+import de.cau.cs.kieler.core.krendering.KRoundedBendsPolyline;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
@@ -159,8 +160,9 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
         KRenderingFactory factory = KRenderingFactory.eINSTANCE;
         for (Entity e : element.getChildEntities()) {
             KNode n = KimlUtil.createInitializedNode();
+            KLabel l;
             if (e.getName() != null) {
-                KLabel l = KimlUtil.createInitializedLabel(n);
+                l = KimlUtil.createInitializedLabel(n);
                 l.setText(e.getName());
             }
             KRendering ren = KRenderingProvider.getKNodeRendering(e);
@@ -220,11 +222,12 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             KShapeLayout lay = getKLayout(port);
             KRendering ren = KRenderingProvider.getKPortRendering(p, lay, getKLayout(parent));
             
-            
+            /*
             if (p.getName() != null) {
                 KLabel l = KimlUtil.createInitializedLabel(port);
                 l.setText(p.getName());
             }
+            */
             
             if (topRen != null) {
                 getKRendering(port).getChildren().add(ren);
@@ -251,7 +254,8 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
                 KLabel label = KimlUtil.createInitializedLabel(edge);
                 label.setText(l.getName());
             }
-            KRendering edgeRendering = factory.createKPolyline();
+            KRoundedBendsPolyline edgeRendering = factory.createKRoundedBendsPolyline();
+            edgeRendering.setBendRadius(5);
             KEdgeLayout el = null;
             EList<KGraphData> data = edge.getData();
             KContainerRendering topren = null;
