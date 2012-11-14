@@ -76,5 +76,14 @@
        </knownOption>
     </layoutAlgorithm>
  </extension>
+ <extension
+       point="org.eclipse.gmf.runtime.diagram.ui.layoutProviders">
+    <layoutProvider
+          class="de.cau.cs.kieler.kiml.gmf.KielerLayoutProvider">
+       <Priority
+             name="Highest">
+       </Priority>
+    </layoutProvider>
+ </extension>
 
 </plugin>
