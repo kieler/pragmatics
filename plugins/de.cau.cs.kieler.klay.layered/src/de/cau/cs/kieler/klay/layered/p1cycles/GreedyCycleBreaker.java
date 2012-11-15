@@ -191,8 +191,8 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
         }
 
         // shift negative ranks to positive; this applies to sinks of the graph
-        int shiftBase = unprocessedNodeCount + 1;
-        for (index = 0; index < unprocessedNodeCount; index++) {
+        int shiftBase = nodes.size() + 1;
+        for (index = 0; index < nodes.size(); index++) {
             if (mark[index] < 0) {
                 mark[index] += shiftBase;
             }
@@ -200,18 +200,15 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
 
         // reverse edges that point left
         for (LNode node : nodes) {
-            for (LPort port : node.getPorts()) {
-                LEdge[] outgoingEdges = port.getOutgoingEdges().toArray(new LEdge[0]);
+            LPort[] ports = node.getPorts().toArray(new LPort[node.getPorts().size()]);
+            for (LPort port : ports) {
+                LEdge[] outgoingEdges = port.getOutgoingEdges().toArray(
+                        new LEdge[port.getOutgoingEdges().size()]);
                 
                 // look at the node's outgoing edges
                 for (LEdge edge : outgoingEdges) {
                     int targetIx = edge.getTarget().getNode().id;
                     if (mark[node.id] > mark[targetIx]) {
-                        // In theory, this could create new collector ports, leading to a concurrent
-                        // modification exception due to the iteration over the list of ports.
-                        // However, this will not happen here, because edges are only reversed for
-                        // nodes that are part of a cycle and thus already have both an input and
-                        // an output collector port.
                         edge.reverse(layeredGraph, true);
                         layeredGraph.setProperty(Properties.CYCLIC, true);
                     }
