@@ -47,9 +47,8 @@ public class ImportHandler extends AbstractHandler {
         Status myStatus = null;
         try {
             // get input models from currently selected files in package explorer
-            ISelection selection =
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService()
-                            .getSelection();
+            ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                    .getSelectionService().getSelection();
             // open the wizard
             ImportGraphWizard wizard = new ImportGraphWizard();
             wizard.init(PlatformUI.getWorkbench(), (IStructuredSelection) selection);
@@ -58,14 +57,12 @@ public class ImportHandler extends AbstractHandler {
             dialog.open();
         } catch (NullPointerException exception) {
             exception.printStackTrace();
-            myStatus =
-                    new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID,
-                            Messages.ImportHandler_import_failed_error, exception);
+            myStatus = new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID,
+                    Messages.ImportHandler_import_failed_error, exception);
         } catch (ClassCastException exception) {
             exception.printStackTrace();
-            myStatus =
-                    new Status(IStatus.WARNING, KEGImporterPlugin.PLUGIN_ID,
-                            Messages.ImportHandler_no_input_error, exception);
+            myStatus = new Status(IStatus.WARNING, KEGImporterPlugin.PLUGIN_ID,
+                    Messages.ImportHandler_no_input_error, exception);
         } finally {
             if (myStatus != null) {
                 StatusManager.getManager().handle(myStatus,
