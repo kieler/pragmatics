@@ -20,7 +20,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.force.graph.FBendpoint;
@@ -53,7 +52,7 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class ComponentsProcessor extends AbstractAlgorithm {
+public class ComponentsProcessor {
 
     /** the incidence lists of the graph. */
     private List<FEdge>[] incidence;
