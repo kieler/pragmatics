@@ -17,7 +17,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -30,21 +30,18 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * @author pkl
  * @kieler.rating proposed yellow by pkl
  */
-public class SelfLoopDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
-
-    private PGraph graph;
-    private GridRepresentation grid;
+public class SelfLoopDummyRemover implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph) {
-        getMonitor().begin("Remove self loop dummies", 1);
-        this.graph = pgraph;
-        this.grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
+    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Remove self loop dummies", 1);
+        
+        GridRepresentation grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
 
         List<PNode> selfLoopNodes = Lists.newLinkedList();
-        for (PNode node : this.graph.getNodes()) {
+        for (PNode node : pgraph.getNodes()) {
             SelfLoopDummyContainer container = node.getProperty(Properties.SELFLOOP_DUMMIES);
             if (container != null) {
                 selfLoopNodes.add(node);
@@ -80,14 +77,16 @@ public class SelfLoopDummyRemover extends AbstractAlgorithm implements ILayoutPr
             // removal of dummies
             originalEdge.setTarget(node);
 
-            this.graph.removeEdge(container.getDummyEdge1());
-            this.graph.removeEdge(container.getDummyEdge2());
+            pgraph.removeEdge(container.getDummyEdge1());
+            pgraph.removeEdge(container.getDummyEdge2());
             dummyNode1.unlinkAll();
-            this.graph.removeNode(dummyNode1);
-            this.graph.removeNode(dummyNode2);
-            this.grid.remove(dummyNode1);
-            this.grid.remove(dummyNode2);
+            pgraph.removeNode(dummyNode1);
+            pgraph.removeNode(dummyNode2);
+            grid.remove(dummyNode1);
+            grid.remove(dummyNode2);
         }
+        
+        monitor.done();
     }
 
 }

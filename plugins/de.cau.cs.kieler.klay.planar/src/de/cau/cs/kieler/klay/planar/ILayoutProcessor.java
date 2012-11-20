@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar;
 
-import de.cau.cs.kieler.core.alg.IAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 
 /**
@@ -23,14 +23,16 @@ import de.cau.cs.kieler.klay.planar.graph.PGraph;
  * @author pkl
  * @kieler.rating proposed yellow by pkl
  */
-public interface ILayoutProcessor extends IAlgorithm {
+public interface ILayoutProcessor {
 
     /**
      * Performs the phase's work on the given graph.
      * 
      * @param graph
      *            a instance of {@link PGraph}
+     * @param progressMonitor
+     *            a progress monitor to track algorithm progress
      */
-    void process(PGraph graph);
+    void process(PGraph graph, IKielerProgressMonitor progressMonitor);
 
 }

@@ -19,7 +19,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -37,7 +37,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author pkl
  */
-public class RectShapeDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
+public class RectShapeDummyRemover implements ILayoutProcessor {
 
     /** The graph which is changed during the processor. */
     private PGraph graph;
@@ -48,15 +48,18 @@ public class RectShapeDummyRemover extends AbstractAlgorithm implements ILayoutP
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pGraph) {
-        getMonitor().begin("Remove dummynodes", 1);
+    public void process(final PGraph pGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Remove dummynodes", 1);
 
         this.graph = pGraph;
         this.grid = graph.getProperty(Properties.GRID_REPRESENTATION);
 
         removeRectShapeDummies();
 
-        getMonitor().done();
+        // release resources
+        graph = null;
+        grid = null;
+        monitor.done();
     }
 
     /**

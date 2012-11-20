@@ -17,7 +17,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -28,10 +28,11 @@ import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalA
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
+ * TODO document.
  * 
  * @author pkl
  */
-public class FullAngleDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
+public class FullAngleDummyRemover implements ILayoutProcessor {
 
     /** The current given graph. */
     private PGraph graph = null;
@@ -42,8 +43,8 @@ public class FullAngleDummyRemover extends AbstractAlgorithm implements ILayoutP
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pGraph) {
-        getMonitor().begin("full angle dummies remover", 1);
+    public void process(final PGraph pGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("full angle dummies remover", 1);
         this.graph = pGraph;
         this.ortho = this.graph.getProperty(Properties.ORTHO_REPRESENTATION);
 
@@ -63,10 +64,12 @@ public class FullAngleDummyRemover extends AbstractAlgorithm implements ILayoutP
         }
 
         // trigger new face calculation
-        this.graph.getFaces();
+        pGraph.getFaces();
 
-        getMonitor().done();
-
+        // release resources
+        graph = null;
+        ortho = null;
+        monitor.done();
     }
 
     /**

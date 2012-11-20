@@ -21,7 +21,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.PConstants;
@@ -39,7 +39,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author pkl
  */
-public class QuodDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
+public class QuodDummyRemover implements ILayoutProcessor {
 
     /** The processed graph. */
     private PGraph graph;
@@ -50,8 +50,9 @@ public class QuodDummyRemover extends AbstractAlgorithm implements ILayoutProces
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph) {
-        getMonitor().begin("Quod Dummy Removing", 1);
+    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Quod Dummy Removing", 1);
+        
         this.graph = pgraph;
         this.grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
 
@@ -62,7 +63,10 @@ public class QuodDummyRemover extends AbstractAlgorithm implements ILayoutProces
 
         calcNodePosition(highDegreeNodes);
 
-        getMonitor().done();
+        // release resources
+        graph = null;
+        grid = null;
+        monitor.done();
     }
 
     /**

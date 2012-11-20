@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.planar.util.PUtil;
  * @author pkl
  * @kieler.rating yellow 2012-11-01 review KI-30 by ima, cds
  */
-public class PlanarDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
+public class PlanarDummyRemover implements ILayoutProcessor {
 
     /** The graph which is changed during the processor. */
     private PGraph graph;
@@ -43,15 +43,18 @@ public class PlanarDummyRemover extends AbstractAlgorithm implements ILayoutProc
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pGraph) {
-        getMonitor().begin("Remove dummynodes", 1);
+    public void process(final PGraph pGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Remove dummynodes", 1);
 
         this.graph = pGraph;
         this.grid = graph.getProperty(Properties.GRID_REPRESENTATION);
 
         removePlanarDummies();
 
-        getMonitor().done();
+        // release resources
+        graph = null;
+        grid = null;
+        monitor.done();
     }
 
     /**
