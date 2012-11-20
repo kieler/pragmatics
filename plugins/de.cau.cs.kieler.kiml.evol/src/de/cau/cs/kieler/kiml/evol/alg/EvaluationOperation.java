@@ -31,7 +31,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.WrappedException;
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -55,7 +54,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class EvaluationOperation extends AbstractAlgorithm implements IEvolutionaryOperation {
+public class EvaluationOperation implements IEvolutionaryOperation {
     
     /** identifier for the metric category. */
     public static final String METRIC_CATEGORY = "de.cau.cs.kieler.kiml.evol.metricCategory";
@@ -119,18 +118,18 @@ public class EvaluationOperation extends AbstractAlgorithm implements IEvolution
     /**
      * {@inheritDoc}
      */
-    public void process(final Population population) {
-        getMonitor().begin("Evaluation", population.size());
+    public void process(final Population population, final IKielerProgressMonitor monitor) {
+        monitor.begin("Evaluation", population.size());
         
         if (executorService == null) {
             // single-threaded execution
             for (Genome genome : population) {
                 Double fitness = genome.getProperty(Genome.FITNESS);
                 if (fitness == null) {
-                    fitness = autoRate(genome, population, getMonitor().subTask(1));
+                    fitness = autoRate(genome, population, monitor.subTask(1));
                     genome.setProperty(Genome.FITNESS, fitness);
                 } else {
-                    getMonitor().worked(1);
+                    monitor.worked(1);
                 }
             }
             
@@ -147,7 +146,7 @@ public class EvaluationOperation extends AbstractAlgorithm implements IEvolution
                     });
                     futures.addLast(future);
                 } else {
-                    getMonitor().worked(1);
+                    monitor.worked(1);
                 }
             }
             
@@ -156,7 +155,7 @@ public class EvaluationOperation extends AbstractAlgorithm implements IEvolution
                 try {
                     // this call waits if necessary for the computation to complete
                     futures.removeFirst().get();
-                    getMonitor().worked(1);
+                    monitor.worked(1);
                 } catch (Exception exception) {
                     throw new WrappedException(exception);
                 }
@@ -167,7 +166,7 @@ public class EvaluationOperation extends AbstractAlgorithm implements IEvolution
         // sort the individuals by descending fitness
         Collections.sort(population);
         
-        getMonitor().done();
+        monitor.done();
     }
     
     /**
