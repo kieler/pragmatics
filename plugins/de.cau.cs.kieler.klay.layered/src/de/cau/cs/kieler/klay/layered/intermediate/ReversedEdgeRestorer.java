@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -40,13 +40,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class ReversedEdgeRestorer extends AbstractAlgorithm implements ILayoutProcessor {
+public class ReversedEdgeRestorer implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Restoring reversed edges", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Restoring reversed edges", 1);
         
         // Iterate through the layers
         for (Layer layer : layeredGraph) {
@@ -67,7 +67,7 @@ public class ReversedEdgeRestorer extends AbstractAlgorithm implements ILayoutPr
             }
         }
         
-        getMonitor().done();
+        monitor.done();
     }
 
 }

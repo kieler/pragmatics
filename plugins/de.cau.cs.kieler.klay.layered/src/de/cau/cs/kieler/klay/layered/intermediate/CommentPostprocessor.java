@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -46,13 +46,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class CommentPostprocessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class CommentPostprocessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Comment post-processing", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Comment post-processing", 1);
         double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         
         for (Layer layer : layeredGraph) {
@@ -73,7 +73,7 @@ public class CommentPostprocessor extends AbstractAlgorithm implements ILayoutPr
             layer.getNodes().addAll(boxes);
         }
         
-        getMonitor().done();
+        monitor.done();
     }
     
     /**

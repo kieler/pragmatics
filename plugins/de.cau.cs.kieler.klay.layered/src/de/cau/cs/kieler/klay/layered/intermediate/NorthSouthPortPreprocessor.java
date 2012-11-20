@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -100,13 +100,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class NorthSouthPortPreprocessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Odd port side processing", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Odd port side processing", 1);
         
         int pointer;
         List<LNode> northDummyNodes = new LinkedList<LNode>();
@@ -202,6 +202,8 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                 }
             }
         }
+        
+        monitor.done();
     }
     
     /**

@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -54,13 +54,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author ima
  * @kieler.design 2012-08-10 chsch grh
  */
-public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutProcessor {
+public class CompoundGraphRestorer implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin(
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin(
                 "Remove dummy edges and nodes, set node and edge positions"
                         + "and node size for compound nodes", 1);
 
@@ -208,7 +208,7 @@ public class CompoundGraphRestorer extends AbstractAlgorithm implements ILayoutP
             layerNodes.remove(removable);
         }
 
-        getMonitor().done();
+        monitor.done();
     }
 
     /**

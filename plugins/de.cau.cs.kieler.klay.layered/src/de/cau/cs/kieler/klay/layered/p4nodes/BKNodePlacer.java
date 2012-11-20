@@ -23,7 +23,7 @@ import java.util.List;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
@@ -109,7 +109,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating yellow 2012-08-10 chsch grh KI-19
  */
-public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
+public class BKNodePlacer implements ILayoutPhase {
     
     /** In the compaction step, nodes connected with north south dummies
      *  are compacted in a way which doesn't leave enough space for e.g., arrowheads.
@@ -123,7 +123,7 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
                                     LayoutProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
     /** List of edges involved in type 1 conflicts (see above). */
-    private List<LEdge> markedEdges;
+    private final List<LEdge> markedEdges = new LinkedList<LEdge>();
 
     /** Basic spacing between nodes, determined by layout options. */
     private float normalSpacing;
@@ -154,9 +154,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Brandes & Koepf node placement", 1);
-        markedEdges = new LinkedList<LEdge>();
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Brandes & Koepf node placement", 1);
 
         // Determine overall node count for an optimal initialization of maps.
         int nodeCount = 0;
@@ -311,7 +310,8 @@ public class BKNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
             System.out.println(markedEdges);
         }
 
-        getMonitor().done();
+        markedEdges.clear();
+        monitor.done();
     }
 
     /**
