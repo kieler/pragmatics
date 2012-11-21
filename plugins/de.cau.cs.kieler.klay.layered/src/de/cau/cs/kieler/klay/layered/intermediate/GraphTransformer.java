@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -34,7 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class GraphTransformer extends AbstractAlgorithm implements ILayoutProcessor {
+public class GraphTransformer implements ILayoutProcessor {
 
     /** definition of transformation modes. */
     public enum Mode {
@@ -61,8 +61,8 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Graph transformation (" + mode + ")", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Graph transformation (" + mode + ")", 1);
         List<LNode> nodes = new LinkedList<LNode>(layeredGraph.getLayerlessNodes());
         for (Layer layer : layeredGraph.getLayers()) {
             nodes.addAll(layer.getNodes());
@@ -84,7 +84,7 @@ public class GraphTransformer extends AbstractAlgorithm implements ILayoutProces
             transpose(layeredGraph.getSize());
             break;
         }
-        getMonitor().done();
+        monitor.done();
     }
     
     /**

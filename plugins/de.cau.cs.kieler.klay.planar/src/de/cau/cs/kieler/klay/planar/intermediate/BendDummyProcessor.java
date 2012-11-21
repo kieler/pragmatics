@@ -18,7 +18,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -42,7 +42,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * @author pkl
  * @kieler.rating yellow 2012-11-01 review KI-30 by ima, cds
  */
-public class BendDummyProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class BendDummyProcessor implements ILayoutProcessor {
 
     /** The processed graph. */
     private PGraph graph;
@@ -53,8 +53,8 @@ public class BendDummyProcessor extends AbstractAlgorithm implements ILayoutProc
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph) {
-        getMonitor().begin("Add bend dummies", 1);
+    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Add bend dummies", 1);
         this.graph = pgraph;
         this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
 
@@ -68,7 +68,10 @@ public class BendDummyProcessor extends AbstractAlgorithm implements ILayoutProc
             addBendDummies(edge);
         }
 
-        getMonitor().done();
+        // release resources
+        graph = null;
+        orthogonal = null;
+        monitor.done();
     }
 
     /**

@@ -21,7 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -45,7 +45,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author pdo
  * @kieler.design 2012-08-10 chsch grh
  */
-public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class BigNodesProcessor implements ILayoutProcessor {
 
     // ================================== Attributes ==============================================
 
@@ -100,11 +100,13 @@ public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProce
      * 
      * @param theLayeredGraph
      *            the layered graph to put all nodes into
+     * @param monitor
+     *            the progress monitor
      * 
      * @see de.cau.cs.kieler.klay.layered.intermediate.BigNodesProcessor#width width
      */
-    public void process(final LGraph theLayeredGraph) {
-        assert theLayeredGraph != null;
+    public void process(final LGraph theLayeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Big nodes processing", 1);
 
         // initialize attributes
         nodes = theLayeredGraph.getLayerlessNodes();
@@ -192,6 +194,8 @@ public class BigNodesProcessor extends AbstractAlgorithm implements ILayoutProce
         for (LNode node : nodes) {
             nodeIDs.put(node, node.id);
         }
+        
+        monitor.done();
     }
 
     /**
