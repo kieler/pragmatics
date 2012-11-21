@@ -20,17 +20,13 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * Sets the node margins. Node margins are influenced by both port positions and sizes
- * and label positions and sizes. Furthermore, comment boxes that are put directly
- * above or below a node also increase the margin.
+ * 
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph; nodes have fixed port positions; labels
- *     have fixed positions.</dd>
- *   <dt>Postcondition:</dt><dd>the node margins are properly set to form a bounding box
- *     around the node and its ports and labels.</dd>
+ *   <dt>Precondition:</dt><dd></dd>
+ *   <dt>Postcondition:</dt><dd></dd>
  *   <dt>Slots:</dt><dd>Before phase 4.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link PortPositionProcessor}</dd>
+ *   <dt>Same-slot dependencies:</dt><dd></dd>
  * </dl>
  *
  * @author cds
@@ -44,7 +40,27 @@ public class LabelAndNodeSizeProcessor extends AbstractAlgorithm implements ILay
         getMonitor().begin("Node and Port Label Placement and Node Sizing", 1);
         double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
 
+        /* PHASE 1: PLACE PORT LABELS
+         * Port labels are placed and port margins are calculated. We currently only support
+         * one label per port.
+         */
         
+        /* PHASE 2: PLACE PORTS
+         * Ports are placed and node insets are calculated accordingly.
+         */
+        
+        /* PHASE 3: RESERVE SPACE FOR NODE LABEL
+         * If the node has a label (we currently only support one), the node insets might have
+         * to be adjusted to reserve space for it, which is what this phase does.
+         */
+        
+        /* PHASE 4: RESIZE NODE
+         * The node is resized, taking all node size constraints into account.
+         */
+        
+        /* PHASE 5: PLACE NODE LABEL
+         * With space reserved for the node label (we only support one), the label is placed.
+         */
         
         getMonitor().done();
     }
