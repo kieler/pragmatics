@@ -13,22 +13,13 @@
  */
 package de.cau.cs.kieler.kiml.debug.views;
 
-import org.eclipse.gef.EditPart;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.part.ViewPart;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
-import de.cau.cs.kieler.core.ui.UnsupportedPartException;
-import de.cau.cs.kieler.kiml.debug.views.SmartLayoutContentProvider.ResultData;
 import de.cau.cs.kieler.kiml.service.LayoutInfoService;
 import de.cau.cs.kieler.kiml.service.LayoutInfoService.ConfigData;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
@@ -59,34 +50,6 @@ public class SmartLayoutView extends ViewPart {
         treeViewer.setLabelProvider(new SmartLayoutLabelProvider());
         treeViewer.setInput(metaLayoutMap.values());
         treeViewer.setComparator(new SmartLayoutComparator());
-        
-        Tree tree = (Tree) treeViewer.getControl();
-        tree.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(final SelectionEvent event) {
-                if (event.item instanceof TreeItem) {
-                    Object data = ((TreeItem) event.item).getData();
-                    MetaLayout metaLayout = null;
-                    if (data instanceof MetaLayout) {
-                        metaLayout = (MetaLayout) data;
-                    } else if (data instanceof ResultData) {
-                        metaLayout = ((ResultData) data).getMetaLayout();
-                    }
-                    Object object = metaLayoutMap.inverse().get(metaLayout);
-                    if (object != null) {
-                        try {
-                            IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
-                                    .getBridge(object);
-                            EditPart editPart = bridge.getEditPart(object);
-                            bridge.setSelection(editPart);
-                        } catch (UnsupportedPartException exception) {
-                            // ignore exception
-                        }
-                    }
-                }
-            }
-            public void widgetDefaultSelected(final SelectionEvent e) {
-            }
-        });
     }
 
     /**

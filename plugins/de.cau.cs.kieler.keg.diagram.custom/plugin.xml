@@ -11,7 +11,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            categoryId="de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorID"
+            categoryId="org.eclipse.ui.category.file"
             defaultHandler="de.cau.cs.kieler.keg.diagram.custom.commands.InitKegDiagramHandler"
             id="de.cau.cs.kieler.keg.ui.reinitDiagram"
             name="%reinitDiagramCommand.name">
@@ -59,7 +59,7 @@
          point="org.eclipse.ui.newWizards">
       <wizard
             canFinishEarly="false"
-            category="de.cau.cs.kieler"
+            category="de.cau.cs.kieler.keg"
             class="de.cau.cs.kieler.keg.diagram.custom.wizards.RandomGraphWizard"
             hasPages="true"
             icon="icons/obj16/KEGDiagramFile.gif"

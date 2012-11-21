@@ -18,6 +18,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
@@ -71,18 +72,22 @@ public class LayerConstraintProcessor extends AbstractAlgorithm implements ILayo
                 switch (constraint) {
                 case FIRST:
                     node.setLayer(firstLayer);
+                    assertNoIncoming(node);
                     break;
                 
                 case FIRST_SEPARATE:
                     node.setLayer(veryFirstLayer);
+                    assertNoIncoming(node);
                     break;
                 
                 case LAST:
                     node.setLayer(lastLayer);
+                    assertNoOutgoing(node);
                     break;
                 
                 case LAST_SEPARATE:
                     node.setLayer(veryLastLayer);
+                    assertNoOutgoing(node);
                     break;
                 }
             }
@@ -107,6 +112,28 @@ public class LayerConstraintProcessor extends AbstractAlgorithm implements ILayo
         }
         
         getMonitor().done();
+    }
+    
+    /**
+     * Check that the node has no incoming edges, and fail if it has any.
+     * 
+     * @param node a node
+     */
+    private void assertNoIncoming(final LNode node) {
+        for (LPort port : node.getPorts()) {
+            assert port.getIncomingEdges().isEmpty();
+        }
+    }
+    
+    /**
+     * Check that the node has no outgoing edges, and fail if it has any.
+     * 
+     * @param node a node
+     */
+    private void assertNoOutgoing(final LNode node) {
+        for (LPort port : node.getPorts()) {
+            assert port.getOutgoingEdges().isEmpty();
+        }
     }
 
 }

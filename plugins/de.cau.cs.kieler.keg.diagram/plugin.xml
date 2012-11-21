@@ -41,10 +41,14 @@
 
    <extension point="org.eclipse.ui.newWizards" id="creation-wizard">
       <?gmfgen generated="true"?>
+     <category
+           id="de.cau.cs.kieler.keg"
+           name="KIELER Editor for Graphs">
+     </category>
   	  <wizard
   	     name="%newWizardName"
   	     icon="icons/obj16/KEGDiagramFile.gif"
-  	     category="de.cau.cs.kieler"
+  	     category="de.cau.cs.kieler.keg"
   	     class="de.cau.cs.kieler.keg.diagram.part.GraphsCreationWizard"
   	     id="de.cau.cs.kieler.keg.diagram.part.GraphsCreationWizardID">
   	  	 <description>%newWizardDesc</description>  
@@ -91,7 +95,6 @@
       <page
             id="de.cau.cs.kieler.keg.diagram.general"
             name="%prefpage.de.cau.cs.kieler.keg.diagram.general"
-            category="de.cau.cs.kieler"
 
             class="de.cau.cs.kieler.keg.diagram.preferences.DiagramGeneralPreferencePage">
       </page>

@@ -287,7 +287,8 @@ public class DiagramLayoutEngine {
      *            the parent diagram part for which layout is performed, or {@code null} if the whole
      *            diagram shall be layouted
      * @param progressMonitor
-     *            a progress monitor to which progress of the layout algorithm is reported
+     *            a progress monitor to which progress of the layout algorithm is reported,
+     *            or {@code null} if no progress reporting is required
      * @return a status indicating success or failure
      */
     public IStatus layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
@@ -314,17 +315,24 @@ public class DiagramLayoutEngine {
      *            the parent diagram part for which layout is performed, or {@code null} if the whole
      *            diagram shall be layouted
      * @param progressMonitor
-     *            a progress monitor to which progress of the layout algorithm is reported
+     *            a progress monitor to which progress of the layout algorithm is reported,
+     *            or {@code null} if no progress reporting is required
      * @return a status indicating success or failure
      */
     protected <T> IStatus layout(final IDiagramLayoutManager<T> layoutManager,
             final IWorkbenchPart workbenchPart, final Object diagramPart,
             final IKielerProgressMonitor progressMonitor) {
+        IKielerProgressMonitor monitor;
+        if (progressMonitor == null) {
+            monitor = new BasicProgressMonitor(0);
+        } else {
+            monitor = progressMonitor;
+        }
         // SUPPRESS CHECKSTYLE NEXT MagicNumber
-        progressMonitor.begin("Layout Diagram", 3);
+        monitor.begin("Layout Diagram", 3);
         
         // build the layout graph
-        IKielerProgressMonitor submon1 = progressMonitor.subTask(1);
+        IKielerProgressMonitor submon1 = monitor.subTask(1);
         submon1.begin("Build layout graph", 1);
         LayoutMapping<T> mapping = layoutManager.buildLayoutGraph(workbenchPart, diagramPart);
         
@@ -339,10 +347,10 @@ public class DiagramLayoutEngine {
             submon1.done();
             
             // perform the actual layout
-            status = layout(mapping, transDiagPart, progressMonitor.subTask(1), null, false);
+            status = layout(mapping, transDiagPart, monitor.subTask(1), null, false);
             
             // apply the layout to the diagram
-            IKielerProgressMonitor submon3 = progressMonitor.subTask(1);
+            IKielerProgressMonitor submon3 = monitor.subTask(1);
             submon3.begin("Apply layout to the diagram", 1);
             layoutManager.applyLayout(mapping, false, 0);
             submon3.done();
@@ -351,7 +359,7 @@ public class DiagramLayoutEngine {
                     Messages.getString("kiml.ui.62"));
         }
         
-        progressMonitor.done();
+        monitor.done();
         return status;
     }
 

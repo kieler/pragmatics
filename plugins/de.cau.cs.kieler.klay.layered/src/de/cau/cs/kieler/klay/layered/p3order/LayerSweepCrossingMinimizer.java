@@ -400,6 +400,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                     for (LEdge edge : port.getOutgoingEdges()) {
                         LPort target = edge.getTarget();
                         if (node.getLayer() != target.getNode().getLayer()) {
+                            assert i < edgeCount;
                             // If the port has multiple output edges, sort them by target port index
                             insert(southSequence, start, i++, portPos[target.id]);
                         }
@@ -412,6 +413,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                     for (LEdge edge : port.getOutgoingEdges()) {
                         LPort target = edge.getTarget();
                         if (node.getLayer() != target.getNode().getLayer()) {
+                            assert i < edgeCount;
                             insert(southSequence, start, i++, portPos[target.id]);
                         }
                     }
@@ -759,9 +761,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         for (int j = end - 1; j >= insx; j--) {
             array[j + 1] = array[j];
         }
-        if (array.length != 0) {
-            array[insx] = n;
-        }
+        array[insx] = n;
     }
 
     /**
