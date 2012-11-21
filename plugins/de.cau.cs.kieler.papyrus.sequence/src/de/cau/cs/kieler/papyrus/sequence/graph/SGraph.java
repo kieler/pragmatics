@@ -28,8 +28,8 @@ public class SGraph extends SGraphElement {
     private static final long serialVersionUID = -7952451128297135991L;
     private List<SLifeline> lifelines = new LinkedList<SLifeline>();
     private List<SComment> comments = new LinkedList<SComment>();
-    private float sizeX = 0.0f;
-    private float sizeY = 0.0f;
+    private double width = 0.0f;
+    private double height = 0.0f;
 
     /**
      * Get the list of lifelines in the SGraph.
@@ -71,41 +71,41 @@ public class SGraph extends SGraphElement {
     }
 
     /**
-     * Get the horizontal size of the graph.
+     * Get the width of the graph.
      * 
-     * @return the horizontal size
+     * @return the width
      */
-    public float getSizeX() {
-        return sizeX;
+    public double getWidth() {
+        return width;
     }
 
     /**
-     * Set the horizontal size of the graph.
+     * Set the width of the graph.
      * 
-     * @param sizeX
-     *            the new horizontal size
+     * @param width
+     *            the new width
      */
-    public void setSizeX(final float sizeX) {
-        this.sizeX = sizeX;
+    public void setWidth(final double width) {
+        this.width = width;
     }
 
     /**
-     * Get the vertical size of the graph.
+     * Get the height of the graph.
      * 
-     * @return the vertical size
+     * @return the height
      */
-    public float getSizeY() {
-        return sizeY;
+    public double getHeight() {
+        return height;
     }
 
     /**
-     * Set the vertical size of the graph.
+     * Set the height of the graph.
      * 
-     * @param sizeY
-     *            the new vertical size
+     * @param height
+     *            the new height
      */
-    public void setSizeY(final float sizeY) {
-        this.sizeY = sizeY;
+    public void setHeight(final double height) {
+        this.height = height;
     }
 
     /**

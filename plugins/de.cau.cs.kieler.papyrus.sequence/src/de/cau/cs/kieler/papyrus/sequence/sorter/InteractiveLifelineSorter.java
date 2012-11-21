@@ -39,7 +39,7 @@ public class InteractiveLifelineSorter implements ILifelineSorter {
         List<SLifeline> lifelines = (List<SLifeline>) graph.getLifelines();
         java.util.Collections.sort(lifelines);
         for (int i = 0; i < lifelines.size(); i++) {
-            lifelines.get(i).setPosition(i);
+            lifelines.get(i).setHorizontalPosition(i);
         }
         return lifelines;
     }

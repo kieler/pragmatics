@@ -29,7 +29,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 public class SequenceExecution {
     private String type = "";
     private List<Object> messages;
-    private float xPos, yPos, maxXPos, maxYPos;
+    private double xPos, yPos, maxXPos, maxYPos;
     private KNode origin;
 
     /**
@@ -39,7 +39,7 @@ public class SequenceExecution {
         messages = new LinkedList<Object>();
         xPos = 0;
         maxXPos = 0;
-        yPos = Float.MAX_VALUE;
+        yPos = Double.MAX_VALUE;
         maxYPos = 0;
     }
 
@@ -105,7 +105,7 @@ public class SequenceExecution {
      * 
      * @return the horizontal position
      */
-    public float getxPos() {
+    public double getxPos() {
         return xPos;
     }
 
@@ -115,7 +115,7 @@ public class SequenceExecution {
      * @param xPos
      *            the new horizontal position
      */
-    public void setxPos(final float xPos) {
+    public void setxPos(final double xPos) {
         this.xPos = xPos;
     }
 
@@ -124,7 +124,7 @@ public class SequenceExecution {
      * 
      * @return the vertical position
      */
-    public float getyPos() {
+    public double getyPos() {
         return yPos;
     }
 
@@ -134,7 +134,7 @@ public class SequenceExecution {
      * @param yPos
      *            the new vertical position
      */
-    public void setyPos(final float yPos) {
+    public void setyPos(final double yPos) {
         this.yPos = yPos;
     }
 
@@ -143,7 +143,7 @@ public class SequenceExecution {
      * 
      * @return the lower border
      */
-    public float getMaxYPos() {
+    public double getMaxYPos() {
         return maxYPos;
     }
 
@@ -153,7 +153,7 @@ public class SequenceExecution {
      * @param maxYPos
      *            the new lower border
      */
-    public void setMaxYPos(final float maxYPos) {
+    public void setMaxYPos(final double maxYPos) {
         this.maxYPos = maxYPos;
     }
 
@@ -162,7 +162,7 @@ public class SequenceExecution {
      * 
      * @return the right border
      */
-    public float getMaxXPos() {
+    public double getMaxXPos() {
         return maxXPos;
     }
 
@@ -172,7 +172,7 @@ public class SequenceExecution {
      * @param maxXPos
      *            the new right border
      */
-    public void setMaxXPos(final float maxXPos) {
+    public void setMaxXPos(final double maxXPos) {
         this.maxXPos = maxXPos;
     }
 

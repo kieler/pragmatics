@@ -30,7 +30,7 @@ public class SequenceArea {
     private List<Object> lifelines;
     private List<SequenceArea> subAreas;
     private List<SequenceArea> containedAreas;
-    private float xPos, yPos, width, height;
+    private double xPos, yPos, width, height;
     private Object nextMessage;
 
     /**
@@ -109,7 +109,7 @@ public class SequenceArea {
      * 
      * @return the horizontal position
      */
-    public float getxPos() {
+    public double getxPos() {
         return xPos;
     }
 
@@ -119,7 +119,7 @@ public class SequenceArea {
      * @param xPos
      *            the new horizontal position
      */
-    public void setxPos(final float xPos) {
+    public void setxPos(final double xPos) {
         this.xPos = xPos;
     }
 
@@ -128,7 +128,7 @@ public class SequenceArea {
      * 
      * @return the vertical position
      */
-    public float getyPos() {
+    public double getyPos() {
         return yPos;
     }
 
@@ -138,7 +138,7 @@ public class SequenceArea {
      * @param yPos
      *            the new vertical position
      */
-    public void setyPos(final float yPos) {
+    public void setyPos(final double yPos) {
         this.yPos = yPos;
     }
 
@@ -147,7 +147,7 @@ public class SequenceArea {
      * 
      * @return the width of the area
      */
-    public float getWidth() {
+    public double getWidth() {
         return width;
     }
 
@@ -157,7 +157,7 @@ public class SequenceArea {
      * @param width
      *            the new width
      */
-    public void setWidth(final float width) {
+    public void setWidth(final double width) {
         this.width = width;
     }
 
@@ -166,7 +166,7 @@ public class SequenceArea {
      * 
      * @return the height of the area
      */
-    public float getHeight() {
+    public double getHeight() {
         return height;
     }
 
@@ -176,7 +176,7 @@ public class SequenceArea {
      * @param height
      *            the new height
      */
-    public void setHeight(final float height) {
+    public void setHeight(final double height) {
         this.height = height;
     }
 

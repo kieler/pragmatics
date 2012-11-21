@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -39,8 +40,10 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
     private String name = "Lifeline";
     private List<SMessage> outgoingMessages = new LinkedList<SMessage>();
     private List<SMessage> incomingMessages = new LinkedList<SMessage>();
-    private int position;
-    private KNode destruction;
+    private int horizontalPosition;
+    private KNode destructionEvent;
+    private KVector position = new KVector();
+    private KVector size = new KVector();
 
     /**
      * Get the SGraph to which the lifeline belongs.
@@ -143,18 +146,18 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
      * 
      * @return the position
      */
-    public int getPosition() {
-        return position;
+    public int getHorizontalPosition() {
+        return horizontalPosition;
     }
 
     /**
      * Set the horizontal position of the lifeline.
      * 
-     * @param position
+     * @param horizontalPosition
      *            the new position
      */
-    public void setPosition(final int position) {
-        this.position = position;
+    public void setHorizontalPosition(final int horizontalPosition) {
+        this.horizontalPosition = horizontalPosition;
     }
 
     /**
@@ -162,8 +165,8 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
      * 
      * @return the KNode of the destruction event or null if none exists
      */
-    public KNode getDestruction() {
-        return destruction;
+    public KNode getDestructionEvent() {
+        return destructionEvent;
     }
 
     /**
@@ -172,8 +175,26 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
      * @param destruction
      *            the KNode of the destruction event
      */
-    public void setDestruction(final KNode destruction) {
-        this.destruction = destruction;
+    public void setDestructionEvent(final KNode destruction) {
+        this.destructionEvent = destruction;
+    }
+
+    /**
+     * Get the position of the lifeline.
+     * 
+     * @return the Vector with the position
+     */
+    public KVector getPosition() {
+        return position;
+    }
+
+    /**
+     * Get the size of the lifeline.
+     * 
+     * @return the Vector with the size
+     */
+    public KVector getSize() {
+        return size;
     }
 
     /**

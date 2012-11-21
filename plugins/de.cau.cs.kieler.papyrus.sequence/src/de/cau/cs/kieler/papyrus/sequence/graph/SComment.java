@@ -18,7 +18,8 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.papyrus.sequence.SeqProperties;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.papyrus.sequence.SequenceDiagramProperties;
 
 /**
  * Comment representation for SGraphs.
@@ -35,20 +36,43 @@ public class SComment extends SGraphElement {
     private List<SGraphElement> attachedTo;
     private SMessage message;
     private SLifeline lifeline;
-    private float xPos, yPos;
-    private float width, height;
+    private KVector size;
+    private KVector position;
 
     /**
      * Constructor that takes the origin which is the KNode of the comment as argument.
-     * @param origin the origin
+     * 
+     * @param origin
+     *            the origin
      */
     public SComment(final KNode origin) {
         this.origin = origin;
         attachedTo = new LinkedList<SGraphElement>();
+        size = new KVector();
+        position = new KVector();
+    }
+
+    /**
+     * Get the size of the comment.
+     * 
+     * @return the KVector with the size
+     */
+    public KVector getSize() {
+        return size;
+    }
+
+    /**
+     * Get the position of the comment.
+     * 
+     * @return the KVector with the position
+     */
+    public KVector getPosition() {
+        return position;
     }
 
     /**
      * Get the origin which is the KNode of the comment.
+     * 
      * @return the origin
      */
     public KNode getOrigin() {
@@ -57,6 +81,7 @@ public class SComment extends SGraphElement {
 
     /**
      * Get the SGraphElement to which the comment is attached to.
+     * 
      * @return the connected element
      */
     public List<SGraphElement> getAttachedTo() {
@@ -65,6 +90,7 @@ public class SComment extends SGraphElement {
 
     /**
      * Get the original connection of the comment which is a KEdge.
+     * 
      * @return the connection
      */
     public KEdge getConnection() {
@@ -73,7 +99,9 @@ public class SComment extends SGraphElement {
 
     /**
      * Set the connection of the comment.
-     * @param connection the new connection
+     * 
+     * @param connection
+     *            the new connection
      */
     public void setConnection(final KEdge connection) {
         this.connection = connection;
@@ -81,6 +109,7 @@ public class SComment extends SGraphElement {
 
     /**
      * Get the message near to which the comment will be drawn if existing.
+     * 
      * @return the SMessage near to the comment or null if not existing
      */
     public SMessage getMessage() {
@@ -89,12 +118,15 @@ public class SComment extends SGraphElement {
 
     /**
      * Set the message near to which the comment will be drawn.
-     * @param message the new message
+     * 
+     * @param message
+     *            the new message
      */
     public void setMessage(final SMessage message) {
         // Delete comment from the old message's comments list
         if (this.message != null) {
-            List<SComment> oldComments = this.message.getProperty(SeqProperties.COMMENTS);
+            List<SComment> oldComments = this.message
+                    .getProperty(SequenceDiagramProperties.COMMENTS);
             if (oldComments != null) {
                 oldComments.remove(this);
             }
@@ -104,7 +136,7 @@ public class SComment extends SGraphElement {
 
         // Add comment to the new message's comments list
         if (message != null) {
-            List<SComment> comments = message.getProperty(SeqProperties.COMMENTS);
+            List<SComment> comments = message.getProperty(SequenceDiagramProperties.COMMENTS);
             if (comments != null) {
                 if (!comments.contains(this)) {
                     comments.add(this);
@@ -118,6 +150,7 @@ public class SComment extends SGraphElement {
 
     /**
      * Get the lifeline near to which the comment will be drawn if existing.
+     * 
      * @return the SLifeline near to the comment or null if not existing
      */
     public SLifeline getLifeline() {
@@ -126,12 +159,15 @@ public class SComment extends SGraphElement {
 
     /**
      * Set the lifeline near to which the comment will be drawn.
-     * @param lifeline the new lifeline
+     * 
+     * @param lifeline
+     *            the new lifeline
      */
     public void setLifeline(final SLifeline lifeline) {
         // Delete comment from the old lifeline's comments list
         if (this.lifeline != null) {
-            List<SComment> oldComments = this.lifeline.getProperty(SeqProperties.COMMENTS);
+            List<SComment> oldComments = this.lifeline
+                    .getProperty(SequenceDiagramProperties.COMMENTS);
             if (oldComments != null) {
                 oldComments.remove(this);
             }
@@ -141,7 +177,7 @@ public class SComment extends SGraphElement {
 
         // Add comment to the new lifeline's comments list
         if (lifeline != null) {
-            List<SComment> comments = lifeline.getProperty(SeqProperties.COMMENTS);
+            List<SComment> comments = lifeline.getProperty(SequenceDiagramProperties.COMMENTS);
             if (comments != null) {
                 if (!comments.contains(this)) {
                     comments.add(this);
@@ -151,69 +187,5 @@ public class SComment extends SGraphElement {
                 comments.add(this);
             }
         }
-    }
-
-    /**
-     * Get the horizontal position of the comment.
-     * @return the horizontal position
-     */
-    public float getxPos() {
-        return xPos;
-    }
-
-    /**
-     * Set the horizontal position of the comment.
-     * @param xPos the new horizontal position
-     */
-    public void setxPos(final float xPos) {
-        this.xPos = xPos;
-    }
-
-    /**
-     * Get the vertical position of the comment.
-     * @return the vertical position
-     */
-    public float getyPos() {
-        return yPos;
-    }
-
-    /**
-     * Set the vertical position of the comment.
-     * @param yPos the new vertical position
-     */
-    public void setyPos(final float yPos) {
-        this.yPos = yPos;
-    }
-
-    /**
-     * Get the width of the comment.
-     * @return the width
-     */
-    public float getWidth() {
-        return width;
-    }
-
-    /**
-     * Set the width of the comment.
-     * @param width the new width
-     */
-    public void setWidth(final float width) {
-        this.width = width;
-    }
-
-    /**
-     * Get the height of the comment.
-     * @return the height
-     */
-    public float getHeight() {
-        return height;
-    }
-
-    /**
-     * Set the height of the comment.
-     * @param height the new height
-     */
-    public void setHeight(final float height) {
-        this.height = height;
     }
 }
