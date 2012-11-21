@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.papyrus.sequence.SequenceDiagramProperties;
 
@@ -31,7 +30,6 @@ import de.cau.cs.kieler.papyrus.sequence.SequenceDiagramProperties;
  */
 public class SComment extends SGraphElement {
     private static final long serialVersionUID = 2543686433908319587L;
-    private KNode origin;
     private KEdge connection;
     private List<SGraphElement> attachedTo;
     private SMessage message;
@@ -40,13 +38,9 @@ public class SComment extends SGraphElement {
     private KVector position;
 
     /**
-     * Constructor that takes the origin which is the KNode of the comment as argument.
-     * 
-     * @param origin
-     *            the origin
+     * Constructs a new SComment.
      */
-    public SComment(final KNode origin) {
-        this.origin = origin;
+    public SComment() {
         attachedTo = new LinkedList<SGraphElement>();
         size = new KVector();
         position = new KVector();
@@ -68,15 +62,6 @@ public class SComment extends SGraphElement {
      */
     public KVector getPosition() {
         return position;
-    }
-
-    /**
-     * Get the origin which is the KNode of the comment.
-     * 
-     * @return the origin
-     */
-    public KNode getOrigin() {
-        return origin;
     }
 
     /**

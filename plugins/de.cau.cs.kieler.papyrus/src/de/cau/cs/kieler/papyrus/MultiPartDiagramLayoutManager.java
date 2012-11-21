@@ -535,10 +535,10 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
             Rectangle bounds = getAbsoluteBounds(nodeFigure);
             Rectangle parentBounds = getAbsoluteBounds(nodeFigure.getParent());
             SequenceArea area = new SequenceArea(childLayoutNode);
-            area.setxPos(bounds.x - parentBounds.x);
-            area.setyPos(bounds.y - parentBounds.y);
-            area.setWidth(bounds.width);
-            area.setHeight(bounds.height);
+            area.getPosition().x = bounds.x - parentBounds.x;
+            area.getPosition().y = bounds.y - parentBounds.y;
+            area.getSize().x = bounds.width;
+            area.getSize().y = bounds.height;
             List<SequenceArea> areas = parentKNode.getData(KShapeLayout.class).getProperty(
                     PapyrusProperties.AREAS);
             areas.add(area);
@@ -558,10 +558,10 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
                             mapping.getGraphMap().put(areaNode, ioEditPart);
                             SequenceArea subArea = new SequenceArea(areaNode);
                             // Set size and position
-                            subArea.setxPos(ioBounds.x - parentBounds.x);
-                            subArea.setyPos(ioBounds.y - parentBounds.y);
-                            subArea.setWidth(ioBounds.width);
-                            subArea.setHeight(ioBounds.height);
+                            subArea.getPosition().x = ioBounds.x - parentBounds.x;
+                            subArea.getPosition().y = ioBounds.y - parentBounds.y;
+                            subArea.getSize().x = ioBounds.width;
+                            subArea.getSize().y = ioBounds.height;
                             area.getSubAreas().add(subArea);
                         }
                     }

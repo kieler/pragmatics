@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
 
 /**
  * Data structure for execution specification elements in sequence diagrams.
@@ -29,7 +30,8 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 public class SequenceExecution {
     private String type = "";
     private List<Object> messages;
-    private double xPos, yPos, maxXPos, maxYPos;
+    private KVector size;
+    private KVector position;
     private KNode origin;
 
     /**
@@ -37,10 +39,26 @@ public class SequenceExecution {
      */
     public SequenceExecution() {
         messages = new LinkedList<Object>();
-        xPos = 0;
-        maxXPos = 0;
-        yPos = Double.MAX_VALUE;
-        maxYPos = 0;
+        size = new KVector(0, -1);
+        position = new KVector(0, 0);
+    }
+
+    /**
+     * Get the size of the execution.
+     * 
+     * @return the KVector with the size
+     */
+    public KVector getSize() {
+        return size;
+    }
+
+    /**
+     * Get the position of the execution.
+     * 
+     * @return the KVector with the position
+     */
+    public KVector getPosition() {
+        return position;
     }
 
     /**
@@ -100,88 +118,13 @@ public class SequenceExecution {
         this.origin = origin;
     }
 
-    /**
-     * Get the horizontal position of the execution.
-     * 
-     * @return the horizontal position
-     */
-    public double getxPos() {
-        return xPos;
-    }
-
-    /**
-     * Set the horizontal position of the execution.
-     * 
-     * @param xPos
-     *            the new horizontal position
-     */
-    public void setxPos(final double xPos) {
-        this.xPos = xPos;
-    }
-
-    /**
-     * Get the vertical position of the execution.
-     * 
-     * @return the vertical position
-     */
-    public double getyPos() {
-        return yPos;
-    }
-
-    /**
-     * Set the vertical position of the execution.
-     * 
-     * @param yPos
-     *            the new vertical position
-     */
-    public void setyPos(final double yPos) {
-        this.yPos = yPos;
-    }
-
-    /**
-     * Get the lower border position of the execution.
-     * 
-     * @return the lower border
-     */
-    public double getMaxYPos() {
-        return maxYPos;
-    }
-
-    /**
-     * Set the lower border position of the execution.
-     * 
-     * @param maxYPos
-     *            the new lower border
-     */
-    public void setMaxYPos(final double maxYPos) {
-        this.maxYPos = maxYPos;
-    }
-
-    /**
-     * Get the right border position of the execution.
-     * 
-     * @return the right border
-     */
-    public double getMaxXPos() {
-        return maxXPos;
-    }
-
-    /**
-     * Set the right border position of the execution.
-     * 
-     * @param maxXPos
-     *            the new right border
-     */
-    public void setMaxXPos(final double maxXPos) {
-        this.maxXPos = maxXPos;
-    }
 
     /**
      * {@inheritDoc}
      */
     public String toString() {
-        return "Origin: " + this.origin.getClass().getSimpleName() + ", Messages: " + this.messages
-                + ", Pos: (" + this.xPos + "/" + this.yPos + "), MaxPos: (" + this.maxXPos + "/"
-                + this.maxYPos + ")";
+        return "Origin: " + origin.getClass().getSimpleName() + ", Messages: " + messages
+                + ", Pos: (" + getPosition().x + "/" + getPosition().y + "), Size: (" + getSize().x + "/"
+                + getSize().y + ")";
     }
 }

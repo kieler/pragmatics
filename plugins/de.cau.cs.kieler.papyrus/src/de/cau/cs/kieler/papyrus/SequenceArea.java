@@ -16,6 +16,8 @@ package de.cau.cs.kieler.papyrus;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.math.KVector;
+
 /**
  * Data structure for area-like elements in sequence diagrams.
  * 
@@ -30,8 +32,9 @@ public class SequenceArea {
     private List<Object> lifelines;
     private List<SequenceArea> subAreas;
     private List<SequenceArea> containedAreas;
-    private double xPos, yPos, width, height;
     private Object nextMessage;
+    private KVector size;
+    private KVector position;
 
     /**
      * Constructor that initializes the area.
@@ -41,10 +44,30 @@ public class SequenceArea {
      */
     public SequenceArea(final Object origin) {
         this.origin = origin;
-        this.messages = new LinkedList<Object>();
-        this.lifelines = new LinkedList<Object>();
-        this.subAreas = new LinkedList<SequenceArea>();
-        this.containedAreas = new LinkedList<SequenceArea>();
+        messages = new LinkedList<Object>();
+        lifelines = new LinkedList<Object>();
+        subAreas = new LinkedList<SequenceArea>();
+        containedAreas = new LinkedList<SequenceArea>();
+        size = new KVector();
+        position = new KVector();
+    }
+
+    /**
+     * Get the size of the area.
+     * 
+     * @return the KVector with the size
+     */
+    public KVector getSize() {
+        return size;
+    }
+
+    /**
+     * Get the position of the area.
+     * 
+     * @return the KVector with the position
+     */
+    public KVector getPosition() {
+        return position;
     }
 
     /**
@@ -105,82 +128,6 @@ public class SequenceArea {
     }
 
     /**
-     * Get the horizontal position of the area.
-     * 
-     * @return the horizontal position
-     */
-    public double getxPos() {
-        return xPos;
-    }
-
-    /**
-     * Set the horizontal position of the area.
-     * 
-     * @param xPos
-     *            the new horizontal position
-     */
-    public void setxPos(final double xPos) {
-        this.xPos = xPos;
-    }
-
-    /**
-     * Get the vertical position of the area.
-     * 
-     * @return the vertical position
-     */
-    public double getyPos() {
-        return yPos;
-    }
-
-    /**
-     * Set the vertical position of the area.
-     * 
-     * @param yPos
-     *            the new vertical position
-     */
-    public void setyPos(final double yPos) {
-        this.yPos = yPos;
-    }
-
-    /**
-     * Get the width of the area.
-     * 
-     * @return the width of the area
-     */
-    public double getWidth() {
-        return width;
-    }
-
-    /**
-     * Set the width of the area.
-     * 
-     * @param width
-     *            the new width
-     */
-    public void setWidth(final double width) {
-        this.width = width;
-    }
-
-    /**
-     * Get the height of the area.
-     * 
-     * @return the height of the area
-     */
-    public double getHeight() {
-        return height;
-    }
-
-    /**
-     * Set the height of the area.
-     * 
-     * @param height
-     *            the new height
-     */
-    public void setHeight(final double height) {
-        this.height = height;
-    }
-
-    /**
      * Get the message that is next to the area if the area does not contain any messages.
      * 
      * @return the message next to the area
@@ -208,7 +155,7 @@ public class SequenceArea {
             subareas = "";
         }
         return "Area " + origin + "\nwith " + messages.size() + " Messages: " + messages + "\nand "
-                + lifelines.size() + " Lifelines: " + lifelines + "\nat (" + xPos + "/" + yPos
-                + ") + (" + width + "/" + height + ")" + subareas;
+                + lifelines.size() + " Lifelines: " + lifelines + "\nat (" + getPosition().x + "/"
+                + getPosition().y + ") + (" + getSize().x + "/" + getSize().y + ")" + subareas;
     }
 }

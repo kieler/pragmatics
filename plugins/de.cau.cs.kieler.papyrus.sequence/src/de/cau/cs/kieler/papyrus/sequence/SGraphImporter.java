@@ -245,7 +245,8 @@ public class SGraphImporter {
         String nodeType = commentLayout.getProperty(PapyrusProperties.NODE_TYPE);
 
         // Create comment object
-        SComment comment = new SComment(node);
+        SComment comment = new SComment();
+        comment.setProperty(Properties.ORIGIN, node);
         comment.setProperty(PapyrusProperties.NODE_TYPE, nodeType);
         String attachedElement = commentLayout.getProperty(PapyrusProperties.ATTACHED_ELEMENT);
         comment.setProperty(PapyrusProperties.ATTACHED_ELEMENT, attachedElement);
@@ -339,7 +340,7 @@ public class SGraphImporter {
             }
         }
 
-        double lowerEnd = area.getyPos() + area.getHeight();
+        double lowerEnd = area.getPosition().y + area.getSize().y;
         SMessage nextMessage = null;
         double uppermostPosition = Double.MAX_VALUE;
         // Check which message is the next one below the area
@@ -617,8 +618,8 @@ public class SGraphImporter {
      */
     private boolean isLifelineContained(final SLifeline lifeline, final SequenceArea area) {
         double lifelineCenter = lifeline.getPosition().x + lifeline.getSize().x / 2;
-        double leftEnd = area.getxPos();
-        double rightEnd = area.getxPos() + area.getWidth();
+        double leftEnd = area.getPosition().x;
+        double rightEnd = area.getPosition().x + area.getSize().x;
 
         return (lifelineCenter >= leftEnd && lifelineCenter <= rightEnd);
     }
@@ -633,16 +634,16 @@ public class SGraphImporter {
      * @return true if the point is inside the area
      */
     private boolean isInArea(final KPoint point, final SequenceArea area) {
-        if (point.getX() < area.getxPos()) {
+        if (point.getX() < area.getPosition().x) {
             return false;
         }
-        if (point.getX() > area.getxPos() + area.getWidth()) {
+        if (point.getX() > area.getPosition().x + area.getSize().x) {
             return false;
         }
-        if (point.getY() < area.getyPos()) {
+        if (point.getY() < area.getPosition().y) {
             return false;
         }
-        if (point.getY() > area.getyPos() + area.getHeight()) {
+        if (point.getY() > area.getPosition().y + area.getSize().y) {
             return false;
         }
         return true;
