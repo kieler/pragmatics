@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar.flownetwork;
 
-import de.cau.cs.kieler.core.alg.IAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -26,7 +26,7 @@ import de.cau.cs.kieler.klay.planar.graph.PGraph;
  * @author pkl
  * @kieler.rating yellow 2012-11-01 review KI-30 by ima, cds
  */
-public interface IFlowNetworkSolver extends IAlgorithm {
+public interface IFlowNetworkSolver {
 
     /**
      * A property assigning a supply or demand value to a node. A positive value denotes a supply
@@ -78,8 +78,10 @@ public interface IFlowNetworkSolver extends IAlgorithm {
      * 
      * @param network
      *            the network to work on
+     * @param progressMonitor
+     *            a progress monitor to track algorithm progress
      */
-    void calcFlow(PGraph network);
+    void calcFlow(PGraph network, IKielerProgressMonitor progressMonitor);
 
     /**
      * Interface for algorithms to solve the maximum flow problem in a flow network. The maximum

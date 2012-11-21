@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -59,7 +59,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
-public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhase {
+public class GreedyCycleBreaker implements ILayoutPhase {
     
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
@@ -90,8 +90,8 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Greedy cycle removal", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Greedy cycle removal", 1);
         
         Collection<LNode> nodes = layeredGraph.getLayerlessNodes();
 
@@ -217,7 +217,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
         }
 
         dispose();
-        getMonitor().done();
+        monitor.done();
     }
     
     /**

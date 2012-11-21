@@ -17,7 +17,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -32,16 +32,14 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * @author pkl
  * @kieler.rating proposed yellow by pkl
  */
-public class SelfLoopDummyProcessor extends AbstractAlgorithm implements ILayoutProcessor {
-
-    private PGraph graph;
+public class SelfLoopDummyProcessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph) {
-        getMonitor().begin("Add self loop dummies", 1);
-        this.graph = pgraph;
+    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Add self loop dummies", 1);
+        
         // filter selfloop edges.
         Set<PEdge> selfLoops = Sets.newHashSet();
         for (PEdge edge : pgraph.getEdges()) {
@@ -55,19 +53,20 @@ public class SelfLoopDummyProcessor extends AbstractAlgorithm implements ILayout
             PNode node = selfLoop.getSource();
 
             // create dummy nodes
-            PNode dummyNode1 = this.graph.addNode();
-            PNode dummyNode2 = this.graph.addNode();
+            PNode dummyNode1 = pgraph.addNode();
+            PNode dummyNode2 = pgraph.addNode();
 
             // create edge cycle
             selfLoop.setTarget(dummyNode1);
             dummyNode1.getEdges().add(selfLoop);
-            PEdge dummyEdge1 = this.graph.addEdge(dummyNode1, dummyNode2);
-            PEdge dummyEdge2 = this.graph.addEdge(dummyNode2, node);
+            PEdge dummyEdge1 = pgraph.addEdge(dummyNode1, dummyNode2);
+            PEdge dummyEdge2 = pgraph.addEdge(dummyNode2, node);
 
             node.setProperty(Properties.SELFLOOP_DUMMIES, new SelfLoopDummyContainer(dummyNode1,
                     dummyNode2, dummyEdge1, dummyEdge2));
         }
 
+        monitor.done();
     }
 
 }

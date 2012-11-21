@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -45,13 +45,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class InLayerConstraintProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class InLayerConstraintProcessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Layer constraint edge reversal", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Layer constraint edge reversal", 1);
         
         // Iterate through each layer
         for (Layer layer : layeredGraph) {
@@ -101,7 +101,7 @@ public class InLayerConstraintProcessor extends AbstractAlgorithm implements ILa
             }
         }
         
-        getMonitor().done();
+        monitor.done();
     }
 
 }

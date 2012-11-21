@@ -23,7 +23,7 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
@@ -53,7 +53,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * @author pkl
  * @kieler.rating yellow 2012-10-09 review KI-16 by ckru, cds
  */
-public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayoutPhase {
+public class TamassiaOrthogonalizer implements ILayoutPhase {
 
     /** Sum of angles around a node. */
     private static final int SUM_OF_ANGLES = 4;
@@ -114,8 +114,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
      * @param pgraph
      *            the graph to draw as orthogonal graph
      */
-    public void process(final PGraph pgraph) {
-        getMonitor().begin("Orthogonalization", 1);
+    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Orthogonalization", 2);
 
         // Initialization
         this.graph = pgraph;
@@ -123,7 +123,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
 
         // Create flow network and solve it
         PGraph network = createFlowNetwork();
-        new SuccessiveShortestPathFlowSolver().calcFlow(network);
+        new SuccessiveShortestPathFlowSolver().calcFlow(network, monitor.subTask(1));
 
         // special cutedge handling
         // handlingCutEdges(network);
@@ -135,7 +135,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {
             testOrthoRep();
         }
-        getMonitor().done();
+        
+        monitor.done();
     }
 
     /**

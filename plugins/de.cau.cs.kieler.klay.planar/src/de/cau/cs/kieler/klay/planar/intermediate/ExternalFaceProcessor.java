@@ -15,7 +15,7 @@ package de.cau.cs.kieler.klay.planar.intermediate;
 
 import java.util.Iterator;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -27,13 +27,14 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author pkl
  */
-public class ExternalFaceProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class ExternalFaceProcessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pGraph) {
-        getMonitor().begin("external face processor", 1);
+    public void process(final PGraph pGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("external face processor", 1);
+        
         pGraph.setChangedFaces();
         Iterator<PFace> it = pGraph.getFaces().iterator();
         PFace externalFace = null;
@@ -52,7 +53,7 @@ public class ExternalFaceProcessor extends AbstractAlgorithm implements ILayoutP
         }
         pGraph.setExternalFace(externalFace);
 
-        getMonitor().done();
+        monitor.done();
     }
 
 }

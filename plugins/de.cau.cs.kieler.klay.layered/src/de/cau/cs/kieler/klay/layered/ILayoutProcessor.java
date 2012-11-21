@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
-import de.cau.cs.kieler.core.alg.IAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 /**
@@ -25,13 +25,14 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public interface ILayoutProcessor extends IAlgorithm {
+public interface ILayoutProcessor {
     
     /**
      * Performs the phase's work on the given graph.
      * 
      * @param layeredGraph a layered graph
+     * @param progressMonitor a progress monitor to track algorithm execution
      */
-    void process(LGraph layeredGraph);
+    void process(LGraph layeredGraph, IKielerProgressMonitor progressMonitor);
     
 }

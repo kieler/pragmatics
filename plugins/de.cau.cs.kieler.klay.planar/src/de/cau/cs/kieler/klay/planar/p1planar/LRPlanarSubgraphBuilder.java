@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
@@ -56,7 +56,7 @@ import de.cau.cs.kieler.klay.planar.util.IFunction;
  * @author pdo
  * @kieler.rating proposed yellow by pkl
  */
-public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayoutPhase {
+public class LRPlanarSubgraphBuilder implements ILayoutPhase {
 
     // ====================== Attributes ======================================
 
@@ -70,10 +70,10 @@ public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayou
      * during current iteration. A list of all crossing edges is saved in {@code planarSubgraph()}
      * itself.
      */
-    private LinkedList<PEdge> crossingEdges;
+    private LinkedList<PEdge> crossingEdges = new LinkedList<PEdge>();
 
     /** The DFS-roots of all connected components in the graph. */
-    private LinkedList<PNode> roots;
+    private LinkedList<PNode> roots = new LinkedList<PNode>();
 
     /** Source node of every edge in the DFS-oriented tree. */
     private PNode[] dfsSource;
@@ -187,18 +187,6 @@ public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayou
      */
     private PEdge[] initialRef;
 
-    // ====================== Constructor =====================================
-
-    /**
-     * Default Constructor for {@link LRPlanarSubgraphBuilder}. It creates a new instance of this
-     * class.
-     */
-    public LRPlanarSubgraphBuilder() {
-        super();
-        roots = new LinkedList<PNode>();
-        crossingEdges = new LinkedList<PEdge>();
-    }
-
     // ====================== Methods =====================================
 
     /**
@@ -207,13 +195,20 @@ public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayou
     public IntermediateProcessingConfiguration getIntermediateProcessingStrategy(final PGraph pGraph) {
         return null;
     }
+    
+    /**
+     * Release all resources so the garbage collector can reap them.
+     */
+    private void dispose() {
+        // TODO clear all non-primitive class variables (either set to null or call clear method)
+    }
 
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph) {
-
-        getMonitor().begin("Planar embedding", 1);
+    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Planar embedding", 1);
+        
         if (pgraph == null) {
             throw new NullPointerException("Input graph is null.");
         }
@@ -287,8 +282,9 @@ public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayou
             removedEdges.add(edge);
         }
 
-        getMonitor().done();
         pgraph.setProperty(Properties.INSERTABLE_EDGES, removedEdges);
+        dispose();
+        monitor.done();
     }
 
     
@@ -372,20 +368,13 @@ public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayou
      * 
      * @param pgraph
      *            the graph to check for planarity.
+     * @param monitor
+     *            a progress monitor to track algorithm progress
      * @return {@code true}, if the graph is planar, {@code false} otherwise
-     * 
-     * @see de.cau.cs.rtprak.planarization.OrthogonalLayoutProvider OrthogonalLayoutProvider
-     * @see de.cau.cs.kieler.klay.planar.p1planar.alg.planarity.rtprak.planarization.IPlanarityTester
-     *      IPlanarityTester
-     * @see de.cau.cs.rtprak.planarization.graph.IGraph IGraph
-     * @see de.cau.cs.rtprak.planarization.graph.PNode PNode
-     * @see de.cau.cs.rtprak.planarization.graph.PEdge PEdge
-     * 
-     * 
      */
-    public boolean testPlanarity(final PGraph pgraph) {
-
-        getMonitor().begin("Test planarity", 1);
+    public boolean testPlanarity(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Test planarity", 1);
+        
         if (pgraph == null) {
             throw new NullPointerException("Input graph is null.");
         }
@@ -412,12 +401,13 @@ public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayou
         for (PNode root : roots) {
             testingDFS(root, false);
             if (!isPlanar) {
-                getMonitor().done();
+                monitor.done();
                 return false;
             }
         }
 
-        getMonitor().done();
+        dispose();
+        monitor.done();
         return true;
     }
 
@@ -434,20 +424,14 @@ public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayou
      * 
      * @param iGraph
      *            the graph to reduce to a planar subgraph and determine its planar embedding
+     * @param monitor
+     *            a progress monitor to track algorithm execution
      * @return a list of edges of the input graph, that are not part of the determined subgraph and
      *         have been removed therefore (empty, if fully planar).
-     * 
-     * @see de.cau.cs.rtprak.planarization.OrthogonalLayoutProvider OrthogonalLayoutProvider
-     * @see de.cau.cs.kieler.klay.planar.p1planar.alg.planarity.rtprak.planarization.IPlanarityTester
-     *      IPlanarityTester
-     * @see de.cau.cs.rtprak.planarization.graph.IGraph IGraph
-     * @see de.cau.cs.rtprak.planarization.graph.PNode PNode
-     * @see de.cau.cs.rtprak.planarization.graph.PEdge PEdge
-     * @see de.cau.cs.kieler.core.util.Pair Pair
      */
-    public List<PEdge> planarSubgraph(final PGraph iGraph) {
-
-        getMonitor().begin("Planar embedding", 1);
+    public List<PEdge> planarSubgraph(final PGraph iGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Planar embedding", 1);
+        
         if (iGraph == null) {
             throw new NullPointerException("Input graph is null.");
         }
@@ -521,7 +505,7 @@ public class LRPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayou
             removedEdges.add(edge);
         }
 
-        getMonitor().done();
+        monitor.done();
         return removedEdges;
     }
 

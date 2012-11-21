@@ -20,7 +20,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -55,7 +54,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * @author msp
  * @kieler.rating proposed yellow by pkl
  */
-public class ComponentsProcessor extends AbstractAlgorithm {
+public class ComponentsProcessor {
 
     /** the incidence lists of the graph. */
     private List<PEdge>[] incidence;
