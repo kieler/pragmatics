@@ -49,7 +49,7 @@ public class RectShapeDummyRemover implements ILayoutProcessor {
      * {@inheritDoc}
      */
     public void process(final PGraph pGraph, final IKielerProgressMonitor monitor) {
-        monitor.begin("Remove dummynodes", 1);
+        monitor.begin("Remove rectangular shape dummy nodes", 1);
 
         this.graph = pGraph;
         this.grid = graph.getProperty(Properties.GRID_REPRESENTATION);

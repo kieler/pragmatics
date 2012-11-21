@@ -36,7 +36,7 @@ public class SelfLoopDummyRemover implements ILayoutProcessor {
      * {@inheritDoc}
      */
     public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
-        monitor.begin("Remove self loop dummies", 1);
+        monitor.begin("Remove self-loop dummies", 1);
         
         GridRepresentation grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
 

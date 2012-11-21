@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar.p1planar;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -211,7 +212,7 @@ public class BoyerMyrvoldPlanarSubgraphBuilder implements ILayoutPhase {
         this.graph = thegraph;
         planarity();
 
-        graph.setProperty(Properties.INSERTABLE_EDGES, this.missingEdges);
+        graph.setProperty(Properties.INSERTABLE_EDGES, new ArrayList<PEdge>(missingEdges));
         
         dispose();
         monitor.done();

@@ -44,9 +44,9 @@ public class FullAngleDummyRemover implements ILayoutProcessor {
      * {@inheritDoc}
      */
     public void process(final PGraph pGraph, final IKielerProgressMonitor monitor) {
-        monitor.begin("full angle dummies remover", 1);
+        monitor.begin("Full angle dummies remover", 1);
         this.graph = pGraph;
-        this.ortho = this.graph.getProperty(Properties.ORTHO_REPRESENTATION);
+        this.ortho = pGraph.getProperty(Properties.ORTHO_REPRESENTATION);
 
         List<PNode> processableNodes = Lists.newArrayList();
         for (PNode node : pGraph.getNodes()) {

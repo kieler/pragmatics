@@ -51,7 +51,7 @@ public class QuodDummyRemover implements ILayoutProcessor {
      * {@inheritDoc}
      */
     public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
-        monitor.begin("Quod Dummy Removing", 1);
+        monitor.begin("Remove Quod dummy nodes", 1);
         
         this.graph = pgraph;
         this.grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
