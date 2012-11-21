@@ -91,6 +91,8 @@ public enum LayoutProcessorStrategy {
     HYPEREDGE_DUMMY_MERGER,
     /** Sets the positions of ports. */
     PORT_POSITION_PROCESSOR,
+    /** Sets the positions of ports and labels, and sets the node sizes. */
+    LABEL_AND_NODE_SIZE_PROCESSOR,
     /** Calculates the margins of nodes according to the sizes of ports and labels. */
     NODE_MARGIN_CALCULATOR,
     /** Inserts dummy nodes and edges to achieve free drawing space for compound node borders. */
@@ -162,6 +164,12 @@ public enum LayoutProcessorStrategy {
         case DOWN_DIR_POSTPROCESSOR:
         case DOWN_DIR_PREPROCESSOR:
             return new GraphTransformer(GraphTransformer.Mode.TRANSPOSE);
+        
+        case EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER:
+            return new EdgeAndLayerConstraintEdgeReverser();
+            
+        case END_LABEL_PROCESSOR:
+            return new EndLabelProcessor();
             
         case HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR:
             return new HierarchicalPortConstraintProcessor();
@@ -184,15 +192,27 @@ public enum LayoutProcessorStrategy {
         case IN_LAYER_CONSTRAINT_PROCESSOR:
             return new InLayerConstraintProcessor();
         
+        case LABEL_AND_NODE_SIZE_PROCESSOR:
+            return new LabelAndNodeSizeProcessor();
+            
+        case LABEL_DUMMY_INSERTER:
+            return new LabelDummyInserter();
+            
+        case LABEL_DUMMY_REMOVER:
+            return new LabelDummyRemover();
+            
+        case LABEL_DUMMY_SWITCHER:
+            return new LabelDummySwitcher();
+            
+        case LABEL_SIDE_SELECTOR:
+            return new LabelSideSelector();
+        
         case LAYER_CONSTRAINT_PROCESSOR:
             return new LayerConstraintProcessor();
             
         case LEFT_DIR_POSTPROCESSOR:
         case LEFT_DIR_PREPROCESSOR:
             return new GraphTransformer(GraphTransformer.Mode.MIRROR);
-        
-        case EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER:
-            return new EdgeAndLayerConstraintEdgeReverser();
             
         case LONG_EDGE_JOINER:
             return new LongEdgeJoiner();
@@ -233,21 +253,6 @@ public enum LayoutProcessorStrategy {
         case UP_DIR_POSTPROCESSOR:
         case UP_DIR_PREPROCESSOR:
             return new GraphTransformer(GraphTransformer.Mode.MIRROR_AND_TRANSPOSE);
-            
-        case LABEL_DUMMY_INSERTER:
-            return new LabelDummyInserter();
-            
-        case LABEL_DUMMY_REMOVER:
-            return new LabelDummyRemover();
-            
-        case LABEL_DUMMY_SWITCHER:
-            return new LabelDummySwitcher();
-            
-        case END_LABEL_PROCESSOR:
-            return new EndLabelProcessor();
-            
-        case LABEL_SIDE_SELECTOR:
-            return new LabelSideSelector();
         
         default:
             return null;

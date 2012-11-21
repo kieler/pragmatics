@@ -57,9 +57,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
     
-    /* The basic processing strategy for this phase is empty. Depending on
-     * the graph features, dependencies on intermediate processors are added
-     * dynamically as follows:
+    /* The basic processing strategy for this phase only contains the LABEL_AND_NODE_SIZE_PROCESSOR.
+     * Depending on the graph features, dependencies on intermediate processors are added dynamically
+     * as follows:
      * 
      * Before phase 1:
      *   - None.
@@ -86,6 +86,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      *      - LABEL_DUMMY_SWITCHER
      * 
      * Before phase 4:
+     *   - For port or node labels:
+     *     - LABEL_AND_NODE_SIZE_PROCESSOR
+     *   
      *   - For hyperedges:
      *     - HYPEREDGE_DUMMY_MERGER
      * 
@@ -106,6 +109,10 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      *   - For end edge labels:
      *     - END_LABEL_PROCESSOR
      */
+    
+    private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
+        new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.BEFORE_PHASE_4,
+                LayoutProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR);
     
     /** additional processor dependencies for graphs with hyperedges. */
     private static final IntermediateProcessingConfiguration HYPEREDGE_PROCESSING_ADDITIONS =
@@ -221,7 +228,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
         
         // Basic configuration
-        IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration();
+        IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration(
+                BASELINE_PROCESSING_CONFIGURATION);
         
         // Additional dependencies
         if (graphProperties.contains(GraphProperties.HYPEREDGES)) {
