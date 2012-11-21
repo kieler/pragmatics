@@ -113,7 +113,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
 
         // Find a layering for the layeredGraph
         NetworkSimplexLayerer layerer = new NetworkSimplexLayerer(); // new LongestPathLayerer();
-        layerer.process(layeredGraph);
+        layerer.process(layeredGraph, progressMonitor.subTask(1));
 
         // Order lifelines by the chosen lifeline sorting algorithm
         List<SLifeline> lifelineOrder = lifelineSorter.sortLifelines(sgraph, layeredGraph);

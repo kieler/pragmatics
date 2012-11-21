@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.List;
 import java.util.ListIterator;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -45,13 +45,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author jjc
  * @kieler.rating yellow proposed cds
  */
-public class LabelDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
+public class LabelDummyRemover implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Label dummy removal", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Label dummy removal", 1);
         
         for (Layer layer : layeredGraph.getLayers()) {
             // An iterator is necessary for traversing nodes, since
@@ -106,7 +106,7 @@ public class LabelDummyRemover extends AbstractAlgorithm implements ILayoutProce
                 }
             }
         }
-
+        monitor.done();
     }
 
 }

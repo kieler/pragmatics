@@ -21,7 +21,7 @@ import java.util.List;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel.LSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelectionStrategy;
+import de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelection;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -49,20 +49,14 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  * @author jjc
  */
-public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProcessor {
+public class LabelSideSelector implements ILayoutProcessor {
 
-    /**
-     * The (empty) constructor for this processor.
-     */
-    public LabelSideSelector() {
-    }
-    
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        EdgeLabelSideSelectionStrategy mode = layeredGraph.getProperty(Properties.EDGE_LABEL_SIDE);
-        getMonitor().begin("Label side selection (" + mode + ")", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        EdgeLabelSideSelection mode = layeredGraph.getProperty(Properties.EDGE_LABEL_SIDE);
+        monitor.begin("Label side selection (" + mode + ")", 1);
         
         List<LNode> nodes = new LinkedList<LNode>();
         for (Layer layer : layeredGraph.getLayers()) {
@@ -87,7 +81,7 @@ public class LabelSideSelector extends AbstractAlgorithm implements ILayoutProce
             break;
         }
         
-        getMonitor().done();
+        monitor.done();
     }
     
     /**

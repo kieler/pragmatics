@@ -22,20 +22,15 @@ package de.cau.cs.kieler.klay.layered.p4nodes;
  */
 public enum NodePlacementStrategy {
     
-    /** Node placement implementation that aligns long edges using linear segments. */
-    LINEAR_SEGMENTS,
-    /** Node placement which groups nodes to blocks which result in straight edges. */
-    BRANDES_KOEPF;
-    
     /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i
-     *            ordinal value
-     * @return the related enumeration value
+     * Node placement implementation that aligns long edges using linear segments.
+     * Nodes are aligned according to the <em>pendulum</em> method, which is similar to
+     * the barycenter method for node ordering.
      */
-    public static NodePlacementStrategy valueOf(final int i) {
-        return values()[i];
-    }
+    LINEAR_SEGMENTS,
+    /**
+     * Node placement which groups nodes to blocks which result in straight edges.
+     */
+    BRANDES_KOEPF;
 
 }

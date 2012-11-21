@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
@@ -50,7 +50,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * @author pkl
  *  @kieler.rating yellow 2012-11-01 review KI-30 by ima, cds
  */
-public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayoutPhase {
+public class TidyRectangleCompactor implements ILayoutPhase {
 
     // ======================== Constants ==========================================================
 
@@ -136,7 +136,8 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph) {
+    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Tidy rectangle compaction", 3);  // SUPPRESS CHECKSTYLE MagicNumber
 
         this.graph = pgraph;
 
@@ -147,16 +148,17 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ILayout
 
         // Side 0 is the left face side, thus it is vertical.
         PGraph verticalNetwork = createFlowNetwork(0);
-        solver.calcFlow(verticalNetwork);
+        solver.calcFlow(verticalNetwork, monitor.subTask(1));
         // Assign edge length based on flow of the flow network
         addFlowAsLength(verticalNetwork);
 
         // Side 1 is the top face side, thus it is horizontal.
         PGraph horizontalNetwork = createFlowNetwork(1);
-        solver.calcFlow(horizontalNetwork);
+        solver.calcFlow(horizontalNetwork, monitor.subTask(1));
         // Assign edge length based on flow of the flow network
         addFlowAsLength(horizontalNetwork);
 
+        monitor.done();
     }
 
     /**

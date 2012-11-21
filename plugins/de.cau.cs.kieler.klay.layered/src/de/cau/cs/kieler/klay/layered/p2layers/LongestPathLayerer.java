@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -40,9 +40,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  * @author msp
  * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
-public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhase {
+public class LongestPathLayerer implements ILayoutPhase {
     
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
@@ -96,15 +96,17 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph thelayeredGraph) {
-        getMonitor().begin("Longest path layering", 1);
+    public void process(final LGraph thelayeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Longest path layering", 1);
         
         layeredGraph = thelayeredGraph;
         Collection<LNode> nodes = layeredGraph.getLayerlessNodes();
         
+        // initialize values required for the computation
         nodeHeights = new int[nodes.size()];
         int index = 0;
         for (LNode node : nodes) {
+            // the node id is used as index for the nodeHeights array
             node.id = index;
             nodeHeights[index] = -1;
             index++;
@@ -122,7 +124,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
         this.layeredGraph = null;
         this.nodeHeights = null;
         
-        getMonitor().done();
+        monitor.done();
     }
     
 
@@ -135,7 +137,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
     private int visit(final LNode node) {
         int height = nodeHeights[node.id];
         if (height >= 0) {
-            // the node was already visited
+            // the node was already visited (the case height == 0 should never occur)
             return height;
         } else {
             int maxHeight = 1;
@@ -143,13 +145,11 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
                 for (LEdge edge : port.getOutgoingEdges()) {
                     LNode targetNode = edge.getTarget().getNode();
                     
-                    // Beware of self-loops
-                    if (edge.getSource().getNode() == targetNode) {
-                        continue;
+                    // ignore self-loops
+                    if (node != targetNode) {
+                        int targetHeight = visit(targetNode);
+                        maxHeight = Math.max(maxHeight, targetHeight + 1);
                     }
-                    
-                    int targetHeight = visit(targetNode) + 1;
-                    maxHeight = Math.max(maxHeight, targetHeight);
                 }
             }
             putNode(node, maxHeight);
@@ -158,16 +158,19 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
     }
     
     /**
-     * Puts the given node into the layered graph.
+     * Puts the given node into the layered graph, adding new layers as necessary.
      * 
      * @param node a node
      * @param height height of the layer where the node shall be added
+     *          (height = number of layers - layer index)
      */
     private void putNode(final LNode node, final int height) {
         List<Layer> layers = layeredGraph.getLayers();
+        // add layers so as to guarantee that number of layers >= height
         for (int i = layers.size(); i < height; i++) {
             layers.add(0, new Layer(layeredGraph));
         }
+        // layer index = number of layers - height
         node.setLayer(layers.get(layers.size() - height));
         nodeHeights[node.id] = height;
     }

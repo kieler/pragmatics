@@ -18,7 +18,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author pkl
  */
-public class ExpansionCycleProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class ExpansionCycleProcessor implements ILayoutProcessor {
 
     /** Nodes with a higher degree than four are called high-degree nodes. */
     private static final int HIGH_DEGREE_BORDER = 4;
@@ -39,8 +39,8 @@ public class ExpansionCycleProcessor extends AbstractAlgorithm implements ILayou
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph) {
-        getMonitor().begin("Perform Giotto Process", 1);
+    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Perform Giotto Process", 1);
 
         // filter nodes with degree higher than 4.
         List<PNode> hiDeNodes = Lists.newLinkedList();
@@ -118,7 +118,7 @@ public class ExpansionCycleProcessor extends AbstractAlgorithm implements ILayou
         // adds a property to the expansion cycle faces to identify them.
         markExpCycleFaces(pgraph);
 
-        getMonitor().done();
+        monitor.done();
     }
 
     /**

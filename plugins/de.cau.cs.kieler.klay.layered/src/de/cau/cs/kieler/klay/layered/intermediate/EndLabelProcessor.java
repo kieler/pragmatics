@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -50,7 +50,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author jjc
  * @kieler.rating proposed yellow cds
  */
-public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class EndLabelProcessor implements ILayoutProcessor {
 
     /** Distance of a label to its edge. */
     private static final int LABEL_DISTANCE = 0;
@@ -59,28 +59,18 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
     private static final int PORT_LABEL_DISTANCE = 3;
     
     /**
-     * In case of northern ports, labels have to be stacked to avoid overlaps.
-     * The necessary offset is stored here.
-     */
-    private HashMap<LNode, Double> northOffset; 
-    
-    /** The stacking offset for southern labels is stored here. */
-    private HashMap<LNode, Double> southOffset;
-    
-    /**
-     * Port labels have to be stacked on northern or southern ports as well if
-     * placed outside. This offset is memorized here.
-     */
-    private HashMap<LPort, Double> portLabelOffsetHint;
-    
-    /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        // Initialize the offset maps
-        northOffset = new HashMap<LNode, Double>();
-        southOffset = new HashMap<LNode, Double>();
-        portLabelOffsetHint = new HashMap<LPort, Double>();
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("End label placement", 1);
+        // In case of northern ports, labels have to be stacked to avoid overlaps.
+        // The necessary offset is stored here.
+        HashMap<LNode, Double> northOffset = new HashMap<LNode, Double>();
+        // The stacking offset for southern labels is stored here.
+        HashMap<LNode, Double> southOffset = new HashMap<LNode, Double>();
+        // Port labels have to be stacked on northern or southern ports as well if
+        // placed outside. This offset is memorized here.
+        HashMap<LPort, Double> portLabelOffsetHint = new HashMap<LPort, Double>();
         
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
@@ -297,6 +287,7 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                 }
             }
         }
+        monitor.done();
     }
 
 }

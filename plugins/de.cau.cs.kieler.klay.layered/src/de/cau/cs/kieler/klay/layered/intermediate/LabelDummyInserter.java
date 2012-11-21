@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -44,13 +44,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author jjc
  * @kieler.rating yellow proposed cds
  */
-public class LabelDummyInserter extends AbstractAlgorithm implements ILayoutProcessor {
+public class LabelDummyInserter implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Label dummy insertions", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Label dummy insertions", 1);
         List<LNode> newDummyNodes = new LinkedList<LNode>();
 
         for (LNode node : layeredGraph.getLayerlessNodes()) {
@@ -103,7 +103,7 @@ public class LabelDummyInserter extends AbstractAlgorithm implements ILayoutProc
         // Add created dummies to graph
         layeredGraph.getLayerlessNodes().addAll(newDummyNodes);
         
-        getMonitor().done();
+        monitor.done();
     }
 
 }

@@ -14,11 +14,12 @@
 package de.cau.cs.kieler.klay.layered.properties;
 
 /**
- * Layout option for the choice of candidates in the Brandes Köpf node placement.
+ * Layout option for the choice of candidates in the Brandes & Köpf node placement.
  *
  * @author jjc
  */
 public enum FixedAlignment {
+    
     /** Chooses the smallest layout from the four possible candidates. */
     NONE,
     /** Chooses the left-up candidate from the four possible candidates. */

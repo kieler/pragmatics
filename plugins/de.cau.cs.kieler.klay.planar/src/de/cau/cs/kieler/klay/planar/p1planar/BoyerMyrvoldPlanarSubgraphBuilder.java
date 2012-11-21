@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar.p1planar;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -20,7 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
@@ -55,7 +56,7 @@ import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.ManualIterator;
  * @author pkl
  * @kieler.rating proposed yellow by pkl
  */
-public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm implements ILayoutPhase {
+public class BoyerMyrvoldPlanarSubgraphBuilder implements ILayoutPhase {
 
     /** Intermediate Processing Configuration. */
     private static final IntermediateProcessingConfiguration 
@@ -180,15 +181,13 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
     private LinkedList<PNode>[] pertinentRoots;
 
     /**
-     * {@inheritDoc}
+     * Release all resources so the garbage collector can reap them.
      */
-    @Override
-    public void reset() {
-        super.reset();
+    private void dispose() {
         graph = null;
         missingEdges.clear();
         reversedNodes.clear();
-        planar = true;
+        // TODO also clear the other class variables (either set to null or call clear method) 
     }
 
     /**
@@ -207,13 +206,16 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
      * addition will cause non-planarity and therefore could not be inserted.This guarantees to find
      * a planar embedding for a subgraph in time linear to the number of nodes in the graph.
      */
-    public void process(final PGraph thegraph) {
-        getMonitor().begin("Planar Subgraph Building", 1);
+    public void process(final PGraph thegraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Planar Subgraph Building", 1);
+        
         this.graph = thegraph;
         planarity();
 
-        graph.setProperty(Properties.INSERTABLE_EDGES, this.missingEdges);
-        getMonitor().done();
+        graph.setProperty(Properties.INSERTABLE_EDGES, new ArrayList<PEdge>(missingEdges));
+        
+        dispose();
+        monitor.done();
     }
 
     /**
@@ -224,14 +226,19 @@ public class BoyerMyrvoldPlanarSubgraphBuilder extends AbstractAlgorithm impleme
      * 
      * @param g
      *            the graph to test for planarity
+     * @param monitor
+     *            a progress monitor to track algorithm progress
      * @return true if the graph is planar, false otherwise
      */
-    public boolean testPlanarity(final PGraph g) {
-        getMonitor().begin("Planarity Testing", 1);
+    public boolean testPlanarity(final PGraph g, final IKielerProgressMonitor monitor) {
+        monitor.begin("Planarity Testing", 1);
         this.graph = g;
-        this.planarity();
-        this.planarity();
-        getMonitor().done();
+        
+        planarity(); // FIXME why twice?
+        planarity();
+        
+        dispose();
+        monitor.done();
         return this.planar;
     }
 
