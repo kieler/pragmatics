@@ -18,7 +18,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
@@ -32,13 +32,12 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
 import de.cau.cs.kieler.klay.planar.util.PUtil;
 
 /**
- * 
  * Brings the faces of the graph in rectangular shape. Meaning that after this step there are exact
  * 4 bends per face, all in right or left order, depending from the start point.
  * 
  * @author pkl
  */
-public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class RectShapeDummyProcessor implements ILayoutProcessor {
 
     /** The external face has at this point exact 5 adjacent edges. */
     private static final int EXTERNAL_EDGE_COUNT = 6;
@@ -58,8 +57,9 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph) {
-        getMonitor().begin("Rectangular shaping", 1);
+    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Rectangular shaping", 1);
+        
         this.graph = pgraph;
         this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
         PFace externalFace = this.graph.getExternalFace();
@@ -82,7 +82,10 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
 
         transformInternalFaces();
 
-        getMonitor().done();
+        // release resources
+        graph = null;
+        orthogonal = null;
+        monitor.done();
     }
 
     /**

@@ -19,7 +19,7 @@ package de.cau.cs.kieler.kiml.evol.alg;
 import java.util.Iterator;
 import java.util.Random;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class SurvivalOperation extends AbstractAlgorithm implements IEvolutionaryOperation {
+public class SurvivalOperation implements IEvolutionaryOperation {
 
     /**
      * The survival ratio. This indicates the ratio of surviving individuals,
@@ -61,8 +61,8 @@ public class SurvivalOperation extends AbstractAlgorithm implements IEvolutionar
     /**
      * {@inheritDoc}
      */
-    public void process(final Population population) {
-        getMonitor().begin("Survival", 1);
+    public void process(final Population population, final IKielerProgressMonitor monitor) {
+        monitor.begin("Survival", 1);
         if (population.size() <= MIN_SURVIVORS) {
             return;
         }
@@ -115,7 +115,7 @@ public class SurvivalOperation extends AbstractAlgorithm implements IEvolutionar
         for (int i = 0; i < surviveCount; i++) {
             population.add(survivors[i]);
         }
-        getMonitor().done();
+        monitor.done();
     }
 
 }

@@ -20,7 +20,7 @@ import java.util.Map.Entry;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
@@ -31,10 +31,11 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
+ * TODO document.
  * 
  * @author pkl
  */
-public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class GridDrawingProcessor implements ILayoutProcessor {
 
     /** The bottom side. */
     private static final int BOTTOM_SIDE = 3;
@@ -46,8 +47,9 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph) {
-        getMonitor().begin("Draw grid", 1);
+    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Draw grid", 1);
+        
         this.graph = pgraph;
         PFace externalFace = this.graph.getExternalFace();
         List<PEdge>[] sides = externalFace.getProperty(Properties.FACE_SIDES);
@@ -68,7 +70,10 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
 
         fillGrid();
 
-        getMonitor().done();
+        // release resources
+        graph = null;
+        grid = null;
+        monitor.done();
     }
 
     private void fillGrid() {

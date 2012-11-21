@@ -19,7 +19,7 @@ package de.cau.cs.kieler.kiml.evol.alg;
 import java.util.ListIterator;
 import java.util.Random;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -40,7 +40,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class MutationOperation extends AbstractAlgorithm implements IEvolutionaryOperation {
+public class MutationOperation implements IEvolutionaryOperation {
 
     /**
      * The mutation application probability. This is the probability for each
@@ -61,8 +61,8 @@ public class MutationOperation extends AbstractAlgorithm implements IEvolutionar
     /**
      * {@inheritDoc}
      */
-    public void process(final Population population) {
-        getMonitor().begin("Mutation", 1);
+    public void process(final Population population, final IKielerProgressMonitor monitor) {
+        monitor.begin("Mutation", 1);
         ILayoutConfig layoutConfig = population.getProperty(Population.DEFAULT_CONFIG);
         LayoutContext layoutContext = population.getProperty(Population.DEFAULT_CONTEXT);
         
@@ -75,7 +75,7 @@ public class MutationOperation extends AbstractAlgorithm implements IEvolutionar
             }
         }
         
-        getMonitor().done();
+        monitor.done();
     }
 
     /**

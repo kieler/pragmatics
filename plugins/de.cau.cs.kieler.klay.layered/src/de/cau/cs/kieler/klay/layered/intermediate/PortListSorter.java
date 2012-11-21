@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -43,7 +43,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class PortListSorter extends AbstractAlgorithm implements ILayoutProcessor {
+public class PortListSorter implements ILayoutProcessor {
     
     /**
      * A comparer for ports. Ports are sorted by side (north, east, south, west) in
@@ -110,8 +110,8 @@ public class PortListSorter extends AbstractAlgorithm implements ILayoutProcesso
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Port order processing", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Port order processing", 1);
         
         // Iterate through the nodes of all layers
         for (Layer layer : layeredGraph) {
@@ -123,7 +123,7 @@ public class PortListSorter extends AbstractAlgorithm implements ILayoutProcesso
             }
         }
         
-        getMonitor().done();
+        monitor.done();
     }
     
     /**

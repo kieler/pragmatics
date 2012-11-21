@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -41,13 +41,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class PortPositionProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class PortPositionProcessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Port position processor", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Port position processor", 1);
         
         // Iterate through all nodes
         for (Layer layer : layeredGraph) {
@@ -65,7 +65,7 @@ public class PortPositionProcessor extends AbstractAlgorithm implements ILayoutP
             }
         }
         
-        getMonitor().done();
+        monitor.done();
     }
     
     /**
