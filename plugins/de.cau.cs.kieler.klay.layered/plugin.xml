@@ -95,6 +95,9 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
+         </knownOption>
+         <knownOption
                default="RIGHT"
                option="de.cau.cs.kieler.direction">
          </knownOption>

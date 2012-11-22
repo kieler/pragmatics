@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.options;
 
 import java.util.EnumSet;
-import java.util.Set;
 
 /**
  * Things to take into account when determining the size of a node. Each item of this enumeration
@@ -53,37 +52,7 @@ public enum SizeConstraint {
      * If set, a node's size will be at least the minimum size set on it. If no minimum size is set,
      * the behaviour depends on whether the {@link #DEFAULT_MINIMUM_SIZE} constraint is set as well.
      */
-    MINIMUM_SIZE,
-    
-    /**
-     * If no minimum size is set on an element, the minimum size options are assumed to be some
-     * default value determined by the particular layout algorithm.
-     */
-    DEFAULT_MINIMUM_SIZE,
-    
-    /**
-     * If this option is set and insets are computed by the algorithm, the minimum size plus the
-     * computed insets are a lower bound on the node size. If this option is not set, the minimum size
-     * will be applied to the node's whole size regardless of any computed insets. Note that,
-     * depending on the algorithm, this option may only apply to non-hierarchical nodes.
-     */
-    MINIMUM_SIZE_ACCOUNTS_FOR_INSETS,
-    
-    /**
-     * With this option set, the insets of nodes will be computed and returned as part of the
-     * algorithm's result. If port labels or node labels are placed, they may influence the size of
-     * the insets. Note that, depending on the algorithm, this option may only apply to
-     * non-hierarchical nodes.
-     */
-    COMPUTE_INSETS;
-    
-    
-    public static boolean isSizeFixed(Set<SizeConstraint> constraints) {
-        return !constraints.contains(PORTS) &&
-                !constraints.contains(PORT_LABELS) &&
-                !constraints.contains(NODE_LABELS) &&
-                !constraints.contains(MINIMUM_SIZE);
-    }
+    MINIMUM_SIZE;
     
     
     /**
@@ -107,23 +76,13 @@ public enum SizeConstraint {
     }
     
     /**
-     * Returns a set containing the common combination of {@link #MINIMUM_SIZE} and
-     * {@link #DEFAULT_MINIMUM_SIZE}.
-     * 
-     * @return set with default minimum size constraint combination.
-     */
-    public static EnumSet<SizeConstraint> defaultMinimumSize() {
-        return EnumSet.of(MINIMUM_SIZE, DEFAULT_MINIMUM_SIZE);
-    }
-    
-    /**
      * Returns a set containing the common combination of {@link #MINIMUM_SIZE},
      * {@link #DEFAULT_MINIMUM_SIZE}, and {@link #PORTS}.
      * 
      * @return set with default minimum size constraint combination with ports.
      */
-    public static EnumSet<SizeConstraint> defaultMinimumSizeWithPorts() {
-        return EnumSet.of(PORTS, MINIMUM_SIZE, DEFAULT_MINIMUM_SIZE);
+    public static EnumSet<SizeConstraint> minimumSizeWithPorts() {
+        return EnumSet.of(PORTS, MINIMUM_SIZE);
     }
     
     /**

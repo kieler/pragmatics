@@ -45,6 +45,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
+import de.cau.cs.kieler.kiml.options.SizeOptions;
 
 /**
  * Utility methods for KGraphs and layout data.
@@ -398,6 +399,7 @@ public final class KimlUtil {
             return null;
         }
         EnumSet<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+        EnumSet<SizeOptions> sizeOptions = nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS);
         
         KVector oldSize = new KVector(nodeLayout.getWidth(), nodeLayout.getHeight());
         KVector newSize;
@@ -408,7 +410,7 @@ public final class KimlUtil {
             float minHeight = nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT);
             
             // If minimum width or height are not set, maybe default to default values
-            if (sizeConstraint.contains(SizeConstraint.DEFAULT_MINIMUM_SIZE)) {
+            if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
                 if (minWidth <= 0) {
                     minWidth = DEFAULT_MIN_WIDTH;
                 }

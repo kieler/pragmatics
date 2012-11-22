@@ -248,6 +248,15 @@ public final class LayoutOptions {
     public static final IProperty<EnumSet<SizeConstraint>> SIZE_CONSTRAINT =
             new Property<EnumSet<SizeConstraint>>(
                     "de.cau.cs.kieler.sizeConstraint", SizeConstraint.fixed());
+
+    /**
+     * Options modifying the behaviour of the size constraints set on a node. Each member of the set
+     * specifies something that should be taken into account when calculating node sizes. The empty
+     * set corresponds to no further modifications.
+     */
+    public static final IProperty<EnumSet<SizeOptions>> SIZE_OPTIONS =
+            new Property<EnumSet<SizeOptions>>(
+                    "de.cau.cs.kieler.sizeOptions", EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE));
     
     /**
      * Overall spacing between elements. This is mostly interpreted as the minimal distance
