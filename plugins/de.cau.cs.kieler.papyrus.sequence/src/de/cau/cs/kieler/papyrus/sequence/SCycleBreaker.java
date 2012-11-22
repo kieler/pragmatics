@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -41,9 +42,15 @@ public class SCycleBreaker {
 
     /**
      * Break the cycles in the given layered graph.
-     * @param lgraph the layered graph
+     * 
+     * @param lgraph
+     *            the layered graph
+     * @param progressMonitor
+     *            the progress monitor
      */
-    public void breakCycles(final LGraph lgraph) {
+    public void breakCycles(final LGraph lgraph, final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Cycle Breaking", 1);
+
         // The set of edges to be split after the cycle detecting phase
         split = new HashSet<LNode>();
         chain = new LinkedList<LNode>();
@@ -67,6 +74,8 @@ public class SCycleBreaker {
         for (LNode node : split) {
             splitNode(lgraph, node);
         }
+
+        progressMonitor.done();
     }
 
     /**

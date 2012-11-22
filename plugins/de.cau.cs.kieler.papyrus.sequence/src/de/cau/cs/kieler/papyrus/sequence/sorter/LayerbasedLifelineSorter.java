@@ -16,6 +16,7 @@ package de.cau.cs.kieler.papyrus.sequence.sorter;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -43,7 +44,10 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
     /**
      * Sorts the lifelines in a stairway-like fashion. {@inheritDoc}
      */
-    public List<SLifeline> sortLifelines(final SGraph graph, final LGraph lgraph) {
+    public List<SLifeline> sortLifelines(final SGraph graph, final LGraph lgraph, 
+            final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Layer based lifeline sorting", 1);
+        
         lifelines.addAll(graph.getLifelines());
         sortedLifelines = new LinkedList<SLifeline>();
 
@@ -82,6 +86,8 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
             } while (m0 != null);
         }
 
+        progressMonitor.done();
+        
         return sortedLifelines;
     }
 

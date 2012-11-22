@@ -19,6 +19,7 @@ import java.util.List;
 
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -61,9 +62,13 @@ public class SGraphImporter {
      * 
      * @param topNode
      *            the KGraphElement, that holds the nodes
+     * @param progressMonitor
+     *            the progress monitor
      * @return the built PGraph
      */
-    public SGraph importGraph(final KNode topNode) {
+    public SGraph importGraph(final KNode topNode, final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Import graph", 1);
+        
         // Create a graph object
         SGraph sgraph = new SGraph();
         // Initialize node-lifeline and edge-message maps
@@ -111,12 +116,14 @@ public class SGraphImporter {
         }
 
         // Reset graph size to zero before layouting
-        sgraph.setWidth(0);
-        sgraph.setHeight(0);
+        sgraph.getSize().x = 0;
+        sgraph.getSize().y = 0;
 
         // Copy the areas property to the SGraph
         sgraph.setProperty(PapyrusProperties.AREAS, areas);
 
+        progressMonitor.done();
+        
         return sgraph;
     }
 
@@ -126,9 +133,13 @@ public class SGraphImporter {
      * 
      * @param sgraph
      *            the given SGraph
+     * @param progressMonitor
+     *            the progress monitor
      * @return the layeredGraph
      */
-    public LGraph createLayeredGraph(final SGraph sgraph) {
+    public LGraph createLayeredGraph(final SGraph sgraph, final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Create layered graph", 1);
+        
         LGraph lgraph = new LGraph();
 
         // Build a node for every message.
@@ -221,6 +232,8 @@ public class SGraphImporter {
             }
         }
 
+        progressMonitor.done();
+        
         return lgraph;
     }
 
@@ -252,7 +265,8 @@ public class SGraphImporter {
         comment.setProperty(PapyrusProperties.ATTACHED_ELEMENT, attachedElement);
         // Attach connected edge to comment
         if (!node.getOutgoingEdges().isEmpty()) {
-            comment.setConnection(node.getOutgoingEdges().get(0));
+            comment.setProperty(SequenceDiagramProperties.COMMENT_CONNECTION, 
+                    node.getOutgoingEdges().get(0));
         }
 
         List<Object> attachedTo = commentLayout.getProperty(PapyrusProperties.ATTACHED_TO);
@@ -410,6 +424,10 @@ public class SGraphImporter {
             message.setProperty(Properties.ORIGIN, edge);
             message.setProperty(SequenceDiagramProperties.COMMENTS, new LinkedList<SComment>());
 
+            KEdgeLayout layout = edge.getData(KEdgeLayout.class);
+            message.setSourceYPos(layout.getSourcePoint().getY());
+            message.setTargetYPos(layout.getTargetPoint().getY());
+
             // Put edge and message into the edge map
             edgeMap.put(edge, message);
 
@@ -432,8 +450,6 @@ public class SGraphImporter {
                 }
             }
 
-            KEdgeLayout layout = edge.getData(KEdgeLayout.class);
-
             // Append the message type of the edge to the message
             String messageType = layout.getProperty(PapyrusProperties.MESSAGE_TYPE);
             if (messageType.equals("4004")) {
@@ -454,9 +470,6 @@ public class SGraphImporter {
             if (targetLL.getName().equals("DummyLifeline") && !messageType.equals("4008")) {
                 targetLL.setHorizontalPosition(sgraph.getLifelines().size() + 1);
             }
-
-            message.setSourceYPos(layout.getSourcePoint().getY());
-            message.setTargetYPos(layout.getTargetPoint().getY());
 
             // check if message is in any area
             if (areas != null) {
@@ -512,6 +525,7 @@ public class SGraphImporter {
                 SMessage message = new SMessage(sourceLL, targetLL);
                 message.setProperty(Properties.ORIGIN, edge);
                 message.setProperty(SequenceDiagramProperties.COMMENTS, new LinkedList<SComment>());
+                message.setTargetYPos(layout.getTargetPoint().getY());
 
                 // Put edge and message into the edge map
                 edgeMap.put(edge, message);
@@ -558,7 +572,6 @@ public class SGraphImporter {
                         }
                     }
                 }
-                message.setTargetYPos(layout.getTargetPoint().getY());
             }
         }
     }

@@ -16,7 +16,6 @@ package de.cau.cs.kieler.papyrus.sequence.graph;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.papyrus.sequence.SequenceDiagramProperties;
 
@@ -30,7 +29,6 @@ import de.cau.cs.kieler.papyrus.sequence.SequenceDiagramProperties;
  */
 public class SComment extends SGraphElement {
     private static final long serialVersionUID = 2543686433908319587L;
-    private KEdge connection;
     private List<SGraphElement> attachedTo;
     private SMessage message;
     private SLifeline lifeline;
@@ -71,25 +69,6 @@ public class SComment extends SGraphElement {
      */
     public List<SGraphElement> getAttachedTo() {
         return attachedTo;
-    }
-
-    /**
-     * Get the original connection of the comment which is a KEdge.
-     * 
-     * @return the connection
-     */
-    public KEdge getConnection() {
-        return connection;
-    }
-
-    /**
-     * Set the connection of the comment.
-     * 
-     * @param connection
-     *            the new connection
-     */
-    public void setConnection(final KEdge connection) {
-        this.connection = connection;
     }
 
     /**

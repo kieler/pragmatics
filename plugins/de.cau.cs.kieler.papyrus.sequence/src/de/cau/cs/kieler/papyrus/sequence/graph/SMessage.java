@@ -103,11 +103,11 @@ public class SMessage extends SGraphElement {
      *            the new vertical position
      */
     public void setLayerYPos(final double yPosition) {
-        this.layerYPos = yPosition;
-        this.sourceYPos = yPosition;
-        this.targetYPos = yPosition;
-        if (this.source.getGraph().getHeight() < yPosition) {
-            this.source.getGraph().setHeight(yPosition);
+        layerYPos = yPosition;
+        sourceYPos = yPosition;
+        targetYPos = yPosition;
+        if (source.getGraph().getSize().y < yPosition) {
+            source.getGraph().getSize().y = yPosition;
         }
     }
 
@@ -128,8 +128,8 @@ public class SMessage extends SGraphElement {
      */
     public void setSourceYPos(final double sourceYPos) {
         this.sourceYPos = sourceYPos;
-        if (this.source.getGraph().getHeight() < sourceYPos) {
-            this.source.getGraph().setHeight(sourceYPos);
+        if (source.getGraph().getSize().y < sourceYPos) {
+            source.getGraph().getSize().y = sourceYPos;
         }
     }
 
@@ -149,8 +149,8 @@ public class SMessage extends SGraphElement {
      */
     public void setTargetYPos(final double targetYPos) {
         this.targetYPos = targetYPos;
-        if (this.target.getGraph().getHeight() < targetYPos) {
-            this.target.getGraph().setHeight(targetYPos);
+        if (target.getGraph().getSize().y < targetYPos) {
+            target.getGraph().getSize().y = targetYPos;
         }
     }
 }
