@@ -44,7 +44,7 @@ public class LNode extends LShape {
     private final List<LPort> ports = new LinkedList<LPort>();
     /** this node's labels. */
     private final List<LLabel> labels = new LinkedList<LLabel>();
-    /** this node's insets. */
+    /** the margin area around this node. */
     private final LInsets.Double margin = new LInsets.Double();
     
     /**

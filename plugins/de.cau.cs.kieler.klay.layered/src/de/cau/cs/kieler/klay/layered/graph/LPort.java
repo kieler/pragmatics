@@ -49,6 +49,8 @@ public class LPort extends LShape {
     private PortSide side = PortSide.UNDEFINED;
     /** the anchor point position. */
     private final KVector anchor = new KVector();
+    /** the margin area around this port. */
+    private final LInsets.Double margin = new LInsets.Double();
     /** this port's labels. */
     private final List<LLabel> labels = new LinkedList<LLabel>();
     /** the edges going into the port. */
@@ -185,6 +187,16 @@ public class LPort extends LShape {
      */
     public KVector getAbsoluteAnchor() {
         return KVector.sum(owner.getPosition(), this.getPosition(), anchor);
+    }
+    
+    /**
+     * Returns the margin around this port. The margin is typically used to reserve space for the
+     * port's labels.
+     * 
+     * @return the port's margin.
+     */
+    public LInsets getMargin() {
+        return margin;
     }
     
     /**
