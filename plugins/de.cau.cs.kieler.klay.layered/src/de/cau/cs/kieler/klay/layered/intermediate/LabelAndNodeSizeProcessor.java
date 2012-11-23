@@ -17,6 +17,11 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
+import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.properties.PortLabelPlacement;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -31,7 +36,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  * @author cds
  */
-public class LabelAndNodeSizeProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
@@ -40,29 +45,120 @@ public class LabelAndNodeSizeProcessor extends AbstractAlgorithm implements ILay
         getMonitor().begin("Node and Port Label Placement and Node Sizing", 1);
         double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
 
-        /* PHASE 1: PLACE PORT LABELS
-         * Port labels are placed and port margins are calculated. We currently only support
-         * one label per port.
-         */
-        
-        /* PHASE 2: PLACE PORTS
-         * Ports are placed and node insets are calculated accordingly.
-         */
-        
-        /* PHASE 3: RESERVE SPACE FOR NODE LABEL
-         * If the node has a label (we currently only support one), the node insets might have
-         * to be adjusted to reserve space for it, which is what this phase does.
-         */
-        
-        /* PHASE 4: RESIZE NODE
-         * The node is resized, taking all node size constraints into account.
-         */
-        
-        /* PHASE 5: PLACE NODE LABEL
-         * With space reserved for the node label (we only support one), the label is placed.
-         */
+        // Iterate over all the graph's nodes
+        for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
+                
+                /* PHASE 1: PLACE PORT LABELS
+                 * Port labels are placed and port margins are calculated. We currently only support
+                 * one label per port.
+                 */
+                PortLabelPlacement labelPlacement = node.getProperty(Properties.PORT_LABEL_PLACEMENT);
+                
+                // Place port labels and calculate the margins
+                for (LPort port : node.getPorts()) {
+                    if (!port.getLabels().isEmpty()) {
+                        LLabel label = port.getLabels().get(0);
+                        
+                        placePortLabel(port, label, labelPlacement);
+                        calculateAndSetPortMargins(port, label);
+                    }
+                }
+                
+                
+                /* PHASE 2: PLACE PORTS
+                 * Ports are placed and node insets are calculated accordingly.
+                 */
+                placePorts(node);
+                calculateAndSetNodeInsets(node);
+                
+                
+                /* PHASE 3: RESERVE SPACE FOR NODE LABEL
+                 * If the node has a label (we currently only support one), the node insets might have
+                 * to be adjusted to reserve space for it, which is what this phase does.
+                 */
+                
+                
+                /* PHASE 4: RESIZE NODE
+                 * The node is resized, taking all node size constraints into account.
+                 */
+                
+                
+                /* PHASE 5: PLACE NODE LABEL
+                 * With space reserved for the node label (we only support one), the label is placed.
+                 */
+            }
+        }
         
         getMonitor().done();
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // PORT LABEL PLACEMENT
+
+    /**
+     * Places the given label of the given port. We assume that the label is actually part of the
+     * given port.
+     * 
+     * <p><i>Note:</i> We currently only support one label per port.
+     * 
+     * @param port the port whose label to place.
+     * @param label the label to place.
+     * @param placement the port label placement that applies to the port.
+     */
+    private void placePortLabel(final LPort port, final LLabel label,
+            final PortLabelPlacement placement) {
+        
+        // TODO: Place label
+    }
+    
+    /**
+     * Calculates the port's margins such that the given label is part of them and sets them
+     * accordingly.
+     * 
+     * @param port the port whose margins to calculate.
+     * @param label the label that is to be contained in the margins.
+     */
+    private void calculateAndSetPortMargins(final LPort port, final LLabel label) {
+        // TODO: Calculate margins
+    }
+
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // PORT PLACEMENT
+
+    /**
+     * Places the given node's ports.
+     * 
+     * @param node the node whose ports to place.
+     */
+    private void placePorts(final LNode node) {
+        // TODO: Place ports.
+    }
+    
+    /**
+     * Calculates and sets the given node's insets accordingly such that they contain all the ports
+     * and port labels.
+     * 
+     * @param node the node whose insets to calculate and to set.
+     */
+    private void calculateAndSetNodeInsets(final LNode node) {
+        // TODO: Calculate insets.
+    }
+
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // RESERVING SPACE FOR NODE LABELS
+    
+
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // NODE RESIZING
+    
+
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // PLACING NODE LABELS
     
 }
