@@ -95,6 +95,21 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                             
                             LPort port = edge.getSource();
                             
+                            // Determine the port label placement that applies to the port this label
+                            // is closest to
+                            PortLabelPlacement portLabelPlacement = PortLabelPlacement.FIXED;
+                            if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                                == EdgeLabelPlacement.TAIL) {
+                                
+                                // Tail label -> use source port's node as reference
+                                portLabelPlacement = edge.getSource().getNode()
+                                        .getProperty(Properties.PORT_LABEL_PLACEMENT);
+                            } else {
+                                // Head label -> use target port's node as reference
+                                portLabelPlacement = edge.getTarget().getNode()
+                                        .getProperty(Properties.PORT_LABEL_PLACEMENT);
+                            }
+                            
                             // When a tail label is present, the target port is used
                             // for orientation
                             if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
@@ -106,8 +121,7 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                             // port label
                             double portLabelOffsetX = 0.0;
                             double portLabelOffsetY = 0.0;
-                            if (layeredGraph.getProperty(Properties.PORT_LABEL_PLACEMENT) 
-                                    == PortLabelPlacement.OUTSIDE) {
+                            if (portLabelPlacement == PortLabelPlacement.OUTSIDE) {
                                 for (LLabel portLabel : port.getLabels()) {
                                     portLabelOffsetX = Math.max(portLabelOffsetX, portLabel.getSize().x)
                                                                 + PORT_LABEL_DISTANCE;
@@ -217,9 +231,11 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                     ports.add(edge.getSource());
                     ports.add(edge.getTarget());
                     for (LPort port : ports) {
+                        PortLabelPlacement portLabelPlacement =
+                                port.getNode().getProperty(Properties.PORT_LABEL_PLACEMENT);
+                        
                         for (LLabel portLabel : port.getLabels()) {
-                            if (layeredGraph.getProperty(Properties.PORT_LABEL_PLACEMENT)
-                                    == PortLabelPlacement.OUTSIDE) {
+                            if (portLabelPlacement == PortLabelPlacement.OUTSIDE) {
                                 if (portLabel.getSide() == LSide.UP) {
                                     switch (port.getSide()) {
                                     case WEST:
@@ -271,8 +287,7 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
                                         break;
                                     }
                                 }
-                            } else if (layeredGraph.getProperty(Properties.PORT_LABEL_PLACEMENT) 
-                                    == PortLabelPlacement.INSIDE) {
+                            } else if (portLabelPlacement == PortLabelPlacement.INSIDE) {
                                 switch (port.getSide()) {
                                 case WEST:
                                     portLabel.getPosition().x = port.getSize().x + 1;

@@ -117,7 +117,7 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
                     double portLabelY = 0;
                     
                     //TODO: maybe leave space for manually placed ports 
-                    if (layeredGraph.getProperty(Properties.PORT_LABEL_PLACEMENT)
+                    if (node.getProperty(Properties.PORT_LABEL_PLACEMENT)
                             == PortLabelPlacement.OUTSIDE) {
                         
                         for (LLabel label : port.getLabels()) {
