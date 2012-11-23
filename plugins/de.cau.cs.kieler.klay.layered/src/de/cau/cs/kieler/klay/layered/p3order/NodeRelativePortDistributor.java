@@ -37,7 +37,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class NodeRelativePortDistributor implements IPortDistributor {
+public final class NodeRelativePortDistributor implements IPortDistributor {
 
     /** barycenter values for ports. */
     private float[] portBarycenter;

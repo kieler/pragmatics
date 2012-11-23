@@ -41,23 +41,23 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * A/03/96, Universität des Saarlandes, 1996.
  * 
  * <dl>
- * <dt>Precondition:</dt>
- * <dd>A layered graph. The node ordering has taken place. The nodes on a layer that belong to the
- * same compound node are placed in an unbroken sequence in the layer.</dd>
- * <dt>Postcondition:</dt>
- * <dd>The nodes are ordered such that the subgraphs have the same relative position on all layers.
- * The nodes of one subgraph on one layer are still placed next to each other without other nodes
- * between them.</dd>
- * <dt>Slots:</dt>
- * <dd>After phase 3.</dd>
- * <dt>Same-slot dependencies:</dt>
- * <dd>none.</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>A layered graph. The node ordering has taken place. The nodes on a layer that belong to the
+ *     same compound node are placed in an unbroken sequence in the layer.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>The nodes are ordered such that the subgraphs have the same relative position on all layers.
+ *     The nodes of one subgraph on one layer are still placed next to each other without other nodes
+ *     between them.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>After phase 3.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>none.</dd>
  * </dl>
  * 
  * @author ima
  * @kieler.design 2012-08-10 chsch grh
  */
-public class SubgraphOrderingProcessor implements ILayoutProcessor {
+public final class SubgraphOrderingProcessor implements ILayoutProcessor {
 
     /**
      * Document the layers that are resorted.

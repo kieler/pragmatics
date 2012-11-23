@@ -31,7 +31,7 @@ public class LInsets {
      * 
      * @author cds
      */
-    public static class Double extends LInsets {
+    public static final class Double extends LInsets {
         /**
          * The inset from the top.
          */

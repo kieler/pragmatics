@@ -48,7 +48,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author cds
  * @kieler.design 2012-08-10 chsch grh
  */
-public class NodeMarginCalculator implements ILayoutProcessor {
+public final class NodeMarginCalculator implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}

@@ -53,7 +53,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class SplineEdgeRouter implements ILayoutPhase {
+public final class SplineEdgeRouter implements ILayoutPhase {
 
     /** factor for layer spacing. */
     private static final double LAYER_SPACE_FAC = 0.2;

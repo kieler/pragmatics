@@ -45,7 +45,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author pdo
  * @kieler.design 2012-08-10 chsch grh
  */
-public class BigNodesProcessor implements ILayoutProcessor {
+public final class BigNodesProcessor implements ILayoutProcessor {
 
     // ================================== Attributes ==============================================
 

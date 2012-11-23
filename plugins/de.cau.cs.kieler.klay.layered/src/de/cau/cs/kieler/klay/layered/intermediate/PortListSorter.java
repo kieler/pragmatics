@@ -43,7 +43,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class PortListSorter implements ILayoutProcessor {
+public final class PortListSorter implements ILayoutProcessor {
     
     /**
      * A comparer for ports. Ports are sorted by side (north, east, south, west) in

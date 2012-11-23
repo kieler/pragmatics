@@ -42,7 +42,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
-public class InteractiveLayerer implements ILayoutPhase {
+public final class InteractiveLayerer implements ILayoutPhase {
 
     /**
      * {@inheritDoc}

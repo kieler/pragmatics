@@ -34,7 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class GraphTransformer implements ILayoutProcessor {
+public final class GraphTransformer implements ILayoutProcessor {
 
     /** definition of transformation modes. */
     public enum Mode {

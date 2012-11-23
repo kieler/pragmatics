@@ -66,7 +66,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class LayerSweepCrossingMinimizer implements ILayoutPhase {
+public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
