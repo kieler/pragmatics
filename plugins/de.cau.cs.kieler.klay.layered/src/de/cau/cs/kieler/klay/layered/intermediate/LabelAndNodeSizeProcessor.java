@@ -17,7 +17,6 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -57,19 +56,15 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
                 
                 // Place port labels and calculate the margins
                 for (LPort port : node.getPorts()) {
-                    if (!port.getLabels().isEmpty()) {
-                        LLabel label = port.getLabels().get(0);
-                        
-                        placePortLabel(port, label, labelPlacement);
-                        calculateAndSetPortMargins(port, label);
-                    }
+                    placePortLabels(port, labelPlacement);
+                    calculateAndSetPortMargins(port);
                 }
                 
                 
                 /* PHASE 2: PLACE PORTS
                  * Ports are placed and node insets are calculated accordingly.
                  */
-                placePorts(node);
+                placePorts(node, spacing);
                 calculateAndSetNodeInsets(node);
                 
                 
@@ -77,16 +72,19 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
                  * If the node has a label (we currently only support one), the node insets might have
                  * to be adjusted to reserve space for it, which is what this phase does.
                  */
+                reserveSpaceForNodeLabels(node);
                 
                 
                 /* PHASE 4: RESIZE NODE
                  * The node is resized, taking all node size constraints into account.
                  */
+                resizeNode(node);
                 
                 
                 /* PHASE 5: PLACE NODE LABEL
                  * With space reserved for the node label (we only support one), the label is placed.
                  */
+                placeNodeLabels(node);
             }
         }
         
@@ -98,30 +96,27 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
     // PORT LABEL PLACEMENT
 
     /**
-     * Places the given label of the given port. We assume that the label is actually part of the
+     * Places the label of the given port, if any. We assume that the label is actually part of the
      * given port.
      * 
-     * <p><i>Note:</i> We currently only support one label per port.
+     * <p><i>Note:</i> We currently only support one label per port.</p>
      * 
-     * @param port the port whose label to place.
-     * @param label the label to place.
+     * @param port the port whose labels to place.
      * @param placement the port label placement that applies to the port.
      */
-    private void placePortLabel(final LPort port, final LLabel label,
-            final PortLabelPlacement placement) {
-        
-        // TODO: Place label
+    private void placePortLabels(final LPort port, final PortLabelPlacement placement) {
+        // TODO: Implement.
     }
     
     /**
-     * Calculates the port's margins such that the given label is part of them and sets them
-     * accordingly.
+     * Calculates the port's margins such that its label is part of them and sets them accordingly.
+     * 
+     * <p><i>Note:</i> We currently only support one label per port.</p>
      * 
      * @param port the port whose margins to calculate.
-     * @param label the label that is to be contained in the margins.
      */
-    private void calculateAndSetPortMargins(final LPort port, final LLabel label) {
-        // TODO: Calculate margins
+    private void calculateAndSetPortMargins(final LPort port) {
+        // TODO: Implement.
     }
 
     
@@ -132,33 +127,67 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
      * Places the given node's ports.
      * 
      * @param node the node whose ports to place.
+     * @param spacing the object spacing set for the diagram.
      */
-    private void placePorts(final LNode node) {
-        // TODO: Place ports.
+    private void placePorts(final LNode node, final double spacing) {
+        // TODO: Implement.
     }
     
     /**
      * Calculates and sets the given node's insets accordingly such that they contain all the ports
      * and port labels.
      * 
+     * <p><i>Note:</i> We currently only support one label per port.</p>
+     * 
      * @param node the node whose insets to calculate and to set.
      */
     private void calculateAndSetNodeInsets(final LNode node) {
-        // TODO: Calculate insets.
+        // TODO: Implement.
     }
 
     
     ///////////////////////////////////////////////////////////////////////////////
     // RESERVING SPACE FOR NODE LABELS
-    
+
+    /**
+     * Adjusts the node's insets to leave enough space for the node's label. This method only modifies
+     * the insets if the node's label is placed inside the node. A label placed on its outside doesn't
+     * modify the insets much...
+     * 
+     * <p><i>Note:</i> We currently only support one label per node.</p>
+     * 
+     * @param node the node in question.
+     */
+    private void reserveSpaceForNodeLabels(final LNode node) {
+        // TODO: Implement.
+    }
 
     
     ///////////////////////////////////////////////////////////////////////////////
     // NODE RESIZING
     
+    /**
+     * Resizes the given node subject to the sizing constraints and options.
+     * 
+     * @param node the node to resize.
+     */
+    private void resizeNode(final LNode node) {
+        // TODO: Implement.
+    }
 
     
     ///////////////////////////////////////////////////////////////////////////////
     // PLACING NODE LABELS
+    
+    /**
+     * Calculates the position of the node's label.
+     * 
+     * <p><i>Note:</i> We currently only support one label per node.</p>
+     * 
+     * @param node the node whose label to place.
+     */
+    private void placeNodeLabels(final LNode node) {
+        // TODO: Implement.
+    }
     
 }
