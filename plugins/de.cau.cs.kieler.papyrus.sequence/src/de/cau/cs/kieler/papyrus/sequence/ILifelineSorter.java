@@ -15,6 +15,7 @@ package de.cau.cs.kieler.papyrus.sequence;
 
 import java.util.List;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.papyrus.sequence.graph.SGraph;
 import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
@@ -34,7 +35,8 @@ public interface ILifelineSorter {
      * 
      * @param graph the Sequence Graph
      * @param lgraph the layered graph
+     * @param progressMonitor the progress monitor
      * @return a list of the lifelines in the calculated order
      */
-    List<SLifeline> sortLifelines(SGraph graph, LGraph lgraph);
+    List<SLifeline> sortLifelines(SGraph graph, LGraph lgraph, IKielerProgressMonitor progressMonitor);
 }

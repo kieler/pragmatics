@@ -25,9 +25,9 @@ public class SMessage extends SGraphElement {
     private static final long serialVersionUID = 6326794211792613083L;
     private SLifeline source;
     private SLifeline target;
-    private Float sourceYPos;
-    private Float targetYPos;
-    private Float yPos;
+    private double sourceYPos;
+    private double targetYPos;
+    private double layerYPos;
 
     /**
      * Constructor that takes the source and target lifelines as arguments.
@@ -40,7 +40,7 @@ public class SMessage extends SGraphElement {
     public SMessage(final SLifeline source, final SLifeline target) {
         this.source = source;
         this.target = target;
-        this.yPos = -1.0f;
+        this.layerYPos = -1.0f;
         source.getOutgoingMessages().add(this);
         target.getIncomingMessages().add(this);
     }
@@ -88,26 +88,26 @@ public class SMessage extends SGraphElement {
     }
 
     /**
-     * Get the vertical position of the message.
+     * Get the vertical position of the layer of the message.
      * 
      * @return the vertical position
      */
-    public Float getYPos() {
-        return yPos;
+    public double getLayerYPos() {
+        return layerYPos;
     }
 
     /**
-     * Set the vertical position of the message.
+     * Set the vertical position of the layer of the message.
      * 
      * @param yPosition
      *            the new vertical position
      */
-    public void setYPos(final Float yPosition) {
-        this.yPos = yPosition;
-        this.sourceYPos = yPosition;
-        this.targetYPos = yPosition;
-        if (this.source.getGraph().getSizeY() < yPosition) {
-            this.source.getGraph().setSizeY(yPosition);
+    public void setLayerYPos(final double yPosition) {
+        layerYPos = yPosition;
+        sourceYPos = yPosition;
+        targetYPos = yPosition;
+        if (source.getGraph().getSize().y < yPosition) {
+            source.getGraph().getSize().y = yPosition;
         }
     }
 
@@ -116,7 +116,7 @@ public class SMessage extends SGraphElement {
      * 
      * @return the vertical position at the source lifeline
      */
-    public Float getSourceYPos() {
+    public double getSourceYPos() {
         return sourceYPos;
     }
 
@@ -126,10 +126,10 @@ public class SMessage extends SGraphElement {
      * @param sourceYPos
      *            the new vertical position at the source lifeline
      */
-    public void setSourceYPos(final Float sourceYPos) {
+    public void setSourceYPos(final double sourceYPos) {
         this.sourceYPos = sourceYPos;
-        if (this.source.getGraph().getSizeY() < sourceYPos) {
-            this.source.getGraph().setSizeY(sourceYPos);
+        if (source.getGraph().getSize().y < sourceYPos) {
+            source.getGraph().getSize().y = sourceYPos;
         }
     }
 
@@ -138,7 +138,7 @@ public class SMessage extends SGraphElement {
      * 
      * @return the vertical position at the target lifeline
      */
-    public Float getTargetYPos() {
+    public double getTargetYPos() {
         return targetYPos;
     }
     /**
@@ -147,10 +147,10 @@ public class SMessage extends SGraphElement {
      * @param targetYPos
      *            the new vertical position at the target lifeline
      */
-    public void setTargetYPos(final Float targetYPos) {
+    public void setTargetYPos(final double targetYPos) {
         this.targetYPos = targetYPos;
-        if (this.target.getGraph().getSizeY() < targetYPos) {
-            this.target.getGraph().setSizeY(targetYPos);
+        if (target.getGraph().getSize().y < targetYPos) {
+            target.getGraph().getSize().y = targetYPos;
         }
     }
 }

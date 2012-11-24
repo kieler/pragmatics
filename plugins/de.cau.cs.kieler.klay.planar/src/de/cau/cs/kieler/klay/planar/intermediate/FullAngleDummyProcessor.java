@@ -17,7 +17,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -30,9 +30,11 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * Tamassia's orthogonalization does not work correctly for full anlges at the internal faces. Thus,
  * all full angle nodes are replaced with dummy cages that do not form a full angle.
  * 
+ * FIXME this seems not to be used anymore?!
+ * 
  * @author pkl
  */
-public class FullAngleDummyProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class FullAngleDummyProcessor implements ILayoutProcessor {
 
     /** The current given graph. */
     private PGraph graph = null;
@@ -40,14 +42,25 @@ public class FullAngleDummyProcessor extends AbstractAlgorithm implements ILayou
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pGraph) {
-        getMonitor().begin("full angle dummies", 1);
+    public void process(final PGraph pGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("full angle dummies", 1);
         this.graph = pGraph;
 
-        // Attention: this is only a test. Hence it is deactivated for the release.
         // processFullAngles(pGraph);
 
-        getMonitor().done();
+        // processCutEdges(pGraph);
+
+        monitor.done();
+    }
+
+    /**
+     * @param pGraph
+     *            the graph for which the cut edge dummies should be computed.
+     */
+    private void processCutEdges(final PGraph pGraph) {
+        // List<PEdge> cutEdges =
+        // Iterable<PFace> faces = this.graph.getFaces();
+
     }
 
     /**
@@ -55,7 +68,6 @@ public class FullAngleDummyProcessor extends AbstractAlgorithm implements ILayou
      * @param pGraph
      *            the graph for which the full anlge node dummies should be computed.
      */
-    @SuppressWarnings("unused")
     private void processFullAngles(final PGraph pGraph) {
         List<PNode> fullAngleNodes = Lists.newLinkedList();
         Iterable<PFace> faces = this.graph.getFaces();

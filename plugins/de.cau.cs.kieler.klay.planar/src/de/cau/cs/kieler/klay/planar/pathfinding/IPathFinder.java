@@ -17,7 +17,6 @@ import java.util.List;
 
 import com.google.common.base.Predicate;
 
-import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -30,7 +29,7 @@ import de.cau.cs.kieler.klay.planar.graph.PNode;
  * @author ocl
  * @kieler.rating proposed yellow by pkl
  */
-public interface IPathFinder extends IAlgorithm {
+public interface IPathFinder {
 
     /**
      * A property assigning a cost to an edge. This property is used when computing a shortest path

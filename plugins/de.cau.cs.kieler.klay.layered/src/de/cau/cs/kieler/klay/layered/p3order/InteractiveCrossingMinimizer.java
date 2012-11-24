@@ -19,7 +19,7 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
@@ -47,7 +47,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class InteractiveCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {
+public class InteractiveCrossingMinimizer implements ILayoutPhase {
 
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
@@ -77,8 +77,8 @@ public class InteractiveCrossingMinimizer extends AbstractAlgorithm implements I
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Interactive crossing minimization", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Interactive crossing minimization", 1);
         
         int portCount = 0;
         for (Layer layer : layeredGraph) {
@@ -142,7 +142,7 @@ public class InteractiveCrossingMinimizer extends AbstractAlgorithm implements I
         IPortDistributor portDistributor = new NodeRelativePortDistributor(new float[portCount]);
         portDistributor.distributePorts(lgraphArray);
         
-        getMonitor().done();
+        monitor.done();
     }
     
     /**

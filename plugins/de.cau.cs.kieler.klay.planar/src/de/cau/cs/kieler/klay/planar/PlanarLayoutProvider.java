@@ -172,7 +172,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
     private void updateModules(final PGraph graph) {
 
         // check which planarity test algorithm should be used
-        if (graph.getProperty(Properties.PLANAR_TESTING_ALGORITHM) 
+        if (graph.getProperty(Properties.PLANAR_TESTING_ALGORITHM)
                 == PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM) {
             if (!(this.subgraphBuilder instanceof BoyerMyrvoldPlanarSubgraphBuilder)) {
                 this.subgraphBuilder = new BoyerMyrvoldPlanarSubgraphBuilder();
@@ -194,24 +194,20 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
-        algorithm
-                .addAll(getIntermediateProcessorList(
-                        IntermediateProcessingConfiguration.BEFORE_PHASE_1));
+        algorithm.addAll(getIntermediateProcessorList(
+                IntermediateProcessingConfiguration.BEFORE_PHASE_1));
         algorithm.add(subgraphBuilder);
-        algorithm
-                .addAll(getIntermediateProcessorList(
-                        IntermediateProcessingConfiguration.BEFORE_PHASE_2));
+        algorithm.addAll(getIntermediateProcessorList(
+                IntermediateProcessingConfiguration.BEFORE_PHASE_2));
         algorithm.add(edgeInserter);
-        algorithm
-                .addAll(getIntermediateProcessorList(
-                        IntermediateProcessingConfiguration.BEFORE_PHASE_3));
+        algorithm.addAll(getIntermediateProcessorList(
+                IntermediateProcessingConfiguration.BEFORE_PHASE_3));
         algorithm.add(orthogonalizer);
-        algorithm
-                .addAll(getIntermediateProcessorList(
-                        IntermediateProcessingConfiguration.BEFORE_PHASE_4));
+        algorithm.addAll(getIntermediateProcessorList(
+                IntermediateProcessingConfiguration.BEFORE_PHASE_4));
         algorithm.add(compactor);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.AFTER_PHASE_4));
+        algorithm.addAll(getIntermediateProcessorList(
+                IntermediateProcessingConfiguration.AFTER_PHASE_4));
     }
 
     // ======================================= Layout ===============================
@@ -250,8 +246,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
                 if (monitor.isCanceled()) {
                     return;
                 }
-                processor.reset(monitor.subTask(1));
-                processor.process(graph);
+                processor.process(graph, monitor.subTask(1));
                 // graph debug output
                 PUtil.storeGraph(graph, slotIndex++, false);
             }
@@ -262,8 +257,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
                 if (monitor.isCanceled()) {
                     return;
                 }
-                processor.reset(monitor.subTask(1));
-                processor.process(graph);
+                processor.process(graph, monitor.subTask(1));
             }
         }
         monitor.done();

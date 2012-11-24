@@ -18,7 +18,7 @@ package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Random;
 
-import de.cau.cs.kieler.core.alg.IAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
@@ -29,15 +29,17 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public interface IEvolutionaryOperation extends IAlgorithm {
+public interface IEvolutionaryOperation {
 
     /**
      * Performs the evolutionary operation on the given population.
      * 
      * @param population
      *            a population
+     * @param progressMonitor
+     *            the progress monitor used to track execution progress
      */
-    void process(Population population);
+    void process(Population population, IKielerProgressMonitor progressMonitor);
     
     /**
      * Sets the random number generator to the given instance. This must be done before any

@@ -2,36 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.commands">
-      <command
-            categoryId="org.eclipse.ui.category.file"
-            defaultHandler="de.cau.cs.kieler.keg.importer.handlers.ImportHandler"
-            id="de.cau.cs.kieler.keg.importer.importGraph"
-            name="Import Graph">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:de.cau.cs.kieler">
-         <command
-               commandId="de.cau.cs.kieler.keg.importer.importGraph"
-               icon="icons/menu16/importdiagram.gif"
-               label="Import Graph"
-               mnemonic="I"
-               style="push"
-               tooltip="Import a graph from common file formats to the KEG format.">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="de.cau.cs.kieler.keg.importer.canImport">
-               </reference>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-   </extension>
-   <extension
          point="org.eclipse.core.expressions.definitions">
       <definition
             id="de.cau.cs.kieler.keg.importer.canImport">

@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.Alignment;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -71,7 +71,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class HierarchicalPortConstraintProcessor implements ILayoutProcessor {
     
     /**
      * Comparator to compare nodes by their position values in ascending order. Nodes
@@ -119,13 +119,13 @@ public class HierarchicalPortConstraintProcessor extends AbstractAlgorithm imple
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Hierarchical port constraint processing", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Hierarchical port constraint processing", 1);
         
         processEasternAndWesternPortDummies(layeredGraph);
         processNorthernAndSouthernPortDummies(layeredGraph);
         
-        getMonitor().done();
+        monitor.done();
     }
 
 

@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Util;
@@ -50,16 +50,18 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author ima
  * @kieler.design 2012-08-10 chsch grh
  */
-public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class CompoundCycleProcessor implements ILayoutProcessor {
 
-    // Store information about inserted dummy edges
+    /**
+     * Store information about inserted dummy edges.
+     */
     private final HashMap<LEdge, LEdge> dummyEdgeMap = new HashMap<LEdge, LEdge>();
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Revert edges to remove cyclic dependencies between compound nodes", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Revert edges to remove cyclic dependencies between compound nodes", 1);
 
         // Represent the cyclic dependencies of compound nodes in a cycle-removal-graph
         LGraph cycleRemovalGraph = new LGraph(layeredGraph);
@@ -236,7 +238,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
             }
         }
 
-        reverseCyclicEdges(layeredGraph, cycleRemovalGraph);
+        reverseCyclicEdges(layeredGraph, cycleRemovalGraph, monitor);
 
         int toDescendantSize = toDescendantEdges.size();
         for (int i = 0; i < toDescendantSize; i++) {
@@ -251,7 +253,8 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
             }
         }
 
-        getMonitor().done();
+        dummyEdgeMap.clear();
+        monitor.done();
     }
 
     /**
@@ -306,18 +309,21 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
      * Removes cyclic dependencies between compound nodes by reverting edges.
      * 
      * @param layeredGraph
+     *            the layered graph
      * @param cycleRemovalGraph
      *            A layered graph representing the cyclic dependencies of the layeredGraph.
+     * @param monitor
+     *            the current progress monitor
      */
     private void reverseCyclicEdges(final LGraph layeredGraph,
-            final LGraph cycleRemovalGraph) {
+            final LGraph cycleRemovalGraph, final IKielerProgressMonitor monitor) {
 
         LinkedList<LEdge> edgesToReverse = new LinkedList<LEdge>();
 
         // At this point, a cycle breaking algorithm is needed. At the moment, the greedy cycle
         // breaker is used.
         GreedyCycleBreaker cycleBreaker = new GreedyCycleBreaker();
-        cycleBreaker.process(cycleRemovalGraph);
+        cycleBreaker.process(cycleRemovalGraph, monitor.subTask(1.0f / 2));
 
         for (LNode lnode : cycleRemovalGraph.getLayerlessNodes()) {
             for (LEdge ledge : lnode.getOutgoingEdges()) {
@@ -327,19 +333,7 @@ public class CompoundCycleProcessor extends AbstractAlgorithm implements ILayout
             }
         }
 
-        // for(LEdge ledge: edgesToReverse){
-        // LNode target = ledge.getTarget().getNode();
-        // LNode source = ledge.getSource().getNode();
-        // LEdge test = ledge;
-        // }
-
         reverseEdges(edgesToReverse, layeredGraph);
-
-        // for(LEdge ledge: edgesToReverse){
-        // LNode target = ledge.getTarget().getNode();
-        // LNode source = ledge.getSource().getNode();
-        // LEdge test = ledge;
-        // }
     }
 
     /**

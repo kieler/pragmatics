@@ -20,6 +20,7 @@ import java.util.LinkedList;
 
 import org.junit.Test;
 
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -122,7 +123,7 @@ public class PlanarizationTest {
      */
     private void testEdgeInserter(final PGraph graph, final int additionalNodeCount) {
         EdgeInsertionPlanarization edgeInserter = new EdgeInsertionPlanarization();
-        edgeInserter.process(graph);
+        edgeInserter.process(graph, new BasicProgressMonitor());
         // Object insertable_edges = graph.getProperty(Properties.INSERTABLE_EDGES);
         // if (insertable_edges instanceof LinkedList) {
         // @SuppressWarnings("unchecked")
@@ -251,7 +252,7 @@ public class PlanarizationTest {
      */
     private PGraph testSubgraphBuilder(ILayoutProcessor subgraphBuilder, PGraph testGraph,
             int removeEdgeCount) {
-        subgraphBuilder.process(testGraph);
+        subgraphBuilder.process(testGraph, new BasicProgressMonitor());
         Object insertable_edges = testGraph.getProperty(Properties.INSERTABLE_EDGES);
         // checks also against null
         if (insertable_edges instanceof LinkedList) {

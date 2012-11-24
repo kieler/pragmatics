@@ -63,8 +63,7 @@ public class ForceLayoutProvider extends AbstractLayoutProvider {
         
         // perform the actual layout
         for (FGraph comp : components) {
-            forceModel.reset(progressMonitor.subTask(1.0f / components.size()));
-            forceModel.layout(comp);
+            forceModel.layout(comp, progressMonitor.subTask(1.0f / components.size()));
         }
         
         // pack the components back into one graph

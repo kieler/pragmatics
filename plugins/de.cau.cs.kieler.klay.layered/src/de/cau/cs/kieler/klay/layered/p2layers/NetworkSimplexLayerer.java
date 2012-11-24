@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
@@ -55,7 +55,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutPhase {
+public class NetworkSimplexLayerer implements ILayoutPhase {
     
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
@@ -442,12 +442,13 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
      * @param theLayeredGraph
      *            a layered graph which initially only contains layerless nodes and is
      *            then filled with layers
+     * @param monitor
+     *            the progress monitor
      *            
      * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
      */
-    public void process(final LGraph theLayeredGraph) {
-        assert theLayeredGraph != null;
-        getMonitor().begin("Network-Simplex Layering", 1);
+    public void process(final LGraph theLayeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Network-Simplex Layering", 1);
         
         layeredGraph = theLayeredGraph;
         removedSelfLoops = new HashMap<LEdge, Pair<LPort, LPort>>();
@@ -455,7 +456,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
 
         Collection<LNode> theNodes = layeredGraph.getLayerlessNodes();
         if (theNodes.size() < 1) {
-            getMonitor().done();
+            monitor.done();
             return;
         }
 
@@ -496,7 +497,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
 
         // release the created resources
         dispose();
-        getMonitor().done();
+        monitor.done();
     }
 
     /**
