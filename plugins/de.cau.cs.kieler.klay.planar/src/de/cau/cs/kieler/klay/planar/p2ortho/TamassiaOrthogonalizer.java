@@ -125,7 +125,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
         PGraph network = createFlowNetwork();
         new SuccessiveShortestPathFlowSolver().calcFlow(network);
 
-        // special cutedge handling
+        // special cutedge handling (currently only for testing)
         // handlingCutEdges(network);
 
         // compute bends and angles
@@ -141,6 +141,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements ILayout
     /**
      * @param network
      */
+    @SuppressWarnings("unused")
     private void handlingCutEdges(final PGraph network) {
 
         // internal faces containing at least one cutedge

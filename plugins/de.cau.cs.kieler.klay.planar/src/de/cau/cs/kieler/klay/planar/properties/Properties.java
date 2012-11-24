@@ -178,7 +178,8 @@ public final class Properties {
             "de.cau.cs.kieler.klay.planar.rect_shape_properties");
 
     /** A cut edge is passed in both directions and hence it needs two edge properties. */
-    public static final IProperty<Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>> RECT_SHAPE_CUTEDGE 
+    public static final IProperty<Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>> 
+        RECT_SHAPE_CUTEDGE 
         = new Property<Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>>(
             "de.cau.cs.kieler.klay.planar.rect_shape_cutedge");
 

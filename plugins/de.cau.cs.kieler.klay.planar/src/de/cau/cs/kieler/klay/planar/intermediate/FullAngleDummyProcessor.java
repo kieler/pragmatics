@@ -44,21 +44,10 @@ public class FullAngleDummyProcessor extends AbstractAlgorithm implements ILayou
         getMonitor().begin("full angle dummies", 1);
         this.graph = pGraph;
 
+        // Attention: this is only a test. Hence it is deactivated for the release.
         // processFullAngles(pGraph);
 
-        // processCutEdges(pGraph);
-
         getMonitor().done();
-    }
-
-    /**
-     * @param pGraph
-     *            the graph for which the cut edge dummies should be computed.
-     */
-    private void processCutEdges(final PGraph pGraph) {
-        // List<PEdge> cutEdges =
-        // Iterable<PFace> faces = this.graph.getFaces();
-
     }
 
     /**
@@ -66,6 +55,7 @@ public class FullAngleDummyProcessor extends AbstractAlgorithm implements ILayou
      * @param pGraph
      *            the graph for which the full anlge node dummies should be computed.
      */
+    @SuppressWarnings("unused")
     private void processFullAngles(final PGraph pGraph) {
         List<PNode> fullAngleNodes = Lists.newLinkedList();
         Iterable<PFace> faces = this.graph.getFaces();

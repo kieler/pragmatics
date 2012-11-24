@@ -54,8 +54,6 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
         // stores the found higher 4 degree nodes.
         Set<PNode> highDegreeNodes = filterHighDegreeNodes();
 
-        // FIXME grid size should depend on the average size of all nodes?
-        // if a layout is triggered twice, the node should not further be increased...
         calcMetrics(highDegreeNodes);
 
         getMonitor().done();
@@ -107,8 +105,6 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
                 graph.removeNode(dummyNode);
                 grid.remove(dummyNode);
 
-                // TODO hier ansetzen!
-                // grid.set(position[0], position[1], hDNode);
             }
 
             // calculate position and size of the highDegreeNode

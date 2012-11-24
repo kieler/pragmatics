@@ -67,10 +67,6 @@ public class SelfLoopDummyRemover extends AbstractAlgorithm implements ILayoutPr
                 }
             }
 
-            if (originalEdge == null) {
-                // TODO Assertion error...
-            }
-
             int[] pos1 = grid.getPosition(dummyNode1);
             int[] pos2 = grid.getPosition(dummyNode2);
 

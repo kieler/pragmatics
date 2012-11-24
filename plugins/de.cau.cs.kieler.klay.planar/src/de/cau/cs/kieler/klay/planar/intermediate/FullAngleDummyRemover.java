@@ -124,7 +124,6 @@ public class FullAngleDummyRemover extends AbstractAlgorithm implements ILayoutP
 
         List<OrthogonalAngle> newBends = Lists.newArrayList();
 
-        // FIXME: additionally check for the correct bend direction rll or llr are different bends.
         OrthogonalAngle[] bends = this.ortho.getBends(edgeSplitDummy);
         for (OrthogonalAngle bend : bends) {
             newBends.add(bend);
@@ -142,7 +141,8 @@ public class FullAngleDummyRemover extends AbstractAlgorithm implements ILayoutP
         }
 
         bends = this.ortho.getBends(originalEdge);
-        // FIXME: additionally check for the correct bend direction rll or llr are different bends.
+        // Attention: an additionally check for the correct bend direction rll or llr,
+        // since there are different bends.
         for (OrthogonalAngle bend : bends) {
             newBends.add(bend);
         }

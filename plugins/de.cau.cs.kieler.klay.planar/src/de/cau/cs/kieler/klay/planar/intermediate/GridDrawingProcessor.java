@@ -71,6 +71,9 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
         getMonitor().done();
     }
 
+    /**
+     * Fills the grid with the graph elements.
+     */
     private void fillGrid() {
 
         Pair<PNode, PEdge> pair = determineStartPosition();
@@ -129,7 +132,6 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
                 grid.set(gridX, gridY, currentNode);
                 visitedEdges.add(currentEdge);
                 // choose next edge
-                //TODO face sides adjust that only the next side edge can be taken.
                 out: for (int i = 0; i < faceSides.length; i++) {
                     // start at the current sideIndex and walk around until edge is found
                     for (PEdge edge : faceSides[(i + sideIndex) % faceSides.length]) {
@@ -173,7 +175,7 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
                     }
                 }
             } // end of while
-            
+
             visitedEdges.clear();
             completedFaces.add(currentFace);
 
@@ -189,8 +191,6 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
                 Pair<PEdge, Integer> knownPair = knownFace.getValue();
                 currentEdge = knownPair.getFirst();
                 sideIndex = knownPair.getSecond();
-                // FIXME use the side of the currentEdge, to make it more performant,
-                // instead of iterating over all grid items.
 
                 PNode checkNode = null;
                 boolean tempFound = false;
@@ -275,7 +275,8 @@ public class GridDrawingProcessor extends AbstractAlgorithm implements ILayoutPr
 
     /**
      * Filters startNode, the node that lies on the left side and on the bottom side, meaning the
-     * leftmost and lower most node! 
+     * leftmost and lower most node!
+     * 
      * @return pair of node and edge.
      */
     private Pair<PNode, PEdge> determineStartPosition() {

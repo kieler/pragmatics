@@ -40,6 +40,8 @@ import de.cau.cs.kieler.klay.planar.util.PUtil;
  */
 public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayoutProcessor {
 
+    private static final int LOOP_BREAKER = 3;
+
     /** The external face has at this point exact 5 adjacent edges. */
     private static final int EXTERNAL_EDGE_COUNT = 6;
 
@@ -158,7 +160,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
         // maximal length of iterations over the edges. Every edge could be traversed two times
         // and in some cases 2-3 extra iterations are needed, such that 3 times as much as edges
         // are an upper bound of the iteration.
-        int infiniteLoopBreaker = face.getAdjacentEdgeCount() * 3;
+        int infiniteLoopBreaker = face.getAdjacentEdgeCount() * LOOP_BREAKER;
         int i = 0;
         // Iterate around the face edges and set the edge properties.
         do {
@@ -218,7 +220,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
         // maximal length of iterations over the edges. Every edge could be traversed two times
         // and in some cases 2-3 extra iterations are needed, such that 3 times as much as edges
         // are an upper bound of the iteration.
-        infiniteLoopBreaker = face.getAdjacentEdgeCount() * 3;
+        infiniteLoopBreaker = face.getAdjacentEdgeCount() * LOOP_BREAKER;
         i = 0;
         // Iterate around the face edges and set the edge properties.
         do {
@@ -339,7 +341,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
             // maximal length of iterations over the edges. Every edge could be traversed two times
             // and in some cases 2-3 extra iterations are needed, such that 3 times as much as edges
             // are an upper bound of the iteration.
-            int infiniteLoopBreaker = currentFace.getAdjacentEdgeCount() * 3;
+            int infiniteLoopBreaker = currentFace.getAdjacentEdgeCount() * LOOP_BREAKER;
             int i = 0;
             // Iterate around the face edges and set the edge properties.
             do {
@@ -533,7 +535,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
         // maximal length of iterations over the edges. Every edge could be traversed two times
         // and in some cases 2-3 extra iterations are needed, such that 3 times as much as edges
         // are an upper bound of the iteration.
-        int infiniteLoopBreaker = face.getAdjacentEdgeCount() * 3;
+        int infiniteLoopBreaker = face.getAdjacentEdgeCount() * LOOP_BREAKER;
         int i = 0;
         // Iterate around the face edges and set the edge properties.
         do {
@@ -725,10 +727,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
             frontProperties.setTurn(0);
             frontProperties.setFront(null);
 
-            // for(PEdge edge : faceEdges){
-            // TODO hier front und prefront abgleichen und dann umsetzen auf die virtual edge
-            // auch fuer die andere direction machen sowie für ohne backDirectionProps..
-            // }
+            // Attention: the pre front is not set, think about it.
 
             if (vEdgeProperties1.getCorner().getAdjacentEdgeCount() != 1) {
                 // update previous of next edge
@@ -771,7 +770,8 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
                 backDirectionProps.setPreviousEdge(virtualEdge);
             }
 
-            Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProp = new Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>(
+            Pair<RectShapeEdgeProperties, RectShapeEdgeProperties> cutEdgeProp 
+                = new Pair<RectShapeEdgeProperties, RectShapeEdgeProperties>(
                     vEdgeProperties1, vEdgeProperties2);
             virtualEdge.setProperty(Properties.RECT_SHAPE_CUTEDGE, cutEdgeProp);
 
