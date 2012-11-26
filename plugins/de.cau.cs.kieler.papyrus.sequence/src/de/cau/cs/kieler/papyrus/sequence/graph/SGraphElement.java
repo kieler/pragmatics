@@ -20,7 +20,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
  * Superclass for all SGraph elements.
  * 
  * @author grh
- * @kieler.design proposed grh
+ * @kieler.design 2012-11-20 grh, cds, msp
  * @kieler.rating proposed yellow grh
  * 
  */

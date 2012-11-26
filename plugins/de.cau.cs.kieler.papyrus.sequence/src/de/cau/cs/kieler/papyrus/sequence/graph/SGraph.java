@@ -22,7 +22,7 @@ import de.cau.cs.kieler.core.math.KVector;
  * The graph representation for sequence diagrams.
  * 
  * @author grh
- * @kieler.design proposed grh
+ * @kieler.design 2012-11-20 grh, cds, msp
  * @kieler.rating proposed yellow grh
  * 
  */
