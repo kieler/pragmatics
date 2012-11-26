@@ -16,12 +16,14 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.HashMap;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LLabel.LSide;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -107,42 +109,13 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
      * @param label the end label to place.
      */
     private void placeEndLabel(final LNode node, final LEdge edge, final LLabel label) {
-        LPort port = edge.getSource();
+        // Get the nearest port (source port for tail labels, target port for head labels)
+        LPort port = null;
         
-        // Determine the port label placement that applies to the port this label
-        // is closest to
-        PortLabelPlacement portLabelPlacement = PortLabelPlacement.FIXED;
-        if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-            == EdgeLabelPlacement.TAIL) {
-            
-            // Tail label -> use source port's node as reference
-            portLabelPlacement = edge.getSource().getNode()
-                    .getProperty(Properties.PORT_LABEL_PLACEMENT);
-        } else {
-            // Head label -> use target port's node as reference
-            portLabelPlacement = edge.getTarget().getNode()
-                    .getProperty(Properties.PORT_LABEL_PLACEMENT);
-        }
-        
-        // When a tail label is present, the target port is used
-        // for orientation
-        if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-            == EdgeLabelPlacement.HEAD) {
+        if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT) == EdgeLabelPlacement.TAIL) {
+            port = edge.getSource();
+        } else if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT) == EdgeLabelPlacement.HEAD) {
             port = edge.getTarget();
-        }
-        
-        // Calculate, how many space the end label has to keep clear for a
-        // port label
-        // TODO: This should be refactored to use the port's margins.
-        double portLabelOffsetX = 0.0;
-        double portLabelOffsetY = 0.0;
-        if (portLabelPlacement == PortLabelPlacement.OUTSIDE) {
-            for (LLabel portLabel : port.getLabels()) {
-                portLabelOffsetX = Math.max(portLabelOffsetX, portLabel.getSize().x)
-                                            + PORT_LABEL_DISTANCE;
-                portLabelOffsetY = Math.max(portLabelOffsetY, portLabel.getSize().y)
-                                            + PORT_LABEL_DISTANCE;
-            }
         }
         
         // Initialize offset with zero if no offset was present
@@ -160,9 +133,9 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
         // Port side undefined can be left out, because there would be no reasonable
         // way of handling them
         if (label.getSide() == LSide.UP) {
-            placeEndLabelUpwards(node, label, port, portLabelOffsetX, portLabelOffsetY);
+            placeEndLabelUpwards(node, label, port);
         } else {
-            placeEndLabelDownwards(node, label, port, portLabelOffsetX, portLabelOffsetY);
+            placeEndLabelDownwards(node, label, port);
         }
     }
 
@@ -172,46 +145,48 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
      * @param node source node of the edge the label belongs to.
      * @param label the label to place.
      * @param port the end port of the edge the label is nearest to.
-     * @param portLabelOffsetX x offset of the label.
-     * @param portLabelOffsetY y offset of the label.
      */
-    private void placeEndLabelDownwards(final LNode node, final LLabel label, final LPort port,
-            final double portLabelOffsetX, final double portLabelOffsetY) {
+    private void placeEndLabelDownwards(final LNode node, final LLabel label, final LPort port) {
+        // Remember some stuff
+        KVector labelPosition = label.getPosition();
+        KVector absolutePortPosition = KVector.sum(port.getPosition(), port.getNode().getPosition());
+        KVector absolutePortAnchor = port.getAbsoluteAnchor();
+        LInsets.Double portMargin = port.getMargin();
         
+        // Actually calculate the coordinates
         switch (port.getSide()) {
         case WEST:
-            label.getPosition().x = port.getAbsoluteAnchor().x
-                                    - label.getSize().x
-                                    - portLabelOffsetX;
-            label.getPosition().y = port.getAbsoluteAnchor().y + LABEL_DISTANCE;
+            labelPosition.x = Math.min(absolutePortPosition.x, absolutePortAnchor.x)
+                              - portMargin.left
+                              - label.getSize().x
+                              - LABEL_DISTANCE;
+            labelPosition.y = port.getAbsoluteAnchor().y
+                              + LABEL_DISTANCE;
             break;
+            
         case EAST:
-            label.getPosition().x = port.getAbsoluteAnchor().x
-                                    + portLabelOffsetX;
-            label.getPosition().y = port.getAbsoluteAnchor().y + LABEL_DISTANCE;
+            labelPosition.x = Math.max(absolutePortPosition.x + port.getSize().x, absolutePortAnchor.x)
+                              + portMargin.right
+                              + LABEL_DISTANCE;
+            labelPosition.y = port.getAbsoluteAnchor().y
+                              + LABEL_DISTANCE;
             break;
+            
         case NORTH:
-            label.getPosition().x = port.getAbsoluteAnchor().x;
-            label.getPosition().y = port.getAbsoluteAnchor().y
-                                    - label.getSize().y - LABEL_DISTANCE
-                                    - northOffset.get(node)
-                                    - portLabelOffsetY;
-            portLabelOffsetHint.put(port, northOffset.get(node));
-            northOffset.put(node,
-                    northOffset.get(port.getNode())
-                                    + label.getSize().y
-                                    + portLabelOffsetY);
+            labelPosition.x = port.getAbsoluteAnchor().x
+                              + LABEL_DISTANCE;
+            labelPosition.y = Math.min(absolutePortPosition.y, absolutePortAnchor.y)
+                              - portMargin.top
+                              - label.getSize().y
+                              - LABEL_DISTANCE;
             break;
+            
         case SOUTH:
-            label.getPosition().x = port.getAbsoluteAnchor().x;
-            label.getPosition().y = port.getAbsoluteAnchor().y
-                                    + southOffset.get(port.getNode())
-                                    + portLabelOffsetY;
-            portLabelOffsetHint.put(port, southOffset.get(node));
-            southOffset.put(node,
-                    southOffset.get(port.getNode())
-                    + label.getSize().y
-                    + portLabelOffsetY);
+            labelPosition.x = port.getAbsoluteAnchor().x
+                              + LABEL_DISTANCE;
+            labelPosition.y = Math.max(absolutePortPosition.y + port.getSize().y, absolutePortAnchor.y)
+                              + portMargin.bottom
+                              + LABEL_DISTANCE;
             break;
         }
     }
@@ -222,50 +197,50 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
      * @param node source node of the edge the label belongs to.
      * @param label the label to place.
      * @param port the end port of the edge the label is nearest to.
-     * @param portLabelOffsetX x offset of the label.
-     * @param portLabelOffsetY y offset of the label.
      */
-    private void placeEndLabelUpwards(final LNode node, final LLabel label, final LPort port,
-            final double portLabelOffsetX, final double portLabelOffsetY) {
+    private void placeEndLabelUpwards(final LNode node, final LLabel label, final LPort port) {
+        // Remember some stuff
+        KVector labelPosition = label.getPosition();
+        KVector absolutePortPosition = KVector.sum(port.getPosition(), port.getNode().getPosition());
+        KVector absolutePortAnchor = port.getAbsoluteAnchor();
+        LInsets.Double portMargin = port.getMargin();
         
+        // Actually calculate the coordinates
         switch (port.getSide()) {
         case WEST:
-            label.getPosition().x = port.getAbsoluteAnchor().x
-                                    - label.getSize().x
-                                    - portLabelOffsetX;
-            label.getPosition().y = port.getAbsoluteAnchor().y
-                                    - label.getSize().y - LABEL_DISTANCE;
+            labelPosition.x = Math.min(absolutePortPosition.x, absolutePortAnchor.x)
+                              - portMargin.left
+                              - label.getSize().x
+                              - LABEL_DISTANCE;
+            labelPosition.y = port.getAbsoluteAnchor().y
+                              - label.getSize().y
+                              - LABEL_DISTANCE;
             break;
+            
         case EAST:
-            label.getPosition().x = port.getAbsoluteAnchor().x
-                                    + portLabelOffsetX;
-            label.getPosition().y = port.getAbsoluteAnchor().y
-                    - label.getSize().y - LABEL_DISTANCE;
+            labelPosition.x = Math.max(absolutePortPosition.x + port.getSize().x, absolutePortAnchor.x)
+                              + portMargin.right
+                              + LABEL_DISTANCE;
+            labelPosition.y = port.getAbsoluteAnchor().y
+                              - label.getSize().y
+                              - LABEL_DISTANCE;
             break;
+            
         case NORTH:
-            label.getPosition().x = port.getAbsoluteAnchor().x
-                                    - label.getSize().x;
-            label.getPosition().y = port.getAbsoluteAnchor().y
-                                    - label.getSize().y - LABEL_DISTANCE
-                                    - northOffset.get(port.getNode())
-                                    - portLabelOffsetY;
-            portLabelOffsetHint.put(port, northOffset.get(node));
-            northOffset.put(node,
-                    northOffset.get(port.getNode())
-                                    + label.getSize().y
-                                    + portLabelOffsetY);
+            labelPosition.x = port.getAbsoluteAnchor().x
+                              + LABEL_DISTANCE;
+            labelPosition.y = Math.min(absolutePortPosition.y, absolutePortAnchor.y)
+                              - portMargin.top
+                              - label.getSize().y
+                              - LABEL_DISTANCE;
             break;
+            
         case SOUTH:
-            label.getPosition().x = port.getAbsoluteAnchor().x
-            - label.getSize().x;
-            label.getPosition().y = port.getAbsoluteAnchor().y
-                                    + southOffset.get(port.getNode())
-                                    + portLabelOffsetY;
-            portLabelOffsetHint.put(port, southOffset.get(node));
-            southOffset.put(node,
-                    southOffset.get(port.getNode())
-                                    + label.getSize().y
-                                    + portLabelOffsetY);
+            labelPosition.x = port.getAbsoluteAnchor().x
+                              + LABEL_DISTANCE;
+            labelPosition.y = Math.max(absolutePortPosition.y + port.getSize().y, absolutePortAnchor.y)
+                              + portMargin.bottom
+                              + LABEL_DISTANCE;
             break;
         }
     }
