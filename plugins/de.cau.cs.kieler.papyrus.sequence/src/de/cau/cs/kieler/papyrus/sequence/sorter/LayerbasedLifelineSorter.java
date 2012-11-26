@@ -114,7 +114,7 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
 
     // Select lifeline x with outgoing message m_0 in the uppermost layer
     // If there are different messages in that layer, select lifeline with best incoming/outgoing
-    // relation
+    // relation (more outgoing messages are desirable)
     private SMessage findUppermostMessage(final LGraph lgraph) {
         List<LNode> candidates = new LinkedList<LNode>();
         for (Layer layer : lgraph.getLayers()) {
@@ -134,9 +134,10 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
                 int bestRelation = Integer.MIN_VALUE;
                 for (LNode node : candidates) {
                     SMessage candidate = (SMessage) node.getProperty(Properties.ORIGIN);
-                    int relation = candidate.getSource().getOutgoingMessages().size()
-                            - candidate.getSource().getIncomingMessages().size();
+                    int relation = candidate.getSource().getNumberOfOutgoingMessages()
+                            - candidate.getSource().getNumberOfIncomingMessages();
                     if (relation > bestRelation) {
+                        bestRelation = relation;
                         bestOne = candidate;
                     }
                 }

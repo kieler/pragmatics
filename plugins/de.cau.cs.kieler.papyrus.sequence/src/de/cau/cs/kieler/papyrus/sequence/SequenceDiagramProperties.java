@@ -60,13 +60,33 @@ public final class SequenceDiagramProperties {
     /** The KEdge that connects the comment to another element of the diagram. */
     public static final IProperty<KEdge> COMMENT_CONNECTION = new Property<KEdge>(
             "de.cau.cs.kieler.papyrus.sequence.commentConnection");
+
+    /** The height of the lifeline's header. */
+    public static final IProperty<Integer> LIFELINE_HEADER = new Property<Integer>(
+            "de.cau.cs.kieler.papyrus.sequence.lifelineHeader", 30);
+
+    /** The vertical position of lifelines. */
+    public static final IProperty<Integer> LIFELINE_Y_POS = new Property<Integer>(
+            "de.cau.cs.kieler.papyrus.sequence.lifelineYPos", 10);
+
+    /** The height of the header of combined fragments. */
+    public static final IProperty<Integer> AREA_HEADER = new Property<Integer>(
+            "de.cau.cs.kieler.papyrus.sequence.areaHeader", 25);
+
+    /** The width of time observations. */
+    public static final IProperty<Integer> TIME_OBSERVATION_WIDTH = new Property<Integer>(
+            "de.cau.cs.kieler.papyrus.sequence.timeObservationWidth", 20);
+
+    /** The offset between two nested areas. */
+    public static final IProperty<Integer> CONTAINMENT_OFFSET = new Property<Integer>(
+            "de.cau.cs.kieler.papyrus.sequence.containmentOffset", 5);
     
     /** The horizontal space between two neighbored lifelines. This property may be set by the user. */
-    public static final Property<Float> LIFELINE_SPACING = new Property<Float>(
+    public static final IProperty<Float> LIFELINE_SPACING = new Property<Float>(
             "de.cau.cs.kieler.papyrus.sequence.lifelineSpacing", 50.0f);
 
     /** The vertical space between two neighbored messages. This property may be set by the user. */
-    public static final Property<Float> MESSAGE_SPACING = new Property<Float>(
+    public static final IProperty<Float> MESSAGE_SPACING = new Property<Float>(
             "de.cau.cs.kieler.papyrus.sequence.messageSpacing", 50.0f);
 
     /**

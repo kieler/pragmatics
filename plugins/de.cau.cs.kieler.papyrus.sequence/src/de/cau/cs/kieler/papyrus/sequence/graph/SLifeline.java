@@ -14,12 +14,12 @@
 package de.cau.cs.kieler.papyrus.sequence.graph;
 
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
@@ -38,12 +38,11 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
     private static final long serialVersionUID = 1309361361029991404L;
     private SGraph graph;
     private String name = "Lifeline";
-    private List<SMessage> outgoingMessages = new LinkedList<SMessage>();
-    private List<SMessage> incomingMessages = new LinkedList<SMessage>();
     private int horizontalPosition;
     private KNode destructionEvent;
     private KVector position = new KVector();
     private KVector size = new KVector();
+    private List<SMessage> messages = new LinkedList<SMessage>();
 
     /**
      * Get the SGraph to which the lifeline belongs.
@@ -65,21 +64,98 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
     }
 
     /**
+     * Add a message to the list of messages. The list of messages is sorted by their vertical
+     * connection to the lifeline afterwards.
+     * 
+     * @param message
+     *            the message to add
+     */
+    public void addMessage(final SMessage message) {
+        // Get the position of the message at this lifeline
+        double messageYPosition;
+        if (message.getSource() == this) {
+            messageYPosition = message.getSourceYPos();
+        } else {
+            messageYPosition = message.getTargetYPos();
+        }
+
+        // Compare to the position of each message in the list
+        for (SMessage mess : messages) {
+            // Get the position of the current message in the list
+            double pos = 0;
+            if (mess.getSource() == this) {
+                pos = mess.getSourceYPos();
+            } else {
+                pos = mess.getTargetYPos();
+            }
+
+            // Since messages are already sorted, the place of the first message with greater
+            // position is the right place for the message.
+            if (messageYPosition < pos) {
+                messages.add(messages.indexOf(mess), message);
+                return;
+            }
+        }
+        // Add the message at the end if none of the existing messages has greater position
+        messages.add(message);
+    }
+
+    /**
      * Get the list of outgoing messages of the lifeline.
      * 
-     * @return the list of outgoing messages
+     * @return an iterable of outgoing messages
      */
-    public List<SMessage> getOutgoingMessages() {
-        return outgoingMessages;
+    public Iterable<SMessage> getOutgoingMessages() {
+        final SLifeline lifeline = this;
+        return Iterables.filter(messages, new Predicate<SMessage>() {
+            public boolean apply(final SMessage message) {
+                return message.getSource() == lifeline;
+            }
+        });
+    }
+
+    /**
+     * Get the number of outgoing messages.
+     * 
+     * @return the number of outgoing messages
+     */
+    public int getNumberOfOutgoingMessages() {
+        int ret = 0;
+        for (SMessage message : messages) {
+            if (message.getSource() == this) {
+                ret++;
+            }
+        }
+        return ret;
     }
 
     /**
      * Get the list of incoming messages of the lifeline.
      * 
-     * @return the list of incoming messages
+     * @return an iterable of incoming messages
      */
-    public List<SMessage> getIncomingMessages() {
-        return incomingMessages;
+    public Iterable<SMessage> getIncomingMessages() {
+        final SLifeline lifeline = this;
+        return Iterables.filter(messages, new Predicate<SMessage>() {
+            public boolean apply(final SMessage message) {
+                return message.getTarget() == lifeline;
+            }
+        });
+    }
+
+    /**
+     * Get the number of incoming messages.
+     * 
+     * @return the number of incoming messages
+     */
+    public int getNumberOfIncomingMessages() {
+        int ret = 0;
+        for (SMessage message : messages) {
+            if (message.getTarget() == this) {
+                ret++;
+            }
+        }
+        return ret;
     }
 
     /**
@@ -88,37 +164,6 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
      * @return the list of messages
      */
     public List<SMessage> getMessages() {
-        List<SMessage> messages = new LinkedList<SMessage>();
-        messages.addAll(incomingMessages);
-        messages.addAll(outgoingMessages);
-        return messages;
-    }
-
-    // TODO sort messages by inlineComparator (array.sort)
-    /**
-     * Get a sorted list of messages connected to the lifeline. Messages are sorted according to
-     * their vertical position at the lifeline (top-down).
-     * 
-     * @return the sorted list of messages
-     */
-    public List<SMessage> getMessagesSorted() {
-        List<SMessage> incoming = getIncomingMessages();
-        List<SMessage> outgoing = getOutgoingMessages();
-        HashMap<SMessage, Double> map = new HashMap<SMessage, Double>();
-        for (SMessage message : incoming) {
-            map.put(message, (double) message.getTargetYPos());
-        }
-        for (SMessage message : outgoing) {
-            map.put(message, (double) message.getSourceYPos());
-        }
-        MessageComparator comp = new MessageComparator(map);
-        TreeMap<SMessage, Double> sortedMap = new TreeMap<SMessage, Double>(comp);
-        sortedMap.putAll(map);
-        Iterator<SMessage> iterator = sortedMap.keySet().iterator();
-        List<SMessage> messages = new LinkedList<SMessage>();
-        while (iterator.hasNext()) {
-            messages.add(iterator.next());
-        }
         return messages;
     }
 

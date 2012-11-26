@@ -30,8 +30,6 @@ public class SGraph extends SGraphElement {
     private static final long serialVersionUID = -7952451128297135991L;
     private List<SLifeline> lifelines = new LinkedList<SLifeline>();
     private List<SComment> comments = new LinkedList<SComment>();
-//    private double width = 0.0f;
-//    private double height = 0.0f;
     private KVector size = new KVector();
 
     /**
