@@ -195,7 +195,7 @@ public class LPort extends LShape {
      * 
      * @return the port's margin.
      */
-    public LInsets getMargin() {
+    public LInsets.Double getMargin() {
         return margin;
     }
     

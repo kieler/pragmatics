@@ -13,13 +13,17 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.awt.geom.Rectangle2D;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.graph.LLabel.LSide;
 import de.cau.cs.kieler.klay.layered.properties.PortLabelPlacement;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -105,9 +109,93 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
      * @param placement the port label placement that applies to the port.
      */
     private void placePortLabels(final LPort port, final PortLabelPlacement placement) {
-        // TODO: Implement.
+        // Get the port's label, if any
+        if (!port.getLabels().isEmpty()) {
+            // We use different implementations based on whether port labels are to be placed
+            // inside or outside the node
+            if (placement.equals(PortLabelPlacement.INSIDE)) {
+                placePortLabelsInside(port, port.getLabels().get(0));
+            } else if (placement.equals(PortLabelPlacement.OUTSIDE)) {
+                placePortLabelsOutside(port, port.getLabels().get(0));
+            }
+        }
+    }
+
+    /**
+     * Places the label of the given port on the inside of the port's node.
+     * 
+     * @param port the port whose label to place.
+     * @param label the label to place.
+     */
+    private void placePortLabelsInside(final LPort port, final LLabel label) {
+        switch (port.getSide()) {
+        case WEST:
+            label.getPosition().x = port.getSize().x + 1;
+            label.getPosition().y = 0;
+            break;
+        case EAST:
+            label.getPosition().x = -label.getSize().x - 1;
+            label.getPosition().y = 0;
+            break;
+        case NORTH:
+            label.getPosition().x = -label.getSize().x / 2;
+            label.getPosition().y = port.getSize().y;
+            break;
+        case SOUTH:
+            label.getPosition().x = -label.getSize().x / 2;
+            label.getPosition().y = -label.getSize().y;
+            break;
+        }
     }
     
+    /**
+     * Places the label of the given port on the outside of the port's node.
+     * 
+     * @param port the port whose label to place.
+     * @param label the label to place.
+     */
+    private void placePortLabelsOutside(final LPort port, final LLabel label) {
+        if (label.getSide() == LSide.UP) {
+            switch (port.getSide()) {
+            case WEST:
+                label.getPosition().x = -label.getSize().x;
+                label.getPosition().y = -label.getSize().y + EndLabelProcessor.PORT_LABEL_DISTANCE;
+                break;
+            case EAST:
+                label.getPosition().x = port.getSize().x;
+                label.getPosition().y = -label.getSize().y + EndLabelProcessor.PORT_LABEL_DISTANCE;
+                break;
+            case NORTH:
+                label.getPosition().x = -port.getSize().x / 2 - label.getSize().x;
+                label.getPosition().y = -port.getSize().y - label.getSize().y;
+                break;
+            case SOUTH:
+                label.getPosition().x = -port.getSize().x / 2 - label.getSize().x;
+                label.getPosition().y = port.getSize().y;
+                break;
+            }
+        } else {
+            switch (port.getSide()) {
+            case WEST:
+                label.getPosition().x = -label.getSize().x;
+                label.getPosition().y = port.getSize().y  - EndLabelProcessor.PORT_LABEL_DISTANCE;
+                break;
+            case EAST:
+                label.getPosition().x = port.getSize().x;
+                label.getPosition().y = port.getSize().y - EndLabelProcessor.PORT_LABEL_DISTANCE;
+                break;
+            case NORTH:
+                label.getPosition().x = port.getSize().x / 2;
+                label.getPosition().y = -port.getSize().y - label.getSize().y;
+                break;
+            case SOUTH:
+                label.getPosition().x = port.getSize().x / 2;
+                label.getPosition().y = port.getSize().y;
+                break;
+            }
+        }
+    }
+
     /**
      * Calculates the port's margins such that its label is part of them and sets them accordingly.
      * 
@@ -116,7 +204,31 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
      * @param port the port whose margins to calculate.
      */
     private void calculateAndSetPortMargins(final LPort port) {
-        // TODO: Implement.
+        // Get the port's label, if any
+        if (!port.getLabels().isEmpty()) {
+            Rectangle2D.Double portBox = new Rectangle2D.Double(
+                    port.getPosition().x,
+                    port.getPosition().y,
+                    port.getSize().x,
+                    port.getSize().y);
+            
+            // We only support one label, so retrieve it
+            LLabel label = port.getLabels().get(0);
+            Rectangle2D.Double labelBox = new Rectangle2D.Double(
+                    label.getPosition().x,
+                    label.getPosition().y,
+                    label.getSize().x,
+                    label.getSize().y);
+            
+            // Calculate the union of the two bounding boxes and calculate the margins
+            Rectangle2D.union(portBox, labelBox, portBox);
+
+            LInsets.Double margin = port.getMargin();
+            margin.top = port.getPosition().y - portBox.y;
+            margin.bottom = portBox.getMaxY() - (port.getPosition().y + port.getSize().y);
+            margin.left = port.getPosition().x - portBox.x;
+            margin.right = portBox.getMaxX() - (port.getPosition().x + port.getSize().x);
+        }
     }
 
     
