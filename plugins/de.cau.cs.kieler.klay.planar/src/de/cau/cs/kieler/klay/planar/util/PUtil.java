@@ -126,10 +126,6 @@ public final class PUtil {
                         break;
                     }
                 }
-                if (!found) {
-                    // TODO Assertion found has to be true here. Otherwise the graphmodel is
-                    // inconsistent.
-                }
                 // If not continued add vec to bend data.
                 startX = foundVec.x;
                 startY = foundVec.y;

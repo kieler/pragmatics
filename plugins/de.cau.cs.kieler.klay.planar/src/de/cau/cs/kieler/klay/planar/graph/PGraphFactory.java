@@ -395,6 +395,18 @@ public class PGraphFactory {
             }
         }
 
+        if (pgraph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) == HighDegreeNodeStrategy.GIOTTO) {
+            for (PNode node : pgraph.getNodes()) {
+                if (node.getProperty(Properties.EXPANSION_CYCLE) != null
+                        && hdStrategy == HighDegreeNodeStrategy.GIOTTO) {
+                    KShapeLayout nodeLayout = ((KNode) node.getProperty(Properties.ORIGIN))
+                            .getData(KShapeLayout.class);
+                    nodeLayout.setXpos(nodeLayout.getXpos() + nodeLayout.getWidth() / 2);
+                    nodeLayout.setYpos(nodeLayout.getYpos() + nodeLayout.getHeight() / 2);
+                }
+            }
+        }
+
         if (pgraph.getProperty(LayoutOptions.DEBUG_MODE) == Boolean.TRUE) {
             for (PEdge edge : pgraph.getEdges()) {
                 KEdge originEdge = (KEdge) edge.getProperty(Properties.ORIGIN);
@@ -431,7 +443,6 @@ public class PGraphFactory {
                         - nodeLayout.getWidth() / 2);
                 nodeLayout.setYpos(((float) PGraphFactory.mapNodeToRealY(y))
                         - nodeLayout.getHeight() / 2);
-                // TODO check if spacing is higher
                 float gap = spacing - nodeLayout.getWidth();
                 nodeLayout.setWidth(nodeLayout.getWidth() * widthX + (widthX - 1) * gap);
                 gap = spacing - nodeLayout.getHeight();

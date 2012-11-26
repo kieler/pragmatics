@@ -136,12 +136,6 @@ public class FaceSidesProcessor implements ILayoutProcessor {
                         }
                     }
                 }
-
-                if (pair.getSecond().ordinal() == 2) {
-                    // error to do make assertion with useful description!
-                    // TODO add a cut edge to both sides, the current and the opposite
-                }
-
                 faceSides[sideIndex].add(currentEdge);
             } while (currentEdge != startEdge || corner != startNode);
 
