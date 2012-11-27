@@ -259,7 +259,41 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
      * @param node the node whose insets to calculate and to set.
      */
     private void calculateAndSetNodeInsets(final LNode node) {
-        // TODO: Implement.
+        // Get the insets. We don't reset them here, which might or might not become a problem.
+        // Currently, it is not.
+        LInsets.Double nodeInsets = node.getInsets();
+        
+        // TODO: Should port labels always count towards the insets calculation?
+        
+        // Iterate over the ports and look at their margins
+        for (LPort port : node.getPorts()) {
+            switch (port.getSide()) {
+            case WEST:
+                nodeInsets.left = Math.max(nodeInsets.left,
+                        port.getPosition().x
+                        + port.getSize().x
+                        + port.getMargin().right);
+                break;
+            case EAST:
+                nodeInsets.right = Math.max(nodeInsets.right,
+                        node.getSize().x
+                        - port.getPosition().x
+                        + port.getMargin().left);
+                break;
+            case NORTH:
+                nodeInsets.top = Math.max(nodeInsets.top,
+                        port.getPosition().y
+                        + port.getSize().y
+                        + port.getMargin().bottom);
+                break;
+            case SOUTH:
+                nodeInsets.bottom = Math.max(nodeInsets.bottom,
+                        node.getSize().y
+                        - port.getPosition().y
+                        + port.getMargin().top);
+                break;
+            }
+        }
     }
 
     
