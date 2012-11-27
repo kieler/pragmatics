@@ -80,7 +80,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      *     - HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR
      *   
      *   - For edge labels:
-     *      - LABEL_SIDE_SELECTOR
+     *     - LABEL_SIDE_SELECTOR
      *   
      *   - For center edge labels:
      *      - LABEL_DUMMY_SWITCHER
@@ -104,7 +104,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      *     - HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER
      *     
      *   - For center edge labels:
-     *      - LABEL_DUMMY_REMOVER
+     *     - LABEL_DUMMY_REMOVER
      *     
      *   - For end edge labels:
      *     - END_LABEL_PROCESSOR
@@ -180,7 +180,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     private static final IntermediateProcessingConfiguration CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
         new IntermediateProcessingConfiguration(
                 // Before Phase 1
-                EnumSet.of(LayoutProcessorStrategy.LABEL_NODE_SIZE_ADJUSTER),
+                null,
                 
                 // Before Phase 2
                 EnumSet.of(LayoutProcessorStrategy.LABEL_DUMMY_INSERTER),
@@ -202,7 +202,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     private static final IntermediateProcessingConfiguration END_EDGE_LABEL_PROCESSING_ADDITIONS =
         new IntermediateProcessingConfiguration(
                 // Before Phase 1
-                EnumSet.of(LayoutProcessorStrategy.LABEL_NODE_SIZE_ADJUSTER),
+                null,
                 
                 // Before Phase 2
                 null,
