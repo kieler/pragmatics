@@ -14,8 +14,15 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.awt.geom.Rectangle2D;
+import java.util.EnumSet;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.SizeConstraint;
+import de.cau.cs.kieler.kiml.options.SizeOptions;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
@@ -68,30 +75,38 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
                 }
                 
                 
-                /* PHASE 2 (DYNAMIC DONALD): PLACE PORTS
-                 * Ports are placed and node insets are calculated accordingly.
+                /* PHASE 2 (DYNAMIC DONALD): CALCULATE INSETS
+                 * We know the sides the ports will be placed at and we know where node labels are to
+                 * be placed. Calculate the node's insets accordingly. Note that we don't have to
+                 * know the final port positions to calculate the insets.
                  */
-                placePorts(node, spacing);
                 calculateAndSetNodeInsets(node);
-                
-                
-                /* PHASE 3 (DANGEROUS DUCKLING): RESERVE SPACE FOR NODE LABEL
-                 * If the node has a label (we currently only support one), the node insets might have
-                 * to be adjusted to reserve space for it, which is what this phase does.
-                 */
                 reserveSpaceForNodeLabels(node);
                 
                 
-                /* PHASE 4 (DUCK AND COVER): RESIZE NODE
+                /* PHASE 3 (DANGEROUS DUCKLING): RESIZE NODE
+                 * If the node has a label (we currently only support one), the node insets might have
+                 * to be adjusted to reserve space for it, which is what this phase does.
+                 */
+                resizeNode(node, spacing);
+                
+                
+                /* PHASE 4 (DUCK AND COVER): PLACE PORTS
                  * The node is resized, taking all node size constraints into account.
                  */
-                resizeNode(node);
+                placePorts(node, spacing);
                 
                 
                 /* PHASE 5 (HAPPY DUCK): PLACE NODE LABEL
                  * With space reserved for the node label (we only support one), the label is placed.
                  */
                 placeNodeLabels(node);
+                
+                // TODO: Implement node insets handling
+                // Up to now, the node insets contained only those labels that were to be accounted
+                // for in node resizing. If the insets are to be saved in the node later when the
+                // layout is to be applied, the insets have to include all labels, or else the value
+                // won't make much sense.
             }
         }
         
@@ -238,21 +253,12 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
 
     
     ///////////////////////////////////////////////////////////////////////////////
-    // PORT PLACEMENT
-
-    /**
-     * Places the given node's ports.
-     * 
-     * @param node the node whose ports to place.
-     * @param spacing the object spacing set for the diagram.
-     */
-    private void placePorts(final LNode node, final double spacing) {
-        // TODO: Implement.
-    }
+    // INSETS CALCULATION
     
     /**
      * Calculates and sets the given node's insets accordingly such that they contain all the ports
-     * and port labels.
+     * and port labels. This method requires that the port margins are set to include the port
+     * labels.
      * 
      * <p><i>Note:</i> We currently only support one label per port.</p>
      * 
@@ -264,41 +270,26 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
         LInsets.Double nodeInsets = node.getInsets();
         
         // TODO: Should port labels always count towards the insets calculation?
+        // TODO: We don't support fixed port positions yet
         
         // Iterate over the ports and look at their margins
         for (LPort port : node.getPorts()) {
             switch (port.getSide()) {
             case WEST:
-                nodeInsets.left = Math.max(nodeInsets.left,
-                        port.getPosition().x
-                        + port.getSize().x
-                        + port.getMargin().right);
+                nodeInsets.left = Math.max(nodeInsets.left, port.getMargin().right);
                 break;
             case EAST:
-                nodeInsets.right = Math.max(nodeInsets.right,
-                        node.getSize().x
-                        - port.getPosition().x
-                        + port.getMargin().left);
+                nodeInsets.right = Math.max(nodeInsets.right, port.getMargin().left);
                 break;
             case NORTH:
-                nodeInsets.top = Math.max(nodeInsets.top,
-                        port.getPosition().y
-                        + port.getSize().y
-                        + port.getMargin().bottom);
+                nodeInsets.top = Math.max(nodeInsets.top, port.getMargin().bottom);
                 break;
             case SOUTH:
-                nodeInsets.bottom = Math.max(nodeInsets.bottom,
-                        node.getSize().y
-                        - port.getPosition().y
-                        + port.getMargin().top);
+                nodeInsets.bottom = Math.max(nodeInsets.bottom, port.getMargin().top);
                 break;
             }
         }
     }
-
-    
-    ///////////////////////////////////////////////////////////////////////////////
-    // RESERVING SPACE FOR NODE LABELS
 
     /**
      * Adjusts the node's insets to leave enough space for the node's label. This method only modifies
@@ -311,6 +302,8 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
      */
     private void reserveSpaceForNodeLabels(final LNode node) {
         // TODO: Implement.
+        // To implement this, we will also have to implement label position support in applyLayout
+        // and add the appropriate layout options to support node label placement.
     }
 
     
@@ -321,9 +314,195 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
      * Resizes the given node subject to the sizing constraints and options.
      * 
      * @param node the node to resize.
+     * @param portSpacing the amount of space to leave between ports.
      */
-    private void resizeNode(final LNode node) {
-        // TODO: Implement.
+    private void resizeNode(final LNode node, final double portSpacing) {
+        KVector nodeSize = node.getSize();
+        LInsets.Double nodeInsets = node.getInsets();
+        EnumSet<SizeConstraint> sizeConstraint = node.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+        EnumSet<SizeOptions> sizeOptions = node.getProperty(LayoutOptions.SIZE_OPTIONS);
+        
+        // If the size constraint is empty, we can't do anything
+        if (sizeConstraint.isEmpty()) {
+            return;
+        }
+        
+        // It's not empty, so we will change the node size. Initialize it to the current insets
+        // (this already ensures that the node will be large enough to accommodate the node label)
+        nodeSize.x = nodeInsets.left + nodeInsets.right;
+        nodeSize.y = nodeInsets.top + nodeInsets.bottom;
+        
+        // Check how much space the ports need
+        if (sizeConstraint.contains(SizeConstraint.PORTS)) {
+            PortConstraints portConstraints = node.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+            boolean accountForLabels = sizeConstraint.contains(SizeConstraint.PORT_LABELS);
+            
+            // Find out how large the node will have to be to accommodate all ports. If port
+            // constraints are set to FIXED_RATIO, we can't do anything actually
+            KVector minSizeForPorts = null;
+            switch (portConstraints) {
+            case FREE:
+            case FIXED_SIDE:
+            case FIXED_ORDER:
+                // Calculate the space necessary to accomodate all ports
+                minSizeForPorts = calculatePortSpaceRequirements(node, portSpacing, accountForLabels);
+                break;
+            
+            case FIXED_POS:
+                // Find the maximum position of ports
+                minSizeForPorts = calculateMaxPortPositions(node, accountForLabels);
+                break;
+            }
+            
+            // Check if we have a minimum size required for all ports
+            if (minSizeForPorts != null) {
+                nodeSize.x = Math.max(nodeSize.x, minSizeForPorts.x);
+                nodeSize.y = Math.max(nodeSize.y, minSizeForPorts.y);
+            }
+        }
+        
+        // Respect minimum size
+        if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
+            double minWidth = node.getProperty(LayoutOptions.MIN_WIDTH);
+            double minHeight = node.getProperty(LayoutOptions.MIN_HEIGHT);
+            
+            // If we are to use default minima, check if the values are properly set
+            if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
+                if (minWidth <= 0) {
+                    minWidth = KimlUtil.DEFAULT_MIN_WIDTH;
+                }
+                
+                if (minHeight <= 0) {
+                    minHeight = KimlUtil.DEFAULT_MIN_HEIGHT;
+                }
+            }
+            
+            // We might have to take the insets into account
+            if (sizeOptions.contains(SizeOptions.MINIMUM_SIZE_ACCOUNTS_FOR_INSETS)) {
+                if (minWidth > 0) {
+                    nodeSize.x = Math.max(nodeSize.x, minWidth + nodeInsets.left + nodeInsets.right);
+                }
+                
+                if (minHeight > 0) {
+                    nodeSize.y = Math.max(nodeSize.y, minHeight + nodeInsets.top + nodeInsets.bottom);
+                }
+            } else {
+                if (minWidth > 0) {
+                    nodeSize.x = Math.max(nodeSize.x, minWidth);
+                }
+                
+                if (minHeight > 0) {
+                    nodeSize.y = Math.max(nodeSize.y, minHeight);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Calculate how much space the ports will need if they can be freely distributed on their
+     * respective node side. The x coordinate of the returned vector will be the minimum width
+     * required by the ports on the northern and southern side. The y coordinate, in turn, will
+     * be the minimum height required by the ports on the western and eastern side. This means
+     * that 
+     * 
+     * @param node the node to calculate the minimum size for.
+     * @param portSpacing the amount of space to leave between ports.
+     * @param accountForLabels if {@code true}, the port labels will be taken into account
+     *                         when calculating the space requirements.
+     * @return minimum size.
+     */
+    private KVector calculatePortSpaceRequirements(final LNode node, final double portSpacing,
+            final boolean accountForLabels) {
+        
+        // Width and height required by the ports on the different sides
+        double westPortsHeight = portSpacing;
+        double eastPortsHeight = portSpacing;
+        double northPortsWidth = portSpacing;
+        double southPortsWidth = portSpacing;
+        
+        // Iterate over the ports
+        for (LPort port : node.getPorts()) {
+            switch (port.getSide()) {
+            case WEST:
+                westPortsHeight += portSpacing
+                    + port.getSize().y
+                    + (accountForLabels ? port.getMargin().bottom + port.getMargin().top : 0.0);
+                break;
+            case EAST:
+                eastPortsHeight += portSpacing
+                    + port.getSize().y
+                    + (accountForLabels ? port.getMargin().bottom + port.getMargin().top : 0.0);
+                break;
+            case NORTH:
+                northPortsWidth += portSpacing
+                    + port.getSize().x
+                    + (accountForLabels ? port.getMargin().left + port.getMargin().right : 0.0);
+                break;
+            case SOUTH:
+                southPortsWidth += portSpacing
+                    + port.getSize().x
+                    + (accountForLabels ? port.getMargin().left + port.getMargin().right : 0.0);
+                break;
+            }
+        }
+        
+        // Reset unused sides to a width / height of 0
+        westPortsHeight = (westPortsHeight == portSpacing ? 0.0 : westPortsHeight);
+        eastPortsHeight = (eastPortsHeight == portSpacing ? 0.0 : eastPortsHeight);
+        northPortsWidth = (northPortsWidth == portSpacing ? 0.0 : northPortsWidth);
+        southPortsWidth = (southPortsWidth == portSpacing ? 0.0 : southPortsWidth);
+        
+        return new KVector(
+                Math.max(northPortsWidth, southPortsWidth),
+                Math.max(westPortsHeight, eastPortsHeight));
+    }
+    
+    /**
+     * For fixed node positions, returns the minimum size of the node to contain all ports.
+     * 
+     * @param node the node to calculate the minimum size for.
+     * @param accountForLabels
+     * @return
+     */
+    private KVector calculateMaxPortPositions(final LNode node, final boolean accountForLabels) {
+        KVector result = new KVector();
+        
+        // Iterate over the ports
+        for (LPort port : node.getPorts()) {
+            switch (port.getSide()) {
+            case WEST:
+            case EAST:
+                result.y = Math.max(result.y,
+                        port.getPosition().y
+                        + port.getSize().y
+                        + (accountForLabels ? port.getMargin().bottom : 0.0));
+                break;
+                
+            case NORTH:
+            case SOUTH:
+                result.x = Math.max(result.x,
+                        port.getPosition().x
+                        + port.getSize().x
+                        + (accountForLabels ? port.getMargin().right : 0.0));
+                break;
+            }
+        }
+        
+        return result;
+    }
+
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // PORT PLACEMENT
+
+    /**
+     * Places the given node's ports.
+     * 
+     * @param node the node whose ports to place.
+     * @param spacing the object spacing set for the diagram.
+     */
+    private void placePorts(final LNode node, final double spacing) {
+        
     }
 
     
@@ -339,6 +518,8 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
      */
     private void placeNodeLabels(final LNode node) {
         // TODO: Implement.
+        // To implement this, we will also have to implement label position support in applyLayout
+        // and add the appropriate layout options to support node label placement.
     }
     
 }
