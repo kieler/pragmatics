@@ -34,12 +34,15 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *   <dt>Precondition:</dt><dd></dd>
  *   <dt>Postcondition:</dt><dd></dd>
  *   <dt>Slots:</dt><dd>Before phase 4.</dd>
- *   <dt>Same-slot dependencies:</dt><dd></dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link LabelSideSelector}</dd>
  * </dl>
  *
  * @author cds
  */
 public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+    
+    /** Distance between labels and ports or edges. */
+    public static final int LABEL_DISTANCE = 3;
 
     /**
      * {@inheritDoc}
@@ -130,20 +133,20 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
     private void placePortLabelsInside(final LPort port, final LLabel label) {
         switch (port.getSide()) {
         case WEST:
-            label.getPosition().x = port.getSize().x + 1;
-            label.getPosition().y = 0;
+            label.getPosition().x = port.getSize().x + LABEL_DISTANCE;
+            label.getPosition().y = (port.getSize().y - label.getSize().y) / 2.0;
             break;
         case EAST:
-            label.getPosition().x = -label.getSize().x - 1;
-            label.getPosition().y = 0;
+            label.getPosition().x = -label.getSize().x - LABEL_DISTANCE;
+            label.getPosition().y = (port.getSize().y - label.getSize().y) / 2.0;
             break;
         case NORTH:
             label.getPosition().x = -label.getSize().x / 2;
-            label.getPosition().y = port.getSize().y;
+            label.getPosition().y = port.getSize().y + LABEL_DISTANCE;
             break;
         case SOUTH:
             label.getPosition().x = -label.getSize().x / 2;
-            label.getPosition().y = -label.getSize().y;
+            label.getPosition().y = -label.getSize().y - LABEL_DISTANCE;
             break;
         }
     }
@@ -156,41 +159,43 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
      */
     private void placePortLabelsOutside(final LPort port, final LLabel label) {
         if (label.getSide() == LSide.UP) {
+            // Place label "above" edges
             switch (port.getSide()) {
             case WEST:
-                label.getPosition().x = -label.getSize().x;
-                label.getPosition().y = -label.getSize().y + EndLabelProcessor.PORT_LABEL_DISTANCE;
+                label.getPosition().x = -label.getSize().x - LABEL_DISTANCE;
+                label.getPosition().y = -label.getSize().y - LABEL_DISTANCE;
                 break;
             case EAST:
-                label.getPosition().x = port.getSize().x;
-                label.getPosition().y = -label.getSize().y + EndLabelProcessor.PORT_LABEL_DISTANCE;
+                label.getPosition().x = port.getSize().x + LABEL_DISTANCE;
+                label.getPosition().y = -label.getSize().y - LABEL_DISTANCE;
                 break;
             case NORTH:
-                label.getPosition().x = -port.getSize().x / 2 - label.getSize().x;
-                label.getPosition().y = -port.getSize().y - label.getSize().y;
+                label.getPosition().x = -label.getSize().x - LABEL_DISTANCE;
+                label.getPosition().y = -label.getSize().y - LABEL_DISTANCE;
                 break;
             case SOUTH:
-                label.getPosition().x = -port.getSize().x / 2 - label.getSize().x;
-                label.getPosition().y = port.getSize().y;
+                label.getPosition().x = -label.getSize().x - LABEL_DISTANCE;
+                label.getPosition().y = port.getSize().y + LABEL_DISTANCE;
                 break;
             }
         } else {
+            // Place label "below" edges
             switch (port.getSide()) {
             case WEST:
-                label.getPosition().x = -label.getSize().x;
-                label.getPosition().y = port.getSize().y  - EndLabelProcessor.PORT_LABEL_DISTANCE;
+                label.getPosition().x = -label.getSize().x - LABEL_DISTANCE;
+                label.getPosition().y = port.getSize().y + LABEL_DISTANCE;
                 break;
             case EAST:
-                label.getPosition().x = port.getSize().x;
-                label.getPosition().y = port.getSize().y - EndLabelProcessor.PORT_LABEL_DISTANCE;
+                label.getPosition().x = port.getSize().x + LABEL_DISTANCE;
+                label.getPosition().y = port.getSize().y + LABEL_DISTANCE;
                 break;
             case NORTH:
-                label.getPosition().x = port.getSize().x / 2;
-                label.getPosition().y = -port.getSize().y - label.getSize().y;
+                label.getPosition().x = port.getSize().x + LABEL_DISTANCE;
+                label.getPosition().y = -label.getSize().y - LABEL_DISTANCE;
                 break;
             case SOUTH:
-                label.getPosition().x = port.getSize().x / 2;
-                label.getPosition().y = port.getSize().y;
+                label.getPosition().x = port.getSize().x + LABEL_DISTANCE;
+                label.getPosition().y = port.getSize().y + LABEL_DISTANCE;
                 break;
             }
         }

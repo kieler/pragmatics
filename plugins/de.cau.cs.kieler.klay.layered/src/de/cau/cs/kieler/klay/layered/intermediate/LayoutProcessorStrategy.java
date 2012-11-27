@@ -45,8 +45,6 @@ public enum LayoutProcessorStrategy {
     COMMENT_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
-    /** Increases node size for the placement of end labels. */
-    LABEL_NODE_SIZE_ADJUSTER,
     
     // Before Phase 2
     
@@ -63,8 +61,6 @@ public enum LayoutProcessorStrategy {
     HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR,
     /** Removes layering constraint dummy edges from compound graphs. */
     COMPOUND_DUMMY_EDGE_REMOVER,
-    /** Decides, on which side of an edge the edge labels should be placed. */ 
-    LABEL_SIDE_SELECTOR,
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
@@ -89,6 +85,8 @@ public enum LayoutProcessorStrategy {
     IN_LAYER_CONSTRAINT_PROCESSOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
     HYPEREDGE_DUMMY_MERGER,
+    /** Decides, on which side of an edge the edge labels should be placed. */ 
+    LABEL_SIDE_SELECTOR,
     /** Sets the positions of ports. */
     PORT_POSITION_PROCESSOR,
     /** Sets the positions of ports and labels, and sets the node sizes. */

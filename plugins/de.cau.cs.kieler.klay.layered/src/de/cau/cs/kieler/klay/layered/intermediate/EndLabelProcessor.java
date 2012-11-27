@@ -28,8 +28,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.properties.PortLabelPlacement;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * <p>This intermediate processor does the necessary calculations for an absolute positioning
@@ -54,9 +52,6 @@ public class EndLabelProcessor extends AbstractAlgorithm implements ILayoutProce
 
     /** Distance of a label to its edge. */
     public static final int LABEL_DISTANCE = 0;
-    
-    /** Offset introduced by GMF to ports, results have to be adjusted by this factor. */
-    public static final int PORT_LABEL_DISTANCE = 3;
     
     /**
      * In case of northern ports, labels have to be stacked to avoid overlaps.
