@@ -50,6 +50,23 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
     
     /** Distance between labels and ports or edges. */
     public static final int LABEL_DISTANCE = 3;
+    
+    /**
+     * Node insets required by port labels inside the node. This is always set, but not always taken
+     * into account to calculate the node size.
+     * 
+     * <p><i>Note:</i> This is only valid for the currently processed node!</p>
+     */
+    private LInsets.Double requiredPortLabelSpace = new LInsets.Double();
+    
+    /**
+     * Node insets required by node labels placed inside the node. This is always set, but not always
+     * taken into account to calculate the node size.
+     * 
+     * <p><i>Note:</i> This is only valid for the currently processed node!</p>
+     */
+    private LInsets.Double requiredNodeLabelSpace = new LInsets.Double();
+    
 
     /**
      * {@inheritDoc}
@@ -61,6 +78,13 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
         // Iterate over all the graph's nodes
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
+                
+                /* PREPARATIONS
+                 * Reset stuff.
+                 */
+                requiredPortLabelSpace.set(0.0, 0.0, 0.0, 0.0);
+                requiredNodeLabelSpace.set(0.0, 0.0, 0.0, 0.0);
+                
                 
                 /* PHASE 1 (SAD DUCK): PLACE PORT LABELS
                  * Port labels are placed and port margins are calculated. We currently only support
@@ -80,8 +104,8 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
                  * be placed. Calculate the node's insets accordingly. Note that we don't have to
                  * know the final port positions to calculate the insets.
                  */
-                calculateAndSetNodeInsets(node);
-                reserveSpaceForNodeLabels(node);
+                calculateRequiredPortLabelSpace(node);
+                calculateRequiredNodeLabelSpace(node);
                 
                 
                 /* PHASE 3 (DANGEROUS DUCKLING): RESIZE NODE
@@ -102,11 +126,17 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
                  */
                 placeNodeLabels(node);
                 
-                // TODO: Implement node insets handling
-                // Up to now, the node insets contained only those labels that were to be accounted
-                // for in node resizing. If the insets are to be saved in the node later when the
-                // layout is to be applied, the insets have to include all labels, or else the value
-                // won't make much sense.
+                
+                /* CLEANUP (THANKSGIVING): SET NODE INSETS
+                 * Set the node insets to include space required for port and node labels. If the labels
+                 * were not taken into account when calculating the node's size, this may result in
+                 * insets that, taken together, are larger than the node's actual size.
+                 */
+                LInsets.Double nodeInsets = node.getInsets();
+                nodeInsets.left = requiredNodeLabelSpace.left + requiredPortLabelSpace.left;
+                nodeInsets.right = requiredNodeLabelSpace.right + requiredPortLabelSpace.right;
+                nodeInsets.top = requiredNodeLabelSpace.top + requiredPortLabelSpace.top;
+                nodeInsets.bottom = requiredNodeLabelSpace.bottom + requiredPortLabelSpace.bottom;
             }
         }
         
@@ -256,51 +286,48 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
     // INSETS CALCULATION
     
     /**
-     * Calculates and sets the given node's insets accordingly such that they contain all the ports
-     * and port labels. This method requires that the port margins are set to include the port
-     * labels.
+     * Calculates the space required to accommodate all port labels and sets
+     * {@link #requiredPortLabelSpace}.
      * 
      * <p><i>Note:</i> We currently only support one label per port.</p>
      * 
      * @param node the node whose insets to calculate and to set.
      */
-    private void calculateAndSetNodeInsets(final LNode node) {
-        // Get the insets. We don't reset them here, which might or might not become a problem.
-        // Currently, it is not.
-        LInsets.Double nodeInsets = node.getInsets();
-        
-        // TODO: Should port labels always count towards the insets calculation?
+    private void calculateRequiredPortLabelSpace(final LNode node) {
         // TODO: We don't support fixed port positions yet
         
         // Iterate over the ports and look at their margins
         for (LPort port : node.getPorts()) {
             switch (port.getSide()) {
             case WEST:
-                nodeInsets.left = Math.max(nodeInsets.left, port.getMargin().right);
+                requiredPortLabelSpace.left =
+                    Math.max(requiredPortLabelSpace.left, port.getMargin().right);
                 break;
             case EAST:
-                nodeInsets.right = Math.max(nodeInsets.right, port.getMargin().left);
+                requiredPortLabelSpace.right =
+                    Math.max(requiredPortLabelSpace.right, port.getMargin().left);
                 break;
             case NORTH:
-                nodeInsets.top = Math.max(nodeInsets.top, port.getMargin().bottom);
+                requiredPortLabelSpace.top =
+                    Math.max(requiredPortLabelSpace.top, port.getMargin().bottom);
                 break;
             case SOUTH:
-                nodeInsets.bottom = Math.max(nodeInsets.bottom, port.getMargin().top);
+                requiredPortLabelSpace.bottom =
+                    Math.max(requiredPortLabelSpace.bottom, port.getMargin().top);
                 break;
             }
         }
     }
 
     /**
-     * Adjusts the node's insets to leave enough space for the node's label. This method only modifies
-     * the insets if the node's label is placed inside the node. A label placed on its outside doesn't
-     * modify the insets much...
+     * Calculates the space required to accommodate the node label (if any) and sets
+     * {@link #requiredNodeLabelSpace}.
      * 
      * <p><i>Note:</i> We currently only support one label per node.</p>
      * 
      * @param node the node in question.
      */
-    private void reserveSpaceForNodeLabels(final LNode node) {
+    private void calculateRequiredNodeLabelSpace(final LNode node) {
         // TODO: Implement.
         // To implement this, we will also have to implement label position support in applyLayout
         // and add the appropriate layout options to support node label placement.
@@ -318,7 +345,6 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
      */
     private void resizeNode(final LNode node, final double portSpacing) {
         KVector nodeSize = node.getSize();
-        LInsets.Double nodeInsets = node.getInsets();
         EnumSet<SizeConstraint> sizeConstraint = node.getProperty(LayoutOptions.SIZE_CONSTRAINT);
         EnumSet<SizeOptions> sizeOptions = node.getProperty(LayoutOptions.SIZE_OPTIONS);
         
@@ -327,10 +353,9 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
             return;
         }
         
-        // It's not empty, so we will change the node size. Initialize it to the current insets
-        // (this already ensures that the node will be large enough to accommodate the node label)
-        nodeSize.x = nodeInsets.left + nodeInsets.right;
-        nodeSize.y = nodeInsets.top + nodeInsets.bottom;
+        // It's not empty, so we will change the node size; we start by resetting the size to zero
+        nodeSize.x = 0.0;
+        nodeSize.y = 0.0;
         
         // Check how much space the ports need
         if (sizeConstraint.contains(SizeConstraint.PORTS)) {
@@ -361,6 +386,12 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
             }
         }
         
+        // If the node label is to be accounted for, add its required space to the node size
+        if (sizeConstraint.contains(SizeConstraint.NODE_LABELS)) {
+            nodeSize.x += requiredNodeLabelSpace.left + requiredNodeLabelSpace.right;
+            nodeSize.y += requiredNodeLabelSpace.top + requiredNodeLabelSpace.bottom;
+        }
+        
         // Respect minimum size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
             double minWidth = node.getProperty(LayoutOptions.MIN_WIDTH);
@@ -380,11 +411,17 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
             // We might have to take the insets into account
             if (sizeOptions.contains(SizeOptions.MINIMUM_SIZE_ACCOUNTS_FOR_INSETS)) {
                 if (minWidth > 0) {
-                    nodeSize.x = Math.max(nodeSize.x, minWidth + nodeInsets.left + nodeInsets.right);
+                    nodeSize.x = Math.max(nodeSize.x,
+                            minWidth
+                            + requiredPortLabelSpace.left
+                            + requiredPortLabelSpace.right);
                 }
                 
                 if (minHeight > 0) {
-                    nodeSize.y = Math.max(nodeSize.y, minHeight + nodeInsets.top + nodeInsets.bottom);
+                    nodeSize.y = Math.max(nodeSize.y,
+                            minHeight
+                            + requiredPortLabelSpace.top
+                            + requiredPortLabelSpace.bottom);
                 }
             } else {
                 if (minWidth > 0) {
