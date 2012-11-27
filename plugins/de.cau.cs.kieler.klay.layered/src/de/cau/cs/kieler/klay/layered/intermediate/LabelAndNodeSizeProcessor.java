@@ -55,7 +55,7 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
                 
-                /* PHASE 1: PLACE PORT LABELS
+                /* PHASE 1 (SAD DUCK): PLACE PORT LABELS
                  * Port labels are placed and port margins are calculated. We currently only support
                  * one label per port.
                  */
@@ -68,27 +68,27 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
                 }
                 
                 
-                /* PHASE 2: PLACE PORTS
+                /* PHASE 2 (DYNAMIC DONALD): PLACE PORTS
                  * Ports are placed and node insets are calculated accordingly.
                  */
                 placePorts(node, spacing);
                 calculateAndSetNodeInsets(node);
                 
                 
-                /* PHASE 3: RESERVE SPACE FOR NODE LABEL
+                /* PHASE 3 (DANGEROUS DUCKLING): RESERVE SPACE FOR NODE LABEL
                  * If the node has a label (we currently only support one), the node insets might have
                  * to be adjusted to reserve space for it, which is what this phase does.
                  */
                 reserveSpaceForNodeLabels(node);
                 
                 
-                /* PHASE 4: RESIZE NODE
+                /* PHASE 4 (DUCK AND COVER): RESIZE NODE
                  * The node is resized, taking all node size constraints into account.
                  */
                 resizeNode(node);
                 
                 
-                /* PHASE 5: PLACE NODE LABEL
+                /* PHASE 5 (HAPPY DUCK): PLACE NODE LABEL
                  * With space reserved for the node label (we only support one), the label is placed.
                  */
                 placeNodeLabels(node);
