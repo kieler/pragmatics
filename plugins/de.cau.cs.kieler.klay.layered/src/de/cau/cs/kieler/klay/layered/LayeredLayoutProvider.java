@@ -108,8 +108,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /** connected components processor. */
     private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
     /** intermediate layout processor configuration. */
-    private IntermediateProcessingConfiguration intermediateProcessingConfiguration 
-                                         = new IntermediateProcessingConfiguration();
+    private IntermediateProcessingConfiguration intermediateProcessingConfiguration =
+            new IntermediateProcessingConfiguration();
     /** collection of instantiated intermediate modules. */
     private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache 
                  = new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
@@ -619,7 +619,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             
             // Before Phase 4
             EnumSet.of(LayoutProcessorStrategy.NODE_MARGIN_CALCULATOR,
-                    LayoutProcessorStrategy.PORT_POSITION_PROCESSOR),
+//                    LayoutProcessorStrategy.PORT_POSITION_PROCESSOR
+                    LayoutProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR),
             
             null, null);
 
