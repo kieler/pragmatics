@@ -51,6 +51,12 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
     /** Distance between labels and ports or edges. */
     public static final int LABEL_DISTANCE = 3;
     
+    /* The following variables provide context information for the different phases of the algorithm.
+     * The information are usually computed by some phase to be made available to later phases. This
+     * would probably be better kept in some kind of a context object, but is kept here for performance
+     * reasons to avoid having to create new context objects all the time.
+     */
+    
     /**
      * Node insets required by port labels inside the node. This is always set, but not always taken
      * into account to calculate the node size.
@@ -67,6 +73,58 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
      */
     private LInsets.Double requiredNodeLabelSpace = new LInsets.Double();
     
+    /**
+     * Number of ports on the western side. Only used if port constraints are not
+     * {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}.
+     */
+    private int westPortsCount = 0;
+    
+    /**
+     * Height of the ports on the western side. If port labels are accounted for, the height includes
+     * the relevant port margins too. Only used if port constraints are not
+     * {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}.
+     */
+    private double westPortsHeight = 0.0;
+    
+    /**
+     * Number of ports on the eastern side.Only used if port constraints are not
+     * {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}.
+     */
+    private int eastPortsCount = 0;
+    
+    /**
+     * Height of the ports on the eastern side. If port labels are accounted for, the height includes
+     * the relevant port margins too. Only used if port constraints are not
+     * {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}.
+     */
+    private double eastPortsHeight = 0.0;
+    
+    /**
+     * Number of ports on the northern side.Only used if port constraints are not
+     * {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}.
+     */
+    private int northPortsCount = 0;
+    
+    /**
+     * Width of the ports on the northern side. If port labels are accounted for, the height includes
+     * the relevant port margins too. Only used if port constraints are not
+     * {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}.
+     */
+    private double northPortsWidth = 0.0;
+    
+    /**
+     * Number of ports on the southern side.Only used if port constraints are not
+     * {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}.
+     */
+    private int southPortsCount = 0;
+    
+    /**
+     * Width of the ports on the southern side. If port labels are accounted for, the height includes
+     * the relevant port margins too. Only used if port constraints are not
+     * {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}.
+     */
+    private double southPortsWidth = 0.0;
+    
 
     /**
      * {@inheritDoc}
@@ -82,8 +140,7 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
                 /* PREPARATIONS
                  * Reset stuff.
                  */
-                requiredPortLabelSpace.set(0.0, 0.0, 0.0, 0.0);
-                requiredNodeLabelSpace.set(0.0, 0.0, 0.0, 0.0);
+                resetContext();
                 
                 
                 /* PHASE 1 (SAD DUCK): PLACE PORT LABELS
@@ -116,9 +173,11 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
                 
                 
                 /* PHASE 4 (DUCK AND COVER): PLACE PORTS
-                 * The node is resized, taking all node size constraints into account.
+                 * The node is resized, taking all node size constraints into account. The port spacing
+                 * is not required for port placement since the placement will be based on the node's
+                 * size (if it is not fixed anyway).
                  */
-                placePorts(node, spacing);
+                placePorts(node);
                 
                 
                 /* PHASE 5 (HAPPY DUCK): PLACE NODE LABEL
@@ -141,6 +200,23 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
         }
         
         getMonitor().done();
+    }
+    
+    /**
+     * Resets the fields providing context information to the algorithm.
+     */
+    private void resetContext() {
+        requiredPortLabelSpace.set(0.0, 0.0, 0.0, 0.0);
+        requiredNodeLabelSpace.set(0.0, 0.0, 0.0, 0.0);
+        
+        westPortsCount = 0;
+        westPortsHeight = 0.0;
+        eastPortsCount = 0;
+        eastPortsHeight = 0.0;
+        northPortsCount = 0;
+        northPortsWidth = 0.0;
+        southPortsCount = 0;
+        southPortsWidth = 0.0;
     }
     
     
@@ -451,47 +527,42 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
     private KVector calculatePortSpaceRequirements(final LNode node, final double portSpacing,
             final boolean accountForLabels) {
         
-        // Width and height required by the ports on the different sides
-        double westPortsHeight = portSpacing;
-        double eastPortsHeight = portSpacing;
-        double northPortsWidth = portSpacing;
-        double southPortsWidth = portSpacing;
-        
         // Iterate over the ports
         for (LPort port : node.getPorts()) {
             switch (port.getSide()) {
             case WEST:
-                westPortsHeight += portSpacing
-                    + port.getSize().y
+                westPortsHeight += port.getSize().y
                     + (accountForLabels ? port.getMargin().bottom + port.getMargin().top : 0.0);
+                westPortsCount++;
                 break;
             case EAST:
-                eastPortsHeight += portSpacing
-                    + port.getSize().y
+                eastPortsHeight += port.getSize().y
                     + (accountForLabels ? port.getMargin().bottom + port.getMargin().top : 0.0);
+                eastPortsCount++;
                 break;
             case NORTH:
-                northPortsWidth += portSpacing
-                    + port.getSize().x
+                northPortsWidth += port.getSize().x
                     + (accountForLabels ? port.getMargin().left + port.getMargin().right : 0.0);
+                northPortsCount++;
                 break;
             case SOUTH:
-                southPortsWidth += portSpacing
-                    + port.getSize().x
+                southPortsWidth += port.getSize().x
                     + (accountForLabels ? port.getMargin().left + port.getMargin().right : 0.0);
+                southPortsCount++;
                 break;
             }
         }
         
-        // Reset unused sides to a width / height of 0
-        westPortsHeight = (westPortsHeight == portSpacing ? 0.0 : westPortsHeight);
-        eastPortsHeight = (eastPortsHeight == portSpacing ? 0.0 : eastPortsHeight);
-        northPortsWidth = (northPortsWidth == portSpacing ? 0.0 : northPortsWidth);
-        southPortsWidth = (southPortsWidth == portSpacing ? 0.0 : southPortsWidth);
+        // Calculate the maximum width and height, taking the necessary spacing between (and around)
+        // the ports into consideration as well
+        double maxWidth = Math.max(
+                northPortsCount > 0 ? (northPortsCount + 1) * portSpacing + northPortsWidth : 0.0,
+                southPortsCount > 0 ? (southPortsCount + 1) * portSpacing + southPortsWidth : 0.0);
+        double maxHeight = Math.max(
+                westPortsCount > 0 ? (westPortsCount + 1) * portSpacing + westPortsHeight : 0.0,
+                eastPortsCount > 0 ? (eastPortsCount + 1) * portSpacing + eastPortsHeight : 0.0);
         
-        return new KVector(
-                Math.max(northPortsWidth, southPortsWidth),
-                Math.max(westPortsHeight, eastPortsHeight));
+        return new KVector(maxWidth, maxHeight);
     }
     
     /**
@@ -536,10 +607,121 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
      * Places the given node's ports.
      * 
      * @param node the node whose ports to place.
-     * @param spacing the object spacing set for the diagram.
      */
-    private void placePorts(final LNode node, final double spacing) {
+    private void placePorts(final LNode node) {
+        PortConstraints portConstraints = node.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         
+        if (portConstraints == PortConstraints.FIXED_RATIO) {
+            // Fixed Ratio
+            placeFixedRatioNodePorts(node);
+        } else if (portConstraints != PortConstraints.FIXED_POS) {
+            // Free, Fixed Side, Fixed Order
+            if (node.getProperty(LayoutOptions.HYPERNODE)
+                    || (node.getSize().x == 0 && node.getSize().y == 0)) {
+                
+                placeHypernodePorts(node);
+            } else {
+                placeNodePorts(node);
+            }
+        }
+    }
+    
+    /**
+     * Places the ports of a node keeping the ratio between their position and the length of their
+     * respective side intact.
+     * 
+     * @param node the node whose ports to place.
+     */
+    private void placeFixedRatioNodePorts(final LNode node) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    /**
+     * Places the ports of a node, assuming that the ports are not fixed in their position or ratio.
+     * 
+     * @param node the node whose ports to place.
+     */
+    private void placeNodePorts(final LNode node) {
+        KVector nodeSize = node.getSize();
+        boolean accountForLabels =
+                node.getProperty(LayoutOptions.SIZE_CONSTRAINT).contains(SizeConstraint.PORT_LABELS);
+        
+        // Compute the space to be left between the ports
+        double westDelta = (nodeSize.y - westPortsHeight) / (westPortsCount + 1);
+        double westY = nodeSize.y - westDelta;
+        double eastDelta = (nodeSize.y - eastPortsHeight) / (eastPortsCount + 1);
+        double eastY = eastDelta;
+        double northDelta = (nodeSize.x - northPortsWidth) / (northPortsCount + 1);
+        double northX = northDelta;
+        double southDelta = (nodeSize.x - southPortsWidth) / (southPortsCount + 1);
+        double southX = nodeSize.x - southDelta;
+        
+        // Arrange the ports
+        for (LPort port : node.getPorts()) {
+            float portOffset = port.getProperty(Properties.OFFSET);
+            KVector portSize = port.getSize();
+            LInsets.Double portMargins = port.getMargin();
+            
+            switch (port.getSide()) {
+            case WEST:
+                port.getPosition().x = -portSize.x - portOffset;
+                port.getPosition().y = westY
+                        + (accountForLabels ? portMargins.top : 0.0);
+                westY -= westDelta + portSize.y
+                        + (accountForLabels ? portMargins.top + portMargins.bottom : 0.0);
+                break;
+            case EAST:
+                port.getPosition().x = nodeSize.x + portOffset;
+                port.getPosition().y = eastY
+                        + (accountForLabels ? portMargins.top : 0.0);
+                eastY += eastDelta + portSize.y
+                        + (accountForLabels ? portMargins.top + portMargins.bottom : 0.0);
+                break;
+            case NORTH:
+                port.getPosition().x = northX
+                        + (accountForLabels ? portMargins.left : 0.0);
+                port.getPosition().y = -port.getSize().y - portOffset;
+                northX += northDelta + portSize.x
+                        + (accountForLabels ? portMargins.left + portMargins.right : 0.0);
+                break;
+            case SOUTH:
+                port.getPosition().x = southX
+                        + (accountForLabels ? portMargins.left : 0.0);
+                port.getPosition().y = nodeSize.y + portOffset;
+                southX -= southDelta + portSize.x
+                        + (accountForLabels ? portMargins.left + portMargins.right : 0.0);
+                break;
+            }
+        }
+    }
+    
+    /**
+     * Places the ports of a hypernode.
+     * 
+     * @param node the hypernode whose ports to place.
+     */
+    private void placeHypernodePorts(final LNode node) {
+        for (LPort port : node.getPorts()) {
+            switch (port.getSide()) {
+            case WEST:
+                port.getPosition().x = 0;
+                port.getPosition().y = node.getSize().y / 2;
+                break;
+            case EAST:
+                port.getPosition().x = node.getSize().x;
+                port.getPosition().y = node.getSize().y / 2;
+                break;
+            case NORTH:
+                port.getPosition().x = node.getSize().x / 2;
+                port.getPosition().y = 0;
+                break;
+            case SOUTH:
+                port.getPosition().x = node.getSize().x / 2;
+                port.getPosition().y = node.getSize().y;
+                break;
+            }
+        }
     }
 
     
