@@ -13,10 +13,8 @@
  */
 package de.cau.cs.kieler.papyrus.sequence.graph;
 
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -261,31 +259,5 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
             }
         }
         return 0;
-    }
-}
-
-/**
- * Comparator for messages that is necessary to sort the messages of a lifeline.
- * 
- * @author grh
- * 
- */
-class MessageComparator implements Comparator<SMessage> {
-
-    private Map<SMessage, Double> base;
-
-    public MessageComparator(final Map<SMessage, Double> base) {
-        this.base = base;
-    }
-
-    public int compare(final SMessage a, final SMessage b) {
-
-        if (base.get(a) < base.get(b)) {
-            return -1;
-        } else if ((Double) base.get(a) == (Double) base.get(b)) {
-            return 0;
-        } else {
-            return 1;
-        }
     }
 }

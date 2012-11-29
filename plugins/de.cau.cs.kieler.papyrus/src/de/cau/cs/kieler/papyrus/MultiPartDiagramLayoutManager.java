@@ -569,8 +569,9 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
             }
         } else if (nodeType.equals("3009") || nodeType.equals("3008") || nodeType.equals("3024")
                 || nodeType.equals("3020")) {
-//            System.out.println(nodeType); // TODO
-//            System.out.println(nodeEditPart.getFigure().getBounds());
+            System.out.print(nodeType + ": "); // TODO
+            System.out.println(nodeEditPart.getFigure().getBounds());
+            System.out.println(nodeEditPart);
             // Handle comments, constraints and observations
             List<Object> attachedTo = new LinkedList<Object>();
             // Process connections of the object

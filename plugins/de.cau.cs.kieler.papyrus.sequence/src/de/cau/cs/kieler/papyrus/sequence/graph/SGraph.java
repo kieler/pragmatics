@@ -80,44 +80,6 @@ public class SGraph extends SGraphElement {
         lifelines.remove(lifeline);
     }
 
-//    /**
-//     * Get the width of the graph.
-//     * 
-//     * @return the width
-//     */
-//    public double getWidth() {
-//        return width;
-//    }
-//
-//    /**
-//     * Set the width of the graph.
-//     * 
-//     * @param width
-//     *            the new width
-//     */
-//    public void setWidth(final double width) {
-//        this.width = width;
-//    }
-//
-//    /**
-//     * Get the height of the graph.
-//     * 
-//     * @return the height
-//     */
-//    public double getHeight() {
-//        return height;
-//    }
-//
-//    /**
-//     * Set the height of the graph.
-//     * 
-//     * @param height
-//     *            the new height
-//     */
-//    public void setHeight(final double height) {
-//        this.height = height;
-//    }
-
     /**
      * 
      * {@inheritDoc}
