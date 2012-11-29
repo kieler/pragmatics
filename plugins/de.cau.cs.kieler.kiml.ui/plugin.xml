@@ -9,7 +9,7 @@
           id="de.cau.cs.kieler.kiml.ui.activeEditorSupportedTester"
           namespace="de.cau.cs.kieler.kiml.ui"
           properties="activeEditorIsSupported"
-          type="org.eclipse.ui.IEditorPart">
+          type="org.eclipse.ui.IWorkbenchPart">
     </propertyTester>
  </extension>
 
@@ -33,7 +33,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <category
-            description="Commands from the KIELER Layout Infrastructure"
+            description="%command.description.0"
             id="de.cau.cs.kieler.layout"
             name="%category.name.0">
       </category>
@@ -97,7 +97,7 @@ point="org.eclipse.ui.menus">
       <visibleWhen
             checkEnabled="false">
          <with
-               variable="activeEditor">
+               variable="activePart">
             <test
                   property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
             </test>
@@ -113,7 +113,7 @@ point="org.eclipse.ui.menus">
       <visibleWhen
             checkEnabled="false">
          <with
-               variable="activeEditor">
+               variable="activePart">
             <test
                   property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
             </test>
