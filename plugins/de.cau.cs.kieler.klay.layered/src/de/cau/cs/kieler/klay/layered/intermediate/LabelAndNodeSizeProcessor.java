@@ -666,8 +666,8 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
             switch (port.getSide()) {
             case WEST:
                 port.getPosition().x = -portSize.x - portOffset;
-                port.getPosition().y = westY
-                        + (accountForLabels ? portMargins.top : 0.0);
+                port.getPosition().y = westY - portSize.y
+                        - (accountForLabels ? portMargins.bottom : 0.0);
                 westY -= westDelta + portSize.y
                         + (accountForLabels ? portMargins.top + portMargins.bottom : 0.0);
                 break;
@@ -686,13 +686,15 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
                         + (accountForLabels ? portMargins.left + portMargins.right : 0.0);
                 break;
             case SOUTH:
-                port.getPosition().x = southX
-                        + (accountForLabels ? portMargins.left : 0.0);
+                port.getPosition().x = southX - portSize.x
+                        - (accountForLabels ? portMargins.right : 0.0);
                 port.getPosition().y = nodeSize.y + portOffset;
                 southX -= southDelta + portSize.x
                         + (accountForLabels ? portMargins.left + portMargins.right : 0.0);
                 break;
             }
+            
+            System.out.println(port + " " + port.getPosition());
         }
     }
     

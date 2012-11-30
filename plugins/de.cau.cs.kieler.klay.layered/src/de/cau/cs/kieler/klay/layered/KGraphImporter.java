@@ -394,12 +394,12 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // set the size of the new node AFTER ports have been created, since the original size
         // is required for port side and offset calculation
-        KVector ratio = KimlUtil.resizeNode(node);
-        if (ratio != null && (ratio.x != 1 || ratio.y != 1)) {
-            newNode.setProperty(Properties.RESIZE_RATIO, ratio);
-        }
-        newNode.getSize().x = nodeLayout.getWidth();
-        newNode.getSize().y = nodeLayout.getHeight();
+//        KVector ratio = KimlUtil.resizeNode(node);
+//        if (ratio != null && (ratio.x != 1 || ratio.y != 1)) {
+//            newNode.setProperty(Properties.RESIZE_RATIO, ratio);
+//        }
+//        newNode.getSize().x = nodeLayout.getWidth();
+//        newNode.getSize().y = nodeLayout.getHeight();
 
         // add the node's labels
         for (KLabel klabel : node.getLabels()) {
@@ -721,6 +721,12 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
                 nodeLayout.setXpos((float) (lnode.getPosition().x + offset.x));
                 nodeLayout.setYpos((float) (lnode.getPosition().y + offset.y));
+                
+                // set the node size, if necessary
+                if (!nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT).isEmpty()) {
+                    nodeLayout.setWidth((float) lnode.getSize().x);
+                    nodeLayout.setHeight((float) lnode.getSize().y);
+                }
 
                 // set port positions
                 if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
