@@ -172,6 +172,7 @@ abstract class AbstractPortDistributor {
             node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
         } else {
             // sort the ports by their current position vector
+            // FIXME isn't this already done in the PortListSorter?
             sortPortsByPosition(node);
         }
         

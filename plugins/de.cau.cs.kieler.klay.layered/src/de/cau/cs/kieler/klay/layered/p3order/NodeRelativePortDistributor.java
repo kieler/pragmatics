@@ -36,7 +36,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
 class NodeRelativePortDistributor extends AbstractPortDistributor {
 
     /**
-     * Constructs a node-relative port distributor with the given arrays of ranks and barycenters.
+     * Constructs a node-relative port distributor with the given array of ranks.
      * 
      * @param portRanks
      *            The array of port ranks
@@ -55,7 +55,7 @@ class NodeRelativePortDistributor extends AbstractPortDistributor {
         if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
 
             switch (type) {
-            case INPUT:
+            case INPUT: {
                 // Count the number of input ports, and additionally the north-side input ports
                 int inputCount = 0, northInputCount = 0;
                 for (LPort port : node.getPorts()) {
@@ -69,7 +69,7 @@ class NodeRelativePortDistributor extends AbstractPortDistributor {
                 
                 // Assign port ranks in the order north - west - south - east
                 float incr = 1.0f / (inputCount + 1);
-                float northPos = nodeIx + (northInputCount + 1) * incr;
+                float northPos = nodeIx + northInputCount * incr;
                 float restPos = nodeIx + 1 - incr;
                 for (LPort port : node.getPorts(PortType.INPUT)) {
                     if (port.getSide() == PortSide.NORTH) {
@@ -81,8 +81,9 @@ class NodeRelativePortDistributor extends AbstractPortDistributor {
                     }
                 }
                 break;
+            }
                 
-            case OUTPUT:
+            case OUTPUT: {
                 // Count the number of output ports
                 int outputCount = 0;
                 for (LPort port : node.getPorts()) {
@@ -92,13 +93,18 @@ class NodeRelativePortDistributor extends AbstractPortDistributor {
                 }
 
                 // Iterate output ports in their natural order, that is north - east - south - west
-                float outincr = 1.0f / (outputCount + 1);
-                float pos = nodeIx + outincr;
+                float incr = 1.0f / (outputCount + 1);
+                float pos = nodeIx + incr;
                 for (LPort port : node.getPorts(PortType.OUTPUT)) {
                     portRanks[port.id] = pos;
-                    pos += outincr;
+                    pos += incr;
                 }
                 break;
+            }
+            
+            default:
+                // this means illegal input to the method
+                throw new IllegalArgumentException();
             }
             
         } else {
