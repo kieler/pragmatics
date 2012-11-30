@@ -139,7 +139,7 @@ public class InteractiveCrossingMinimizer implements ILayoutPhase {
         }
         
         // Distribute the ports of all nodes with free port constraints
-        IPortDistributor portDistributor = new NodeRelativePortDistributor(new float[portCount]);
+        AbstractPortDistributor portDistributor = new NodeRelativePortDistributor(new float[portCount]);
         portDistributor.distributePorts(lgraphArray);
         
         monitor.done();

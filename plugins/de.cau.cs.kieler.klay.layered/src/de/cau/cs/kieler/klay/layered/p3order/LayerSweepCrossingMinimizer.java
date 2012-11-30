@@ -208,7 +208,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         int runCount = layeredGraph.getProperty(Properties.THOROUGHNESS);
 
         // Initialize the compound graph layer crossing minimizer
-        IPortDistributor portDistributor = new NodeRelativePortDistributor(portRanks);
+        AbstractPortDistributor portDistributor = new NodeRelativePortDistributor(portRanks);
         IConstraintResolver constraintResolver = new ForsterConstraintResolver(layoutUnits);
         ICrossingMinimizationHeuristic heuristic = new BarycenterHeuristic(constraintResolver,
                 random, portRanks);
