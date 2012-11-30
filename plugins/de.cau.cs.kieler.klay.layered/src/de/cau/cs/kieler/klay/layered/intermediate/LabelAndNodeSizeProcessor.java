@@ -333,8 +333,8 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
         // Get the port's label, if any
         if (!port.getLabels().isEmpty()) {
             Rectangle2D.Double portBox = new Rectangle2D.Double(
-                    port.getPosition().x,
-                    port.getPosition().y,
+                    0.0,
+                    0.0,
                     port.getSize().x,
                     port.getSize().y);
             
@@ -350,10 +350,10 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
             Rectangle2D.union(portBox, labelBox, portBox);
 
             LInsets.Double margin = port.getMargin();
-            margin.top = port.getPosition().y - portBox.y;
-            margin.bottom = portBox.getMaxY() - (port.getPosition().y + port.getSize().y);
-            margin.left = port.getPosition().x - portBox.x;
-            margin.right = portBox.getMaxX() - (port.getPosition().x + port.getSize().x);
+            margin.top = -portBox.y;
+            margin.bottom = portBox.getMaxY() - port.getSize().y;
+            margin.left = -portBox.x;
+            margin.right = portBox.getMaxX() - port.getSize().x;
         }
     }
 
@@ -693,8 +693,6 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
                         + (accountForLabels ? portMargins.left + portMargins.right : 0.0);
                 break;
             }
-            
-            System.out.println(port + " " + port.getPosition());
         }
     }
     
