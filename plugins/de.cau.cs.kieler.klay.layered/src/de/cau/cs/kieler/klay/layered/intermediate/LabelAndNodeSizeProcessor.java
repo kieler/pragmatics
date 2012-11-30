@@ -460,6 +460,15 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
                 nodeSize.x = Math.max(nodeSize.x, minSizeForPorts.x);
                 nodeSize.y = Math.max(nodeSize.y, minSizeForPorts.y);
             }
+            
+            // If we account for labels, we need to have the size account for labels placed on the
+            // inside of the node
+            if (accountForLabels) {
+                nodeSize.x = Math.max(nodeSize.x,
+                        requiredPortLabelSpace.left + requiredPortLabelSpace.right + portSpacing);
+                nodeSize.y = Math.max(nodeSize.y,
+                        requiredPortLabelSpace.top + requiredPortLabelSpace.bottom + portSpacing);
+            }
         }
         
         // If the node label is to be accounted for, add its required space to the node size
