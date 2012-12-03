@@ -774,7 +774,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 if (nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS)
                         .contains(SizeOptions.COMPUTE_INSETS)) {
                     
-                    // TODO: Apply insets as soon as we have an appropriate data type.
+                    // Apply insets
+                    LInsets.Double lInsets = lnode.getInsets();
+                    KInsets kInsets = nodeLayout.getInsets();
+                    kInsets.setBottom((float) lInsets.bottom);
+                    kInsets.setTop((float) lInsets.top);
+                    kInsets.setLeft((float) lInsets.left);
+                    kInsets.setRight((float) lInsets.right);
                 }
             } else if (origin instanceof KPort) {
                 // It's an external port. Set its position

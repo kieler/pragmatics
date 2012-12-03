@@ -43,6 +43,7 @@ import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -1062,7 +1063,13 @@ public class CompoundKGraphImporter extends KGraphImporter {
         if (!isCompound && nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS)
                 .contains(SizeOptions.COMPUTE_INSETS)) {
             
-            // TODO: Apply insets as soon as we have an appropriate data type.
+            // Apply insets
+            LInsets.Double lInsets = node.getInsets();
+            KInsets kInsets = nodeLayout.getInsets();
+            kInsets.setBottom((float) lInsets.bottom);
+            kInsets.setTop((float) lInsets.top);
+            kInsets.setLeft((float) lInsets.left);
+            kInsets.setRight((float) lInsets.right);
         }
 
         // get position of currentNodes representative in the layered graph
