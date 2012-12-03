@@ -422,6 +422,7 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
      */
     private void resizeNode(final LNode node, final double portSpacing) {
         KVector nodeSize = node.getSize();
+        KVector originalNodeSize = new KVector(nodeSize);
         EnumSet<SizeConstraint> sizeConstraint = node.getProperty(LayoutOptions.SIZE_CONSTRAINT);
         EnumSet<SizeOptions> sizeOptions = node.getProperty(LayoutOptions.SIZE_OPTIONS);
         
@@ -440,7 +441,8 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
             boolean accountForLabels = sizeConstraint.contains(SizeConstraint.PORT_LABELS);
             
             // Find out how large the node will have to be to accommodate all ports. If port
-            // constraints are set to FIXED_RATIO, we can't do anything actually
+            // constraints are set to FIXED_RATIO, we can't do anything smart, really; in this
+            // case we will just assume the original node size to be the minumum for ports
             KVector minSizeForPorts = null;
             switch (portConstraints) {
             case FREE:
@@ -448,6 +450,10 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
             case FIXED_ORDER:
                 // Calculate the space necessary to accomodate all ports
                 minSizeForPorts = calculatePortSpaceRequirements(node, portSpacing, accountForLabels);
+                break;
+            
+            case FIXED_RATIO:
+                minSizeForPorts = new KVector(originalNodeSize);
                 break;
             
             case FIXED_POS:
