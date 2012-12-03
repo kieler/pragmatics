@@ -136,6 +136,7 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
         // Iterate over all the graph's nodes
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
+                /* Note that, upon Miro's request, each phase of the algorithm was given a code name. */
                 
                 /* PREPARATIONS
                  * Reset stuff.
@@ -620,10 +621,13 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
     private void placePorts(final LNode node) {
         PortConstraints portConstraints = node.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         
-        if (portConstraints == PortConstraints.FIXED_RATIO) {
+        if (portConstraints == PortConstraints.FIXED_POS) {
+            // Fixed Position
+            placeFixedPosNodePorts(node);
+        } else if (portConstraints == PortConstraints.FIXED_RATIO) {
             // Fixed Ratio
             placeFixedRatioNodePorts(node);
-        } else if (portConstraints != PortConstraints.FIXED_POS) {
+        } else {
             // Free, Fixed Side, Fixed Order
             if (node.getProperty(LayoutOptions.HYPERNODE)
                     || (node.getSize().x == 0 && node.getSize().y == 0)) {
@@ -636,6 +640,27 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
     }
     
     /**
+     * Places the ports of a node assuming that the port constraints are set to fixed port positions.
+     * Ports still need to be placed, though, because the node may have been resized.
+     * 
+     * @param node the node whose ports to place.
+     */
+    private void placeFixedPosNodePorts(final LNode node) {
+        KVector nodeSize = node.getSize();
+
+        for (LPort port : node.getPorts()) {
+            switch (port.getSide()) {
+            case EAST:
+                port.getPosition().x = nodeSize.x;
+                break;
+            case SOUTH:
+                port.getPosition().y = nodeSize.y;
+                break;
+            }
+        }
+    }
+
+    /**
      * Places the ports of a node keeping the ratio between their position and the length of their
      * respective side intact.
      * 
@@ -643,7 +668,6 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
      */
     private void placeFixedRatioNodePorts(final LNode node) {
         // TODO Auto-generated method stub
-        
     }
     
     /**

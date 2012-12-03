@@ -729,7 +729,9 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 }
 
                 // set port positions
-                if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
+                if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()
+                        || !nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT).isEmpty()) {
+                    
                     for (LPort lport : lnode.getPorts()) {
                         origin = lport.getProperty(Properties.ORIGIN);
                         if (origin instanceof KPort) {
