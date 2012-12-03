@@ -360,6 +360,24 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 newPort.getAnchor().x = portSize.x / 2;
                 newPort.getAnchor().y = portSize.y / 2;
             }
+            
+            // if the port constraints are set to fixed ratio, remember the current ratio
+            if (portConstraints.isRatioFixed()) {
+                double ratio = 0.0;
+                
+                switch (portSide) {
+                case NORTH:
+                case SOUTH:
+                    ratio = portPos.x / nodeLayout.getWidth();
+                    break;
+                case EAST:
+                case WEST:
+                    ratio = portPos.y / nodeLayout.getHeight();
+                    break;
+                }
+                
+                newPort.setProperty(Properties.PORT_RATIO_OR_POSITION, ratio);
+            }
 
             elemMap.put(kport, newPort);
 
@@ -398,8 +416,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 //        if (ratio != null && (ratio.x != 1 || ratio.y != 1)) {
 //            newNode.setProperty(Properties.RESIZE_RATIO, ratio);
 //        }
-//        newNode.getSize().x = nodeLayout.getWidth();
-//        newNode.getSize().y = nodeLayout.getHeight();
+        newNode.getSize().x = nodeLayout.getWidth();
+        newNode.getSize().y = nodeLayout.getHeight();
 
         // add the node's labels
         for (KLabel klabel : node.getLabels()) {

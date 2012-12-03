@@ -667,7 +667,28 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
      * @param node the node whose ports to place.
      */
     private void placeFixedRatioNodePorts(final LNode node) {
-        // TODO Auto-generated method stub
+        KVector nodeSize = node.getSize();
+        
+        // Adjust port positions depending on port side. Eastern ports have to have their x coordinate
+        // set to the node's current width; the same goes for the y coordinate of southern ports
+        for (LPort port : node.getPorts()) {
+            switch (port.getSide()) {
+            case WEST:
+                port.getPosition().y = nodeSize.y * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
+                break;
+            case EAST:
+                port.getPosition().y = nodeSize.y * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
+                port.getPosition().x = nodeSize.x;
+                break;
+            case NORTH:
+                port.getPosition().x = nodeSize.x * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
+                break;
+            case SOUTH:
+                port.getPosition().x = nodeSize.x * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
+                port.getPosition().y = nodeSize.y;
+                break;
+            }
+        }
     }
     
     /**
