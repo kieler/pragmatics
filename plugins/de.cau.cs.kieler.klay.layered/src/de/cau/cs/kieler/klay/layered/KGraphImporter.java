@@ -37,6 +37,7 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -767,6 +768,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                         KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
                         klabelLayout.applyVector(label.getPosition());
                     }
+                }
+                
+                // set node insets, if requested
+                if (nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS)
+                        .contains(SizeOptions.COMPUTE_INSETS)) {
+                    
+                    // TODO: Apply insets as soon as we have an appropriate data type.
                 }
             } else if (origin instanceof KPort) {
                 // It's an external port. Set its position

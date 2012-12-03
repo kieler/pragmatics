@@ -453,6 +453,7 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
                 break;
             
             case FIXED_RATIO:
+                // Keep original node size
                 minSizeForPorts = new KVector(originalNodeSize);
                 break;
             
