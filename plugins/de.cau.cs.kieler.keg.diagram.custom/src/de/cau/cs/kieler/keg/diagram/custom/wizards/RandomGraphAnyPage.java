@@ -57,7 +57,7 @@ public class RandomGraphAnyPage extends WizardPage {
     /** the selected number of edges. */
     private int numberOfEdges;
     /** the selected density. */
-    private float density;
+    private int density;
     /** the selected minimum number of outgoing edges. */
     private int minOutgoingEdges;
     /** the selected maximum number of outgoing edges. */
@@ -180,7 +180,7 @@ public class RandomGraphAnyPage extends WizardPage {
         
         final Spinner densitySpinner = new Spinner(edgeGroup, SWT.BORDER | SWT.SINGLE);
         densitySpinner.setToolTipText(Messages.RandomGraphAnyPage_density_help);
-        densitySpinner.setValues((int) (density * 100), 0, 100, 2, 1, 10);
+        densitySpinner.setValues(density, 0, 100, 0, 1, 10);
         densitySpinner.setEnabled(false);
         
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -236,7 +236,7 @@ public class RandomGraphAnyPage extends WizardPage {
 
         densitySpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                density = ((float) densitySpinner.getSelection()) / 100f;
+                density = densitySpinner.getSelection();
             }
         });
 
@@ -372,7 +372,7 @@ public class RandomGraphAnyPage extends WizardPage {
         numberOfNodes = preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
         edgeDetermination = preferenceStore.getInt(RandomGraphGenerator.EDGE_DETERMINATION.getId());
         numberOfEdges = preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_EDGES.getId());
-        density = preferenceStore.getFloat(PREFERENCE_DENSITY);
+        density = preferenceStore.getInt(PREFERENCE_DENSITY);
         minOutgoingEdges = preferenceStore.getInt(RandomGraphGenerator.MIN_OUTGOING_EDGES.getId());
         maxOutgoingEdges = preferenceStore.getInt(RandomGraphGenerator.MAX_OUTGOING_EDGES.getId());
         selfLoops = preferenceStore.getBoolean(RandomGraphGenerator.SELF_LOOPS.getId());
@@ -388,7 +388,7 @@ public class RandomGraphAnyPage extends WizardPage {
                 EDGE_DETERMINATION_EDGES);
         preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_EDGES.getId(),
                 RandomGraphGenerator.NUMBER_OF_EDGES.getDefault());
-        preferenceStore.setDefault(PREFERENCE_DENSITY, 0.0f);
+        preferenceStore.setDefault(PREFERENCE_DENSITY, 10);
         preferenceStore.setDefault(RandomGraphGenerator.MIN_OUTGOING_EDGES.getId(),
                 RandomGraphGenerator.MIN_OUTGOING_EDGES.getDefault());
         preferenceStore.setDefault(RandomGraphGenerator.MAX_OUTGOING_EDGES.getId(),
@@ -430,7 +430,7 @@ public class RandomGraphAnyPage extends WizardPage {
      */
     public int getNumberOfEdges() {
         if (edgeDetermination == EDGE_DETERMINATION_DENSITY) {
-            return (int) (density * numberOfNodes * numberOfNodes);
+            return (int) ((density / 100.0) * numberOfNodes * numberOfNodes);
         }
         return numberOfEdges;
     }

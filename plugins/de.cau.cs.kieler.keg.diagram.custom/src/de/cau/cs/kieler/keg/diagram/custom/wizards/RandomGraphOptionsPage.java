@@ -42,19 +42,27 @@ public class RandomGraphOptionsPage extends WizardPage {
     
     /** ID of the Enable Hierarchy option. */
     private static final String ENABLE_HIERARCHY = "basic.enableHierarchy";
+    /**
+     * Default percentage of hierarchichal nodes. We cannot take the default value defined in
+     * {@link RandomGraphGenerator#HIERARCHY_CHANCE} since that can be 0, which we don't allow
+     * here.
+     */
+    private static final int DEFAULT_HIERARCHY_CHANCE = 5;
+    /** A hundred percent as a float value. */
+    private static final float HUNDRED_PERCENT = 100.0f;
     
     /** if hierarchy is enabled. */
     private boolean hierarchyEnabled;
     /** the selected hierarchy chance. */
-    private float hierarchyChance;
+    private int hierarchyChance;
     /** the selected maximum hierarchy level. */
     private int maxHierarchyLevel;
     /** the selected hierarchy nodes factor. */
     private float hierarchyNodesFactor;
     /** the selected hypernode chance. */
-    private float hypernodeChance;
+    private int hypernodeChance;
     /** the selected chance for directed edges. */
-    private float edgeDirectedChance;
+    private int edgeDirectedChance;
     /** the selected port usage. */
     private boolean ports;
     /** whether cross-hierarchy edges are allowed. */
@@ -102,7 +110,7 @@ public class RandomGraphOptionsPage extends WizardPage {
         
         final Spinner hypernodeSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
         hypernodeSpinner.setToolTipText(Messages.RandomGraphUtilityPage_hypernode_help);
-        hypernodeSpinner.setValues((int) (hypernodeChance * 100), 0, 100, 2, 1, 10);
+        hypernodeSpinner.setValues(hypernodeChance, 0, 100, 0, 1, 10);
         
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
@@ -110,7 +118,7 @@ public class RandomGraphOptionsPage extends WizardPage {
         
         hypernodeSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                hypernodeChance = ((float) hypernodeSpinner.getSelection()) / 100f;
+                hypernodeChance = hypernodeSpinner.getSelection();
             }
         });
         
@@ -120,7 +128,7 @@ public class RandomGraphOptionsPage extends WizardPage {
         
         final Spinner edgeDirectedSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
         edgeDirectedSpinner.setToolTipText(Messages.RandomGraphUtilityPage_directed_help);
-        edgeDirectedSpinner.setValues((int) (edgeDirectedChance * 100), 0, 100, 2, 1, 10);
+        edgeDirectedSpinner.setValues(edgeDirectedChance, 0, 100, 0, 1, 10);
         
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
@@ -128,7 +136,7 @@ public class RandomGraphOptionsPage extends WizardPage {
         
         edgeDirectedSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                edgeDirectedChance = ((float) edgeDirectedSpinner.getSelection()) / 100f;
+                edgeDirectedChance = edgeDirectedSpinner.getSelection();
             }
         });
     }
@@ -160,7 +168,7 @@ public class RandomGraphOptionsPage extends WizardPage {
         
         final Spinner hierarchySpinner = new Spinner(hierarchyGroup, SWT.BORDER | SWT.SINGLE);
         hierarchySpinner.setToolTipText(Messages.RandomGraphUtilityPage_hierarchy_help);
-        hierarchySpinner.setValues((int) (hierarchyChance * 100), 0, 100, 2, 1, 10);
+        hierarchySpinner.setValues(hierarchyChance, 1, 100, 0, 1, 10);
         hierarchySpinner.setEnabled(hierarchyEnabled);
         
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -207,6 +215,7 @@ public class RandomGraphOptionsPage extends WizardPage {
         hierarchyEdgesButton.setText(Messages.RandomGraphUtilityPage_hierarchy_edges_caption);
         hierarchyEdgesButton.setToolTipText(Messages.RandomGraphUtilityPage_hierarchy_edges_help);
         hierarchyEdgesButton.setSelection(crossHierarchyEdges);
+        hierarchyEdgesButton.setEnabled(hierarchyEnabled);
         
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false, 2, 1);
         gridData.horizontalIndent = 30;
@@ -221,6 +230,7 @@ public class RandomGraphOptionsPage extends WizardPage {
                 hierarchySpinner.setEnabled(hierarchyEnabled);
                 hierarchyLevelSpinner.setEnabled(hierarchyEnabled);
                 hierarchyFactorSpinner.setEnabled(hierarchyEnabled);
+                hierarchyEdgesButton.setEnabled(hierarchyEnabled);
             }
         });
         
@@ -263,7 +273,7 @@ public class RandomGraphOptionsPage extends WizardPage {
         portsGroup.setLayout(new GridLayout(2, false));
         portsGroup.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 2, 1));
         
-        // add PORTS option
+        // Enable Ports option
         final Button portsButton = new Button(portsGroup, SWT.CHECK);
         portsButton.setText(Messages.RandomGraphUtilityPage_ports_caption);
         portsButton.setToolTipText(Messages.RandomGraphUtilityPage_ports_help);
@@ -305,13 +315,13 @@ public class RandomGraphOptionsPage extends WizardPage {
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
         hierarchyEnabled = preferenceStore.getBoolean(ENABLE_HIERARCHY);
-        hierarchyChance = preferenceStore.getFloat(RandomGraphGenerator.HIERARCHY_CHANCE.getId());
+        hierarchyChance = preferenceStore.getInt(RandomGraphGenerator.HIERARCHY_CHANCE.getId());
         maxHierarchyLevel = preferenceStore
                 .getInt(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getId());
         hierarchyNodesFactor = preferenceStore.getFloat(RandomGraphGenerator.HIERARCHY_NODES_FACTOR
                 .getId());
-        hypernodeChance = preferenceStore.getFloat(RandomGraphGenerator.HYPERNODE_CHANCE.getId());
-        edgeDirectedChance = preferenceStore.getFloat(RandomGraphGenerator.EDGE_DIRECTED_CHANCE
+        hypernodeChance = preferenceStore.getInt(RandomGraphGenerator.HYPERNODE_CHANCE.getId());
+        edgeDirectedChance = preferenceStore.getInt(RandomGraphGenerator.EDGE_DIRECTED_CHANCE
                 .getId());
         ports = preferenceStore.getBoolean(RandomGraphGenerator.PORTS.getId());
         crossHierarchyEdges = preferenceStore.getBoolean(RandomGraphGenerator.CROSS_HIERARCHY_EDGES
@@ -322,15 +332,15 @@ public class RandomGraphOptionsPage extends WizardPage {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
         preferenceStore.setDefault(ENABLE_HIERARCHY, false);
         preferenceStore.setDefault(RandomGraphGenerator.HIERARCHY_CHANCE.getId(),
-                RandomGraphGenerator.HIERARCHY_CHANCE.getDefault());
+                DEFAULT_HIERARCHY_CHANCE);
         preferenceStore.setDefault(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getId(),
                 RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getDefault());
         preferenceStore.setDefault(RandomGraphGenerator.HIERARCHY_NODES_FACTOR.getId(),
                 RandomGraphGenerator.HIERARCHY_NODES_FACTOR.getDefault());
         preferenceStore.setDefault(RandomGraphGenerator.HYPERNODE_CHANCE.getId(),
-                RandomGraphGenerator.HYPERNODE_CHANCE.getDefault());
+                (int) (RandomGraphGenerator.HYPERNODE_CHANCE.getDefault() * HUNDRED_PERCENT));
         preferenceStore.setDefault(RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getId(),
-                RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getDefault());
+                (int) (RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getDefault() * HUNDRED_PERCENT));
         preferenceStore.setDefault(RandomGraphGenerator.PORTS.getId(),
                 RandomGraphGenerator.PORTS.getDefault());
         preferenceStore.setDefault(RandomGraphGenerator.CROSS_HIERARCHY_EDGES.getId(),
@@ -352,7 +362,7 @@ public class RandomGraphOptionsPage extends WizardPage {
      * @return the hierarchy chance
      */
     public float getHierarchyChance() {
-        return hierarchyChance;
+        return hierarchyChance / HUNDRED_PERCENT;
     }
 
     /**
@@ -379,7 +389,7 @@ public class RandomGraphOptionsPage extends WizardPage {
      * @return the hypernode chance
      */
     public float getHypernodeChance() {
-        return hypernodeChance;
+        return hypernodeChance / HUNDRED_PERCENT;
     }
 
     /**
@@ -388,7 +398,7 @@ public class RandomGraphOptionsPage extends WizardPage {
      * @return the chance for creating a directed edge
      */
     public float getEdgeDirectedChance() {
-        return edgeDirectedChance;
+        return edgeDirectedChance / HUNDRED_PERCENT;
     }
 
     /**

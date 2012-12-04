@@ -63,21 +63,21 @@ public class RandomGraphTriconnectedPage extends WizardPage {
     // CHECKSTYLEOFF MagicNumber
     private void createOptions(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NULL);
-        GridData gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
-        composite.setLayoutData(gridData);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        layout.verticalSpacing = 9;
-        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+        composite.setLayout(new GridLayout(2, false));
+        
         // add NUMBER_OF_NODES option
         Label label = new Label(composite, SWT.NULL);
         label.setText(Messages.RandomGraphTriconnectedPage_number_of_nodes_caption);
+        
         final Spinner nodesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(nodesSpinner, Messages.RandomGraphTriconnectedPage_number_of_nodes_help);
+        nodesSpinner.setToolTipText(Messages.RandomGraphTriconnectedPage_number_of_nodes_help);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        
+        GridData gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
         nodesSpinner.setLayoutData(gridData);
+        
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 numberOfNodes = nodesSpinner.getSelection();
