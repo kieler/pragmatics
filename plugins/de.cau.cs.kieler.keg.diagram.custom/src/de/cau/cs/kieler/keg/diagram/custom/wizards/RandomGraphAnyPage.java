@@ -197,7 +197,7 @@ public class RandomGraphAnyPage extends WizardPage {
         Label label = new Label(edgeGroup, SWT.NONE);
         label.setText(Messages.RandomGraphAnyPage_min_outgoing_caption);
         
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData = new GridData(SWT.LEFT, SWT.CENTER, false, false);
         gridData.horizontalIndent = 30;
         label.setLayoutData(gridData);
         
@@ -214,7 +214,7 @@ public class RandomGraphAnyPage extends WizardPage {
         label = new Label(edgeGroup, SWT.NONE);
         label.setText(Messages.RandomGraphAnyPage_max_outgoing_caption);
         
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData = new GridData(SWT.LEFT, SWT.CENTER, false, false);
         gridData.horizontalIndent = 30;
         label.setLayoutData(gridData);
         

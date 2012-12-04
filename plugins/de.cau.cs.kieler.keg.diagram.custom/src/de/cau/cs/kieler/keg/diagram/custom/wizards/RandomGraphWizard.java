@@ -96,8 +96,8 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
     private RandomGraphTriconnectedPage triconnectedPage;
     /** the page for the ACYCLIC_NO_TRANSITIV_EDGES graph type. */
     private RandomGraphANTEPage antePage;
-    /** the utility page. */
-    private RandomGraphUtilityPage utilityPage;
+    /** the options page. */
+    private RandomGraphOptionsPage optionsPage;
 
     /**
      * Creates a RandomGraphWizard.
@@ -120,7 +120,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         biconnectedPage = new RandomGraphBiconnectedPage();
         triconnectedPage = new RandomGraphTriconnectedPage();
         antePage = new RandomGraphANTEPage();
-        utilityPage = new RandomGraphUtilityPage();
+        optionsPage = new RandomGraphOptionsPage();
         addPage(newFilePage);
         addPage(typePage);
         addPage(anyPage);
@@ -128,7 +128,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         addPage(biconnectedPage);
         addPage(triconnectedPage);
         addPage(antePage);
-        addPage(utilityPage);
+        addPage(optionsPage);
     }
 
     /**
@@ -152,10 +152,13 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
             default:
                 return anyPage;
             }
-        } else if (page == treePage || page == biconnectedPage || page == triconnectedPage
-                || page == antePage || page == anyPage) {
+        } else if (page == treePage
+                || page == biconnectedPage
+                || page == triconnectedPage
+                || page == antePage
+                || page == anyPage) {
             
-            return utilityPage;
+            return optionsPage;
         } else {
             return null;
         }
@@ -461,17 +464,19 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         }
         
         // Common options
-        options.setProperty(RandomGraphGenerator.HIERARCHY_CHANCE, utilityPage.getHierarchyChance());
+        if (optionsPage.isHierarchyEnabled()) {
+            options.setProperty(RandomGraphGenerator.HIERARCHY_CHANCE, optionsPage.getHierarchyChance());
+        }
         options.setProperty(RandomGraphGenerator.MAX_HIERARCHY_LEVEL,
-                utilityPage.getMaximumHierarchyLevel());
+                optionsPage.getMaximumHierarchyLevel());
         options.setProperty(RandomGraphGenerator.HIERARCHY_NODES_FACTOR,
-                utilityPage.getHierarchyNodesFactor());
-        options.setProperty(RandomGraphGenerator.HYPERNODE_CHANCE, utilityPage.getHypernodeChance());
+                optionsPage.getHierarchyNodesFactor());
+        options.setProperty(RandomGraphGenerator.HYPERNODE_CHANCE, optionsPage.getHypernodeChance());
         options.setProperty(RandomGraphGenerator.EDGE_DIRECTED_CHANCE,
-                utilityPage.getEdgeDirectedChance());
-        options.setProperty(RandomGraphGenerator.PORTS, utilityPage.getPorts());
+                optionsPage.getEdgeDirectedChance());
+        options.setProperty(RandomGraphGenerator.PORTS, optionsPage.getPorts());
         options.setProperty(RandomGraphGenerator.CROSS_HIERARCHY_EDGES,
-                utilityPage.getCrossHierarchyEdges());
+                optionsPage.getCrossHierarchyEdges());
         
         return options;
     }
@@ -496,6 +501,6 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
             antePage.savePreferences();
             break;
         }
-        utilityPage.savePreferences();
+        optionsPage.savePreferences();
     }
 }
