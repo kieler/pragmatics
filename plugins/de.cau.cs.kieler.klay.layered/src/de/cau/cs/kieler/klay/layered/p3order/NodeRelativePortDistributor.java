@@ -21,9 +21,9 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
- * Calculates port ranks and distributes ports in a node-relative way.
+ * Calculates port ranks in a node-relative way.
  * 
- * <p>Port ranks are calculated by giving each node {@code i} a range of values {@code [i,i+1)} to
+ * <p>Port ranks are calculated by giving each node {@code i} a range of values {@code [i,i+1]} to
  * distribute their port values in. This effectively gives a node with many ports the same weight as
  * a node with few ports as opposed to a strategy that just numbers ports from top to bottom.</p>
  * 
@@ -104,7 +104,7 @@ class NodeRelativePortDistributor extends AbstractPortDistributor {
             
             default:
                 // this means illegal input to the method
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Port type is undefined");
             }
             
         } else {
@@ -154,6 +154,10 @@ class NodeRelativePortDistributor extends AbstractPortDistributor {
                 return INCR_FOUR;
             }
             break;
+            
+        default:
+            // this means illegal input to the method
+            throw new IllegalArgumentException("Port type is undefined");
         }
         return 0;
     }

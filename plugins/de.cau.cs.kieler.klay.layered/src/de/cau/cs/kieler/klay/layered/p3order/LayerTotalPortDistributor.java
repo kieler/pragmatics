@@ -20,11 +20,22 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
+ * Calculates port ranks in a layer-total way.
+ * 
+ * <p>Port ranks are calculated by giving each node {@code i} a range of values {@code [i,i+x]},
+ * where {@code x} is the number of input ports or output ports. Hence nodes with many ports are
+ * assigned a broader range of ranks than nodes with few ports.</p>
+ * 
+ * <p>The port rank calculation done here depends on the fact that
+ * {@link #calculatePortRanks(LNode, int, PortType)} is always called iteratively for all nodes
+ * of a layer according to the current order. The rank of nodes is accumulated, since it does
+ * not only depend on the node index, but also on the number of ports of preceding nodes.</p>
  *
  * @author msp
  */
 class LayerTotalPortDistributor extends AbstractPortDistributor {
     
+    /** the cumulative node rank of the currently processed layer. */
     private int cumulativeNodeRank;
 
     /**
@@ -97,15 +108,73 @@ class LayerTotalPortDistributor extends AbstractPortDistributor {
             }
             
         } else {
-            int increase = 0;
+            // determine the minimal and maximal increment depending on port sides
+            float minIncr = INCR_FOUR;
+            float maxIncr = 0;
             for (LPort port : node.getPorts(type)) {
-                portRanks[port.id] = cumulativeNodeRank + 1;
-                increase = 1;
+                float incr = getPortIncr(type, port.getSide());
+                minIncr = Math.min(minIncr, incr - 1);
+                maxIncr = Math.max(maxIncr, incr);
             }
+
+            if (maxIncr > minIncr) {
+                // make sure that ports on different sides get different ranks
+                for (LPort port : node.getPorts(type)) {
+                    portRanks[port.id] = cumulativeNodeRank
+                            + getPortIncr(type, port.getSide()) - minIncr;
+                }
             
-            // increase the cumulative node rank only if at least one outgoing edge was found
-            cumulativeNodeRank += increase;
+                cumulativeNodeRank += maxIncr - minIncr;
+            }
         }
+    }
+
+    private static final float INCR_ONE = 1;
+    private static final float INCR_TWO = 2;
+    private static final float INCR_THREE = 3;
+    private static final float INCR_FOUR = 4;
+
+    /**
+     * Return an increment value for the position of a port with given type and side.
+     * 
+     * @param type
+     *            the port type
+     * @param side
+     *            the port side
+     * @return a position increment for the port
+     */
+    private static float getPortIncr(final PortType type, final PortSide side) {
+        switch (type) {
+        case INPUT:
+            switch (side) {
+            case NORTH:
+                return INCR_ONE;
+            case WEST:
+                return INCR_TWO;
+            case SOUTH:
+                return INCR_THREE;
+            case EAST:
+                return INCR_FOUR;
+            }
+            break;
+        case OUTPUT:
+            switch (side) {
+            case NORTH:
+                return INCR_ONE;
+            case EAST:
+                return INCR_TWO;
+            case SOUTH:
+                return INCR_THREE;
+            case WEST:
+                return INCR_FOUR;
+            }
+            break;
+            
+        default:
+            // this means illegal input to the method
+            throw new IllegalArgumentException("Port type is undefined");
+        }
+        return 0;
     }
 
 }

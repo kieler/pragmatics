@@ -82,7 +82,7 @@ public class PortListSorter implements ILayoutProcessor {
                 
             default:
                 // Port sides should not be undefined
-                throw new IllegalStateException();
+                throw new IllegalStateException("Port side is undefined");
             }
         }
         

@@ -25,6 +25,13 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
  * Calculates port ranks and distributes ports.
+ * The <em>rank</em> of a port is a floating point number that represents its position
+ * inside the containing layer. This depends on the node order of that layer and on the
+ * port constraints of the nodes. Port ranks are used by {@link ICrossingMinimizationHeuristic}s
+ * for calculating barycenter or median values for nodes. Furthermore, they are used in this
+ * class for distributing the ports of nodes where the order of ports is not fixed,
+ * which has to be done as the last step of each crossing minimization processor.
+ * There are different ways to determine port ranks, therefore that is done in concrete subclasses.
  * 
  * @author cds
  * @author ima
@@ -64,7 +71,9 @@ abstract class AbstractPortDistributor {
     // Port Rank Assignment
     
     /**
-     * Assign port positions for the input or output ports of the given node.
+     * Assign port ranks for the input or output ports of the given node. If the node's port
+     * constraints imply a fixed order, the ports are assumed to be pre-ordered in the usual way,
+     * i.e. in clockwise order north - east - south - west.
      * 
      * @param node
      *            a node
@@ -72,12 +81,12 @@ abstract class AbstractPortDistributor {
      *            the node's index in its layer
      * @param type
      *            the port type to consider
+     * @see de.cau.cs.kieler.klay.layered.intermediate.PortListSorter
      */
     protected abstract void calculatePortRanks(final LNode node, final int nodeIx, final PortType type);
     
     /**
-     * Determine positions for all ports of specific type in the given layer. Input and output ports
-     * are processed separately.
+     * Determine ranks for all ports of specific type in the given layer.
      * 
      * @param layer
      *            a layer as node array
@@ -91,8 +100,8 @@ abstract class AbstractPortDistributor {
     }
     
     /**
-     * Determine positions for all ports of specific type in the given layer. Input and output ports
-     * are processed separately. Entries that contain multiple nodes are ignored.
+     * Determine ranks for all ports of specific type in the given layer. Entries that
+     * contain multiple nodes are ignored.
      * 
      * @param layer
      *            a layer as node group array
@@ -113,7 +122,10 @@ abstract class AbstractPortDistributor {
     // Port Distribution
 
     /**
-     * {@inheritDoc}
+     * Distribute the ports of each node in the layered graph depending on the port constraints.
+     * 
+     * @param layeredGraph
+     *            a layered graph as node array
      */
     public final void distributePorts(final LNode[][] layeredGraph) {
         for (int l = 0; l < layeredGraph.length; l++) {
@@ -128,7 +140,10 @@ abstract class AbstractPortDistributor {
     }
     
     /**
-     * {@inheritDoc}
+     * Distribute the ports of each node in the layered graph depending on the port constraints.
+     * 
+     * @param layeredGraph
+     *            a layered graph as node group array
      */
     public final void distributePorts(final NodeGroup[][] layeredGraph) {
         for (int l = 0; l < layeredGraph.length; l++) {

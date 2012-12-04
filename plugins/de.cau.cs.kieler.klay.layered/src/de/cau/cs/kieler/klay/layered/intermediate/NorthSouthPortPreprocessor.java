@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -145,10 +147,8 @@ public class NorthSouthPortPreprocessor implements ILayoutProcessor {
                 // Prepare a list of ports on the northern side, sorted from left
                 // to right (when viewed in the diagram); create the appropriate
                 // dummy nodes and assign them to the layer
-                List<LPort> portList = new LinkedList<LPort>();
-                for (LPort port : node.getPorts(PortSide.NORTH)) {
-                    portList.add(port);
-                }
+                LinkedList<LPort> portList = new LinkedList<LPort>();
+                Iterables.addAll(portList, node.getPorts(PortSide.NORTH));
 
                 createDummyNodes(layeredGraph, portList, northDummyNodes, southDummyNodes,
                         barycenterAssociates);
@@ -163,9 +163,7 @@ public class NorthSouthPortPreprocessor implements ILayoutProcessor {
                     // were created from. In addition, the order of the dummy nodes must
                     // be fixed.
                     dummy.setProperty(Properties.IN_LAYER_LAYOUT_UNIT, node);
-                    dummy.setProperty(
-                            Properties.IN_LAYER_SUCCESSOR_CONSTRAINT,
-                            successor);
+                    dummy.setProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT, successor);
                     
                     successor = dummy;
                 }
@@ -175,7 +173,7 @@ public class NorthSouthPortPreprocessor implements ILayoutProcessor {
                 // listed from right to left
                 portList.clear();
                 for (LPort port : node.getPorts(PortSide.SOUTH)) {
-                    portList.add(0, port);
+                    portList.addFirst(port);
                 }
                 
                 createDummyNodes(layeredGraph, portList, southDummyNodes, null,
@@ -189,9 +187,7 @@ public class NorthSouthPortPreprocessor implements ILayoutProcessor {
                     // were created from. In addition, the order of the dummy nodes must
                     // be fixed.
                     dummy.setProperty(Properties.IN_LAYER_LAYOUT_UNIT, node);
-                    predecessor.setProperty(
-                            Properties.IN_LAYER_SUCCESSOR_CONSTRAINT,
-                            dummy);
+                    predecessor.setProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT, dummy);
                     
                     predecessor = dummy;
                 }
