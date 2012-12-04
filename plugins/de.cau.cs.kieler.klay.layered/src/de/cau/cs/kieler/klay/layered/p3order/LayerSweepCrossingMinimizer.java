@@ -34,6 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -89,8 +90,15 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
+        IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration(
+                INTERMEDIATE_PROCESSING_CONFIGURATION);
         
-        return INTERMEDIATE_PROCESSING_CONFIGURATION;
+        if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.NON_FREE_PORTS)) {
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_3,
+                    LayoutProcessorStrategy.PORT_LIST_SORTER);
+        }
+        
+        return configuration;
     }
     
     /** array of port ranks used for sorting nodes and ports. */
