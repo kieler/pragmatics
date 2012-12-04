@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 import de.cau.cs.kieler.keg.diagram.custom.KEGDiagramPlugin;
 import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
@@ -64,40 +65,66 @@ public class RandomGraphTypePage extends WizardPage {
     private void createGraphTypeGroup(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
-        rowLayout.spacing = 20;
+        rowLayout.spacing = 5;
         composite.setLayout(rowLayout);
+        
+        // label
+        Label label = new Label(composite, SWT.NULL);
+        label.setText("Graph type:");
+        
         // create buttons
-        Button anyButton =
-                addRadioButton(composite, Messages.RandomGraphTypePage_any_graph_type_caption,
-                        RandomGraphGenerator.GraphType.ANY, graphType);
-        Util.addHelp(anyButton, Messages.RandomGraphTypePage_any_graph_type_help);
-        Button treeButton =
-                addRadioButton(composite, Messages.RandomGraphTypePage_tree_graph_type_caption,
-                        RandomGraphGenerator.GraphType.TREE, graphType);
-        Util.addHelp(treeButton, Messages.RandomGraphTypePage_tree_graph_type_help);
-        Button biconnectedButton =
-                addRadioButton(composite,
-                        Messages.RandomGraphTypePage_biconnected_graph_type_caption,
-                        RandomGraphGenerator.GraphType.BICONNECTED, graphType);
-        Util.addHelp(biconnectedButton, Messages.RandomGraphTypePage_biconnected_graph_type_help);
-        Button triconnectedButton =
-                addRadioButton(composite,
-                        Messages.RandomGraphTypePage_triconnected_graph_type_caption,
-                        RandomGraphGenerator.GraphType.TRICONNECTED, graphType);
-        Util.addHelp(triconnectedButton, Messages.RandomGraphTypePage_triconnected_graph_type_help);
-        Button anteButton =
-                addRadioButton(composite, Messages.RandomGraphTypePage_ante_graph_type_caption,
-                        RandomGraphGenerator.GraphType.ACYCLIC_NO_TRANSITIV_EDGES, graphType);
-        Util.addHelp(anteButton, Messages.RandomGraphTypePage_ante_graph_type_help);
+        addRadioButton(
+                composite,
+                Messages.RandomGraphTypePage_tree_graph_type_caption,
+                Messages.RandomGraphTypePage_tree_graph_type_help,
+                RandomGraphGenerator.GraphType.TREE,
+                graphType);
+        addRadioButton(
+                composite,
+                Messages.RandomGraphTypePage_biconnected_graph_type_caption,
+                Messages.RandomGraphTypePage_biconnected_graph_type_help,
+                RandomGraphGenerator.GraphType.BICONNECTED,
+                graphType);
+        addRadioButton(composite,
+                Messages.RandomGraphTypePage_triconnected_graph_type_caption,
+                Messages.RandomGraphTypePage_triconnected_graph_type_help,
+                RandomGraphGenerator.GraphType.TRICONNECTED,
+                graphType);
+        addRadioButton(
+                composite,
+                Messages.RandomGraphTypePage_ante_graph_type_caption,
+                Messages.RandomGraphTypePage_ante_graph_type_help,
+                RandomGraphGenerator.GraphType.ACYCLIC_NO_TRANSITIV_EDGES,
+                graphType);
+        addRadioButton(
+                composite,
+                Messages.RandomGraphTypePage_any_graph_type_caption,
+                Messages.RandomGraphTypePage_any_graph_type_help,
+                RandomGraphGenerator.GraphType.ANY,
+                graphType);
     }
-
-    private Button addRadioButton(final Composite parent, final String description,
+    
+    /**
+     * Creates a radio button with the specified properties as child of the given parent composite.
+     * 
+     * @param parent the new radio button's parent composite.
+     * @param text the button's text.
+     * @param toolTip the button's tool tip text.
+     * @param type the graph type represented by the button.
+     * @param selected the currently selected graph type. If this is equal to the button's graph type,
+     *                 the button will be selected.
+     */
+    private void addRadioButton(final Composite parent, final String text, final String toolTip,
             final RandomGraphGenerator.GraphType type, final RandomGraphGenerator.GraphType selected) {
+        
         final Button radio = new Button(parent, SWT.RADIO | SWT.LEFT);
-        radio.setText(description);
+        radio.setText(text);
+        radio.setToolTipText(toolTip);
+        
         if (type.equals(selected)) {
             radio.setSelection(true);
         }
+        
         radio.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(final SelectionEvent e) {
@@ -110,27 +137,30 @@ public class RandomGraphTypePage extends WizardPage {
                 // do nothing
             }
         });
-        return radio;
     }
 
     // CHECKSTYLEON MagicNumber
 
     /**
-     * Saves the selected options to the preference store.
+     * Saves the selected graph type to the preference store.
      */
     public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setValue(RandomGraphGenerator.GRAPH_TYPE.getId(),
-                graphType.toString());
+        preferenceStore.setValue(RandomGraphGenerator.GRAPH_TYPE.getId(), graphType.toString());
     }
-
+    
+    /**
+     * Loads the previously selected graph type from the preference store.
+     */
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        graphType =
-                RandomGraphGenerator.GraphType.valueOf(preferenceStore
-                        .getString(RandomGraphGenerator.GRAPH_TYPE.getId()));
+        graphType = RandomGraphGenerator.GraphType.valueOf(
+                preferenceStore.getString(RandomGraphGenerator.GRAPH_TYPE.getId()));
     }
-
+    
+    /**
+     * Sets the default graph type.
+     */
     private void setDefaultPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
         preferenceStore.setDefault(RandomGraphGenerator.GRAPH_TYPE.getId(),

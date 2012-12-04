@@ -24,6 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
@@ -80,41 +81,68 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
     @Override
     // CHECKSTYLEOFF MagicNumber
     protected void createAdvancedControls(final Composite parent) {
-        Composite composite = new Composite(parent, SWT.NULL);
+        // group box
+        Group group = new Group(parent, SWT.NULL);
+        group.setText("Options");
+        
         GridData gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
-        composite.setLayoutData(gridData);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        layout.verticalSpacing = 9;
-        composite.setLayout(layout);
+        group.setLayoutData(gridData);
+        
+        GridLayout layout = new GridLayout(2, false);
+        group.setLayout(layout);
+        
         // add option for a number of graphs to be created
-        Label label = new Label(composite, SWT.NULL);
+        Label label = new Label(group, SWT.NULL);
         label.setText(Messages.RandomGraphNewFilePage_number_of_graphs_caption);
-        final Spinner graphsSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
+        
+        final Spinner graphsSpinner = new Spinner(group, SWT.BORDER | SWT.SINGLE);
+        graphsSpinner.setToolTipText("The number of graphs to be generated.");
         graphsSpinner.setValues(numberOfGraphs, 1, Integer.MAX_VALUE, 0, 1, 10);
+        
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 50;
         graphsSpinner.setLayoutData(gridData);
+        
+        // add option for creating diagram files for the graphs
+        final Button diagramButton = new Button(group, SWT.CHECK);
+        diagramButton.setText(Messages.RandomGraphNewFilePage_create_diagrams_caption);
+        diagramButton.setToolTipText("Initialize a diagram file for each created KEG graph.");
+        diagramButton.setSelection(diagramFiles);
+        
+        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData.horizontalSpan = 2;
+        gridData.verticalIndent = 10;
+        diagramButton.setLayoutData(gridData);
+        
+        // add option for creating diagram files for the graphs
+        final Button openButton = new Button(group, SWT.CHECK);
+        openButton.setText(Messages.RandomGraphNewFilePage_open_diagrams_caption);
+        openButton.setToolTipText("Open the created diagram files in KEG editors.");
+        openButton.setSelection(openDiagramFiles);
+        openButton.setEnabled(diagramFiles);
+        
+        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData.horizontalSpan = 2;
+        gridData.horizontalIndent = 20;
+        openButton.setLayoutData(gridData);
+        
+        // create the advanced options and hide them
+        Composite advanced = new Composite(group, SWT.NULL);
+        advanced.setVisible(false);
+        gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
+        gridData.exclude = true;
+        advanced.setLayoutData(gridData);
+        layout = new GridLayout();
+        advanced.setLayout(layout);
+        super.createAdvancedControls(advanced);
+        
+        // event listeners
         graphsSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 numberOfGraphs = graphsSpinner.getSelection();
             }
         });
-        // add option for creating diagram files for the graphs
-        final Button diagramButton = new Button(composite, SWT.CHECK);
-        diagramButton.setText(Messages.RandomGraphNewFilePage_create_diagrams_caption);
-        diagramButton.setSelection(diagramFiles);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.horizontalSpan = 2;
-        diagramButton.setLayoutData(gridData);
-        // add option for creating diagram files for the graphs
-        final Button openButton = new Button(composite, SWT.CHECK);
-        openButton.setText(Messages.RandomGraphNewFilePage_open_diagrams_caption);
-        openButton.setSelection(openDiagramFiles);
-        openButton.setEnabled(diagramFiles);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.horizontalSpan = 2;
-        openButton.setLayoutData(gridData);
+        
         openButton.addSelectionListener(new SelectionListenerAdapter() {
             public void widgetSelected(final SelectionEvent e) {
                 openDiagramFiles = openButton.getSelection();
@@ -132,15 +160,6 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
                 }
             }
         });
-        // create the advanced options and hide them
-        Composite advanced = new Composite(composite, SWT.NULL);
-        advanced.setVisible(false);
-        gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
-        gridData.exclude = true;
-        advanced.setLayoutData(gridData);
-        layout = new GridLayout();
-        advanced.setLayout(layout);
-        super.createAdvancedControls(advanced);
     }
 
     // CHECKSTYLEON MagicNumber

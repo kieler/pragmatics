@@ -138,8 +138,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
     public IWizardPage getNextPage(final IWizardPage page) {
         if (page == newFilePage) {
             return typePage;
-        }
-        if (page == typePage) {
+        } else if (page == typePage) {
             switch (typePage.getGraphType()) {
             case TREE:
                 return treePage;
@@ -153,12 +152,13 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
             default:
                 return anyPage;
             }
-        }
-        if (page == treePage || page == biconnectedPage || page == triconnectedPage
+        } else if (page == treePage || page == biconnectedPage || page == triconnectedPage
                 || page == antePage || page == anyPage) {
+            
             return utilityPage;
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**
@@ -186,6 +186,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                 return false;
             }
         }
+        
         // run the generation in the wizard container
         IRunnableWithProgress runnable = new IRunnableWithProgress() {
             public void run(final IProgressMonitor monitor) throws InterruptedException,
@@ -199,6 +200,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                 }
             }
         };
+        
         try {
             getContainer().run(true, true, runnable);
         } catch (InterruptedException exception) {
@@ -334,7 +336,14 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
             monitor.done();
         }
     }
-
+    
+    /**
+     * Initializes a diagram from the given model file.
+     * 
+     * @param modelFile the model file to create a diagram for.
+     * @param diagramFile path of the diagram file to create.
+     * @throws IOException if anything goes wrong.
+     */
     private void createDiagram(final IPath modelFile, final IPath diagramFile) throws IOException {
         closeDiagram(diagramFile);
         // load the model
@@ -353,7 +362,12 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         diagramResource.getContents().add(diagram);
         diagramResource.save(GraphsDiagramEditorUtil.getSaveOptions());
     }
-
+    
+    /**
+     * Closes the given diagram file if it is open in any editors.
+     * 
+     * @param diagramPath the diagram file to close.
+     */
     private void closeDiagram(final IPath diagramPath) {
         final IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(diagramPath);
         if (diagramFile.exists()) {
@@ -371,7 +385,12 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
             });
         }
     }
-
+    
+    /**
+     * Opens the given diagram file.
+     * 
+     * @param diagramPath path to the diagram file that is to be opened.
+     */
     private void openDiagram(final IPath diagramPath) {
         final IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(diagramPath);
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
@@ -403,6 +422,8 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
     private IPropertyHolder getOptions() {
         IPropertyHolder options = new MapPropertyHolder();
         options.setProperty(RandomGraphGenerator.GRAPH_TYPE, typePage.getGraphType());
+        
+        // Graph-specific options
         switch (typePage.getGraphType()) {
         case ANY:
             options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES, anyPage.getNumberOfNodes());
@@ -438,6 +459,8 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
             options.setProperty(RandomGraphGenerator.PLANAR, antePage.getPlanar());
             break;
         }
+        
+        // Common options
         options.setProperty(RandomGraphGenerator.HIERARCHY_CHANCE, utilityPage.getHierarchyChance());
         options.setProperty(RandomGraphGenerator.MAX_HIERARCHY_LEVEL,
                 utilityPage.getMaximumHierarchyLevel());
@@ -449,6 +472,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         options.setProperty(RandomGraphGenerator.PORTS, utilityPage.getPorts());
         options.setProperty(RandomGraphGenerator.CROSS_HIERARCHY_EDGES,
                 utilityPage.getCrossHierarchyEdges());
+        
         return options;
     }
 
