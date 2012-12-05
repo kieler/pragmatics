@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.awt.geom.Rectangle2D;
 import java.util.EnumSet;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -46,7 +46,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  * @author cds
  */
-public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
     
     /** Distance between labels and ports or edges. */
     public static final int LABEL_DISTANCE = 3;
@@ -129,8 +129,8 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Node and Port Label Placement and Node Sizing", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Node and Port Label Placement and Node Sizing", 1);
         double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
 
         // Iterate over all the graph's nodes
@@ -200,7 +200,7 @@ public final class LabelAndNodeSizeProcessor extends AbstractAlgorithm implement
             }
         }
         
-        getMonitor().done();
+        monitor.done();
     }
     
     /**
