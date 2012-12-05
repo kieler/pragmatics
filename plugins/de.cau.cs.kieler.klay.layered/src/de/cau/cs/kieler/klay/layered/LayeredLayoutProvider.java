@@ -611,8 +611,7 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
             = new IntermediateProcessingConfiguration(null, null,
             
             // Before Phase 3
-            EnumSet.of(LayoutProcessorStrategy.PORT_LIST_SORTER,
-                    LayoutProcessorStrategy.PORT_SIDE_PROCESSOR),
+            EnumSet.of(LayoutProcessorStrategy.PORT_SIDE_PROCESSOR),
             
             // Before Phase 4
             EnumSet.of(LayoutProcessorStrategy.NODE_MARGIN_CALCULATOR,

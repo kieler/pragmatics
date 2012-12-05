@@ -17,7 +17,7 @@ package de.cau.cs.kieler.papyrus.sequence.graph;
  * Message representation for SGraphs.
  * 
  * @author grh
- * @kieler.design proposed grh
+ * @kieler.design 2012-11-20 grh, cds, msp
  * @kieler.rating proposed yellow grh
  * 
  */
@@ -40,9 +40,9 @@ public class SMessage extends SGraphElement {
     public SMessage(final SLifeline source, final SLifeline target) {
         this.source = source;
         this.target = target;
-        this.layerYPos = -1.0f;
-        source.getOutgoingMessages().add(this);
-        target.getIncomingMessages().add(this);
+        layerYPos = -1.0f;
+        sourceYPos = -1.0f;
+        targetYPos = -1.0f;
     }
 
     /**
@@ -55,36 +55,12 @@ public class SMessage extends SGraphElement {
     }
 
     /**
-     * Set the source lifeline of the message.
-     * 
-     * @param source
-     *            the new source lifeline
-     */
-    public void setSource(final SLifeline source) {
-        this.source.getOutgoingMessages().remove(this);
-        this.source = source;
-        this.source.getOutgoingMessages().add(this);
-    }
-
-    /**
      * Get the target lifeline of the message.
      * 
      * @return the target lifeline
      */
     public SLifeline getTarget() {
         return target;
-    }
-
-    /**
-     * Set the target lifeline of the message.
-     * 
-     * @param target
-     *            the new target lifeline
-     */
-    public void setTarget(final SLifeline target) {
-        this.target.getIncomingMessages().remove(this);
-        this.target = target;
-        this.target.getIncomingMessages().add(this);
     }
 
     /**
@@ -141,6 +117,7 @@ public class SMessage extends SGraphElement {
     public double getTargetYPos() {
         return targetYPos;
     }
+
     /**
      * Set the vertical position at the target lifeline of the message.
      * 

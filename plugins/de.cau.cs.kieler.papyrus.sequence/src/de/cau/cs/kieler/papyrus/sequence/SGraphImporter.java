@@ -45,17 +45,11 @@ import de.cau.cs.kieler.papyrus.SequenceExecution;
  * SGraph.
  * 
  * @author grh
- * @kieler.design proposed grh
+ * @kieler.design 2012-11-20 grh, cds, msp
  * @kieler.rating proposed yellow grh
  * 
  */
 public class SGraphImporter {
-
-    /**
-     * Just needed for a workaround.
-     */
-    private static final int TWENTY = 20;
-
     /**
      * Builds a PGraph out of a given KGraph by associating every KNode to a PLifeline and every
      * KEdge to a PMessage.
@@ -167,7 +161,7 @@ public class SGraphImporter {
         // Add an edge for every neighbored pair of messages at every lifeline
         // indicating the relative order of the messages.
         for (SLifeline lifeline : sgraph.getLifelines()) {
-            List<SMessage> messages = lifeline.getMessagesSorted();
+            List<SMessage> messages = lifeline.getMessages();
             for (int j = 1; j < messages.size(); j++) {
                 // Add an edge from the node belonging to message j-1 to the node belonging to
                 // message j
@@ -291,7 +285,7 @@ public class SGraphImporter {
 
         // Handle time observations
         if (nodeType.equals("3020")) {
-            comment.getSize().x = TWENTY; // FIXME workaround for time observations to have a width
+            comment.getSize().x = sgraph.getProperty(SequenceDiagramProperties.TIME_OBSERVATION_WIDTH); 
             
             // TODO it seems, the coordinates are not valid => check this
 
@@ -427,6 +421,10 @@ public class SGraphImporter {
             KEdgeLayout layout = edge.getData(KEdgeLayout.class);
             message.setSourceYPos(layout.getSourcePoint().getY());
             message.setTargetYPos(layout.getTargetPoint().getY());
+            
+            // Add message to the source and the target lifeline's list of messages
+            sourceLL.addMessage(message);
+            targetLL.addMessage(message);
 
             // Put edge and message into the edge map
             edgeMap.put(edge, message);
@@ -526,6 +524,10 @@ public class SGraphImporter {
                 message.setProperty(Properties.ORIGIN, edge);
                 message.setProperty(SequenceDiagramProperties.COMMENTS, new LinkedList<SComment>());
                 message.setTargetYPos(layout.getTargetPoint().getY());
+                
+                // Add the message to the source and target lifeline's list of messages
+                sourceLL.addMessage(message);
+                targetLL.addMessage(message);
 
                 // Put edge and message into the edge map
                 edgeMap.put(edge, message);

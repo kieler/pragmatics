@@ -22,8 +22,10 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 
@@ -47,6 +49,11 @@ public class RandomGraphAnyPage extends WizardPage {
 
     /** the preference key for the density. */
     private static final String PREFERENCE_DENSITY = "randomWizard.density"; //$NON-NLS-1$
+    /** the default density. */
+    private static final int DEFAULT_DENSITY = 10;
+    
+    /** Constant for a hundred percent. To avoid magic numbers... */
+    private static final float HUNDRED_PERCENT = 100.0f;
 
     /** the selected number of nodes. */
     private int numberOfNodes;
@@ -55,7 +62,7 @@ public class RandomGraphAnyPage extends WizardPage {
     /** the selected number of edges. */
     private int numberOfEdges;
     /** the selected density. */
-    private float density;
+    private int density;
     /** the selected minimum number of outgoing edges. */
     private int minOutgoingEdges;
     /** the selected maximum number of outgoing edges. */
@@ -92,103 +99,165 @@ public class RandomGraphAnyPage extends WizardPage {
     // CHECKSTYLEOFF MagicNumber
     private void createOptions(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NULL);
-        GridData gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
-        composite.setLayoutData(gridData);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 3;
-        layout.verticalSpacing = 9;
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+        
+        GridLayout layout = new GridLayout(1, false);
+        layout.verticalSpacing = 10;
         composite.setLayout(layout);
-        // add NUMBER_OF_NODES option
-        // empty label to fill first column
-        Label label = new Label(composite, SWT.NULL);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 16;
-        label.setLayoutData(gridData);
-        label = new Label(composite, SWT.NULL);
+        
+        // Create the different groups
+        createNodesGroup(composite);
+        createEdgeGroup(composite);
+        createGraphPropertiesGroup(composite);
+    }
+
+    /**
+     * Creates the group holding node options and adds it to the given composite.
+     * 
+     * @param composite the composite to add the group to.
+     */
+    private void createNodesGroup(final Composite composite) {
+        GridData gridData;
+        
+        // Nodes group
+        Group nodesGroup = new Group(composite, SWT.NULL);
+        nodesGroup.setText(Messages.RandomGraphAnyPage_nodes_group_caption);
+        nodesGroup.setLayout(new GridLayout(2, false));
+        nodesGroup.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+        
+        // Number of Nodes
+        Label label = new Label(nodesGroup, SWT.NULL);
         label.setText(Messages.RandomGraphAnyPage_number_of_nodes_caption);
-        final Spinner nodesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(nodesSpinner, Messages.RandomGraphAnyPage_number_of_nodes_help);
+        
+        final Spinner nodesSpinner = new Spinner(nodesGroup, SWT.BORDER | SWT.SINGLE);
+        nodesSpinner.setToolTipText(Messages.RandomGraphAnyPage_number_of_nodes_help);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
+        
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
         nodesSpinner.setLayoutData(gridData);
+        
+        // Event Listeners
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 numberOfNodes = nodesSpinner.getSelection();
             }
         });
-        // add NUMBER_OF_EDGES option
-        Button edgesSwitch = new Button(composite, SWT.RADIO | SWT.LEFT);
+    }
+
+    /**
+     * Creates the group holding edge options and adds it to the given composite.
+     * 
+     * @param composite the composite to add the group to.
+     */
+    private void createEdgeGroup(final Composite composite) {
+        GridData gridData;
+        
+        // Edges Group
+        Group edgeGroup = new Group(composite, SWT.NULL);
+        edgeGroup.setText(Messages.RandomGraphAnyPage_edges_group_caption);
+        edgeGroup.setLayout(new GridLayout(2, false));
+        edgeGroup.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+        
+        // Edge Group Description
+        Label edgeDescriptionLabel = new Label(edgeGroup, SWT.WRAP);
+        edgeDescriptionLabel.setText(Messages.RandomGraphAnyPage_edges_description_caption);
+        edgeDescriptionLabel.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 2, 1));
+        
+        // Number of Edges
+        Button edgesSwitch = new Button(edgeGroup, SWT.RADIO | SWT.LEFT);
         edgesSwitch.setText(Messages.RandomGraphAnyPage_number_of_edges_caption);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.horizontalSpan = 2;
-        edgesSwitch.setLayoutData(gridData);
-        final Spinner edgesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(edgesSpinner, Messages.RandomGraphAnyPage_number_of_edges_help);
+        edgesSwitch.setToolTipText(Messages.RandomGraphAnyPage_number_of_edges_help);
+        
+        final Spinner edgesSpinner = new Spinner(edgeGroup, SWT.BORDER | SWT.SINGLE);
+        edgesSpinner.setToolTipText(Messages.RandomGraphAnyPage_number_of_edges_help);
         edgesSpinner.setValues(numberOfEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
         edgesSpinner.setEnabled(false);
+        
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
         edgesSpinner.setLayoutData(gridData);
+        
+        // Density
+        Button densitySwitch = new Button(edgeGroup, SWT.RADIO | SWT.LEFT);
+        densitySwitch.setText(Messages.RandomGraphAnyPage_density_caption);
+        densitySwitch.setToolTipText(Messages.RandomGraphAnyPage_density_help);
+        
+        final Spinner densitySpinner = new Spinner(edgeGroup, SWT.BORDER | SWT.SINGLE);
+        densitySpinner.setToolTipText(Messages.RandomGraphAnyPage_density_help);
+        densitySpinner.setValues(density, 0, 100, 0, 1, 10);
+        densitySpinner.setEnabled(false);
+        
+        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData.widthHint = 80;
+        densitySpinner.setLayoutData(gridData);
+        
+        // Outgoing Edges
+        Button outgoingSwitch = new Button(edgeGroup, SWT.RADIO | SWT.LEFT);
+        outgoingSwitch.setText(Messages.RandomGraphAnyPage_outgoing_caption);
+        outgoingSwitch.setToolTipText(Messages.RandomGraphAnyPage_outgoing_help);
+        outgoingSwitch.setLayoutData(new GridData(SWT.LEFT, SWT.NONE, false, false, 2, 1));
+        
+        // Minimum
+        Label label = new Label(edgeGroup, SWT.NONE);
+        label.setText(Messages.RandomGraphAnyPage_min_outgoing_caption);
+        
+        gridData = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+        gridData.horizontalIndent = 30;
+        label.setLayoutData(gridData);
+        
+        final Spinner minOutSpinner = new Spinner(edgeGroup, SWT.BORDER | SWT.SINGLE);
+        minOutSpinner.setToolTipText(Messages.RandomGraphAnyPage_min_outgoing_help);
+        minOutSpinner.setValues(minOutgoingEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
+        minOutSpinner.setEnabled(false);
+        
+        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData.widthHint = 80;
+        minOutSpinner.setLayoutData(gridData);
+        
+        // Maximum
+        label = new Label(edgeGroup, SWT.NONE);
+        label.setText(Messages.RandomGraphAnyPage_max_outgoing_caption);
+        
+        gridData = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+        gridData.horizontalIndent = 30;
+        label.setLayoutData(gridData);
+        
+        final Spinner maxOutSpinner = new Spinner(edgeGroup, SWT.BORDER | SWT.SINGLE);
+        maxOutSpinner.setToolTipText(Messages.RandomGraphAnyPage_max_outgoing_help);
+        maxOutSpinner.setValues(maxOutgoingEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
+        maxOutSpinner.setEnabled(false);
+        
+        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData.widthHint = 80;
+        maxOutSpinner.setLayoutData(gridData);
+
+        // Event listeners
         edgesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 numberOfEdges = edgesSpinner.getSelection();
             }
         });
-        // add another way to specify the NUMBER_OF_EDGES option
-        Button densitySwitch = new Button(composite, SWT.RADIO | SWT.LEFT);
-        densitySwitch.setText(Messages.RandomGraphAnyPage_density_caption);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.horizontalSpan = 2;
-        densitySwitch.setLayoutData(gridData);
-        final Spinner densitySpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(densitySpinner, Messages.RandomGraphAnyPage_density_help);
-        densitySpinner.setValues((int) (density * 100), 0, 100, 2, 1, 10);
-        densitySpinner.setEnabled(false);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 80;
-        densitySpinner.setLayoutData(gridData);
+
         densitySpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
-                density = ((float) densitySpinner.getSelection()) / 100f;
+                density = densitySpinner.getSelection();
             }
         });
-        // add MIN_OUTGOING_EDGES option
-        Button outgoingSwitch = new Button(composite, SWT.RADIO | SWT.LEFT);
-        outgoingSwitch.setText(Messages.RandomGraphAnyPage_min_outgoing_caption);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.horizontalSpan = 2;
-        outgoingSwitch.setLayoutData(gridData);
-        final Spinner minOutSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(minOutSpinner, Messages.RandomGraphAnyPage_min_outgoing_help);
-        minOutSpinner.setValues(minOutgoingEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
-        minOutSpinner.setEnabled(false);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 80;
-        minOutSpinner.setLayoutData(gridData);
+
         minOutSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 minOutgoingEdges = minOutSpinner.getSelection();
             }
         });
-        // add MAX_OUTGOING_EDGES option
-        // empty label to fill first column
-        label = new Label(composite, SWT.NULL);
-        label = new Label(composite, SWT.NULL);
-        label.setText(Messages.RandomGraphAnyPage_max_outgoing_caption);
-        final Spinner maxOutSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(maxOutSpinner, Messages.RandomGraphAnyPage_max_outgoing_help);
-        maxOutSpinner.setValues(maxOutgoingEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
-        maxOutSpinner.setEnabled(false);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.widthHint = 80;
-        maxOutSpinner.setLayoutData(gridData);
+
         maxOutSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 maxOutgoingEdges = maxOutSpinner.getSelection();
             }
         });
-        // add the switch functionality
+        
+        // Radio Button Controlling
         edgesSwitch.addSelectionListener(new SelectionListenerAdapter() {
             public void widgetSelected(final SelectionEvent e) {
                 edgeDetermination = EDGE_DETERMINATION_EDGES;
@@ -232,40 +301,51 @@ public class RandomGraphAnyPage extends WizardPage {
             edgesSpinner.setEnabled(true);
             break;
         }
-        // add SELF_LOOPS option
-        final Button selfLoopsButton = new Button(composite, SWT.CHECK);
-        Util.addHelp(selfLoopsButton, Messages.RandomGraphAnyPage_self_loops_help);
+    }
+
+    /**
+     * Creates the group holding graph property options and adds it to the given composite.
+     * 
+     * @param composite the composite to add the group to.
+     */
+    private void createGraphPropertiesGroup(final Composite composite) {
+        // Graph Properties Group
+        Group optionsGroup = new Group(composite, SWT.NULL);
+        optionsGroup.setText(Messages.RandomGraphAnyPage_options_group_caption);
+        optionsGroup.setLayout(new RowLayout(SWT.VERTICAL));
+        optionsGroup.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+        
+        // Self Loops
+        final Button selfLoopsButton = new Button(optionsGroup, SWT.CHECK);
         selfLoopsButton.setText(Messages.RandomGraphAnyPage_self_loops_caption);
+        selfLoopsButton.setToolTipText(Messages.RandomGraphAnyPage_self_loops_help);
         selfLoopsButton.setSelection(selfLoops);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.horizontalSpan = 3;
-        selfLoopsButton.setLayoutData(gridData);
+        
+        // Multi Edges
+        final Button multiEdgesButton = new Button(optionsGroup, SWT.CHECK);
+        multiEdgesButton.setText(Messages.RandomGraphAnyPage_multi_edges_caption);
+        multiEdgesButton.setToolTipText(Messages.RandomGraphAnyPage_multi_edges_help);
+        multiEdgesButton.setSelection(multiEdges);
+        
+        // Cycles
+        final Button cyclesButton = new Button(optionsGroup, SWT.CHECK);
+        cyclesButton.setText(Messages.RandomGraphAnyPage_cycles_caption);
+        cyclesButton.setToolTipText(Messages.RandomGraphAnyPage_cycles_help);
+        cyclesButton.setSelection(cycles);
+        
+        // Event listeners
         selfLoopsButton.addSelectionListener(new SelectionListenerAdapter() {
             public void widgetSelected(final SelectionEvent e) {
                 selfLoops = selfLoopsButton.getSelection();
             }
         });
-        // add MULTI_EDGES option
-        final Button multiEdgesButton = new Button(composite, SWT.CHECK);
-        Util.addHelp(multiEdgesButton, Messages.RandomGraphAnyPage_multi_edges_help);
-        multiEdgesButton.setText(Messages.RandomGraphAnyPage_multi_edges_caption);
-        multiEdgesButton.setSelection(multiEdges);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.horizontalSpan = 3;
-        multiEdgesButton.setLayoutData(gridData);
+
         multiEdgesButton.addSelectionListener(new SelectionListenerAdapter() {
             public void widgetSelected(final SelectionEvent e) {
                 multiEdges = multiEdgesButton.getSelection();
             }
         });
-        // add CYCLES option
-        final Button cyclesButton = new Button(composite, SWT.CHECK);
-        Util.addHelp(cyclesButton, Messages.RandomGraphAnyPage_cycles_help);
-        cyclesButton.setText(Messages.RandomGraphAnyPage_cycles_caption);
-        cyclesButton.setSelection(cycles);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.horizontalSpan = 3;
-        cyclesButton.setLayoutData(gridData);
+
         cyclesButton.addSelectionListener(new SelectionListenerAdapter() {
             public void widgetSelected(final SelectionEvent e) {
                 cycles = cyclesButton.getSelection();
@@ -297,7 +377,7 @@ public class RandomGraphAnyPage extends WizardPage {
         numberOfNodes = preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_NODES.getId());
         edgeDetermination = preferenceStore.getInt(RandomGraphGenerator.EDGE_DETERMINATION.getId());
         numberOfEdges = preferenceStore.getInt(RandomGraphGenerator.NUMBER_OF_EDGES.getId());
-        density = preferenceStore.getFloat(PREFERENCE_DENSITY);
+        density = preferenceStore.getInt(PREFERENCE_DENSITY);
         minOutgoingEdges = preferenceStore.getInt(RandomGraphGenerator.MIN_OUTGOING_EDGES.getId());
         maxOutgoingEdges = preferenceStore.getInt(RandomGraphGenerator.MAX_OUTGOING_EDGES.getId());
         selfLoops = preferenceStore.getBoolean(RandomGraphGenerator.SELF_LOOPS.getId());
@@ -313,7 +393,8 @@ public class RandomGraphAnyPage extends WizardPage {
                 EDGE_DETERMINATION_EDGES);
         preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_EDGES.getId(),
                 RandomGraphGenerator.NUMBER_OF_EDGES.getDefault());
-        preferenceStore.setDefault(PREFERENCE_DENSITY, 0.0f);
+        preferenceStore.setDefault(PREFERENCE_DENSITY,
+                DEFAULT_DENSITY);
         preferenceStore.setDefault(RandomGraphGenerator.MIN_OUTGOING_EDGES.getId(),
                 RandomGraphGenerator.MIN_OUTGOING_EDGES.getDefault());
         preferenceStore.setDefault(RandomGraphGenerator.MAX_OUTGOING_EDGES.getId(),
@@ -355,7 +436,7 @@ public class RandomGraphAnyPage extends WizardPage {
      */
     public int getNumberOfEdges() {
         if (edgeDetermination == EDGE_DETERMINATION_DENSITY) {
-            return (int) (density * numberOfNodes * numberOfNodes);
+            return (int) ((density / HUNDRED_PERCENT) * numberOfNodes * numberOfNodes);
         }
         return numberOfEdges;
     }
@@ -409,7 +490,6 @@ public class RandomGraphAnyPage extends WizardPage {
      * An adapter class for the SelectionListener.
      */
     private abstract static class SelectionListenerAdapter implements SelectionListener {
-
         public void widgetDefaultSelected(final SelectionEvent e) {
             // do nothing
         }

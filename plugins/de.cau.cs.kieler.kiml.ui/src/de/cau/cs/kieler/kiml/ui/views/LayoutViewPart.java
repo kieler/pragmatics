@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -92,6 +93,18 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     private PropertySheetPage page;
     /** the property source provider that keeps track of created property sources. */
     private final LayoutPropertySourceProvider propSourceProvider = new LayoutPropertySourceProvider();
+    /** the part listener for reacting to closed workbench parts. */
+    private final IPartListener partListener = new IPartListener() {
+        public void partClosed(final IWorkbenchPart part) {
+            if (propSourceProvider.getWorkbenchPart() == part) {
+                propSourceProvider.resetContext();
+            }
+        }
+        public void partOpened(final IWorkbenchPart part) { }
+        public void partDeactivated(final IWorkbenchPart part) { }
+        public void partBroughtToTop(final IWorkbenchPart part) { }
+        public void partActivated(final IWorkbenchPart part) { }
+    };
     
     /**
      * Finds the active layout view, if it exists.
@@ -226,6 +239,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
             }
         }
         workbenchWindow.getSelectionService().addSelectionListener(this);
+        workbenchWindow.getPartService().addPartListener(partListener);
     }
 
     /**
@@ -266,6 +280,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         }
         // dispose the view part
         getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
+        getSite().getWorkbenchWindow().getPartService().removePartListener(partListener);
         propSourceProvider.resetContext(null);
         toolkit.dispose();
         super.dispose();
@@ -355,15 +370,21 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                     }
                 }
                 
-                // add the "set as default for whole diagram" action
-                if (diagramDefaultItem == null) {
-                    ContributionItem contributionItem = new ActionContributionItem(
-                            applyOptionAction);
-                    contributionItem.setId(DiagramDefaultAction.ACTION_ID);
-                    contributionItem.fill(menu, -1);
+                // add the "set as default for this diagram" action
+                if (propSourceProvider.hasContent()) {
+                    if (diagramDefaultItem == null) {
+                        ContributionItem contributionItem = new ActionContributionItem(
+                                applyOptionAction);
+                        contributionItem.setId(DiagramDefaultAction.ACTION_ID);
+                        contributionItem.fill(menu, -1);
+                    } else {
+                        diagramDefaultItem.setEnabled(true);
+                    }
+                } else if (diagramDefaultItem != null) {
+                    diagramDefaultItem.setEnabled(false);
                 }
                 
-                // add the "set as default for diagram part" action
+                // add the "set as default for ... in this context" action
                 String diagramPartName = getReadableName(false, true);
                 if (diagramPartName != null && propSourceProvider.hasContent()) {
                     if (diagramPartDefaultItem == null) {
@@ -382,7 +403,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                     diagramPartDefaultItem.setEnabled(false);
                 }
                     
-                // add the "set as default for model element" action
+                // add the "set as default for all ..." action
                 String modelName = getReadableName(true, true);
                 if (modelName != null && propSourceProvider.hasContent()) {
                     if (modelDefaultItem == null) {

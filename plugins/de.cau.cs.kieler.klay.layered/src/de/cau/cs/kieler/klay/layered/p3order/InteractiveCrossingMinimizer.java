@@ -30,6 +30,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -70,8 +71,15 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
+        IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration(
+                INTERMEDIATE_PROCESSING_CONFIGURATION);
         
-        return INTERMEDIATE_PROCESSING_CONFIGURATION;
+        if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.NON_FREE_PORTS)) {
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_3,
+                    LayoutProcessorStrategy.PORT_LIST_SORTER);
+        }
+        
+        return configuration;
     }
 
     /**
@@ -139,7 +147,17 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
         }
         
         // Distribute the ports of all nodes with free port constraints
-        IPortDistributor portDistributor = new NodeRelativePortDistributor(new float[portCount]);
+        AbstractPortDistributor portDistributor;
+        switch (layeredGraph.getProperty(Properties.PORT_DISTRIBUTION)) {
+        case NODE_RELATIVE:
+            portDistributor = new NodeRelativePortDistributor(new float[portCount]);
+            break;
+        case LAYER_TOTAL:
+            portDistributor = new LayerTotalPortDistributor(new float[portCount]);
+            break;
+        default:
+            throw new IllegalStateException();
+        }
         portDistributor.distributePorts(lgraphArray);
         
         monitor.done();
