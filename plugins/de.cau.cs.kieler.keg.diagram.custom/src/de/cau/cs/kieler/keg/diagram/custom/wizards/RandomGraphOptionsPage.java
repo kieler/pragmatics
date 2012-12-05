@@ -41,7 +41,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
 public class RandomGraphOptionsPage extends WizardPage {
     
     /** ID of the Enable Hierarchy option. */
-    private static final String ENABLE_HIERARCHY = "basic.enableHierarchy";
+    private static final String ENABLE_HIERARCHY = "basic.enableHierarchy"; //$NON-NLS-1$
     /**
      * Default percentage of hierarchichal nodes. We cannot take the default value defined in
      * {@link RandomGraphGenerator#HIERARCHY_CHANCE} since that can be 0, which we don't allow
@@ -65,6 +65,8 @@ public class RandomGraphOptionsPage extends WizardPage {
     private int edgeDirectedChance;
     /** the selected port usage. */
     private boolean ports;
+    /** chance for edges to use existing ports. */
+    private int useExistingPortsChance;
     /** whether cross-hierarchy edges are allowed. */
     private boolean crossHierarchyEdges;
 
@@ -148,14 +150,14 @@ public class RandomGraphOptionsPage extends WizardPage {
         GridData gridData;
         // Hierarchy Group
         Group hierarchyGroup = new Group(composite, SWT.NULL);
-        hierarchyGroup.setText("Hierarchy");
+        hierarchyGroup.setText(Messages.RandomGraphUtilityPage_hierarchy_group_caption);
         hierarchyGroup.setLayout(new GridLayout(2, false));
         hierarchyGroup.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 2, 1));
         
         // Allow Hierarchy button
         final Button hierarchyButton = new Button(hierarchyGroup, SWT.CHECK);
-        hierarchyButton.setText("Enable hierarchy");
-        hierarchyButton.setToolTipText("If checked, generated graphs may contain hierarchical nodes.");
+        hierarchyButton.setText(Messages.RandomGraphUtilityPage_hierarchy_enable_caption);
+        hierarchyButton.setToolTipText(Messages.RandomGraphUtilityPage_hierarchy_enable_help);
         hierarchyButton.setLayoutData(new GridData(SWT.NONE, SWT.NONE, false, false, 2, 1));
         
         // Hierarchy Percentage option
@@ -269,7 +271,7 @@ public class RandomGraphOptionsPage extends WizardPage {
     private void createPortsGroup(final Composite composite) {
         // Ports Group
         Group portsGroup = new Group(composite, SWT.NULL);
-        portsGroup.setText("Ports");
+        portsGroup.setText(Messages.RandomGraphUtilityPage_ports_group_caption);
         portsGroup.setLayout(new GridLayout(2, false));
         portsGroup.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 2, 1));
         
@@ -280,13 +282,35 @@ public class RandomGraphOptionsPage extends WizardPage {
         portsButton.setLayoutData(new GridData(SWT.LEFT, SWT.NONE, false, false, 2, 1));
         portsButton.setSelection(ports);
         
-        portsButton.addSelectionListener(new SelectionListener() {
+        // Use existing ports chance
+        Label label = new Label(portsGroup, SWT.NULL);
+        label.setText(Messages.RandomGraphUtilityPage_ports_reuse_caption);
+        
+        GridData gridData = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+        gridData.horizontalIndent = 30;
+        label.setLayoutData(gridData);
+        
+        final Spinner useExistingPortsChanceSpinner = new Spinner(portsGroup, SWT.BORDER | SWT.SINGLE);
+        useExistingPortsChanceSpinner.setToolTipText(Messages.RandomGraphUtilityPage_port_reuse_help);
+        useExistingPortsChanceSpinner.setValues(useExistingPortsChance, 0, 100, 0, 1, 10);
+        useExistingPortsChanceSpinner.setEnabled(ports);
+        
+        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData.widthHint = 80;
+        useExistingPortsChanceSpinner.setLayoutData(gridData);
+
+        // Event listeners
+        portsButton.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(final SelectionEvent e) {
                 ports = portsButton.getSelection();
+                useExistingPortsChanceSpinner.setEnabled(ports);
             }
-
-            public void widgetDefaultSelected(final SelectionEvent e) {
-                // do nothing
+        });
+        
+        useExistingPortsChanceSpinner.addModifyListener(new ModifyListener() {
+            public void modifyText(final ModifyEvent e) {
+                useExistingPortsChance = useExistingPortsChanceSpinner.getSelection();
             }
         });
     }
@@ -298,39 +322,52 @@ public class RandomGraphOptionsPage extends WizardPage {
      */
     public void savePreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setValue(ENABLE_HIERARCHY, hierarchyEnabled);
-        preferenceStore.setValue(RandomGraphGenerator.HIERARCHY_CHANCE.getId(), hierarchyChance);
+        preferenceStore.setValue(ENABLE_HIERARCHY,
+                hierarchyEnabled);
+        preferenceStore.setValue(RandomGraphGenerator.HIERARCHY_CHANCE.getId(),
+                hierarchyChance);
         preferenceStore.setValue(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getId(),
                 maxHierarchyLevel);
         preferenceStore.setValue(RandomGraphGenerator.HIERARCHY_NODES_FACTOR.getId(),
                 hierarchyNodesFactor);
-        preferenceStore.setValue(RandomGraphGenerator.HYPERNODE_CHANCE.getId(), hypernodeChance);
+        preferenceStore.setValue(RandomGraphGenerator.HYPERNODE_CHANCE.getId(),
+                hypernodeChance);
         preferenceStore.setValue(RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getId(),
                 edgeDirectedChance);
-        preferenceStore.setValue(RandomGraphGenerator.PORTS.getId(), ports);
+        preferenceStore.setValue(RandomGraphGenerator.PORTS.getId(),
+                ports);
+        preferenceStore.setValue(RandomGraphGenerator.USE_EXISTING_PORTS_CHANCE.getId(),
+                useExistingPortsChance);
         preferenceStore.setValue(RandomGraphGenerator.CROSS_HIERARCHY_EDGES.getId(),
                 crossHierarchyEdges);
     }
 
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        hierarchyEnabled = preferenceStore.getBoolean(ENABLE_HIERARCHY);
-        hierarchyChance = preferenceStore.getInt(RandomGraphGenerator.HIERARCHY_CHANCE.getId());
-        maxHierarchyLevel = preferenceStore
-                .getInt(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getId());
-        hierarchyNodesFactor = preferenceStore.getFloat(RandomGraphGenerator.HIERARCHY_NODES_FACTOR
-                .getId());
-        hypernodeChance = preferenceStore.getInt(RandomGraphGenerator.HYPERNODE_CHANCE.getId());
-        edgeDirectedChance = preferenceStore.getInt(RandomGraphGenerator.EDGE_DIRECTED_CHANCE
-                .getId());
-        ports = preferenceStore.getBoolean(RandomGraphGenerator.PORTS.getId());
-        crossHierarchyEdges = preferenceStore.getBoolean(RandomGraphGenerator.CROSS_HIERARCHY_EDGES
-                .getId());
+        hierarchyEnabled = preferenceStore.getBoolean(
+                ENABLE_HIERARCHY);
+        hierarchyChance = preferenceStore.getInt(
+                RandomGraphGenerator.HIERARCHY_CHANCE.getId());
+        maxHierarchyLevel = preferenceStore.getInt(
+                RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getId());
+        hierarchyNodesFactor = preferenceStore.getFloat(
+                RandomGraphGenerator.HIERARCHY_NODES_FACTOR.getId());
+        hypernodeChance = preferenceStore.getInt(
+                RandomGraphGenerator.HYPERNODE_CHANCE.getId());
+        edgeDirectedChance = preferenceStore.getInt(
+                RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getId());
+        ports = preferenceStore.getBoolean(
+                RandomGraphGenerator.PORTS.getId());
+        useExistingPortsChance = preferenceStore.getInt(
+                RandomGraphGenerator.USE_EXISTING_PORTS_CHANCE.getId());
+        crossHierarchyEdges = preferenceStore.getBoolean(
+                RandomGraphGenerator.CROSS_HIERARCHY_EDGES.getId());
     }
 
     private void setDefaultPreferences() {
         IPreferenceStore preferenceStore = KEGDiagramPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setDefault(ENABLE_HIERARCHY, false);
+        preferenceStore.setDefault(ENABLE_HIERARCHY,
+                false);
         preferenceStore.setDefault(RandomGraphGenerator.HIERARCHY_CHANCE.getId(),
                 DEFAULT_HIERARCHY_CHANCE);
         preferenceStore.setDefault(RandomGraphGenerator.MAX_HIERARCHY_LEVEL.getId(),
@@ -343,6 +380,8 @@ public class RandomGraphOptionsPage extends WizardPage {
                 (int) (RandomGraphGenerator.EDGE_DIRECTED_CHANCE.getDefault() * HUNDRED_PERCENT));
         preferenceStore.setDefault(RandomGraphGenerator.PORTS.getId(),
                 RandomGraphGenerator.PORTS.getDefault());
+        preferenceStore.setDefault(RandomGraphGenerator.USE_EXISTING_PORTS_CHANCE.getId(),
+                (int) (RandomGraphGenerator.USE_EXISTING_PORTS_CHANCE.getDefault() * HUNDRED_PERCENT));
         preferenceStore.setDefault(RandomGraphGenerator.CROSS_HIERARCHY_EDGES.getId(),
                 RandomGraphGenerator.CROSS_HIERARCHY_EDGES.getDefault());
     }
@@ -408,6 +447,15 @@ public class RandomGraphOptionsPage extends WizardPage {
      */
     public boolean getPorts() {
         return ports;
+    }
+    
+    /**
+     * Returns the chance for edges to use existing ports rather than newly created ones.
+     * 
+     * @return the chance to use existing ports.
+     */
+    public float getUseExistingPortsChance() {
+        return useExistingPortsChance / HUNDRED_PERCENT;
     }
     
     /**

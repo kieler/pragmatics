@@ -429,22 +429,30 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         // Graph-specific options
         switch (typePage.getGraphType()) {
         case ANY:
-            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES, anyPage.getNumberOfNodes());
+            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES,
+                    anyPage.getNumberOfNodes());
             options.setProperty(RandomGraphGenerator.EDGE_DETERMINATION,
                     anyPage.getEdgeDetermination());
-            options.setProperty(RandomGraphGenerator.NUMBER_OF_EDGES, anyPage.getNumberOfEdges());
+            options.setProperty(RandomGraphGenerator.NUMBER_OF_EDGES,
+                    anyPage.getNumberOfEdges());
             options.setProperty(RandomGraphGenerator.MIN_OUTGOING_EDGES,
                     anyPage.getMinOutgoingEdges());
             options.setProperty(RandomGraphGenerator.MAX_OUTGOING_EDGES,
                     anyPage.getMaxOutgoingEdges());
-            options.setProperty(RandomGraphGenerator.SELF_LOOPS, anyPage.getSelfLoops());
-            options.setProperty(RandomGraphGenerator.MULTI_EDGES, anyPage.getMultiEdges());
-            options.setProperty(RandomGraphGenerator.CYCLES, anyPage.getCycles());
+            options.setProperty(RandomGraphGenerator.SELF_LOOPS,
+                    anyPage.getSelfLoops());
+            options.setProperty(RandomGraphGenerator.MULTI_EDGES,
+                    anyPage.getMultiEdges());
+            options.setProperty(RandomGraphGenerator.CYCLES,
+                    anyPage.getCycles());
             break;
         case TREE:
-            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES, treePage.getNumberOfNodes());
-            options.setProperty(RandomGraphGenerator.MAX_DEGREE, treePage.getMaxDegree());
-            options.setProperty(RandomGraphGenerator.MAX_WIDTH, treePage.getMaxWidth());
+            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES,
+                    treePage.getNumberOfNodes());
+            options.setProperty(RandomGraphGenerator.MAX_DEGREE,
+                    treePage.getMaxDegree());
+            options.setProperty(RandomGraphGenerator.MAX_WIDTH,
+                    treePage.getMaxWidth());
             break;
         case BICONNECTED:
             options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES,
@@ -457,9 +465,12 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                     triconnectedPage.getNumberOfNodes());
             break;
         case ACYCLIC_NO_TRANSITIV_EDGES:
-            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES, antePage.getNumberOfNodes());
-            options.setProperty(RandomGraphGenerator.NUMBER_OF_EDGES, antePage.getNumberOfEdges());
-            options.setProperty(RandomGraphGenerator.PLANAR, antePage.getPlanar());
+            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES,
+                    antePage.getNumberOfNodes());
+            options.setProperty(RandomGraphGenerator.NUMBER_OF_EDGES,
+                    antePage.getNumberOfEdges());
+            options.setProperty(RandomGraphGenerator.PLANAR,
+                    antePage.getPlanar());
             break;
         }
         
@@ -471,10 +482,14 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                 optionsPage.getMaximumHierarchyLevel());
         options.setProperty(RandomGraphGenerator.HIERARCHY_NODES_FACTOR,
                 optionsPage.getHierarchyNodesFactor());
-        options.setProperty(RandomGraphGenerator.HYPERNODE_CHANCE, optionsPage.getHypernodeChance());
+        options.setProperty(RandomGraphGenerator.HYPERNODE_CHANCE,
+                optionsPage.getHypernodeChance());
         options.setProperty(RandomGraphGenerator.EDGE_DIRECTED_CHANCE,
                 optionsPage.getEdgeDirectedChance());
-        options.setProperty(RandomGraphGenerator.PORTS, optionsPage.getPorts());
+        options.setProperty(RandomGraphGenerator.PORTS,
+                optionsPage.getPorts());
+        options.setProperty(RandomGraphGenerator.USE_EXISTING_PORTS_CHANCE,
+                optionsPage.getUseExistingPortsChance());
         options.setProperty(RandomGraphGenerator.CROSS_HIERARCHY_EDGES,
                 optionsPage.getCrossHierarchyEdges());
         

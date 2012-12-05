@@ -91,6 +91,9 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
             "basic.edgeDirectedChance", 0.0f);
     /** the option for using ports to connect nodes. */
     public static final Property<Boolean> PORTS = new Property<Boolean>("basic.ports", false);
+    /** the option for the chance of edges to use already existing ports. */
+    public static final Property<Float> USE_EXISTING_PORTS_CHANCE = new Property<Float>(
+            "basic.useExistingPortsChance", 0.3f);
     /** the option for allowing cross-hierarchy edges. */
     public static final Property<Boolean> CROSS_HIERARCHY_EDGES = new Property<Boolean>(
             "basic.crossHierarchyEdges", false);

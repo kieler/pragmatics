@@ -70,7 +70,7 @@ public class RandomGraphTypePage extends WizardPage {
         
         // label
         Label label = new Label(composite, SWT.NULL);
-        label.setText("Graph type:");
+        label.setText(Messages.RandomGraphTypePage_graph_type_caption);
         
         // create buttons
         addRadioButton(

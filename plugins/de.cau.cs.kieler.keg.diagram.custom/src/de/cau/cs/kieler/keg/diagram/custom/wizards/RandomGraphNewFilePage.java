@@ -83,7 +83,7 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
     protected void createAdvancedControls(final Composite parent) {
         // group box
         Group group = new Group(parent, SWT.NULL);
-        group.setText("Options");
+        group.setText(Messages.RandomGraphNewFilePage_options_group_caption);
         
         GridData gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
         group.setLayoutData(gridData);
@@ -96,7 +96,7 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
         label.setText(Messages.RandomGraphNewFilePage_number_of_graphs_caption);
         
         final Spinner graphsSpinner = new Spinner(group, SWT.BORDER | SWT.SINGLE);
-        graphsSpinner.setToolTipText("The number of graphs to be generated.");
+        graphsSpinner.setToolTipText(Messages.RandomGraphNewFilePage_number_of_graphs_help);
         graphsSpinner.setValues(numberOfGraphs, 1, Integer.MAX_VALUE, 0, 1, 10);
         
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -106,7 +106,7 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
         // add option for creating diagram files for the graphs
         final Button diagramButton = new Button(group, SWT.CHECK);
         diagramButton.setText(Messages.RandomGraphNewFilePage_create_diagrams_caption);
-        diagramButton.setToolTipText("Initialize a diagram file for each created KEG graph.");
+        diagramButton.setToolTipText(Messages.RandomGraphNewFilePage_create_diagrams_help);
         diagramButton.setSelection(diagramFiles);
         
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
@@ -117,13 +117,13 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
         // add option for creating diagram files for the graphs
         final Button openButton = new Button(group, SWT.CHECK);
         openButton.setText(Messages.RandomGraphNewFilePage_open_diagrams_caption);
-        openButton.setToolTipText("Open the created diagram files in KEG editors.");
+        openButton.setToolTipText(Messages.RandomGraphNewFilePage_open_diagrams_help);
         openButton.setSelection(openDiagramFiles);
         openButton.setEnabled(diagramFiles);
         
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.horizontalSpan = 2;
-        gridData.horizontalIndent = 20;
+        gridData.horizontalIndent = 30;
         openButton.setLayoutData(gridData);
         
         // create the advanced options and hide them

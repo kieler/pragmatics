@@ -49,6 +49,11 @@ public class RandomGraphAnyPage extends WizardPage {
 
     /** the preference key for the density. */
     private static final String PREFERENCE_DENSITY = "randomWizard.density"; //$NON-NLS-1$
+    /** the default density. */
+    private static final int DEFAULT_DENSITY = 10;
+    
+    /** Constant for a hundred percent. To avoid magic numbers... */
+    private static final float HUNDRED_PERCENT = 100.0f;
 
     /** the selected number of nodes. */
     private int numberOfNodes;
@@ -116,7 +121,7 @@ public class RandomGraphAnyPage extends WizardPage {
         
         // Nodes group
         Group nodesGroup = new Group(composite, SWT.NULL);
-        nodesGroup.setText("Nodes");
+        nodesGroup.setText(Messages.RandomGraphAnyPage_nodes_group_caption);
         nodesGroup.setLayout(new GridLayout(2, false));
         nodesGroup.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
         
@@ -150,13 +155,13 @@ public class RandomGraphAnyPage extends WizardPage {
         
         // Edges Group
         Group edgeGroup = new Group(composite, SWT.NULL);
-        edgeGroup.setText("Edges");
+        edgeGroup.setText(Messages.RandomGraphAnyPage_edges_group_caption);
         edgeGroup.setLayout(new GridLayout(2, false));
         edgeGroup.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
         
         // Edge Group Description
         Label edgeDescriptionLabel = new Label(edgeGroup, SWT.WRAP);
-        edgeDescriptionLabel.setText("Select one of the following ways to specify the number of edges in the generated graphs.");
+        edgeDescriptionLabel.setText(Messages.RandomGraphAnyPage_edges_description_caption);
         edgeDescriptionLabel.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 2, 1));
         
         // Number of Edges
@@ -189,8 +194,8 @@ public class RandomGraphAnyPage extends WizardPage {
         
         // Outgoing Edges
         Button outgoingSwitch = new Button(edgeGroup, SWT.RADIO | SWT.LEFT);
-        outgoingSwitch.setText("Outgoing edges per node");
-        outgoingSwitch.setToolTipText("Specify the minimum and maximum number of outgoing edges per node.");
+        outgoingSwitch.setText(Messages.RandomGraphAnyPage_outgoing_caption);
+        outgoingSwitch.setToolTipText(Messages.RandomGraphAnyPage_outgoing_help);
         outgoingSwitch.setLayoutData(new GridData(SWT.LEFT, SWT.NONE, false, false, 2, 1));
         
         // Minimum
@@ -306,7 +311,7 @@ public class RandomGraphAnyPage extends WizardPage {
     private void createGraphPropertiesGroup(final Composite composite) {
         // Graph Properties Group
         Group optionsGroup = new Group(composite, SWT.NULL);
-        optionsGroup.setText("Graph Properties");
+        optionsGroup.setText(Messages.RandomGraphAnyPage_options_group_caption);
         optionsGroup.setLayout(new RowLayout(SWT.VERTICAL));
         optionsGroup.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
         
@@ -388,7 +393,8 @@ public class RandomGraphAnyPage extends WizardPage {
                 EDGE_DETERMINATION_EDGES);
         preferenceStore.setDefault(RandomGraphGenerator.NUMBER_OF_EDGES.getId(),
                 RandomGraphGenerator.NUMBER_OF_EDGES.getDefault());
-        preferenceStore.setDefault(PREFERENCE_DENSITY, 10);
+        preferenceStore.setDefault(PREFERENCE_DENSITY,
+                DEFAULT_DENSITY);
         preferenceStore.setDefault(RandomGraphGenerator.MIN_OUTGOING_EDGES.getId(),
                 RandomGraphGenerator.MIN_OUTGOING_EDGES.getDefault());
         preferenceStore.setDefault(RandomGraphGenerator.MAX_OUTGOING_EDGES.getId(),
@@ -430,7 +436,7 @@ public class RandomGraphAnyPage extends WizardPage {
      */
     public int getNumberOfEdges() {
         if (edgeDetermination == EDGE_DETERMINATION_DENSITY) {
-            return (int) ((density / 100.0) * numberOfNodes * numberOfNodes);
+            return (int) ((density / HUNDRED_PERCENT) * numberOfNodes * numberOfNodes);
         }
         return numberOfEdges;
     }
