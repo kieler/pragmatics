@@ -17,13 +17,14 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
  * Abstract superclass for the layers, nodes, ports, and edges of a layered graph.
+ * 
+ * <p>TODO: Document the hash code functionality.</p>
  *
  * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public abstract class LGraphElement extends MapPropertyHolder
-        implements Comparable<LGraphElement> {
+public abstract class LGraphElement extends MapPropertyHolder implements Comparable<LGraphElement> {
 
     /** the serial version UID. */
     private static final long serialVersionUID = 5480383439314459124L;

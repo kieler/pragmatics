@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -42,13 +42,13 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public final class HypernodesProcessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Hypernodes processing", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Hypernodes processing", 1);
         
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
@@ -78,7 +78,7 @@ public class HypernodesProcessor extends AbstractAlgorithm implements ILayoutPro
             }
         }
         
-        getMonitor().done();
+        monitor.done();
     }
     
     /**

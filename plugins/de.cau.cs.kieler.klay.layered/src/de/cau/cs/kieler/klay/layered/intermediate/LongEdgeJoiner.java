@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.List;
 import java.util.ListIterator;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -45,13 +45,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class LongEdgeJoiner extends AbstractAlgorithm implements ILayoutProcessor {
+public final class LongEdgeJoiner implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Edge joining", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Edge joining", 1);
         
         // Iterate through the layers
         for (Layer layer : layeredGraph) {
@@ -104,7 +104,7 @@ public class LongEdgeJoiner extends AbstractAlgorithm implements ILayoutProcesso
             }
         }
         
-        getMonitor().done();
+        monitor.done();
     }
 
 }

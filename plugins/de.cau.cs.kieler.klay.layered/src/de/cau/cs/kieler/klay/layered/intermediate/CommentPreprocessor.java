@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -47,13 +47,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class CommentPreprocessor extends AbstractAlgorithm implements ILayoutProcessor {
+public final class CommentPreprocessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Comment pre-processing", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Comment pre-processing", 1);
         
         Iterator<LNode> nodeIter = layeredGraph.getLayerlessNodes().iterator();
         while (nodeIter.hasNext()) {
@@ -101,7 +101,7 @@ public class CommentPreprocessor extends AbstractAlgorithm implements ILayoutPro
             }
         }
         
-        getMonitor().done();
+        monitor.done();
     }
     
     /**

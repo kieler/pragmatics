@@ -17,7 +17,7 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -40,7 +40,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
-public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayoutPhase {
+public final class InteractiveCycleBreaker implements ILayoutPhase {
 
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
@@ -60,8 +60,8 @@ public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayou
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Interactive cycle breaking", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Interactive cycle breaking", 1);
         
         // gather edges that point to the wrong direction
         LinkedList<LEdge> revEdges = new LinkedList<LEdge>();
@@ -100,7 +100,7 @@ public class InteractiveCycleBreaker extends AbstractAlgorithm implements ILayou
         }
         
         revEdges.clear();
-        getMonitor().done();
+        monitor.done();
     }
     
     /**

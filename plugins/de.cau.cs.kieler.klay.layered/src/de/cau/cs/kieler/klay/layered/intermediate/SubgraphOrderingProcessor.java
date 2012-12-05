@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Util;
@@ -41,39 +41,45 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * A/03/96, Universität des Saarlandes, 1996.
  * 
  * <dl>
- * <dt>Precondition:</dt>
- * <dd>A layered graph. The node ordering has taken place. The nodes on a layer that belong to the
- * same compound node are placed in an unbroken sequence in the layer.</dd>
- * <dt>Postcondition:</dt>
- * <dd>The nodes are ordered such that the subgraphs have the same relative position on all layers.
- * The nodes of one subgraph on one layer are still placed next to each other without other nodes
- * between them.</dd>
- * <dt>Slots:</dt>
- * <dd>After phase 3.</dd>
- * <dt>Same-slot dependencies:</dt>
- * <dd>none.</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>A layered graph. The node ordering has taken place. The nodes on a layer that belong to the
+ *     same compound node are placed in an unbroken sequence in the layer.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>The nodes are ordered such that the subgraphs have the same relative position on all layers.
+ *     The nodes of one subgraph on one layer are still placed next to each other without other nodes
+ *     between them.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>After phase 3.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>none.</dd>
  * </dl>
  * 
  * @author ima
  * @kieler.design 2012-08-10 chsch grh
  */
-public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public final class SubgraphOrderingProcessor implements ILayoutProcessor {
 
-    // Document the layers that are resorted.
+    /**
+     * Document the layers that are resorted.
+     */
     private HashMap<Layer, HashMap<LNode, LinkedList<LNode>>> reorderedLayers;
 
-    // Store the node orderings for compound nodes.
+    /**
+     * Store the node orderings for compound nodes.
+     */
     private HashMap<LNode, LinkedList<LNode>> orderedLists;
 
-    // Keep a childrenlist for every compound node relevant for this layer. This
-    // is done to preserve the ordering of compound nodes as far as possible.
+    /**
+     * Keep a childrenlist for every compound node relevant for this layer.
+     * This is done to preserve the ordering of compound nodes as far as possible.
+     */
     private HashMap<Layer, HashMap<LNode, LinkedList<LNode>>> compoundChildrenLists;
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin(
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin(
                 "Order subgraphs so that the relative position " + "is the same on all layers", 1);
 
         reorderedLayers = new HashMap<Layer, HashMap<LNode, LinkedList<LNode>>>();
@@ -208,8 +214,7 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
         for (LNode key : keys) {
             LGraph graphComponent = subgraphOrderingGraph.get(key);
             // Remove cycles from the graph component.
-            cycleBreaker.reset();
-            cycleBreaker.process(graphComponent);
+            cycleBreaker.process(graphComponent, monitor.subTask(1.0f / keys.size()));
             // Extract a topological sorting from the graph component and store
             // it.
             if (graphComponent.getProperty(Properties.CYCLIC)) {
@@ -224,7 +229,10 @@ public class SubgraphOrderingProcessor extends AbstractAlgorithm implements ILay
             applyOrder(layeredGraph, subgraphOrderingGraph, graphKey, elemMap);
         }
 
-        getMonitor().done();
+        compoundChildrenLists = null;
+        reorderedLayers = null;
+        orderedLists = null;
+        monitor.done();
     }
 
     /**

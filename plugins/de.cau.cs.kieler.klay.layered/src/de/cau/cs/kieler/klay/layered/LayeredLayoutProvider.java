@@ -89,7 +89,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class LayeredLayoutProvider extends AbstractLayoutProvider {
+public final class LayeredLayoutProvider extends AbstractLayoutProvider {
 
     // /////////////////////////////////////////////////////////////////////////////
     // Variables
@@ -521,8 +521,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                     // Do nothing.
                 }
 
-                processor.reset(monitor.subTask(1));
-                processor.process(graph);
+                processor.process(graph, monitor.subTask(1));
             }
 
             // Graph debug output
@@ -537,8 +536,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 if (monitor.isCanceled()) {
                     return;
                 }
-                processor.reset(monitor.subTask(1));
-                processor.process(graph);
+                processor.process(graph, monitor.subTask(1));
             }
         }
 
@@ -570,8 +568,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             if (monitor.isCanceled()) {
                 return;
             }
-            processor.reset(monitor.subTask(1));
-            processor.process(graph);
+            processor.process(graph, monitor.subTask(1));
             
             // check if we need to stop after this processor
             if (processor.getClass().equals(phase)) {
@@ -614,8 +611,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             = new IntermediateProcessingConfiguration(null, null,
             
             // Before Phase 3
-            EnumSet.of(LayoutProcessorStrategy.PORT_LIST_SORTER,
-                    LayoutProcessorStrategy.PORT_SIDE_PROCESSOR),
+            EnumSet.of(LayoutProcessorStrategy.PORT_SIDE_PROCESSOR),
             
             // Before Phase 4
             EnumSet.of(LayoutProcessorStrategy.NODE_MARGIN_CALCULATOR,

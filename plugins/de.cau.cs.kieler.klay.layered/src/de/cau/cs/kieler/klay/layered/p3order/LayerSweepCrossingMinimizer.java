@@ -22,7 +22,7 @@ import java.util.Random;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -34,6 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -66,7 +67,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {
+public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
@@ -89,8 +90,15 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
+        IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration(
+                INTERMEDIATE_PROCESSING_CONFIGURATION);
         
-        return INTERMEDIATE_PROCESSING_CONFIGURATION;
+        if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.NON_FREE_PORTS)) {
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_3,
+                    LayoutProcessorStrategy.PORT_LIST_SORTER);
+        }
+        
+        return configuration;
     }
     
     /** array of port ranks used for sorting nodes and ports. */
@@ -187,8 +195,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Layer sweep crossing minimization", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Layer sweep crossing minimization", 1);
 
         // Fetch the graph's randomizer.
         Random random = layeredGraph.getProperty(Properties.RANDOM);
@@ -196,7 +204,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         // Find the number of layers. If there's only one, no crossing minimization is necessary.
         int layerCount = layeredGraph.getLayers().size();
         if (layerCount < 2) {
-            getMonitor().done();
+            monitor.done();
             return;
         }
         
@@ -208,7 +216,17 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         int runCount = layeredGraph.getProperty(Properties.THOROUGHNESS);
 
         // Initialize the compound graph layer crossing minimizer
-        IPortDistributor portDistributor = new NodeRelativePortDistributor(portRanks);
+        AbstractPortDistributor portDistributor;
+        switch (layeredGraph.getProperty(Properties.PORT_DISTRIBUTION)) {
+        case NODE_RELATIVE:
+            portDistributor = new NodeRelativePortDistributor(portRanks);
+            break;
+        case LAYER_TOTAL:
+            portDistributor = new LayerTotalPortDistributor(portRanks);
+            break;
+        default:
+            throw new IllegalStateException();
+        }
         IConstraintResolver constraintResolver = new ForsterConstraintResolver(layoutUnits);
         ICrossingMinimizationHeuristic heuristic = new BarycenterHeuristic(constraintResolver,
                 random, portRanks);
@@ -306,7 +324,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         }
 
         dispose();
-        getMonitor().done();
+        monitor.done();
     }
 
     // /////////////////////////////////////////////////////////////////////////////
@@ -400,6 +418,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                     for (LEdge edge : port.getOutgoingEdges()) {
                         LPort target = edge.getTarget();
                         if (node.getLayer() != target.getNode().getLayer()) {
+                            assert i < edgeCount;
                             // If the port has multiple output edges, sort them by target port index
                             insert(southSequence, start, i++, portPos[target.id]);
                         }
@@ -412,6 +431,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                     for (LEdge edge : port.getOutgoingEdges()) {
                         LPort target = edge.getTarget();
                         if (node.getLayer() != target.getNode().getLayer()) {
+                            assert i < edgeCount;
                             insert(southSequence, start, i++, portPos[target.id]);
                         }
                     }
@@ -759,9 +779,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         for (int j = end - 1; j >= insx; j--) {
             array[j + 1] = array[j];
         }
-        if (array.length != 0) {
-            array[insx] = n;
-        }
+        array[insx] = n;
     }
 
     /**

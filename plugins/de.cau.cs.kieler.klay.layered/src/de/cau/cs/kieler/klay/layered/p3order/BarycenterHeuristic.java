@@ -33,7 +33,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
+public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
 
     /** the array of port ranks. */
     private float[] portRanks;

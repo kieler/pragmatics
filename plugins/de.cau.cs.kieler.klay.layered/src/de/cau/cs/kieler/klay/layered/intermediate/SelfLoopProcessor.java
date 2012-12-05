@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -63,13 +63,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public final class SelfLoopProcessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Self-loop processing", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Self-loop processing", 1);
         
         // Iterate through all nodes
         List<LNode> createdDummies = new LinkedList<LNode>();
@@ -140,7 +140,7 @@ public class SelfLoopProcessor extends AbstractAlgorithm implements ILayoutProce
             }
         }
         
-        getMonitor().done();
+        monitor.done();
     }
     
     /**

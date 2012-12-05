@@ -18,7 +18,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -46,12 +46,14 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author jjc
  * @kieler.rating yellow proposed cds
  */
-public class LabelDummySwitcher extends AbstractAlgorithm implements ILayoutProcessor {
+public final class LabelDummySwitcher implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Label dummy switching", 1);
+        
         // Mark all label nodes which can be swapped to the middle of a long edge
         List<Pair<LNode, LNode>> nodesToSwap = new LinkedList<Pair<LNode, LNode>>();
         for (Layer layer : layeredGraph) {
@@ -91,6 +93,8 @@ public class LabelDummySwitcher extends AbstractAlgorithm implements ILayoutProc
         for (Pair<LNode, LNode> swapPair : nodesToSwap) {
             swapNodes(swapPair.getFirst(), swapPair.getSecond());
         }
+        
+        monitor.done();
     }
 
     /**

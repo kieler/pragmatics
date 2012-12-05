@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.p5edges;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
@@ -41,7 +41,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class PolylineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
+public final class PolylineEdgeRouter implements ILayoutPhase {
     
     /** the minimal vertical difference for creating bend points. */
     private static final double MIN_VERT_DIFF = 1.0;
@@ -59,8 +59,8 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Polyline edge routing", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Polyline edge routing", 1);
         float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         float edgeSpaceFac = layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         
@@ -135,7 +135,7 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements ILayoutPhas
         }
         layeredGraph.getSize().x = xpos - layerSpacing;
         
-        getMonitor().done();
+        monitor.done();
     }
 
 }

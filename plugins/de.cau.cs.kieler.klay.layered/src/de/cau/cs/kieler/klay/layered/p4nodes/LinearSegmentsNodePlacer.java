@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -63,7 +63,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
+public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
     /**
      * A linear segment contains a single regular node or all dummy nodes of a long edge.
@@ -196,8 +196,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Linear segments node placement", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Linear segments node placement", 1);
 
         // sort the linear segments of the layered graph
         sortLinearSegments(layeredGraph);
@@ -229,7 +229,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
 
         // release the created resources
         linearSegments = null;
-        getMonitor().done();
+        monitor.done();
     }
 
     // /////////////////////////////////////////////////////////////////////////////

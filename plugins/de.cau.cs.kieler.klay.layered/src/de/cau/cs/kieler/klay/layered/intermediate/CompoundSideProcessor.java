@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.options.Alignment;
@@ -58,13 +58,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author ima
  * @kieler.design 2012-08-10 chsch grh
  */
-public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public final class CompoundSideProcessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Set Compound Side nodes", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Set Compound Side nodes", 1);
         List<Layer> layers = layeredGraph.getLayers();
         List<LNode> openingBorders = new LinkedList<LNode>();
 
@@ -84,7 +84,7 @@ public class CompoundSideProcessor extends AbstractAlgorithm implements ILayoutP
             int endIndex = spanEnd.getIndex();
             insertSideDummies(startIndex, endIndex, layers, lnode, null, null, layeredGraph);
         }
-        getMonitor().done();
+        monitor.done();
     }
 
     /**

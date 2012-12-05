@@ -38,7 +38,7 @@ import de.cau.cs.kieler.kiml.options.PortSide;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class LPort extends LShape {
+public final class LPort extends LShape {
 
     /** the serial version UID. */
     private static final long serialVersionUID = -3406558719744943360L;

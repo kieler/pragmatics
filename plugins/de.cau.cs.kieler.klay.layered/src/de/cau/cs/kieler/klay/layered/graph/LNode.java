@@ -33,7 +33,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class LNode extends LShape {
+public final class LNode extends LShape {
     
     /** the serial version UID. */
     private static final long serialVersionUID = -4272570519129722541L;
@@ -140,12 +140,20 @@ public class LNode extends LShape {
     }
 
     /**
-     * Returns the list of ports of this node. The order of ports in this list
-     * corresponds to the order in which they are drawn, assuming clockwise order,
-     * starting with the north side. That order is potentially affected during
-     * the crossing minimization phase.
+     * Returns the list of ports of this node. Note that all edges are connected to specific
+     * ports, even if the original diagram does not have any ports.
+     * Before the crossing minimization phase has passed, the port order in this list is
+     * arbitrary. After crossing minimization the order of ports corresponds to the clockwise
+     * order in which they are drawn, starting with the north side.
+     * Hence the order is
+     * <ul>
+     *   <li>north ports from left to right,</li>
+     *   <li>east ports from top to bottom,</li>
+     *   <li>south ports from right to left,</li>
+     *   <li>west port from bottom to top.</li>
+     * </ul>
      * 
-     * @return the ports
+     * @return the ports of this node
      */
     public List<LPort> getPorts() {
         return ports;

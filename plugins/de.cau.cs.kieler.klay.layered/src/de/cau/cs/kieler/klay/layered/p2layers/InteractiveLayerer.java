@@ -17,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -42,7 +42,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
-public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhase {
+public final class InteractiveLayerer implements ILayoutPhase {
 
     /**
      * {@inheritDoc}
@@ -63,8 +63,8 @@ public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Interactive node layering", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Interactive node layering", 1);
 
         // create layers with a start and an end position, merging when they overlap with others
         LinkedList<LayerSpan> currentSpans = new LinkedList<LayerSpan>();
@@ -133,7 +133,7 @@ public class InteractiveLayerer extends AbstractAlgorithm implements ILayoutPhas
         
         // clear the list of nodes that have no layer, since now they all have one
         layeredGraph.getLayerlessNodes().clear();
-        getMonitor().done();
+        monitor.done();
     }
     
     /**

@@ -13,15 +13,14 @@
  */
 package de.cau.cs.kieler.papyrus.sequence.graph;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -29,7 +28,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * Lifeline representation for SGraphs.
  * 
  * @author grh
- * @kieler.design proposed grh
+ * @kieler.design 2012-11-20 grh, cds, msp
  * @kieler.rating proposed yellow grh
  * 
  */
@@ -37,10 +36,11 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
     private static final long serialVersionUID = 1309361361029991404L;
     private SGraph graph;
     private String name = "Lifeline";
-    private List<SMessage> outgoingMessages = new LinkedList<SMessage>();
-    private List<SMessage> incomingMessages = new LinkedList<SMessage>();
-    private int position;
-    private KNode destruction;
+    private int horizontalPosition;
+    private KNode destructionEvent;
+    private KVector position = new KVector();
+    private KVector size = new KVector();
+    private List<SMessage> messages = new LinkedList<SMessage>();
 
     /**
      * Get the SGraph to which the lifeline belongs.
@@ -62,21 +62,98 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
     }
 
     /**
+     * Add a message to the list of messages. The list of messages is sorted by their vertical
+     * connection to the lifeline afterwards.
+     * 
+     * @param message
+     *            the message to add
+     */
+    public void addMessage(final SMessage message) {
+        // Get the position of the message at this lifeline
+        double messageYPosition;
+        if (message.getSource() == this) {
+            messageYPosition = message.getSourceYPos();
+        } else {
+            messageYPosition = message.getTargetYPos();
+        }
+
+        // Compare to the position of each message in the list
+        for (SMessage mess : messages) {
+            // Get the position of the current message in the list
+            double pos = 0;
+            if (mess.getSource() == this) {
+                pos = mess.getSourceYPos();
+            } else {
+                pos = mess.getTargetYPos();
+            }
+
+            // Since messages are already sorted, the place of the first message with greater
+            // position is the right place for the message.
+            if (messageYPosition < pos) {
+                messages.add(messages.indexOf(mess), message);
+                return;
+            }
+        }
+        // Add the message at the end if none of the existing messages has greater position
+        messages.add(message);
+    }
+
+    /**
      * Get the list of outgoing messages of the lifeline.
      * 
-     * @return the list of outgoing messages
+     * @return an iterable of outgoing messages
      */
-    public List<SMessage> getOutgoingMessages() {
-        return outgoingMessages;
+    public Iterable<SMessage> getOutgoingMessages() {
+        final SLifeline lifeline = this;
+        return Iterables.filter(messages, new Predicate<SMessage>() {
+            public boolean apply(final SMessage message) {
+                return message.getSource() == lifeline;
+            }
+        });
+    }
+
+    /**
+     * Get the number of outgoing messages.
+     * 
+     * @return the number of outgoing messages
+     */
+    public int getNumberOfOutgoingMessages() {
+        int ret = 0;
+        for (SMessage message : messages) {
+            if (message.getSource() == this) {
+                ret++;
+            }
+        }
+        return ret;
     }
 
     /**
      * Get the list of incoming messages of the lifeline.
      * 
-     * @return the list of incoming messages
+     * @return an iterable of incoming messages
      */
-    public List<SMessage> getIncomingMessages() {
-        return incomingMessages;
+    public Iterable<SMessage> getIncomingMessages() {
+        final SLifeline lifeline = this;
+        return Iterables.filter(messages, new Predicate<SMessage>() {
+            public boolean apply(final SMessage message) {
+                return message.getTarget() == lifeline;
+            }
+        });
+    }
+
+    /**
+     * Get the number of incoming messages.
+     * 
+     * @return the number of incoming messages
+     */
+    public int getNumberOfIncomingMessages() {
+        int ret = 0;
+        for (SMessage message : messages) {
+            if (message.getTarget() == this) {
+                ret++;
+            }
+        }
+        return ret;
     }
 
     /**
@@ -85,37 +162,6 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
      * @return the list of messages
      */
     public List<SMessage> getMessages() {
-        List<SMessage> messages = new LinkedList<SMessage>();
-        messages.addAll(incomingMessages);
-        messages.addAll(outgoingMessages);
-        return messages;
-    }
-
-    // TODO sort messages by inlineComparator (array.sort)
-    /**
-     * Get a sorted list of messages connected to the lifeline. Messages are sorted according to
-     * their vertical position at the lifeline (top-down).
-     * 
-     * @return the sorted list of messages
-     */
-    public List<SMessage> getMessagesSorted() {
-        List<SMessage> incoming = getIncomingMessages();
-        List<SMessage> outgoing = getOutgoingMessages();
-        HashMap<SMessage, Double> map = new HashMap<SMessage, Double>();
-        for (SMessage message : incoming) {
-            map.put(message, (double) message.getTargetYPos());
-        }
-        for (SMessage message : outgoing) {
-            map.put(message, (double) message.getSourceYPos());
-        }
-        MessageComparator comp = new MessageComparator(map);
-        TreeMap<SMessage, Double> sortedMap = new TreeMap<SMessage, Double>(comp);
-        sortedMap.putAll(map);
-        Iterator<SMessage> iterator = sortedMap.keySet().iterator();
-        List<SMessage> messages = new LinkedList<SMessage>();
-        while (iterator.hasNext()) {
-            messages.add(iterator.next());
-        }
         return messages;
     }
 
@@ -143,18 +189,18 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
      * 
      * @return the position
      */
-    public int getPosition() {
-        return position;
+    public int getHorizontalPosition() {
+        return horizontalPosition;
     }
 
     /**
      * Set the horizontal position of the lifeline.
      * 
-     * @param position
+     * @param horizontalPosition
      *            the new position
      */
-    public void setPosition(final int position) {
-        this.position = position;
+    public void setHorizontalPosition(final int horizontalPosition) {
+        this.horizontalPosition = horizontalPosition;
     }
 
     /**
@@ -162,8 +208,8 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
      * 
      * @return the KNode of the destruction event or null if none exists
      */
-    public KNode getDestruction() {
-        return destruction;
+    public KNode getDestructionEvent() {
+        return destructionEvent;
     }
 
     /**
@@ -172,8 +218,26 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
      * @param destruction
      *            the KNode of the destruction event
      */
-    public void setDestruction(final KNode destruction) {
-        this.destruction = destruction;
+    public void setDestructionEvent(final KNode destruction) {
+        this.destructionEvent = destruction;
+    }
+
+    /**
+     * Get the position of the lifeline.
+     * 
+     * @return the Vector with the position
+     */
+    public KVector getPosition() {
+        return position;
+    }
+
+    /**
+     * Get the size of the lifeline.
+     * 
+     * @return the Vector with the size
+     */
+    public KVector getSize() {
+        return size;
     }
 
     /**
@@ -195,31 +259,5 @@ public class SLifeline extends SGraphElement implements Comparable<SLifeline> {
             }
         }
         return 0;
-    }
-}
-
-/**
- * Comparator for messages that is necessary to sort the messages of a lifeline.
- * 
- * @author grh
- * 
- */
-class MessageComparator implements Comparator<SMessage> {
-
-    private Map<SMessage, Double> base;
-
-    public MessageComparator(final Map<SMessage, Double> base) {
-        this.base = base;
-    }
-
-    public int compare(final SMessage a, final SMessage b) {
-
-        if (base.get(a) < base.get(b)) {
-            return -1;
-        } else if ((Double) base.get(a) == (Double) base.get(b)) {
-            return 0;
-        } else {
-            return 1;
-        }
     }
 }

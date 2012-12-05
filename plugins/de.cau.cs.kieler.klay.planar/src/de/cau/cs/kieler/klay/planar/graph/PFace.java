@@ -37,6 +37,8 @@ import de.cau.cs.kieler.klay.planar.util.MappedIterable;
  */
 public class PFace extends PGraphElement {
 
+    private static final int LOOP_BREAKER = 3;
+
     /** Generated Version UID for Serialization. */
     private static final long serialVersionUID = 595562864080000947L;
 
@@ -258,7 +260,22 @@ public class PFace extends PGraphElement {
         OrthogonalAngle currentAngle = null;
         OrthogonalAngle checkAngle = null;
 
+        // maximal length of iterations over the edges. Every edge could be traversed two times
+        // and in some cases 2-3 extra iterations are needed, such that 3 times as much as edges
+        // are an upper bound of the iteration.
+
+        int infiniteLoopBreaker = this.edges.size() * LOOP_BREAKER;
+        int i = 0;
         do {
+            if (i < infiniteLoopBreaker) {
+                i++;
+            } else {
+                throw new InconsistentGraphModelException(
+                        "PFace, isInRectShape(): Attention, possibly infinite iterations appear. "
+                                + "This happens if the graph structure is inconsistent, this usually "
+                                + "appears if the embedding is incorrect.");
+            }
+
             // Find next edge in the path.
             Pair<PEdge, OrthogonalAngle> pair = nextAdjacentElement(currentEdge, corner);
             currentEdge = pair.getFirst();

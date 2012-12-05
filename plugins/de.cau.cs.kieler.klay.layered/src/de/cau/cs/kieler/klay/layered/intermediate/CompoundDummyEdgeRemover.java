@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -45,13 +45,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author ima
  * @kieler.design 2012-08-10 chsch grh
  */
-public class CompoundDummyEdgeRemover extends AbstractAlgorithm implements ILayoutProcessor {
+public final class CompoundDummyEdgeRemover implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Removing compound dummy edges", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Removing compound dummy edges", 1);
 
         List<Layer> layerList = layeredGraph.getLayers();
 
@@ -90,7 +90,7 @@ public class CompoundDummyEdgeRemover extends AbstractAlgorithm implements ILayo
             }
         }
 
-        getMonitor().done();
+        monitor.done();
     }
 
 }

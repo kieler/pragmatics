@@ -18,7 +18,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
@@ -32,13 +32,14 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
 import de.cau.cs.kieler.klay.planar.util.PUtil;
 
 /**
- * 
  * Brings the faces of the graph in rectangular shape. Meaning that after this step there are exact
  * 4 bends per face, all in right or left order, depending from the start point.
  * 
  * @author pkl
  */
-public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class RectShapeDummyProcessor implements ILayoutProcessor {
+
+    private static final int LOOP_BREAKER = 3;
 
     /** The external face has at this point exact 5 adjacent edges. */
     private static final int EXTERNAL_EDGE_COUNT = 6;
@@ -58,8 +59,9 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph) {
-        getMonitor().begin("Rectangular shaping", 1);
+    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Rectangular shaping", 1);
+        
         this.graph = pgraph;
         this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);
         PFace externalFace = this.graph.getExternalFace();
@@ -82,7 +84,10 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
 
         transformInternalFaces();
 
-        getMonitor().done();
+        // release resources
+        graph = null;
+        orthogonal = null;
+        monitor.done();
     }
 
     /**
@@ -155,8 +160,22 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
 
         // determine the face side for setting the edge to the correct edge on the external
         // rectangle.
-        // TODO merge this step and the below one
+        // maximal length of iterations over the edges. Every edge could be traversed two times
+        // and in some cases 2-3 extra iterations are needed, such that 3 times as much as edges
+        // are an upper bound of the iteration.
+        int infiniteLoopBreaker = face.getAdjacentEdgeCount() * LOOP_BREAKER;
+        int i = 0;
+        // Iterate around the face edges and set the edge properties.
         do {
+            if (i < infiniteLoopBreaker) {
+                i++;
+            } else {
+                throw new InconsistentGraphModelException(
+                        "RectShapeDummyProcessor, transformInternal(...): Attention, possibly "
+                                + "infinite iterations appear. This happens if the graph structure "
+                                + "is inconsistent, this usually appears if the embedding is "
+                                + "incorrect.");
+            }
             int edgeturn = properties.getTurn();
             next = properties.getNext();
             properties.setSideIndex(sideIndex);
@@ -201,7 +220,22 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
 
         // Adds exact two edges that connects the new rectangular external face with the
         // old external face.
+        // maximal length of iterations over the edges. Every edge could be traversed two times
+        // and in some cases 2-3 extra iterations are needed, such that 3 times as much as edges
+        // are an upper bound of the iteration.
+        infiniteLoopBreaker = face.getAdjacentEdgeCount() * LOOP_BREAKER;
+        i = 0;
+        // Iterate around the face edges and set the edge properties.
         do {
+            if (i < infiniteLoopBreaker) {
+                i++;
+            } else {
+                throw new InconsistentGraphModelException(
+                        "RectShapeDummyProcessor, transformExternal(...): Attention, possibly "
+                                + "infinite iterations appear. This happens if the graph structure "
+                                + "is inconsistent, this usually appears if the embedding is "
+                                + "incorrect.");
+            }
             int index = edgeProperties.getSideIndex();
             int turn = edgeProperties.getTurn();
             if ((turn == 1 || turn == 2)
@@ -307,14 +341,29 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
             PNode corner = edgeProperties.getCorner();
             PNode startNode = corner;
 
+            // maximal length of iterations over the edges. Every edge could be traversed two times
+            // and in some cases 2-3 extra iterations are needed, such that 3 times as much as edges
+            // are an upper bound of the iteration.
+            int infiniteLoopBreaker = currentFace.getAdjacentEdgeCount() * LOOP_BREAKER;
+            int i = 0;
+            // Iterate around the face edges and set the edge properties.
             do {
+                if (i < infiniteLoopBreaker) {
+                    i++;
+                } else {
+                    throw new InconsistentGraphModelException(
+                            "RectShapeDummyProcessor, transformInternal(...): Attention, possibly "
+                                    + "infinite iterations appear. This happens if the graph structure "
+                                    + "is inconsistent, this usually appears if the embedding is "
+                                    + "incorrect.");
+                }
                 if ((edgeProperties.getTurn() == 1 || edgeProperties.getTurn() == 2)
                         && edgeProperties.getFront() != RectShapeEdgeProperties.EMPTY_FRONT) {
                     if (edgeProperties.getFront() == startEdge) {
                         startNode = startEdge.getOppositeNode(startNode);
                         addArtificial(currentEdge, edgeProperties, false);
                         startNode = startEdge.getOppositeNode(startNode);
-                        
+
                     } else {
                         addArtificial(currentEdge, edgeProperties, false);
 
@@ -486,9 +535,21 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
 
         int counter = 0;
         boolean finish = false;
-
+        // maximal length of iterations over the edges. Every edge could be traversed two times
+        // and in some cases 2-3 extra iterations are needed, such that 3 times as much as edges
+        // are an upper bound of the iteration.
+        int infiniteLoopBreaker = face.getAdjacentEdgeCount() * LOOP_BREAKER;
+        int i = 0;
         // Iterate around the face edges and set the edge properties.
         do {
+            if (i < infiniteLoopBreaker) {
+                i++;
+            } else {
+                throw new InconsistentGraphModelException(
+                        "RectShapeDummyProcessor, setEdgeProperties(...): Attention, possibly infinite "
+                                + "iterations appear. This happens if the graph structure is "
+                                + "inconsistent, this usually appears if the embedding is incorrect.");
+            }
 
             Pair<PEdge, OrthogonalAngle> pair = face.nextAdjacentElement(currentEdge, corner);
 
@@ -669,10 +730,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
             frontProperties.setTurn(0);
             frontProperties.setFront(null);
 
-            // for(PEdge edge : faceEdges){
-            // TODO hier front und prefront abgleichen und dann umsetzen auf die virtual edge
-            // auch fuer die andere direction machen sowie für ohne backDirectionProps..
-            // }
+            // Attention: the pre front is not set, think about it.
 
             if (vEdgeProperties1.getCorner().getAdjacentEdgeCount() != 1) {
                 // update previous of next edge
@@ -736,7 +794,7 @@ public class RectShapeDummyProcessor extends AbstractAlgorithm implements ILayou
         }
 
         // update faces
-        //this.graph.updateFaces(virtualEdge, front.getSimpleLeftFace(), null);
+        // this.graph.updateFaces(virtualEdge, front.getSimpleLeftFace(), null);
         this.graph.updateFaces(virtualEdge, null, front.getSimpleRightFace());
 
     }

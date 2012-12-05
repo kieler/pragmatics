@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class LEdge extends LGraphElement {
+public final class LEdge extends LGraphElement {
 
     /** the serial version UID. */
     private static final long serialVersionUID = 1429497419118554817L;

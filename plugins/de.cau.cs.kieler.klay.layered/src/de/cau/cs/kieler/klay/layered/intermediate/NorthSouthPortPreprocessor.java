@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import com.google.common.collect.Iterables;
+
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -100,13 +102,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILayoutProcessor {
+public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Odd port side processing", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Odd port side processing", 1);
         
         int pointer;
         List<LNode> northDummyNodes = new LinkedList<LNode>();
@@ -145,10 +147,8 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                 // Prepare a list of ports on the northern side, sorted from left
                 // to right (when viewed in the diagram); create the appropriate
                 // dummy nodes and assign them to the layer
-                List<LPort> portList = new LinkedList<LPort>();
-                for (LPort port : node.getPorts(PortSide.NORTH)) {
-                    portList.add(port);
-                }
+                LinkedList<LPort> portList = new LinkedList<LPort>();
+                Iterables.addAll(portList, node.getPorts(PortSide.NORTH));
 
                 createDummyNodes(layeredGraph, portList, northDummyNodes, southDummyNodes,
                         barycenterAssociates);
@@ -163,9 +163,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     // were created from. In addition, the order of the dummy nodes must
                     // be fixed.
                     dummy.setProperty(Properties.IN_LAYER_LAYOUT_UNIT, node);
-                    dummy.setProperty(
-                            Properties.IN_LAYER_SUCCESSOR_CONSTRAINT,
-                            successor);
+                    dummy.setProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT, successor);
                     
                     successor = dummy;
                 }
@@ -175,7 +173,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                 // listed from right to left
                 portList.clear();
                 for (LPort port : node.getPorts(PortSide.SOUTH)) {
-                    portList.add(0, port);
+                    portList.addFirst(port);
                 }
                 
                 createDummyNodes(layeredGraph, portList, southDummyNodes, null,
@@ -189,9 +187,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     // were created from. In addition, the order of the dummy nodes must
                     // be fixed.
                     dummy.setProperty(Properties.IN_LAYER_LAYOUT_UNIT, node);
-                    predecessor.setProperty(
-                            Properties.IN_LAYER_SUCCESSOR_CONSTRAINT,
-                            dummy);
+                    predecessor.setProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT, dummy);
                     
                     predecessor = dummy;
                 }
@@ -202,6 +198,8 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                 }
             }
         }
+        
+        monitor.done();
     }
     
     /**

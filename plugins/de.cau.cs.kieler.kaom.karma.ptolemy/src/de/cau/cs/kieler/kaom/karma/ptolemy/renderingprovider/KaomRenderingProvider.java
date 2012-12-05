@@ -23,9 +23,11 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.PolygonDecoration;
+import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.RotatableDecoration;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.PointList;
@@ -45,6 +47,7 @@ import org.w3c.dom.Document;
 
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.vergil.icon.EditorIcon;
+import de.cau.cs.kieler.core.model.gmf.IJoinPointFactory;
 import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
 import de.cau.cs.kieler.kaom.custom.EntityLayout;
 import de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation.FigureProvider;
@@ -96,6 +99,20 @@ public class KaomRenderingProvider implements IRenderingProvider {
             }
         }
         */
+        if (input.equals("true") && oldFigure instanceof SplineConnection) {
+            SplineConnection connection = (SplineConnection) oldFigure;
+            connection.setJoinPointDecoration(new IJoinPointFactory() {
+                
+                public IFigure getNewJoinPointDecorator() {
+                        RectangleFigure defaultFigure = new RectangleFigure();
+                defaultFigure.setLineWidth(1);
+                defaultFigure.setForegroundColor(ColorConstants.black);
+                defaultFigure.setBackgroundColor(ColorConstants.red);
+                defaultFigure.getBounds().setSize(7, 7);
+                return defaultFigure;
+                }
+            });
+        }
         if (input.equals("_IconDescription")) {
             this.hideCompartment(part, true);
             return createPtolemyFigure(PtolemyFetcher.getPtolemyInstance(object));
@@ -129,6 +146,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 connection.setSplineMode(SplineConnection.SPLINE_OFF);
                 final ConnectionEditPart cPart = (ConnectionEditPart) part;
                 //code will be used again for debug purposes.
+                
                 /*
                 connection.setJoinPointDecoration(new IJoinPointFactory() {
 					
@@ -141,7 +159,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
 				        return defaultFigure;
 					}
 				});
-				*/
+		*/		
                 
                 // Encapsulate setting the BendpointRadius and Smoothness in an emf operation.
                 // Eclipse needs it that way.

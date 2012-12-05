@@ -17,7 +17,7 @@ import java.util.List;
 
 import com.google.common.base.Predicate;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver.IMaximumFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -33,12 +33,13 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
  * @author pkl
  * @kieler.rating proposed yellow by msp
  */
-public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaximumFlowSolver {
+public class FordFulkersonFlowSolver implements IMaximumFlowSolver {
 
     /**
      * {@inheritDoc}
      */
-    public void calcFlow(final PGraph network) {
+    public void calcFlow(final PGraph network, final IKielerProgressMonitor monitor) {
+        monitor.begin("Ford-Fulkerson maximum flow", 1);
 
         // Add source and sink nodes
         PNode source = network.addNode();
@@ -102,13 +103,13 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
                 edge.setProperty(FLOW, flow + value);
             }
 
-            pathFinder.reset();
             path = pathFinder.findPath(source, sink, cond);
         }
 
         // Remove source and sink nodes
         network.removeNode(source);
         network.removeNode(sink);
+        monitor.done();
     }
 
 }

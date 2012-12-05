@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -75,31 +75,21 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutProcessor {
+public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProcessor {
     
     // VARIABLES
     
     /**
      * The amount of space necessary to accomodate northern external port edge routing.
      */
-    private double northernExtPortEdgeRoutingHeight = 0.0;
-    
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() {
-        super.reset();
-        
-        northernExtPortEdgeRoutingHeight = 0.0;
-    }
+    private double northernExtPortEdgeRoutingHeight;
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Orthogonally routing hierarchical port edges", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Orthogonally routing hierarchical port edges", 1);
+        northernExtPortEdgeRoutingHeight = 0.0;
         
         /* Step 1
          * Restore any north / south port dummies removed by the HierarchicalPortConstraintProcessor
@@ -141,7 +131,7 @@ public class HierarchicalPortOrthogonalEdgeRouter extends AbstractAlgorithm impl
          */
         correctSlantedEdgeSegments(layeredGraph);
         
-        getMonitor().done();
+        monitor.done();
     }
     
     

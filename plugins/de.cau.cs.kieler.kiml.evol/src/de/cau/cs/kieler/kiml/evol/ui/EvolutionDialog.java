@@ -52,8 +52,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.ui.ProgressBarMonitor;
-import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.LayoutEvolutionModel;
@@ -66,6 +64,7 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisCategory;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.util.KGraphRenderer;
+import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
 
 /**
  * The main user interface for evolutionary meta layout.

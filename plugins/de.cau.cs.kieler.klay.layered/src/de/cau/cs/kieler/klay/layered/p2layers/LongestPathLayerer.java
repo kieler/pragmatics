@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -42,7 +42,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
-public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhase {
+public final class LongestPathLayerer implements ILayoutPhase {
     
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
@@ -96,8 +96,8 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph thelayeredGraph) {
-        getMonitor().begin("Longest path layering", 1);
+    public void process(final LGraph thelayeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Longest path layering", 1);
         
         layeredGraph = thelayeredGraph;
         Collection<LNode> nodes = layeredGraph.getLayerlessNodes();
@@ -124,7 +124,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhas
         this.layeredGraph = null;
         this.nodeHeights = null;
         
-        getMonitor().done();
+        monitor.done();
     }
     
 

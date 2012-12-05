@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -49,13 +49,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implements ILayoutProcessor {
+public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Edge and layer constraint edge reversal", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Edge and layer constraint edge reversal", 1);
         
         // Iterate through the list of nodes
         for (LNode node : layeredGraph.getLayerlessNodes()) {
@@ -98,7 +98,7 @@ public class EdgeAndLayerConstraintEdgeReverser extends AbstractAlgorithm implem
             }
         }
         
-        getMonitor().done();
+        monitor.done();
     }
     
     /**

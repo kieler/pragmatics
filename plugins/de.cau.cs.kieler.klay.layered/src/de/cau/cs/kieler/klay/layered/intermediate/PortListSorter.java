@@ -13,10 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -27,10 +27,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 /**
  * Sorts the port lists of nodes with fixed port orders. The node's list of ports is sorted
  * beginning at the leftmost northern port, going clockwise.
- * 
- * <p>Note that this processor is placed before phase 3. Another instance may be used
- * before phase 4. This is because in phase 3, nodes may have their port orders assigned.
- * This processor can then be used to sort the port lists accordingly.</p>
+ * This order of ports may be used during crossing minimization for calculating port ranks.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
@@ -39,11 +36,12 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
  * 
+ * @see LNode#getPorts()
  * @author cds
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class PortListSorter extends AbstractAlgorithm implements ILayoutProcessor {
+public final class PortListSorter implements ILayoutProcessor {
     
     /**
      * A comparer for ports. Ports are sorted by side (north, east, south, west) in
@@ -68,39 +66,23 @@ public class PortListSorter extends AbstractAlgorithm implements ILayoutProcesso
             switch (port1.getSide()) {
             case NORTH:
                 // Compare x coordinates
-                return convertDifferenceToInt(port1.getPosition().x - port2.getPosition().x);
+                return Double.compare(port1.getPosition().x, port2.getPosition().x);
             
             case EAST:
                 // Compare y coordinates
-                return convertDifferenceToInt(port1.getPosition().y - port2.getPosition().y);
+                return Double.compare(port1.getPosition().y, port2.getPosition().y);
             
             case SOUTH:
-                // Compare x coordinates
-                return convertDifferenceToInt(port2.getPosition().x - port1.getPosition().x);
+                // Compare x coordinates in reversed order
+                return Double.compare(port2.getPosition().x, port1.getPosition().x);
             
             case WEST:
-                // Compare y coordinates
-                return convertDifferenceToInt(port2.getPosition().y - port1.getPosition().y);
-            }
-            
-            // Port side undefined; shouldn't happen. EVER!
-            return 0;
-        }
-        
-        /**
-         * Converts the given difference to {@code -1} if it's negative, {@code 0} if
-         * it's zero and {@code 1} if it's positive.
-         * 
-         * @param diff the value to be converted.
-         * @return {@code -1}, {@code 0} or {@code 1}.
-         */
-        private int convertDifferenceToInt(final double diff) {
-            if (diff < 0.0) {
-                return -1;
-            } else if (diff == 0) {
-                return 0;
-            } else {
-                return 1;
+                // Compare y coordinates in reversed order
+                return Double.compare(port2.getPosition().y, port1.getPosition().y);
+                
+            default:
+                // Port sides should not be undefined
+                throw new IllegalStateException("Port side is undefined");
             }
         }
         
@@ -110,33 +92,21 @@ public class PortListSorter extends AbstractAlgorithm implements ILayoutProcesso
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Port order processing", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Port order processing", 1);
+        PortComparator portComparator = new PortComparator();
         
         // Iterate through the nodes of all layers
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
                 if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                     // We need to sort the port list accordingly
-                    sortPorts(node);
+                    Collections.sort(node.getPorts(), portComparator);
                 }
             }
         }
         
-        getMonitor().done();
-    }
-    
-    /**
-     * Sorts the list of nodes according to their placement, starting in the upper left
-     * corner and going around the node in a clockwise direction.
-     * 
-     * @param node the node whose port list to sort.
-     */
-    private void sortPorts(final LNode node) {
-        LPort[] portsArray = node.getPorts().toArray(new LPort[0]);
-        Arrays.sort(portsArray, new PortComparator());
-        node.getPorts().clear();
-        node.getPorts().addAll(Arrays.asList(portsArray));
+        monitor.done();
     }
 
 }

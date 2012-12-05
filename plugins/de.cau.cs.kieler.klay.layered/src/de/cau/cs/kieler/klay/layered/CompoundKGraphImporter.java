@@ -61,7 +61,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class CompoundKGraphImporter extends KGraphImporter {
+public final class CompoundKGraphImporter extends KGraphImporter {
 
     /**
      * Maximal depth of the imported graph - to be updated during import.

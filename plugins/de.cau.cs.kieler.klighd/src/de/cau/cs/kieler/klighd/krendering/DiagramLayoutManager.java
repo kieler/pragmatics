@@ -39,6 +39,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
@@ -249,23 +250,34 @@ public class DiagramLayoutManager implements IDiagramLayoutManager<KGraphElement
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 
         if (nodeLayout != null) {
-            KRendering rootRendering = node.getData(KRendering.class);
-
-            if (rootRendering != null) {
-                // calculate the minimal size need for the first rendering and update the node size
-                // if it exceeds its size
-                Bounds defaultSize = new Bounds(nodeLayout.getWidth(), nodeLayout.getHeight());
-                Bounds minSize = PlacementUtil.estimateSize(rootRendering, defaultSize);
-                
-                if (minSize.width > nodeLayout.getWidth()) {
-                    nodeLayout.setWidth(minSize.width);
-                }
-                if (minSize.height > nodeLayout.getHeight()) {
-                    nodeLayout.setHeight(minSize.height);
-                }
-            }
 
             transferShapeLayout(nodeLayout, layoutLayout);
+
+            // integrate the minimal estimated node size based on the updated layoutLayout
+            //  - manipulating the nodeLayout may cause immediate glitches in the diagram
+            //   (through the listeners)
+            KRendering rootRendering = node.getData(KRendering.class);
+            if (rootRendering != null) {
+                // calculate the minimal size need for the first rendering ... 
+                Bounds minSize = PlacementUtil.estimateSize(rootRendering,
+                        new Bounds(layoutLayout.getWidth(), layoutLayout.getHeight()));
+                
+                // ... and update the node size if it exceeds its size
+                if (minSize.width > layoutLayout.getWidth()) {
+                    layoutLayout.setWidth(minSize.width);
+                    // In order to instruct KIML to not shrink the node beyond the minimal size,
+                    //  e.g. due to less space required by child nodes,
+                    //  configure a related layout option!
+                    // This has to be done on the original node instance, as layout options are
+                    //  transfered by the {@link KGraphPropertyLayoutConfig}.
+                    nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, minSize.width);
+                }
+                if (minSize.height > layoutLayout.getHeight()) {
+                    layoutLayout.setHeight(minSize.height);
+                    // see comment above
+                    nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, minSize.height);
+                }
+            }
         }
 
         // set insets if available
@@ -514,6 +526,7 @@ public class DiagramLayoutManager implements IDiagramLayoutManager<KGraphElement
      */
     private static void transferShapeLayout(final KShapeLayout sourceShapeLayout,
             final KShapeLayout targetShapeLayout) {
+        // Attention: Layout options are transfered by the {@link KGraphPropertyLayoutConfig}
         targetShapeLayout.setPos(sourceShapeLayout.getXpos(), sourceShapeLayout.getYpos());
         targetShapeLayout.setSize(sourceShapeLayout.getWidth(), sourceShapeLayout.getHeight());
     }

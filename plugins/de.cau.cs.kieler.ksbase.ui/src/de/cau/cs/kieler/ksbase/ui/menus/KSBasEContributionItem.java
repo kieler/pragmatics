@@ -258,7 +258,7 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
 
                     // get a command and register the Kivi ButtonHandler for it
                     Command cmd = commandService.getCommand(config.getId());
-                    Category category = commandService.getCategory("de.cau.cs.kieler");
+                    Category category = commandService.getCategory("de.cau.cs.kieler.ksbase.ui.ksbaseCategory");
                     IParameter[] params = {};
                     cmd.define(config.getLabel(), null, category, params);
                     // define a Handler for the command

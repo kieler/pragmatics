@@ -19,7 +19,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -34,7 +34,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author pkl
  */
-public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class FaceSidesProcessor implements ILayoutProcessor {
 
     /** The number of faces. */
     private static final int FACE_SIDES_NUMBER = 4;
@@ -46,9 +46,10 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
      * rectangular shape of the input faces. Attention: This works only for graphs with rectangular
      * face shapes.
      */
-
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void process(final PGraph graph) {
+    public void process(final PGraph graph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Face side processing", 1);
+        
         Set<VisitEntry> visitedFaces = Sets.newHashSet();
 
         Set<PFace> completedFaces = Sets.newHashSet();
@@ -135,12 +136,6 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
                         }
                     }
                 }
-
-                if (pair.getSecond().ordinal() == 2) {
-                    // error to do make assertion with useful description!
-                    // TODO add a cut edge to both sides, the current and the opposite
-                }
-
                 faceSides[sideIndex].add(currentEdge);
             } while (currentEdge != startEdge || corner != startNode);
 
@@ -159,6 +154,8 @@ public class FaceSidesProcessor extends AbstractAlgorithm implements ILayoutProc
                 }
             }
         }
+        
+        monitor.done();
     }
 
     /**

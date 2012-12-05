@@ -12,11 +12,11 @@
    </extension>
    <extension point="org.eclipse.ui.commands">
          <command
-            categoryId="de.cau.cs.kieler"
+            categoryId="org.eclipse.ui.category.file"
             defaultHandler="de.cau.cs.kieler.kaom.diagram.custom.commands.InitKaomDiagramHandler"
             description="Initialize a GMF diagram for the selected KAOM model, overwriting any old &apos;kaod&apos; file."
             id="de.cau.cs.kieler.kaom.ui.reinitDiagram"
-            name="Initialize GMF diagram">
+            name="Initialize KAOM Diagram (GMF)">
             <commandParameter
                   id="de.cau.cs.kieler.kaom.ui.reinitDiagram.source"
                   name="Source"

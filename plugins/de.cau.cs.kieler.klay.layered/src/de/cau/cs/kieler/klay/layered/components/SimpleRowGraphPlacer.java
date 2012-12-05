@@ -36,7 +36,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-class SimpleRowGraphPlacer extends AbstractGraphPlacer {
+final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
 
     /**
      * {@inheritDoc}

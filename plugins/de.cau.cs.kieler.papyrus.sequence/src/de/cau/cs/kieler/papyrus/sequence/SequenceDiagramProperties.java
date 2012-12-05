@@ -15,8 +15,10 @@ package de.cau.cs.kieler.papyrus.sequence;
 
 import java.util.List;
 
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.papyrus.sequence.graph.SComment;
 import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
 import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
@@ -25,13 +27,13 @@ import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
  * Properties for sequence diagrams.
  * 
  * @author grh
- * @kieler.design proposed grh
+ * @kieler.design 2012-11-20 grh, cds, msp
  * @kieler.rating proposed yellow grh
  * 
  */
-public final class SeqProperties {
+public final class SequenceDiagramProperties {
     
-    private SeqProperties() {
+    private SequenceDiagramProperties() {
         // Hide the constructor
     }
     
@@ -51,12 +53,40 @@ public final class SeqProperties {
     public static final IProperty<List<SComment>> COMMENTS = new Property<List<SComment>>(
             "de.cau.cs.kieler.papyrus.sequence.comments");
 
+    /** The node in the layered graph that corresponds to a message. */
+    public static final IProperty<LNode> LAYERED_NODE = new Property<LNode>(
+            "de.cau.cs.kieler.papyrus.sequence.layeredNode");
+
+    /** The KEdge that connects the comment to another element of the diagram. */
+    public static final IProperty<KEdge> COMMENT_CONNECTION = new Property<KEdge>(
+            "de.cau.cs.kieler.papyrus.sequence.commentConnection");
+
+    /** The height of the lifeline's header. */
+    public static final IProperty<Integer> LIFELINE_HEADER = new Property<Integer>(
+            "de.cau.cs.kieler.papyrus.sequence.lifelineHeader", 30);
+
+    /** The vertical position of lifelines. */
+    public static final IProperty<Integer> LIFELINE_Y_POS = new Property<Integer>(
+            "de.cau.cs.kieler.papyrus.sequence.lifelineYPos", 10);
+
+    /** The height of the header of combined fragments. */
+    public static final IProperty<Integer> AREA_HEADER = new Property<Integer>(
+            "de.cau.cs.kieler.papyrus.sequence.areaHeader", 25);
+
+    /** The width of time observations. */
+    public static final IProperty<Integer> TIME_OBSERVATION_WIDTH = new Property<Integer>(
+            "de.cau.cs.kieler.papyrus.sequence.timeObservationWidth", 20);
+
+    /** The offset between two nested areas. */
+    public static final IProperty<Integer> CONTAINMENT_OFFSET = new Property<Integer>(
+            "de.cau.cs.kieler.papyrus.sequence.containmentOffset", 5);
+    
     /** The horizontal space between two neighbored lifelines. This property may be set by the user. */
-    public static final Property<Float> LIFELINE_SPACING = new Property<Float>(
+    public static final IProperty<Float> LIFELINE_SPACING = new Property<Float>(
             "de.cau.cs.kieler.papyrus.sequence.lifelineSpacing", 50.0f);
 
     /** The vertical space between two neighbored messages. This property may be set by the user. */
-    public static final Property<Float> MESSAGE_SPACING = new Property<Float>(
+    public static final IProperty<Float> MESSAGE_SPACING = new Property<Float>(
             "de.cau.cs.kieler.papyrus.sequence.messageSpacing", 50.0f);
 
     /**

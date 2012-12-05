@@ -17,7 +17,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
@@ -55,7 +56,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
+public final class OrthogonalEdgeRouter implements ILayoutPhase {
     
     /* The basic processing strategy for this phase only contains the LABEL_AND_NODE_SIZE_PROCESSOR.
      * Depending on the graph features, dependencies on intermediate processors are added dynamically
@@ -263,8 +264,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Orthogonal edge routing", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Orthogonal edge routing", 1);
         
         // Retrieve some generic values
         double nodeSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
@@ -313,7 +314,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         
         layeredGraph.getSize().x = xpos;
         
-        getMonitor().done();
+        monitor.done();
     }
     
 }

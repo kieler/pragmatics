@@ -37,13 +37,10 @@ public abstract class AbstractEvolutionaryAlgorithm {
      * dummy if you don't want an operation to be done.
      */
     private static final IEvolutionaryOperation NULL_OPERATION = new IEvolutionaryOperation() {
-            public void process(final Population thepopulation) {
+            public void process(final Population thepopulation, final IKielerProgressMonitor monitor) {
                 // Intentionally left empty.
             }
             public void setRandom(final Random random) { }
-            public void reset() { }
-            public void reset(final IKielerProgressMonitor monitor) { }
-            public void setProgressMonitor(final IKielerProgressMonitor monitor) { }
     };
 
     /** The number of the current generation. */
@@ -125,8 +122,7 @@ public abstract class AbstractEvolutionaryAlgorithm {
      * @param monitor a progress monitor
      */
     protected final void evaluate(final IKielerProgressMonitor monitor) {
-        evaluationOperation.reset(monitor);
-        evaluationOperation.process(population);
+        evaluationOperation.process(population, monitor);
     }
 
     /**
@@ -141,8 +137,7 @@ public abstract class AbstractEvolutionaryAlgorithm {
      * @param monitor a progress monitor
      */
     protected final void crossover(final IKielerProgressMonitor monitor) {
-        crossoverOperation.reset(monitor);
-        crossoverOperation.process(population);
+        crossoverOperation.process(population, monitor);
     }
 
     /**
@@ -153,8 +148,7 @@ public abstract class AbstractEvolutionaryAlgorithm {
      * @param monitor a progress monitor
      */
     protected final void mutate(final IKielerProgressMonitor monitor) {
-        mutationOperation.reset(monitor);
-        mutationOperation.process(population);
+        mutationOperation.process(population, monitor);
     }
 
     /**
@@ -168,8 +162,7 @@ public abstract class AbstractEvolutionaryAlgorithm {
      * @param monitor a progress monitor
      */
     protected final void survive(final IKielerProgressMonitor monitor) {
-        survivalOperation.reset(monitor);
-        survivalOperation.process(population);
+        survivalOperation.process(population, monitor);
     }
 
     /**

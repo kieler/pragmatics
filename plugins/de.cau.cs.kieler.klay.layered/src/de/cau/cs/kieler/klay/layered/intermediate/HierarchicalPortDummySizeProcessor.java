@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -46,13 +46,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class HierarchicalPortDummySizeProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public final class HierarchicalPortDummySizeProcessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Hierarchical port dummy size processing", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Hierarchical port dummy size processing", 1);
         
         List<LNode> northernDummies = new LinkedList<LNode>();
         List<LNode> southernDummies = new LinkedList<LNode>();
@@ -85,7 +85,7 @@ public class HierarchicalPortDummySizeProcessor extends AbstractAlgorithm implem
             setWidths(southernDummies, false, delta);
         }
         
-        getMonitor().done();
+        monitor.done();
     }
     
     /**

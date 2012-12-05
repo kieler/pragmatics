@@ -13,11 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -49,13 +48,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author cds
  * @kieler.design 2012-08-10 chsch grh
  */
-public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutProcessor {
+public final class NodeMarginCalculator implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Node margin calculation", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Node margin calculation", 1);
         double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
 
         // Iterate through the layers
@@ -175,7 +174,7 @@ public class NodeMarginCalculator extends AbstractAlgorithm implements ILayoutPr
             }
         }
         
-        getMonitor().done();
+        monitor.done();
     }
     
     /**
