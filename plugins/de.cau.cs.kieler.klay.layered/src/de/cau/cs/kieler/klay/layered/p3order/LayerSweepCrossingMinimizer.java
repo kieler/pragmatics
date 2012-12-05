@@ -308,9 +308,6 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
             }
         }
 
-        // Distribute the ports of all nodes with free port constraints
-        portDistributor.distributePorts(bestSweep);
-
         // Apply the ordering to the original layered graph
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
@@ -322,6 +319,9 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 nodeIter.set(nodes[nodeIter.previousIndex()].getNode());
             }
         }
+
+        // Distribute the ports of all nodes with free port constraints
+        portDistributor.distributePorts(bestSweep);
 
         dispose();
         monitor.done();
