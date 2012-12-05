@@ -31,6 +31,7 @@ import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.service.TransformationService;
@@ -38,6 +39,7 @@ import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
 import de.cau.cs.kieler.kiml.service.formats.TransformationData;
+import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
@@ -172,7 +174,7 @@ public class GraphFileHandler {
         try {
             resource.load(Collections.emptyMap());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new WrappedException(e);
         }
         if (resource.getContents().isEmpty() || !(resource.getContents().get(0) instanceof Diagram)) {
             throw new IllegalArgumentException("The selected file does not contain a diagram.");
@@ -199,8 +201,12 @@ public class GraphFileHandler {
         }
 
         // retrieve a kgraph representation of the diagram
-        LayoutMapping<?> mapping = EclipseLayoutInfoService.getInstance()
-                .getManager(null, editPart.get()).buildLayoutGraph(null, editPart.get());
+        IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance()
+                .getManager(null, editPart.get());
+        if (layoutManager == null) {
+            throw new RuntimeException("No layout manager could be retrieved for the selected file.");
+        }
+        LayoutMapping<?> mapping = layoutManager.buildLayoutGraph(null, editPart.get());
         KNode inputGraph = mapping.getLayoutGraph();
 
         return inputGraph;
