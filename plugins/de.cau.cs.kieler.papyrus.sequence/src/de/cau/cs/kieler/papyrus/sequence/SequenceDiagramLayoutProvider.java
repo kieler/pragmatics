@@ -38,6 +38,7 @@ import de.cau.cs.kieler.papyrus.sequence.graph.SGraph;
 import de.cau.cs.kieler.papyrus.sequence.graph.SGraphElement;
 import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
 import de.cau.cs.kieler.papyrus.sequence.graph.SMessage;
+import de.cau.cs.kieler.papyrus.sequence.sorter.EqualDistributionLifelineSorter;
 import de.cau.cs.kieler.papyrus.sequence.sorter.InteractiveLifelineSorter;
 import de.cau.cs.kieler.papyrus.sequence.sorter.LayerbasedLifelineSorter;
 import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
@@ -92,6 +93,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
         ILifelineSorter lifelineSorter;
         if (strategy == LifelineSortingStrategy.LAYER_BASED) {
             lifelineSorter = new LayerbasedLifelineSorter();
+        } else if (strategy == LifelineSortingStrategy.SHORT_MESSAGES) {
+            lifelineSorter = new EqualDistributionLifelineSorter();
         } else {
             lifelineSorter = new InteractiveLifelineSorter();
         }
@@ -1028,8 +1031,6 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             if (messObj instanceof SMessage) {
                 // Compute new y coordinates
                 SMessage message = (SMessage) messObj;
-                KEdge edge = (KEdge) message.getProperty(Properties.ORIGIN);
-                KEdgeLayout layout = edge.getData(KEdgeLayout.class);
                 double sourceYPos = message.getSourceYPos();
                 if (sourceYPos < minY) {
                     minY = sourceYPos;
@@ -1045,14 +1046,16 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     maxY = targetYPos;
                 }
                 // Compute new x coordinates
-                double sourceXPos = layout.getSourcePoint().getX();
+                SLifeline sourceLL = message.getSource();
+                double sourceXPos = sourceLL.getPosition().x + sourceLL.getSize().x / 2;
                 if (sourceXPos < minX) {
                     minX = sourceXPos;
                 }
                 if (sourceXPos > maxX) {
                     maxX = sourceXPos;
                 }
-                double targetXPos = layout.getTargetPoint().getX();
+                SLifeline targetLL = message.getTarget();
+                double targetXPos = targetLL.getPosition().x + targetLL.getSize().x / 2;
                 if (targetXPos < minX) {
                     minX = targetXPos;
                 }
