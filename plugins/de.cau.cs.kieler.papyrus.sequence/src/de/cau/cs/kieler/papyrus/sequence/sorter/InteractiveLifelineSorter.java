@@ -15,6 +15,7 @@ package de.cau.cs.kieler.papyrus.sequence.sorter;
 
 import java.util.List;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.papyrus.sequence.ILifelineSorter;
 import de.cau.cs.kieler.papyrus.sequence.graph.SGraph;
@@ -35,12 +36,18 @@ public class InteractiveLifelineSorter implements ILifelineSorter {
      * Sort lifelines as they were sorted before layout.
      * {@inheritDoc}
      */
-    public List<SLifeline> sortLifelines(final SGraph graph, final LGraph lgraph) {
+    public List<SLifeline> sortLifelines(final SGraph graph, final LGraph lgraph, 
+            final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Interactive lifeline sorting", 1);
+        
         List<SLifeline> lifelines = (List<SLifeline>) graph.getLifelines();
         java.util.Collections.sort(lifelines);
         for (int i = 0; i < lifelines.size(); i++) {
-            lifelines.get(i).setPosition(i);
+            lifelines.get(i).setHorizontalPosition(i);
         }
+        
+        progressMonitor.done();
+        
         return lifelines;
     }
 

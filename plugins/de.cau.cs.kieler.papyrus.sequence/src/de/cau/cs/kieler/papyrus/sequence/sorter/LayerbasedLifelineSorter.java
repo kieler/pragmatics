@@ -16,12 +16,13 @@ package de.cau.cs.kieler.papyrus.sequence.sorter;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.papyrus.sequence.ILifelineSorter;
-import de.cau.cs.kieler.papyrus.sequence.SeqProperties;
+import de.cau.cs.kieler.papyrus.sequence.SequenceDiagramProperties;
 import de.cau.cs.kieler.papyrus.sequence.graph.SGraph;
 import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
 import de.cau.cs.kieler.papyrus.sequence.graph.SMessage;
@@ -43,7 +44,10 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
     /**
      * Sorts the lifelines in a stairway-like fashion. {@inheritDoc}
      */
-    public List<SLifeline> sortLifelines(final SGraph graph, final LGraph lgraph) {
+    public List<SLifeline> sortLifelines(final SGraph graph, final LGraph lgraph, 
+            final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Layer based lifeline sorting", 1);
+        
         lifelines.addAll(graph.getLifelines());
         sortedLifelines = new LinkedList<SLifeline>();
 
@@ -82,13 +86,15 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
             } while (m0 != null);
         }
 
+        progressMonitor.done();
+        
         return sortedLifelines;
     }
 
     private void assignToNextPosition(final SLifeline lifeline) {
         if (!sortedLifelines.contains(lifeline)) {
             sortedLifelines.add(lifeline);
-            lifeline.setPosition(position);
+            lifeline.setHorizontalPosition(position);
             position++;
             lifelines.remove(lifeline);
         }
@@ -100,7 +106,7 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
             for (LNode node : layer.getNodes()) {
                 SMessage message = (SMessage) node.getProperty(Properties.ORIGIN);
                 if (message != null) {
-                    message.setProperty(SeqProperties.MESSAGE_LAYER, layerIndex);
+                    message.setProperty(SequenceDiagramProperties.MESSAGE_LAYER, layerIndex);
                 }
             }
         }
@@ -108,7 +114,7 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
 
     // Select lifeline x with outgoing message m_0 in the uppermost layer
     // If there are different messages in that layer, select lifeline with best incoming/outgoing
-    // relation
+    // relation (more outgoing messages are desirable)
     private SMessage findUppermostMessage(final LGraph lgraph) {
         List<LNode> candidates = new LinkedList<LNode>();
         for (Layer layer : lgraph.getLayers()) {
@@ -128,9 +134,10 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
                 int bestRelation = Integer.MIN_VALUE;
                 for (LNode node : candidates) {
                     SMessage candidate = (SMessage) node.getProperty(Properties.ORIGIN);
-                    int relation = candidate.getSource().getOutgoingMessages().size()
-                            - candidate.getSource().getIncomingMessages().size();
+                    int relation = candidate.getSource().getNumberOfOutgoingMessages()
+                            - candidate.getSource().getNumberOfIncomingMessages();
                     if (relation > bestRelation) {
+                        bestRelation = relation;
                         bestOne = candidate;
                     }
                 }
@@ -145,11 +152,13 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
         SMessage uppermostMessage = null;
         int bestLayer = lgraph.getLayers().size();
         for (SMessage outgoingMessage : lifeline.getOutgoingMessages()) {
-            if (((int) outgoingMessage.getProperty(SeqProperties.MESSAGE_LAYER)) < bestLayer) {
+            if (((int) outgoingMessage.getProperty(SequenceDiagramProperties.MESSAGE_LAYER)) 
+                    < bestLayer) {
                 // check if target lifeline was already set
                 if (lifelines.contains(outgoingMessage.getTarget())) {
                     uppermostMessage = outgoingMessage;
-                    bestLayer = (int) outgoingMessage.getProperty(SeqProperties.MESSAGE_LAYER);
+                    bestLayer = (int) 
+                            outgoingMessage.getProperty(SequenceDiagramProperties.MESSAGE_LAYER);
                 }
             }
         }

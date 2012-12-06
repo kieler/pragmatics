@@ -17,7 +17,7 @@ import java.util.List;
 
 import com.google.common.base.Predicate;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver.IMinimumCostFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -36,13 +36,15 @@ import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
  * @author pkl
  * @kieler.rating yellow 2012-10-09 review KI-16 by ckru, cds
  */
-public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implements
+public class SuccessiveShortestPathFlowSolver implements
         IMinimumCostFlowSolver {
 
     /**
      * {@inheritDoc}
      */
-    public void calcFlow(final PGraph network) {
+    public void calcFlow(final PGraph network, final IKielerProgressMonitor monitor) {
+        monitor.begin("Successive shortest path minimum cost flow", 1);
+        
         // Add source and sink nodes
         PNode source = network.addNode();
         PNode sink = network.addNode();
@@ -124,11 +126,13 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
                 edge.setProperty(FLOW, flow + value);
             }
 
-            pathFinder.reset();
             path = pathFinder.findPath(source, sink, cond);
         }
         // Remove source and sink nodes
         network.removeNode(source);
         network.removeNode(sink);
+        
+        monitor.done();
     }
+    
 }

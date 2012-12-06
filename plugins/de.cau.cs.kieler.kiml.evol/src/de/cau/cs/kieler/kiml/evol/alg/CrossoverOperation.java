@@ -18,7 +18,7 @@ package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Random;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
@@ -37,7 +37,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class CrossoverOperation extends AbstractAlgorithm implements IEvolutionaryOperation {
+public class CrossoverOperation implements IEvolutionaryOperation {
 
     /**
      * The selection ratio. Indicates the ratio of the population that shall be
@@ -72,11 +72,11 @@ public class CrossoverOperation extends AbstractAlgorithm implements IEvolutiona
     /**
      * {@inheritDoc}
      */
-    public void process(final Population population) {
-        getMonitor().begin("Crossover", 1);
+    public void process(final Population population, final IKielerProgressMonitor monitor) {
+        monitor.begin("Crossover", 1);
         // We need a minimal number of individuals to do crossovers
         if (population.size() < MIN_SELECT) {
-            getMonitor().done();
+            monitor.done();
             return;
         }
         
@@ -97,7 +97,7 @@ public class CrossoverOperation extends AbstractAlgorithm implements IEvolutiona
             population.add(offspring);
         }
         
-        getMonitor().done();
+        monitor.done();
     }
 
     /**

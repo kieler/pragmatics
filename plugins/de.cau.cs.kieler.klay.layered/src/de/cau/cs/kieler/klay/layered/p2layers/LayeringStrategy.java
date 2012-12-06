@@ -18,26 +18,23 @@ package de.cau.cs.kieler.klay.layered.p2layers;
  * 
  * @author pdo
  * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
 public enum LayeringStrategy {
 
-    /** All nodes will be layered with minimal edge length by using the network-simplex-algorithm. */
-    NETWORK_SIMPLEX,
-    /** All nodes will be layered according to the longest path. */
-    LONGEST_PATH,
-    /** Nodes are put into layers according to their relative position. */
-    INTERACTIVE;
-    
     /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i
-     *            ordinal value
-     * @return the related enumeration value
+     * All nodes will be layered with minimal edge length by using the network-simplex-algorithm.
      */
-    public static LayeringStrategy valueOf(final int i) {
-        return values()[i];
-    }
+    NETWORK_SIMPLEX,
+    /**
+     * All nodes will be layered according to the longest path to any sink.
+     */
+    LONGEST_PATH,
+    /**
+     * Nodes are put into layers according to their relative position. The actual positions
+     * as given in the input diagram are considered here. This means that if the user moves
+     * a node, that movement is reflected in the layering of the graph.
+     */
+    INTERACTIVE;
 
 }

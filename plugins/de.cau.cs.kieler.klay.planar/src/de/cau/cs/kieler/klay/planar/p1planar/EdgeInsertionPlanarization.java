@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -44,7 +44,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * @kieler.rating proposed yellow by pkl
  * 
  */
-public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILayoutPhase {
+public class EdgeInsertionPlanarization implements ILayoutPhase {
 
     /**
      * {@inheritDoc}
@@ -63,9 +63,12 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
      * 
      * @param graph
      *            the planar subgraph containing a list of the edges to be inserted into the graph
-     * 
+     * @param monitor
+     *            a progress monitor to track algorithm progress
      */
-    public void process(final PGraph graph) {
+    public void process(final PGraph graph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Edge insertion planarization", 1);
+        
         List<PEdge> edges = graph.getProperty(Properties.INSERTABLE_EDGES);
         if (edges != null) {
             // initialize path finder
@@ -133,6 +136,8 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements ILa
                 }
             }
         }
+        
+        monitor.done();
     }
 
     /**

@@ -349,6 +349,10 @@
                   key="language"
                   value="ptolemy">
             </customCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.conditions.TrueCondition"
+                  figureParam="true">
+            </customCondition>
          </conditions>
          <editPart
                editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.LinkEditPart">

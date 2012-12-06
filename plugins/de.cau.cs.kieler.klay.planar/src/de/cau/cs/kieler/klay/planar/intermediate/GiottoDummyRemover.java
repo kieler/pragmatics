@@ -19,7 +19,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -35,7 +35,7 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * 
  * @author pkl
  */
-public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProcessor {
+public class GiottoDummyRemover implements ILayoutProcessor {
 
     /** The processed graph. */
     private PGraph graph;
@@ -46,19 +46,21 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph) {
-        getMonitor().begin("Giotto Dummy Removing", 1);
+    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Giotto Dummy Removing", 1);
+        
         this.graph = pgraph;
         this.grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
 
         // stores the found higher 4 degree nodes.
         Set<PNode> highDegreeNodes = filterHighDegreeNodes();
 
-        // FIXME grid size should depend on the average size of all nodes?
-        // if a layout is triggered twice, the node should not further be increased...
         calcMetrics(highDegreeNodes);
 
-        getMonitor().done();
+        // release resources
+        graph = null;
+        grid = null;
+        monitor.done();
     }
 
     /**
@@ -107,8 +109,6 @@ public class GiottoDummyRemover extends AbstractAlgorithm implements ILayoutProc
                 graph.removeNode(dummyNode);
                 grid.remove(dummyNode);
 
-                // TODO hier ansetzen!
-                // grid.set(position[0], position[1], hDNode);
             }
 
             // calculate position and size of the highDegreeNode

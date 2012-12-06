@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -57,9 +57,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintProcessor
  * @author msp
  * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
-public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhase {
+public class GreedyCycleBreaker implements ILayoutPhase {
     
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
@@ -71,7 +71,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
     private int[] indeg;
     /** outdegree values for the nodes. */
     private int[] outdeg;
-    /** mark for the nodes. */
+    /** mark for the nodes, inducing an ordering of the nodes. */
     private int[] mark;
     /** list of source nodes. */
     private final LinkedList<LNode> sources = new LinkedList<LNode>();
@@ -90,22 +90,23 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Greedy cycle removal", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Greedy cycle removal", 1);
         
         Collection<LNode> nodes = layeredGraph.getLayerlessNodes();
 
         // initialize values for the algorithm (sum of priorities of incoming edges and outgoing
-        // edges per node, and the "layer" calculated for each node)
-        int unprocessedNodes = nodes.size();
-        indeg = new int[unprocessedNodes];
-        outdeg = new int[unprocessedNodes];
-        mark = new int[unprocessedNodes];
+        // edges per node, and the ordering calculated for each node)
+        int unprocessedNodeCount = nodes.size();
+        indeg = new int[unprocessedNodeCount];
+        outdeg = new int[unprocessedNodeCount];
+        mark = new int[unprocessedNodeCount];
         
-        // iterate over all nodes, ...
         int index = 0;
         for (LNode node : nodes) {
+            // the node id is used as index for the indeg, outdeg, and mark arrays
             node.id = index;
+            
             for (LPort port : node.getPorts()) {
                 // calculate the sum of edge priorities
                 for (LEdge edge : port.getIncomingEdges()) {
@@ -145,25 +146,25 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
         List<LNode> maxNodes = new ArrayList<LNode>();
         Random random = layeredGraph.getProperty(Properties.RANDOM);
         
-        while (unprocessedNodes > 0) {
-            // while we have sinks left...
+        while (unprocessedNodeCount > 0) {
+            // sinks are put to the right --> assign negative rank, which is later shifted to positive
             while (!sinks.isEmpty()) {
                 LNode sink = sinks.removeFirst();
                 mark[sink.id] = nextRight--;
                 updateNeighbors(sink);
-                unprocessedNodes--;
+                unprocessedNodeCount--;
             }
             
-            // while we have sources left...
+            // sources are put to the left --> assign positive rank
             while (!sources.isEmpty()) {
                 LNode source = sources.removeFirst();
                 mark[source.id] = nextLeft++;
                 updateNeighbors(source);
-                unprocessedNodes--;
+                unprocessedNodeCount--;
             }
             
             // while there are unprocessed nodes left that are neither sinks nor sources...
-            if (unprocessedNodes > 0) {
+            if (unprocessedNodeCount > 0) {
                 int maxOutflow = Integer.MIN_VALUE;
                 
                 // find the set of unprocessed node (=> mark == 0), with the largest out flow
@@ -179,16 +180,17 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                         }
                     }
                 }
+                assert maxOutflow > Integer.MIN_VALUE;
                 
-                // randomly select a node from the ones with maximal outflow
+                // randomly select a node from the ones with maximal outflow and put it left
                 LNode maxNode = maxNodes.get(random.nextInt(maxNodes.size()));
                 mark[maxNode.id] = nextLeft++;
                 updateNeighbors(maxNode);
-                unprocessedNodes--;
+                unprocessedNodeCount--;
             }
         }
 
-        // shift negative ranks
+        // shift negative ranks to positive; this applies to sinks of the graph
         int shiftBase = nodes.size() + 1;
         for (index = 0; index < nodes.size(); index++) {
             if (mark[index] < 0) {
@@ -198,18 +200,15 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
 
         // reverse edges that point left
         for (LNode node : nodes) {
-            for (LPort port : node.getPorts()) {
-                LEdge[] outgoingEdges = port.getOutgoingEdges().toArray(new LEdge[0]);
+            LPort[] ports = node.getPorts().toArray(new LPort[node.getPorts().size()]);
+            for (LPort port : ports) {
+                LEdge[] outgoingEdges = port.getOutgoingEdges().toArray(
+                        new LEdge[port.getOutgoingEdges().size()]);
                 
                 // look at the node's outgoing edges
                 for (LEdge edge : outgoingEdges) {
                     int targetIx = edge.getTarget().getNode().id;
                     if (mark[node.id] > mark[targetIx]) {
-                        // In theory, this could create new collector ports, leading to a concurrent
-                        // modification exception due to the iteration over the list of ports.
-                        // However, this will not happen here, because edges are only reversed for
-                        // nodes that are part of a cycle and thus already have both an input and
-                        // an output collector port.
                         edge.reverse(layeredGraph, true);
                         layeredGraph.setProperty(Properties.CYCLIC, true);
                     }
@@ -218,7 +217,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
         }
 
         dispose();
-        getMonitor().done();
+        monitor.done();
     }
     
     /**

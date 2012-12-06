@@ -9,7 +9,7 @@
           id="de.cau.cs.kieler.kiml.ui.activeEditorSupportedTester"
           namespace="de.cau.cs.kieler.kiml.ui"
           properties="activeEditorIsSupported"
-          type="org.eclipse.ui.IEditorPart">
+          type="org.eclipse.ui.IWorkbenchPart">
     </propertyTester>
  </extension>
 
@@ -24,7 +24,6 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kiml.ui.preferences.LayoutPreferencePage"
             id="de.cau.cs.kieler.kiml.ui.preferences.layout"
             name="%page.name.0">
@@ -34,12 +33,12 @@
    <extension
          point="org.eclipse.ui.commands">
       <category
-            description="Commands from the KIELER Layout Infrastructure"
-            id="de.cau.cs.kieler.kiml"
-            name="KIELER Layout">
+            description="%command.description.0"
+            id="de.cau.cs.kieler.layout"
+            name="%category.name.0">
       </category>
       <command
-            categoryId="de.cau.cs.kieler.kiml"
+            categoryId="de.cau.cs.kieler.layout"
             defaultHandler="de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler"
             id="de.cau.cs.kieler.kiml.ui.command.layout"
             name="%command.name.0">
@@ -50,7 +49,7 @@
          </commandParameter>
       </command>
       <command
-            categoryId="de.cau.cs.kieler.kiml"
+            categoryId="de.cau.cs.kieler.layout"
             defaultHandler="de.cau.cs.kieler.kiml.ui.views.ShowLayoutViewHandler"
             id="de.cau.cs.kieler.kiml.ui.command.showLayoutView"
             name="%command.name.1">
@@ -60,28 +59,9 @@
    <extension
 point="org.eclipse.ui.menus">
 <menuContribution
-  locationURI="menu:de.cau.cs.kieler">
-   <command
-         commandId="de.cau.cs.kieler.kiml.ui.command.layout"
-         icon="icons/menu16/kieler-arrange.gif"
-         label="%command.label.0"
-         mnemonic="%command.mnemonic.0"
-         style="push">
-      <visibleWhen
-            checkEnabled="false">
-         <with
-               variable="activeEditor">
-            <test
-                  property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
-            </test>
-         </with>
-      </visibleWhen>
-   </command>
-</menuContribution>
-<menuContribution
       locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
    <toolbar
-         id="de.cau.cs.kieler.kiml.toolbar"
+         id="de.cau.cs.kieler.layout.toolbar"
          label="KIELER Layout">
       <command
             commandId="de.cau.cs.kieler.kiml.ui.command.layout"
@@ -102,13 +82,14 @@ point="org.eclipse.ui.menus">
    </toolbar>
 </menuContribution>
 <menuContribution
-      locationURI="popup:de.cau.cs.kieler">
+      locationURI="popup:org.eclipse.ui.popup.any?after=additions">
    <command
          commandId="de.cau.cs.kieler.kiml.ui.command.layout"
          icon="icons/menu16/kieler-arrange.gif"
          label="%command.label.2"
          mnemonic="%command.mnemonic.0"
-         style="push">
+         style="push"
+         tooltip="%command.tooltip.0">
       <parameter
             name="de.cau.cs.kieler.kiml.ui.layoutScope"
             value="selection">
@@ -116,26 +97,23 @@ point="org.eclipse.ui.menus">
       <visibleWhen
             checkEnabled="false">
          <with
-               variable="activeEditor">
+               variable="activePart">
             <test
                   property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
             </test>
          </with>
       </visibleWhen>
    </command>
-</menuContribution>
-<menuContribution
-      locationURI="popup:org.eclipse.ui.popup.any?after=additions">
    <command
          commandId="de.cau.cs.kieler.kiml.ui.command.showLayoutView"
          icon="icons/view16/layout.gif"
          label="%command.label.3"
-         mnemonic="%command.mnemonic.0"
+         mnemonic="%command.mnemonic.1"
          style="push">
       <visibleWhen
             checkEnabled="false">
          <with
-               variable="activeEditor">
+               variable="activePart">
             <test
                   property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
             </test>
@@ -155,12 +133,12 @@ point="org.eclipse.ui.menus">
  <extension
        point="org.eclipse.ui.views">
     <category
-          id="de.cau.cs.kieler"
-          name="KIELER">
+          id="de.cau.cs.kieler.layout"
+          name="%category.name.0">
     </category>
     <view
           allowMultiple="false"
-          category="de.cau.cs.kieler"
+          category="de.cau.cs.kieler.layout"
           class="de.cau.cs.kieler.kiml.ui.views.LayoutViewPart"
           icon="icons/view16/layout.gif"
           id="de.cau.cs.kieler.kiml.views.layout"

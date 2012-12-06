@@ -22,7 +22,7 @@ import java.util.Random;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -66,7 +66,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {
+public class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
@@ -187,8 +187,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Layer sweep crossing minimization", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Layer sweep crossing minimization", 1);
 
         // Fetch the graph's randomizer.
         Random random = layeredGraph.getProperty(Properties.RANDOM);
@@ -196,7 +196,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         // Find the number of layers. If there's only one, no crossing minimization is necessary.
         int layerCount = layeredGraph.getLayers().size();
         if (layerCount < 2) {
-            getMonitor().done();
+            monitor.done();
             return;
         }
         
@@ -306,7 +306,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         }
 
         dispose();
-        getMonitor().done();
+        monitor.done();
     }
 
     // /////////////////////////////////////////////////////////////////////////////
@@ -400,6 +400,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                     for (LEdge edge : port.getOutgoingEdges()) {
                         LPort target = edge.getTarget();
                         if (node.getLayer() != target.getNode().getLayer()) {
+                            assert i < edgeCount;
                             // If the port has multiple output edges, sort them by target port index
                             insert(southSequence, start, i++, portPos[target.id]);
                         }
@@ -412,6 +413,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                     for (LEdge edge : port.getOutgoingEdges()) {
                         LPort target = edge.getTarget();
                         if (node.getLayer() != target.getNode().getLayer()) {
+                            assert i < edgeCount;
                             insert(southSequence, start, i++, portPos[target.id]);
                         }
                     }
@@ -759,9 +761,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         for (int j = end - 1; j >= insx; j--) {
             array[j + 1] = array[j];
         }
-        if (array.length != 0) {
-            array[insx] = n;
-        }
+        array[insx] = n;
     }
 
     /**

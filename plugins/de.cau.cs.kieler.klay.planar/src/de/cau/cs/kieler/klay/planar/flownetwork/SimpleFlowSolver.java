@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.planar.flownetwork;
 import java.util.Iterator;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
@@ -37,12 +37,13 @@ import de.cau.cs.kieler.klay.planar.util.PUtil;
  * @author pkl
  * @kieler.rating yellow 2012-11-01 review KI-30 by ima, cds
  */
-public class SimpleFlowSolver extends AbstractAlgorithm implements IFlowNetworkSolver {
+public class SimpleFlowSolver implements IFlowNetworkSolver {
 
     /**
      * {@inheritDoc}
      */
-    public void calcFlow(final PGraph network) {
+    public void calcFlow(final PGraph network, final IKielerProgressMonitor monitor) {
+        monitor.begin("Simple flow solver", 1);
 
         PNode source = null;
         PNode sink = null;
@@ -103,6 +104,7 @@ public class SimpleFlowSolver extends AbstractAlgorithm implements IFlowNetworkS
 
         }
 
+        monitor.done();
     }
 
     /**

@@ -48,8 +48,7 @@ public class PlanarityAnalysis implements IAnalysis {
         ILayoutPhase tester = new BoyerMyrvoldPlanarSubgraphBuilder();
 
         // Planarity Testing
-        tester.reset();
-        tester.process(graph);
+        tester.process(graph, progressMonitor.subTask(1));
         progressMonitor.done();
         return graph.getProperty(Properties.INSERTABLE_EDGES).size();
     }

@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.p5edges;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.CubicSplineInterpolator;
 import de.cau.cs.kieler.core.math.ISplineInterpolator;
@@ -53,7 +53,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
+public class SplineEdgeRouter implements ILayoutPhase {
 
     /** factor for layer spacing. */
     private static final double LAYER_SPACE_FAC = 0.2;
@@ -98,8 +98,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph layeredGraph) {
-        getMonitor().begin("Spline edge routing", 1);
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Spline edge routing", 1);
         double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         float edgeSpaceFac = layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         
@@ -149,7 +149,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase 
             }
         }
         
-        getMonitor().done();
+        monitor.done();
     }
     
     /**
