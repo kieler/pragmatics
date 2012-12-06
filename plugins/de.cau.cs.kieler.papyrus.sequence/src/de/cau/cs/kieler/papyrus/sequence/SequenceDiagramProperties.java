@@ -32,11 +32,11 @@ import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
  * 
  */
 public final class SequenceDiagramProperties {
-    
+
     private SequenceDiagramProperties() {
         // Hide the constructor
     }
-    
+
     /** The type of a message. */
     public static final IProperty<MessageType> MESSAGE_TYPE = new Property<MessageType>(
             "de.cau.cs.kieler.papyrus.sequence.messageType", MessageType.ASYNCHRONOUS);
@@ -80,7 +80,7 @@ public final class SequenceDiagramProperties {
     /** The offset between two nested areas. */
     public static final IProperty<Integer> CONTAINMENT_OFFSET = new Property<Integer>(
             "de.cau.cs.kieler.papyrus.sequence.containmentOffset", 5);
-    
+
     /** The horizontal space between two neighbored lifelines. This property may be set by the user. */
     public static final IProperty<Float> LIFELINE_SPACING = new Property<Float>(
             "de.cau.cs.kieler.papyrus.sequence.lifelineSpacing", 50.0f);
@@ -94,6 +94,14 @@ public final class SequenceDiagramProperties {
      * by the user.
      */
     public static final Property<LifelineSortingStrategy> LIFELINE_SORTING 
-    = new Property<LifelineSortingStrategy>("de.cau.cs.kieler.papyrus.sequence.lifelineSorting",
+                = new Property<LifelineSortingStrategy>(
+            "de.cau.cs.kieler.papyrus.sequence.lifelineSorting",
             LifelineSortingStrategy.INTERACTIVE);
+
+    /**
+     * If messages in areas should be grouped together. This property may be set by the user if the
+     * SHORT_MESSAGES lifeline sorter is chosen.
+     */
+    public static final IProperty<Boolean> GROUP_AREAS = new Property<Boolean>(
+            "de.cau.cs.kieler.papyrus.sequence.groupAreas", false);
 }

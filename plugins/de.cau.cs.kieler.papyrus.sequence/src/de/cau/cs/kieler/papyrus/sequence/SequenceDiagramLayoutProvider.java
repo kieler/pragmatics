@@ -94,7 +94,12 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
         if (strategy == LifelineSortingStrategy.LAYER_BASED) {
             lifelineSorter = new LayerbasedLifelineSorter();
         } else if (strategy == LifelineSortingStrategy.SHORT_MESSAGES) {
-            lifelineSorter = new EqualDistributionLifelineSorter();
+            // The short messages lifeline sorter has an additional layout option
+            boolean groupAreas = false;
+            if (sourceShapeLayout.getProperty(SequenceDiagramProperties.GROUP_AREAS)) {
+                groupAreas = true;
+            }
+            lifelineSorter = new EqualDistributionLifelineSorter(groupAreas);
         } else {
             lifelineSorter = new InteractiveLifelineSorter();
         }

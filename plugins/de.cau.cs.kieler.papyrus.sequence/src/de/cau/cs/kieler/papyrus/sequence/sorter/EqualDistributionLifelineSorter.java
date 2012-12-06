@@ -142,6 +142,17 @@ public class EqualDistributionLifelineSorter implements ILifelineSorter {
     private HashBiMap<SLifeline, EDLSNode> correspondences;
 
     /**
+     * Constructor with parameter for the area grouping option.
+     * 
+     * @param groupAreas
+     *            if messages that are contained in areas should be given increased priority in the
+     *            message length minimization process.
+     */
+    public EqualDistributionLifelineSorter(final boolean groupAreas) {
+        this.considerAreas = groupAreas;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public List<SLifeline> sortLifelines(final SGraph sgraph, final LGraph lgraph,
