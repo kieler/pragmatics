@@ -230,66 +230,18 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         // with the lowest and highest x coordinate
         if (line1.x1 == line1.x2) {
             // Vertical
-            if (line1.y2 < start.y) {
-                start.x = line1.x2;
-                start.y = line1.y2;
-            }
+            start.x = line1.x1;
+            start.y = KielerMath.mind(line1.y1, line1.y2, line2.y1, line2.y2);
             
-            if (line2.y1 < start.y) {
-                start.x = line2.x1;
-                start.y = line2.y1;
-            }
-            
-            if (line2.y2 < start.y) {
-                start.x = line2.x2;
-                start.y = line2.y2;
-            }
-            
-            if (line1.y2 > end.y) {
-                end.x = line1.x2;
-                end.y = line1.y2;
-            }
-            
-            if (line2.y1 < end.y) {
-                end.x = line2.x1;
-                end.y = line2.y1;
-            }
-            
-            if (line2.y2 < end.y) {
-                end.x = line2.x2;
-                end.y = line2.y2;
-            }
+            end.x = line1.x1;
+            end.y = KielerMath.maxd(line1.y1, line1.y2, line2.y1, line2.y2);
         } else {
             // Horizontal
-            if (line1.x2 < start.x) {
-                start.x = line1.x2;
-                start.y = line1.y2;
-            }
+            start.x = KielerMath.mind(line1.x1, line1.x2, line2.x1, line2.x2);
+            start.y = line1.y1;
             
-            if (line2.x1 < start.x) {
-                start.x = line2.x1;
-                start.y = line2.y1;
-            }
-            
-            if (line2.x2 < start.x) {
-                start.x = line2.x2;
-                start.y = line2.y2;
-            }
-            
-            if (line1.x2 > end.x) {
-                end.x = line1.x2;
-                end.y = line1.y2;
-            }
-            
-            if (line2.x1 < end.x) {
-                end.x = line2.x1;
-                end.y = line2.y1;
-            }
-            
-            if (line2.x2 < end.x) {
-                end.x = line2.x2;
-                end.y = line2.y2;
-            }
+            end.x = KielerMath.maxd(line1.x1, line1.x2, line2.x1, line2.x2);
+            end.y = line1.y1;
         }
         
         // Set new start and end points

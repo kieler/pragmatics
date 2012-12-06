@@ -14,6 +14,8 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -134,6 +136,11 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                     continue;
                 }
                 
+                // Sort the port list if we have control over the port order
+                if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+                    sortPortList(node);
+                }
+                
                 // Nodes form their own layout unit
                 node.setProperty(Properties.IN_LAYER_LAYOUT_UNIT, node);
                 
@@ -201,6 +208,83 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         
         monitor.done();
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // PORT LIST SORTING
+    
+    /**
+     * Sorts the list of northern and southern ports such that ports with only incoming edges end
+     * up left, ports with only outgoing edges end up right, and ports with both end up in between.
+     * Ports on the eastern and western sides are left untouched.
+     * 
+     * @param node the node whose ports to sort.
+     */
+    private void sortPortList(final LNode node) {
+        int ports = node.getPorts().size();
+        
+        // Next IDs for ports with a given configuration of input and output edges. The choice of
+        // initial IDs ensures that port IDs will be unique
+        int inPorts = 0;
+        int inOutPorts = ports;
+        int outPorts = 2 * ports;
+        
+        // Iterate over the list of ports and set their IDs
+        for (LPort port : node.getPorts()) {
+            switch (port.getSide()) {
+            case EAST:
+            case WEST:
+                port.id = -1;
+                break;
+                
+            case NORTH:
+            case SOUTH:
+                int incoming = port.getIncomingEdges().size();
+                int outgoing = port.getOutgoingEdges().size();
+                
+                if (incoming > 0 && outgoing > 0) {
+                    port.id = inOutPorts++;
+                } else if (incoming > 0) {
+                    port.id = inPorts++;
+                } else if (outgoing > 0) {
+                    port.id = outPorts++;
+                } else {
+                    // Unconnected ports are placed between input ports...
+                    port.id = inPorts++;
+                }
+                
+                break;
+            }
+        }
+        
+        // With all IDs assigned, sort the port list
+        Collections.sort(node.getPorts(), new Comparator<LPort>() {
+            public int compare(final LPort port1, final LPort port2) {
+                PortSide side1 = port1.getSide();
+                PortSide side2 = port2.getSide();
+
+                if (side1 != side2) {
+                    // sort according to the node side
+                    return side1.ordinal() - side2.ordinal();
+                } else {
+                    if (port1.id == port2.id) {
+                        // Eastern and western ports have the same ID and have to retain their order
+                        return 0;
+                    } else {
+                        if (side1 == PortSide.NORTH) {
+                            return port1.id - port2.id;
+                        } else {
+                            return port2.id - port1.id;
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // DUMMY NODE CREATION
     
     /**
      * Returns a list of dummy nodes for the given ports. The list of ports must be
@@ -467,5 +551,4 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         northDummy.setProperty(Properties.CROSSING_HINT, 1);
         southDummy.setProperty(Properties.CROSSING_HINT, 1);
     }
-    
 }
