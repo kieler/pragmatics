@@ -21,6 +21,9 @@ import com.google.common.collect.HashBiMap;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.papyrus.PapyrusProperties;
 import de.cau.cs.kieler.papyrus.SequenceArea;
 import de.cau.cs.kieler.papyrus.sequence.ILifelineSorter;
@@ -125,12 +128,12 @@ public class EqualDistributionLifelineSorter implements ILifelineSorter {
     }
 
     /** Option that indicates, if the starting node is searched by layering attributes. */
-    private boolean layerBased = false;
+    private boolean layerBased = true;
     /**
      * Option that indicates, if areas are considered by the sorter. If so, edges corresponding to
      * messages in an area are given higher weight.
      */
-    private boolean considerAreas = true;
+    private boolean considerAreas = false;
 
     /** List of nodes that are already placed by the algorithm. */
     private List<EDLSNode> placedNodes;
@@ -337,7 +340,32 @@ public class EqualDistributionLifelineSorter implements ILifelineSorter {
      * @return the node that should be placed in first location
      */
     private EDLSNode layerBasedFirstNode(final SGraph sgraph, final LGraph lgraph) {
-        return null; // TODO
+
+        List<Layer> layers = lgraph.getLayers();
+        Layer firstLayer = layers.get(0);
+        List<LNode> nodes = firstLayer.getNodes();
+        if (nodes.size() > 1) {
+            // If there is more than one message in the first layer, return the one with the highest
+            // weighted node degree
+            EDLSNode candidate = null;
+            int bestDegree = -1;
+            for (LNode node : nodes) {
+                SMessage message = (SMessage) node.getProperty(Properties.ORIGIN);
+                SLifeline sourceLifeline = message.getSource();
+                EDLSNode cand = correspondences.get(sourceLifeline);
+                if (cand.getWeightedDegree() > bestDegree) {
+                    bestDegree = cand.getWeightedDegree();
+                    candidate = cand;
+                }
+            }
+            return candidate;
+        } else {
+            // If there is just one message in the first layer, return the node corresponding to its
+            // source lifeline
+            SMessage message = (SMessage) nodes.get(0).getProperty(Properties.ORIGIN);
+            SLifeline sourceLifeline = message.getSource();
+            return correspondences.get(sourceLifeline);
+        }
     }
 
     /**
