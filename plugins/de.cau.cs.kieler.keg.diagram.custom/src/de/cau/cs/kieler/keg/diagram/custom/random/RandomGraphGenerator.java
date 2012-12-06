@@ -22,8 +22,11 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
@@ -91,6 +94,9 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
             "basic.edgeDirectedChance", 0.0f);
     /** the option for using ports to connect nodes. */
     public static final Property<Boolean> PORTS = new Property<Boolean>("basic.ports", false);
+    /** the option for the chance of edges to use already existing ports. */
+    public static final Property<Float> USE_EXISTING_PORTS_CHANCE = new Property<Float>(
+            "basic.useExistingPortsChance", 0.3f);
     /** the option for allowing cross-hierarchy edges. */
     public static final Property<Boolean> CROSS_HIERARCHY_EDGES = new Property<Boolean>(
             "basic.crossHierarchyEdges", false);
@@ -157,6 +163,8 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
     private boolean crossHierarchyEdges;
     /** whether to use ports to connect nodes. */
     private boolean ports;
+    /** chance for existing ports to be reused. */
+    private float reusePortsChance;
     /** the chance for creating a directed edge. */
     private float edgeDirectedChance;
     /** whether to allow self-loops. */
@@ -179,6 +187,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         hypernodeChance = options.getProperty(HYPERNODE_CHANCE);
         crossHierarchyEdges = options.getProperty(CROSS_HIERARCHY_EDGES);
         ports = options.getProperty(PORTS);
+        reusePortsChance = options.getProperty(USE_EXISTING_PORTS_CHANCE);
         edgeDirectedChance = options.getProperty(EDGE_DIRECTED_CHANCE);
         selfLoops = options.getProperty(SELF_LOOPS);
         multiEdges = options.getProperty(MULTI_EDGES);
@@ -954,22 +963,24 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
      */
     private Edge connect(final Node source, final Node target, final boolean directed) {
         Edge edge = factory.createEdge();
+        
         edge.setSource(source);
         edge.setTarget(target);
         edge.setDirected(directed);
+        
         if (ports) {
             if (!source.isHypernode()) {
-                Port sourcePort = factory.createPort();
-                source.getPorts().add(sourcePort);
+                Port sourcePort = retrievePort(source, true);
                 edge.setSourcePort(sourcePort);
                 sourcePort.getEdges().add(edge);
             }
+            
             if (!target.isHypernode()) {
-                Port targetPort = factory.createPort();
-                target.getPorts().add(targetPort);
+                Port targetPort = retrievePort(target, false);
                 edge.setTargetPort(targetPort);
                 targetPort.getEdges().add(edge);
             }
+            
             // set the correct edge type
             edge.setType(determineEdgeType(source, target));
         } else {
@@ -999,6 +1010,56 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
             directed = false;
         }
         return connect(source, target, directed);
+    }
+    
+    /**
+     * Retrieves a port for a new edge to connect to the given node through. This can either be a newly
+     * created port, or an existing one. Which one it is depends on the chance of ports to be reused.
+     * 
+     * <p>An outgoing edge will only ever try to reuse ports that only have outgoing edges connected
+     * to them. The same is true for incoming edges and ports with only incoming edges.</p>
+     * 
+     * @param node the node to add the port to.
+     * @param source {@code true} if the port will be used as a source port, {@code false} if it will
+     *               be used as a target port.
+     * @return the new or existing port.
+     */
+    private Port retrievePort(final Node node, final boolean source) {
+        // We might want to reuse an existing port
+        if (reusePortsChance > 0.0f && Math.random() < reusePortsChance) {
+            // Collect candidate ports for reuse
+            List<Port> reuseCandidates = Lists.newLinkedList();
+            
+            for (KPort port : node.getPorts()) {
+                // Two flags indicating whether the port already has edges pointing in the right
+                // or wrong direction connected to it
+                boolean connectedToDesiredEdges = false;
+                boolean connectedToBadEdges = false;
+                
+                for (KEdge edge : port.getEdges()) {
+                    connectedToDesiredEdges = (source && edge.getSourcePort() == port)
+                            || (!source && edge.getTargetPort() == port);
+                    connectedToBadEdges = (source && edge.getTargetPort() == port)
+                            || (!source && edge.getSourcePort() == port);
+                }
+                
+                // If there are only edges pointing in the same direction as the new edge connected to
+                // the port, it qualifies as a candidate for reuse
+                if (connectedToDesiredEdges && !connectedToBadEdges) {
+                    reuseCandidates.add((Port) port);
+                }
+            }
+            
+            // If there are candidates for reuse, choose one at random
+            if (!reuseCandidates.isEmpty()) {
+                return reuseCandidates.get(randomInt(0, reuseCandidates.size() - 1));
+            }
+        }
+        
+        // We were unable to reuse an existing port, so create a new one and return that
+        Port port = factory.createPort();
+        node.getPorts().add(port);
+        return port;
     }
 
     /**
@@ -1041,17 +1102,22 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
      */
     private void moveSource(final Edge edge, final Node node) {
         if (ports) {
+            // Check if we need to remove the old source port
             if (edge.getType() == EdgeType.PORT2_NODE || edge.getType() == EdgeType.PORT2_PORT) {
-                edge.getSource().getPorts().remove(edge.getSourcePort());
+                if (edge.getSourcePort().getEdges().size() == 1) {
+                    edge.getSource().getPorts().remove(edge.getSourcePort());
+                }
             }
+            
             if (!node.isHypernode()) {
-                Port newPort = factory.createPort();
-                node.getPorts().add(newPort);
+                Port newPort = retrievePort(node, true);
                 edge.setSourcePort(newPort);
                 newPort.getEdges().add(edge);
             }
+            
             edge.setType(determineEdgeType(node, (Node) edge.getTarget()));
         }
+        
         edge.setSource(node);
     }
 
@@ -1065,17 +1131,22 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
      */
     private void moveTarget(final Edge edge, final Node node) {
         if (ports) {
+            // Check if we need to remove the old target port
             if (edge.getType() == EdgeType.NODE2_PORT || edge.getType() == EdgeType.PORT2_PORT) {
-                edge.getTarget().getPorts().remove(edge.getTargetPort());
+                if (edge.getTargetPort().getEdges().size() == 1) {
+                    edge.getTarget().getPorts().remove(edge.getTargetPort());
+                }
             }
+            
             if (!node.isHypernode()) {
-                Port newPort = factory.createPort();
-                node.getPorts().add(newPort);
+                Port newPort = retrievePort(node, false);
                 edge.setTargetPort(newPort);
                 newPort.getEdges().add(edge);
             }
+            
             edge.setType(determineEdgeType((Node) edge.getSource(), node));
         }
+        
         edge.setTarget(node);
     }
 
@@ -1333,7 +1404,6 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
      * An interface for expressing conditions for creating an edge between two nodes.
      */
     private interface EdgeCondition {
-
         /**
          * Returns whether the condition is met for an edge from the first to the second node.
          * 

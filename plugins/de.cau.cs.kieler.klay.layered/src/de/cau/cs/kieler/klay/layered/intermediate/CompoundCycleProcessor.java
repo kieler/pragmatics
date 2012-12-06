@@ -50,7 +50,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author ima
  * @kieler.design 2012-08-10 chsch grh
  */
-public class CompoundCycleProcessor implements ILayoutProcessor {
+public final class CompoundCycleProcessor implements ILayoutProcessor {
 
     /**
      * Store information about inserted dummy edges.

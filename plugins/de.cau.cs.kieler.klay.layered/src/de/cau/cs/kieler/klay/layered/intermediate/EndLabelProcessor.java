@@ -50,7 +50,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author jjc
  * @kieler.rating proposed yellow cds
  */
-public class EndLabelProcessor implements ILayoutProcessor {
+public final class EndLabelProcessor implements ILayoutProcessor {
 
     /** Distance of a label to its edge. */
     private static final int LABEL_DISTANCE = 0;

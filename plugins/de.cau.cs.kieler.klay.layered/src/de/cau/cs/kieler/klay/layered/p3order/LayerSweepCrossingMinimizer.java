@@ -34,6 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -66,7 +67,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class LayerSweepCrossingMinimizer implements ILayoutPhase {
+public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
@@ -89,8 +90,15 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
+        IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration(
+                INTERMEDIATE_PROCESSING_CONFIGURATION);
         
-        return INTERMEDIATE_PROCESSING_CONFIGURATION;
+        if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.NON_FREE_PORTS)) {
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_3,
+                    LayoutProcessorStrategy.PORT_LIST_SORTER);
+        }
+        
+        return configuration;
     }
     
     /** array of port ranks used for sorting nodes and ports. */
@@ -208,7 +216,17 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         int runCount = layeredGraph.getProperty(Properties.THOROUGHNESS);
 
         // Initialize the compound graph layer crossing minimizer
-        IPortDistributor portDistributor = new NodeRelativePortDistributor(portRanks);
+        AbstractPortDistributor portDistributor;
+        switch (layeredGraph.getProperty(Properties.PORT_DISTRIBUTION)) {
+        case NODE_RELATIVE:
+            portDistributor = new NodeRelativePortDistributor(portRanks);
+            break;
+        case LAYER_TOTAL:
+            portDistributor = new LayerTotalPortDistributor(portRanks);
+            break;
+        default:
+            throw new IllegalStateException();
+        }
         IConstraintResolver constraintResolver = new ForsterConstraintResolver(layoutUnits);
         ICrossingMinimizationHeuristic heuristic = new BarycenterHeuristic(constraintResolver,
                 random, portRanks);
@@ -290,9 +308,6 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             }
         }
 
-        // Distribute the ports of all nodes with free port constraints
-        portDistributor.distributePorts(bestSweep);
-
         // Apply the ordering to the original layered graph
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
@@ -304,6 +319,9 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 nodeIter.set(nodes[nodeIter.previousIndex()].getNode());
             }
         }
+
+        // Distribute the ports of all nodes with free port constraints
+        portDistributor.distributePorts(bestSweep);
 
         dispose();
         monitor.done();

@@ -49,7 +49,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  * @author jjc
  */
-public class LabelSideSelector implements ILayoutProcessor {
+public final class LabelSideSelector implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}

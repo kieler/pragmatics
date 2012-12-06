@@ -96,8 +96,8 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
     private RandomGraphTriconnectedPage triconnectedPage;
     /** the page for the ACYCLIC_NO_TRANSITIV_EDGES graph type. */
     private RandomGraphANTEPage antePage;
-    /** the utility page. */
-    private RandomGraphUtilityPage utilityPage;
+    /** the options page. */
+    private RandomGraphOptionsPage optionsPage;
 
     /**
      * Creates a RandomGraphWizard.
@@ -120,7 +120,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         biconnectedPage = new RandomGraphBiconnectedPage();
         triconnectedPage = new RandomGraphTriconnectedPage();
         antePage = new RandomGraphANTEPage();
-        utilityPage = new RandomGraphUtilityPage();
+        optionsPage = new RandomGraphOptionsPage();
         addPage(newFilePage);
         addPage(typePage);
         addPage(anyPage);
@@ -128,7 +128,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         addPage(biconnectedPage);
         addPage(triconnectedPage);
         addPage(antePage);
-        addPage(utilityPage);
+        addPage(optionsPage);
     }
 
     /**
@@ -138,8 +138,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
     public IWizardPage getNextPage(final IWizardPage page) {
         if (page == newFilePage) {
             return typePage;
-        }
-        if (page == typePage) {
+        } else if (page == typePage) {
             switch (typePage.getGraphType()) {
             case TREE:
                 return treePage;
@@ -153,12 +152,16 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
             default:
                 return anyPage;
             }
+        } else if (page == treePage
+                || page == biconnectedPage
+                || page == triconnectedPage
+                || page == antePage
+                || page == anyPage) {
+            
+            return optionsPage;
+        } else {
+            return null;
         }
-        if (page == treePage || page == biconnectedPage || page == triconnectedPage
-                || page == antePage || page == anyPage) {
-            return utilityPage;
-        }
-        return null;
     }
 
     /**
@@ -186,6 +189,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                 return false;
             }
         }
+        
         // run the generation in the wizard container
         IRunnableWithProgress runnable = new IRunnableWithProgress() {
             public void run(final IProgressMonitor monitor) throws InterruptedException,
@@ -199,6 +203,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                 }
             }
         };
+        
         try {
             getContainer().run(true, true, runnable);
         } catch (InterruptedException exception) {
@@ -334,7 +339,14 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
             monitor.done();
         }
     }
-
+    
+    /**
+     * Initializes a diagram from the given model file.
+     * 
+     * @param modelFile the model file to create a diagram for.
+     * @param diagramFile path of the diagram file to create.
+     * @throws IOException if anything goes wrong.
+     */
     private void createDiagram(final IPath modelFile, final IPath diagramFile) throws IOException {
         closeDiagram(diagramFile);
         // load the model
@@ -353,7 +365,12 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         diagramResource.getContents().add(diagram);
         diagramResource.save(GraphsDiagramEditorUtil.getSaveOptions());
     }
-
+    
+    /**
+     * Closes the given diagram file if it is open in any editors.
+     * 
+     * @param diagramPath the diagram file to close.
+     */
     private void closeDiagram(final IPath diagramPath) {
         final IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(diagramPath);
         if (diagramFile.exists()) {
@@ -371,7 +388,12 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
             });
         }
     }
-
+    
+    /**
+     * Opens the given diagram file.
+     * 
+     * @param diagramPath path to the diagram file that is to be opened.
+     */
     private void openDiagram(final IPath diagramPath) {
         final IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(diagramPath);
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
@@ -403,24 +425,34 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
     private IPropertyHolder getOptions() {
         IPropertyHolder options = new MapPropertyHolder();
         options.setProperty(RandomGraphGenerator.GRAPH_TYPE, typePage.getGraphType());
+        
+        // Graph-specific options
         switch (typePage.getGraphType()) {
         case ANY:
-            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES, anyPage.getNumberOfNodes());
+            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES,
+                    anyPage.getNumberOfNodes());
             options.setProperty(RandomGraphGenerator.EDGE_DETERMINATION,
                     anyPage.getEdgeDetermination());
-            options.setProperty(RandomGraphGenerator.NUMBER_OF_EDGES, anyPage.getNumberOfEdges());
+            options.setProperty(RandomGraphGenerator.NUMBER_OF_EDGES,
+                    anyPage.getNumberOfEdges());
             options.setProperty(RandomGraphGenerator.MIN_OUTGOING_EDGES,
                     anyPage.getMinOutgoingEdges());
             options.setProperty(RandomGraphGenerator.MAX_OUTGOING_EDGES,
                     anyPage.getMaxOutgoingEdges());
-            options.setProperty(RandomGraphGenerator.SELF_LOOPS, anyPage.getSelfLoops());
-            options.setProperty(RandomGraphGenerator.MULTI_EDGES, anyPage.getMultiEdges());
-            options.setProperty(RandomGraphGenerator.CYCLES, anyPage.getCycles());
+            options.setProperty(RandomGraphGenerator.SELF_LOOPS,
+                    anyPage.getSelfLoops());
+            options.setProperty(RandomGraphGenerator.MULTI_EDGES,
+                    anyPage.getMultiEdges());
+            options.setProperty(RandomGraphGenerator.CYCLES,
+                    anyPage.getCycles());
             break;
         case TREE:
-            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES, treePage.getNumberOfNodes());
-            options.setProperty(RandomGraphGenerator.MAX_DEGREE, treePage.getMaxDegree());
-            options.setProperty(RandomGraphGenerator.MAX_WIDTH, treePage.getMaxWidth());
+            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES,
+                    treePage.getNumberOfNodes());
+            options.setProperty(RandomGraphGenerator.MAX_DEGREE,
+                    treePage.getMaxDegree());
+            options.setProperty(RandomGraphGenerator.MAX_WIDTH,
+                    treePage.getMaxWidth());
             break;
         case BICONNECTED:
             options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES,
@@ -433,22 +465,34 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                     triconnectedPage.getNumberOfNodes());
             break;
         case ACYCLIC_NO_TRANSITIV_EDGES:
-            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES, antePage.getNumberOfNodes());
-            options.setProperty(RandomGraphGenerator.NUMBER_OF_EDGES, antePage.getNumberOfEdges());
-            options.setProperty(RandomGraphGenerator.PLANAR, antePage.getPlanar());
+            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES,
+                    antePage.getNumberOfNodes());
+            options.setProperty(RandomGraphGenerator.NUMBER_OF_EDGES,
+                    antePage.getNumberOfEdges());
+            options.setProperty(RandomGraphGenerator.PLANAR,
+                    antePage.getPlanar());
             break;
         }
-        options.setProperty(RandomGraphGenerator.HIERARCHY_CHANCE, utilityPage.getHierarchyChance());
+        
+        // Common options
+        if (optionsPage.isHierarchyEnabled()) {
+            options.setProperty(RandomGraphGenerator.HIERARCHY_CHANCE, optionsPage.getHierarchyChance());
+        }
         options.setProperty(RandomGraphGenerator.MAX_HIERARCHY_LEVEL,
-                utilityPage.getMaximumHierarchyLevel());
+                optionsPage.getMaximumHierarchyLevel());
         options.setProperty(RandomGraphGenerator.HIERARCHY_NODES_FACTOR,
-                utilityPage.getHierarchyNodesFactor());
-        options.setProperty(RandomGraphGenerator.HYPERNODE_CHANCE, utilityPage.getHypernodeChance());
+                optionsPage.getHierarchyNodesFactor());
+        options.setProperty(RandomGraphGenerator.HYPERNODE_CHANCE,
+                optionsPage.getHypernodeChance());
         options.setProperty(RandomGraphGenerator.EDGE_DIRECTED_CHANCE,
-                utilityPage.getEdgeDirectedChance());
-        options.setProperty(RandomGraphGenerator.PORTS, utilityPage.getPorts());
+                optionsPage.getEdgeDirectedChance());
+        options.setProperty(RandomGraphGenerator.PORTS,
+                optionsPage.getPorts());
+        options.setProperty(RandomGraphGenerator.USE_EXISTING_PORTS_CHANCE,
+                optionsPage.getUseExistingPortsChance());
         options.setProperty(RandomGraphGenerator.CROSS_HIERARCHY_EDGES,
-                utilityPage.getCrossHierarchyEdges());
+                optionsPage.getCrossHierarchyEdges());
+        
         return options;
     }
 
@@ -472,6 +516,6 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
             antePage.savePreferences();
             break;
         }
-        utilityPage.savePreferences();
+        optionsPage.savePreferences();
     }
 }

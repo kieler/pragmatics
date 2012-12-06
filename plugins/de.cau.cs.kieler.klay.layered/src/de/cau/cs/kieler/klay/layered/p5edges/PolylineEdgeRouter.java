@@ -41,7 +41,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class PolylineEdgeRouter implements ILayoutPhase {
+public final class PolylineEdgeRouter implements ILayoutPhase {
     
     /** the minimal vertical difference for creating bend points. */
     private static final double MIN_VERT_DIFF = 1.0;

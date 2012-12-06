@@ -30,6 +30,7 @@ import org.eclipse.ui.ide.IDE;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
@@ -42,7 +43,7 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
  * @author mri
  * @kieler.ignore (excluded from review process)
  */
-public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
+public class EditorKGraphProvider implements IKGraphProvider<IPath> {
 
     /** the message for an unsupported diagram editor. */
     private static final String MESSAGE_NO_MANAGER =
@@ -53,10 +54,6 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
 
     /** the 'layout before analysis' option. */
     private boolean layoutBeforeAnalysis;
-    /** the last exception thrown inside the UI thread. */
-    private Throwable lastException;
-    /** the last created kgraph instance. */
-    private KNode graph;
 
     /**
      * {@inheritDoc}
@@ -64,10 +61,12 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
     public KNode getKGraph(final IPath parameter,
             final IKielerProgressMonitor monitor) {
         monitor.begin("Retrieving KGraph from " + parameter.toString(), 1);
+        
         // get the diagram file
         final IFile diagramFile =
                 ResourcesPlugin.getWorkspace().getRoot().getFile(parameter);
-        lastException = null;
+        final Maybe<Throwable> wrappedException = new Maybe<Throwable>();
+        final Maybe<KNode> graph = new Maybe<KNode>();
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 IWorkbenchPage page =
@@ -82,12 +81,12 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                         initialEditors.add(editor);
                     }
                 }
+                
                 // open the diagram file in an editor
                 IEditorDescriptor editorDescriptor =
                         IDE.getDefaultEditor(diagramFile);
                 if (editorDescriptor == null
                         || editorDescriptor.isOpenExternal()) {
-                    // FIXME throw a more specific exception
                     throw new RuntimeException(MESSAGE_NO_EDITOR);
                 }
                 IEditorPart editorPart;
@@ -96,9 +95,10 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                             IDE.openEditor(page, diagramFile,
                                     editorDescriptor.getId(), true);
                 } catch (PartInitException e) {
-                    lastException = e;
+                    wrappedException.set(e);
                     return;
                 }
+                
                 // get the layout manager for the editor
                 IDiagramLayoutManager<?> layoutManager =
                         EclipseLayoutInfoService.getInstance().getManager(
@@ -107,13 +107,14 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                     if (!initialEditors.contains(editorPart)) {
                         page.closeEditor(editorPart, false);
                     }
-                    // FIXME throw a more specific exception
-                    lastException = new RuntimeException(MESSAGE_NO_MANAGER);
+                    wrappedException.set(new RuntimeException(MESSAGE_NO_MANAGER));
                     return;
                 }
+                
                 // build the graph
                 LayoutMapping<?> mapping = layoutManager.buildLayoutGraph(editorPart, null);
-                graph = mapping.getLayoutGraph();
+                graph.set(mapping.getLayoutGraph());
+                
                 // layout if the option is set
                 if (layoutBeforeAnalysis) {
                     DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
@@ -122,7 +123,7 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                         if (!initialEditors.contains(editorPart)) {
                             page.closeEditor(editorPart, false);
                         }
-                        lastException = status.getException();
+                        wrappedException.set(status.getException());
                         return;
                     }
                 }
@@ -131,33 +132,26 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                 }
             }
         });
+        
         monitor.done();
         // throw any exceptions that occurred inside the UI thread
-        if (lastException != null) {
-            throw new RuntimeException(lastException);
+        if (wrappedException.get() instanceof RuntimeException) {
+            throw (RuntimeException) wrappedException.get();
+        } else if (wrappedException.get() != null) {
+            throw new RuntimeException(wrappedException.get());
         }
-        return graph;
+        return graph.get();
     }
 
     /**
      * Sets the option which specifies whether layout should be performed before
-     * the KGraph is built.
+     * the KGraph is returned.
      * 
      * @param layoutBeforeAnalysisOption
-     *            true if layout should be performed before the kgraph
-     *            generation
+     *            true if layout should be performed
      */
     public void setLayoutBeforeAnalysis(final boolean layoutBeforeAnalysisOption) {
         layoutBeforeAnalysis = layoutBeforeAnalysisOption;
     }
-
-    /**
-     * Returns the option which specifies whether layout should be performed
-     * before the KGraph is built.
-     * 
-     * @return true if layout should be performed before the kgraph generation
-     */
-    public boolean getLayoutBeforeAnalysis() {
-        return layoutBeforeAnalysis;
-    }
+    
 }

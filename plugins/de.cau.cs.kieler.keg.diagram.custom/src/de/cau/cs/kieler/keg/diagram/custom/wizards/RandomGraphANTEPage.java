@@ -70,50 +70,55 @@ public class RandomGraphANTEPage extends WizardPage {
     // CHECKSTYLEOFF MagicNumber
     private void createOptions(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NULL);
-        GridData gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
-        composite.setLayoutData(gridData);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        layout.verticalSpacing = 9;
-        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+        composite.setLayout(new GridLayout(2, false));
+        
+        GridData gridData;
+        
         // add NUMBER_OF_NODES option
         Label label = new Label(composite, SWT.NULL);
         label.setText(Messages.RandomGraphANTEPage_number_of_nodes_caption);
+        
         final Spinner nodesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(nodesSpinner, Messages.RandomGraphANTEPage_number_of_nodes_help);
+        nodesSpinner.setToolTipText(Messages.RandomGraphANTEPage_number_of_nodes_help);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
+        
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
         nodesSpinner.setLayoutData(gridData);
+        
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 numberOfNodes = nodesSpinner.getSelection();
             }
         });
+        
         // add NUMBER_OF_EDGES option
         label = new Label(composite, SWT.NULL);
         label.setText(Messages.RandomGraphANTEPage_number_of_edges_caption);
+        
         final Spinner edgesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(edgesSpinner, Messages.RandomGraphANTEPage_number_of_edges_help);
+        edgesSpinner.setToolTipText(Messages.RandomGraphANTEPage_number_of_edges_help);
         edgesSpinner.setValues(numberOfEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
+        
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
         edgesSpinner.setLayoutData(gridData);
+        
         edgesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 numberOfEdges = edgesSpinner.getSelection();
             }
         });
+        
         // add PLANAR option
         final Button planarButton = new Button(composite, SWT.CHECK);
-        Util.addHelp(planarButton, Messages.RandomGraphANTEPage_planarity_help);
+        planarButton.setToolTipText(Messages.RandomGraphANTEPage_planarity_help);
         planarButton.setText(Messages.RandomGraphANTEPage_planarity_caption);
         planarButton.setSelection(planar);
-        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
-        gridData.horizontalSpan = 2;
-        planarButton.setLayoutData(gridData);
+        planarButton.setLayoutData(new GridData(SWT.LEFT, SWT.NONE, false, false, 2, 1));
+        
         planarButton.addSelectionListener(new SelectionListener() {
-
             public void widgetSelected(final SelectionEvent e) {
                 planar = planarButton.getSelection();
             }

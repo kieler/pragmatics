@@ -56,7 +56,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class OrthogonalEdgeRouter implements ILayoutPhase {
+public final class OrthogonalEdgeRouter implements ILayoutPhase {
     
     /* The basic processing strategy for this phase is empty. Depending on
      * the graph features, dependencies on intermediate processors are added

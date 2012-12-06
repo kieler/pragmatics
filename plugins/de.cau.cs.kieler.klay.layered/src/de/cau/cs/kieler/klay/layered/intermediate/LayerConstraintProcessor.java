@@ -42,7 +42,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class LayerConstraintProcessor implements ILayoutProcessor {
+public final class LayerConstraintProcessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
