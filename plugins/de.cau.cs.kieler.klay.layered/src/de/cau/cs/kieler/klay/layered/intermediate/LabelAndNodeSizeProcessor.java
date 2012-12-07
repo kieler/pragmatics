@@ -364,7 +364,8 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
     
     /**
      * Calculates the space required to accommodate all port labels and sets
-     * {@link #requiredPortLabelSpace}.
+     * {@link #requiredPortLabelSpace}. Also counts the number of ports on
+     * each side of the node.
      * 
      * <p><i>Note:</i> We currently only support one label per port.</p>
      * 
@@ -379,18 +380,22 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
             case WEST:
                 requiredPortLabelSpace.left =
                     Math.max(requiredPortLabelSpace.left, port.getMargin().right);
+                westPortsCount++;
                 break;
             case EAST:
                 requiredPortLabelSpace.right =
                     Math.max(requiredPortLabelSpace.right, port.getMargin().left);
+                eastPortsCount++;
                 break;
             case NORTH:
                 requiredPortLabelSpace.top =
                     Math.max(requiredPortLabelSpace.top, port.getMargin().bottom);
+                northPortsCount++;
                 break;
             case SOUTH:
                 requiredPortLabelSpace.bottom =
                     Math.max(requiredPortLabelSpace.bottom, port.getMargin().top);
+                southPortsCount++;
                 break;
             }
         }
@@ -550,22 +555,18 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
             case WEST:
                 westPortsHeight += port.getSize().y
                     + (accountForLabels ? port.getMargin().bottom + port.getMargin().top : 0.0);
-                westPortsCount++;
                 break;
             case EAST:
                 eastPortsHeight += port.getSize().y
                     + (accountForLabels ? port.getMargin().bottom + port.getMargin().top : 0.0);
-                eastPortsCount++;
                 break;
             case NORTH:
                 northPortsWidth += port.getSize().x
                     + (accountForLabels ? port.getMargin().left + port.getMargin().right : 0.0);
-                northPortsCount++;
                 break;
             case SOUTH:
                 southPortsWidth += port.getSize().x
                     + (accountForLabels ? port.getMargin().left + port.getMargin().right : 0.0);
-                southPortsCount++;
                 break;
             }
         }
