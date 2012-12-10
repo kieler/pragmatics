@@ -201,10 +201,18 @@ public final class LayoutOptions {
      * level of the graph is processed independently, possibly by different layout algorithms,
      * beginning with the lowest level. If it is set, the algorithm is responsible to process
      * all hierarchy levels that are contained in the associated parent node.
+     * 
      * @see GraphFeature#COMPOUND
      */
     public static final IProperty<Boolean> LAYOUT_HIERARCHY = new Property<Boolean>(
             "de.cau.cs.kieler.layoutHierarchy", false);
+    
+    /**
+     * The way node labels are placed. Defaults to node labels not being touched.
+     */
+    public static final IProperty<EnumSet<NodeLabelPlacement>> NODE_LABEL_PLACEMENT =
+            new Property<EnumSet<NodeLabelPlacement>>("de.cau.cs.kieler.nodeLabelPlacement",
+                    NodeLabelPlacement.fixed());
 
     /**
      * What constraints on port positions are given for the associated node.
