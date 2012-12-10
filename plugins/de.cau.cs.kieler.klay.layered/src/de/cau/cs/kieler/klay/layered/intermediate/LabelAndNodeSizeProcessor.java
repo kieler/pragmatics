@@ -372,8 +372,6 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
      * @param node the node whose insets to calculate and to set.
      */
     private void calculateRequiredPortLabelSpace(final LNode node) {
-        // TODO: We don't support fixed port positions yet
-        
         // Iterate over the ports and look at their margins
         for (LPort port : node.getPorts()) {
             switch (port.getSide()) {
@@ -710,6 +708,10 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 node.getProperty(LayoutOptions.SIZE_CONSTRAINT).contains(SizeConstraint.PORT_LABELS);
         
         // Compute the space to be left between the ports
+        // Note: If the size constraints of this node are empty, the height and width of the ports
+        // on each side are zero. That is intentional: if this wasn't the case, bad things would
+        // happen if the ports would actually need more size than the node at its current (unchanged)
+        // size would be able to provide.
         double westDelta = (nodeSize.y - westPortsHeight) / (westPortsCount + 1);
         double westY = nodeSize.y - westDelta;
         double eastDelta = (nodeSize.y - eastPortsHeight) / (eastPortsCount + 1);
