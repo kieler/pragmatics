@@ -19,6 +19,7 @@ import java.util.EnumSet;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
@@ -47,6 +48,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author cds
  */
 public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
+    
+    // TODO: Make use of the label spacing layout option in this class.
     
     /** Distance between labels and ports or edges. */
     public static final int LABEL_DISTANCE = 3;
@@ -163,14 +166,14 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                  * know the final port positions to calculate the insets.
                  */
                 calculateRequiredPortLabelSpace(node);
-                calculateRequiredNodeLabelSpace(node);
+                calculateRequiredNodeLabelSpace(node, spacing);
                 
                 
                 /* PHASE 3 (DANGEROUS DUCKLING): RESIZE NODE
                  * If the node has a label (we currently only support one), the node insets might have
                  * to be adjusted to reserve space for it, which is what this phase does.
                  */
-                resizeNode(node, spacing);
+                resizeNode(node, spacing, spacing);
                 
                 
                 /* PHASE 4 (DUCK AND COVER): PLACE PORTS
@@ -184,7 +187,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 /* PHASE 5 (HAPPY DUCK): PLACE NODE LABEL
                  * With space reserved for the node label (we only support one), the label is placed.
                  */
-                placeNodeLabels(node);
+                placeNodeLabels(node, spacing);
                 
                 
                 /* CLEANUP (THANKSGIVING): SET NODE INSETS
@@ -401,16 +404,43 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
 
     /**
      * Calculates the space required to accommodate the node label (if any) and sets
-     * {@link #requiredNodeLabelSpace}.
+     * {@link #requiredNodeLabelSpace}. If the label is placed at the top or at the bottom, the top
+     * or bottom insets are set. If it is centered vertically, the left or right insets are set if
+     * the label is horizontally aligned leftwards or rightwards. If it is centered in both directions,
+     * no insets are set. If it is placed outside the node, no insets are set.
      * 
      * <p><i>Note:</i> We currently only support one label per node.</p>
      * 
      * @param node the node in question.
+     * @param labelSpacing spacing between labels and other objects.
      */
-    private void calculateRequiredNodeLabelSpace(final LNode node) {
-        // TODO: Implement.
-        // To implement this, we will also have to implement label position support in applyLayout
-        // and add the appropriate layout options to support node label placement.
+    private void calculateRequiredNodeLabelSpace(final LNode node, final double labelSpacing) {
+        // Retrieve first label, if any (we only support one label)
+        if (node.getLabels().isEmpty()) {
+            return;
+        }
+        LLabel nodeLabel = node.getLabels().get(0);
+        
+        // Retrieve label placement policy
+        EnumSet<NodeLabelPlacement> nodeLabelPlacement =
+                node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+        
+        // This method only sets insets if the node label is to be placed on the inside
+        if (nodeLabelPlacement.contains(NodeLabelPlacement.INSIDE)) {
+            // The primary distinction criterion is the vertical placement
+            if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
+                requiredNodeLabelSpace.top = nodeLabel.getSize().y + labelSpacing;
+            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
+                requiredNodeLabelSpace.bottom = nodeLabel.getSize().y + labelSpacing;
+            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
+                // Check whether the label will be placed left or right
+                if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
+                    requiredNodeLabelSpace.left = nodeLabel.getSize().x + labelSpacing;
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
+                    requiredNodeLabelSpace.right = nodeLabel.getSize().x + labelSpacing;
+                }
+            }
+        }
     }
 
     
@@ -422,8 +452,9 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
      * 
      * @param node the node to resize.
      * @param portSpacing the amount of space to leave between ports.
+     * @param labelSpacing the amount of space to leave between labels and other objects.
      */
-    private void resizeNode(final LNode node, final double portSpacing) {
+    private void resizeNode(final LNode node, final double portSpacing, final double labelSpacing) {
         KVector nodeSize = node.getSize();
         KVector originalNodeSize = new KVector(nodeSize);
         EnumSet<SizeConstraint> sizeConstraint = node.getProperty(LayoutOptions.SIZE_CONSTRAINT);
@@ -483,9 +514,32 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         }
         
         // If the node label is to be accounted for, add its required space to the node size
-        if (sizeConstraint.contains(SizeConstraint.NODE_LABELS)) {
-            nodeSize.x += requiredNodeLabelSpace.left + requiredNodeLabelSpace.right;
-            nodeSize.y += requiredNodeLabelSpace.top + requiredNodeLabelSpace.bottom;
+        if (sizeConstraint.contains(SizeConstraint.NODE_LABELS) && !node.getLabels().isEmpty()) {
+            LLabel nodeLabel = node.getLabels().get(0);
+            EnumSet<NodeLabelPlacement> nodeLabelPlacement =
+                    node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+            
+            // Check if the label is to be placed inside or outside the node
+            if (nodeLabelPlacement.contains(NodeLabelPlacement.INSIDE)) {
+                // If the label is centered both horizontally and vertically, the insets are not set
+                if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)
+                        || nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
+                    
+                    nodeSize.x += nodeLabel.getSize().x + 2 * labelSpacing;
+                } else {
+                    nodeSize.x += requiredNodeLabelSpace.left + requiredNodeLabelSpace.right;
+                    nodeSize.y += requiredNodeLabelSpace.top + requiredNodeLabelSpace.bottom;
+                }
+            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.OUTSIDE)) {
+                // The node must be at least as high or wide as the label
+                if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)
+                        || nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
+                    
+                    nodeSize.x = Math.max(nodeSize.x, nodeLabel.getSize().x);
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
+                    nodeSize.y = Math.max(nodeSize.y, nodeLabel.getSize().y);
+                }
+            }
         }
         
         // Respect minimum size
@@ -798,11 +852,63 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
      * <p><i>Note:</i> We currently only support one label per node.</p>
      * 
      * @param node the node whose label to place.
+     * @param labelSpacing spacing between labels and other objects.
      */
-    private void placeNodeLabels(final LNode node) {
-        // TODO: Implement.
-        // To implement this, we will also have to implement label position support in applyLayout
-        // and add the appropriate layout options to support node label placement.
+    private void placeNodeLabels(final LNode node, final double labelSpacing) {
+        // Retrieve the first node label, if any
+        if (node.getLabels().isEmpty()) {
+            return;
+        }
+        LLabel label = node.getLabels().get(0);
+        KVector labelPos = label.getPosition();
+        KVector labelSize = label.getSize();
+        
+        // Retrieve label placement policy
+        EnumSet<NodeLabelPlacement> nodeLabelPlacement =
+                node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+        
+        // This method only sets insets if the node label is to be placed on the inside
+        if (nodeLabelPlacement.contains(NodeLabelPlacement.INSIDE)) {
+            // Y coordinate
+            if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
+                labelPos.y = requiredPortLabelSpace.top + labelSpacing;
+            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
+                labelPos.y = (node.getSize().y - labelSize.y) / 2.0;
+            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
+                labelPos.y = node.getSize().y - requiredPortLabelSpace.bottom
+                        - labelSize.y - labelSpacing;
+            }
+            
+            // X coordinate
+            if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
+                labelPos.x = requiredPortLabelSpace.left + labelSpacing;
+            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
+                labelPos.x = (node.getSize().x - labelSize.x) / 2.0;
+            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
+                labelPos.x = node.getSize().x - requiredPortLabelSpace.right
+                        - labelSize.x - labelSpacing;
+            }
+        } else if (nodeLabelPlacement.contains(NodeLabelPlacement.OUTSIDE)) {
+            // TODO: Outside placement doesn't take ports and port labels into account yet.
+            
+            // Y coordinate
+            if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
+                labelPos.y = -(labelSize.y + labelSpacing);
+            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
+                labelPos.y = (node.getSize().y - labelSize.y) / 2.0;
+            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
+                labelPos.y = node.getSize().y + labelSpacing;
+            }
+            
+            // X coordinate
+            if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
+                labelPos.x = -(labelSize.x + labelSpacing);
+            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
+                labelPos.x = (node.getSize().x - labelSize.x) / 2.0;
+            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
+                labelPos.x = node.getSize().x + labelSpacing;
+            }
+        }
     }
     
 }
