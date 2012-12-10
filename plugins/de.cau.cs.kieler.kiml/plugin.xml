@@ -333,6 +333,16 @@
            variance="0">
      </layoutOption>
      <layoutOption
+           appliesTo="nodes"
+           advanced="true"
+           class="de.cau.cs.kieler.kiml.options.NodeLabelPlacement"
+           default=""
+           description="Hints for where node labels are to be placed; if empty, the node label's position is not modified."
+           id="de.cau.cs.kieler.nodeLabelPlacement"
+           name="Node Label Placement"
+           type="enumset">
+     </layoutOption>
+     <layoutOption
            advanced="true"
            class="de.cau.cs.kieler.kiml.options.EdgeType"
            default="NONE"

@@ -102,6 +102,9 @@
                option="de.cau.cs.kieler.direction">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.nodeLabelPlacement">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.klay.layered.cycleBreaking">
          </knownOption>
          <knownOption
