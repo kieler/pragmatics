@@ -424,7 +424,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         for (KLabel klabel : node.getLabels()) {
             KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
             LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
-            newLabel.setProperty(Properties.ORIGIN, node);
+            newLabel.setProperty(Properties.ORIGIN, klabel);
             newLabel.getSize().x = labelLayout.getWidth();
             newLabel.getSize().y = labelLayout.getHeight();
             newLabel.getPosition().x = labelLayout.getXpos();
@@ -765,6 +765,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                             portLayout.applyVector(lport.getPosition());
                         }
                     }
+                }
+                
+                // set label positions
+                for (LLabel llabel : lnode.getLabels()) {
+                    KLabel klabel = (KLabel) llabel.getProperty(Properties.ORIGIN);
+                    KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+                    klabelLayout.applyVector(llabel.getPosition());
                 }
                 
                 // set port labels

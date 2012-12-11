@@ -25,6 +25,7 @@ import org.eclipse.emf.common.util.EList;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
@@ -44,6 +45,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -1058,6 +1060,13 @@ public final class CompoundKGraphImporter extends KGraphImporter {
         // get the size and margin of the node's representative
         KVector size = node.getSize();
         nodeLayout.setSize((float) size.x, (float) size.y);
+        
+        // set label positions
+        for (LLabel llabel : node.getLabels()) {
+            KLabel klabel = (KLabel) llabel.getProperty(Properties.ORIGIN);
+            KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+            klabelLayout.applyVector(llabel.getPosition());
+        }
         
         // set node insets, if requested
         if (!isCompound && nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS)
