@@ -47,7 +47,7 @@ import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
  * Layout algorithm for Papyrus sequence diagrams.
  * 
  * @author grh
- * @kieler.design 2012-11-20 grh, cds, msp
+ * @kieler.design 2012-11-20 cds, msp
  * @kieler.rating proposed yellow grh
  * 
  */
@@ -199,7 +199,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             nodeLayout.setHeight((float) lifeline.getSize().y);
             
             // Place destruction if existing
-            KNode destruction = lifeline.getDestructionEvent();
+            KNode destruction = lifeline.getProperty(SequenceDiagramProperties.DESTRUCTION_EVENT);
             if (destruction != null) {
                 KShapeLayout destructLayout = destruction.getData(KShapeLayout.class);
                 double destructionXPos = nodeLayout.getWidth() / 2 - destructLayout.getWidth() / 2;
@@ -251,11 +251,11 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             }
 
             // Check if there are any comments that have to be placed near the lifeline
-            List<SComment> comments = lifeline.getProperty(SequenceDiagramProperties.COMMENTS);
             double thisLifelinesSpacing = lifelineSpacing;
-            if (comments.size() > 0) {
+            if (lifeline.getComments().size() > 0) {
                 // Calculate comments positions and maximum width
                 thisLifelinesSpacing = arrangeComments(xPos, lifeline);
+                // TODO somehow consider edge label length's here too
             }
 
             // Set position and height for the lifeline. This may be overridden if there are create-
@@ -690,7 +690,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      */
     private double arrangeComments(final double xPos, final SLifeline lifeline) {
         // Get the list of comments attached to the current lifeline
-        List<SComment> comments = lifeline.getProperty(SequenceDiagramProperties.COMMENTS);
+        List<SComment> comments = lifeline.getComments();
 
         // Check maximum size of comments attached to the lifeline
         double maxCommentWidth = lifelineSpacing;
@@ -941,7 +941,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                         createDummyNode(lgraph, node, true);
                     }
                     comment.setMessage(attachedMess);
-                    attachedMess.getProperty(SequenceDiagramProperties.COMMENTS).add(comment);
+                    attachedMess.getComments().add(comment);
                 }
             }
         }
@@ -1215,7 +1215,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     continue;
                 }
 
-                if (message.getLayerYPos() != -1.0f) {
+                if (message.isLayerPositionSet()) {
                     // Skip iteration message if it was already set
                     continue;
                 }
@@ -1237,7 +1237,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                             // of the tested message, there is an overlapping
                             if (isOverlapping(sourceXPos, targetXPos, otherSourcePos,
                                     otherTargetPos)) {
-                                if (otherMessage.getLayerYPos() != -1.0f) {
+                                if (otherMessage.isLayerPositionSet()) {
                                     // If the other message was already set, the message has to
                                     // be placed in another layer
                                     layerpos += messageSpacing;

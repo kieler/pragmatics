@@ -13,13 +13,11 @@
  */
 package de.cau.cs.kieler.papyrus.sequence;
 
-import java.util.List;
-
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.papyrus.sequence.graph.SComment;
 import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
 import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
 
@@ -27,9 +25,8 @@ import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
  * Properties for sequence diagrams.
  * 
  * @author grh
- * @kieler.design 2012-11-20 grh, cds, msp
- * @kieler.rating proposed yellow grh
- * 
+ * @kieler.design 2012-11-20 cds, msp
+ * @kieler.rating yellow 2012-12-11 cds, ima
  */
 public final class SequenceDiagramProperties {
 
@@ -41,21 +38,17 @@ public final class SequenceDiagramProperties {
     public static final IProperty<MessageType> MESSAGE_TYPE = new Property<MessageType>(
             "de.cau.cs.kieler.papyrus.sequence.messageType", MessageType.ASYNCHRONOUS);
 
-    /** The layer of a message in the layered graph. */
-    public static final IProperty<Integer> MESSAGE_LAYER = new Property<Integer>(
-            "de.cau.cs.kieler.papyrus.sequence.messageLayer");
-
     /** The lifeline to which an element of the SGraph belongs. */
     public static final IProperty<SLifeline> BELONGS_TO_LIFELINE = new Property<SLifeline>(
             "de.cau.cs.kieler.papyrus.sequence.belongsToLifeline");
 
-    /** The list of comments in a SGraphElement. */
-    public static final IProperty<List<SComment>> COMMENTS = new Property<List<SComment>>(
-            "de.cau.cs.kieler.papyrus.sequence.comments");
-
     /** The node in the layered graph that corresponds to a message. */
     public static final IProperty<LNode> LAYERED_NODE = new Property<LNode>(
             "de.cau.cs.kieler.papyrus.sequence.layeredNode");
+
+    /** The node in the KGraph that corresponds to the destruction event of a lifeline. */
+    public static final IProperty<KNode> DESTRUCTION_EVENT = new Property<KNode>(
+            "de.cau.cs.kieler.papyrus.sequence.destructionEvent");
 
     /** The KEdge that connects the comment to another element of the diagram. */
     public static final IProperty<KEdge> COMMENT_CONNECTION = new Property<KEdge>(
@@ -95,8 +88,8 @@ public final class SequenceDiagramProperties {
      */
     public static final Property<LifelineSortingStrategy> LIFELINE_SORTING 
                 = new Property<LifelineSortingStrategy>(
-            "de.cau.cs.kieler.papyrus.sequence.lifelineSorting",
-            LifelineSortingStrategy.INTERACTIVE);
+                        "de.cau.cs.kieler.papyrus.sequence.lifelineSorting",
+                        LifelineSortingStrategy.INTERACTIVE);
 
     /**
      * If messages in areas should be grouped together. This property may be set by the user if the
