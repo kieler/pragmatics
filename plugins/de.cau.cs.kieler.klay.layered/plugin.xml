@@ -128,9 +128,6 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.portLabelPlacement">
          </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.layered.portDistribution">
-         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
@@ -288,16 +285,6 @@
                option="de.cau.cs.kieler.edgeRouting"
                value="ORTHOGONAL">
          </dependency>
-      </layoutOption>
-      <layoutOption
-            advanced="true"
-            appliesTo="parents"
-            class="de.cau.cs.kieler.klay.layered.properties.PortDistribution"
-            default="NODE_RELATIVE"
-            description="Strategy for port distribution."
-            id="de.cau.cs.kieler.klay.layered.portDistribution"
-            name="Port Distribution"
-            type="enum">
       </layoutOption>
    </extension>
 

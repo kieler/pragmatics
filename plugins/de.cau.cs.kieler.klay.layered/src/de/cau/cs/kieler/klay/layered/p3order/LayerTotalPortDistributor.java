@@ -40,6 +40,7 @@ class LayerTotalPortDistributor extends AbstractPortDistributor {
 
     /**
      * Constructs a layer-total port distributor with the given array of ranks.
+     * All ports are required to be assigned ids in the range of the given array.
      * 
      * @param portRanks
      *            The array of port ranks
