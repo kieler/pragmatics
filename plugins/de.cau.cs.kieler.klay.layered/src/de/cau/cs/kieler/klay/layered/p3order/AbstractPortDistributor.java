@@ -44,20 +44,18 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  */
 abstract class AbstractPortDistributor {
 
-    /** barycenter values for ports. */
-    private Float[] portBarycenter;
-    /** port position array. */
+    /** port ranks array in which the results of ranks calculation are stored. */
     private float[] portRanks;
 
     /**
-     * Constructs a port distributor with the given array of ranks.
+     * Constructs a port distributor for the given array of port ranks.
+     * All ports are required to be assigned ids in the range of the given array.
      * 
      * @param portRanks
      *            The array of port ranks
      */
     public AbstractPortDistributor(final float[] portRanks) {
         this.portRanks = portRanks;
-        portBarycenter = new Float[portRanks.length];
     }
     
     /**
@@ -65,7 +63,7 @@ abstract class AbstractPortDistributor {
      * 
      * @return the array of port ranks
      */
-    protected float[] getPortRanks() {
+    public float[] getPortRanks() {
         return portRanks;
     }
 
@@ -77,6 +75,7 @@ abstract class AbstractPortDistributor {
      * Assign port ranks for the input or output ports of the given node. If the node's port
      * constraints imply a fixed order, the ports are assumed to be pre-ordered in the usual way,
      * i.e. in clockwise order north - east - south - west.
+     * The ranks are written to the {@link #getPortRanks()} array.
      * 
      * @param node
      *            a node
@@ -90,6 +89,7 @@ abstract class AbstractPortDistributor {
     
     /**
      * Determine ranks for all ports of specific type in the given layer.
+     * The ranks are written to the {@link #getPortRanks()} array.
      * 
      * @param layer
      *            a layer as node array
@@ -104,7 +104,7 @@ abstract class AbstractPortDistributor {
     
     /**
      * Determine ranks for all ports of specific type in the given layer. Entries that
-     * contain multiple nodes are ignored.
+     * contain multiple nodes are ignored. The ranks are written to the {@link #getPortRanks()} array.
      * 
      * @param layer
      *            a layer as node group array
@@ -163,7 +163,6 @@ abstract class AbstractPortDistributor {
     /**
      * Distribute the ports of the given node by their sides, connected ports, and input or output
      * type.
-     * FIXME this does not properly consider the FixedSides scenario
      * 
      * @param node node whose ports shall be sorted
      * @param nodeIndex the index of the given node
@@ -172,6 +171,9 @@ abstract class AbstractPortDistributor {
         if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
             // the order of ports on each side is variable, so distribute the ports
             if (node.getPorts().size() > 1) {
+                // array of port barycenter values calculated from ranks of connected ports
+                Float[] portBarycenter = new Float[portRanks.length];
+                
                 // list that keeps track of ports connected to other ports in the same layer; these are
                 // treated specially when calculating barycenters
                 List<LPort> inLayerPorts = Lists.newLinkedList();
