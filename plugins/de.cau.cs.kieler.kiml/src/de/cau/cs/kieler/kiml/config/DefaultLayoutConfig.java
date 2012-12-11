@@ -129,14 +129,13 @@ public class DefaultLayoutConfig implements ILayoutConfig {
      */
     public void enrich(final LayoutContext context) {
         // adapt ports information in the context
-        KGraphElement graphElem = context.getProperty(LayoutContext.GRAPH_ELEM);
-        if (context.getProperty(HAS_PORTS) == null && graphElem instanceof KNode) {
-            context.setProperty(HAS_PORTS, !((KNode) graphElem).getPorts().isEmpty());
+        KGraphElement graphElement = context.getProperty(LayoutContext.GRAPH_ELEM);
+        if (context.getProperty(HAS_PORTS) == null && graphElement instanceof KNode) {
+            context.setProperty(HAS_PORTS, !((KNode) graphElement).getPorts().isEmpty());
         }
         
         // add layout option target types
         Set<LayoutOptionData.Target> optionTargets = context.getProperty(LayoutContext.OPT_TARGETS);
-        KGraphElement graphElement = context.getProperty(LayoutContext.GRAPH_ELEM);
         if (optionTargets == null && graphElement != null) {
             optionTargets = kgraphSwitch.doSwitch(graphElement);
             context.setProperty(LayoutContext.OPT_TARGETS, optionTargets);
