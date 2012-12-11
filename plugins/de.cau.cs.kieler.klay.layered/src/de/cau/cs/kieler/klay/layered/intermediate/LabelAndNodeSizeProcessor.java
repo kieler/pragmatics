@@ -49,11 +49,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
     
-    // TODO: Make use of the label spacing layout option in this class.
-    
-    /** Distance between labels and ports or edges. */
-    public static final int LABEL_DISTANCE = 3;
-    
     /* The following variables provide context information for the different phases of the algorithm.
      * The information are usually computed by some phase to be made available to later phases. This
      * would probably be better kept in some kind of a context object, but is kept here for performance
@@ -134,7 +129,8 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Node and Port Label Placement and Node Sizing", 1);
-        double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        double objectSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
 
         // Iterate over all the graph's nodes
         for (Layer layer : layeredGraph) {
@@ -155,7 +151,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 
                 // Place port labels and calculate the margins
                 for (LPort port : node.getPorts()) {
-                    placePortLabels(port, labelPlacement);
+                    placePortLabels(port, labelPlacement, labelSpacing);
                     calculateAndSetPortMargins(port);
                 }
                 
@@ -166,14 +162,14 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                  * know the final port positions to calculate the insets.
                  */
                 calculateRequiredPortLabelSpace(node);
-                calculateRequiredNodeLabelSpace(node, spacing);
+                calculateRequiredNodeLabelSpace(node, labelSpacing);
                 
                 
                 /* PHASE 3 (DANGEROUS DUCKLING): RESIZE NODE
                  * If the node has a label (we currently only support one), the node insets might have
                  * to be adjusted to reserve space for it, which is what this phase does.
                  */
-                resizeNode(node, spacing, spacing);
+                resizeNode(node, objectSpacing, labelSpacing);
                 
                 
                 /* PHASE 4 (DUCK AND COVER): PLACE PORTS
@@ -187,7 +183,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 /* PHASE 5 (HAPPY DUCK): PLACE NODE LABEL
                  * With space reserved for the node label (we only support one), the label is placed.
                  */
-                placeNodeLabels(node, spacing);
+                placeNodeLabels(node, labelSpacing);
                 
                 
                 /* CLEANUP (THANKSGIVING): SET NODE INSETS
@@ -235,16 +231,19 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
      * 
      * @param port the port whose labels to place.
      * @param placement the port label placement that applies to the port.
+     * @param labelSpacing spacing between labels and other objects.
      */
-    private void placePortLabels(final LPort port, final PortLabelPlacement placement) {
+    private void placePortLabels(final LPort port, final PortLabelPlacement placement,
+            final double labelSpacing) {
+        
         // Get the port's label, if any
         if (!port.getLabels().isEmpty()) {
             // We use different implementations based on whether port labels are to be placed
             // inside or outside the node
             if (placement.equals(PortLabelPlacement.INSIDE)) {
-                placePortLabelsInside(port, port.getLabels().get(0));
+                placePortLabelsInside(port, port.getLabels().get(0), labelSpacing);
             } else if (placement.equals(PortLabelPlacement.OUTSIDE)) {
-                placePortLabelsOutside(port, port.getLabels().get(0));
+                placePortLabelsOutside(port, port.getLabels().get(0), labelSpacing);
             }
         }
     }
@@ -254,24 +253,25 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
      * 
      * @param port the port whose label to place.
      * @param label the label to place.
+     * @param labelSpacing spacing between labels and other objects.
      */
-    private void placePortLabelsInside(final LPort port, final LLabel label) {
+    private void placePortLabelsInside(final LPort port, final LLabel label, final double labelSpacing) {
         switch (port.getSide()) {
         case WEST:
-            label.getPosition().x = port.getSize().x + LABEL_DISTANCE;
+            label.getPosition().x = port.getSize().x + labelSpacing;
             label.getPosition().y = (port.getSize().y - label.getSize().y) / 2.0;
             break;
         case EAST:
-            label.getPosition().x = -label.getSize().x - LABEL_DISTANCE;
+            label.getPosition().x = -label.getSize().x - labelSpacing;
             label.getPosition().y = (port.getSize().y - label.getSize().y) / 2.0;
             break;
         case NORTH:
             label.getPosition().x = -label.getSize().x / 2;
-            label.getPosition().y = port.getSize().y + LABEL_DISTANCE;
+            label.getPosition().y = port.getSize().y + labelSpacing;
             break;
         case SOUTH:
             label.getPosition().x = -label.getSize().x / 2;
-            label.getPosition().y = -label.getSize().y - LABEL_DISTANCE;
+            label.getPosition().y = -label.getSize().y - labelSpacing;
             break;
         }
     }
@@ -281,46 +281,49 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
      * 
      * @param port the port whose label to place.
      * @param label the label to place.
+     * @param labelSpacing spacing between labels and other objects.
      */
-    private void placePortLabelsOutside(final LPort port, final LLabel label) {
+    private void placePortLabelsOutside(final LPort port, final LLabel label,
+            final double labelSpacing) {
+        
         if (label.getSide() == LSide.UP) {
             // Place label "above" edges
             switch (port.getSide()) {
             case WEST:
-                label.getPosition().x = -label.getSize().x - LABEL_DISTANCE;
-                label.getPosition().y = -label.getSize().y - LABEL_DISTANCE;
+                label.getPosition().x = -label.getSize().x - labelSpacing;
+                label.getPosition().y = -label.getSize().y - labelSpacing;
                 break;
             case EAST:
-                label.getPosition().x = port.getSize().x + LABEL_DISTANCE;
-                label.getPosition().y = -label.getSize().y - LABEL_DISTANCE;
+                label.getPosition().x = port.getSize().x + labelSpacing;
+                label.getPosition().y = -label.getSize().y - labelSpacing;
                 break;
             case NORTH:
-                label.getPosition().x = -label.getSize().x - LABEL_DISTANCE;
-                label.getPosition().y = -label.getSize().y - LABEL_DISTANCE;
+                label.getPosition().x = -label.getSize().x - labelSpacing;
+                label.getPosition().y = -label.getSize().y - labelSpacing;
                 break;
             case SOUTH:
-                label.getPosition().x = -label.getSize().x - LABEL_DISTANCE;
-                label.getPosition().y = port.getSize().y + LABEL_DISTANCE;
+                label.getPosition().x = -label.getSize().x - labelSpacing;
+                label.getPosition().y = port.getSize().y + labelSpacing;
                 break;
             }
         } else {
             // Place label "below" edges
             switch (port.getSide()) {
             case WEST:
-                label.getPosition().x = -label.getSize().x - LABEL_DISTANCE;
-                label.getPosition().y = port.getSize().y + LABEL_DISTANCE;
+                label.getPosition().x = -label.getSize().x - labelSpacing;
+                label.getPosition().y = port.getSize().y + labelSpacing;
                 break;
             case EAST:
-                label.getPosition().x = port.getSize().x + LABEL_DISTANCE;
-                label.getPosition().y = port.getSize().y + LABEL_DISTANCE;
+                label.getPosition().x = port.getSize().x + labelSpacing;
+                label.getPosition().y = port.getSize().y + labelSpacing;
                 break;
             case NORTH:
-                label.getPosition().x = port.getSize().x + LABEL_DISTANCE;
-                label.getPosition().y = -label.getSize().y - LABEL_DISTANCE;
+                label.getPosition().x = port.getSize().x + labelSpacing;
+                label.getPosition().y = -label.getSize().y - labelSpacing;
                 break;
             case SOUTH:
-                label.getPosition().x = port.getSize().x + LABEL_DISTANCE;
-                label.getPosition().y = port.getSize().y + LABEL_DISTANCE;
+                label.getPosition().x = port.getSize().x + labelSpacing;
+                label.getPosition().y = port.getSize().y + labelSpacing;
                 break;
             }
         }

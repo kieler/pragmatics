@@ -194,7 +194,7 @@ public final class LayoutOptions {
      * Determines the amount of space to be left around the labels of the associated edge.
      */
     public static final IProperty<Float> LABEL_SPACING = new Property<Float>(
-            "de.cau.cs.kieler.labelSpacing", -1.0f);
+            "de.cau.cs.kieler.labelSpacing", 3.0f, 0.0f);
 
     /**
      * Whether the whole hierarchy shall be layouted. If this option is not set, each hierarchy

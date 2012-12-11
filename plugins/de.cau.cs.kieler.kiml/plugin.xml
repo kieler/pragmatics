@@ -210,9 +210,9 @@
             variance="0">
       </layoutOption>
       <layoutOption
-            appliesTo="edges"
+            appliesTo="edges,nodes"
             default="-1.0"
-            description="Factor for spacing of edge labels to the respective edge"
+            description="Spacing between labels and other objects."
             id="de.cau.cs.kieler.labelSpacing"
             lowerBound="0"
             name="Label Spacing"
