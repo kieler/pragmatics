@@ -129,6 +129,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Node and Port Label Placement and Node Sizing", 1);
+        
         double objectSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
 
@@ -893,23 +894,34 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
             }
         } else if (nodeLabelPlacement.contains(NodeLabelPlacement.OUTSIDE)) {
             // TODO: Outside placement doesn't take ports and port labels into account yet.
+            boolean topOrBottom = false;
             
             // Y coordinate
             if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
                 labelPos.y = -(labelSize.y + labelSpacing);
+                topOrBottom = true;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
                 labelPos.y = (node.getSize().y - labelSize.y) / 2.0;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
                 labelPos.y = node.getSize().y + labelSpacing;
+                topOrBottom = true;
             }
             
             // X coordinate
             if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
-                labelPos.x = -(labelSize.x + labelSpacing);
+                if (topOrBottom) {
+                    labelPos.x = 0;
+                } else {
+                    labelPos.x = -(labelSize.x + labelSpacing);
+                }
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
                 labelPos.x = (node.getSize().x - labelSize.x) / 2.0;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
-                labelPos.x = node.getSize().x + labelSpacing;
+                if (topOrBottom) {
+                    labelPos.x = node.getSize().x - labelSize.x;
+                } else {
+                    labelPos.x = node.getSize().x + labelSpacing;
+                }
             }
         }
     }
