@@ -250,7 +250,8 @@ public enum LayoutProcessorStrategy {
             return new LabelSideSelector();
         
         default:
-            return null;
+            throw new IllegalArgumentException(
+                    "No implementation is available for the layout processor " + this.toString());
         }
     }
 }

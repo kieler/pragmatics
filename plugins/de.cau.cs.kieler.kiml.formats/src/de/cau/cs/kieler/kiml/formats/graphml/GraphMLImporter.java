@@ -179,12 +179,10 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
             if (edge.getSourceport() != null) {
                 KPort port = transformPort(edge.getSourceport(), source, transData);
                 kedge.setSourcePort(port);
-                port.getEdges().add(kedge);
             }
             if (edge.getTargetport() != null) {
                 KPort port = transformPort(edge.getTargetport(), target, transData);
                 kedge.setTargetPort(port);
-                port.getEdges().add(kedge);
             }
             for (DataType data : edge.getData()) {
                 KimlUtil.setOption(edgeLayout, data.getKey(), getValue(data));
@@ -204,7 +202,6 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
                 if (endpoint.getPort() != null) {
                     KPort port = transformPort(endpoint.getPort(), epnode, transData);
                     kedge.setSourcePort(port);
-                    port.getEdges().add(kedge);
                 }
             }
         }
