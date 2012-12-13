@@ -174,7 +174,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
         new IntermediateProcessingConfiguration(
                 // Before Phase 1
-                EnumSet.of(LayoutProcessorStrategy.LABEL_NODE_SIZE_ADJUSTER),
+                null,
                 
                 // Before Phase 2
                 EnumSet.of(LayoutProcessorStrategy.LABEL_DUMMY_INSERTER),
@@ -196,7 +196,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration END_EDGE_LABEL_PROCESSING_ADDITIONS =
         new IntermediateProcessingConfiguration(
                 // Before Phase 1
-                EnumSet.of(LayoutProcessorStrategy.LABEL_NODE_SIZE_ADJUSTER),
+                null,
                 
                 // Before Phase 2
                 null,
