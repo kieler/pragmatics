@@ -18,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -29,6 +30,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -169,8 +171,10 @@ public final class OrthogonalRoutingGenerator {
                     if (Math.abs(sourcey - targety) > edgeSpacing / STRAIGHT_TOLERANCE) {
                         KVector point1 = new KVector(x, sourcey);
                         edge.getBendPoints().add(point1);
+                        addJunctionPoint(edge, hyperNode, point1, true);
                         KVector point2 = new KVector(x, targety);
                         edge.getBendPoints().add(point2);
+                        addJunctionPoint(edge, hyperNode, point2, true);
                     }
                 }
             }
@@ -226,8 +230,10 @@ public final class OrthogonalRoutingGenerator {
                     if (Math.abs(sourcex - targetx) > edgeSpacing / STRAIGHT_TOLERANCE) {
                         KVector point1 = new KVector(sourcex, y);
                         edge.getBendPoints().add(point1);
+                        addJunctionPoint(edge, hyperNode, point1, false);
                         KVector point2 = new KVector(targetx, y);
                         edge.getBendPoints().add(point2);
+                        addJunctionPoint(edge, hyperNode, point2, false);
                     }
                 }
             }
@@ -282,9 +288,11 @@ public final class OrthogonalRoutingGenerator {
                             + target.getAnchor().x;
                     if (Math.abs(sourcex - targetx) > edgeSpacing / STRAIGHT_TOLERANCE) {
                         KVector point1 = new KVector(sourcex, y);
+                        addJunctionPoint(edge, hyperNode, point1, false);
                         edge.getBendPoints().add(point1);
                         KVector point2 = new KVector(targetx, y);
                         edge.getBendPoints().add(point2);
+                        addJunctionPoint(edge, hyperNode, point2, false);
                     }
                 }
             }
@@ -310,9 +318,9 @@ public final class OrthogonalRoutingGenerator {
         /** vertical ending position of this hypernode. */
         private double end = Double.NaN;
         /** positions of line segments going to the preceding layer. */
-        private List<Double> sourcePosis = new LinkedList<Double>();
+        private LinkedList<Double> sourcePosis = new LinkedList<Double>();
         /** positions of line segments going to the next layer. */
-        private List<Double> targetPosis = new LinkedList<Double>();
+        private LinkedList<Double> targetPosis = new LinkedList<Double>();
         /** list of outgoing dependencies. */
         private List<Dependency> outgoing = new LinkedList<Dependency>();
         /** sum of the weights of outgoing dependencies. */
@@ -942,6 +950,34 @@ public final class OrthogonalRoutingGenerator {
             }
         }
         listIter.add(Double.valueOf(value));
+    }
+    
+    /**
+     * Add a junction point to the given edge if necessary.
+     * 
+     * @param edge an edge
+     * @param hyperNode the corresponding hypernode
+     * @param pos the bend point position
+     * @param vertical {@code true} if the connecting segment is vertical, {@code false} if it
+     *          is horizontal
+     */
+    private static void addJunctionPoint(final LEdge edge, final HyperNode hyperNode,
+            final KVector pos, final boolean vertical) {
+        double p = vertical ? pos.y : pos.x;
+        // the bend point is somewhere between the start and end position of the hypernode
+        if (p > hyperNode.start && p < hyperNode.end
+                || !hyperNode.sourcePosis.isEmpty() && !hyperNode.targetPosis.isEmpty()
+                // the bend point is at the start and joins another edge at the same position
+                && (p == hyperNode.sourcePosis.getFirst() && p == hyperNode.targetPosis.getFirst()
+                // the bend point is at the end and joins another edge at the same position
+                || p == hyperNode.sourcePosis.getLast() && p == hyperNode.targetPosis.getLast())) {
+            Collection<KVector> junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+            if (junctionPoints == null) {
+                junctionPoints = new LinkedList<KVector>();
+                edge.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+            }
+            junctionPoints.add(new KVector(pos));
+        }
     }
     
     

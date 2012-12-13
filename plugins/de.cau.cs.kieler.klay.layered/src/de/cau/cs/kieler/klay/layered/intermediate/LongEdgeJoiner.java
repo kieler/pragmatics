@@ -13,12 +13,14 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -91,10 +93,24 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
                             survivingBendPoints.add(new KVector(bendPoint));
                         }
                         
-                        //Join their labels
+                        // Join their labels
                         List<LLabel> survivingLabels = survivingEdge.getLabels();
                         for (LLabel label: droppedEdge.getLabels()) {
                             survivingLabels.add(label);
+                        }
+                        
+                        // Join their junction points
+                        Collection<KVector> survivingJunctionPoints = survivingEdge.getProperty(
+                                LayoutOptions.JUNCTION_POINTS);
+                        Collection<KVector> droppedJunctionsPoints = droppedEdge.getProperty(
+                                LayoutOptions.JUNCTION_POINTS);
+                        if (droppedJunctionsPoints != null) {
+                            if (survivingJunctionPoints == null) {
+                                survivingEdge.setProperty(LayoutOptions.JUNCTION_POINTS,
+                                        droppedJunctionsPoints);
+                            } else {
+                                survivingJunctionPoints.addAll(droppedJunctionsPoints);
+                            }
                         }
                     }
                     

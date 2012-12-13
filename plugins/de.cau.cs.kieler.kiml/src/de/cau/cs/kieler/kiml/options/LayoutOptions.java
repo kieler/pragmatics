@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.options;
 
+import java.util.Collection;
 import java.util.EnumSet;
 
 import de.cau.cs.kieler.core.math.KVector;
@@ -189,6 +190,16 @@ public final class LayoutOptions {
      */
     public static final IProperty<Boolean> INTERACTIVE = new Property<Boolean>(
             "de.cau.cs.kieler.interactive", false);
+    
+    /**
+     * This property is not used as option, but as output of the layout algorithms.
+     * It is attached to edges and determines the points where junction symbols should
+     * be drawn in order to represent hyperedges with orthogonal routing.
+     * Whether such points are computed depends on the chosen layout algorithm and
+     * edge routing style.
+     */
+    public static final IProperty<Collection<KVector>> JUNCTION_POINTS
+            = new Property<Collection<KVector>>("de.cau.cs.kieler.junctionPoints");
     
     /**
      * Determines the amount of space to be left around the labels of the associated edge.

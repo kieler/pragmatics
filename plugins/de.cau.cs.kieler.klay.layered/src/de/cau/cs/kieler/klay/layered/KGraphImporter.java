@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -796,6 +797,15 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
                 KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
                 klabelLayout.applyVector(label.getPosition().add(offset));
+            }
+            
+            // copy junction points
+            Collection<KVector> junctionPoints = ledge.getProperty(LayoutOptions.JUNCTION_POINTS);
+            if (junctionPoints != null) {
+                for (KVector jp : junctionPoints) {
+                    jp.translate(offset.x, offset.y);
+                }
+                edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
             }
 
             // set spline option
