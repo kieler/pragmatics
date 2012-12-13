@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -100,9 +99,9 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
                         }
                         
                         // Join their junction points
-                        Collection<KVector> survivingJunctionPoints = survivingEdge.getProperty(
+                        KVectorChain survivingJunctionPoints = survivingEdge.getProperty(
                                 LayoutOptions.JUNCTION_POINTS);
-                        Collection<KVector> droppedJunctionsPoints = droppedEdge.getProperty(
+                        KVectorChain droppedJunctionsPoints = droppedEdge.getProperty(
                                 LayoutOptions.JUNCTION_POINTS);
                         if (droppedJunctionsPoints != null) {
                             if (survivingJunctionPoints == null) {

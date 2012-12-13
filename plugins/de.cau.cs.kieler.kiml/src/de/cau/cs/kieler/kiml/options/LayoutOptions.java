@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.options;
 
-import java.util.Collection;
 import java.util.EnumSet;
 
 import de.cau.cs.kieler.core.math.KVector;
@@ -196,10 +195,10 @@ public final class LayoutOptions {
      * It is attached to edges and determines the points where junction symbols should
      * be drawn in order to represent hyperedges with orthogonal routing.
      * Whether such points are computed depends on the chosen layout algorithm and
-     * edge routing style.
+     * edge routing style. The points are put into the vector chain with no specific order.
      */
-    public static final IProperty<Collection<KVector>> JUNCTION_POINTS
-            = new Property<Collection<KVector>>("de.cau.cs.kieler.junctionPoints");
+    public static final IProperty<KVectorChain> JUNCTION_POINTS
+            = new Property<KVectorChain>("de.cau.cs.kieler.junctionPoints");
     
     /**
      * Determines the amount of space to be left around the labels of the associated edge.

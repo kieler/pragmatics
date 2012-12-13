@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -934,7 +933,7 @@ public final class CompoundKGraphImporter extends KGraphImporter {
         offsetBorderSpacingVec.add(graphOffset);
         
         // copy junction points
-        Collection<KVector> junctionPoints = ledge.getProperty(LayoutOptions.JUNCTION_POINTS);
+        KVectorChain junctionPoints = ledge.getProperty(LayoutOptions.JUNCTION_POINTS);
         if (junctionPoints != null) {
             for (KVector jp : junctionPoints) {
                 jp.translate(graphBorderSpacing, graphBorderSpacing);

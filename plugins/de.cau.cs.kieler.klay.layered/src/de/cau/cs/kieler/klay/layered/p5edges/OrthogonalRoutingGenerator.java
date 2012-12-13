@@ -18,7 +18,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -30,6 +29,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.Util;
@@ -971,9 +971,9 @@ public final class OrthogonalRoutingGenerator {
                 && (p == hyperNode.sourcePosis.getFirst() && p == hyperNode.targetPosis.getFirst()
                 // the bend point is at the end and joins another edge at the same position
                 || p == hyperNode.sourcePosis.getLast() && p == hyperNode.targetPosis.getLast())) {
-            Collection<KVector> junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+            KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
             if (junctionPoints == null) {
-                junctionPoints = new LinkedList<KVector>();
+                junctionPoints = new KVectorChain();
                 edge.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
             }
             junctionPoints.add(new KVector(pos));

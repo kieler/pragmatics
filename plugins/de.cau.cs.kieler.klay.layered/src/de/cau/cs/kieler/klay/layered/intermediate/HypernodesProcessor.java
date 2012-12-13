@@ -13,12 +13,12 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -175,7 +175,7 @@ public final class HypernodesProcessor implements ILayoutProcessor {
                     }
                 }
                 // remove junction points that collide with the eliminated bend point
-                Collection<KVector> junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
                 if (junctionPoints != null) {
                     junctionPoints.remove(first);
                 }
