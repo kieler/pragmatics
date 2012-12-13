@@ -1,16 +1,11 @@
-/*
- * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
- *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
- * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
- *   + Department of Computer Science
- *     + Real-Time and Embedded Systems Group
- * 
- * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
- */
+// SUPPRESS CHECKSTYLE NEXT Header
+/*******************************************************************************
+ * Copyright (c) 2009 itemis AG (http://www.itemis.eu) and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package de.cau.cs.kieler.kiml.graphviz.dot;
 
 import java.util.Map;
@@ -29,7 +24,8 @@ import com.google.inject.Injector;
  * The content of this class was mainly copied from
  * {@link org.eclipse.xtext.ui.guice.AbstractGuiceAwareExecutableExtensionFactory}.
  * 
- * @author msp (original code by Sven Efftinge)
+ * @author Sven Efftinge - Initial contribution and API
+ * @author Miro Spoenemann - Adapted to Graphviz Dot language
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */

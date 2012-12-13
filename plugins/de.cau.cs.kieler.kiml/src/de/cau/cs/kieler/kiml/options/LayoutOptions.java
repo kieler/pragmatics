@@ -191,6 +191,16 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.interactive", false);
     
     /**
+     * This property is not used as option, but as output of the layout algorithms.
+     * It is attached to edges and determines the points where junction symbols should
+     * be drawn in order to represent hyperedges with orthogonal routing.
+     * Whether such points are computed depends on the chosen layout algorithm and
+     * edge routing style. The points are put into the vector chain with no specific order.
+     */
+    public static final IProperty<KVectorChain> JUNCTION_POINTS
+            = new Property<KVectorChain>("de.cau.cs.kieler.junctionPoints");
+    
+    /**
      * Determines the amount of space to be left around the labels of the associated edge.
      */
     public static final IProperty<Float> LABEL_SPACING = new Property<Float>(

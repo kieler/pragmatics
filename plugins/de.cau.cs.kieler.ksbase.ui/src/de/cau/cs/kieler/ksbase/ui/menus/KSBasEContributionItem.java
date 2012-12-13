@@ -409,8 +409,9 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
     }
 
     /**
-     * haf: simply copied the code from the CompoundContributionItem. This also supports the
-     * compound idea for the Toolbar and not only for menus. {@inheritDoc}
+     * This method has been copied from {@link org.eclipse.ui.actions.CompoundContributionItem}.
+     * This also supports the compound idea for the Toolbar and not only for menus.
+     * {@inheritDoc}
      */
     @Override
     public void fill(final ToolBar parent, final int index) {

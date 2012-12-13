@@ -19,6 +19,7 @@ import java.util.ListIterator;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -98,6 +99,22 @@ public final class LabelDummyRemover implements ILayoutProcessor {
                         List<LLabel> survivingLabels = survivingEdge.getLabels();
                         for (LLabel label2: droppedEdge.getLabels()) {
                             survivingLabels.add(label2);
+                        }
+                        
+                        // Join their junction points
+                        KVectorChain survivingJunctionPoints = survivingEdge.getProperty(
+                                LayoutOptions.JUNCTION_POINTS);
+                        KVectorChain droppedJunctionsPoints = droppedEdge.getProperty(
+                                LayoutOptions.JUNCTION_POINTS);
+                        if (droppedJunctionsPoints != null) {
+                            if (survivingJunctionPoints == null) {
+                                survivingJunctionPoints = new KVectorChain();
+                                survivingEdge.setProperty(LayoutOptions.JUNCTION_POINTS,
+                                        survivingJunctionPoints);
+                            }
+                            for (KVector jp : droppedJunctionsPoints) {
+                                survivingJunctionPoints.add(new KVector(jp));
+                            }
                         }
                     }
                     

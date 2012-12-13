@@ -253,7 +253,8 @@ public enum LayoutProcessorStrategy {
             return new GraphTransformer(GraphTransformer.Mode.MIRROR_AND_TRANSPOSE);
         
         default:
-            return null;
+            throw new IllegalArgumentException(
+                    "No implementation is available for the layout processor " + this.toString());
         }
     }
 }

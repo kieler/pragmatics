@@ -619,9 +619,11 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // set properties of the new edge
         newEdge.copyProperties(edgeLayout);
+        // clear junction points, since they are recalculated from scratch
+        newEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
+        
         // method will be called from the subclass CompoundKGraphImporter. The following part is
         // to be executed in this case.
-
         if (isCompound) {
             // put edge to elementMap
             elemMap.put(kedge, newEdge);
@@ -843,6 +845,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
                 KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
                 klabelLayout.applyVector(label.getPosition().add(offset));
+            }
+            
+            // copy junction points
+            KVectorChain junctionPoints = ledge.getProperty(LayoutOptions.JUNCTION_POINTS);
+            if (junctionPoints != null) {
+                junctionPoints.translate(offset);
+                edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
             }
 
             // set spline option
