@@ -38,26 +38,30 @@
       <menuContribution
             allPopups="true"
             locationURI="toolbar:de.cau.cs.kieler">
-         <dynamic
-               class="de.cau.cs.kieler.core.kivi.internal.KiviContributionItem"
-               id="de.cau.cs.kieler.kivi.dynamic.toolbar">
-         </dynamic>
+         <command
+               commandId="de.cau.cs.kieler.core.kivi.toolbar.command"
+               icon="icons/kieler_16.gif"
+               id="de.cau.cs.kieler.kivi.dynamic.toolbar.button"
+               label="KiviButtons"
+               style="pulldown">
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="true"
-            locationURI="menu:de.cau.cs.kieler">
+            locationURI="menu:de.cau.cs.kieler.kivi.dynamic.toolbar.button">
          <dynamic
                class="de.cau.cs.kieler.core.kivi.internal.KiviContributionItem"
                id="de.cau.cs.kieler.kivi.dynamic.menu">
          </dynamic>
       </menuContribution>
-      <menuContribution
-            allPopups="true"
-            locationURI="popup:de.cau.cs.kieler">
-         <dynamic
-               class="de.cau.cs.kieler.core.kivi.internal.KiviContributionItem"
-               id="de.cau.cs.kieler.kivi.dynamic.popup">
-         </dynamic>
-      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.cau.cs.kieler.core.kivi.internal.KiviToolbarHandler"
+            description="bla"
+            id="de.cau.cs.kieler.core.kivi.toolbar.command"
+            name="KiviButtonCommand">
+      </command>
    </extension>
 </plugin>
