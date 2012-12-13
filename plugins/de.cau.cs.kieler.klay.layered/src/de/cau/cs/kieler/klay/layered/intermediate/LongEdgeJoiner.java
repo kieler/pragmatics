@@ -105,10 +105,12 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
                                 LayoutOptions.JUNCTION_POINTS);
                         if (droppedJunctionsPoints != null) {
                             if (survivingJunctionPoints == null) {
+                                survivingJunctionPoints = new KVectorChain();
                                 survivingEdge.setProperty(LayoutOptions.JUNCTION_POINTS,
-                                        droppedJunctionsPoints);
-                            } else {
-                                survivingJunctionPoints.addAll(droppedJunctionsPoints);
+                                        survivingJunctionPoints);
+                            }
+                            for (KVector jp : droppedJunctionsPoints) {
+                                survivingJunctionPoints.add(new KVector(jp));
                             }
                         }
                     }

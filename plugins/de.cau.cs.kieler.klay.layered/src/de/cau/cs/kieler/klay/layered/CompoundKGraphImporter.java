@@ -932,12 +932,10 @@ public final class CompoundKGraphImporter extends KGraphImporter {
         KVector graphOffset = layeredGraph.getOffset();
         offsetBorderSpacingVec.add(graphOffset);
         
-        // copy junction points
+        // consider junction points
         KVectorChain junctionPoints = ledge.getProperty(LayoutOptions.JUNCTION_POINTS);
         if (junctionPoints != null) {
-            for (KVector jp : junctionPoints) {
-                jp.translate(graphBorderSpacing, graphBorderSpacing);
-            }
+            junctionPoints.translate(offsetBorderSpacingVec);
         }
 
         bendPoints.translate(offsetBorderSpacingVec);
@@ -953,9 +951,7 @@ public final class CompoundKGraphImporter extends KGraphImporter {
             bendpointOffset.negate();
             bendPoints.translate(bendpointOffset);
             if (junctionPoints != null) {
-                for (KVector jp : junctionPoints) {
-                    jp.translate(bendpointOffset.x, bendpointOffset.y);
-                }
+                junctionPoints.translate(bendpointOffset);
             }
         }
 
@@ -1019,6 +1015,7 @@ public final class CompoundKGraphImporter extends KGraphImporter {
         // transfer the bend points and end points to the edge layout
         edgeLayout.applyVectorChain(bendPoints);
         
+        // transfer the junction points to the edge layout
         edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
 
         // set spline option
