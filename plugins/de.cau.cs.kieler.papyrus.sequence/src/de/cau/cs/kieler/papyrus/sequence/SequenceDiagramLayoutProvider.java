@@ -38,6 +38,7 @@ import de.cau.cs.kieler.papyrus.sequence.graph.SGraph;
 import de.cau.cs.kieler.papyrus.sequence.graph.SGraphElement;
 import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
 import de.cau.cs.kieler.papyrus.sequence.graph.SMessage;
+import de.cau.cs.kieler.papyrus.sequence.sorter.EqualDistributionLifelineSorter;
 import de.cau.cs.kieler.papyrus.sequence.sorter.InteractiveLifelineSorter;
 import de.cau.cs.kieler.papyrus.sequence.sorter.LayerbasedLifelineSorter;
 import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
@@ -46,7 +47,7 @@ import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
  * Layout algorithm for Papyrus sequence diagrams.
  * 
  * @author grh
- * @kieler.design 2012-11-20 grh, cds, msp
+ * @kieler.design 2012-11-20 cds, msp
  * @kieler.rating proposed yellow grh
  * 
  */
@@ -92,6 +93,13 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
         ILifelineSorter lifelineSorter;
         if (strategy == LifelineSortingStrategy.LAYER_BASED) {
             lifelineSorter = new LayerbasedLifelineSorter();
+        } else if (strategy == LifelineSortingStrategy.SHORT_MESSAGES) {
+            // The short messages lifeline sorter has an additional layout option
+            boolean groupAreas = false;
+            if (sourceShapeLayout.getProperty(SequenceDiagramProperties.GROUP_AREAS)) {
+                groupAreas = true;
+            }
+            lifelineSorter = new EqualDistributionLifelineSorter(groupAreas);
         } else {
             lifelineSorter = new InteractiveLifelineSorter();
         }
@@ -191,7 +199,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             nodeLayout.setHeight((float) lifeline.getSize().y);
             
             // Place destruction if existing
-            KNode destruction = lifeline.getDestructionEvent();
+            KNode destruction = lifeline.getProperty(SequenceDiagramProperties.DESTRUCTION_EVENT);
             if (destruction != null) {
                 KShapeLayout destructLayout = destruction.getData(KShapeLayout.class);
                 double destructionXPos = nodeLayout.getWidth() / 2 - destructLayout.getWidth() / 2;
@@ -243,11 +251,11 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             }
 
             // Check if there are any comments that have to be placed near the lifeline
-            List<SComment> comments = lifeline.getProperty(SequenceDiagramProperties.COMMENTS);
             double thisLifelinesSpacing = lifelineSpacing;
-            if (comments.size() > 0) {
+            if (lifeline.getComments().size() > 0) {
                 // Calculate comments positions and maximum width
                 thisLifelinesSpacing = arrangeComments(xPos, lifeline);
+                // TODO somehow consider edge label length's here too
             }
 
             // Set position and height for the lifeline. This may be overridden if there are create-
@@ -682,7 +690,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      */
     private double arrangeComments(final double xPos, final SLifeline lifeline) {
         // Get the list of comments attached to the current lifeline
-        List<SComment> comments = lifeline.getProperty(SequenceDiagramProperties.COMMENTS);
+        List<SComment> comments = lifeline.getComments();
 
         // Check maximum size of comments attached to the lifeline
         double maxCommentWidth = lifelineSpacing;
@@ -933,7 +941,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                         createDummyNode(lgraph, node, true);
                     }
                     comment.setMessage(attachedMess);
-                    attachedMess.getProperty(SequenceDiagramProperties.COMMENTS).add(comment);
+                    attachedMess.getComments().add(comment);
                 }
             }
         }
@@ -1028,8 +1036,6 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             if (messObj instanceof SMessage) {
                 // Compute new y coordinates
                 SMessage message = (SMessage) messObj;
-                KEdge edge = (KEdge) message.getProperty(Properties.ORIGIN);
-                KEdgeLayout layout = edge.getData(KEdgeLayout.class);
                 double sourceYPos = message.getSourceYPos();
                 if (sourceYPos < minY) {
                     minY = sourceYPos;
@@ -1045,14 +1051,16 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     maxY = targetYPos;
                 }
                 // Compute new x coordinates
-                double sourceXPos = layout.getSourcePoint().getX();
+                SLifeline sourceLL = message.getSource();
+                double sourceXPos = sourceLL.getPosition().x + sourceLL.getSize().x / 2;
                 if (sourceXPos < minX) {
                     minX = sourceXPos;
                 }
                 if (sourceXPos > maxX) {
                     maxX = sourceXPos;
                 }
-                double targetXPos = layout.getTargetPoint().getX();
+                SLifeline targetLL = message.getTarget();
+                double targetXPos = targetLL.getPosition().x + targetLL.getSize().x / 2;
                 if (targetXPos < minX) {
                     minX = targetXPos;
                 }
@@ -1207,7 +1215,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     continue;
                 }
 
-                if (message.getLayerYPos() != -1.0f) {
+                if (message.isLayerPositionSet()) {
                     // Skip iteration message if it was already set
                     continue;
                 }
@@ -1229,7 +1237,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                             // of the tested message, there is an overlapping
                             if (isOverlapping(sourceXPos, targetXPos, otherSourcePos,
                                     otherTargetPos)) {
-                                if (otherMessage.getLayerYPos() != -1.0f) {
+                                if (otherMessage.isLayerPositionSet()) {
                                     // If the other message was already set, the message has to
                                     // be placed in another layer
                                     layerpos += messageSpacing;

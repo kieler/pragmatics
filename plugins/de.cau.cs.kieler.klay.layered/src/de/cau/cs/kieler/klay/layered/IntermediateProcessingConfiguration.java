@@ -61,7 +61,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class IntermediateProcessingConfiguration {
+public final class IntermediateProcessingConfiguration {
     
     /** Constant for the processors that should come before phase 1. */
     public static final int BEFORE_PHASE_1 = 0;

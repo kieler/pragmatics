@@ -395,10 +395,6 @@ public final class Properties {
         = new Property<InteractiveReferencePoint>(
             "de.cau.cs.kieler.klay.layered.interactiveReferencePoint",
             InteractiveReferencePoint.CENTER);
-    
-    /** property for selection of port distribution. */
-    public static final IProperty<PortDistribution> PORT_DISTRIBUTION = new Property<PortDistribution>(
-            "de.cau.cs.kieler.klay.layered.portDistribution", PortDistribution.NODE_RELATIVE);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

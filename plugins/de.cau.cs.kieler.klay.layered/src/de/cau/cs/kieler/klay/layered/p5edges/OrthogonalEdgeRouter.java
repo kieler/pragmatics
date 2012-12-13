@@ -56,7 +56,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class OrthogonalEdgeRouter implements ILayoutPhase {
+public final class OrthogonalEdgeRouter implements ILayoutPhase {
     
     /* The basic processing strategy for this phase is empty. Depending on
      * the graph features, dependencies on intermediate processors are added
@@ -174,7 +174,7 @@ public class OrthogonalEdgeRouter implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
         new IntermediateProcessingConfiguration(
                 // Before Phase 1
-                EnumSet.of(LayoutProcessorStrategy.LABEL_NODE_SIZE_ADJUSTER),
+                null,
                 
                 // Before Phase 2
                 EnumSet.of(LayoutProcessorStrategy.LABEL_DUMMY_INSERTER),
@@ -196,7 +196,7 @@ public class OrthogonalEdgeRouter implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration END_EDGE_LABEL_PROCESSING_ADDITIONS =
         new IntermediateProcessingConfiguration(
                 // Before Phase 1
-                EnumSet.of(LayoutProcessorStrategy.LABEL_NODE_SIZE_ADJUSTER),
+                null,
                 
                 // Before Phase 2
                 null,

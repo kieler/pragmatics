@@ -22,7 +22,6 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.papyrus.sequence.ILifelineSorter;
-import de.cau.cs.kieler.papyrus.sequence.SequenceDiagramProperties;
 import de.cau.cs.kieler.papyrus.sequence.graph.SGraph;
 import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
 import de.cau.cs.kieler.papyrus.sequence.graph.SMessage;
@@ -106,7 +105,7 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
             for (LNode node : layer.getNodes()) {
                 SMessage message = (SMessage) node.getProperty(Properties.ORIGIN);
                 if (message != null) {
-                    message.setProperty(SequenceDiagramProperties.MESSAGE_LAYER, layerIndex);
+                    message.setMessageLayer(layerIndex);
                 }
             }
         }
@@ -152,13 +151,11 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
         SMessage uppermostMessage = null;
         int bestLayer = lgraph.getLayers().size();
         for (SMessage outgoingMessage : lifeline.getOutgoingMessages()) {
-            if (((int) outgoingMessage.getProperty(SequenceDiagramProperties.MESSAGE_LAYER)) 
-                    < bestLayer) {
+            if (outgoingMessage.getMessageLayer() < bestLayer) {
                 // check if target lifeline was already set
                 if (lifelines.contains(outgoingMessage.getTarget())) {
                     uppermostMessage = outgoingMessage;
-                    bestLayer = (int) 
-                            outgoingMessage.getProperty(SequenceDiagramProperties.MESSAGE_LAYER);
+                    bestLayer = outgoingMessage.getMessageLayer();
                 }
             }
         }

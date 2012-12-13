@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -45,7 +46,7 @@ import de.cau.cs.kieler.papyrus.SequenceExecution;
  * SGraph.
  * 
  * @author grh
- * @kieler.design 2012-11-20 grh, cds, msp
+ * @kieler.design 2012-11-20 cds, msp
  * @kieler.rating proposed yellow grh
  * 
  */
@@ -416,11 +417,21 @@ public class SGraphImporter {
             // Create message object
             SMessage message = new SMessage(sourceLL, targetLL);
             message.setProperty(Properties.ORIGIN, edge);
-            message.setProperty(SequenceDiagramProperties.COMMENTS, new LinkedList<SComment>());
+            message.setComments(new LinkedList<SComment>());
 
             KEdgeLayout layout = edge.getData(KEdgeLayout.class);
             message.setSourceYPos(layout.getSourcePoint().getY());
             message.setTargetYPos(layout.getTargetPoint().getY());
+            
+            // Read size of the attached label
+            double maxLabelLength = 0;
+            for (KLabel label : edge.getLabels()) {
+                KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                if (labelLayout.getWidth() > maxLabelLength) {
+                    maxLabelLength = labelLayout.getWidth();
+                }
+            }
+            message.setLabelWidth(maxLabelLength);
             
             // Add message to the source and the target lifeline's list of messages
             sourceLL.addMessage(message);
@@ -522,7 +533,7 @@ public class SGraphImporter {
                 // Create message object
                 SMessage message = new SMessage(sourceLL, targetLL);
                 message.setProperty(Properties.ORIGIN, edge);
-                message.setProperty(SequenceDiagramProperties.COMMENTS, new LinkedList<SComment>());
+                message.setComments(new LinkedList<SComment>());
                 message.setTargetYPos(layout.getTargetPoint().getY());
                 
                 // Add the message to the source and target lifeline's list of messages
@@ -612,12 +623,12 @@ public class SGraphImporter {
             List<SequenceExecution> executions = layout.getProperty(PapyrusProperties.EXECUTIONS);
             lifeline.setProperty(PapyrusProperties.EXECUTIONS, executions);
 
-            lifeline.setProperty(SequenceDiagramProperties.COMMENTS, new LinkedList<SComment>());
+            lifeline.setComments(new LinkedList<SComment>());
 
             // Copy destruction to lifeline
             KNode destruction = layout.getProperty(PapyrusProperties.DESTRUCTION);
             if (destruction != null) {
-                lifeline.setDestructionEvent(destruction);
+                lifeline.setProperty(SequenceDiagramProperties.DESTRUCTION_EVENT, destruction);
             }
         }
     }

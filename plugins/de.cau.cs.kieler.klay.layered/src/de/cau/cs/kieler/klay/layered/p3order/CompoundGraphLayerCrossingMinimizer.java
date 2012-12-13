@@ -43,7 +43,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class CompoundGraphLayerCrossingMinimizer {
+public final class CompoundGraphLayerCrossingMinimizer {
 
     /** the layered graph that is processed. */
     private LGraph layeredGraph;

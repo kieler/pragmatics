@@ -65,7 +65,7 @@ import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.ButtonConfigu
  * 
  * @author ckru
  * 
- */
+*/
 @SuppressWarnings("restriction")
 public class KiviContributionItem extends CompoundContributionItem implements
 IWorkbenchContribution {
@@ -108,7 +108,8 @@ IWorkbenchContribution {
     /**
      * Cached handler activations to avoid activating the same handler twice.
      */
-    private static Map<String,IHandlerActivation> handlerActivations = new HashMap<String,IHandlerActivation>();
+    private static Map<String, IHandlerActivation> handlerActivations = 
+            new HashMap<String, IHandlerActivation>();
     
     /**
      * Cached toggle states to make them persistent between menu construction cycles.
@@ -118,8 +119,8 @@ IWorkbenchContribution {
     /**
      * {@inheritDoc}
      */
-    public void initialize(IServiceLocator serviceLocator) {
-        this.serviceLocator = serviceLocator;
+    public void initialize(final IServiceLocator newServiceLocator) {
+        this.serviceLocator = newServiceLocator;
         this.commandService = (ICommandService) serviceLocator.getService(ICommandService.class);
         this.menuService = (WorkbenchMenuService) serviceLocator.getService(IMenuService.class);
         this.evaluationService = (IEvaluationService) serviceLocator
@@ -261,11 +262,6 @@ IWorkbenchContribution {
          }
     }
     
-    /**
-     * 
-     * @author ckru
-     *
-     */
     private class ContributionItemUpdater implements IPropertyChangeListener {
 
         private boolean visible = true;

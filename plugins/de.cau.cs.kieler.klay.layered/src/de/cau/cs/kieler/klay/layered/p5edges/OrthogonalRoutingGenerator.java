@@ -66,7 +66,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class OrthogonalRoutingGenerator {
+public final class OrthogonalRoutingGenerator {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Routing Strategies

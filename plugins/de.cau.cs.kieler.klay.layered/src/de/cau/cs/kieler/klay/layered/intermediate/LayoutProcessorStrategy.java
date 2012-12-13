@@ -45,8 +45,6 @@ public enum LayoutProcessorStrategy {
     COMMENT_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
-    /** Increases node size for the placement of end labels. */
-    LABEL_NODE_SIZE_ADJUSTER,
     
     // Before Phase 2
     
@@ -250,7 +248,8 @@ public enum LayoutProcessorStrategy {
             return new LabelSideSelector();
         
         default:
-            return null;
+            throw new IllegalArgumentException(
+                    "No implementation is available for the layout processor " + this.toString());
         }
     }
 }

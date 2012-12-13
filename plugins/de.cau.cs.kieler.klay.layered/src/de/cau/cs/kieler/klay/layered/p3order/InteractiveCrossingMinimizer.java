@@ -48,7 +48,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class InteractiveCrossingMinimizer implements ILayoutPhase {
+public final class InteractiveCrossingMinimizer implements ILayoutPhase {
 
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
@@ -147,17 +147,7 @@ public class InteractiveCrossingMinimizer implements ILayoutPhase {
         }
         
         // Distribute the ports of all nodes with free port constraints
-        AbstractPortDistributor portDistributor;
-        switch (layeredGraph.getProperty(Properties.PORT_DISTRIBUTION)) {
-        case NODE_RELATIVE:
-            portDistributor = new NodeRelativePortDistributor(new float[portCount]);
-            break;
-        case LAYER_TOTAL:
-            portDistributor = new LayerTotalPortDistributor(new float[portCount]);
-            break;
-        default:
-            throw new IllegalStateException();
-        }
+        AbstractPortDistributor portDistributor = new NodeRelativePortDistributor(new float[portCount]);
         portDistributor.distributePorts(lgraphArray);
         
         monitor.done();

@@ -89,7 +89,7 @@ public class LayoutOptionManager {
      * Create a layout configuration that can be used to access all actual values of layout options.
      * 
      * @param domainElement
-     *            a domain model element
+     *            a domain model element, or {@code null}
      * @param extraConfigs
      *            optional additional layout configurations to include
      * @return a complete layout configuration

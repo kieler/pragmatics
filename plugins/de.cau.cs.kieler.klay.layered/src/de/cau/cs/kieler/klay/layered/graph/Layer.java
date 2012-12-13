@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class Layer extends LGraphElement implements Iterable<LNode> {
+public final class Layer extends LGraphElement implements Iterable<LNode> {
 
     /** the serial version UID. */
     private static final long serialVersionUID = 5760328884701318753L;

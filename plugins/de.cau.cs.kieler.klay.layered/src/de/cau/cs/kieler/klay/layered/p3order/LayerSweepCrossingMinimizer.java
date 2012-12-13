@@ -67,7 +67,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class LayerSweepCrossingMinimizer implements ILayoutPhase {
+public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
@@ -115,6 +115,10 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
     private int[] inLayerEdgeCount;
     /** layout units represented by a single node. */
     private final Multimap<LNode, LNode> layoutUnits = HashMultimap.create();
+    /** the node-relative port distributor. */
+    private NodeRelativePortDistributor nodeRelativePortDistributor;
+    /** the layer-total port distributor. */
+    private LayerTotalPortDistributor layerTotalPortDistributor;
     
     /**
      * Initialize all data for the layer sweep crossing minimizer.
@@ -174,9 +178,13 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             }
         }
 
-        // Initialize the position arrays
+        // Initialize the port positions and ranks arrays
         portRanks = new float[portCount];
         portPos = new int[portCount];
+        
+        // Create port distributors
+        nodeRelativePortDistributor = new NodeRelativePortDistributor(portRanks);
+        layerTotalPortDistributor = new LayerTotalPortDistributor(portRanks);
     }
     
     /**
@@ -190,6 +198,8 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         prevSweep = null;
         inLayerEdgeCount = null;
         layoutUnits.clear();
+        nodeRelativePortDistributor = null;
+        layerTotalPortDistributor = null;
     }
 
     /**
@@ -216,22 +226,12 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         int runCount = layeredGraph.getProperty(Properties.THOROUGHNESS);
 
         // Initialize the compound graph layer crossing minimizer
-        AbstractPortDistributor portDistributor;
-        switch (layeredGraph.getProperty(Properties.PORT_DISTRIBUTION)) {
-        case NODE_RELATIVE:
-            portDistributor = new NodeRelativePortDistributor(portRanks);
-            break;
-        case LAYER_TOTAL:
-            portDistributor = new LayerTotalPortDistributor(portRanks);
-            break;
-        default:
-            throw new IllegalStateException();
-        }
         IConstraintResolver constraintResolver = new ForsterConstraintResolver(layoutUnits);
         ICrossingMinimizationHeuristic heuristic = new BarycenterHeuristic(constraintResolver,
                 random, portRanks);
         CompoundGraphLayerCrossingMinimizer compoundMinimizer
                 = new CompoundGraphLayerCrossingMinimizer(layeredGraph, heuristic);
+        AbstractPortDistributor portDistributor;
 
         // Perform the requested number of runs, each consisting of several sweeps
         // (alternating between forward and backward sweeps)
@@ -240,6 +240,10 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             boolean forward = random.nextBoolean();
             int fixedLayerIndex = forward ? 0 : layerCount - 1;
             NodeGroup[] fixedLayer = curSweep[fixedLayerIndex];
+            
+            // Randomly choose a port distribution method for this run
+            portDistributor = random.nextBoolean()
+                    ? nodeRelativePortDistributor : layerTotalPortDistributor;
 
             // The fixed layer is randomized
             compoundMinimizer.compoundMinimizeCrossings(fixedLayer, fixedLayerIndex, forward,
@@ -308,9 +312,6 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             }
         }
 
-        // Distribute the ports of all nodes with free port constraints
-        portDistributor.distributePorts(bestSweep);
-
         // Apply the ordering to the original layered graph
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
@@ -322,6 +323,11 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 nodeIter.set(nodes[nodeIter.previousIndex()].getNode());
             }
         }
+
+        // Distribute the ports of all nodes with free port constraints
+        portDistributor = random.nextBoolean()
+                ? nodeRelativePortDistributor : layerTotalPortDistributor;
+        portDistributor.distributePorts(bestSweep);
 
         dispose();
         monitor.done();

@@ -15,6 +15,9 @@ package de.cau.cs.kieler.klay.layered.p3order;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -41,20 +44,18 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  */
 abstract class AbstractPortDistributor {
 
-    /** barycenter values for ports. */
-    private float[] portBarycenter;
-    /** port position array. */
+    /** port ranks array in which the results of ranks calculation are stored. */
     private float[] portRanks;
 
     /**
-     * Constructs a port distributor with the given array of ranks.
+     * Constructs a port distributor for the given array of port ranks.
+     * All ports are required to be assigned ids in the range of the given array.
      * 
      * @param portRanks
      *            The array of port ranks
      */
     public AbstractPortDistributor(final float[] portRanks) {
         this.portRanks = portRanks;
-        portBarycenter = new float[portRanks.length];
     }
     
     /**
@@ -62,7 +63,7 @@ abstract class AbstractPortDistributor {
      * 
      * @return the array of port ranks
      */
-    protected float[] getPortRanks() {
+    public float[] getPortRanks() {
         return portRanks;
     }
 
@@ -74,6 +75,7 @@ abstract class AbstractPortDistributor {
      * Assign port ranks for the input or output ports of the given node. If the node's port
      * constraints imply a fixed order, the ports are assumed to be pre-ordered in the usual way,
      * i.e. in clockwise order north - east - south - west.
+     * The ranks are written to the {@link #getPortRanks()} array.
      * 
      * @param node
      *            a node
@@ -87,6 +89,7 @@ abstract class AbstractPortDistributor {
     
     /**
      * Determine ranks for all ports of specific type in the given layer.
+     * The ranks are written to the {@link #getPortRanks()} array.
      * 
      * @param layer
      *            a layer as node array
@@ -101,7 +104,7 @@ abstract class AbstractPortDistributor {
     
     /**
      * Determine ranks for all ports of specific type in the given layer. Entries that
-     * contain multiple nodes are ignored.
+     * contain multiple nodes are ignored. The ranks are written to the {@link #getPortRanks()} array.
      * 
      * @param layer
      *            a layer as node group array
@@ -160,7 +163,6 @@ abstract class AbstractPortDistributor {
     /**
      * Distribute the ports of the given node by their sides, connected ports, and input or output
      * type.
-     * FIXME this does not properly consider the FixedSides scenario
      * 
      * @param node node whose ports shall be sorted
      * @param nodeIndex the index of the given node
@@ -169,18 +171,67 @@ abstract class AbstractPortDistributor {
         if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
             // the order of ports on each side is variable, so distribute the ports
             if (node.getPorts().size() > 1) {
+                // array of port barycenter values calculated from ranks of connected ports
+                Float[] portBarycenter = new Float[portRanks.length];
+                
+                // list that keeps track of ports connected to other ports in the same layer; these are
+                // treated specially when calculating barycenters
+                List<LPort> inLayerPorts = Lists.newLinkedList();
+                
+                // the maximum barycenter value assigned for ports of this node
+                float maxBarycenter = 0.0f;
+                
                 // calculate barycenter values for the ports of the node
+                PortIteration:
                 for (LPort port : node.getPorts()) {
+                    // add up all ranks of connected ports
                     float sum = 0;
                     for (LPort connectedPort : port.getConnectedPorts()) {
-                        sum += portRanks[connectedPort.id];
+                        if (connectedPort.getNode().getLayer() == node.getLayer()) {
+                            inLayerPorts.add(port);
+                            continue PortIteration;
+                        } else {
+                            sum += portRanks[connectedPort.id];
+                        }
                     }
+                    
                     if (port.getDegree() == 0) {
-                        portBarycenter[port.id] = -1;
+                        // We don't have a barycenter value
+                        portBarycenter[port.id] = null;
                     } else {
                         portBarycenter[port.id] = sum / port.getDegree();
+                        maxBarycenter = Math.max(maxBarycenter, portBarycenter[port.id]);
                     }
                 }
+                
+                // go through the list of in-layer ports and calculate their barycenter values
+                int nodeIndexInLayer = node.getIndex();
+                for (LPort inLayerPort : inLayerPorts) {
+                    // add the indices of all connected in-layer ports
+                    int sum = 0;
+                    int inLayerConnections = 0;
+                    
+                    for (LPort connectedPort : inLayerPort.getConnectedPorts()) {
+                        if (connectedPort.getNode().getLayer() == node.getLayer()) {
+                            sum += connectedPort.getNode().getIndex();
+                            inLayerConnections++;
+                        }
+                    }
+                    
+                    // the port's barycenter value is the mean index of connected ports. If that index
+                    // is lower than the node's index, most in-layer edges will point upwards. We will
+                    // give the port a negative barycenter then to have it show up top. If most edges
+                    // point downwards, we add the maximum barycenter value encountered so far to the
+                    // one calculated here to have it show up at the bottom.
+                    float barycenter = ((float) sum) / inLayerConnections;
+                    
+                    if (barycenter < nodeIndexInLayer) {
+                        portBarycenter[inLayerPort.id] = -1 * barycenter;
+                    } else {
+                        portBarycenter[inLayerPort.id] = maxBarycenter + barycenter;
+                    }
+                }
+                
                 // sort the ports by considering the side, type, and barycenter values
                 sortPorts(node, portBarycenter);
             }
@@ -200,31 +251,33 @@ abstract class AbstractPortDistributor {
      *            an array of position values; the identifier of each port of this node must be
      *            inside the range of the {@code position} array, since it is used as index
      */
-    private static void sortPorts(final LNode node, final float[] position) {
+    private static void sortPorts(final LNode node, final Float[] position) {
         Collections.sort(node.getPorts(), new Comparator<LPort>() {
             public int compare(final LPort port1, final LPort port2) {
                 PortSide side1 = port1.getSide();
-                PortType type1 = port1.getNetFlow() >= 0 ? PortType.INPUT : PortType.OUTPUT;
                 PortSide side2 = port2.getSide();
-                PortType type2 = port2.getNetFlow() >= 0 ? PortType.INPUT : PortType.OUTPUT;
 
                 if (side1 != side2) {
                     // sort according to the node side
                     return side1.ordinal() - side2.ordinal();
-                } else if (type1 != type2) {
-                    // north side: first inputs, then outputs; other sides: reverse
-                    if (side1 == PortSide.NORTH) {
-                        return type1.ordinal() - type2.ordinal();
-                    } else {
-                        return type2.ordinal() - type1.ordinal();
-                    }
                 } else {
-                    float pos1 = position[port1.id], pos2 = position[port2.id];
-                    // input ports are counter-clockwise, output ports are clockwise
-                    if (type1 == PortType.INPUT) {
-                        return Float.compare(pos2, pos1);
+                    Float pos1 = position[port1.id];
+                    Float pos2 = position[port2.id];
+                    
+                    if (pos1 == null && pos2 == null) {
+                        // the ports are not connected to anything -- leave their order untouched
+                        return 0;
+                    } else if (pos1 == null) {
+                        return -1;
+                    } else if (pos2 == null) {
+                        return 1;
                     } else {
-                        return Float.compare(pos1, pos2);
+                        // different port sides are sorted differently
+                        if (side1 == PortSide.NORTH || side1 == PortSide.EAST) {
+                            return Float.compare(pos1, pos2);
+                        } else {
+                            return Float.compare(pos2, pos1);
+                        }
                     }
                 }
             }
