@@ -829,20 +829,18 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                     
                     // Correct a slanted segment connected to the source port if it belongs to our node
                     LPort sourcePort = edge.getSource();
-                    KVector firstBendPoint = bendPoints.getFirst();
                     
                     if (sourcePort.getNode() == node) {
-                        firstBendPoint.y = node.getPosition().y + sourcePort.getPosition().y
-                                + sourcePort.getAnchor().y;
+                        KVector firstBendPoint = bendPoints.getFirst();
+                        firstBendPoint.y = sourcePort.getAbsoluteAnchor().y;
                     }
                     
                     // Correct a slanted segment connected to the target port if it belongs to our node
                     LPort targetPort = edge.getTarget();
-                    KVector lastBendPoint = bendPoints.getLast();
                     
                     if (targetPort.getNode() == node) {
-                        lastBendPoint.y = node.getPosition().y + targetPort.getPosition().y
-                                + targetPort.getAnchor().y;
+                        KVector lastBendPoint = bendPoints.getLast();
+                        lastBendPoint.y = targetPort.getAbsoluteAnchor().y;
                     }
                 }
             }
