@@ -38,6 +38,7 @@ import de.cau.cs.kieler.papyrus.sequence.graph.SGraph;
 import de.cau.cs.kieler.papyrus.sequence.graph.SGraphElement;
 import de.cau.cs.kieler.papyrus.sequence.graph.SLifeline;
 import de.cau.cs.kieler.papyrus.sequence.graph.SMessage;
+import de.cau.cs.kieler.papyrus.sequence.sorter.EqualDistributionLifelineSorter;
 import de.cau.cs.kieler.papyrus.sequence.sorter.InteractiveLifelineSorter;
 import de.cau.cs.kieler.papyrus.sequence.sorter.LayerbasedLifelineSorter;
 import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
@@ -46,59 +47,103 @@ import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy;
  * Layout algorithm for Papyrus sequence diagrams.
  * 
  * @author grh
- * @kieler.design proposed grh
+ * @kieler.design 2012-11-20 cds, msp
  * @kieler.rating proposed yellow grh
  * 
  */
 public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
-    /** Vertical size of lifeline header. */
-    private static final float LIFELINE_HEADER = 30;
-    /** Vertical space above lifelines. */
-    private static final float LIFELINE_Y_POS = 10;
-    /** Height of the header of areas. */
-    private static final float AREA_HEADER_HEIGHT = 25;
-    /** The offset of an area that contains another area (spacing between them). */
-    private static final int CONTAINMENT_OFFSET = 5;
     /** Constant that is needed to calculate some offsets. */
     private static final int TWENTY = 20;
     /** Constant that is needed to calculate some offsets. */
     private static final int FOURTY = 40;
+    
+    /** The height of the lifeline's header. */
+    private int lifelineHeader;
+    /** The vertical position of lifelines. */
+    private int lifelineYPos;
+    /** The height of the header of combined fragments. */
+    private int areaHeader;
+    /** The offset between two nested areas. */
+    private int containmentOffset;
 
-    /** Lifeline ordering algorithm. */
-    private ILifelineSorter lifelineSorter;
-    /** Graph importer. */
-    private SGraphImporter importer;
     /** Border spacing. */
-    private float borderSpacing;
+    private double borderSpacing;
     /** Horizontal spacing between two neighbored lifelines. */
-    private float lifelineSpacing;
+    private double lifelineSpacing;
     /** Vertical spacing between two neighbored layers of messages. */
-    private float messageSpacing;
+    private double messageSpacing;
 
     @Override
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Sequence Diagrem Layouter", 1);
+        progressMonitor.begin("Sequence Diagrem Layouter", 1 + 1 + 1 + 1 + 1 + 1);
 
         // Get layout properties
         KShapeLayout sourceShapeLayout = parentNode.getData(KShapeLayout.class);
         borderSpacing = sourceShapeLayout.getProperty(Properties.BORDER_SPACING);
-        lifelineSpacing = sourceShapeLayout.getProperty(SeqProperties.LIFELINE_SPACING);
-        messageSpacing = sourceShapeLayout.getProperty(SeqProperties.MESSAGE_SPACING);
+        lifelineHeader = sourceShapeLayout.getProperty(SequenceDiagramProperties.LIFELINE_HEADER);
+        lifelineYPos = sourceShapeLayout.getProperty(SequenceDiagramProperties.LIFELINE_Y_POS);
+        areaHeader = sourceShapeLayout.getProperty(SequenceDiagramProperties.AREA_HEADER);
+        containmentOffset = sourceShapeLayout.getProperty(SequenceDiagramProperties.CONTAINMENT_OFFSET);
+        lifelineSpacing = sourceShapeLayout.getProperty(SequenceDiagramProperties.LIFELINE_SPACING);
+        messageSpacing = sourceShapeLayout.getProperty(SequenceDiagramProperties.MESSAGE_SPACING);
         LifelineSortingStrategy strategy = sourceShapeLayout
-                .getProperty(SeqProperties.LIFELINE_SORTING);
+                .getProperty(SequenceDiagramProperties.LIFELINE_SORTING);
+
+        // Lifeline ordering algorithm.
+        ILifelineSorter lifelineSorter;
         if (strategy == LifelineSortingStrategy.LAYER_BASED) {
             lifelineSorter = new LayerbasedLifelineSorter();
+        } else if (strategy == LifelineSortingStrategy.SHORT_MESSAGES) {
+            // The short messages lifeline sorter has an additional layout option
+            boolean groupAreas = false;
+            if (sourceShapeLayout.getProperty(SequenceDiagramProperties.GROUP_AREAS)) {
+                groupAreas = true;
+            }
+            lifelineSorter = new EqualDistributionLifelineSorter(groupAreas);
         } else {
             lifelineSorter = new InteractiveLifelineSorter();
         }
 
         // Convert the KGraph into a SGraph
-        importer = new SGraphImporter();
-        SGraph sgraph = importer.importGraph(parentNode);
+        SGraphImporter importer = new SGraphImporter();
+        SGraph sgraph = importer.importGraph(parentNode, progressMonitor.subTask(1));
 
         // Build layeredGraph of the edges of the SGraph
-        LGraph layeredGraph = importer.createLayeredGraph(sgraph);
+        LGraph layeredGraph = importer.createLayeredGraph(sgraph, progressMonitor.subTask(1));
 
+        // Allocate space for various objects
+        allocateSpace(sgraph, layeredGraph);
+
+        // Break the cycles in the layeredGraph
+        SCycleBreaker cycleBreaker = new SCycleBreaker();
+        cycleBreaker.breakCycles(layeredGraph, progressMonitor.subTask(1));
+
+        // Find a layering for the layeredGraph
+        NetworkSimplexLayerer layerer = new NetworkSimplexLayerer();
+        layerer.process(layeredGraph, progressMonitor.subTask(1));
+
+        // Order lifelines by the chosen lifeline sorting algorithm
+        List<SLifeline> lifelineOrder = lifelineSorter.sortLifelines(sgraph, layeredGraph, 
+                progressMonitor.subTask(1));
+
+        // Calculate the coordinates for all the objects of the diagram
+        calculateCoordinates(sgraph, layeredGraph, lifelineOrder, progressMonitor.subTask(1));
+
+        // Apply the calculated layout to the KGraph
+        applyLayout(sgraph, parentNode);
+
+        progressMonitor.done();
+    }
+
+    /**
+     * Allocate vertical space for various objects by introducing dummy nodes.
+     * 
+     * @param sgraph 
+     *          the sequence graph
+     * @param layeredGraph 
+     *          the layered graph
+     */
+    private void allocateSpace(final SGraph sgraph, final LGraph layeredGraph) {
         // Allocate space for comments by introducing dummy nodes
         placeComments(sgraph, layeredGraph);
 
@@ -107,52 +152,23 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
 
         // Allocate space for lifeline header of "created" lifelines
         placeCreatedLifelines(sgraph, layeredGraph);
-
-        // Break the cycles in the layeredGraph
-        SCycleBreaker cycleBreaker = new SCycleBreaker();
-        cycleBreaker.breakCycles(layeredGraph);
-
-        // Find a layering for the layeredGraph
-        NetworkSimplexLayerer layerer = new NetworkSimplexLayerer(); // new LongestPathLayerer();
-        layerer.process(layeredGraph, progressMonitor.subTask(1));
-
-        // Order lifelines by the chosen lifeline sorting algorithm
-        List<SLifeline> lifelineOrder = lifelineSorter.sortLifelines(sgraph, layeredGraph);
-
-        // Assign vertical position to SMessages
-        applyMessageYCoords(layeredGraph);
-
-        // Apply the calculated layout to the KGraph
-        applyLayout(sgraph, lifelineOrder, parentNode);
-
-        progressMonitor.done();
     }
 
     /**
-     * Apply the calculated layout the KGraph.
+     * Apply the calculated coordinates to the KGraph.
      * 
      * @param graph
      *            the SGraph
-     * @param lifelineOrder
-     *            a list of the lifelines in the desired order
      * @param parentNode
      *            the parent layout node
      */
-    public void applyLayout(final SGraph graph, final List<SLifeline> lifelineOrder,
-            final KNode parentNode) {
-        float xPos = borderSpacing;
-
-        // Arrange comments
-        arrangeComments(graph);
-
-        // The height of all "normal-sized" (not affected by create or delete messages) lifelines
-        float lifelinesHeight = LIFELINE_HEADER + graph.getSizeY() + messageSpacing;
-
+    public void applyLayout(final SGraph graph, final KNode parentNode) {
         // The height of the diagram (the surrounding interaction)
-        float diagramHeight = graph.getSizeY() + messageSpacing + LIFELINE_HEADER + LIFELINE_Y_POS;
+        double diagramHeight = graph.getSize().y + messageSpacing + lifelineHeader
+                + lifelineYPos;
 
         // Set position for lifelines/nodes
-        for (SLifeline lifeline : lifelineOrder) {
+        for (SLifeline lifeline : graph.getLifelines()) {
 
             // Dummy lifelines don't need any layout
             if (lifeline.getName().equals("DummyLifeline")) {
@@ -165,70 +181,108 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             if (nodeLayout.getProperty(PapyrusProperties.NODE_TYPE).equals(
                     "PapyrusUMLSequenceDiagram")) {
                 // Set position of the surrounding node
-                nodeLayout.setYpos(borderSpacing);
-                nodeLayout.setXpos(borderSpacing);
+                nodeLayout.setYpos((float) borderSpacing);
+                nodeLayout.setXpos((float) borderSpacing);
                 break;
             }
 
+            // Handle messages of the lifeline
+            List<SequenceExecution> executions = lifeline.getProperty(PapyrusProperties.EXECUTIONS);
+            applyMessageCoordinates(diagramHeight, graph, lifeline, executions);
+
+            // Apply execution coordinates and adjust positions of messages attached to these executions.
+            applyExecutionCoordinates(lifeline);
+
+            // Set position and height for the lifeline.
+            nodeLayout.setYpos((float) lifeline.getPosition().y);
+            nodeLayout.setXpos((float) lifeline.getPosition().x);
+            nodeLayout.setHeight((float) lifeline.getSize().y);
+            
+            // Place destruction if existing
+            KNode destruction = lifeline.getProperty(SequenceDiagramProperties.DESTRUCTION_EVENT);
+            if (destruction != null) {
+                KShapeLayout destructLayout = destruction.getData(KShapeLayout.class);
+                double destructionXPos = nodeLayout.getWidth() / 2 - destructLayout.getWidth() / 2;
+                double destructionYPos = nodeLayout.getHeight() - destructLayout.getHeight();
+                destructLayout.setPos((float) destructionXPos, (float) destructionYPos);
+            }
+        }
+
+        // Place all comments
+        placeComments(graph);
+
+        // Set position and size of surrounding interaction
+        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+        parentLayout.setWidth((float) graph.getSize().x);
+        parentLayout.setHeight((float) diagramHeight);
+        parentLayout.setPos((float) borderSpacing, (float) borderSpacing);
+    }
+
+    /**
+     * Calculate the final coordinates for all the objects in the graph.
+     * 
+     * @param graph
+     *            the sequence graph
+     * @param lifelineOrder
+     *            the order of the lifelines
+     */
+    private void calculateCoordinates(final SGraph graph, final LGraph layeredGraph,
+            final List<SLifeline> lifelineOrder, final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Calculate coordinates", 1);
+        
+        // Assign vertical position to SMessages
+        calculateMessageYCoords(layeredGraph);
+
+        // Arrange comments that are connected to a message or lifeline
+        arrangeConnectedComments(graph);
+        
+        // Position of the next lifeline (at first, of the first lifeline)
+        double xPos = borderSpacing;
+
+        // The height of all "normal-sized" (not affected by create or delete messages) lifelines
+        double lifelinesHeight = lifelineHeader + graph.getSize().y + messageSpacing;
+
+        // Set position for lifelines/nodes
+        for (SLifeline lifeline : lifelineOrder) {
+
+            // Dummy lifelines don't need any layout
+            if (lifeline.getName().equals("DummyLifeline")) {
+                continue;
+            }
+
             // Check if there are any comments that have to be placed near the lifeline
-            List<SComment> comments = lifeline.getProperty(SeqProperties.COMMENTS);
-            float thisLifelinesSpacing = lifelineSpacing;
-            if (comments.size() > 0) {
-                // Place comments and calculate the maximum width of the comments
+            double thisLifelinesSpacing = lifelineSpacing;
+            if (lifeline.getComments().size() > 0) {
+                // Calculate comments positions and maximum width
                 thisLifelinesSpacing = arrangeComments(xPos, lifeline);
+                // TODO somehow consider edge label length's here too
             }
 
             // Set position and height for the lifeline. This may be overridden if there are create-
             // or delete-messages involved.
-            nodeLayout.setYpos(LIFELINE_Y_POS);
-            nodeLayout.setXpos(xPos);
-            nodeLayout.setHeight(lifelinesHeight);
+            lifeline.getPosition().y = lifelineYPos;
+            lifeline.getPosition().x = xPos;
+            lifeline.getSize().y = lifelinesHeight;
 
             // Apply maximum comment width to new xPos
-            xPos += nodeLayout.getWidth() + thisLifelinesSpacing;
+            xPos += lifeline.getSize().x + thisLifelinesSpacing;
             // Reset the graph's horizontal size
-            if (graph.getSizeX() < xPos) {
-                graph.setSizeX(xPos);
-            }
-
-            List<SequenceExecution> executions = lifeline.getProperty(PapyrusProperties.EXECUTIONS);
-
-            // Handle messages of the lifeline
-            handleMessages(diagramHeight, graph, lifeline, executions);
-
-            // Handle destruction if existing
-            KNode destruction = lifeline.getDestruction();
-            if (destruction != null) {
-                KShapeLayout destructLayout = destruction.getData(KShapeLayout.class);
-                float destructionXPos = nodeLayout.getWidth() / 2 - destructLayout.getWidth() / 2;
-                float destructionYPos = nodeLayout.getHeight() - destructLayout.getHeight();
-                destructLayout.setPos(destructionXPos, destructionYPos);
-            }
-
-            // Handle executions and messages that are attached to that executions
-            if (executions != null) {
-                handleExecutions(lifeline, executions);
+            if (graph.getSize().x < xPos) {
+                graph.getSize().x = xPos;
             }
         }
 
-        List<SequenceArea> areas = graph.getProperty(PapyrusProperties.AREAS);
+        // Arrange unconnected comments (after the last lifeline)
+        arrangeUnconnectedComments(graph);
 
         // Handle areas (interactions / combined fragments / interaction operands)
-        if (areas != null) {
-            // Check containments (hierarchy) of areas
-            checkAreaContainment(areas);
-
-            handleAreas(areas);
-        }
-
-        // Place all comments
-        placeComments(graph, xPos);
-
-        // Set position and size of surrounding interaction
-        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        parentLayout.setWidth(graph.getSizeX());
-        parentLayout.setHeight(diagramHeight);
-        parentLayout.setPos(borderSpacing, borderSpacing);
+        List<SequenceArea> areas = graph.getProperty(PapyrusProperties.AREAS);
+        // Check containments (hierarchy) of areas
+        checkAreaContainment(areas);
+        // Calculate the areas positions
+        calculateAreaPosition(areas);
+        
+        progressMonitor.done();
     }
 
     /**
@@ -236,59 +290,44 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      * 
      * @param graph
      *            the Sequence Graph
-     * @param xPos
-     *            the last lifeline's x-coordinate
      */
-    private void placeComments(final SGraph graph, final float xPos) {
-        float commentMaxExtraWidth = 0;
-        float commentNextYPos = LIFELINE_HEADER + LIFELINE_Y_POS;
+    private void placeComments(final SGraph graph) {
         for (SComment comment : graph.getComments()) {
+            Object origin = comment.getProperty(Properties.ORIGIN);
+            KShapeLayout commentLayout = ((KNode) origin).getData(KShapeLayout.class);
+            commentLayout.setPos((float) comment.getPosition().x, (float) comment.getPosition().y);
             if (comment.getMessage() != null) {
                 // Connected comments
-                comment.getOrigin().getData(KShapeLayout.class)
-                        .setPos(comment.getxPos(), comment.getyPos());
 
                 // Set coordinates for the connection of the comment
-                float edgeSourceXPos, edgeSourceYPos, edgeTargetXPos, edgeTargetYPos;
+                double edgeSourceXPos, edgeSourceYPos, edgeTargetXPos, edgeTargetYPos;
                 String attachedElement = comment.getProperty(PapyrusProperties.ATTACHED_ELEMENT);
                 if (attachedElement.toLowerCase().startsWith("lifeline")
                         || attachedElement.toLowerCase().contains("execution")) {
                     // Connections to lifelines or executions are drawn horizontally
-                    KNode node = (KNode) comment.getLifeline().getProperty(Properties.ORIGIN);
-                    KShapeLayout nodelayout = node.getData(KShapeLayout.class);
-                    edgeSourceXPos = comment.getxPos();
-                    edgeSourceYPos = comment.getyPos() + comment.getHeight() / 2;
-                    edgeTargetXPos = nodelayout.getXpos() + nodelayout.getWidth() / 2;
+                    SLifeline lifeline = comment.getLifeline();
+                    edgeSourceXPos = comment.getPosition().x;
+                    edgeSourceYPos = comment.getPosition().y + comment.getSize().y / 2;
+                    edgeTargetXPos = lifeline.getPosition().x + lifeline.getSize().x / 2;
                     edgeTargetYPos = edgeSourceYPos;
                 } else {
                     // Connections to messages are drawn vertically
-                    edgeSourceXPos = comment.getxPos() + comment.getWidth() / 2;
+                    edgeSourceXPos = comment.getPosition().x + comment.getSize().x / 2;
                     edgeTargetXPos = edgeSourceXPos;
                     KEdge edge = (KEdge) comment.getMessage().getProperty(Properties.ORIGIN);
                     KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                     KPoint targetPoint = edgeLayout.getTargetPoint();
                     KPoint sourcePoint = edgeLayout.getSourcePoint();
-                    edgeSourceYPos = comment.getyPos() + comment.getHeight();
+                    edgeSourceYPos = comment.getPosition().y + comment.getSize().y;
                     edgeTargetYPos = (targetPoint.getY() + sourcePoint.getY()) / 2;
                 }
 
                 // Apply comment coordinates to layout
-                KEdgeLayout edgelayout = comment.getConnection().getData(KEdgeLayout.class);
-                edgelayout.getSourcePoint().setPos(edgeSourceXPos, edgeSourceYPos);
-                edgelayout.getTargetPoint().setPos(edgeTargetXPos, edgeTargetYPos);
-            } else {
-                // Unconnected comments
-                if (comment.getWidth() > commentMaxExtraWidth) {
-                    commentMaxExtraWidth = comment.getWidth();
-                }
-                // Set position of unconnected comments next to the last lifeline
-                comment.getOrigin().getData(KShapeLayout.class).setPos(xPos, commentNextYPos);
-                commentNextYPos += comment.getHeight() + messageSpacing;
+                KEdgeLayout edgelayout = comment.getProperty(
+                        SequenceDiagramProperties.COMMENT_CONNECTION).getData(KEdgeLayout.class);
+                edgelayout.getSourcePoint().setPos((float) edgeSourceXPos, (float) edgeSourceYPos);
+                edgelayout.getTargetPoint().setPos((float) edgeTargetXPos, (float) edgeTargetYPos);
             }
-        }
-
-        if (commentMaxExtraWidth > 0) {
-            graph.setSizeX(graph.getSizeX() + lifelineSpacing + commentMaxExtraWidth);
         }
     }
 
@@ -298,113 +337,123 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      * @param areas
      *            the list of areas in the graph
      */
-    private void handleAreas(final List<SequenceArea> areas) {
+    private void calculateAreaPosition(final List<SequenceArea> areas) {
+        if (areas != null) {
+            // Set size and position of area
+            for (SequenceArea area : areas) {
+                if (area.getMessages().size() > 0) {
+                    setAreaPositionByMessages(area);
+                } else {
+                    setAreaPositionByLifelinesAndMessage(area);
+                }
+                KNode areaNode = (KNode) area.getOrigin();
+                KShapeLayout areaLayout = areaNode.getData(KShapeLayout.class);
 
-        // Set size and position of area
-        for (SequenceArea area : areas) {
-            if (area.getMessages().size() > 0) {
-                setAreaPositionByMessages(area);
-            } else {
-                setAreaPositionByLifelinesAndMessage(area);
-            }
-            KNode areaNode = (KNode) area.getOrigin();
-            KShapeLayout areaLayout = areaNode.getData(KShapeLayout.class);
+                // Check if there are contained areas
+                int containmentDepth = checkContainment(area);
+                // If so, an offset has to be calculated in order not to have overlapping borders
+                int containmentSpacing = containmentDepth * containmentOffset;
 
-            // Check if there are contained areas
-            int containmentDepth = checkContainment(area);
-            // If so, an offset has to be calculated in order not to have overlapping borders
-            int containmentSpacing = containmentDepth * CONTAINMENT_OFFSET;
+                areaLayout.setXpos((float) (area.getPosition().x - lifelineSpacing / 2 
+                        - containmentSpacing));
+                areaLayout.setWidth((float) (area.getSize().x + lifelineSpacing 
+                        + 2 * containmentSpacing));
 
-            areaLayout.setXpos(area.getxPos() - lifelineSpacing / 2 - containmentSpacing);
-            areaLayout.setWidth(area.getWidth() + lifelineSpacing + 2 * containmentSpacing);
+                areaLayout.setYpos((float) (area.getPosition().y + lifelineHeader - messageSpacing / 2 
+                        - containmentSpacing));
+                areaLayout.setHeight((float) (area.getSize().y + messageSpacing 
+                        + 2 * containmentSpacing));
 
-            areaLayout.setYpos(area.getyPos() + LIFELINE_HEADER - messageSpacing / 2
-                    - containmentSpacing);
-            areaLayout.setHeight(area.getHeight() + messageSpacing + 2 * containmentSpacing);
+                // Handle interaction operands
+                if (area.getSubAreas().size() > 0) {
+                    // Reset area yPos and height if subAreas exists (to have a "header" that isn't
+                    // occupied by any subArea)
+                    areaLayout.setYpos((float) (area.getPosition().y - messageSpacing / 2));
+                    areaLayout
+                            .setHeight((float) (area.getSize().y + messageSpacing + lifelineHeader));
 
-            // Handle interaction operands
-            if (area.getSubAreas().size() > 0) {
-                // Reset area yPos and height if subAreas exists (to have a "header" that isn't
-                // occupied by any subArea)
-                areaLayout.setYpos(area.getyPos() - messageSpacing / 2);
-                areaLayout.setHeight(area.getHeight() + messageSpacing + LIFELINE_HEADER);
+                    double lastPos = 0;
+                    KShapeLayout lastLayout = null;
+                    for (SequenceArea subArea : area.getSubAreas()) {
 
-                float lastPos = 0;
-                KShapeLayout lastLayout = null;
-                for (SequenceArea subArea : area.getSubAreas()) {
+                        KNode subAreaNode = (KNode) subArea.getOrigin();
+                        KShapeLayout subAreaLayout = subAreaNode.getData(KShapeLayout.class);
 
-                    KNode subAreaNode = (KNode) subArea.getOrigin();
-                    KShapeLayout subAreaLayout = subAreaNode.getData(KShapeLayout.class);
+                        subAreaLayout.setXpos(0);
+                        subAreaLayout.setWidth((float) (area.getSize().x + lifelineSpacing - 2));
+                        if (subArea.getMessages().size() > 0) {
+                            // Calculate and set y-position by the area's messages
+                            setAreaPositionByMessages(subArea);
+                            subAreaLayout.setYpos((float) (subArea.getPosition().y
+                                    - area.getPosition().y + lifelineHeader - messageSpacing / 2));
+                        } else {
+                            // Calculate and set y-position by the available space
+                            subAreaLayout.setYpos((float) lastPos);
+                            // FIXME if subarea is empty, it appears first in the list
+                        }
 
-                    subAreaLayout.setXpos(0);
-                    subAreaLayout.setWidth(area.getWidth() + lifelineSpacing - 2);
-                    if (subArea.getMessages().size() > 0) {
-                        // Calculate and set y-position by the area's messages
-                        setAreaPositionByMessages(subArea);
-                        subAreaLayout.setYpos(subArea.getyPos() - area.getyPos() + LIFELINE_HEADER
-                                - messageSpacing / 2);
-                    } else {
-                        // Calculate and set y-position by the available space
-                        subAreaLayout.setYpos(lastPos);
-                        // FIXME if subarea is empty, it appears first in the list
+                        // Reset last subArea's height to fit
+                        if (lastLayout != null) {
+                            lastLayout.setHeight(subAreaLayout.getYpos() - lastLayout.getYpos());
+                        }
+                        lastPos = subAreaLayout.getYpos() + subAreaLayout.getHeight();
+                        lastLayout = subAreaLayout;
                     }
-
                     // Reset last subArea's height to fit
                     if (lastLayout != null) {
-                        lastLayout.setHeight(subAreaLayout.getYpos() - lastLayout.getYpos());
+                        lastLayout.setHeight((float) (areaLayout.getHeight() - lastLayout.getYpos() 
+                                - areaHeader));
                     }
-                    lastPos = subAreaLayout.getYpos() + subAreaLayout.getHeight();
-                    lastLayout = subAreaLayout;
-                }
-                // Reset last subArea's height to fit
-                if (lastLayout != null) {
-                    lastLayout.setHeight(areaLayout.getHeight() - lastLayout.getYpos()
-                            - AREA_HEADER_HEIGHT);
                 }
             }
         }
     }
 
     /**
-     * Calculate and set the coordinates of the executions of the given lifeline.
+     * Apply execution coordinates and adjust positions of messages attached to these executions.
      * 
      * @param lifeline
      *            the lifeline, whose executions are placed
-     * @param executions
-     *            the list of executions
      */
-    private void handleExecutions(final SLifeline lifeline, final List<SequenceExecution> executions) {
+    private void applyExecutionCoordinates(final SLifeline lifeline) {
+        List<SequenceExecution> executions = lifeline.getProperty(PapyrusProperties.EXECUTIONS);
+        if (executions == null) {
+            return;
+        }
+        
+        // Get the layout data of the execution
         KNode node = (KNode) lifeline.getProperty(Properties.ORIGIN);
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 
         // Set xPos, maxXPos and height / maxYPos
-        arrangeExecutions(executions, nodeLayout.getWidth());
+        arrangeExecutions(executions, lifeline.getSize().x);
 
         // Walk through the lifeline's executions
         nodeLayout.setProperty(PapyrusProperties.EXECUTIONS, executions);
         for (SequenceExecution execution : executions) {
             Object executionObj = execution.getOrigin();
+            
             if (executionObj instanceof KNode) {
-                KNode executionNode = (KNode) executionObj;
-                KShapeLayout shapelayout = executionNode.getData(KShapeLayout.class);
                 if (execution.getType().equals("Duration")
                         || execution.getType().equals("TimeConstraint")) {
-                    execution.setyPos(execution.getyPos() + TWENTY);
-                    execution.setMaxYPos(execution.getMaxYPos() + TWENTY);
+                    execution.getPosition().y += TWENTY;
                 }
-                shapelayout.setXpos(execution.getxPos());
-                shapelayout.setYpos(execution.getyPos() - LIFELINE_Y_POS);
-                shapelayout.setWidth(execution.getMaxXPos() - execution.getxPos());
-                shapelayout.setHeight(execution.getMaxYPos() - execution.getyPos());
+                
+                // Apply calculated coordinates to the execution
+                KNode executionNode = (KNode) executionObj;
+                KShapeLayout shapelayout = executionNode.getData(KShapeLayout.class);
+                shapelayout.setXpos((float) execution.getPosition().x);
+                shapelayout.setYpos((float) (execution.getPosition().y - lifelineYPos));
+                shapelayout.setWidth((float) execution.getSize().x);
+                shapelayout.setHeight((float) execution.getSize().y);
 
                 // Determine max and min y-pos of messages
-                float lifelineHeight = nodeLayout.getHeight();
-                float minYPos = lifelineHeight;
-                float maxYPos = 0;
+                double minYPos = lifeline.getSize().y;
+                double maxYPos = 0;
                 for (Object messObj : execution.getMessages()) {
                     if (messObj instanceof SMessage) {
                         SMessage message = (SMessage) messObj;
-                        float messageYPos;
+                        double messageYPos;
                         if (message.getSource() == lifeline) {
                             messageYPos = message.getSourceYPos();
                         } else {
@@ -427,58 +476,57 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                  * relative coordinates must be scaled as if the execution was having the height of
                  * its lifeline.
                  */
-                float effectiveHeight = lifelineHeight - TWENTY;
-                float executionHeight = maxYPos - minYPos;
-                float executionFactor = effectiveHeight / executionHeight;
+                double effectiveHeight = lifeline.getSize().y - TWENTY;
+                double executionHeight = maxYPos - minYPos;
+                double executionFactor = effectiveHeight / executionHeight;
 
                 // Walk through execution's messages and adjust their position
                 for (Object messObj : execution.getMessages()) {
                     if (messObj instanceof SMessage) {
                         SMessage mess = (SMessage) messObj;
                         boolean toLeft = false;
-                        if (mess.getSource().getPosition() > mess.getTarget().getPosition()) {
+                        if (mess.getSource().getHorizontalPosition() > mess.getTarget()
+                                .getHorizontalPosition()) {
                             // Message leads leftwards
                             toLeft = true;
                         }
 
                         KEdge edge = (KEdge) mess.getProperty(Properties.ORIGIN);
                         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                        float newXPos = nodeLayout.getXpos() + shapelayout.getXpos();
+                        double newXPos = lifeline.getPosition().x + execution.getPosition().x;
                         if (mess.getSource() == mess.getTarget()) {
                             // Selfloop: insert bend points
-                            edgeLayout.getBendPoints().get(0)
-                                    .setY(edgeLayout.getSourcePoint().getY());
-                            edgeLayout.getBendPoints().get(1)
-                                    .setY(edgeLayout.getTargetPoint().getY());
-                            edgeLayout.getTargetPoint().setX(newXPos + shapelayout.getWidth());
+                            edgeLayout.getBendPoints().get(0).setY(edgeLayout.getSourcePoint().getY());
+                            edgeLayout.getBendPoints().get(1).setY(edgeLayout.getTargetPoint().getY());
+                            edgeLayout.getTargetPoint().setX((float) (newXPos + execution.getSize().x));
                             edgeLayout.getTargetPoint().setY(0);
                         } else if (mess.getSource() == lifeline) {
                             if (!toLeft) {
-                                newXPos += shapelayout.getWidth();
+                                newXPos += execution.getSize().x;
                             }
-                            edgeLayout.getSourcePoint().setX(newXPos);
+                            edgeLayout.getSourcePoint().setX((float) newXPos);
 
                             // Calculate the message's height relative to the execution
-                            float relHeight = mess.getSourceYPos() - minYPos;
+                            double relHeight = mess.getSourceYPos() - minYPos;
                             if (relHeight == 0) {
                                 edgeLayout.getSourcePoint().setY(0);
                             } else {
-                                edgeLayout.getSourcePoint().setY(
-                                        LIFELINE_HEADER + relHeight * executionFactor);
+                                edgeLayout.getSourcePoint().setY((float) 
+                                        (lifelineHeader + relHeight * executionFactor));
                             }
                         } else {
                             if (toLeft) {
-                                newXPos += shapelayout.getWidth();
+                                newXPos += execution.getSize().x;
                             }
-                            edgeLayout.getTargetPoint().setX(newXPos);
+                            edgeLayout.getTargetPoint().setX((float) newXPos);
 
                             // Calculate the message's height relative to the execution
-                            float relHeight = mess.getTargetYPos() - minYPos;
+                            double relHeight = mess.getTargetYPos() - minYPos;
                             if (relHeight == 0) {
                                 edgeLayout.getTargetPoint().setY(0);
                             } else {
-                                edgeLayout.getTargetPoint().setY(
-                                        LIFELINE_HEADER + relHeight * executionFactor);
+                                edgeLayout.getTargetPoint().setY((float) 
+                                        (lifelineHeader + relHeight * executionFactor));
                             }
                         }
                     }
@@ -488,7 +536,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Handle the messages that are connected to the given lifeline.
+     * Apply the calculated coordinates of the messages that are connected to the given lifeline.
      * 
      * @param diagramHeight
      *            the height of the whole diagram
@@ -499,12 +547,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      * @param executions
      *            the list of executions
      */
-    private void handleMessages(final float diagramHeight, final SGraph graph,
+    private void applyMessageCoordinates(final double diagramHeight, final SGraph graph,
             final SLifeline lifeline, final List<SequenceExecution> executions) {
-
-        KNode node = (KNode) lifeline.getProperty(Properties.ORIGIN);
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-
         /*
          * TODO Set this to one if Papyrus team fixes its bug. Workaround for Papyrus bug.
          * Y-coordinates are stored in a strange way by Papyrus. When the message starts or ends at
@@ -512,20 +556,21 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
          * coordinates must be scaled as if the lifeline was having the height of its surrounding
          * interaction.
          */
-        float factor = (diagramHeight + TWENTY) / nodeLayout.getHeight();
+        double factor = (diagramHeight + TWENTY) / lifeline.getSize().y;
 
         // Resize node if there are any create or delete messages involved
         for (SMessage message : lifeline.getIncomingMessages()) {
-            if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.CREATE) {
+            if (message.getProperty(SequenceDiagramProperties.MESSAGE_TYPE) == MessageType.CREATE) {
                 // Set lifeline's yPos to the yPos of the create-message
-                nodeLayout.setYpos(message.getTargetYPos() + LIFELINE_HEADER / 2);
+                lifeline.getPosition().y = message.getTargetYPos() + lifelineHeader / 2;
                 // Modify height of lifeline in order to compensate yPos changes
-                nodeLayout.setHeight(nodeLayout.getHeight() + LIFELINE_Y_POS
-                        - message.getTargetYPos() - LIFELINE_HEADER / 2);
-            } else if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.DELETE) {
+                lifeline.getSize().y += lifelineYPos - message.getTargetYPos() - lifelineHeader
+                        / 2;
+            } else if (message.getProperty(SequenceDiagramProperties.MESSAGE_TYPE) 
+                    == MessageType.DELETE) {
                 // Modify height of lifeline in order to end at the yPos of the delete-message
-                nodeLayout.setHeight(nodeLayout.getHeight()
-                        - (graph.getSizeY() + messageSpacing - message.getTargetYPos()));
+                lifeline.getSize().y -= graph.getSize().y + messageSpacing
+                        - message.getTargetYPos();
             }
         }
 
@@ -534,21 +579,30 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             KEdge edge = (KEdge) message.getProperty(Properties.ORIGIN);
             KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
             KPoint sourcePoint = edgeLayout.getSourcePoint();
-            sourcePoint.setY(message.getSourceYPos() * factor);
-            sourcePoint.setX(nodeLayout.getXpos() + nodeLayout.getWidth() / 2);
+            sourcePoint.setY((float) (message.getSourceYPos() * factor));
+            sourcePoint.setX((float) (lifeline.getPosition().x + lifeline.getSize().x / 2));
 
             // Set execution coordinates according to connected messages coordinates
             if (executions != null) {
                 for (SequenceExecution execution : executions) {
                     if (execution.getMessages().contains(message)) {
-                        float sourceYPos = message.getSourceYPos();
-                        if (sourceYPos < execution.getyPos()) {
-                            if (message.getSource() != message.getTarget()) {
-                                execution.setyPos(sourceYPos);
+                        double sourceYPos = message.getSourceYPos();
+                        if (execution.getPosition().y == 0) {
+                            execution.getPosition().y = sourceYPos;
+                            execution.getSize().y = 0;
+                        } else {
+                            if (sourceYPos < execution.getPosition().y) {
+                                if (message.getSource() != message.getTarget()) {
+                                    double diff = execution.getPosition().y - sourceYPos;
+                                    execution.getPosition().y = sourceYPos;
+                                    if (execution.getSize().y >= 0) {
+                                        execution.getSize().y += diff;
+                                    }
+                                }
                             }
-                        }
-                        if (sourceYPos > execution.getMaxYPos()) {
-                            execution.setMaxYPos(sourceYPos);
+                            if (sourceYPos > execution.getPosition().y + execution.getSize().y) {
+                                execution.getSize().y = sourceYPos - execution.getPosition().y;
+                            }
                         }
                     }
                 }
@@ -557,13 +611,13 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             // Handle messages that lead to something else than a lifeline
             if (message.getTarget().getName().equals("DummyLifeline")) {
                 KPoint targetPoint = edgeLayout.getTargetPoint();
-                float reverseFactor = nodeLayout.getHeight() / (diagramHeight + FOURTY);
-                targetPoint.setY(TWENTY + message.getTargetYPos() * reverseFactor);
+                double reverseFactor = lifeline.getSize().y / (diagramHeight + FOURTY);
+                targetPoint.setY((float) (TWENTY + message.getTargetYPos() * reverseFactor));
 
                 // Lost-messages end between its source and the next lifeline
-                if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.LOST) {
-                    targetPoint.setX(nodeLayout.getXpos() + nodeLayout.getWidth() + lifelineSpacing
-                            / 2);
+                if (message.getProperty(SequenceDiagramProperties.MESSAGE_TYPE) == MessageType.LOST) {
+                    targetPoint.setX((float) (lifeline.getPosition().x + lifeline.getSize().x 
+                            + lifelineSpacing / 2));
                 }
             }
         }
@@ -573,28 +627,38 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             KEdge edge = (KEdge) message.getProperty(Properties.ORIGIN);
             KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
             KPoint targetPoint = edgeLayout.getTargetPoint();
-            targetPoint.setX(nodeLayout.getXpos() + nodeLayout.getWidth() / 2);
-            targetPoint.setY(message.getTargetYPos() * factor);
+            targetPoint.setX((float) (lifeline.getPosition().x + lifeline.getSize().x / 2));
+            targetPoint.setY((float) (message.getTargetYPos() * factor));
 
-            if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.CREATE) {
+            if (message.getProperty(SequenceDiagramProperties.MESSAGE_TYPE) == MessageType.CREATE) {
                 // Reset x-position of create message because it leads to the header and not the line
-                targetPoint.setX(nodeLayout.getXpos());
-            } else if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.DELETE) {
+                targetPoint.setX((float) lifeline.getPosition().x);
+            } else if (message.getProperty(SequenceDiagramProperties.MESSAGE_TYPE) 
+                    == MessageType.DELETE) {
                 // Reset y-position of delete message to end at the end of the lifeline
-                targetPoint.setY((nodeLayout.getHeight() + nodeLayout.getYpos() - LIFELINE_HEADER)
-                        * factor);
+                targetPoint.setY((float) ((lifeline.getPosition().y + lifeline.getSize().y 
+                                - lifelineHeader) * factor));
             }
 
             // Reset execution coordinates if the message is contained in an execution
             if (executions != null) {
                 for (SequenceExecution execution : executions) {
                     if (execution.getMessages().contains(message)) {
-                        float targetYPos = message.getTargetYPos();
-                        if (targetYPos < execution.getyPos()) {
-                            execution.setyPos(targetYPos);
-                        }
-                        if (targetYPos > execution.getMaxYPos()) {
-                            execution.setMaxYPos(targetYPos);
+                        double targetYPos = message.getTargetYPos();
+                        if (execution.getPosition().y == 0) {
+                            execution.getPosition().y = targetYPos;
+                            execution.getSize().y = 0;
+                        } else {
+                            if (targetYPos < execution.getPosition().y) {
+                                double diff = execution.getPosition().y - targetYPos;
+                                execution.getPosition().y = targetYPos;
+                                if (execution.getSize().y >= 0) {
+                                    execution.getSize().y += diff;
+                                }
+                            }
+                            if (targetYPos > execution.getPosition().y + execution.getSize().y) {
+                                execution.getSize().y = targetYPos - execution.getPosition().y;
+                            }
                         }
                     }
                 }
@@ -603,12 +667,12 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             // Handle messages that come from something else than a lifeline
             if (message.getSource().getName().equals("DummyLifeline")) {
                 KPoint sourcePoint = edgeLayout.getSourcePoint();
-                float reverseFactor = nodeLayout.getHeight() / (diagramHeight + FOURTY);
-                sourcePoint.setY(TWENTY + message.getSourceYPos() * reverseFactor);
+                double reverseFactor = lifeline.getSize().y / (diagramHeight + FOURTY);
+                sourcePoint.setY((float) (TWENTY + message.getSourceYPos() * reverseFactor));
 
                 // Found-messages start between its source and the previous lifeline
-                if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.FOUND) {
-                    sourcePoint.setX(nodeLayout.getXpos() - lifelineSpacing / 2);
+                if (message.getProperty(SequenceDiagramProperties.MESSAGE_TYPE) == MessageType.FOUND) {
+                    sourcePoint.setX((float) (lifeline.getPosition().x - lifelineSpacing / 2));
                 }
             }
         }
@@ -624,21 +688,17 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      *            the current lifeline
      * @return the width of the widest comment
      */
-    private float arrangeComments(final float xPos, final SLifeline lifeline) {
+    private double arrangeComments(final double xPos, final SLifeline lifeline) {
         // Get the list of comments attached to the current lifeline
-        List<SComment> comments = lifeline.getProperty(SeqProperties.COMMENTS);
+        List<SComment> comments = lifeline.getComments();
 
         // Check maximum size of comments attached to the lifeline
-        float maxCommentWidth = lifelineSpacing;
+        double maxCommentWidth = lifelineSpacing;
         for (SComment comment : comments) {
-            if (comment.getWidth() > maxCommentWidth) {
-                maxCommentWidth = comment.getWidth();
+            if (comment.getSize().x > maxCommentWidth) {
+                maxCommentWidth = comment.getSize().x;
             }
         }
-
-        // Get layout information of the lifeline
-        KNode node = (KNode) lifeline.getProperty(Properties.ORIGIN);
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 
         // HashMap that organizes which comment belongs to which message. This is important
         // if there are more than one comments at a message.
@@ -649,17 +709,17 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
 
                 // Place comment in the center of the message if it is smaller than
                 // lifelineSpacing
-                float commentXPos = xPos + nodeLayout.getWidth();
-                if (comment.getWidth() < maxCommentWidth) {
-                    commentXPos += (maxCommentWidth - comment.getWidth()) / 2;
+                double commentXPos = xPos + lifeline.getSize().x;
+                if (comment.getSize().x < maxCommentWidth) {
+                    commentXPos += (maxCommentWidth - comment.getSize().x) / 2;
                 }
 
                 // Place comment above the message
-                float commentYPos = message.getSourceYPos() + LIFELINE_HEADER + LIFELINE_Y_POS
-                        - (comment.getHeight() + messageSpacing);
+                double commentYPos = message.getSourceYPos() + lifelineHeader + lifelineYPos
+                        - (comment.getSize().y + messageSpacing);
 
-                comment.setxPos(commentXPos);
-                comment.setyPos(commentYPos);
+                comment.getPosition().x = commentXPos;
+                comment.getPosition().y = commentYPos;
 
                 if (hash.containsKey(message)) {
                     // Handle conflicts (reset yPos if necessary)
@@ -674,13 +734,13 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     }
 
                     // Place lower comment first
-                    commentYPos = message.getSourceYPos() + LIFELINE_HEADER + LIFELINE_Y_POS
-                            - (lower.getHeight() + messageSpacing);
-                    lower.setyPos(commentYPos);
+                    commentYPos = message.getSourceYPos() + lifelineHeader + lifelineYPos
+                            - (lower.getSize().y + messageSpacing);
+                    lower.getPosition().y = commentYPos;
 
                     // Place upper comment near to lower one
-                    float uYpos = lower.getyPos() - upper.getHeight() - messageSpacing / 2;
-                    upper.setyPos(uYpos);
+                    double uYpos = lower.getPosition().y - upper.getSize().y - messageSpacing / 2;
+                    upper.getPosition().y = uYpos;
                 } else {
                     hash.put(message, comment);
                 }
@@ -690,13 +750,43 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Preprocessor that does some organizing stuff for comment objects that are connected to
-     * lifelines or messages.
+     * Calculate positions for comments that are not connected to any element. They will be drawn
+     * after the last lifeline.
+     * 
+     * @param graph
+     *            the sequence graph
+     */
+    private void arrangeUnconnectedComments(final SGraph graph) {
+        // The width of the widest comment that has to be placed after the last lifeline
+        double commentMaxExtraWidth = 0;
+        // The vertical position of the next comment that is drawn after the last lifeline
+        double commentNextYPos = lifelineHeader + lifelineYPos;
+
+        for (SComment comment : graph.getComments()) {
+            if (comment.getMessage() == null) {
+                // Unconnected comments
+                if (comment.getSize().x > commentMaxExtraWidth) {
+                    commentMaxExtraWidth = comment.getSize().x;
+                }
+                // Set position of unconnected comments next to the last lifeline
+                comment.getPosition().x = graph.getSize().x;
+                comment.getPosition().y = commentNextYPos;
+                commentNextYPos += comment.getSize().y + messageSpacing;
+            }
+        }
+
+        if (commentMaxExtraWidth > 0) {
+            graph.getSize().x += lifelineSpacing + commentMaxExtraWidth;
+        }
+    }
+
+    /**
+     * Preprocessor that does some organizing stuff for connected comment objects.
      * 
      * @param graph
      *            the SequenceGraph
      */
-    private void arrangeComments(final SGraph graph) {
+    private void arrangeConnectedComments(final SGraph graph) {
         for (SComment comment : graph.getComments()) {
             SMessage message = null;
             SLifeline lifeline = null;
@@ -715,13 +805,14 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
 
             /*
              * If the comment is attached to a message, determine if it should be drawn near the
-             * beginning or near the end of the message. If the message is attached to a message and
+             * beginning or near the end of the message. If the comment is attached to a message and
              * one of the message's lifelines, it should be drawn near that lifeline (this is the
              * case for time observations for example).
              */
             if (message != null) {
                 SLifeline right, left;
-                if (message.getSource().getPosition() < message.getTarget().getPosition()) {
+                if (message.getSource().getHorizontalPosition() < message.getTarget()
+                        .getHorizontalPosition()) {
                     // Message leads rightwards
                     right = message.getTarget();
                     left = message.getSource();
@@ -733,9 +824,9 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                 if (lifeline == right) {
                     // Find lifeline left to "right" and attach comment to that lifeline because
                     // comments are drawn right of the connected lifeline.
-                    int position = right.getPosition();
+                    int position = right.getHorizontalPosition();
                     for (SLifeline ll : graph.getLifelines()) {
-                        if (ll.getPosition() == position - 1) {
+                        if (ll.getHorizontalPosition() == position - 1) {
                             comment.setLifeline(ll);
                             break;
                         }
@@ -761,8 +852,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                         if (area.getMessages().containsAll(otherArea.getMessages())) {
                             // Check if upper left corner is more upper and left than the other
                             // area's corner
-                            if (area.getyPos() < otherArea.getyPos()
-                                    && area.getxPos() < otherArea.getxPos()) {
+                            if (area.getPosition().y < otherArea.getPosition().y
+                                    && area.getPosition().x < otherArea.getPosition().x) {
                                 area.getContainedAreas().add(otherArea);
                             }
                         }
@@ -785,8 +876,10 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
         if (areas != null) {
             for (SequenceArea area : areas) {
                 if (area.getMessages().size() == 0) {
-                    if (area.getNextMessage() != null) {
-                        LNode node = importer.getLayeredMap().get(area.getNextMessage());
+                    Object nextMess = area.getNextMessage();
+                    if (nextMess != null) {
+                        LNode node = ((SMessage) nextMess)
+                                .getProperty(SequenceDiagramProperties.LAYERED_NODE);
                         if (node != null) {
                             // Create two dummy nodes before node to have enough space for the empty
                             // area
@@ -811,9 +904,9 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     private void placeCreatedLifelines(final SGraph sgraph, final LGraph lgraph) {
         for (SLifeline lifeline : sgraph.getLifelines()) {
             for (SMessage message : lifeline.getIncomingMessages()) {
-                if (message.getProperty(SeqProperties.MESSAGE_TYPE) == MessageType.CREATE) {
+                if (message.getProperty(SequenceDiagramProperties.MESSAGE_TYPE) == MessageType.CREATE) {
                     // Add dummy below this messages node
-                    LNode node = importer.getLayeredMap().get(message);
+                    LNode node = message.getProperty(SequenceDiagramProperties.LAYERED_NODE);
                     createDummyNode(lgraph, node, false);
                 }
             }
@@ -839,16 +932,16 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             }
             if (attachedMess != null) {
                 // Get height of the comment and calculate number of dummy nodes needed
-                float height = comment.getHeight();
+                double height = comment.getSize().y;
                 int dummys = (int) Math.ceil(height / messageSpacing);
                 // Add dummy nodes in the layered graph
-                LNode node = importer.getLayeredMap().get(attachedMess);
+                LNode node = attachedMess.getProperty(SequenceDiagramProperties.LAYERED_NODE);
                 if (node != null) {
                     for (int i = 0; i < dummys; i++) {
                         createDummyNode(lgraph, node, true);
                     }
                     comment.setMessage(attachedMess);
-                    attachedMess.getProperty(SeqProperties.COMMENTS).add(comment);
+                    attachedMess.getComments().add(comment);
                 }
             }
         }
@@ -934,25 +1027,23 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      *            SMessage
      */
     private void setAreaPositionByMessages(final SequenceArea area) {
-        float minX = Float.MAX_VALUE;
-        float minY = Float.MAX_VALUE;
-        float maxX = 0;
-        float maxY = 0;
+        double minX = Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxX = 0;
+        double maxY = 0;
         // Compute the bounding box of all contained messages
         for (Object messObj : area.getMessages()) {
             if (messObj instanceof SMessage) {
                 // Compute new y coordinates
                 SMessage message = (SMessage) messObj;
-                KEdge edge = (KEdge) message.getProperty(Properties.ORIGIN);
-                KEdgeLayout layout = edge.getData(KEdgeLayout.class);
-                float sourceYPos = message.getSourceYPos();
+                double sourceYPos = message.getSourceYPos();
                 if (sourceYPos < minY) {
                     minY = sourceYPos;
                 }
                 if (sourceYPos > maxY) {
                     maxY = sourceYPos;
                 }
-                float targetYPos = message.getTargetYPos();
+                double targetYPos = message.getTargetYPos();
                 if (targetYPos < minY) {
                     minY = targetYPos;
                 }
@@ -960,14 +1051,16 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     maxY = targetYPos;
                 }
                 // Compute new x coordinates
-                float sourceXPos = layout.getSourcePoint().getX();
+                SLifeline sourceLL = message.getSource();
+                double sourceXPos = sourceLL.getPosition().x + sourceLL.getSize().x / 2;
                 if (sourceXPos < minX) {
                     minX = sourceXPos;
                 }
                 if (sourceXPos > maxX) {
                     maxX = sourceXPos;
                 }
-                float targetXPos = layout.getTargetPoint().getX();
+                SLifeline targetLL = message.getTarget();
+                double targetXPos = targetLL.getPosition().x + targetLL.getSize().x / 2;
                 if (targetXPos < minX) {
                     minX = targetXPos;
                 }
@@ -976,10 +1069,10 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                 }
             }
         }
-        area.setxPos(minX);
-        area.setyPos(minY);
-        area.setWidth(maxX - minX);
-        area.setHeight(maxY - minY);
+        area.getPosition().x = minX;
+        area.getPosition().y = minY;
+        area.getSize().x = maxX - minX;
+        area.getSize().y = maxY - minY;
     }
 
     /**
@@ -991,13 +1084,13 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      */
     private void setAreaPositionByLifelinesAndMessage(final SequenceArea area) {
         // Set xPos and width according to the involved lifelines
-        float minXPos = Float.MAX_VALUE;
-        float maxXPos = 0;
+        double minXPos = Double.MAX_VALUE;
+        double maxXPos = 0;
         for (Object lifelineObj : area.getLifelines()) {
             SLifeline lifeline = (SLifeline) lifelineObj;
             KNode node = (KNode) lifeline.getProperty(Properties.ORIGIN);
             KShapeLayout layout = node.getData(KShapeLayout.class);
-            float lifelineCenter = layout.getXpos() + layout.getWidth() / 2;
+            double lifelineCenter = layout.getXpos() + layout.getWidth() / 2;
             if (lifelineCenter < minXPos) {
                 minXPos = lifelineCenter;
             }
@@ -1005,8 +1098,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                 maxXPos = lifelineCenter;
             }
         }
-        area.setxPos(minXPos);
-        area.setWidth(maxXPos - minXPos);
+        area.getPosition().x = minXPos;
+        area.getSize().x = maxXPos - minXPos;
 
         // Set yPos and height according to the next message's yPos
         if (area.getNextMessage() != null) {
@@ -1014,14 +1107,14 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             SMessage message = (SMessage) messageObj;
             KEdge edge = (KEdge) message.getProperty(Properties.ORIGIN);
             KEdgeLayout layout = edge.getData(KEdgeLayout.class);
-            float messageYPos;
+            double messageYPos;
             if (layout.getSourcePoint().getY() < layout.getTargetPoint().getY()) {
                 messageYPos = message.getSourceYPos();
             } else {
                 messageYPos = message.getTargetYPos();
             }
-            area.setHeight(messageSpacing);
-            area.setyPos(messageYPos - area.getHeight() - messageSpacing);
+            area.getSize().y = messageSpacing;
+            area.getPosition().y = messageYPos - area.getSize().y - messageSpacing;
         }
     }
 
@@ -1033,18 +1126,19 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      * @param parentWidth
      *            Width of the {@link SLifeline}
      */
-    private void arrangeExecutions(final List<SequenceExecution> executions, final float parentWidth) {
-        final float minHeight = 20;
-        final float executionWidth = 16;
+    private void arrangeExecutions(final List<SequenceExecution> executions,
+            final double parentWidth) {
+        final double minHeight = 20;
+        final double executionWidth = 16;
 
-        // Initially set xPosition of execution
+        // Initially set position and height of executions
         for (SequenceExecution execution : executions) {
-            execution.setxPos((parentWidth - executionWidth) / 2);
+            execution.getPosition().x = (parentWidth - executionWidth) / 2;
             // Give executions without messages their original height and yPos
             if (execution.getMessages().size() == 0) {
                 KShapeLayout shapelayout = execution.getOrigin().getData(KShapeLayout.class);
-                execution.setyPos(shapelayout.getYpos());
-                execution.setMaxYPos(shapelayout.getYpos() + shapelayout.getHeight());
+                execution.getPosition().y = shapelayout.getYpos();
+                execution.getSize().y = shapelayout.getHeight();
             }
         }
 
@@ -1058,29 +1152,30 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                 int pos = 0;
                 for (SequenceExecution otherExecution : executions) {
                     if (execution != otherExecution) {
-                        if (execution.getyPos() > otherExecution.getyPos()
-                                && execution.getMaxYPos() < otherExecution.getMaxYPos()) {
+                        if (execution.getPosition().y > otherExecution.getPosition().y
+                                && execution.getPosition().y + execution.getSize().y < otherExecution
+                                        .getPosition().y + otherExecution.getSize().y) {
                             pos++;
                         }
                     }
                 }
                 if (pos > 0) {
-                    execution.setxPos(execution.getxPos() + pos * executionWidth / 2);
+                    execution.getPosition().x = execution.getPosition().x + pos * executionWidth
+                            / 2;
                 }
             }
         }
 
         // Check minimum height of executions and set width
         for (SequenceExecution execution : executions) {
-            float height = execution.getMaxYPos() - execution.getyPos();
-            if (height < minHeight) {
-                execution.setMaxYPos(execution.getyPos() + minHeight);
+            if (execution.getSize().y < minHeight) {
+                execution.getSize().y = minHeight;
             }
             if (execution.getType().equals("Duration")
                     || execution.getType().equals("TimeConstraint")) {
                 continue;
             }
-            execution.setMaxXPos(execution.getxPos() + executionWidth);
+            execution.getSize().x = executionWidth;
         }
     }
 
@@ -1090,9 +1185,9 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      * @param layeredGraph
      *            the layered graph
      */
-    private void applyMessageYCoords(final LGraph layeredGraph) {
+    private void calculateMessageYCoords(final LGraph layeredGraph) {
         // Position of first layer of messages
-        float layerpos = LIFELINE_Y_POS + messageSpacing;
+        double layerpos = lifelineYPos + messageSpacing;
 
         // Iterate the layers of nodes that represent messages
         for (int i = 0; i < layeredGraph.getLayers().size(); i++) {
@@ -1106,7 +1201,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     continue;
                 }
 
-                SLifeline lifeline = node.getProperty(SeqProperties.BELONGS_TO_LIFELINE);
+                SLifeline lifeline = node
+                        .getProperty(SequenceDiagramProperties.BELONGS_TO_LIFELINE);
                 // This property is set only for splitted messages
                 if (lifeline != null) {
                     // consider messages that have different layers for source and target
@@ -1119,13 +1215,13 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     continue;
                 }
 
-                if (message.getYPos() != -1.0f) {
+                if (message.isLayerPositionSet()) {
                     // Skip iteration message if it was already set
                     continue;
                 }
 
-                int sourceXPos = message.getSource().getPosition();
-                int targetXPos = message.getTarget().getPosition();
+                int sourceXPos = message.getSource().getHorizontalPosition();
+                int targetXPos = message.getTarget().getHorizontalPosition();
 
                 // If the message crosses at least one lifeline, check for overlappings
                 if (Math.abs(sourceXPos - targetXPos) > 1) {
@@ -1134,14 +1230,14 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                         // Get the corresponding message
                         SMessage otherMessage = (SMessage) otherNode.getProperty(Properties.ORIGIN);
                         try {
-                            int otherSourcePos = otherMessage.getSource().getPosition();
-                            int otherTargetPos = otherMessage.getTarget().getPosition();
+                            int otherSourcePos = otherMessage.getSource().getHorizontalPosition();
+                            int otherTargetPos = otherMessage.getTarget().getHorizontalPosition();
 
                             // If the other message starts or ends between the start and the end
                             // of the tested message, there is an overlapping
                             if (isOverlapping(sourceXPos, targetXPos, otherSourcePos,
                                     otherTargetPos)) {
-                                if (otherMessage.getYPos() != -1.0f) {
+                                if (otherMessage.isLayerPositionSet()) {
                                     // If the other message was already set, the message has to
                                     // be placed in another layer
                                     layerpos += messageSpacing;
@@ -1149,7 +1245,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                                 } else if (Math.abs(otherSourcePos - otherTargetPos) <= 1) {
                                     // If the other message was not set and it is a short one,
                                     // the other message has to be set here
-                                    otherMessage.setYPos(layerpos);
+                                    otherMessage.setLayerYPos(layerpos);
                                     layerpos += messageSpacing;
                                     break;
                                 }
@@ -1161,13 +1257,12 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     }
                 }
                 // Set the vertical position of the message
-                message.setYPos(layerpos);
+                message.setLayerYPos(layerpos);
 
                 // Handle selfloops
                 if (message.getSource() == message.getTarget()) {
                     message.setSourceYPos(layerpos - messageSpacing / 2);
                 }
-
             }
             layerpos += messageSpacing;
         }

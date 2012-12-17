@@ -45,7 +45,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author ima
  * @kieler.design 2012-08-10 chsch grh
  */
-public class CompoundDummyEdgeRemover implements ILayoutProcessor {
+public final class CompoundDummyEdgeRemover implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}

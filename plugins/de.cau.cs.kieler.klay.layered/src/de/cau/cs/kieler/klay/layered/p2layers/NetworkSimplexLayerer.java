@@ -55,7 +55,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class NetworkSimplexLayerer implements ILayoutPhase {
+public final class NetworkSimplexLayerer implements ILayoutPhase {
     
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =

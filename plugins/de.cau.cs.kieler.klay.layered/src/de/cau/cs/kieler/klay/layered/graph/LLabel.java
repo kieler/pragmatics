@@ -20,7 +20,7 @@ package de.cau.cs.kieler.klay.layered.graph;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class LLabel extends LShape {
+public final class LLabel extends LShape {
     
     /** Enum for the definition of a side of the edge to place the (edge) label to. 
      *  Currently supported in orthogonal edge routing.

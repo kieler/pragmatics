@@ -91,11 +91,11 @@
    <extension
          point="org.eclipse.ui.commands">
          <command
-            categoryId="de.cau.cs.kieler"
+            categoryId="org.eclipse.ui.category.file"
             defaultHandler="de.cau.cs.kieler.kaom.graphiti.diagram.ReInitKaomDiagramCommand"
-            description="Reinitialize the diagram for the selected kaom file overwriting the old kaog file."
+            description="Initialize a Graphiti diagram for the selected KAOM model, overwriting any old &apos;kaog&apos; file."
             id="de.cau.cs.kieler.kaom.graphiti.reinitDiagram"
-            name="Reinitialize and save kaog diagram">
+            name="Initialize KAOM Diagram (Graphiti)">
       </command>
          </extension>
       <extension

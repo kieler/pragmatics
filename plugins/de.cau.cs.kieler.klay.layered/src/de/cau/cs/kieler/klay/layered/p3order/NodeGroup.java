@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class NodeGroup implements Comparable<NodeGroup> {
+public final class NodeGroup implements Comparable<NodeGroup> {
 
     // CHECKSTYLEOFF VisibilityModifier
     

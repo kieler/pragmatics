@@ -258,7 +258,7 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
 
                     // get a command and register the Kivi ButtonHandler for it
                     Command cmd = commandService.getCommand(config.getId());
-                    Category category = commandService.getCategory("de.cau.cs.kieler");
+                    Category category = commandService.getCategory("de.cau.cs.kieler.ksbase.ui.ksbaseCategory");
                     IParameter[] params = {};
                     cmd.define(config.getLabel(), null, category, params);
                     // define a Handler for the command
@@ -409,8 +409,9 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
     }
 
     /**
-     * haf: simply copied the code from the CompoundContributionItem. This also supports the
-     * compound idea for the Toolbar and not only for menus. {@inheritDoc}
+     * This method has been copied from {@link org.eclipse.ui.actions.CompoundContributionItem}.
+     * This also supports the compound idea for the Toolbar and not only for menus.
+     * {@inheritDoc}
      */
     @Override
     public void fill(final ToolBar parent, final int index) {

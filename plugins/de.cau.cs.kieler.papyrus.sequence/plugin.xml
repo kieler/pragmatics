@@ -30,7 +30,12 @@
                option="de.cau.cs.kieler.papyrus.sequence.messageSpacing">
          </knownOption>
          <knownOption
+               default="INTERACTIVE"
                option="de.cau.cs.kieler.papyrus.sequence.lifelineSorting">
+         </knownOption>
+         <knownOption
+               default="false"
+               option="de.cau.cs.kieler.papyrus.sequence.groupAreas">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -69,6 +74,19 @@
             id="de.cau.cs.kieler.papyrus.sequence.lifelineSorting"
             name="Lifeline sorting"
             type="enum">
+      </layoutOption>
+      <layoutOption
+            advanced="false"
+            appliesTo="parents"
+            default="false"
+            description="Defines, if messages that are contained in areas, such as combined fragments, are given higher priority in the minimization process of message&apos;s length."
+            id="de.cau.cs.kieler.papyrus.sequence.groupAreas"
+            name="Group areas"
+            type="boolean">
+         <dependency
+               option="de.cau.cs.kieler.papyrus.sequence.lifelineSorting"
+               value="SHORT_MESSAGES">
+         </dependency>
       </layoutOption>
    </extension>
 

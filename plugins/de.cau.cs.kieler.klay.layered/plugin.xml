@@ -114,15 +114,12 @@
                option="de.cau.cs.kieler.klay.layered.nodePlace">
          </knownOption>
          <knownOption
-               default="NONE"
                option="de.cau.cs.kieler.klay.layered.fixedAlignment">
          </knownOption>
          <knownOption
-               default="SMART"
                option="de.cau.cs.kieler.klay.layered.LabelSide">
          </knownOption>
          <knownOption
-               default="OUTSIDE"
                option="de.cau.cs.kieler.klay.layered.portLabelPlacement">
          </knownOption>
       </layoutAlgorithm>

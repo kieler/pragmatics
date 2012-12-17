@@ -96,7 +96,8 @@ public class TidyRectangleCompactor implements ILayoutPhase {
                     LayoutProcessorStrategy.SELFLOOP_DUMMY_REMOVER));
 
     /** Intermediate processing configuration with Giotto high-degree strategy. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO 
+    private static final IntermediateProcessingConfiguration 
+        INTERMEDIATE_PROCESSING_CONFIGURATION_GIOTTO 
         = new IntermediateProcessingConfiguration(
             // Before Phase 1
             null,

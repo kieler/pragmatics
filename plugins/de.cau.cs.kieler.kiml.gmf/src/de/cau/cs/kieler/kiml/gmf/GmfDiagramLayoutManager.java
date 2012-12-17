@@ -255,45 +255,49 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      */
     @SuppressWarnings({ "rawtypes", "unchecked" }) // the signature of IAdapterFactory is unchecked
     public Object getAdapter(final Object object, final Class adapterType) {
-        if (adapterType.isAssignableFrom(GmfLayoutConfig.class)) {
-            return layoutConfig;
-        } else if (adapterType.isAssignableFrom(IGraphicalEditPart.class)) {
-            if (object instanceof CompartmentEditPart) {
-                return ((CompartmentEditPart) object).getParent();
-            } else if (object instanceof IGraphicalEditPart) {
-                return object;
-            } else if (object instanceof DiagramEditor) {
-                return ((DiagramEditor) object).getDiagramEditPart();
-            } else if (object instanceof DiagramRootEditPart) {
-                return ((DiagramRootEditPart) object).getContents();
-            }
-        } else if (adapterType.isAssignableFrom(EObject.class)) {
-            if (object instanceof IGraphicalEditPart) {
-                IGraphicalEditPart editPart = (IGraphicalEditPart) object;
-                EObject element = editPart.getNotationView().getElement();
-                if (editPart.getParent() != null) {
-                    // return the EObject only if the edit part has its own model element
-                    Object model = editPart.getParent().getModel();
-                    if (model instanceof View) {
-                        EObject parentElement = ((View) model).getElement();
-                        if (element == parentElement) {
-                            return null;
+        try {
+            if (adapterType.isAssignableFrom(GmfLayoutConfig.class)) {
+                return layoutConfig;
+            } else if (adapterType.isAssignableFrom(IGraphicalEditPart.class)) {
+                if (object instanceof CompartmentEditPart) {
+                    return ((CompartmentEditPart) object).getParent();
+                } else if (object instanceof IGraphicalEditPart) {
+                    return object;
+                } else if (object instanceof DiagramEditor) {
+                    return ((DiagramEditor) object).getDiagramEditPart();
+                } else if (object instanceof DiagramRootEditPart) {
+                    return ((DiagramRootEditPart) object).getContents();
+                }
+            } else if (adapterType.isAssignableFrom(EObject.class)) {
+                if (object instanceof IGraphicalEditPart) {
+                    IGraphicalEditPart editPart = (IGraphicalEditPart) object;
+                    EObject element = editPart.getNotationView().getElement();
+                    if (editPart.getParent() != null) {
+                        // return the EObject only if the edit part has its own model element
+                        Object model = editPart.getParent().getModel();
+                        if (model instanceof View) {
+                            EObject parentElement = ((View) model).getElement();
+                            if (element == parentElement) {
+                                return null;
+                            }
                         }
                     }
+                    return element;
+                } else if (object instanceof View) {
+                    return ((View) object).getElement();
                 }
-                return element;
-            } else if (object instanceof View) {
-                return ((View) object).getElement();
+            } else if (adapterType.isAssignableFrom(TransactionalEditingDomain.class)) {
+                if (object instanceof DiagramEditor) {
+                    return ((DiagramEditor) object).getEditingDomain();
+                } else if (object instanceof IGraphicalEditPart) {
+                    return ((IGraphicalEditPart) object).getEditingDomain();
+                }
             }
-        } else if (adapterType.isAssignableFrom(TransactionalEditingDomain.class)) {
-            if (object instanceof DiagramEditor) {
-                return ((DiagramEditor) object).getEditingDomain();
-            } else if (object instanceof IGraphicalEditPart) {
-                return ((IGraphicalEditPart) object).getEditingDomain();
+            if (object instanceof IAdaptable) {
+                return ((IAdaptable) object).getAdapter(adapterType);
             }
-        }
-        if (object instanceof IAdaptable) {
-            return ((IAdaptable) object).getAdapter(adapterType);
+        } catch (RuntimeException exception) {
+            // when the editor part has been closed NPEs can occur
         }
         return null;
     }
@@ -839,12 +843,10 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 edge.setSource(sourceNode);
                 if (sourcePort != null) {
                     edge.setSourcePort(sourcePort);
-                    sourcePort.getEdges().add(edge);
                 }
                 edge.setTarget(targetNode);
                 if (targetPort != null) {
                     edge.setTargetPort(targetPort);
-                    targetPort.getEdges().add(edge);
                 }
 
                 graphMap.put(edge, connection);

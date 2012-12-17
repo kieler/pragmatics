@@ -30,7 +30,6 @@ import de.cau.cs.kieler.klay.planar.properties.Properties;
  * Tamassia's orthogonalization does not work correctly for full anlges at the internal faces. Thus,
  * all full angle nodes are replaced with dummy cages that do not form a full angle.
  * 
- * FIXME this seems not to be used anymore?!
  * 
  * @author pkl
  */
@@ -46,6 +45,7 @@ public class FullAngleDummyProcessor implements ILayoutProcessor {
         monitor.begin("full angle dummies", 1);
         this.graph = pGraph;
 
+        // for testing only.
         // processFullAngles(pGraph);
 
         // processCutEdges(pGraph);
@@ -54,20 +54,11 @@ public class FullAngleDummyProcessor implements ILayoutProcessor {
     }
 
     /**
-     * @param pGraph
-     *            the graph for which the cut edge dummies should be computed.
-     */
-    private void processCutEdges(final PGraph pGraph) {
-        // List<PEdge> cutEdges =
-        // Iterable<PFace> faces = this.graph.getFaces();
-
-    }
-
-    /**
      * 
      * @param pGraph
      *            the graph for which the full anlge node dummies should be computed.
      */
+    @SuppressWarnings("unused")
     private void processFullAngles(final PGraph pGraph) {
         List<PNode> fullAngleNodes = Lists.newLinkedList();
         Iterable<PFace> faces = this.graph.getFaces();

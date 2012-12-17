@@ -195,44 +195,46 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      */
     private void addEdgeLayout(final GmfLayoutCommand command, final KEdge kedge,
             final ConnectionEditPart connectionEditPart, final double scale) {
-        // create source terminal identifier
-        INodeEditPart sourceEditPart = (INodeEditPart) connectionEditPart.getSource();
-        ConnectionAnchor sourceAnchor;
-        if (sourceEditPart instanceof ConnectionEditPart) {
-            // if the edge source is a connection, don't consider the source point
-            sourceAnchor = new SlidableAnchor(sourceEditPart.getFigure());
-        } else {
-            KVector sourceRel = getRelativeSourcePoint(kedge);
-            sourceAnchor = new SlidableAnchor(sourceEditPart.getFigure(),
-                    new PrecisionPoint(sourceRel.x, sourceRel.y));
-        }
-        String sourceTerminal = sourceEditPart.mapConnectionAnchorToTerminal(sourceAnchor);
-
-        // create target terminal identifier
-        INodeEditPart targetEditPart = (INodeEditPart) connectionEditPart.getTarget();
-        ConnectionAnchor targetAnchor;
-        if (targetEditPart instanceof ConnectionEditPart) {
-            // if the edge target is a connection, don't consider the target point
-            targetAnchor = new SlidableAnchor(targetEditPart.getFigure());
-        } else {
-            KVector targetRel = getRelativeTargetPoint(kedge);
-            targetAnchor = new SlidableAnchor(targetEditPart.getFigure(),
-                                    new PrecisionPoint(targetRel.x, targetRel.y));
-        }
-        String targetTerminal = targetEditPart.mapConnectionAnchorToTerminal(targetAnchor);
-
-        PointList bendPoints = getBendPoints(kedge, connectionEditPart.getFigure(), scale);
-
-        // check whether the connection is a note attachment to an edge, then remove bend points
-        if (sourceEditPart instanceof ConnectionEditPart
-                || targetEditPart instanceof ConnectionEditPart) {
-            while (bendPoints.size() > 2) {
-                bendPoints.removePoint(1);
+        if (connectionEditPart.getSource() != null && connectionEditPart.getTarget() != null) {
+            // create source terminal identifier
+            INodeEditPart sourceEditPart = (INodeEditPart) connectionEditPart.getSource();
+            ConnectionAnchor sourceAnchor;
+            if (sourceEditPart instanceof ConnectionEditPart) {
+                // if the edge source is a connection, don't consider the source point
+                sourceAnchor = new SlidableAnchor(sourceEditPart.getFigure());
+            } else {
+                KVector sourceRel = getRelativeSourcePoint(kedge);
+                sourceAnchor = new SlidableAnchor(sourceEditPart.getFigure(),
+                        new PrecisionPoint(sourceRel.x, sourceRel.y));
             }
+            String sourceTerminal = sourceEditPart.mapConnectionAnchorToTerminal(sourceAnchor);
+    
+            // create target terminal identifier
+            INodeEditPart targetEditPart = (INodeEditPart) connectionEditPart.getTarget();
+            ConnectionAnchor targetAnchor;
+            if (targetEditPart instanceof ConnectionEditPart) {
+                // if the edge target is a connection, don't consider the target point
+                targetAnchor = new SlidableAnchor(targetEditPart.getFigure());
+            } else {
+                KVector targetRel = getRelativeTargetPoint(kedge);
+                targetAnchor = new SlidableAnchor(targetEditPart.getFigure(),
+                                        new PrecisionPoint(targetRel.x, targetRel.y));
+            }
+            String targetTerminal = targetEditPart.mapConnectionAnchorToTerminal(targetAnchor);
+    
+            PointList bendPoints = getBendPoints(kedge, connectionEditPart.getFigure(), scale);
+    
+            // check whether the connection is a note attachment to an edge, then remove bend points
+            if (sourceEditPart instanceof ConnectionEditPart
+                    || targetEditPart instanceof ConnectionEditPart) {
+                while (bendPoints.size() > 2) {
+                    bendPoints.removePoint(1);
+                }
+            }
+            
+            command.addEdgeLayout((Edge) connectionEditPart.getModel(), bendPoints, sourceTerminal,
+                    targetTerminal);
         }
-        
-        command.addEdgeLayout((Edge) connectionEditPart.getModel(), bendPoints, sourceTerminal,
-                targetTerminal);
     }
 
     /**
@@ -513,9 +515,14 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
     }
 
     /**
-     * Calculates the label offset from the reference point given the label bounds and a points
-     * list.
+     * <!-- CHECKSTYLEOFF LineLength -->
+     * Calculates the label offset from the reference point given the label bounds and a points list.
+     * This code has been copied and adapted from
+     * {@link org.eclipse.gmf.runtime.diagram.ui.internal.figures.LabelHelper#offsetFromRelativeCoordinate(IFigure, Rectangle, PointList, Point)},
+     * {@link org.eclipse.gmf.runtime.diagram.ui.internal.figures.LabelHelper#normalizeRelativePointToPointOnLine(PointList, Point, Point)}, and
+     * {@link org.eclipse.gmf.runtime.diagram.ui.internal.figures.LabelHelper#getOrthogonalDistances(LineSeg, Point, Point)}.
      * 
+     * <!-- CHECKSTYLEON LineLength -->
      * @param bounds the {@code Rectangle} that is the bounding box of the label
      * @param points the {@code PointList} that the label offset is relative to
      * @param therefPoint the {@code Point} that is the reference point that the offset is based on,
@@ -524,6 +531,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      *         oriented based on the nearest line segment, or {@code null} if no such point can be
      *         determined
      */
+    @SuppressWarnings("restriction")
     public static Point offsetFromRelativeCoordinate(final Rectangle bounds,
             final PointList points, final Point therefPoint) {
         Point refPoint = therefPoint;

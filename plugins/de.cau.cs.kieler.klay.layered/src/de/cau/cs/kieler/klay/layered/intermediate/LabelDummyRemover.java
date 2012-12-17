@@ -45,7 +45,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author jjc
  * @kieler.rating yellow proposed cds
  */
-public class LabelDummyRemover implements ILayoutProcessor {
+public final class LabelDummyRemover implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}

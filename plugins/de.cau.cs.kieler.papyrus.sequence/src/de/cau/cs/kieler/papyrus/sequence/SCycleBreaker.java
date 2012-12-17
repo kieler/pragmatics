@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -41,9 +42,15 @@ public class SCycleBreaker {
 
     /**
      * Break the cycles in the given layered graph.
-     * @param lgraph the layered graph
+     * 
+     * @param lgraph
+     *            the layered graph
+     * @param progressMonitor
+     *            the progress monitor
      */
-    public void breakCycles(final LGraph lgraph) {
+    public void breakCycles(final LGraph lgraph, final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Cycle Breaking", 1);
+
         // The set of edges to be split after the cycle detecting phase
         split = new HashSet<LNode>();
         chain = new LinkedList<LNode>();
@@ -67,6 +74,8 @@ public class SCycleBreaker {
         for (LNode node : split) {
             splitNode(lgraph, node);
         }
+
+        progressMonitor.done();
     }
 
     /**
@@ -87,7 +96,7 @@ public class SCycleBreaker {
         Iterator<LEdge> oEdges = node.getConnectedEdges().iterator();
         while (oEdges.hasNext()) {
             LEdge edge = oEdges.next();
-            SLifeline belongsTo = edge.getProperty(SeqProperties.BELONGS_TO_LIFELINE);
+            SLifeline belongsTo = edge.getProperty(SequenceDiagramProperties.BELONGS_TO_LIFELINE);
             if (belongsTo == targetLL) {
                 // if edge belongs to targetLifeline, rebase it to newNode
                 if (edge.getSource().getNode() == node) {
@@ -98,8 +107,8 @@ public class SCycleBreaker {
             }
             // if edge belongs to sourceLifeline, leave it as it was
         }
-        node.setProperty(SeqProperties.BELONGS_TO_LIFELINE, sourceLL);
-        newNode.setProperty(SeqProperties.BELONGS_TO_LIFELINE, targetLL);
+        node.setProperty(SequenceDiagramProperties.BELONGS_TO_LIFELINE, sourceLL);
+        newNode.setProperty(SequenceDiagramProperties.BELONGS_TO_LIFELINE, targetLL);
         newNode.setProperty(Properties.ORIGIN, message);
     }
 

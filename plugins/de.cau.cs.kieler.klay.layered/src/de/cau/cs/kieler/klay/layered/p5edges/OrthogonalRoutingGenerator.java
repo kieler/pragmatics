@@ -17,12 +17,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -34,6 +36,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Edge routing implementation that creates orthogonal bend points. Inspired by
@@ -63,7 +66,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class OrthogonalRoutingGenerator {
+public final class OrthogonalRoutingGenerator {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Routing Strategies
@@ -534,7 +537,7 @@ public class OrthogonalRoutingGenerator {
         }
         
         // break cycles
-        breakCycles(hyperNodes);
+        breakCycles(hyperNodes, layeredGraph.getProperty(Properties.RANDOM));
 
         // write the acyclic dependency graph to an output file
         if (debugPrefix != null) {
@@ -702,8 +705,9 @@ public class OrthogonalRoutingGenerator {
      * weight are exactly the two-cycles of the hypernode structure.
      * 
      * @param nodes list of hypernodes
+     * @param random random number generator
      */
-    private static void breakCycles(final List<HyperNode> nodes) {
+    private static void breakCycles(final List<HyperNode> nodes, final Random random) {
         LinkedList<HyperNode> sources = new LinkedList<HyperNode>();
         LinkedList<HyperNode> sinks = new LinkedList<HyperNode>();
         
@@ -735,7 +739,8 @@ public class OrthogonalRoutingGenerator {
         Set<HyperNode> unprocessed = new TreeSet<HyperNode>(nodes);
         int markBase = nodes.size();
         int nextRight = markBase - 1, nextLeft = markBase + 1;
-        
+        List<HyperNode> maxNodes = new ArrayList<HyperNode>();
+
         while (!unprocessed.isEmpty()) {
             while (!sinks.isEmpty()) {
                 HyperNode sink = sinks.removeFirst();
@@ -752,19 +757,24 @@ public class OrthogonalRoutingGenerator {
             }
             
             int maxOutflow = Integer.MIN_VALUE;
-            HyperNode maxNode = null;
             for (HyperNode node : unprocessed) {
                 int outflow = node.outweight - node.inweight;
-                if (outflow > maxOutflow) {
-                    maxOutflow = outflow;
-                    maxNode = node;
+                if (outflow >= maxOutflow) {
+                    if (outflow > maxOutflow) {
+                        maxNodes.clear();
+                        maxOutflow = outflow;
+                    }
+                    maxNodes.add(node);
                 }
             }
             
-            if (maxNode != null) {
+            if (!maxNodes.isEmpty()) {
+                // if there are multiple hypernodes with maximal outflow, select one randomly
+                HyperNode maxNode = maxNodes.get(random.nextInt(maxNodes.size()));
                 unprocessed.remove(maxNode);
                 maxNode.mark = nextLeft++;
                 updateNeighbors(maxNode, sources, sinks);
+                maxNodes.clear();
             }
         }
     

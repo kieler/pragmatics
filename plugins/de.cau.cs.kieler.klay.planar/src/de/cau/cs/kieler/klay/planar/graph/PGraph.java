@@ -489,7 +489,7 @@ public class PGraph extends PNode {
     }
 
     /**
-     * Sets the face that has the most adjacent edges to the old external face as new external face.
+     * Sets the face with the most adjacent edges to the old external face as the new external face.
      */
     private void determineExternalFace() {
         Iterable<PEdge> adjacentEdges = this.externalFace.adjacentEdges();
@@ -503,8 +503,9 @@ public class PGraph extends PNode {
                 }
             }
 
+            // Attention: This could be probelmatic, if the graph consists exact two faces.
+            // They share the same edges, all the way!
             if (count == nodeNumber) {
-                // FIXME problematic if only two faces with equal nodes exists.
                 this.externalFace = face;
                 return;
             }
@@ -636,16 +637,12 @@ public class PGraph extends PNode {
      */
     private PEdge getNextCClockwiseEdge(final PNode node, final PEdge edge) {
         Iterator<PEdge> iter = node.adjacentEdges().iterator();
-        while (iter.hasNext() && iter.next() != edge) {
-            // nothing to do
-        }
-        if (iter.hasNext()) {
+        while (iter.hasNext() && iter.next() == edge) {
             // Get the next edge on the node
             return iter.next();
-        } else {
-            // Reached the last node, get the first
-            return node.adjacentEdges().iterator().next();
         }
+        // Reached the last node, get the first
+        return node.adjacentEdges().iterator().next();
     }
 
     /**

@@ -65,35 +65,41 @@ public class RandomGraphBiconnectedPage extends WizardPage {
     // CHECKSTYLEOFF MagicNumber
     private void createOptions(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NULL);
-        GridData gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
-        composite.setLayoutData(gridData);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        layout.verticalSpacing = 9;
-        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+        composite.setLayout(new GridLayout(2, false));
+        
+        GridData gridData;
+        
         // add NUMBER_OF_NODES option
         Label label = new Label(composite, SWT.NULL);
         label.setText(Messages.RandomGraphBiconnectedPage_number_of_nodes_caption);
+        
         final Spinner nodesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(nodesSpinner, Messages.RandomGraphBiconnectedPage_number_of_nodes_help);
+        nodesSpinner.setToolTipText(Messages.RandomGraphBiconnectedPage_number_of_nodes_help);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
+        
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
         nodesSpinner.setLayoutData(gridData);
+        
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 numberOfNodes = nodesSpinner.getSelection();
             }
         });
+        
         // add NUMBER_OF_EDGES option
         label = new Label(composite, SWT.NULL);
         label.setText(Messages.RandomGraphBiconnectedPage_number_of_edges_caption);
+        
         final Spinner edgesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(edgesSpinner, Messages.RandomGraphBiconnectedPage_number_of_edges_help);
+        edgesSpinner.setToolTipText(Messages.RandomGraphBiconnectedPage_number_of_edges_help);
         edgesSpinner.setValues(numberOfEdges, 0, Integer.MAX_VALUE, 0, 1, 10);
+        
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
         edgesSpinner.setLayoutData(gridData);
+        
         edgesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 numberOfEdges = edgesSpinner.getSelection();

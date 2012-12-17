@@ -109,7 +109,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating yellow 2012-08-10 chsch grh KI-19
  */
-public class BKNodePlacer implements ILayoutPhase {
+public final class BKNodePlacer implements ILayoutPhase {
     
     /** In the compaction step, nodes connected with north south dummies
      *  are compacted in a way which doesn't leave enough space for e.g., arrowheads.
