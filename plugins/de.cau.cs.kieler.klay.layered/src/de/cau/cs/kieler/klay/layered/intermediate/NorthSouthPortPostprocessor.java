@@ -13,8 +13,12 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.Iterator;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -65,14 +69,41 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
                     // It's a self-loop
                     processSelfLoop(node);
                 } else {
+                    // Check if all ports were created for the same origin port
+                    boolean sameOriginPort;
+                    if (node.getPorts().size() >= 2) {
+                        // Iterate over the dummy's ports to find out whether the origin is always the
+                        // same
+                        sameOriginPort = true;
+                        
+                        Iterator<LPort> portIterator = node.getPorts().iterator();
+                        LPort currentPort = portIterator.next();
+                        LPort previousPort = null;
+                        
+                        while (portIterator.hasNext()) {
+                            previousPort = currentPort;
+                            currentPort = portIterator.next();
+                            
+                            if (!previousPort.getProperty(Properties.ORIGIN).equals(
+                                    currentPort.getProperty(Properties.ORIGIN))) {
+                                
+                                // The two ports don't have the same origin
+                                sameOriginPort = false;
+                                break;
+                            }
+                        }
+                    } else {
+                        sameOriginPort = false;
+                    }
+                    
                     // Iterate through the ports
                     for (LPort port : node.getPorts()) {
                         if (!port.getIncomingEdges().isEmpty()) {
-                            processInputPort(port);
+                            processInputPort(port, sameOriginPort);
                         }
                         
                         if (!port.getOutgoingEdges().isEmpty()) {
-                            processOutputPort(port);
+                            processOutputPort(port, sameOriginPort);
                         }
                     }
                 }
@@ -90,8 +121,12 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
      * created for.
      * 
      * @param inputPort the input port whose edges to restore.
+     * @param addJunctionPoints if {@code true}, adds a junction point to the edge that equals the
+     *                          bend point computed for the edge. This should be {@code true} for ports
+     *                          belonging to north south port dummies that only have ports created for
+     *                          the same port.
      */
-    private void processInputPort(final LPort inputPort) {
+    private void processInputPort(final LPort inputPort, final boolean addJunctionPoints) {
         // Retrieve the port the dummy node was created from
         LPort originPort = (LPort) inputPort.getProperty(Properties.ORIGIN);
         
@@ -106,6 +141,16 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
         for (LEdge inEdge : edgeArray) {
             inEdge.setTarget(originPort);
             inEdge.getBendPoints().addLast(x, y);
+            
+            // Check if a junction point should be added
+            if (addJunctionPoints) {
+                KVectorChain junctionPoints = inEdge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                if (junctionPoints == null) {
+                    junctionPoints = new KVectorChain();
+                    inEdge.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+                }
+                junctionPoints.add(new KVector(x, y));
+            }
         }
     }
     
@@ -114,8 +159,12 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
      * created for.
      * 
      * @param outputPort the output port whose edges to restore.
+     * @param addJunctionPoints if {@code true}, adds a junction point to the edge that equals the
+     *                          bend point computed for the edge. This should be {@code true} for ports
+     *                          belonging to north south port dummies that only have ports created for
+     *                          the same port.
      */
-    private void processOutputPort(final LPort outputPort) {
+    private void processOutputPort(final LPort outputPort, final boolean addJunctionPoints) {
         // Retrieve the port the dummy node was created from
         LPort originPort = (LPort) outputPort.getProperty(Properties.ORIGIN);
         
@@ -130,6 +179,16 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
         for (LEdge outEdge : edgeArray) {
             outEdge.setSource(originPort);
             outEdge.getBendPoints().addFirst(x, y);
+            
+            // Check if a junction point should be added
+            if (addJunctionPoints) {
+                KVectorChain junctionPoints = outEdge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                if (junctionPoints == null) {
+                    junctionPoints = new KVectorChain();
+                    outEdge.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+                }
+                junctionPoints.add(new KVector(x, y));
+            }
         }
     }
     
