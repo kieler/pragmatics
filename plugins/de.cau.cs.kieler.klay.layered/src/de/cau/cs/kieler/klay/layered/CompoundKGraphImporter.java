@@ -931,6 +931,12 @@ public final class CompoundKGraphImporter extends KGraphImporter {
         // and respect the graph's offset also
         KVector graphOffset = layeredGraph.getOffset();
         offsetBorderSpacingVec.add(graphOffset);
+        
+        // consider junction points
+        KVectorChain junctionPoints = ledge.getProperty(LayoutOptions.JUNCTION_POINTS);
+        if (junctionPoints != null) {
+            junctionPoints.translate(offsetBorderSpacingVec);
+        }
 
         bendPoints.translate(offsetBorderSpacingVec);
         if (!(kSourceNode.getParent() == (KNode) layeredGraph.getProperty(Properties.ORIGIN))
@@ -944,6 +950,9 @@ public final class CompoundKGraphImporter extends KGraphImporter {
             }
             bendpointOffset.negate();
             bendPoints.translate(bendpointOffset);
+            if (junctionPoints != null) {
+                junctionPoints.translate(bendpointOffset);
+            }
         }
 
         // calculate starting point of edge
@@ -968,8 +977,7 @@ public final class CompoundKGraphImporter extends KGraphImporter {
         KVector difference = getAbsolute(kTargetNode).sub(getAbsolute(kSourceNode));
         if (!descendantEdge) {
             // Mind the fact that getAbsolute calculates absolute coordinates plus insets. We need
-            // the
-            // difference from the absolute sourceNode position without insets.
+            // the difference from the absolute sourceNode position without insets.
             KVector sourceInsets = new KVector(kSourceNodeLayout.getInsets().getLeft(),
                     kSourceNodeLayout.getInsets().getTop());
             difference.add(sourceInsets);
@@ -1006,6 +1014,9 @@ public final class CompoundKGraphImporter extends KGraphImporter {
 
         // transfer the bend points and end points to the edge layout
         edgeLayout.applyVectorChain(bendPoints);
+        
+        // transfer the junction points to the edge layout
+        edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
 
         // set spline option
         if (splinesActive) {
