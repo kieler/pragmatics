@@ -276,9 +276,16 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public T parseValue(final String valueString) {
-        if (valueString == null || valueString.length() == 0 || valueString.equals("null")) {
+        if (valueString == null || valueString.equals("null")) {
             return null;
         }
+        
+        // if this open data instance is an ENUMSET or a REMOTE_ENUMSET, we need to allow empty strings
+        // to denote that no enumeration value is selected. Otherwise, we forbid empty strings
+        if (valueString.length() == 0 && type != Type.ENUMSET && type != Type.REMOTE_ENUMSET) {
+            return null;
+        }
+        
         switch (type) {
         case BOOLEAN:
             return (T) Boolean.valueOf(valueString);
