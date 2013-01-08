@@ -843,12 +843,10 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 edge.setSource(sourceNode);
                 if (sourcePort != null) {
                     edge.setSourcePort(sourcePort);
-                    sourcePort.getEdges().add(edge);
                 }
                 edge.setTarget(targetNode);
                 if (targetPort != null) {
                     edge.setTargetPort(targetPort);
-                    targetPort.getEdges().add(edge);
                 }
 
                 graphMap.put(edge, connection);

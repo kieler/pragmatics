@@ -21,6 +21,7 @@ import org.eclipse.ui.services.IEvaluationService;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.internal.KiviContributionItem;
+import de.cau.cs.kieler.ksbase.ui.menus.KSBasEContributionItem;
 
 /**
  * This effect will request a reevaluation of all Visibility expressions and update the
@@ -60,9 +61,9 @@ public class UpdateVisibilityEffect extends AbstractEffect {
                         .getWorkbenchWindow();
                 ToolBarContributionItem it = (ToolBarContributionItem) b.getCoolBarManager2().find(
                         "de.cau.cs.kieler");
-                KiviContributionItem.setSoftUpdate(true);
+                KSBasEContributionItem.setSoftUpdate(true);
                 it.getToolBarManager().update(true);
-                KiviContributionItem.setSoftUpdate(false);
+                KSBasEContributionItem.setSoftUpdate(false);
             }
         });
     }

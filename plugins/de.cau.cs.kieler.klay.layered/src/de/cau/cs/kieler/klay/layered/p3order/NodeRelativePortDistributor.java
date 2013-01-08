@@ -50,7 +50,7 @@ final class NodeRelativePortDistributor extends AbstractPortDistributor {
      * {@inheritDoc}
      */
     @Override
-    protected void calculatePortRanks(final LNode node, final int nodeIx, final PortType type) {
+    protected float calculatePortRanks(final LNode node, final float rankSum, final PortType type) {
         float[] portRanks = getPortRanks();
 
         if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
@@ -70,8 +70,8 @@ final class NodeRelativePortDistributor extends AbstractPortDistributor {
                 
                 // Assign port ranks in the order north - west - south - east
                 float incr = 1.0f / (inputCount + 1);
-                float northPos = nodeIx + northInputCount * incr;
-                float restPos = nodeIx + 1 - incr;
+                float northPos = rankSum + northInputCount * incr;
+                float restPos = rankSum + 1 - incr;
                 for (LPort port : node.getPorts(PortType.INPUT)) {
                     if (port.getSide() == PortSide.NORTH) {
                         portRanks[port.id] = northPos;
@@ -95,7 +95,7 @@ final class NodeRelativePortDistributor extends AbstractPortDistributor {
 
                 // Iterate output ports in their natural order, that is north - east - south - west
                 float incr = 1.0f / (outputCount + 1);
-                float pos = nodeIx + incr;
+                float pos = rankSum + incr;
                 for (LPort port : node.getPorts(PortType.OUTPUT)) {
                     portRanks[port.id] = pos;
                     pos += incr;
@@ -110,9 +110,12 @@ final class NodeRelativePortDistributor extends AbstractPortDistributor {
             
         } else {
             for (LPort port : node.getPorts(type)) {
-                portRanks[port.id] = nodeIx + getPortIncr(type, port.getSide());
+                portRanks[port.id] = rankSum + getPortIncr(type, port.getSide());
             }
         }
+        
+        // the consumed rank is always 1
+        return 1;
     }
 
     private static final float INCR_ONE = 0.3f;

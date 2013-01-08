@@ -174,7 +174,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
         new IntermediateProcessingConfiguration(
                 // Before Phase 1
-                EnumSet.of(LayoutProcessorStrategy.LABEL_NODE_SIZE_ADJUSTER),
+                null,
                 
                 // Before Phase 2
                 EnumSet.of(LayoutProcessorStrategy.LABEL_DUMMY_INSERTER),
@@ -196,7 +196,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration END_EDGE_LABEL_PROCESSING_ADDITIONS =
         new IntermediateProcessingConfiguration(
                 // Before Phase 1
-                EnumSet.of(LayoutProcessorStrategy.LABEL_NODE_SIZE_ADJUSTER),
+                null,
                 
                 // Before Phase 2
                 null,
@@ -230,7 +230,8 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
             configuration.addAll(INVERTED_PORT_PROCESSING_ADDITIONS);
         }
         
-        if (graphProperties.contains(GraphProperties.NON_FREE_PORTS)) {
+        if (graphProperties.contains(GraphProperties.NON_FREE_PORTS)
+                || graph.getProperty(Properties.FEEDBACK_EDGES)) {
             configuration.addAll(INVERTED_PORT_PROCESSING_ADDITIONS);
 
             if (graphProperties.contains(GraphProperties.NORTH_SOUTH_PORTS)) {
