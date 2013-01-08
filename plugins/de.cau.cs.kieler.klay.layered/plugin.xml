@@ -128,6 +128,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.portLabelPlacement">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.feedBackEdges">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
@@ -281,6 +284,19 @@
             id="de.cau.cs.kieler.klay.layered.portLabelPlacement"
             name="Port Label Placement"
             type="enum">
+         <dependency
+               option="de.cau.cs.kieler.edgeRouting"
+               value="ORTHOGONAL">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="Whether feedback edges should be highlighted by routing around the nodes."
+            id="de.cau.cs.kieler.klay.layered.feedBackEdges"
+            name="Feedback Edges"
+            type="boolean">
          <dependency
                option="de.cau.cs.kieler.edgeRouting"
                value="ORTHOGONAL">

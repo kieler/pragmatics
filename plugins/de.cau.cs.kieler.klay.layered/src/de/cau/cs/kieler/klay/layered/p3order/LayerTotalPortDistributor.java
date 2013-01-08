@@ -25,18 +25,10 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * <p>Port ranks are calculated by giving each node {@code i} a range of values {@code [i,i+x]},
  * where {@code x} is the number of input ports or output ports. Hence nodes with many ports are
  * assigned a broader range of ranks than nodes with few ports.</p>
- * 
- * <p>The port rank calculation done here depends on the fact that
- * {@link #calculatePortRanks(LNode, int, PortType)} is always called iteratively for all nodes
- * of a layer according to the current order. The rank of nodes is accumulated, since it does
- * not only depend on the node index, but also on the number of ports of preceding nodes.</p>
  *
  * @author msp
  */
 class LayerTotalPortDistributor extends AbstractPortDistributor {
-    
-    /** the cumulative node rank of the currently processed layer. */
-    private int cumulativeNodeRank;
 
     /**
      * Constructs a layer-total port distributor with the given array of ranks.
@@ -53,13 +45,8 @@ class LayerTotalPortDistributor extends AbstractPortDistributor {
      * {@inheritDoc}
      */
     @Override
-    protected void calculatePortRanks(final LNode node, final int nodeIx, final PortType type) {
+    protected float calculatePortRanks(final LNode node, final float rankSum, final PortType type) {
         float[] portRanks = getPortRanks();
-        
-        // reset the cumulative node rank when a new calculation has started
-        if (nodeIx == 0) {
-            cumulativeNodeRank = 0;
-        }
 
         if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
 
@@ -77,8 +64,8 @@ class LayerTotalPortDistributor extends AbstractPortDistributor {
                 }
                 
                 // Assign port ranks in the order north - west - south - east
-                int northPos = cumulativeNodeRank + northInputCount;
-                int restPos = cumulativeNodeRank + inputCount;
+                float northPos = rankSum + northInputCount;
+                float restPos = rankSum + inputCount;
                 for (LPort port : node.getPorts(PortType.INPUT)) {
                     if (port.getSide() == PortSide.NORTH) {
                         portRanks[port.id] = northPos;
@@ -89,18 +76,18 @@ class LayerTotalPortDistributor extends AbstractPortDistributor {
                     }
                 }
                 
-                // update the cumulative node rank according to the number of input ports
-                cumulativeNodeRank += inputCount;
-                break;
+                // the consumed rank corresponds to the number of input ports
+                return inputCount;
             }
                 
             case OUTPUT: {
                 // Iterate output ports in their natural order, that is north - east - south - west
+                int pos = 0;
                 for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                    // increase the cumulative node rank and assign the new value to the current port
-                    portRanks[port.id] = ++cumulativeNodeRank;
+                    pos++;
+                    portRanks[port.id] = rankSum + pos;
                 }
-                break;
+                return pos;
             }
             
             default:
@@ -121,12 +108,13 @@ class LayerTotalPortDistributor extends AbstractPortDistributor {
             if (maxIncr > minIncr) {
                 // make sure that ports on different sides get different ranks
                 for (LPort port : node.getPorts(type)) {
-                    portRanks[port.id] = cumulativeNodeRank
-                            + getPortIncr(type, port.getSide()) - minIncr;
+                    portRanks[port.id] = rankSum + getPortIncr(type, port.getSide()) - minIncr;
                 }
             
-                cumulativeNodeRank += maxIncr - minIncr;
+                return maxIncr - minIncr;
             }
+            // no ports of given type, so no rank is consumed
+            return 0;
         }
     }
 

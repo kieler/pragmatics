@@ -396,6 +396,16 @@ public final class KlayLayered {
         IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration(
                 BASELINE_PROCESSING_CONFIGURATION);
         
+        // port side processor, put to first slot only if requested and routing is orthogonal
+        if (graph.getProperty(Properties.FEEDBACK_EDGES)
+                && graph.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_1,
+                    LayoutProcessorStrategy.PORT_SIDE_PROCESSOR);
+        } else {
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_3,
+                    LayoutProcessorStrategy.PORT_SIDE_PROCESSOR);
+        }
+        
         // graph transformations for unusual layout directions
         switch (graph.getProperty(LayoutOptions.DIRECTION)) {
         case LEFT:
@@ -565,10 +575,7 @@ public final class KlayLayered {
 
     /** intermediate processing configuration for basic graphs. */
     private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION 
-            = new IntermediateProcessingConfiguration(null, null,
-            
-            // Before Phase 3
-            EnumSet.of(LayoutProcessorStrategy.PORT_SIDE_PROCESSOR),
+            = new IntermediateProcessingConfiguration(null, null, null,
             
             // Before Phase 4
             EnumSet.of(LayoutProcessorStrategy.NODE_MARGIN_CALCULATOR,

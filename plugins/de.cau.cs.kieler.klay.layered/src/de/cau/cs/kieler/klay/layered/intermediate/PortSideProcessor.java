@@ -25,13 +25,19 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 /**
  * Makes sure ports have at least a fixed side. If they don't, input ports are assigned
- * to the left and output ports to the right side.
+ * to the left and output ports to the right side. This processor can run either before the
+ * first phase or before the third phase. In the first slot it assigns port sides before any
+ * edges are reversed, hence edges that are reversed later are routed "around" the nodes
+ * using inverted ports. This can only be handled correctly if the {@link InvertedPortProcessor}
+ * is active. In the third slot, however, the port sides are assigned <em>after</em> edges
+ * are reversed, so no inverted ports will occur. This behavior is controlled by the option
+ * {@link de.cau.cs.kieler.klay.layered.properties.Properties#FEEDBACK_EDGES FEEDBACK_EDGES}.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
  *   <dt>Postcondition:</dt><dd>all nodes have their ports distributed, with port constraints
  *     set to fixed sides at the least.</dd>
- *   <dt>Slots:</dt><dd>Before phase 3.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 1 or before phase 3.</dd>
  *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
  * </dl>
  * 
@@ -47,27 +53,43 @@ public final class PortSideProcessor implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Port side processing", 1);
         
+        // IF USED BEFORE PHASE 1
+        // Iterate through the unlayered nodes of the graph
+        for (LNode node : layeredGraph.getLayerlessNodes()) {
+            process(node);
+        }
+        
+        // IF USED BEFORE PHASE 3
         // Iterate through the nodes of all layers
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
-                if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
-                    // Check whether there are ports with undefined side
-                    for (LPort port : node.getPorts()) {
-                        if (port.getSide() == PortSide.UNDEFINED) {
-                            setPortSide(port);
-                        }
-                    }
-                } else {
-                    // Distribute all ports and change constraints to fixed side
-                    for (LPort port : node.getPorts()) {
-                        setPortSide(port);
-                    }
-                    node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
-                }
+                process(node);
             }
         }
         
         monitor.done();
+    }
+    
+    /**
+     * Process the ports of the given node.
+     * 
+     * @param node a node
+     */
+    private void process(final LNode node) {
+        if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+            // Check whether there are ports with undefined side
+            for (LPort port : node.getPorts()) {
+                if (port.getSide() == PortSide.UNDEFINED) {
+                    setPortSide(port);
+                }
+            }
+        } else {
+            // Distribute all ports and change constraints to fixed side
+            for (LPort port : node.getPorts()) {
+                setPortSide(port);
+            }
+            node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        }
     }
     
     /**
