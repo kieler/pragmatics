@@ -28,6 +28,8 @@
  */
 package edu.umd.cs.piccolox.swt;
 
+import java.io.InputStream;
+
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
@@ -43,6 +45,7 @@ import edu.umd.cs.piccolo.util.PPaintContext;
  * 
  * @version 1.0
  * @author Jesse Grosjean
+ * @author chsch (Christian Schneider)
  */
 public class PSWTImage extends PNode {
     private static final long serialVersionUID = 1L;
@@ -95,6 +98,21 @@ public class PSWTImage extends PNode {
     }
 
     /**
+     * Constructs a PSWTImage wrapping the provided image after loading it from
+     * the input stream.
+     * 
+     * @author chsch
+     * 
+     * @param canvas canvas to associate with the image node
+     * @param input stream providing the image, will be read and converted to
+     *            an Image internally
+     */
+    public PSWTImage(final PSWTCanvas canvas, final InputStream input) {
+        this(canvas);
+        setImage(input);
+    }
+
+    /**
      * Returns the image that is shown by this node, may be null.
      * 
      * @return the image that is shown by this node
@@ -115,6 +133,22 @@ public class PSWTImage extends PNode {
      */
     public void setImage(final String filePath) {
         setImage(new Image(canvas.getDisplay(), filePath));
+    }
+
+    /**
+     * Set the image that is wrapped by this PImage node. This method will also
+     * load the image using a MediaTracker before returning. And if the this
+     * PImage is accelerated that image will be copied into an accelerated image
+     * if needed. Note that this may cause undesired results with images that
+     * have transparent regions, for those cases you may want to set the PImage
+     * to be not accelerated.
+     * 
+     * @author chsch
+     * 
+     * @param input stream providing the image data
+     */
+    public void setImage(final InputStream input) {
+        setImage(new Image(canvas.getDisplay(), input));
     }
 
     /**

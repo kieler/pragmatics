@@ -18,6 +18,8 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -111,6 +113,12 @@ public final class GraphTransformer implements ILayoutProcessor {
                     for (KVector bendPoint : edge.getBendPoints()) {
                         mirror(bendPoint, maxx);
                     }
+                    KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                    if (junctionPoints != null) {
+                        for (KVector jp : junctionPoints) {
+                            mirror(jp, maxx);
+                        }
+                    }
                     for (LLabel label : edge.getLabels()) {
                         mirror(label.getPosition(), maxx - label.getSize().x);
                     }
@@ -177,6 +185,12 @@ public final class GraphTransformer implements ILayoutProcessor {
                 for (LEdge edge : port.getOutgoingEdges()) {
                     for (KVector bendPoint : edge.getBendPoints()) {
                         transpose(bendPoint);
+                    }
+                    KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                    if (junctionPoints != null) {
+                        for (KVector jp : junctionPoints) {
+                            transpose(jp);
+                        }
                     }
                     for (LLabel label : edge.getLabels()) {
                         transpose(label.getPosition());

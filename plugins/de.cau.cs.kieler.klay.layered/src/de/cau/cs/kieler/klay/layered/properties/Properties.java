@@ -395,6 +395,10 @@ public final class Properties {
         = new Property<InteractiveReferencePoint>(
             "de.cau.cs.kieler.klay.layered.interactiveReferencePoint",
             InteractiveReferencePoint.CENTER);
+    
+    /** Whether feedback edges should be highlighted by routing around the nodes. */
+    public static final IProperty<Boolean> FEEDBACK_EDGES = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.feedBackEdges", false);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

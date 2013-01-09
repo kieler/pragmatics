@@ -186,7 +186,7 @@ public class SelectionInfoAction extends Action {
         // display layout algorithms
         LayoutAlgorithmData[] layouterData = layoutView.getCurrentLayouterData();
         if (layouterData != null && layouterData.length > 0) {
-            builder.append("<b>Involved layout providers</b><ul>");
+            builder.append("<b>Involved layout algorithms</b><ul>");
             for (LayoutAlgorithmData data : layouterData) {
                 if (data != null) {
                     builder.append("<li>" + data.getName());

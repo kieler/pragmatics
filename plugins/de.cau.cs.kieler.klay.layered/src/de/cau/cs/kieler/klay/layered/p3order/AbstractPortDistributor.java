@@ -79,13 +79,16 @@ abstract class AbstractPortDistributor {
      * 
      * @param node
      *            a node
-     * @param nodeIx
-     *            the node's index in its layer
+     * @param rankSum
+     *            the sum of ranks of preceding nodes in the same layer
      * @param type
      *            the port type to consider
+     * @return the rank consumed by the given node; the following node's ranks start at
+     *            {@code rankSum + consumedRank}
      * @see de.cau.cs.kieler.klay.layered.intermediate.PortListSorter
      */
-    protected abstract void calculatePortRanks(final LNode node, final int nodeIx, final PortType type);
+    protected abstract float calculatePortRanks(final LNode node, final float rankSum,
+            final PortType type);
     
     /**
      * Determine ranks for all ports of specific type in the given layer.
@@ -97,8 +100,9 @@ abstract class AbstractPortDistributor {
      *            the port type to consider
      */
     public final void calculatePortRanks(final LNode[] layer, final PortType portType) {
+        float consumedRank = 0;
         for (int nodeIx = 0; nodeIx < layer.length; nodeIx++) {
-            calculatePortRanks(layer[nodeIx], nodeIx, portType);
+            consumedRank += calculatePortRanks(layer[nodeIx], consumedRank, portType);
         }
     }
     
@@ -112,10 +116,11 @@ abstract class AbstractPortDistributor {
      *            the port type to consider
      */
     public final void calculatePortRanks(final NodeGroup[] layer, final PortType portType) {
+        float consumedRank = 0;
         for (int nodeIx = 0; nodeIx < layer.length; nodeIx++) {
             NodeGroup nodeGroup = layer[nodeIx];
             if (nodeGroup.getNodes().length == 1) {
-                calculatePortRanks(nodeGroup.getNode(), nodeIx, portType);
+                consumedRank += calculatePortRanks(nodeGroup.getNode(), consumedRank, portType);
             }
         }
     }
@@ -133,11 +138,16 @@ abstract class AbstractPortDistributor {
     public final void distributePorts(final LNode[][] layeredGraph) {
         for (int l = 0; l < layeredGraph.length; l++) {
             if (l + 1 < layeredGraph.length) {
+                // update the input port ranks of the next layer
                 calculatePortRanks(layeredGraph[l + 1], PortType.INPUT);
             }
             LNode[] layer = layeredGraph[l];
+            float consumedRank = 0;
             for (int i = 0; i < layer.length; i++) {
-                distributePorts(layer[i], i);
+                // reorder the ports of the current node
+                distributePorts(layer[i]);
+                // update the output port ranks after reordering
+                consumedRank += calculatePortRanks(layer[i], consumedRank, PortType.OUTPUT);
             }
         }
     }
@@ -151,11 +161,16 @@ abstract class AbstractPortDistributor {
     public final void distributePorts(final NodeGroup[][] layeredGraph) {
         for (int l = 0; l < layeredGraph.length; l++) {
             if (l + 1 < layeredGraph.length) {
+                // update the input port ranks of the next layer
                 calculatePortRanks(layeredGraph[l + 1], PortType.INPUT);
             }
             NodeGroup[] layer = layeredGraph[l];
+            float consumedRank = 0;
             for (int i = 0; i < layer.length; i++) {
-                distributePorts(layer[i].getNode(), i);
+                // reorder the ports of the current node
+                distributePorts(layer[i].getNode());
+                // update the output port ranks after reordering
+                consumedRank += calculatePortRanks(layer[i].getNode(), consumedRank, PortType.OUTPUT);
             }
         }
     }
@@ -165,9 +180,8 @@ abstract class AbstractPortDistributor {
      * type.
      * 
      * @param node node whose ports shall be sorted
-     * @param nodeIndex the index of the given node
      */
-    private void distributePorts(final LNode node, final int nodeIndex) {
+    private void distributePorts(final LNode node) {
         if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
             // the order of ports on each side is variable, so distribute the ports
             if (node.getPorts().size() > 1) {
@@ -237,9 +251,6 @@ abstract class AbstractPortDistributor {
             }
             node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
         }
-        
-        // update the port ranks after reordering
-        calculatePortRanks(node, nodeIndex, PortType.OUTPUT);
     }
 
     /**

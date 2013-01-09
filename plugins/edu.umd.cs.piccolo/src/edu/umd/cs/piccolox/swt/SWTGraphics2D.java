@@ -67,6 +67,7 @@ import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Path;
+import org.eclipse.swt.graphics.Pattern;
 import org.eclipse.swt.graphics.Transform;
 
 /**
@@ -273,6 +274,28 @@ public class SWTGraphics2D extends Graphics2D {
         gc.setForeground(foregroundColor);
     }
 
+    /**
+     * Sets the foreground {@link Pattern} to the provided one.
+     * 
+     * @author chsch
+     * 
+     * @param pattern
+     *            new foreground pattern
+     */
+    public void setPattern(final org.eclipse.swt.graphics.Pattern pattern) {
+        gc.setForegroundPattern(pattern);
+    }
+
+    /**
+     * Returns the currently set (foreground) pattern.
+     * 
+     * @author chsch
+     * @return the currently set (foreground) pattern
+     */
+    public Pattern getPattern() {
+        return gc.getForegroundPattern();
+    }
+    
     /** {@inheritDoc} */
     public void setBackground(final Color c) {
         org.eclipse.swt.graphics.Color cachedColor =
@@ -303,6 +326,27 @@ public class SWTGraphics2D extends Graphics2D {
         return awtColor;
     }
 
+    /**
+     * Sets the background {@link Pattern} to the provided one.
+     * 
+     * @author chsch
+     * @param pattern
+     *            new background pattern
+     */
+    public void setBackgoundPattern(final org.eclipse.swt.graphics.Pattern pattern) {
+        gc.setBackgroundPattern(pattern);
+    }
+
+    /**
+     * Returns the currently set background pattern.
+     * 
+     * @author chsch
+     * @return the currently set background pattern
+     */
+    public Pattern getBackgroundPattern() {
+        return gc.getBackgroundPattern();
+    }
+    
     // //////////////
     // FONT METHODS
     // //////////////
@@ -657,8 +701,8 @@ public class SWTGraphics2D extends Graphics2D {
         for (int i = 0; i < nPoints; i++) {
             TEMP_POINT.setLocation(xPoints[i], yPoints[i]);
             transform.transform(TEMP_POINT, TEMP_POINT);
-            ptArray[2 * i] = xPoints[i];
-            ptArray[2 * i + 1] = yPoints[i];
+            ptArray[2 * i] = TEMP_POINT.x;
+            ptArray[2 * i + 1] = TEMP_POINT.y;
         }
 
         gc.fillPolygon(ptArray);
@@ -1123,7 +1167,7 @@ public class SWTGraphics2D extends Graphics2D {
     /** {@inheritDoc} */
     public void fillArc(final int x, final int y, final int width, final int height,
             final int startAngle, final int extent) {
-        drawArc((double) x, (double) y, (double) width, (double) height, (double) startAngle,
+        fillArc((double) x, (double) y, (double) width, (double) height, (double) startAngle,
                 (double) extent);
     }
 
@@ -1148,7 +1192,7 @@ public class SWTGraphics2D extends Graphics2D {
         TEMP_RECT.setRect(x, y, width, height);
         SWTShapeManager.transform(TEMP_RECT, transform);
 
-        gc.drawArc((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
+        gc.fillArc((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
                 (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5),
                 (int) (startAngle + 0.5), (int) (startAngle + extent + 0.5));
     }
