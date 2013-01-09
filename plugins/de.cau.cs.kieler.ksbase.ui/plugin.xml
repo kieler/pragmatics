@@ -68,14 +68,15 @@
                id="de.cau.cs.kieler.ksbase.ui.dynamic.toolbar">
          </dynamic>
       </menuContribution>
-      <menuContribution
+      <!-- We don't want this one anymore: http://rtsys.informatik.uni-kiel.de/confluence/x/6wA3 -->
+      <!-- menuContribution
             allPopups="true"
             locationURI="menu:de.cau.cs.kieler">
          <dynamic
                class="de.cau.cs.kieler.ksbase.ui.menus.KSBasEContributionItem"
                id="de.cau.cs.kieler.ksbase.ui.dynamic.menu">
          </dynamic>
-      </menuContribution>
+      </menuContribution -->
       <menuContribution
             allPopups="true"
             locationURI="popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu?after=addGroup">
@@ -83,6 +84,14 @@
                class="de.cau.cs.kieler.ksbase.ui.menus.KSBasEContributionItem"
                id="de.cau.cs.kieler.ksbase.ui.dynamic.popup">
          </dynamic>
+         <menu
+               id="de.cau.cs.kieler.ksbase.templates"
+               label="Add template ...">
+            <dynamic
+                  class="de.cau.cs.kieler.ksbase.ui.menus.KSBasEContributionItem"
+                  id="de.cau.cs.kieler.ksbase.ui.dynamic.templates">
+            </dynamic>
+         </menu>
       </menuContribution>
    </extension>
 
