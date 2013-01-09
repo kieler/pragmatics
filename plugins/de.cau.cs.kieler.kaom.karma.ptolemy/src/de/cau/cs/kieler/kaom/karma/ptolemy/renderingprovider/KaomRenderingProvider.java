@@ -101,7 +101,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
         */
         if (input.equals("true") && oldFigure instanceof SplineConnection) {
             SplineConnection connection = (SplineConnection) oldFigure;
-            connection.setJoinPointDecoration(new IJoinPointFactory() {
+            connection.setJoinPointFactory(new IJoinPointFactory() {
                 
                 public IFigure getNewJoinPointDecorator() {
                         RectangleFigure defaultFigure = new RectangleFigure();

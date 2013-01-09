@@ -14,17 +14,10 @@
  *****************************************************************************/
 package de.cau.cs.kieler.kiml.gmf;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.OperationHistoryFactory;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.ConnectionLocator;
 import org.eclipse.draw2d.IFigure;
@@ -35,8 +28,6 @@ import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.transaction.Transaction;
-import org.eclipse.emf.workspace.AbstractEMFOperation;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
@@ -52,9 +43,7 @@ import org.eclipse.gmf.runtime.draw2d.ui.geometry.PointListUtilities;
 import org.eclipse.gmf.runtime.emf.core.util.EObjectAdapter;
 import org.eclipse.gmf.runtime.gef.ui.figures.SlidableAnchor;
 import org.eclipse.gmf.runtime.notation.Edge;
-import org.eclipse.gmf.runtime.notation.NotationFactory;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
-import org.eclipse.gmf.runtime.notation.StringValueStyle;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -242,69 +231,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             String targetTerminal = targetEditPart.mapConnectionAnchorToTerminal(targetAnchor);
 
             PointList bendPoints = getBendPoints(kedge, connectionEditPart.getFigure(), scale);
-            KEdgeLayout shapeLayout = kedge.getData(KEdgeLayout.class);
-            if (shapeLayout != null) {
-                System.out.println("foundShapeLayout");
-                final KVectorChain joinpoints = shapeLayout
-                        .getProperty(LayoutOptions.JUNCTION_POINTS);
-                if (joinpoints != null) {
-                    KNode referenceNode = kedge.getSource();
-                    if (!KimlUtil.isDescendant(kedge.getTarget(), referenceNode)) {
-                        referenceNode = referenceNode.getParent();
-                    }
-                    for (KVector point : joinpoints) {
-                        KimlUtil.toAbsolute(point, referenceNode);
-                    }
 
-                    StringValueStyle style = (StringValueStyle) connectionEditPart
-                            .getNotationView().getNamedStyle(
-                                    NotationPackage.eINSTANCE.getStringValueStyle(), "joinPoints");
-                    if (style != null) {
-                        final StringValueStyle finalStyle = style;
-                        AbstractEMFOperation emfOp = new AbstractEMFOperation(
-                                connectionEditPart.getEditingDomain(), "line routing setting",
-                                Collections.singletonMap(Transaction.OPTION_UNPROTECTED, true)) {
-                            @Override
-                            protected IStatus doExecute(final IProgressMonitor monitor,
-                                    final IAdaptable info) throws ExecutionException {
-                                finalStyle.setStringValue(joinpoints.toString());
-                                return Status.OK_STATUS;
-                            }
-                        };
-                        try {
-                            // execute above operation
-                            OperationHistoryFactory.getOperationHistory()
-                                    .execute(emfOp, null, null);
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
-
-                    } else {
-                        style = NotationFactory.eINSTANCE.createStringValueStyle();
-                        style.setName("joinPoints");
-                        style.setStringValue(joinpoints.toString());
-                        final StringValueStyle finalStyle = style;
-                        AbstractEMFOperation emfOp = new AbstractEMFOperation(
-                                connectionEditPart.getEditingDomain(), "line routing setting",
-                                Collections.singletonMap(Transaction.OPTION_UNPROTECTED, true)) {
-                            @Override
-                            protected IStatus doExecute(final IProgressMonitor monitor,
-                                    final IAdaptable info) throws ExecutionException {
-                                connectionEditPart.getNotationView().getStyles().add(finalStyle);
-                                return Status.OK_STATUS;
-                            }
-                        };
-                        try {
-                            // execute above operation
-                            OperationHistoryFactory.getOperationHistory()
-                                    .execute(emfOp, null, null);
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }
-            }
             // check whether the connection is a note attachment to an edge, then remove bend points
             if (sourceEditPart instanceof ConnectionEditPart
                     || targetEditPart instanceof ConnectionEditPart) {
@@ -312,9 +239,24 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                     bendPoints.removePoint(1);
                 }
             }
+            
+            // retrieve junction points and transform them to absolute coordinates
+            KVectorChain junctionPoints = kedge.getData(KEdgeLayout.class)
+                    .getProperty(LayoutOptions.JUNCTION_POINTS);
+            String serializedJP = null;
+            if (junctionPoints != null) {
+                KNode referenceNode = kedge.getSource();
+                if (!KimlUtil.isDescendant(kedge.getTarget(), referenceNode)) {
+                    referenceNode = referenceNode.getParent();
+                }
+                for (KVector point : junctionPoints) {
+                    KimlUtil.toAbsolute(point, referenceNode);
+                }
+                serializedJP = junctionPoints.toString();
+            }
 
             command.addEdgeLayout((Edge) connectionEditPart.getModel(), bendPoints, sourceTerminal,
-                    targetTerminal);
+                    targetTerminal, serializedJP);
         }
     }
 
@@ -569,7 +511,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
     }
 
     /** class name of the KIELER SplineConnection. */
-    private static final String SPLINE_CONNECTION = "de.cau.cs.kieler.core.model.gmf.figures.SplineConnection";
+    private static final String SPLINE_CONNECTION
+            = "de.cau.cs.kieler.core.model.gmf.figures.SplineConnection";
 
     /**
      * Handle the KIELER SplineConnection class without a direct reference to it. Reflection is used

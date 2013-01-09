@@ -36,6 +36,7 @@ import org.eclipse.gmf.runtime.notation.RelativeBendpoints;
 import org.eclipse.gmf.runtime.notation.Routing;
 import org.eclipse.gmf.runtime.notation.RoutingStyle;
 import org.eclipse.gmf.runtime.notation.Smoothness;
+import org.eclipse.gmf.runtime.notation.StringValueStyle;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.gmf.runtime.notation.datatype.RelativeBendpoint;
 
@@ -51,6 +52,9 @@ import org.eclipse.gmf.runtime.notation.datatype.RelativeBendpoint;
  */
 @SuppressWarnings("restriction")
 public class GmfLayoutCommand extends AbstractTransactionalCommand {
+    
+    /** Style name for serialized junction points. */
+    public static final String JUNCTION_POINTS_STYLE_NAME = "junctionPoints";
 
     /** layout data for node shapes. */
     private static final class ShapeLayoutData {
@@ -66,6 +70,7 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
     private static final class EdgeLayoutData {
         private Edge edge;
         private PointList bends;
+        private String junctionPoints;
         private String sourceTerminal;
         private String targetTerminal;
 
@@ -125,6 +130,9 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
      * @param bends
      *            list of bend points for the edge, or {@code null} if the bend points shall not be
      *            changed
+     * @param junctionPoints
+     *            list of junction points to draw on the edge, encoded as string, or {@code null}
+     *            if no junction points shall be drawn
      * @param sourceTerminal
      *            new source terminal, encoded as string, or {@code null} if the source terminal
      *            shall not be changed
@@ -133,11 +141,12 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
      *            shall not be changed
      */
     public void addEdgeLayout(final Edge edge, final PointList bends, final String sourceTerminal,
-            final String targetTerminal) {
+            final String targetTerminal, final String junctionPoints) {
         assert edge != null;
         EdgeLayoutData layout = new EdgeLayoutData();
         layout.edge = edge;
         layout.bends = bends;
+        layout.junctionPoints = junctionPoints;
         layout.sourceTerminal = sourceTerminal;
         layout.targetTerminal = targetTerminal;
         edgeLayouts.add(layout);
@@ -156,6 +165,7 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected CommandResult doExecuteWithResult(final IProgressMonitor monitor,
             final IAdaptable info) throws ExecutionException {
@@ -217,6 +227,23 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
                     edgeLayout.edge.setTargetAnchor(anchor);
                 }
                 anchor.setId(edgeLayout.targetTerminal);
+            }
+            
+            // set junction points as style
+            StringValueStyle style = (StringValueStyle) edgeLayout.edge.getNamedStyle(
+                            NotationPackage.eINSTANCE.getStringValueStyle(),
+                            JUNCTION_POINTS_STYLE_NAME);
+            if (edgeLayout.junctionPoints == null) {
+                if (style != null) {
+                    edgeLayout.edge.getStyles().remove(style);
+                }
+            } else {
+                if (style == null) {
+                    style = NotationFactory.eINSTANCE.createStringValueStyle();
+                    style.setName(JUNCTION_POINTS_STYLE_NAME);
+                    edgeLayout.edge.getStyles().add(style);
+                }
+                style.setStringValue(edgeLayout.junctionPoints);
             }
 
             // set routing style to oblique
