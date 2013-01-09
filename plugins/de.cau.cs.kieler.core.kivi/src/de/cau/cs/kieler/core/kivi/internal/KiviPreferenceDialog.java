@@ -52,7 +52,6 @@ import de.cau.cs.kieler.core.kivi.KiViPlugin;
  * Dialog for activating kivi combinations.
  * 
  * @author ckru
- *
  */
 public class KiviPreferenceDialog extends Dialog {
 
@@ -91,8 +90,6 @@ public class KiviPreferenceDialog extends Dialog {
 
         // TODO check how much of all this layout stuff is actually needed
         GridLayout layout = new GridLayout();
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
         layout.verticalSpacing = 10;
         mainComposite.setLayout(layout);
 
@@ -202,14 +199,19 @@ public class KiviPreferenceDialog extends Dialog {
     }
     
 
+    @Override
+    protected void configureShell(final Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText("View Management Configuration");
+    }
+
     private void enableComposites(final boolean b) {
         combinationsComposite.setEnabled(b);
-        checkboxViewer.setAllGrayed(!b);
-
+        checkboxViewer.getControl().setEnabled(b);
+        descriptionText.setEnabled(b);
     }
 
     private void createDescriptionArea(final Composite composite) {
-
         Font mainFont = composite.getFont();
         Composite textComposite = new Composite(composite, SWT.NONE);
         textComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
