@@ -9,7 +9,7 @@
 				<transformation
           icon="icons/obj16/addSuc.gif"
           keyboardShortcut="M1+R S"
-          menu="true"
+          menu="false"
           name="Add Successor"
           popup="true"
           popupbar="true"
@@ -22,7 +22,7 @@
 				<transformation
           icon="icons/obj16/addPred.gif"
           keyboardShortcut="M1+R P"
-          menu="true"
+          menu="false"
           name="Add Predecessor"
           popup="true"
           popupbar="true"
@@ -35,7 +35,7 @@
 				<transformation
           icon="icons/obj16/addNeigh.gif"
           keyboardShortcut="M1+R N"
-          menu="true"
+          menu="false"
           name="Add Neighbour"
           popup="true"
           popupbar="true"
@@ -48,7 +48,7 @@
 				<transformation
           icon="icons/obj16/connectDir.gif"
           keyboardShortcut="M1+R D"
-          menu="true"
+          menu="false"
           name="Connect (Directed)"
           popup="true"
           popupbar="true"
@@ -60,7 +60,7 @@
 				<transformation
           icon="icons/obj16/connectUndir.gif"
           keyboardShortcut="M1+R U"
-          menu="true"
+          menu="false"
           name="Connect (Undirected)"
           popup="true"
           popupbar="true"
@@ -72,7 +72,7 @@
 				<transformation
           icon="icons/obj16/connectHyper.gif"
           keyboardShortcut="M1+R H"
-          menu="true"
+          menu="false"
           name="Connect (Hyperedge)"
           popup="true"
           popupbar="true"
@@ -85,7 +85,7 @@
 				<transformation
           icon="icons/obj16/flipEdge.gif"
           keyboardShortcut="M1+R F"
-          menu="true"
+          menu="false"
           name="Flip"
           popup="true"
           popupbar="true"
@@ -97,7 +97,7 @@
 				<transformation
           icon="icons/obj16/toggleDirUndir.gif"
           keyboardShortcut="M1+R T"
-          menu="true"
+          menu="false"
           name="Toggle Directed/Undirected"
           popup="true"
           popupbar="true"
@@ -109,7 +109,7 @@
 				<transformation
           icon="icons/obj16/toggleHyper.gif"
           keyboardShortcut="M1+R Q"
-          menu="true"
+          menu="false"
           name="Toggle Node/Hypernode"
           popup="true"
           popupbar="true"
@@ -122,7 +122,7 @@
 				<transformation
           icon="icons/obj16/encapsulate.gif"
           keyboardShortcut="M1+R E"
-          menu="true"
+          menu="false"
           name="Encapsulate"
           popup="true"
           popupbar="true"
@@ -135,23 +135,25 @@
     <transformation
           icon="icons/obj16/clique.gif"
           keyboardShortcut="M1+R C"
-          menu="true"
+          menu="false"
           name="Add Clique"
-          popup="true"
+          popup="false"
           popupbar="true"
-          separated="true"
-          toolbar="true"
+          separated="false"
+          templates="true"
+          toolbar="false"
           transformation="addClique"
           transformationId="de.cau.cs.kieler.keg.ksbase.addClique">
     </transformation>
     <transformation
           icon="icons/obj16/tree.gif"
           keyboardShortcut="M1+R V"
-          menu="true"
+          menu="false"
           name="Add Tree"
-          popup="true"
+          popup="false"
           popupbar="true"
           separated="false"
+          templates="true"
           toolbar="true"
           transformation="addTree"
           transformationId="de.cau.cs.kieler.keg.ksbase.addTree">
@@ -159,12 +161,13 @@
     <transformation
           icon="icons/obj16/circle.gif"
           keyboardShortcut="M1+R X"
-          menu="true"
+          menu="false"
           name="Add Circle"
-          popup="true"
+          popup="false"
           popupbar="true"
           separated="false"
-          toolbar="true"
+          templates="true"
+          toolbar="false"
           transformation="addCircle"
           transformationId="de.cau.cs.kieler.keg.ksbase.addCircle">
     </transformation>
