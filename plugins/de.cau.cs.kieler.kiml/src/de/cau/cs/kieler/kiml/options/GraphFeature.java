@@ -51,15 +51,5 @@ public enum GraphFeature {
      * Multiple connected components.
      */
     DISCONNECTED;
-    
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static GraphFeature valueOf(final int i) {
-        return values()[i];
-    }
 
 }

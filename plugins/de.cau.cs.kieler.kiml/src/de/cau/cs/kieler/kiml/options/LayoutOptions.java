@@ -114,12 +114,18 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.noLayout", false);
     
     /**
-     * Offset of a graph element. This is mostly used to indicate the distance of a port from its
-     * node: with a positive offset the port is moved outside of the node, while with a negative
-     * offset the port is moved towards the inside. [programmatically set]
+     * Offset of a graph element. [programmatically set] This is mostly used to indicate the
+     * distance of a port from its node: with a positive offset the port is moved outside of
+     * the node, while with a negative offset the port is moved towards the inside. An offset
+     * of 0 means that the port is placed directly on the node border, i.e.
+     * <ul>
+     *   <li> if the port side is north, the port's south border touches the nodes's north border;</li>
+     *   <li> if the port side is east, the port's west border touches the nodes's east border;</li>
+     *   <li> if the port side is south, the port's north border touches the node's south border;</li>
+     *   <li> if the port side is west, the port's east border touches the node's west border.</li>
+     * </ul>
      */
-    public static final IProperty<Float> OFFSET = new Property<Float>(
-            "de.cau.cs.kieler.offset");
+    public static final IProperty<Float> OFFSET = new Property<Float>("de.cau.cs.kieler.offset");
     
     /**
      * On which side of its corresponding node a port is situated. [programmatically set]
@@ -195,7 +201,10 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.expandNodes", false);
 
     /**
-     * Whether the algorithm should be run in debug mode for the content of a parent node.
+     * Whether the algorithm should be run in interactive mode for the content of a parent node.
+     * What this means exactly depends on how the specific algorithm interprets this option.
+     * Usually in the interactive mode algorithms try to modify the current layout as little as
+     * possible.
      */
     public static final IProperty<Boolean> INTERACTIVE = new Property<Boolean>(
             "de.cau.cs.kieler.interactive", false);

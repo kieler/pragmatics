@@ -32,14 +32,4 @@ public enum EdgeLabelPlacement {
     /** label is at the tail (source) of the edge. */
     TAIL;
     
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static EdgeLabelPlacement valueOf(final int i) {
-        return values()[i];
-    }
-    
 }

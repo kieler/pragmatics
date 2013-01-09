@@ -61,17 +61,6 @@ public enum SizeConstraint {
     
     
     /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static SizeConstraint valueOf(final int i) {
-        return values()[i];
-    }
-    
-    
-    /**
      * Returns an empty enum set over this enumeration, which corresponds to fixed size constraints.
      * 
      * @return set over this enumeration representing fixed size constraints.

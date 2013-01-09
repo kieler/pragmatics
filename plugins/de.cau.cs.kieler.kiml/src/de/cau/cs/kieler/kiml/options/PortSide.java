@@ -34,16 +34,6 @@ public enum PortSide {
     WEST;
     
     /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static PortSide valueOf(final int i) {
-        return values()[i];
-    }
-    
-    /**
      * Returns the next side in clockwise order.
      * 
      * @return the next side in clockwise order

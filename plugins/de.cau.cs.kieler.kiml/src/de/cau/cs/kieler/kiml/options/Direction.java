@@ -33,14 +33,4 @@ public enum Direction {
     /** upward vertical layout. */
     UP;
     
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static Direction valueOf(final int i) {
-        return values()[i];
-    }
-    
 }
