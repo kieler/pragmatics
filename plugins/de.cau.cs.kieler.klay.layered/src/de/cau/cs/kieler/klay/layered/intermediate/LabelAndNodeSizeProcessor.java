@@ -463,6 +463,8 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         KVector originalNodeSize = new KVector(nodeSize);
         EnumSet<SizeConstraint> sizeConstraint = node.getProperty(LayoutOptions.SIZE_CONSTRAINT);
         EnumSet<SizeOptions> sizeOptions = node.getProperty(LayoutOptions.SIZE_OPTIONS);
+        PortConstraints portConstraints = node.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+        boolean accountForLabels = sizeConstraint.contains(SizeConstraint.PORT_LABELS);
         
         // If the size constraint is empty, we can't do anything
         if (sizeConstraint.isEmpty()) {
@@ -473,34 +475,31 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         nodeSize.x = 0.0;
         nodeSize.y = 0.0;
         
-        // Check how much space the ports need
+        // Find out how large the node will have to be to accommodate all ports. If port
+        // constraints are set to FIXED_RATIO, we can't do anything smart, really; in this
+        // case we will just assume the original node size to be the minumum for ports
+        KVector minSizeForPorts = null;
+        switch (portConstraints) {
+        case FREE:
+        case FIXED_SIDE:
+        case FIXED_ORDER:
+            // Calculate the space necessary to accomodate all ports
+            minSizeForPorts = calculatePortSpaceRequirements(node, portSpacing, accountForLabels);
+            break;
+        
+        case FIXED_RATIO:
+            // Keep original node size
+            minSizeForPorts = new KVector(originalNodeSize);
+            break;
+        
+        case FIXED_POS:
+            // Find the maximum position of ports
+            minSizeForPorts = calculateMaxPortPositions(node, accountForLabels);
+            break;
+        }
+        
+        // If the node size should take port space requirements into account, adjust it accordingly
         if (sizeConstraint.contains(SizeConstraint.PORTS)) {
-            PortConstraints portConstraints = node.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-            boolean accountForLabels = sizeConstraint.contains(SizeConstraint.PORT_LABELS);
-            
-            // Find out how large the node will have to be to accommodate all ports. If port
-            // constraints are set to FIXED_RATIO, we can't do anything smart, really; in this
-            // case we will just assume the original node size to be the minumum for ports
-            KVector minSizeForPorts = null;
-            switch (portConstraints) {
-            case FREE:
-            case FIXED_SIDE:
-            case FIXED_ORDER:
-                // Calculate the space necessary to accomodate all ports
-                minSizeForPorts = calculatePortSpaceRequirements(node, portSpacing, accountForLabels);
-                break;
-            
-            case FIXED_RATIO:
-                // Keep original node size
-                minSizeForPorts = new KVector(originalNodeSize);
-                break;
-            
-            case FIXED_POS:
-                // Find the maximum position of ports
-                minSizeForPorts = calculateMaxPortPositions(node, accountForLabels);
-                break;
-            }
-            
             // Check if we have a minimum size required for all ports
             if (minSizeForPorts != null) {
                 nodeSize.x = Math.max(nodeSize.x, minSizeForPorts.x);
@@ -792,6 +791,9 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                         - (accountForLabels ? portMargins.bottom : 0.0);
                 westY -= westDelta + portSize.y
                         + (accountForLabels ? portMargins.top + portMargins.bottom : 0.0);
+                // DEBUG START
+                System.out.println("West port y position " + port.getPosition().y);
+                // DEBUG END
                 break;
             case EAST:
                 port.getPosition().x = nodeSize.x + portOffset;
@@ -799,6 +801,9 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                         + (accountForLabels ? portMargins.top : 0.0);
                 eastY += eastDelta + portSize.y
                         + (accountForLabels ? portMargins.top + portMargins.bottom : 0.0);
+                // DEBUG START
+                System.out.println("East port y position " + port.getPosition().y);
+                // DEBUG END
                 break;
             case NORTH:
                 port.getPosition().x = northX
