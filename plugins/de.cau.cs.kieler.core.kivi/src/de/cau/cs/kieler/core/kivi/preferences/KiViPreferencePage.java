@@ -240,8 +240,8 @@ public class KiViPreferencePage extends PreferencePage implements IWorkbenchPref
 
     private void enableComposites(final boolean b) {
         combinationsComposite.setEnabled(b);
-        checkboxViewer.setAllGrayed(!b);
-
+        checkboxViewer.getControl().setEnabled(b);
+        descriptionText.setEnabled(b);
     }
 
     private void createDescriptionArea(final Composite composite) {
