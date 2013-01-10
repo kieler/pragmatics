@@ -55,7 +55,12 @@ public class KSBasEMenuContributionService {
         /** Menu contribution is to be attached to both popup menus and toolbar. */
         POPUP_TOOLBAR,
         /** Menu contribution is to be attached to main menu, popup menus, and toolbar. */
-        MENU_POPUP_TOOLBAR
+        MENU_POPUP_TOOLBAR,
+        /**
+         * Menu contribution is to be attached to the dedicated template menu that is currently
+         * supposed to be a sub menu of the popup menu.
+         */
+        TEMPLATES_MENU
     }
     
 

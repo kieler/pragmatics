@@ -25,6 +25,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -56,6 +57,8 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Fixed Layout", 1);
+        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
+        EdgeRouting edgeRouting = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
         float maxx = 0, maxy = 0;
         
         for (KNode node : layoutNode.getChildren()) {
@@ -116,13 +119,13 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             
             // set fixed routing for the connected edges, or leave them as they are
             for (KEdge edge : node.getOutgoingEdges()) {
-                KVector maxv = processEdge(edge);
+                KVector maxv = processEdge(edge, edgeRouting);
                 maxx = Math.max(maxx, (float) maxv.x);
                 maxy = Math.max(maxy, (float) maxv.y);
             }
             for (KEdge edge : node.getIncomingEdges()) {
                 if (edge.getSource().getParent() != layoutNode) {
-                    KVector maxv = processEdge(edge);
+                    KVector maxv = processEdge(edge, edgeRouting);
                     maxx = Math.max(maxx, (float) maxv.x);
                     maxy = Math.max(maxy, (float) maxv.y);
                 }
@@ -130,7 +133,6 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         }
         
         // set size of the parent node
-        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
             borderSpacing = DEF_BORDER_SPACING;
@@ -146,8 +148,9 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
      * Process an edge and its labels.
      * 
      * @param edge an edge
+     * @param edgeRouting the global edge routing setting
      */
-    private KVector processEdge(final KEdge edge) {
+    private KVector processEdge(final KEdge edge, final EdgeRouting edgeRouting) {
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         boolean sameHierarchy = edge.getSource().getParent() == edge.getTarget().getParent();
         KVector maxv = new KVector();
@@ -165,6 +168,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             }
         }
         
+        // set the fixed position of the edge labels, or leave them as they are
         for (KLabel label : edge.getLabels()) {
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
             KVector pos = labelLayout.getProperty(LayoutOptions.POSITION);
@@ -176,6 +180,18 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                 maxv.y = Math.max(maxv.y, labelLayout.getYpos() + labelLayout.getHeight());
             }
         }
+        
+        // if orthogonal routing is selected, determine the junction points
+        // Note: if the edge coordinates are not modified, the junction points are also ignored
+        if (edgeRouting == EdgeRouting.ORTHOGONAL) {
+            KVectorChain junctionPoints = KimlUtil.determineJunctionPoints(edge);
+            if (junctionPoints.isEmpty()) {
+                edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, null);
+            } else {
+                edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+            }
+        }
+        
         return maxv;
     }
 

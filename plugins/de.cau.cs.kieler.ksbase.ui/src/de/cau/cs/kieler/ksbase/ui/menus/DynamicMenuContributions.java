@@ -551,6 +551,15 @@ public final class DynamicMenuContributions {
                                 KSBasEMenuContributionService.LocationScheme.POPUP, visibility,
                                 null, null, editorSettings.getEditorId());
                         combination.addTransformation(command + ".popup", transformation);
+                    // chsch: insertion due to KIELER-2281
+                    } else if (contrib.getData().startsWith("templates:")) {
+                        KSBasEMenuContributionService.INSTANCE.addToolbarButton(combination,
+                                command + ".template", transformation.getName(),
+                                transformation.getToolTip(), icon, SWT.PUSH,
+                                KSBasEMenuContributionService.LocationScheme.TEMPLATES_MENU, visibility,
+                                null, null, editorSettings.getEditorId());
+                        combination.addTransformation(command + ".popup", transformation);
+                    // insertion end
                     } else if (contrib.getData().startsWith("popupbar:")) {
                         KSbasEBalloonPopup contribution = new KSbasEBalloonPopup();
                         HashMap<String, String> params = new HashMap<String, String>();
@@ -589,6 +598,14 @@ public final class DynamicMenuContributions {
                             KSBasEMenuContributionService.INSTANCE.addSeparator(separatedCommand
                                     + ".popup" + ".separator",
                                     KSBasEMenuContributionService.LocationScheme.POPUP,
+                                    new KsbaseVisibilityExpression(separatedTransformation,
+                                            editorSettings, validationCache), editorSettings
+                                            .getEditorId());
+                        // chsch: insertion due to KIELER-2281
+                        } else if (contrib.getData().startsWith("templates:")) {
+                            KSBasEMenuContributionService.INSTANCE.addSeparator(separatedCommand
+                                    + ".template" + ".separator",
+                                    KSBasEMenuContributionService.LocationScheme.TEMPLATES_MENU,
                                     new KsbaseVisibilityExpression(separatedTransformation,
                                             editorSettings, validationCache), editorSettings
                                             .getEditorId());

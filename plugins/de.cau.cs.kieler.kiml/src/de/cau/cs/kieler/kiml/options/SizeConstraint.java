@@ -23,6 +23,8 @@ import java.util.EnumSet;
  * 
  * <p><i>Note:</i> Layout algorithms may only support a subset of these options.</p>
  *
+ * @kieler.design proposed by msp
+ * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  * @author msp
  * @author cds
  */
@@ -61,17 +63,6 @@ public enum SizeConstraint {
     
     
     /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static SizeConstraint valueOf(final int i) {
-        return values()[i];
-    }
-    
-    
-    /**
      * Returns an empty enum set over this enumeration, which corresponds to fixed size constraints.
      * 
      * @return set over this enumeration representing fixed size constraints.
@@ -99,4 +90,5 @@ public enum SizeConstraint {
     public static EnumSet<SizeConstraint> defaultMinimumSizeWithPorts() {
         return EnumSet.of(PORTS, MINIMUM_SIZE, DEFAULT_MINIMUM_SIZE);
     }
+    
 }

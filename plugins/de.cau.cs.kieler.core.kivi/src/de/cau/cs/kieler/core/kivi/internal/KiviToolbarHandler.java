@@ -18,8 +18,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Handler for the kivi toolbar button. Will open a dialog to enable/disable
@@ -33,7 +32,7 @@ public class KiviToolbarHandler extends AbstractHandler implements IHandler {
      * {@inheritDoc}
      */
     public Object execute(final ExecutionEvent event) throws ExecutionException {
-        Dialog d = new KiviPreferenceDialog(new Shell(Display.getCurrent()));
+        Dialog d = new KiviPreferenceDialog(HandlerUtil.getActiveShell(event));
         d.open();
         return null;
     }

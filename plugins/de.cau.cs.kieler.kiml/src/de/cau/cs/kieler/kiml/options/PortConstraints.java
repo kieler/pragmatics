@@ -17,37 +17,28 @@ package de.cau.cs.kieler.kiml.options;
  * Definition of port constraints. To be accessed using {@link LayoutOptions#PORT_CONSTRAINTS}.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  * @author msp
  */
 public enum PortConstraints {
 
-    /** undefined constraints. */
+    /** Undefined constraints. */
     UNDEFINED,
-    /** all ports are free. */
+    /** All ports are free. */
     FREE,
-    /** the side is fixed for each port. */
+    /** The side is fixed for each port. */
     FIXED_SIDE,
-    /** the side is fixed for each port, and the order of ports is fixed for each side. */
+    /** The side is fixed for each port, and the order of ports is fixed for each side. */
     FIXED_ORDER,
     /**
-     * the side is fixed for each port, the order or ports is fixed for each side and
-     * the position of each port must preserve the ratio defined by the two segments the
-     * port divides the side into.
+     * The side is fixed for each port, the order or ports is fixed for each side and
+     * the relative position of each port must be preserved. That means if the node is
+     * resized by factor x, the port's position must also be scaled by x.
      */
     FIXED_RATIO,
-    /** the exact position is fixed for each port. */
+    /** The exact position is fixed for each port. */
     FIXED_POS;
     
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static PortConstraints valueOf(final int i) {
-        return values()[i];
-    }
     
     /**
      * Returns whether the position of the ports is fixed. Note that this is not true

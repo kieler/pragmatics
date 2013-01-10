@@ -17,7 +17,7 @@ package de.cau.cs.kieler.kiml.options;
  * Definition of layout directions. To be accessed using {@link LayoutOptions#DIRECTION}.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  * @author msp
  */
 public enum Direction {
@@ -32,15 +32,5 @@ public enum Direction {
     DOWN,
     /** upward vertical layout. */
     UP;
-    
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static Direction valueOf(final int i) {
-        return values()[i];
-    }
     
 }

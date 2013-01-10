@@ -128,7 +128,9 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
      * @author chsch
      */
     private enum InternalLocationScheme {
-        MENU, POPUP, TOOLBAR;
+        MENU, POPUP, TOOLBAR,
+        // chsch: insertion due to KIELER-2281
+        TEMPLATES;
 
         public boolean isContainedIn(final LocationScheme theLocation) {
             switch (this) {
@@ -147,6 +149,9 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
                         || theLocation.equals(LocationScheme.MENU_TOOLBAR)
                         || theLocation.equals(LocationScheme.POPUP_TOOLBAR)
                         || theLocation.equals(LocationScheme.MENU_POPUP_TOOLBAR);
+            // chsch: insertion due to KIELER-2281
+            case TEMPLATES:
+                return theLocation.equals(LocationScheme.TEMPLATES_MENU);
             default:
                 return true;
             }
@@ -171,6 +176,9 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
             this.location = InternalLocationScheme.POPUP;
         } else if (this.getId().endsWith("toolbar")) {
             this.location = InternalLocationScheme.TOOLBAR;
+        // chsch: insertion due to KIELER-2281
+        } else if (this.getId().endsWith("templates")) {
+            this.location = InternalLocationScheme.TEMPLATES;
         }
     }
 
