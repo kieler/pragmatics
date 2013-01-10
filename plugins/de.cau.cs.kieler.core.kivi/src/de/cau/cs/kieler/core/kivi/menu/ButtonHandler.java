@@ -31,7 +31,6 @@ import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
  * The handler that receives commands from various view management buttons.
  * 
  * @author mmu
- * 
  */
 public class ButtonHandler extends AbstractHandler {
 

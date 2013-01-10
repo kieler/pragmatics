@@ -231,7 +231,7 @@ public class DirectedCycleAnalysis implements IAnalysis {
             KNode endpoint = edge.getSource() == node ? edge.getTarget() : edge.getSource();
             
             // exclude self-loops
-            if (endpoint == node || !idmap.containsKey(endpoint)) {
+            if (endpoint.equals(node) || !idmap.containsKey(endpoint)) {
                 continue;
             }
             

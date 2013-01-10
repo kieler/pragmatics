@@ -270,8 +270,9 @@ public class KiViPreferencePage extends PreferencePage implements IWorkbenchPref
      * Populates the list of descriptors.
      */
     private void populateDescriptors() {
-        CombinationDescriptor[] descriptors = KiVi.getInstance().getAvailableCombinations()
-                .toArray(new CombinationDescriptor[0]);
+        List<CombinationDescriptor> descriptorList = KiVi.getInstance().getAvailableCombinations();
+        CombinationDescriptor[] descriptors = descriptorList.toArray(
+                new CombinationDescriptor[descriptorList.size()]);
         checkboxViewer.setInput(descriptors);
         for (CombinationDescriptor d : descriptors) {
             checkboxViewer.setChecked(d, d.isActive());

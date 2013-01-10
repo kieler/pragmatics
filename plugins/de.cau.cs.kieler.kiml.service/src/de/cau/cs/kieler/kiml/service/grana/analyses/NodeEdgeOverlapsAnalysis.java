@@ -202,7 +202,7 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
         }
         int overlaps = 0;
         edgeLoop: for (KEdge edge : node1.getOutgoingEdges()) {
-            if (edge.getTarget() == node2) {
+            if (edge.getTarget().equals(node2)) {
                 continue;
             }
             KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);

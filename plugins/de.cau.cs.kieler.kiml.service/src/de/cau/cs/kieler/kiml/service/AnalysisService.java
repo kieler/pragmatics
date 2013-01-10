@@ -114,7 +114,7 @@ public abstract class AnalysisService {
     /** the analysis id mapped on the appropriate analysis. */
     private final Map<String, AnalysisData> analysisIdMapping = new HashMap<String, AnalysisData>();
     /** the default category. */
-    private AnalysisCategory defaultCategory = null;
+    private AnalysisCategory defaultCategory;
 
     /**
      * Report an error that occurred while reading extensions.
@@ -281,10 +281,10 @@ public abstract class AnalysisService {
         // sort the categories
         Collections.sort(categories, new Comparator<AnalysisCategory>() {
             public int compare(final AnalysisCategory category1, final AnalysisCategory category2) {
-                if (category1 == defaultCategory) {
-                    return category2 == defaultCategory ? 0 : 1;
+                if (category1.equals(defaultCategory)) {
+                    return category2.equals(defaultCategory) ? 0 : 1;
                 } else {
-                    return category2 == defaultCategory ? -1
+                    return category2.equals(defaultCategory) ? -1
                             : category1.getName().compareTo(category2.getName());
                 }
             }
