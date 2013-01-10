@@ -23,6 +23,8 @@ import java.util.EnumSet;
  * 
  * <p><i>Note:</i> Layout algorithms may only support a subset of these options.</p>
  *
+ * @kieler.design proposed by msp
+ * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  * @author msp
  * @author cds
  */
@@ -88,4 +90,5 @@ public enum SizeConstraint {
     public static EnumSet<SizeConstraint> defaultMinimumSizeWithPorts() {
         return EnumSet.of(PORTS, MINIMUM_SIZE, DEFAULT_MINIMUM_SIZE);
     }
+    
 }

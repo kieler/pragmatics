@@ -17,7 +17,7 @@ package de.cau.cs.kieler.kiml.options;
  * Definition of port constraints. To be accessed using {@link LayoutOptions#PORT_CONSTRAINTS}.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  * @author msp
  */
 public enum PortConstraints {
