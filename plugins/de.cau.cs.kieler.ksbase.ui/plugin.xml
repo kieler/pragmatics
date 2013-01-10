@@ -86,7 +86,7 @@
          </dynamic>
          <menu
                id="de.cau.cs.kieler.ksbase.templates"
-               label="Add template ...">
+               label="Add Template">
             <dynamic
                   class="de.cau.cs.kieler.ksbase.ui.menus.KSBasEContributionItem"
                   id="de.cau.cs.kieler.ksbase.ui.dynamic.templates">
