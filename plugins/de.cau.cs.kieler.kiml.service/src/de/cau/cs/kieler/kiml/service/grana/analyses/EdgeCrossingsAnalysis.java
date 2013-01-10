@@ -193,13 +193,13 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
                 
                 boolean samePort = false;
                 samePort |= sourcePort1 != null
-                        && (sourcePort1 == sourcePort2 || sourcePort1 == targetPort2);
+                        && (sourcePort1.equals(sourcePort2) || sourcePort1.equals(targetPort2));
                 samePort |= targetPort1 != null
-                        && (targetPort1 == targetPort2 || targetPort1 == sourcePort2);
+                        && (targetPort1.equals(targetPort2) || targetPort1.equals(sourcePort2));
                 samePort |= sourceLayout1.getProperty(LayoutOptions.HYPERNODE)
-                        && (source1 == source2 || source1 == target2);
+                        && (source1.equals(source2) || source1.equals(target2));
                 samePort |= targetLayout1.getProperty(LayoutOptions.HYPERNODE)
-                        && (target1 == target2 || target1 == source2);
+                        && (target1.equals(target2) || target1.equals(source2));
                 if (!samePort) {
                     KVectorChain chain2 = chains.get(j);
                     int c = computeNumberOfCrossings(chain1, chain2);

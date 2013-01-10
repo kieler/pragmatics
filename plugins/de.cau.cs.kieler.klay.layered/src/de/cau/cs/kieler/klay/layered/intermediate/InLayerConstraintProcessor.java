@@ -68,7 +68,7 @@ public final class InLayerConstraintProcessor implements ILayoutProcessor {
             List<LNode> bottomConstrainedNodes = new LinkedList<LNode>();
             
             // Iterate through an array of its nodes
-            LNode[] nodes = layer.getNodes().toArray(new LNode[0]);
+            LNode[] nodes = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
             
             for (int i = 0; i < nodes.length; i++) {
                 InLayerConstraint constraint =

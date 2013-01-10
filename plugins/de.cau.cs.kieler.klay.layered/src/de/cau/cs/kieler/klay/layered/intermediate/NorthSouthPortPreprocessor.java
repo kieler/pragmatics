@@ -118,14 +118,12 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         
         // Iterate through the layers
         for (Layer layer : layeredGraph) {
-            // The pointer indicates the index of the current node while northern ports are
-            // processed, and the index of the most recently inserted dummy while south ports
-            // are processed
+            // The pointer indicates the index of the current node while northern ports are processed,
+            // and the index of the most recently inserted dummy while south ports are processed
             pointer = -1;
             
-            // Iterate through the nodes (use an array to avoid concurrent modification
-            // exceptions)
-            LNode[] nodeArray = layer.getNodes().toArray(new LNode[0]);
+            // Iterate through the nodes (use an array to avoid concurrent modification exceptions)
+            LNode[] nodeArray = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
             for (LNode node : nodeArray) {
                 pointer++;
                 
@@ -433,7 +431,8 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
             dummyInputPort.setNode(dummy);
             
             // Reroute edges
-            LEdge[] edgeArray = inPort.getIncomingEdges().toArray(new LEdge[0]);
+            LEdge[] edgeArray = inPort.getIncomingEdges().toArray(
+                    new LEdge[inPort.getIncomingEdges().size()]);
             for (LEdge edge : edgeArray) {
                 edge.setTarget(dummyInputPort);
             }
@@ -450,7 +449,8 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
             dummyOutputPort.setNode(dummy);
             
             // Reroute edges
-            LEdge[] edgeArray = outPort.getOutgoingEdges().toArray(new LEdge[0]);
+            LEdge[] edgeArray = outPort.getOutgoingEdges().toArray(
+                    new LEdge[outPort.getOutgoingEdges().size()]);
             for (LEdge edge : edgeArray) {
                 edge.setSource(dummyOutputPort);
             }

@@ -207,7 +207,7 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
                 if (currentNode.getMarker() != MARKER_VISITED + i) {
                     currentNode.setMarker(MARKER_VISITED + i);
                     stack.addAll(currentNode.getStrongDependants());
-                } else if (node == currentNode) {
+                } else if (node.equals(currentNode)) {
                     // cycle detected
                     List<Node> removedNodes =
                             removeNodeAndDependencies(currentNode);
@@ -277,7 +277,7 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
         /** the object this node is representing. */
         private T object;
         /** an utility marker attribute. */
-        private int marker = 0;
+        private int marker;
 
         /**
          * Constructs a new node representing an object.

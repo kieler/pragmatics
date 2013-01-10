@@ -54,7 +54,7 @@ public class BiconnectedComponentsAnalysis implements IAnalysis {
     }
 
     /** next DFS number to assign. */
-    private int nextDfsnum = 0;
+    private int nextDfsnum;
     /** map of DFS numbers. */
     private Map<KNode, Integer> dfsMap = new HashMap<KNode, Integer>();
     /** lowest point numbers. */

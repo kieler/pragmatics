@@ -458,7 +458,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         while (tokenizer.hasMoreTokens()) {
             tmp.add(tokenizer.nextToken());
         }      
-        choices = tmp.toArray(new String[0]);
+        choices = tmp.toArray(new String[tmp.size()]);
     }
     
     /**

@@ -48,15 +48,15 @@ import de.cau.cs.kieler.karma.SwitchableFigure;
  */
 public class KarmaEffect extends AbstractEffect {
 
-    private IRenderingProvider renderingProvider = null;
-    private IFigure figure = null;
-    private IFigure oldFigure = null;
-    private EObject modelElement = null;
-    private IGraphicalEditPart editPart = null;
+    private IRenderingProvider renderingProvider;
+    private IFigure figure;
+    private IFigure oldFigure;
+    private EObject modelElement;
+    private IGraphicalEditPart editPart;
 
-    private String layoutParam = null;
-    private String figureParam = null;
-    private String borderItemParam = null;
+    private String layoutParam;
+    private String figureParam;
+    private String borderItemParam;
     private Pair<Integer, Integer> figureSize = new Pair<Integer, Integer>(-1, -1);
 
     private CollapseStatus collapseStatus = CollapseStatus.UNCHANGED;
