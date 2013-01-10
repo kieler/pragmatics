@@ -36,15 +36,20 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * above or below a node also increase the margin.
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph; nodes have fixed port positions; labels
- *     have fixed positions.</dd>
- *   <dt>Postcondition:</dt><dd>the node margins are properly set to form a bounding box
- *     around the node and its ports and labels.</dd>
- *   <dt>Slots:</dt><dd>Before phase 4.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link PortPositionProcessor}</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>A layered graph.</dd>
+ *     <dd>Ports have fixed port positions.</dd>
+ *     <dd>Labels have fixed positions.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>The node margins are properly set to form a bounding box around the node and its ports and
+ *         labels.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>Before phase 4.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>{@link LabelAndNodeSizeProcessor}</dd>
  * </dl>
  *
- * @see PortPositionProcessor
+ * @see LabelAndNodeSizeProcessor
  * @author cds
  * @kieler.design 2012-08-10 chsch grh
  */

@@ -36,6 +36,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *   <dt>Same-slot dependencies:</dt><dd>{@link PortSideProcessor}</dd>
  * </dl>
  * 
+ * @deprecated since the introduction of {@link LabelAndNodeSizeProcessor}.
  * @see PortSideProcessor
  * @author msp
  * @kieler.design 2012-08-10 chsch grh

@@ -36,15 +36,29 @@ import de.cau.cs.kieler.klay.layered.properties.PortLabelPlacement;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
+ * Calculates node sizes, places ports, and places node and port labels.
  * 
+ * <p><i>Note:</i> Regarding port placement, this processor now does what the old
+ * {@code PortPositionProcessor} did and thus replaces it.</p>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd></dd>
- *   <dt>Postcondition:</dt><dd></dd>
- *   <dt>Slots:</dt><dd>Before phase 4.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link LabelSideSelector}</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>The graph is layered.</dd>
+ *     <dd>Crossing minimization is finished.</dd>
+ *     <dd>Port constraints are at least at {@code FIXED_ORDER}.</dd>
+ *     <dd>Port lists are properly sorted going clockwise, starting at the leftmost northern port.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>Port positions are fixed.</dd>
+ *     <dd>Port labels are placed.</dd>
+ *     <dd>Node labels are placed.</dd>
+ *     <dd>Node sizes are set.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>Before phase 4.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>{@link LabelSideSelector}</dd>
  * </dl>
- *
+ * 
+ * @see LabelSideSelector
  * @author cds
  */
 public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
