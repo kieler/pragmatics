@@ -480,13 +480,25 @@ public class FigureProviderKRendering {
     private static final float PORT_SIZE_SHORT_SIDE = 3.5f;
     //private static final int PORT_SIZE_BOUNDS = 8;
     
-    public KRendering getPortKRendering(final KBackgroundColor color, float xoffset, float yoffset) {
+    public KRendering getPortKRendering(final KBackgroundColor color, float xoffset, float yoffset, String input) {
         KPolylinePlacementData placement = factory.createKPolylinePlacementData();
         
-        placement.getPoints().add(createKPosition(0 + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
-        placement.getPoints().add(createKPosition(0 + xoffset, 0 + yoffset));
-        placement.getPoints().add(createKPosition(PORT_SIZE_LONG_SIDE + xoffset, PORT_SIZE_SHORT_SIDE + yoffset));
-        placement.getPoints().add(createKPosition(0 + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
+        if (input.equals("SOUTH")) {
+            placement.getPoints().add(createKPosition(0 + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
+            placement.getPoints().add(createKPosition(PORT_SIZE_LONG_SIDE + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
+            placement.getPoints().add(createKPosition(PORT_SIZE_SHORT_SIDE + xoffset, 0 + yoffset));
+            placement.getPoints().add(createKPosition(0 + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
+        } else if (input.equals("NORTH")) {
+            placement.getPoints().add(createKPosition(0 + xoffset, 0 + yoffset));
+            placement.getPoints().add(createKPosition(PORT_SIZE_LONG_SIDE + xoffset, 0 + yoffset));
+            placement.getPoints().add(createKPosition(PORT_SIZE_SHORT_SIDE + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
+            placement.getPoints().add(createKPosition(0 + xoffset, 0 + yoffset));
+        } else {
+            placement.getPoints().add(createKPosition(0 + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
+            placement.getPoints().add(createKPosition(0 + xoffset, 0 + yoffset));
+            placement.getPoints().add(createKPosition(PORT_SIZE_LONG_SIDE + xoffset, PORT_SIZE_SHORT_SIDE + yoffset));
+            placement.getPoints().add(createKPosition(0 + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
+        }
         
         KPolygon figure = factory.createKPolygon();
 

@@ -209,6 +209,7 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             if (lay != null) {
                 lay.setHeight(10);
                 lay.setWidth(10);
+                lay.setProperty(LayoutOptions.HYPERNODE, true);
             }
             
             map.put(r, n);

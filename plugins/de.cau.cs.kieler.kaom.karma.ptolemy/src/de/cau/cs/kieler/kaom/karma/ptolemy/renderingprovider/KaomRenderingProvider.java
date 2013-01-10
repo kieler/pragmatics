@@ -86,19 +86,14 @@ public class KaomRenderingProvider implements IRenderingProvider {
             final EObject object, final EditPart part) {
 
         /*
-        if (part instanceof TopGraphicEditPart) {
-            TopGraphicEditPart ep = (TopGraphicEditPart) part;
-            List<EditPart> resizeableCompartments = ep.getResizableCompartments();
-            for (EditPart compartment : resizeableCompartments) {
-                if (compartment instanceof IResizableCompartmentEditPart) {
-                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
-                    ResizableCompartmentEditPolicy rcep = (ResizableCompartmentEditPolicy) resizeComp
-                            .getEditPolicy("PrimaryDrag Policy");
-                    rcep.deactivate();
-                }
-            }
-        }
-        */
+         * if (part instanceof TopGraphicEditPart) { TopGraphicEditPart ep = (TopGraphicEditPart)
+         * part; List<EditPart> resizeableCompartments = ep.getResizableCompartments(); for
+         * (EditPart compartment : resizeableCompartments) { if (compartment instanceof
+         * IResizableCompartmentEditPart) { IResizableCompartmentEditPart resizeComp =
+         * (IResizableCompartmentEditPart) compartment; ResizableCompartmentEditPolicy rcep =
+         * (ResizableCompartmentEditPolicy) resizeComp .getEditPolicy("PrimaryDrag Policy");
+         * rcep.deactivate(); } } }
+         */
         if (input.equals("true") && oldFigure instanceof SplineConnection) {
             SplineConnection connection = (SplineConnection) oldFigure;
             connection.setJoinPointFactory(new IFactory<IFigure>() {
@@ -130,10 +125,10 @@ public class KaomRenderingProvider implements IRenderingProvider {
             this.hideCompartment(part, true);
             return figureProvider.getDefaultFigure();
         } else if (input.equals("compound")) {
-            //this.unhideCompartment(part);
+            // this.unhideCompartment(part);
             return figureProvider.getDefaultFigure();
         } else if (input.equals("compoundCollapsed")) {
-            //this.hideCompartment(part, false);
+            // this.hideCompartment(part, false);
             IFigure figure = createPtolemyFigure(PtolemyFetcher.getPtolemyInstance(object));
             return figure;
         } else if (input.startsWith("valueDisplay")) {
@@ -155,22 +150,24 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 connection.setLineWidthFloat(LINE_WIDTH);
                 connection.setSplineMode(SplineConnection.SPLINE_OFF);
                 final ConnectionEditPart cPart = (ConnectionEditPart) part;
-                //code will be used again for debug purposes.
-                
-                /*
-                connection.setJoinPointDecoration(new IJoinPointFactory() {
-					
-					public IFigure getNewJoinPointDecorator() {
-						RectangleFigure defaultFigure = new RectangleFigure();
-				        defaultFigure.setLineWidth(1);
-				        defaultFigure.setForegroundColor(ColorConstants.black);
-				        defaultFigure.setBackgroundColor(ColorConstants.red);
-				        defaultFigure.getBounds().setSize(7, 7);
-				        return defaultFigure;
-					}
-				});
-		*/		
-                
+                // code will be used again for debug purposes.
+
+                connection.setJoinPointFactory(new IFactory<IFigure>() {
+
+                    public IFigure create() {
+                        RectangleFigure defaultFigure = new RectangleFigure();
+                        defaultFigure.setLineWidth(1);
+                        defaultFigure.setForegroundColor(ColorConstants.black);
+                        defaultFigure.setBackgroundColor(ColorConstants.red);
+                        defaultFigure.getBounds().setSize(7, 7);
+                        return defaultFigure;
+                    }
+
+                    public void destroy(IFigure obj) {
+
+                    }
+                });
+
                 // Encapsulate setting the BendpointRadius and Smoothness in an emf operation.
                 // Eclipse needs it that way.
                 AbstractEMFOperation emfOp = new AbstractEMFOperation(cPart.getEditingDomain(),
@@ -213,67 +210,64 @@ public class KaomRenderingProvider implements IRenderingProvider {
             }
         } else if (input.equals("inputPort")) {
             IFigure f = figureProvider.createInputPort();
-            //They just have to have thoses sizes to be displayed correctly.
+            // They just have to have thoses sizes to be displayed correctly.
             // SUPPRESS CHECKSTYLE NEXT Magic Number
             f.setMinimumSize(new Dimension(30, 30));
             // SUPPRESS CHECKSTYLE NEXT Magic Number
             f.setPreferredSize(new Dimension(30, 30));
-            return f;         
+            return f;
         } else if (input.equals("outputPort")) {
             return figureProvider.createOutputPort();
         } else {
             return figureProvider.getDefaultFigure();
         }
     }
-    
-    /* Might be reused later on.
-    private void unhideCompartment(EditPart part) {
-        if (part instanceof AdvancedRenderingBorderedShapeEditPart) {
-        AdvancedRenderingBorderedShapeEditPart arbsep = (AdvancedRenderingBorderedShapeEditPart) part;
-            List<EditPart> resizeableCompartments = arbsep.getResizableCompartments();
-            for (EditPart compartment : resizeableCompartments) {
-                if (compartment instanceof IResizableCompartmentEditPart) {
-             IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
-                    resizeComp.getFigure().setVisible(true);
-                }
-            }
-            
-            arbsep.setCollapseExpandSize(new Dimension(8,8));
-            
-        }
-    }
-    */
-    
+
+    /*
+     * Might be reused later on. private void unhideCompartment(EditPart part) { if (part instanceof
+     * AdvancedRenderingBorderedShapeEditPart) { AdvancedRenderingBorderedShapeEditPart arbsep =
+     * (AdvancedRenderingBorderedShapeEditPart) part; List<EditPart> resizeableCompartments =
+     * arbsep.getResizableCompartments(); for (EditPart compartment : resizeableCompartments) { if
+     * (compartment instanceof IResizableCompartmentEditPart) { IResizableCompartmentEditPart
+     * resizeComp = (IResizableCompartmentEditPart) compartment;
+     * resizeComp.getFigure().setVisible(true); } }
+     * 
+     * arbsep.setCollapseExpandSize(new Dimension(8,8));
+     * 
+     * } }
+     */
+
     /**
      * Hides a compartment so that you don't accidently click it.
-     * @param part editpart that owns the compartment to hide.
-     * @param hideExpandCollapse should the object still be expandable.
+     * 
+     * @param part
+     *            editpart that owns the compartment to hide.
+     * @param hideExpandCollapse
+     *            should the object still be expandable.
      */
     private void hideCompartment(final EditPart part, final boolean hideExpandCollapse) {
         if (part instanceof AdvancedRenderingBorderedShapeEditPart) {
-            AdvancedRenderingBorderedShapeEditPart arbsep = 
-                    (AdvancedRenderingBorderedShapeEditPart) part;
-            //Can't do check here cause generics are badly designed.
+            AdvancedRenderingBorderedShapeEditPart arbsep = (AdvancedRenderingBorderedShapeEditPart) part;
+            // Can't do check here cause generics are badly designed.
             @SuppressWarnings("unchecked")
             List<EditPart> resizeableCompartments = arbsep.getResizableCompartments();
             for (EditPart compartment : resizeableCompartments) {
                 if (compartment instanceof IResizableCompartmentEditPart) {
-                    IResizableCompartmentEditPart resizeComp = 
-                            (IResizableCompartmentEditPart) compartment;
+                    IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
                     resizeComp.getFigure().setVisible(false);
                 }
             }
             if (hideExpandCollapse) {
                 arbsep.setCollapseExpandSize(new Dimension(0, 0));
             } else {
-                //Thats just how big the button is.
+                // Thats just how big the button is.
                 // SUPPRESS CHECKSTYLE NEXT Magic Number
                 arbsep.setCollapseExpandSize(new Dimension(8, 8));
             }
         }
-        
+
     }
-    
+
     // minimum size for compound entites. Important if they are collapsed
     private static final int DEFAULT_SIZE_X = 63;
     private static final int DEFAULT_SIZE_Y = 43;
@@ -353,7 +347,8 @@ public class KaomRenderingProvider implements IRenderingProvider {
                     IFigure figure = figureProvider.createFigureFromSvg(doc);
                     return figure;
                 } else {
-                    Status myStatus = new Status(IStatus.WARNING, "de.cau.cs.kieler.kaom.karma.ptolemy",
+                    Status myStatus = new Status(IStatus.WARNING,
+                            "de.cau.cs.kieler.kaom.karma.ptolemy",
                             "couldn't get svg document from ptolemy");
                     StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
                     return figureProvider.getErrorFigure();
@@ -369,7 +364,6 @@ public class KaomRenderingProvider implements IRenderingProvider {
         }
 
     }
-    
 
     /**
      * {@inheritDoc}
