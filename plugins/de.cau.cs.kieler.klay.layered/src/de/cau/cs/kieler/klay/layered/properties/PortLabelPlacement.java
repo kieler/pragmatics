@@ -26,6 +26,6 @@ public enum PortLabelPlacement {
     /** Port labels are placed inside of the node, next to the port. */
     INSIDE,
     /** Port labels are left on the position the user chose. */
-    MANUAL;
+    FIXED;
 
 }

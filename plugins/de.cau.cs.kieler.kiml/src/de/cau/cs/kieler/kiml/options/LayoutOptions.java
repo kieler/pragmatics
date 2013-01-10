@@ -213,17 +213,25 @@ public final class LayoutOptions {
      * Determines the amount of space to be left around the labels of the associated edge.
      */
     public static final IProperty<Float> LABEL_SPACING = new Property<Float>(
-            "de.cau.cs.kieler.labelSpacing", -1.0f);
+            "de.cau.cs.kieler.labelSpacing", 3.0f, 0.0f);
 
     /**
      * Whether the whole hierarchy shall be layouted. If this option is not set, each hierarchy
      * level of the graph is processed independently, possibly by different layout algorithms,
      * beginning with the lowest level. If it is set, the algorithm is responsible to process
      * all hierarchy levels that are contained in the associated parent node.
+     * 
      * @see GraphFeature#COMPOUND
      */
     public static final IProperty<Boolean> LAYOUT_HIERARCHY = new Property<Boolean>(
             "de.cau.cs.kieler.layoutHierarchy", false);
+    
+    /**
+     * The way node labels are placed. Defaults to node labels not being touched.
+     */
+    public static final IProperty<EnumSet<NodeLabelPlacement>> NODE_LABEL_PLACEMENT =
+            new Property<EnumSet<NodeLabelPlacement>>("de.cau.cs.kieler.nodeLabelPlacement",
+                    NodeLabelPlacement.fixed());
 
     /**
      * What constraints on port positions are given for the associated node.
@@ -267,6 +275,15 @@ public final class LayoutOptions {
     public static final IProperty<EnumSet<SizeConstraint>> SIZE_CONSTRAINT =
             new Property<EnumSet<SizeConstraint>>(
                     "de.cau.cs.kieler.sizeConstraint", SizeConstraint.fixed());
+
+    /**
+     * Options modifying the behaviour of the size constraints set on a node. Each member of the set
+     * specifies something that should be taken into account when calculating node sizes. The empty
+     * set corresponds to no further modifications.
+     */
+    public static final IProperty<EnumSet<SizeOptions>> SIZE_OPTIONS =
+            new Property<EnumSet<SizeOptions>>(
+                    "de.cau.cs.kieler.sizeOptions", EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE));
     
     /**
      * Overall spacing between elements. This is mostly interpreted as the minimal distance
