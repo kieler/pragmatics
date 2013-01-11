@@ -58,9 +58,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public final class OrthogonalEdgeRouter implements ILayoutPhase {
     
-    /* The basic processing strategy for this phase only contains the LABEL_AND_NODE_SIZE_PROCESSOR.
-     * Depending on the graph features, dependencies on intermediate processors are added dynamically
-     * as follows:
+    /* The basic processing strategy for this phase is empty. Depending on the graph features,
+     * dependencies on intermediate processors are added dynamically as follows:
      * 
      * Before phase 1:
      *   - None.
@@ -205,7 +204,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
                 EnumSet.of(LayoutProcessorStrategy.LABEL_SIDE_SELECTOR),
                 
                 // Before Phase 4
-                EnumSet.of(LayoutProcessorStrategy.NODE_MARGIN_CALCULATOR),
+                null,
                 
                 // Before Phase 5
                 null,

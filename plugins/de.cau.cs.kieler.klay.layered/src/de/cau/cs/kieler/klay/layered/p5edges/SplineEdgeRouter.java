@@ -92,6 +92,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
+        
         return null;
     }
 
