@@ -58,7 +58,7 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
         // Iterate through the layers
         for (Layer layer : layeredGraph) {
             // Iterate through the nodes (use an array to avoid concurrent modification exceptions)
-            LNode[] nodeArray = layer.getNodes().toArray(new LNode[0]);
+            LNode[] nodeArray = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
             for (LNode node : nodeArray) {
                 // We only care for North/South Port dummy nodes
                 if (node.getProperty(Properties.NODE_TYPE) != NodeType.NORTH_SOUTH_PORT) {

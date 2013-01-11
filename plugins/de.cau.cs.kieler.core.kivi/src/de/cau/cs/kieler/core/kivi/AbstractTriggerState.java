@@ -17,13 +17,14 @@ package de.cau.cs.kieler.core.kivi;
  * Base implementation for trigger states.
  * 
  * @author mmu
- * 
  */
 public abstract class AbstractTriggerState implements ITriggerState {
     
+    /** Global counter for sequence numbers. */
     private static long lastSequenceNumber = 0;
     
-    private long sequenceNumber = 0;
+    /** The unique sequence number of this trigger state. */
+    private long sequenceNumber;
 
     /**
      * {@inheritDoc}
@@ -46,6 +47,9 @@ public abstract class AbstractTriggerState implements ITriggerState {
         return sequenceNumber;
     }
     
+    /**
+     * Set the unique sequence number.
+     */
     void setSequenceNumber() {
         // not thread-safe, only gets called from the combinations worker
         if (sequenceNumber == 0) {
@@ -61,10 +65,14 @@ public abstract class AbstractTriggerState implements ITriggerState {
         return getClass();
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         String name = this.getClass().getName();
         int index = name.lastIndexOf(".");
         return "TriggerState[" + name.substring(index) + "]";
     }
+    
 }

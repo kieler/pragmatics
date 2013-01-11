@@ -157,7 +157,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
      */
     private void processEasternAndWesternPortDummies(final Layer layer) {
         // Put the nodes into an array
-        LNode[] nodes = layer.getNodes().toArray(new LNode[0]);
+        LNode[] nodes = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
         
         // Sort the array; hierarchical port dummies are at the top, sorted by
         // position or ratio in ascending order

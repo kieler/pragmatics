@@ -645,7 +645,8 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                 }
                 
                 // Reroute all the output port's edges
-                edges = nodeOutPort.getOutgoingEdges().toArray(new LEdge[0]);
+                edges = nodeOutPort.getOutgoingEdges().toArray(
+                        new LEdge[nodeOutPort.getOutgoingEdges().size()]);
                 
                 for (LEdge edge : edges) {
                     edge.setSource(replacedDummyPort);
