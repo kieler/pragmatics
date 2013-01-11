@@ -87,8 +87,6 @@ public enum LayoutProcessorStrategy {
     HYPEREDGE_DUMMY_MERGER,
     /** Decides, on which side of an edge the edge labels should be placed. */ 
     LABEL_SIDE_SELECTOR,
-    /** Sets the positions of ports. */
-    PORT_POSITION_PROCESSOR,
     /** Sets the positions of ports and labels, and sets the node sizes. */
     LABEL_AND_NODE_SIZE_PROCESSOR,
     /** Calculates the margins of nodes according to the sizes of ports and labels. */
@@ -232,9 +230,6 @@ public enum LayoutProcessorStrategy {
         
         case PORT_LIST_SORTER:
             return new PortListSorter();
-        
-        case PORT_POSITION_PROCESSOR:
-            return new PortPositionProcessor();
         
         case PORT_SIDE_PROCESSOR:
             return new PortSideProcessor();
