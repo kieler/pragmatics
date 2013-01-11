@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -32,7 +33,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LLabel.LSide;
-import de.cau.cs.kieler.klay.layered.properties.PortLabelPlacement;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -162,7 +162,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                  * Port labels are placed and port margins are calculated. We currently only support
                  * one label per port.
                  */
-                PortLabelPlacement labelPlacement = node.getProperty(Properties.PORT_LABEL_PLACEMENT);
+                PortLabelPlacement labelPlacement = node.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT);
                 
                 // Place port labels and calculate the margins
                 for (LPort port : node.getPorts()) {

@@ -372,11 +372,6 @@ public final class Properties {
     public static final IProperty<EdgeLabelSideSelection> EDGE_LABEL_SIDE =
             new Property<EdgeLabelSideSelection>("de.cau.cs.kieler.klay.layered.LabelSide",
                                                          EdgeLabelSideSelection.SMART);
-    
-    /** property to choose an edge placement strategy. */
-    public static final IProperty<PortLabelPlacement> PORT_LABEL_PLACEMENT =
-            new Property<PortLabelPlacement>("de.cau.cs.kieler.klay.layered.portLabelPlacement",
-                    PortLabelPlacement.OUTSIDE);
 
     /** property to switch debug mode on or off. */
     public static final IProperty<Boolean> DEBUG_MODE = new Property<Boolean>(

@@ -239,6 +239,11 @@ public final class LayoutOptions {
     public static final IProperty<PortConstraints> PORT_CONSTRAINTS = new Property<PortConstraints>(
             "de.cau.cs.kieler.portConstraints", PortConstraints.UNDEFINED);
     
+    /** property to choose a port label placement strategy. */
+    public static final IProperty<PortLabelPlacement> PORT_LABEL_PLACEMENT =
+            new Property<PortLabelPlacement>("de.cau.cs.kieler.portLabelPlacement",
+                    PortLabelPlacement.OUTSIDE);
+    
     /**
      * The position of a node, port, or label. This is used by the
      * {@link de.cau.cs.kieler.kiml.FixedLayoutProvider} to specify a pre-defined position.

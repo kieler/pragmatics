@@ -343,6 +343,15 @@
            type="enumset">
      </layoutOption>
      <layoutOption
+           appliesTo="nodes"
+           class="de.cau.cs.kieler.kiml.options.PortLabelPlacement"
+           default="OUTSIDE"
+           description="Decides on a placement method for port labels."
+           id="de.cau.cs.kieler.portLabelPlacement"
+           name="Port Label Placement"
+           type="enum">
+     </layoutOption>
+     <layoutOption
            advanced="true"
            class="de.cau.cs.kieler.kiml.options.EdgeType"
            default="NONE"

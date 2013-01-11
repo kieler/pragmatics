@@ -19,6 +19,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
@@ -27,7 +28,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.properties.PortLabelPlacement;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -136,7 +136,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
             double portLabelY = 0;
             
             //TODO: maybe leave space for manually placed ports 
-            if (node.getProperty(Properties.PORT_LABEL_PLACEMENT) == PortLabelPlacement.OUTSIDE) {
+            if (node.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT) == PortLabelPlacement.OUTSIDE) {
                 
                 for (LLabel label : port.getLabels()) {
                     if (portLabelX < label.getSize().x) {
