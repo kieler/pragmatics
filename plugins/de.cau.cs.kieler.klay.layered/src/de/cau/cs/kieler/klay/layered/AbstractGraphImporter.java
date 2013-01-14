@@ -92,7 +92,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
      *   <li>{@link Properties#EXT_PORT_SIDE} is set to the side of the external port represented.</li>
      *   <li>If the port constraints of the original port's node are set to
      *     {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}, the dummy node's
-     *     {@link Properties#EXT_PORT_RATIO_OR_POSITION} property is set to the port's original position,
+     *     {@link Properties#PORT_RATIO_OR_POSITION} property is set to the port's original position,
      *     defined relative to the original node's origin. (as opposed to relative to the node's content
      *     area)</li>
      *   <li>The {@link Properties#EXT_PORT_SIZE} property is set to the size of the external port the
@@ -208,7 +208,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
                 break;
             }
             
-            dummy.setProperty(Properties.EXT_PORT_RATIO_OR_POSITION, positionOrRatio);
+            dummy.setProperty(Properties.PORT_RATIO_OR_POSITION, positionOrRatio);
         }
         
         // Set the port side of the dummy

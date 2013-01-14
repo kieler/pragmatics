@@ -18,7 +18,7 @@ package de.cau.cs.kieler.kiml.options;
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  */
 public enum GraphFeature {
 
@@ -51,15 +51,5 @@ public enum GraphFeature {
      * Multiple connected components.
      */
     DISCONNECTED;
-    
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static GraphFeature valueOf(final int i) {
-        return values()[i];
-    }
 
 }

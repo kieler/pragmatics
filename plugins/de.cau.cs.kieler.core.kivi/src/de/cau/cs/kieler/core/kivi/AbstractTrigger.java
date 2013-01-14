@@ -42,6 +42,9 @@ public abstract class AbstractTrigger implements ITrigger {
     public void synchronizedTrigger(final ITriggerState triggerState) throws InterruptedException {
         synchronized (triggerState) {
             trigger(triggerState);
+            // FIXME This call to wait does not conform to the documentation:
+            // "interrupts and spurious wakeups are possible", hence the wait must be surrounded
+            // by a loop that checks whether the thread should continue or go back to sleep.
             triggerState.wait();
         }
     }

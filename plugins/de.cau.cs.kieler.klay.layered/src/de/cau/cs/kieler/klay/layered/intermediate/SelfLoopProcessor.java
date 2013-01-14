@@ -80,7 +80,8 @@ public final class SelfLoopProcessor implements ILayoutProcessor {
             for (LNode node : layer) {
                 for (LPort port : node.getPorts()) {
                     // Go through the port's outgoing edges
-                    LEdge[] edges = port.getOutgoingEdges().toArray(new LEdge[0]);
+                    LEdge[] edges = port.getOutgoingEdges().toArray(
+                            new LEdge[port.getOutgoingEdges().size()]);
                     
                     for (LEdge edge : edges) {
                         // We're only interested in edges whose source and target node are identical

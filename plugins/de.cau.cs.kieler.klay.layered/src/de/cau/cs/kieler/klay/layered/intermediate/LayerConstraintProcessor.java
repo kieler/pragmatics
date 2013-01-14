@@ -63,7 +63,7 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
         // Iterate through the current list of layers
         for (Layer layer : layers) {
             // Iterate through a node array to avoid ConcurrentModificationExceptions
-            LNode [] nodes = layer.getNodes().toArray(new LNode[0]);
+            LNode [] nodes = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
             
             for (LNode node : nodes) {
                 LayerConstraint constraint = node.getProperty(Properties.LAYER_CONSTRAINT);

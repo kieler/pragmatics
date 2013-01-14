@@ -355,7 +355,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
     private void applyNorthSouthDummyRatio(final LNode dummy, final double width) {
         KVector anchor = dummy.getProperty(Properties.PORT_ANCHOR);
         double offset = anchor == null ? 0 : anchor.x;
-        dummy.getPosition().x = width * dummy.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION)
+        dummy.getPosition().x = width * dummy.getProperty(Properties.PORT_RATIO_OR_POSITION)
                 - offset;
     }
     
@@ -367,7 +367,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
     private void applyNorthSouthDummyPosition(final LNode dummy) {
         KVector anchor = dummy.getProperty(Properties.PORT_ANCHOR);
         double offset = anchor == null ? 0 : anchor.x;
-        dummy.getPosition().x = dummy.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION) - offset;
+        dummy.getPosition().x = dummy.getProperty(Properties.PORT_RATIO_OR_POSITION) - offset;
     }
     
     /**
@@ -423,8 +423,8 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         
         Arrays.sort(dummyArray, new Comparator<LNode>() {
             public int compare(final LNode a, final LNode b) {
-                double diff = a.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION)
-                        - b.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+                double diff = a.getProperty(Properties.PORT_RATIO_OR_POSITION)
+                        - b.getProperty(Properties.PORT_RATIO_OR_POSITION);
                 
                 // We cannot simply return diff cast to an int: if diff == 0.4, the returned value
                 // would be 0, which is wrong
@@ -645,7 +645,8 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                 }
                 
                 // Reroute all the output port's edges
-                edges = nodeOutPort.getOutgoingEdges().toArray(new LEdge[0]);
+                edges = nodeOutPort.getOutgoingEdges().toArray(
+                        new LEdge[nodeOutPort.getOutgoingEdges().size()]);
                 
                 for (LEdge edge : edges) {
                     edge.setSource(replacedDummyPort);
@@ -742,13 +743,13 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
             case EAST:
             case WEST:
                 if (constraints == PortConstraints.FIXED_RATIO) {
-                    double ratio = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+                    double ratio = node.getProperty(Properties.PORT_RATIO_OR_POSITION);
                     nodePosition.y = graphActualSize.y * ratio
                             - node.getProperty(Properties.PORT_ANCHOR).y;
                     requiredActualGraphHeight = nodePosition.y + extPortSize.y;
                     node.borderToContentAreaCoordinates(false, true);
                 } else if (constraints == PortConstraints.FIXED_POS) {
-                    nodePosition.y = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION)
+                    nodePosition.y = node.getProperty(Properties.PORT_RATIO_OR_POSITION)
                             - node.getProperty(Properties.PORT_ANCHOR).y;
                     requiredActualGraphHeight = nodePosition.y + extPortSize.y;
                     node.borderToContentAreaCoordinates(false, true);

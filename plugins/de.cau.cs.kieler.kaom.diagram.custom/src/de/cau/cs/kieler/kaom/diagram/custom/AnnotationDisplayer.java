@@ -41,6 +41,7 @@ import org.eclipse.gmf.runtime.diagram.ui.type.DiagramNotationType;
 import org.eclipse.gmf.runtime.notation.Node;
 import org.eclipse.gmf.runtime.notation.Shape;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.ReferenceAnnotation;
@@ -71,7 +72,6 @@ public final class AnnotationDisplayer {
      */
     public static void displayAnnotations(final IEditorPart editorPart) {
         displayTextAsNote(editorPart);
-
     }
 
     /**
@@ -176,8 +176,11 @@ public final class AnnotationDisplayer {
                         try {
                             IOperationHistory oh = OperationHistoryFactory.getOperationHistory();
                             oh.execute(emfOp, null, null);
-                        } catch (ExecutionException e) { //
-                            e.printStackTrace();
+                        } catch (ExecutionException exception) {
+                            IStatus status = new Status(IStatus.WARNING,
+                                    "de.cau.cs.kieler.kaom.diagram.custom",
+                                    "Error while executing operation.", exception);
+                            StatusManager.getManager().handle(status);
                         }
 
                     }

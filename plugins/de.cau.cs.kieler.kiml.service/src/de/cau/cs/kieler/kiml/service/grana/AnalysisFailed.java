@@ -44,7 +44,7 @@ public class AnalysisFailed {
     /** the analysis failed type. */
     private Type type;
     /** the associated exception. */
-    private Exception exception = null;
+    private Exception exception;
 
     /**
      * Constructs a new analysis failed object.

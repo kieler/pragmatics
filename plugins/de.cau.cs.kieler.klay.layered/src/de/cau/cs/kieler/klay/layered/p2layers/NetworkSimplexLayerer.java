@@ -894,43 +894,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
     }
 
     /**
-     * Helper method for the network simplex layerer. It determines the cut value of each tree edge,
-     * which is defined as follows: If the edge is deleted, the spanning tree breaks into two
-     * connected components, the head component containing the target node of the edge and the tail
-     * component containing the source node of the edge. The cut value is the sum of the weights of
-     * all edges going from the tail to the head component, including the tree edge itself, minus
-     * the sum of the weights of all edges from the head to the tail component.
-     * 
-     * @deprecated This method realizes a naive approach to compute the cut values with a
-     *             performance of O(|E|^2). The method {@code cutvalues()} computes the cut values
-     *             in linear time and therefore, should be used instead.
-     * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#cutvalue cutvalue
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#cutvalues() cutvalues()
-     */
-    @SuppressWarnings("unused")
-    private void naiveCutvalues() {
-
-        boolean source, target;
-        for (LEdge edge : edges) {
-            if (treeEdge[edge.id]) {
-                cutvalue[edge.id] = 1;
-                for (LEdge cur : edges) {
-                    if (!treeEdge[cur.id]) {
-                        source = isInHead(cur.getSource().getNode(), edge);
-                        target = isInHead(cur.getTarget().getNode(), edge);
-                        if (target && !source) {
-                            cutvalue[edge.id]++;
-                        } else if (source && !target) {
-                            cutvalue[edge.id]--;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Helper method for the network simplex layerer. It returns a tree edge with a negative cut
      * value or {@code null}, if no such edge exists, meaning that the current layer assignment of
      * all nodes is optimal. Note, that this method returns any edge with a negative cut value. A

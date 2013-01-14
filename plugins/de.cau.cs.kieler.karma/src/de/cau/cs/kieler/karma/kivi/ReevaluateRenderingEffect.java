@@ -30,9 +30,9 @@ import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
  */
 public class ReevaluateRenderingEffect extends AbstractEffect {
 
-    private IAdvancedRenderingEditPart part = null;
+    private IAdvancedRenderingEditPart part;
     
-    private EObject modelElement = null;
+    private EObject modelElement;
     
     /**
      * The constructor. The built effect will reevalute 

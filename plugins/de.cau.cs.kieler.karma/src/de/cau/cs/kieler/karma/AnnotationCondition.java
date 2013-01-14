@@ -56,7 +56,7 @@ public class AnnotationCondition extends ICustomCondition<EObject> {
                 FloatAnnotation floatAnnotation = (FloatAnnotation) annotation;
                 float annotationValue = floatAnnotation.getValue();
                 float floatValue = Float.parseFloat(value);
-                return (floatValue == annotationValue);
+                return Float.compare(floatValue, annotationValue) == 0;
             } else if (annotation instanceof IntAnnotation) {
                 IntAnnotation intAnnotation = (IntAnnotation) annotation;
                 int annotationValue = intAnnotation.getValue();

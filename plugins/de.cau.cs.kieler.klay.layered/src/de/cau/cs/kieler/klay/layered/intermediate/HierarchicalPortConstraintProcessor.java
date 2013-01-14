@@ -85,9 +85,9 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
          */
         public int compare(final LNode node1, final LNode node2) {
             NodeType nodeType1 = node1.getProperty(Properties.NODE_TYPE);
-            double nodePos1 = node1.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+            double nodePos1 = node1.getProperty(Properties.PORT_RATIO_OR_POSITION);
             NodeType nodeType2 = node2.getProperty(Properties.NODE_TYPE);
-            double nodePos2 = node2.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+            double nodePos2 = node2.getProperty(Properties.PORT_RATIO_OR_POSITION);
             
             if (nodeType2 != NodeType.EXTERNAL_PORT) {
                 return -1;
@@ -157,7 +157,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
      */
     private void processEasternAndWesternPortDummies(final Layer layer) {
         // Put the nodes into an array
-        LNode[] nodes = layer.getNodes().toArray(new LNode[0]);
+        LNode[] nodes = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
         
         // Sort the array; hierarchical port dummies are at the top, sorted by
         // position or ratio in ascending order

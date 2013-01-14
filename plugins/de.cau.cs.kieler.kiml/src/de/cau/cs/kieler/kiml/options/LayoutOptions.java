@@ -27,7 +27,7 @@ import de.cau.cs.kieler.core.properties.Property;
  * are accessed with methods.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  * @author msp
  */
 public final class LayoutOptions {
@@ -84,6 +84,16 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.hypernode", false);
     
     /**
+     * This property is not used as option, but as output of the layout algorithms.
+     * It is attached to edges and determines the points where junction symbols should
+     * be drawn in order to represent hyperedges with orthogonal routing.
+     * Whether such points are computed depends on the chosen layout algorithm and
+     * edge routing style. The points are put into the vector chain with no specific order.
+     */
+    public static final IProperty<KVectorChain> JUNCTION_POINTS
+            = new Property<KVectorChain>("de.cau.cs.kieler.junctionPoints");
+    
+    /**
      * The minimal height of a node. [programmatically set]
      */
     public static final IProperty<Float> MIN_HEIGHT = new Property<Float>(
@@ -104,12 +114,18 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.noLayout", false);
     
     /**
-     * Offset of a graph element. This is mostly used to indicate the distance of a port from its
-     * node: with a positive offset the port is moved outside of the node, while with a negative
-     * offset the port is moved towards the inside. [programmatically set]
+     * Offset of a graph element. [programmatically set] This is mostly used to indicate the
+     * distance of a port from its node: with a positive offset the port is moved outside of
+     * the node, while with a negative offset the port is moved towards the inside. An offset
+     * of 0 means that the port is placed directly on the node border, i.e.
+     * <ul>
+     *   <li> if the port side is north, the port's south border touches the nodes's north border;</li>
+     *   <li> if the port side is east, the port's west border touches the nodes's east border;</li>
+     *   <li> if the port side is south, the port's north border touches the node's south border;</li>
+     *   <li> if the port side is west, the port's east border touches the node's west border.</li>
+     * </ul>
      */
-    public static final IProperty<Float> OFFSET = new Property<Float>(
-            "de.cau.cs.kieler.offset");
+    public static final IProperty<Float> OFFSET = new Property<Float>("de.cau.cs.kieler.offset");
     
     /**
      * On which side of its corresponding node a port is situated. [programmatically set]
@@ -185,42 +201,48 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.expandNodes", false);
 
     /**
-     * Whether the algorithm should be run in debug mode for the content of a parent node.
+     * Whether the algorithm should be run in interactive mode for the content of a parent node.
+     * What this means exactly depends on how the specific algorithm interprets this option.
+     * Usually in the interactive mode algorithms try to modify the current layout as little as
+     * possible.
      */
     public static final IProperty<Boolean> INTERACTIVE = new Property<Boolean>(
             "de.cau.cs.kieler.interactive", false);
     
     /**
-     * This property is not used as option, but as output of the layout algorithms.
-     * It is attached to edges and determines the points where junction symbols should
-     * be drawn in order to represent hyperedges with orthogonal routing.
-     * Whether such points are computed depends on the chosen layout algorithm and
-     * edge routing style. The points are put into the vector chain with no specific order.
-     */
-    public static final IProperty<KVectorChain> JUNCTION_POINTS
-            = new Property<KVectorChain>("de.cau.cs.kieler.junctionPoints");
-    
-    /**
      * Determines the amount of space to be left around the labels of the associated edge.
      */
     public static final IProperty<Float> LABEL_SPACING = new Property<Float>(
-            "de.cau.cs.kieler.labelSpacing", -1.0f);
+            "de.cau.cs.kieler.labelSpacing", 3.0f, 0.0f);
 
     /**
      * Whether the whole hierarchy shall be layouted. If this option is not set, each hierarchy
      * level of the graph is processed independently, possibly by different layout algorithms,
      * beginning with the lowest level. If it is set, the algorithm is responsible to process
      * all hierarchy levels that are contained in the associated parent node.
+     * 
      * @see GraphFeature#COMPOUND
      */
     public static final IProperty<Boolean> LAYOUT_HIERARCHY = new Property<Boolean>(
             "de.cau.cs.kieler.layoutHierarchy", false);
+    
+    /**
+     * The way node labels are placed. Defaults to node labels not being touched.
+     */
+    public static final IProperty<EnumSet<NodeLabelPlacement>> NODE_LABEL_PLACEMENT =
+            new Property<EnumSet<NodeLabelPlacement>>("de.cau.cs.kieler.nodeLabelPlacement",
+                    NodeLabelPlacement.fixed());
 
     /**
      * What constraints on port positions are given for the associated node.
      */
     public static final IProperty<PortConstraints> PORT_CONSTRAINTS = new Property<PortConstraints>(
             "de.cau.cs.kieler.portConstraints", PortConstraints.UNDEFINED);
+    
+    /** property to choose a port label placement strategy. */
+    public static final IProperty<PortLabelPlacement> PORT_LABEL_PLACEMENT =
+            new Property<PortLabelPlacement>("de.cau.cs.kieler.portLabelPlacement",
+                    PortLabelPlacement.OUTSIDE);
     
     /**
      * The position of a node, port, or label. This is used by the
@@ -258,6 +280,15 @@ public final class LayoutOptions {
     public static final IProperty<EnumSet<SizeConstraint>> SIZE_CONSTRAINT =
             new Property<EnumSet<SizeConstraint>>(
                     "de.cau.cs.kieler.sizeConstraint", SizeConstraint.fixed());
+
+    /**
+     * Options modifying the behaviour of the size constraints set on a node. Each member of the set
+     * specifies something that should be taken into account when calculating node sizes. The empty
+     * set corresponds to no further modifications.
+     */
+    public static final IProperty<EnumSet<SizeOptions>> SIZE_OPTIONS =
+            new Property<EnumSet<SizeOptions>>(
+                    "de.cau.cs.kieler.sizeOptions", EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE));
     
     /**
      * Overall spacing between elements. This is mostly interpreted as the minimal distance

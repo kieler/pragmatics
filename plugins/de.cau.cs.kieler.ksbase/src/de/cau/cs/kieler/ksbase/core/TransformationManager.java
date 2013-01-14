@@ -334,6 +334,9 @@ public final class TransformationManager {
             }
 
             // setup some containers for menubar contributions
+            
+            // chsch: due to http://rtsys.informatik.uni-kiel.de/confluence/x/6wA3 the following (first)
+            //  menu contribution is not used examined any more!
             KSBasEMenuContribution menuContrib = new KSBasEMenuContribution("menu:de.cau.cs.kieler");
             KSBasEMenuContribution toolbarContrib = new KSBasEMenuContribution(
                     "toolbar:de.cau.cs.kieler");
@@ -343,6 +346,8 @@ public final class TransformationManager {
                     "popupbar:de.cau.cs.kieler");
             KSBasEMenuContribution customContrib = new KSBasEMenuContribution(
                     "custom:de.cau.cs.kieler");
+            KSBasEMenuContribution templatesContrib = new KSBasEMenuContribution(
+                    "templates:de.cau.cs.kieler");
 
             // get all package declarations
             IConfigurationElement[] packages = settings.getChildren("package");
@@ -421,18 +426,31 @@ public final class TransformationManager {
                             }
                             popupbarContrib.addCommand(t.getAttribute("transformationId"));
                         }
+                        // chsch: insertion due to KIELER-2281
+                        attr = t.getAttribute("templates");
+                        if ((attr != null) && attr.equals("true")) {
+                            String separator = t.getAttribute("separated");
+                            if ((separator != null) && separator.equals("true")) {
+                                templatesContrib.addCommand(t.getAttribute("transformationId")
+                                        + "_SEPARATOR");
+                            }
+                            templatesContrib.addCommand(t.getAttribute("transformationId"));
+                        }
+                        // insertion end
                         attr = t.getAttribute("customMenuEntry");
                         if ((attr != null) && !attr.isEmpty()) {
                             customContrib.addCommand(t.getAttribute("transformationId"));
                             transformation.setCommandId(attr);
                         }
+
                         editor.addTransformation(transformation);
                     }
                 }
-                editor.addMenuContribution(menuContrib);
+                // editor.addMenuContribution(menuContrib); -- see declaration
                 editor.addMenuContribution(toolbarContrib);
                 editor.addMenuContribution(popupContrib);
                 editor.addMenuContribution(popupbarContrib);
+                editor.addMenuContribution(templatesContrib);
                 editor.addMenuContribution(customContrib);
             }
             // read alternate command handler

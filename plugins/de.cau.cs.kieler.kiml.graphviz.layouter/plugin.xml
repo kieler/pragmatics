@@ -70,6 +70,9 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
+         </knownOption>
+         <knownOption
                default="10"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
@@ -139,6 +142,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
          </knownOption>
          <knownOption
                default="10"
@@ -226,6 +232,9 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
+         </knownOption>
+         <knownOption
                default="10"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
@@ -295,6 +304,9 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
+         </knownOption>
+         <knownOption
                default="10"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
@@ -349,6 +361,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
          </knownOption>
          <knownOption
                default="10"

@@ -47,7 +47,7 @@ import org.w3c.dom.Document;
 
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.vergil.icon.EditorIcon;
-import de.cau.cs.kieler.core.model.gmf.IJoinPointFactory;
+import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
 import de.cau.cs.kieler.kaom.custom.EntityLayout;
 import de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation.FigureProvider;
@@ -101,15 +101,25 @@ public class KaomRenderingProvider implements IRenderingProvider {
         */
         if (input.equals("true") && oldFigure instanceof SplineConnection) {
             SplineConnection connection = (SplineConnection) oldFigure;
-            connection.setJoinPointDecoration(new IJoinPointFactory() {
-                
-                public IFigure getNewJoinPointDecorator() {
-                        RectangleFigure defaultFigure = new RectangleFigure();
-                defaultFigure.setLineWidth(1);
-                defaultFigure.setForegroundColor(ColorConstants.black);
-                defaultFigure.setBackgroundColor(ColorConstants.red);
-                defaultFigure.getBounds().setSize(7, 7);
-                return defaultFigure;
+            connection.setJoinPointFactory(new IFactory<IFigure>() {
+
+                /**
+                 * {@inheritDoc}
+                 */
+                public IFigure create() {
+                    RectangleFigure defaultFigure = new RectangleFigure();
+                    defaultFigure.setLineWidth(1);
+                    defaultFigure.setForegroundColor(ColorConstants.black);
+                    defaultFigure.setBackgroundColor(ColorConstants.red);
+                    defaultFigure.getBounds().setSize(7, 7);
+                    return defaultFigure;
+                }
+
+                /**
+                 * {@inheritDoc}
+                 */
+                public void destroy(final IFigure obj) {
+                    // nothing to do here
                 }
             });
         }

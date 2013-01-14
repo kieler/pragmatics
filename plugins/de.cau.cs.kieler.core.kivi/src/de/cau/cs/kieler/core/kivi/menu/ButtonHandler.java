@@ -28,83 +28,82 @@ import org.eclipse.ui.handlers.RegistryToggleState;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 
 /**
-     * The handler that receives commands from various view management buttons.
-     * 
-     * @author mmu
-     * 
+ * The handler that receives commands from various view management buttons.
+ * 
+ * @author mmu
+ */
+public class ButtonHandler extends AbstractHandler {
+
+    private boolean pushed = false;
+    private String id = "";
+    private IEditorPart editorPart;
+    
+    /**
+     * {@inheritDoc}
      */
-    public class ButtonHandler extends AbstractHandler {
-
-        private boolean pushed = false;
-        private String id = "";
-        private IEditorPart editorPart;
-        
-        /**
-         * {@inheritDoc}
-         */
-        public Object execute(final ExecutionEvent event) throws ExecutionException {
-            if (ButtonTrigger.getInstance() != null) {
-                editorPart = HandlerUtil.getActiveEditor(event);
-                id = event.getCommand().getId();
-                if (event.getTrigger() instanceof Event) {
-                    Event e = (Event) event.getTrigger();
-                    if (e.widget instanceof ToolItem) {
-                        ToolItem tool = (ToolItem) e.widget;
-                        pushed = tool.getSelection();
-                    } else if (e.widget instanceof MenuItem) {
-                        RegistryToggleState state = 
-                                (RegistryToggleState) event.getCommand()
-                                .getState("org.eclipse.ui.commands.toggleState");
-                        state.setValue(!(Boolean) state.getValue());
-                        state.setShouldPersist(true);
-                        pushed = (Boolean) state.getValue();
-                    }
-
+    public Object execute(final ExecutionEvent event) throws ExecutionException {
+        if (ButtonTrigger.getInstance() != null) {
+            editorPart = HandlerUtil.getActiveEditor(event);
+            id = event.getCommand().getId();
+            if (event.getTrigger() instanceof Event) {
+                Event e = (Event) event.getTrigger();
+                if (e.widget instanceof ToolItem) {
+                    ToolItem tool = (ToolItem) e.widget;
+                    pushed = tool.getSelection();
+                } else if (e.widget instanceof MenuItem) {
+                    RegistryToggleState state = 
+                            (RegistryToggleState) event.getCommand()
+                            .getState("org.eclipse.ui.commands.toggleState");
+                    state.setValue(!(Boolean) state.getValue());
+                    state.setShouldPersist(true);
+                    pushed = (Boolean) state.getValue();
                 }
-                ButtonTrigger.getInstance().trigger(
-                        new ButtonState(editorPart, id, event.getParameters(), pushed));
+
             }
-            return null;
+            ButtonTrigger.getInstance().trigger(
+                    new ButtonState(editorPart, id, event.getParameters(), pushed));
         }
-        
-        /**
-         * Unload this ButtonHandler. I.e. trigger a last not-pushed state if the button was
-         * pushed before.
-         */
-        public void unload() {
-            if (pushed) {
-                pushed = false;
-                ButtonTrigger.getInstance().trigger(
-                        new ButtonState(null, id, Collections.EMPTY_MAP, pushed));
-            }
-        }
-        
-        /**
-         * Set the enabled state of this handler. This state is used by corresponding
-         * menu contributions (buttons, menu entries, etc.) to determine the enabled state
-         * of that menu item, e.g. whether a button should be grayed out or not.
-         * @author haf
-         * @param enabled true iff the handler is enabled.
-         */
-        public void setEnabled(final boolean enabled) {
-            this.setBaseEnabled(enabled);
-        }
-        
-        /**
-         * Returns the pushed status.
-         * 
-         * @return the pushed status
-         */
-        public boolean getPushed() {
-            return pushed;
-        }
-        
-        /**
-         * Sets the id of the button handler.
-         * @param id the new id
-         */
-        public void setId(final String id) {
-            this.id = id;
-        }
-        
+        return null;
     }
+    
+    /**
+     * Unload this ButtonHandler. I.e. trigger a last not-pushed state if the button was
+     * pushed before.
+     */
+    public void unload() {
+        if (pushed) {
+            pushed = false;
+            ButtonTrigger.getInstance().trigger(
+                    new ButtonState(null, id, Collections.EMPTY_MAP, pushed));
+        }
+    }
+    
+    /**
+     * Set the enabled state of this handler. This state is used by corresponding
+     * menu contributions (buttons, menu entries, etc.) to determine the enabled state
+     * of that menu item, e.g. whether a button should be grayed out or not.
+     * @author haf
+     * @param enabled true iff the handler is enabled.
+     */
+    public void setEnabled(final boolean enabled) {
+        this.setBaseEnabled(enabled);
+    }
+    
+    /**
+     * Returns the pushed status.
+     * 
+     * @return the pushed status
+     */
+    public boolean getPushed() {
+        return pushed;
+    }
+    
+    /**
+     * Sets the id of the button handler.
+     * @param id the new id
+     */
+    public void setId(final String id) {
+        this.id = id;
+    }
+    
+}

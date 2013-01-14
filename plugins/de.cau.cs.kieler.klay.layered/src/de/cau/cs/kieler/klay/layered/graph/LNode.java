@@ -44,8 +44,10 @@ public final class LNode extends LShape {
     private final List<LPort> ports = new LinkedList<LPort>();
     /** this node's labels. */
     private final List<LLabel> labels = new LinkedList<LLabel>();
-    /** this node's insets. */
+    /** the margin area around this node. */
     private final LInsets.Double margin = new LInsets.Double();
+    /** the insets inside this node, usually reserved for port and label placement. */
+    private final LInsets.Double insets = new LInsets.Double();
     
     /**
      * Creates a node.
@@ -302,6 +304,20 @@ public final class LNode extends LShape {
     }
     
     /**
+     * Returns the node's insets. The insets describe the area inside the node that is used by
+     * ports, port labels, and node labels.
+     * 
+     * <p>The insets are not automatically updated. Rather, the insets have to be calculated
+     * once the port and label positions are fixed. Usually this is right before node placement
+     * starts.</p>
+     * 
+     * @return the node's insets. May be modified.
+     */
+    public LInsets.Double getInsets() {
+        return insets;
+    }
+    
+    /**
      * Returns the index of the node in the containing layer's list of nodes.
      * Note that this method has linear running time in the number of nodes,
      * so use it with caution.
@@ -332,17 +348,17 @@ public final class LNode extends LShape {
         
         LGraph graph = owner.getGraph();
         
-        LInsets.Double insets = graph.getInsets();
+        LInsets.Double graphInsets = graph.getInsets();
         float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
         KVector offset = graph.getOffset();
         KVector pos = getPosition();
         
         if (horizontal) {
-            pos.x = pos.x - insets.left - borderSpacing - offset.x;
+            pos.x = pos.x - graphInsets.left - borderSpacing - offset.x;
         }
         
         if (vertical) {
-            pos.y = pos.y - insets.top - borderSpacing - offset.y;
+            pos.y = pos.y - graphInsets.top - borderSpacing - offset.y;
         }
     }
 

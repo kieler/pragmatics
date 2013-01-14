@@ -49,6 +49,9 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  */
 public class HyperedgeCrossingsAnalysis implements IAnalysis {
     
+    /** tolerance for double equality. */
+    private static final double TOLERANCE = 1e-4;
+    
     /**
      * {@inheritDoc}
      */
@@ -61,7 +64,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         
         mergeEdgeSegments(edgeSegments);
         
-        int crossings = countCrossings(edgeSegments.toArray(new Line2D.Double[0]));
+        int crossings = countCrossings(edgeSegments.toArray(new Line2D.Double[edgeSegments.size()]));
         
         progressMonitor.done();
         return crossings;
@@ -155,7 +158,8 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
             }
             
             // If the current segment has already been removed, continue
-            if (line1.x1 == line1.x2 && line1.y1 == line1.y2) {
+            if (Math.abs(line1.x1 - line1.x2) < TOLERANCE
+                    && Math.abs(line1.y1 - line1.y2) < TOLERANCE) {
                 continue;
             }
             
@@ -208,11 +212,8 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         
         // The lines have to be parallel, which means that the distance between line1 and
         // both points defining line2 have to be equal
-        if (line1.ptLineDist(line2.x1, line2.y1) != line1.ptLineDist(line2.x2, line2.y2)) {
-            return false;
-        }
-        
-        return true;
+        return Math.abs(line1.ptLineDist(line2.x1, line2.y1) - line1.ptLineDist(line2.x2, line2.y2))
+                < TOLERANCE;
     }
     
     /**
@@ -228,7 +229,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         // If the lines are vertical, we use the points with the lowest and highest
         // y coordinate as the merged line's end points. Otherwise, we use the points
         // with the lowest and highest x coordinate
-        if (line1.x1 == line1.x2) {
+        if (Math.abs(line1.x1 - line1.x2) < TOLERANCE) {
             // Vertical
             start.x = line1.x1;
             start.y = KielerMath.mind(line1.y1, line1.y2, line2.y1, line2.y2);
