@@ -13,8 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.p5edges;
 
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Set;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.BezierSpline;
@@ -31,6 +33,8 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -54,6 +58,81 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.rating proposed yellow by msp
  */
 public final class SplineEdgeRouter implements ILayoutPhase {
+    
+    /* The basic processing strategy for this phase is empty. Depending on the graph features,
+     * dependencies on intermediate processors are added dynamically as follows:
+     * 
+     * Before phase 1:
+     *   - None.
+     * 
+     * Before phase 2:
+     *   - For center edge labels:
+     *     - LABEL_DUMMY_INSERTER
+     * 
+     * Before phase 3:
+     *   - For edge labels:
+     *     - LABEL_SIDE_SELECTOR
+     *   
+     *   - For center edge labels:
+     *     - LABEL_SIDE_SELECTOR
+     *     - LABEL_DUMMY_SWITCHER
+     * 
+     * Before phase 4:
+     *   - None.
+     * 
+     * Before phase 5:
+     *   - None.
+     * 
+     * After phase 5:
+     *   - For center edge labels:
+     *     - LABEL_DUMMY_REMOVER
+     *     
+     *   - For end edge labels:
+     *     - END_LABEL_PROCESSOR
+     */
+    
+    /** additional processor dependencies for graphs with center edge labels. */
+    private static final IntermediateProcessingConfiguration CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
+        new IntermediateProcessingConfiguration(
+                // Before Phase 1
+                null,
+                
+                // Before Phase 2
+                EnumSet.of(LayoutProcessorStrategy.LABEL_DUMMY_INSERTER),
+                
+                // Before Phase 3
+                EnumSet.of(LayoutProcessorStrategy.LABEL_SIDE_SELECTOR,
+                           LayoutProcessorStrategy.LABEL_DUMMY_SWITCHER),
+                
+                // Before Phase 4
+                null,
+                
+                // Before Phase 5
+                null,
+                
+                // After Phase 5
+                EnumSet.of(LayoutProcessorStrategy.LABEL_DUMMY_REMOVER));
+    
+    /** additional processor dependencies for graphs with head or tail edge labels. */
+    private static final IntermediateProcessingConfiguration END_EDGE_LABEL_PROCESSING_ADDITIONS =
+        new IntermediateProcessingConfiguration(
+                // Before Phase 1
+                null,
+                
+                // Before Phase 2
+                null,
+                
+                // Before Phase 3
+                EnumSet.of(LayoutProcessorStrategy.LABEL_SIDE_SELECTOR),
+                
+                // Before Phase 4
+                null,
+                
+                // Before Phase 5
+                null,
+                
+                // After Phase 5
+                EnumSet.of(LayoutProcessorStrategy.END_LABEL_PROCESSOR));
 
     /** factor for layer spacing. */
     private static final double LAYER_SPACE_FAC = 0.2;
@@ -93,7 +172,21 @@ public final class SplineEdgeRouter implements ILayoutPhase {
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
         
-        return null;
+        Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
+        
+        // Basic configuration
+        IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration();
+        
+        // Additional dependencies
+        if (graphProperties.contains(GraphProperties.CENTER_LABELS)) {
+            configuration.addAll(CENTER_EDGE_LABEL_PROCESSING_ADDITIONS);
+        }
+        
+        if (graphProperties.contains(GraphProperties.END_LABELS)) {
+            configuration.addAll(END_EDGE_LABEL_PROCESSING_ADDITIONS);
+        }
+        
+        return configuration;
     }
 
     /**
