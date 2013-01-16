@@ -214,9 +214,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             }
             Boolean hasPorts = context.getProperty(DefaultLayoutConfig.HAS_PORTS);
             if (hasPorts != null && hasPorts) {
-                return SizeConstraint.defaultMinimumSizeWithPorts();
+                return SizeConstraint.minimumSizeWithPorts();
             }
-            return SizeConstraint.defaultMinimumSize();
+            return EnumSet.of(SizeConstraint.MINIMUM_SIZE);
         }
         return SizeConstraint.fixed();
     }

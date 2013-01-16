@@ -44,11 +44,11 @@ import de.cau.cs.kieler.core.util.Maybe;
 public class EffectsWorker extends Thread {
 
     /** list of listeners to executed effects. */
-    private List<IEffectsListener> effectsListeners = new ArrayList<IEffectsListener>();
+    private final List<IEffectsListener> effectsListeners = new ArrayList<IEffectsListener>();
     /** queue of effects that are executed by this worker thread. */
-    private List<IEffect> effects = new ArrayList<IEffect>();
+    private final List<IEffect> effects = new ArrayList<IEffect>();
     /** map of monitor context markers, used to track effects with a progress bar. */
-    private Map<IEffect, MonitorContext> monitorMap = new HashMap<IEffect, MonitorContext>();
+    private final Map<IEffect, MonitorContext> monitorMap = new HashMap<IEffect, MonitorContext>();
     
     /**
      * Default constructor, sets thread name as effects.

@@ -25,6 +25,7 @@ import org.eclipse.emf.common.util.EList;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
@@ -39,9 +40,12 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -1066,11 +1070,26 @@ public final class CompoundKGraphImporter extends KGraphImporter {
 
         // get the size and margin of the node's representative
         KVector size = node.getSize();
-
-        // if currentNode is compound node, resize
-        if (isCompound) {
-
-            nodeLayout.setSize((float) size.x, (float) size.y);
+        nodeLayout.setSize((float) size.x, (float) size.y);
+        
+        // set label positions
+        for (LLabel llabel : node.getLabels()) {
+            KLabel klabel = (KLabel) llabel.getProperty(Properties.ORIGIN);
+            KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+            klabelLayout.applyVector(llabel.getPosition());
+        }
+        
+        // set node insets, if requested
+        if (!isCompound && nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS)
+                .contains(SizeOptions.COMPUTE_INSETS)) {
+            
+            // Apply insets
+            LInsets.Double lInsets = node.getInsets();
+            KInsets kInsets = nodeLayout.getInsets();
+            kInsets.setBottom((float) lInsets.bottom);
+            kInsets.setTop((float) lInsets.top);
+            kInsets.setLeft((float) lInsets.left);
+            kInsets.setRight((float) lInsets.right);
         }
 
         // get position of currentNodes representative in the layered graph
@@ -1080,7 +1099,6 @@ public final class CompoundKGraphImporter extends KGraphImporter {
         // to the parent node for nodes whose originals are not direct children of the layout node -
         // calculate relative position
         if (!(original.getParent() == layeredGraph.getProperty(Properties.ORIGIN))) {
-
             KVector parentRepPos = parentRepresentative.getPosition();
             KVector pointOfOrigin = new KVector(parentRepPos.x, parentRepPos.y);
             pointOfOrigin.x += insetsParent.getLeft();
@@ -1090,9 +1108,7 @@ public final class CompoundKGraphImporter extends KGraphImporter {
             float relativeX = (float) (position.x - pointOfOrigin.x);
             float relativeY = (float) (position.y - pointOfOrigin.y);
             nodeLayout.setPos(relativeX, relativeY);
-
         } else {
-
             // for nodes that are direct children of the layout node, only the border spacing of the
             // drawing and the graph's offset have to be respected
             KVector graphOffset = layeredGraph.getOffset();
@@ -1118,7 +1134,9 @@ public final class CompoundKGraphImporter extends KGraphImporter {
         KShapeLayout nodeLayout = kNode.getData(KShapeLayout.class);
 
         // set port positions
-        if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
+        if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()
+                || !nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT).isEmpty()) {
+            
             for (LPort lport : representative.getPorts()) {
                 Object origin = lport.getProperty(Properties.ORIGIN);
                 if (origin instanceof KPort) {

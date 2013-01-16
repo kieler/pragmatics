@@ -76,7 +76,7 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
         if (request instanceof ReconnectRequest) {
             Object view = ((ReconnectRequest) request).getConnectionEditPart().getModel();
             if (view instanceof View) {
-                Integer id = new Integer(KaomVisualIDRegistry.getVisualID((View) view));
+                int id = KaomVisualIDRegistry.getVisualID((View) view);
                 request.getExtendedData().put(VISUAL_ID_KEY, id);
             }
         }

@@ -44,7 +44,7 @@ public enum GraphProperties {
     NORTH_SOUTH_PORTS,
     /** The graph contains self-loops. */
     SELF_LOOPS,
-    /** The graph contains center edge labels. */
+    /** The graph contains node labels. */
     CENTER_LABELS,
     /** The graph contains head or tail edge labels. */
     END_LABELS;

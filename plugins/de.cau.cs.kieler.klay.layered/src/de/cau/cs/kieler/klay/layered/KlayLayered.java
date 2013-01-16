@@ -579,7 +579,7 @@ public final class KlayLayered {
             
             // Before Phase 4
             EnumSet.of(LayoutProcessorStrategy.NODE_MARGIN_CALCULATOR,
-                    LayoutProcessorStrategy.PORT_POSITION_PROCESSOR),
+                    LayoutProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR),
             
             null, null);
 

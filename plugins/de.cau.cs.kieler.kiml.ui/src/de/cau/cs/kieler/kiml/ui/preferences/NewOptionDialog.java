@@ -346,7 +346,7 @@ public class NewOptionDialog extends Dialog {
                 inputList.add(new SelectionData(optionData));
             }
         }
-        SelectionData[] input = inputList.toArray(new SelectionData[0]);
+        SelectionData[] input = inputList.toArray(new SelectionData[inputList.size()]);
         Arrays.sort(input);
         dialog.setInput(input);
         if (dialog.open() == ListDialog.OK) {

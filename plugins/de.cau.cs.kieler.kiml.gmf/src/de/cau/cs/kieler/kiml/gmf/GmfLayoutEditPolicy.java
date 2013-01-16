@@ -106,8 +106,6 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 GmfLayoutCommand command = new GmfLayoutCommand(hostEditPart.getEditingDomain(),
                         Messages.getString("kiml.ui.5"), //$NON-NLS-1$
                         new EObjectAdapter((View) hostEditPart.getModel()));
-                float xbound = layoutRequest.getXBound();
-                float ybound = layoutRequest.getYBound();
                 float scale = layoutRequest.getScale();
 
                 // retrieve layout data from the request and compute layout data for the command
@@ -124,7 +122,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                                 (ConnectionEditPart) layoutPair.getSecond(), scale);
                     } else if (layoutPair.getFirst() instanceof KLabel) {
                         addLabelLayout(command, (KLabel) layoutPair.getFirst(),
-                                layoutPair.getSecond(), xbound, ybound, scale);
+                                layoutPair.getSecond(), scale);
                     }
                 }
 
@@ -270,7 +268,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      */
     private KVector getRelativeSourcePoint(final KEdge edge) {
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        KNode sourceNode = edge.getSource(), targetNode = edge.getTarget();
+        KNode sourceNode = edge.getSource();
+        KNode targetNode = edge.getTarget();
         KPoint sourcePoint = edgeLayout.getSourcePoint();
         KVector sourceRel = sourcePoint.createVector();
         KShapeLayout sourceLayout = sourceNode.getData(KShapeLayout.class);
@@ -411,8 +410,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      *            scale factor for coordinates
      */
     private void addLabelLayout(final GmfLayoutCommand command, final KLabel klabel,
-            final GraphicalEditPart labelEditPart, final float xbound, final float ybound,
-            final double scale) {
+            final GraphicalEditPart labelEditPart, final double scale) {
         KLabeledGraphElement parent = klabel.getParent();
         KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
         // node and port labels are processed separately

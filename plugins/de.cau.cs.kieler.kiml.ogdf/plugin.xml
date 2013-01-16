@@ -81,6 +81,9 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
          <knownOption
@@ -165,6 +168,9 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
          <knownOption
@@ -221,6 +227,9 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
       </layoutAlgorithm>
@@ -266,6 +275,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
@@ -321,6 +333,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
@@ -412,6 +427,9 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
       </layoutAlgorithm>
@@ -464,6 +482,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
@@ -520,6 +541,9 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
       </layoutAlgorithm>
@@ -556,6 +580,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
@@ -598,6 +625,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">

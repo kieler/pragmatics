@@ -95,8 +95,14 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
+         </knownOption>
+         <knownOption
                default="RIGHT"
                option="de.cau.cs.kieler.direction">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.nodeLabelPlacement">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.cycleBreaking">
@@ -120,7 +126,7 @@
                option="de.cau.cs.kieler.klay.layered.LabelSide">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.portLabelPlacement">
+               option="de.cau.cs.kieler.portLabelPlacement">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.feedBackEdges">
@@ -264,19 +270,6 @@
             description="Method to decide on edge label sides."
             id="de.cau.cs.kieler.klay.layered.LabelSide"
             name="Label Side"
-            type="enum">
-         <dependency
-               option="de.cau.cs.kieler.edgeRouting"
-               value="ORTHOGONAL">
-         </dependency>
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            class="de.cau.cs.kieler.klay.layered.properties.PortLabelPlacement"
-            default="OUTSIDE"
-            description="Decides on a placement method for port labels."
-            id="de.cau.cs.kieler.klay.layered.portLabelPlacement"
-            name="Port Label Placement"
             type="enum">
          <dependency
                option="de.cau.cs.kieler.edgeRouting"

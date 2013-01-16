@@ -32,13 +32,13 @@ public class AdvancedRenderingResizableCompartmentEditPolicy extends ResizableCo
 
     private AdvancedRenderingCompartmentCollapseHandle collapseHandle;
 
-    private IFigure collapseFigure = null;
+    private IFigure collapseFigure;
 
-    private IFigure expandFigure = null;
+    private IFigure expandFigure;
 
-    private Locator collapseExpandLocator = null;
+    private Locator collapseExpandLocator;
     
-    private Dimension collapseExpandSize = null;
+    private Dimension collapseExpandSize;
 
     //Taken from original eclipse code, blame them
     @SuppressWarnings("rawtypes")
