@@ -13,7 +13,7 @@ public class KaomKlighdCombination extends AbstractCombination {
         List<Object> selection = triggerState.getSelectedObjects();
         if ((selection != null && !selection.isEmpty())) {// && selection.forall[typeof(EcoreDomainNavigatorItem).isInstance(it)]) {
             if (selection.get(0) instanceof Entity) {
-                this.schedule(new KlighdUpdateDiagramEffect(selection.get(0)));
+                this.schedule(new KlighdUpdateDiagramEffect(triggerState.getWorkbenchPart().getTitle(), selection.get(0)));
             }
 
         }
