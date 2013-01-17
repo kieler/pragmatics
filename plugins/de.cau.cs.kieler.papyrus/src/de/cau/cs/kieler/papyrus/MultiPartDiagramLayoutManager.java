@@ -18,10 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.OperationHistoryFactory;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.ConnectionLocator;
 import org.eclipse.draw2d.IFigure;
@@ -46,9 +42,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ListCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ResizableCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.gmf.runtime.notation.impl.EdgeImpl;
@@ -61,7 +55,6 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.BiMap;
 
-import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KGraphFactory;
@@ -289,51 +282,6 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
         if (attachedElement != null) {
             staticConfig.setValue(PapyrusProperties.ATTACHED_ELEMENT, topNode,
                     LayoutContext.GRAPH_ELEM, attachedElement);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void applyLayout(final LayoutMapping<IGraphicalEditPart> mapping) {
-        // get a command stack to execute the command
-        CommandStack commandStack = mapping.getProperty(COMMAND_STACK);
-        DiagramEditor diagramEditor = mapping.getProperty(DIAGRAM_EDITOR);
-        if (commandStack == null) {
-            if (diagramEditor != null) {
-                Object adapter = diagramEditor.getAdapter(CommandStack.class);
-                if (adapter instanceof CommandStack) {
-                    commandStack = (CommandStack) adapter;
-                }
-            }
-            if (commandStack == null) {
-                commandStack = mapping.getParentElement().getDiagramEditDomain()
-                        .getDiagramCommandStack();
-            }
-        }
-
-        // execute the command
-        commandStack.execute(mapping.getProperty(LAYOUT_COMMAND));
-
-        // refresh the border items in the diagram
-        if (diagramEditor != null || mapping.getParentElement() != null) {
-            refreshDiagram(diagramEditor, mapping.getParentElement());
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void performUndo(final LayoutMapping<IGraphicalEditPart> mapping) {
-        try {
-            IOperationHistory history = OperationHistoryFactory.getOperationHistory();
-            history.undoOperation(
-                    DiagramCommandStack.getICommand(mapping.getProperty(LAYOUT_COMMAND)),
-                    new NullProgressMonitor(), null);
-        } catch (ExecutionException e) {
-            throw new WrappedException(e);
         }
     }
 
@@ -754,6 +702,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
 
     /**
      * Create a port while building the layout graph.
+     * TODO delete?
      * 
      * @param mapping
      *            the layout mapping
@@ -823,6 +772,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
 
     /**
      * Create a node label while building the layout graph.
+     * TODO delete?
      * 
      * @param mapping
      *            the layout mapping
@@ -890,7 +840,6 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
             if (targetConn instanceof ConnectionEditPart) {
                 ConnectionEditPart connectionEditPart = (ConnectionEditPart) targetConn;
                 mapping.getProperty(CONNECTIONS).add(connectionEditPart);
-                // addConnections(mapping, connectionEditPart);
             }
         }
     }
@@ -1101,7 +1050,6 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
          * a label to be placed as target on a connection, then the label will show up next to the
          * source node in the diagram editor. So correct it here, very ugly.
          */
-        // TODO children don't contain messagenameeditparts!
         for (Object obj : connection.getChildren()) {
             if (obj instanceof LabelEditPart) {
                 LabelEditPart labelEditPart = (LabelEditPart) obj;
@@ -1181,32 +1129,6 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
                     KShapeLayout labelLayout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
                     label.getData().add(labelLayout);
                     mapping.getGraphMap().put(label, labelEditPart);
-                }
-            }
-        }
-    }
-
-    /**
-     * Refreshes all ports in the diagram. This is necessary in order correctly move ports, which
-     * does not work due to GMF bugs. See Eclipse bug #291484.
-     * 
-     * @param editor
-     *            the diagram editor
-     * @param rootPart
-     *            the root edit part
-     */
-    private static void refreshDiagram(final DiagramEditor editor, final IGraphicalEditPart rootPart) {
-        EditPart editPart = rootPart;
-        if (editPart == null) {
-            editPart = editor.getDiagramEditPart();
-        }
-        for (Object obj : editPart.getViewer().getEditPartRegistry().values()) {
-            if (obj instanceof ShapeNodeEditPart) {
-                IFigure figure = ((ShapeNodeEditPart) obj).getFigure();
-                if (figure instanceof BorderedNodeFigure) {
-                    IFigure portContainer = ((BorderedNodeFigure) figure).getBorderItemContainer();
-                    portContainer.invalidate();
-                    portContainer.validate();
                 }
             }
         }
