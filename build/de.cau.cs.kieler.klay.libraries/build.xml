@@ -36,8 +36,8 @@
     <!-- Some more properties that configure the behaviour of the build. -->
     <property name="outputFolder" location="target" />
     <property name="outputFolder.temp" location="${outputFolder}/temp" />
-    <property name="outputFile.withoutdeps" location="${outputFolder}/klay_${timestamp}.jar" />
-    <property name="outputFile.withdeps" location="${outputFolder}/klay_emf_${timestamp}.jar" />
+    <property name="outputFile.withoutdeps" location="${outputFolder}/klay_nightly_${timestamp}.jar" />
+    <property name="outputFile.withdeps" location="${outputFolder}/klay-emf_nightly_${timestamp}.jar" />
     <property name="licenseFile" location="${productFolder}/epl-v10.html" />
     
     
