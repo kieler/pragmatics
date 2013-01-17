@@ -155,7 +155,8 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
             if (part.getClass().getSimpleName().equals("UmlSequenceDiagramForMultiEditor")) {
                 return buildSequenceLayoutGraph(part, diagramPart);
             }
-            return super.buildLayoutGraph(part, diagramPart);
+            LayoutMapping<IGraphicalEditPart> mapping = super.buildLayoutGraph(part, diagramPart);
+            return mapping;
 
         } else {
             return super.buildLayoutGraph(workbenchPart, diagramPart);
@@ -197,7 +198,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
         }
 
         // create the mapping
-        LayoutMapping<IGraphicalEditPart> mapping = buildLayoutGraph(layoutRootPart);
+        LayoutMapping<IGraphicalEditPart> mapping = buildSequenceLayoutGraph(layoutRootPart);
 
         // set optional diagram editor
         if (diagramEditor != null) {
@@ -218,7 +219,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
      *            the layout root edit part
      * @return a layout graph mapping
      */
-    protected LayoutMapping<IGraphicalEditPart> buildLayoutGraph(
+    protected LayoutMapping<IGraphicalEditPart> buildSequenceLayoutGraph(
             final IGraphicalEditPart layoutRootPart) {
         LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>(this);
         mapping.setProperty(CONNECTIONS, new LinkedList<ConnectionEditPart>());
@@ -249,9 +250,9 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
         mapping.setLayoutGraph(topNode);
 
         // traverse the children of the layout root part
-        buildLayoutGraphRecursively(mapping, layoutRootPart, topNode, layoutRootPart);
+        buildSequenceLayoutGraphRecursively(mapping, layoutRootPart, topNode, layoutRootPart);
         // transform all connections in the selected area
-        processConnections(mapping);
+        processSequenceConnections(mapping);
 
         // copy annotations from KShapeLayout to VolatileLayoutConfig
         copyAnnotations(mapping, topNode);
@@ -358,7 +359,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
      * @param currentEditPart
      *            the currently analyzed edit part
      */
-    private void buildLayoutGraphRecursively(final LayoutMapping<IGraphicalEditPart> mapping,
+    private void buildSequenceLayoutGraphRecursively(final LayoutMapping<IGraphicalEditPart> mapping,
             final IGraphicalEditPart parentEditPart, final KNode parentLayoutNode,
             final IGraphicalEditPart currentEditPart) {
         Maybe<KInsets> kinsets = new Maybe<KInsets>();
@@ -391,7 +392,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
                     }
 
                     if (compExp) {
-                        buildLayoutGraphRecursively(mapping, parentEditPart, parentLayoutNode,
+                        buildSequenceLayoutGraphRecursively(mapping, parentEditPart, parentLayoutNode,
                                 compartment);
                     }
                 }
@@ -487,7 +488,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
 
         // process the child as new current edit part
         if (nodeType.equals("2001")) {
-            buildLayoutGraphRecursively(mapping, nodeEditPart, childLayoutNode, nodeEditPart);
+            buildSequenceLayoutGraphRecursively(mapping, nodeEditPart, childLayoutNode, nodeEditPart);
         } else if (nodeType.equals("3001")) {
             // handle subnodes like execution specifications
             List<SequenceExecution> executions = new LinkedList<SequenceExecution>();
@@ -901,7 +902,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
      * @param mapping
      *            the layout mapping
      */
-    protected void processConnections(final LayoutMapping<IGraphicalEditPart> mapping) {
+    protected void processSequenceConnections(final LayoutMapping<IGraphicalEditPart> mapping) {
         reference2EdgeMap = new HashMap<EReference, KEdge>();
         for (ConnectionEditPart connection : mapping.getProperty(CONNECTIONS)) {
             boolean isOppositeEdge = false;
