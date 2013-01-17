@@ -341,7 +341,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         }
 
         // create the mapping
-        LayoutMapping<IGraphicalEditPart> mapping = buildLayoutGraph(layoutRootPart);
+        LayoutMapping<IGraphicalEditPart> mapping = buildLayoutLayoutGraph(layoutRootPart);
 
         // set optional diagram editor
         if (diagramEditor != null) {
@@ -362,7 +362,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      *            the layout root edit part
      * @return a layout graph mapping
      */
-    protected LayoutMapping<IGraphicalEditPart> buildLayoutGraph(
+    protected LayoutMapping<IGraphicalEditPart> buildLayoutLayoutGraph(
             final IGraphicalEditPart layoutRootPart) {
         LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>(this);
         mapping.setProperty(CONNECTIONS, new LinkedList<ConnectionEditPart>());
