@@ -55,7 +55,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class NetworkSimplexLayerer implements ILayoutPhase {
+public final class NetworkSimplexLayerer implements ILayoutPhase {
     
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
@@ -888,43 +888,6 @@ public class NetworkSimplexLayerer implements ILayoutPhase {
                     node = toDetermine.getTarget().getNode();
                 } else {
                     node = toDetermine.getSource().getNode();
-                }
-            }
-        }
-    }
-
-    /**
-     * Helper method for the network simplex layerer. It determines the cut value of each tree edge,
-     * which is defined as follows: If the edge is deleted, the spanning tree breaks into two
-     * connected components, the head component containing the target node of the edge and the tail
-     * component containing the source node of the edge. The cut value is the sum of the weights of
-     * all edges going from the tail to the head component, including the tree edge itself, minus
-     * the sum of the weights of all edges from the head to the tail component.
-     * 
-     * @deprecated This method realizes a naive approach to compute the cut values with a
-     *             performance of O(|E|^2). The method {@code cutvalues()} computes the cut values
-     *             in linear time and therefore, should be used instead.
-     * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#cutvalue cutvalue
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#cutvalues() cutvalues()
-     */
-    @SuppressWarnings("unused")
-    private void naiveCutvalues() {
-
-        boolean source, target;
-        for (LEdge edge : edges) {
-            if (treeEdge[edge.id]) {
-                cutvalue[edge.id] = 1;
-                for (LEdge cur : edges) {
-                    if (!treeEdge[cur.id]) {
-                        source = isInHead(cur.getSource().getNode(), edge);
-                        target = isInHead(cur.getTarget().getNode(), edge);
-                        if (target && !source) {
-                            cutvalue[edge.id]++;
-                        } else if (source && !target) {
-                            cutvalue[edge.id]--;
-                        }
-                    }
                 }
             }
         }

@@ -18,7 +18,7 @@ package de.cau.cs.kieler.kiml.options;
  * {@link LayoutOptions#EDGE_LABEL_PLACEMENT}.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  * @author msp
  */
 public enum EdgeLabelPlacement {
@@ -31,15 +31,5 @@ public enum EdgeLabelPlacement {
     HEAD,
     /** label is at the tail (source) of the edge. */
     TAIL;
-    
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static EdgeLabelPlacement valueOf(final int i) {
-        return values()[i];
-    }
     
 }

@@ -56,41 +56,42 @@ public class KiVi {
     /**
      * Worker Thread that distributes incoming TriggerStates.
      */
-    private CombinationsWorker combinationsWorker = new CombinationsWorker();
+    private final CombinationsWorker combinationsWorker = new CombinationsWorker();
     /**
      * Worker Thread that controls the execution of effects.
      */
-    private EffectsWorker effectsWorker = new EffectsWorker();
+    private final EffectsWorker effectsWorker = new EffectsWorker();
 
     /**
      * Storage for all Trigger instances in form of a map to guarantee there's only one Trigger for
      * a Trigger class. Similar to singleton pattern.
      */
-    private Map<Class<?>, ITrigger> triggers = new HashMap<Class<?>, ITrigger>();
+    private final Map<Class<?>, ITrigger> triggers = new HashMap<Class<?>, ITrigger>();
 
     /**
      * Storage for all TriggerState instances in form of a map to guarantee there's only one
      * TriggerState for a TriggerState class. Similar to singleton pattern.
      */
-    private Map<Class<?>, ITriggerState> triggerStates = new HashMap<Class<?>, ITriggerState>();
+    private final Map<Class<?>, ITriggerState> triggerStates = new HashMap<Class<?>, ITriggerState>();
 
     /**
      * List of all available contributions registered via the extension point.
      */
-    private List<CombinationDescriptor> availableCombinations = new ArrayList<CombinationDescriptor>();
+    private final List<CombinationDescriptor> availableCombinations
+            = new ArrayList<CombinationDescriptor>();
 
     /**
      * List of all combinations that have been seen by KiVi, hence also combos that have been
      * programmatically used via the registerCombination method.
      */
-    private Collection<ICombination> combinations = new HashSet<ICombination>();
+    private final Collection<ICombination> combinations = new HashSet<ICombination>();
 
     /**
      * A mapping of ITriggerState classes to active Combinations that listen to that TriggerStates.
      * Is updated when combinations are de-/activated.
      */
-    private Multimap<Class<? extends ITriggerState>, ICombination> triggerStates2Combinations = 
-        HashMultimap.create();
+    private final Multimap<Class<? extends ITriggerState>, ICombination> triggerStates2Combinations
+            = HashMultimap.create();
 
     /**
      * View Management can be disabled at a whole.

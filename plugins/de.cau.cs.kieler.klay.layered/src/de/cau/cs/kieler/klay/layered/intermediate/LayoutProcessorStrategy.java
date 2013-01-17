@@ -45,8 +45,6 @@ public enum LayoutProcessorStrategy {
     COMMENT_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
-    /** Increases node size for the placement of end labels. */
-    LABEL_NODE_SIZE_ADJUSTER,
     
     // Before Phase 2
     
@@ -63,8 +61,6 @@ public enum LayoutProcessorStrategy {
     HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR,
     /** Removes layering constraint dummy edges from compound graphs. */
     COMPOUND_DUMMY_EDGE_REMOVER,
-    /** Decides, on which side of an edge the edge labels should be placed. */ 
-    LABEL_SIDE_SELECTOR,
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
@@ -89,8 +85,10 @@ public enum LayoutProcessorStrategy {
     IN_LAYER_CONSTRAINT_PROCESSOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
     HYPEREDGE_DUMMY_MERGER,
-    /** Sets the positions of ports. */
-    PORT_POSITION_PROCESSOR,
+    /** Decides, on which side of an edge the edge labels should be placed. */ 
+    LABEL_SIDE_SELECTOR,
+    /** Sets the positions of ports and labels, and sets the node sizes. */
+    LABEL_AND_NODE_SIZE_PROCESSOR,
     /** Calculates the margins of nodes according to the sizes of ports and labels. */
     NODE_MARGIN_CALCULATOR,
     /** Inserts dummy nodes and edges to achieve free drawing space for compound node borders. */
@@ -162,6 +160,12 @@ public enum LayoutProcessorStrategy {
         case DOWN_DIR_POSTPROCESSOR:
         case DOWN_DIR_PREPROCESSOR:
             return new GraphTransformer(GraphTransformer.Mode.TRANSPOSE);
+        
+        case EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER:
+            return new EdgeAndLayerConstraintEdgeReverser();
+            
+        case END_LABEL_PROCESSOR:
+            return new EndLabelProcessor();
             
         case HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR:
             return new HierarchicalPortConstraintProcessor();
@@ -184,15 +188,27 @@ public enum LayoutProcessorStrategy {
         case IN_LAYER_CONSTRAINT_PROCESSOR:
             return new InLayerConstraintProcessor();
         
+        case LABEL_AND_NODE_SIZE_PROCESSOR:
+            return new LabelAndNodeSizeProcessor();
+            
+        case LABEL_DUMMY_INSERTER:
+            return new LabelDummyInserter();
+            
+        case LABEL_DUMMY_REMOVER:
+            return new LabelDummyRemover();
+            
+        case LABEL_DUMMY_SWITCHER:
+            return new LabelDummySwitcher();
+            
+        case LABEL_SIDE_SELECTOR:
+            return new LabelSideSelector();
+        
         case LAYER_CONSTRAINT_PROCESSOR:
             return new LayerConstraintProcessor();
             
         case LEFT_DIR_POSTPROCESSOR:
         case LEFT_DIR_PREPROCESSOR:
             return new GraphTransformer(GraphTransformer.Mode.MIRROR);
-        
-        case EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER:
-            return new EdgeAndLayerConstraintEdgeReverser();
             
         case LONG_EDGE_JOINER:
             return new LongEdgeJoiner();
@@ -215,9 +231,6 @@ public enum LayoutProcessorStrategy {
         case PORT_LIST_SORTER:
             return new PortListSorter();
         
-        case PORT_POSITION_PROCESSOR:
-            return new PortPositionProcessor();
-        
         case PORT_SIDE_PROCESSOR:
             return new PortSideProcessor();
         
@@ -233,24 +246,10 @@ public enum LayoutProcessorStrategy {
         case UP_DIR_POSTPROCESSOR:
         case UP_DIR_PREPROCESSOR:
             return new GraphTransformer(GraphTransformer.Mode.MIRROR_AND_TRANSPOSE);
-            
-        case LABEL_DUMMY_INSERTER:
-            return new LabelDummyInserter();
-            
-        case LABEL_DUMMY_REMOVER:
-            return new LabelDummyRemover();
-            
-        case LABEL_DUMMY_SWITCHER:
-            return new LabelDummySwitcher();
-            
-        case END_LABEL_PROCESSOR:
-            return new EndLabelProcessor();
-            
-        case LABEL_SIDE_SELECTOR:
-            return new LabelSideSelector();
         
         default:
-            return null;
+            throw new IllegalArgumentException(
+                    "No implementation is available for the layout processor " + this.toString());
         }
     }
 }

@@ -21,11 +21,16 @@ package de.cau.cs.kieler.papyrus.sequence.sorter;
  * @kieler.rating proposed yellow grh
  */
 public enum LifelineSortingStrategy {
-    
+
     /** Sort the lifelines according to their x-coordinates. */
     INTERACTIVE,
     /** Sort the lifelines according to the layers of the associated messages. */
-    LAYER_BASED;
+    LAYER_BASED,
+    /**
+     * Sort the lifelines according to McAllisters solution for the linear arrangement problem that
+     * minimizes the total length of messages.
+     */
+    SHORT_MESSAGES;
 
     /**
      * Returns the enumeration value related to the given ordinal.

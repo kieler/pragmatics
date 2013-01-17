@@ -67,6 +67,7 @@ import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Path;
+import org.eclipse.swt.graphics.Pattern;
 import org.eclipse.swt.graphics.Transform;
 
 /**
@@ -79,7 +80,7 @@ import org.eclipse.swt.graphics.Transform;
  * 
  * A lot of this may also be duplicated in GEF - the eclipse Graphical Editor Framework
  * 
- * @author Lance Good
+ * @author Lance Good, chsch
  */
 public class SWTGraphics2D extends Graphics2D {
     private static final int DEFAULT_FONT_SIZE = 12;
@@ -92,11 +93,13 @@ public class SWTGraphics2D extends Graphics2D {
      */
     protected static int CACHE_COUNT = 0;
     /** Map from font names to Fonts. */
-    protected static HashMap FONT_CACHE = new HashMap();
+    protected static HashMap<String, org.eclipse.swt.graphics.Font> FONT_CACHE
+                    = new HashMap<String, org.eclipse.swt.graphics.Font>();
     /** Map from awt colors to swt colors. */
-    protected static HashMap COLOR_CACHE = new HashMap();
+    protected static HashMap<Color, org.eclipse.swt.graphics.Color> COLOR_CACHE
+                    = new HashMap<Color, org.eclipse.swt.graphics.Color>();
     /** Map from awt shapess to swt Paths. */
-    protected static HashMap SHAPE_CACHE = new HashMap();
+    protected static HashMap<Shape, Path> SHAPE_CACHE = new HashMap<Shape, Path>();
     /** Buffer used to extract the graphics device. */
     protected static BufferedImage BUFFER = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 
@@ -117,6 +120,10 @@ public class SWTGraphics2D extends Graphics2D {
     protected org.eclipse.swt.graphics.Font curFont;
     /** The current stroke width to use when drawing lines. */
     protected double lineWidth = 1.0;
+    /** The current stroke style to use when drawing lines. */
+    protected int lineStyle = SWT.LINE_SOLID;
+    /** The current stroke ending style to use when drawing lines. */
+    protected int lineCap = SWT.CAP_FLAT;
 
     /**
      * Constructor for SWTGraphics2D.
@@ -158,6 +165,7 @@ public class SWTGraphics2D extends Graphics2D {
 
         org.eclipse.swt.graphics.Rectangle clip = gc.getClipping();
         clip = clip.intersection(SWT_RECT);
+        origClip = new Rectangle(clip.x, clip.y, clip.width, clip.height);
 
         gc.setClipping(clip);
     }
@@ -166,6 +174,8 @@ public class SWTGraphics2D extends Graphics2D {
     public void setClip(final int x, final int y, final int width, final int height) {
         TEMP_RECT.setRect(x, y, width, height);
         SWTShapeManager.transform(TEMP_RECT, transform);
+        origClip = TEMP_RECT.getBounds2D();
+
         SWTShapeManager.awtToSWT(TEMP_RECT, SWT_RECT);
 
         gc.setClipping(SWT_RECT);
@@ -184,6 +194,7 @@ public class SWTGraphics2D extends Graphics2D {
 
         org.eclipse.swt.graphics.Rectangle clip = gc.getClipping();
         clip = clip.intersection(SWT_RECT);
+        origClip = new Rectangle(clip.x, clip.y, clip.width, clip.height);
 
         gc.setClipping(SWT_RECT);
     }
@@ -200,6 +211,8 @@ public class SWTGraphics2D extends Graphics2D {
         } else {
             final Rectangle2D clipBds = clip.getBounds2D();
             SWTShapeManager.transform(clipBds, transform);
+            origClip = clipBds;
+            
             SWTShapeManager.awtToSWT(clipBds, SWT_RECT);
 
             gc.setClipping(SWT_RECT);
@@ -225,6 +238,47 @@ public class SWTGraphics2D extends Graphics2D {
      */
     public GraphicsConfiguration getDeviceConfiguration() {
         return ((Graphics2D) BUFFER.getGraphics()).getDeviceConfiguration();
+    }
+    
+    private Rectangle2D origClip = null; 
+    
+    /**
+     * This method widens the currently set clipping mask. It supposed to be called after changing
+     * the line width, if necessary.<br>
+     * <br>
+     * Rational: At least on OSX GC#setClipping(...) appears to treat the pixel line forming the
+     * bounding box multiplied with the currently set line width that has been corrected by the zoom
+     * factor as part of the clipped area. Hence, for some non-empty rectangle 'someRect' the
+     * following code
+     * 
+     * <pre>
+     * gc.drawRect(someRect);
+     * gc.setClipping(someRect);
+     * gc.drawRect(someRect);
+     * </pre>
+     * 
+     * results in two differently sized rectangles on the screen with the second one not covering
+     * the first one completely (which I however expected). Thus the method takes the last
+     * configured clipping area (which will also be kept in mind in the @code{setClip(...)} &&
+     * @code{clip} methods) and increases that bounding box by a surrounding line of the
+     * (zoom factor correct) line width. 
+     * 
+     * @author chsch
+     */
+    public void updateClip() {
+        if (origClip == null) {
+            final org.eclipse.swt.graphics.Rectangle rect = gc.getClipping();
+            origClip = new Rectangle(rect.x, rect.y, rect.width, rect.height);            
+        }
+        int lineWidth = getTransformedLineWidth();
+        SWTShapeManager.awtToSWT(origClip, SWT_RECT);
+
+        SWT_RECT.x -= lineWidth;
+        SWT_RECT.y -= lineWidth;
+        SWT_RECT.width += 2*lineWidth;
+        SWT_RECT.height += 2*lineWidth;
+        gc.setClipping(SWT_RECT);
+        
     }
 
     // //////////////
@@ -273,6 +327,28 @@ public class SWTGraphics2D extends Graphics2D {
         gc.setForeground(foregroundColor);
     }
 
+    /**
+     * Sets the foreground {@link Pattern} to the provided one.
+     * 
+     * @author chsch
+     * 
+     * @param pattern
+     *            new foreground pattern
+     */
+    public void setPattern(final org.eclipse.swt.graphics.Pattern pattern) {
+        gc.setForegroundPattern(pattern);
+    }
+
+    /**
+     * Returns the currently set (foreground) pattern.
+     * 
+     * @author chsch
+     * @return the currently set (foreground) pattern
+     */
+    public Pattern getPattern() {
+        return gc.getForegroundPattern();
+    }
+    
     /** {@inheritDoc} */
     public void setBackground(final Color c) {
         org.eclipse.swt.graphics.Color cachedColor =
@@ -303,6 +379,27 @@ public class SWTGraphics2D extends Graphics2D {
         return awtColor;
     }
 
+    /**
+     * Sets the background {@link Pattern} to the provided one.
+     * 
+     * @author chsch
+     * @param pattern
+     *            new background pattern
+     */
+    public void setBackgoundPattern(final org.eclipse.swt.graphics.Pattern pattern) {
+        gc.setBackgroundPattern(pattern);
+    }
+
+    /**
+     * Returns the currently set background pattern.
+     * 
+     * @author chsch
+     * @return the currently set background pattern
+     */
+    public Pattern getBackgroundPattern() {
+        return gc.getBackgroundPattern();
+    }
+    
     // //////////////
     // FONT METHODS
     // //////////////
@@ -549,7 +646,12 @@ public class SWTGraphics2D extends Graphics2D {
         fillRect(x, y, width, height);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * 
+     * @deprecated Else branch doesn't perform the required floating point 2 integer (awtToSwt)
+     *             conversion! (chsch)
+     */
     public void draw(final Shape s) {
         if (s instanceof Rectangle2D) {
             final Rectangle2D r2 = (Rectangle2D) s;
@@ -575,7 +677,12 @@ public class SWTGraphics2D extends Graphics2D {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * 
+     * @deprecated Else branch doesn't perform the required floating point 2 integer (awtToSwt)
+     *             conversion! (chsch)
+     */
     public void fill(final Shape s) {
         if (s instanceof Rectangle2D) {
             final Rectangle2D r2 = (Rectangle2D) s;
@@ -600,6 +707,7 @@ public class SWTGraphics2D extends Graphics2D {
             drawPath(p);
         }
     }
+    
 
     /** {@inheritDoc} */
     public void drawPolyline(final int[] xPoints, final int[] yPoints, final int nPoints) {
@@ -612,8 +720,11 @@ public class SWTGraphics2D extends Graphics2D {
         }
 
         gc.setLineWidth(getTransformedLineWidth());
+        gc.setLineStyle(this.lineStyle);
+        gc.setLineCap(this.lineCap);
         gc.drawPolyline(ptArray);
     }
+    
 
     /**
      * Draw a polyline from the specified double array of points.
@@ -624,8 +735,11 @@ public class SWTGraphics2D extends Graphics2D {
     public void drawPolyline(final double[] pts) {
         final int[] intPts = SWTShapeManager.transform(pts, transform);
         gc.setLineWidth(getTransformedLineWidth());
+        gc.setLineStyle(this.lineStyle);
+        gc.setLineCap(this.lineCap);
         gc.drawPolyline(intPts);
     }
+    
 
     /** {@inheritDoc} */
     public void drawPolygon(final int[] xPoints, final int[] yPoints, final int nPoints) {
@@ -637,19 +751,44 @@ public class SWTGraphics2D extends Graphics2D {
             ptArray[2 * i + 1] = TEMP_POINT.y;
         }
         gc.setLineWidth(getTransformedLineWidth());
-        gc.drawPolygon(ptArray);
+        gc.setLineStyle(this.lineStyle);
+        gc.setLineCap(this.lineCap);
+       gc.drawPolygon(ptArray);
     }
+    
 
     /**
-     * Fill a polyline from the specified double array of points.
+     * Draw a polygon from the specified double array of points.<br>
+     * Derivative of {@link #drawPolyline(double[])}.
+     * 
+     * @author chsch
+     * 
+     * @param pts
+     *            double array of points
+     */
+    public void drawPolygon(final double[] pts) {
+        final int[] intPts = SWTShapeManager.transform(pts, transform);
+        gc.setLineWidth(getTransformedLineWidth());
+        gc.setLineStyle(this.lineStyle);
+        gc.setLineCap(this.lineCap);
+        gc.drawPolygon(intPts);
+    }
+
+
+    /**
+     * Fill a polygon from the specified double array of points.
      * 
      * @param pts
      *            double array of points
      */
     public void fillPolygon(final double[] pts) {
         final int[] intPts = SWTShapeManager.transform(pts, transform);
+        gc.setLineWidth(getTransformedLineWidth());
+        gc.setLineStyle(this.lineStyle);
+        gc.setLineCap(this.lineCap);
         gc.fillPolygon(intPts);
     }
+    
 
     /** {@inheritDoc} */
     public void fillPolygon(final int[] xPoints, final int[] yPoints, final int nPoints) {
@@ -657,8 +796,8 @@ public class SWTGraphics2D extends Graphics2D {
         for (int i = 0; i < nPoints; i++) {
             TEMP_POINT.setLocation(xPoints[i], yPoints[i]);
             transform.transform(TEMP_POINT, TEMP_POINT);
-            ptArray[2 * i] = xPoints[i];
-            ptArray[2 * i + 1] = yPoints[i];
+            ptArray[2 * i] = TEMP_POINT.x;
+            ptArray[2 * i + 1] = TEMP_POINT.y;
         }
 
         gc.fillPolygon(ptArray);
@@ -693,6 +832,8 @@ public class SWTGraphics2D extends Graphics2D {
         final double transformedY2 = (int) TEMP_POINT.getY();
 
         gc.setLineWidth(getTransformedLineWidth());
+        gc.setLineStyle(this.lineStyle);
+        gc.setLineCap(this.lineCap);
         gc.drawLine((int) (transformedX1 + 0.5), (int) (transformedY1 + 0.5),
                 (int) (transformedX2 + 0.5), (int) (transformedY2 + 0.5));
     }
@@ -898,6 +1039,8 @@ public class SWTGraphics2D extends Graphics2D {
         SWTShapeManager.awtToSWT(TEMP_RECT, SWT_RECT);
 
         gc.setLineWidth(getTransformedLineWidth());
+        gc.setLineStyle(this.lineStyle);
+        gc.setLineCap(this.lineCap);
         gc.drawRectangle(SWT_RECT);
     }
 
@@ -969,6 +1112,8 @@ public class SWTGraphics2D extends Graphics2D {
         final double tarcHeight = TEMP_RECT.getHeight();
 
         gc.setLineWidth(getTransformedLineWidth());
+        gc.setLineStyle(this.lineStyle);
+        gc.setLineCap(this.lineCap);
         gc.drawRoundRectangle((int) (tx + 0.5), (int) (ty + 0.5), (int) (twidth + 0.5),
                 (int) (theight + 0.5), (int) (tarcWidth + 0.5), (int) (tarcHeight + 0.5));
     }
@@ -1013,6 +1158,8 @@ public class SWTGraphics2D extends Graphics2D {
         final double tarcHeight = TEMP_RECT.getHeight();
 
         gc.setLineWidth(getTransformedLineWidth());
+        gc.setLineStyle(this.lineStyle);
+        gc.setLineCap(this.lineCap);
         gc.fillRoundRectangle((int) (tx + 0.5), (int) (ty + 0.5), (int) (twidth + 0.5),
                 (int) (theight + 0.5), (int) (tarcWidth + 0.5), (int) (tarcHeight + 0.5));
     }
@@ -1041,6 +1188,8 @@ public class SWTGraphics2D extends Graphics2D {
         SWTShapeManager.transform(TEMP_RECT, transform);
 
         gc.setLineWidth(getTransformedLineWidth());
+        gc.setLineStyle(this.lineStyle);
+        gc.setLineCap(this.lineCap);
         gc.drawOval((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
                 (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5));
     }
@@ -1115,6 +1264,8 @@ public class SWTGraphics2D extends Graphics2D {
         SWTShapeManager.transform(TEMP_RECT, transform);
 
         gc.setLineWidth(getTransformedLineWidth());
+        gc.setLineStyle(this.lineStyle);
+        gc.setLineCap(this.lineCap);
         gc.drawArc((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
                 (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5),
                 (int) (startAngle + 0.5), (int) (extent + 0.5));
@@ -1123,7 +1274,7 @@ public class SWTGraphics2D extends Graphics2D {
     /** {@inheritDoc} */
     public void fillArc(final int x, final int y, final int width, final int height,
             final int startAngle, final int extent) {
-        drawArc((double) x, (double) y, (double) width, (double) height, (double) startAngle,
+        fillArc((double) x, (double) y, (double) width, (double) height, (double) startAngle,
                 (double) extent);
     }
 
@@ -1148,7 +1299,7 @@ public class SWTGraphics2D extends Graphics2D {
         TEMP_RECT.setRect(x, y, width, height);
         SWTShapeManager.transform(TEMP_RECT, transform);
 
-        gc.drawArc((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
+        gc.fillArc((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
                 (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5),
                 (int) (startAngle + 0.5), (int) (startAngle + extent + 0.5));
     }
@@ -1156,11 +1307,15 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Draws the provided path.
      * 
+     * @deprecated (chsch) Method doesn't handle the floating point 2 integer (awtToSwt) conversion! 
+     * 
      * @param p
      *            path to draw
      */
     public void drawPath(final Path p) {
         gc.setLineWidth((int) lineWidth);
+        gc.setLineStyle(this.lineStyle);
+        gc.setLineCap(this.lineCap);
         gc.setTransform(swtTransform);
         // FIXME this is a workaround for Eclipse Bug 335769
         gc.getGCData().state |= 1 << 9;
@@ -1170,6 +1325,8 @@ public class SWTGraphics2D extends Graphics2D {
 
     /**
      * Draws a filled version of the provided path.
+     * 
+     * @deprecated (chsch) Method doesn't handle the floating point 2 integer (awtToSwt) conversion! 
      * 
      * @param p
      *            path to draw filled
@@ -1267,6 +1424,59 @@ public class SWTGraphics2D extends Graphics2D {
         return (int) (Math.max(TEMP_LINE_RECT.getWidth(), 1) + 0.5);
     }
 
+    /**
+     * Sets the line width to use when drawing shapes. <br>
+     * Must be one of the constants {@link SWT#LINE_SOLID}, {@link SWT#LINE_DASH},
+     * {@link SWT#LINE_DOT}, {@link SWT#LINE_DASHDOT} or {@link SWT#LINE_DASHDOTDOT}.
+     * 
+     * @author chsch
+     * 
+     * @param lineStyle
+     *            style of lines when drawing shapes
+     */
+    public void setLineStyle(final int lineStyle) {
+        this.lineStyle = lineStyle;
+    }
+
+    /**
+     * Returns the line width to use when drawing shapes.<br>
+     * Result is supposed to be one of the constants {@link SWT#LINE_SOLID}, {@link SWT#LINE_DASH},
+     * {@link SWT#LINE_DOT}, {@link SWT#LINE_DASHDOT} or {@link SWT#LINE_DASHDOTDOT}.
+     * 
+     * @author chsch
+     * 
+     * @return style of lines when drawing shapes
+     */
+    public int getLineStyle() {
+        return this.lineStyle;
+    }
+    
+    /**
+     * Sets the line width to use when drawing shapes. <br>
+     * Must be one of the constants {@link SWT#CAP_FLAT}, {@link SWT#CAP_ROUND}, or
+     * {@link SWT#CAP_SQUARE}.
+     * 
+     * @author chsch
+     * 
+     * @param lineCap
+     *            cap style of lines when drawing strokes
+     */
+    public void setLineCap(final int lineCap) {
+        this.lineCap = lineCap;
+    }
+
+    /**
+     * Returns the line width to use when drawing shapes. Result is supposed to be one of the
+     * constants {@link SWT#CAP_FLAT}, {@link SWT#CAP_ROUND}, or {@link SWT#CAP_SQUARE}.
+     * 
+     * @author chsch
+     * 
+     * @return cap style of lines when drawing strokes
+     */
+    public int getLineCap() {
+        return this.lineCap;
+    }
+    
     /**
      * Fills a gradient rectangle of in the direction specified.
      * 
@@ -1434,7 +1644,7 @@ public class SWTGraphics2D extends Graphics2D {
      * 
      * @see java.awt.Graphics2D#setRenderingHints(Map)
      */
-    public void setRenderingHints(final Map hints) {
+    public void setRenderingHints(final Map<?, ?> hints) {
     }
 
     /**
@@ -1442,7 +1652,7 @@ public class SWTGraphics2D extends Graphics2D {
      * 
      * @see java.awt.Graphics2D#addRenderingHints(Map)
      */
-    public void addRenderingHints(final Map hints) {
+    public void addRenderingHints(final Map<?, ?> hints) {
     }
 
     /**
@@ -1636,18 +1846,20 @@ public class SWTGraphics2D extends Graphics2D {
         CACHE_COUNT--;
 
         if (CACHE_COUNT == 0) {
-            for (final Iterator i = FONT_CACHE.values().iterator(); i.hasNext();) {
+            for (final Iterator<org.eclipse.swt.graphics.Font> i = FONT_CACHE.values().iterator(); i
+                    .hasNext();) {
                 final org.eclipse.swt.graphics.Font font = (org.eclipse.swt.graphics.Font) i.next();
                 font.dispose();
             }
             FONT_CACHE.clear();
-            for (final Iterator i = COLOR_CACHE.values().iterator(); i.hasNext();) {
-                final org.eclipse.swt.graphics.Color color =
-                        (org.eclipse.swt.graphics.Color) i.next();
+            for (final Iterator<org.eclipse.swt.graphics.Color> i = COLOR_CACHE.values().iterator(); i
+                    .hasNext();) {
+                final org.eclipse.swt.graphics.Color color = (org.eclipse.swt.graphics.Color) i
+                        .next();
                 color.dispose();
             }
             COLOR_CACHE.clear();
-            for (final Iterator i = SHAPE_CACHE.values().iterator(); i.hasNext();) {
+            for (final Iterator<Path> i = SHAPE_CACHE.values().iterator(); i.hasNext();) {
                 final Path path = (Path) i.next();
                 path.dispose();
             }

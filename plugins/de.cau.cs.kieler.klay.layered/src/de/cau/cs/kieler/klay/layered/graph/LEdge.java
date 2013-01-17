@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
@@ -30,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class LEdge extends LGraphElement {
+public final class LEdge extends LGraphElement {
 
     /** the serial version UID. */
     private static final long serialVersionUID = 1429497419118554817L;
@@ -67,7 +69,8 @@ public class LEdge extends LGraphElement {
     /**
      * Reverses the edge, including its bend points. Negates the {@code REVERSED} property. (an
      * edge that was marked as being reversed is then unmarked, and the other way around) This
-     * does not change any properties on the connected ports.
+     * does not change any properties on the connected ports. End labels are reversed as well (
+     * {@code HEAD} labels become {@code TAIL} labels and vice versa).
      * 
      * @param layeredGraph
      *         the layered graph
@@ -92,6 +95,17 @@ public class LEdge extends LGraphElement {
                     PortType.INPUT, PortSide.WEST));
         } else {
             setTarget(oldSource);
+        }
+        
+        // Switch end labels
+        for (LLabel label : labels) {
+            EdgeLabelPlacement labelPlacement = label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+            
+            if (labelPlacement == EdgeLabelPlacement.TAIL) {
+                label.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, EdgeLabelPlacement.HEAD);
+            } else if (labelPlacement == EdgeLabelPlacement.HEAD) {
+                label.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, EdgeLabelPlacement.TAIL);
+            }
         }
         
         boolean reversed = getProperty(Properties.REVERSED);

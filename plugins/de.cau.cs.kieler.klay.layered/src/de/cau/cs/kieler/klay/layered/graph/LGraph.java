@@ -34,7 +34,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class LGraph extends LGraphElement implements Iterable<Layer> {
+public final class LGraph extends LGraphElement implements Iterable<Layer> {
     
     /** the serial version UID. */
     private static final long serialVersionUID = -8006835373897072852L;

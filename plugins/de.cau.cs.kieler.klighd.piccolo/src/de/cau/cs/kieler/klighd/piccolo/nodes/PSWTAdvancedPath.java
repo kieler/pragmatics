@@ -1,15 +1,31 @@
+// SUPPRESS CHECKSTYLE NEXT Header
 /*
- * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ * Copyright (c) 2008-2011, Piccolo2D project, http://piccolo2d.org
+ * Copyright (c) 1998-2008, University of Maryland
+ * All rights reserved.
  *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
- * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
- *   + Department of Computer Science
- *     + Real-Time and Embedded Systems Group
- * 
- * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
+ * Redistribution and use in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list of conditions
+ * and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions
+ * and the following disclaimer in the documentation and/or other materials provided with the
+ * distribution.
+ *
+ * None of the name of the University of Maryland, the name of the Piccolo2D project, or the names of its
+ * contributors may be used to endorse or promote products derived from this software without specific
+ * prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package de.cau.cs.kieler.klighd.piccolo.nodes;
 
@@ -28,7 +44,6 @@ import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
@@ -46,11 +61,13 @@ import edu.umd.cs.piccolox.swt.SWTShapeManager;
 
 /**
  * The {@code PSWTAdvancedPath} is a refinement of the Piccolo {@code PSWTPath}. Provides the
- * possibility to adjust the line width and the line style and can represent polygons.<br />
- * <br />
- * Most of the implementation is copied from {@code PSWTPath}.
+ * possibility to adjust the line width and the line style and can represent polygons.
+ * <p>
+ * Most of the implementation is copied from {@code edu.umd.cs.piccolox.swt.PSWTPath},
+ * therefore the original copyright header is retained.
+ * </p>
  * 
- * @author mri
+ * @author mri, chsch
  */
 public class PSWTAdvancedPath extends PNode {
 
@@ -92,6 +109,8 @@ public class PSWTAdvancedPath extends PNode {
     private double lineWidth = 1.0;
     /** the line style for this path. */
     private int lineStyle = SWT.LINE_SOLID;
+    /** the line cap style for this path. */
+    private int lineCap = SWT.CAP_FLAT;
 
     private boolean updatingBoundsFromPath;
     private Shape origShape;
@@ -433,9 +452,8 @@ public class PSWTAdvancedPath extends PNode {
         SWTGraphics2D g2 = (SWTGraphics2D) paintContext.getGraphics();
         Paint p = getPaint();
         g2.setLineWidth(lineWidth);
-        GC graphicsContext = g2.getGraphicsContext();
-        int oldLineStyle = graphicsContext.getLineStyle();
-        graphicsContext.setLineStyle(lineStyle);
+        g2.setLineStyle(lineStyle);
+        g2.setLineCap(lineCap);
 
         if (internalXForm != null) {
             g2.transform(internalXForm);
@@ -454,12 +472,14 @@ public class PSWTAdvancedPath extends PNode {
         if (inverseXForm != null) {
             g2.transform(inverseXForm);
         }
-        graphicsContext.setLineStyle(oldLineStyle);
         g2.setLineWidth(1.0);
+        g2.setLineStyle(SWT.LINE_SOLID);
+        g2.setLineCap(SWT.CAP_FLAT);
     }
 
     // CHECKSTYLEOFF MagicNumber
 
+    @SuppressWarnings("deprecation")
     private void drawShape(final SWTGraphics2D g2) {
         final double lw = g2.getLineWidth();
         if (shape instanceof Rectangle2D) {
@@ -474,11 +494,19 @@ public class PSWTAdvancedPath extends PNode {
         } else if (shape instanceof RoundRectangle2D) {
             g2.drawRoundRect(shapePts[0] + lw / 2, shapePts[1] + lw / 2, shapePts[2] - lw,
                     shapePts[3] - lw, shapePts[4], shapePts[5]);
+        } else if (isPolygon) {
+            g2.drawPolygon(shapePts);
         } else {
+            // chsch: executing this branch should be avoided under all circumstances
+            //  as it most likely results in calling SWTGraphics2D#drawPath(Path)
+            //  that in turn is a kind of fall back method, which doesn't correctly handle
+            //  the floating point 2 integer (awtToSwt) conversion! 
             g2.draw(shape);
         }
+        
     }
 
+    @SuppressWarnings("deprecation")
     private void fillShape(final SWTGraphics2D g2) {
         final double lw = g2.getLineWidth();
         if (shape instanceof Rectangle2D) {
@@ -493,12 +521,14 @@ public class PSWTAdvancedPath extends PNode {
         } else if (shape instanceof RoundRectangle2D) {
             g2.fillRoundRect(shapePts[0] + lw / 2, shapePts[1] + lw / 2, shapePts[2] - lw,
                     shapePts[3] - lw, shapePts[4], shapePts[5]);
+        } else if (isPolygon) {
+            g2.fillPolygon(shapePts);
         } else {
-            if (isPolygon) {
-                g2.fillPolygon(shapePts);
-            } else {
-                g2.fill(shape);
-            }
+            // chsch: executing this branch should be avoided under all circumstances
+            //  as it most likely results in calling SWTGraphics2D#fillPath(Path)
+            //  that in turn is a kind of fall back method, which doesn't correctly handle
+            //  the floating point 2 integer (awtToSwt) conversion! 
+            g2.fill(shape);
         }
     }
 

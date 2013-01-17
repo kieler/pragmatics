@@ -23,6 +23,9 @@ import java.util.EnumSet;
  * 
  * <p><i>Note:</i> Layout algorithms may only support a subset of these options.</p>
  *
+ * @see SizeOptions
+ * @kieler.design proposed by msp
+ * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  * @author msp
  * @author cds
  */
@@ -38,7 +41,8 @@ public enum SizeConstraint {
     /**
      * Ports labels are taken into account when determining the size of nodes. Depending on where
      * the labels are positioned the node will be made large enough to avoid overlaps and to try
-     * to place labels in as unambiguous a way as possible.
+     * to place labels in as unambiguous a way as possible. Setting this option doesn't make any
+     * sense if the {@link #PORTS} option is not set as well.
      */
     PORT_LABELS,
     
@@ -51,24 +55,7 @@ public enum SizeConstraint {
      * If set, a node's size will be at least the minimum size set on it. If no minimum size is set,
      * the behaviour depends on whether the {@link #DEFAULT_MINIMUM_SIZE} constraint is set as well.
      */
-    MINIMUM_SIZE,
-    
-    /**
-     * If no minimum size is set on an element, the minimum size options are assumed to be some
-     * default value.
-     */
-    DEFAULT_MINIMUM_SIZE;
-    
-    
-    /**
-     * Returns the enumeration value related to the given ordinal.
-     * 
-     * @param i ordinal value
-     * @return the related enumeration value
-     */
-    public static SizeConstraint valueOf(final int i) {
-        return values()[i];
-    }
+    MINIMUM_SIZE;
     
     
     /**
@@ -81,22 +68,23 @@ public enum SizeConstraint {
     }
     
     /**
-     * Returns a set containing the common combination of {@link #MINIMUM_SIZE} and
-     * {@link #DEFAULT_MINIMUM_SIZE}.
-     * 
-     * @return set with default minimum size constraint combination.
-     */
-    public static EnumSet<SizeConstraint> defaultMinimumSize() {
-        return EnumSet.of(MINIMUM_SIZE, DEFAULT_MINIMUM_SIZE);
-    }
-    
-    /**
      * Returns a set containing the common combination of {@link #MINIMUM_SIZE},
      * {@link #DEFAULT_MINIMUM_SIZE}, and {@link #PORTS}.
      * 
      * @return set with default minimum size constraint combination with ports.
      */
-    public static EnumSet<SizeConstraint> defaultMinimumSizeWithPorts() {
-        return EnumSet.of(PORTS, MINIMUM_SIZE, DEFAULT_MINIMUM_SIZE);
+    public static EnumSet<SizeConstraint> minimumSizeWithPorts() {
+        return EnumSet.of(PORTS, MINIMUM_SIZE);
     }
+    
+    /**
+     * Returns a set containing all options defined in this enumeration, effectively giving
+     * the layout algorithm as much freedom as possible in determining the node size.
+     * 
+     * @return set with all available options.
+     */
+    public static EnumSet<SizeConstraint> free() {
+        return EnumSet.allOf(SizeConstraint.class);
+    }
+    
 }

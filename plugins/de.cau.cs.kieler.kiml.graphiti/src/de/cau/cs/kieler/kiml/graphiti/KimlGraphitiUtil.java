@@ -187,7 +187,6 @@ public final class KimlGraphitiUtil {
         KPort targetPort = (KPort) graphMap.inverse().get(targetAnchor);
         if (targetPort != null) {
             edge.setTargetPort(targetPort);
-            targetPort.getEdges().add(edge);
             targetNode = targetPort.getNode();
         } else {
             targetNode = (KNode) graphMap.inverse().get(targetAnchor.getParent());
@@ -200,7 +199,6 @@ public final class KimlGraphitiUtil {
         KPort sourcePort = (KPort) graphMap.inverse().get(sourceAnchor);
         if (sourcePort != null) {
             edge.setSourcePort(sourcePort);
-            sourcePort.getEdges().add(edge);
             sourceNode = sourcePort.getNode();
         } else {
             sourceNode = (KNode) graphMap.inverse().get(sourceAnchor.getParent());

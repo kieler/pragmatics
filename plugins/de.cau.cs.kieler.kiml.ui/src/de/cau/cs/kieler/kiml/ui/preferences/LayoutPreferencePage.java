@@ -464,7 +464,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
             Object oldValue = infoService.getOptionValue(entry.getElementId(),
                     entry.getOptionData().getId());
             Object newValue = entry.getValue();
-            if (oldValue == null && newValue != null || !oldValue.equals(newValue)) {
+            if (oldValue == null && newValue != null
+                    || oldValue != null && !oldValue.equals(newValue)) {
                 String preference = EclipseLayoutInfoService.getPreferenceName(
                         entry.getElementId(), entry.getOptionData().getId());
                 if (newValue == null) {

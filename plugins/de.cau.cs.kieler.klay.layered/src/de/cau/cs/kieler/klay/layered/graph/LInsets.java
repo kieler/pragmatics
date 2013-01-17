@@ -31,7 +31,7 @@ public class LInsets {
      * 
      * @author cds
      */
-    public static class Double extends LInsets {
+    public static final class Double extends LInsets {
         /**
          * The inset from the top.
          */
@@ -75,6 +75,23 @@ public class LInsets {
             this.right = right;
         }
         
+        
+        /**
+         * Sets all four insets at once.
+         * 
+         * @param newTop the inset from the top.
+         * @param newLeft the inset from the left.
+         * @param newBottom the inset from the bottom.
+         * @param newRight the inset from the right.
+         */
+        public void set(final double newTop, final double newLeft, final double newBottom,
+                final double newRight) {
+            
+            this.top = newTop;
+            this.left = newLeft;
+            this.bottom = newBottom;
+            this.right = newRight;
+        }
         
         /**
          * {@inheritDoc}

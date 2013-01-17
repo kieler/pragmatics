@@ -17,16 +17,20 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -34,6 +38,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Edge routing implementation that creates orthogonal bend points. Inspired by
@@ -63,7 +68,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class OrthogonalRoutingGenerator {
+public final class OrthogonalRoutingGenerator {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Routing Strategies
@@ -163,11 +168,13 @@ public class OrthogonalRoutingGenerator {
                     LPort target = edge.getTarget();
                     double targety = target.getNode().getPosition().y + target.getPosition().y
                             + target.getAnchor().y;
-                    if (Math.abs(sourcey - targety) > edgeSpacing / STRAIGHT_TOLERANCE) {
+                    if (Math.abs(sourcey - targety) > TOLERANCE) {
                         KVector point1 = new KVector(x, sourcey);
                         edge.getBendPoints().add(point1);
+                        addJunctionPoint(edge, hyperNode, point1, true);
                         KVector point2 = new KVector(x, targety);
                         edge.getBendPoints().add(point2);
+                        addJunctionPoint(edge, hyperNode, point2, true);
                     }
                 }
             }
@@ -220,11 +227,13 @@ public class OrthogonalRoutingGenerator {
                     LPort target = edge.getTarget();
                     double targetx = target.getNode().getPosition().x + target.getPosition().x
                             + target.getAnchor().x;
-                    if (Math.abs(sourcex - targetx) > edgeSpacing / STRAIGHT_TOLERANCE) {
+                    if (Math.abs(sourcex - targetx) > TOLERANCE) {
                         KVector point1 = new KVector(sourcex, y);
                         edge.getBendPoints().add(point1);
+                        addJunctionPoint(edge, hyperNode, point1, false);
                         KVector point2 = new KVector(targetx, y);
                         edge.getBendPoints().add(point2);
+                        addJunctionPoint(edge, hyperNode, point2, false);
                     }
                 }
             }
@@ -277,11 +286,13 @@ public class OrthogonalRoutingGenerator {
                     LPort target = edge.getTarget();
                     double targetx = target.getNode().getPosition().x + target.getPosition().x
                             + target.getAnchor().x;
-                    if (Math.abs(sourcex - targetx) > edgeSpacing / STRAIGHT_TOLERANCE) {
+                    if (Math.abs(sourcex - targetx) > TOLERANCE) {
                         KVector point1 = new KVector(sourcex, y);
+                        addJunctionPoint(edge, hyperNode, point1, false);
                         edge.getBendPoints().add(point1);
                         KVector point2 = new KVector(targetx, y);
                         edge.getBendPoints().add(point2);
+                        addJunctionPoint(edge, hyperNode, point2, false);
                     }
                 }
             }
@@ -307,9 +318,9 @@ public class OrthogonalRoutingGenerator {
         /** vertical ending position of this hypernode. */
         private double end = Double.NaN;
         /** positions of line segments going to the preceding layer. */
-        private List<Double> sourcePosis = new LinkedList<Double>();
+        private LinkedList<Double> sourcePosis = new LinkedList<Double>();
         /** positions of line segments going to the next layer. */
-        private List<Double> targetPosis = new LinkedList<Double>();
+        private LinkedList<Double> targetPosis = new LinkedList<Double>();
         /** list of outgoing dependencies. */
         private List<Dependency> outgoing = new LinkedList<Dependency>();
         /** sum of the weights of outgoing dependencies. */
@@ -450,11 +461,11 @@ public class OrthogonalRoutingGenerator {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Constants and Variables
-    
+
+    /** differences below this tolerance value are treated as zero. */
+    private static final double TOLERANCE = 1e-3;
     /** factor for edge spacing used to determine the conflict threshold. */
     private static final double CONFL_THRESH_FACTOR = 0.2;
-    /** denominator for edge spacing to determine when an edge shall be drawn without bends. */
-    private static final int STRAIGHT_TOLERANCE = 256;
     /** weight penalty for conflicts of horizontal line segments. */
     private static final int CONFLICT_PENALTY = 16;
     
@@ -534,7 +545,7 @@ public class OrthogonalRoutingGenerator {
         }
         
         // break cycles
-        breakCycles(hyperNodes);
+        breakCycles(hyperNodes, layeredGraph.getProperty(Properties.RANDOM));
 
         // write the acyclic dependency graph to an output file
         if (debugPrefix != null) {
@@ -548,9 +559,8 @@ public class OrthogonalRoutingGenerator {
         // set bend points with appropriate coordinates
         int rankCount = -1;
         for (HyperNode node : hyperNodes) {
-            // Hypernodes that are just straight lines don't take up a slot and don't need
-            // bend points
-            if (node.start == node.end) {
+            // Hypernodes that are just straight lines don't take up a slot and don't need bend points
+            if (Math.abs(node.start - node.end) < TOLERANCE) {
                 continue;
             }
             
@@ -604,7 +614,7 @@ public class OrthogonalRoutingGenerator {
         
         // check if at least one of the two nodes is just a straight line; those don't
         // create dependencies since they don't take up a slot
-        if (hn1.start == hn1.end || hn2.start == hn2.end) {
+        if (Math.abs(hn1.start - hn1.end) < TOLERANCE || Math.abs(hn2.start - hn2.end) < TOLERANCE) {
             return;
         }
         
@@ -702,8 +712,9 @@ public class OrthogonalRoutingGenerator {
      * weight are exactly the two-cycles of the hypernode structure.
      * 
      * @param nodes list of hypernodes
+     * @param random random number generator
      */
-    private static void breakCycles(final List<HyperNode> nodes) {
+    private static void breakCycles(final List<HyperNode> nodes, final Random random) {
         LinkedList<HyperNode> sources = new LinkedList<HyperNode>();
         LinkedList<HyperNode> sinks = new LinkedList<HyperNode>();
         
@@ -735,7 +746,8 @@ public class OrthogonalRoutingGenerator {
         Set<HyperNode> unprocessed = new TreeSet<HyperNode>(nodes);
         int markBase = nodes.size();
         int nextRight = markBase - 1, nextLeft = markBase + 1;
-        
+        List<HyperNode> maxNodes = new ArrayList<HyperNode>();
+
         while (!unprocessed.isEmpty()) {
             while (!sinks.isEmpty()) {
                 HyperNode sink = sinks.removeFirst();
@@ -752,19 +764,24 @@ public class OrthogonalRoutingGenerator {
             }
             
             int maxOutflow = Integer.MIN_VALUE;
-            HyperNode maxNode = null;
             for (HyperNode node : unprocessed) {
                 int outflow = node.outweight - node.inweight;
-                if (outflow > maxOutflow) {
-                    maxOutflow = outflow;
-                    maxNode = node;
+                if (outflow >= maxOutflow) {
+                    if (outflow > maxOutflow) {
+                        maxNodes.clear();
+                        maxOutflow = outflow;
+                    }
+                    maxNodes.add(node);
                 }
             }
             
-            if (maxNode != null) {
+            if (!maxNodes.isEmpty()) {
+                // if there are multiple hypernodes with maximal outflow, select one randomly
+                HyperNode maxNode = maxNodes.get(random.nextInt(maxNodes.size()));
                 unprocessed.remove(maxNode);
                 maxNode.mark = nextLeft++;
                 updateNeighbors(maxNode, sources, sinks);
+                maxNodes.clear();
             }
         }
     
@@ -925,6 +942,7 @@ public class OrthogonalRoutingGenerator {
         while (listIter.hasNext()) {
             double next = listIter.next().floatValue();
             if (next == value) {
+                // an exactly equal value is already present in the list
                 return;
             } else if (next > value) {
                 listIter.previous();
@@ -932,6 +950,36 @@ public class OrthogonalRoutingGenerator {
             }
         }
         listIter.add(Double.valueOf(value));
+    }
+    
+    /**
+     * Add a junction point to the given edge if necessary.
+     * 
+     * @param edge an edge
+     * @param hyperNode the corresponding hypernode
+     * @param pos the bend point position
+     * @param vertical {@code true} if the connecting segment is vertical, {@code false} if it
+     *          is horizontal
+     */
+    private static void addJunctionPoint(final LEdge edge, final HyperNode hyperNode,
+            final KVector pos, final boolean vertical) {
+        double p = vertical ? pos.y : pos.x;
+        // the bend point is somewhere between the start and end position of the hypernode
+        if (p > hyperNode.start && p < hyperNode.end
+                || !hyperNode.sourcePosis.isEmpty() && !hyperNode.targetPosis.isEmpty()
+                // the bend point is at the start and joins another edge at the same position
+                && (Math.abs(p - hyperNode.sourcePosis.getFirst()) < TOLERANCE
+                    && Math.abs(p - hyperNode.targetPosis.getFirst()) < TOLERANCE
+                // the bend point is at the end and joins another edge at the same position
+                    || Math.abs(p - hyperNode.sourcePosis.getLast()) < TOLERANCE
+                    && Math.abs(p - hyperNode.targetPosis.getLast()) < TOLERANCE)) {
+            KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+            if (junctionPoints == null) {
+                junctionPoints = new KVectorChain();
+                edge.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+            }
+            junctionPoints.add(new KVector(pos));
+        }
     }
     
     

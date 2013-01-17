@@ -1,17 +1,14 @@
-/*
- * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+// SUPPRESS CHECKSTYLE NEXT Header
+/******************************************************************************
+ * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
- * Copyright 2009 by
- * + Christian-Albrechts-University of Kiel
- *   + Department of Computer Science
- *     + Real-Time and Embedded Systems Group
- * 
- * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
- * 
- *****************************************************************************/
+ * Contributors:
+ *    IBM Corporation - initial API and implementation 
+ ****************************************************************************/
 package de.cau.cs.kieler.karma.util.expandcollapsebutton;
 
 import java.util.ArrayList;
@@ -26,6 +23,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editpolicies.ResizableCompartmentEditP
 /**
  * A resizable editpolicy for resizable compartments.
  * 
+ * @author melaasar
  * @author ckru
  * @kieler.design proposed by msp
  * @kieler.ignored
@@ -34,13 +32,13 @@ public class AdvancedRenderingResizableCompartmentEditPolicy extends ResizableCo
 
     private AdvancedRenderingCompartmentCollapseHandle collapseHandle;
 
-    private IFigure collapseFigure = null;
+    private IFigure collapseFigure;
 
-    private IFigure expandFigure = null;
+    private IFigure expandFigure;
 
-    private Locator collapseExpandLocator = null;
+    private Locator collapseExpandLocator;
     
-    private Dimension collapseExpandSize = null;
+    private Dimension collapseExpandSize;
 
     //Taken from original eclipse code, blame them
     @SuppressWarnings("rawtypes")

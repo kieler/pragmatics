@@ -40,16 +40,18 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * between the sides UP and DOWN based on different strategies selected by a layout option.</p>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a properly layered graph.</dd>
+ *   <dt>Precondition:</dt><dd>a properly layered graph with fixed port orders.</dd>
  *   <dt>Postcondition:</dt><dd>the placement side is chosen for each label, and each label is
  *     annotated accordingly.</dd>
- *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
+ *   <dt>Slots:</dt><dd>Before phase 4.</dd>
+ *   <dt>Same-slot dependencies:</dt><dd>{@link HyperedgeDummyMerger}</dd>
+ *                                   <dd>{@link InLayerConstraintProcessor}</dd>
+ *                                   <dd>{@link SubgraphOrderingProcessor}</dd>
  * </dl>
  *
  * @author jjc
  */
-public class LabelSideSelector implements ILayoutProcessor {
+public final class LabelSideSelector implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}

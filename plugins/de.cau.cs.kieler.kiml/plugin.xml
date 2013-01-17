@@ -64,6 +64,9 @@
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.sizeOptions">
+         </knownOption>
+         <knownOption
                default="1.3"
                option="de.cau.cs.kieler.aspectRatio">
          </knownOption>
@@ -207,9 +210,9 @@
             variance="0">
       </layoutOption>
       <layoutOption
-            appliesTo="edges"
+            appliesTo="edges,nodes"
             default="-1.0"
-            description="Factor for spacing of edge labels to the respective edge"
+            description="Spacing between labels and other objects."
             id="de.cau.cs.kieler.labelSpacing"
             lowerBound="0"
             name="Label Spacing"
@@ -283,6 +286,15 @@
             type="enumset">
       </layoutOption>
       <layoutOption
+            appliesTo="nodes"
+            class="de.cau.cs.kieler.kiml.options.SizeOptions"
+            default="DEFAULT_MINIMUM_SIZE"
+            description="Options modifying how the size constraints set on a node are interpreted."
+            id="de.cau.cs.kieler.sizeOptions"
+            name="Size Options"
+            type="enumset">
+      </layoutOption>
+      <layoutOption
             appliesTo="parents"
             default="-1.0"
             description="Overall setting for the minimal amount of space to be left between objects"
@@ -319,6 +331,25 @@
            name="Edge Label Placement (programmatic)"
            type="enum"
            variance="0">
+     </layoutOption>
+     <layoutOption
+           appliesTo="nodes"
+           advanced="true"
+           class="de.cau.cs.kieler.kiml.options.NodeLabelPlacement"
+           default=""
+           description="Hints for where node labels are to be placed; if empty, the node label's position is not modified."
+           id="de.cau.cs.kieler.nodeLabelPlacement"
+           name="Node Label Placement"
+           type="enumset">
+     </layoutOption>
+     <layoutOption
+           appliesTo="nodes"
+           class="de.cau.cs.kieler.kiml.options.PortLabelPlacement"
+           default="OUTSIDE"
+           description="Decides on a placement method for port labels."
+           id="de.cau.cs.kieler.portLabelPlacement"
+           name="Port Label Placement"
+           type="enum">
      </layoutOption>
      <layoutOption
            advanced="true"

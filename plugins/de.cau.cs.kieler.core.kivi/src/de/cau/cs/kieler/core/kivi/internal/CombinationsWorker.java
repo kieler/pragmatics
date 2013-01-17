@@ -38,7 +38,7 @@ public class CombinationsWorker extends Thread {
     /**
      * Queue of triggers containing events that need to be handled.
      */
-    private BlockingQueue<ITriggerState> triggerStates = new LinkedBlockingQueue<ITriggerState>();
+    private final BlockingQueue<ITriggerState> triggerStates = new LinkedBlockingQueue<ITriggerState>();
 
     /**
      * Default constructor, sets thread name as combinations.

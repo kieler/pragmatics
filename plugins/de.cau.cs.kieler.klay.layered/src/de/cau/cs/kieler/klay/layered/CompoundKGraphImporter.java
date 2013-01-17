@@ -25,6 +25,7 @@ import org.eclipse.emf.common.util.EList;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
@@ -39,9 +40,12 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -59,7 +63,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class CompoundKGraphImporter extends KGraphImporter {
+public final class CompoundKGraphImporter extends KGraphImporter {
 
     /**
      * Maximal depth of the imported graph - to be updated during import.
@@ -931,6 +935,12 @@ public class CompoundKGraphImporter extends KGraphImporter {
         // and respect the graph's offset also
         KVector graphOffset = layeredGraph.getOffset();
         offsetBorderSpacingVec.add(graphOffset);
+        
+        // consider junction points
+        KVectorChain junctionPoints = ledge.getProperty(LayoutOptions.JUNCTION_POINTS);
+        if (junctionPoints != null) {
+            junctionPoints.translate(offsetBorderSpacingVec);
+        }
 
         bendPoints.translate(offsetBorderSpacingVec);
         if (!(kSourceNode.getParent() == (KNode) layeredGraph.getProperty(Properties.ORIGIN))
@@ -944,6 +954,9 @@ public class CompoundKGraphImporter extends KGraphImporter {
             }
             bendpointOffset.negate();
             bendPoints.translate(bendpointOffset);
+            if (junctionPoints != null) {
+                junctionPoints.translate(bendpointOffset);
+            }
         }
 
         // calculate starting point of edge
@@ -968,8 +981,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
         KVector difference = getAbsolute(kTargetNode).sub(getAbsolute(kSourceNode));
         if (!descendantEdge) {
             // Mind the fact that getAbsolute calculates absolute coordinates plus insets. We need
-            // the
-            // difference from the absolute sourceNode position without insets.
+            // the difference from the absolute sourceNode position without insets.
             KVector sourceInsets = new KVector(kSourceNodeLayout.getInsets().getLeft(),
                     kSourceNodeLayout.getInsets().getTop());
             difference.add(sourceInsets);
@@ -1006,6 +1018,9 @@ public class CompoundKGraphImporter extends KGraphImporter {
 
         // transfer the bend points and end points to the edge layout
         edgeLayout.applyVectorChain(bendPoints);
+        
+        // transfer the junction points to the edge layout
+        edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
 
         // set spline option
         if (splinesActive) {
@@ -1055,11 +1070,26 @@ public class CompoundKGraphImporter extends KGraphImporter {
 
         // get the size and margin of the node's representative
         KVector size = node.getSize();
-
-        // if currentNode is compound node, resize
-        if (isCompound) {
-
-            nodeLayout.setSize((float) size.x, (float) size.y);
+        nodeLayout.setSize((float) size.x, (float) size.y);
+        
+        // set label positions
+        for (LLabel llabel : node.getLabels()) {
+            KLabel klabel = (KLabel) llabel.getProperty(Properties.ORIGIN);
+            KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+            klabelLayout.applyVector(llabel.getPosition());
+        }
+        
+        // set node insets, if requested
+        if (!isCompound && nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS)
+                .contains(SizeOptions.COMPUTE_INSETS)) {
+            
+            // Apply insets
+            LInsets.Double lInsets = node.getInsets();
+            KInsets kInsets = nodeLayout.getInsets();
+            kInsets.setBottom((float) lInsets.bottom);
+            kInsets.setTop((float) lInsets.top);
+            kInsets.setLeft((float) lInsets.left);
+            kInsets.setRight((float) lInsets.right);
         }
 
         // get position of currentNodes representative in the layered graph
@@ -1069,7 +1099,6 @@ public class CompoundKGraphImporter extends KGraphImporter {
         // to the parent node for nodes whose originals are not direct children of the layout node -
         // calculate relative position
         if (!(original.getParent() == layeredGraph.getProperty(Properties.ORIGIN))) {
-
             KVector parentRepPos = parentRepresentative.getPosition();
             KVector pointOfOrigin = new KVector(parentRepPos.x, parentRepPos.y);
             pointOfOrigin.x += insetsParent.getLeft();
@@ -1079,9 +1108,7 @@ public class CompoundKGraphImporter extends KGraphImporter {
             float relativeX = (float) (position.x - pointOfOrigin.x);
             float relativeY = (float) (position.y - pointOfOrigin.y);
             nodeLayout.setPos(relativeX, relativeY);
-
         } else {
-
             // for nodes that are direct children of the layout node, only the border spacing of the
             // drawing and the graph's offset have to be respected
             KVector graphOffset = layeredGraph.getOffset();
@@ -1107,7 +1134,9 @@ public class CompoundKGraphImporter extends KGraphImporter {
         KShapeLayout nodeLayout = kNode.getData(KShapeLayout.class);
 
         // set port positions
-        if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
+        if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()
+                || !nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT).isEmpty()) {
+            
             for (LPort lport : representative.getPorts()) {
                 Object origin = lport.getProperty(Properties.ORIGIN);
                 if (origin instanceof KPort) {

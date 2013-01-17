@@ -998,12 +998,10 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
                 edge.setSource(sourceNode);
                 if (sourcePort != null) {
                     edge.setSourcePort(sourcePort);
-                    sourcePort.getEdges().add(edge);
                 }
                 edge.setTarget(targetNode);
                 if (targetPort != null) {
                     edge.setTargetPort(targetPort);
-                    targetPort.getEdges().add(edge);
                 }
 
                 if (!graphMap.containsValue(connection)) {

@@ -34,7 +34,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * does.
  * 
  * <p>This processor is only necessary for node placers that do not respect the
- * {@link de.cau.cs.kieler.klay.layered.properties.Properties#EXT_PORT_RATIO_OR_POSITION}
+ * {@link de.cau.cs.kieler.klay.layered.properties.Properties#PORT_RATIO_OR_POSITION}
  * property themselves.</p>
  * 
  * <dl>
@@ -52,7 +52,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class HierarchicalPortPositionProcessor implements ILayoutProcessor {
+public final class HierarchicalPortPositionProcessor implements ILayoutProcessor {
     
     /**
      * {@inheritDoc}
@@ -105,7 +105,7 @@ public class HierarchicalPortPositionProcessor implements ILayoutProcessor {
                 continue;
             }
             
-            double finalYCoordinate = node.getProperty(Properties.EXT_PORT_RATIO_OR_POSITION);
+            double finalYCoordinate = node.getProperty(Properties.PORT_RATIO_OR_POSITION);
             
             if (portConstraints == PortConstraints.FIXED_RATIO) {
                 // finalYCoordinate is a ratio that must be multiplied with the graph's height

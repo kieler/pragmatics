@@ -19,6 +19,7 @@ import java.util.ListIterator;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -45,7 +46,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class LongEdgeJoiner implements ILayoutProcessor {
+public final class LongEdgeJoiner implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
@@ -91,10 +92,26 @@ public class LongEdgeJoiner implements ILayoutProcessor {
                             survivingBendPoints.add(new KVector(bendPoint));
                         }
                         
-                        //Join their labels
+                        // Join their labels
                         List<LLabel> survivingLabels = survivingEdge.getLabels();
                         for (LLabel label: droppedEdge.getLabels()) {
                             survivingLabels.add(label);
+                        }
+                        
+                        // Join their junction points
+                        KVectorChain survivingJunctionPoints = survivingEdge.getProperty(
+                                LayoutOptions.JUNCTION_POINTS);
+                        KVectorChain droppedJunctionsPoints = droppedEdge.getProperty(
+                                LayoutOptions.JUNCTION_POINTS);
+                        if (droppedJunctionsPoints != null) {
+                            if (survivingJunctionPoints == null) {
+                                survivingJunctionPoints = new KVectorChain();
+                                survivingEdge.setProperty(LayoutOptions.JUNCTION_POINTS,
+                                        survivingJunctionPoints);
+                            }
+                            for (KVector jp : droppedJunctionsPoints) {
+                                survivingJunctionPoints.add(new KVector(jp));
+                            }
                         }
                     }
                     

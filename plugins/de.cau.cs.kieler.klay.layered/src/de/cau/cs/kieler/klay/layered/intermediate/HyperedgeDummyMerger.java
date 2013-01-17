@@ -48,7 +48,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class HyperedgeDummyMerger implements ILayoutProcessor {
+public final class HyperedgeDummyMerger implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
@@ -141,7 +141,8 @@ public class HyperedgeDummyMerger implements ILayoutProcessor {
         for (LPort port : mergeSource.getPorts()) {
             if (!port.getIncomingEdges().isEmpty()) {
                 // Use an array of edges to avoid concurrent modification exceptions
-                LEdge[] edgeArray = port.getIncomingEdges().toArray(new LEdge[0]);
+                LEdge[] edgeArray = port.getIncomingEdges().toArray(
+                        new LEdge[port.getIncomingEdges().size()]);
                 
                 for (LEdge edge : edgeArray) {
                     edge.setTarget(mergeTargetInputPort);
@@ -150,7 +151,8 @@ public class HyperedgeDummyMerger implements ILayoutProcessor {
             
             if (!port.getOutgoingEdges().isEmpty()) {
                 // Use an array of edges to avoid concurrent modification exceptions
-                LEdge[] edgeArray = port.getOutgoingEdges().toArray(new LEdge[0]);
+                LEdge[] edgeArray = port.getOutgoingEdges().toArray(
+                        new LEdge[port.getOutgoingEdges().size()]);
                 
                 for (LEdge edge : edgeArray) {
                     edge.setSource(mergeTargetOutputPort);

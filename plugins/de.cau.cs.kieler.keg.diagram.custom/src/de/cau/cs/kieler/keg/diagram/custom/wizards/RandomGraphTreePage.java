@@ -67,49 +67,59 @@ public class RandomGraphTreePage extends WizardPage {
     // CHECKSTYLEOFF MagicNumber
     private void createOptions(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NULL);
-        GridData gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
-        composite.setLayoutData(gridData);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        layout.verticalSpacing = 9;
-        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+        composite.setLayout(new GridLayout(2, false));
+        
+        GridData gridData;
+        
         // add NUMBER_OF_NODES option
         Label label = new Label(composite, SWT.NULL);
         label.setText(Messages.RandomGraphTreePage_number_of_nodes_caption);
+        
         final Spinner nodesSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(nodesSpinner, Messages.RandomGraphTreePage_number_of_nodes_help);
+        nodesSpinner.setToolTipText(Messages.RandomGraphTreePage_number_of_nodes_help);
         nodesSpinner.setValues(numberOfNodes, 1, Integer.MAX_VALUE, 0, 1, 10);
+        
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
         nodesSpinner.setLayoutData(gridData);
+        
         nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 numberOfNodes = nodesSpinner.getSelection();
             }
         });
+        
         // add MAX_DEGREE option
         label = new Label(composite, SWT.NULL);
         label.setText(Messages.RandomGraphTreePage_max_degree_caption);
+        
         final Spinner degreeSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(degreeSpinner, Messages.RandomGraphTreePage_max_degree_help);
+        degreeSpinner.setToolTipText(Messages.RandomGraphTreePage_max_degree_help);
         degreeSpinner.setValues(maxDegree, 1, Integer.MAX_VALUE, 0, 1, 10);
+        
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
         degreeSpinner.setLayoutData(gridData);
+        
         degreeSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 maxDegree = degreeSpinner.getSelection();
             }
         });
+        
         // add MAX_WIDTH option
         label = new Label(composite, SWT.NULL);
         label.setText(Messages.RandomGraphTreePage_max_width_caption);
+        
         final Spinner widthSpinner = new Spinner(composite, SWT.BORDER | SWT.SINGLE);
-        Util.addHelp(widthSpinner, Messages.RandomGraphTreePage_max_width_help);
+        widthSpinner.setToolTipText(Messages.RandomGraphTreePage_max_width_help);
         widthSpinner.setValues(maxWidth, 1, Integer.MAX_VALUE, 0, 1, 10);
+        
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
         widthSpinner.setLayoutData(gridData);
+        
         widthSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 maxWidth = widthSpinner.getSelection();

@@ -17,6 +17,11 @@
             option="de.cau.cs.kieler.direction"
             value="RIGHT">
       </option>
+      <option
+            class="de.cau.cs.kieler.kaom.Entity"
+            option="de.cau.cs.kieler.nodeLabelPlacement"
+            value="OUTSIDE, V_BOTTOM, H_CENTER">
+      </option>
       <semanticOption
             class="de.cau.cs.kieler.kaom.Linkable"
             config="de.cau.cs.kieler.kaom.custom.AnnotationsLayoutConfig">

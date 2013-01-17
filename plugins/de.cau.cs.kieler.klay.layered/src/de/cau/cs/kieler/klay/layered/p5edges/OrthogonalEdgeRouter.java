@@ -56,11 +56,10 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class OrthogonalEdgeRouter implements ILayoutPhase {
+public final class OrthogonalEdgeRouter implements ILayoutPhase {
     
-    /* The basic processing strategy for this phase is empty. Depending on
-     * the graph features, dependencies on intermediate processors are added
-     * dynamically as follows:
+    /* The basic processing strategy for this phase is empty. Depending on the graph features,
+     * dependencies on intermediate processors are added dynamically as follows:
      * 
      * Before phase 1:
      *   - None.
@@ -81,7 +80,7 @@ public class OrthogonalEdgeRouter implements ILayoutPhase {
      *     - HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR
      *   
      *   - For edge labels:
-     *      - LABEL_SIDE_SELECTOR
+     *     - LABEL_SIDE_SELECTOR
      *   
      *   - For center edge labels:
      *      - LABEL_DUMMY_SWITCHER
@@ -102,7 +101,7 @@ public class OrthogonalEdgeRouter implements ILayoutPhase {
      *     - HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER
      *     
      *   - For center edge labels:
-     *      - LABEL_DUMMY_REMOVER
+     *     - LABEL_DUMMY_REMOVER
      *     
      *   - For end edge labels:
      *     - END_LABEL_PROCESSOR
@@ -174,7 +173,7 @@ public class OrthogonalEdgeRouter implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
         new IntermediateProcessingConfiguration(
                 // Before Phase 1
-                EnumSet.of(LayoutProcessorStrategy.LABEL_NODE_SIZE_ADJUSTER),
+                null,
                 
                 // Before Phase 2
                 EnumSet.of(LayoutProcessorStrategy.LABEL_DUMMY_INSERTER),
@@ -196,7 +195,7 @@ public class OrthogonalEdgeRouter implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration END_EDGE_LABEL_PROCESSING_ADDITIONS =
         new IntermediateProcessingConfiguration(
                 // Before Phase 1
-                EnumSet.of(LayoutProcessorStrategy.LABEL_NODE_SIZE_ADJUSTER),
+                null,
                 
                 // Before Phase 2
                 null,
@@ -205,7 +204,7 @@ public class OrthogonalEdgeRouter implements ILayoutPhase {
                 EnumSet.of(LayoutProcessorStrategy.LABEL_SIDE_SELECTOR),
                 
                 // Before Phase 4
-                EnumSet.of(LayoutProcessorStrategy.NODE_MARGIN_CALCULATOR),
+                null,
                 
                 // Before Phase 5
                 null,
@@ -230,7 +229,8 @@ public class OrthogonalEdgeRouter implements ILayoutPhase {
             configuration.addAll(INVERTED_PORT_PROCESSING_ADDITIONS);
         }
         
-        if (graphProperties.contains(GraphProperties.NON_FREE_PORTS)) {
+        if (graphProperties.contains(GraphProperties.NON_FREE_PORTS)
+                || graph.getProperty(Properties.FEEDBACK_EDGES)) {
             configuration.addAll(INVERTED_PORT_PROCESSING_ADDITIONS);
 
             if (graphProperties.contains(GraphProperties.NORTH_SOUTH_PORTS)) {

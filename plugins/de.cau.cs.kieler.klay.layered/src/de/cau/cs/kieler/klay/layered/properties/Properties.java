@@ -169,16 +169,6 @@ public final class Properties {
             "externalPortSize", new KVector());
 
     /**
-     * The original position or position-to-node-size ratio of an external port. This is a property
-     * usually used for external port dummy nodes. There is only one coordinate since the side of
-     * the port determines the other coordinate. (for eastern and western ports, the x coordinate is
-     * determined automatically; for northern and southern ports, the y coordinate is determined
-     * automatically)
-     */
-    public static final IProperty<Double> EXT_PORT_RATIO_OR_POSITION = new Property<Double>(
-            "externalPortRatioOrPosition", 0.0);
-
-    /**
      * External port dummies that represent northern or southern external ports are replaced by new
      * dummy nodes during layout. In these cases, this property is set to the original dummy node.
      */
@@ -193,6 +183,25 @@ public final class Properties {
      */
     public static final IProperty<Set<PortSide>> EXT_PORT_CONNECTIONS = new Property<Set<PortSide>>(
             "externalPortConnections", EnumSet.noneOf(PortSide.class));
+
+    /**
+     * The original position or position-to-node-size ratio of a port. This property has two use
+     * cases:
+     * <ol>
+     *   <li>For external port dummies. In this use case, the property gives the original position of
+     *       the external port (if port constraints are set to {@code FIXED_POS}) or the original
+     *       position-to-node-size ratio of the external port ((if port constraints are set to
+     *       {@code FIXED_RATIO}).</li>
+     *   <li>For ports of regular nodes with port constraints set to {@code FIXED_RATIO}. Since regular
+     *       nodes may be resized, the original ratio must be remembered for the new port position
+     *       to be determined.</li>
+     * </ol>
+     * <p>This is a one-dimensional value since the side of the port determines the other dimension.
+     * (For eastern and western ports, the x coordinate is determined automatically; for northern and
+     * southern ports, the y coordinate is determined automatically)</p>
+     */
+    public static final IProperty<Double> PORT_RATIO_OR_POSITION = new Property<Double>(
+            "portRatioOrPosition", 0.0);
 
     /**
      * A list of nodes whose barycenters should go into the barycenter calculation of the node this
@@ -363,11 +372,6 @@ public final class Properties {
     public static final IProperty<EdgeLabelSideSelection> EDGE_LABEL_SIDE =
             new Property<EdgeLabelSideSelection>("de.cau.cs.kieler.klay.layered.LabelSide",
                                                          EdgeLabelSideSelection.SMART);
-    
-    /** property to choose an edge placement strategy. */
-    public static final IProperty<PortLabelPlacement> PORT_LABEL_PLACEMENT =
-            new Property<PortLabelPlacement>("de.cau.cs.kieler.klay.layered.portLabelPlacement",
-                    PortLabelPlacement.OUTSIDE);
 
     /** property to switch debug mode on or off. */
     public static final IProperty<Boolean> DEBUG_MODE = new Property<Boolean>(
@@ -395,6 +399,10 @@ public final class Properties {
         = new Property<InteractiveReferencePoint>(
             "de.cau.cs.kieler.klay.layered.interactiveReferencePoint",
             InteractiveReferencePoint.CENTER);
+    
+    /** Whether feedback edges should be highlighted by routing around the nodes. */
+    public static final IProperty<Boolean> FEEDBACK_EDGES = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.feedBackEdges", false);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
