@@ -153,9 +153,11 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 /* Note that, upon Miro's request, each phase of the algorithm was given a code name. */
                 
                 /* PREPARATIONS
-                 * Reset stuff.
+                 * Reset stuff and fill the port information fields.
                  */
                 resetContext();
+                calculatePortInformation(node, node.getProperty(LayoutOptions.SIZE_CONSTRAINT).contains(
+                        SizeConstraint.PORT_LABELS));
                 
                 
                 /* PHASE 1 (SAD DUCK): PLACE PORT LABELS
@@ -232,6 +234,43 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         northPortsWidth = 0.0;
         southPortsCount = 0;
         southPortsWidth = 0.0;
+    }
+
+    /**
+     * Calculates the width of ports on the northern and southern sides, and the height of ports on the
+     * western and eastern sides of the given node. The information are stored in the class fields and
+     * are used later on when calculating the minimum node size and when placing ports.
+     * 
+     * @param node the node to calculate the port information for.
+     * @param accountForLabels if {@code true}, the port labels will be taken into account
+     *                         when calculating the port information.
+     */
+    private void calculatePortInformation(final LNode node, final boolean accountForLabels) {
+        // Iterate over the ports
+        for (LPort port : node.getPorts()) {
+            switch (port.getSide()) {
+            case WEST:
+                westPortsCount++;
+                westPortsHeight += port.getSize().y
+                    + (accountForLabels ? port.getMargin().bottom + port.getMargin().top : 0.0);
+                break;
+            case EAST:
+                eastPortsCount++;
+                eastPortsHeight += port.getSize().y
+                    + (accountForLabels ? port.getMargin().bottom + port.getMargin().top : 0.0);
+                break;
+            case NORTH:
+                northPortsCount++;
+                northPortsWidth += port.getSize().x
+                    + (accountForLabels ? port.getMargin().left + port.getMargin().right : 0.0);
+                break;
+            case SOUTH:
+                southPortsCount++;
+                southPortsWidth += port.getSize().x
+                    + (accountForLabels ? port.getMargin().left + port.getMargin().right : 0.0);
+                break;
+            }
+        }
     }
     
     
@@ -399,22 +438,18 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
             case WEST:
                 requiredPortLabelSpace.left =
                     Math.max(requiredPortLabelSpace.left, port.getMargin().right);
-                westPortsCount++;
                 break;
             case EAST:
                 requiredPortLabelSpace.right =
                     Math.max(requiredPortLabelSpace.right, port.getMargin().left);
-                eastPortsCount++;
                 break;
             case NORTH:
                 requiredPortLabelSpace.top =
                     Math.max(requiredPortLabelSpace.top, port.getMargin().bottom);
-                northPortsCount++;
                 break;
             case SOUTH:
                 requiredPortLabelSpace.bottom =
                     Math.max(requiredPortLabelSpace.bottom, port.getMargin().top);
-                southPortsCount++;
                 break;
             }
         }
@@ -618,28 +653,6 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
     private KVector calculatePortSpaceRequirements(final LNode node, final double portSpacing,
             final boolean accountForLabels) {
         
-        // Iterate over the ports
-        for (LPort port : node.getPorts()) {
-            switch (port.getSide()) {
-            case WEST:
-                westPortsHeight += port.getSize().y
-                    + (accountForLabels ? port.getMargin().bottom + port.getMargin().top : 0.0);
-                break;
-            case EAST:
-                eastPortsHeight += port.getSize().y
-                    + (accountForLabels ? port.getMargin().bottom + port.getMargin().top : 0.0);
-                break;
-            case NORTH:
-                northPortsWidth += port.getSize().x
-                    + (accountForLabels ? port.getMargin().left + port.getMargin().right : 0.0);
-                break;
-            case SOUTH:
-                southPortsWidth += port.getSize().x
-                    + (accountForLabels ? port.getMargin().left + port.getMargin().right : 0.0);
-                break;
-            }
-        }
-        
         // Calculate the maximum width and height, taking the necessary spacing between (and around)
         // the ports into consideration as well
         double maxWidth = Math.max(
@@ -791,6 +804,13 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         double northX = northDelta;
         double southDelta = (nodeSize.x - southPortsWidth) / (southPortsCount + 1);
         double southX = nodeSize.x - southDelta;
+
+        // DEBUG START
+        System.out.println("Node width " + nodeSize.x);
+        System.out.println("North ports: " + northPortsCount);
+        System.out.println("North ports width: " + northPortsWidth);
+        System.out.println("North delta: " + northDelta);
+        // DEBUG END
         
         // Arrange the ports
         for (LPort port : node.getPorts()) {
@@ -805,9 +825,6 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                         - (accountForLabels ? portMargins.bottom : 0.0);
                 westY -= westDelta + portSize.y
                         + (accountForLabels ? portMargins.top + portMargins.bottom : 0.0);
-                // DEBUG START
-                System.out.println("West port y position " + port.getPosition().y);
-                // DEBUG END
                 break;
             case EAST:
                 port.getPosition().x = nodeSize.x + portOffset;
@@ -815,9 +832,6 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                         + (accountForLabels ? portMargins.top : 0.0);
                 eastY += eastDelta + portSize.y
                         + (accountForLabels ? portMargins.top + portMargins.bottom : 0.0);
-                // DEBUG START
-                System.out.println("East port y position " + port.getPosition().y);
-                // DEBUG END
                 break;
             case NORTH:
                 port.getPosition().x = northX
@@ -825,6 +839,9 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 port.getPosition().y = -port.getSize().y - portOffset;
                 northX += northDelta + portSize.x
                         + (accountForLabels ? portMargins.left + portMargins.right : 0.0);
+                // DEBUG START
+                System.out.println("North port x position " + port.getPosition().x);
+                // DEBUG END
                 break;
             case SOUTH:
                 port.getPosition().x = southX - portSize.x

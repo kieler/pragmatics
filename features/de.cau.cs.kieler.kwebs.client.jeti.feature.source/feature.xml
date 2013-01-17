@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.cau.cs.kieler.kwebs.client.jeti.feature.source"
-      label="KIELER Layout Client over jETI (optional)"
+      label="KIELER Layout Client over jETI (optional) (Sources)"
       version="0.1.1.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       plugin="de.cau.cs.kieler.kwebs.client.jeti.source">

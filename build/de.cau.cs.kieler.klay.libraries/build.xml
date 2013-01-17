@@ -1,0 +1,169 @@
+<project name="build KLay" default="buildall">
+    <!-- This is the build file that builds the KLay layout library to be used outside
+         of an Eclipse context. To use this build file, run Ant from the directory
+         containing the file and make sure the following environment variables are
+         set correctly:
+         
+            PRODUCT  Directory that contains the directory structure of a compiled
+                     and packaged KIELER installation. You can get at one by running
+                     Maven on the KIELER parent pom file. The product can then be
+                     found in one of the subdirectories of:
+
+                       build/de.cau.cs.kieler.repository/target/products/de.cau.cs.kieler.product
+         
+         This build file provides the following targets:
+         
+            clean        Deletes the target directory with all of its contents.
+            withdeps     Builds the KLay library with necessary dependencies already
+                         built in.
+            withoutdeps  Builds the KLay library without any dependencies built in.
+         
+         By default, these targets are run in just that order.
+         
+         The output produced by the build file will be placed in a folder called
+         "target", which makes it somewhat similar to what the Maven builds do.
+    -->
+    
+    <!-- Setup the timestamp used for generating file names. -->
+    <tstamp>
+        <format property="timestamp" pattern="yyyyMMddhhmm" />
+    </tstamp>
+    
+    <!-- Retrieve our system property. -->
+    <property environment="system"/>
+    <property name="productFolder" location="${system.PRODUCT}" />
+    
+    <!-- Some more properties that configure the behaviour of the build. -->
+    <property name="outputFolder" location="target" />
+    <property name="outputFolder.temp" location="${outputFolder}/temp" />
+    <property name="outputFile.withoutdeps" location="${outputFolder}/klay_nightly_${timestamp}.jar" />
+    <property name="outputFile.withdeps" location="${outputFolder}/klay-emf_nightly_${timestamp}.jar" />
+    <property name="licenseFile" location="${productFolder}/epl-v10.html" />
+    
+    
+    <!-- TARGET -setupTempFolder (internal) -->
+    <target
+        name="-setupTempFolder"
+        description="Empties the temporary folder and fills it with the KLay files.">
+        
+        <!-- Empty the temp folder -->
+        <delete dir="${outputFolder.temp}" />
+        <mkdir dir="${outputFolder.temp}" />
+        
+        <!-- Unjar everything from the KLay jar files into the temporary folder. -->
+        <unjar dest="${outputFolder.temp}" overwrite="true">
+            <fileset dir="${productFolder}/plugins">
+                <include name="de.cau.cs.kieler.core_*.jar"/>
+                <include name="de.cau.cs.kieler.core.kgraph_*.jar"/>
+                <include name="de.cau.cs.kieler.kiml_*.jar"/>
+                <include name="de.cau.cs.kieler.klay.layered_*.jar"/>
+                <include name="de.cau.cs.kieler.klay.force_*.jar"/>
+            </fileset>
+            <patternset>
+                <exclude name="META-INF/*"/>
+                <exclude name="about.*"/>
+                <exclude name="images"/>
+                <exclude name="model"/>
+                <exclude name="schema"/>
+                <exclude name="plugin.properties"/>
+                <exclude name="**/*.xml"/>
+                <exclude name="**/*.html"/>
+                <exclude name="**/*.exsd"/>
+                <exclude name="**/*.xsd"/>
+                <exclude name="**/*.ecore"/>
+                <exclude name="**/*.genmodel"/>
+                <exclude name="**/*.ecorediag"/>
+                <exclude name="**/*.png"/>
+                <exclude name="**/*.gif"/>
+                <exclude name="**/*.pdf"/>
+            </patternset>
+        </unjar>
+    </target>
+    
+    
+    <!-- TARGET -assembleLibrary (internal) -->
+    <target
+        name="-assembleLibrary"
+        description="Assembles everything in the temp folder into a temporary library whose name is given by the outputFile property.">
+        
+        <!-- Create library file. -->
+        <delete file="${outputFile}" />
+        <copy file="${licenseFile}" todir="${outputFolder.temp}" />
+        <jar destfile="${outputFile}" basedir="${outputFolder.temp}" />
+    </target>
+    
+    
+    <!-- TARGET clean -->
+    <target
+        name="clean"
+        description="Removes the target directory.">
+        
+        <delete dir="${outputFolder}" />
+    </target>
+    
+    
+    <!-- TARGET withdeps -->
+    <target
+        name="withdeps"
+        description="Assembles the KLay library with all dependencies included.">
+        
+        <!-- Call the task that sets up the temporary folder with KLay files. -->
+        <antcall target="-setupTempFolder" />
+        
+        <!-- Add the dependencies to the temporary folder. -->
+        <unjar dest="${outputFolder.temp}" overwrite="true">
+            <fileset dir="${productFolder}/plugins">
+                <include name="org.eclipse.emf.common_*.jar"/>
+                <include name="org.eclipse.emf.ecore_*.jar"/>
+                <include name="org.eclipse.emf.ecore.xmi_*.jar"/>
+            </fileset>
+            <patternset>
+                <exclude name="META-INF/*"/>
+                <exclude name="about.*"/>
+                <exclude name="images"/>
+                <exclude name="model"/>
+                <exclude name="schema"/>
+                <exclude name="plugin.properties"/>
+                <exclude name="**/*.xml"/>
+                <exclude name="**/*.html"/>
+                <exclude name="**/*.exsd"/>
+                <exclude name="**/*.xsd"/>
+                <exclude name="**/*.ecore"/>
+                <exclude name="**/*.genmodel"/>
+                <exclude name="**/*.ecorediag"/>
+                <exclude name="**/*.png"/>
+                <exclude name="**/*.gif"/>
+                <exclude name="**/*.pdf"/>
+            </patternset>
+        </unjar>
+        
+        <!-- Call the task that assembles the library file. -->
+        <antcall target="-assembleLibrary">
+            <param name="outputFile" location="${outputFile.withdeps}" />
+        </antcall>
+    </target>
+    
+    
+    <!-- TARGET withoutdeps -->
+    <target
+        name="withoutdeps"
+        description="Assembles the KLay library without any dependencies included.">
+        
+        <!-- Call the task that sets up the temporary folder with KLay files. -->
+        <antcall target="-setupTempFolder" />
+        
+        <!-- Call the task that assembles the library file. -->
+        <antcall target="-assembleLibrary">
+            <param name="outputFile" location="${outputFile.withoutdeps}" />
+        </antcall>
+    </target>
+    
+    
+    <!-- TARGET buidlall -->
+    <target
+        name="buildall"
+        depends="clean,withoutdeps,withdeps"
+        description="Builds all configurations of the KLay library." />
+
+</project>
+
