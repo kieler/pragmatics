@@ -214,13 +214,6 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 nodeInsets.right = requiredNodeLabelSpace.right + requiredPortLabelSpace.right;
                 nodeInsets.top = requiredNodeLabelSpace.top + requiredPortLabelSpace.top;
                 nodeInsets.bottom = requiredNodeLabelSpace.bottom + requiredPortLabelSpace.bottom;
-                
-                // DEBUG START
-                System.out.println("Node " + node.getName());
-                for (LPort port : node.getPorts()) {
-                    System.out.println("   Port " + port.getPosition().toString());
-                }
-                // DEBUG END
             }
         }
         
@@ -823,13 +816,6 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         double northX = northDelta;
         double southDelta = (nodeSize.x - southPortsWidth) / (southPortsCount + 1);
         double southX = nodeSize.x - southDelta;
-
-        // DEBUG START
-        System.out.println("Node width " + nodeSize.x);
-        System.out.println("North ports: " + northPortsCount);
-        System.out.println("North ports width: " + northPortsWidth);
-        System.out.println("North delta: " + northDelta);
-        // DEBUG END
         
         // Arrange the ports
         for (LPort port : node.getPorts()) {
@@ -858,9 +844,6 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 port.getPosition().y = -port.getSize().y - portOffset;
                 northX += northDelta + portSize.x
                         + (accountForLabels ? portMargins.left + portMargins.right : 0.0);
-                // DEBUG START
-                System.out.println("North port x position " + port.getPosition().x);
-                // DEBUG END
                 break;
             case SOUTH:
                 port.getPosition().x = southX - portSize.x
