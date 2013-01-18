@@ -153,11 +153,12 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 /* Note that, upon Miro's request, each phase of the algorithm was given a code name. */
                 
                 /* PREPARATIONS
-                 * Reset stuff and fill the port information fields.
+                 * Reset stuff, fill the port information fields, and remember the node's old size.
                  */
                 resetContext();
                 calculatePortInformation(node, node.getProperty(LayoutOptions.SIZE_CONSTRAINT).contains(
                         SizeConstraint.PORT_LABELS));
+                KVector originalNodeSize = new KVector(node.getSize());
                 
                 
                 /* PHASE 1 (SAD DUCK): PLACE PORT LABELS
@@ -194,7 +195,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                  * is not required for port placement since the placement will be based on the node's
                  * size (if it is not fixed anyway).
                  */
-                placePorts(node);
+                placePorts(node, originalNodeSize);
                 
                 
                 /* PHASE 5 (HAPPY DUCK): PLACE NODE LABEL
@@ -711,19 +712,26 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
     // PORT PLACEMENT
 
     /**
-     * Places the given node's ports.
+     * Places the given node's ports. If the node wasn't resized at all and port constraints are set
+     * to either {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}, the port
+     * positions are not touched.
      * 
      * @param node the node whose ports to place.
+     * @param originalNodeSize the node's size before it was (possibly) resized.
      */
-    private void placePorts(final LNode node) {
+    private void placePorts(final LNode node, final KVector originalNodeSize) {
         PortConstraints portConstraints = node.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         
         if (portConstraints == PortConstraints.FIXED_POS) {
             // Fixed Position
-            placeFixedPosNodePorts(node);
+            if (!originalNodeSize.equals(node.getSize())) {
+                placeFixedPosNodePorts(node);
+            }
         } else if (portConstraints == PortConstraints.FIXED_RATIO) {
             // Fixed Ratio
-            placeFixedRatioNodePorts(node);
+            if (!originalNodeSize.equals(node.getSize())) {
+                placeFixedRatioNodePorts(node);
+            }
         } else {
             // Free, Fixed Side, Fixed Order
             if (node.getProperty(LayoutOptions.HYPERNODE)
