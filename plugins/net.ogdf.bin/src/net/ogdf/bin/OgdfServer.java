@@ -514,7 +514,7 @@ public class OgdfServer {
         if (process != null) {
             InputStream errorStream = process.getErrorStream();
             try {
-                if (c == Cleanup.ERROR && ogdfStream != null) {
+                if (c == Cleanup.ERROR) {
                     // wait a bit so the process can either terminate or generate error
                     Thread.sleep(PROC_ERROR_TIME);
                     // read the error stream to display a meaningful error message
@@ -609,7 +609,7 @@ public class OgdfServer {
                             nextJob.wait();
                         } catch (InterruptedException ex) {
                             // the watchdog thread is interrupted: shutdown is requested
-                            if (watchdog == null) {
+                            if (watchdog != this) {
                                 return;
                             }
                         }
@@ -642,7 +642,7 @@ public class OgdfServer {
                     }
                 }
                 
-            } while (watchdog != null);
+            } while (watchdog == this);
         }
         
     }
