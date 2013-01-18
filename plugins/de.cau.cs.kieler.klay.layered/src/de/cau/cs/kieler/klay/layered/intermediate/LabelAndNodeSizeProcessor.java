@@ -213,6 +213,13 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 nodeInsets.right = requiredNodeLabelSpace.right + requiredPortLabelSpace.right;
                 nodeInsets.top = requiredNodeLabelSpace.top + requiredPortLabelSpace.top;
                 nodeInsets.bottom = requiredNodeLabelSpace.bottom + requiredPortLabelSpace.bottom;
+                
+                // DEBUG START
+                System.out.println("Node " + node.getName());
+                for (LPort port : node.getPorts()) {
+                    System.out.println("   Port " + port.getPosition().toString());
+                }
+                // DEBUG END
             }
         }
         
@@ -739,12 +746,14 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         KVector nodeSize = node.getSize();
 
         for (LPort port : node.getPorts()) {
+            float portOffset = port.getProperty(Properties.OFFSET);
+            
             switch (port.getSide()) {
             case EAST:
-                port.getPosition().x = nodeSize.x;
+                port.getPosition().x = nodeSize.x + portOffset;
                 break;
             case SOUTH:
-                port.getPosition().y = nodeSize.y;
+                port.getPosition().y = nodeSize.y + portOffset;
                 break;
             }
         }
@@ -762,20 +771,22 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         // Adjust port positions depending on port side. Eastern ports have to have their x coordinate
         // set to the node's current width; the same goes for the y coordinate of southern ports
         for (LPort port : node.getPorts()) {
+            float portOffset = port.getProperty(Properties.OFFSET);
+            
             switch (port.getSide()) {
             case WEST:
                 port.getPosition().y = nodeSize.y * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
                 break;
             case EAST:
                 port.getPosition().y = nodeSize.y * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
-                port.getPosition().x = nodeSize.x;
+                port.getPosition().x = nodeSize.x + portOffset;
                 break;
             case NORTH:
                 port.getPosition().x = nodeSize.x * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
                 break;
             case SOUTH:
                 port.getPosition().x = nodeSize.x * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
-                port.getPosition().y = nodeSize.y;
+                port.getPosition().y = nodeSize.y + portOffset;
                 break;
             }
         }
