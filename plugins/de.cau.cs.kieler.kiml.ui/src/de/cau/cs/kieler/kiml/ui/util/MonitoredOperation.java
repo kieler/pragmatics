@@ -136,9 +136,6 @@ public abstract class MonitoredOperation {
     protected void postUIexec() {
     }
     
-    /** the status of the last operation run. */
-    private IStatus lastStatus;
-    
     /**
      * Run the operation. If the current thread is the UI thread, the actual operation
      * is executed in a new thread that runs in parallel. Otherwise the operation is
@@ -290,9 +287,8 @@ public abstract class MonitoredOperation {
      */
     private void handleStatus(final Maybe<IStatus> status) {
         if (status.get() != null) {
-            lastStatus = status.get();
             int handlingStyle = StatusManager.NONE;
-            switch (lastStatus.getSeverity()) {
+            switch (status.get().getSeverity()) {
             case IStatus.ERROR:
                 handlingStyle = StatusManager.SHOW | StatusManager.LOG;
                 break;
@@ -301,7 +297,7 @@ public abstract class MonitoredOperation {
                 handlingStyle = StatusManager.LOG;
                 break;
             }
-            StatusManager.getManager().handle(lastStatus, handlingStyle);
+            StatusManager.getManager().handle(status.get(), handlingStyle);
         }
     }
     
@@ -428,16 +424,6 @@ public abstract class MonitoredOperation {
                 }
             }
         }
-    }
-    
-    /**
-     * Returns the status of the last operation run.
-     * 
-     * @return the last status, or {@code null} if the operation has not
-     *         run yet
-     */
-    public IStatus getStatus() {
-        return lastStatus;
     }
 
     /**
