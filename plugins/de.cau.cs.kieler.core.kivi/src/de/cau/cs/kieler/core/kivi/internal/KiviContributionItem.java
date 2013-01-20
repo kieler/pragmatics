@@ -136,7 +136,6 @@ IWorkbenchContribution {
     @Override
     protected IContributionItem[] getContributionItems() {
         KiVi.getInstance().initialize();
-        System.out.println("getContributionItems");
         for (IHandlerActivation act: handlerActivations.values()) {
             handlerService.deactivateHandler(act);
         }
