@@ -156,78 +156,124 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Polyline edge routing", 1);
+        
         float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         float edgeSpaceFac = layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         
-        double xpos = 0.0, layerSpacing = 0.0;
+        double xpos = 0.0;
+        double layerSpacing = 0.0;
+        
+        // Iterate over the layers
         for (Layer layer : layeredGraph) {
             // set horizontal coordinates for all nodes of the layer
             layer.placeNodes(xpos);
             
-            double maxVertDiff = 0;
+            double maxVertDiff = 0.0;
+            
+            // Iterate over the layer's nodes
             for (LNode node : layer) {
-                // count the maximal vertical difference of output edges
-                double nodeMaxOutputDiff = 0;
-                for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                    double sourcePos = port.getNode().getPosition().y
-                            + port.getPosition().y + port.getAnchor().y;
-                    for (LPort targetPort : port.getSuccessorPorts()) {
-                        if (targetPort.getNode().getLayer() != node.getLayer()) {
-                            double targetPos = targetPort.getNode().getPosition().y
-                                    + targetPort.getPosition().y + targetPort.getAnchor().y;
-                            nodeMaxOutputDiff = KielerMath.maxd(nodeMaxOutputDiff,
-                                    targetPos - sourcePos, sourcePos - targetPos);
+                // Calculate the maximal vertical span of output edges
+                double maxOutputYDiff = 0.0;
+                for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
+                    double sourcePos = sourcePort.getAbsoluteAnchor().y;
+                    
+                    // Iterate over the connected target ports
+                    for (LPort targetPort : sourcePort.getSuccessorPorts()) {
+                        // Check for vertical span if the ports are in different layers
+                        if (node.getLayer() != targetPort.getNode().getLayer()) {
+                            double targetPos = targetPort.getAbsoluteAnchor().y;
+                            
+                            maxOutputYDiff = KielerMath.maxd(
+                                    maxOutputYDiff,
+                                    targetPos - sourcePos,
+                                    sourcePos - targetPos);
                         }
                     }
                 }
                 
-                if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
-                    // count the maximal vertical difference of input edges
-                    double nodeMaxInputDiff = 0;
-                    for (LPort port : node.getPorts(PortType.INPUT)) {
-                        double targetPos = port.getNode().getPosition().y
-                                + port.getPosition().y + port.getAnchor().y;
-                        for (LPort sourcePort : port.getPredecessorPorts()) {
-                            double sourcePos = sourcePort.getNode().getPosition().y
-                                    + sourcePort.getPosition().y + sourcePort.getAnchor().y;
-                            nodeMaxInputDiff = KielerMath.maxd(nodeMaxInputDiff,
-                                    targetPos - sourcePos, sourcePos - targetPos);
+                // If we have LONG_EDGE or LABEL dummy nodes, these must be treated differently.
+                NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
+                if (nodeType == NodeType.LONG_EDGE) {
+                    // Calculate the maximal vertical span of input edges
+                    double maxInputYDiff = 0.0;
+                    for (LPort targetPort : node.getPorts(PortType.INPUT)) {
+                        double targetPos = targetPort.getAbsoluteAnchor().y;
+
+                        // Iterate over the connected source ports
+                        for (LPort sourcePort : targetPort.getPredecessorPorts()) {
+                            // Check for vertical span if the ports are in different layers
+                            if (node.getLayer() != sourcePort.getNode().getLayer()) {
+                                double sourcePos = sourcePort.getAbsoluteAnchor().y;
+                                
+                                maxInputYDiff = KielerMath.maxd(
+                                        maxInputYDiff,
+                                        targetPos - sourcePos,
+                                        sourcePos - targetPos);
+                            }
                         }
                     }
                     
-                    LEdge edge = (LEdge) node.getProperty(Properties.ORIGIN);
-                    if (nodeMaxInputDiff >= MIN_VERT_DIFF && nodeMaxOutputDiff >= MIN_VERT_DIFF) {
-                        // both the incoming and the outgoing edge have significant difference
+                    if (maxInputYDiff >= MIN_VERT_DIFF && maxOutputYDiff >= MIN_VERT_DIFF) {
+                        // Both the incoming and the outgoing edges have significant differences. Check
+                        // how large the vertical span is in relation to the layer's width and thus
+                        // determine if we need to insert bend points at all
                         double layerSize = layer.getSize().x;
-                        double diff = Math.max(nodeMaxInputDiff, nodeMaxOutputDiff);
-                        double deviation = diff / (layerSize / 2 + spacing
-                                + LAYER_SPACE_FAC * edgeSpaceFac * diff) * layerSize / 2;
+                        double diff = Math.max(maxInputYDiff, maxOutputYDiff);
+                        double deviation = diff / (layerSize / 2.0 + spacing
+                                + LAYER_SPACE_FAC * edgeSpaceFac * diff) * layerSize / 2.0;
+                        
                         if (deviation >= edgeSpaceFac * spacing) {
-                            // insert two bend points, one left and one right
-                            edge.getBendPoints().add(xpos, node.getPosition().y);
-                            edge.getBendPoints().add(xpos + layerSize, node.getPosition().y);
+                            // Insert for incoming and outgoing edges
+                            for (LEdge incoming : node.getIncomingEdges()) {
+                                incoming.getBendPoints().add(
+                                        xpos, node.getPosition().y);
+                            }
+
+                            for (LEdge outgoing : node.getOutgoingEdges()) {
+                                outgoing.getBendPoints().add(
+                                        xpos + layer.getSize().x, node.getPosition().y);
+                            }
                         } else {
-                            // insert only one bend point in the middle
-                            edge.getBendPoints().add(xpos + layerSize / 2, node.getPosition().y);
+                            // Insert only for incoming edges in the layer's horizontal center
+                            for (LEdge incoming : node.getIncomingEdges()) {
+                                incoming.getBendPoints().add(
+                                        xpos + layerSize / 2.0, node.getPosition().y);
+                            }
                         }
-                        
-                    } else if (nodeMaxInputDiff >= MIN_VERT_DIFF) {
-                        // only the incoming edge has significant difference
-                        edge.getBendPoints().add(xpos, node.getPosition().y);
-                        
-                    } else if (nodeMaxOutputDiff >= MIN_VERT_DIFF) {
-                        // only the outgoing edge has significant difference
-                        edge.getBendPoints().add(xpos + layer.getSize().x, node.getPosition().y);
+                    } else if (maxInputYDiff >= MIN_VERT_DIFF) {
+                        // Only the incoming edges have significant differences
+                        for (LEdge incoming : node.getIncomingEdges()) {
+                            incoming.getBendPoints().add(
+                                    xpos, node.getPosition().y);
+                        }
+                    } else if (maxOutputYDiff >= MIN_VERT_DIFF) {
+                        // Only the outgoing edges have significant differences
+                        for (LEdge outgoing : node.getOutgoingEdges()) {
+                            outgoing.getBendPoints().add(
+                                    xpos + layer.getSize().x, node.getPosition().y);
+                        }
                     }
+                } else if (nodeType == NodeType.LABEL) {
+                    // Insert bend points left and right of the node so that the label does not
+                    // overlap the edge. We assume that there's only one input and one output edge,
+                    // which should be true for label dummy nodes.
+                    node.getIncomingEdges().iterator().next().getBendPoints().add(
+                            xpos, node.getPosition().y);
+                    node.getOutgoingEdges().iterator().next().getBendPoints().add(
+                            xpos + layer.getSize().x, node.getPosition().y);
                 }
                 
-                maxVertDiff = Math.max(maxVertDiff, nodeMaxOutputDiff);
+                maxVertDiff = Math.max(maxVertDiff, maxOutputYDiff);
             }
             
-            // determine placement of next layer based on the maximal vertical difference
+            // Determine placement of next layer based on the maximal vertical difference (as the
+            // maximum vertical difference edges span grows, the layer grows wider to allow enough
+            // space for such sloped edges to avoid too harsh angles)
             layerSpacing = spacing + LAYER_SPACE_FAC * edgeSpaceFac * maxVertDiff;
             xpos += layer.getSize().x + layerSpacing;
         }
+        
+        // Set the graph's horizontal size
         layeredGraph.getSize().x = xpos - layerSpacing;
         
         monitor.done();
