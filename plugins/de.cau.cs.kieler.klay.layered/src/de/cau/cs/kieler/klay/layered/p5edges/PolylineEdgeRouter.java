@@ -65,6 +65,9 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
      *   - For center edge labels:
      *     - LABEL_SIDE_SELECTOR
      *     - LABEL_DUMMY_SWITCHER
+     *     
+     *   - For northern and southern ports:
+     *     - NORTH_SOUTH_PORT_PREPROCESSOR
      * 
      * Before phase 4:
      *   - None.
@@ -78,6 +81,9 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
      *     
      *   - For end edge labels:
      *     - END_LABEL_PROCESSOR
+     *     
+     *   - For northern and southern ports:
+     *     - NORTH_SOUTH_PORT_POSTPROCESSOR
      */
     
     /** additional processor dependencies for graphs with center edge labels. */
@@ -123,6 +129,27 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 // After Phase 5
                 EnumSet.of(LayoutProcessorStrategy.END_LABEL_PROCESSOR));
     
+    /** additional processor dependencies for graphs with northern / southern non-free ports. */
+    private static final IntermediateProcessingConfiguration NORTH_SOUTH_PORT_PROCESSING_ADDITIONS =
+        new IntermediateProcessingConfiguration(
+                // Before Phase 1
+                null,
+                
+                // Before Phase 2
+                null,
+                
+                // Before Phase 3
+                EnumSet.of(LayoutProcessorStrategy.NORTH_SOUTH_PORT_PREPROCESSOR),
+                
+                // Before Phase 4
+                null,
+                
+                // Before Phase 5
+                null,
+                
+                // After Phase 5
+                EnumSet.of(LayoutProcessorStrategy.NORTH_SOUTH_PORT_POSTPROCESSOR));
+    
     /** the minimal vertical difference for creating bend points. */
     private static final double MIN_VERT_DIFF = 1.0;
     /** factor for layer spacing. */
@@ -146,6 +173,10 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
         
         if (graphProperties.contains(GraphProperties.END_LABELS)) {
             configuration.addAll(END_EDGE_LABEL_PROCESSING_ADDITIONS);
+        }
+
+        if (graphProperties.contains(GraphProperties.NORTH_SOUTH_PORTS)) {
+            configuration.addAll(NORTH_SOUTH_PORT_PROCESSING_ADDITIONS);
         }
         
         return configuration;
