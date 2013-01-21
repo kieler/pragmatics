@@ -494,7 +494,7 @@ public class OgmlServerCommunicator {
                         if (bendIt.hasNext()) {
                             kbends.add(toKPoint((float) bend.x, (float) bend.y, offsetX, offsetY));
                         }
-                    } else if (!bendIt.hasNext()) {
+                    } else if (!bendIt.hasNext() && kbends.size() > 0) {
                         kbends.remove(kbends.size() - 1);
                     }
                     lastBend = bend;
