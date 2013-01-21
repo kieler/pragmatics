@@ -231,6 +231,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         
         if (graphProperties.contains(GraphProperties.NON_FREE_PORTS)
                 || graph.getProperty(Properties.FEEDBACK_EDGES)) {
+            
             configuration.addAll(INVERTED_PORT_PROCESSING_ADDITIONS);
 
             if (graphProperties.contains(GraphProperties.NORTH_SOUTH_PORTS)) {

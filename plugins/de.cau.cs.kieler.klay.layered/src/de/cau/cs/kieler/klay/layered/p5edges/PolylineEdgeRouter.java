@@ -17,7 +17,9 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -37,7 +39,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * <dl>
  *   <dt>Precondition:</dt><dd>the graph has a proper layering with
  *     assigned node and port positions; the size of each layer is
- *     correctly set</dd>
+ *     correctly set; at least one of the nodes connected by an in-layer
+ *     edge is a dummy node.</dd>
  *   <dt>Postcondition:</dt><dd>each node is assigned a horizontal coordinate;
  *     the bend points of each edge are set; the width of the whole graph is set</dd>
  * </dl>
@@ -59,15 +62,16 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
      *     - LABEL_DUMMY_INSERTER
      * 
      * Before phase 3:
+     *   - For non-free ports:
+     *     - NORTH_SOUTH_PORT_PREPROCESSOR
+     *     - INVERTED_PORT_PROCESSOR
+     *     
      *   - For edge labels:
      *     - LABEL_SIDE_SELECTOR
      *   
      *   - For center edge labels:
      *     - LABEL_SIDE_SELECTOR
      *     - LABEL_DUMMY_SWITCHER
-     *     
-     *   - For northern and southern ports:
-     *     - NORTH_SOUTH_PORT_PREPROCESSOR
      * 
      * Before phase 4:
      *   - None.
@@ -76,15 +80,41 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
      *   - None.
      * 
      * After phase 5:
+     *   - For non-free ports:
+     *     - NORTH_SOUTH_PORT_POSTPROCESSOR
+     *     
      *   - For center edge labels:
      *     - LABEL_DUMMY_REMOVER
      *     
      *   - For end edge labels:
      *     - END_LABEL_PROCESSOR
-     *     
-     *   - For northern and southern ports:
-     *     - NORTH_SOUTH_PORT_POSTPROCESSOR
      */
+    
+    /** additional processor dependencies for graphs with possible inverted ports. */
+    private static final IntermediateProcessingConfiguration INVERTED_PORT_PROCESSING_ADDITIONS =
+        new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.BEFORE_PHASE_3,
+                LayoutProcessorStrategy.INVERTED_PORT_PROCESSOR);
+    
+    /** additional processor dependencies for graphs with northern / southern non-free ports. */
+    private static final IntermediateProcessingConfiguration NORTH_SOUTH_PORT_PROCESSING_ADDITIONS =
+        new IntermediateProcessingConfiguration(
+                // Before Phase 1
+                null,
+                
+                // Before Phase 2
+                null,
+                
+                // Before Phase 3
+                EnumSet.of(LayoutProcessorStrategy.NORTH_SOUTH_PORT_PREPROCESSOR),
+                
+                // Before Phase 4
+                null,
+                
+                // Before Phase 5
+                null,
+                
+                // After Phase 5
+                EnumSet.of(LayoutProcessorStrategy.NORTH_SOUTH_PORT_POSTPROCESSOR));
     
     /** additional processor dependencies for graphs with center edge labels. */
     private static final IntermediateProcessingConfiguration CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
@@ -129,27 +159,6 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 // After Phase 5
                 EnumSet.of(LayoutProcessorStrategy.END_LABEL_PROCESSOR));
     
-    /** additional processor dependencies for graphs with northern / southern non-free ports. */
-    private static final IntermediateProcessingConfiguration NORTH_SOUTH_PORT_PROCESSING_ADDITIONS =
-        new IntermediateProcessingConfiguration(
-                // Before Phase 1
-                null,
-                
-                // Before Phase 2
-                null,
-                
-                // Before Phase 3
-                EnumSet.of(LayoutProcessorStrategy.NORTH_SOUTH_PORT_PREPROCESSOR),
-                
-                // Before Phase 4
-                null,
-                
-                // Before Phase 5
-                null,
-                
-                // After Phase 5
-                EnumSet.of(LayoutProcessorStrategy.NORTH_SOUTH_PORT_POSTPROCESSOR));
-    
     /** the minimal vertical difference for creating bend points. */
     private static final double MIN_VERT_DIFF = 1.0;
     /** factor for layer spacing. */
@@ -167,16 +176,22 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
         IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration();
         
         // Additional dependencies
+        if (graphProperties.contains(GraphProperties.NON_FREE_PORTS)
+                || graph.getProperty(Properties.FEEDBACK_EDGES)) {
+            
+            configuration.addAll(INVERTED_PORT_PROCESSING_ADDITIONS);
+
+            if (graphProperties.contains(GraphProperties.NORTH_SOUTH_PORTS)) {
+                configuration.addAll(NORTH_SOUTH_PORT_PROCESSING_ADDITIONS);
+            }
+        }
+        
         if (graphProperties.contains(GraphProperties.CENTER_LABELS)) {
             configuration.addAll(CENTER_EDGE_LABEL_PROCESSING_ADDITIONS);
         }
         
         if (graphProperties.contains(GraphProperties.END_LABELS)) {
             configuration.addAll(END_EDGE_LABEL_PROCESSING_ADDITIONS);
-        }
-
-        if (graphProperties.contains(GraphProperties.NORTH_SOUTH_PORTS)) {
-            configuration.addAll(NORTH_SOUTH_PORT_PROCESSING_ADDITIONS);
         }
         
         return configuration;
@@ -203,22 +218,21 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
             
             // Iterate over the layer's nodes
             for (LNode node : layer) {
-                // Calculate the maximal vertical span of output edges
+                // Calculate the maximal vertical span of output edges. In-layer edges are already
+                // routed at this point by inserting a bend point appropriately
                 double maxOutputYDiff = 0.0;
-                for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
-                    double sourcePos = sourcePort.getAbsoluteAnchor().y;
-                    
-                    // Iterate over the connected target ports
-                    for (LPort targetPort : sourcePort.getSuccessorPorts()) {
-                        // Check for vertical span if the ports are in different layers
-                        if (node.getLayer() != targetPort.getNode().getLayer()) {
-                            double targetPos = targetPort.getAbsoluteAnchor().y;
-                            
-                            maxOutputYDiff = KielerMath.maxd(
-                                    maxOutputYDiff,
-                                    targetPos - sourcePos,
-                                    sourcePos - targetPos);
-                        }
+                for (LEdge outgoingEdge : node.getOutgoingEdges()) {
+                    if (node.getLayer() == outgoingEdge.getTarget().getNode().getLayer()) {
+                        // We have an in-layer edge -- route it!
+                        routeInLayerEdge(outgoingEdge, xpos, layer.getSize(), spacing * edgeSpaceFac);
+                    } else {
+                        double sourcePos = outgoingEdge.getSource().getAbsoluteAnchor().y;
+                        double targetPos = outgoingEdge.getTarget().getAbsoluteAnchor().y;
+
+                        maxOutputYDiff = KielerMath.maxd(
+                                maxOutputYDiff,
+                                targetPos - sourcePos,
+                                sourcePos - targetPos);
                     }
                 }
                 
@@ -309,5 +323,47 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
         
         monitor.done();
     }
-
+    
+    private void routeInLayerEdge(final LEdge edge, final double layerXPos, final KVector layerSize,
+            final double edgeSpacing) {
+        
+        /* We will add two bend points to the edge:
+         *  1. One will be vertically centered between the connected ports, with the x position
+         *     slightly to the left (western ports) or to the right (eastern ports) of the layer.
+         *  2. The other will be just where the port of the dummy node is anchored. (all in-layer
+         *     edges are assumed to connect to at least one dummy node.)
+         */
+        
+        LPort sourcePort = edge.getSource();
+        LPort targetPort = edge.getTarget();
+        
+        // Calculate the two x coordinates used (one at the layer start / end, and one a bit off)
+        double nearX = 0.0;
+        double farX = 0.0;
+        
+        // Since in-layer edges connect two eastern or two western ports, we only need to look at the
+        // port side of the source port
+        if (sourcePort.getSide() == PortSide.EAST) {
+            nearX = layerXPos + layerSize.x;
+            farX = nearX + edgeSpacing;
+        } else if (sourcePort.getSide() == PortSide.WEST) {
+            nearX = layerXPos;
+            farX = nearX - edgeSpacing;
+        }
+        
+        // FIRST BEND POINT (if the source node is a dummy node)
+        if (sourcePort.getNode().getProperty(Properties.NODE_TYPE) != NodeType.NORMAL) {
+            edge.getBendPoints().add(new KVector(nearX, sourcePort.getAbsoluteAnchor().y));
+        }
+        
+        // SECOND BEND POINT (halfway between the ports)
+        edge.getBendPoints().add(new KVector(
+                farX,
+                (sourcePort.getAbsoluteAnchor().y + targetPort.getAbsoluteAnchor().y) / 2.0));
+        
+        // THIRD BEND POINT (if the target node is a dummy node)
+        if (targetPort.getNode().getProperty(Properties.NODE_TYPE) != NodeType.NORMAL) {
+            edge.getBendPoints().add(new KVector(nearX, targetPort.getAbsoluteAnchor().y));
+        }
+    }
 }
