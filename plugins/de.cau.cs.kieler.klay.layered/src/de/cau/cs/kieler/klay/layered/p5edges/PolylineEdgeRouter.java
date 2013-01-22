@@ -162,7 +162,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
     /** the minimal vertical difference for creating bend points. */
     private static final double MIN_VERT_DIFF = 1.0;
     /** factor for layer spacing. */
-    private static final double LAYER_SPACE_FAC = 0.2;
+    private static final double LAYER_SPACE_FAC = 0.4;
     
     /**
      * {@inheritDoc}
