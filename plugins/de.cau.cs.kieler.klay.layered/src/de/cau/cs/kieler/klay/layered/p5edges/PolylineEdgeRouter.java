@@ -162,7 +162,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
     /** the minimal vertical difference for creating bend points. */
     private static final double MIN_VERT_DIFF = 1.0;
     /** factor for layer spacing. */
-    private static final double LAYER_SPACE_FAC = 0.2;
+    private static final double LAYER_SPACE_FAC = 0.4;
     
     /**
      * {@inheritDoc}
@@ -224,7 +224,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 for (LEdge outgoingEdge : node.getOutgoingEdges()) {
                     if (node.getLayer() == outgoingEdge.getTarget().getNode().getLayer()) {
                         // We have an in-layer edge -- route it!
-                        routeInLayerEdge(outgoingEdge, xpos, layer.getSize(), spacing * edgeSpaceFac);
+                        routeInLayerEdge(outgoingEdge, xpos, layer.getSize().x, spacing * edgeSpaceFac);
                     } else {
                         double sourcePos = outgoingEdge.getSource().getAbsoluteAnchor().y;
                         double targetPos = outgoingEdge.getTarget().getAbsoluteAnchor().y;
@@ -324,7 +324,18 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
         monitor.done();
     }
     
-    private void routeInLayerEdge(final LEdge edge, final double layerXPos, final KVector layerSize,
+    /**
+     * Computes the bend points for in-layer edges. In-layer edges are assumed to always connect either
+     * two western or two eastern ports, but not two ports on different sides. This method makes no
+     * restrictions as to the kinds of nodes connected by the in-layer edge. That is, it does not for
+     * example assume at least one of the connected nodes to be a regular node.
+     * 
+     * @param edge the in-layer edge to route.
+     * @param layerXPos the layer's x position.
+     * @param layerWidth the layer's width.
+     * @param edgeSpacing spacing between edges and nodes.
+     */
+    private void routeInLayerEdge(final LEdge edge, final double layerXPos, final double layerWidth,
             final double edgeSpacing) {
         
         /* We will add two bend points to the edge:
@@ -344,7 +355,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
         // Since in-layer edges connect two eastern or two western ports, we only need to look at the
         // port side of the source port
         if (sourcePort.getSide() == PortSide.EAST) {
-            nearX = layerXPos + layerSize.x;
+            nearX = layerXPos + layerWidth;
             farX = nearX + edgeSpacing;
         } else if (sourcePort.getSide() == PortSide.WEST) {
             nearX = layerXPos;
