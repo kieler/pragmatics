@@ -1082,35 +1082,47 @@ public final class BKNodePlacer implements ILayoutPhase {
      * It is checked whether all nodes are placed in the correct order in their layers
      * and do not overlap each other.
      * 
-     * @param layeredGraph The containing layered graph
-     * @param bal The layout which shall be checked
-     * @return True if the order is preserved and no nodes overlap, false else
+     * @param layeredGraph the containing layered graph.
+     * @param bal the layout which shall be checked.
+     * @return {@code true} if the order is preserved and no nodes overlap, {@code false} otherwise.
      */
     private boolean checkOrderConstraint(final LGraph layeredGraph, final BKAlignedLayout bal) {
+        // Check if the layout contains Y coordinate information
         if (bal.getY().isEmpty()) {
             return false;
         }
         
+        // Flag indicating if any problems were found
         boolean layoutIsSane = true;
+        
+        // Iterate over the layers
         for (Layer layer : layeredGraph.getLayers()) {
+            // Current Y position in the layer
             double pos = Double.NEGATIVE_INFINITY;
+            
+            // We remember the previous node for debug output
             LNode previous = new LNode(layeredGraph);
+            
+            // Iterate through the layer's nodes
             for (LNode node : layer.getNodes()) {
-                if (bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y > pos) {
+                // For the layout to be correct, both the node's top border and its bottom border must
+                // be beyond the current position in the layer
+                if (bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y > pos
+                        && bal.getY().get(node) + bal.getInnerShift().get(node) > pos) {
+                    
                     previous = node;
+                    
+                    // Update the position inside the layer
                     pos = bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y;
                 } else {
+                    // We've found an overlap
                     layoutIsSane = false;
                     if (debug) {
-                        System.out.println("breaks on " + node + " which should have been after "
-                                + previous);
+                        System.out.println("breaks on " + node
+                                + " which should have been after " + previous);
                     }
                     break;
                 }
-            }
-            
-            if (!layoutIsSane) {
-                break;
             }
         }
         
