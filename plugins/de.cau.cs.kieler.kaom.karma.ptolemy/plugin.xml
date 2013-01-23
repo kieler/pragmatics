@@ -436,6 +436,49 @@
             description="every time a kaom diagram is opened a corresponding klighd view is opened as well"
             name="kaom klight debug">
       </combination>
+    </extension>
+    <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="de.cau.cs.kieler.kaom.karma.ptolemy.openkaomklighd"
+               label="Open Klighd Diagram"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                     <or>
+                        <test
+                              forcePluginActivation="false"
+                              property="org.eclipse.core.resources.extension"
+                              value="kaom">
+                        </test>
+                        <test
+                              forcePluginActivation="false"
+                              property="org.eclipse.core.resources.extension"
+                              value="kaot">
+                        </test>
+                     </or>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID"
+            defaultHandler="de.cau.cs.kieler.kaom.karma.ptolemy.krendering.OpenKaomKlighdViewHandler"
+            description="Open a Klighd view for the selected model"
+            id="de.cau.cs.kieler.kaom.karma.ptolemy.openkaomklighd"
+            name="openkaomklighd">
+      </command>
    </extension>
 
 </plugin>
