@@ -153,11 +153,12 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 /* Note that, upon Miro's request, each phase of the algorithm was given a code name. */
                 
                 /* PREPARATIONS
-                 * Reset stuff and fill the port information fields.
+                 * Reset stuff, fill the port information fields, and remember the node's old size.
                  */
                 resetContext();
                 calculatePortInformation(node, node.getProperty(LayoutOptions.SIZE_CONSTRAINT).contains(
                         SizeConstraint.PORT_LABELS));
+                KVector originalNodeSize = new KVector(node.getSize());
                 
                 
                 /* PHASE 1 (SAD DUCK): PLACE PORT LABELS
@@ -194,7 +195,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                  * is not required for port placement since the placement will be based on the node's
                  * size (if it is not fixed anyway).
                  */
-                placePorts(node);
+                placePorts(node, originalNodeSize);
                 
                 
                 /* PHASE 5 (HAPPY DUCK): PLACE NODE LABEL
@@ -704,19 +705,26 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
     // PORT PLACEMENT
 
     /**
-     * Places the given node's ports.
+     * Places the given node's ports. If the node wasn't resized at all and port constraints are set
+     * to either {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}, the port
+     * positions are not touched.
      * 
      * @param node the node whose ports to place.
+     * @param originalNodeSize the node's size before it was (possibly) resized.
      */
-    private void placePorts(final LNode node) {
+    private void placePorts(final LNode node, final KVector originalNodeSize) {
         PortConstraints portConstraints = node.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         
         if (portConstraints == PortConstraints.FIXED_POS) {
             // Fixed Position
-            placeFixedPosNodePorts(node);
+            if (!originalNodeSize.equals(node.getSize())) {
+                placeFixedPosNodePorts(node);
+            }
         } else if (portConstraints == PortConstraints.FIXED_RATIO) {
             // Fixed Ratio
-            placeFixedRatioNodePorts(node);
+            if (!originalNodeSize.equals(node.getSize())) {
+                placeFixedRatioNodePorts(node);
+            }
         } else {
             // Free, Fixed Side, Fixed Order
             if (node.getProperty(LayoutOptions.HYPERNODE)
@@ -739,12 +747,14 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         KVector nodeSize = node.getSize();
 
         for (LPort port : node.getPorts()) {
+            float portOffset = port.getProperty(Properties.OFFSET);
+            
             switch (port.getSide()) {
             case EAST:
-                port.getPosition().x = nodeSize.x;
+                port.getPosition().x = nodeSize.x + portOffset;
                 break;
             case SOUTH:
-                port.getPosition().y = nodeSize.y;
+                port.getPosition().y = nodeSize.y + portOffset;
                 break;
             }
         }
@@ -762,20 +772,22 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         // Adjust port positions depending on port side. Eastern ports have to have their x coordinate
         // set to the node's current width; the same goes for the y coordinate of southern ports
         for (LPort port : node.getPorts()) {
+            float portOffset = port.getProperty(Properties.OFFSET);
+            
             switch (port.getSide()) {
             case WEST:
                 port.getPosition().y = nodeSize.y * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
                 break;
             case EAST:
                 port.getPosition().y = nodeSize.y * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
-                port.getPosition().x = nodeSize.x;
+                port.getPosition().x = nodeSize.x + portOffset;
                 break;
             case NORTH:
                 port.getPosition().x = nodeSize.x * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
                 break;
             case SOUTH:
                 port.getPosition().x = nodeSize.x * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
-                port.getPosition().y = nodeSize.y;
+                port.getPosition().y = nodeSize.y + portOffset;
                 break;
             }
         }
@@ -804,13 +816,6 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         double northX = northDelta;
         double southDelta = (nodeSize.x - southPortsWidth) / (southPortsCount + 1);
         double southX = nodeSize.x - southDelta;
-
-        // DEBUG START
-        System.out.println("Node width " + nodeSize.x);
-        System.out.println("North ports: " + northPortsCount);
-        System.out.println("North ports width: " + northPortsWidth);
-        System.out.println("North delta: " + northDelta);
-        // DEBUG END
         
         // Arrange the ports
         for (LPort port : node.getPorts()) {
@@ -839,9 +844,6 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 port.getPosition().y = -port.getSize().y - portOffset;
                 northX += northDelta + portSize.x
                         + (accountForLabels ? portMargins.left + portMargins.right : 0.0);
-                // DEBUG START
-                System.out.println("North port x position " + port.getPosition().x);
-                // DEBUG END
                 break;
             case SOUTH:
                 port.getPosition().x = southX - portSize.x

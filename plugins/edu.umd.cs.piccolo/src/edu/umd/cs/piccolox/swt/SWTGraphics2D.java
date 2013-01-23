@@ -893,6 +893,7 @@ public class SWTGraphics2D extends Graphics2D {
     public void drawString(final String str, final int x, final int y, final boolean isTransparent) {
         // FIXME this is a workaround for Eclipse Bug 335769
         gc.getGCData().state |= 1 << 9;
+        gc.setFont(curFont);
         gc.setTransform(swtTransform);
         gc.drawString(str, x, y, isTransparent);
         gc.setTransform(null);
@@ -965,7 +966,7 @@ public class SWTGraphics2D extends Graphics2D {
      *            the y coordinate of the location where the String should be rendered
      */
     public void drawText(final String str, final double x, final double y) {
-        drawString(str, (int) (x + 0.5), (int) (y + 0.5));
+        drawText(str, (int) (x + 0.5), (int) (y + 0.5), SWT.DRAW_DELIMITER | SWT.DRAW_TRANSPARENT);
     }
 
     /**
@@ -1009,6 +1010,7 @@ public class SWTGraphics2D extends Graphics2D {
     public void drawText(final String str, final int x, final int y, final int flags) {
         // FIXME this is a workaround for Eclipse Bug 335769
         gc.getGCData().state |= 1 << 9;
+        gc.setFont(curFont);
         gc.setTransform(swtTransform);
         gc.drawText(str, x, y, flags);
         gc.setTransform(null);
