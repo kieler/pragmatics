@@ -228,11 +228,19 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         // process all edges
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
-                if (node.getProperty(Properties.NODE_TYPE) != NodeType.LONG_EDGE) {
+                NodeType sourceNodeType = node.getProperty(Properties.NODE_TYPE);
+                
+                if (sourceNodeType != NodeType.LONG_EDGE
+                        && sourceNodeType != NodeType.LABEL) {
+                    
                     for (LPort port : node.getPorts()) {
                         for (LEdge edge : port.getOutgoingEdges()) {
-                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
-                                    == NodeType.LONG_EDGE) {
+                            NodeType targetNodeType =
+                                    edge.getTarget().getNode().getProperty(Properties.NODE_TYPE);
+                            
+                            if (targetNodeType == NodeType.LONG_EDGE
+                                    || targetNodeType == NodeType.LABEL) {
+                                
                                 processLongEdge(edge);
                             } else {
                                 processShortEdge(edge);

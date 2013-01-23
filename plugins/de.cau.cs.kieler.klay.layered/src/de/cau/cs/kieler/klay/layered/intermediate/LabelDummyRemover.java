@@ -95,7 +95,7 @@ public final class LabelDummyRemover implements ILayoutProcessor {
                             survivingBendPoints.add(new KVector(bendPoint));
                         }
                         
-                        //Join their labels
+                        // Join their labels
                         List<LLabel> survivingLabels = survivingEdge.getLabels();
                         for (LLabel label2: droppedEdge.getLabels()) {
                             survivingLabels.add(label2);

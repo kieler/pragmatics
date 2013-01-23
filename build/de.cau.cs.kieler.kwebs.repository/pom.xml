@@ -62,7 +62,7 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}/products/de.cau.cs.kwebs.server.product/de.cau.cs.kieler.kwebs.server/icons/</outputDirectory>
+              <outputDirectory>${project.build.directory}/products/de.cau.cs.kieler.kwebs.server.product/de.cau.cs.kieler.kwebs.server/icons/</outputDirectory>
               <nonFilteredFileExtensions>
                 <nonFilteredFileExtension>gif</nonFilteredFileExtension>
                 <nonFilteredFileExtension>icns</nonFilteredFileExtension>

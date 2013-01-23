@@ -22,24 +22,29 @@
             id="de.cau.cs.kieler.core.kivi"
             name="KIELER View Management">
       </page>
-   </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
       <page
+            category="de.cau.cs.kieler.core.kivi"
             class="de.cau.cs.kieler.core.kivi.preferences.CombinationsPreferencePage"
             id="de.cau.cs.kieler.core.kivi.combinations"
-            name="Combinations"
-            category="de.cau.cs.kieler.core.kivi">
+            name="Combinations">
       </page>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="de.cau.cs.kieler.core.kivi"
+               label="KIELER View Management">
+         </toolbar>
+      </menuContribution>
+      <menuContribution
             allPopups="true"
-            locationURI="toolbar:de.cau.cs.kieler">
+            locationURI="toolbar:de.cau.cs.kieler.core.kivi">
          <command
                commandId="de.cau.cs.kieler.core.kivi.toolbar.command"
-               icon="icons/kieler_16.gif"
+               icon="icons/foerde-green.gif"
                id="de.cau.cs.kieler.kivi.dynamic.toolbar.button"
                label="KIELER View Management"
                style="pulldown">
