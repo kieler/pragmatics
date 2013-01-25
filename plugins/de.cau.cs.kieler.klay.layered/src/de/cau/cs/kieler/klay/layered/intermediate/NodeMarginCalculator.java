@@ -170,7 +170,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
                     if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
                             == EdgeLabelPlacement.HEAD) {
                         
-                        elementBox.x = portX - label.getSize().x;
+                        elementBox.x = portX - maxPortLabelWidth - label.getSize().x;
                         elementBox.y = portY;
                         elementBox.width = label.getSize().x;
                         elementBox.height = label.getSize().y;
