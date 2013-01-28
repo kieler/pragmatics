@@ -347,20 +347,27 @@ class ProvidedlayoutProvider
         }
         val String type         = option.type
         val String defaultValue = if (option.^default != null && option.^default.trim.length > 0) option.^default.trim else "&lt;NONE&gt;"
-        return
+        return 
             '''
             «if (!rawAppend) '''<p class='title'>Layout Option Details</p>'''»
             <p>Name: «option.name»<br/></p>
             <p>Identifier: «option.id»<br/></p>
-            <p>Type: «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL)) "enumeration" else type»<br/></p>
-            «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL)) {
+            <p>Type: 
+            «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL))
+                "enumeration"
+            else if (type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL))
+                "enumeration set"
+            else type»<br/></p>
+            «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL)
+                || type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL)) {
                 '''
-                <p>
-                    Possible Values: «option.remoteEnum.values.join(", ")»
-                </p>
+                <p>Possible Values: «option.remoteEnum.values.join(", ")»<br/></p>
                 '''
             }»
             <p>Default Value: «defaultValue»<br/></p>
+            «if (option.appliesTo != null) {
+                '''<p>Applies To: «option.appliesTo»<br/></p>'''
+            }»
             <p class='title'>Description</p>
             «if (option.description != null) {
                 '''
