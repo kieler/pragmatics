@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.kiml.ogdf.feature.source"
       label="KIELER Layout - OGDF Support (optional) (Sources)"
-      version="0.5.0.qualifier"
+      version="0.5.1.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       plugin="de.cau.cs.kieler.kiml.ogdf.source">
 
@@ -218,14 +218,14 @@ litigation.
       <update label="KIELER Nightly Builds" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"/>
    </url>
 
+   <includes
+         id="net.ogdf.bin.feature.source"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="de.cau.cs.kieler.kiml.source"/>
       <import plugin="de.cau.cs.kieler.core.source"/>
    </requires>
-
-   <includes
-         id="net.ogdf.bin.feature.source"
-         version="0.0.0"/>
 
    <plugin
          id="de.cau.cs.kieler.kiml.ogdf.source"
