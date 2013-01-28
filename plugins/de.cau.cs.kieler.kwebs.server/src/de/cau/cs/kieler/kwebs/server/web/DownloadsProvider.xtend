@@ -117,7 +117,7 @@ class DownloadsProvider
                 '''
                 <p class='title'>Secure Access</p>
                 <p>
-                    In order to use the layout service secured by HTTPS, you need to download <a href='«urlTS»'>trust store</a>.
+                    In order to use the layout service secured by HTTPS, you need to download the <a href='«urlTS»'>trust store</a>.
                     Furthermore, you will need the password to access the key that is stored in it and that is necessary
                     for opening a secure connection. The policy for getting this password depends on your service host.
                 </p>
