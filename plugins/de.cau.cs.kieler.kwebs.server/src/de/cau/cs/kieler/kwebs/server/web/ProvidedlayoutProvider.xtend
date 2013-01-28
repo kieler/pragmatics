@@ -37,6 +37,9 @@ import java.util.List
 class ProvidedlayoutProvider 
     extends AbstractProvider
 {
+    
+    /** The default layout algorithm identifier. */
+    private static String DEFAULT_ALGORITHM_ID = "de.cau.cs.kieler.klay.layered"
 
     /** Constant for query parameter 'algorithm'. */
     private static String PARAM_ALGORITHM = "algorithm"
@@ -350,7 +353,10 @@ class ProvidedlayoutProvider
             return ''''''
         }
         val String type         = option.type
-        val String defaultValue = if (option.^default != null && option.^default.trim.length > 0) option.^default.trim else "&lt;NONE&gt;"
+        val String defaultValue =
+            if (id.equals(LayoutOptions::ALGORITHM.getId())) DEFAULT_ALGORITHM_ID
+            else if (option.^default != null && option.^default.trim.length > 0) option.^default.trim
+            else "&lt;NONE&gt;"
  
         '''
         «if (!rawAppend) '''<p class='title'>Layout Option Details</p>'''»
@@ -372,12 +378,12 @@ class ProvidedlayoutProvider
         «if (option.appliesTo != null) {
             '''<p>Applies To: «option.appliesTo»<br/></p>'''
         }»
-        <p class='title'>Description</p>
         «if (option.description != null) {
             '''
-            <p>
-                «generateHypertext(option.description)»
-            </p>
+        <p class='title'>Description</p>
+        <p>
+            «generateHypertext(option.description)»
+        </p>
             '''
         }»
         «if (!rawAppend) generateBackButton(processingExchange)»'''
