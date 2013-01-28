@@ -40,6 +40,13 @@ public class KlighdViewer extends AbstractViewer<Object> {
     public KlighdViewer(final Composite parent) {
         contextViewer = new ContextViewer(parent, null, null);
     }
+    
+    /**
+     * Release all resources that were allocated for this viewer.
+     */
+    public void dispose() {
+        contextViewer.dispose();
+    }
 
     /**
      * Returns the context viewer utilized by this viewer.
