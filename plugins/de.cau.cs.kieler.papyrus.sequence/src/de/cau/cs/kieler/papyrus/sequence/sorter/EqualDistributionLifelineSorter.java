@@ -39,7 +39,8 @@ import de.cau.cs.kieler.papyrus.sequence.graph.SMessage;
  * "A new heuristic algorithm for the Linear Arrangement problem".
  * 
  * @author grh
- * 
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
  */
 public class EqualDistributionLifelineSorter implements ILifelineSorter {
 
@@ -351,7 +352,6 @@ public class EqualDistributionLifelineSorter implements ILifelineSorter {
      * @return the node that should be placed in first location
      */
     private EDLSNode layerBasedFirstNode(final SGraph sgraph, final LGraph lgraph) {
-
         List<Layer> layers = lgraph.getLayers();
         Layer firstLayer = layers.get(0);
         List<LNode> nodes = firstLayer.getNodes();
