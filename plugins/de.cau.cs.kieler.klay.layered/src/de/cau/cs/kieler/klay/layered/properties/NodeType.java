@@ -71,6 +71,7 @@ public enum NodeType {
         case LOWER_COMPOUND_PORT: return "#2f6d3e";
         case UPPER_COMPOUND_BORDER: return "#fb0838";
         case UPPER_COMPOUND_PORT: return "#b01d38";
+        case LABEL: return "#75c3c3";
         default: return "#000000";
         }
     }

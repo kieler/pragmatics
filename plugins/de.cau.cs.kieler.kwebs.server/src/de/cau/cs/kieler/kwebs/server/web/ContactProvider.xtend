@@ -22,65 +22,61 @@ import de.cau.cs.kieler.kwebs.server.configuration.Configuration
  * @author swe
  */
 class ContactProvider 
-	extends AbstractProvider
+    extends AbstractProvider
 {
-	
-	/**
-	 * 
-	 */
-	override CharSequence getHeaders(
-    	ResourceProcessingExchange processingExchange
-	) 
-	{
-		return ''''''
-	}
     
     /**
      * 
      */
-	override CharSequence getBody(
-    	ResourceProcessingExchange processingExchange
-	) 
-	{
-		val Configuration config = Configuration::INSTANCE
-		return 
-			'''
-			<p class='title'>Contact</p>
-			«if (config.hasConfigProperty(Configuration::CONTACT_INFORMATION)) {
-				val String provider = config.getConfigProperty(Configuration::CONTACT_INFORMATION).escapeHtml 				
-				'''
-				<p>
-					<b>This service is provided by:</b>
-				</p>
-				<p>
-					«provider»
-				</p>
-				'''
-			}»
-			«if (config.hasConfigProperty(Configuration::CONTACT_EMAIL_ADDRESS)) {
-				val String person  = config.getConfigProperty(Configuration::CONTACT_EMAIL_PERSON).escapeHtml
-				val String address = config.getConfigProperty(Configuration::CONTACT_EMAIL_ADDRESS).escapeHtml				
-				'''
-				<p>
-					<b>You can also contact us via email:</b>
-				</p>
-				<p>
-					Please feel free to contact <a href='mailto:«address»'>«person»</a> for any questions and suggestions
-					you have referring the service we provide.
-				</p>
-				'''
-			}»
-			'''
-	}
+    override CharSequence getHeaders(
+        ResourceProcessingExchange processingExchange
+    ) 
+    {
+        return ''''''
+    }
     
     /**
      * 
      */
-	override boolean providerOverride(
-    	ResourceProcessingExchange processingExchange
-	) 
-	{
-		return false
-	}
-	
+    override CharSequence getBody(
+        ResourceProcessingExchange processingExchange
+    ) 
+    {
+        val Configuration config = Configuration::INSTANCE
+        '''
+        <p class='title'>Contact</p>
+        «if (config.hasConfigProperty(Configuration::CONTACT_INFORMATION)) {
+            val String provider = config.getConfigProperty(Configuration::CONTACT_INFORMATION).escapeHtml                 
+            '''
+            <p>
+                <b>This service is provided by:</b>
+            </p>
+            <p>
+                «provider»
+            </p>
+            '''
+        }»
+        «if (config.hasConfigProperty(Configuration::CONTACT_EMAIL_ADDRESS)) {
+            val String person  = config.getConfigProperty(Configuration::CONTACT_EMAIL_PERSON).escapeHtml
+            val String address = config.getConfigProperty(Configuration::CONTACT_EMAIL_ADDRESS).escapeHtml                
+            '''
+            <p>
+                Please feel free to contact <a href='mailto:«address»'>«person»</a> for any questions and suggestions
+                regarding the layout web service.
+            </p>
+            '''
+        }»
+        '''
+    }
+    
+    /**
+     * 
+     */
+    override boolean providerOverride(
+        ResourceProcessingExchange processingExchange
+    ) 
+    {
+        return false
+    }
+    
 }

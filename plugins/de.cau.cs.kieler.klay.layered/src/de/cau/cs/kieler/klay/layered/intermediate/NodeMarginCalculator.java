@@ -132,45 +132,45 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
             // Calculate the port's upper left corner's x and y coordinate
             double portX = port.getPosition().x + node.getPosition().x;
             double portY = port.getPosition().y + node.getPosition().y;
-            double portLabelX = 0;
-            double portLabelY = 0;
+            double maxPortLabelWidth = 0;
+            double maxPortLabelHeight = 0;
             
             //TODO: maybe leave space for manually placed ports 
             if (node.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT) == PortLabelPlacement.OUTSIDE) {
-                
                 for (LLabel label : port.getLabels()) {
-                    if (portLabelX < label.getSize().x) {
-                        portLabelX = label.getSize().x;
+                    if (maxPortLabelWidth < label.getSize().x) {
+                        maxPortLabelWidth = label.getSize().x;
                     }
-                    if (portLabelY < label.getSize().y) {
-                        portLabelY = label.getSize().y;
+                    
+                    if (maxPortLabelHeight < label.getSize().y) {
+                        maxPortLabelHeight = label.getSize().y;
                     }
                 }
             }
-            
+
+            // For each edge, the tail labels of outgoing edges ...
             for (LEdge edge : port.getOutgoingEdges()) {
-                // For each edge, the head labels of outgoing edges ...
                 for (LLabel label : edge.getLabels()) {
                     if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                            == EdgeLabelPlacement.HEAD) {
+                            == EdgeLabelPlacement.TAIL) {
                         
                         elementBox.x = portX;
                         elementBox.y = portY;
-                        elementBox.width = label.getSize().x + portLabelX;
-                        elementBox.height = label.getSize().y + portLabelY;
+                        elementBox.width = label.getSize().x + maxPortLabelWidth;
+                        elementBox.height = label.getSize().y + maxPortLabelHeight;
                         
                         Rectangle2D.union(boundingBox, elementBox, boundingBox);
                     }
                 }
             }
-            
+
+            // ... and the head label of incoming edges shall be considered 
             for (LEdge edge : port.getIncomingEdges()) {
-                // ... and the tail label of incoming edges shall be considered 
                 for (LLabel label : edge.getLabels()) {
                     if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                            == EdgeLabelPlacement.TAIL) {
+                            == EdgeLabelPlacement.HEAD) {
                         
-                        elementBox.x = portX - label.getSize().x;
+                        elementBox.x = portX - maxPortLabelWidth - label.getSize().x;
                         elementBox.y = portY;
                         elementBox.width = label.getSize().x;
                         elementBox.height = label.getSize().y;

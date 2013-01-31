@@ -127,10 +127,6 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
     public byte[] getPreviewImage(final String previewImage) {
         return previewImages.get(previewImage);
     }
-    
-    /** Type attribute value for enumeration layout options. */
-    private static final String TYPE_ENUM
-        = "enum";
 
     /**
      * Creates the model instance and the XMI representation of the services meta data.
@@ -211,14 +207,19 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
                 option.setDefault(element.getAttribute(ATTRIBUTE_DEFAULT));
                 option.setImplementation(element.getAttribute(ATTRIBUTE_CLASS));
                 option.setAdvanced(Boolean.parseBoolean(element.getAttribute(ATTRIBUTE_ADVANCED)));
-                if (element.getAttribute(ATTRIBUTE_TYPE).equals(TYPE_ENUM)) {
-                    option.setType(LayoutOptionData.REMOTEENUM_LITERAL);        
+                String type = element.getAttribute(ATTRIBUTE_TYPE);
+                if (type.equals(LayoutOptionData.ENUM_LITERAL)
+                        || type.equals(LayoutOptionData.ENUMSET_LITERAL)) {
+                    if (type.equals(LayoutOptionData.ENUM_LITERAL)) {
+                        option.setType(LayoutOptionData.REMOTEENUM_LITERAL);
+                    } else {
+                        option.setType(LayoutOptionData.REMOTEENUMSET_LITERAL);
+                    }
                     try {
                         String className = element.getAttribute(ATTRIBUTE_CLASS);
                         if (className == null || className.length() == 0) {
                             throw new IllegalArgumentException(
-                                "Class name of enum layout option is not defined"
-                            );
+                                "Class name of enum layout option is not defined");
                         }
                         @SuppressWarnings("rawtypes")
                         Class<? extends Enum> classInstance 
@@ -229,11 +230,11 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
                             remoteEnum.getValues().add(enumInstance.toString());
                         }
                         option.setRemoteEnum(remoteEnum);
-                    } catch (Exception e) {
-                        reportError(null,  null, null, e);
+                    } catch (Exception exception) {
+                        reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, exception);
                     }
                 } else {
-                    option.setType(element.getAttribute(ATTRIBUTE_TYPE));                    
+                    option.setType(type);                    
                 }
                 serviceData.getLayoutOptions().add(option);
             }
@@ -296,18 +297,9 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
                 serviceData.getLayoutAlgorithms().add(algorithm); 
                 for (IConfigurationElement child : element.getChildren()) {
                     if (child.getName().equals(ELEMENT_KNOWN_OPTION)) {
-                        KnownOption option = factory.createKnownOption();
-                        LayoutOption tmpOption = getLayoutOption(
-                            child.getAttribute(ATTRIBUTE_OPTION)
-                        );
-                        if (tmpOption == null) {
-/*                            
-                            throw new IllegalStateException(
-                                "Option for layout algorithm not found"
-                                + " (algorithm=" + algorithm.getId() 
-                                + ", option=" + child.getAttribute("option") + ")"
-                            );
-*/
+                        KnownOption knownOption = factory.createKnownOption();
+                        LayoutOption option = getLayoutOption(child.getAttribute(ATTRIBUTE_OPTION));
+                        if (option == null) {
                             Logger.log(
                                 Severity.FAILURE,
                                 "Option for layout algorithm not found, "
@@ -316,9 +308,9 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
                             );
                             continue;
                         }
-                        option.setOption(tmpOption);
-                        option.setDefault(child.getAttribute(ATTRIBUTE_DEFAULT));
-                        algorithm.getKnownOptions().add(option);
+                        knownOption.setOption(option);
+                        knownOption.setDefault(child.getAttribute(ATTRIBUTE_DEFAULT));
+                        algorithm.getKnownOptions().add(knownOption);
                     } else if (child.getName().equals(ELEMENT_SUPPORTED_DIAGRAM)) {
                         SupportedDiagram diagram = factory.createSupportedDiagram();
                         diagram.setType(child.getAttribute(ATTRIBUTE_TYPE));

@@ -34,102 +34,102 @@ import org.eclipse.core.runtime.Platform
 class AjaxdomainbridgeProvider
     extends AbstractProvider
 {
-	
-	/** */
-	private IAjaxDomainBridgeDelegate defaultDelegate
-		= new DefaultAjaxDelegate()
-		
-	//////////
-	
-	/**
-	 * 
-	 */
-	override CharSequence getHeaders(
-    	ResourceProcessingExchange processingExchange
-	) 
-	{
-		return ''''''
-	}
-	
-	/**
-	 * 
-	 */
-	override CharSequence getBody(
-    	ResourceProcessingExchange processingExchange
-	) 
-	{
-		return ''''''
-	}
-	
-	/** */
-	private static String PARAMETER_HANDLER
-		= "handler"
-		
-	/** */
-	private static int BUFFER_SIZE
-		= 4096
-		
+    
+    /** */
+    private IAjaxDomainBridgeDelegate defaultDelegate
+        = new DefaultAjaxDelegate()
+        
+    //////////
+    
+    /**
+     * 
+     */
+    override CharSequence getHeaders(
+        ResourceProcessingExchange processingExchange
+    ) 
+    {
+        return ''''''
+    }
+    
+    /**
+     * 
+     */
+    override CharSequence getBody(
+        ResourceProcessingExchange processingExchange
+    ) 
+    {
+        return ''''''
+    }
+    
+    /** */
+    private static String PARAMETER_HANDLER
+        = "handler"
+        
+    /** */
+    private static int BUFFER_SIZE
+        = 4096
+        
     /**
      *
      */
     override boolean providerOverride(
-    	ResourceProcessingExchange processingExchange
+        ResourceProcessingExchange processingExchange
     )
     {
-    	var IAjaxDomainBridgeDelegate delegate = defaultDelegate
-    	val Map<String, String>       params   = processingExchange.getParams()
-    	try {
-	    	if (params.containsKey(PARAMETER_HANDLER)) {
-	    		delegate = createDelegate(processingExchange)
-	    	} 
-	        val URLConnection         con    = delegate.getConnection(processingExchange)
-    		if (con == null) {
-	    		return true
-	    	}
-	        val BufferedInputStream   in     = new BufferedInputStream(con.getInputStream())
-	        val ByteArrayOutputStream out    = new ByteArrayOutputStream()
-	        val byte[] 				  buffer = Xtend2Util::getByteArray(BUFFER_SIZE)
-	        var int 				  read   = -1
-	        while ((read = in.read(buffer)) > 0) {
-	        	out.write(buffer, 0, read)
-	        }
-	        in.close()
-	        out.flush()
-	        processingExchange.getResourceInformation().setContent(out.toByteArray())
-	        processingExchange.getResourceInformation().setMimetype(
-	            delegate.getMimetype(processingExchange)
-	        )
-   		} catch (IOException e) {
-    		processingExchange.setResultCode(HttpURLConnection::HTTP_CLIENT_TIMEOUT)
-   		} catch (Exception e) {
-    		processingExchange.setResultCode(HttpURLConnection::HTTP_BAD_REQUEST)
-   		}
-   		return true
+        var IAjaxDomainBridgeDelegate delegate = defaultDelegate
+        val Map<String, String>       params   = processingExchange.getParams()
+        try {
+            if (params.containsKey(PARAMETER_HANDLER)) {
+                delegate = createDelegate(processingExchange)
+            } 
+            val URLConnection         con    = delegate.getConnection(processingExchange)
+            if (con == null) {
+                return true
+            }
+            val BufferedInputStream   in     = new BufferedInputStream(con.getInputStream())
+            val ByteArrayOutputStream out    = new ByteArrayOutputStream()
+            val byte[]                   buffer = Xtend2Util::getByteArray(BUFFER_SIZE)
+            var int                   read   = -1
+            while ((read = in.read(buffer)) > 0) {
+                out.write(buffer, 0, read)
+            }
+            in.close()
+            out.flush()
+            processingExchange.getResourceInformation().setContent(out.toByteArray())
+            processingExchange.getResourceInformation().setMimetype(
+                delegate.getMimetype(processingExchange)
+            )
+           } catch (IOException e) {
+            processingExchange.setResultCode(HttpURLConnection::HTTP_CLIENT_TIMEOUT)
+           } catch (Exception e) {
+            processingExchange.setResultCode(HttpURLConnection::HTTP_BAD_REQUEST)
+           }
+           return true
     }
 
-	//////////
-	
-	/** */
-	private static String DELEGATE_BASEPACKAGE
-		= "de.cau.cs.kieler.kwebs.server.web.delegates"
-	
-	/**
-	 * 
-	 */	
-	def private IAjaxDomainBridgeDelegate createDelegate(
-    	ResourceProcessingExchange processingExchange
-	)
-	throws IllegalAccessException, InstantiationException
-	{
-    	val Map<String, String>       params   = processingExchange.getParams()
-		val String                    handler  = params.get(PARAMETER_HANDLER)
-		val IAjaxDomainBridgeDelegate delegate 
-			= 
-			Platform::getBundle(Application::PLUGIN_ID).loadClass(
-				DELEGATE_BASEPACKAGE + "." + handler
-			).newInstance() 
-			as IAjaxDomainBridgeDelegate
-		return delegate
-	}
-	
+    //////////
+    
+    /** */
+    private static String DELEGATE_BASEPACKAGE
+        = "de.cau.cs.kieler.kwebs.server.web.delegates"
+    
+    /**
+     * 
+     */    
+    def private IAjaxDomainBridgeDelegate createDelegate(
+        ResourceProcessingExchange processingExchange
+    )
+    throws IllegalAccessException, InstantiationException
+    {
+        val Map<String, String>       params   = processingExchange.getParams()
+        val String                    handler  = params.get(PARAMETER_HANDLER)
+        val IAjaxDomainBridgeDelegate delegate 
+            = 
+            Platform::getBundle(Application::PLUGIN_ID).loadClass(
+                DELEGATE_BASEPACKAGE + "." + handler
+            ).newInstance() 
+            as IAjaxDomainBridgeDelegate
+        return delegate
+    }
+    
 }

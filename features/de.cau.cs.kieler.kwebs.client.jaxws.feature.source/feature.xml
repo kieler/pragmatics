@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.kwebs.client.jaxws.feature.source"
       label="KIELER Layout Client over JAX-WS (optional) (Sources)"
-      version="0.1.1.qualifier"
+      version="0.1.2.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       plugin="de.cau.cs.kieler.kwebs.client.jaxws.source">
 

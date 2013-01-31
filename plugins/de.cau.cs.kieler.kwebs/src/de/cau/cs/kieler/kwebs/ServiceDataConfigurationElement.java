@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.emf.common.util.EList;
 
 import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
 import de.cau.cs.kieler.kwebs.servicedata.Category;
@@ -180,17 +179,14 @@ public class ServiceDataConfigurationElement implements IConfigurationElement {
         element.addAttribute(ExtensionLayoutDataService.ATTRIBUTE_APPLIESTO, option.getAppliesTo());
         RemoteEnum remoteEnum = option.getRemoteEnum();
         if (remoteEnum != null) {
-            EList<String> remoteEnumValues = remoteEnum.getValues();
-            if (remoteEnumValues != null) {
-                String enumValues = "";
-                for (String enumValue : remoteEnumValues) {
-                    if (enumValue.length() > 0) {
-                        enumValues += " ";
-                        enumValues += enumValue;
-                    }
+            StringBuilder enumValues = new StringBuilder();
+            for (String enumValue : remoteEnum.getValues()) {
+                if (enumValue.length() > 0) {
+                    enumValues.append(" ").append(enumValue);
                 }
-                element.addAttribute(ExtensionLayoutDataService.ATTRIBUTE_ENUMVALUES, enumValues);
             }
+            element.addAttribute(ExtensionLayoutDataService.ATTRIBUTE_ENUMVALUES,
+                    enumValues.toString());
         }
         return element;
     }

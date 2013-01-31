@@ -36,6 +36,6 @@
   </build>
   <groupId>de.cau.cs.kieler</groupId>
   <artifactId>de.cau.cs.kieler.kwebs.server</artifactId>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.2.1-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

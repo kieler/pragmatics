@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="KIELER Layout Web Server" uid="de.cau.cs.kieler.kwebs.server.product" id="de.cau.cs.kieler.kwebs.server.Product" application="de.cau.cs.kieler.kwebs.server.Application" version="0.2.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="KIELER Layout Web Server" uid="de.cau.cs.kieler.kwebs.server.product" id="de.cau.cs.kieler.kwebs.server.Product" application="de.cau.cs.kieler.kwebs.server.Application" version="0.3.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -25,12 +25,18 @@
    <windowImages/>
 
    <launcher name="kwebs">
-      <linux icon="/de.cau.cs.kieler.kwebs.server/icons/kieler_64.xpm"/>
-      <macosx icon="/de.cau.cs.kieler.kwebs.server/icons/kieler.icns"/>
+      <linux icon="/de.cau.cs.kieler.kwebs.server/icons/foerde-logo-64.xpm"/>
+      <macosx icon="/de.cau.cs.kieler.kwebs.server/icons/foerde-logo.icns"/>
       <solaris/>
-      <win useIco="true">
-         <ico path="/de.cau.cs.kieler.kwebs.server/icons/kieler.ico"/>
-         <bmp/>
+      <win useIco="false">
+         <bmp
+            winSmallHigh="/de.cau.cs.kieler.kwebs.server/icons/foerde-logo-16.bmp"
+            winSmallLow="/de.cau.cs.kieler.kwebs.server/icons/foerde-logo-16i.bmp"
+            winMediumHigh="/de.cau.cs.kieler.kwebs.server/icons/foerde-logo-32.bmp"
+            winMediumLow="/de.cau.cs.kieler.kwebs.server/icons/foerde-logo-32i.bmp"
+            winLargeHigh="/de.cau.cs.kieler.kwebs.server/icons/foerde-logo-48.bmp"
+            winLargeLow="/de.cau.cs.kieler.kwebs.server/icons/foerde-logo-48i.bmp"
+            winExtraLargeHigh="/de.cau.cs.kieler.kwebs.server/icons/foerde-logo-256.bmp"/>
       </win>
    </launcher>
 
@@ -138,7 +144,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </plugins>
 
    <features>
-      <feature id="de.cau.cs.kieler.kwebs.server.feature" version="0.2.0.qualifier"/>
+      <feature id="de.cau.cs.kieler.kwebs.server.feature" version="0.3.0.qualifier"/>
    </features>
 
    <configurations>

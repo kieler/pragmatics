@@ -78,7 +78,7 @@ public class LoadGraphAction extends Action {
 
         // create and configure file dialog
         FileDialog fileDialog = new FileDialog(Display.getDefault().getActiveShell(), SWT.OPEN);
-        fileDialog.setFilterExtensions(new String[] { "*.kgraph", "*.xmi", "*.*" });
+        fileDialog.setFilterExtensions(new String[] { "*.kgraph", "*.kgx", "*.kgt", "*.xmi", "*.*" });
         fileDialog.setText(Messages.getString("kiml.viewer.14"));
         fileDialog.setFileName(preferenceStore.getString(LAST_FILE_NAME_PREF));
 

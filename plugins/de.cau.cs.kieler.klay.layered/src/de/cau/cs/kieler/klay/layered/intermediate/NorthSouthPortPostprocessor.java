@@ -131,8 +131,7 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
         LPort originPort = (LPort) inputPort.getProperty(Properties.ORIGIN);
         
         // Calculate the bend point
-        double x = originPort.getNode().getPosition().x + originPort.getPosition().x
-                + originPort.getAnchor().x;
+        double x = originPort.getAbsoluteAnchor().x;
         double y = inputPort.getNode().getPosition().y;
         
         // Reroute the edges, inserting a new bend point at the position of the dummy node
@@ -169,8 +168,7 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
         LPort originPort = (LPort) outputPort.getProperty(Properties.ORIGIN);
         
         // Calculate the bend point
-        double x = originPort.getNode().getPosition().x + originPort.getPosition().x
-                + originPort.getAnchor().x;
+        double x = originPort.getAbsoluteAnchor().x;
         double y = outputPort.getNode().getPosition().y;
         
         // Reroute the edges, inserting a new bend point at the position of the dummy node
@@ -211,13 +209,11 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
         
         // Add two bend points
         KVector bendPoint = new KVector(outputPort.getNode().getPosition());
-        bendPoint.x = originOutputPort.getNode().getPosition().x + originOutputPort.getPosition().x
-                + originOutputPort.getAnchor().x;
+        bendPoint.x = originOutputPort.getAbsoluteAnchor().x;
         selfLoop.getBendPoints().add(bendPoint);
         
         bendPoint = new KVector(inputPort.getNode().getPosition());
-        bendPoint.x = originInputPort.getNode().getPosition().x + originInputPort.getPosition().x
-                + originInputPort.getAnchor().x;
+        bendPoint.x = originInputPort.getAbsoluteAnchor().x;
         selfLoop.getBendPoints().add(bendPoint);
     }
 }

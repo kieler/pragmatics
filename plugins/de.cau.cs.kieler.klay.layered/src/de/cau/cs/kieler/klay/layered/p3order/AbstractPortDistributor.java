@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
@@ -192,7 +193,8 @@ abstract class AbstractPortDistributor {
                 // treated specially when calculating barycenters
                 List<LPort> inLayerPorts = Lists.newLinkedList();
                 
-                // the maximum barycenter value assigned for ports of this node
+                // the minimum and maximum barycenter values assigned for ports of this node
+                float minBarycenter = 0.0f;
                 float maxBarycenter = 0.0f;
                 
                 // calculate barycenter values for the ports of the node
@@ -200,26 +202,37 @@ abstract class AbstractPortDistributor {
                 for (LPort port : node.getPorts()) {
                     // add up all ranks of connected ports
                     float sum = 0;
-                    for (LPort connectedPort : port.getConnectedPorts()) {
+                    for (LEdge outgoingEdge : port.getOutgoingEdges()) {
+                        LPort connectedPort = outgoingEdge.getTarget();
                         if (connectedPort.getNode().getLayer() == node.getLayer()) {
                             inLayerPorts.add(port);
                             continue PortIteration;
                         } else {
+                            // outgoing edges go to the subsequent layer and are seen clockwise
                             sum += portRanks[connectedPort.id];
                         }
                     }
+                    for (LEdge incomingEdge : port.getIncomingEdges()) {
+                        LPort connectedPort = incomingEdge.getSource();
+                        if (connectedPort.getNode().getLayer() == node.getLayer()) {
+                            inLayerPorts.add(port);
+                            continue PortIteration;
+                        } else {
+                            // incoming edges go to the preceding layer and are seen counter-clockwise
+                            sum -= portRanks[connectedPort.id];
+                        }
+                    }
                     
-                    if (port.getDegree() == 0) {
-                        // We don't have a barycenter value
-                        portBarycenter[port.id] = null;
-                    } else {
+                    if (port.getDegree() > 0) {
                         portBarycenter[port.id] = sum / port.getDegree();
+                        minBarycenter = Math.min(minBarycenter, portBarycenter[port.id]);
                         maxBarycenter = Math.max(maxBarycenter, portBarycenter[port.id]);
                     }
                 }
                 
                 // go through the list of in-layer ports and calculate their barycenter values
-                int nodeIndexInLayer = node.getIndex();
+                int nodeIndexInLayer = node.getIndex() + 1;
+                int layerSize = node.getLayer().getNodes().size() + 1;
                 for (LPort inLayerPort : inLayerPorts) {
                     // add the indices of all connected in-layer ports
                     int sum = 0;
@@ -227,22 +240,36 @@ abstract class AbstractPortDistributor {
                     
                     for (LPort connectedPort : inLayerPort.getConnectedPorts()) {
                         if (connectedPort.getNode().getLayer() == node.getLayer()) {
-                            sum += connectedPort.getNode().getIndex();
+                            sum += connectedPort.getNode().getIndex() + 1;
                             inLayerConnections++;
                         }
                     }
                     
-                    // the port's barycenter value is the mean index of connected ports. If that index
-                    // is lower than the node's index, most in-layer edges will point upwards. We will
-                    // give the port a negative barycenter then to have it show up top. If most edges
-                    // point downwards, we add the maximum barycenter value encountered so far to the
-                    // one calculated here to have it show up at the bottom.
+                    // The port's barycenter value is the mean index of connected nodes. If that value
+                    // is lower than the node's index, most in-layer edges point upwards, so we want
+                    // the port to be placed at the top of the side. If the value is higher than the
+                    // nodes's index, most in-layer edges point downwards, so we want the port to be
+                    // placed at the bottom of the side.
                     float barycenter = ((float) sum) / inLayerConnections;
                     
-                    if (barycenter < nodeIndexInLayer) {
-                        portBarycenter[inLayerPort.id] = -1 * barycenter;
-                    } else {
-                        portBarycenter[inLayerPort.id] = maxBarycenter + barycenter;
+                    PortSide portSide = inLayerPort.getSide();
+                    
+                    if (portSide == PortSide.EAST) {
+                        if (barycenter < nodeIndexInLayer) {
+                            // take a low value in order to have the port above
+                            portBarycenter[inLayerPort.id] = minBarycenter - barycenter;
+                        } else {
+                            // take a high value in order to have the port below
+                            portBarycenter[inLayerPort.id] = maxBarycenter + (layerSize - barycenter);
+                        }
+                    } else if (portSide == PortSide.WEST) {
+                        if (barycenter < nodeIndexInLayer) {
+                            // take a high value in order to have the port above
+                            portBarycenter[inLayerPort.id] = maxBarycenter + barycenter;
+                        } else {
+                            // take a low value in order to have the port below
+                            portBarycenter[inLayerPort.id] = minBarycenter - (layerSize - barycenter);
+                        }
                     }
                 }
                 
@@ -254,7 +281,8 @@ abstract class AbstractPortDistributor {
     }
 
     /**
-     * Sort the ports of a node using the given relative position values.
+     * Sort the ports of a node using the given relative position values. These values are
+     * interpreted as a hint for the clockwise order of ports.
      * 
      * @param node
      *            a node
@@ -283,12 +311,8 @@ abstract class AbstractPortDistributor {
                     } else if (pos2 == null) {
                         return 1;
                     } else {
-                        // different port sides are sorted differently
-                        if (side1 == PortSide.NORTH || side1 == PortSide.EAST) {
-                            return Float.compare(pos1, pos2);
-                        } else {
-                            return Float.compare(pos2, pos1);
-                        }
+                        // sort according to the position value
+                        return Float.compare(pos1, pos2);
                     }
                 }
             }

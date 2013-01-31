@@ -64,8 +64,7 @@ import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.ButtonConfigu
  * and therefore result in compiler warnings.
  * 
  * @author ckru
- * 
-*/
+ */
 @SuppressWarnings("restriction")
 public class KiviContributionItem extends CompoundContributionItem implements
 IWorkbenchContribution {
@@ -136,7 +135,6 @@ IWorkbenchContribution {
     @Override
     protected IContributionItem[] getContributionItems() {
         KiVi.getInstance().initialize();
-        System.out.println("getContributionItems");
         for (IHandlerActivation act: handlerActivations.values()) {
             handlerService.deactivateHandler(act);
         }
@@ -262,6 +260,9 @@ IWorkbenchContribution {
          }
     }
     
+    /**
+     * Listener for updating visibility of contribution items.
+     */
     private class ContributionItemUpdater implements IPropertyChangeListener {
 
         private boolean visible = true;
