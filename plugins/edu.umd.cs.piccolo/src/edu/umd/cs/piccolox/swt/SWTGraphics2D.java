@@ -315,6 +315,7 @@ public class SWTGraphics2D extends Graphics2D {
             COLOR_CACHE.put(c, cachedColor);
         }
         gc.setForeground(cachedColor);
+        gc.setAlpha(c.getAlpha());
     }
 
     /**
@@ -360,6 +361,8 @@ public class SWTGraphics2D extends Graphics2D {
             COLOR_CACHE.put(c, cachedColor);
         }
         gc.setBackground(cachedColor);
+        // TODO the correctness of this call must still be verified (chsch)
+        gc.setAlpha(c.getAlpha());
     }
 
     /**
@@ -377,6 +380,22 @@ public class SWTGraphics2D extends Graphics2D {
         final org.eclipse.swt.graphics.Color color = gc.getBackground();
         final Color awtColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
         return awtColor;
+    }
+    
+    /**
+     * 
+     * @param alpha
+     */
+    public void setAlpha(int alpha) {
+        gc.setAlpha(alpha);
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public int getAlpha() {
+        return gc.getAntialias();
     }
 
     /**
