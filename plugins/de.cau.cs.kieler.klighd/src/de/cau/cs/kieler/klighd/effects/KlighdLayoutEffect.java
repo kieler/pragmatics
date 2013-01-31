@@ -16,8 +16,6 @@ package de.cau.cs.kieler.klighd.effects;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -30,7 +28,6 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.KlighdDataManager;
 import de.cau.cs.kieler.klighd.StyleModificationContext;
@@ -280,7 +277,6 @@ public class KlighdLayoutEffect extends AbstractEffect {
                 public Iterator<KStyle> iterator() {
                     @SuppressWarnings("unchecked")
                     IViewer<EObject> viewer = (IViewer<EObject>) KlighdLayoutEffect.this.diagramPart;
-                    EObject model = viewer.getModel();
                     Iterator<EObject> it = viewer.getModel().eAllContents();
                     return Iterators.filter(Iterators.filter(it, KStyle.class),
                             new Predicate<KStyle>() {
