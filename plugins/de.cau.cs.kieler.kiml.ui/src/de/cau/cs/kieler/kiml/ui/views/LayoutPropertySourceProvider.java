@@ -77,7 +77,7 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
         }
         IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
                 workbenchPart, object);
-        if (manager != null) {
+        if (manager != null && manager.getAdapterList().length > 0) {
             LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
             Object diagramPart = manager.getAdapter(object, manager.getAdapterList()[0]);
             EObject domainElement = (EObject) manager.getAdapter(object, EObject.class);

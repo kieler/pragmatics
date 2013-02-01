@@ -68,7 +68,7 @@ public class DiagramDefaultAction extends Action {
         IWorkbenchPart workbenchPart = layoutView.getCurrentWorkbenchPart();
         IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
                 .getManager(workbenchPart, null);
-        if (manager != null) {
+        if (manager != null && manager.getAdapterList().length > 0) {
             Object diagramPart = manager.getAdapter(workbenchPart, manager.getAdapterList()[0]);
             IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(
                     null, IMutableLayoutConfig.class);
