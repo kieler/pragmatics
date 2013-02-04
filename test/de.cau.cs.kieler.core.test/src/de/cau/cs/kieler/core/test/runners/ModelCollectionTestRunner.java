@@ -21,6 +21,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -55,44 +56,51 @@ import com.google.common.collect.Lists;
  * This class defines a JUnit4TestRunner dedicated to run tests on model data bases. It provides
  * various Java annotations:
  * <ul>
- * <li><code>Models,</code></li>
- * <li><code>BundleId,</code></li>
- * <li><code>ModelPath,</code></li>
- * <li><code>ModelFilter,</code></li>
- * <li><code>ResourceSet</code></li>
+ * <li><samp>@Models,</samp></li>
+ * <li><samp>@BundleId,</samp></li>
+ * <li><samp>@ModelPath,</samp></li>
+ * <li><samp>@ModelFilter,</samp></li>
+ * <li><samp>@ResourceSet</samp></li>
  * </ul>
  * </p>
  * <p>
  * In a test implementation the model base can be provided in two ways:
  * <ol>
  * <li>Implementing a method <code>public static Collection&lt;Object&gt; methodName() {...}</code>
- *     annotated with <code>(at)Models</code>,</li>
+ *     annotated with <samp>@Models</samp>,</li>
  * <li>Implementing <code>public static String ...</code> methods providing the bundle id, annotated
- *     with <code>(at)BundleId</code>, and the path to the models, annotated with
- *     <code>(at)ModelPath</code>.<br>
+ *     with <samp>@BundleId</samp>, and the path to the models, annotated with
+ *     <samp>@ModelPath</samp>.<br>
  *     In addition, a model file filter may be provided in form of a regular expression string by
- *     means of a method annotated with <code>(at)ModelFilter</code> and a special
+ *     means of a method annotated with <samp>@ModelFilter</samp> and a special
  *     {@link org.eclipse.emf.ecore.resource.ResourceSet ResourceSet} may registered by means a
- *     method <code>public static ResourceSet ...</code> annotated with (at)ResourceSet.</li>
+ *     method <code>public static ResourceSet ...</code> annotated with <samp>@ResourceSet</samp>.</li>
+ * <li>Attaching the parameterized annotations <samp>@BundleId("...")</samp>,
+ *     <samp>@ModelPath("...")</samp>, and optionally <samp>@ModelFilter("...")</samp> containing the
+ *     related String values to the test class besides the <samp>@RunWith(...)</samp> annotation.<br>
+ *     Due to the limitation of Java annotations w.r.t. to the parameter type a custom ResourceSet
+ *     may only be provided by means of an annotated method as mentioned in item 2.</li>
  * </ol>
  * 
- * The test classes may have a constructor with zero or one Argument(s) of type {@link Object} or
+ * The test classes may have a constructor with zero or one argument(s) of type {@link Object} or
  * {@link EObject} in order to inject the model into the test. The same holds for the test methods
- * (annotated with <code>(at)Test</code>) - 
+ * (annotated with <samp>@Test</samp>). Hence, if a test method does not require any parameter
+ * the test class must provide a one argument constructor in order to get the models to be tested
+ * injected into the test class object.
  * </p>
  *
  * Examples of valid test specifications:
- *<pre>
- * (at)RunWith(ModelCollectionTestRunner.class) {
+ * <pre>
+ * <samp>@RunWith(ModelCollectionTestRunner.class)</samp> {
  * public class Test {
  * 
- *     (at)Models
+ *     <samp>@Models</samp>
  *     public static Collection<?> getModels() {
  *         List<Object> models = Lists.newLinkedList();
  *         return models;
  *     }
  *   
- *     (at)Test
+ *     <samp>@Test</samp>
  *     public void test(EObject model) {
  *         System.out.println(((KNode) model).getData().get(0));
  *     }
@@ -100,30 +108,52 @@ import com.google.common.collect.Lists;
  *</pre>
  *
  *<pre>
- * (at)RunWith(ModelCollectionTestRunner.class) {
+ * <samp>@RunWith(ModelCollectionTestRunner.class)</samp>
  * public class Test {
  * 
- *     (at)BundleId
+ *     <samp>@BundleId</samp>
  *     public static String getBundleId() {
  *         return "de.cau.cs.kieler.klighd.test";
  *     }
  *    
- *     (at)ModelPath
+ *     <samp>@ModelPath</samp>
  *     public static String getModelPath() {
  *         return "sizeEstimationTests/";
  *     }
  *    
- *     (at)ModelFilter
+ *     <samp>@ModelFilter</samp>
  *     public static String getModelFilter() {
  *         return "*.kgt";
  *     }
  *    
- *     (at)ModelCollectionTestRunner.ResourceSet
+ *     <samp>@ModelCollectionTestRunner.ResourceSet</samp>
  *     public static ResourceSet getResourceSet() {
  *         return KGraphStandaloneSetup.doSetup().getInstance(XtextResourceSet.class);
  *     }
  *   
- *     (at)Test
+ *     <samp>@Test</samp>
+ *     public void test(EObject model) {
+ *         System.out.println(((KNode) model).getData().get(0));
+ *     }
+ * }
+ *</pre>
+ *
+ * In case the String-typed parameters are constant (not computed somehow, similar to the example above)
+ * they may be provided by means annotations attached to the test class, see below:
+ *
+ *<pre>
+ * <samp>@RunWith(ModelCollectionTestRunner.class)</samp>
+ * <samp>@BundleId("de.cau.cs.kieler.klighd.test")</samp>
+ * <samp>@ModelPath("sizeEstimationTests/")</samp>
+ * <samp>@ModelFilter("*.kgt")</samp>
+ * public class Test {
+ * 
+ *     <samp>@ModelCollectionTestRunner.ResourceSet</samp>
+ *     public static ResourceSet getResourceSet() {
+ *         return KGraphStandaloneSetup.doSetup().getInstance(XtextResourceSet.class);
+ *     }
+ *   
+ *     <samp>@Test</samp>
  *     public void test(EObject model) {
  *         System.out.println(((KNode) model).getData().get(0));
  *     }
@@ -153,8 +183,11 @@ public class ModelCollectionTestRunner extends Suite {
      * @author chsch
      */
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
+    @Target({ElementType.METHOD, ElementType.TYPE })
     public @interface BundleId {
+        
+        /** An optional annotation parameter in case the annotation is attached to the test class. */
+        String value() default "";
     }
 
     /**
@@ -164,8 +197,11 @@ public class ModelCollectionTestRunner extends Suite {
      * @author chsch
      */
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
+    @Target({ElementType.METHOD, ElementType.TYPE })
     public @interface ModelPath {
+        
+        /** An optional annotation parameter in case the annotation is attached to the test class. */
+        String value() default "";
     }
 
     /**
@@ -175,13 +211,19 @@ public class ModelCollectionTestRunner extends Suite {
      * @author chsch
      */
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
+    @Target({ElementType.METHOD, ElementType.TYPE })
     public @interface ModelFilter {
+        
+        /** An optional annotation parameter in case the annotation is attached to the test class. */
+        String value() default "";
     }
 
     /**
      * The declaration of the Java annotation 'ResourceSet', see documentation of
-     * {@link ModelCollectionTestRunner} for details.
+     * {@link ModelCollectionTestRunner} for details.<br>
+     * <br>
+     * Unfortunately, annotation parameters may only be of primitive, Annotation, Class, Enumeration,
+     * or String type, so the parameterized type annotation variant doesn't work here :-(.
      * 
      * @author chsch
      */
@@ -274,21 +316,38 @@ public class ModelCollectionTestRunner extends Suite {
     private Collection<Object> getModelsByPathMethods() {
         String bundleId = null;
         try {
+            // first examine the test class annotations:
+            //  (doesn't work for the ResourceSet as java annotations don't support
+            //   custom typed parameters)
+            BundleId bundleIdAn = getClassAnnotation(BundleId.class);
+            bundleId = bundleIdAn != null ? bundleIdAn.value() : null;
+            
+            ModelPath modelPathAn = getClassAnnotation(ModelPath.class);
+            String modelPath = modelPathAn != null ? modelPathAn.value() : null;
+            
+            ModelFilter modelFilterAn = getClassAnnotation(ModelFilter.class);
+            String modelFilter = modelFilterAn != null ? modelFilterAn.value() : null;
             
             // try to obtain the mandatory and optional provider methods:
-            FrameworkMethod bundleIdMethod = getAnnotatedMethod(getTestClass(), BundleId.class);
-            FrameworkMethod modelPathMethod = getAnnotatedMethod(getTestClass(), ModelPath.class);
+            FrameworkMethod bundleIdMethod = bundleId == null
+                    ? getAnnotatedMethod(getTestClass(), BundleId.class) : null;
+            FrameworkMethod modelPathMethod = modelPath == null
+                    ? getAnnotatedMethod(getTestClass(), ModelPath.class) : null;
+
             // optional:
+            FrameworkMethod modelFilterMethod = modelFilter == null
+                    ? getAnnotatedMethod(getTestClass(), ModelFilter.class) : null;
             FrameworkMethod resourceSetMethod = getAnnotatedMethod(getTestClass(), ResourceSet.class);
-            FrameworkMethod modelFilterMethod = getAnnotatedMethod(getTestClass(), ModelFilter.class);
 
             // check whether the mandatory ones are available
             boolean valid = true;
-            if (bundleIdMethod == null
-                    || !bundleIdMethod.getMethod().getReturnType().equals(String.class)) {
+            if (Strings.isNullOrEmpty(bundleId)
+                    && (bundleIdMethod == null || !bundleIdMethod.getMethod().getReturnType()
+                            .equals(String.class))) {
                 valid = false;
-            } else if (modelPathMethod == null
-                    || !modelPathMethod.getMethod().getReturnType().equals(String.class)) {
+            } else if (Strings.isNullOrEmpty(modelPath)
+                    && (modelPathMethod == null || !modelPathMethod.getMethod().getReturnType()
+                            .equals(String.class))) {
                 valid = false;
             }
           
@@ -309,11 +368,13 @@ public class ModelCollectionTestRunner extends Suite {
             
             if (valid) {
                 // now reveal the provided information ...
-                bundleId = (String) bundleIdMethod.invokeExplosively(null);
-                String modelPath = (String) modelPathMethod.invokeExplosively(null);
-                String modelFilter = filtered ? (String) modelFilterMethod.invokeExplosively(null)
-                        : null;
-                final org.eclipse.emf.ecore.resource.ResourceSet set = (customResourceSet)
+                bundleId = bundleId == null
+                        ? (String) bundleIdMethod.invokeExplosively(null) : bundleId;
+                modelPath = modelPath == null
+                        ? (String) modelPathMethod.invokeExplosively(null) : modelPath;
+                modelFilter = filtered
+                        ? (String) modelFilterMethod.invokeExplosively(null) : modelFilter;
+                final org.eclipse.emf.ecore.resource.ResourceSet set = customResourceSet
                         ? (org.eclipse.emf.ecore.resource.ResourceSet) resourceSetMethod
                         .invokeExplosively(null) : new ResourceSetImpl();
                 
@@ -380,11 +441,9 @@ public class ModelCollectionTestRunner extends Suite {
      * @param annotationClass
      *            the annotation type to look for
      * @return the annotated method
-     * @throws Exception
-     *             the exception
      */
     protected FrameworkMethod getAnnotatedMethod(final TestClass testClass,
-            final Class<? extends Annotation> annotationClass) throws Exception {
+            final Class<? extends Annotation> annotationClass) {
         List<FrameworkMethod> methods = testClass.getAnnotatedMethods(annotationClass);
         for (FrameworkMethod each : methods) {
             int modifiers = each.getMethod().getModifiers();
@@ -392,9 +451,22 @@ public class ModelCollectionTestRunner extends Suite {
                 return each;
             }
         }
+        return null;
+    }
 
-        throw new Exception("No public static @" + annotationClass.getSimpleName()
-                + " method in class " + testClass.getName());
+    /**
+     * Reveals the first annotation instance of type 'annotationClass' from the test class's
+     * annotations.
+     * 
+     * @param <T>
+     *            the requested annotation type
+     * @param annotationType
+     *            the requested annotation type
+     * @return the first instance of #annotationType being found
+     */
+    protected <T extends Annotation> T getClassAnnotation(final Class<T> annotationType) {
+        final List<Annotation> annotations = Arrays.asList(getTestClass().getAnnotations());
+        return Iterables.getFirst(Iterables.filter(annotations, annotationType), null);
     }
 
     /**
@@ -479,7 +551,7 @@ public class ModelCollectionTestRunner extends Suite {
         // --------------------------------------------------------------------
 
         /**
-         * Depending on the number of constructor parameters and, id a parameter is present the
+         * Depending on the number of constructor parameters and, if a parameter is present the
          * parameter type, this method creates a new instance of the test class by calling the
          * (only) constructor and optionally injecting the current model.
          * 
@@ -496,8 +568,8 @@ public class ModelCollectionTestRunner extends Suite {
                     && constructorParams[0].isAssignableFrom(this.model.getClass())) {
                 return getTestClass().getOnlyConstructor().newInstance(this.model);
             } else {
-                throw new NoSuchMethodError("Type of first parameter of constructor of "
-                        + getTestClass() + " is not compatible with the current model's type "
+                throw new NoSuchMethodError("Type of the parameter of " + getTestClass()
+                        + "'s constructor is not compatible with the current model's type "
                         + this.model.getClass().getSimpleName());
             }
         }
@@ -536,7 +608,7 @@ public class ModelCollectionTestRunner extends Suite {
         /**
          * The name of the test of a concrete test run.
          * Due to some weird reason the JUnit view cuts the test name right before
-         * the first occurrence of '(', used '[]' instead.
+         * the first occurrence of '(', so I used '[]' instead.
          * 
          * @param method
          *            the method
