@@ -202,7 +202,12 @@ public class DiagramLayoutEngine {
                     assert adapterList.length > 0;
                     
                     // translate the diagram part into one that is understood by the layout manager
-                    Object transDiagPart = layoutManager.getAdapter(diagramPart, adapterList[0]);
+                    Object transDiagPart;
+                    if (adapterList != null && adapterList.length > 0) {
+                        transDiagPart = layoutManager.getAdapter(diagramPart, adapterList[0]);
+                    } else {
+                        transDiagPart = diagramPart;
+                    }
                     
                     // perform the actual layout
                     status = layout(mapping, transDiagPart, kielerMonitor, extraLayoutConfigs,

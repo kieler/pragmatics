@@ -183,7 +183,10 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
         if (manager != null) {
             if (adapterType == null) {
                 // use the layout manager's diagram part type as adapter type
-                return manager.getAdapter(adaptableObject, manager.getAdapterList()[0]);
+                Class[] adapterList = manager.getAdapterList();
+                if (adapterList != null && adapterList.length > 0) {
+                    return manager.getAdapter(adaptableObject, adapterList[0]);
+                }
             } else {
                 // use the adapter type given as parameter
                 return manager.getAdapter(adaptableObject, adapterType);
