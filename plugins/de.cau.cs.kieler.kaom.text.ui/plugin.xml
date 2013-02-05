@@ -50,10 +50,10 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-              category="de.cau.cs.kieler"
+              category="de.cau.cs.kieler.kaom.diagram.general"
               class="de.cau.cs.kieler.kaom.text.ui.KaomExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
               id="de.cau.cs.kieler.kaom.text.Kaom"
-              name="KAOM Text Editing">
+              name="Text Editing">
             <keywordReference id="de.cau.cs.kieler.kaom.text.ui.keyword_Kaom"/>
         </page>
         <page
