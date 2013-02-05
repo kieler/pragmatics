@@ -13,27 +13,27 @@
  */
 package de.cau.cs.kieler.core.krendering.impl;
 
-import de.cau.cs.kieler.core.krendering.KBackgroundVisibility;
+import de.cau.cs.kieler.core.krendering.KBackground;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>KBackground Visibility</b></em>'.
+ * An implementation of the model object '<em><b>KBackground</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class KBackgroundVisibilityImpl extends KVisibilityImpl implements KBackgroundVisibility {
+public class KBackgroundImpl extends KColoringImpl implements KBackground {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected KBackgroundVisibilityImpl() {
+    protected KBackgroundImpl() {
         super();
     }
 
@@ -44,7 +44,7 @@ public class KBackgroundVisibilityImpl extends KVisibilityImpl implements KBackg
      */
     @Override
     protected EClass eStaticClass() {
-        return KRenderingPackage.Literals.KBACKGROUND_VISIBILITY;
+        return KRenderingPackage.Literals.KBACKGROUND;
     }
 
-} //KBackgroundVisibilityImpl
+} //KBackgroundImpl

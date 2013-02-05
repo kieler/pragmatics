@@ -13,27 +13,27 @@
  */
 package de.cau.cs.kieler.core.krendering.impl;
 
-import de.cau.cs.kieler.core.krendering.KBackgroundColor;
+import de.cau.cs.kieler.core.krendering.KForeground;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>KBackground Color</b></em>'.
+ * An implementation of the model object '<em><b>KForeground</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class KBackgroundColorImpl extends KColorImpl implements KBackgroundColor {
+public class KForegroundImpl extends KColoringImpl implements KForeground {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected KBackgroundColorImpl() {
+    protected KForegroundImpl() {
         super();
     }
 
@@ -44,7 +44,7 @@ public class KBackgroundColorImpl extends KColorImpl implements KBackgroundColor
      */
     @Override
     protected EClass eStaticClass() {
-        return KRenderingPackage.Literals.KBACKGROUND_COLOR;
+        return KRenderingPackage.Literals.KFOREGROUND;
     }
 
-} //KBackgroundColorImpl
+} //KForegroundImpl

@@ -18,21 +18,22 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.krendering.KForegroundColor;
+import de.cau.cs.kieler.core.krendering.KBackground;
+import de.cau.cs.kieler.core.krendering.KForeground;
 import de.cau.cs.kieler.core.krendering.KRectangle;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
 import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.klighd.piccolo.krendering.KChildAreaNode;
 import de.cau.cs.kieler.klighd.piccolo.krendering.KNodeNode;
-import de.cau.cs.kieler.klighd.piccolo.krendering.util.PlacementUtil;
+import de.cau.cs.kieler.klighd.piccolo.krendering.util.PiccoloPlacementUtil;
 import de.cau.cs.kieler.klighd.piccolo.util.NodeUtil;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
- * An {@link AbstractRenderingController} for KNodes generating the rendering PNodes
- *  according to the related KRendering rendering description.
+ * An {@link AbstractRenderingController} for KNodes generating the rendering PNodes according to
+ * the related KRendering rendering description.
  * 
  * 
  * @author mri
@@ -41,7 +42,7 @@ public class KNodeRenderingController extends AbstractRenderingController<KNode,
 
     /** the Piccolo node representing the child area. */
     private KChildAreaNode childAreaNode;
-    
+
     /**
      * Constructs a rendering controller for a node.
      * 
@@ -53,7 +54,7 @@ public class KNodeRenderingController extends AbstractRenderingController<KNode,
         this.childAreaNode = new KChildAreaNode(node);
         initializeRenderingNode(childAreaNode);
     }
-    
+
     /**
      * Returns the Piccolo node representing the child area.
      * 
@@ -62,40 +63,38 @@ public class KNodeRenderingController extends AbstractRenderingController<KNode,
     public KChildAreaNode getChildAreaNode() {
         return childAreaNode;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     protected PNode internalUpdateRendering() {
         PNode repNode = getRepresentation();
-        
+
         // detach the child area before updating the rendering
         childAreaNode.removeFromParent();
 
         // evaluate the rendering data
         KRendering currentRendering = getCurrentRendering();
         PNode renderingNode;
+        // KPlacementData pd;
         if (currentRendering != null) {
-                renderingNode =
-                        handleDirectPlacementRendering(currentRendering, new ArrayList<KStyle>(0),
-                                repNode, repNode);
+            renderingNode = handleAreaPlacementRendering(currentRendering, new ArrayList<KStyle>(
+                    0), repNode, repNode);
         } else {
-                renderingNode =
-                        handleDirectPlacementRendering(createDefaultNodeRendering(),
-                                new ArrayList<KStyle>(0), repNode, repNode);
+            renderingNode = handleAreaPlacementRendering(createDefaultNodeRendering(),
+                    new ArrayList<KStyle>(0), repNode, repNode);
         }
-        
+
         // make sure the child area is attached to something
         if (childAreaNode.getParent() == null) {
             // if the childArea is not part of the above created PNode rendering tree
-            //  let the whole figure be the child area
+            // let the whole figure be the child area
             createDefaultChildArea(getRepresentation());
         }
-        
         return renderingNode;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -111,7 +110,6 @@ public class KNodeRenderingController extends AbstractRenderingController<KNode,
         NodeUtil.applySmartBounds(childAreaNode, initialBounds);
 
         parent.addChild(childAreaNode);
-
         // create a controller for the child area and return it
         return new PNodeController<PNode>(childAreaNode) {
             public void setBounds(final PBounds bounds) {
@@ -120,7 +118,7 @@ public class KNodeRenderingController extends AbstractRenderingController<KNode,
             }
         };
     }
-    
+
     /**
      * Creates the Piccolo node for the parent Piccolo node using direct placement.
      * 
@@ -129,7 +127,8 @@ public class KNodeRenderingController extends AbstractRenderingController<KNode,
      */
     private void createDefaultChildArea(final PNode parent) {
         // determine the initial bounds
-        PBounds bounds = PlacementUtil.evaluateDirectPlacement(null, parent.getBoundsReference());
+        PBounds bounds = PiccoloPlacementUtil.evaluateAreaPlacement(null,
+                parent.getBoundsReference());
 
         // configure the child area
         final PNodeController<?> controller = createChildArea(parent, bounds);
@@ -139,15 +138,14 @@ public class KNodeRenderingController extends AbstractRenderingController<KNode,
                 new PropertyChangeListener() {
                     public void propertyChange(final PropertyChangeEvent e) {
                         // calculate the new bounds of the rendering
-                        PBounds bounds =
-                                PlacementUtil.evaluateDirectPlacement(null,
-                                        parent.getBoundsReference());
+                        PBounds bounds = PiccoloPlacementUtil.evaluateAreaPlacement(null,
+                                parent.getBoundsReference());
                         // use the controller to apply the new bounds
                         controller.setBounds(bounds);
                     }
                 });
     }
-    
+
     /**
      * Creates a default rendering for nodes without attached rendering data.
      * 
@@ -157,12 +155,15 @@ public class KNodeRenderingController extends AbstractRenderingController<KNode,
         // create the default rendering model
         KRenderingFactory factory = KRenderingFactory.eINSTANCE;
         KRectangle rect = factory.createKRectangle();
-        KForegroundColor color = factory.createKForegroundColor();
-        color.setRed(0);
-        color.setGreen(0);
-        color.setBlue(0);
-        rect.getStyles().add(color);
+
+        KForeground foreground = factory.createKForeground();
+        foreground.setColor(factory.createKColor());
+        KBackground background = factory.createKBackground();
+        background.setColor(factory.createKColor());
+
+        rect.getStyles().add(foreground);
+        rect.getStyles().add(background);
         return rect;
     }
-    
+
 }

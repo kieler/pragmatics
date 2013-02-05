@@ -13,27 +13,27 @@
  */
 package de.cau.cs.kieler.core.krendering.impl;
 
-import de.cau.cs.kieler.core.krendering.KForegroundVisibility;
+import de.cau.cs.kieler.core.krendering.KExpandAction;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>KForeground Visibility</b></em>'.
+ * An implementation of the model object '<em><b>KExpand Action</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class KForegroundVisibilityImpl extends KVisibilityImpl implements KForegroundVisibility {
+public class KExpandActionImpl extends KActionImpl implements KExpandAction {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected KForegroundVisibilityImpl() {
+    protected KExpandActionImpl() {
         super();
     }
 
@@ -44,7 +44,7 @@ public class KForegroundVisibilityImpl extends KVisibilityImpl implements KForeg
      */
     @Override
     protected EClass eStaticClass() {
-        return KRenderingPackage.Literals.KFOREGROUND_VISIBILITY;
+        return KRenderingPackage.Literals.KEXPAND_ACTION;
     }
 
-} //KForegroundVisibilityImpl
+} //KExpandActionImpl

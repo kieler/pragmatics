@@ -13,27 +13,27 @@
  */
 package de.cau.cs.kieler.core.krendering.impl;
 
-import de.cau.cs.kieler.core.krendering.KForegroundColor;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
+import de.cau.cs.kieler.core.krendering.KSelectAction;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>KForeground Color</b></em>'.
+ * An implementation of the model object '<em><b>KSelect Action</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class KForegroundColorImpl extends KColorImpl implements KForegroundColor {
+public class KSelectActionImpl extends KActionImpl implements KSelectAction {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected KForegroundColorImpl() {
+    protected KSelectActionImpl() {
         super();
     }
 
@@ -44,7 +44,7 @@ public class KForegroundColorImpl extends KColorImpl implements KForegroundColor
      */
     @Override
     protected EClass eStaticClass() {
-        return KRenderingPackage.Literals.KFOREGROUND_COLOR;
+        return KRenderingPackage.Literals.KSELECT_ACTION;
     }
 
-} //KForegroundColorImpl
+} //KSelectActionImpl

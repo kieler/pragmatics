@@ -16,13 +16,13 @@ package de.cau.cs.kieler.core.krendering;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>KBackground Visibility</b></em>'.
+ * A representation of the model object '<em><b>KSelect Action</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @see de.cau.cs.kieler.core.krendering.KRenderingPackage#getKBackgroundVisibility()
+ * @see de.cau.cs.kieler.core.krendering.KRenderingPackage#getKSelectAction()
  * @model
  * @generated
  */
-public interface KBackgroundVisibility extends KVisibility {
-} // KBackgroundVisibility
+public interface KSelectAction extends KAction {
+} // KSelectAction

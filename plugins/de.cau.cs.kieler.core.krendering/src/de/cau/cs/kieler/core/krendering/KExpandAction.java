@@ -16,13 +16,13 @@ package de.cau.cs.kieler.core.krendering;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>KForeground Color</b></em>'.
+ * A representation of the model object '<em><b>KExpand Action</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @see de.cau.cs.kieler.core.krendering.KRenderingPackage#getKForegroundColor()
+ * @see de.cau.cs.kieler.core.krendering.KRenderingPackage#getKExpandAction()
  * @model
  * @generated
  */
-public interface KForegroundColor extends KColor {
-} // KForegroundColor
+public interface KExpandAction extends KAction {
+} // KExpandAction

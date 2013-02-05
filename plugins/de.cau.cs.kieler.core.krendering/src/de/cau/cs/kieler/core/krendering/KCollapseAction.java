@@ -16,13 +16,13 @@ package de.cau.cs.kieler.core.krendering;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>KBackground Color</b></em>'.
+ * A representation of the model object '<em><b>KCollapse Action</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @see de.cau.cs.kieler.core.krendering.KRenderingPackage#getKBackgroundColor()
+ * @see de.cau.cs.kieler.core.krendering.KRenderingPackage#getKCollapseAction()
  * @model
  * @generated
  */
-public interface KBackgroundColor extends KColor {
-} // KBackgroundColor
+public interface KCollapseAction extends KAction {
+} // KCollapseAction

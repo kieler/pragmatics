@@ -20,6 +20,8 @@ import java.awt.Color;
 
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineCapStyle;
+
 
 /**
  * A node controller for the {@code PSWTAdvancedPath}.
@@ -66,8 +68,8 @@ public abstract class PSWTAdvancedPathController extends PNodeController<PSWTAdv
      * {@inheritDoc}
      */
     @Override
-    public void setLineVisible(final boolean lineVisible) {
-        if (!lineVisible) {
+    public void setLineAlpha(final int lineAlpha) {
+        if (lineAlpha == 0) {
             getNode().setStrokeColor(null);
         }
     }
@@ -76,8 +78,8 @@ public abstract class PSWTAdvancedPathController extends PNodeController<PSWTAdv
      * {@inheritDoc}
      */
     @Override
-    public void setFilled(final boolean filled) {
-        if (!filled) {
+    public void setBackgroundAlpha(final int backgroundAlpha) {
+        if (backgroundAlpha == 0) {
             getNode().setPaint(null);
         }
     }
@@ -88,6 +90,14 @@ public abstract class PSWTAdvancedPathController extends PNodeController<PSWTAdv
     @Override
     public void setLineStyle(final LineStyle lineStyle) {
         getNode().setLineStyle(lineStyle);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setLineCapStyle(final LineCapStyle lineCapStyle) {
+        getNode().setLineCapStyle(lineCapStyle);
     }
 
     /**

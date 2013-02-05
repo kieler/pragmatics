@@ -48,6 +48,7 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -315,6 +316,7 @@ public class SWTGraphics2D extends Graphics2D {
             COLOR_CACHE.put(c, cachedColor);
         }
         gc.setForeground(cachedColor);
+        gc.setAlpha(c.getAlpha());
     }
 
     /**
@@ -360,6 +362,8 @@ public class SWTGraphics2D extends Graphics2D {
             COLOR_CACHE.put(c, cachedColor);
         }
         gc.setBackground(cachedColor);
+        // TODO the correctness of this call must still be verified (chsch)
+        gc.setAlpha(c.getAlpha());
     }
 
     /**
@@ -377,6 +381,22 @@ public class SWTGraphics2D extends Graphics2D {
         final org.eclipse.swt.graphics.Color color = gc.getBackground();
         final Color awtColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
         return awtColor;
+    }
+    
+    /**
+     * 
+     * @param alpha
+     */
+    public void setAlpha(int alpha) {
+        gc.setAlpha(alpha);
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public int getAlpha() {
+        return gc.getAntialias();
     }
 
     /**
@@ -753,7 +773,7 @@ public class SWTGraphics2D extends Graphics2D {
         gc.setLineWidth(getTransformedLineWidth());
         gc.setLineStyle(this.lineStyle);
         gc.setLineCap(this.lineCap);
-       gc.drawPolygon(ptArray);
+        gc.drawPolygon(ptArray);
     }
     
 
@@ -1304,6 +1324,22 @@ public class SWTGraphics2D extends Graphics2D {
         gc.fillArc((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
                 (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5),
                 (int) (startAngle + 0.5), (int) (startAngle + extent + 0.5));
+    }
+
+    /**
+     * Draws the provided AWT GeneralPath respecting the current AWT transform without any caching.
+     * We need to assess whether this is OK w.r.t. the runtime performance.
+     * 
+     * @author chsch
+     * 
+     * @param s
+     *            path to draw
+     */
+    public void drawGeneralPath(final GeneralPath gp) {
+        gc.setLineWidth(getTransformedLineWidth());
+        gc.setLineStyle(this.lineStyle);
+        gc.setLineCap(this.lineCap);
+        gc.drawPath(pathIterator2Path(gp.getPathIterator(transform)));
     }
 
     /**

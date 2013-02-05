@@ -16,13 +16,17 @@ package de.cau.cs.kieler.core.krendering;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>KForeground Visibility</b></em>'.
+ * A representation of the model object '<em><b>KForeground</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Defines the alphaChannel of a foregroudRendering
+ * <!-- end-model-doc -->
  *
- * @see de.cau.cs.kieler.core.krendering.KRenderingPackage#getKForegroundVisibility()
+ *
+ * @see de.cau.cs.kieler.core.krendering.KRenderingPackage#getKForeground()
  * @model
  * @generated
  */
-public interface KForegroundVisibility extends KVisibility {
-} // KForegroundVisibility
+public interface KForeground extends KColoring {
+} // KForeground

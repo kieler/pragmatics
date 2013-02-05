@@ -14,54 +14,46 @@
 package de.cau.cs.kieler.core.krendering.impl;
 
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
-import de.cau.cs.kieler.core.krendering.KVisibility;
+import de.cau.cs.kieler.core.krendering.KStyleHolder;
+import de.cau.cs.kieler.core.krendering.KStyleRef;
 
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>KVisibility</b></em>'.
+ * An implementation of the model object '<em><b>KStyle Ref</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.core.krendering.impl.KVisibilityImpl#isVisible <em>Visible</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.core.krendering.impl.KStyleRefImpl#getEReference0 <em>EReference0</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public abstract class KVisibilityImpl extends KStyleImpl implements KVisibility {
+public class KStyleRefImpl extends KStyleImpl implements KStyleRef {
     /**
-     * The default value of the '{@link #isVisible() <em>Visible</em>}' attribute.
+     * The cached value of the '{@link #getEReference0() <em>EReference0</em>}' reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #isVisible()
+     * @see #getEReference0()
      * @generated
      * @ordered
      */
-    protected static final boolean VISIBLE_EDEFAULT = false;
-
-    /**
-     * The cached value of the '{@link #isVisible() <em>Visible</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #isVisible()
-     * @generated
-     * @ordered
-     */
-    protected boolean visible = VISIBLE_EDEFAULT;
+    protected KStyleHolder eReference0;
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected KVisibilityImpl() {
+    protected KStyleRefImpl() {
         super();
     }
 
@@ -72,7 +64,7 @@ public abstract class KVisibilityImpl extends KStyleImpl implements KVisibility 
      */
     @Override
     protected EClass eStaticClass() {
-        return KRenderingPackage.Literals.KVISIBILITY;
+        return KRenderingPackage.Literals.KSTYLE_REF;
     }
 
     /**
@@ -80,8 +72,16 @@ public abstract class KVisibilityImpl extends KStyleImpl implements KVisibility 
      * <!-- end-user-doc -->
      * @generated
      */
-    public boolean isVisible() {
-        return visible;
+    public KStyleHolder getEReference0() {
+        if (eReference0 != null && eReference0.eIsProxy()) {
+            InternalEObject oldEReference0 = (InternalEObject)eReference0;
+            eReference0 = (KStyleHolder)eResolveProxy(oldEReference0);
+            if (eReference0 != oldEReference0) {
+                if (eNotificationRequired())
+                    eNotify(new ENotificationImpl(this, Notification.RESOLVE, KRenderingPackage.KSTYLE_REF__EREFERENCE0, oldEReference0, eReference0));
+            }
+        }
+        return eReference0;
     }
 
     /**
@@ -89,11 +89,20 @@ public abstract class KVisibilityImpl extends KStyleImpl implements KVisibility 
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setVisible(boolean newVisible) {
-        boolean oldVisible = visible;
-        visible = newVisible;
+    public KStyleHolder basicGetEReference0() {
+        return eReference0;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setEReference0(KStyleHolder newEReference0) {
+        KStyleHolder oldEReference0 = eReference0;
+        eReference0 = newEReference0;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KRenderingPackage.KVISIBILITY__VISIBLE, oldVisible, visible));
+            eNotify(new ENotificationImpl(this, Notification.SET, KRenderingPackage.KSTYLE_REF__EREFERENCE0, oldEReference0, eReference0));
     }
 
     /**
@@ -104,8 +113,9 @@ public abstract class KVisibilityImpl extends KStyleImpl implements KVisibility 
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case KRenderingPackage.KVISIBILITY__VISIBLE:
-                return isVisible();
+            case KRenderingPackage.KSTYLE_REF__EREFERENCE0:
+                if (resolve) return getEReference0();
+                return basicGetEReference0();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -118,8 +128,8 @@ public abstract class KVisibilityImpl extends KStyleImpl implements KVisibility 
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case KRenderingPackage.KVISIBILITY__VISIBLE:
-                setVisible((Boolean)newValue);
+            case KRenderingPackage.KSTYLE_REF__EREFERENCE0:
+                setEReference0((KStyleHolder)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -133,8 +143,8 @@ public abstract class KVisibilityImpl extends KStyleImpl implements KVisibility 
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case KRenderingPackage.KVISIBILITY__VISIBLE:
-                setVisible(VISIBLE_EDEFAULT);
+            case KRenderingPackage.KSTYLE_REF__EREFERENCE0:
+                setEReference0((KStyleHolder)null);
                 return;
         }
         super.eUnset(featureID);
@@ -148,26 +158,10 @@ public abstract class KVisibilityImpl extends KStyleImpl implements KVisibility 
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case KRenderingPackage.KVISIBILITY__VISIBLE:
-                return visible != VISIBLE_EDEFAULT;
+            case KRenderingPackage.KSTYLE_REF__EREFERENCE0:
+                return eReference0 != null;
         }
         return super.eIsSet(featureID);
     }
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public String toString() {
-        if (eIsProxy()) return super.toString();
-
-        StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (visible: ");
-        result.append(visible);
-        result.append(')');
-        return result.toString();
-    }
-
-} //KVisibilityImpl
+} //KStyleRefImpl

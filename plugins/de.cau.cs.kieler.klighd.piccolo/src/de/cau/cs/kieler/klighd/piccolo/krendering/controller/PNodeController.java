@@ -21,6 +21,7 @@ import java.awt.Color;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.HAlignment;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.VAlignment;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineCapStyle;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PBounds;
 
@@ -58,6 +59,7 @@ public abstract class PNodeController<T extends PNode> {
      */
     public abstract void setBounds(final PBounds bounds);
 
+    
     /**
      * Sets the foreground color of the associated node.
      * 
@@ -91,20 +93,20 @@ public abstract class PNodeController<T extends PNode> {
     /**
      * Sets the line visibility of the associated node.
      * 
-     * @param lineVisible
-     *            the line visibility
+     * @param lineAlpha
+     *            the line alpha
      */
-    public void setLineVisible(final boolean lineVisible) {
+    public void setLineAlpha(final int lineAlpha) {
         // do nothing
     }
 
     /**
      * Sets the filled status of the associated node.
      * 
-     * @param filled
-     *            the filled status
+     * @param backgroundAlpha
+     *            the background alpha
      */
-    public void setFilled(final boolean filled) {
+    public void setBackgroundAlpha(final int backgroundAlpha) {
         // do nothing
     }
 
@@ -115,6 +117,16 @@ public abstract class PNodeController<T extends PNode> {
      *            the line style
      */
     public void setLineStyle(final LineStyle lineStyle) {
+        // do nothing
+    }
+    
+    /**
+     * Sets the line cap style of the associated node.
+     * 
+     * @param lineCapStyle
+     *            the line cap style
+     */
+    public void setLineCapStyle(final LineCapStyle lineCapStyle) {
         // do nothing
     }
 

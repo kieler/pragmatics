@@ -16,13 +16,17 @@ package de.cau.cs.kieler.core.krendering;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>KStack Placement</b></em>'.
+ * A representation of the model object '<em><b>KBackground</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Defines the alphaChannel of a background of a rendering
+ * <!-- end-model-doc -->
  *
- * @see de.cau.cs.kieler.core.krendering.KRenderingPackage#getKStackPlacement()
+ *
+ * @see de.cau.cs.kieler.core.krendering.KRenderingPackage#getKBackground()
  * @model
  * @generated
  */
-public interface KStackPlacement extends KPlacement {
-} // KStackPlacement
+public interface KBackground extends KColoring {
+} // KBackground
