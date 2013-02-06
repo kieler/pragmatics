@@ -765,6 +765,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                             KPort kport = (KPort) origin;
                             KShapeLayout portLayout = kport.getData(KShapeLayout.class);
                             portLayout.applyVector(lport.getPosition());
+                            portLayout.setProperty(LayoutOptions.PORT_SIDE, lport.getSide());
                         }
                     }
                 }
