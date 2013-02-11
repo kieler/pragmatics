@@ -92,8 +92,7 @@ public final class ForsterConstraintResolver implements IConstraintResolver {
             LNode node = nodeGroup.getNode();
 
             // Add the constraints given by the vertex's node
-            LNode successor = node.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT);
-            if (successor != null) {
+            for (LNode successor : node.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS)) {
                 NodeGroup successorNodeGroup = successor.getProperty(Properties.NODE_GROUP);
                 nodeGroup.getOutgoingConstraints().add(successorNodeGroup);
                 successorNodeGroup.incomingConstraintsCount++;

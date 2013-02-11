@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -120,14 +121,14 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
                     if (compare == 0) {
                         // The two nodes have the same y coordinate. Check for node successor
                         // constraints
-                        LNode node1Successor =
-                                node1.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT);
-                        LNode node2Successor =
-                                node2.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT);
+                        List<LNode> node1Successors =
+                                node1.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS);
+                        List<LNode> node2Successors =
+                                node2.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS);
                         
-                        if (node1Successor == node2) {
+                        if (node1Successors.contains(node2)) {
                             return -1;
-                        } else if (node2Successor == node1) {
+                        } else if (node2Successors.contains(node1)) {
                             return 1;
                         }
                     }

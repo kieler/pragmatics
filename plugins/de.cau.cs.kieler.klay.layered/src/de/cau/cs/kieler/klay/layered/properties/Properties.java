@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.properties;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -136,8 +137,8 @@ public final class Properties {
      * property is set to. That is, having {@code x} appear after {@code y} would violate this
      * constraint. This property only makes sense for nodes.
      */
-    public static final IProperty<LNode> IN_LAYER_SUCCESSOR_CONSTRAINT = new Property<LNode>(
-            "inLayerSuccessorConstraint");
+    public static final IProperty<List<LNode>> IN_LAYER_SUCCESSOR_CONSTRAINTS =
+            new Property<List<LNode>>("inLayerSuccessorConstraint", new ArrayList<LNode>());
 
     /**
      * The node group of an LNode as used in the crossing minimization phase.

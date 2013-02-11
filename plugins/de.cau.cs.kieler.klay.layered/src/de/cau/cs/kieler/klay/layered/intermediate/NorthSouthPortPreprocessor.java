@@ -159,18 +159,19 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                         barycenterAssociates);
                 
                 int insertPoint = pointer;
-                LNode successor = node;
                 for (LNode dummy : northDummyNodes) {
                     dummy.setLayer(insertPoint, layer);
                     pointer++;
                     
                     // The dummy nodes form a layout unit identified by the node they
-                    // were created from. In addition, the order of the dummy nodes must
-                    // be fixed.
+                    // were created from. In addition, northern dummy nodes must appear
+                    // before the regular node
                     dummy.setProperty(Properties.IN_LAYER_LAYOUT_UNIT, node);
-                    dummy.setProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT, successor);
                     
-                    successor = dummy;
+                    List<LNode> successors = dummy.getProperty(
+                            Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS);
+                    successors.add(node);
+                    dummy.setProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS, successors);
                 }
                 
                 // Do the same for ports on the southern side; the list of ports must
@@ -184,17 +185,18 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                 createDummyNodes(layeredGraph, portList, southDummyNodes, null,
                         barycenterAssociates);
                 
-                LNode predecessor = node;
                 for (LNode dummy : southDummyNodes) {
                     dummy.setLayer(++pointer, layer);
                     
                     // The dummy nodes form a layout unit identified by the node they
-                    // were created from. In addition, the order of the dummy nodes must
-                    // be fixed.
+                    // were created from. In addition, southern dummy nodes must appear
+                    // after the regular node
                     dummy.setProperty(Properties.IN_LAYER_LAYOUT_UNIT, node);
-                    predecessor.setProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINT, dummy);
                     
-                    predecessor = dummy;
+                    List<LNode> successors = node.getProperty(
+                            Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS);
+                    successors.add(dummy);
+                    node.setProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS, successors);
                 }
                 
                 // If the list of barycenter associates contains nodes, set the appropriate property
@@ -357,46 +359,18 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
             createDummyNode(layeredGraph, edge, dummyNodes);
         }
         
-        // Iterate through the lists of input and output ports while both lists still
-        // have elements and while output ports are still located right of input ports.
-        // While this is true, input and output ports may share the same dummy node
-        int inPortsIndex = 0;
-        int outPortsIndex = outPorts.size() - 1;
-        
-        while (inPortsIndex < inPorts.size() && outPortsIndex >= 0) {
-            LPort inPort = inPorts.get(inPortsIndex);
-            LPort outPort = outPorts.get(outPortsIndex);
-            
-            // If the out port is not right of the in port, they cannot share the same
-            // dummy node anymore
-            if (ports.indexOf(outPort) < ports.indexOf(inPort)) {
-                break;
-            }
-            
-            // Otherwise, create a dummy node for them
-            barycenterAssociates.add(createDummyNode(layeredGraph, inPort, outPort, dummyNodes));
-            
-            inPortsIndex++;
-            outPortsIndex--;
-        }
-        
         // Give the rest of input and output ports their dummy nodes
-        while (inPortsIndex < inPorts.size()) {
-            barycenterAssociates.add(createDummyNode(layeredGraph,
-                    inPorts.get(inPortsIndex), null, dummyNodes));
-            inPortsIndex++;
+        for (LPort inPort : inPorts) {
+            barycenterAssociates.add(createDummyNode(layeredGraph, inPort, null, dummyNodes));
         }
         
-        while (outPortsIndex >= 0) {
-            barycenterAssociates.add(createDummyNode(layeredGraph,
-                    null, outPorts.get(outPortsIndex), dummyNodes));
-            outPortsIndex--;
+        for (LPort outPort : outPorts) {
+            barycenterAssociates.add(createDummyNode(layeredGraph, null, outPort, dummyNodes));
         }
         
         // in / out ports get their own dummy nodes
         for (LPort inOutPort : inOutPorts) {
-            barycenterAssociates.add(createDummyNode(layeredGraph,
-                    inOutPort, inOutPort, dummyNodes));
+            barycenterAssociates.add(createDummyNode(layeredGraph, inOutPort, inOutPort, dummyNodes));
         }
     }
     
