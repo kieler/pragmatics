@@ -167,11 +167,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                     // were created from. In addition, northern dummy nodes must appear
                     // before the regular node
                     dummy.setProperty(Properties.IN_LAYER_LAYOUT_UNIT, node);
-                    
-                    List<LNode> successors = dummy.getProperty(
-                            Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS);
-                    successors.add(node);
-                    dummy.setProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS, successors);
+                    dummy.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(node);
                 }
                 
                 // Do the same for ports on the southern side; the list of ports must
@@ -192,11 +188,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                     // were created from. In addition, southern dummy nodes must appear
                     // after the regular node
                     dummy.setProperty(Properties.IN_LAYER_LAYOUT_UNIT, node);
-                    
-                    List<LNode> successors = node.getProperty(
-                            Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS);
-                    successors.add(dummy);
-                    node.setProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS, successors);
+                    node.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(dummy);
                 }
                 
                 // If the list of barycenter associates contains nodes, set the appropriate property

@@ -179,10 +179,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
             }
             
             if (lastHierarchicalDummy != null) {
-                List<LNode> successors = lastHierarchicalDummy.getProperty(
-                        Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS);
-                successors.add(node);
-                lastHierarchicalDummy.setProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS, successors);
+                lastHierarchicalDummy.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(node);
             }
             
             lastHierarchicalDummy = node;
