@@ -16,7 +16,6 @@
  */
 package de.cau.cs.kieler.klighd.piccolo.krendering.controller;
 
-import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -33,6 +32,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
@@ -44,7 +44,6 @@ import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.krendering.KArc;
 import de.cau.cs.kieler.core.krendering.KBackground;
 import de.cau.cs.kieler.core.krendering.KChildArea;
-import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KContainerRendering;
 import de.cau.cs.kieler.core.krendering.KCustomRendering;
 import de.cau.cs.kieler.core.krendering.KEllipse;
@@ -52,9 +51,9 @@ import de.cau.cs.kieler.core.krendering.KFontBold;
 import de.cau.cs.kieler.core.krendering.KFontItalic;
 import de.cau.cs.kieler.core.krendering.KFontName;
 import de.cau.cs.kieler.core.krendering.KFontSize;
+import de.cau.cs.kieler.core.krendering.KFontUnderlined;
 import de.cau.cs.kieler.core.krendering.KForeground;
 import de.cau.cs.kieler.core.krendering.KGridPlacement;
-import de.cau.cs.kieler.core.krendering.KGridPlacementData;
 import de.cau.cs.kieler.core.krendering.KHorizontalAlignment;
 import de.cau.cs.kieler.core.krendering.KImage;
 import de.cau.cs.kieler.core.krendering.KInvisibility;
@@ -75,6 +74,7 @@ import de.cau.cs.kieler.core.krendering.KRoundedBendsPolyline;
 import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
 import de.cau.cs.kieler.core.krendering.KSpline;
 import de.cau.cs.kieler.core.krendering.KStyle;
+import de.cau.cs.kieler.core.krendering.KStyleRef;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KVerticalAlignment;
 import de.cau.cs.kieler.core.krendering.util.KRenderingSwitch;
@@ -97,8 +97,7 @@ import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.HAlignment;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.VAlignment;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PEmptyNode;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath;
-import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineStyle;
-import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath.LineCapStyle;
+import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTStyledText;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTTracingText;
 import de.cau.cs.kieler.klighd.piccolo.util.NodeUtil;
 import de.cau.cs.kieler.klighd.util.CrossDocumentContentAdapter;
@@ -107,7 +106,6 @@ import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolox.swt.PSWTCanvas;
 import edu.umd.cs.piccolox.swt.PSWTImage;
-import edu.umd.cs.piccolox.swt.PSWTText;
 
 /**
  * The abstract base class for classes which control the transformation of KRendering data to
@@ -278,10 +276,6 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
 
                     // handle style changes
                     if (msg.getNotifier() instanceof KStyle) {
-                        // exclude opposite relation
-                        if (msg.getFeatureID(KStyle.class) == KRenderingPackage.KSTYLE__RENDERING) {
-                            return;
-                        }
                         // PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                         // public void run() {
                         // update the styles
@@ -293,7 +287,7 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
                     // handle new, moved and removed styles
                     if (msg.getNotifier() instanceof KRendering
                             && msg.getFeatureID(KRendering.class) 
-                               == KRenderingPackage.KRENDERING__STYLES) {
+                               == KRenderingPackage.KSTYLE_HOLDER__STYLES) {
                         // PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                         // public void run() {
                         // update the styles
@@ -544,13 +538,6 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
             return;
         }
 
-        // collect the grid placement data
-        final KGridPlacementData[] gpds = new KGridPlacementData[renderings.size()];
-        int i = 0;
-        for (KRendering rendering : renderings) {
-            gpds[i++] = PlacementUtil.asGridPlacementData(rendering.getPlacementData());
-        }
-
         // calculate the bounds
         Bounds parentBounds = 
                 new Bounds(
@@ -558,12 +545,12 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
                 (float) parent.getBoundsReference().getY(), 
                 (float) parent.getBoundsReference().getWidth(),
                 (float) parent.getBoundsReference().getHeight());
-        final GridPlacer gridPlacer = PlacementUtil.getGridPlacementObject(gridPlacement, gpds);
+        final GridPlacer gridPlacer = PlacementUtil.getGridPlacementObject(gridPlacement, renderings);
         Bounds[] elementBounds = gridPlacer.evaluate(parentBounds);
         // create the renderings and collect the controllers
         Bounds currentBounds;
         final PNodeController<?>[] controllers = new PNodeController<?>[renderings.size()];
-        i = 0;
+        int i = 0;
         for (KRendering rendering : renderings) {
             currentBounds = elementBounds[renderings.lastIndexOf(rendering)];
             PBounds currentPBounds = new PBounds(currentBounds.getX(), currentBounds.getY(),
@@ -953,7 +940,7 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
         // create the rounded rectangle
         final PSWTAdvancedPath path = PSWTAdvancedPath.createArc(0, 0, (float) initialBounds.width,
                 (float) initialBounds.height, arc.getStartAngle(), arc.getArcAngle());
-        path.setPaint(null);
+        path.setPaint((RGB) null);
         initializeRenderingNode(path);
         path.translate(initialBounds.x, initialBounds.y);
         parent.addChild(path);
@@ -991,7 +978,7 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
      *            the key used to identify the current reference hierarchy
      * @return the controller for the created Piccolo node
      */
-    protected PNodeController<PSWTText> createText(final KText text, final Styles styles,
+    protected PNodeController<PSWTStyledText> createText(final KText text, final Styles styles,
             final List<KStyle> propagatedStyles, final PNode parent, final PBounds initialBounds,
             final Object key) {
         // create the text
@@ -1543,105 +1530,91 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
             new KRenderingSwitch<Boolean>() {
                 // foreground
                 public Boolean caseKForeground(final KForeground f) {
-                    if (theStyles.foreground == null) {
-                        theStyles.foreground = f;
-                    }
+                    theStyles.foreground = f;
                     return true;
                 }
 
                 // background
                 public Boolean caseKBackground(final KBackground b) {
-                    if (theStyles.background == null) {
-                        theStyles.background = b;
-                    }
+                    theStyles.background = b;
                     return true;
                 }
 
-                // weather the foreground is invisible or not
+                // whether the foreground is invisible or not
                 public Boolean caseKInvisibility(final KInvisibility i) {
-                    if (theStyles.invisibility == null) {
-                        theStyles.invisibility = i;
-                    }
+                    theStyles.invisibility = i;
                     return true;
                 }
 
                 // line width
                 public Boolean caseKLineWidth(final KLineWidth lw) {
-                    if (theStyles.lineWidth == null) {
-                        theStyles.lineWidth = lw;
-                    }
+                    theStyles.lineWidth = lw;
                     return true;
                 }
 
                 // line style
                 public Boolean caseKLineStyle(final KLineStyle ls) {
-                    if (theStyles.lineStyle == null) {
-                        theStyles.lineStyle = ls;
-                    }
+                    theStyles.lineStyle = ls;
                     return true;
                 }
 
                 // line cap style
                 public Boolean caseKLineCap(final KLineCap lcs) {
-                    if (theStyles.lineCap == null) {
-                        theStyles.lineCap = lcs;
-                    }
+                    theStyles.lineCap = lcs;
                     return true;
                 }
 
                 // rotation
                 public Boolean caseKRotation(final KRotation r) {
-                    if (theStyles.rotation == null) {
-                        theStyles.rotation = r;
-                    }
+                    theStyles.rotation = r;
                     return true;
                 }
 
                 // horizontal alignment
                 public Boolean caseKHorizontalAlignment(final KHorizontalAlignment ha) {
-                    if (theStyles.horizontalAlignment == null) {
-                        theStyles.horizontalAlignment = ha;
-                    }
+                    theStyles.horizontalAlignment = ha;
                     return true;
                 }
 
                 // vertical alignment
                 public Boolean caseKVerticalAlignment(final KVerticalAlignment va) {
-                    if (theStyles.verticalAlignment == null) {
-                        theStyles.verticalAlignment = va;
-                    }
+                    theStyles.verticalAlignment = va;
                     return true;
                 }
 
                 // font name
                 public Boolean caseKFontName(final KFontName fontName) {
-                    if (theStyles.fontName == null) {
-                        theStyles.fontName = fontName;
-                    }
+                    theStyles.fontName = fontName;
                     return true;
                 }
 
                 // font size
                 public Boolean caseKFontSize(final KFontSize fontSize) {
-                    if (theStyles.fontSize == null) {
-                        theStyles.fontSize = fontSize;
-                    }
+                    theStyles.fontSize = fontSize;
                     return true;
                 }
 
                 // italic
                 public Boolean caseKFontItalic(final KFontItalic italic) {
-                    if (theStyles.italic == null) {
-                        theStyles.italic = italic;
-                    }
+                    theStyles.italic = italic;
                     return true;
                 }
 
                 // bold
                 public Boolean caseKFontBold(final KFontBold bold) {
-                    if (theStyles.bold == null) {
-                        theStyles.bold = bold;
-                    }
+                    theStyles.bold = bold;
+                    return true;
+                }
+
+                // bold
+                public Boolean caseKFontUnderlined(final KFontUnderlined underlined) {
+                    theStyles.underlined = underlined;
+                    return true;
+                }
+                
+                // styleRef
+                public Boolean caseKStyleRef(final KStyleRef style) {
+                    deriveStyles(theStyles, style.getStyleHolder().getStyles());
                     return true;
                 }
             } /**/.doSwitch(style);
@@ -1672,137 +1645,7 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
             }
         }        
         
-        // apply foreground styles
-        if (styles.foreground != null) {
-            int alphaValue = styles.foreground.getAlpha();
-            KColor color = styles.foreground.getColor();
-            if (color != null) {
-                controller.setForegroundColor(new Color(color.getRed(), color.getGreen(), color
-                        .getBlue(), alphaValue));
-            }
-            controller.setLineAlpha(alphaValue);
-        }
-
-        // apply background color
-        if (styles.background != null) {
-            KColor color = styles.background.getColor();
-            int alphaValue = styles.background.getAlpha();
-            controller.setBackgroundColor(new Color(
-                        color.getRed(), 
-                        color.getGreen(), 
-                        color.getBlue(),
-                        alphaValue));
-            controller.setBackgroundAlpha(alphaValue);
-        }
-        
-        // apply line width
-        if (styles.lineWidth != null) {
-            controller.setLineWidth(styles.lineWidth.getLineWidth());
-        }
-
-        // apply line style
-        if (styles.lineStyle != null) {
-            switch (styles.lineStyle.getLineStyle()) {
-            case DASH:
-                controller.setLineStyle(LineStyle.DASH);
-                break;
-            case DASHDOT:
-                controller.setLineStyle(LineStyle.DASHDOT);
-                break;
-            case DASHDOTDOT:
-                controller.setLineStyle(LineStyle.DASHDOTDOT);
-                break;
-            case DOT:
-                controller.setLineStyle(LineStyle.DOT);
-                break;
-            case SOLID:
-            default:
-                controller.setLineStyle(LineStyle.SOLID);
-                break;
-            }
-        } else {
-            controller.setLineStyle(LineStyle.SOLID);
-        }
-        
-     // apply line cap style
-        if (styles.lineCap != null) {
-            switch (styles.lineCap.getLineCap()) {
-            case CAP_ROUND:
-                controller.setLineCapStyle(LineCapStyle.CAP_ROUND);
-                break;
-            case CAP_SQUARE:
-                controller.setLineCapStyle(LineCapStyle.CAP_SQUARE);
-                break;
-            case CAP_FLAT:
-            default:
-                controller.setLineCapStyle(LineCapStyle.CAP_FLAT);
-                break;
-            }
-        } else {
-            controller.setLineCapStyle(LineCapStyle.CAP_FLAT);
-        }
-
-        // apply rotation
-        if (styles.rotation != null) {
-            KRotation rotation = styles.rotation;
-            controller.setRotation(rotation.getRotation());
-        }
-
-        // apply horizontal alignment
-        if (styles.horizontalAlignment != null) {
-            switch (styles.horizontalAlignment.getHorizontalAlignment()) {
-            case LEFT:
-                controller.setHorizontalAlignment(HAlignment.LEFT);
-                break;
-            case RIGHT:
-                controller.setHorizontalAlignment(HAlignment.RIGHT);
-                break;
-            case CENTER:
-            default:
-                controller.setHorizontalAlignment(HAlignment.CENTER);
-                break;
-            }
-        }
-
-        // apply vertical alignment
-        if (styles.verticalAlignment != null) {
-            switch (styles.verticalAlignment.getVerticalAlignment()) {
-            case TOP:
-                controller.setVerticalAlignment(VAlignment.TOP);
-                break;
-            case BOTTOM:
-                controller.setVerticalAlignment(VAlignment.BOTTOM);
-                break;
-            case CENTER:
-            default:
-                controller.setVerticalAlignment(VAlignment.CENTER);
-                break;
-            }
-        }
-
-        // apply font name
-        if (styles.fontName != null) {
-            controller.setFontName(styles.fontName.getName());
-        }
-
-        // apply font size
-        if (styles.fontSize != null) {
-            controller.setFontSize(styles.fontSize.getSize());
-        }
-
-        // apply the italic property
-        if (styles.italic != null) {
-            controller.setItalic(styles.italic.isItalic());
-        }
-
-        // apply the bold property
-        if (styles.bold != null) {
-            controller.setBold(styles.bold.isBold());
-        }
-
-        // give the controller the opportunity to apply styles bundled
-        controller.applyChanges();
-
+        controller.applyChanges(styles);
     }
 
     /**
@@ -1905,33 +1748,39 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
      * A container class for the possible styles.
      */
     protected class Styles {
+        
+        // CHECKSTYLEOFF Visibility
 
        /** the line width. */
-        private KLineWidth lineWidth = null;
+        KLineWidth lineWidth = null;
         /** the foreground. */
-        private KForeground foreground =  null;
+        KForeground foreground =  null;
         /** the background. */
-        private KBackground background = null;
+        KBackground background = null;
         /** whether the foreground should be invisible or not. */
-        private KInvisibility invisibility = null;
+        KInvisibility invisibility = null;
         /** the line style. */
-        private KLineStyle lineStyle = null;
+        KLineStyle lineStyle = null;
         /** the line style. */
-        private KLineCap lineCap = null;
+        KLineCap lineCap = null;
         /** the horizontal alignment. */
-        private KRotation rotation = null;
+        KRotation rotation = null;
         /** the horizontal alignment. */
-        private KHorizontalAlignment horizontalAlignment = null;
+        KHorizontalAlignment horizontalAlignment = null;
         /** the vertical alignment. */
-        private KVerticalAlignment verticalAlignment = null;
+        KVerticalAlignment verticalAlignment = null;
         /** the font name. */
-        private KFontName fontName = null;
+        KFontName fontName = null;
         /** the font size. */
-        private KFontSize fontSize = null;
+        KFontSize fontSize = null;
         /** the font italic property. */
-        private KFontItalic italic = null;
+        KFontItalic italic = null;
         /** the font bold property. */
-        private KFontBold bold = null;
+        KFontBold bold = null;
+        /** the font underline property. */
+        KFontUnderlined underlined = null;
+        
+        // CHECKSTYLEON Visibility
 
     }
 

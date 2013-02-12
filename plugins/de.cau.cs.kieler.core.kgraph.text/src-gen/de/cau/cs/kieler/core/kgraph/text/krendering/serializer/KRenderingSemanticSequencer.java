@@ -42,6 +42,7 @@ import de.cau.cs.kieler.core.krendering.KRotation;
 import de.cau.cs.kieler.core.krendering.KRoundedBendsPolyline;
 import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
 import de.cau.cs.kieler.core.krendering.KSpline;
+import de.cau.cs.kieler.core.krendering.KStyleRef;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KTopPosition;
 import de.cau.cs.kieler.core.krendering.KVerticalAlignment;
@@ -345,6 +346,13 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 					return; 
 				}
 				else break;
+			case KRenderingPackage.KSTYLE_REF:
+				if(context == grammarAccess.getKStyleRule() ||
+				   context == grammarAccess.getKStyleRefRule()) {
+					sequence_KStyleRef(context, (KStyleRef) semanticObject); 
+					return; 
+				}
+				else break;
 			case KRenderingPackage.KTEXT:
 				if(context == grammarAccess.getKRenderingRule() ||
 				   context == grammarAccess.getKTextRule()) {
@@ -582,7 +590,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     numColumns=EInt
+	 *     (numColumns=EInt (topLeft=KPosition bottomRight=KPosition)?)
 	 */
 	protected void sequence_KGridPlacement(EObject context, KGridPlacement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -650,7 +658,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (lineWidth=EInt propagateToChildren?='!'? functionId=EString?)
+	 *     (lineWidth=EFloat propagateToChildren?='!'? functionId=EString?)
 	 */
 	protected void sequence_KLineWidth(EObject context, KLineWidth semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -816,6 +824,15 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	 *     (((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? childPlacement=KPlacement? (children+=KRendering children+=KRendering*)?)?)
 	 */
 	protected void sequence_KSpline(EObject context, KSpline semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     styleHolder=[KStyleHolder|EString]
+	 */
+	protected void sequence_KStyleRef(EObject context, KStyleRef semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

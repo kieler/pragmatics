@@ -13,7 +13,6 @@ import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.KVerticalAlignment
 import de.cau.cs.kieler.core.krendering.VerticalAlignment
-import de.cau.cs.kieler.core.krendering.KContainerRendering
 import de.cau.cs.kieler.core.krendering.KStyle
 import de.cau.cs.kieler.core.krendering.KPlacementData
 import de.cau.cs.kieler.core.krendering.KRoundedRectangle
@@ -30,6 +29,8 @@ import de.cau.cs.kieler.core.krendering.KLineCap
 import de.cau.cs.kieler.core.krendering.LineCap
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import de.cau.cs.kieler.core.krendering.KStyleRef
+import de.cau.cs.kieler.core.krendering.KStyleHolder
 
 /**
  * This utility class contains various methods that are convenient while composing KRendering data.
@@ -50,16 +51,7 @@ class KRenderingExtensions {
         return kge.getData(typeof(KRendering));
     }
 
-    /**
-     * @returns the child! 
-     */
-    def <T extends KRendering> KRendering addChild(KContainerRendering parent, T child) {
-        return child => [
-            parent.children.add(it);
-        ];
-    }
-    
-    def KRoundedRectangle addRoundedRectangle(KNode node, float cWidth, float cHeight, int lineWidth){
+    def KRoundedRectangle addRoundedRectangle(KNode node, float cWidth, float cHeight, float lineWidth){
         return renderingFactory.createKRoundedRectangle => [
             it.cornerWidth = cWidth;
             it.cornerHeight = cHeight;
@@ -85,10 +77,37 @@ class KRenderingExtensions {
             it.styles += style.copy;
         ];
     }
+    
+    // how might a getStyleRef look like?
+    //  In case we allow multiple that may refine each other the getter returns an iterator?
+    
+    def <T extends KRendering> T setStyleRef(T rendering, KStyleHolder styleHolder) {
+        rendering.styles.removeAll(rendering.styles.filter(typeof(KStyleRef)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKStyleRef() => [
+                it.styleHolder = styleHolder;
+            ];
+        ];
+    }
+ 
+    def <T extends KRendering> T addStyleRef(T rendering, KStyleHolder styleHolder) {
+        return rendering => [
+            it.styles += renderingFactory.createKStyleRef() => [
+                it.styleHolder = styleHolder;
+            ];
+        ];
+    }
  
     def KInvisibility getInvisible(KRendering rendering) {
         // chsch: I'm currently not sure whether the first or the last will win...
         return rendering.styles.filter(typeof(KInvisibility)).last?:(renderingFactory.createKInvisibility());
+    }
+ 
+    def boolean getBooleanInvisible(KRendering rendering) {
+        // chsch: I'm currently not sure whether the first or the last will win...
+        return (
+            rendering.styles.filter(typeof(KInvisibility)).last?:(renderingFactory.createKInvisibility())
+        ).invisible;
     }
  
     def <T extends KRendering> T setInvisible(T rendering, boolean invisible) {
@@ -103,15 +122,22 @@ class KRenderingExtensions {
     def KLineWidth getLineWidth(KRendering rendering) {
         // chsch: I'm currently not sure whether the first or the last will win...
         return rendering.styles.filter(typeof(KLineWidth)).last?:(renderingFactory.createKLineWidth => [
-            lineWidth = 1
+            lineWidth = 1f
         ]);
     }
  
-    def <T extends KRendering> T setLineWidth(T rendering, int with) {
+    def float getLineWidthValue(KRendering rendering) {
+        // chsch: I'm currently not sure whether the first or the last will win...
+        return (rendering.styles.filter(typeof(KLineWidth)).last?:(renderingFactory.createKLineWidth => [
+            lineWidth = 1f
+        ])).lineWidth;
+    }
+ 
+    def <T extends KRendering> T setLineWidth(T rendering, float width) {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KLineWidth)).toList);
         return rendering => [
             it.styles += renderingFactory.createKLineWidth() => [
-                it.setLineWidth(with);
+                it.setLineWidth(width);
             ]
         ];
     }
@@ -121,6 +147,13 @@ class KRenderingExtensions {
         return rendering.styles.filter(typeof(KLineStyle)).last?:(renderingFactory.createKLineStyle => [
             lineStyle = LineStyle::SOLID;
         ]);
+    }
+ 
+    def LineStyle getEnumLineStyle(KRendering rendering) {
+        // chsch: I'm currently not sure whether the first or the last will win...
+        return (rendering.styles.filter(typeof(KLineStyle)).last?:(renderingFactory.createKLineStyle => [
+            lineStyle = LineStyle::SOLID;
+        ])).lineStyle;
     }
  
     def <T extends KRendering> T setLineStyle(T rendering, LineStyle style) {
@@ -135,8 +168,15 @@ class KRenderingExtensions {
     def KLineCap getLineCap(KRendering rendering) {
         // chsch: I'm currently not sure whether the first or the last will win...
         return rendering.styles.filter(typeof(KLineCap)).last?:(renderingFactory.createKLineCap => [
-            lineCap = LineCap::CAP_ROUND;
+            lineCap = LineCap::CAP_FLAT;
         ]);
+    }
+ 
+    def LineCap getEnumLineCap(KRendering rendering) {
+        // chsch: I'm currently not sure whether the first or the last will win...
+        return (rendering.styles.filter(typeof(KLineCap)).last?:(renderingFactory.createKLineCap => [
+            lineCap = LineCap::CAP_FLAT;
+        ])).lineCap;
     }
  
     def <T extends KRendering> T setLineCap(T rendering, LineCap style) {
@@ -151,6 +191,13 @@ class KRenderingExtensions {
     def KRotation getRotation(KRendering rendering) {
         // chsch: I'm currently not sure whether the first or the last will win...
         return rendering.styles.filter(typeof(KRotation)).last?:renderingFactory.createKRotation;
+    }
+ 
+    def float getFloatRotation(KRendering rendering) {
+        // chsch: I'm currently not sure whether the first or the last will win...
+        return (
+            rendering.styles.filter(typeof(KRotation)).last?:renderingFactory.createKRotation
+        ).rotation;
     }
  
     def <T extends KRendering> T setRotation(T rendering, Float rotation) {
@@ -399,6 +446,20 @@ class KRenderingExtensions {
                 it.verticalAlignment = verticalAlignment;
                 it.horizontalMargin = horizontalMargin;
                 it.verticalMargin = verticalMargin;
+            ];
+        ];
+    }
+
+    def <T extends KRendering> T setDecoratorPlacementData(T rendering, float width,
+            float height, float posAbsolute, float posRelative, boolean rotateWithLine) {
+        return rendering => [
+            rendering.placementData = renderingFactory.createKDecoratorPlacementData() => [
+                it.width = width;
+                it.height = height;
+                it.absolute = posAbsolute;
+                it.relative = posRelative;
+                it.rotateWithLine = rotateWithLine;
+                it.YOffset = -4f;
             ];
         ];
     }

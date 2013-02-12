@@ -31,12 +31,6 @@
         <details key="documentation" value="the rendering containing this rendering"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="references" upperBound="-1"
-        eType="#//KRenderingRef">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="reference an existing KRendering ref instead of re-defining everything"/>
-      </eAnnotations>
-    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="placementData" eType="#//KPlacementData"
         containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -44,7 +38,7 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="actions" upperBound="-1"
-        eType="#//KAction">
+        eType="#//KAction" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
           <details key="documentation" value="actions that should be performed when according trigger is pulled"/>
@@ -109,14 +103,12 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Use an image instead of defining the renderings completely by yourself"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bundleName" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bundleName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Name of the bundle where the image can be found. Note that the imagePath is relative to this bundle. "/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="imagePath" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="imagePath" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="the path to the image on the filesystem relative to the bundleName (and its according position)"/>
       </eAnnotations>
@@ -208,11 +200,6 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Adds additional StyleInformation to a rendering.&#xA;can be set to propagate to children to make redefinining styles unneccessary"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="rendering" eType="#//KRendering">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="the rendering the style is attached to"/>
-      </eAnnotations>
-    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="propagateToChildren" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -273,12 +260,14 @@
         <details key="documentation" value="The number of columns the grid should have&#xA;if set to -1, all elements are placed in a single row"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="topLeft" eType="#//KPosition">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="topLeft" eType="#//KPosition"
+        containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="the top left position of the grid"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="bottomRight" eType="#//KPosition">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bottomRight" eType="#//KPosition"
+        containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="the bottom right position of the grid"/>
       </eAnnotations>
@@ -336,10 +325,8 @@
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KCustomRendering" eSuperTypes="#//KContainerRendering">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bundleName" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bundleName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="figureObject" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
         transient="true"/>
   </eClassifiers>
@@ -368,7 +355,7 @@
       <details key="documentation" value="specifies a lineWidth for a rendering. "/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="lineWidth" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="the line width of the element"/>
       </eAnnotations>
@@ -470,9 +457,9 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Defines the alphaChannel of an Object"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="alpha" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="alpha" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
         defaultValueLiteral="255"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="color" lowerBound="1" eType="#//KColor"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="color" eType="#//KColor"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="targetColor" eType="#//KColor"
         containment="true"/>
@@ -603,7 +590,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="xOffset" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="yOffset" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="blur" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="color" eType="#//KColor"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="color" eType="#//KColor"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KFontUnderlined" eSuperTypes="#//KStyle">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="underlineStyle" lowerBound="1"
@@ -614,7 +602,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KCollapseAction" eSuperTypes="#//KAction"/>
   <eClassifiers xsi:type="ecore:EClass" name="KStyleRef" eSuperTypes="#//KStyle">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="EReference0" lowerBound="1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="styleHolder" lowerBound="1"
         eType="#//KStyleHolder"/>
   </eClassifiers>
 </ecore:EPackage>
