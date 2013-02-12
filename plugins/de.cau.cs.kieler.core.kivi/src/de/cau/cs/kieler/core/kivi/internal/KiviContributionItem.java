@@ -254,9 +254,12 @@ IWorkbenchContribution {
      *            true if the handler is enabled.
      */
     public static void setEnabledState(final String buttonID, final boolean enabled) {
-         ButtonHandler handler = (ButtonHandler) handlerActivations.get(buttonID).getHandler();
-         if (handler != null) {
-             handler.setEnabled(enabled);
+         IHandlerActivation activation = handlerActivations.get(buttonID);
+         if (activation != null) {
+             ButtonHandler handler = (ButtonHandler) activation.getHandler();
+             if (handler != null) {
+                 handler.setEnabled(enabled);
+             }
          }
     }
     
