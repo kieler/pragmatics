@@ -27,13 +27,21 @@ import de.cau.cs.kieler.core.math.KVector;
  * 
  */
 public class SequenceArea {
+    /** The originating object of the execution. */
     private Object origin;
+    /** The list of messages contained in the area. */
     private List<Object> messages;
+    /** The list of affected lifelines. */
     private List<Object> lifelines;
+    /** The list of subareas (in case of a combined fragment). */
     private List<SequenceArea> subAreas;
+    /** The list of areas that are contained in this area. */
     private List<SequenceArea> containedAreas;
+    /** The message, that is nearest to the area if the area is empty. */
     private Object nextMessage;
+    /** The size of the area. */
     private KVector size;
+    /** The position of the area. */
     private KVector position;
 
     /**

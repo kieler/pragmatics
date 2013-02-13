@@ -32,7 +32,6 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
@@ -66,7 +65,6 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutContext;
-import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.gmf.GmfLayoutConfig;
@@ -85,8 +83,10 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 /**
  * Layout manager wrapper for the Papyrus multi diagram editor.
  * 
- * @author msp
- * @author grh
+ * @author msp original layout manager
+ * @author grh adaptions for sequence diagram layout
+ * @kieler.design proposed grh
+ * @kieler.rating proposed yellow grh
  */
 public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
 
@@ -114,7 +114,12 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
     public static final IProperty<VolatileLayoutConfig> STATIC_CONFIG = 
             new Property<VolatileLayoutConfig>("gmf.staticLayoutConfig");
 
+    /** the map of references and edges. */
     private Map<EReference, KEdge> reference2EdgeMap;
+
+    /** the cached layout configuration for GMF. */
+    private GmfLayoutConfig layoutConfig = new PapyrusLayoutConfig(); //new GmfLayoutConfig();
+    // TODO
 
     /**
      * {@inheritDoc}
@@ -129,8 +134,11 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Object getAdapter(final Object object, final Class adapterType) {
+        if (adapterType.isAssignableFrom(GmfLayoutConfig.class)) {
+            return layoutConfig;
+        }
         if (object instanceof IMultiDiagramEditor) {
             return super.getAdapter(((IMultiDiagramEditor) object).getActiveEditor(), adapterType);
         }
@@ -146,6 +154,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
         if (workbenchPart instanceof IMultiDiagramEditor) {
             IWorkbenchPart part = ((IMultiDiagramEditor) workbenchPart).getActiveEditor();
             if (part.getClass().getSimpleName().equals("UmlSequenceDiagramForMultiEditor")) {
+                // Build KGraph in a different way if it is a sequence diagram
                 return buildSequenceLayoutGraph(part, diagramPart);
             }
             LayoutMapping<IGraphicalEditPart> mapping = super.buildLayoutGraph(part, diagramPart);
@@ -158,19 +167,23 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
 
     /**
      * Special method to build a layoutGraph when the diagram is a sequence diagram.
-     * @param workbenchPart the workbenchPart
-     * @param diagramPart the diagramPart
-     * @return a layoutGraph  
+     * 
+     * @param workbenchPart
+     *            the workbenchPart
+     * @param diagramPart
+     *            the diagramPart
+     * @return a layoutGraph
      */
     public LayoutMapping<IGraphicalEditPart> buildSequenceLayoutGraph(
             final IWorkbenchPart workbenchPart, final Object diagramPart) {
+
         DiagramEditor diagramEditor = null;
 
         // get the diagram editor part
         if (workbenchPart instanceof DiagramEditor) {
             diagramEditor = (DiagramEditor) workbenchPart;
         }
-        
+
         // choose the layout root edit part
         IGraphicalEditPart layoutRootPart = null;
         if (diagramPart instanceof ShapeNodeEditPart || diagramPart instanceof DiagramEditPart) {
@@ -200,7 +213,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
 
         // create a layout configuration
         mapping.getLayoutConfigs().add(mapping.getProperty(STATIC_CONFIG));
-        mapping.getLayoutConfigs().add(getLayoutConfig());
+        mapping.getLayoutConfigs().add(layoutConfig);
 
         return mapping;
     }
@@ -253,11 +266,21 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
         return mapping;
     }
 
+    /**
+     * Copy the annotations to the static config.
+     * 
+     * @param mapping
+     *            the layout mapping
+     * @param topNode
+     *            the layout root part
+     */
     private void copyAnnotations(final LayoutMapping<IGraphicalEditPart> mapping,
             final KNode topNode) {
         KShapeLayout nodelayout = topNode.getData(KShapeLayout.class);
-        List<SequenceExecution> executions = nodelayout.getProperty(PapyrusProperties.EXECUTIONS);
         VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
+
+        // Copy the executions
+        List<SequenceExecution> executions = nodelayout.getProperty(PapyrusProperties.EXECUTIONS);
         if (executions != null) {
             staticConfig.setValue(PapyrusProperties.EXECUTIONS, topNode, LayoutContext.GRAPH_ELEM,
                     executions);
@@ -267,6 +290,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
             }
         }
 
+        // Copy the information to which element a comment is attached to
         List<Object> attachedTo = nodelayout.getProperty(PapyrusProperties.ATTACHED_TO);
         if (attachedTo != null) {
             List<Object> attTo = new LinkedList<Object>();
@@ -285,16 +309,6 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
         }
     }
 
-    /** the cached layout configuration for GMF. */
-    private GmfLayoutConfig layoutConfig = new GmfLayoutConfig();
-
-    /**
-     * {@inheritDoc}
-     */
-    public IMutableLayoutConfig getLayoutConfig() {
-        return layoutConfig;
-    }
-
     /**
      * Recursively builds a layout graph by analyzing the children of the given edit part.
      * 
@@ -307,7 +321,8 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
      * @param currentEditPart
      *            the currently analyzed edit part
      */
-    private void buildSequenceLayoutGraphRecursively(final LayoutMapping<IGraphicalEditPart> mapping,
+    private void buildSequenceLayoutGraphRecursively(
+            final LayoutMapping<IGraphicalEditPart> mapping,
             final IGraphicalEditPart parentEditPart, final KNode parentLayoutNode,
             final IGraphicalEditPart currentEditPart) {
         Maybe<KInsets> kinsets = new Maybe<KInsets>();
@@ -340,8 +355,8 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
                     }
 
                     if (compExp) {
-                        buildSequenceLayoutGraphRecursively(mapping, parentEditPart, parentLayoutNode,
-                                compartment);
+                        buildSequenceLayoutGraphRecursively(mapping, parentEditPart,
+                                parentLayoutNode, compartment);
                     }
                 }
 
@@ -356,11 +371,6 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
                 // process a label of the current node
             } else if (obj instanceof IGraphicalEditPart) {
                 createNodeLabel(mapping, (IGraphicalEditPart) obj, parentEditPart, parentLayoutNode);
-
-                // process a port (border item)
-            } else if (obj instanceof AbstractBorderItemEditPart) {
-                createPort(mapping, (AbstractBorderItemEditPart) obj, parentEditPart,
-                        parentLayoutNode);
             }
         }
     }
@@ -436,133 +446,204 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
 
         // process the child as new current edit part
         if (nodeType.equals("2001")) {
-            buildSequenceLayoutGraphRecursively(mapping, nodeEditPart, childLayoutNode, nodeEditPart);
+            // Node is the surrounding interaction
+            buildSequenceLayoutGraphRecursively(mapping, nodeEditPart, childLayoutNode,
+                    nodeEditPart);
         } else if (nodeType.equals("3001")) {
-            // handle subnodes like execution specifications
-            List<SequenceExecution> executions = new LinkedList<SequenceExecution>();
-            for (Object child : nodeEditPart.getChildren()) {
-                if (child instanceof ShapeNodeEditPart) {
-                    ShapeNodeEditPart childEditPart = (ShapeNodeEditPart) child;
-                    String subNodeType = "";
-                    if (childEditPart.getModel() instanceof ShapeImpl) {
-                        ShapeImpl shape = (ShapeImpl) childEditPart.getModel();
-                        subNodeType = shape.getType();
-                    }
-                    IFigure subNodeFigure = childEditPart.getFigure();
-                    KNode subNode = KimlUtil.createInitializedNode();
-
-                    mapping.getGraphMap().put(subNode, childEditPart);
-
-                    Rectangle subNodeBounds = getAbsoluteBounds(subNodeFigure);
-                    Rectangle subNodeContainerBounds = getAbsoluteBounds(subNodeFigure.getParent());
-                    KShapeLayout subNodeLayout = subNode.getData(KShapeLayout.class);
-                    subNodeLayout.setXpos(subNodeBounds.x - subNodeContainerBounds.x);
-                    subNodeLayout.setYpos(subNodeBounds.y - subNodeContainerBounds.y);
-                    subNodeLayout.setSize(subNodeBounds.width, subNodeBounds.height);
-
-                    if (subNodeType.equals("3003") || subNodeType.equals("3006")
-                            || subNodeType.equals("3019") || subNodeType.equals("3021")) {
-                        // Create Execution Object (which handles all these types) and initialize it
-                        createExecution(mapping, nodeEditPart, executions, childEditPart,
-                                subNodeType, subNode);
-                    } else if (subNodeType.equals("3022")) {
-                        // Subnode is destruction event
-                        childLayoutNode.getData(KShapeLayout.class).setProperty(
-                                PapyrusProperties.DESTRUCTION, subNode);
-                    }
-
-                    // the modification flag must initially be false
-                    ((KShapeLayoutImpl) subNodeLayout).resetModificationFlag();
-                }
-            }
-            if (executions.size() > 0) {
-                childLayoutNode.getData(KShapeLayout.class).setProperty(
-                        PapyrusProperties.EXECUTIONS, executions);
-            }
+            // Node is lifeline
+            handleLifeline(mapping, nodeEditPart, childLayoutNode);
         } else if (nodeType.equals("3002") || nodeType.equals("3004")) {
-            // Handle interactionUse, combinedFragment and interactionOperand
-            Rectangle bounds = getAbsoluteBounds(nodeFigure);
-            Rectangle parentBounds = getAbsoluteBounds(nodeFigure.getParent());
-            SequenceArea area = new SequenceArea(childLayoutNode);
-            area.getPosition().x = bounds.x - parentBounds.x;
-            area.getPosition().y = bounds.y - parentBounds.y;
-            area.getSize().x = bounds.width;
-            area.getSize().y = bounds.height;
-            List<SequenceArea> areas = parentKNode.getData(KShapeLayout.class).getProperty(
-                    PapyrusProperties.AREAS);
-            areas.add(area);
-            staticConfig.setValue(PapyrusProperties.AREAS, parentKNode, LayoutContext.GRAPH_ELEM,
-                    areas);
-            // Get coordinates of the interaction operands if existing
-            for (Object child : nodeEditPart.getChildren()) {
-                if (child instanceof ListCompartmentEditPart) {
-                    ListCompartmentEditPart lcEditPart = (ListCompartmentEditPart) child;
-                    for (Object childObj : lcEditPart.getChildren()) {
-                        if (childObj instanceof AbstractBorderedShapeEditPart) {
-                            AbstractBorderedShapeEditPart ioEditPart = 
-                                    (AbstractBorderedShapeEditPart) childObj;
-                            Rectangle ioBounds = getAbsoluteBounds(ioEditPart.getFigure());
-
-                            KNode areaNode = KimlUtil.createInitializedNode();
-                            mapping.getGraphMap().put(areaNode, ioEditPart);
-                            SequenceArea subArea = new SequenceArea(areaNode);
-                            // Set size and position
-                            subArea.getPosition().x = ioBounds.x - parentBounds.x;
-                            subArea.getPosition().y = ioBounds.y - parentBounds.y;
-                            subArea.getSize().x = ioBounds.width;
-                            subArea.getSize().y = ioBounds.height;
-                            area.getSubAreas().add(subArea);
-                        }
-                    }
-                }
-            }
+            // Handle areas such as interactionUse, combinedFragment and interactionOperand
+            handleAreas(mapping, nodeEditPart, parentKNode, childLayoutNode);
         } else if (nodeType.equals("3009") || nodeType.equals("3008") || nodeType.equals("3024")
                 || nodeType.equals("3020")) {
-            System.out.print(nodeType + ": "); // TODO
-            System.out.println(nodeEditPart.getFigure().getBounds());
-            System.out.println(nodeEditPart);
-            // Handle comments, constraints and observations
-            List<Object> attachedTo = new LinkedList<Object>();
-            // Process connections of the object
-            for (Object connObj : nodeEditPart.getSourceConnections()) {
-                if (connObj instanceof ConnectionEditPart) {
-                    ConnectionEditPart connedit = (ConnectionEditPart) connObj;
-                    mapping.getProperty(CONNECTIONS).add(connedit);
-                    nodeLayout.setProperty(PapyrusProperties.ATTACHED_ELEMENT, connedit.getTarget()
-                            .getClass().getSimpleName());
-                    // If target is lifeline, attach to the nearest message
-                    if (connedit.getTarget() instanceof ShapeNodeEditPart) {
-                        float yPos = connedit.getConnectionFigure().getPoints().getLastPoint().y();
-                        ConnectionEditPart nearestMessage = findMessageBelowPoint(
-                                (ShapeNodeEditPart) connedit.getTarget(), connedit, yPos);
-                        if (nearestMessage != null) {
-                            attachedTo.add(nearestMessage);
-                        }
-                    } else {
-                        attachedTo.add(connedit.getTarget());
-                    }
-                }
-            }
-
-            // If the object is connected to any other object, attach property with connected
-            // objects
-            if (attachedTo.size() > 0) {
-                nodeLayout.setProperty(PapyrusProperties.ATTACHED_TO, attachedTo);
-            }
+            handleComments(mapping, nodeEditPart, nodeLayout);
         }
         // store all the connections to process them later
         addConnections(mapping, nodeEditPart);
     }
 
     /**
-     * Creates a SequnceExecution Object and cares about the initialization.
+     * Handle a node that represents a lifeline. Especially handle sub-nodes like execution
+     * specifications.
+     * 
+     * @param mapping
+     *            the layout mapping
+     * @param nodeEditPart
+     *            the current node edit part
+     * @param layoutNode
+     *            the created KNode
+     */
+    private void handleLifeline(final LayoutMapping<IGraphicalEditPart> mapping,
+            final ShapeNodeEditPart nodeEditPart, final KNode layoutNode) {
+        // handle subnodes like execution specifications
+        List<SequenceExecution> executions = new LinkedList<SequenceExecution>();
+        for (Object child : nodeEditPart.getChildren()) {
+            if (child instanceof ShapeNodeEditPart) {
+                ShapeNodeEditPart childEditPart = (ShapeNodeEditPart) child;
+                String subNodeType = "";
+                if (childEditPart.getModel() instanceof ShapeImpl) {
+                    ShapeImpl shape = (ShapeImpl) childEditPart.getModel();
+                    subNodeType = shape.getType();
+                }
+                IFigure subNodeFigure = childEditPart.getFigure();
+                KNode subNode = KimlUtil.createInitializedNode();
+
+                mapping.getGraphMap().put(subNode, childEditPart);
+
+                // Copy layout information
+                Rectangle subNodeBounds = getAbsoluteBounds(subNodeFigure);
+                Rectangle subNodeContainerBounds = getAbsoluteBounds(subNodeFigure.getParent());
+                KShapeLayout subNodeLayout = subNode.getData(KShapeLayout.class);
+                subNodeLayout.setXpos(subNodeBounds.x - subNodeContainerBounds.x);
+                subNodeLayout.setYpos(subNodeBounds.y - subNodeContainerBounds.y);
+                subNodeLayout.setSize(subNodeBounds.width, subNodeBounds.height);
+
+                if (subNodeType.equals("3003") || subNodeType.equals("3006")
+                        || subNodeType.equals("3019") || subNodeType.equals("3021")) {
+                    // Create Execution Object (which handles all these types) and initialize it
+                    createExecution(mapping, nodeEditPart, executions, childEditPart, subNodeType,
+                            subNode);
+                } else if (subNodeType.equals("3022")) {
+                    // Subnode is destruction event
+                    layoutNode.getData(KShapeLayout.class).setProperty(
+                            PapyrusProperties.DESTRUCTION, subNode);
+                }
+
+                // the modification flag must initially be false
+                ((KShapeLayoutImpl) subNodeLayout).resetModificationFlag();
+            }
+        }
+        if (executions.size() > 0) {
+            layoutNode.getData(KShapeLayout.class).setProperty(PapyrusProperties.EXECUTIONS,
+                    executions);
+        }
+    }
+
+    /**
+     * Handle nodes that represent area-like objects (interaction use, combined fragments).
+     * 
+     * @param mapping
+     *            the layout mapping
+     * @param nodeEditPart
+     *            the current node edit part
+     * @param parentKNode
+     *            the parent KNode
+     * @param layoutNode
+     *            the created KNode
+     */
+    private void handleAreas(final LayoutMapping<IGraphicalEditPart> mapping,
+            final ShapeNodeEditPart nodeEditPart, final KNode parentKNode, final KNode layoutNode) {
+        IFigure nodeFigure = nodeEditPart.getFigure();
+        Rectangle bounds = getAbsoluteBounds(nodeFigure);
+        Rectangle parentBounds = getAbsoluteBounds(nodeFigure.getParent());
+
+        SequenceArea area = new SequenceArea(layoutNode);
+
+        // Copy layout information
+        area.getPosition().x = bounds.x - parentBounds.x;
+        area.getPosition().y = bounds.y - parentBounds.y;
+        area.getSize().x = bounds.width;
+        area.getSize().y = bounds.height;
+
+        List<SequenceArea> areas = parentKNode.getData(KShapeLayout.class).getProperty(
+                PapyrusProperties.AREAS);
+        areas.add(area);
+        
+        VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
+        staticConfig.setValue(PapyrusProperties.AREAS, parentKNode, LayoutContext.GRAPH_ELEM, areas);
+        
+        // Get coordinates of the interaction operands if existing
+        for (Object child : nodeEditPart.getChildren()) {
+            if (child instanceof ListCompartmentEditPart) {
+                ListCompartmentEditPart lcEditPart = (ListCompartmentEditPart) child;
+                for (Object childObj : lcEditPart.getChildren()) {
+                    if (childObj instanceof AbstractBorderedShapeEditPart) {
+                        AbstractBorderedShapeEditPart ioEditPart = 
+                                (AbstractBorderedShapeEditPart) childObj;
+                        Rectangle ioBounds = getAbsoluteBounds(ioEditPart.getFigure());
+
+                        KNode areaNode = KimlUtil.createInitializedNode();
+                        mapping.getGraphMap().put(areaNode, ioEditPart);
+                        SequenceArea subArea = new SequenceArea(areaNode);
+                        // Copy layout information
+                        subArea.getPosition().x = ioBounds.x - parentBounds.x;
+                        subArea.getPosition().y = ioBounds.y - parentBounds.y;
+                        subArea.getSize().x = ioBounds.width;
+                        subArea.getSize().y = ioBounds.height;
+                        area.getSubAreas().add(subArea);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Handle nodes that represent comments, constraints or observations.
+     * 
+     * @param mapping
+     *            the layout mapping
+     * @param nodeEditPart
+     *            the current node edit part
+     * @param nodeLayout
+     *            the node layout
+     */
+    private void handleComments(final LayoutMapping<IGraphicalEditPart> mapping,
+            final ShapeNodeEditPart nodeEditPart, final KShapeLayout nodeLayout) {
+        // FIXME time observations are not detected properly
+
+        // Handle comments, constraints and observations
+        List<Object> attachedTo = new LinkedList<Object>();
+        // Process connections of the object
+        for (Object connObj : nodeEditPart.getSourceConnections()) {
+            if (connObj instanceof ConnectionEditPart) {
+                ConnectionEditPart connedit = (ConnectionEditPart) connObj;
+                mapping.getProperty(CONNECTIONS).add(connedit);
+                nodeLayout.setProperty(PapyrusProperties.ATTACHED_ELEMENT, connedit.getTarget()
+                        .getClass().getSimpleName());
+                // If target is lifeline, attach to the nearest message
+                if (connedit.getTarget() instanceof ShapeNodeEditPart) {
+                    float yPos = connedit.getConnectionFigure().getPoints().getLastPoint().y();
+                    ConnectionEditPart nearestMessage = findMessageBelowPoint(
+                            (ShapeNodeEditPart) connedit.getTarget(), connedit, yPos);
+                    if (nearestMessage != null) {
+                        attachedTo.add(nearestMessage);
+                    }
+                } else {
+                    // If target already is a message, attach to that message
+                    attachedTo.add(connedit.getTarget());
+                }
+            }
+        }
+
+        // If the object is connected to any other object, attach property with connected
+        // objects
+        if (attachedTo.size() > 0) {
+            nodeLayout.setProperty(PapyrusProperties.ATTACHED_TO, attachedTo);
+        }
+    }
+
+    /**
+     * Creates a SequenceExecution Object and cares about the initialization.
+     * 
+     * @param mapping
+     *            the layout mapping
+     * @param lifelineEditPart
+     *            the edit part of the current lifeline
+     * @param executions
+     *            the list of executions at the current lifeline
+     * @param childEditPart
+     *            the executions edit part
+     * @param nodeType
+     *            the type of the node
+     * @param executionNode
+     *            the KNode representation of the execution
      */
     private void createExecution(final LayoutMapping<IGraphicalEditPart> mapping,
             final ShapeNodeEditPart lifelineEditPart, final List<SequenceExecution> executions,
             final ShapeNodeEditPart childEditPart, final String nodeType, final KNode executionNode) {
 
         KShapeLayout executionLayout = executionNode.getData(KShapeLayout.class);
-
         IFigure executionFigure = childEditPart.getFigure();
         Rectangle executionBounds = getAbsoluteBounds(executionFigure);
 
@@ -580,6 +661,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
             execution.setType("TimeConstraint");
         }
 
+        // Walk through the connected messages
         for (Object targetConn : childEditPart.getTargetConnections()) {
             if (targetConn instanceof ConnectionEditPart) {
                 ConnectionEditPart connectionEditPart = (ConnectionEditPart) targetConn;
@@ -701,78 +783,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
     }
 
     /**
-     * Create a port while building the layout graph.
-     * TODO delete?
-     * 
-     * @param mapping
-     *            the layout mapping
-     * @param portEditPart
-     *            the port edit part
-     * @param nodeEditPart
-     *            the parent node edit part
-     * @param knode
-     *            the corresponding layout node
-     * @param layoutConfig
-     *            a layout configuration
-     */
-    private void createPort(final LayoutMapping<IGraphicalEditPart> mapping,
-            final AbstractBorderItemEditPart portEditPart, final IGraphicalEditPart nodeEditPart,
-            final KNode knode) {
-        KPort port = KimlUtil.createInitializedPort();
-        port.setNode(knode);
-
-        // set the port's layout, relative to the node position
-        KShapeLayout portLayout = port.getData(KShapeLayout.class);
-        Rectangle portBounds = getAbsoluteBounds(portEditPart.getFigure());
-        Rectangle nodeBounds = getAbsoluteBounds(nodeEditPart.getFigure());
-        float xpos = portBounds.x - nodeBounds.x;
-        float ypos = portBounds.y - nodeBounds.y;
-        portLayout.setPos(xpos, ypos);
-        portLayout.setSize(portBounds.width, portBounds.height);
-        // the modification flag must initially be false
-        ((KShapeLayoutImpl) portLayout).resetModificationFlag();
-
-        mapping.getGraphMap().put(port, portEditPart);
-
-        // store all the connections to process them later
-        addConnections(mapping, portEditPart);
-
-        // set the port label
-        for (Object portChildObj : portEditPart.getChildren()) {
-            if (portChildObj instanceof IGraphicalEditPart) {
-                IFigure labelFigure = ((IGraphicalEditPart) portChildObj).getFigure();
-                String text = null;
-                if (labelFigure instanceof WrappingLabel) {
-                    text = ((WrappingLabel) labelFigure).getText();
-                } else if (labelFigure instanceof Label) {
-                    text = ((Label) labelFigure).getText();
-                }
-                if (text != null) {
-                    KLabel portLabel = KimlUtil.createInitializedLabel(port);
-                    portLabel.setText(text);
-                    mapping.getGraphMap().put(portLabel, (IGraphicalEditPart) portChildObj);
-                    // set the port label's layout
-                    KShapeLayout labelLayout = portLabel.getData(KShapeLayout.class);
-                    Rectangle labelBounds = getAbsoluteBounds(labelFigure);
-                    labelLayout.setXpos(labelBounds.x - portBounds.x);
-                    labelLayout.setYpos(labelBounds.y - portBounds.y);
-                    try {
-                        Dimension size = labelFigure.getPreferredSize();
-                        labelLayout.setWidth(size.width);
-                        labelLayout.setHeight(size.height);
-                    } catch (SWTException exception) {
-                        // ignore exception and leave the label size to (0, 0)
-                    }
-                    // the modification flag must initially be false
-                    ((KShapeLayoutImpl) labelLayout).resetModificationFlag();
-                }
-            }
-        }
-    }
-
-    /**
      * Create a node label while building the layout graph.
-     * TODO delete?
      * 
      * @param mapping
      *            the layout mapping

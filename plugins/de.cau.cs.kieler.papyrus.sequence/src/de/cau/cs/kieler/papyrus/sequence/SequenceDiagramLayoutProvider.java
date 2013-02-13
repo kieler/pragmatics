@@ -102,6 +102,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
         labelAlignment = sourceShapeLayout.getProperty(SequenceDiagramProperties.LABEL_ALIGNMENT);
         LifelineSortingStrategy strategy = sourceShapeLayout
                 .getProperty(SequenceDiagramProperties.LIFELINE_SORTING);
+        
+        // TODO maybe apply the properties of the surrounding interaction?
 
         // Lifeline ordering algorithm.
         ILifelineSorter lifelineSorter;
@@ -379,16 +381,16 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
 
         // Check, if there are labels longer than the available space
         for (SMessage message : lifeline.getIncomingMessages()) {
-            if (message.getSource().getHorizontalPosition() == 1 + message.getTarget()
-                    .getHorizontalPosition()) {
+            if (message.getSource().getHorizontalSlot() == 1 + message.getTarget()
+                    .getHorizontalSlot()) {
                 if (message.getLabelWidth() > spacing + lifeline.getSize().x) {
                     spacing = LABELMARGIN + message.getLabelWidth() - lifeline.getSize().x;
                 }
             }
         }
         for (SMessage message : lifeline.getOutgoingMessages()) {
-            if (message.getTarget().getHorizontalPosition() == 1 + message.getSource()
-                    .getHorizontalPosition()) {
+            if (message.getTarget().getHorizontalSlot() == 1 + message.getSource()
+                    .getHorizontalSlot()) {
                 if (message.getLabelWidth() > spacing + lifeline.getSize().x) {
                     spacing = LABELMARGIN + message.getLabelWidth() - lifeline.getSize().x;
                 }
@@ -500,8 +502,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     continue;
                 }
 
-                int sourceXPos = message.getSource().getHorizontalPosition();
-                int targetXPos = message.getTarget().getHorizontalPosition();
+                int sourceXPos = message.getSource().getHorizontalSlot();
+                int targetXPos = message.getTarget().getHorizontalSlot();
 
                 // If the message crosses at least one lifeline, check for overlappings
                 if (Math.abs(sourceXPos - targetXPos) > 1) {
@@ -510,8 +512,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                         // Get the corresponding message
                         SMessage otherMessage = (SMessage) otherNode.getProperty(Properties.ORIGIN);
                         try {
-                            int otherSourcePos = otherMessage.getSource().getHorizontalPosition();
-                            int otherTargetPos = otherMessage.getTarget().getHorizontalPosition();
+                            int otherSourcePos = otherMessage.getSource().getHorizontalSlot();
+                            int otherTargetPos = otherMessage.getTarget().getHorizontalSlot();
 
                             // If the other message starts or ends between the start and the end
                             // of the tested message, there is an overlapping
@@ -614,8 +616,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
              */
             if (message != null) {
                 SLifeline right, left;
-                if (message.getSource().getHorizontalPosition() < message.getTarget()
-                        .getHorizontalPosition()) {
+                if (message.getSource().getHorizontalSlot() < message.getTarget()
+                        .getHorizontalSlot()) {
                     // Message leads rightwards
                     right = message.getTarget();
                     left = message.getSource();
@@ -627,9 +629,9 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                 if (lifeline == right) {
                     // Find lifeline left to "right" and attach comment to that lifeline because
                     // comments are drawn right of the connected lifeline.
-                    int position = right.getHorizontalPosition();
+                    int position = right.getHorizontalSlot();
                     for (SLifeline ll : graph.getLifelines()) {
-                        if (ll.getHorizontalPosition() == position - 1) {
+                        if (ll.getHorizontalSlot() == position - 1) {
                             comment.setLifeline(ll);
                             break;
                         }
@@ -1138,7 +1140,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             // The index of the current lifeline in the ordered list of lifelines
             int lifelineIndex = lifelineOrder.indexOf(lifeline);
 
-            if (message.getTarget().getHorizontalPosition() > lifeline.getHorizontalPosition()) {
+            if (message.getTarget().getHorizontalSlot() > lifeline.getHorizontalSlot()) {
                 // Message leads rightwards
                 switch (labelAlignment) {
                 case FIRST_CENTER:
@@ -1261,8 +1263,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     if (messObj instanceof SMessage) {
                         SMessage mess = (SMessage) messObj;
                         boolean toLeft = false;
-                        if (mess.getSource().getHorizontalPosition() > mess.getTarget()
-                                .getHorizontalPosition()) {
+                        if (mess.getSource().getHorizontalSlot() > mess.getTarget()
+                                .getHorizontalSlot()) {
                             // Message leads leftwards
                             toLeft = true;
                         }
@@ -1315,8 +1317,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Set x position and width of an execution and check for minimum height. TODO can't this be
-     * done in the calculateCoordinates method?
+     * Set x position and width of an execution and check for minimum height. 
      * 
      * @param executions
      *            List of {@link SequenceExecution} at the given {@link SLifeline}

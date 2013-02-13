@@ -283,9 +283,7 @@ public class SGraphImporter {
 
         // Handle time observations
         if (nodeType.equals("3020")) {
-            comment.getSize().x = sgraph.getProperty(SequenceDiagramProperties.TIME_OBSERVATION_WIDTH); 
-            
-            // TODO it seems, the coordinates are not valid => check this
+            comment.getSize().x = sgraph.getProperty(SequenceDiagramProperties.TIME_OBSERVATION_WIDTH);
 
             // Find lifeline that is next to the time observation
             SLifeline nextLifeline = null;
@@ -472,7 +470,7 @@ public class SGraphImporter {
             // Outgoing messages to the surrounding interaction are drawn to the right and therefore
             // their target lifeline should have highest position
             if (targetLL.getName().equals("DummyLifeline") && !messageType.equals("4008")) {
-                targetLL.setHorizontalPosition(sgraph.getLifelines().size() + 1);
+                targetLL.setHorizontalSlot(sgraph.getLifelines().size() + 1);
             }
 
             // check if message is in any area
@@ -545,7 +543,7 @@ public class SGraphImporter {
                 } else {
                     // Since incoming messages come from the left side of the surrounding
                     // interaction, give its dummy lifeline position -1
-                    sourceLL.setHorizontalPosition(-1);
+                    sourceLL.setHorizontalSlot(-1);
 
                     if (messageType.equals("4004")) {
                         message.setProperty(SequenceDiagramProperties.MESSAGE_TYPE,

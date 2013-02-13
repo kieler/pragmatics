@@ -37,13 +37,13 @@ public final class SLifeline extends SGraphElement implements Comparable<SLifeli
     private static final long serialVersionUID = 1309361361029991404L;
     /** The owning graph. */
     private SGraph graph;
-    /** The name of the lifeline. TODO remove this? */
+    /** The name of the lifeline. */
     private String name = "Lifeline";
     /**
      * Lifelines are ordered one after another at the top of the diagram. This is the position of
      * the lifeline in this line.
      */
-    private int horizontalPosition;
+    private int horizontalSlot;
     /** The coordinates of the lifeline in the diagram. */
     private KVector position = new KVector();
     /** The size of the lifeline. */
@@ -224,23 +224,22 @@ public final class SLifeline extends SGraphElement implements Comparable<SLifeli
     }
 
     /**
-     * Get the horizontal position of the lifeline in the sequence of lifelines. TODO find a better
-     * formulation for that
+     * Get the number of the horizontal slot of the lifeline.
      * 
-     * @return the position
+     * @return the number of the slot
      */
-    public int getHorizontalPosition() {
-        return horizontalPosition;
+    public int getHorizontalSlot() {
+        return horizontalSlot;
     }
 
     /**
-     * Set the horizontal position of the lifeline in the sequence of lifelines.
+     * Set the number of the horizontal slot of the lifeline.
      * 
-     * @param horizontalPosition
-     *            the new position
+     * @param horizontalSlot
+     *            the new slot number
      */
-    public void setHorizontalPosition(final int horizontalPosition) {
-        this.horizontalPosition = horizontalPosition;
+    public void setHorizontalSlot(final int horizontalSlot) {
+        this.horizontalSlot = horizontalSlot;
     }
 
     /**
