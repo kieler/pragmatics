@@ -26,6 +26,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Calculates port ranks and distributes ports.
@@ -200,26 +201,42 @@ abstract class AbstractPortDistributor {
                 // calculate barycenter values for the ports of the node
                 PortIteration:
                 for (LPort port : node.getPorts()) {
-                    // add up all ranks of connected ports
+                    boolean northSouthPort =
+                            port.getSide() == PortSide.NORTH || port.getSide() == PortSide.SOUTH;
                     float sum = 0;
-                    for (LEdge outgoingEdge : port.getOutgoingEdges()) {
-                        LPort connectedPort = outgoingEdge.getTarget();
-                        if (connectedPort.getNode().getLayer() == node.getLayer()) {
-                            inLayerPorts.add(port);
-                            continue PortIteration;
-                        } else {
-                            // outgoing edges go to the subsequent layer and are seen clockwise
-                            sum += portRanks[connectedPort.id];
+                    
+                    if (northSouthPort) {
+                        // TODO: Find a proper algorithm!
+                        
+                        // ports on the northern or southern side don't have incoming or outgoing edges;
+                        // instead they receive the layer index of their dummy node (if any) as their
+                        // barycenter
+                        LNode portDummy = port.getProperty(Properties.PORT_DUMMY);
+                        if (portDummy != null) {
+                            sum = portDummy.getIndex();
                         }
-                    }
-                    for (LEdge incomingEdge : port.getIncomingEdges()) {
-                        LPort connectedPort = incomingEdge.getSource();
-                        if (connectedPort.getNode().getLayer() == node.getLayer()) {
-                            inLayerPorts.add(port);
-                            continue PortIteration;
-                        } else {
-                            // incoming edges go to the preceding layer and are seen counter-clockwise
-                            sum -= portRanks[connectedPort.id];
+                    } else {
+                        // add up all ranks of connected ports
+                        for (LEdge outgoingEdge : port.getOutgoingEdges()) {
+                            LPort connectedPort = outgoingEdge.getTarget();
+                            if (connectedPort.getNode().getLayer() == node.getLayer()) {
+                                inLayerPorts.add(port);
+                                continue PortIteration;
+                            } else {
+                                // outgoing edges go to the subsequent layer and are seen clockwise
+                                sum += portRanks[connectedPort.id];
+                            }
+                        }
+                        for (LEdge incomingEdge : port.getIncomingEdges()) {
+                            LPort connectedPort = incomingEdge.getSource();
+                            if (connectedPort.getNode().getLayer() == node.getLayer()) {
+                                inLayerPorts.add(port);
+                                continue PortIteration;
+                            } else {
+                                // incoming edges go to the preceding layer and are seen
+                                // counter-clockwise
+                                sum -= portRanks[connectedPort.id];
+                            }
                         }
                     }
                     
@@ -227,6 +244,10 @@ abstract class AbstractPortDistributor {
                         portBarycenter[port.id] = sum / port.getDegree();
                         minBarycenter = Math.min(minBarycenter, portBarycenter[port.id]);
                         maxBarycenter = Math.max(maxBarycenter, portBarycenter[port.id]);
+                    } else if (northSouthPort) {
+                        // For northern and southern ports, the sum directly corresponds to the
+                        // barycenter value to be used.
+                        portBarycenter[port.id] = sum;
                     }
                 }
                 
