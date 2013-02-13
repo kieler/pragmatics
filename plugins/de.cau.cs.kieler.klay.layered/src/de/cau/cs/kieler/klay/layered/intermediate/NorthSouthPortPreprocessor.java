@@ -403,6 +403,9 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                 edge.setTarget(dummyInputPort);
             }
             
+            // Make sure the inPort knows about the dummy node
+            inPort.setProperty(Properties.PORT_DUMMY, dummy);
+            
             crossingHint++;
         }
         
@@ -420,6 +423,9 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
             for (LEdge edge : edgeArray) {
                 edge.setSource(dummyOutputPort);
             }
+            
+            // Make sure the outPort knows about the dummy node
+            outPort.setProperty(Properties.PORT_DUMMY, dummy);
             
             crossingHint++;
         }
@@ -468,6 +474,10 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         
         // Set the crossing hint used for cross counting later
         dummy.setProperty(Properties.CROSSING_HINT, 2);
+        
+        // Make sure the ports know about the dummy node
+        selfLoop.getSource().setProperty(Properties.PORT_DUMMY, dummy);
+        selfLoop.getTarget().setProperty(Properties.PORT_DUMMY, dummy);
     }
     
     /**
@@ -496,6 +506,8 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         northDummyOutputPort.setSide(portSide);
         northDummyOutputPort.setNode(northDummy);
         
+        selfLoop.getSource().setProperty(Properties.PORT_DUMMY, northDummy);
+        
         // South dummy
         LNode southDummy = new LNode(layeredGraph);
         southDummy.setProperty(Properties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
@@ -505,6 +517,8 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         southDummyInputPort.setProperty(Properties.ORIGIN, selfLoop.getTarget());
         southDummyInputPort.setSide(portSide);
         southDummyInputPort.setNode(southDummy);
+        
+        selfLoop.getTarget().setProperty(Properties.PORT_DUMMY, southDummy);
         
         // Reroute the edge
         selfLoop.setSource(northDummyOutputPort);
