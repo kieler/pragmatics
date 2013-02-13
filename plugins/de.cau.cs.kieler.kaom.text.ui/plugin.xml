@@ -80,12 +80,13 @@
     <extension
          point="org.eclipse.ui.commands">
       <command
+            categoryId="de.cau.cs.kieler.kaom.textcommands"
             description="Trigger expensive validation"
             id="de.cau.cs.kieler.kaom.text.Kaom.validate"
             name="Validate">
       </command>
       <command
-            categoryId="de.cau.cs.kieler"
+            categoryId="de.cau.cs.kieler.kaom.textcommands"
             defaultHandler="de.cau.cs.kieler.kaom.text.ui.ConvertKaomModelHandler"
             id="de.cau.cs.kieler.kaom.convert"
             name="Convert KAOM Model">
@@ -95,6 +96,11 @@
                optional="false">
          </commandParameter>
       </command>
+      <category
+            description="Commands relating to the KAOM text editor."
+            id="de.cau.cs.kieler.kaom.textcommands"
+            name="Kaom Text Editor Commands">
+      </category>
     </extension>
     <extension point="org.eclipse.ui.menus">
         <menuContribution

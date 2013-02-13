@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.ui.views;
 
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPart;
@@ -74,7 +73,7 @@ public class DiagramDefaultAction extends Action {
                     null, IMutableLayoutConfig.class);
             EditingDomain editingDomain = (EditingDomain) manager.getAdapter(workbenchPart,
                     EditingDomain.class);
-            if (diagramPart != null && layoutConfig != null && editingDomain != null) {
+            if (diagramPart != null && layoutConfig != null) {
                 // build a layout context for setting the option
                 final LayoutContext context = new LayoutContext();
                 context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
@@ -92,7 +91,7 @@ public class DiagramDefaultAction extends Action {
      * Sets the layout option of the given property sheet entry as default for the whole
      * diagram.
      * 
-     * @param editingDomain the editing domain
+     * @param editingDomain the editing domain, or {@code null}
      * @param config a layout configuration
      * @param context a layout context
      * @param entry a property sheet entry
@@ -118,8 +117,7 @@ public class DiagramDefaultAction extends Action {
                     config.setValue(optionData, context, value);
                 }
             };
-            KimlUiUtil.runModelChange(modelChange, (TransactionalEditingDomain) editingDomain,
-                    Messages.getString("kiml.ui.13"));
+            KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.13"));
         }
     }
 
