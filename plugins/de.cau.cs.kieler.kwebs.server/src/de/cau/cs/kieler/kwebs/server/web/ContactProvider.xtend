@@ -43,31 +43,30 @@ class ContactProvider
     ) 
     {
         val Configuration config = Configuration::INSTANCE
-        return 
+        '''
+        <p class='title'>Contact</p>
+        «if (config.hasConfigProperty(Configuration::CONTACT_INFORMATION)) {
+            val String provider = config.getConfigProperty(Configuration::CONTACT_INFORMATION).escapeHtml                 
             '''
-            <p class='title'>Contact</p>
-            «if (config.hasConfigProperty(Configuration::CONTACT_INFORMATION)) {
-                val String provider = config.getConfigProperty(Configuration::CONTACT_INFORMATION).escapeHtml                 
-                '''
-                <p>
-                    <b>This service is provided by:</b>
-                </p>
-                <p>
-                    «provider»
-                </p>
-                '''
-            }»
-            «if (config.hasConfigProperty(Configuration::CONTACT_EMAIL_ADDRESS)) {
-                val String person  = config.getConfigProperty(Configuration::CONTACT_EMAIL_PERSON).escapeHtml
-                val String address = config.getConfigProperty(Configuration::CONTACT_EMAIL_ADDRESS).escapeHtml                
-                '''
-                <p>
-                    Please feel free to contact <a href='mailto:«address»'>«person»</a> for any questions and suggestions
-                    regarding the layout web service.
-                </p>
-                '''
-            }»
+            <p>
+                <b>This service is provided by:</b>
+            </p>
+            <p>
+                «provider»
+            </p>
             '''
+        }»
+        «if (config.hasConfigProperty(Configuration::CONTACT_EMAIL_ADDRESS)) {
+            val String person  = config.getConfigProperty(Configuration::CONTACT_EMAIL_PERSON).escapeHtml
+            val String address = config.getConfigProperty(Configuration::CONTACT_EMAIL_ADDRESS).escapeHtml                
+            '''
+            <p>
+                Please feel free to contact <a href='mailto:«address»'>«person»</a> for any questions and suggestions
+                regarding the layout web service.
+            </p>
+            '''
+        }»
+        '''
     }
     
     /**

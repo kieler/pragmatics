@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -113,7 +112,7 @@ public class SetOptionsEffect extends AbstractEffect {
                                 }
                             }
                         }
-                    } , (TransactionalEditingDomain) editingDomain, Messages.getString("kiml.ui.40"));
+                    }, editingDomain, Messages.getString("kiml.ui.40"));
                 }
             }
         } catch (UnsupportedPartException exception) {

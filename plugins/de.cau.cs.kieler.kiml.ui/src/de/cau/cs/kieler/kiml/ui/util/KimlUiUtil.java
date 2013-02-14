@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.ui.util;
 
+import org.eclipse.emf.common.command.AbstractCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 
@@ -38,18 +40,41 @@ public final class KimlUiUtil {
     
     /**
      * Performs the model changes specified in the given runnable in a safe context.
+     * If the given editing domain is a {@link TransactionalEditingDomain}, the changes done in
+     * the runnable are recorded, otherwise the operation is not undoable.
      * 
      * @param runnable a runnable that performs model changes
-     * @param editingDomain the editing domain for the changes
-     * @param label a user friendly label shown for the undo action
+     * @param editingDomain the editing domain for the changes, or {@code null}
+     * @param label a user friendly label shown for the undo action, or {@code null}
      */
     public static void runModelChange(final Runnable runnable,
-            final TransactionalEditingDomain editingDomain, final String label) {
-        editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain, label) {
-            protected void doExecute() {
-                runnable.run();
-            }
-        });
+            final EditingDomain editingDomain, final String label) {
+        if (editingDomain instanceof TransactionalEditingDomain) {
+            // execute with a transactional editing domain
+            editingDomain.getCommandStack().execute(new RecordingCommand(
+                    (TransactionalEditingDomain) editingDomain, label) {
+                protected void doExecute() {
+                    runnable.run();
+                }
+            });
+        } else if (editingDomain != null) {
+            // execute with an arbitrary editing domain
+            editingDomain.getCommandStack().execute(new AbstractCommand(label) {
+                public void execute() {
+                    runnable.run();
+                }
+                @Override
+                public boolean canUndo() {
+                    return false;
+                }
+                public void redo() {
+                    execute();
+                }
+            });
+        } else {
+            // execute without an editing domain
+            runnable.run();
+        }
     }
     
     /**

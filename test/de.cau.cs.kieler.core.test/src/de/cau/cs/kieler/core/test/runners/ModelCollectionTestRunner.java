@@ -21,9 +21,8 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
@@ -37,6 +36,9 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.Test;
 import org.junit.runner.Runner;
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Suite;
 import org.junit.runners.model.FrameworkMethod;
@@ -46,92 +48,144 @@ import org.junit.runners.model.TestClass;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * <p>
  * This class defines a JUnit4TestRunner dedicated to run tests on model data bases. It provides
  * various Java annotations:
  * <ul>
- * <li><code>Models,</code></li>
- * <li><code>BundleId,</code></li>
- * <li><code>ModelPath,</code></li>
- * <li><code>ModelFilter,</code></li>
- * <li><code>ResourceSet</code></li>
+ * <li><samp>@Models,</samp></li>
+ * <li><samp>@BundleId,</samp></li>
+ * <li><samp>@ModelPath,</samp></li>
+ * <li><samp>@ModelFilter,</samp></li>
+ * <li><samp>@ResourceSet</samp></li>
+ * <li><samp>@StopOnFailure</samp></li>
  * </ul>
- * </p>
- * <p>
- * In a test implementation the model base can be provided in two ways:
- * <ol>
- * <li>Implementing a method <code>public static Collection&lt;Object&gt; methodName() {...}</code>
- *     annotated with <code>(at)Models</code>,</li>
- * <li>Implementing <code>public static String ...</code> methods providing the bundle id, annotated
- *     with <code>(at)BundleId</code>, and the path to the models, annotated with
- *     <code>(at)ModelPath</code>.<br>
- *     In addition, a model file filter may be provided in form of a regular expression string by
- *     means of a method annotated with <code>(at)ModelFilter</code> and a special
- *     {@link org.eclipse.emf.ecore.resource.ResourceSet ResourceSet} may registered by means a
- *     method <code>public static ResourceSet ...</code> annotated with (at)ResourceSet.</li>
- * </ol>
  * 
- * The test classes may have a constructor with zero or one Argument(s) of type {@link Object} or
- * {@link EObject} in order to inject the model into the test. The same holds for the test methods
- * (annotated with <code>(at)Test</code>) - 
+ * In a test implementation the model base can be provided in two ways:
+ * 
+ * <ol>
+ * <li>Implementing a method <code>public static Iterable&lt;Object&gt; methodName() {...}</code>
+ * annotated with <samp>@Models</samp>,</li>
+ * 
+ * <li>Implementing <code>public static String ...</code> methods providing the bundle id, annotated
+ * with <samp>@BundleId</samp>, and the path to the models, annotated with <samp>@ModelPath</samp>.<br>
+ * In addition, a model file filter may be provided in form of a regular expression string by means
+ * of a method annotated with <samp>@ModelFilter</samp> and a special
+ * {@link org.eclipse.emf.ecore.resource.ResourceSet ResourceSet} may registered by means a method
+ * <code>public static ResourceSet ...</code> annotated with <samp>@ResourceSet</samp>.</li>
+ * 
+ * <li>Attaching the parameterized annotations <samp>@BundleId("...")</samp>,
+ * <samp>@ModelPath("...")</samp>, and optionally <samp>@ModelFilter("...")</samp> containing the
+ * related String values to the test class besides the <samp>@RunWith(...)</samp> annotation.<br>
+ * Due to the limitation of Java annotations w.r.t. to the parameter type a custom ResourceSet may
+ * only be provided by means of an annotated method as mentioned in item 2.</li>
+ * </ol>
+
+ * <p><i>Note, that <samp>@ModelPath(...)</samp> may also take an array of String, like
+ * <samp>@ModelPath( { "a/", "b/c/", ... } )</samp> The same applies to a <samp>public static ...</samp>
+ * method annotated with <samp>@ModelPath</samp> that may return a <samp>String[]</samp>, as well.</i>
  * </p>
- *
+ * 
+ * <p><i>Note furthermore, that the values of the provided model paths may end with <samp>\/**</samp> or
+ * <samp>\/**\/</samp> in order to instruct the model gathering to descent into sub folders.</i></p>
+ * 
+ * <p>The test classes may have a constructor with zero or one argument(s) of type {@link Object} or
+ * {@link EObject} in order to inject the model into the test. The same holds for the test methods
+ * (annotated with <samp>@Test</samp>). Hence, if a test method does not require any parameter the
+ * test class must provide a one argument constructor in order to get the models to be tested
+ * injected into the test class object.</p>
+ * 
+ * <p>In case various tests in a test class are functionally dependent, i.e. executing test2(),
+ * test3(), ... makes no sense if test1() failed, test1() may be annotated with
+ * <samp>@StopOnFailure</samp>. This instructs the particular test runner being in charge of testing
+ * with a certain model to skip the remaining tests and pass the baton the next runner testing with
+ * the next model. Note that the test order depends on the specification order of the test methods
+ * in the test class (from top to bottom).</p>
+ * 
  * Examples of valid test specifications:
- *<pre>
- * (at)RunWith(ModelCollectionTestRunner.class) {
+ * 
+ * <pre>
+ * <samp>@RunWith(ModelCollectionTestRunner.class)</samp>
  * public class Test {
  * 
- *     (at)Models
- *     public static Collection<?> getModels() {
- *         List<Object> models = Lists.newLinkedList();
+ *     <samp>@Models</samp>
+ *     public static Iterable<?> getModels() {
+ *         List&lt;Object&gt; models = Lists.newLinkedList();
  *         return models;
  *     }
- *   
- *     (at)Test
+ * 
+ *     <samp>@Test</samp>
+ *     <samp>@StopOnFailure</samp>
+ *     public void requirementsTest(EObject model) {
+ *         Assert.assertTrue(model instanceof KNode);
+ *     }
+ * 
+ *     <samp>@Test</samp>
  *     public void test(EObject model) {
  *         System.out.println(((KNode) model).getData().get(0));
  *     }
  * }
- *</pre>
- *
- *<pre>
- * (at)RunWith(ModelCollectionTestRunner.class) {
+ * </pre>
+ * 
+ * <pre>
+ * <samp>@RunWith(ModelCollectionTestRunner.class)</samp>
  * public class Test {
  * 
- *     (at)BundleId
+ *     <samp>@BundleId</samp>
  *     public static String getBundleId() {
  *         return "de.cau.cs.kieler.klighd.test";
  *     }
- *    
- *     (at)ModelPath
+ * 
+ *     <samp>@ModelPath</samp>
  *     public static String getModelPath() {
  *         return "sizeEstimationTests/";
  *     }
- *    
- *     (at)ModelFilter
+ * 
+ *     <samp>@ModelFilter</samp>
  *     public static String getModelFilter() {
  *         return "*.kgt";
  *     }
- *    
- *     (at)ModelCollectionTestRunner.ResourceSet
+ * 
+ *     <samp>@ModelCollectionTestRunner.ResourceSet</samp>
+ *     public static ResourceSet getResourceSet() {
+ *         return KGraphStandaloneSetup.doSetup().getInstance(XtextResourceSet.class);
+ *     }
+ * 
+ *     <samp>@Test</samp>
+ *     public void test(EObject model) {
+ *         System.out.println(((KNode) model).getData().get(0));
+ *     }
+ * }
+ * </pre>
+ * 
+ * In case the String-typed parameters are constant (not computed somehow, similar to the example
+ * above) they may be provided by means annotations attached to the test class, see below:
+ * 
+ * <pre>
+ * <samp>@RunWith(ModelCollectionTestRunner.class)</samp>
+ * <samp>@BundleId("de.cau.cs.kieler.klighd.test")</samp>
+ * <samp>@ModelPath("sizeEstimationTests/")</samp>
+ * <samp>@ModelFilter("*.kgt")</samp>
+ * public class Test {
+ * 
+ *     <samp>@ModelCollectionTestRunner.ResourceSet</samp>
  *     public static ResourceSet getResourceSet() {
  *         return KGraphStandaloneSetup.doSetup().getInstance(XtextResourceSet.class);
  *     }
  *   
- *     (at)Test
+ *     <samp>@Test</samp>
  *     public void test(EObject model) {
  *         System.out.println(((KNode) model).getData().get(0));
  *     }
  * }
- *</pre>
- *
+ * </pre>
  * 
  * @author chsch
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch
+ * 
  */
 public class ModelCollectionTestRunner extends Suite {
 
@@ -153,8 +207,11 @@ public class ModelCollectionTestRunner extends Suite {
      * @author chsch
      */
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
+    @Target({ElementType.METHOD, ElementType.TYPE })
     public @interface BundleId {
+        
+        /** An optional annotation parameter in case the annotation is attached to the test class. */
+        String value() default "";
     }
 
     /**
@@ -164,8 +221,11 @@ public class ModelCollectionTestRunner extends Suite {
      * @author chsch
      */
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
+    @Target({ElementType.METHOD, ElementType.TYPE })
     public @interface ModelPath {
+        
+        /** An optional annotation parameter in case the annotation is attached to the test class. */
+        String[] value() default { };
     }
 
     /**
@@ -175,13 +235,19 @@ public class ModelCollectionTestRunner extends Suite {
      * @author chsch
      */
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
+    @Target({ElementType.METHOD, ElementType.TYPE })
     public @interface ModelFilter {
+        
+        /** An optional annotation parameter in case the annotation is attached to the test class. */
+        String value() default "";
     }
 
     /**
      * The declaration of the Java annotation 'ResourceSet', see documentation of
-     * {@link ModelCollectionTestRunner} for details.
+     * {@link ModelCollectionTestRunner} for details.<br>
+     * <br>
+     * Unfortunately, annotation parameters may only be of primitive, Annotation, Class, Enumeration,
+     * or String type, so the parameterized type annotation variant doesn't work here :-(.
      * 
      * @author chsch
      */
@@ -189,6 +255,31 @@ public class ModelCollectionTestRunner extends Suite {
     @Target(ElementType.METHOD)
     public @interface ResourceSet {
     }
+
+    
+    // --------------------------------------------------------------------
+
+
+    /**
+     * Instructs the {@link ModelCollectionTestRunner} to stop testing with the current model and
+     * proceed with the next one in the provided model base if the annotated test fails.<br>
+     * This way, "pre-condition" tests may be formulated.<br>
+     * <br>
+     * In more detail, a failing test method annotated with <samp>@StopOnFailure</samp> makes the
+     * {@link SingleModelTestRunner} to ignore the remaining tests. Thereafter the current
+     * {@link ModelCollectionTestRunner} instance proceeds with its next {@link SingleModelTestRunner}
+     * child that restarts the test procedure with its assigned model. 
+     * 
+     * @author chsch
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface StopOnFailure {
+    }
+
+    
+    // --------------------------------------------------------------------
+
 
     /**
      * Constructor.
@@ -213,7 +304,7 @@ public class ModelCollectionTestRunner extends Suite {
         if (models.isEmpty()) {
             throw new NoSuchMethodException(
                     "Expected a public static method annotated width @Models returning a "
-                    + "non-empty Collection<Object> in "
+                    + "non-empty Iterable<Object> in "
                     + getTestClass().getName()
                     + ", or methods annotated with @BundleId, @ModelPath, and @ResourceSet as "
                     + "documented in the ModelCollectionTestRunner class enabling to obtain a "
@@ -231,29 +322,30 @@ public class ModelCollectionTestRunner extends Suite {
                 modelName = uri.path() + uri.fragment();
             }
             this.getChildren().add(
-                    new ModelCollectionTestRunnerForModels(getTestClass().getJavaClass(), o,
-                            modelName));
+                    new SingleModelTestRunner(getTestClass().getJavaClass(), o, modelName));
         }
     }
+
+    // --------------------------------------------------------------------
 
     /**
      * Method tries to reveal test models by means of a method annotated with @Models. 
      * 
-     * @return A Collection of models or an empty list if the attempt fails.
+     * @return An {@link Iterable} of models or an empty list if the attempt fails.
      */
-    private Collection<Object> getModelsByModelsMethod() {
+    private Iterable<Object> getModelsByModelsMethod() {
         try {
 
             // try to obtain the provider method:
             FrameworkMethod modelsMethod = getAnnotatedMethod(getTestClass(), Models.class);
             if (modelsMethod == null
-                    || !modelsMethod.getMethod().getReturnType().isAssignableFrom(Collection.class)) {
+                    || !Iterable.class.isAssignableFrom(modelsMethod.getMethod().getReturnType())) {
                 return Collections.emptyList();
             }
             
             // now reveal the provided information ...
             @SuppressWarnings("unchecked")
-            Collection<Object> models = (Collection<Object>) modelsMethod.invokeExplosively(null);
+            Iterable<Object> models = (Iterable<Object>) modelsMethod.invokeExplosively(null);
             if (models != null) {
                 // if models are available return them,
                 return models;
@@ -266,33 +358,70 @@ public class ModelCollectionTestRunner extends Suite {
         }
     }
 
+    // --------------------------------------------------------------------
+
     /**
      * Method tries to reveal test models by means of path denoting methods.
      * 
-     * @return A Collection of models or an empty list if the attempt fails.
+     * @return An {@link Iterable} of models or an empty list if the attempt fails.
      */
-    private Collection<Object> getModelsByPathMethods() {
+    private Iterable<Object> getModelsByPathMethods() {
         String bundleId = null;
         try {
+            // first examine the test class annotations:
+            //  (doesn't work for the ResourceSet as java annotations don't support
+            //   custom typed parameters)
+            BundleId bundleIdAn = getClassAnnotation(BundleId.class);
+            bundleId = bundleIdAn != null ? bundleIdAn.value() : null;
+            
+            ModelPath modelPathAn = getClassAnnotation(ModelPath.class);
+            String[] modelPaths = modelPathAn != null ? modelPathAn.value() : null;
+            
+            ModelFilter modelFilterAn = getClassAnnotation(ModelFilter.class);
+            String modelFilter = modelFilterAn != null ? modelFilterAn.value() : null;
             
             // try to obtain the mandatory and optional provider methods:
-            FrameworkMethod bundleIdMethod = getAnnotatedMethod(getTestClass(), BundleId.class);
-            FrameworkMethod modelPathMethod = getAnnotatedMethod(getTestClass(), ModelPath.class);
-            // optional:
-            FrameworkMethod resourceSetMethod = getAnnotatedMethod(getTestClass(), ResourceSet.class);
-            FrameworkMethod modelFilterMethod = getAnnotatedMethod(getTestClass(), ModelFilter.class);
+            FrameworkMethod bundleIdMethod = bundleId == null
+                    ? getAnnotatedMethod(getTestClass(), BundleId.class) : null;
+            FrameworkMethod modelPathMethod = modelPaths == null || modelPaths.length == 0
+                    ? getAnnotatedMethod(getTestClass(), ModelPath.class) : null;
 
-            // check whether the mandatory ones are available
+            // optional:
+            FrameworkMethod modelFilterMethod = modelFilter == null
+                    ? getAnnotatedMethod(getTestClass(), ModelFilter.class) : null;
+            FrameworkMethod resourceSetMethod = getAnnotatedMethod(getTestClass(), ResourceSet.class);
+
             boolean valid = true;
-            if (bundleIdMethod == null
-                    || !bundleIdMethod.getMethod().getReturnType().equals(String.class)) {
+            boolean pathArray = false;
+
+            // check whether the mandatory annotations are given
+            if (Strings.isNullOrEmpty(bundleId)
+                    && (bundleIdMethod == null || !bundleIdMethod.getMethod().getReturnType()
+                            .equals(String.class))) {
+                // in this case no bundle id is provided
                 valid = false;
-            } else if (modelPathMethod == null
-                    || !modelPathMethod.getMethod().getReturnType().equals(String.class)) {
+                
+            } else if (modelPaths != null && modelPaths.length != 0) { // SUPPRESS CHECKSTYLE Empty
+                // in this case we're fine
+                
+            } else if ((modelPaths == null || modelPaths.length == 0) && modelPathMethod != null) {
+                // in this case no test class @ModelPath annotation is given but a related method
+                
+                if (modelPathMethod.getMethod().getReturnType().equals(String.class)) {
+                    pathArray = false;
+                } else if (modelPathMethod.getMethod().getReturnType().equals(String[].class)) {
+                    pathArray = true;
+                } else {
+                    // in this case no proper modelPath(s) providing method is available
+                    valid = false;
+                }
+                
+            } else {
+                // in this case no modelPath(s) is/are provided
                 valid = false;
             }
           
-            // check whether the optional one is available
+            // check whether the optional one is given
             boolean filtered = true;
             if (modelFilterMethod == null
                     || !modelFilterMethod.getMethod().getReturnType().equals(String.class)) {
@@ -309,52 +438,59 @@ public class ModelCollectionTestRunner extends Suite {
             
             if (valid) {
                 // now reveal the provided information ...
-                bundleId = (String) bundleIdMethod.invokeExplosively(null);
-                String modelPath = (String) modelPathMethod.invokeExplosively(null);
-                String modelFilter = filtered ? (String) modelFilterMethod.invokeExplosively(null)
-                        : null;
-                final org.eclipse.emf.ecore.resource.ResourceSet set = (customResourceSet)
+                bundleId = bundleId == null
+                        ? (String) bundleIdMethod.invokeExplosively(null) : bundleId;
+                        
+                if (modelPaths == null || modelPaths.length == 0) {
+                    
+                    Object modelPathObj = modelPathMethod.invokeExplosively(null);
+                    modelPaths = pathArray ? (String[]) modelPathObj
+                            : new String[] { (String) modelPathObj };
+                }
+                
+                modelFilter = filtered
+                        ? (String) modelFilterMethod.invokeExplosively(null) : modelFilter;
+                final org.eclipse.emf.ecore.resource.ResourceSet set = customResourceSet
                         ? (org.eclipse.emf.ecore.resource.ResourceSet) resourceSetMethod
                         .invokeExplosively(null) : new ResourceSetImpl();
                 
-                // the final bundleId variable is needed for logging purposes later on
-                final String bundleIdf = bundleId;
+                List<URL> urls = Lists.newArrayList();
                 
-                // ... and try to access the specified path
-                Enumeration<URL> urls = Platform.getBundle(bundleId).findEntries(modelPath,
-                        modelFilter, true);
+                // for all provided model paths ...
+                for (String modelPath : modelPaths) {
+                    
+                    // since Bundle#findEntries() does not support path pattern expressions
+                    //  the path is first checked for the recurse pattern and accordingly modified
+                    boolean recurse = true;
+                    if (modelPath != null) {
+                        if (modelPath.endsWith("/**")) {
+                            // SUPPRESS CHECKSTYLE NEXT 5 MagicNumber
+                            modelPath = modelPath.substring(0, modelPath.length() - 3);
+                        } else {
+                            if (modelPath.endsWith("/**/")) {
+                                modelPath = modelPath.substring(0, modelPath.length() - 4);
+                            } else {
+                                recurse = false;
+                            }
+                        }
+                    }
+                    
+                    // ... try to access the specified path, transform the Enumeration of URLs
+                    //  into a list, and add them to the whole url list
+                    urls.addAll(Collections.list(Platform.getBundle(bundleId).findEntries(
+                            modelPath, modelFilter, recurse)));
+                    
+                }
 
-                if (urls == null) {
+                if (urls.isEmpty()) {
                     // if nothing is found (without a failing) return an empty list
                     return Collections.emptyList();
                 }
 
                 // if some model files are available
-                //  transform the Enumeration into a list
-                //  and try to load each Resource by means of the provided ResourceSet
-                Iterable<? extends Object> models = Iterables.concat(Iterables.transform(
-                        Collections.list(urls), new Function<URL, List<EObject>>() {
-                            public List<EObject> apply(final URL url) {
-                                try {
-                                    final Resource r = set.getResource(
-                                            URI.createURI(url.toString()), true);
-                                    return r.getContents();
-                                } catch (WrappedException w) {
-                                    // if the resource load fails (e.g. as no
-                                    //  valid ResourceFactory has been registered)
-                                    //  return the empty list
-                                    String message = "ModelCollectionTestRunner: Loading model"
-                                            + " resource " + url.toString() + " of " + bundleIdf
-                                            + " failed with the following exception:"
-                                            + System.getProperty("line.separator");
-                                    Platform.getLog(Platform.getBundle(bundleIdf)).log(
-                                            new Status(IStatus.ERROR, bundleIdf, message, w));
-                                    return Collections.emptyList();
-                                }
-                            }
-                        }));
-                // finally return the revealed models
-                return ImmutableList.copyOf(models);
+                //  try to load each Resource by means of the provided ResourceSet
+                //  and finally return the revealed models
+                return this.loadURLs(bundleId, set, urls);
             } else {
                 return Collections.emptyList();
             }
@@ -369,6 +505,30 @@ public class ModelCollectionTestRunner extends Suite {
             return Collections.emptyList();
         }
     }
+    
+    private Iterable<Object> loadURLs(final String bundleId,
+            final org.eclipse.emf.ecore.resource.ResourceSet set, final Iterable<URL> urls) {
+        return Iterables.concat(Iterables.transform(urls, new Function<URL, Iterable<?>>() {
+            public Iterable<?> apply(final URL url) {
+                try {
+                    final Resource r = set.getResource(URI.createURI(url.toString()), true);
+                    return r.getContents();
+                } catch (WrappedException w) {
+                    // if the resource load fails (e.g. as no valid ResourceFactory has been
+                    //  registered) return the empty list
+                    String message = "ModelCollectionTestRunner: Loading model resource "
+                            + url.toString() + " of " + bundleId
+                            + " failed with the following exception:"
+                            + System.getProperty("line.separator");
+                    Platform.getLog(Platform.getBundle(bundleId)).log(
+                            new Status(IStatus.ERROR, bundleId, message, w));
+                    return Collections.emptyList();
+                }
+            }
+        }));
+    }
+
+    // --------------------------------------------------------------------
 
     /**
      * Gets the method annotated with an instance of 'annotationClass'.
@@ -380,11 +540,9 @@ public class ModelCollectionTestRunner extends Suite {
      * @param annotationClass
      *            the annotation type to look for
      * @return the annotated method
-     * @throws Exception
-     *             the exception
      */
     protected FrameworkMethod getAnnotatedMethod(final TestClass testClass,
-            final Class<? extends Annotation> annotationClass) throws Exception {
+            final Class<? extends Annotation> annotationClass) {
         List<FrameworkMethod> methods = testClass.getAnnotatedMethods(annotationClass);
         for (FrameworkMethod each : methods) {
             int modifiers = each.getMethod().getModifiers();
@@ -392,17 +550,36 @@ public class ModelCollectionTestRunner extends Suite {
                 return each;
             }
         }
-
-        throw new Exception("No public static @" + annotationClass.getSimpleName()
-                + " method in class " + testClass.getName());
+        return null;
     }
 
+    // --------------------------------------------------------------------
+
+    /**
+     * Reveals the first annotation instance of type 'annotationClass' from the test class's
+     * annotations.
+     * 
+     * @param <T>
+     *            the requested annotation type
+     * @param annotationType
+     *            the requested annotation type
+     * @return the first instance of #annotationType being found
+     */
+    protected <T extends Annotation> T getClassAnnotation(final Class<T> annotationType) {
+        final List<Annotation> annotations = Arrays.asList(getTestClass().getAnnotations());
+        return Iterables.getFirst(Iterables.filter(annotations, annotationType), null);
+    }
+
+
+    // --------------------------------------------------------------------
+
+    
     /**
      * A specialized {@link BlockJUnit4ClassRunner} running tests on a given model element. 
      *
      * @author chsch
      */
-    protected class ModelCollectionTestRunnerForModels extends BlockJUnit4ClassRunner {
+    protected class SingleModelTestRunner extends BlockJUnit4ClassRunner {
 
         private Object model = null;
         private String modelName = null;
@@ -421,7 +598,7 @@ public class ModelCollectionTestRunner extends Suite {
          * @throws InitializationError
          *             if the super implementation throws such an error
          */
-        public <T extends Object> ModelCollectionTestRunnerForModels(final Class<?> clazz,
+        public <T extends Object> SingleModelTestRunner(final Class<?> clazz,
                 final T theModel, final String theModelName) throws InitializationError {
             super(clazz);
             this.model = theModel;
@@ -479,7 +656,7 @@ public class ModelCollectionTestRunner extends Suite {
         // --------------------------------------------------------------------
 
         /**
-         * Depending on the number of constructor parameters and, id a parameter is present the
+         * Depending on the number of constructor parameters and, if a parameter is present the
          * parameter type, this method creates a new instance of the test class by calling the
          * (only) constructor and optionally injecting the current model.
          * 
@@ -496,9 +673,58 @@ public class ModelCollectionTestRunner extends Suite {
                     && constructorParams[0].isAssignableFrom(this.model.getClass())) {
                 return getTestClass().getOnlyConstructor().newInstance(this.model);
             } else {
-                throw new NoSuchMethodError("Type of first parameter of constructor of "
-                        + getTestClass() + " is not compatible with the current model's type "
+                throw new NoSuchMethodError("Type of the parameter of " + getTestClass()
+                        + "'s constructor is not compatible with the current model's type "
                         + this.model.getClass().getSimpleName());
+            }
+        }
+        
+        // --------------------------------------------------------------------
+        
+        private boolean methodStopsExecution = false;
+        private boolean ignoreRemainingTests = false;
+        
+        /**
+         * This listener is registered in {@link #childrenInvoker}. In case it notices a test
+         * failure it configures its parent {@link SingleModelTestRunner} to ignore its remaining
+         * tests, see {@link #runChild(FrameworkMethod, RunNotifier)}.
+         */
+        private RunListener listener = new RunListener() {
+
+            /**
+             * Called when an atomic test fails.
+             * 
+             * @param failure
+             *            describes the test that failed and the exception that was thrown
+             */
+            public void testFailure(final Failure failure) throws Exception {
+                SingleModelTestRunner.this.ignoreRemainingTests =
+                        SingleModelTestRunner.this.methodStopsExecution;
+            }
+        };
+
+
+        /**
+         * {@inheritDoc}.<br>
+         * <br>
+         * The returned result iterates on this' children and calls
+         * {@link #runChild(FrameworkMethod, RunNotifier)} for each.
+         */
+        protected Statement childrenInvoker(final RunNotifier notifier) {
+            notifier.addListener(listener);
+            return super.childrenInvoker(notifier);
+        }
+        
+        
+        /**
+         * {@inheritDoc}
+         */
+        protected void runChild(final FrameworkMethod method, final RunNotifier notifier) {
+            if (this.ignoreRemainingTests) {
+                notifier.fireTestIgnored(this.describeChild(method));
+            } else {
+                this.methodStopsExecution = method.getAnnotation(StopOnFailure.class) != null;
+                super.runChild(method, notifier);
             }
         }
 
@@ -528,7 +754,8 @@ public class ModelCollectionTestRunner extends Suite {
          */
         @Override
         protected String getName() {
-            return ModelCollectionTestRunner.this.getClass().getSimpleName();
+            return ModelCollectionTestRunner.this.getClass().getSimpleName()
+                    + "." + SingleModelTestRunner.this.getClass().getSimpleName();
         }
 
         // --------------------------------------------------------------------
@@ -536,7 +763,7 @@ public class ModelCollectionTestRunner extends Suite {
         /**
          * The name of the test of a concrete test run.
          * Due to some weird reason the JUnit view cuts the test name right before
-         * the first occurrence of '(', used '[]' instead.
+         * the first occurrence of '(', so I used '[]' instead.
          * 
          * @param method
          *            the method
@@ -548,6 +775,10 @@ public class ModelCollectionTestRunner extends Suite {
         }
     }
     
+    
+    // --------------------------------------------------------------------
+
+
     /**
      * A custom {@link Statement} encapsulating the invocation of a test method executed by the
      * JUnit {@link Runner}. It enables the invocation of test methods expecting the model element

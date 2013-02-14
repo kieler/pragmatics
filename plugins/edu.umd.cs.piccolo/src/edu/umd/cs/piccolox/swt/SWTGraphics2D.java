@@ -48,6 +48,7 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -62,12 +63,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Pattern;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.TextLayout;
+import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.graphics.Transform;
 
 /**
@@ -98,6 +105,14 @@ public class SWTGraphics2D extends Graphics2D {
     /** Map from awt colors to swt colors. */
     protected static HashMap<Color, org.eclipse.swt.graphics.Color> COLOR_CACHE
                     = new HashMap<Color, org.eclipse.swt.graphics.Color>();
+
+    /** Map from FontData to SWT Fonts. */
+    protected static HashMap<FontData, org.eclipse.swt.graphics.Font> FONT_CACHE_2
+                    = new HashMap<FontData, org.eclipse.swt.graphics.Font>();
+    /** Map from RGB to SWT Colors. */
+    protected static HashMap<RGB, org.eclipse.swt.graphics.Color> COLOR_CACHE_2
+                    = new HashMap<RGB, org.eclipse.swt.graphics.Color>();
+
     /** Map from awt shapess to swt Paths. */
     protected static HashMap<Shape, Path> SHAPE_CACHE = new HashMap<Shape, Path>();
     /** Buffer used to extract the graphics device. */
@@ -109,8 +124,10 @@ public class SWTGraphics2D extends Graphics2D {
     private static org.eclipse.swt.graphics.Rectangle SWT_RECT =
             new org.eclipse.swt.graphics.Rectangle(0, 0, 0, 0);
 
-    /** The Underlying GraphicsContext provided by swt. */
+    /** The underlying GraphicsContext provided by swt. */
     protected GC gc;
+    /** The underlying TextLayout provided by swt. */
+    protected TextLayout tl;
     /** Device onto which all graphics operations will ultimately take place. */
     protected Device device;
     /** The current transform to apply to drawing operations. */
@@ -118,12 +135,26 @@ public class SWTGraphics2D extends Graphics2D {
     private final Transform swtTransform;
     /** The current font to use when drawing text. */
     protected org.eclipse.swt.graphics.Font curFont;
+    /** The state w.r.t. using the text style when drawing text. */
+    protected boolean useTextStyle = false;
+    /** The current text style to use when drawing text. */
+    protected TextStyle curTextStyle;
     /** The current stroke width to use when drawing lines. */
     protected double lineWidth = 1.0;
     /** The current stroke style to use when drawing lines. */
     protected int lineStyle = SWT.LINE_SOLID;
     /** The current stroke ending style to use when drawing lines. */
     protected int lineCap = SWT.CAP_FLAT;
+    /** The state w.r.t. underlining when drawing text. */
+    protected boolean underlining = false;
+    /** The current text underline style to use when drawing text; is also controlled by {@link #underlining}. */
+    protected int underline = SWT.UNDERLINE_SINGLE;
+    /** The current underline color to use when drawing underlined text. */
+    protected RGB underlineColor = null;
+    /** The state w.r.t. strikeout when drawing text. */
+    protected boolean strikeout = false;
+    /** The current strikeout color to use when drawing struck out text. */
+    protected RGB strikeoutColor = null;
 
     /**
      * Constructor for SWTGraphics2D.
@@ -135,11 +166,42 @@ public class SWTGraphics2D extends Graphics2D {
      */
     public SWTGraphics2D(final GC gc, final Device device) {
         this.gc = gc;
+        this.tl = new TextLayout(device);
         this.device = device;
 
         swtTransform = new Transform(device);
         gc.setAntialias(SWT.ON);
     }
+
+    /**
+     * Constructor for SWTGraphics2D.
+     * 
+     * @param gc
+     *            The Eclipse Graphics Context onto which all Graphics2D operations are delegating
+     * @param tl
+     *            The Eclipse Graphics Context onto which all Graphics2D operations are delegating
+     * @param device
+     *            Device onto which ultimately all gc operations are drawn onto
+     */
+    public SWTGraphics2D(final GC gc, final TextLayout tl, final Device device) {
+        this.gc = gc;
+        this.tl = tl;
+        this.device = device;
+
+        swtTransform = new Transform(device);
+        gc.setAntialias(SWT.ON);
+    }
+    
+    
+    protected org.eclipse.swt.graphics.Color getColor(RGB rgb) {
+        org.eclipse.swt.graphics.Color color = COLOR_CACHE_2.get(rgb);
+        if (color == null) {
+            color = new org.eclipse.swt.graphics.Color(device, rgb);
+            COLOR_CACHE_2.put(rgb, color);
+        }
+        return color;
+    }
+    
 
     // //////////////////
     // GET CLIP
@@ -315,6 +377,17 @@ public class SWTGraphics2D extends Graphics2D {
             COLOR_CACHE.put(c, cachedColor);
         }
         gc.setForeground(cachedColor);
+        gc.setAlpha(c.getAlpha());
+    }
+
+    /**
+     * Sets the foreground color to the provided swt color.
+     * 
+     * @param foregroundColor
+     *            new foreground color
+     */
+    public void setColor(final RGB foregroundColor) {
+        gc.setForeground(getColor(foregroundColor));
     }
 
     /**
@@ -349,6 +422,7 @@ public class SWTGraphics2D extends Graphics2D {
         return gc.getForegroundPattern();
     }
     
+    
     /** {@inheritDoc} */
     public void setBackground(final Color c) {
         org.eclipse.swt.graphics.Color cachedColor =
@@ -360,6 +434,18 @@ public class SWTGraphics2D extends Graphics2D {
             COLOR_CACHE.put(c, cachedColor);
         }
         gc.setBackground(cachedColor);
+        // TODO the correctness of this call must still be verified (chsch)
+        gc.setAlpha(c.getAlpha());
+    }
+
+    /**
+     * Sets the background color to the provided swt color.
+     * 
+     * @param backgroundColor
+     *            new background color
+     */
+    public void setBackground(final RGB backgroundColor) {
+        gc.setBackground(getColor(backgroundColor));
     }
 
     /**
@@ -371,12 +457,29 @@ public class SWTGraphics2D extends Graphics2D {
     public void setBackground(final org.eclipse.swt.graphics.Color backgroundColor) {
         gc.setBackground(backgroundColor);
     }
+    
 
     /** {@inheritDoc} */
     public Color getBackground() {
         final org.eclipse.swt.graphics.Color color = gc.getBackground();
         final Color awtColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
         return awtColor;
+    }
+    
+    /**
+     * 
+     * @param alpha
+     */
+    public void setAlpha(int alpha) {
+        gc.setAlpha(alpha);
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public int getAlpha() {
+        return gc.getAntialias();
     }
 
     /**
@@ -461,6 +564,39 @@ public class SWTGraphics2D extends Graphics2D {
      * @param font
      *            font for this SWTGraphics2D
      */
+    public void setFont(final FontData fontData) {
+        org.eclipse.swt.graphics.Font font = FONT_CACHE_2.get(fontData);
+        if (font == null) {
+            font = new org.eclipse.swt.graphics.Font(device, fontData);
+            FONT_CACHE_2.put(fontData, font);
+        }
+        curFont = font;
+
+        if (underlining) {
+            if (curTextStyle == null) {
+                curTextStyle = new TextStyle();
+            }
+            curTextStyle.strikeout = strikeout;
+            curTextStyle.strikeoutColor = getColor(strikeoutColor);
+            curTextStyle.font = curFont;
+            curTextStyle.underline = true;
+            curTextStyle.underlineStyle = underline;
+            curTextStyle.underlineColor = getColor(underlineColor);
+            curTextStyle.foreground = gc.getForeground();
+            // since PSWTText/PSWTStyledText cares on itself on the background
+            //  setting the curTextStyle.background is left here 
+            useTextStyle = true;
+        } else {
+            useTextStyle = false;
+        }
+    }
+
+    /**
+     * Set the font for this SWTGraphics2D to <code>font</code>.
+     * 
+     * @param font
+     *            font for this SWTGraphics2D
+     */
     public void setFont(final org.eclipse.swt.graphics.Font font) {
         curFont = font;
     }
@@ -468,11 +604,21 @@ public class SWTGraphics2D extends Graphics2D {
     /**
      * Returns the SWT font matching the given font string.
      * 
+     * @deprecated (chsch)
+     * 
      * @param fontString
      *            description of the font desired
      * @return matching font, or null if not found
      */
     public org.eclipse.swt.graphics.Font getFont(final String fontString) {
+        // insertion chsch:
+        String id = "edu.umd.cs.piccolo";
+        Platform.getLog(Platform.getBundle(id)).log(
+                new Status(IStatus.WARNING, id,
+                       "Bundle edu.umd.cs.piccolo: Method SWTGraphics2D#getFon(String) has been used. Avoid this!!")
+                );
+        // insertion end
+        
         org.eclipse.swt.graphics.Font cachedFont =
                 (org.eclipse.swt.graphics.Font) FONT_CACHE.get(fontString);
         if (cachedFont == null) {
@@ -524,6 +670,46 @@ public class SWTGraphics2D extends Graphics2D {
         }
         return null;
     }
+    
+        
+    /**
+     * Sets the underline for next text to be drawn on this SWTGraphics2D (see
+     * {@link #setFont(FontData)}, {@link #drawText(String, double, double, int)}.
+     * 
+     * @param theUnderlining
+     *            the underline style constant, see {@link SWT}
+     * @param color
+     *            the underline color
+     */
+    public void setUnderline(final int theUnderlining, final RGB color) {
+        // -1 is the NO_UNDERLINE constant, see PSWTStyledText (klighd.piccolo)
+        underlining = theUnderlining != -1;
+        underline = theUnderlining;
+        underlineColor = color;
+    }
+
+    /**
+     * Sets the strikeout flag for next text to be drawn on this SWTGraphics2D (see
+     * {@link #setFont(FontData)}, {@link #drawText(String, double, double, int)}.
+     * 
+     * @param theStrikeout
+     *            indicate whether to strike out
+     * @param color
+     *            the underline color
+     */
+    public void setStrikeout(final boolean theStrikeout, final RGB color) {
+        strikeout = theStrikeout;
+        strikeoutColor = color;
+    }
+
+    public void setTextStyle(final TextStyle style) {
+        this.curTextStyle = style;
+    }
+    
+    public TextStyle getTextStyle() {
+        return this.curTextStyle;
+    }
+    
 
     // /////////////////////////
     // AFFINE TRANSFORM METHODS
@@ -753,7 +939,7 @@ public class SWTGraphics2D extends Graphics2D {
         gc.setLineWidth(getTransformedLineWidth());
         gc.setLineStyle(this.lineStyle);
         gc.setLineCap(this.lineCap);
-       gc.drawPolygon(ptArray);
+        gc.drawPolygon(ptArray);
     }
     
 
@@ -966,7 +1152,7 @@ public class SWTGraphics2D extends Graphics2D {
      *            the y coordinate of the location where the String should be rendered
      */
     public void drawText(final String str, final double x, final double y) {
-        drawText(str, (int) (x + 0.5), (int) (y + 0.5), SWT.DRAW_DELIMITER | SWT.DRAW_TRANSPARENT);
+        drawText(str, x, y, SWT.DRAW_DELIMITER | SWT.DRAW_TRANSPARENT);
     }
 
     /**
@@ -976,6 +1162,10 @@ public class SWTGraphics2D extends Graphics2D {
      * Composite attributes. For characters in script systems such as Hebrew and Arabic, the glyphs
      * can be rendered from right to left, in which case the coordinate supplied is the location of
      * the leftmost character on the baseline.
+     * 
+     * Supplement by chsch:
+     *  In case advanced features like text underlining is required, employ the {@link TextLayout} by
+     *  configuring and invoking it!
      * 
      * @param str
      *            the string to be rendered
@@ -987,7 +1177,15 @@ public class SWTGraphics2D extends Graphics2D {
      *            flags to apply to the string as defined by SWT
      */
     public void drawText(final String str, final double x, final double y, final int flags) {
-        drawText(str, (int) (x + 0.5), (int) (y + 0.5), flags);
+        if (!useTextStyle) {
+            drawText(str, (int) (x + 0.5), (int) (y + 0.5), flags);
+        } else {
+            tl.setText(str);
+            tl.setStyle(curTextStyle, 0, str.length() - 1);            
+            gc.setTransform(swtTransform);
+            tl.draw(gc, (int) (x + 0.5), (int) (y + 0.5));
+            gc.setTransform(null);
+        }
     }
 
     /**
@@ -1304,6 +1502,22 @@ public class SWTGraphics2D extends Graphics2D {
         gc.fillArc((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
                 (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5),
                 (int) (startAngle + 0.5), (int) (startAngle + extent + 0.5));
+    }
+
+    /**
+     * Draws the provided AWT GeneralPath respecting the current AWT transform without any caching.
+     * We need to assess whether this is OK w.r.t. the runtime performance.
+     * 
+     * @author chsch
+     * 
+     * @param s
+     *            path to draw
+     */
+    public void drawGeneralPath(final GeneralPath gp) {
+        gc.setLineWidth(getTransformedLineWidth());
+        gc.setLineStyle(this.lineStyle);
+        gc.setLineCap(this.lineCap);
+        gc.drawPath(pathIterator2Path(gp.getPathIterator(transform)));
     }
 
     /**

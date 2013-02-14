@@ -463,7 +463,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
         // layer graph, each connected component separately
         for (List<LNode> connComp : connectedComponents(theNodes)) {
             // determine a limit on the number of iterations
-            int iterLimit = thoroughness * (int) (Math.sqrt(connComp.size()) + 1);
+            int iterLimit = thoroughness * (int) Math.sqrt(connComp.size());
 
             initialize(connComp);
             // determine an initial feasible layering

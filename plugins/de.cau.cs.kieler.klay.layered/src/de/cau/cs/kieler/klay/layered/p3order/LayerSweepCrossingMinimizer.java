@@ -101,23 +101,42 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         return configuration;
     }
     
-    /** array of port ranks used for sorting nodes and ports. */
+    /**
+     * Array of port ranks used for sorting nodes and ports.
+     */
     private float[] portRanks;
-    /** port position array used for counting the number of edge crossings. */
+    /**
+     * Port position array used for counting the number of edge crossings.
+     */
     private int[] portPos;
-    /** complete node order of the best layer sweep. */
+    /**
+     * Complete node order of the best layer sweep.
+     */
     private NodeGroup[][] bestSweep;
-    /** complete node order of the current layer sweep. */
+    /**
+     * Complete node order of the current layer sweep.
+     */
     private NodeGroup[][] curSweep;
-    /** complete node order of the previous layer sweep. */
+    /**
+     * Complete node order of the previous layer sweep.
+     */
     private NodeGroup[][] prevSweep;
-    /** the number of in-layer edges for each layer. */
+    /**
+     * The number of in-layer edges for each layer, including virtual connections to
+     * north/south dummies.
+     */
     private int[] inLayerEdgeCount;
-    /** layout units represented by a single node. */
+    /**
+     * Layout units represented by a single node.
+     */
     private final Multimap<LNode, LNode> layoutUnits = HashMultimap.create();
-    /** the node-relative port distributor. */
+    /**
+     * The node-relative port distributor.
+     */
     private NodeRelativePortDistributor nodeRelativePortDistributor;
-    /** the layer-total port distributor. */
+    /**
+     * The layer-total port distributor.
+     */
     private LayerTotalPortDistributor layerTotalPortDistributor;
     
     /**
@@ -158,6 +177,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
             while (nodeIter.hasNext()) {
                 LNode node = nodeIter.next();
 
+                // Create node group and register layout unit
                 NodeGroup nodeGroup = new NodeGroup(node);
                 curSweep[layerIndex][nodeIter.previousIndex()] = nodeGroup;
                 node.id = nodeCount++;
@@ -167,6 +187,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                     layoutUnits.put(layoutUnit, node);
                 }
 
+                // Count in-layer edges
                 for (LPort port : node.getPorts()) {
                     port.id = portCount++;
                     for (LEdge edge : port.getOutgoingEdges()) {
@@ -174,6 +195,11 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                             inLayerEdgeCount[layerIndex]++;
                         }
                     }
+                }
+                
+                // Count north/south dummy nodes
+                if (node.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                    inLayerEdgeCount[layerIndex]++;
                 }
             }
         }
@@ -234,8 +260,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         AbstractPortDistributor portDistributor;
 
         // Perform the requested number of runs, each consisting of several sweeps
-        // (alternating between forward and backward sweeps)
-        for (int run = 0; run < runCount; run++) {
+        for (int run = 0; run < runCount && bestSweepCrossings > 0; run++) {
             // Each run is randomly determined to be a forward or a backward run
             boolean forward = random.nextBoolean();
             int fixedLayerIndex = forward ? 0 : layerCount - 1;
@@ -262,6 +287,10 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 prevSweepCrossings = curSweepCrossings;
                 curSweepCrossings = 0;
                 
+                if (inLayerEdgeCount[fixedLayerIndex] > 0) {
+                    curSweepCrossings += countCrossings(fixedLayer);
+                }
+                
                 if (forward) {
                     // Perform a forward sweep
                     for (int layerIndex = 1; layerIndex < layerCount; layerIndex++) {
@@ -277,6 +306,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
                         fixedLayer = freeLayer;
                     }
+                    fixedLayerIndex = layerCount - 1;
                 } else {
                     // Perform a backward sweep
                     for (int layerIndex = layerCount - 2; layerIndex >= 0; layerIndex--) {
@@ -292,17 +322,18 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
                         fixedLayer = freeLayer;
                     }
+                    fixedLayerIndex = 0;
                 }
 
                 // Switch the sweep direction
                 firstSweep = false;
                 forward = !forward;
-            } while (curSweepCrossings < prevSweepCrossings);
+            } while (curSweepCrossings < prevSweepCrossings && curSweepCrossings > 0);
 
             // Compare the current result with the best one
             if (curSweepCrossings < bestSweepCrossings || prevSweepCrossings < bestSweepCrossings) {
                 // Restore the previous sweep's ordering if it has become worse
-                if (curSweepCrossings < prevSweepCrossings) {
+                if (curSweepCrossings <= prevSweepCrossings) {
                     copySweep(curSweep, bestSweep);
                     bestSweepCrossings = curSweepCrossings;
                 } else {
@@ -505,14 +536,16 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
     /**
      * Calculates the worst case for the number of crossings caused by in-layer edges in the given
-     * layer. The actual number of crossings may be lower.
+     * layer and by north/south port dummies that are later connected to their corresponding regular
+     * nodes. The actual number of crossings may be lower.
      * 
      * @param layer
-     *            the layer whose in-layer crossings to estimate.
-     * @return the worst possible number of crossings.
+     *            the layer whose in-layer crossings and north/south dummy crossings to estimate.
+     * @return the worst possible number of crossings
      */
     private int countCrossings(final NodeGroup[] layer) {
-        int crossings = 0;
+        int eastWestCrossings = 0;
+        int northSouthCrossings = 0;
 
         // Number of north/south dummies and indices
         Map<LNode, Pair<Integer, Integer>> northSouthCrossingHints 
@@ -538,11 +571,11 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
             for (LPort port : node.getPorts()) {
                 switch (port.getSide()) {
                 case EAST:
-                    crossings += countInLayerCrossings(port, easternPortNumbers);
+                    eastWestCrossings += countInLayerCrossings(port, easternPortNumbers);
                     break;
 
                 case WEST:
-                    crossings += countInLayerCrossings(port, westernPortNumbers);
+                    eastWestCrossings += countInLayerCrossings(port, westernPortNumbers);
                     break;
                 }
             }
@@ -601,6 +634,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
             LNode lastDummyNormalNode = null;
             int lastDummyIndex = 0;
             int dummyCount = 0;
+            northernSide = true;
 
             for (NodeGroup nodeGroup : layer) {
                 LNode node = nodeGroup.getNode();
@@ -610,8 +644,10 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 case NORMAL:
                     lastDummyIndex = dummyIndices.get(node);
 
-                    lastDummyNormalNode = node;
                     dummyCount = northSouthCrossingHints.get(node).getSecond();
+                    lastDummyNormalNode = node;
+                    northernSide = false;
+                    
                     break;
 
                 case NORTH_SOUTH_PORT:
@@ -621,16 +657,17 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                     if (newNormalNode != lastDummyNormalNode) {
                         dummyCount = northSouthCrossingHints.get(newNormalNode).getFirst();
                         lastDummyNormalNode = newNormalNode;
+                        northernSide = true;
                     }
                     break;
 
                 default:
-                    crossings += dummyCount - lastDummyIndex;
+                    northSouthCrossings += northernSide ? lastDummyIndex : dummyCount - lastDummyIndex;
                 }
             }
         }
-
-        return crossings;
+        
+        return eastWestCrossings + northSouthCrossings;
     }
 
     /**
@@ -732,7 +769,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
             } else {
                 connectedPortIndex = portIndices.get(edge.getSource());
             }
-
+            
             // Check if the edge is connected to another port in the same layer
             if (connectedPortIndex != null) {
                 // Only count the edge once
