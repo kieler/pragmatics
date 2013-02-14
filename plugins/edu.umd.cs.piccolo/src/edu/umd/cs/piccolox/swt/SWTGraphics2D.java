@@ -194,6 +194,9 @@ public class SWTGraphics2D extends Graphics2D {
     
     
     protected org.eclipse.swt.graphics.Color getColor(RGB rgb) {
+        if (rgb == null) {
+            return null;
+        }
         org.eclipse.swt.graphics.Color color = COLOR_CACHE_2.get(rgb);
         if (color == null) {
             color = new org.eclipse.swt.graphics.Color(device, rgb);
@@ -572,20 +575,25 @@ public class SWTGraphics2D extends Graphics2D {
         }
         curFont = font;
 
-        if (underlining) {
+        if (underlining || strikeout) {
+            useTextStyle = true;
             if (curTextStyle == null) {
                 curTextStyle = new TextStyle();
             }
-            curTextStyle.strikeout = strikeout;
-            curTextStyle.strikeoutColor = getColor(strikeoutColor);
             curTextStyle.font = curFont;
-            curTextStyle.underline = true;
-            curTextStyle.underlineStyle = underline;
-            curTextStyle.underlineColor = getColor(underlineColor);
             curTextStyle.foreground = gc.getForeground();
-            // since PSWTText/PSWTStyledText cares on itself on the background
+            // since PSWTText/PSWTStyledText cares itself on the background
             //  setting the curTextStyle.background is left here 
-            useTextStyle = true;
+            
+            if (strikeout) {
+                curTextStyle.strikeout = strikeout;
+                curTextStyle.strikeoutColor = getColor(strikeoutColor);
+            }
+            if (underlining) {
+                curTextStyle.underline = true;
+                curTextStyle.underlineStyle = underline;
+                curTextStyle.underlineColor = getColor(underlineColor);
+            }
         } else {
             useTextStyle = false;
         }
