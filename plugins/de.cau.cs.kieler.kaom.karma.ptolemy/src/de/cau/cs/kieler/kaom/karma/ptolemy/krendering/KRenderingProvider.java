@@ -5,39 +5,29 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.draw2d.ColorConstants;
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gef.EditPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.w3c.dom.Document;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.vergil.icon.EditorIcon;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.krendering.KBackgroundColor;
-import de.cau.cs.kieler.core.krendering.KForegroundColor;
-import de.cau.cs.kieler.core.krendering.KGridPlacementData;
+import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KRectangle;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
-import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.PtolemyInterface;
 import de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation.PtolemyFetcher;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.options.PortSide;
 
 public class KRenderingProvider {
 
@@ -48,7 +38,7 @@ public class KRenderingProvider {
         if (language != null && language.getValue().equals("ptolemy") ) {
             Annotation director = annotatable.getAnnotation("Director");
             if (director != null) {
-                return getDirectorRendering();
+                return figureProvider.createDirector();//getDirectorRendering();
             } else if ((annotatable instanceof Entity) && (((StringAnnotation) annotatable.getAnnotation("ptolemyClass")).getValue().equals("ptolemy.actor.lib.Accumulator"))) {
                 return figureProvider.createAccumulator();
             } else if ((annotatable instanceof Entity) && ((Entity) annotatable).getChildEntities().isEmpty()) {
@@ -62,7 +52,7 @@ public class KRenderingProvider {
     
     public static KRendering getKPortRendering(final Annotatable annotatable, final KShapeLayout layout, KShapeLayout parentLayout) {
         
-        KBackgroundColor color = KRenderingFactory.eINSTANCE.createKBackgroundColor();
+        KColor color = KRenderingFactory.eINSTANCE.createKColor();
         String input = "WEST";
         
         StringAnnotation cardinal = (StringAnnotation)annotatable.getAnnotation("_cardinal");
@@ -93,7 +83,7 @@ public class KRenderingProvider {
                 try {
                     ptolemy.kernel.Entity entity = getPtolemyEntity(ptolemyClassString);
                     if (entity == null) {
-                        return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, 0, input);
+                        return figureProvider.getPortKRendering( FigureParserKRendering.lookupColor("black", color), 0, 0, input);
                     }
                     if (annotatable instanceof Port) {
                         // we fetch a ptolemy instance of this port by its name to get some
@@ -106,19 +96,19 @@ public class KRenderingProvider {
                             if (input.equals("SOUTH")) {
                                 layout.setYpos(parentLayout.getHeight() + 1);
                                 //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.SOUTH);
-                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, -4, input);
+                                return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("black", color), 0, -4, input);
                             } else if (input.equals("NORTH")) {
                                 //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.NORTH);
                                 layout.setYpos(-1);
-                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, 0, input);
+                                return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("black", color), 0, 0, input);
                             } else if (input.equals("EAST")){
                                 layout.setXpos(parentLayout.getWidth() +1);
                                 //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.EAST);
-                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("gray", color), 0, 0, input);
+                                return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("gray", color), 0, 0, input);
                             } else {
                                 layout.setXpos(-1);
                                 //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.WEST);
-                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("gray", color), -4, 0, input);
+                                return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("gray", color), -4, 0, input);
                             }
                         } else if (ptolemyPort instanceof ptolemy.actor.IOPort) {
                             // io multiports are white
@@ -126,38 +116,38 @@ public class KRenderingProvider {
                                 if (input.equals("SOUTH")) {
                                     layout.setYpos(parentLayout.getHeight() + 1);
                                     //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.SOUTH);
-                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, -4, input);
+                                    return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("black", color), 0, -4, input);
                                 } else if (input.equals("NORTH")) {
                                     layout.setYpos(-1);
                                     //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.NORTH);
-                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, 0, input);
+                                    return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("black", color), 0, 0, input);
                                 } else if (input.equals("EAST")){
                                     layout.setXpos(parentLayout.getWidth() +1);
                                     //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.EAST);
-                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("white", color), 0, 0, input);
+                                    return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("white", color), 0, 0, input);
                                 } else {
                                     layout.setXpos(-1);
                                     //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.WEST);
-                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("white", color), -4, 0, input);
+                                    return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("white", color), -4, 0, input);
                                 }
                             } else {
                                 // other io ports are black
                                 if (input.equals("SOUTH")) {
                                     layout.setYpos(parentLayout.getHeight() + 1);
                                     //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.SOUTH);
-                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, -4, input);
+                                    return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("black", color), 0, -4, input);
                                 } else if (input.equals("NORTH")) {
                                     layout.setYpos(-1);
                                     //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.NORTH);
-                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, 0, input);
+                                    return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("black", color), 0, 0, input);
                                 } else if (input.equals("EAST")){
                                     layout.setXpos(parentLayout.getWidth() + 1);
                                     //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.EAST);
-                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, 0, input);
+                                    return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("black", color), 0, 0, input);
                                 } else {
                                     layout.setXpos(-1);
                                     //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.WEST);
-                                    return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), -4, 0, input);
+                                    return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("black", color), -4, 0, input);
                                 }
                             }
                         } else {
@@ -165,19 +155,19 @@ public class KRenderingProvider {
                             if (input.equals("SOUTH")) {
                                 layout.setYpos(parentLayout.getHeight() + 1);
                                 //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.SOUTH);
-                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, 4, input);
+                                return figureProvider.getPortKRendering( FigureParserKRendering.lookupColor("black", color), 0, 4, input);
                             } else if (input.equals("NORTH")) {
                                 layout.setYpos(-1);
                                 //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.NORTH);
-                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, 0, input);
+                                return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("black", color), 0, 0, input);
                             } else if (input.equals("EAST")){
                                 layout.setXpos(parentLayout.getWidth() + 1);
                                 //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.EAST);
-                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, 0, input);
+                                return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("black", color), 0, 0, input);
                             } else {
                                 layout.setXpos(-1);
                                 //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.WEST);
-                                return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, 0, input);
+                                return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("black", color), 0, 0, input);
                             }
                         }
                     }
@@ -188,7 +178,7 @@ public class KRenderingProvider {
             }
         }
         
-        return figureProvider.getPortKRendering((KBackgroundColor) FigureParserKRendering.lookupColor("black", color), 0, 0, input);
+        return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("black", color), 0, 0, input);
     }
     
     
@@ -232,7 +222,7 @@ public class KRenderingProvider {
     public static KRendering getDirectorRendering() {
         KRenderingFactory factory = KRenderingFactory.eINSTANCE;
         KRectangle rectangle = factory.createKRectangle();
-        
+        /*
         KGridPlacementData placement = factory.createKGridPlacementData();
         placement.setHeightHint(30);
         placement.setWidthHint(100);
@@ -240,7 +230,7 @@ public class KRenderingProvider {
         
         KBackgroundColor fill = factory.createKBackgroundColor();
         rectangle.getStyles().add((KBackgroundColor) FigureParserKRendering.lookupColor("green", fill));
-        
+        */
         return rectangle;
     }
     

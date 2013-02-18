@@ -26,6 +26,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.krendering.KAreaPlacementData;
 import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KContainerRendering;
 import de.cau.cs.kieler.core.krendering.KGridPlacementData;
@@ -183,9 +184,9 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
                     n.getData().add(ren);
                 }
                 if (lay != null) {
-                    if (ren.getPlacementData() != null && ren.getPlacementData() instanceof KGridPlacementData) {
-                        lay.setHeight(((KGridPlacementData) ren.getPlacementData()).getHeightHint());
-                        lay.setWidth(((KGridPlacementData) ren.getPlacementData()).getWidthHint());
+                    if (ren.getPlacementData() != null && ren.getPlacementData() instanceof KAreaPlacementData) {
+                        lay.setHeight(((KAreaPlacementData) ren.getPlacementData()).getBottomRight().getY().getAbsolute());
+                        lay.setWidth(((KAreaPlacementData) ren.getPlacementData()).getBottomRight().getX().getAbsolute());
                     }
                 }
             } else {

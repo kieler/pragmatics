@@ -10,29 +10,25 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import de.cau.cs.kieler.core.krendering.KBackgroundColor;
+import de.cau.cs.kieler.core.krendering.KAreaPlacementData;
+import de.cau.cs.kieler.core.krendering.KBackground;
 import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KContainerRendering;
-import de.cau.cs.kieler.core.krendering.KDirectPlacementData;
 import de.cau.cs.kieler.core.krendering.KEllipse;
-import de.cau.cs.kieler.core.krendering.KFontSize;
-import de.cau.cs.kieler.core.krendering.KForegroundColor;
-import de.cau.cs.kieler.core.krendering.KGridPlacementData;
+import de.cau.cs.kieler.core.krendering.KForeground;
+import de.cau.cs.kieler.core.krendering.KInvisibility;
 import de.cau.cs.kieler.core.krendering.KLineWidth;
+import de.cau.cs.kieler.core.krendering.KPointPlacementData;
 import de.cau.cs.kieler.core.krendering.KPolygon;
 import de.cau.cs.kieler.core.krendering.KPolyline;
-import de.cau.cs.kieler.core.krendering.KPolylinePlacementData;
 import de.cau.cs.kieler.core.krendering.KPosition;
 import de.cau.cs.kieler.core.krendering.KRectangle;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
 import de.cau.cs.kieler.core.krendering.KText;
-import de.cau.cs.kieler.core.krendering.KVisibility;
 import de.cau.cs.kieler.core.krendering.KXPosition;
 import de.cau.cs.kieler.core.krendering.KYPosition;
 import de.cau.cs.kieler.core.krendering.impl.KRenderingFactoryImpl;
-import de.cau.cs.kieler.core.krendering.impl.KRenderingLibraryImpl;
-import de.cau.cs.kieler.core.krendering.impl.KVisibilityImpl;
 
 public class FigureParserKRendering {
     /**
@@ -56,20 +52,37 @@ public class FigureParserKRendering {
         // structure of the svg.
         KContainerRendering rootFigure = factory.createKRectangle();
         
-        KVisibility backgroundVisibility = factory.createKBackgroundVisibility();
-        backgroundVisibility.setVisible(false);
-        KVisibility foregroundVisibility = factory.createKForegroundVisibility();
-        foregroundVisibility.setVisible(false);
+        KInvisibility invisibility = factory.createKInvisibility();//.createKBackgroundVisibility();
+        invisibility.setInvisible(false);//.setVisible(false);
+        //KVisibility foregroundVisibility = factory.createKForegroundVisibility();
+        //foregroundVisibility.setVisible(false);
         
-        rootFigure.getStyles().add(backgroundVisibility);
-        rootFigure.getStyles().add(foregroundVisibility);
+        //rootFigure.getStyles().add(invisibility);
+        
+        //rootFigure.getStyles().add(foregroundVisibility);
         
         // IFigure rootFigure = new Panel();
-        KGridPlacementData placement = factory.createKGridPlacementData();
-        placement.setHeightHint(Float.parseFloat(svgElement.getAttribute("height")));
-        placement.setWidthHint(Float.parseFloat(svgElement.getAttribute("width")));
+        KAreaPlacementData placement = factory.createKAreaPlacementData();
+        KPosition topleft = factory.createKPosition();
+        KXPosition left = factory.createKLeftPosition();
+        left.setAbsolute(0);
+        topleft.setX(left);
+        KYPosition top = factory.createKTopPosition();
+        top.setAbsolute(0);
+        topleft.setY(top);
+        KPosition bottomright = factory.createKPosition();
+        KXPosition right = factory.createKLeftPosition();
+        right.setAbsolute(Float.parseFloat(svgElement.getAttribute("width")));
+        bottomright.setX(right);
+        KYPosition bottom = factory.createKTopPosition();
+        bottom.setAbsolute(Float.parseFloat(svgElement.getAttribute("height")));
+        bottomright.setY(bottom);
+        placement.setTopLeft(topleft);
+        placement.setBottomRight(bottomright);
+        //placement.setHeightHint(Float.parseFloat(svgElement.getAttribute("height")));
+        //placement.setWidthHint(Float.parseFloat(svgElement.getAttribute("width")));
         rootFigure.setPlacementData(placement);
-        rootFigure.setChildPlacement(factory.createKStackPlacement());
+        //rootFigure.setChildPlacement(factory.createKStackPlacement());
         rootFigure = buildFigure(svgElement, rootFigure);
         return rootFigure;
     }
@@ -101,17 +114,17 @@ public class FigureParserKRendering {
                     KYPosition top = factory.createKTopPosition();
                     top.setAbsolute(Float.parseFloat(childElement.getAttribute("y")));
 
-                    KXPosition right = factory.createKRightPosition();
+                    KXPosition right = factory.createKLeftPosition();
                     right.setAbsolute(left.getAbsolute()
                             + Float.parseFloat(childElement.getAttribute("width")));
 
-                    KYPosition bottom = factory.createKBottomPosition();
+                    KYPosition bottom = factory.createKTopPosition();
                     bottom.setAbsolute(top.getAbsolute()
                             + Float.parseFloat(childElement.getAttribute("height")));
 
                     String style = (String) childElement.getAttribute("style");
 
-                    KDirectPlacementData placement = factory.createKDirectPlacementData();
+                    KAreaPlacementData placement = factory.createKAreaPlacementData();
 
                     KPosition topleft = factory.createKPosition();
                     topleft.setX(left);
@@ -139,17 +152,17 @@ public class FigureParserKRendering {
                     KYPosition top = factory.createKTopPosition();
                     top.setAbsolute(Float.parseFloat(childElement.getAttribute("cy")));
 
-                    KXPosition right = factory.createKRightPosition();
+                    KXPosition right = factory.createKLeftPosition();
                     right.setAbsolute(left.getAbsolute()
                             + (Float.parseFloat(childElement.getAttribute("r")) * 2));
 
-                    KYPosition bottom = factory.createKBottomPosition();
+                    KYPosition bottom = factory.createKTopPosition();
                     bottom.setAbsolute(top.getAbsolute()
                             + (Float.parseFloat(childElement.getAttribute("r")) * 2));
 
                     String style = (String) childElement.getAttribute("style");
 
-                    KDirectPlacementData placement = factory.createKDirectPlacementData();
+                    KAreaPlacementData placement = factory.createKAreaPlacementData();
 
                     KPosition topleft = factory.createKPosition();
                     topleft.setX(left);
@@ -176,17 +189,17 @@ public class FigureParserKRendering {
                     KYPosition top = factory.createKTopPosition();
                     top.setAbsolute(Float.parseFloat(childElement.getAttribute("cy")));
 
-                    KXPosition right = factory.createKRightPosition();
+                    KXPosition right = factory.createKLeftPosition();
                     right.setAbsolute(left.getAbsolute()
                             + (Float.parseFloat(childElement.getAttribute("rx")) * 2));
 
-                    KYPosition bottom = factory.createKBottomPosition();
+                    KYPosition bottom = factory.createKTopPosition();
                     bottom.setAbsolute(top.getAbsolute()
                             + (Float.parseFloat(childElement.getAttribute("ry")) * 2));
 
                     String style = (String) childElement.getAttribute("style");
 
-                    KDirectPlacementData placement = factory.createKDirectPlacementData();
+                    KAreaPlacementData placement = factory.createKAreaPlacementData();
 
                     KPosition topleft = factory.createKPosition();
                     topleft.setX(left);
@@ -220,7 +233,8 @@ public class FigureParserKRendering {
 
                     String style = (String) childElement.getAttribute("style");
 
-                    KPolylinePlacementData placement = factory.createKPolylinePlacementData();
+                    
+                    //KPointPlacementData placement = factory.createKPointPlacementData();//createKPolylinePlacementData();
 
                     KPosition p1 = factory.createKPosition();
                     p1.setX(x1);
@@ -229,11 +243,12 @@ public class FigureParserKRendering {
                     KPosition p2 = factory.createKPosition();
                     p2.setX(x2);
                     p2.setY(y2);
-
-                    placement.getPoints().add(p1);
-                    placement.getPoints().add(p2);
                     
-                    figure.setPlacementData(placement);
+                    //placement.getPoints().add(p1);
+                    //placement.getPoints().add(p2);
+                    figure.getPoints().add(p1);
+                    figure.getPoints().add(p2);
+                    //figure.setPlacementData(placement);
                     applyStyle(figure, style);
                     
                     
@@ -243,8 +258,8 @@ public class FigureParserKRendering {
                     String allpoints = childElement.getAttribute("points");
                     String style = (String) childElement.getAttribute("style");
                     String[] pointsarray = allpoints.split(" +");
-                    KPolylinePlacementData placement = factory.createKPolylinePlacementData();
-
+                    //KPolylinePlacementData placement = factory.createKPolylinePlacementData();
+                    KPolyline figure = factory.createKPolyline();
                     for (String coords : pointsarray) {
                         String[] coordsarray = coords.split(",");
 
@@ -258,10 +273,11 @@ public class FigureParserKRendering {
                         p.setX(x);
                         p.setY(y);
 
-                        placement.getPoints().add(p);
+                        figure.getPoints().add(p);
+                        //placement.getPoints().add(p);
                     }
-                    KPolyline figure = factory.createKPolyline();
-                    figure.setPlacementData(placement);
+                    
+                    //figure.setPlacementData(placement);
                     applyStyle(figure, style);
                     parentFigure.getChildren().add(buildFigure(childElement, figure));
 
@@ -270,8 +286,10 @@ public class FigureParserKRendering {
                     String allpoints = childElement.getAttribute("points");
                     String style = (String) childElement.getAttribute("style");
                     String[] pointsarray = allpoints.split(" +");
-                    KPolylinePlacementData placement = factory.createKPolylinePlacementData();
+                    //KPolylinePlacementData placement = factory.createKPolylinePlacementData();
 
+                    KPolygon figure = factory.createKPolygon();
+                    
                     for (String coords : pointsarray) {
                         String[] coordsarray = coords.split(",");
 
@@ -285,11 +303,12 @@ public class FigureParserKRendering {
                         p.setX(x);
                         p.setY(y);
 
-                        placement.getPoints().add(p);
+                        figure.getPoints().add(p);
+                        //placement.getPoints().add(p);
                     }
-                    KPolygon figure = factory.createKPolygon();
+                    
 
-                    figure.setPlacementData(placement);
+                    //figure.setPlacementData(placement);
                     applyStyle(figure, style);
                     parentFigure.getChildren().add(buildFigure(childElement, figure));
 
@@ -311,12 +330,13 @@ public class FigureParserKRendering {
                     figure.setText(text);
                     applyTextStyle(figure, style);
 
-                    KDirectPlacementData placement = factory.createKDirectPlacementData();
+                    KPointPlacementData placement = factory.createKPointPlacementData();
 
                     KPosition topleft = factory.createKPosition();
                     topleft.setX(x);
                     topleft.setY(y);
-
+                    System.out.println("???????????" + text);
+                    placement.setReferencePoint(topleft);
                     // KPosition bottomright = factory.createKPosition();
                     // bottomright.setX(right);
                     // bottomright.setY(bottom);
@@ -327,7 +347,7 @@ public class FigureParserKRendering {
                      * figure.getBounds().setSize(figure.getTextBounds().getSize());
                      */
                     // figure.setLayoutManager(new BorderLayout());
-                    parentFigure.getChildren().add(buildFigure(childElement, figure));
+                    //parentFigure.getChildren().add(buildFigure(childElement, figure));
                     // make an ImageFigureEx out of an image element
                 } else if (tag.equals("image")) {
                     KXPosition left = factory.createKLeftPosition();
@@ -336,11 +356,11 @@ public class FigureParserKRendering {
                     KYPosition top = factory.createKTopPosition();
                     top.setAbsolute(Float.parseFloat(childElement.getAttribute("y")));
 
-                    KXPosition right = factory.createKRightPosition();
+                    KXPosition right = factory.createKLeftPosition();
                     right.setAbsolute(left.getAbsolute()
                             + Float.parseFloat(childElement.getAttribute("width")));
 
-                    KYPosition bottom = factory.createKBottomPosition();
+                    KYPosition bottom = factory.createKTopPosition();
                     bottom.setAbsolute(top.getAbsolute()
                             + Float.parseFloat(childElement.getAttribute("height")));
 
@@ -365,7 +385,7 @@ public class FigureParserKRendering {
                     // e.printStackTrace();
                     // }
 
-                    KDirectPlacementData placement = factory.createKDirectPlacementData();
+                    KAreaPlacementData placement = factory.createKAreaPlacementData();
 
                     KPosition topleft = factory.createKPosition();
                     topleft.setX(left);
@@ -410,11 +430,17 @@ public class FigureParserKRendering {
                 String value = string.substring(index + 1);
                 // fill might be background, stroke foreground. Works fine so far.
                 if (name.equals("fill")) {
-                    KBackgroundColor fill = factory.createKBackgroundColor();
-                    figure.getStyles().add((KBackgroundColor) lookupColor(value, fill));
+                    KBackground fill = factory.createKBackground();
+                    KColor color = factory.createKColor();
+                    color = lookupColor(value, color);
+                    fill.setColor(color);
+                    figure.getStyles().add(fill);
                 } else if (name.equals("stroke")) {
-                    KForegroundColor stroke = factory.createKForegroundColor();
-                    figure.getStyles().add(lookupColor(value, stroke));
+                    KForeground stroke = factory.createKForeground();
+                    KColor color = factory.createKColor();
+                    color = lookupColor(value, color);
+                    stroke.setColor(color);
+                    figure.getStyles().add(stroke);
                 } else if (name.equals("stroke-width")) {
                     Float width = Float.parseFloat(value);
                     KLineWidth strokeWidth = factory.createKLineWidth();
@@ -446,8 +472,8 @@ public class FigureParserKRendering {
                 String value = string.substring(index + 1);
                 // foreground color determines the text color
                 if (name.equals("fill")) {
-                    KForegroundColor fill = factory.createKForegroundColor();
-                    figure.getStyles().add(lookupColor(value, fill));
+                   // KForegroundColor fill = factory.createKForegroundColor();
+                    //figure.getStyles().add(lookupColor(value, fill));
                     // some hacked size stuff without having a fitting font.
                 } else if (name.equals("font-size")) {
                     /*
@@ -469,7 +495,7 @@ public class FigureParserKRendering {
                 // This has to be mapped to existing fonts on a specific system.
             }
         }
-        return figure;
+        return null;//figure;
     }
 
     /**
