@@ -161,20 +161,19 @@ public final class OrthogonalRoutingGenerator {
             double x = startPos + hyperNode.rank * edgeSpacing;
             
             for (LPort port : hyperNode.ports) {
-                double sourcey = port.getNode().getPosition().y + port.getPosition().y
-                        + port.getAnchor().y;
+                double sourcey = port.getAbsoluteAnchor().y;
                 
                 for (LEdge edge : port.getOutgoingEdges()) {
                     LPort target = edge.getTarget();
-                    double targety = target.getNode().getPosition().y + target.getPosition().y
-                            + target.getAnchor().y;
+                    double targety = target.getAbsoluteAnchor().y;
                     if (Math.abs(sourcey - targety) > TOLERANCE) {
                         KVector point1 = new KVector(x, sourcey);
                         edge.getBendPoints().add(point1);
-                        addJunctionPoint(edge, hyperNode, point1, true);
+                        addJunctionPointIfNecessary(edge, hyperNode, point1, true);
+                        
                         KVector point2 = new KVector(x, targety);
                         edge.getBendPoints().add(point2);
-                        addJunctionPoint(edge, hyperNode, point2, true);
+                        addJunctionPointIfNecessary(edge, hyperNode, point2, true);
                     }
                 }
             }
@@ -220,20 +219,19 @@ public final class OrthogonalRoutingGenerator {
             double y = startPos + hyperNode.rank * edgeSpacing;
             
             for (LPort port : hyperNode.ports) {
-                double sourcex = port.getNode().getPosition().x + port.getPosition().x
-                        + port.getAnchor().x;
+                double sourcex = port.getAbsoluteAnchor().x;
                 
                 for (LEdge edge : port.getOutgoingEdges()) {
                     LPort target = edge.getTarget();
-                    double targetx = target.getNode().getPosition().x + target.getPosition().x
-                            + target.getAnchor().x;
+                    double targetx = target.getAbsoluteAnchor().x;
                     if (Math.abs(sourcex - targetx) > TOLERANCE) {
                         KVector point1 = new KVector(sourcex, y);
                         edge.getBendPoints().add(point1);
-                        addJunctionPoint(edge, hyperNode, point1, false);
+                        addJunctionPointIfNecessary(edge, hyperNode, point1, false);
+                        
                         KVector point2 = new KVector(targetx, y);
                         edge.getBendPoints().add(point2);
-                        addJunctionPoint(edge, hyperNode, point2, false);
+                        addJunctionPointIfNecessary(edge, hyperNode, point2, false);
                     }
                 }
             }
@@ -279,20 +277,19 @@ public final class OrthogonalRoutingGenerator {
             double y = startPos - hyperNode.rank * edgeSpacing;
             
             for (LPort port : hyperNode.ports) {
-                double sourcex = port.getNode().getPosition().x + port.getPosition().x
-                        + port.getAnchor().x;
+                double sourcex = port.getAbsoluteAnchor().x;
                 
                 for (LEdge edge : port.getOutgoingEdges()) {
                     LPort target = edge.getTarget();
-                    double targetx = target.getNode().getPosition().x + target.getPosition().x
-                            + target.getAnchor().x;
+                    double targetx = target.getAbsoluteAnchor().x;
                     if (Math.abs(sourcex - targetx) > TOLERANCE) {
                         KVector point1 = new KVector(sourcex, y);
-                        addJunctionPoint(edge, hyperNode, point1, false);
                         edge.getBendPoints().add(point1);
+                        addJunctionPointIfNecessary(edge, hyperNode, point1, false);
+                        
                         KVector point2 = new KVector(targetx, y);
                         edge.getBendPoints().add(point2);
-                        addJunctionPoint(edge, hyperNode, point2, false);
+                        addJunctionPointIfNecessary(edge, hyperNode, point2, false);
                     }
                 }
             }
@@ -953,7 +950,8 @@ public final class OrthogonalRoutingGenerator {
     }
     
     /**
-     * Add a junction point to the given edge if necessary.
+     * Add a junction point to the given edge if necessary. It is necessary to add a junction point if
+     * the bend point is not at one of the two end positions of the hypernode.
      * 
      * @param edge an edge
      * @param hyperNode the corresponding hypernode
@@ -961,10 +959,12 @@ public final class OrthogonalRoutingGenerator {
      * @param vertical {@code true} if the connecting segment is vertical, {@code false} if it
      *          is horizontal
      */
-    private static void addJunctionPoint(final LEdge edge, final HyperNode hyperNode,
+    private static void addJunctionPointIfNecessary(final LEdge edge, final HyperNode hyperNode,
             final KVector pos, final boolean vertical) {
+        
         double p = vertical ? pos.y : pos.x;
-        // the bend point is somewhere between the start and end position of the hypernode
+        
+        // check if the given bend point is somewhere between the start and end position of the hypernode
         if (p > hyperNode.start && p < hyperNode.end
                 || !hyperNode.sourcePosis.isEmpty() && !hyperNode.targetPosis.isEmpty()
                 // the bend point is at the start and joins another edge at the same position
@@ -973,6 +973,8 @@ public final class OrthogonalRoutingGenerator {
                 // the bend point is at the end and joins another edge at the same position
                     || Math.abs(p - hyperNode.sourcePosis.getLast()) < TOLERANCE
                     && Math.abs(p - hyperNode.targetPosis.getLast()) < TOLERANCE)) {
+            
+            // it is, so create a new junction point for the edge at the bend point's position
             KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
             if (junctionPoints == null) {
                 junctionPoints = new KVectorChain();

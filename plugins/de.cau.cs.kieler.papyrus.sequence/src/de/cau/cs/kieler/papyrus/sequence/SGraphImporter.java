@@ -81,10 +81,7 @@ public class SGraphImporter {
         // Walk through lifelines (create their messages) and comments
         for (KNode node : topNode.getChildren()) {
             String nodeType = node.getData(KShapeLayout.class).getProperty(PapyrusProperties.NODE_TYPE);
-            if (nodeType.equals("2001")) {
-                // Node is surrounding interaction
-                continue;
-            } else if (nodeType.equals("3001")) {
+            if (nodeType.equals("3001")) {
                 // Node is a lifeline
 
                 // Create SMessages for each of the outgoing edges
@@ -289,8 +286,6 @@ public class SGraphImporter {
             comment.getSize().x = sgraph.getProperty(SequenceDiagramProperties.TIME_OBSERVATION_WIDTH); 
             
             // TODO it seems, the coordinates are not valid => check this
-
-            // System.out.println(commentLayout);
 
             // Find lifeline that is next to the time observation
             SLifeline nextLifeline = null;

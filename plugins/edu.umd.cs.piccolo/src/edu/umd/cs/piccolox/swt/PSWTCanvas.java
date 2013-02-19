@@ -504,6 +504,16 @@ public class PSWTCanvas extends Composite implements PComponent {
         super.setBounds(x, y, newWidth, newHeight);
     }
 
+    /**
+     * Changes the bounds of this PSWTCanvas. Updating the camera and the double
+     * buffered image appropriately.
+     * 
+     * @param rectangle the new bounds
+     */
+    public void setBounds(final Rectangle rectangle) {
+        this.setBounds(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+    }
+
     private void resizeBackBuffer(final int newWidth, final int newHeight) {
         if (backBuffer != null) {
             backBuffer.dispose();

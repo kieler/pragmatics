@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.ui.views;
 
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchPart;
@@ -57,13 +56,13 @@ public class RemoveOptionsAction extends Action {
         IWorkbenchPart workbenchPart = layoutView.getCurrentWorkbenchPart();
         IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
                 .getManager(workbenchPart, null);
-        if (manager != null) {
+        if (manager != null && manager.getAdapterList().length > 0) {
             Object diagramPart = manager.getAdapter(workbenchPart, manager.getAdapterList()[0]);
             IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(
                     null, IMutableLayoutConfig.class);
             EditingDomain editingDomain = (EditingDomain) manager.getAdapter(workbenchPart,
                     EditingDomain.class);
-            if (diagramPart != null && layoutConfig != null && editingDomain != null) {
+            if (diagramPart != null && layoutConfig != null) {
                 // build a layout context for setting the option
                 final LayoutContext context = new LayoutContext();
                 context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
@@ -81,7 +80,7 @@ public class RemoveOptionsAction extends Action {
      * @param diagramName name of the open diagram
      * @param layoutConfig a layout configuration for options removal
      * @param context a layout context
-     * @param editingDomain an editing domain to apply the changes
+     * @param editingDomain an editing domain to apply the changes, or {@code null}
      */
     private void removeOptions(final String diagramName, final IMutableLayoutConfig layoutConfig,
             final LayoutContext context, final EditingDomain editingDomain) {
@@ -95,9 +94,7 @@ public class RemoveOptionsAction extends Action {
                     layoutConfig.clearValues(context);
                 }
             };
-            KimlUiUtil.runModelChange(runnable,
-                    (TransactionalEditingDomain) editingDomain,
-                    Messages.getString("kiml.ui.30"));
+            KimlUiUtil.runModelChange(runnable, editingDomain, Messages.getString("kiml.ui.30"));
             
             // refresh the layout view after these changes
             LayoutViewPart viewPart = LayoutViewPart.findView();

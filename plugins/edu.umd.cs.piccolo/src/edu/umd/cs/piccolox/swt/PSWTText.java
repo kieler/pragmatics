@@ -556,10 +556,10 @@ public class PSWTText extends PNode {
      * 
      * @return true if the text is the empty string
      */
-    private boolean isTextEmpty() {
+    protected boolean isTextEmpty() {
         return lines.isEmpty() || lines.size() == 1 && ((String) lines.get(0)).equals("");
     }
-
+    
     /**
      * Calculates the bounds of the text in the box as measured by the given
      * graphics context and font metrics.
@@ -568,7 +568,7 @@ public class PSWTText extends PNode {
      * @return point representing the dimensions of the text's bounds
      */
     private Point calculateTextBounds(final GC gc) {
-        final SWTGraphics2D g2 = new SWTGraphics2D(gc, Display.getDefault());
+        final SWTGraphics2D g2 = createtemporayGraphics(gc);
         g2.setFont(font);
         final FontMetrics fm = g2.getSWTFontMetrics();
         final Point textBounds = new Point(0, 0);
@@ -591,6 +591,21 @@ public class PSWTText extends PNode {
         }
 
         return textBounds;
+    }
+
+    /**
+     * A factory method creating a temporary {@link SWTGraphics2D} used for the text bounds
+     * calculation. It's been introduced to allow to inject more specialized variants within
+     * specialization of this class, i.e. to be overridden.
+     * 
+     * @author chsch
+     * 
+     * @param gc
+     *            the gc to be used
+     * @return a temporary {@link SWTGraphics2D}
+     */
+    protected SWTGraphics2D createtemporayGraphics(final GC gc) {
+        return new SWTGraphics2D(gc, Display.getDefault());
     }
 
     /** {@inheritDoc} */

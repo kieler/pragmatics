@@ -34,6 +34,10 @@
                option="de.cau.cs.kieler.papyrus.sequence.lifelineSorting">
          </knownOption>
          <knownOption
+               default="FIRST_CENTER"
+               option="de.cau.cs.kieler.papyrus.sequence.labelAlignment">
+         </knownOption>
+         <knownOption
                default="false"
                option="de.cau.cs.kieler.papyrus.sequence.groupAreas">
          </knownOption>
@@ -73,6 +77,16 @@
             description="The sorting strategy that is used to order the lifelines horizontally"
             id="de.cau.cs.kieler.papyrus.sequence.lifelineSorting"
             name="Lifeline sorting"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            advanced="false"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.papyrus.sequence.LabelAlignment"
+            default="FIRST_CENTER"
+            description="The strategy that is used to find the right horizontal position for message labels."
+            id="de.cau.cs.kieler.papyrus.sequence.labelAlignment"
+            name="Label Alignment"
             type="enum">
       </layoutOption>
       <layoutOption

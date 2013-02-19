@@ -54,9 +54,11 @@ public class ButtonHandler extends AbstractHandler {
                     RegistryToggleState state = 
                             (RegistryToggleState) event.getCommand()
                             .getState("org.eclipse.ui.commands.toggleState");
-                    state.setValue(!(Boolean) state.getValue());
-                    state.setShouldPersist(true);
-                    pushed = (Boolean) state.getValue();
+                    if (state != null) {
+                        state.setValue(!(Boolean) state.getValue());
+                        state.setShouldPersist(true);
+                        pushed = (Boolean) state.getValue();
+                    }
                 }
 
             }

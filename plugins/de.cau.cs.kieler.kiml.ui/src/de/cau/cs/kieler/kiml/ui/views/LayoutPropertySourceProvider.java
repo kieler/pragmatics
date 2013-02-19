@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySourceProvider;
@@ -77,13 +77,13 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
         }
         IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
                 workbenchPart, object);
-        if (manager != null) {
+        if (manager != null && manager.getAdapterList().length > 0) {
             LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
             Object diagramPart = manager.getAdapter(object, manager.getAdapterList()[0]);
             EObject domainElement = (EObject) manager.getAdapter(object, EObject.class);
             ILayoutConfig elc = (ILayoutConfig) manager.getAdapter(null, ILayoutConfig.class);
-            TransactionalEditingDomain editingDomain = (TransactionalEditingDomain)
-                    manager.getAdapter(object, TransactionalEditingDomain.class);
+            EditingDomain editingDomain = (EditingDomain) manager.getAdapter(object,
+                    EditingDomain.class);
             if (diagramPart != null) {
                 IMutableLayoutConfig layoutConfig;
                 if (elc == null) {

@@ -39,37 +39,34 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.krendering.HorizontalAlignment;
 import de.cau.cs.kieler.core.krendering.KArc;
-import de.cau.cs.kieler.core.krendering.KBackgroundColor;
-import de.cau.cs.kieler.core.krendering.KBackgroundVisibility;
+import de.cau.cs.kieler.core.krendering.KAreaPlacementData;
+import de.cau.cs.kieler.core.krendering.KBackground;
+import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KContainerRendering;
 import de.cau.cs.kieler.core.krendering.KDecoratorPlacementData;
-import de.cau.cs.kieler.core.krendering.KDirectPlacementData;
 import de.cau.cs.kieler.core.krendering.KFontBold;
 import de.cau.cs.kieler.core.krendering.KFontItalic;
 import de.cau.cs.kieler.core.krendering.KFontName;
 import de.cau.cs.kieler.core.krendering.KFontSize;
-import de.cau.cs.kieler.core.krendering.KForegroundColor;
-import de.cau.cs.kieler.core.krendering.KForegroundVisibility;
+import de.cau.cs.kieler.core.krendering.KForeground;
 import de.cau.cs.kieler.core.krendering.KGridPlacement;
 import de.cau.cs.kieler.core.krendering.KGridPlacementData;
 import de.cau.cs.kieler.core.krendering.KHorizontalAlignment;
 import de.cau.cs.kieler.core.krendering.KImage;
+import de.cau.cs.kieler.core.krendering.KInvisibility;
 import de.cau.cs.kieler.core.krendering.KLineStyle;
 import de.cau.cs.kieler.core.krendering.KLineWidth;
 import de.cau.cs.kieler.core.krendering.KPlacementData;
 import de.cau.cs.kieler.core.krendering.KPolyline;
-import de.cau.cs.kieler.core.krendering.KPolylinePlacementData;
 import de.cau.cs.kieler.core.krendering.KPosition;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 import de.cau.cs.kieler.core.krendering.KRenderingRef;
 import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
 import de.cau.cs.kieler.core.krendering.KSpline;
-import de.cau.cs.kieler.core.krendering.KStackPlacementData;
 import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KVerticalAlignment;
-import de.cau.cs.kieler.core.krendering.KVisibility;
 import de.cau.cs.kieler.core.krendering.KXPosition;
 import de.cau.cs.kieler.core.krendering.KYPosition;
 import de.cau.cs.kieler.core.krendering.LineStyle;
@@ -540,7 +537,7 @@ public class KAwtRenderer {
         private float[] lineStyle = null;
         private HorizontalAlignment horzAlignment = HorizontalAlignment.LEFT;
         private VerticalAlignment vertAlignment = VerticalAlignment.CENTER;
-        private boolean visible = true;
+        private boolean invisible = false;
         private int fontStyle = Font.PLAIN;
         private String fontName = Font.SANS_SERIF;
         private int fontSize = NODE_FONT_SIZE;
@@ -554,12 +551,12 @@ public class KAwtRenderer {
      */
     private void handleStyle(final KStyle style, final StyleData styleData) {
         switch (style.eClass().getClassifierID()) {
-        case KRenderingPackage.KFOREGROUND_COLOR:
-            KForegroundColor color = (KForegroundColor) style;
+        case KRenderingPackage.KFOREGROUND:
+            KColor color = ((KForeground) style).getColor();
             styleData.foregColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
             break;
-        case KRenderingPackage.KBACKGROUND_COLOR:
-            KBackgroundColor backgroundColor = (KBackgroundColor) style;
+        case KRenderingPackage.KBACKGROUND:
+            KColor backgroundColor = ((KBackground) style).getColor();
             styleData.backgColor = new Color(backgroundColor.getRed(), backgroundColor.getGreen(),
                     backgroundColor.getBlue());
             break;
@@ -592,14 +589,8 @@ public class KAwtRenderer {
         case KRenderingPackage.KVERTICAL_ALIGNMENT:
             styleData.vertAlignment = ((KVerticalAlignment) style).getVerticalAlignment();
             break;
-        case KRenderingPackage.KVISIBILITY:
-            styleData.visible = ((KVisibility) style).isVisible();
-            break;
-        case KRenderingPackage.KFOREGROUND_VISIBILITY:
-            styleData.foregVisible = ((KForegroundVisibility) style).isVisible();
-            break;
-        case KRenderingPackage.KBACKGROUND_VISIBILITY:
-            styleData.backgVisible = ((KBackgroundVisibility) style).isVisible();
+        case KRenderingPackage.KINVISIBILITY:
+            styleData.invisible = ((KInvisibility) style).isInvisible();
             break;
         case KRenderingPackage.KFONT_BOLD:
             if (((KFontBold) style).isBold()) {
@@ -639,7 +630,7 @@ public class KAwtRenderer {
      */
     private void handleRendering(final KRendering rendering, final StyleData styleData,
             final KVector size, final KVectorChain points, final boolean isSpline) {
-        if (styleData.visible) {
+        if (styleData.invisible) {
             boolean unknownShape = false, unknownLine = false;
             if (size != null) {
                 
@@ -789,14 +780,14 @@ public class KAwtRenderer {
     /**
      * Create a vector chain for a polyline placement data.
      * 
-     * @param placeData the placement data
+     * @param polyline the polyline with points to added to the vector chain
      * @param parentSize the parent size
      * @return a vector chain with the points of the placement data
      */
-    private KVectorChain createVectorChain(final KPolylinePlacementData placeData,
+    private KVectorChain createVectorChain(final KPolyline polyline,
             final KVector parentSize) {
         KVectorChain points = new KVectorChain();
-        for (KPosition position : placeData.getPoints()) {
+        for (KPosition position : polyline.getPoints()) {
             KVector point = new KVector();
             KXPosition xpos = position.getX();
             if (xpos != null) {
@@ -902,14 +893,11 @@ public class KAwtRenderer {
      */
     private void handleDirectPlacement(final KRendering rendering, final KVector parentSize) {
         KPlacementData placeData = rendering.getPlacementData();
-        if (placeData instanceof KPolylinePlacementData) {
-            placeData = ((KPolylinePlacementData) placeData).getDetailPlacementData();
-        }
         
         double x = 0, y = 0;
         KVector childSize = new KVector(parentSize);
-        if (placeData instanceof KDirectPlacementData) {
-            KDirectPlacementData directPlaceData = (KDirectPlacementData) placeData;
+        if (placeData instanceof KAreaPlacementData) {
+            KAreaPlacementData directPlaceData = (KAreaPlacementData) placeData;
             
             // determine top left corner
             if (directPlaceData.getTopLeft() != null) {
@@ -938,13 +926,6 @@ public class KAwtRenderer {
                 }
             }
             
-        } else if (placeData instanceof KStackPlacementData) {
-            KStackPlacementData stackPlaceData = (KStackPlacementData) placeData;
-            x = scale * stackPlaceData.getInsetLeft();
-            y = scale * stackPlaceData.getInsetTop();
-            childSize.translate(-(x + scale * stackPlaceData.getInsetRight()),
-                    -(y + scale * stackPlaceData.getInsetBottom()));
-            
         } else if (placeData != null && transData != null) {
             transData.log("Placement data not supported in the context of direct placement: "
                     + placeData.eClass().getName());
@@ -959,9 +940,8 @@ public class KAwtRenderer {
         
         // create points for polyline
         KVectorChain points = null;
-        if (rendering.getPlacementData() instanceof KPolylinePlacementData) {
-            points = createVectorChain((KPolylinePlacementData) rendering.getPlacementData(),
-                    parentSize);
+        if (rendering instanceof KPolyline) {
+            points = createVectorChain((KPolyline) rendering, parentSize);
         }
 
         // render the child with translated graphics
@@ -985,15 +965,15 @@ public class KAwtRenderer {
         double[] rowHeight = new double[rowCount];
         for (int i = 0; i < children.length; i++) {
             KPlacementData placeData = children[i].getPlacementData();
-            if (placeData instanceof KPolylinePlacementData) {
-                placeData = ((KPolylinePlacementData) placeData).getDetailPlacementData();
-            }
             if (placeData instanceof KGridPlacementData) {
                 KGridPlacementData gridPlaceData = (KGridPlacementData) placeData;
-                colWidth[i % colCount] = Math.max(colWidth[i % colCount],
-                        scale * gridPlaceData.getWidthHint());
-                rowHeight[i / colCount] = Math.max(rowHeight[i / colCount],
-                        scale * gridPlaceData.getHeightHint());
+                // chsch: TODO hot fix is most likely not correct
+                colWidth[i % colCount] = Math.min(Math.max(colWidth[i % colCount],
+                        scale * gridPlaceData.getMinCellWidth()),
+                        scale * gridPlaceData.getMaxCellWidth());
+                rowHeight[i / colCount] = Math.min(Math.max(rowHeight[i / colCount],
+                        scale * gridPlaceData.getMinCellHeight()),
+                        scale * gridPlaceData.getMaxCellHeight());
             }
         }
         
@@ -1079,17 +1059,16 @@ public class KAwtRenderer {
             double x = xpos, y = ypos;
             KVector childSize = new KVector(colWidth[c], rowHeight[r]);
             KPlacementData placeData = children[i].getPlacementData();
-            if (placeData instanceof KPolylinePlacementData) {
-                placeData = ((KPolylinePlacementData) placeData).getDetailPlacementData();
-            }
             if (placeData instanceof KGridPlacementData) {
-                KGridPlacementData gridPlaceData = (KGridPlacementData) placeData;
-                x += scale * gridPlaceData.getInsetLeft();
-                y += scale * gridPlaceData.getInsetTop();
-                childSize.translate(-scale * (gridPlaceData.getInsetLeft()
-                                + gridPlaceData.getInsetRight()),
-                        -scale * (gridPlaceData.getInsetTop()
-                                + gridPlaceData.getInsetBottom()));
+                
+                // chsch TODO: fix this
+//                KGridPlacementData gridPlaceData = (KGridPlacementData) placeData;
+//                x += scale * gridPlaceData.getInsetLeft();
+//                y += scale * gridPlaceData.getInsetTop();
+//                childSize.translate(-scale * (gridPlaceData.getInsetLeft()
+//                                + gridPlaceData.getInsetRight()),
+//                        -scale * (gridPlaceData.getInsetTop()
+//                                + gridPlaceData.getInsetBottom()));
             } else if (placeData != null && transData != null) {
                 transData.log("Placement data not supported in the context of grid placement: "
                         + placeData.eClass().getName());
@@ -1104,9 +1083,8 @@ public class KAwtRenderer {
             
             // create points for polyline
             KVectorChain points = null;
-            if (children[i].getPlacementData() instanceof KPolylinePlacementData) {
-                points = createVectorChain((KPolylinePlacementData) children[i].getPlacementData(),
-                        childSize);
+            if (children[i] instanceof KPolyline) {
+                points = createVectorChain((KPolyline) children[i], childSize);
             }
             
             // render the child with translated graphics
@@ -1129,14 +1107,11 @@ public class KAwtRenderer {
      */
     private void handleDecoratorPlacement(final KRendering rendering, final KVectorChain linePoints) {
         KPlacementData placeData = rendering.getPlacementData();
-        if (placeData instanceof KPolylinePlacementData) {
-            placeData = ((KPolylinePlacementData) placeData).getDetailPlacementData();
-        }
         if (placeData instanceof KDecoratorPlacementData && linePoints.size() >= 2) {
             KDecoratorPlacementData decoPlaceData = (KDecoratorPlacementData) placeData;
             
             // calculate the reference point
-            double absLocation = decoPlaceData.getLocation() * linePoints.getLength();
+            double absLocation = decoPlaceData.getRelative() * linePoints.getLength();
             KVector referencePoint = linePoints.getPointOnLine(absLocation);
             
             KVector size = new KVector(decoPlaceData.getWidth(), decoPlaceData.getHeight());
@@ -1149,12 +1124,12 @@ public class KAwtRenderer {
             
             // create points for polyline
             KVectorChain points = null;
-            if (rendering.getPlacementData() instanceof KPolylinePlacementData) {
-                points = createVectorChain((KPolylinePlacementData) rendering.getPlacementData(), size);
+            if (rendering.getPlacementData() instanceof KPolyline) {
+                points = createVectorChain((KPolyline) rendering, size);
             }
             
             // rotate the decorator if requested
-            if (decoPlaceData.isRelative()) {
+            if (decoPlaceData.isRotateWithLine()) {
                 double angle = linePoints.getAngleOnLine(absLocation);
                 
                 // render the decorator with translated and rotated graphics

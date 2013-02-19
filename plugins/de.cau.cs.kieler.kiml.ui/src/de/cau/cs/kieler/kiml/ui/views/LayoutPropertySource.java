@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -49,7 +49,7 @@ public class LayoutPropertySource implements IPropertySource {
     /** the layout context describing which element has been selected. */
     private LayoutContext layoutContext;
     /** the editing domain that is used for model changes. */
-    private TransactionalEditingDomain editingDomain;
+    private EditingDomain editingDomain;
     /** array of property descriptors for the option data. */
     private IPropertyDescriptor[] propertyDescriptors;
     /** set of layout option identifiers that can affect the visibility of other options. */
@@ -60,11 +60,11 @@ public class LayoutPropertySource implements IPropertySource {
      * 
      * @param config a mutable layout configuration
      * @param context a layout context describing which element has been selected
-     * @param theeditingDomain the editing domain
+     * @param theeditingDomain the editing domain, or {@code null} if none is required
      */
     public LayoutPropertySource(final IMutableLayoutConfig config,
             final LayoutContext context,
-            final TransactionalEditingDomain theeditingDomain) {
+            final EditingDomain theeditingDomain) {
         this.layoutConfig = config;
         this.layoutContext = context;
         this.editingDomain = theeditingDomain;
@@ -222,9 +222,6 @@ public class LayoutPropertySource implements IPropertySource {
      * {@inheritDoc}
      */
     public void setPropertyValue(final Object id, final Object thevalue) {
-        if (editingDomain == null) {
-            throw new UnsupportedOperationException(Messages.getString("kiml.ui.67"));
-        }
         final LayoutOptionData<?> optionData = LayoutDataService.getInstance()
                 .getOptionData((String) id);
         if (optionData != null) {
@@ -292,9 +289,6 @@ public class LayoutPropertySource implements IPropertySource {
      * {@inheritDoc}
      */
     public void resetPropertyValue(final Object id) {
-        if (editingDomain == null) {
-            throw new UnsupportedOperationException(Messages.getString("kiml.ui.67"));
-        }
         final LayoutOptionData<?> optionData = LayoutDataService.getInstance()
                 .getOptionData((String) id);
         if (optionData != null) {

@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kwebs.servicedata.ServiceData
 import de.cau.cs.kieler.kwebs.servicedata.SupportedFormat
 import de.cau.cs.kieler.kwebs.util.Resources
 import java.util.Map
-import org.eclipse.emf.common.util.EList
+import java.util.List
 
 /**
  * This class implements a web content provider for displaying the service meta data in HTML format.
@@ -35,8 +35,11 @@ import org.eclipse.emf.common.util.EList
  * @author msp
  */
 class ProvidedlayoutProvider 
-	extends AbstractProvider
+    extends AbstractProvider
 {
+    
+    /** The default layout algorithm identifier. */
+    private static String DEFAULT_ALGORITHM_ID = "de.cau.cs.kieler.klay.layered"
 
     /** Constant for query parameter 'algorithm'. */
     private static String PARAM_ALGORITHM = "algorithm"
@@ -57,64 +60,63 @@ class ProvidedlayoutProvider
     /**
      * 
      */
-	override CharSequence getHeaders(
-    	ResourceProcessingExchange processingExchange
-	) 
-	{
-		return 
-			'''
-			<style type='text/css'>
-				<!--
-					.even {
-						background-color : #efefef;
-					}
-					.odd  {
-						background-color : #ffffff;
-					}
-					.even:hover, .odd:hover {
-						background-color : #a5F3a5;
-						cursor           : pointer;
-					}
-					table.listing {
-						border-width 	 : 2px;
-						border-style 	 : ridge;
-						border-color	 : #000000;
-						table-layout	 : fixed;
-					}
-					table.listing thead tr > th, table.listing tbody tr > td {
-						font-family 	 : Verdana, Arial; 
-						font-size		 : 8pt; 
-						border-style	 : none;
-						text-align	     : left;
-						padding          : 10px;
-					}
-					table.listing thead tr > th {
-						font-weight		 : bold;
-						border-bottom	 : 1px solid;
-					}
-					table.advertisement {
-						background-color : #a5F3a5;
-						border           : 1px solid;
-						padding          : 10px;
-					}
-					table.advertisement tr td > p{
-						font-family 	 : Verdana, Arial; 
-						font-size		 : 8pt;
-						border-style	 : none;
-						text-align	     : left;
-					}
-				//-->
-			</style>
-			'''
-	}
+    override CharSequence getHeaders(
+        ResourceProcessingExchange processingExchange
+    ) 
+    {
+        '''
+        <style type='text/css'>
+            <!--
+                .even {
+                    background-color : #efefef;
+                }
+                .odd  {
+                    background-color : #ffffff;
+                }
+                .even:hover, .odd:hover {
+                    background-color : #a5F3a5;
+                    cursor           : pointer;
+                }
+                table.listing {
+                    border-width      : 2px;
+                    border-style      : ridge;
+                    border-color     : #000000;
+                    table-layout     : fixed;
+                }
+                table.listing thead tr > th, table.listing tbody tr > td {
+                    font-family      : Verdana, Arial; 
+                    font-size         : 8pt; 
+                    border-style     : none;
+                    text-align         : left;
+                    padding          : 10px;
+                }
+                table.listing thead tr > th {
+                    font-weight         : bold;
+                    border-bottom     : 1px solid;
+                }
+                table.advertisement {
+                    background-color : #a5F3a5;
+                    border           : 1px solid;
+                    padding          : 10px;
+                }
+                table.advertisement tr td > p{
+                    font-family      : Verdana, Arial; 
+                    font-size         : 8pt;
+                    border-style     : none;
+                    text-align         : left;
+                }
+            //-->
+        </style>
+        '''
+    }
     
     /**
      * 
      */
-	override CharSequence getBody(
-    	ResourceProcessingExchange processingExchange
-	) 
-	{		
+    override CharSequence getBody(
+        ResourceProcessingExchange processingExchange
+    ) 
+    {        
         val Map<String, String> params = processingExchange.getParams()
         if (params.containsKey(PARAM_ALGORITHM)) {
             return generateForAlgorithm(processingExchange)
@@ -123,29 +125,29 @@ class ProvidedlayoutProvider
         } else if (params.containsKey(PARAM_FORMAT)) {
             return generateForFormat(processingExchange)
         } else if (params.containsKey(PARAM_PREVIEWIMAGE)) {
-            Logger::log(//FIXME Xtend2 can not handle static enum members            	
-            	"Preview image handled without override."
+            Logger::log(//FIXME Xtend2 can not handle static enum members                
+                "Preview image handled without override."
             )
             return ''''''
         } 
         return generateOverview(processingExchange)            
-	}
+    }
     
     /**
      * 
      */
     override boolean providerOverride(
-    	ResourceProcessingExchange processingExchange
-	) 
-	{
+        ResourceProcessingExchange processingExchange
+    ) 
+    {
         val Map<String, String> params = processingExchange.getParams()
-		if (params.containsKey(PARAM_PREVIEWIMAGE)) {
+        if (params.containsKey(PARAM_PREVIEWIMAGE)) {
             generateForPreviewImage(processingExchange)
             return true
         } 
         return false
-	}
-	
+    }
+    
     /**
      * Generates web page content describing a layout algorithm.
      * 
@@ -153,11 +155,11 @@ class ProvidedlayoutProvider
      *            the data of the request
      */
     def private CharSequence generateForAlgorithm(
-    	ResourceProcessingExchange processingExchange
-	) 
-	{
+        ResourceProcessingExchange processingExchange
+    ) 
+    {
         val Map<String, String> params = processingExchange.getParams()
-        val String 				id 	   = params.get(PARAM_ALGORITHM)
+        val String                 id        = params.get(PARAM_ALGORITHM)
         if (id == null) {
             return ''''''
         }
@@ -165,45 +167,56 @@ class ProvidedlayoutProvider
         if (algorithm == null) {
             return ''''''
         }
-        val EList<KnownOption> options = algorithm.knownOptions
-        return 
-        	'''
-			<p class='title'>Algorithm Details</p>
-			<p>Name: «algorithm.name»<br/></p>
-			<p>Identifier: «algorithm.id»<br/></p>
-			«if (algorithm.description != null) {
-				'''<p>«generateHypertext(algorithm.description)»</p>'''
-			}»
-			<p class='title'>A Quick Preview</p>
-			<p>
-				<div align='center'>
-					<img src='/ProvidedLayout.html?previewimage=«algorithm.previewImagePath»'/>
-				</div>
-			</p>
-			<p class='title'>Supported Layout Options</p>
-			<p>
-				<div align='center'>
-					<table cellspacing='0' cellpadding='5' class='listing'>
-						<thead><tr><th>Name</th></tr></thead>
-						<tbody>
-							«options.map(option | {			
-					            return 
-						            '''
-						            <tr class='«
-						            	if (options.indexOf(option) % 2 == 0) "even" else "odd"
-						            »' onclick='document.location.href="Providedlayout.html?option=«
-						            	option.option.id
-						            »";'>
-						            	<td align='left'>«option.option.name»</td>
-						            </tr>
-						            '''
-						    }).join»
-						</tbody>
-					</table>
-				</div>
-			</p>
-			«generateBackButton(processingExchange)»
-        	'''
+        val List<KnownOption> options = algorithm.knownOptions.sortBy[it.option.name]
+        
+        '''
+        <p class='title'>«algorithm.category?.name» - «algorithm.name»</p>
+        <p>Type: «algorithm.type?.name»<br/></p>
+        <p>Identifier: «algorithm.id»<br/></p>
+        «if (algorithm.description != null) {
+            '''<p>«generateHypertext(algorithm.description)»</p>'''
+        }»
+        <p>
+            <div align='center'>
+                <img src='/ProvidedLayout.html?previewimage=«algorithm.previewImagePath»'/>
+            </div>
+        </p>
+        <p class='title'>Supported Layout Options</p>
+        <p>
+            <div align='center'>
+                <table cellspacing='0' cellpadding='5' class='listing'>
+                    <thead><tr><th>Name</th><th>Type</th><th>Identifier</th><th>Default Value</th></tr></thead>
+                    <tbody>
+                        «options.map(option | {
+                            '''
+                            <tr class='«
+                                if (options.indexOf(option) % 2 == 0) "even" else "odd"
+                            »' onclick='document.location.href="Providedlayout.html?option=«
+                                option.option.id
+                            »";'>
+                                <td>«option.option.name»</td>
+                                <td>«
+                                    if (option.option.type.equals(LayoutOptionData::REMOTEENUM_LITERAL))
+                                        LayoutOptionData::ENUM_LITERAL
+                                    else if (option.option.type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL))
+                                        LayoutOptionData::ENUMSET_LITERAL
+                                    else option.option.type
+                                »</td>
+                                <td>«option.option.id»</td>
+                                <td>«if (option.^default == null) {
+                                    option.option.^default
+                                } else {
+                                    option.^default
+                                }»</td>
+                            </tr>
+                            '''
+                        }).join»
+                    </tbody>
+                </table>
+            </div>
+        </p>
+        «generateBackButton(processingExchange)»
+        '''
     }
 
     /**
@@ -212,102 +225,104 @@ class ProvidedlayoutProvider
      *            the data of the request
      */
     def private CharSequence generateOverview(
-    	ResourceProcessingExchange processingExchange
-	) 
-	{
-		val EList<LayoutAlgorithm> algorithmns = serviceData.layoutAlgorithms
-		val EList<SupportedFormat> formats     = serviceData.supportedFormats
-        return
-        	'''
-			<p class='title'>Provided Layout</p>
-			<p>
-				On this page you can inform yourself about the layout the service provides. You can take a look at the <i>algorithms</i> it exposes and see how
-				you can configure them to your specific needs by setting their <i>options</i> accordingly. Furthermore you can take a look at the <i>formats</i>
-				the service understands. The formats are used to exchange graphs in serialized form between your application and the service and we try to provide
-				a useful set of them to make the service as easily consumeable for you as possible. If you would like to use a format not currently supported please
-				feel free to <a href='Contact.html'>contact</a> us.
-			</p>
-			<p class='title'>Service Details</p>
-			<p>Currently executed version: «serviceData.version»<br/></p>
-			<p class='title'>How to select a Layout Algorithm &#63;</p>
-			<p>
-				In order to select a specific layout algorithm when doing layout with the provided service, you can use the following layout option:
-			</p>
-			<p>
-				<div align='center'>
-					<table class='advertisement'>
-						<tr>
-							<td align='left'>
-								«generateForOption(processingExchange, LayoutOptions::ALGORITHM.id, true)»
-							</td>
-						</tr>
-					</table>
-				</div>
-			</p>
-			<p class='title'>Supported Algorithms</p>
-			<p>
-				The following list shows you the list of layout algorithms currently supported by this service.
-			</p>
-			<p>
-				<div align='center'>
-					<table cellspacing='0' cellpadding='5' class='listing'>
-						<thead><tr><th>Name</th><th>Category</th><th>Type</th><th>Version</th></tr></thead>
-						<tbody>
-							«algorithmns.map(algorithm | {	
-					            var String category = algorithm.category?.name
-					            var String type     = algorithm.type?.name
-					            var String version  = algorithm.version
-					            if (category == null || category.length== 0) {
-					                category = "&nbsp;"
-					            }
-					            if (type == null || type.length== 0) {
-					                type = "&nbsp;"
-					            }
-					            if (version == null || version.length== 0) {
-					                version = "&nbsp;"
-					            }
-					            return 
-									'''
-									<tr class='«
-										if (algorithmns.indexOf(algorithm) % 2 == 0) "even" else "odd"
-									»' onclick='document.location.href="Providedlayout.html?algorithm=«
-										algorithm.id
-									»";'>
-										<td>«algorithm.name»</td>
-										<td>«category»</td>
-										<td>«type»</td>
-										<td>«version»</td>
-									</tr>'''
-					        }).join»
-						</tbody>
-					</table>
-				</div>
-			</p>	
-			<p class='title'>Supported Formats</p>
-			<p>
-				The following list shows you the list of formats you can use to transfer the graphs you wish to have calculated a layout on to this service.
-			</p>
-			<p>
-				<div align='center'>
-					<table cellspacing='0' cellpadding='5' class='listing'>
-						<thead><tr><th>Name</th><th>Identifier</th></tr></thead>
-						<tbody>
-					        «formats.map(format | {
-					        	return 
-									'''
-									<tr class='«
-										if (formats.indexOf(format) % 2 == 0) "even" else "odd"
-									»' onclick='document.location.href="Providedlayout.html?format=«
-										format.id
-									»";'>
-									    <td>«format.name»</td> 
-									    <td>«format.id»</td>
-									</tr>'''
-					        }).join»
-						</tbody>
-					</table>
-				</div>
-			</p>'''	        
+        ResourceProcessingExchange processingExchange
+    ) 
+    {
+        val List<LayoutAlgorithm> algorithmns = serviceData.layoutAlgorithms.sortBy[
+            '''«it.category?.name»/«it.type?.name»/«it.name»'''.toString
+        ]
+        val List<SupportedFormat> formats     = serviceData.supportedFormats
+        
+        '''
+        <p class='title'>Provided Layout</p>
+        <p>
+            This page offers details on the configuration options of the layout service.
+            The most important option is the choice which layout algorithm to execute on the input graph.
+            Each algorithm supports a different set of options for fine-tuning the layout.
+            Furthermore, the service supports different graph formats to exchange graphs in serialized form
+            between your application and the server.
+            You can either send and receive the graph in the same format, or use different formats
+            for input and output.
+        </p>
+        <p class='title'>Service Details</p>
+        <p>Currently running version: «serviceData.version»<br/></p>
+        <p class='title'>Supported Algorithms</p>
+        <p>
+            The following option can be used to select a specific layout algorithm:
+        </p>
+        <p>
+            <div align='center'>
+                <table class='advertisement'>
+                    <tr>
+                        <td align='left'>
+                            «generateForOption(processingExchange, LayoutOptions::ALGORITHM.id, true)»
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </p>
+        <p>
+            The following layout algorithms are currently supported by this service:
+        </p>
+        <p>
+            <div align='center'>
+                <table cellspacing='0' cellpadding='5' class='listing'>
+                    <thead><tr><th>Name</th><th>Category</th><th>Type</th><th>Identifier</th><th>Version</th></tr></thead>
+                    <tbody>
+                        «algorithmns.map(algorithm | {    
+                            var String category = algorithm.category?.name
+                            var String type     = algorithm.type?.name
+                            var String version  = algorithm.version
+                            if (category == null || category.length== 0) {
+                                category = "&nbsp;"
+                            }
+                            if (type == null || type.length== 0) {
+                                type = "&nbsp;"
+                            }
+                            if (version == null || version.length== 0) {
+                                version = "&nbsp;"
+                            }
+                            '''
+                            <tr class='«
+                                if (algorithmns.indexOf(algorithm) % 2 == 0) "even" else "odd"
+                            »' onclick='document.location.href="Providedlayout.html?algorithm=«
+                                algorithm.id
+                            »";'>
+                                <td>«algorithm.name»</td>
+                                <td>«category»</td>
+                                <td>«type»</td>
+                                <td>«algorithm.id»</td>
+                                <td>«version»</td>
+                            </tr>'''
+                        }).join»
+                    </tbody>
+                </table>
+            </div>
+        </p>    
+        <p class='title'>Supported Formats</p>
+        <p>
+            The following formats can be used to transfer graphs to the layout service:
+        </p>
+        <p>
+            <div align='center'>
+                <table cellspacing='0' cellpadding='5' class='listing'>
+                    <thead><tr><th>Name</th><th>Identifier</th></tr></thead>
+                    <tbody>
+                        «formats.map(format | {
+                            '''
+                            <tr class='«
+                                if (formats.indexOf(format) % 2 == 0) "even" else "odd"
+                            »' onclick='document.location.href="Providedlayout.html?format=«
+                                format.id
+                            »";'>
+                                <td>«format.name»</td> 
+                                <td>«format.id»</td>
+                            </tr>'''
+                        }).join»
+                    </tbody>
+                </table>
+            </div>
+        </p>'''            
     }
 
     /**
@@ -323,11 +338,11 @@ class ProvidedlayoutProvider
      *            create full page or simply add the raw algorithm description
      */
     def private CharSequence generateForOption(
-    	ResourceProcessingExchange processingExchange,
-        String      			   algorithmId,
-        boolean     			   rawAppend
-	) 
-	{
+        ResourceProcessingExchange processingExchange,
+        String                     algorithmId,
+        boolean                    rawAppend
+    ) 
+    {
         val Map<String, String> params = processingExchange.getParams()
         val String              id     = if (params.get(PARAM_OPTION) != null) params.get(PARAM_OPTION) else algorithmId
         if (id == null) {
@@ -337,34 +352,41 @@ class ProvidedlayoutProvider
         if (option == null) {
             return ''''''
         }
-	    val String type         = option.type
-	    val String defaultValue = if (option.^default != null && option.^default.trim.length > 0) option.^default.trim else "&lt;NONE&gt;"
-        return 
-        	'''
-			«if (!rawAppend) '''<p class='title'>Layout Option Details</p>'''»
-			<p>Name: «option.name»<br/></p>
-			<p>Identifier: «option.id»<br/></p>
-			<p>Type: «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL)) "enumeration" else type»<br/></p>
-			«if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL)) {
-			    '''
-			    <p>
-			    	Possible Values: «option.remoteEnum.values.map(value | {
-			            '''«value», '''
-			        }).join»
-			    	<br/>
-			    </p>
-			    '''
-			}»
-			<p>Default Value: «defaultValue»<br/></p>
-			<p class='title'>Description</p>
-			«if (option.description != null) {
-			    '''
-			    <p>
-			    	«generateHypertext(option.description)»
-			    </p>
-			    '''
-			}»
-			«if (!rawAppend) generateBackButton(processingExchange)»'''
+        val String type         = option.type
+        val String defaultValue =
+            if (id.equals(LayoutOptions::ALGORITHM.getId())) DEFAULT_ALGORITHM_ID
+            else if (option.^default != null && option.^default.trim.length > 0) option.^default.trim
+            else "&lt;NONE&gt;"
+ 
+        '''
+        «if (!rawAppend) '''<p class='title'>Layout Option Details</p>'''»
+        <p>Name: «option.name»<br/></p>
+        <p>Identifier: «option.id»<br/></p>
+        <p>Type: 
+        «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL))
+            "enumeration"
+        else if (type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL))
+            "enumeration set"
+        else type»<br/></p>
+        «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL)
+            || type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL)) {
+            '''
+            <p>Possible Values: «option.remoteEnum.values.join(", ")»<br/></p>
+            '''
+        }»
+        <p>Default Value: «defaultValue»<br/></p>
+        «if (option.appliesTo != null) {
+            '''<p>Applies To: «option.appliesTo»<br/></p>'''
+        }»
+        «if (option.description != null) {
+            '''
+        <p class='title'>Description</p>
+        <p>
+            «generateHypertext(option.description)»
+        </p>
+            '''
+        }»
+        «if (!rawAppend) generateBackButton(processingExchange)»'''
     }
     
     /**
@@ -374,11 +396,11 @@ class ProvidedlayoutProvider
      *            the data of the request
      */
     def private generateForFormat(
-		ResourceProcessingExchange processingExchange
-	) 
-	{
+        ResourceProcessingExchange processingExchange
+    ) 
+    {
         val Map<String, String> params = processingExchange.getParams()
-        val String 				id     = params.get(PARAM_FORMAT)
+        val String                 id     = params.get(PARAM_FORMAT)
         if (id == null) {
             return ''''''
         }
@@ -386,19 +408,18 @@ class ProvidedlayoutProvider
         if (format == null) {
             return ''''''
         }
-        return
-        	'''
-			<p class='title'>Format Details</p>
-			<p>Name: «format.name»<br/></p>
-			<p>Identifier: «format.id»<br/></p>
-			«if (format.description!= null) {
-			    '''
-				<p class='title'>Description</p>
-				<p>
-					«generateHypertext(format.description)»
-				</p>'''
-	        }»
-	        «generateBackButton(processingExchange)»'''
+        '''
+        <p class='title'>Format Details</p>
+        <p>Name: «format.name»<br/></p>
+        <p>Identifier: «format.id»<br/></p>
+        «if (format.description!= null) {
+            '''
+            <p class='title'>Description</p>
+            <p>
+                «generateHypertext(format.description)»
+            </p>'''
+        }»
+        «generateBackButton(processingExchange)»'''
     }
     
     /** Path to the image which is shown when a preview image is not given by a plug in. */
@@ -411,11 +432,11 @@ class ProvidedlayoutProvider
      *            the data of the request
      */
     def private CharSequence generateForPreviewImage(
-		ResourceProcessingExchange processingExchange
-	) 
-	{
+        ResourceProcessingExchange processingExchange
+    ) 
+    {
         val Map<String, String> params = processingExchange.getParams()
-        val String 			    id     = params.get(PARAM_PREVIEWIMAGE)
+        val String                 id     = params.get(PARAM_PREVIEWIMAGE)
         if (id == null) {
             return ''''''
         }
@@ -431,9 +452,6 @@ class ProvidedlayoutProvider
         }
     }
     
-    /** Name of the referer entry in the headers of a HTTP request. */
-//    private static String HEADER_REFERER = "Referer"
-    
     /**
      * Inserts a "Back" button in the response data buffer.
      * 
@@ -443,27 +461,17 @@ class ProvidedlayoutProvider
      *            the response buffer to append to
      */
     def private CharSequence generateBackButton(
-		ResourceProcessingExchange processingExchange
-	) 
-	{
-//        val Headers headers = requestData.exchange.requestHeaders
-		return
-			'''
-			<p>
-				<div align='center'>
-«««					<form action="«        
-«««				        if (headers.containsKey(HEADER_REFERER)) {
-«««				            '''«headers.getFirst(HEADER_REFERER)»'''
-«««				        } else {
-«««				            '''javascript:history.back();'''
-«««				        }»" method="POST">
-«««				        <input type="submit" value="Back"/>
-«««				    </form>
-					<form action="javascript:history.back();" method="POST">
-				        <input type="submit" value="Back"/>
-				    </form>
-				</div>
-			</p>'''
+        ResourceProcessingExchange processingExchange
+    ) 
+    {
+        '''
+        <p>
+            <div align='center'>
+                <form action="javascript:history.back();" method="POST">
+                    <input type="submit" value="Back"/>
+                </form>
+            </div>
+        </p>'''
     }
     
     /**
@@ -475,11 +483,11 @@ class ProvidedlayoutProvider
      *            description text
      */
     def private CharSequence generateHypertext(
-    	String text
+        String text
     ) 
     {
-    	val StringBuilder builder = new StringBuilder()
-        var int 		  p       = 0
+        val StringBuilder builder = new StringBuilder
+        var int p = 0
         while (p < text.length) {
             val int s = text.indexOf("http", p)
             if (s >= 0) {
@@ -502,7 +510,7 @@ class ProvidedlayoutProvider
                 p = text.length()
             }
         }
-        return '''«builder.toString»'''
+        return builder
     }
     
 }

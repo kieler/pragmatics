@@ -379,7 +379,7 @@ public final class Properties {
 
     /** property that determines how much effort should be spent. */
     public static final IProperty<Integer> THOROUGHNESS = new Property<Integer>(
-            "de.cau.cs.kieler.klay.layered.thoroughness", 5, 1);
+            "de.cau.cs.kieler.klay.layered.thoroughness", 7, 1);
 
     /** property to set constraints on the node layering. */
     public static final IProperty<LayerConstraint> LAYER_CONSTRAINT = new Property<LayerConstraint>(

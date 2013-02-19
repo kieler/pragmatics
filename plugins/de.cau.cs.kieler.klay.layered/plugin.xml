@@ -173,7 +173,7 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="5"
+            default="7"
             description="How much effort should be spent to produce a nice layout."
             id="de.cau.cs.kieler.klay.layered.thoroughness"
             lowerBound="1"
