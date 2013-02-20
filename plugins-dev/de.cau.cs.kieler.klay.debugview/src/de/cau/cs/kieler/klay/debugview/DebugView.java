@@ -32,7 +32,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CLabel;
@@ -42,22 +41,20 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Scale;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.part.ViewPart;
 
 import de.cau.cs.kieler.core.ui.util.DragDropScrollHandler;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
@@ -65,12 +62,12 @@ import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
 // CHECKSTYLEOFF MagicNumber
 
 /**
- * The debug window houses controls that allow the user to inspect the debug output
+ * The debug view houses controls that allow the user to inspect the debug output
  * produced by Klay Layered.
  * 
  * @author cds
  */
-public class DebugWindow extends Window {
+public class DebugView extends ViewPart {
     
     /**
      * Content provider for the file table. Expects the table viewer to get a
@@ -234,11 +231,6 @@ public class DebugWindow extends Window {
     private static final String SETT_PATH = "debugWindow.path"; //$NON-NLS-1$
     
     /**
-     * Setting for the window bounds.
-     */
-    private static final String SETT_BOUNDS = "debugWindow.bounds"; //$NON-NLS-1$
-    
-    /**
      * Setting for the zoom level.
      */
     private static final String SETT_ZOOM = "debugWindow.zoom"; //$NON-NLS-1$
@@ -294,16 +286,6 @@ public class DebugWindow extends Window {
     private int zoomPercentage = ZOOM_DEFAULT;
     
 
-    /**
-     * Constructs a new instance with the given parent shell.
-     * 
-     * @param parentShell the window's parent.
-     */
-    protected DebugWindow(final Shell parentShell) {
-        super(parentShell);
-    }
-    
-
     ///////////////////////////////////////////////////////////////////////////////
     // Path Setting
     
@@ -312,7 +294,7 @@ public class DebugWindow extends Window {
      * OK, the new path is applied.
      */
     private void openPathDialog() {
-        DirectoryDialog dialog = new DirectoryDialog(getShell());
+        DirectoryDialog dialog = new DirectoryDialog(this.getSite().getShell());
         dialog.setMessage(Messages.DebugWindow_PathDialog_Message);
         dialog.setFilterPath(currentPath);
         
@@ -498,7 +480,7 @@ public class DebugWindow extends Window {
      */
     private void openErrorDialog(final String message) {
         ErrorDialog dialog = new ErrorDialog(
-                getShell(),
+                this.getSite().getShell(),
                 Messages.DebugWindow_Error_Title,
                 null,
                 new Status(IStatus.ERROR, KlayDebugViewPlugin.PLUGIN_ID, message),
@@ -510,20 +492,45 @@ public class DebugWindow extends Window {
     ///////////////////////////////////////////////////////////////////////////////
     // Dialog Settings
     
+    /* Basing the settings on the memento mechanism didn't work right out of the box. Since I don't
+     * have the time to solve that properly, I just decided to not care and not use mementos. Take
+     * that, Eclipse!
+     */
+
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public void init(final IViewSite site, final IMemento memento) throws PartInitException {
+//        setPath(memento.getString(SETT_PATH));
+//        
+//        Integer zoom = memento.getInteger(SETT_ZOOM);
+//        if (zoom != null) {
+//            changeZoom(zoom);
+//        }
+//        
+//        Boolean colorKey = memento.getBoolean(SETT_COLOR_KEY);
+//        setColorKeyVisible(colorKey == null ? true : colorKey);
+//    }
+//
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public void saveState(final IMemento memento) {
+//        memento.putString(SETT_PATH, currentPath);
+//        memento.putInteger(SETT_ZOOM, zoomPercentage);
+//        memento.putBoolean(SETT_COLOR_KEY, colorKeyBrowser.isVisible());
+//    }
+    
     /**
      * Saves the current settings.
      */
     private void saveDialogSettings() {
         IDialogSettings dialogSettings = KlayDebugViewPlugin.getDefault().getDialogSettings();
         
-        Point size = getShell().getSize();
-        dialogSettings.put(SETT_BOUNDS + ".x", size.x); //$NON-NLS-1$
-        dialogSettings.put(SETT_BOUNDS + ".y", size.y); //$NON-NLS-1$
-        
         dialogSettings.put(SETT_PATH, currentPath);
-        
         dialogSettings.put(SETT_ZOOM, zoomPercentage);
-        
         dialogSettings.put(SETT_COLOR_KEY, colorKeyBrowser.isVisible());
     }
     
@@ -545,48 +552,16 @@ public class DebugWindow extends Window {
     }
     
 
+    
+
     ///////////////////////////////////////////////////////////////////////////////
     // GUI Creation / Disposal
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean close() {
-        saveDialogSettings();
-        
-        boolean closed = super.close();
-        
-        if (closed) {
-            if (folderBrowseImage != null && !folderBrowseImage.isDisposed()) {
-                folderBrowseImage.dispose();
-            }
-            
-            if (folderRefreshImage != null && !folderRefreshImage.isDisposed()) {
-                folderRefreshImage.dispose();
-            }
-            
-            if (folderRemoveAllImage != null && !folderRemoveAllImage.isDisposed()) {
-                folderRemoveAllImage.dispose();
-            }
-            
-            if (showColorKeyImage != null && !showColorKeyImage.isDisposed()) {
-                showColorKeyImage.dispose();
-            }
-            
-            if (statusBarZoomLabelContextImage != null && !statusBarZoomLabelContextImage.isDisposed()) {
-                statusBarZoomLabelContextImage.dispose();
-            }
-        }
-        
-        return closed;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Control createContents(final Composite parent) {
+    public void createPartControl(final Composite parent) {
         Composite shellComposite = new Composite(parent, SWT.NULL);
         shellComposite.setLayout(new GridLayout(1, false));
         shellComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -596,8 +571,6 @@ public class DebugWindow extends Window {
         createStatusBar(shellComposite);
         
         loadDialogSettings();
-        
-        return shellComposite;
     }
 
     /**
@@ -671,6 +644,7 @@ public class DebugWindow extends Window {
      * @param parent the parent composite.
      */
     private void setupToolBar(final Composite parent) {
+        // TODO: Migrate to ViewPart's IToolBarManager
         toolBar = new ToolBar(parent, SWT.FLAT | SWT.HORIZONTAL | SWT.RIGHT);
         toolBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         
@@ -831,31 +805,40 @@ public class DebugWindow extends Window {
         
         // CHECKSTYLEON MagicNumber
     }
-
-    /**
-     * {@inheritDoc}
-     */
+    
     @Override
-    protected void configureShell(final Shell newShell) {
-        super.configureShell(newShell);
+    public void dispose() {
+        super.dispose();
         
-        newShell.setText(Messages.DebugWindow_Title);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Point getInitialSize() {
-        IDialogSettings dialogSettings = KlayDebugViewPlugin.getDefault().getDialogSettings();
+        saveDialogSettings();
         
-        try {
-            return new Point(
-                    dialogSettings.getInt(SETT_BOUNDS + ".x"), //$NON-NLS-1$
-                    dialogSettings.getInt(SETT_BOUNDS + ".y")); //$NON-NLS-1$
-        } catch (NumberFormatException e) {
-            return super.getInitialSize();
+        if (folderBrowseImage != null && !folderBrowseImage.isDisposed()) {
+            folderBrowseImage.dispose();
         }
+        
+        if (folderRefreshImage != null && !folderRefreshImage.isDisposed()) {
+            folderRefreshImage.dispose();
+        }
+        
+        if (folderRemoveAllImage != null && !folderRemoveAllImage.isDisposed()) {
+            folderRemoveAllImage.dispose();
+        }
+        
+        if (showColorKeyImage != null && !showColorKeyImage.isDisposed()) {
+            showColorKeyImage.dispose();
+        }
+        
+        if (statusBarZoomLabelContextImage != null && !statusBarZoomLabelContextImage.isDisposed()) {
+            statusBarZoomLabelContextImage.dispose();
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setFocus() {
+        imageCanvas.setFocus();
     }
     
 
