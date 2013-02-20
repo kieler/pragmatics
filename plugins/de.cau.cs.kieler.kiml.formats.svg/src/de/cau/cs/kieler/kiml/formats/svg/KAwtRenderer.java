@@ -41,6 +41,7 @@ import de.cau.cs.kieler.core.krendering.HorizontalAlignment;
 import de.cau.cs.kieler.core.krendering.KArc;
 import de.cau.cs.kieler.core.krendering.KAreaPlacementData;
 import de.cau.cs.kieler.core.krendering.KBackground;
+import de.cau.cs.kieler.core.krendering.KBottomPosition;
 import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KContainerRendering;
 import de.cau.cs.kieler.core.krendering.KDecoratorPlacementData;
@@ -54,21 +55,27 @@ import de.cau.cs.kieler.core.krendering.KGridPlacementData;
 import de.cau.cs.kieler.core.krendering.KHorizontalAlignment;
 import de.cau.cs.kieler.core.krendering.KImage;
 import de.cau.cs.kieler.core.krendering.KInvisibility;
+import de.cau.cs.kieler.core.krendering.KLeftPosition;
+import de.cau.cs.kieler.core.krendering.KLineCap;
 import de.cau.cs.kieler.core.krendering.KLineStyle;
 import de.cau.cs.kieler.core.krendering.KLineWidth;
 import de.cau.cs.kieler.core.krendering.KPlacementData;
+import de.cau.cs.kieler.core.krendering.KPointPlacementData;
 import de.cau.cs.kieler.core.krendering.KPolyline;
 import de.cau.cs.kieler.core.krendering.KPosition;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 import de.cau.cs.kieler.core.krendering.KRenderingRef;
+import de.cau.cs.kieler.core.krendering.KRightPosition;
 import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
 import de.cau.cs.kieler.core.krendering.KSpline;
 import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.core.krendering.KText;
+import de.cau.cs.kieler.core.krendering.KTopPosition;
 import de.cau.cs.kieler.core.krendering.KVerticalAlignment;
 import de.cau.cs.kieler.core.krendering.KXPosition;
 import de.cau.cs.kieler.core.krendering.KYPosition;
+import de.cau.cs.kieler.core.krendering.LineCap;
 import de.cau.cs.kieler.core.krendering.LineStyle;
 import de.cau.cs.kieler.core.krendering.VerticalAlignment;
 import de.cau.cs.kieler.core.math.KVector;
@@ -107,13 +114,16 @@ public class KAwtRenderer {
     private static final double ARROW_LENGTH = 8.0;
     /** default width of edge arrows. */
     private static final double ARROW_WIDTH = 7.0;
-    /** the length of dashes used in line style. */
-    private static final float DASH_LENGTH = 5.0f;
-    /** the length of blanks used in line style. */
-    private static final float BLANK_LENGTH = 3.0f;
     /** the default stroke. */
     private static final Stroke DEFAULT_STROKE = new BasicStroke(1);
-    
+
+    // the dash constants in the following definitions are copied
+    // from the related definitions in the GC class (OSX Cocoa fragment):
+    private static final float[] LINE_DOT = new float[] { 1, 1 };
+    private static final float[] LINE_DASH = new float[] { 3, 1 };
+    private static final float[] LINE_DASHDOT = new float[] { 3, 1, 1, 1 };
+    private static final float[] LINE_DASHDOTDOT = new float[] { 3, 1, 1, 1, 1, 1 };
+
     /** the graphics context used for drawing. */
     private Graphics2D graphics;
     /** the scale factor for all coordinates. */
@@ -517,10 +527,10 @@ public class KAwtRenderer {
         if (styleData.lineStyle != null) {
             scaledLineStyle = new float[styleData.lineStyle.length];
             for (int i = 0; i < styleData.lineStyle.length; i++) {
-                scaledLineStyle[i] = scale * styleData.lineStyle[i];
+                scaledLineStyle[i] = scale * styleData.lineWidth * styleData.lineStyle[i];
             }
         }
-        graphics.setStroke(new BasicStroke(scale * styleData.lineWidth, BasicStroke.CAP_SQUARE,
+        graphics.setStroke(new BasicStroke(scale * styleData.lineWidth, styleData.lineCap,
                 BasicStroke.JOIN_MITER, scale, scaledLineStyle, 0.0f));
         graphics.setFont(new Font(styleData.fontName, styleData.fontStyle,
                 Math.round(scale * styleData.fontSize)));
@@ -535,6 +545,7 @@ public class KAwtRenderer {
         private boolean backgVisible = false;
         private float lineWidth = 1.0f;
         private float[] lineStyle = null;
+        private int lineCap = BasicStroke.CAP_BUTT;
         private HorizontalAlignment horzAlignment = HorizontalAlignment.LEFT;
         private VerticalAlignment vertAlignment = VerticalAlignment.CENTER;
         private boolean invisible = false;
@@ -554,33 +565,48 @@ public class KAwtRenderer {
         case KRenderingPackage.KFOREGROUND:
             KColor color = ((KForeground) style).getColor();
             styleData.foregColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
+            styleData.foregVisible = true;
             break;
         case KRenderingPackage.KBACKGROUND:
             KColor backgroundColor = ((KBackground) style).getColor();
             styleData.backgColor = new Color(backgroundColor.getRed(), backgroundColor.getGreen(),
                     backgroundColor.getBlue());
+            styleData.backgVisible = true;
             break;
         case KRenderingPackage.KLINE_WIDTH:
             styleData.lineWidth = ((KLineWidth) style).getLineWidth();
             break;
         case KRenderingPackage.KLINE_STYLE:
-            LineStyle lineStyle = ((KLineStyle) style).getLineStyle();
+            LineStyle lineStyle = ((KLineStyle) style).getLineStyle();            
             switch (lineStyle) {
             case DASH:
-                styleData.lineStyle = new float[] { DASH_LENGTH, BLANK_LENGTH };
+                styleData.lineStyle = LINE_DASH;
                 break;
             case DOT:
-                styleData.lineStyle = new float[] { 1, BLANK_LENGTH };
+                styleData.lineStyle = LINE_DOT;
                 break;
             case DASHDOT:
-                styleData.lineStyle = new float[] { DASH_LENGTH, BLANK_LENGTH, 1, BLANK_LENGTH };
+                styleData.lineStyle = LINE_DASHDOT;
                 break;
             case DASHDOTDOT:
-                styleData.lineStyle = new float[] { DASH_LENGTH, BLANK_LENGTH, 1, BLANK_LENGTH,
-                        1, BLANK_LENGTH };
+                styleData.lineStyle = LINE_DASHDOTDOT;
                 break;
             default:
                 styleData.lineStyle = null;
+            }
+            break;
+        case KRenderingPackage.KLINE_CAP:
+            LineCap lineCap = ((KLineCap) style).getLineCap();
+            switch (lineCap) {
+            case CAP_FLAT:
+                styleData.lineCap = BasicStroke.CAP_BUTT;
+                break;
+            case CAP_ROUND:
+                styleData.lineCap = BasicStroke.CAP_ROUND;
+                break;
+            case CAP_SQUARE:
+                styleData.lineCap = BasicStroke.CAP_SQUARE;
+                break;
             }
             break;
         case KRenderingPackage.KHORIZONTAL_ALIGNMENT:
@@ -630,7 +656,7 @@ public class KAwtRenderer {
      */
     private void handleRendering(final KRendering rendering, final StyleData styleData,
             final KVector size, final KVectorChain points, final boolean isSpline) {
-        if (styleData.invisible) {
+        if (!styleData.invisible) {
             boolean unknownShape = false, unknownLine = false;
             if (size != null) {
                 
@@ -917,14 +943,44 @@ public class KAwtRenderer {
             if (directPlaceData.getBottomRight() != null) {
                 KPosition bottomRight = directPlaceData.getBottomRight();
                 KXPosition xpos = bottomRight.getX();
-                if (xpos != null) {
+                if (xpos instanceof KLeftPosition) {
                     childSize.x = xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute() - x;
+                } else if (xpos instanceof KRightPosition) {
+                    childSize.x = (1 - xpos.getRelative()) * parentSize.x - scale
+                            * xpos.getAbsolute() - x;
                 }
                 KYPosition ypos = bottomRight.getY();
-                if (ypos != null) {
+                if (ypos instanceof KTopPosition) {
                     childSize.y = ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute() - y;
                 }
+                if (ypos instanceof KBottomPosition) {
+                    childSize.y = (1 - ypos.getRelative()) * parentSize.y - scale
+                            * ypos.getAbsolute() - y;
+                }
             }
+            
+        } else if (placeData instanceof KPointPlacementData) {
+            KPointPlacementData pointPlaceData = (KPointPlacementData) placeData;
+            
+            // determine top left corner
+            if (pointPlaceData.getReferencePoint() != null) {
+                KPosition refPos = pointPlaceData.getReferencePoint();
+                if (refPos.getX() != null) {
+                    KXPosition xpos = refPos.getX();
+                    x = xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute();
+                }
+                if (refPos.getY() != null) {
+                    KYPosition ypos = refPos.getY();
+                    y = ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute();
+                }
+            }
+            
+            // determine bottom right corner
+            childSize.translate(-x, -y);
+            
+//            childSize.x = 100;
+//            childSize.y = 30;
+                    
             
         } else if (placeData != null && transData != null) {
             transData.log("Placement data not supported in the context of direct placement: "

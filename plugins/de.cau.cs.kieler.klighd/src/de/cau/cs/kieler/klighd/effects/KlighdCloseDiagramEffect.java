@@ -42,6 +42,9 @@ public class KlighdCloseDiagramEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
+        if (PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+            return;
+        }
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 DiagramViewManager.getInstance().closeView(viewId);
