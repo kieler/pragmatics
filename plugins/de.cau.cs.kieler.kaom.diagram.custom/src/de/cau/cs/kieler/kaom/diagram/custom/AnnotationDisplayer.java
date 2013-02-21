@@ -162,7 +162,7 @@ public final class AnnotationDisplayer {
                                     if (viewObj instanceof ViewDescriptor) {
                                         Object adaptable = ((ViewDescriptor) viewObj)
                                                 .getAdapter(Shape.class);
-                                        if (adaptable instanceof Shape) {
+                                        if (adaptable instanceof Shape && textAnnotation != null) {
                                             Shape shape = (Shape) adaptable;
                                             shape.setDescription(textAnnotation.getValue());
                                         }

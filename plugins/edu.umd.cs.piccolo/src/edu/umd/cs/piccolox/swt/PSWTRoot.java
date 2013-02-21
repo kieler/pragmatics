@@ -74,7 +74,8 @@ public class PSWTRoot extends PRoot {
      * Processes Inputs if any kind of IO needs to be done.
      */
     public void scheduleProcessInputsIfNeeded() {
-        if (!Thread.currentThread().equals(composite.getDisplay().getThread())) {
+        if (composite.isDisposed()
+                || !Thread.currentThread().equals(composite.getDisplay().getThread())) {
             return;
         }
 
