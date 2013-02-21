@@ -295,33 +295,15 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
             rightLayerNodes = rightLayer == null ? null : rightLayer.getNodes();
             rightLayerIndex = layerIter.previousIndex();
             
-            // DEBUG START
-            if (leftLayer != null) {
-                System.out.println("Left Layer: " + leftLayer.toString());
-            }
-            
-            if (rightLayer != null) {
-                System.out.println("Right Layer: " + rightLayer.toString());
-            }
-            // DEBUG END
-            
             // Place the left layer's nodes, if any
             if (leftLayer != null) {
                 leftLayer.placeNodes(xpos);
                 xpos += leftLayer.getSize().x;
-                
-                // DEBUG START
-                System.out.println("  Left Layer Width: " + leftLayer.getSize().x);
-                // DEBUG END
             }
             
             // Route edges between the two layers
             slotsCount = routingGenerator.routeEdges(layeredGraph, leftLayerNodes, leftLayerIndex,
                     rightLayerNodes, xpos + edgeSpacing);
-            
-            // DEBUG START
-            System.out.println("  slotsCount: " + slotsCount);
-            // DEBUG END
             
             if (slotsCount > 0) {
                 // The space between each pair of edge segments, and between nodes and edges
@@ -331,10 +313,6 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
                     increment = nodeSpacing;
                 }
                 xpos += increment;
-                
-                // DEBUG START
-                System.out.println("  increment: " + increment);
-                // DEBUG END
             } else if (leftLayer != null && rightLayer != null) {
                 // If we are between two layers, but all edges are straight, take the default spacing
                 xpos += nodeSpacing;
