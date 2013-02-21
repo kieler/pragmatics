@@ -56,6 +56,12 @@ public final class LabelDummyInserter implements ILayoutProcessor {
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             for (LPort port : node.getPorts()) {
                 for (LEdge edge : port.getOutgoingEdges()) {
+                    // Ignore self-loops for the moment (KIELER-2136 is, amongst other things, about
+                    // fixing this limitation)
+                    if (edge.getSource().getNode().equals(edge.getTarget().getNode())) {
+                        continue;
+                    }
+                    
                     for (LLabel label : edge.getLabels()) {
                         if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
                                 == EdgeLabelPlacement.CENTER) {
