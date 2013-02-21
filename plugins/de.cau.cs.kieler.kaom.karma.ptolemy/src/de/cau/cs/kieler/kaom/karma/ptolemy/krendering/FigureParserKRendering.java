@@ -15,6 +15,7 @@ import de.cau.cs.kieler.core.krendering.KBackground;
 import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KContainerRendering;
 import de.cau.cs.kieler.core.krendering.KEllipse;
+import de.cau.cs.kieler.core.krendering.KFontSize;
 import de.cau.cs.kieler.core.krendering.KForeground;
 import de.cau.cs.kieler.core.krendering.KInvisibility;
 import de.cau.cs.kieler.core.krendering.KLineWidth;
@@ -328,16 +329,19 @@ public class FigureParserKRendering {
 
                     KText figure = factory.createKText();
                     figure.setText(text);
-                    applyTextStyle(figure, style);
-
+                    
                     KPointPlacementData placement = factory.createKPointPlacementData();
 
                     KPosition topleft = factory.createKPosition();
                     topleft.setX(x);
                     topleft.setY(y);
-                    System.out.println("???????????" + text);
+                    //System.out.println("???????????" + text);
                     placement.setReferencePoint(topleft);
-                    // KPosition bottomright = factory.createKPosition();
+
+                    
+                    applyTextStyle(figure, style, placement);
+
+                                        // KPosition bottomright = factory.createKPosition();
                     // bottomright.setX(right);
                     // bottomright.setY(bottom);
                     figure.setPlacementData(placement);
@@ -347,7 +351,7 @@ public class FigureParserKRendering {
                      * figure.getBounds().setSize(figure.getTextBounds().getSize());
                      */
                     // figure.setLayoutManager(new BorderLayout());
-                    //parentFigure.getChildren().add(buildFigure(childElement, figure));
+                    parentFigure.getChildren().add(figure);
                     // make an ImageFigureEx out of an image element
                 } else if (tag.equals("image")) {
                     KXPosition left = factory.createKLeftPosition();
@@ -460,7 +464,7 @@ public class FigureParserKRendering {
      * @param style
      *            the style as a string
      */
-    private static KContainerRendering applyTextStyle(final KText figure, final String style) {
+    private static KContainerRendering applyTextStyle(final KText figure, final String style, KPointPlacementData placement) {
         KRenderingFactory factory = KRenderingFactoryImpl.eINSTANCE;
         if (style != null) {
             StringTokenizer t = new StringTokenizer(style, ";");
@@ -476,12 +480,15 @@ public class FigureParserKRendering {
                     //figure.getStyles().add(lookupColor(value, fill));
                     // some hacked size stuff without having a fitting font.
                 } else if (name.equals("font-size")) {
-                    /*
+                    
                     int size = Integer.parseInt(value);
                     KFontSize fontSize = factory.createKFontSize();
                     fontSize.setSize(size);
                     figure.getStyles().add(fontSize);
-                    */
+                    
+                    KPosition position = placement.getReferencePoint();
+                    position.getY().setAbsolute(position.getY().getAbsolute() - size);
+                    
                     /*
                      * if (figure instanceof Label) { FontData[] fonts =
                      * PlatformUI.getWorkbench().getDisplay() .getFontList("arial", true); FontData
