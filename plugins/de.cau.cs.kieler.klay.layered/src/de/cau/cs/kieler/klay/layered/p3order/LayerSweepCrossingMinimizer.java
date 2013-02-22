@@ -877,38 +877,62 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                         
                         // How crossings are determined depends on which side of the normal node we're on
                         if (northernSide) {
+                            boolean nodeInputPortCollision = false;
+                            boolean nodeOutputPortCollision = false;
+                            
                             if (nodeOutputPort != null && node2InputPort != null
                                     && nodeOutputPort.id < node2InputPort.id) {
                                 crossings++;
+                                nodeOutputPortCollision = true;
                             }
                             if (nodeInputPort != null && node2OutputPort != null
                                     && nodeInputPort.id > node2OutputPort.id) {
                                 crossings++;
+                                nodeInputPortCollision = true;
                             }
                             if (nodeOutputPort != null && node2OutputPort != null
                                     && nodeOutputPort.id > node2OutputPort.id) {
                                 crossings++;
+                                nodeOutputPortCollision = true;
                             }
                             if (nodeInputPort != null && node2InputPort != null
                                     && nodeInputPort.id < node2InputPort.id) {
                                 crossings++;
+                                nodeInputPortCollision = true;
+                            }
+                            
+                            if (nodeInputPortCollision && nodeOutputPortCollision
+                                    && nodeInputPort == nodeOutputPort) {
+                                crossings--;
                             }
                         } else {
+                            boolean node2InputPortCollision = false;
+                            boolean node2OutputPortCollision = false;
+                            
                             if (nodeInputPort != null && node2OutputPort != null
                                     && nodeInputPort.id < node2OutputPort.id) {
                                 crossings++;
+                                node2OutputPortCollision = true;
                             }
                             if (nodeOutputPort != null && node2InputPort != null
                                     && nodeOutputPort.id > node2InputPort.id) {
                                 crossings++;
+                                node2InputPortCollision = true;
                             }
                             if (nodeInputPort != null && node2InputPort != null
                                     && nodeInputPort.id < node2InputPort.id) {
                                 crossings++;
+                                node2InputPortCollision = true;
                             }
                             if (nodeOutputPort != null && node2OutputPort != null
                                     && nodeOutputPort.id > node2OutputPort.id) {
                                 crossings++;
+                                node2OutputPortCollision = true;
+                            }
+                            
+                            if (node2InputPortCollision && node2OutputPortCollision
+                                    && node2InputPort == node2OutputPort) {
+                                crossings--;
                             }
                         }
                     }
