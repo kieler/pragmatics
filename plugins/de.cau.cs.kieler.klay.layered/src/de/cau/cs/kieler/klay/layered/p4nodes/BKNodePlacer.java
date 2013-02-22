@@ -24,8 +24,6 @@ import java.util.List;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -280,28 +278,8 @@ public final class BKNodePlacer implements ILayoutPhase {
             for (LNode node : layer.getNodes()) {
                 node.getPosition().y = chosenLayout.getY().get(node)
                         + chosenLayout.getInnerShift().get(node);
-                if (!node.getProperty(LayoutOptions.HYPERNODE)) {
-                    layer.getSize().x = Math.max(layer.getSize().x,
-                            node.getSize().x + node.getMargin().left + node.getMargin().right);
-                }
             }
         }
-
-        // Set the proper offset and height for the whole graph.
-        double minY = 0, maxY = 0;
-        for (Layer layer : layeredGraph) {
-            KVector layerSize = layer.getSize();
-            LNode firstNode = layer.getNodes().get(0);
-            double top = firstNode.getPosition().y - firstNode.getMargin().top;
-            LNode lastNode = layer.getNodes().get(layer.getNodes().size() - 1);
-            double bottom = lastNode.getPosition().y + lastNode.getSize().y
-                    + lastNode.getMargin().bottom;
-            layerSize.y = bottom - top;
-            minY = Math.min(minY, top);
-            maxY = Math.max(maxY, bottom);
-        }
-        layeredGraph.getSize().y = maxY - minY;
-        layeredGraph.getOffset().y -= minY;
 
         // Debug output
         if (debug) {

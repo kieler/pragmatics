@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
@@ -210,22 +209,6 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
         // post-process the placement for small corrections
         postProcess(layeredGraph);
-
-        // set the proper offset and height for the whole graph
-        double minY = 0, maxY = 0;
-        for (Layer layer : layeredGraph) {
-            KVector layerSize = layer.getSize();
-            LNode firstNode = layer.getNodes().get(0);
-            double top = firstNode.getPosition().y - firstNode.getMargin().top;
-            LNode lastNode = layer.getNodes().get(layer.getNodes().size() - 1);
-            double bottom = lastNode.getPosition().y + lastNode.getSize().y
-                    + lastNode.getMargin().bottom;
-            layerSize.y = bottom - top;
-            minY = Math.min(minY, top);
-            maxY = Math.max(maxY, bottom);
-        }
-        layeredGraph.getSize().y = maxY - minY;
-        layeredGraph.getOffset().y -= minY;
 
         // release the created resources
         linearSegments = null;
@@ -574,14 +557,10 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 // Set the node position
                 node.getPosition().y = uppermostPlace + node.getMargin().top;
 
-                // Adjust layer size, but don't waste space for hypernodes
+                // Adjust layer size
                 Layer layer = node.getLayer();
                 layer.getSize().y = uppermostPlace + node.getMargin().top
                         + node.getSize().y + node.getMargin().bottom;
-                if (!node.getProperty(LayoutOptions.HYPERNODE)) {
-                    layer.getSize().x = Math.max(layer.getSize().x, node.getSize().x
-                            + node.getMargin().left + node.getMargin().right);
-                }
 
                 recentNodeNormal[layer.getIndex()] = node.getProperty(Properties.NODE_TYPE) 
                     == NodeType.NORMAL;

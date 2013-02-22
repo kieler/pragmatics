@@ -17,9 +17,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
-import de.cau.cs.kieler.core.krendering.UnderlineStyle;
+import de.cau.cs.kieler.core.krendering.Underline;
 import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTStyledText;
+import de.cau.cs.kieler.klighd.piccolo.util.StyleUtil.Styles;
 
 /**
  * A node controller for the {@code PSWTText}.
@@ -134,17 +135,30 @@ public abstract class PSWTTextController extends PNodeController<PSWTStyledText>
     /**
      * {@inheritDoc}
      */
-    public void setUnderline(final UnderlineStyle underlining) {
-        if (underlining != null) {
-            switch (underlining) {
-            case UNDERLINE_ON:
-                getNode().setUnderlining(SWT.UNDERLINE_SINGLE);
+    public void setUnderline(final Underline underline, final RGB color) {
+        if (underline != null) {
+            switch (underline) {
+            case SINGLE:
+                getNode().setUnderline(SWT.UNDERLINE_SINGLE, color);
                 break;
+            case DOUBLE:
+                getNode().setUnderline(SWT.UNDERLINE_DOUBLE, color);
+                break;
+            case ERROR:
+                getNode().setUnderline(SWT.UNDERLINE_ERROR, color);
+                break;
+            case SQUIGGLE:
+                getNode().setUnderline(SWT.UNDERLINE_SQUIGGLE, color);
+                break;
+            case LINK:
+                getNode().setUnderline(SWT.UNDERLINE_LINK, color);
+                break;
+            case NONE:
             default:
-                getNode().setUnderlining(KlighdConstants.NO_FONT_UNDERLINING);
+                getNode().setUnderline(KlighdConstants.NO_FONT_UNDERLINING, color);
             }
-        } else  {
-            getNode().setUnderlining(KlighdConstants.NO_FONT_UNDERLINING);
+        } else {
+            getNode().setUnderline(KlighdConstants.NO_FONT_UNDERLINING, KlighdConstants.BLACK);
         }
     }
 
@@ -152,7 +166,15 @@ public abstract class PSWTTextController extends PNodeController<PSWTStyledText>
      * {@inheritDoc}
      */
     @Override
-    public void applyChanges(final AbstractRenderingController<?, ?>.Styles styles) {
+    public void setStrikeout(final boolean strikeout, final RGB color) {
+        getNode().setStrikeout(strikeout, color);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void applyChanges(final Styles styles) {
         super.applyChanges(styles);
         getNode().setFont(new FontData(fontName, fontSize, fontStyle));
     }

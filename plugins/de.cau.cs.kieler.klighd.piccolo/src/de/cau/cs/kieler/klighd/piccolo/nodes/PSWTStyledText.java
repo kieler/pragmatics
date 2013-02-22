@@ -44,8 +44,10 @@ public class PSWTStyledText extends PSWTText {
     private FontData fontData = null;
     private RGB penColor = KlighdConstants.BLACK;
     private RGB penPaint = null;
-    private RGB underlineColor = KlighdConstants.BLACK;
     private int underlining = KlighdConstants.NO_FONT_UNDERLINING;
+    private RGB underlineColor = KlighdConstants.BLACK;
+    private boolean strikeout = false;
+    private RGB strikeoutColor = KlighdConstants.BLACK;
 
     /**
      * PSWTStyledText constructor taking the initial text lines.
@@ -66,7 +68,9 @@ public class PSWTStyledText extends PSWTText {
      *            The SWT font configuration for this text component.
      */
     public PSWTStyledText(final List<String> theLines, final FontData theFont) {
-        super(theLines, new SWTFontWrappingFont(theFont));
+        super(theLines, new SWTFontWrappingFont(theFont != null ? theFont
+                : KlighdConstants.DEFAULT_FONT));
+        this.fontData = theFont != null ? theFont : KlighdConstants.DEFAULT_FONT;
     }
 
     /**
@@ -113,7 +117,7 @@ public class PSWTStyledText extends PSWTText {
      * Configures the text node width a {@link Font}.
      * 
      * @param theFont
-     *            the desired {@link Font}
+     *            the desired {@link Font}, must not be <code>null<code>
      */
     public void setFont(final FontData theFont) {
         this.fontData = theFont;
@@ -131,13 +135,31 @@ public class PSWTStyledText extends PSWTText {
     }
 
     /**
-     * Configures the text node width a {@link Font}.
+     * Augments the text node with an underline of the given type and color.
      * 
      * @param theUnderlining
      *            the related constant from {@link KlighdConstants} and {@link org.eclipse.swt.SWT SWT}
+     * @param color
+     *            the used color, maybe <code>null<code> (penColor is used in that case)
      */
-    public void setUnderlining(final int theUnderlining) {
+    public void setUnderline(final int theUnderlining, final RGB color) {
         this.underlining = theUnderlining;
+        this.underlineColor = color != null ? color : this.penColor;
+        repaint();
+    }
+
+    /**
+     * Augments the text node with a strikeout of the given color.
+     * 
+     * @param theStrikeout
+     *            whether to strike out
+     * @param color
+     *            the used color, maybe <code>null<code> (penColor is used in that case)
+     */
+    public void setStrikeout(final boolean theStrikeout, final RGB color) {
+        this.strikeout = theStrikeout;
+        this.strikeoutColor = color != null ? color : this.penColor;
+        repaint();
     }
 
     @Override
@@ -178,7 +200,8 @@ public class PSWTStyledText extends PSWTText {
         }
 
         sg2.translate(padding, padding);
-        sg2.setUnderlining(underlining, underlineColor);
+        sg2.setUnderline(underlining, underlineColor);
+        sg2.setStrikeout(strikeout, strikeoutColor);
         
         if (penColor != null) {
             sg2.setColor(penColor);

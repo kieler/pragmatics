@@ -279,7 +279,7 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
             if (node.getProperty(Properties.NODE_TYPE).equals(NodeType.NORMAL)) {
                 options.append("shape=box,");
             } else {
-                options.append("shape=circle,style=filled,");
+                options.append("style=\"rounded,filled\",");
                 
                 String color = node.getProperty(Properties.NODE_TYPE).getColor();
                 if (color != null) {

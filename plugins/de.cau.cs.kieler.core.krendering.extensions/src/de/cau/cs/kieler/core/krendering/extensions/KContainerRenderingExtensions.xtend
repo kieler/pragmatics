@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.core.krendering.extensions
 
 import javax.inject.Inject
-
 import de.cau.cs.kieler.core.krendering.KChildArea
 import de.cau.cs.kieler.core.krendering.KContainerRendering
 import de.cau.cs.kieler.core.krendering.KPolyline
@@ -25,6 +24,8 @@ import de.cau.cs.kieler.core.krendering.KGridPlacement
 import de.cau.cs.kieler.core.krendering.KPosition
 import de.cau.cs.kieler.core.krendering.KRoundedRectangle
 import de.cau.cs.kieler.core.krendering.KRendering
+import de.cau.cs.kieler.core.krendering.KText
+import de.cau.cs.kieler.core.krendering.KEllipse
 
 /**
  * @author chsch, alb
@@ -49,6 +50,18 @@ class KContainerRenderingExtensions {
         ];
     }
     
+    def KEllipse addEllipse(KContainerRendering cr){
+        return renderingFactory.createKEllipse() => [
+            cr.children += it;
+        ];
+    }
+
+    def KRectangle addRectangle(KContainerRendering cr){
+        return renderingFactory.createKRectangle() => [
+            cr.children += it;
+        ];
+    }
+
     def KRoundedRectangle addRoundedRectangle(KContainerRendering cr, float cWidth, float cHeight){
         return renderingFactory.createKRoundedRectangle => [
             cr.children += it;
@@ -63,6 +76,13 @@ class KContainerRenderingExtensions {
             it.cornerWidth = cWidth;
             it.cornerHeight = cHeight;
             it.lineWidth = lineWidth;
+        ];
+    }
+
+    def KText addText(KContainerRendering cr, String text){
+        return renderingFactory.createKText() => [
+            cr.children += it;
+            it.text = text;
         ];
     }
 
@@ -88,6 +108,14 @@ class KContainerRenderingExtensions {
 		];
 	}
 	
+    def KPolyline addHorizontalLine(KContainerRendering cr, float leftRightAbsIndent){
+        return cr.addChild(renderingFactory.createKPolyline())  as KPolyline => [
+           it.lineWidth = 1;
+           it.points += createKPosition(PositionReferenceX::LEFT, leftRightAbsIndent, 0, TOP, 0, 0.5f);
+           it.points += createKPosition(PositionReferenceX::RIGHT, leftRightAbsIndent, 0, TOP, 0, 0.5f);
+        ];
+    }
+    
     def KPolyline addHorizontalLine(KContainerRendering cr, PositionReferenceY y, float absIndent){
         return cr.addChild(renderingFactory.createKPolyline())  as KPolyline => [
            it.lineWidth = 1;

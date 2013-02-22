@@ -33,6 +33,8 @@ import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
@@ -42,24 +44,12 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.krendering.KArc;
-import de.cau.cs.kieler.core.krendering.KBackground;
 import de.cau.cs.kieler.core.krendering.KChildArea;
 import de.cau.cs.kieler.core.krendering.KContainerRendering;
 import de.cau.cs.kieler.core.krendering.KCustomRendering;
 import de.cau.cs.kieler.core.krendering.KEllipse;
-import de.cau.cs.kieler.core.krendering.KFontBold;
-import de.cau.cs.kieler.core.krendering.KFontItalic;
-import de.cau.cs.kieler.core.krendering.KFontName;
-import de.cau.cs.kieler.core.krendering.KFontSize;
-import de.cau.cs.kieler.core.krendering.KFontUnderlined;
-import de.cau.cs.kieler.core.krendering.KForeground;
 import de.cau.cs.kieler.core.krendering.KGridPlacement;
-import de.cau.cs.kieler.core.krendering.KHorizontalAlignment;
 import de.cau.cs.kieler.core.krendering.KImage;
-import de.cau.cs.kieler.core.krendering.KInvisibility;
-import de.cau.cs.kieler.core.krendering.KLineStyle;
-import de.cau.cs.kieler.core.krendering.KLineCap;
-import de.cau.cs.kieler.core.krendering.KLineWidth;
 import de.cau.cs.kieler.core.krendering.KPlacement;
 import de.cau.cs.kieler.core.krendering.KPlacementData;
 import de.cau.cs.kieler.core.krendering.KPointPlacementData;
@@ -69,14 +59,11 @@ import de.cau.cs.kieler.core.krendering.KRectangle;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 import de.cau.cs.kieler.core.krendering.KRenderingRef;
-import de.cau.cs.kieler.core.krendering.KRotation;
 import de.cau.cs.kieler.core.krendering.KRoundedBendsPolyline;
 import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
 import de.cau.cs.kieler.core.krendering.KSpline;
 import de.cau.cs.kieler.core.krendering.KStyle;
-import de.cau.cs.kieler.core.krendering.KStyleRef;
 import de.cau.cs.kieler.core.krendering.KText;
-import de.cau.cs.kieler.core.krendering.KVerticalAlignment;
 import de.cau.cs.kieler.core.krendering.util.KRenderingSwitch;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
@@ -84,14 +71,14 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.krendering.KCustomRenderingWrapperFactory;
+import de.cau.cs.kieler.klighd.krendering.PlacementUtil;
+import de.cau.cs.kieler.klighd.krendering.PlacementUtil.Bounds;
+import de.cau.cs.kieler.klighd.krendering.PlacementUtil.GridPlacer;
 import de.cau.cs.kieler.klighd.piccolo.krendering.KCustomConnectionFigureNode;
 import de.cau.cs.kieler.klighd.piccolo.krendering.KDecoratorNode;
 import de.cau.cs.kieler.klighd.piccolo.krendering.KEdgeNode;
 import de.cau.cs.kieler.klighd.piccolo.krendering.util.PiccoloPlacementUtil;
 import de.cau.cs.kieler.klighd.piccolo.krendering.util.PiccoloPlacementUtil.Decoration;
-import de.cau.cs.kieler.klighd.krendering.PlacementUtil;
-import de.cau.cs.kieler.klighd.krendering.PlacementUtil.Bounds;
-import de.cau.cs.kieler.klighd.krendering.PlacementUtil.GridPlacer;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.HAlignment;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.VAlignment;
@@ -100,6 +87,8 @@ import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTStyledText;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTTracingText;
 import de.cau.cs.kieler.klighd.piccolo.util.NodeUtil;
+import de.cau.cs.kieler.klighd.piccolo.util.StyleUtil;
+import de.cau.cs.kieler.klighd.piccolo.util.StyleUtil.Styles;
 import de.cau.cs.kieler.klighd.util.CrossDocumentContentAdapter;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PPath;
@@ -126,6 +115,12 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
     /** the property for a rendering reference key. */
     private static final IProperty<Map<Object, Object>> KEY = 
             new Property<Map<Object, Object>>("de.cau.cs.kieler.klighd.piccolo.key");
+    
+    /**
+     * This attribute key is used to let the PNodes be aware of their related KRenderings in their
+     * attributes list.
+     */
+    public static final Object ATTR_KRENDERING = new Object();
 
     /** the graph element which rendering is controlled by this controller. */
     private S element;
@@ -276,33 +271,22 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
 
                     // handle style changes
                     if (msg.getNotifier() instanceof KStyle) {
-                        // PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                        // public void run() {
-                        // update the styles
-                        updateStyles();
-                        // });
+                        updateStylesInUi();
                         return;
                     }
 
                     // handle new, moved and removed styles
-                    if (msg.getNotifier() instanceof KRendering
-                            && msg.getFeatureID(KRendering.class) 
-                               == KRenderingPackage.KSTYLE_HOLDER__STYLES) {
-                        // PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                        // public void run() {
-                        // update the styles
-                        updateStyles();
-                        // });
+                    // Caution: Due to multi-inheritance of the KRendering class (interface)
+                    //  KRenderingPackage.KRENDERING__STYLES differs from
+                    //  KRenderingPackage.KSTYLE_HOLDER__STYLES !!
+                    if (msg.getNotifier() instanceof KRendering && msg.getFeatureID(KRendering.class)
+                            == KRenderingPackage.KRENDERING__STYLES) {
+                        updateStylesInUi();
                         return;
                     }
 
                     // handle other changes by reevaluating the rendering
-                    // PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                    // public void run() {
-                    // update the rendering
-                    updateRendering();
-                    // }
-                    // });
+                    updateRenderingInUi();
                     break;
                 default:
                     break;
@@ -339,12 +323,7 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
                         final KRendering rendering = element.getData(KRendering.class);
                         if (rendering != currentRendering) {
                             // a rendering has been added or removed
-                            // PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                                // public void run() {
-                                    // update the rendering
-                                    updateRendering();
-                                // }
-                            // });
+                            updateRenderingInUi();
                         }
                         break;
                     default:
@@ -365,6 +344,40 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
             elementAdapter = null;
         }
     }
+    
+    /**
+     * A little help to reduce the syncExec calls if possible.
+     * 
+     * @param r the runnable to be performed in the UI context.
+     */
+    private static void runInUI(final Runnable r) {
+        if (Display.getCurrent() != null) {
+            r.run();
+        } else {
+            PlatformUI.getWorkbench().getDisplay().syncExec(r);
+        }
+    }
+    
+    private Runnable updateRenderingRunnable = new Runnable() {
+        public void run() {
+            updateRendering();
+        }
+    }; 
+    
+    private void updateRenderingInUi() {
+        runInUI(this.updateRenderingRunnable);
+    }
+    
+    private Runnable updateStylesRunnable = new Runnable() {
+        public void run() {
+            updateStyles();
+        }
+    };
+    
+    private void updateStylesInUi() {
+        runInUI(this.updateStylesRunnable);
+    }
+    
 
     /**
      * Updates the styles of the current rendering.
@@ -385,7 +398,7 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
         List<KStyle> renderingStyles = rendering.getStyles();
 
         // determine the styles for this rendering
-        final Styles newStyles = deriveStyles(styles,
+        final Styles newStyles = StyleUtil.deriveStyles(styles,
                 determineRenderingStyles(renderingStyles, propagatedStyles));
 
         // apply the styles to the rendering
@@ -666,7 +679,7 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
         List<KStyle> renderingStyles = rendering.getStyles();
 
         // determine the styles for this rendering
-        final Styles styles = deriveStyles(null,
+        final Styles styles = StyleUtil.deriveStyles(null,
                 determineRenderingStyles(renderingStyles, propagatedStyles));
 
         // determine the styles for propagation to child nodes
@@ -682,6 +695,8 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
 
         // remember the controller in the related KRendering rendering
         setMappedProperty(rendering, CONTROLLER, key, controller);
+        
+        controller.getNode().addAttribute(ATTR_KRENDERING, rendering);
 
         return controller;
     }
@@ -1207,7 +1222,7 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
         List<KStyle> renderingStyles = rendering.getStyles();
 
         // determine the styles for this rendering
-        final Styles refStyles = deriveStyles(styles, renderingStyles);
+        final Styles refStyles = StyleUtil.deriveStyles(styles, renderingStyles);
 
         // determine the styles for propagation to child nodes
         final List<KStyle> childPropagatedStyles = determinePropagationStyles(renderingStyles,
@@ -1510,117 +1525,7 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
         return propagationStyles;
     }
 
-    /**
-     * Enhances a styles container with a list of styles.
-     * 
-     * @param styles
-     *            the styles container or null to create an empty one
-     * @param styleList
-     *            the list of styles
-     * @return the styles container
-     */
-    protected Styles deriveStyles(final Styles styles, final List<KStyle> styleList) {
-        final Styles theStyles;
-        if (styles != null) {
-            theStyles = styles;
-        } else {
-            theStyles = new Styles();
-        }
-        for (KStyle style : styleList) {
-            new KRenderingSwitch<Boolean>() {
-                // foreground
-                public Boolean caseKForeground(final KForeground f) {
-                    theStyles.foreground = f;
-                    return true;
-                }
 
-                // background
-                public Boolean caseKBackground(final KBackground b) {
-                    theStyles.background = b;
-                    return true;
-                }
-
-                // whether the foreground is invisible or not
-                public Boolean caseKInvisibility(final KInvisibility i) {
-                    theStyles.invisibility = i;
-                    return true;
-                }
-
-                // line width
-                public Boolean caseKLineWidth(final KLineWidth lw) {
-                    theStyles.lineWidth = lw;
-                    return true;
-                }
-
-                // line style
-                public Boolean caseKLineStyle(final KLineStyle ls) {
-                    theStyles.lineStyle = ls;
-                    return true;
-                }
-
-                // line cap style
-                public Boolean caseKLineCap(final KLineCap lcs) {
-                    theStyles.lineCap = lcs;
-                    return true;
-                }
-
-                // rotation
-                public Boolean caseKRotation(final KRotation r) {
-                    theStyles.rotation = r;
-                    return true;
-                }
-
-                // horizontal alignment
-                public Boolean caseKHorizontalAlignment(final KHorizontalAlignment ha) {
-                    theStyles.horizontalAlignment = ha;
-                    return true;
-                }
-
-                // vertical alignment
-                public Boolean caseKVerticalAlignment(final KVerticalAlignment va) {
-                    theStyles.verticalAlignment = va;
-                    return true;
-                }
-
-                // font name
-                public Boolean caseKFontName(final KFontName fontName) {
-                    theStyles.fontName = fontName;
-                    return true;
-                }
-
-                // font size
-                public Boolean caseKFontSize(final KFontSize fontSize) {
-                    theStyles.fontSize = fontSize;
-                    return true;
-                }
-
-                // italic
-                public Boolean caseKFontItalic(final KFontItalic italic) {
-                    theStyles.italic = italic;
-                    return true;
-                }
-
-                // bold
-                public Boolean caseKFontBold(final KFontBold bold) {
-                    theStyles.bold = bold;
-                    return true;
-                }
-
-                // bold
-                public Boolean caseKFontUnderlined(final KFontUnderlined underlined) {
-                    theStyles.underlined = underlined;
-                    return true;
-                }
-                
-                // styleRef
-                public Boolean caseKStyleRef(final KStyleRef style) {
-                    deriveStyles(theStyles, style.getStyleHolder().getStyles());
-                    return true;
-                }
-            } /**/.doSwitch(style);
-        }
-        return theStyles;
-    }
 
     /**
      * Applies the styles to the node associated with the given node controller.
@@ -1631,20 +1536,7 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
      *            the styles
      */
     protected void applyStyles(final PNodeController<?> controller, final Styles styles) {
-        // check whether node is visible and apply invisibility
-        if (styles.invisibility != null) {
-            controller.getNode().setOccluded(styles.invisibility.isInvisible());
-            // remark: the 'occluded' flag is examined in PNode#fullPaint();
-            
-            //question: is this the correct place to do this when propagateToChildren is set?
-            // controller.getNode().setVisible(!styles.invisibility.isInvisible());
-            
-            if (styles.invisibility.isInvisible()) {
-                //if node is invisible, no other styles need to be evaluated
-                return;
-            }
-        }        
-        
+       
         controller.applyChanges(styles);
     }
 
@@ -1742,46 +1634,6 @@ public abstract class AbstractRenderingController<S extends KGraphElement, T ext
             }
             mappedProperties.remove(property);
         }
-    }
-
-    /**
-     * A container class for the possible styles.
-     */
-    protected class Styles {
-        
-        // CHECKSTYLEOFF Visibility
-
-       /** the line width. */
-        KLineWidth lineWidth = null;
-        /** the foreground. */
-        KForeground foreground =  null;
-        /** the background. */
-        KBackground background = null;
-        /** whether the foreground should be invisible or not. */
-        KInvisibility invisibility = null;
-        /** the line style. */
-        KLineStyle lineStyle = null;
-        /** the line style. */
-        KLineCap lineCap = null;
-        /** the horizontal alignment. */
-        KRotation rotation = null;
-        /** the horizontal alignment. */
-        KHorizontalAlignment horizontalAlignment = null;
-        /** the vertical alignment. */
-        KVerticalAlignment verticalAlignment = null;
-        /** the font name. */
-        KFontName fontName = null;
-        /** the font size. */
-        KFontSize fontSize = null;
-        /** the font italic property. */
-        KFontItalic italic = null;
-        /** the font bold property. */
-        KFontBold bold = null;
-        /** the font underline property. */
-        KFontUnderlined underlined = null;
-        
-        // CHECKSTYLEON Visibility
-
     }
 
 }

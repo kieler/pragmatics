@@ -151,6 +151,10 @@ public class SWTGraphics2D extends Graphics2D {
     protected int underline = SWT.UNDERLINE_SINGLE;
     /** The current underline color to use when drawing underlined text. */
     protected RGB underlineColor = null;
+    /** The state w.r.t. strikeout when drawing text. */
+    protected boolean strikeout = false;
+    /** The current strikeout color to use when drawing struck out text. */
+    protected RGB strikeoutColor = null;
 
     /**
      * Constructor for SWTGraphics2D.
@@ -190,6 +194,9 @@ public class SWTGraphics2D extends Graphics2D {
     
     
     protected org.eclipse.swt.graphics.Color getColor(RGB rgb) {
+        if (rgb == null) {
+            return null;
+        }
         org.eclipse.swt.graphics.Color color = COLOR_CACHE_2.get(rgb);
         if (color == null) {
             color = new org.eclipse.swt.graphics.Color(device, rgb);
@@ -568,18 +575,25 @@ public class SWTGraphics2D extends Graphics2D {
         }
         curFont = font;
 
-        if (underlining) {
+        if (underlining || strikeout) {
+            useTextStyle = true;
             if (curTextStyle == null) {
                 curTextStyle = new TextStyle();
             }
             curTextStyle.font = curFont;
-            curTextStyle.underline = true;
-            curTextStyle.underlineStyle = SWT.UNDERLINE_ERROR;//underline;
-            curTextStyle.underlineColor = getColor(underlineColor);
             curTextStyle.foreground = gc.getForeground();
-            // since PSWTText/PSWTStyledText cares on itself on the background
+            // since PSWTText/PSWTStyledText cares itself on the background
             //  setting the curTextStyle.background is left here 
-            useTextStyle = true;
+            
+            if (strikeout) {
+                curTextStyle.strikeout = strikeout;
+                curTextStyle.strikeoutColor = getColor(strikeoutColor);
+            }
+            if (underlining) {
+                curTextStyle.underline = true;
+                curTextStyle.underlineStyle = underline;
+                curTextStyle.underlineColor = getColor(underlineColor);
+            }
         } else {
             useTextStyle = false;
         }
@@ -667,16 +681,33 @@ public class SWTGraphics2D extends Graphics2D {
     
         
     /**
-     * Set the font for this SWTGraphics2D to <code>font</code>.
+     * Sets the underline for next text to be drawn on this SWTGraphics2D (see
+     * {@link #setFont(FontData)}, {@link #drawText(String, double, double, int)}.
      * 
-     * @param font
-     *            font for this SWTGraphics2D
+     * @param theUnderlining
+     *            the underline style constant, see {@link SWT}
+     * @param color
+     *            the underline color
      */
-    public void setUnderlining(final int theUnderlining, final RGB color) {
+    public void setUnderline(final int theUnderlining, final RGB color) {
         // -1 is the NO_UNDERLINE constant, see PSWTStyledText (klighd.piccolo)
         underlining = theUnderlining != -1;
         underline = theUnderlining;
         underlineColor = color;
+    }
+
+    /**
+     * Sets the strikeout flag for next text to be drawn on this SWTGraphics2D (see
+     * {@link #setFont(FontData)}, {@link #drawText(String, double, double, int)}.
+     * 
+     * @param theStrikeout
+     *            indicate whether to strike out
+     * @param color
+     *            the underline color
+     */
+    public void setStrikeout(final boolean theStrikeout, final RGB color) {
+        strikeout = theStrikeout;
+        strikeoutColor = color;
     }
 
     public void setTextStyle(final TextStyle style) {

@@ -91,7 +91,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
         /**
          * List of resources to open in editors.
          */
-        private List<String> directOpens;
+        private List<String> resourcesToOpen;
         
         
         /**
@@ -126,7 +126,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
             ExampleManager.get().generateProject(destination);
 
             // Prepare a list of resources to be opened
-            directOpens = new ArrayList<String>();
+            resourcesToOpen = new ArrayList<String>();
             
             // Import the different examples
             for (Example example : examples) {
@@ -137,7 +137,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
                 }
                 
                 try {
-                    directOpens.addAll(exampleManager.importExample(
+                    resourcesToOpen.addAll(exampleManager.importExample(
                             destination, example, checkDuplicates));
                     monitor.worked(1);
                 } catch (Exception e) {
@@ -260,11 +260,11 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
         this.getShell().setVisible(false);
         
         // Open direct opens
-        if (!worker.cancelled && !worker.directOpens.isEmpty() && destinationPage.openImports()) {
+        if (!worker.cancelled && !worker.resourcesToOpen.isEmpty() && destinationPage.openImports()) {
             IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
             IWorkbenchPage page = window.getActivePage();
             
-            for (String path : worker.directOpens) {
+            for (String path : worker.resourcesToOpen) {
                 IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
                         .findFilesForLocationURI(URIUtil.toURI(path), IResource.FILE);
                 if (files.length == 1) {

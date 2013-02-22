@@ -748,13 +748,14 @@ public class ModelCollectionTestRunner extends Suite {
         // --------------------------------------------------------------------
 
         /**
-         * The name of the runner is computed by the KielerTestRunner implementation.
+         * The name of the runner consists of the name of the model being tested and the class name
+         * in parentheses.
          * 
          * @return the name
          */
         @Override
         protected String getName() {
-            return ModelCollectionTestRunner.this.getClass().getSimpleName()
+            return this.modelName + " - " + ModelCollectionTestRunner.this.getClass().getSimpleName()
                     + "." + SingleModelTestRunner.this.getClass().getSimpleName();
         }
 

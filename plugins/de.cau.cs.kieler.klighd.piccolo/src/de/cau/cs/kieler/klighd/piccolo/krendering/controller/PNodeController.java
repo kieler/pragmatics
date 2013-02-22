@@ -19,12 +19,15 @@ package de.cau.cs.kieler.klighd.piccolo.krendering.controller;
 import org.eclipse.swt.graphics.RGB;
 
 import de.cau.cs.kieler.core.krendering.KColor;
+import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 import de.cau.cs.kieler.core.krendering.KRotation;
 import de.cau.cs.kieler.core.krendering.LineCap;
 import de.cau.cs.kieler.core.krendering.LineStyle;
-import de.cau.cs.kieler.core.krendering.UnderlineStyle;
+import de.cau.cs.kieler.core.krendering.Underline;
+import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.HAlignment;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PAlignmentNode.VAlignment;
+import de.cau.cs.kieler.klighd.piccolo.util.StyleUtil.Styles;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PBounds;
 
@@ -71,6 +74,22 @@ public abstract class PNodeController<T extends PNode> {
      */
     public abstract void setBounds(final PBounds bounds);
 
+    
+    /**
+     * Sets the invisibility of the associated node.
+     * 
+     * @param invisible
+     *            the invisibility state
+     */
+    public void setInvisible(final boolean invisible) {
+        getNode().setOccluded(invisible);
+        // need the following call in order to get newly invisible figures away
+        //  (PNode does not do it)
+        getNode().invalidatePaint();
+
+        //question: is it correct to do the following when propagateToChildren is set?
+        // controller.getNode().setVisible(!styles.invisibility.isInvisible());
+    }
     
     /**
      * Sets the foreground color of the associated node.
@@ -217,8 +236,22 @@ public abstract class PNodeController<T extends PNode> {
      * 
      * @param underline
      *            the underline property
+     * @param color
+     *            the underline color
      */
-    public void setUnderline(final UnderlineStyle underline) {
+    public void setUnderline(final Underline underline, final RGB color) {
+        // do nothing
+    }
+    
+    /**
+     * Sets the strikeout property for the associated node (most likely some kind of text).
+     * 
+     * @param strikeout
+     *            the underline property
+     * @param color
+     *            the strikeout color
+     */
+    public void setStrikeout(final boolean strikeout, final RGB color) {
         // do nothing
     }
     
@@ -229,18 +262,31 @@ public abstract class PNodeController<T extends PNode> {
      * 
      * @param styles A compound {@link Styles} field to infer the data from. 
      */
-    public void applyChanges(final AbstractRenderingController<?, ?>.Styles styles) {
-        // apply foreground styles
+    public void applyChanges(final Styles styles) {
+        // apply invisibility
+        if (styles.invisibility != null) {
+            this.setInvisible(styles.invisibility.isInvisible());
+            if (styles.invisibility.isInvisible()) {
+                // in case the node is invisible, we can skip the remaining definitions
+                return;
+            }
+        }
+        
+        // apply foreground coloring
         if (styles.foreground != null) {
             int alphaValue = styles.foreground.getAlpha();
             KColor color = styles.foreground.getColor();
             if (color != null) {
                 this.setForegroundColor(toRGB(color));
             }
-            setLineAlpha(alphaValue);
+            this.setLineAlpha(alphaValue);
+        } else {
+            this.setForegroundColor(KlighdConstants.BLACK);
+            this.setLineAlpha(
+                (Integer) KRenderingPackage.eINSTANCE.getKColoring_Alpha().getDefaultValue());
         }
 
-        // apply background color
+        // apply background coloring
         if (styles.background != null) {
             KColor color = styles.background.getColor();
             int alphaValue = styles.background.getAlpha();
@@ -253,6 +299,8 @@ public abstract class PNodeController<T extends PNode> {
         // apply line width
         if (styles.lineWidth != null) {
             this.setLineWidth(styles.lineWidth.getLineWidth());
+        } else {
+            this.setLineWidth(1);
         }
 
         // apply line style
@@ -328,10 +376,17 @@ public abstract class PNodeController<T extends PNode> {
         }
         
         // apply the underlined property
-        if (styles.underlined != null) {
-            this.setUnderline(styles.underlined.getUnderlineStyle());
+        if (styles.underline != null) {
+            this.setUnderline(styles.underline.getUnderline(), toRGB(styles.underline.getColor()));
         } else {
-            this.setUnderline(null); // for the moment!
+            this.setUnderline(null, KlighdConstants.BLACK);
+        }
+        
+        // apply the strikeout property
+        if (styles.strikeout != null) {
+            this.setStrikeout(styles.strikeout.getStruckOut(), toRGB(styles.strikeout.getColor()));
+        } else {
+            this.setStrikeout(false, KlighdConstants.BLACK);
         }
         
     }
@@ -343,10 +398,9 @@ public abstract class PNodeController<T extends PNode> {
      * 
      * @param color
      *            the {@link KColor} to be converted
-     * @return the {@link RGB}
+     * @return null if<code>color = null<code>, the related {@link RGB} otherwise
      */
     public RGB toRGB(final KColor color) {
-        return new RGB(color.getRed(), color.getGreen(), color.getBlue());
+        return color == null ? null : new RGB(color.getRed(), color.getGreen(), color.getBlue());
     }
-
 }

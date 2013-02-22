@@ -31,6 +31,14 @@ import de.cau.cs.kieler.core.krendering.LineCap
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import de.cau.cs.kieler.core.krendering.KStyleRef
 import de.cau.cs.kieler.core.krendering.KStyleHolder
+import de.cau.cs.kieler.core.krendering.KAreaPlacementData
+import de.cau.cs.kieler.core.krendering.KGridPlacementData
+import de.cau.cs.kieler.core.krendering.Underline
+import de.cau.cs.kieler.core.krendering.KTextUnderline
+import de.cau.cs.kieler.core.krendering.KTextStrikeout
+import de.cau.cs.kieler.core.krendering.KEllipse
+import de.cau.cs.kieler.core.krendering.KRectangle
+import de.cau.cs.kieler.core.krendering.KText
 
 /**
  * This utility class contains various methods that are convenient while composing KRendering data.
@@ -51,7 +59,27 @@ class KRenderingExtensions {
         return kge.getData(typeof(KRendering));
     }
 
-    def KRoundedRectangle addRoundedRectangle(KNode node, float cWidth, float cHeight, float lineWidth){
+    def KEllipse addEllipse(KNode node){
+        return renderingFactory.createKEllipse() => [
+            node.data.add(it)
+        ];
+    }
+
+    def KRectangle addRectangle(KNode node){
+        return renderingFactory.createKRectangle() => [
+            node.data.add(it)
+        ];
+    }
+
+    def KRoundedRectangle addRoundedRectangle(KNode node, float cWidth, float cHeight) {
+        return renderingFactory.createKRoundedRectangle => [
+            it.cornerWidth = cWidth;
+            it.cornerHeight = cHeight;
+            node.data.add(it)
+        ];
+    }
+    
+    def KRoundedRectangle addRoundedRectangle(KNode node, float cWidth, float cHeight, float lineWidth) {
         return renderingFactory.createKRoundedRectangle => [
             it.cornerWidth = cWidth;
             it.cornerHeight = cHeight;
@@ -59,6 +87,21 @@ class KRenderingExtensions {
             node.data.add(it)
         ];
     }
+    
+    def KRoundedRectangle setCornerSize(KRoundedRectangle rect, float cWidth, float cHeight) {
+        return rect => [
+            it.cornerWidth = cWidth;
+            it.cornerHeight = cHeight;
+        ]
+    }
+
+    def KText addText(KNode node, String text){
+        return renderingFactory.createKText() => [
+            node.data.add(it)
+            it.text = text;
+        ];
+    }
+
 
     def <T extends KRendering> T with(T rendering, KPlacementData pd) {
         return rendering => [
@@ -333,15 +376,49 @@ class KRenderingExtensions {
 		];		
 	}
 	
-	def <T extends KRendering> T setFontItalic(T rendering, boolean italic) {
+    def <T extends KRendering> T setFontItalic(T rendering, boolean italic) {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KFontItalic)).toList);
         return rendering => [
             it.styles += renderingFactory.createKFontItalic => [
-    		    it.setItalic(italic);
-		    ];
+                it.setItalic(italic);
+            ];
         ];
-	}
-	
+    }
+    
+    def <T extends KRendering> T setTextUnderline(T rendering, Underline underline) {
+        rendering.styles.removeAll(rendering.styles.filter(typeof(KTextUnderline)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKTextUnderline() => [
+                it.underline = underline;
+            ];
+        ];
+    }
+    
+    def <T extends KRendering> T setTextUnderlineColor(T rendering, KColor color) {
+        return rendering => [
+            (rendering.styles.filter(typeof(KTextUnderline)).last?:renderingFactory.createKTextUnderline()) => [
+                it.color = color;
+            ];
+        ];
+    }
+    
+    def <T extends KRendering> T setTextStrikeout(T rendering, boolean struckOut) {
+        rendering.styles.removeAll(rendering.styles.filter(typeof(KTextStrikeout)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKTextStrikeout() => [
+                it.struckOut = struckOut;
+            ];
+        ];
+    }
+    
+    def <T extends KRendering> T setTextStrikeoutColor(T rendering, KColor color) {
+        return rendering => [
+            (rendering.styles.filter(typeof(KTextStrikeout)).last?:renderingFactory.createKTextStrikeout()) => [
+                it.color = color;
+            ];
+        ];
+    }
+    
     def KFontSize getFontSize(KRendering rendering) {
         // chsch: I'm currently not sure whether the first or the last will win...
         return rendering.styles.filter(typeof(KFontSize)).last?:(renderingFactory.createKFontSize => [
@@ -417,25 +494,85 @@ class KRenderingExtensions {
 	
     def <T extends KRendering> T setAreaPlacementData(T rendering, KPosition topLeft, KPosition bottomRight){
         return rendering => [
-            rendering.placementData = renderingFactory.createKAreaPlacementData => [
+            rendering.placementData = renderingFactory.createKAreaPlacementData() => [
                 it.setTopLeft(topLeft);
                 it.setBottomRight(bottomRight);
             ];
         ];
     }
     
-	def <T extends KRendering> T setGridPlacementData(T rendering, float minCellWidth,
-	        float minCellHeight, KPosition topLeft, KPosition bottomRight) {
-		return rendering => [
-		    rendering.placementData = renderingFactory.createKGridPlacementData => [
-                it.setMinCellWidth(minCellWidth);
-                it.setMinCellHeight(minCellHeight);
-                it.setTopLeft(topLeft);
-                it.setBottomRight(bottomRight);
-            ];
+    def KAreaPlacementData setAreaPlacementData(KRendering rendering) {
+        return renderingFactory.createKAreaPlacementData() => [
+            rendering.placementData = it;
+        ];
+    }
+    
+    def KAreaPlacementData from(KAreaPlacementData placementData, KPosition topLeft) {
+        return placementData => [
+            it.topLeft = topLeft; 
+        ];
+    }
+    
+    def KAreaPlacementData from(KAreaPlacementData placementData, 
+                    PositionReferenceX px, float absoluteLR, float relativeLR,
+                    PositionReferenceY py, float absoluteTB, float relativeTB) {
+        return placementData.from(createKPosition(
+            px, absoluteLR, relativeLR, py, absoluteTB, relativeTB
+        ));
+    }
+    
+    def KRendering to(KAreaPlacementData placementData, KPosition bottomRight) {
+        placementData.bottomRight = bottomRight; 
+        return placementData.eContainer() as KRendering;
+    }
+    
+    def <T extends KRendering> T setSurroundingIndention(T rendering, float abs, float rel) {
+        return rendering.setAreaPlacementData(
+            createKPosition(LEFT, abs, rel, TOP, abs, rel),
+            createKPosition(RIGHT, abs, rel, BOTTOM, abs, rel)
+        );
+    }
+
+    def KRendering to(KAreaPlacementData placementData, 
+                    PositionReferenceX px, float absoluteLR, float relativeLR,
+                    PositionReferenceY py, float absoluteTB, float relativeTB) {
+        return placementData.to(createKPosition(
+            px, absoluteLR, relativeLR, py, absoluteTB, relativeTB
+        ));
+    }
+    
+    def KGridPlacementData setGridPlacementData(KRendering rendering, float minCellWidth,
+            float minCellHeight, KPosition topLeft, KPosition bottomRight) {
+		return renderingFactory.createKGridPlacementData() => [
+		    rendering.placementData = it;
+            it.setMinCellWidth(minCellWidth);
+            it.setMinCellHeight(minCellHeight);
+            it.setTopLeft(topLeft);
+            it.setBottomRight(bottomRight);
 		];
 	}
 	
+    def KGridPlacementData setGridPlacementData(KRendering rendering, float minCellWidth,
+            float minCellHeight) {
+        return renderingFactory.createKGridPlacementData() => [
+            rendering.placementData = it;
+            it.setMinCellWidth(minCellWidth);
+            it.setMinCellHeight(minCellHeight);
+        ];
+    }
+
+    def KGridPlacementData setGridPlacementData(KRendering rendering) {
+        return renderingFactory.createKGridPlacementData() => [
+            rendering.placementData = it;
+        ];
+    }
+    
+    def KGridPlacementData setMaxCellHeight(KGridPlacementData placementData, float maxCellHeight) {
+        return placementData => [
+            placementData.maxCellHeight = maxCellHeight;
+        ];
+    }
+
     def <T extends KRendering> T setPointPlacementData(T rendering, KPosition referencePoint,
         HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
         float horizontalMargin, float verticalMargin) {
@@ -459,7 +596,8 @@ class KRenderingExtensions {
                 it.absolute = posAbsolute;
                 it.relative = posRelative;
                 it.rotateWithLine = rotateWithLine;
-                it.YOffset = -4f;
+                it.XOffset = -width/2;
+                it.YOffset = -height/2;
             ];
         ];
     }
@@ -471,7 +609,7 @@ class KRenderingExtensions {
     public val PositionReferenceY BOTTOM = PositionReferenceY::BOTTOM;
     
     def KPosition createKPosition(PositionReferenceX px, float absoluteLR, float relativeLR,
-                                  PositionReferenceY py, float absoluteTB, float relativeTB){
+                                  PositionReferenceY py, float absoluteTB, float relativeTB) {
         return renderingFactory.createKPosition => [
             it.x = switch px {
                 case PositionReferenceX::LEFT: renderingFactory.createKLeftPosition

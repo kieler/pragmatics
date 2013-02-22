@@ -18,9 +18,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.krendering.KBackground;
-import de.cau.cs.kieler.core.krendering.KForeground;
-import de.cau.cs.kieler.core.krendering.KRectangle;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
 import de.cau.cs.kieler.core.krendering.KStyle;
@@ -106,10 +103,14 @@ public class KNodeRenderingController extends AbstractRenderingController<KNode,
                     + getGraphElement());
         }
 
+        parent.addChild(childAreaNode);
+
         // configure the child area
+        //  Caution: Changing the bounds of a childArea must not happen if the childArea is
+        //  not contained in any other PNode as this will influence the positioning of KEdgeNodes,
+        //  which synchronize on the container childAreas and their parents 
         NodeUtil.applySmartBounds(childAreaNode, initialBounds);
 
-        parent.addChild(childAreaNode);
         // create a controller for the child area and return it
         return new PNodeController<PNode>(childAreaNode) {
             public void setBounds(final PBounds bounds) {
@@ -153,17 +154,6 @@ public class KNodeRenderingController extends AbstractRenderingController<KNode,
      */
     private static KRendering createDefaultNodeRendering() {
         // create the default rendering model
-        KRenderingFactory factory = KRenderingFactory.eINSTANCE;
-        KRectangle rect = factory.createKRectangle();
-
-        KForeground foreground = factory.createKForeground();
-        foreground.setColor(factory.createKColor());
-        KBackground background = factory.createKBackground();
-        background.setColor(factory.createKColor());
-
-        rect.getStyles().add(foreground);
-        rect.getStyles().add(background);
-        return rect;
+        return KRenderingFactory.eINSTANCE.createKRectangle();
     }
-
 }
