@@ -912,7 +912,7 @@ public class KAwtRenderer {
     }
     
     /**
-     * Handle the direct placement or stack placement of a rendering and render it.
+     * Handle the area placement or point placement of a rendering and render it.
      * 
      * @param rendering a rendering
      * @param parentSize the parent size
@@ -961,27 +961,51 @@ public class KAwtRenderer {
             
         } else if (placeData instanceof KPointPlacementData) {
             KPointPlacementData pointPlaceData = (KPointPlacementData) placeData;
+
+            //use the properties attached to the Rendering to get the positioning data of this element
             
-            // determine top left corner
-            if (pointPlaceData.getReferencePoint() != null) {
-                KPosition refPos = pointPlaceData.getReferencePoint();
-                if (refPos.getX() != null) {
-                    KXPosition xpos = refPos.getX();
-                    x = xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute();
-                }
-                if (refPos.getY() != null) {
-                    KYPosition ypos = refPos.getY();
-                    y = ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute();
-                }
+            /**
+             * Property to save xPosition of placed element.
+             */
+            IProperty<Double> pointPlacedObjectXPos = new Property<Double>("PointPlacedObjectXPos");
+            /**
+             * Property to save yPosition of placed element.
+             */
+            IProperty<Double> pointPlacedObjectYPos = new Property<Double>("PointPlacedObjectYPos");
+            /**
+             * Property to save width of element.
+             */
+            IProperty<Float> pointPlacedObjectWidth = new Property<Float>("PointPlacedObjectWidth");
+            /**
+             * Property to save height of element.
+             */
+            IProperty<Float> pointPlacedObjectHeight = new Property<Float>("PointPlacedObjectHeight");
+
+            KRendering containerRendering = ((KRendering) pointPlaceData.eContainer());
+            
+            Double xposcoord = containerRendering.getProperty(pointPlacedObjectXPos);
+            Double yposcoord = containerRendering.getProperty(pointPlacedObjectYPos);
+            Float width = containerRendering.getProperty(pointPlacedObjectWidth);
+            Float height = containerRendering.getProperty(pointPlacedObjectHeight);
+            if (xposcoord != null) {
+                x = xposcoord;
             }
-            
-            // determine bottom right corner
-            childSize.translate(-x, -y);
-            
-//            childSize.x = 100;
-//            childSize.y = 30;
-                    
-            
+
+            if (yposcoord != null) {
+                y = yposcoord;
+            }
+
+            if (width != null) {
+                childSize.x = width;
+            } else {
+                childSize.x = 0;
+            }
+
+            if (height != null) {
+                childSize.y = height;
+            } else {
+                childSize.y = 0;
+            }
         } else if (placeData != null && transData != null) {
             transData.log("Placement data not supported in the context of direct placement: "
                     + placeData.eClass().getName());
