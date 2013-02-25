@@ -816,12 +816,18 @@ public class KAwtRenderer {
         for (KPosition position : polyline.getPoints()) {
             KVector point = new KVector();
             KXPosition xpos = position.getX();
-            if (xpos != null) {
+            if (xpos instanceof KLeftPosition) {
                 point.x = xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute();
+            } else if (xpos instanceof KRightPosition) {
+                point.x = parentSize.x
+                        - (xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute());
             }
             KYPosition ypos = position.getY();
-            if (ypos != null) {
+            if (ypos instanceof KTopPosition) {
                 point.y = ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute();
+            } else if (ypos instanceof KBottomPosition) {
+                point.y = parentSize.y
+                        - (ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute());
             }
             points.add(point);
         }
