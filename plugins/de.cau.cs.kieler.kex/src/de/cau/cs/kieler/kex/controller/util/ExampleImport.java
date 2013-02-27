@@ -22,7 +22,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -49,8 +52,6 @@ import de.cau.cs.kieler.kex.model.ExampleResource;
  * 
  */
 public final class ExampleImport {
-
-    private static final String WORKSPACE_LOCATION = Platform.getLocation().toString();
 
     private static final String EMPTY_PIC_PATH = "files/noPreview.png";
     private static final String KEX_NAMESPACE_ID = "de.cau.cs.kieler.kex";
@@ -101,10 +102,8 @@ public final class ExampleImport {
 
         List<String> directOpens = new ArrayList<String>();
         List<String> finishedResources = new ArrayList<String>();
-
-        StringBuilder destFolder = new StringBuilder();
-        destFolder.append(WORKSPACE_LOCATION).append("/")
-                .append((destination != null ? destination.toString() : "")).append("/");
+        
+        String destFolder = getDestinationPath(destination);
 
         try {
             List<ExampleResource> resources = example.getResources();
@@ -113,13 +112,55 @@ public final class ExampleImport {
             if (rootDirectory != null && rootDirectory.length() > 1) {
                 exampleBeginIndex = rootDirectory.length();
             }
-            handleResources(directOpens, resources, destFolder.toString(),
+            handleResources(directOpens, resources, destFolder,
                     example.getNamespaceId(), exampleBeginIndex, checkDuplicate, finishedResources);
         } catch (Exception e) {
             deleteResources(finishedResources);
             throw e;
         }
         return directOpens;
+    }
+
+    /**
+     * Takes the given destination path and returns a String path of its location in the file system.
+     * 
+     * @param destination the destination path selected as the import target. Assumed to be not empty.
+     * @return the portable version of the destination's absolute file system path.
+     * @throws CoreException if the project to import into does not exist.
+     */
+    private static String getDestinationPath(final IPath destination) throws CoreException {
+        // Declare some helpful variables
+        IContainer currContainer;
+        IFolder currFolder;
+        String[] pathSegments = destination.segments();
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        IWorkspaceRoot workspaceRoot = workspace.getRoot();
+        
+        // Retrieve the project
+        currContainer = workspaceRoot.getProject(pathSegments[0]);
+        if (!currContainer.exists()) {
+            throw new CoreException(new Status(
+                    IStatus.ERROR,
+                    KEXPlugin.PLUGIN_ID,
+                    "Project to import into does not exist."));
+        }
+        
+        // Iterate through the path segments, creating the folder structure along the way
+        for (int i = 1; i < pathSegments.length; i++) {
+            // Retrieve the new container
+            currFolder = currContainer.getFolder(new Path(pathSegments[i]));
+            if (!currFolder.exists()) {
+                currFolder.create(true, true, null);
+            }
+            
+            currContainer = currFolder;
+        }
+        
+        String destFolder = currContainer.getLocation().toPortableString();
+        if (!destFolder.endsWith("/")) {
+            destFolder = destFolder + "/";
+        }
+        return destFolder;
     }
 
     private static void deleteResources(final List<String> finishedResources) {

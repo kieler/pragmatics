@@ -119,7 +119,7 @@ public class ImportDestPage extends WizardResourceImportPage {
      */
     @Override
     public IPath getResourcePath() {
-        return super.getResourcePath();
+        return super.getResourcePath().makeAbsolute();
 
     }
 

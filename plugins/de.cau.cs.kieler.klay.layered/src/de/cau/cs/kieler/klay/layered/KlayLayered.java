@@ -581,7 +581,10 @@ public final class KlayLayered {
             EnumSet.of(LayoutProcessorStrategy.NODE_MARGIN_CALCULATOR,
                     LayoutProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR),
             
-            null, null);
+            // Before Phase 5
+            EnumSet.of(LayoutProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR),
+            
+            null);
 
     /** additional processor dependencies for flattened hierarchical graphs. */
     private static final IntermediateProcessingConfiguration FLATTENED_HIERARCHY_PROCESSING_ADDITIONS 

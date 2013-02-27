@@ -42,6 +42,9 @@ import de.cau.cs.kieler.core.util.Maybe;
  * @author msp
  */
 public class EffectsWorker extends Thread {
+    
+    /** number of milliseconds after which no more UI updates are scheduled in monitored mode. */
+    private static final int UI_UPDATE_TIMEOUT = 50;
 
     /** list of listeners to executed effects. */
     private final List<IEffectsListener> effectsListeners = new ArrayList<IEffectsListener>();
@@ -155,6 +158,16 @@ public class EffectsWorker extends Thread {
                                     }
                                 }
                                 if (!finished) {
+                                    
+                                    // give the display some time to process pending operations
+                                    long startTime = System.currentTimeMillis();
+                                    boolean hasMoreToDispatch;
+                                    do {
+                                        hasMoreToDispatch = Display.getCurrent().readAndDispatch();
+                                    } while (hasMoreToDispatch
+                                            && System.currentTimeMillis() - startTime
+                                            < UI_UPDATE_TIMEOUT);
+                                    
                                     // retrieve the next effect from the queue
                                     synchronized (effects) {
                                         while (effects.size() == 0) {
