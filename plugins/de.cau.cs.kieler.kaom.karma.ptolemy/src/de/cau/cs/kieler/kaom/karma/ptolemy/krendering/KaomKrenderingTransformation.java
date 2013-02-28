@@ -275,7 +275,8 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             }
             KPolyline edgeRendering = null;
             Annotation ptolemyClass = ((Annotatable) l.getSource()).getAnnotation("ptolemyClass");
-            if (((StringAnnotation) ptolemyClass).getValue().equals("ptolemy.domains.modal.kernel.State")) {
+            
+            if ((ptolemyClass != null) && ((StringAnnotation) ptolemyClass).getValue().equals("ptolemy.domains.modal.kernel.State")) {
                 edgeRendering = factory.createKSpline();
                 KLineWidth linewidth = factory.createKLineWidth();
                 linewidth.setLineWidth(1.6f);

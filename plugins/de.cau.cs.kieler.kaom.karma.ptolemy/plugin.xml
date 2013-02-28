@@ -480,5 +480,16 @@
             name="openkaomklighd">
       </command>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.cau.cs.kieler.klighd.views.DiagramEditorPart"
+            default="true"
+            filenames=".kaom"
+            icon="icons/klighd.gif"
+            id="de.cau.cs.kieler.kaom.karma.ptolemy.krenderingeditor"
+            name="Kaom Diagram Viewer">
+      </editor>
+   </extension>
 
 </plugin>
