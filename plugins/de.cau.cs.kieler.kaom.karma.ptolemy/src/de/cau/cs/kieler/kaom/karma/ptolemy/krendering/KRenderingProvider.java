@@ -35,17 +35,20 @@ public class KRenderingProvider {
     
     public static KRendering getKNodeRendering(Annotatable annotatable) {
         StringAnnotation language = (StringAnnotation) annotatable.getAnnotation("language");
-        if (language != null && language.getValue().equals("ptolemy") ) {
+        if (language != null && language.getValue().equals("ptolemy") ) {            
             Annotation director = annotatable.getAnnotation("Director");
             if (director != null) {
                 return figureProvider.createDirector();//getDirectorRendering();
             } else if ((annotatable instanceof Entity) && (((StringAnnotation) annotatable.getAnnotation("ptolemyClass")).getValue().equals("ptolemy.actor.lib.Accumulator"))) {
                 return figureProvider.createAccumulator();
+            } else if ((annotatable instanceof Entity) && (((StringAnnotation) annotatable.getAnnotation("ptolemyClass")).getValue().equals("ptolemy.domains.modal.kernel.State"))) {
+                return figureProvider.createStateRendering((Entity) annotatable);
             } else if ((annotatable instanceof Entity) && ((Entity) annotatable).getChildEntities().isEmpty()) {
                 return getPtolemySvgRendering(annotatable);
             } else {
                 return getDefaultRendering();
             }
+            
         }
         return null;
     }
@@ -218,22 +221,6 @@ public class KRenderingProvider {
         KRectangle rectangle = factory.createKRectangle();
         return rectangle;
     }
-    
-    public static KRendering getDirectorRendering() {
-        KRenderingFactory factory = KRenderingFactory.eINSTANCE;
-        KRectangle rectangle = factory.createKRectangle();
-        /*
-        KGridPlacementData placement = factory.createKGridPlacementData();
-        placement.setHeightHint(30);
-        placement.setWidthHint(100);
-        rectangle.setPlacementData(placement);
-        
-        KBackgroundColor fill = factory.createKBackgroundColor();
-        rectangle.getStyles().add((KBackgroundColor) FigureParserKRendering.lookupColor("green", fill));
-        */
-        return rectangle;
-    }
-    
     
     /**
      * Loads the given Ptolemy entity.

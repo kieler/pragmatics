@@ -52,11 +52,13 @@ import de.cau.cs.kieler.core.krendering.KPosition;
 import de.cau.cs.kieler.core.krendering.KRectangle;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
+import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KXPosition;
 import de.cau.cs.kieler.core.krendering.KYPosition;
 import de.cau.cs.kieler.core.krendering.impl.KRenderingFactoryImpl;
 import de.cau.cs.kieler.core.ui.util.CoreUiUtil;
+import de.cau.cs.kieler.kaom.Entity;
 import diva.canvas.CanvasUtilities;
 import diva.canvas.Figure;
 import diva.canvas.toolbox.ImageFigure;
@@ -576,6 +578,86 @@ public class FigureProviderKRendering {
         
         return relation;
         
+    }
+    
+    public KRendering createStateRendering(final Entity entity) {
+        Annotation isfinal = entity.getAnnotation("isFinalState");
+        Annotation isinitial = entity.getAnnotation("isInitialState");
+        KRoundedRectangle figure = factory.createKRoundedRectangle();
+        
+        figure.setCornerHeight(30);
+        figure.setCornerWidth(30);
+        KAreaPlacementData placement = factory.createKAreaPlacementData();
+
+        KPosition topleft = makeTopLeftKPosition(0, 0);
+
+        KPosition bottomright = makeBottomRightKPosition(30, 30);
+
+        placement.setTopLeft(topleft);
+        placement.setBottomRight(bottomright);
+
+        figure.setPlacementData(placement);
+
+        if (isfinal != null && isinitial != null) {
+            KRoundedRectangle innerfigure = factory.createKRoundedRectangle();
+            
+            innerfigure.setCornerHeight(22);
+            innerfigure.setCornerWidth(22);
+            KAreaPlacementData innerplacement = factory.createKAreaPlacementData();
+
+            KPosition innertopleft = makeTopLeftKPosition(3, 3);
+
+            KPosition innerbottomright = makeBottomRightKPosition(27, 27);
+
+            innerplacement.setTopLeft(innertopleft);
+            innerplacement.setBottomRight(innerbottomright);
+
+            innerfigure.setPlacementData(innerplacement);
+            
+            figure.getChildren().add(innerfigure);
+            
+            KLineWidth linewidth = factory.createKLineWidth();
+            linewidth.setLineWidth(4);
+            figure.getStyles().add(linewidth);
+            KLineWidth innerlinewidth = factory.createKLineWidth();
+            innerlinewidth.setLineWidth(4);
+            innerfigure.getStyles().add(innerlinewidth);
+        } else if (isfinal != null) {
+            
+            KRoundedRectangle innerfigure = factory.createKRoundedRectangle();
+            
+            innerfigure.setCornerHeight(22);
+            innerfigure.setCornerWidth(22);
+            KAreaPlacementData innerplacement = factory.createKAreaPlacementData();
+
+            KPosition innertopleft = makeTopLeftKPosition(3, 3);
+
+            KPosition innerbottomright = makeBottomRightKPosition(27, 27);
+
+            innerplacement.setTopLeft(innertopleft);
+            innerplacement.setBottomRight(innerbottomright);
+
+            innerfigure.setPlacementData(innerplacement);
+            
+            figure.getChildren().add(innerfigure);
+            
+            KLineWidth linewidth = factory.createKLineWidth();
+            linewidth.setLineWidth(1);
+            figure.getStyles().add(linewidth);
+            KLineWidth innerlinewidth = factory.createKLineWidth();
+            innerlinewidth.setLineWidth(1);
+            innerfigure.getStyles().add(innerlinewidth);
+        } else if (isinitial != null) {
+            KLineWidth linewidth = factory.createKLineWidth();
+            linewidth.setLineWidth(4);
+            figure.getStyles().add(linewidth);
+        } else {
+            KLineWidth linewidth = factory.createKLineWidth();
+            linewidth.setLineWidth(1);
+            figure.getStyles().add(linewidth);
+        }
+        
+        return figure;
     }
     
 }

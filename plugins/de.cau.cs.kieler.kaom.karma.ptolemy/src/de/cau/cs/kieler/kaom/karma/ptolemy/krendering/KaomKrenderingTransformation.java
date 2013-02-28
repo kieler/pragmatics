@@ -16,10 +16,12 @@ package de.cau.cs.kieler.kaom.karma.ptolemy.krendering;
 
 import java.util.HashMap;
 
-import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
+import de.cau.cs.kieler.core.annotations.Annotatable;
+import de.cau.cs.kieler.core.annotations.Annotation;
+import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -27,13 +29,23 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.krendering.KAreaPlacementData;
+import de.cau.cs.kieler.core.krendering.KBackground;
+import de.cau.cs.kieler.core.krendering.KBottomPosition;
 import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KContainerRendering;
-import de.cau.cs.kieler.core.krendering.KGridPlacementData;
+import de.cau.cs.kieler.core.krendering.KDecoratorPlacementData;
+import de.cau.cs.kieler.core.krendering.KForeground;
+import de.cau.cs.kieler.core.krendering.KLeftPosition;
+import de.cau.cs.kieler.core.krendering.KLineWidth;
+import de.cau.cs.kieler.core.krendering.KPolygon;
+import de.cau.cs.kieler.core.krendering.KPolyline;
+import de.cau.cs.kieler.core.krendering.KPosition;
 import de.cau.cs.kieler.core.krendering.KRectangle;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
+import de.cau.cs.kieler.core.krendering.KRightPosition;
 import de.cau.cs.kieler.core.krendering.KRoundedBendsPolyline;
+import de.cau.cs.kieler.core.krendering.KTopPosition;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
@@ -41,10 +53,10 @@ import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.Relation;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klighd.TransformationContext;
 import de.cau.cs.kieler.klighd.transformations.AbstractTransformation;
@@ -170,11 +182,16 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             KRendering topRen = getKRendering(n);
             KShapeLayout lay = getKLayout(n);
             if (lay != null) {
-                lay.setProperty(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.klay.layered");
-                lay.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
-                if (e.getChildEntities() == null || e.getChildEntities().isEmpty()) {
-                    lay.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
-                    
+                if (e.getAnnotation("initialStateName") != null) {
+                    lay.setProperty(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.graphviz.dot");
+                    lay.setProperty(LayoutOptions.DIRECTION, Direction.RIGHT);
+                } else {
+                    lay.setProperty(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.klay.layered");
+                    lay.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
+                    if (e.getChildEntities() == null || e.getChildEntities().isEmpty()) {
+                        lay.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+                        
+                    }
                 }
             }
             if (ren != null) {
@@ -256,8 +273,21 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
                 KLabel label = KimlUtil.createInitializedLabel(edge);
                 label.setText(l.getName());
             }
-            KRoundedBendsPolyline edgeRendering = factory.createKRoundedBendsPolyline();
-            edgeRendering.setBendRadius(5);
+            KPolyline edgeRendering = null;
+            Annotation ptolemyClass = ((Annotatable) l.getSource()).getAnnotation("ptolemyClass");
+            if (((StringAnnotation) ptolemyClass).getValue().equals("ptolemy.domains.modal.kernel.State")) {
+                edgeRendering = factory.createKSpline();
+                KLineWidth linewidth = factory.createKLineWidth();
+                linewidth.setLineWidth(1.6f);
+                edgeRendering.getStyles().add(linewidth);
+                this.addArrowToEdge(edgeRendering);
+                                
+                //edgeRendering
+            } else {
+                edgeRendering = factory.createKRoundedBendsPolyline();
+                 ((KRoundedBendsPolyline) edgeRendering).setBendRadius(5);
+            }
+  
             KEdgeLayout el = null;
             EList<KGraphData> data = edge.getData();
             KContainerRendering topren = null;
@@ -303,6 +333,78 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             }
         }
         return parent;
+    }
+    
+    private void addArrowToEdge(KPolyline edgeRendering) {
+        KRenderingFactory factory = KRenderingFactory.eINSTANCE;
+        KPolygon arrow = factory.createKPolygon();
+        
+        KLeftPosition px1 = factory.createKLeftPosition();
+        px1.setRelative(0);
+        KTopPosition py1 = factory.createKTopPosition();
+        py1.setRelative(0);
+        KPosition p1 = factory.createKPosition();
+        p1.setX(px1);
+        p1.setY(py1);
+        arrow.getPoints().add(p1);
+        
+        KLeftPosition px2 = factory.createKLeftPosition();
+        px2.setRelative(0.4f);
+        KTopPosition py2 = factory.createKTopPosition();
+        py2.setRelative(0.5f);
+        KPosition p2 = factory.createKPosition();
+        p2.setX(px2);
+        p2.setY(py2);
+        arrow.getPoints().add(p2);
+        
+        KLeftPosition px3 = factory.createKLeftPosition();
+        px3.setRelative(0);
+        KBottomPosition py3 = factory.createKBottomPosition();
+        py3.setRelative(0);
+        KPosition p3 = factory.createKPosition();
+        p3.setX(px3);
+        p3.setY(py3);
+        arrow.getPoints().add(p3);
+        
+        KRightPosition px4 = factory.createKRightPosition();
+        px4.setRelative(0);
+        KTopPosition py4 = factory.createKTopPosition();
+        py4.setRelative(0.5f);
+        KPosition p4 = factory.createKPosition();
+        p4.setX(px4);
+        p4.setY(py4);
+        arrow.getPoints().add(p4);
+        
+        KForeground fg = factory.createKForeground();
+        KColor color = factory.createKColor();
+        color.setBlue(0);
+        color.setGreen(0);
+        color.setRed(0);
+        fg.setColor(color);
+        
+        arrow.getStyles().add(fg);
+        
+        KBackground bg = factory.createKBackground();
+        KColor colorbg = factory.createKColor();
+        colorbg.setBlue(0);
+        colorbg.setGreen(0);
+        colorbg.setRed(0);
+        bg.setColor(colorbg);
+        
+        arrow.getStyles().add(bg);
+        
+        KDecoratorPlacementData decoratorPlacement = factory.createKDecoratorPlacementData();
+        decoratorPlacement.setRotateWithLine(true);
+        decoratorPlacement.setRelative(1f);
+        decoratorPlacement.setAbsolute(-3f);
+        decoratorPlacement.setWidth(7);
+        decoratorPlacement.setXOffset(-5f);
+        decoratorPlacement.setHeight(5);
+        decoratorPlacement.setYOffset(-2.5f);
+        
+        arrow.setPlacementData(decoratorPlacement);
+        edgeRendering.getChildren().add(arrow);
+
     }
     
 }
