@@ -25,7 +25,6 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
 
 
 /**
@@ -72,13 +71,6 @@ public class PortLayoutProvider extends AbstractLayoutProvider {
     // Properties
     
     /**
-     * Whether the placement of ports should be changed.
-     */
-    private static final Property<Boolean> CHANGE_PORT_PLACEMENT = new Property<Boolean>(
-            "de.cau.cs.kieler.kiml.portlayouter.changePortPlacement",
-            true);
-    
-    /**
      * Probability for ports to be placed on inverted sides.
      */
     private static final Property<Float> INVERTED_PORT_SIDE_PROB = new Property<Float>(
@@ -91,20 +83,6 @@ public class PortLayoutProvider extends AbstractLayoutProvider {
     private static final Property<Float> NORTH_SOUTH_PORT_SIDE_PROB = new Property<Float>(
             "de.cau.cs.kieler.kiml.portlayouter.northSouthPortSideProbability",
             0.1f);
-    
-    /**
-     * Whether port constraints should be set on nodes.
-     */
-    private static final Property<Boolean> CHANGE_PORT_CONSTRAINTS = new Property<Boolean>(
-            "de.cau.cs.kieler.kiml.portlayouter.changePortConstraints",
-            false);
-    
-    /**
-     * Port constraints to be set on nodes.
-     */
-    private static final Property<PortConstraints> PORT_CONSTRAINTS = new Property<PortConstraints>(
-            "de.cau.cs.kieler.kiml.portlayouter.portConstraints",
-            PortConstraints.FREE);
     
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -130,12 +108,8 @@ public class PortLayoutProvider extends AbstractLayoutProvider {
         KShapeLayout graphShapeLayout = layoutNode.getData(KShapeLayout.class);
         boolean debug = graphShapeLayout.getProperty(LayoutOptions.DEBUG_MODE);
         
-        boolean changePortPlacement = graphShapeLayout.getProperty(CHANGE_PORT_PLACEMENT);
         float oddSideProb = graphShapeLayout.getProperty(INVERTED_PORT_SIDE_PROB);
         float northSouthSideProb = graphShapeLayout.getProperty(NORTH_SOUTH_PORT_SIDE_PROB);
-        
-        boolean changePortConstraints = graphShapeLayout.getProperty(CHANGE_PORT_CONSTRAINTS);
-        PortConstraints portConstraints = graphShapeLayout.getProperty(PORT_CONSTRAINTS);
         
         // Check for errors
         if (oddSideProb < 0.0f || oddSideProb > 1.0f) {
@@ -170,14 +144,7 @@ public class PortLayoutProvider extends AbstractLayoutProvider {
         
         // Iterate through the nodes, placing ports and changing port constraints
         for (KNode node : layoutNode.getChildren()) {
-            if (changePortPlacement) {
-                placePorts(node, oddSideProb, northSouthSideProb, randomizer, debug);
-            }
-            
-            if (changePortConstraints) {
-                KShapeLayout nodeShapeLayout = node.getData(KShapeLayout.class);
-                nodeShapeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, portConstraints);
-            }
+            placePorts(node, oddSideProb, northSouthSideProb, randomizer, debug);
         }
         
         progressMonitor.done();

@@ -12,19 +12,10 @@
             name="Port Layouter">
             
             <knownOption
-                option="de.cau.cs.kieler.kiml.portlayouter.changePortPlacement">
-            </knownOption>
-            <knownOption
                 option="de.cau.cs.kieler.kiml.portlayouter.invertedPortSideProbability">
             </knownOption>
             <knownOption
                 option="de.cau.cs.kieler.kiml.portlayouter.northSouthPortSideProbability">
-            </knownOption>
-            <knownOption
-                option="de.cau.cs.kieler.kiml.portlayouter.changePortConstraints">
-            </knownOption>
-            <knownOption
-                option="de.cau.cs.kieler.kiml.portlayouter.portConstraints">
             </knownOption>
             <knownOption
                 option="de.cau.cs.kieler.randomSeed">
@@ -34,14 +25,6 @@
          </knownOption>
         </layoutAlgorithm>
         
-        <layoutOption
-            id="de.cau.cs.kieler.kiml.portlayouter.changePortPlacement"
-            name="Change Port Placement"
-            description="Whether the position of ports is changed when this algorithm is run."
-            appliesTo="parents"
-            type="boolean"
-            default="true">
-        </layoutOption>
         <layoutOption
             id="de.cau.cs.kieler.kiml.portlayouter.invertedPortSideProbability"
             name="Inverted Port Side Probability"
@@ -57,24 +40,6 @@
             appliesTo="parents"
             type="float"
             default="0.1">
-        </layoutOption>
-        <layoutOption
-            id="de.cau.cs.kieler.kiml.portlayouter.changePortConstraints"
-            name="Change Port Constraints"
-            description="Whether the port constraints of nodes are changed when this algorithm is run."
-            appliesTo="parents"
-            type="boolean"
-            default="false">
-        </layoutOption>
-        <layoutOption
-            id="de.cau.cs.kieler.kiml.portlayouter.portConstraints"
-            name="Port Constraints"
-            description="Port constraints set on nodes."
-            appliesTo="parents"
-            type="enum"
-            class="de.cau.cs.kieler.kiml.options.PortConstraints"
-            default="FREE"
-            lowerBound="1">
         </layoutOption>
     </extension>
 </plugin>
