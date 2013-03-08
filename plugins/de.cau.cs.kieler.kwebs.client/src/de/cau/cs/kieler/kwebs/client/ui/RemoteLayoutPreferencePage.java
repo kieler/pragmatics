@@ -15,6 +15,7 @@ final  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
 package de.cau.cs.kieler.kwebs.client.ui;
 
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -36,7 +37,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
@@ -606,13 +606,24 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             }
         );
 
-        comp.setLayout(new FillLayout(SWT.VERTICAL));
+        // Make sure the buttons have an appropriate minimum size
+        setButtonLayoutData(scEditButton1);
+        setButtonLayoutData(scEditButton2);
+        setButtonLayoutData(scEditButton3);
+        setButtonLayoutData(scEditButton4);
+        setButtonLayoutData(scEditButton5);
+        setButtonLayoutData(scEditButton6);
+
+        GridLayout compLayout = new GridLayout(1, false);
+        compLayout.verticalSpacing = LayoutConstants.getSpacing().y;
+        compLayout.marginHeight = 0;
+        compLayout.marginWidth = 0;
+        comp.setLayout(compLayout);
         comp.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 
         generalGroup.setLayout(new GridLayout(2, false));
 
         return generalGroup;
-
     }
 
     /**

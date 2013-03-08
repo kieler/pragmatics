@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -88,12 +89,15 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      */
     protected Control createContents(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
-        Group generalGroup = createGeneralGroup(composite);
-        generalGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-        Group optionsGroup = createOptionsGroup(composite);
-        optionsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         GridLayout compositeLayout = new GridLayout(1, false);
         composite.setLayout(compositeLayout);
+        
+        Group generalGroup = createGeneralGroup(composite);
+        generalGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        
+        Group optionsGroup = createOptionsGroup(composite);
+        optionsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        
         return composite;
     }
     
@@ -115,21 +119,25 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         // add checkbox for animation
         animationCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
         animationCheckBox.setText(Messages.getString("kiml.ui.64")); //$NON-NLS-1$
+        animationCheckBox.setToolTipText(Messages.getString("kiml.ui.67")); //$NON-NLS-1$
         animationCheckBox.setSelection(getPreferenceStore().getBoolean(LayoutHandler.PREF_ANIMATION));
         
         // add checkbox for zoom-to-fit
         zoomCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
         zoomCheckBox.setText(Messages.getString("kiml.ui.65")); //$NON-NLS-1$
+        zoomCheckBox.setToolTipText(Messages.getString("kiml.ui.68")); //$NON-NLS-1$
         zoomCheckBox.setSelection(getPreferenceStore().getBoolean(LayoutHandler.PREF_ZOOM));
         
         // add checkbox for progress dialog
         progressCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
         progressCheckBox.setText(Messages.getString("kiml.ui.66")); //$NON-NLS-1$
+        progressCheckBox.setToolTipText(Messages.getString("kiml.ui.69")); //$NON-NLS-1$
         progressCheckBox.setSelection(getPreferenceStore().getBoolean(LayoutHandler.PREF_PROGRESS));
         
         // add checkbox for oblique routing
         obliqueCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
         obliqueCheckBox.setText(Messages.getString("kiml.ui.36")); //$NON-NLS-1$
+        obliqueCheckBox.setToolTipText(Messages.getString("kiml.ui.70")); //$NON-NLS-1$
         obliqueCheckBox.setSelection(getPreferenceStore().getBoolean(
                 EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE));
         
@@ -199,7 +207,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         
         // create the table and actions to edit layout option values
         addOptionTable(elementGroup, optionEntries);
-
+        
         elementGroup.setLayout(new GridLayout(2, false));
         return elementGroup;
     }
@@ -212,6 +220,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      */
     private void addOptionTable(final Composite parent,
             final List<OptionsTableProvider.DataEntry> entries) {
+        
         // construct the options table
         final Table table = new Table(parent, SWT.BORDER);
         final TableColumn column1 = new TableColumn(table, SWT.NONE);
@@ -308,8 +317,17 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                 }
             }
         });
+
+        // Make sure the buttons have an appropriate minimum size
+        setButtonLayoutData(newButton);
+        setButtonLayoutData(editButton);
+        setButtonLayoutData(removeButton);
         
-        composite.setLayout(new FillLayout(SWT.VERTICAL));
+        GridLayout compositeLayout = new GridLayout(1, false);
+        compositeLayout.verticalSpacing = LayoutConstants.getSpacing().y;
+        compositeLayout.marginHeight = 0;
+        compositeLayout.marginWidth = 0;
+        composite.setLayout(compositeLayout);
         GridData compositeLayoutData = new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1);
         composite.setLayoutData(compositeLayoutData);
     }
