@@ -27,6 +27,8 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -272,13 +274,14 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         removeButton.setEnabled(false);
         removeButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent event) {
-                OptionsTableProvider.DataEntry entry = getEntry(entries, table.getSelectionIndex());
+                int selectionIndex = table.getSelectionIndex();
+                OptionsTableProvider.DataEntry entry = getEntry(entries, selectionIndex);
                 if (entry != null) {
                     entry.setValue(null);
                     tableViewer.refresh();
                     int count = 0;
-                    for (OptionsTableProvider.DataEntry e : entries) {
-                        if (e.getValue() != null) {
+                    for (OptionsTableProvider.DataEntry en : entries) {
+                        if (en.getValue() != null) {
                             count++;
                         }
                     }
@@ -292,6 +295,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         
         // react on selection changes of the options table
         table.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(final SelectionEvent event) {
                 if (!entries.isEmpty() && event.item != null) {
                     editButton.setEnabled(true);
@@ -299,6 +303,40 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                 } else {
                     editButton.setEnabled(false);
                     removeButton.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void widgetDefaultSelected(final SelectionEvent e) {
+                // Duplicate code from edit button handler
+                OptionsTableProvider.DataEntry entry = getEntry(entries, table.getSelectionIndex());
+                if (entry != null) {
+                    showEditDialog(parent.getShell(), entry);
+                    tableViewer.refresh();
+                }
+            }
+        });
+        table.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(final KeyEvent e) {
+                if (e.character == SWT.DEL) {
+                    // Duplicate code from remove button handler
+                    int selectionIndex = table.getSelectionIndex();
+                    OptionsTableProvider.DataEntry entry = getEntry(entries, selectionIndex);
+                    if (entry != null) {
+                        entry.setValue(null);
+                        tableViewer.refresh();
+                        int count = 0;
+                        for (OptionsTableProvider.DataEntry en : entries) {
+                            if (en.getValue() != null) {
+                                count++;
+                            }
+                        }
+                        if (count == 0) {
+                            editButton.setEnabled(false);
+                            removeButton.setEnabled(false);
+                        }
+                    }
                 }
             }
         });
