@@ -15,6 +15,7 @@ final  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
 package de.cau.cs.kieler.kwebs.client.ui;
 
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -32,11 +33,12 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
@@ -89,22 +91,22 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
     private Button serverConfigRadio2;
 
     /** Button for creating a new server configuration. */
-    private Button scEditButton1;
+    private Button newServerButton;
     
     /** Button for editing an existing server configuration. */
-    private Button scEditButton2;
+    private Button editServerButton;
     
     /** Button for deleting a server configuration. */
-    private Button scEditButton3;
+    private Button deleteServerButton;
     
     /** Button for testing the availability of a server configuration. */
-    private Button scEditButton4;
+    private Button checkServerButton;
 
     /** Button for selecting a server configuration. */
-    private Button scEditButton5;
+    private Button selectServerButton;
 
     /** Button for displaying details on the layout service of a server configuration. */
-    private Button scEditButton6;
+    private Button serverDetailsButton;
 
     /** The table viewer used to display the user defined server configuration. */
     private TableViewer serverConfigViewer;
@@ -476,6 +478,22 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
                 }                
             }
         );
+        
+        serverConfigTable.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(final KeyEvent e) {
+                IStructuredSelection selection
+                    = (IStructuredSelection) serverConfigViewer.getSelection();
+                if (!selection.isEmpty()) {
+                    ServerConfigData serverConfig 
+                        = (ServerConfigData) selection.getFirstElement();
+                    if (!serverConfig.isFixed() && !serverConfig.isActive()) {
+                        ServerConfigs.getInstance().removeServerConfig(serverConfig);
+                    }                                
+                }
+                refreshServerConfigViewer();
+            }
+        });
 
         serverConfigViewer.setInput(ServerConfigs.getInstance());
 
@@ -491,12 +509,12 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         // add buttons for testing, editing, creating and removing server configuration
         Composite comp = new Composite(generalGroup, SWT.NONE);
 
-        scEditButton1 = new Button(comp, SWT.PUSH | SWT.CENTER);
-        scEditButton1.setText("New...");
-        scEditButton1.addSelectionListener(
+        newServerButton = new Button(comp, SWT.PUSH | SWT.CENTER);
+        newServerButton.setText("New...");
+        newServerButton.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == scEditButton1) {
+                    if (e.widget == newServerButton) {
                         new NewServerConfigDialog(parent.getShell()).open();
                         refreshServerConfigViewer();
                     }
@@ -504,12 +522,12 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             }
         );
 
-        scEditButton2 = new Button(comp, SWT.PUSH | SWT.CENTER);
-        scEditButton2.setText("Edit...");
-        scEditButton2.addSelectionListener(
+        editServerButton = new Button(comp, SWT.PUSH | SWT.CENTER);
+        editServerButton.setText("Edit...");
+        editServerButton.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == scEditButton2) {
+                    if (e.widget == editServerButton) {
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
@@ -525,12 +543,12 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             }
         );
 
-        scEditButton3 = new Button(comp, SWT.PUSH | SWT.CENTER);
-        scEditButton3.setText("Delete");
-        scEditButton3.addSelectionListener(
+        deleteServerButton = new Button(comp, SWT.PUSH | SWT.CENTER);
+        deleteServerButton.setText("Remove");
+        deleteServerButton.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == scEditButton3) {
+                    if (e.widget == deleteServerButton) {
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
@@ -546,12 +564,12 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             }
         );
 
-        scEditButton4 = new Button(comp, SWT.PUSH | SWT.CENTER);
-        scEditButton4.setText("Check...");
-        scEditButton4.addSelectionListener(
+        checkServerButton = new Button(comp, SWT.PUSH | SWT.CENTER);
+        checkServerButton.setText("Check...");
+        checkServerButton.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == scEditButton4) {
+                    if (e.widget == checkServerButton) {
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
@@ -566,12 +584,12 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             }
         );
 
-        scEditButton6 = new Button(comp, SWT.PUSH | SWT.CENTER);
-        scEditButton6.setText("Details...");
-        scEditButton6.addSelectionListener(
+        serverDetailsButton = new Button(comp, SWT.PUSH | SWT.CENTER);
+        serverDetailsButton.setText("Details...");
+        serverDetailsButton.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == scEditButton6) {
+                    if (e.widget == serverDetailsButton) {
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
@@ -586,12 +604,12 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             }
         );
 
-        scEditButton5 = new Button(comp, SWT.PUSH | SWT.CENTER);
-        scEditButton5.setText("Select");
-        scEditButton5.addSelectionListener(
+        selectServerButton = new Button(comp, SWT.PUSH | SWT.CENTER);
+        selectServerButton.setText("Make Active");
+        selectServerButton.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == scEditButton5) {
+                    if (e.widget == selectServerButton) {
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
@@ -606,13 +624,24 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             }
         );
 
-        comp.setLayout(new FillLayout(SWT.VERTICAL));
+        // Make sure the buttons have an appropriate minimum size
+        setButtonLayoutData(newServerButton);
+        setButtonLayoutData(editServerButton);
+        setButtonLayoutData(deleteServerButton);
+        setButtonLayoutData(checkServerButton);
+        setButtonLayoutData(selectServerButton);
+        setButtonLayoutData(serverDetailsButton);
+
+        GridLayout compLayout = new GridLayout(1, false);
+        compLayout.verticalSpacing = LayoutConstants.getSpacing().y;
+        compLayout.marginHeight = 0;
+        compLayout.marginWidth = 0;
+        comp.setLayout(compLayout);
         comp.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 
         generalGroup.setLayout(new GridLayout(2, false));
 
         return generalGroup;
-
     }
 
     /**
@@ -800,12 +829,12 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             active = serverConfig.isActive();
         }
         serverConfigTable.setEnabled(remoteLayout);
-        scEditButton1.setEnabled(remoteLayout);
-        scEditButton2.setEnabled(remoteLayout && !empty && !fixed);
-        scEditButton3.setEnabled(remoteLayout && !empty && !fixed && !active);
-        scEditButton4.setEnabled(remoteLayout && !empty);
-        scEditButton5.setEnabled(remoteLayout && !empty && !active);
-        scEditButton6.setEnabled(remoteLayout && !empty);
+        newServerButton.setEnabled(remoteLayout);
+        editServerButton.setEnabled(remoteLayout && !empty && !fixed);
+        deleteServerButton.setEnabled(remoteLayout && !empty && !fixed && !active);
+        checkServerButton.setEnabled(remoteLayout && !empty);
+        selectServerButton.setEnabled(remoteLayout && !empty && !active);
+        serverDetailsButton.setEnabled(remoteLayout && !empty);
     }
 
 }

@@ -11,21 +11,18 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.debugview;
+package de.cau.cs.kieler.klay.debugview.views;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Date;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
@@ -45,19 +42,22 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.part.ViewPart;
 
 import de.cau.cs.kieler.core.ui.util.DragDropScrollHandler;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
+import de.cau.cs.kieler.klay.debugview.KlayDebugViewPlugin;
+import de.cau.cs.kieler.klay.debugview.Messages;
+import de.cau.cs.kieler.klay.debugview.provider.FileTableContentProvider;
+import de.cau.cs.kieler.klay.debugview.provider.FileTableLabelProvider;
+import de.cau.cs.kieler.klay.debugview.widgets.ImageCanvas;
+import de.cau.cs.kieler.klay.debugview.widgets.LegendPage;
 
 // CHECKSTYLEOFF MagicNumber
 
@@ -68,136 +68,6 @@ import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
  * @author cds
  */
 public class DebugView extends ViewPart {
-    
-    /**
-     * Content provider for the file table. Expects the table viewer to get a
-     * {@code File} as input that denotes a directory.
-     * 
-     * @author cds
-     */
-    private static class FileTableContentProvider implements IStructuredContentProvider {
-        /**
-         * {@inheritDoc}
-         */
-        public void dispose() {
-            // Nothing to do here.
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
-            // Nothing to do.
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Object[] getElements(final Object inputElement) {
-            if (inputElement instanceof File) {
-                // Return a list of .dot files
-                return ((File) inputElement).listFiles(new FileFilter() {
-                    public boolean accept(final File file) {
-                        return file.isFile() && file.getName().endsWith(".dot"); //$NON-NLS-1$
-                    }
-                });
-                
-            } else {
-                return new Object[0];
-            }
-        }
-    }
-    
-    /**
-     * Label provider for the file table.
-     * 
-     * @author cds
-     */
-    private static class FileTableLabelProvider extends ColumnLabelProvider {
-        /**
-         * The name column.
-         */
-        public static final int COL_NAME = 0;
-        
-        /**
-         * The creation time column.
-         */
-        public static final int COL_CREATED = 1;
-        
-        /**
-         * Image for files whose PNG hasn't been created yet.
-         */
-        private Image unconverted = KlayDebugViewPlugin.loadImage("notconverted.gif"); //$NON-NLS-1$
-
-        /**
-         * Image for files whose PNG is available.
-         */
-        private Image converted = KlayDebugViewPlugin.loadImage("converted.gif"); //$NON-NLS-1$
-        
-        /**
-         * The column to provide labels for.
-         */
-        private int column = 0;
-        
-        
-        /**
-         * Creates a new label provider for the given column.
-         * 
-         * @param column the column.
-         */
-        public FileTableLabelProvider(final int column) {
-            this.column = column;
-        }
-        
-        
-        /**
-         * {@inheritDoc}
-         */
-        public void dispose() {
-            super.dispose();
-            
-            if (converted != null) {
-                converted.dispose();
-            }
-            
-            if (unconverted != null) {
-                unconverted.dispose();
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Image getImage(final Object element) {
-            if (column == COL_NAME) {
-                String path = ((File) element).getPath();
-                
-                if (new File(path.substring(0, path.length() - 3) + "png").exists()) { //$NON-NLS-1$
-                    return converted;
-                } else {
-                    return unconverted;
-                }
-            } else {
-                return null;
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public String getText(final Object element) {
-            File file = (File) element;
-            
-            if (column == COL_NAME) {
-                return file.getName();
-            } else if (column == COL_CREATED) {
-                return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM).format(
-                        new Date(file.lastModified()));
-            } else {
-                return null;
-            }
-        }
-    }
     
     /**
      * Compares {@code File}s.
@@ -241,6 +111,16 @@ public class DebugView extends ViewPart {
     private static final String SETT_COLOR_KEY = "debugWindow.colorKey"; //$NON-NLS-1$
     
     /**
+     * Name of the toolbar group for actions related to folders.
+     */
+    private static final String TOOLBAR_GROUP_FOLDER_ACTIONS = "folderActions"; //$NON-NLS-1$
+    
+    /**
+     * Name of the toolbar group for actions related to help.
+     */
+    private static final String TOOLBAR_GROUP_HELP_ACTIONS = "helpActions"; //$NON-NLS-1$
+    
+    /**
      * The default zoom level. (100%)
      */
     private static final int ZOOM_DEFAULT = 100;
@@ -251,15 +131,10 @@ public class DebugView extends ViewPart {
     private static final float HUNDRED_PERCENT = 100.0f;
     
     // UI CONTROLS
-    private ToolBar toolBar = null;
-    private Image folderBrowseImage = null;
-    private ToolItem folderBrowseButton = null;
-    private Image folderRefreshImage = null;
-    private ToolItem folderRefreshButton = null;
-    private Image folderRemoveAllImage = null;
-    private ToolItem folderRemoveAllButton = null;
-    private Image showColorKeyImage = null;
-    private ToolItem showColorKeyButton = null;
+    private OpenFolderAction openFolderAction = null;
+    private RefreshFolderAction refreshFolderAction = null;
+    private EmptyFolderAction emptyFolderAction = null;
+    private ToggleLegendPaneAction toggleLegendAction = null;
     private SashForm sashForm = null;
     private Table fileTable = null;
     private TableViewer fileTableViewer = null;
@@ -291,23 +166,25 @@ public class DebugView extends ViewPart {
     
     /**
      * Opens a directory dialog for the user to enter a new path. If the user clicks
-     * OK, the new path is applied.
+     * OK, the new path is applied. This is only intended to be used by the corresponding
+     * action.
      */
-    private void openPathDialog() {
-        DirectoryDialog dialog = new DirectoryDialog(this.getSite().getShell());
-        dialog.setMessage(Messages.DebugWindow_PathDialog_Message);
-        dialog.setFilterPath(currentPath);
-        
-        String newPath = dialog.open();
-        if (newPath != null) {
-            setPath(newPath);
-        }
+    public void openPathDialog() {
+    }
+    
+    /**
+     * Returns the currently opened path. May be empty or {@code null}.
+     * 
+     * @return the currently opened path.
+     */
+    String getCurrentPath() {
+        return currentPath;
     }
     
     /**
      * Refreshes the file table.
      */
-    private void refreshFileList() {
+    void refreshFileList() {
         setPath(currentPath);
     }
     
@@ -316,7 +193,7 @@ public class DebugView extends ViewPart {
      * 
      * @param newPath the new path. May be {@code null}.
      */
-    private void setPath(final String newPath) {
+    void setPath(final String newPath) {
         String thePath = newPath;
         if (thePath == null) {
             thePath = ""; //$NON-NLS-1$
@@ -343,8 +220,8 @@ public class DebugView extends ViewPart {
         
         // Show the new path to the user
         currentPath = thePath;
-        folderRefreshButton.setEnabled(fileTableInput != null);
-        folderRemoveAllButton.setEnabled(fileTableInput != null);
+        refreshFolderAction.setEnabled(fileTableInput != null);
+        emptyFolderAction.setEnabled(fileTableInput != null);
         statusBarLabel.setText(currentPath);
     }
     
@@ -355,7 +232,7 @@ public class DebugView extends ViewPart {
     /**
      * Deletes all dot and png files in the current directory.
      */
-    private void removeFiles() {
+    void removeFiles() {
         // Check if we have a file to display
         File pathFile = (File) fileTableViewer.getInput();
         if (pathFile == null) {
@@ -644,81 +521,20 @@ public class DebugView extends ViewPart {
      * @param parent the parent composite.
      */
     private void setupToolBar(final Composite parent) {
-        // TODO: Migrate to ViewPart's IToolBarManager
-        toolBar = new ToolBar(parent, SWT.FLAT | SWT.HORIZONTAL | SWT.RIGHT);
-        toolBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+        toolBarManager.add(new Separator(TOOLBAR_GROUP_FOLDER_ACTIONS));
+        toolBarManager.add(new Separator(TOOLBAR_GROUP_HELP_ACTIONS));
         
-        // Folder Browse Button
-        folderBrowseButton = new ToolItem(toolBar, SWT.NULL);
-        folderBrowseButton.setText(Messages.DebugWindow_Toolbar_BrowseFolder_Text);
-        folderBrowseButton.setToolTipText(Messages.DebugWindow_Toolbar_BrowseFolder_ToolTip);
-        folderBrowseImage = KlayDebugViewPlugin.loadImage("open.png"); //$NON-NLS-1$
-        folderBrowseButton.setImage(folderBrowseImage);
-        
-        // Folder Refresh Button
-        folderRefreshButton = new ToolItem(toolBar, SWT.NULL);
-        folderRefreshButton.setEnabled(false);
-        folderRefreshButton.setToolTipText(Messages.DebugWindow_Toolbar_RefreshFolder_ToolTip);
-        folderRefreshImage = KlayDebugViewPlugin.loadImage("refresh.gif"); //$NON-NLS-1$
-        folderRefreshButton.setImage(folderRefreshImage);
-        
-        // Folder Remove All Button
-        folderRemoveAllButton = new ToolItem(toolBar, SWT.NULL);
-        folderRemoveAllButton.setEnabled(false);
-        folderRemoveAllButton.setToolTipText(Messages.DebugWindow_Toolbar_RemoveAll_ToolTip);
-        folderRemoveAllImage = KlayDebugViewPlugin.loadImage("remall.gif"); //$NON-NLS-1$
-        folderRemoveAllButton.setImage(folderRemoveAllImage);
-        
-        // Separator
-        new ToolItem(toolBar, SWT.SEPARATOR);
-        
-        // Show Color Key
-        showColorKeyButton = new ToolItem(toolBar, SWT.CHECK);
-        showColorKeyButton.setText(Messages.DebugWindow_Toolbar_ShowColorKey_Text);
-        showColorKeyButton.setToolTipText(Messages.DebugWindow_Toolbar_ShowColorKey_ToolTip);
-        showColorKeyImage = KlayDebugViewPlugin.loadImage("colorKeys.gif"); //$NON-NLS-1$
-        showColorKeyButton.setImage(showColorKeyImage);
-        
-        // Event listeners
-        folderBrowseButton.addSelectionListener(new SelectionAdapter() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                openPathDialog();
-            }
-        });
-
-        folderRefreshButton.addSelectionListener(new SelectionAdapter() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                refreshFileList();
-            }
-        });
-
-        folderRemoveAllButton.addSelectionListener(new SelectionAdapter() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                removeFiles();
-            }
-        });
-        
-        showColorKeyButton.addSelectionListener(new SelectionAdapter() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                setColorKeyVisible(showColorKeyButton.getSelection());
-            }
-        });
+        openFolderAction = new OpenFolderAction(this);
+        toolBarManager.appendToGroup(TOOLBAR_GROUP_FOLDER_ACTIONS, openFolderAction);
+        refreshFolderAction = new RefreshFolderAction(this);
+        refreshFolderAction.setEnabled(false);
+        toolBarManager.appendToGroup(TOOLBAR_GROUP_FOLDER_ACTIONS, refreshFolderAction);
+        emptyFolderAction = new EmptyFolderAction(this);
+        emptyFolderAction.setEnabled(false);
+        toolBarManager.appendToGroup(TOOLBAR_GROUP_FOLDER_ACTIONS, emptyFolderAction);
+        toggleLegendAction = new ToggleLegendPaneAction(this);
+        toolBarManager.appendToGroup(TOOLBAR_GROUP_HELP_ACTIONS, toggleLegendAction);
     }
     
     /**
@@ -812,22 +628,6 @@ public class DebugView extends ViewPart {
         
         saveDialogSettings();
         
-        if (folderBrowseImage != null && !folderBrowseImage.isDisposed()) {
-            folderBrowseImage.dispose();
-        }
-        
-        if (folderRefreshImage != null && !folderRefreshImage.isDisposed()) {
-            folderRefreshImage.dispose();
-        }
-        
-        if (folderRemoveAllImage != null && !folderRemoveAllImage.isDisposed()) {
-            folderRemoveAllImage.dispose();
-        }
-        
-        if (showColorKeyImage != null && !showColorKeyImage.isDisposed()) {
-            showColorKeyImage.dispose();
-        }
-        
         if (statusBarZoomLabelContextImage != null && !statusBarZoomLabelContextImage.isDisposed()) {
             statusBarZoomLabelContextImage.dispose();
         }
@@ -851,8 +651,8 @@ public class DebugView extends ViewPart {
      * @param visible {@code true} if the color key panel should be visible, {@code false}
      *                otherwise.
      */
-    private void setColorKeyVisible(final boolean visible) {
-        showColorKeyButton.setSelection(visible);
+    void setColorKeyVisible(final boolean visible) {
+        toggleLegendAction.setChecked(visible);
         colorKeyBrowser.setVisible(visible);
         sashForm.layout(true);
     }
