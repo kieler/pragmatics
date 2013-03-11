@@ -42,10 +42,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * that a node has several northern ports. First, the ports are assembled in left-to-right
  * order according to their position. Then, the ports are partitioned into ports with
  * only incoming edges (in ports), ports with only outgoing edges (out ports) and ports
- * with both, incoming and outgoing edges (in/out ports). Note that this does not rely on
- * port type information.</p>
+ * with both, incoming and outgoing edges (in/out ports). The way the dummy nodes are then
+ * created can either be according to the <em>old approach</em> or the <em>new approach</em>.</p>
  * 
- * <p>In and out ports are now matched up left to right and right to left, respectively, as
+ * 
+ * <h3>The Old Approach</h3>
+ * 
+ * <p>In and out ports are matched up left to right and right to left, respectively, as
  * long as the out port is right of the in port. In the example below, ports P1 and P6
  * will be matched, as will be ports P2 and P5. Ports P3 and P4 will not be matched since
  * P3 is an out port and not right of P4.</p>
@@ -58,6 +61,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * <p>Once in and out ports are processed, in/out ports are given their own dummy node.</p>
  * 
+ * <p>This approach minimizes the amount of edge crossings among the edges connected to
+ * northern ports locally, without paying attention to the rest of the graph. To do that,
+ * this approach fixes the order of the dummy nodes in the layer: the node successor
+ * constraints are set in a way that each dummy node points to the next, with the bottom-most
+ * northern dummy node pointing to the regular node it was created for.</p>
+ * 
  * <pre>
  *                      ------------------------------
  *                      |
@@ -69,6 +78,19 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *              |   |   |   |   |   |
  *              P1  P2  P3  P4  P5  P6
  * </pre>
+ * 
+ * 
+ * <h3>The New Approach</h3>
+ * 
+ * <p>The new approach is designed to not fix the order of dummy nodes at this point and
+ * to instead leave the task of ordering them to the crossing minimization phase. It creates
+ * a single dummy node for every northern port, without two ports sharing a dummy node.
+ * The only necessary constraints are that dummy nodes created for northern ports must have
+ * their regular node as their successor. (Similarly, the regular node must have all dummy
+ * nodes created for southern ports as successors.)
+ * 
+ * 
+ * <h3>Self-Loops</h3>
  * 
  * <p>Self-loops are a special case that is handled party by this processor. For this to
  * work, the {@link SelfLoopProcessor} must have been executed prior to this processor's
@@ -105,6 +127,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.rating proposed yellow by msp
  */
 public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
+    
+    /**
+     * Whether the new or the old approach should be used. The new approach does not impose an order
+     * on the dummy nodes created for northern and southern ports.
+     */
+    private static final boolean USE_NEW_APPROACH = true;
+    
 
     /**
      * {@inheritDoc}
@@ -158,7 +187,15 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                 createDummyNodes(layeredGraph, portList, northDummyNodes, southDummyNodes,
                         barycenterAssociates);
                 
+                /* We will now iterate over all nodes and insert successor constraints to each one of
+                 * them. If we're using the old constrained approach, each dummy has the next dummy
+                 * as its successor. If we use the new unconstrained approach, each dummy on the
+                 * northern side has its regular node as a successor while the node has all southern
+                 * dummies as its successors.
+                 */
+                
                 int insertPoint = pointer;
+                LNode successor = node;
                 for (LNode dummy : northDummyNodes) {
                     dummy.setLayer(insertPoint, layer);
                     pointer++;
@@ -167,7 +204,13 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                     // were created from. In addition, northern dummy nodes must appear
                     // before the regular node
                     dummy.setProperty(Properties.IN_LAYER_LAYOUT_UNIT, node);
-                    dummy.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(node);
+                    dummy.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(successor);
+                    
+                    if (!USE_NEW_APPROACH) {
+                        // The old approach needs the successor to always point to the most recently
+                        // created dummy node
+                        successor = dummy;
+                    }
                 }
                 
                 // Do the same for ports on the southern side; the list of ports must
@@ -181,6 +224,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                 createDummyNodes(layeredGraph, portList, southDummyNodes, null,
                         barycenterAssociates);
                 
+                LNode predecessor = node;
                 for (LNode dummy : southDummyNodes) {
                     dummy.setLayer(++pointer, layer);
                     
@@ -188,7 +232,13 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                     // were created from. In addition, southern dummy nodes must appear
                     // after the regular node
                     dummy.setProperty(Properties.IN_LAYER_LAYOUT_UNIT, node);
-                    node.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(dummy);
+                    predecessor.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(dummy);
+                    
+                    if (!USE_NEW_APPROACH) {
+                        // The old approach needs the predecessor to always point to the most recently
+                        // created dummy node
+                        predecessor = dummy;
+                    }
                 }
                 
                 // If the list of barycenter associates contains nodes, set the appropriate property
@@ -351,13 +401,53 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
             createDummyNode(layeredGraph, edge, dummyNodes);
         }
         
-        // Give the rest of input and output ports their dummy nodes
-        for (LPort inPort : inPorts) {
-            barycenterAssociates.add(createDummyNode(layeredGraph, inPort, null, dummyNodes));
-        }
-        
-        for (LPort outPort : outPorts) {
-            barycenterAssociates.add(createDummyNode(layeredGraph, null, outPort, dummyNodes));
+        // We will now create dummy nodes for input ports and for output ports. How we create them
+        // depends on whether we're using the old approach or the new one
+        if (USE_NEW_APPROACH) {
+            // Give the rest of input and output ports their dummy nodes
+            for (LPort inPort : inPorts) {
+                barycenterAssociates.add(createDummyNode(layeredGraph, inPort, null, dummyNodes));
+            }
+            
+            for (LPort outPort : outPorts) {
+                barycenterAssociates.add(createDummyNode(layeredGraph, null, outPort, dummyNodes));
+            }
+        } else {
+            // Iterate through the lists of input and output ports while both lists still
+            // have elements and while output ports are still located right of input ports.
+            // While this is true, input and output ports may share the same dummy node
+            int inPortsIndex = 0;
+            int outPortsIndex = outPorts.size() - 1;
+            
+            while (inPortsIndex < inPorts.size() && outPortsIndex >= 0) {
+                LPort inPort = inPorts.get(inPortsIndex);
+                LPort outPort = outPorts.get(outPortsIndex);
+                
+                // If the out port is not right of the in port, they cannot share the same
+                // dummy node anymore
+                if (ports.indexOf(outPort) < ports.indexOf(inPort)) {
+                    break;
+                }
+                
+                // Otherwise, create a dummy node for them
+                barycenterAssociates.add(createDummyNode(layeredGraph, inPort, outPort, dummyNodes));
+                
+                inPortsIndex++;
+                outPortsIndex--;
+            }
+            
+            // Give the rest of input and output ports their dummy nodes
+            while (inPortsIndex < inPorts.size()) {
+                barycenterAssociates.add(createDummyNode(layeredGraph,
+                        inPorts.get(inPortsIndex), null, dummyNodes));
+                inPortsIndex++;
+            }
+            
+            while (outPortsIndex >= 0) {
+                barycenterAssociates.add(createDummyNode(layeredGraph,
+                        null, outPorts.get(outPortsIndex), dummyNodes));
+                outPortsIndex--;
+            }
         }
         
         // in / out ports get their own dummy nodes
