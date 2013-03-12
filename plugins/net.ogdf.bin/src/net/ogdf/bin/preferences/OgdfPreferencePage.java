@@ -18,11 +18,7 @@ import net.ogdf.bin.OgdfServer;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -41,11 +37,9 @@ public class OgdfPreferencePage extends FieldEditorPreferencePage implements
      * Creates the OgdfPreferencePage.
      */
     public OgdfPreferencePage() {
-        super(FLAT);
-        setDescription("Preferences for the OGDF integration.");
+        super(GRID);
+        setDescription("Controls how KIELER interacts with the OGDF layout library.");
     }
-
-    private static final int NUM_COLUMNS = 3;
 
     /**
      * {@inheritDoc}
@@ -54,17 +48,12 @@ public class OgdfPreferencePage extends FieldEditorPreferencePage implements
     public void createFieldEditors() {
         // add the process group
         Composite parent = getFieldEditorParent();
-        Group processGroup = new Group(parent, SWT.NONE);
-        processGroup.setText("OGDF Process");
+        
         // add timeout editor
         IntegerFieldEditor timeoutEditor =
-                new IntegerFieldEditor(OgdfServer.PREF_TIMEOUT, "Timeout for OGDF output (ms):",
-                        processGroup);
+                new IntegerFieldEditor(OgdfServer.PREF_TIMEOUT, "Timeout (ms):", parent);
         timeoutEditor.setValidRange(OgdfServer.PROCESS_MIN_TIMEOUT, Integer.MAX_VALUE);
         addField(timeoutEditor);
-        // set layout
-        processGroup.setLayout(new GridLayout(NUM_COLUMNS, false));
-        parent.setLayout(new FillLayout());
     }
 
     /**

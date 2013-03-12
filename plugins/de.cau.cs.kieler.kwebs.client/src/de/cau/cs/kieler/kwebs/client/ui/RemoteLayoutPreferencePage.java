@@ -124,7 +124,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
      * Creates the preference page for the remote layout options.
      */
     public RemoteLayoutPreferencePage() {
-        this(null, "Preferences for the Service based Layout", null);
+        this(null, null, null);
     }
 
     /**
@@ -151,6 +151,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
      */
     public RemoteLayoutPreferencePage(final String title, final String description,
         final ImageDescriptor image) {
+        
         super();
         if (title != null && title.length() > 0) {
             setTitle(title);
@@ -184,9 +185,9 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         //CHECKSTYLEOFF MagicNumber
         Composite composite = new Composite(parent, SWT.NONE);
         if (SwitchLayoutMode.isRemoteLayoutInstalled()) {
-            Group layoutGroup1 = createLayoutGroup1(composite);
+            Group layoutGroup1 = createLayoutTypeGroup(composite);
             layoutGroup1.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-            Group layoutGroup3 = createLayoutGroup3(composite);
+            Group layoutGroup3 = createServerTableGroup(composite);
             layoutGroup3.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
             initRemoteLayoutOptionsView();
         } else {
@@ -228,7 +229,11 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
                 }
             });              
         }
-        composite.setLayout(new GridLayout(1, false));
+        
+        GridLayout layout = new GridLayout(1, false);
+        layout.verticalSpacing = 10;
+        composite.setLayout(layout);
+        
         return composite;
         //CHECKSTYLEON MagicNumber
     }
@@ -311,7 +316,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
      *           the parent control
      * @return a group with general options
      */
-    private Group createLayoutGroup1(final Composite parent) {
+    private Group createLayoutTypeGroup(final Composite parent) {
 
         Group generalGroup = new Group(parent, SWT.NONE);
         generalGroup.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
@@ -368,7 +373,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
      *            the parent control
      * @return a group with the server configuration table
      */
-    private Group createLayoutGroup3(final Composite parent) {
+    private Group createServerTableGroup(final Composite parent) {
 
         Group generalGroup = new Group(parent, SWT.NONE);
         
@@ -506,6 +511,20 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         serverConfigTable.setLayoutData(tableLayoutData);
         serverConfigTable.pack();
 
+        Composite buttonBar = createLayoutGroup3ButtonBar(generalGroup);
+        buttonBar.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+
+        generalGroup.setLayout(new GridLayout(2, false));
+        return generalGroup;
+    }
+
+    /**
+     * Creates the button bar for the server configuration table.
+     * 
+     * @param generalGroup composite to place the button bar into.
+     * @return the button bar.
+     */
+    private Composite createLayoutGroup3ButtonBar(final Group generalGroup) {
         // add buttons for testing, editing, creating and removing server configuration
         Composite comp = new Composite(generalGroup, SWT.NONE);
 
@@ -515,7 +534,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
                     if (e.widget == newServerButton) {
-                        new NewServerConfigDialog(parent.getShell()).open();
+                        new NewServerConfigDialog(generalGroup.getShell()).open();
                         refreshServerConfigViewer();
                     }
                 }
@@ -534,7 +553,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
                             ServerConfigData serverConfig 
                                 = (ServerConfigData) selection.getFirstElement();
                             if (!serverConfig.isFixed()) {
-                                new EditServerConfigDialog(parent.getShell(), serverConfig).open();
+                                new EditServerConfigDialog(generalGroup.getShell(), serverConfig).open();
                             }
                         }
                         refreshServerConfigViewer();
@@ -637,11 +656,8 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         compLayout.marginHeight = 0;
         compLayout.marginWidth = 0;
         comp.setLayout(compLayout);
-        comp.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
-
-        generalGroup.setLayout(new GridLayout(2, false));
-
-        return generalGroup;
+        
+        return comp;
     }
 
     /**

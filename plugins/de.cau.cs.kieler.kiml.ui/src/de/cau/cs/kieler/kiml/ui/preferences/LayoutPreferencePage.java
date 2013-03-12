@@ -83,8 +83,11 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      */
     public LayoutPreferencePage() {
         super();
-        setDescription(Messages.getString("kiml.ui.0")); //$NON-NLS-1$
     }
+    
+    
+    /** vertical spacing between out group boxes. */
+    private static final int VERTICAL_LAYOUT_SPACING = 10;
 
     /**
      * {@inheritDoc}
@@ -92,6 +95,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     protected Control createContents(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout compositeLayout = new GridLayout(1, false);
+        compositeLayout.verticalSpacing = VERTICAL_LAYOUT_SPACING;
         composite.setLayout(compositeLayout);
         
         Group generalGroup = createGeneralGroup(composite);
