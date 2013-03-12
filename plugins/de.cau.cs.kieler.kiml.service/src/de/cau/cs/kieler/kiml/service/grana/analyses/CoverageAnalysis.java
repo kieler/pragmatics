@@ -62,8 +62,8 @@ public class CoverageAnalysis implements IAnalysis {
         Object[] nodeSizeResultArray = (Object[]) nodeSizeResult;
         
         // Extract the values we need
-        float area = ((Integer) areaResultArray[AreaAnalysis.INDEX_WIDTH])
-            * ((Integer) areaResultArray[AreaAnalysis.INDEX_HEIGHT]);
+        float area = ((Float) areaResultArray[AreaAnalysis.INDEX_WIDTH])
+            * ((Float) areaResultArray[AreaAnalysis.INDEX_HEIGHT]);
         int nodes = (Integer) nodeSizeResultArray[NodeSizeAnalysis.INDEX_NODES];
         float avgNodeSize = (Float) nodeSizeResultArray[NodeSizeAnalysis.INDEX_AVG];
         
