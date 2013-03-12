@@ -23,8 +23,6 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -80,13 +78,6 @@ public class AnalysisResultViewPart extends ViewPart {
         try {
             browser = new Browser(parent, SWT.NONE);
             browser.setLayoutData(new GridData(GridData.FILL_BOTH));
-            
-            // Disable the context menu
-            browser.addListener(SWT.MenuDetect, new Listener() {
-                public void handleEvent(final Event event) {
-                    event.doit = false;
-                }
-            }); 
 
             // activate the view visualization method
             VisualizationService.getInstance().setActive(ViewVisualizationMethod.class, true);
