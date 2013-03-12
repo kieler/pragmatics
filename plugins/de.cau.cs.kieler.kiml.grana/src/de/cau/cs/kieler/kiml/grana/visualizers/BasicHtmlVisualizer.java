@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualizers;
 
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.visualization.IVisualizer;
 import de.cau.cs.kieler.kiml.grana.visualization.Visualization;
 import de.cau.cs.kieler.kiml.grana.visualization.VisualizationService;
@@ -99,55 +98,19 @@ public class BasicHtmlVisualizer implements IVisualizer<String, Object> {
 
         StringBuilder builder = new StringBuilder();
         
-        if (horizontal) {
-            // Table headers
-            builder.append("<table cellspacing='6'><tr>");
-            for (Pair<String, String> component : analysis.getComponents()) {
-                builder.append("<td>" + component.getFirst() + "</td>");
-            }
-            builder.append("</tr><tr>");
-            
-            // Component results
-            for (int i = 0; i < analysis.getComponents().size(); i++) {
-                Visualization visualization =
-                    VisualizationService.getInstance().getVisualization("text", results[i]);
-                
-                if (visualization == null) {
-                    builder.append("<td>" + results[i].toString() + "</td>");
-                } else {
-                    builder.append("<td>" + visualization.get(analysis, results[i]) + "</td>");
-                }
+        for (int i = 0; i < analysis.getComponents().size(); i++) {
+            // Add a line break if this is not the first result
+            if (i > 0) {
+                builder.append("<br/>");
             }
             
-            builder.append("</table>");
-        } else {
-            builder.append("<table cellspacing='6'>");
+            // Visualization result
+            Visualization visualization =
+                VisualizationService.getInstance().getVisualization("text", results[i]);
+            builder.append(visualization.get(analysis, results[i]));
             
-            for (int i = 0; i < analysis.getComponents().size(); i++) {
-                // Component name
-                builder.append(
-                        "<tr><td>"
-                        + analysis.getComponents().get(i).getFirst()
-                        + "</td>");
-                
-                // Visualization result
-                Visualization visualization =
-                    VisualizationService.getInstance().getVisualization("text", results[i]);
-                
-                if (visualization == null) {
-                    builder.append(
-                            "<td>"
-                            + results[i].toString()
-                            + "</td></tr>");
-                } else {
-                    builder.append(
-                            "<td>"
-                            + visualization.get(analysis, results[i])
-                            + "</td></tr>");
-                }
-            }
-            
-            builder.append("</table");
+            // Component name
+            builder.append(" <em>(" + analysis.getComponents().get(i).getFirst() + ")</em>");
         }
         
         return builder.toString();

@@ -56,15 +56,19 @@ public class AnalyzeAction extends Action {
         // Run analyses, if possible
         if (VisualizationService.getInstance().findActiveMethod(true)) {
             // There is a visualization method; find the active editor, if any
-            IEditorPart activeEditorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+            final IEditorPart activeEditorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                             .getActivePage().getActiveEditor();
             
             if (activeEditorPart != null) {
-                // Analyze the diagram and visualize the results
-                List<AnalysisData> analyses = GranaUtil.getLastAnalysesSelection();
-                Map<String, Object> results = DiagramAnalyzer.analyze(
-                        activeEditorPart, null, analyses, false);
-                VisualizationService.getInstance().visualize(analyses, results, true);
+                activeEditorPart.getEditorSite().getShell().getDisplay().asyncExec(new Runnable() {
+                    public void run() {
+                        // Analyze the diagram and visualize the results
+                        List<AnalysisData> analyses = GranaUtil.getLastAnalysesSelection();
+                        Map<String, Object> results = DiagramAnalyzer.analyze(
+                                activeEditorPart, null, analyses, false);
+                        VisualizationService.getInstance().visualize(analyses, results, true);
+                    }
+                });
             }
         }
     }
