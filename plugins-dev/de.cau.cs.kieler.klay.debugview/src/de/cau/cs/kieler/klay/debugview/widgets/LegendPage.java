@@ -11,10 +11,11 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.debugview;
+package de.cau.cs.kieler.klay.debugview.widgets;
 
 import org.eclipse.swt.widgets.Control;
 
+import de.cau.cs.kieler.klay.debugview.Messages;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**

@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -69,6 +70,11 @@ public class AnalysisResultViewPart extends ViewPart {
      * {@inheritDoc}
      */
     public void createPartControl(final Composite parent) {
+        // Create actions in the view toolbar
+        IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+        toolBarManager.add(new AnalyzeAction());
+        toolBarManager.add(new ConfigureAnalysesAction(this));
+        
         try {
             browser = new Browser(parent, SWT.NONE);
             browser.setLayoutData(new GridData(GridData.FILL_BOTH));

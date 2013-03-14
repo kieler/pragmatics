@@ -55,7 +55,8 @@ public class GranaPlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        // register a listener for analysis after layout
+        
+        // Register a listener for analysis after layout
         DiagramLayoutEngine.INSTANCE.addListener(new DiagramLayoutEngine.IListener() {
             public void layoutDone(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
                 if (VisualizationService.getInstance().findActiveMethod(true)) {
@@ -64,6 +65,9 @@ public class GranaPlugin extends AbstractUIPlugin {
                 }
             }
         });
+        
+        // TODO: Register a listener for analysis after editor switch
+        
     }
 
     /**

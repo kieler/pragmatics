@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.properties;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -136,8 +137,14 @@ public final class Properties {
      * property is set to. That is, having {@code x} appear after {@code y} would violate this
      * constraint. This property only makes sense for nodes.
      */
-    public static final IProperty<LNode> IN_LAYER_SUCCESSOR_CONSTRAINT = new Property<LNode>(
-            "inLayerSuccessorConstraint");
+    public static final IProperty<List<LNode>> IN_LAYER_SUCCESSOR_CONSTRAINTS =
+            new Property<List<LNode>>("inLayerSuccessorConstraint", new ArrayList<LNode>());
+    
+    /**
+     * A property set on ports indicating a dummy node created for that port. This is not set for all
+     * ports that have dummy nodes created for them.
+     */
+    public static final IProperty<LNode> PORT_DUMMY = new Property<LNode>("portDummy");
 
     /**
      * The node group of an LNode as used in the crossing minimization phase.
@@ -145,7 +152,8 @@ public final class Properties {
     public static final IProperty<NodeGroup> NODE_GROUP = new Property<NodeGroup>("nodeGroup");
 
     /**
-     * Crossing hint used for in-layer cross counting with northern and southern port dummies.
+     * Crossing hint used for in-layer cross counting with northern and southern port dummies. This is
+     * effectively the number of different ports a northern or southern port dummy represents.
      */
     public static final IProperty<Integer> CROSSING_HINT = new Property<Integer>("crossingHint", 0);
 

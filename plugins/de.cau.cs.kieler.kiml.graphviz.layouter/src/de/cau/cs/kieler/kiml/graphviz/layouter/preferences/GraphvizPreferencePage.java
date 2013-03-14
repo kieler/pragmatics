@@ -16,13 +16,7 @@ package de.cau.cs.kieler.kiml.graphviz.layouter.preferences;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -49,42 +43,30 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
      * Creates a Graphviz preference page.
      */
     public GraphvizPreferencePage() {
-        super(FLAT);
-        setDescription("Preferences for the Graphviz layouter.");
+        super(GRID);
+        setDescription("Controls how KIELER interacts with the Graphviz layout tools. "
+                + "The Graphviz layout tools are available at http://www.graphviz.org/. "
+                + "If the 'dot' executable cannot be found in default locations, "
+                + "its path must be entered here.");
     }
 
-    private static final int NUM_COLUMNS = 3;
-    private static final int LABEL_WIDTH = 450;
-    
     /**
      * {@inheritDoc}
      */
     @Override
     public void createFieldEditors() {
-        // process group
-        Composite parent = getFieldEditorParent();
-        Group processGroup = new Group(parent, SWT.NONE);
-        processGroup.setText("Graphviz Process");
-
-        Label label = new Label(processGroup, SWT.WRAP);
-        label.setText("The Graphviz layout tool is available at http://www.graphviz.org/. If the"
-                + " 'dot' executable cannot be found in default locations, its path must be entered"
-                + " here.");
-        GridData labelLayoutData = new GridData(SWT.LEFT, SWT.FILL, false, false, NUM_COLUMNS, 1);
-        labelLayoutData.widthHint = LABEL_WIDTH;
-        label.setLayoutData(labelLayoutData);
+        // Process group
+        Composite executableEditorParent = getFieldEditorParent();
         FileFieldEditor executableEditor = new FileFieldEditor(GraphvizTool.PREF_GRAPHVIZ_EXECUTABLE,
-                "Set path to the 'dot' executable:", processGroup);
+                "Path to 'dot' executable:", executableEditorParent);
         executableEditor.setValidateStrategy(FileFieldEditor.VALIDATE_ON_KEY_STROKE);
         addField(executableEditor);
 
+        Composite timeoutEditorParent = getFieldEditorParent();
         IntegerFieldEditor timeoutEditor = new IntegerFieldEditor(GraphvizTool.PREF_TIMEOUT,
-                "Timeout for Graphviz output (ms):", processGroup);
+                "Timeout (ms):", timeoutEditorParent);
         timeoutEditor.setValidRange(GraphvizTool.PROCESS_MIN_TIMEOUT, Integer.MAX_VALUE);
         addField(timeoutEditor);
-
-        processGroup.setLayout(new GridLayout(NUM_COLUMNS, false));
-        parent.setLayout(new FillLayout());
     }
 
     /**
