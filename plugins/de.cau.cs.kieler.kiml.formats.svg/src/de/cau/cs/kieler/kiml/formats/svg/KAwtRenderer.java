@@ -61,12 +61,14 @@ import de.cau.cs.kieler.core.krendering.KLineStyle;
 import de.cau.cs.kieler.core.krendering.KLineWidth;
 import de.cau.cs.kieler.core.krendering.KPlacementData;
 import de.cau.cs.kieler.core.krendering.KPointPlacementData;
+import de.cau.cs.kieler.core.krendering.KPolygon;
 import de.cau.cs.kieler.core.krendering.KPolyline;
 import de.cau.cs.kieler.core.krendering.KPosition;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 import de.cau.cs.kieler.core.krendering.KRenderingRef;
 import de.cau.cs.kieler.core.krendering.KRightPosition;
+import de.cau.cs.kieler.core.krendering.KRotation;
 import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
 import de.cau.cs.kieler.core.krendering.KSpline;
 import de.cau.cs.kieler.core.krendering.KStyle;
@@ -434,6 +436,10 @@ public class KAwtRenderer {
         // apply the propagated and contained styles
         StyleData styleData = applyStyles(rendering);
         
+        // chsch: integrated support for rotation in quick&dirty way, should re-worked some day
+        //  see also below
+        graphics.rotate(styleData.rotation);
+
         if (rendering instanceof KRenderingRef) {
             // draw the referenced rendering instance
             doRender(((KRenderingRef) rendering).getRendering(), size, points, isSpline);
@@ -453,6 +459,11 @@ public class KAwtRenderer {
                 propagatedStyles.removeLastOccurrence(style);
             }
         }
+
+        // chsch: integrated support for rotation in quick&dirty way, should re-worked some day
+        //  see also above
+        graphics.rotate(-styleData.rotation);
+        
         renderingStack.pop();
     }
     
@@ -549,6 +560,7 @@ public class KAwtRenderer {
         private HorizontalAlignment horzAlignment = HorizontalAlignment.LEFT;
         private VerticalAlignment vertAlignment = VerticalAlignment.CENTER;
         private boolean invisible = false;
+        private double rotation = 0;
         private int fontStyle = Font.PLAIN;
         private String fontName = Font.SANS_SERIF;
         private int fontSize = NODE_FONT_SIZE;
@@ -618,6 +630,9 @@ public class KAwtRenderer {
         case KRenderingPackage.KINVISIBILITY:
             styleData.invisible = ((KInvisibility) style).isInvisible();
             break;
+        case KRenderingPackage.KROTATION:
+            styleData.rotation = Math.toRadians(((KRotation) style).getRotation());
+            break;
         case KRenderingPackage.KFONT_BOLD:
             if (((KFontBold) style).isBold()) {
                 styleData.fontStyle |= Font.BOLD;
@@ -659,6 +674,10 @@ public class KAwtRenderer {
         if (!styleData.invisible) {
             boolean unknownShape = false, unknownLine = false;
             if (size != null) {
+                
+                if (!(rendering instanceof KPolyline)) {
+                    styleData.backgVisible = true;
+                }
                 
                 // check shapes that need size information to be drawn
                 int width = (int) Math.round(size.x);
@@ -875,7 +894,7 @@ public class KAwtRenderer {
      */
     private void handleContent(final KContainerRendering rendering, final KVector size,
             final KVectorChain points, final boolean isSpline) {
-        if (rendering instanceof KPolyline && points != null) {
+        if (rendering instanceof KPolyline && !(rendering instanceof KPolygon) && points != null) {
             // approximate the spline for more accurate decorator placement
             KVectorChain referencePoints = points;
             if (isSpline || rendering instanceof KSpline) {
@@ -1026,8 +1045,12 @@ public class KAwtRenderer {
         
         // create points for polyline
         KVectorChain points = null;
-        if (rendering instanceof KPolyline) {
-            points = createVectorChain((KPolyline) rendering, parentSize);
+        KRendering tempRen = rendering;
+        while (tempRen instanceof KRenderingRef) {
+            tempRen = ((KRenderingRef) tempRen).getRendering();
+        }
+        if (tempRen instanceof KPolyline) {
+            points = createVectorChain((KPolyline) tempRen, parentSize);
         }
 
         // render the child with translated graphics
