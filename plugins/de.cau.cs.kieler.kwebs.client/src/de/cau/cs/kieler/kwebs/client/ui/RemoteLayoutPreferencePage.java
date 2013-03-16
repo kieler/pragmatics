@@ -15,6 +15,7 @@ final  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
 package de.cau.cs.kieler.kwebs.client.ui;
 
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -32,11 +33,12 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
@@ -89,22 +91,22 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
     private Button serverConfigRadio2;
 
     /** Button for creating a new server configuration. */
-    private Button scEditButton1;
+    private Button newServerButton;
     
     /** Button for editing an existing server configuration. */
-    private Button scEditButton2;
+    private Button editServerButton;
     
     /** Button for deleting a server configuration. */
-    private Button scEditButton3;
+    private Button deleteServerButton;
     
     /** Button for testing the availability of a server configuration. */
-    private Button scEditButton4;
+    private Button checkServerButton;
 
     /** Button for selecting a server configuration. */
-    private Button scEditButton5;
+    private Button selectServerButton;
 
     /** Button for displaying details on the layout service of a server configuration. */
-    private Button scEditButton6;
+    private Button serverDetailsButton;
 
     /** The table viewer used to display the user defined server configuration. */
     private TableViewer serverConfigViewer;
@@ -122,7 +124,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
      * Creates the preference page for the remote layout options.
      */
     public RemoteLayoutPreferencePage() {
-        this(null, "Preferences for the Service based Layout", null);
+        this(null, null, null);
     }
 
     /**
@@ -149,6 +151,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
      */
     public RemoteLayoutPreferencePage(final String title, final String description,
         final ImageDescriptor image) {
+        
         super();
         if (title != null && title.length() > 0) {
             setTitle(title);
@@ -182,9 +185,9 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         //CHECKSTYLEOFF MagicNumber
         Composite composite = new Composite(parent, SWT.NONE);
         if (SwitchLayoutMode.isRemoteLayoutInstalled()) {
-            Group layoutGroup1 = createLayoutGroup1(composite);
+            Group layoutGroup1 = createLayoutTypeGroup(composite);
             layoutGroup1.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-            Group layoutGroup3 = createLayoutGroup3(composite);
+            Group layoutGroup3 = createServerTableGroup(composite);
             layoutGroup3.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
             initRemoteLayoutOptionsView();
         } else {
@@ -226,7 +229,11 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
                 }
             });              
         }
-        composite.setLayout(new GridLayout(1, false));
+        
+        GridLayout layout = new GridLayout(1, false);
+        layout.verticalSpacing = 10;
+        composite.setLayout(layout);
+        
         return composite;
         //CHECKSTYLEON MagicNumber
     }
@@ -309,7 +316,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
      *           the parent control
      * @return a group with general options
      */
-    private Group createLayoutGroup1(final Composite parent) {
+    private Group createLayoutTypeGroup(final Composite parent) {
 
         Group generalGroup = new Group(parent, SWT.NONE);
         generalGroup.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
@@ -366,7 +373,7 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
      *            the parent control
      * @return a group with the server configuration table
      */
-    private Group createLayoutGroup3(final Composite parent) {
+    private Group createServerTableGroup(final Composite parent) {
 
         Group generalGroup = new Group(parent, SWT.NONE);
         
@@ -476,6 +483,22 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
                 }                
             }
         );
+        
+        serverConfigTable.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(final KeyEvent e) {
+                IStructuredSelection selection
+                    = (IStructuredSelection) serverConfigViewer.getSelection();
+                if (!selection.isEmpty()) {
+                    ServerConfigData serverConfig 
+                        = (ServerConfigData) selection.getFirstElement();
+                    if (!serverConfig.isFixed() && !serverConfig.isActive()) {
+                        ServerConfigs.getInstance().removeServerConfig(serverConfig);
+                    }                                
+                }
+                refreshServerConfigViewer();
+            }
+        });
 
         serverConfigViewer.setInput(ServerConfigs.getInstance());
 
@@ -488,35 +511,49 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
         serverConfigTable.setLayoutData(tableLayoutData);
         serverConfigTable.pack();
 
+        Composite buttonBar = createLayoutGroup3ButtonBar(generalGroup);
+        buttonBar.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+
+        generalGroup.setLayout(new GridLayout(2, false));
+        return generalGroup;
+    }
+
+    /**
+     * Creates the button bar for the server configuration table.
+     * 
+     * @param generalGroup composite to place the button bar into.
+     * @return the button bar.
+     */
+    private Composite createLayoutGroup3ButtonBar(final Group generalGroup) {
         // add buttons for testing, editing, creating and removing server configuration
         Composite comp = new Composite(generalGroup, SWT.NONE);
 
-        scEditButton1 = new Button(comp, SWT.PUSH | SWT.CENTER);
-        scEditButton1.setText("New...");
-        scEditButton1.addSelectionListener(
+        newServerButton = new Button(comp, SWT.PUSH | SWT.CENTER);
+        newServerButton.setText("New...");
+        newServerButton.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == scEditButton1) {
-                        new NewServerConfigDialog(parent.getShell()).open();
+                    if (e.widget == newServerButton) {
+                        new NewServerConfigDialog(generalGroup.getShell()).open();
                         refreshServerConfigViewer();
                     }
                 }
             }
         );
 
-        scEditButton2 = new Button(comp, SWT.PUSH | SWT.CENTER);
-        scEditButton2.setText("Edit...");
-        scEditButton2.addSelectionListener(
+        editServerButton = new Button(comp, SWT.PUSH | SWT.CENTER);
+        editServerButton.setText("Edit...");
+        editServerButton.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == scEditButton2) {
+                    if (e.widget == editServerButton) {
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
                             ServerConfigData serverConfig 
                                 = (ServerConfigData) selection.getFirstElement();
                             if (!serverConfig.isFixed()) {
-                                new EditServerConfigDialog(parent.getShell(), serverConfig).open();
+                                new EditServerConfigDialog(generalGroup.getShell(), serverConfig).open();
                             }
                         }
                         refreshServerConfigViewer();
@@ -525,12 +562,12 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             }
         );
 
-        scEditButton3 = new Button(comp, SWT.PUSH | SWT.CENTER);
-        scEditButton3.setText("Delete");
-        scEditButton3.addSelectionListener(
+        deleteServerButton = new Button(comp, SWT.PUSH | SWT.CENTER);
+        deleteServerButton.setText("Remove");
+        deleteServerButton.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == scEditButton3) {
+                    if (e.widget == deleteServerButton) {
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
@@ -546,12 +583,12 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             }
         );
 
-        scEditButton4 = new Button(comp, SWT.PUSH | SWT.CENTER);
-        scEditButton4.setText("Check...");
-        scEditButton4.addSelectionListener(
+        checkServerButton = new Button(comp, SWT.PUSH | SWT.CENTER);
+        checkServerButton.setText("Check...");
+        checkServerButton.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == scEditButton4) {
+                    if (e.widget == checkServerButton) {
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
@@ -566,12 +603,12 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             }
         );
 
-        scEditButton6 = new Button(comp, SWT.PUSH | SWT.CENTER);
-        scEditButton6.setText("Details...");
-        scEditButton6.addSelectionListener(
+        serverDetailsButton = new Button(comp, SWT.PUSH | SWT.CENTER);
+        serverDetailsButton.setText("Details...");
+        serverDetailsButton.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == scEditButton6) {
+                    if (e.widget == serverDetailsButton) {
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
@@ -586,12 +623,12 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             }
         );
 
-        scEditButton5 = new Button(comp, SWT.PUSH | SWT.CENTER);
-        scEditButton5.setText("Select");
-        scEditButton5.addSelectionListener(
+        selectServerButton = new Button(comp, SWT.PUSH | SWT.CENTER);
+        selectServerButton.setText("Make Active");
+        selectServerButton.addSelectionListener(
             new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent e) {
-                    if (e.widget == scEditButton5) {
+                    if (e.widget == selectServerButton) {
                         IStructuredSelection selection
                             = (IStructuredSelection) serverConfigViewer.getSelection();
                         if (!selection.isEmpty()) {
@@ -606,13 +643,21 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             }
         );
 
-        comp.setLayout(new FillLayout(SWT.VERTICAL));
-        comp.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+        // Make sure the buttons have an appropriate minimum size
+        setButtonLayoutData(newServerButton);
+        setButtonLayoutData(editServerButton);
+        setButtonLayoutData(deleteServerButton);
+        setButtonLayoutData(checkServerButton);
+        setButtonLayoutData(selectServerButton);
+        setButtonLayoutData(serverDetailsButton);
 
-        generalGroup.setLayout(new GridLayout(2, false));
-
-        return generalGroup;
-
+        GridLayout compLayout = new GridLayout(1, false);
+        compLayout.verticalSpacing = LayoutConstants.getSpacing().y;
+        compLayout.marginHeight = 0;
+        compLayout.marginWidth = 0;
+        comp.setLayout(compLayout);
+        
+        return comp;
     }
 
     /**
@@ -800,12 +845,12 @@ public class RemoteLayoutPreferencePage extends PreferencePage implements
             active = serverConfig.isActive();
         }
         serverConfigTable.setEnabled(remoteLayout);
-        scEditButton1.setEnabled(remoteLayout);
-        scEditButton2.setEnabled(remoteLayout && !empty && !fixed);
-        scEditButton3.setEnabled(remoteLayout && !empty && !fixed && !active);
-        scEditButton4.setEnabled(remoteLayout && !empty);
-        scEditButton5.setEnabled(remoteLayout && !empty && !active);
-        scEditButton6.setEnabled(remoteLayout && !empty);
+        newServerButton.setEnabled(remoteLayout);
+        editServerButton.setEnabled(remoteLayout && !empty && !fixed);
+        deleteServerButton.setEnabled(remoteLayout && !empty && !fixed && !active);
+        checkServerButton.setEnabled(remoteLayout && !empty);
+        selectServerButton.setEnabled(remoteLayout && !empty && !active);
+        serverDetailsButton.setEnabled(remoteLayout && !empty);
     }
 
 }

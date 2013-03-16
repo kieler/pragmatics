@@ -16,6 +16,10 @@ package de.cau.cs.kieler.kiml.grana.ui;
 
 import java.util.List;
 
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.FontData;
+
 import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
 import de.cau.cs.kieler.kiml.service.AnalysisService;
 
@@ -43,13 +47,15 @@ public final class HtmlResultGenerator {
      * @return the generated html, or null if no analysis could be visualized
      */
     public static String generate(final List<BoundVisualization> boundVisualizations) {
-
         String currentCategory = "";
 
         // build the html content
         boolean empty = true;
         boolean first = true;
-        StringBuilder html = new StringBuilder("<HTML><HEAD></HEAD><BODY>");
+        int rowIndex = 0;
+        StringBuilder html = new StringBuilder("<HTML><HEAD>")
+            .append(generateCSS())
+            .append("</HEAD><BODY>");
         for (BoundVisualization visualization : boundVisualizations) {
             // Check if this visualization starts a new category
             if (!visualization.getAnalysis().getCategory().equals(currentCategory)) {
@@ -61,16 +67,24 @@ public final class HtmlResultGenerator {
                     html.append("</TABLE>");
                 }
 
-                html.append("<H2>")
-                        .append(AnalysisService.getInstance().getCategory(currentCategory)
-                                .getName()).append("</H2>")
-                        .append("<TABLE border=0 cellpadding='10'>");
+                html.append("<H1>")
+                        .append(AnalysisService.getInstance().getCategory(currentCategory).getName())
+                        .append("</H1>")
+                        .append("<TABLE cellspacing='0' cellpadding='6'>")
+                        .append("<TR CLASS='header'><TH>Analysis</TH><TH>Result</TH></TR>");
+                
+                rowIndex = 0;
             }
 
             empty = false;
-            html.append("<TR><TD VALIGN='TOP'><b>").append(visualization.getAnalysis().getName())
-                    .append("</b></TD><TD VALIGN='TOP'>").append(visualization.get())
+            html.append("<TR class='" + (rowIndex % 2 == 0 ? "even" : "odd") + "'>")
+                    .append("<TD VALIGN='TOP' CLASS='analysisName'>")
+                    .append(visualization.getAnalysis().getName())
+                    .append("</TD><TD VALIGN='TOP'>")
+                    .append(visualization.get())
                     .append("</TD></TR>");
+            
+            rowIndex++;
         }
         html.append("</TABLE></BODY></HTML>");
 
@@ -82,4 +96,35 @@ public final class HtmlResultGenerator {
     }
 
     // TODO this should be customizable through the preference pages
+    
+    /**
+     * Generates the CSS code necessary for the HTML output to look good.
+     * 
+     * @return CSS code.
+     */
+    private static String generateCSS() {
+        // Get the standard dialog font and the font used for headings
+        FontData headerFont = JFaceResources.getHeaderFont().getFontData()[0];
+        boolean boldHeaderFont = (headerFont.getStyle() & SWT.BOLD) != 0;
+        FontData dialogFont = JFaceResources.getDialogFont().getFontData()[0];
+        
+        StringBuilder css = new StringBuilder("<style TYPE='text/css'><!--")
+            .append("body, table { font-family: \"" + dialogFont.getName() + "\";")
+            .append("              font-size: " + dialogFont.getHeight() + "pt; }")
+            .append("h1 { font-family: \"" + headerFont.getName() + "\";")
+            .append("     font-size: " + headerFont.getHeight() + "pt;")
+            .append("     font-weight: " + (boldHeaderFont ? "bold" : "normal") + "; }")
+            .append("table { border-bottom: 1pt solid #aaaaaa;")
+            .append("        margin-left: 20pt; margin-bottom: 20pt; }")
+            .append("th { background: #fafafa;")
+            .append("     border-bottom: 2pt solid #aaaaaa; border-top: 2pt solid #aaaaaa;")
+            .append("     font-weight: bold; text-align: left; }")
+            .append("td { border-bottom: 1pt solid #aaaaaa; }")
+            .append(".analysisName { font-weight: normal; }")
+            .append(".even { background: white; }")
+            .append(".odd { background: white; }")
+            .append("--></style>");
+        
+        return css.toString();
+    }
 }

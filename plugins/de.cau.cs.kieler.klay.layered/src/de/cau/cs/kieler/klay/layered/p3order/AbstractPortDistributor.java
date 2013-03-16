@@ -26,6 +26,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Calculates port ranks and distributes ports.
@@ -177,6 +178,12 @@ abstract class AbstractPortDistributor {
     }
 
     /**
+     * A float value large enough to be sure that there will never be that many ports on either side
+     * of a node.
+     */
+    private static final float ABSURDLY_LARGE_FLOAT = 1000f;
+    
+    /**
      * Distribute the ports of the given node by their sides, connected ports, and input or output
      * type.
      * 
@@ -200,26 +207,72 @@ abstract class AbstractPortDistributor {
                 // calculate barycenter values for the ports of the node
                 PortIteration:
                 for (LPort port : node.getPorts()) {
-                    // add up all ranks of connected ports
+                    boolean northSouthPort =
+                            port.getSide() == PortSide.NORTH || port.getSide() == PortSide.SOUTH;
                     float sum = 0;
-                    for (LEdge outgoingEdge : port.getOutgoingEdges()) {
-                        LPort connectedPort = outgoingEdge.getTarget();
-                        if (connectedPort.getNode().getLayer() == node.getLayer()) {
-                            inLayerPorts.add(port);
-                            continue PortIteration;
-                        } else {
-                            // outgoing edges go to the subsequent layer and are seen clockwise
-                            sum += portRanks[connectedPort.id];
+                    
+                    if (northSouthPort) {
+                        // Find the dummy node created for the port
+                        LNode portDummy = port.getProperty(Properties.PORT_DUMMY);
+                        if (portDummy == null) {
+                            continue;
                         }
-                    }
-                    for (LEdge incomingEdge : port.getIncomingEdges()) {
-                        LPort connectedPort = incomingEdge.getSource();
-                        if (connectedPort.getNode().getLayer() == node.getLayer()) {
-                            inLayerPorts.add(port);
-                            continue PortIteration;
-                        } else {
-                            // incoming edges go to the preceding layer and are seen counter-clockwise
-                            sum -= portRanks[connectedPort.id];
+                        
+                        // TODO Find out if it's an input port, an output port, or both
+                        boolean input = false;
+                        boolean output = false;
+                        for (LPort portDummyPort : portDummy.getPorts()) {
+                            if (portDummyPort.getProperty(Properties.ORIGIN) == port) {
+                                if (!portDummyPort.getOutgoingEdges().isEmpty()) {
+                                    output = true;
+                                } else if (!portDummyPort.getIncomingEdges().isEmpty()) {
+                                    input = true;
+                                }
+                            }
+                        }
+                        
+                        if (input && (input ^ output)) {
+                            // It's an input port; the index of its dummy node is its inverted sort key
+                            // (for southern input ports, the key must be larger than the ones assigned
+                            // to output ports or input&&output ports)
+                            sum = port.getSide() == PortSide.NORTH
+                                    ? -portDummy.getIndex()
+                                    : ABSURDLY_LARGE_FLOAT - portDummy.getIndex();
+                        } else if (output && (input ^ output)) {
+                            // It's an output port; the index of its dummy node is its sort key
+                            // (for northern output ports, the key must be larger than the ones assigned
+                            // to input ports or input&&output ports, which are negative and 0,
+                            // respectively)
+                            sum = portDummy.getIndex() + 1.0f;
+                        } else if (input && output) {
+                            // It's both, an input and an output port; it must sit between input and
+                            // output ports
+                            // North: input ports < 0.0, output ports > 0.0
+                            // South: input ports > FLOAT_MAX / 2, output ports near zero
+                            sum = port.getSide() == PortSide.NORTH ? 0.0f : ABSURDLY_LARGE_FLOAT / 2f;
+                        }
+                    } else {
+                        // add up all ranks of connected ports
+                        for (LEdge outgoingEdge : port.getOutgoingEdges()) {
+                            LPort connectedPort = outgoingEdge.getTarget();
+                            if (connectedPort.getNode().getLayer() == node.getLayer()) {
+                                inLayerPorts.add(port);
+                                continue PortIteration;
+                            } else {
+                                // outgoing edges go to the subsequent layer and are seen clockwise
+                                sum += portRanks[connectedPort.id];
+                            }
+                        }
+                        for (LEdge incomingEdge : port.getIncomingEdges()) {
+                            LPort connectedPort = incomingEdge.getSource();
+                            if (connectedPort.getNode().getLayer() == node.getLayer()) {
+                                inLayerPorts.add(port);
+                                continue PortIteration;
+                            } else {
+                                // incoming edges go to the preceding layer and are seen
+                                // counter-clockwise
+                                sum -= portRanks[connectedPort.id];
+                            }
                         }
                     }
                     
@@ -227,6 +280,10 @@ abstract class AbstractPortDistributor {
                         portBarycenter[port.id] = sum / port.getDegree();
                         minBarycenter = Math.min(minBarycenter, portBarycenter[port.id]);
                         maxBarycenter = Math.max(maxBarycenter, portBarycenter[port.id]);
+                    } else if (northSouthPort) {
+                        // For northern and southern ports, the sum directly corresponds to the
+                        // barycenter value to be used.
+                        portBarycenter[port.id] = sum;
                     }
                 }
                 

@@ -50,8 +50,8 @@ public class LayoutGraphView extends ViewPart {
     public void createPartControl(final Composite parent) {
         // create actions in the view toolbar
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
-        toolBarManager.add(new ImageExportAction(this));
         toolBarManager.add(new LoadGraphAction());
+        toolBarManager.add(new ImageExportAction(this));
 
         // create canvas for layout graphs
         scrolledComposite = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);

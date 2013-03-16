@@ -71,38 +71,18 @@ public class PortLayoutProvider extends AbstractLayoutProvider {
     // Properties
     
     /**
-     * Property ID.
-     */
-    private static final String INVERTED_PORT_SIDE_PROB_ID =
-        "de.cau.cs.kieler.kiml.portlayouter.oddPortSideProbability";
-    
-    /**
-     * Default probability for ports to be placed on inverted sides.
-     */
-    private static final float DEF_INVERTED_PORT_SIDE_PROB = 0.05f;
-    
-    /**
      * Probability for ports to be placed on inverted sides.
      */
     private static final Property<Float> INVERTED_PORT_SIDE_PROB = new Property<Float>(
-            INVERTED_PORT_SIDE_PROB_ID, DEF_INVERTED_PORT_SIDE_PROB);
-    
-    /**
-     * Property ID.
-     */
-    private static final String NORTH_SOUTH_PORT_SIDE_PROB_ID =
-        "de.cau.cs.kieler.kiml.portlayouter.northSouthPortSideProbability";
-    
-    /**
-     * Default probability for ports to be placed on the northern or southern side.
-     */
-    private static final float DEF_NORTH_SOUTH_PORT_SIDE_PROB = 0.1f;
+            "de.cau.cs.kieler.kiml.portlayouter.oddPortSideProbability",
+            0.05f);
     
     /**
      * Probability for ports to be placed on the northern or southern side.
      */
     private static final Property<Float> NORTH_SOUTH_PORT_SIDE_PROB = new Property<Float>(
-            NORTH_SOUTH_PORT_SIDE_PROB_ID, DEF_NORTH_SOUTH_PORT_SIDE_PROB);
+            "de.cau.cs.kieler.kiml.portlayouter.northSouthPortSideProbability",
+            0.1f);
     
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -127,6 +107,7 @@ public class PortLayoutProvider extends AbstractLayoutProvider {
         // Retrieve the relevant properties
         KShapeLayout graphShapeLayout = layoutNode.getData(KShapeLayout.class);
         boolean debug = graphShapeLayout.getProperty(LayoutOptions.DEBUG_MODE);
+        
         float oddSideProb = graphShapeLayout.getProperty(INVERTED_PORT_SIDE_PROB);
         float northSouthSideProb = graphShapeLayout.getProperty(NORTH_SOUTH_PORT_SIDE_PROB);
         
@@ -161,14 +142,14 @@ public class PortLayoutProvider extends AbstractLayoutProvider {
             randomizer = new Random();
         }
         
-        // Iterate through the nodes, placing the ports accordingly
+        // Iterate through the nodes, placing ports and changing port constraints
         for (KNode node : layoutNode.getChildren()) {
             placePorts(node, oddSideProb, northSouthSideProb, randomizer, debug);
         }
         
         progressMonitor.done();
     }
-    
+
     /**
      * Places the ports of the given node.
      * 

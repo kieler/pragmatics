@@ -6,10 +6,10 @@
       <view
             allowMultiple="false"
             category="de.cau.cs.kieler.layout"
-            class="de.cau.cs.kieler.klay.debugview.DebugView"
+            class="de.cau.cs.kieler.klay.debugview.views.DebugView"
             icon="images/debug.gif"
             id="de.cau.cs.kieler.klay.debug.debugview"
-            name="KLay Debug View"
+            name="KLay Debugging"
             restorable="true">
       </view>
    </extension>

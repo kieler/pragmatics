@@ -6,18 +6,6 @@
          point="org.eclipse.ui.commands">
       <command
             categoryId="de.cau.cs.kieler.layout"
-            defaultHandler="de.cau.cs.kieler.kiml.grana.handlers.AnalysisHandler"
-            id="de.cau.cs.kieler.kiml.grana.command.analyse"
-            name="Analyze">
-      </command>
-      <command
-            categoryId="de.cau.cs.kieler.layout"
-            defaultHandler="de.cau.cs.kieler.kiml.grana.handlers.ConfigureAnalysesHandler"
-            id="de.cau.cs.kieler.kiml.grana.command.configureAnalyses"
-            name="Configure Analyses">
-      </command>
-      <command
-            categoryId="de.cau.cs.kieler.layout"
             defaultHandler="de.cau.cs.kieler.kiml.grana.handlers.BatchHandler"
             id="de.cau.cs.kieler.kiml.grana.command.setupBatch"
             name="Setup Batch">
@@ -25,36 +13,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="toolbar:de.cau.cs.kieler.layout.toolbar">
-         <command
-               commandId="de.cau.cs.kieler.kiml.grana.command.analyse"
-               icon="icons/menu16/analyzediagram.gif"
-               id="de.cau.cs.kieler.kiml.grana.menu.analysis"
-               label="Analyze Graph"
-               style="pulldown"
-               tooltip="Analyze the Graph of the Current Diagram">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeEditor">
-                  <test
-                        forcePluginActivation="false"
-                        property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
-                  </test>
-               </with>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="menu:de.cau.cs.kieler.kiml.grana.menu.analysis">
-         <command
-               commandId="de.cau.cs.kieler.kiml.grana.command.configureAnalyses"
-               label="Configure..."
-               style="push"
-               tooltip="Configure the analyses that are executed">
-         </command>
-      </menuContribution>
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
@@ -79,9 +37,9 @@
             allowMultiple="false"
             category="de.cau.cs.kieler.layout"
             class="de.cau.cs.kieler.kiml.grana.views.AnalysisResultViewPart"
-            icon="icons/menu16/analyzediagramquick.gif"
+            icon="icons/menu16/analyzediagram.gif"
             id="de.cau.cs.kieler.kiml.grana.views.analysisResults"
-            name="Analysis Results"
+            name="Graph Analysis"
             restorable="true">
       </view>
    </extension>
@@ -146,14 +104,8 @@
             type="csv">
       </visualizer>
       <visualizationMethod
-            class="de.cau.cs.kieler.kiml.grana.ui.DialogVisualizationMethod"
-            default="true"
-            silent="false"
-            type="html">
-      </visualizationMethod>
-      <visualizationMethod
             class="de.cau.cs.kieler.kiml.grana.views.ViewVisualizationMethod"
-            default="false"
+            default="true"
             silent="true"
             type="html">
       </visualizationMethod>

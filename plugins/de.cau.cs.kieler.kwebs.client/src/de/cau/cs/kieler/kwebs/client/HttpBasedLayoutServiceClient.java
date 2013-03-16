@@ -57,10 +57,11 @@ public abstract class HttpBasedLayoutServiceClient extends AbstractLayoutService
      *            path to the trust store file
      * @param truststorePass
      *            password for the trust store file
-     * @throws Exception
+     * @throws Exception if a problem occurs with some part of the SSL initialization.
      */
     protected synchronized void initSSL(final String truststore, final String truststorePass) 
         throws Exception {
+        
         if (sslSocketFactory != null) {
             throw new IllegalAccessException("SSL already initialized, call releaseSSL first");
         }

@@ -46,7 +46,7 @@ public class ImageExportAction extends Action {
     /** identifier string for this action. */
     private static final String ACTION_ID = "de.cau.cs.kieler.kiml.debug.imageExport";
     /** relative path to the icon to use for this action. */
-    private static final String ICON_PATH = "icons/pngfile.gif";
+    private static final String ICON_PATH = "icons/export.gif";
     /** preference identifier for the last used file name. */
     private static final String LAST_FILE_NAME_PREF = "klay.info.lastImageFile";
 

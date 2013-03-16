@@ -28,6 +28,7 @@ import de.cau.cs.kieler.core.model.triggers.PartTrigger.EventType;
 import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.SelectionState;
 import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
+import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
 
 /**
  * This combination in is charge of visualizing EMF tree editors' content graphically.
@@ -75,7 +76,7 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
                         .getResources();
                 if (!resources.isEmpty() && !resources.get(0).getContents().isEmpty()) {
 
-                    this.schedule(new KlighdDiagramEffect(id, inputPath.lastSegment(), EcoreUtil
+                    this.schedule(new KlighdUpdateDiagramEffect(id, inputPath.lastSegment(), EcoreUtil
                             .getRootContainer(resources.get(0).getContents().get(0)), es
                             .getEditorPart()));
                 }
@@ -94,7 +95,7 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
                 }
                 if (selected instanceof EObject) {
                     this.schedule(
-                            new KlighdDiagramEffect(
+                            new KlighdUpdateDiagramEffect(
                             id, inputPath.lastSegment(), EcoreUtil
                             .getRootContainer((EObject) selected), es.getEditorPart()));
                     return;

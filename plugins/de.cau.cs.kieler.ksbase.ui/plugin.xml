@@ -10,12 +10,6 @@
                name="Lowest">
          </Priority>
       </editpolicyProvider>
-      <editpolicyProvider
-            class="de.cau.cs.kieler.ksbase.ui.handler.BalloonPopupEditPolicyProvider">
-         <Priority
-               name="Lowest">
-         </Priority>
-      </editpolicyProvider>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
