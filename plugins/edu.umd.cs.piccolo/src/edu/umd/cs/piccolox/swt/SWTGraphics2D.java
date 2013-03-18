@@ -28,6 +28,7 @@
  */
 package edu.umd.cs.piccolox.swt;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
@@ -133,6 +134,8 @@ public class SWTGraphics2D extends Graphics2D {
     /** The current transform to apply to drawing operations. */
     protected AffineTransform transform = new AffineTransform();
     private final Transform swtTransform;
+    /** The transparency to apply during drawing operations. */
+    protected AlphaComposite transparency = null;
     /** The current font to use when drawing text. */
     protected org.eclipse.swt.graphics.Font curFont;
     /** The state w.r.t. using the text style when drawing text. */
@@ -1848,6 +1851,14 @@ public class SWTGraphics2D extends Graphics2D {
 
     /** {@inheritDoc} */
     public void setComposite(final Composite comp) {
+        if (comp instanceof AlphaComposite) {
+            AlphaComposite ac = (AlphaComposite) comp;
+            gc.setAlpha((int) ((1-ac.getAlpha()) * 255));
+            this.transparency = ac;
+        } else {
+            gc.setAlpha(255);
+            this.transparency = null;
+        }
     }
 
     /** {@inheritDoc} */
@@ -1894,7 +1905,7 @@ public class SWTGraphics2D extends Graphics2D {
      * @see java.awt.Graphics2D#getComposite()
      */
     public Composite getComposite() {
-        return null;
+        return this.transparency;
     }
 
     /**
