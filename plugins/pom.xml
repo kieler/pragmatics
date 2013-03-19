@@ -23,9 +23,6 @@
     <module>de.cau.cs.kieler.core.annotations.edit</module>
     <module>de.cau.cs.kieler.core.annotations.text</module>
     <module>de.cau.cs.kieler.core.annotations.text.ui</module>
-    <module>de.cau.cs.kieler.core.kexpressions</module>
-    <module>de.cau.cs.kieler.core.kexpressions.edit</module>
-    <module>de.cau.cs.kieler.core.kexpressions.ui</module>
     <module>de.cau.cs.kieler.core.kgraph</module>
     <module>de.cau.cs.kieler.core.kgraph.edit</module>
     <module>de.cau.cs.kieler.core.kgraph.text</module>
@@ -38,31 +35,19 @@
     <module>de.cau.cs.kieler.core.model.graphiti</module>
     <module>de.cau.cs.kieler.core.model.xtend</module>
     <module>de.cau.cs.kieler.core.model.xtext</module>
-    <module>de.cau.cs.kieler.core.product</module>
     <module>de.cau.cs.kieler.core.ui</module>
-    <module>de.cau.cs.kieler.esterel</module>
-    <module>de.cau.cs.kieler.esterel.cec</module>
-    <module>de.cau.cs.kieler.esterel.cec.linux.x86</module>
-    <module>de.cau.cs.kieler.esterel.cec.linux.x86_64</module>
-    <module>de.cau.cs.kieler.esterel.cec.macosx.x86</module>
-    <module>de.cau.cs.kieler.esterel.cec.macosx.x86_64</module>
-    <module>de.cau.cs.kieler.esterel.cec.sim</module>
-    <module>de.cau.cs.kieler.esterel.cec.sim.kivi</module>
-    <module>de.cau.cs.kieler.esterel.cec.win32.x86</module>
-    <module>de.cau.cs.kieler.esterel.examples</module>
-    <module>de.cau.cs.kieler.esterel.ui</module>
     <module>de.cau.cs.kieler.kaom</module>
     <module>de.cau.cs.kieler.kaom.custom</module>
     <module>de.cau.cs.kieler.kaom.diagram</module>
     <module>de.cau.cs.kieler.kaom.diagram.custom</module>
     <module>de.cau.cs.kieler.kaom.edit</module>
     <module>de.cau.cs.kieler.kaom.examples</module>
-    <module>de.cau.cs.kieler.kaom.examples.ptolemy</module>
     <module>de.cau.cs.kieler.kaom.graphiti</module>
+<!--  these plugins depend on org.ptolemy, which is in the semantics repository
+    <module>de.cau.cs.kieler.kaom.examples.ptolemy</module>
     <module>de.cau.cs.kieler.kaom.importer.ptolemy</module>
     <module>de.cau.cs.kieler.kaom.karma.ptolemy</module>
-    <module>de.cau.cs.kieler.kaom.ksbase.ptolemy</module>
-    <module>de.cau.cs.kieler.kaom.sim.ptolemy</module>
+    <module>de.cau.cs.kieler.kaom.ksbase.ptolemy</module> -->
     <module>de.cau.cs.kieler.kaom.text</module>
     <module>de.cau.cs.kieler.kaom.text.ui</module>
     <module>de.cau.cs.kieler.karma</module>
@@ -72,10 +57,8 @@
     <module>de.cau.cs.kieler.keg.edit</module>
     <module>de.cau.cs.kieler.keg.importer</module>
     <module>de.cau.cs.kieler.keg.ksbase</module>
-    <module>de.cau.cs.kieler.kev</module>
     <module>de.cau.cs.kieler.kex</module>
     <module>de.cau.cs.kieler.kex.ui</module>
-    <module>de.cau.cs.kieler.kies</module>
     <module>de.cau.cs.kieler.kiml</module>
     <module>de.cau.cs.kieler.kiml.evol</module>
     <module>de.cau.cs.kieler.kiml.export</module>
@@ -89,8 +72,8 @@
     <module>de.cau.cs.kieler.kiml.graphviz.layouter</module>
     <module>de.cau.cs.kieler.kiml.kivi</module>
     <module>de.cau.cs.kieler.kiml.ogdf</module>
-    <module>de.cau.cs.kieler.kiml.smart</module>
     <module>de.cau.cs.kieler.kiml.service</module>
+    <module>de.cau.cs.kieler.kiml.smart</module>
     <module>de.cau.cs.kieler.kiml.ui</module>
     <module>de.cau.cs.kieler.klay.force</module>
     <module>de.cau.cs.kieler.klay.layered</module>
@@ -100,70 +83,16 @@
     <module>de.cau.cs.kieler.klighd.piccolo</module>
     <module>de.cau.cs.kieler.klighd.piccolo.draw2d</module>
     <module>de.cau.cs.kieler.klighd.xtext</module>
-    <module>de.cau.cs.kieler.klots</module>
-    <module>de.cau.cs.kieler.klots.examples</module>
     <module>de.cau.cs.kieler.ksbase</module>
     <module>de.cau.cs.kieler.ksbase.ui</module>
-    <module>de.cau.cs.kieler.kvid</module>
-    <module>de.cau.cs.kieler.kvid.ui</module>
     <module>de.cau.cs.kieler.kwebs</module>
     <module>de.cau.cs.kieler.kwebs.client</module>
     <module>de.cau.cs.kieler.kwebs.client.jaxws</module>
     <module>de.cau.cs.kieler.kwebs.client.jeti</module>
     <module>de.cau.cs.kieler.kwebs.jaxws</module>
     <module>de.cau.cs.kieler.kwebs.server</module>
-    <module>de.cau.cs.kieler.maude</module>
     <module>de.cau.cs.kieler.papyrus</module>
     <module>de.cau.cs.kieler.papyrus.sequence</module>
-    <module>de.cau.cs.kieler.s</module>
-    <module>de.cau.cs.kieler.s.sc</module>
-    <module>de.cau.cs.kieler.s.sim.kivi</module>
-    <module>de.cau.cs.kieler.s.sim.sc</module>
-    <module>de.cau.cs.kieler.s.ui</module>
-    <module>de.cau.cs.kieler.sc</module>
-    <module>de.cau.cs.kieler.sim.abro</module>
-    <module>de.cau.cs.kieler.sim.benchmark</module>
-    <module>de.cau.cs.kieler.sim.eso</module>
-    <module>de.cau.cs.kieler.sim.eso.ui</module>
-    <module>de.cau.cs.kieler.sim.instructions</module>
-    <module>de.cau.cs.kieler.sim.kart</module>
-    <module>de.cau.cs.kieler.sim.kart.ui</module>
-    <module>de.cau.cs.kieler.sim.kiem</module>
-    <module>de.cau.cs.kieler.sim.kiem.config</module>
-    <module>de.cau.cs.kieler.sim.kiem.ui</module>
-    <module>de.cau.cs.kieler.sim.kiem.ui.datacomponent</module>
-    <module>de.cau.cs.kieler.sim.kiem.ui.launching</module>
-    <module>de.cau.cs.kieler.sim.kivi</module>
-    <module>de.cau.cs.kieler.sim.ptolemy</module>
-    <module>de.cau.cs.kieler.sim.signals</module>
-    <module>de.cau.cs.kieler.sim.signals.ui</module>
-    <module>de.cau.cs.kieler.sim.syncsignalreset</module>
-    <module>de.cau.cs.kieler.sim.table</module>
-    <module>de.cau.cs.kieler.sj</module>
-    <module>de.cau.cs.kieler.synccharts.benchmark</module>
-    <module>de.cau.cs.kieler.synccharts.codegen.dependencies</module>
-    <module>de.cau.cs.kieler.synccharts.codegen.dependencies.klighd</module>
-    <module>de.cau.cs.kieler.synccharts.codegen.s</module>
-    <module>de.cau.cs.kieler.synccharts</module>
-    <module>de.cau.cs.kieler.synccharts.codegen.esterel</module>
-    <module>de.cau.cs.kieler.synccharts.codegen.sc</module>
-    <module>de.cau.cs.kieler.synccharts.custom</module>
-    <module>de.cau.cs.kieler.synccharts.diagram</module>
-    <module>de.cau.cs.kieler.synccharts.diagram.custom</module>
-    <module>de.cau.cs.kieler.synccharts.edit</module>
-    <module>de.cau.cs.kieler.synccharts.editor</module>
-    <module>de.cau.cs.kieler.synccharts.examples</module>
-    <module>de.cau.cs.kieler.synccharts.kivi</module>
-    <module>de.cau.cs.kieler.synccharts.klighd</module>
-    <module>de.cau.cs.kieler.synccharts.ksbase</module>
-    <module>de.cau.cs.kieler.synccharts.sim.ptolemy</module>
-    <module>de.cau.cs.kieler.synccharts.sim.sc</module>
-    <module>de.cau.cs.kieler.synccharts.sim.s</module>
-    <module>de.cau.cs.kieler.synccharts.synchronizer</module>
-    <module>de.cau.cs.kieler.synccharts.text</module>
-    <module>de.cau.cs.kieler.synccharts.text.bridge</module>
-    <module>de.cau.cs.kieler.synccharts.text.ui</module>
-    <module>de.tu_berlin.cs.tfs.muvitorkit</module>
     <module>de.unido.ls5.eti.client</module>
     <module>de.unido.ls5.eti.common</module>
     <module>de.unido.ls5.eti.connector.sepp</module>
@@ -172,18 +101,7 @@
     <module>edu.umd.cs.piccolo</module>
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>
-    <module>net.sf.antcontrib.cpptasks</module>
-    <module>org.apache.bcel</module>
-    <module>org.bluecove</module>
-    <module>org.bluecove.gpl</module>
     <module>org.graphdrawing.graphml</module>
-    <module>org.json</module>
-    <module>org.lejos.classes</module>
-    <module>org.lejos.jtools</module>
-    <module>org.lejos.pccomms</module>
-    <module>org.lejos.pctools</module>
-    <module>org.ptolemy</module>
-    <module>org.ptolemy.moml</module>
   </modules>
 
 </project>

@@ -12,8 +12,8 @@
   <modules>
     <module>../../plugins</module>
     <module>../../features</module>
-    <module>../de.cau.cs.kieler.repository</module>
-    <!-- <module>../de.cau.cs.kieler.target</module> -->
+<!--  the RCA cannot be built in this repository
+    <module>../de.cau.cs.kieler.repository</module> -->
     <module>../de.cau.cs.kieler.kwebs.repository</module>
     <module>../de.cau.cs.kieler.papyrus.repository</module>
   </modules>
