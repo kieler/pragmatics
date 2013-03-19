@@ -29,7 +29,6 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 
-import de.cau.cs.kieler.core.model.graphiti.GraphitiUtil;
 import de.cau.cs.kieler.kaom.Entity;
 
 /**
@@ -105,7 +104,7 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
                 IDimension labelDim = GraphitiUi.getUiLayoutService().calculateTextSize(
                         text.getValue(), Graphiti.getGaService().getFont(text, true));
                 if (labelDim != null) {
-                    changed |= GraphitiUtil.setBounds(ga, (entityWidth - labelDim.getWidth()) / 2,
+                    changed |= setBounds(ga, (entityWidth - labelDim.getWidth()) / 2,
                             AddPortFeature.PORT_SIZE + entityHeight + TEXT_DIST,
                             labelDim.getWidth(), labelDim.getHeight());
                 }
@@ -116,7 +115,7 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
         // now adjusted to the width of the normal inner rectangle
         for (GraphicsAlgorithm child : containerGa
                 .getGraphicsAlgorithmChildren()) {
-            changed |= GraphitiUtil.setBounds(child,
+            changed |= setBounds(child,
                     AddPortFeature.PORT_SIZE / 2, AddPortFeature.PORT_SIZE / 2,
                     entityWidth, entityHeight);
         }
@@ -130,6 +129,38 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
             }
         }
 
+        return changed;
+    }
+    
+    /**
+     * Set the bounds of the given graphics algorithm.
+     * 
+     * @param ga a graphics algorithm
+     * @param x the new x coordinate
+     * @param y the new y coordinate
+     * @param width the new width
+     * @param height the new height
+     * @return whether the bounds have changed
+     */
+    private static boolean setBounds(final GraphicsAlgorithm ga, final int x, final int y,
+            final int width, final int height) {
+        boolean changed = false;
+        if (ga.getX() != x) {
+            ga.setX(x);
+            changed = true;
+        }
+        if (ga.getY() != y) {
+            ga.setY(y);
+            changed = true;
+        }
+        if (ga.getWidth() != width) {
+            ga.setWidth(width);
+            changed = true;
+        }
+        if (ga.getHeight() != height) {
+            ga.setHeight(height);
+            changed = true;
+        }
         return changed;
     }
 

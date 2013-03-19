@@ -21,8 +21,6 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.util.ColorConstant;
 
-import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
-
 /**
  * A provider for styles of diagram elements.
  * 

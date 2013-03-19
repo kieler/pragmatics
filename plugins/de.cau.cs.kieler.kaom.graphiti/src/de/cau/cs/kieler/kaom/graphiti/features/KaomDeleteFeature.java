@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.model.graphiti.features;
+package de.cau.cs.kieler.kaom.graphiti.features;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -35,7 +35,7 @@ import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
  * 
  * @author soh
  */
-public class DefaultKielerDeleteFeature extends DefaultDeleteFeature {
+public class KaomDeleteFeature extends DefaultDeleteFeature {
 
     private Set<Connection> links = null;
 
@@ -45,7 +45,7 @@ public class DefaultKielerDeleteFeature extends DefaultDeleteFeature {
      * @param fp
      *            the feature provider
      */
-    public DefaultKielerDeleteFeature(final IFeatureProvider fp) {
+    public KaomDeleteFeature(final IFeatureProvider fp) {
         super(fp);
     }
 

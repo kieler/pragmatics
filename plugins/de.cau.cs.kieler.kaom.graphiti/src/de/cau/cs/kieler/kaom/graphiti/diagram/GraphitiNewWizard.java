@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.model.graphiti.ui;
+package de.cau.cs.kieler.kaom.graphiti.diagram;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -53,8 +53,8 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.model.graphiti.ModelGraphitiPlugin;
 import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.kaom.graphiti.KaomGraphitiPlugin;
 
 /**
  * A generic wizard for creation of new Graphiti diagrams.
@@ -213,7 +213,7 @@ public abstract class GraphitiNewWizard extends Wizard implements INewWizard {
                 ErrorDialog.openError(getContainer().getShell(), "Creation Problems", null,
                         ((CoreException) exception.getTargetException()).getStatus());
             } else {
-                IStatus status = new Status(IStatus.ERROR, ModelGraphitiPlugin.PLUGIN_ID,
+                IStatus status = new Status(IStatus.ERROR, KaomGraphitiPlugin.PLUGIN_ID,
                         "Error creating diagram", exception.getTargetException());
                 StatusManager.getManager().handle(status, StatusManager.LOG);
             }
@@ -258,7 +258,7 @@ public abstract class GraphitiNewWizard extends Wizard implements INewWizard {
                 modelResource.save(createSaveOptions());
                 diagramResource.save(createSaveOptions());
             } catch (IOException exception) {
-                IStatus status = new Status(IStatus.ERROR, ModelGraphitiPlugin.PLUGIN_ID,
+                IStatus status = new Status(IStatus.ERROR, KaomGraphitiPlugin.PLUGIN_ID,
                         "Unable to store model and diagram resources", exception);
                 StatusManager.getManager().handle(status);
             }
@@ -294,7 +294,7 @@ public abstract class GraphitiNewWizard extends Wizard implements INewWizard {
                 file.setCharset("UTF-8", new NullProgressMonitor());
             }
         } catch (CoreException e) {
-            StatusManager.getManager().handle(e, ModelGraphitiPlugin.PLUGIN_ID);
+            StatusManager.getManager().handle(e, KaomGraphitiPlugin.PLUGIN_ID);
         }
     }
 

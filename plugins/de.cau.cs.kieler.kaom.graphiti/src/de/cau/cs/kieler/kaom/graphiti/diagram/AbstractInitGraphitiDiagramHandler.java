@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.model.graphiti.ui;
+package de.cau.cs.kieler.kaom.graphiti.diagram;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -73,9 +73,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.model.graphiti.ModelGraphitiPlugin;
 import de.cau.cs.kieler.core.model.handlers.AbstractInitDiagramHandler;
 import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.kaom.graphiti.KaomGraphitiPlugin;
 
 /**
  * Abstract super class for commands that initialize any graphiti diagram.
@@ -290,7 +290,7 @@ public abstract class AbstractInitGraphitiDiagramHandler extends
             } catch (IOException exception) {
                 IStatus status =
                         new Status(IStatus.ERROR,
-                                ModelGraphitiPlugin.PLUGIN_ID,
+                                KaomGraphitiPlugin.PLUGIN_ID,
                                 "Unable to store model and diagram resources",
                                 exception);
                 StatusManager.getManager().handle(status);

@@ -27,8 +27,8 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 
-import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.kaom.Link;
+import de.cau.cs.kieler.kaom.graphiti.diagram.IStyleProvider;
 import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 
 /**

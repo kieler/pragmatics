@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kaom.graphiti.diagram;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.cau.cs.kieler.core.model.graphiti.ui.AbstractInitGraphitiDiagramHandler;
 import de.cau.cs.kieler.kaom.Link;
 
 /**
