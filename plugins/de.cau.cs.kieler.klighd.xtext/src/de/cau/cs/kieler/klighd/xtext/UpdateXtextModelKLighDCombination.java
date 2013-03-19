@@ -18,12 +18,12 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 
-// SUPPRESS CHECKSTYLE NEXT LineLength
-import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;
-// SUPPRESS CHECKSTYLE NEXT LineLength
-import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;
 import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
+// SUPPRESS CHECKSTYLE NEXT LineLength
+import de.cau.cs.kieler.klighd.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;
+// SUPPRESS CHECKSTYLE NEXT LineLength
+import de.cau.cs.kieler.klighd.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;
 
 /**
  * A combination for initializing/refreshing of KLighD views of Xtext-based models.

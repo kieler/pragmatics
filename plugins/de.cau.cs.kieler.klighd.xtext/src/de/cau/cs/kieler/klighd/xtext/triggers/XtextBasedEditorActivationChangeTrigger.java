@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.model.xtext.triggers;
+package de.cau.cs.kieler.klighd.xtext.triggers;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -31,9 +31,9 @@ import de.cau.cs.kieler.core.kivi.AbstractTrigger;
 import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
 import de.cau.cs.kieler.core.kivi.ITrigger;
 import de.cau.cs.kieler.core.kivi.ITriggerState;
-import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;
 import de.cau.cs.kieler.core.ui.util.CombinedWorkbenchListener;
 import de.cau.cs.kieler.core.ui.util.EditorUtils;
+import de.cau.cs.kieler.klighd.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;
 
 // SUPPRESS CHECKSTYLE PREVIOUS 10 LineLength
 

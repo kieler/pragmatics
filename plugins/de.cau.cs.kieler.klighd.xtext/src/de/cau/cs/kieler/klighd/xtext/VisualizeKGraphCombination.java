@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.xtext;
 
-import de.cau.cs.kieler.core.model.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;
+import de.cau.cs.kieler.klighd.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;
 // SUPPRESS CHECKSTYLE PREVIOUS LineLength
 
 /**

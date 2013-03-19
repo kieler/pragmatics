@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.model.xtext.effects;
+package de.cau.cs.kieler.klighd.xtext.effects;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -35,7 +35,7 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.core.model.xtext.ModelXtextPlugin;
+import de.cau.cs.kieler.klighd.xtext.KLighDXtextPlugin;
 
 /**
  * Initial implementation of a highlight effect for Xtext editors.
@@ -94,7 +94,7 @@ public class XtextEditorHighlightEffect extends AbstractEffect {
                             }
                         } catch (PartInitException e) {
                             StatusManager.getManager().handle(
-                                    new Status(IStatus.WARNING, ModelXtextPlugin.PLUGIN_ID,
+                                    new Status(IStatus.WARNING, KLighDXtextPlugin.PLUGIN_ID,
                                             "Error occured while opening the model element definition"
                                                     + "in an Xtext based editor", e));
                             return;

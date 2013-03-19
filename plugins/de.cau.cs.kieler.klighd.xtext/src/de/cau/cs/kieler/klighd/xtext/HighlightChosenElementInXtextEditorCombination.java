@@ -18,8 +18,8 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.model.xtext.effects.XtextEditorHighlightEffect;
 import de.cau.cs.kieler.klighd.triggers.KlighdSelectionTrigger.KlighdSelectionState;
+import de.cau.cs.kieler.klighd.xtext.effects.XtextEditorHighlightEffect;
 
 /**
  * @author chsch
