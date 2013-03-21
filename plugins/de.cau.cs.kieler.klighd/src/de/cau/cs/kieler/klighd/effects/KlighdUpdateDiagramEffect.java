@@ -79,6 +79,21 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
      *            the name
      * @param model
      *            the input model
+     */
+    public KlighdUpdateDiagramEffect(final String id, final String name, final Object model) {
+        super(id, name, model);
+    }
+
+    /**
+     * Constructs an effect that updates the diagram view for the given identifier with the input
+     * model and name.
+     * 
+     * @param id
+     *            the identifier
+     * @param name
+     *            the name
+     * @param model
+     *            the input model
      * @param theSourceWorkbenchPart
      *            the workbench part the element to be shown has been selected in
      */
