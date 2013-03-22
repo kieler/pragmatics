@@ -1853,7 +1853,7 @@ public class SWTGraphics2D extends Graphics2D {
     public void setComposite(final Composite comp) {
         if (comp instanceof AlphaComposite) {
             AlphaComposite ac = (AlphaComposite) comp;
-            gc.setAlpha((int) ((1-ac.getAlpha()) * 255));
+            gc.setAlpha((int) ac.getAlpha() * 255);
             this.transparency = ac;
         } else {
             gc.setAlpha(255);
