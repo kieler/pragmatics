@@ -18,18 +18,18 @@ package de.cau.cs.kieler.klay.layered.graph;
  * 
  * @author jjc
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
  */
 public final class LLabel extends LShape {
     
-    /** Enum for the definition of a side of the edge to place the (edge) label to. 
+    /** Enumeration for the definition of a side of the edge to place the (edge) label to. 
      *  Currently supported in orthogonal edge routing.
      */
-    public enum LSide {
+    public enum LabelSide {
         /** The label is placed above the edge. */
-        UP,
+        ABOVE,
         /** The label is placed below the edge. */
-        DOWN;
+        BELOW;
     }
 
     /** the serial version UID. */
@@ -38,7 +38,8 @@ public final class LLabel extends LShape {
     /** text of the label. */
     private String text;
     
-    private LSide side;
+    /** side of the label (if it's an edge label). */
+    private LabelSide side;
     
     /**
      * Creates a label.
@@ -81,16 +82,20 @@ public final class LLabel extends LShape {
     }
 
     /**
-     * @return the side
+     * If this is an edge label, this method returns the side of the edge on which the label is placed.
+     * 
+     * @return the label side, or {@code null}
      */
-    public LSide getSide() {
+    public LabelSide getSide() {
         return side;
     }
 
     /**
+     * Sets the side of the edge on which to place the label.
+     * 
      * @param side the side to set
      */
-    public void setSide(final LSide side) {
+    public void setSide(final LabelSide side) {
         this.side = side;
     }
     

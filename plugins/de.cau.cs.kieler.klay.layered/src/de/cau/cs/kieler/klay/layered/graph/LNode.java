@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
  */
 public final class LNode extends LShape {
     
@@ -71,7 +71,7 @@ public final class LNode extends LShape {
     }
     
     /**
-     * Returns the name of the node.
+     * Returns the name of the node. The name is derived from the text of the first label, if any.
      * 
      * @return the name, or {@code null}
      */
@@ -92,7 +92,7 @@ public final class LNode extends LShape {
     }
 
     /**
-     * Sets the owning layer and adds itself to the layer's list of nodes.
+     * Sets the owning layer and adds itself to the end of the layer's list of nodes.
      * If the node was previously in another layer, it is removed from
      * that layer's list of nodes. Be careful not to use this method while
      * iterating through the nodes list of the old layer nor of the new layer,
@@ -333,9 +333,9 @@ public final class LNode extends LShape {
     }
     
     /**
-     * Converts the position of this node from coordinates relative to the hierarchical node
+     * Converts the position of this node from coordinates relative to the parent node's
      * border to coordinates relative to that node's content area. The content area is the
-     * hierarchical node minus insets minus border spacing minus offset.
+     * parent node border minus insets minus border spacing minus offset.
      * 
      * @param horizontal if {@code true}, the x coordinate will be translated.
      * @param vertical if {@code true}, the y coordinate will be translated.

@@ -27,7 +27,7 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
-import de.cau.cs.kieler.klay.layered.graph.LLabel.LSide;
+import de.cau.cs.kieler.klay.layered.graph.LLabel.LabelSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -95,13 +95,13 @@ public final class LabelSideSelector implements ILayoutProcessor {
         for (LNode node : nodes) {
             for (LEdge edge : node.getOutgoingEdges()) {
                 for (LLabel label : edge.getLabels()) {
-                    label.setSide(LSide.UP);
+                    label.setSide(LabelSide.ABOVE);
                 }
                 for (LLabel portLabel : edge.getSource().getLabels()) {
-                    portLabel.setSide(LSide.UP);
+                    portLabel.setSide(LabelSide.ABOVE);
                 }
                 for (LLabel portLabel : edge.getTarget().getLabels()) {
-                    portLabel.setSide(LSide.UP);
+                    portLabel.setSide(LabelSide.ABOVE);
                 }
             }
         }
@@ -116,13 +116,13 @@ public final class LabelSideSelector implements ILayoutProcessor {
         for (LNode node : nodes) {
             for (LEdge edge : node.getOutgoingEdges()) {
                 for (LLabel label : edge.getLabels()) {
-                    label.setSide(LSide.DOWN);
+                    label.setSide(LabelSide.BELOW);
                 }
                 for (LLabel portLabel : edge.getSource().getLabels()) {
-                    portLabel.setSide(LSide.DOWN);
+                    portLabel.setSide(LabelSide.BELOW);
                 }
                 for (LLabel portLabel : edge.getTarget().getLabels()) {
-                    portLabel.setSide(LSide.DOWN);
+                    portLabel.setSide(LabelSide.BELOW);
                 }
             }
         }
@@ -137,7 +137,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
     private void directionUp(final List<LNode> nodes) {
         for (LNode node : nodes) {
             for (LEdge edge : node.getOutgoingEdges()) {
-                LSide side = LSide.UP;
+                LabelSide side = LabelSide.ABOVE;
                 LNode target = edge.getTarget().getNode();
                 if (target.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
                         || target.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
@@ -146,9 +146,9 @@ public final class LabelSideSelector implements ILayoutProcessor {
                 if ((node.getLayer().getIndex()
                         < target.getLayer().getIndex()
                         && !edge.getProperty(Properties.REVERSED))) {
-                    side = LSide.UP;
+                    side = LabelSide.ABOVE;
                 } else {
-                    side = LSide.DOWN;
+                    side = LabelSide.BELOW;
                 }
                 for (LLabel label : edge.getLabels()) {
                     label.setSide(side);
@@ -172,7 +172,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
     private void directionDown(final List<LNode> nodes) {
         for (LNode node : nodes) {
             for (LEdge edge : node.getOutgoingEdges()) {
-                LSide side = LSide.UP;
+                LabelSide side = LabelSide.ABOVE;
                 LNode target = edge.getTarget().getNode();
                 if (target.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
                         || target.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
@@ -181,9 +181,9 @@ public final class LabelSideSelector implements ILayoutProcessor {
                 if ((node.getLayer().getIndex()
                         < target.getLayer().getIndex()
                         && !edge.getProperty(Properties.REVERSED))) {
-                    side = LSide.DOWN;
+                    side = LabelSide.BELOW;
                 } else {
-                    side = LSide.UP;
+                    side = LabelSide.ABOVE;
                 }
                 for (LLabel label : edge.getLabels()) {
                     label.setSide(side);
@@ -204,12 +204,12 @@ public final class LabelSideSelector implements ILayoutProcessor {
      * @param nodes All nodes of the graph
      */
     private void smart(final List<LNode> nodes) {
-        HashMap<LNode, LSide> nodeMarkers = Maps.newHashMapWithExpectedSize(nodes.size());
+        HashMap<LNode, LabelSide> nodeMarkers = Maps.newHashMapWithExpectedSize(nodes.size());
         for (LNode node : nodes) {
             List<LPort> eastPorts = getPortsBySide(node, PortSide.EAST);
             for (LPort eastPort : eastPorts) {
                 for (LEdge edge : eastPort.getOutgoingEdges()) {
-                    LSide chosenSide = LSide.UP;
+                    LabelSide chosenSide = LabelSide.ABOVE;
                     LNode targetNode = edge.getTarget().getNode();
                     if (targetNode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
                             || targetNode.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
@@ -223,12 +223,12 @@ public final class LabelSideSelector implements ILayoutProcessor {
                         // two outgoing edges
                         if (eastPorts.size() == 2) {
                             if (eastPort == eastPorts.get(0)) {
-                                chosenSide = LSide.UP;
+                                chosenSide = LabelSide.ABOVE;
                             } else {
-                                chosenSide = LSide.DOWN;
+                                chosenSide = LabelSide.BELOW;
                             }
                         } else {
-                            chosenSide = LSide.UP;
+                            chosenSide = LabelSide.ABOVE;
                         }
                     }
                     for (LLabel label : edge.getLabels()) {

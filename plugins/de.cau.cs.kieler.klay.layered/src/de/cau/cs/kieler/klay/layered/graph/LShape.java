@@ -20,7 +20,7 @@ import de.cau.cs.kieler.core.math.KVector;
  * 
  * @author cds
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
  */
 public abstract class LShape extends LGraphElement {
     

@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LLabel.LSide;
+import de.cau.cs.kieler.klay.layered.graph.LLabel.LabelSide;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -341,7 +341,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
     private void placePortLabelsOutside(final LPort port, final LLabel label,
             final double labelSpacing) {
         
-        if (label.getSide() == LSide.UP) {
+        if (label.getSide() == LabelSide.ABOVE) {
             // Place label "above" edges
             switch (port.getSide()) {
             case WEST:

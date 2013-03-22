@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
  */
 public final class LEdge extends LGraphElement {
 
@@ -199,6 +199,7 @@ public final class LEdge extends LGraphElement {
     }
 
     /**
+     * Returns the list of edge labels.
      * 
      * @return all labels
      */

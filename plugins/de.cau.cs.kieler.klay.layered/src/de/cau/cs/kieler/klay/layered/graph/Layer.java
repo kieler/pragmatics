@@ -27,7 +27,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
  */
 public final class Layer extends LGraphElement implements Iterable<LNode> {
 
