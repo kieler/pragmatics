@@ -25,6 +25,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.RoundedRectangleBorder;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
@@ -374,7 +375,7 @@ public class HighlightEffect extends AbstractEffect {
                     setColor(targetFigure, foregroundColor, true);
                     if (highlightChildren) {
                         for (Object o : targetEditPart.getChildren()) {
-                            if (o instanceof GraphicalEditPart) {
+                            if (o instanceof LabelEditPart) {
                                 if (childrenForegroundColor != null) {
                                     setColor(((GraphicalEditPart) o).getFigure(),
                                             childrenForegroundColor, true);
@@ -393,14 +394,16 @@ public class HighlightEffect extends AbstractEffect {
                     setColor(targetFigure, backgroundColor, false);
                     if (highlightChildren) {
                         for (Object o : targetEditPart.getChildren()) {
-                            if (o instanceof GraphicalEditPart) {
+                            if (o instanceof LabelEditPart) {
                                 if (childrenBackgroundColor != null) {
                                     setColor(((GraphicalEditPart) o).getFigure(),
                                             childrenBackgroundColor, false);
                                 } else {
                                     setColor(((GraphicalEditPart) o).getFigure(), backgroundColor,
                                             false);
+                                    
                                 }
+                                ((GraphicalEditPart) o).getFigure().setOpaque(true);
                             }
                         }
                     }
@@ -452,9 +455,10 @@ public class HighlightEffect extends AbstractEffect {
                 resetColor(targetFigure, false);
                 if (highlightChildren) {
                     for (Object o : targetEditPart.getChildren()) {
-                        if (o instanceof GraphicalEditPart) {
+                        if (o instanceof LabelEditPart) {
                             resetColor(((GraphicalEditPart) o).getFigure(), true);
                             resetColor(((GraphicalEditPart) o).getFigure(), false);
+                            ((GraphicalEditPart) o).getFigure().setOpaque(true);
                         }
                     }
                 }
