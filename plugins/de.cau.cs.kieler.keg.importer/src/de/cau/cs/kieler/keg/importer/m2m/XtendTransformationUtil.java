@@ -36,6 +36,8 @@ import org.eclipse.emf.mwe.internal.core.Workflow;
 import org.eclipse.emf.mwe.utils.Reader;
 import org.eclipse.emf.mwe.utils.Writer;
 import org.eclipse.internal.xtend.xtend.XtendFile;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.xtend.XtendComponent;
 import org.eclipse.xtend.XtendFacade;
@@ -47,7 +49,7 @@ import org.eclipse.xtend.util.stdlib.ExtIssueReporter;
 
 import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.keg.importer.KEGImporterPlugin;
 
 /**
@@ -242,16 +244,21 @@ public final class XtendTransformationUtil {
     public static IStatus model2ModelTransform(final String xtendFile, final String startFunction,
             final URI inputModelURI, final URI outputModelURI, final EPackage... involvedMetamodels)
             throws TransformException {
-        MonitoredOperation monitoredOperation = new MonitoredOperation() {
-            @Override
-            protected IStatus execute(final IProgressMonitor monitor) {
-                return XtendTransformationUtil.model2ModelTransform(new ProgressMonitorAdapter(
-                        monitor), xtendFile, startFunction, inputModelURI, outputModelURI,
-                        involvedMetamodels);
-            }
-        };
-        monitoredOperation.runMonitored();
-        return monitoredOperation.getStatus();
+        try {
+            final Maybe<IStatus> status = new Maybe<IStatus>();
+            PlatformUI.getWorkbench().getProgressService().run(
+                    false, true, new IRunnableWithProgress() {
+                public void run(final IProgressMonitor uiMonitor) {
+                    status.set(XtendTransformationUtil.model2ModelTransform(new ProgressMonitorAdapter(
+                            uiMonitor), xtendFile, startFunction, inputModelURI, outputModelURI,
+                            involvedMetamodels));
+                }
+            });
+            return status.get();
+        } catch (Exception exception) {
+            return new Status(Status.ERROR, KEGImporterPlugin.PLUGIN_ID,
+                    "Could not execute transformation.", exception);
+        }
     }
 
     /**

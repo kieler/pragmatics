@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
-import de.cau.cs.kieler.karma.ICustomCondition;
+import de.cau.cs.kieler.karma.conditions.ICustomCondition;
 
 /**
  * Condition to check whether a modelelement has a comment annotation thats supposed to be

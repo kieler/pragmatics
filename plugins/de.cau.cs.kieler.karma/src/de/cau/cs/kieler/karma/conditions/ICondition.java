@@ -11,17 +11,14 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.util;
+package de.cau.cs.kieler.karma.conditions;
 
 /**
  * Interface for conditions that can be evaluated on a specific object.
  *
- * @kieler.design proposed 2012-11-07 msp cds Think about whether to move this stuff to KARMA.
  * @param <T> the type for which the condition is used
  * @author msp
- * @deprecated use {@code com.google.common.base.Predicate} instead (contained in Guava)
  */
-@Deprecated
 public interface ICondition<T> {
 
     /**

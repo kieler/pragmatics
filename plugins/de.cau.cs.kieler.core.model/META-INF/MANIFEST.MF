@@ -23,10 +23,5 @@ Export-Package: de.cau.cs.kieler.core.model,
  de.cau.cs.kieler.core.model.figures,
  de.cau.cs.kieler.core.model.handlers,
  de.cau.cs.kieler.core.model.m2m,
- de.cau.cs.kieler.core.model.notify,
- de.cau.cs.kieler.core.model.preferences,
- de.cau.cs.kieler.core.model.triggers,
- de.cau.cs.kieler.core.model.ui,
- de.cau.cs.kieler.core.model.util,
- de.cau.cs.kieler.core.model.validation
+ de.cau.cs.kieler.core.model.triggers
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel

@@ -12,9 +12,8 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.karma;
+package de.cau.cs.kieler.karma.conditions;
 
-import de.cau.cs.kieler.core.util.ICondition;
 
 /**
  * Interface for conditions that can be used with an extension point.

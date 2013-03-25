@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.karma;
+package de.cau.cs.kieler.karma.conditions;
 
 import org.eclipse.emf.ecore.EObject;
 

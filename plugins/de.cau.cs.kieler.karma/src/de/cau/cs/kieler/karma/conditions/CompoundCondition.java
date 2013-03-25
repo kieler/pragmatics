@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.util;
+package de.cau.cs.kieler.karma.conditions;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,9 +22,7 @@ import java.util.List;
  * 
  * @param <T> the type for which the condition is used
  * @author msp
- * @deprecated use {@code com.google.common.base.Predicates.and(...)} instead (contained in Guava)
  */
-@Deprecated
 public class CompoundCondition<T> implements ICondition<T> {
 
     private List<ICondition<T>> conditions;

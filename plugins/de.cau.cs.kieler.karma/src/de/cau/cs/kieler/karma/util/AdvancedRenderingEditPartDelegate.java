@@ -38,14 +38,14 @@ import org.eclipse.gmf.runtime.notation.Bounds;
 import org.eclipse.gmf.runtime.notation.IdentityAnchor;
 import org.eclipse.gmf.runtime.notation.RelativeBendpoints;
 
-import de.cau.cs.kieler.core.util.CompoundCondition;
-import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.karma.AdvancedRenderingBorderedBorderItemEditPart;
 import de.cau.cs.kieler.karma.AdvancedRenderingLabelEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.karma.IRenderingProvider.CollapseStatus;
 import de.cau.cs.kieler.karma.SwitchableFigure;
+import de.cau.cs.kieler.karma.conditions.CompoundCondition;
+import de.cau.cs.kieler.karma.conditions.ICondition;
 import de.cau.cs.kieler.karma.conditions.IEditPartSensitiveCondition;
 
 /**

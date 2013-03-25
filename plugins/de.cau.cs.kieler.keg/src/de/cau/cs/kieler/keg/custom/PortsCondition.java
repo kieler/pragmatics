@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.keg.custom;
 
-import de.cau.cs.kieler.karma.ICustomCondition;
+import de.cau.cs.kieler.karma.conditions.ICustomCondition;
 import de.cau.cs.kieler.keg.Node;
 
 /**
