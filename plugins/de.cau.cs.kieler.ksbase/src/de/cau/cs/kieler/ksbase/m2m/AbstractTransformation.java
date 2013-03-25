@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.core.model.xtend.transformation;
+package de.cau.cs.kieler.ksbase.m2m;
 
 import java.util.List;
 
@@ -20,9 +20,6 @@ import java.util.List;
  * Abstract transformation that may be executed by an ITransformationFramework.
  * 
  * @author mim
- * 
- * @deprecated This class is used by KSBasE. For new implementations use the
- *             {@link de.cau.cs.kieler.core.model.m2m.TransformationDescriptor} instead.
  */
 public abstract class AbstractTransformation {
     /**

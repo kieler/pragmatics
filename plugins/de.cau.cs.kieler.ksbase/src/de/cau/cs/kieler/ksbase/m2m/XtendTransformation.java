@@ -12,22 +12,17 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.core.model.xtend.transformation.xtend;
+package de.cau.cs.kieler.ksbase.m2m;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 
-import de.cau.cs.kieler.core.model.xtend.transformation.AbstractTransformation;
-
 /**
  * A transformation used by the Xtend framework.
  * 
  * @author mim
- * 
- * @deprecated This class is used by KSBasE. For new implementations use a class that extends
- *             {@link TransformationDescriptor} instead.
  */
 public class XtendTransformation extends AbstractTransformation {
 

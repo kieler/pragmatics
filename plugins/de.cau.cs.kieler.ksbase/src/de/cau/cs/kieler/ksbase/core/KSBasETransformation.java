@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 
-import de.cau.cs.kieler.core.model.xtend.transformation.AbstractTransformation;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
+import de.cau.cs.kieler.ksbase.m2m.AbstractTransformation;
 
 /**
  * The connection between the transformations and the KSBasE plug-In. Stores additional information
@@ -35,8 +35,6 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * @author mim
  * @kieler.design 2010-01-22 review by msp, skn
  */
-//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
-@SuppressWarnings("deprecation")
 public class KSBasETransformation extends AbstractTransformation implements Serializable, Cloneable {
 
     /** Serialization Id. **/

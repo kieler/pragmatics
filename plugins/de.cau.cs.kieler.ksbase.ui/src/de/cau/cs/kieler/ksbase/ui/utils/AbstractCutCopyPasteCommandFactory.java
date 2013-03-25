@@ -45,8 +45,8 @@ import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.model.gmf.handlers.ICutCopyPasteCommandFactory;
 import de.cau.cs.kieler.core.model.gmf.util.GmfModelingUtil;
-import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
-import de.cau.cs.kieler.core.model.xtend.transformation.xtend.XtendTransformationFramework;
+import de.cau.cs.kieler.ksbase.m2m.ITransformationFramework;
+import de.cau.cs.kieler.ksbase.m2m.XtendTransformationFramework;
 import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommand;
 
 /**

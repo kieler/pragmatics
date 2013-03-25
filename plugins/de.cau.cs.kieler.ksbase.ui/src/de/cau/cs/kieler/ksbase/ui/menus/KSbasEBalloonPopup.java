@@ -29,10 +29,10 @@ import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
-import de.cau.cs.kieler.core.model.xtend.transformation.AbstractTransformation;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
+import de.cau.cs.kieler.ksbase.m2m.AbstractTransformation;
 import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 import de.cau.cs.kieler.ksbase.ui.test.ModelObjectTester;
 
@@ -41,8 +41,6 @@ import de.cau.cs.kieler.ksbase.ui.test.ModelObjectTester;
  * 
  * @author mim
  */
-//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
-@SuppressWarnings("deprecation")
 public class KSbasEBalloonPopup implements IBalloonContribution {
 
     private KSBasETransformation transformation;

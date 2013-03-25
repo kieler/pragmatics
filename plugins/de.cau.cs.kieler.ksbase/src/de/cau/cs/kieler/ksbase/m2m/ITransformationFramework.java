@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.core.model.xtend.transformation;
+package de.cau.cs.kieler.ksbase.m2m;
 
 import java.net.URL;
 import java.util.List;
@@ -29,9 +29,6 @@ import de.cau.cs.kieler.core.model.m2m.TransformException;
  * Xtend framework.
  * 
  * @author mim
- * 
- * @deprecated This class is used by KSBasE. For new implementations use the
- *             {@link de.cau.cs.kieler.core.model.m2m.ITransformationContext} instead.
  */
 public interface ITransformationFramework {
 

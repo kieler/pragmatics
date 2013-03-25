@@ -22,11 +22,11 @@ import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.model.gmf.util.GmfModelingUtil;
 import de.cau.cs.kieler.core.model.m2m.TransformException;
-import de.cau.cs.kieler.core.model.xtend.transformation.AbstractTransformation;
-import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
+import de.cau.cs.kieler.ksbase.m2m.AbstractTransformation;
+import de.cau.cs.kieler.ksbase.m2m.ITransformationFramework;
 
 /**
  * A property tester which checks if a selected diagram object matches a given
@@ -34,8 +34,6 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
  * 
  * @author mim
  */
-//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
-@SuppressWarnings("deprecation")
 public class ModelObjectTester extends PropertyTester {
 
     /**

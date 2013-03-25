@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.core.model.xtend.transformation.xtend;
+package de.cau.cs.kieler.ksbase.m2m;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -37,8 +37,6 @@ import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 import de.cau.cs.kieler.core.model.CoreModelPlugin;
 import de.cau.cs.kieler.core.model.gmf.util.GmfModelingUtil;
 import de.cau.cs.kieler.core.model.m2m.TransformException;
-import de.cau.cs.kieler.core.model.xtend.transformation.AbstractTransformation;
-import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
 
 /**
  * An implementation of the ITransformationFramework interface for the use with the Xtend framework.
@@ -47,10 +45,7 @@ import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework
  * core.model.gmf should be deleted
  * 
  * @author mim
- * @deprecated This class is used by KSBasE. For new implementations extend the
- *             {@link XtendTransformationContext} instead.
  */
-
 public class XtendTransformationFramework implements ITransformationFramework {
 
     private static final int XTEND_LIST_TYPE_PLENGTH = 5;

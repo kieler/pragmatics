@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.model.xtend.util;
+package de.cau.cs.kieler.ksbase.ui.m2m;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,10 +46,9 @@ import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 import org.eclipse.xtend.util.stdlib.ExtIssueReporter;
 
 import de.cau.cs.kieler.core.model.m2m.TransformException;
-import de.cau.cs.kieler.core.model.xtend.Activator;
-import de.cau.cs.kieler.core.model.xtend.m2m.M2MProgressMonitor;
 import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
  * Utitlity class to conveniently execute Xtend transformations.
@@ -314,7 +313,7 @@ public final class XtendTransformationUtil {
             } catch (ConfigurationException ce) {
                 // package class could not be found
                 // this is bad and should not happen.
-                Status myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+                Status myStatus = new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
                         "A problem occured while registering MetaModel "
                                 + "(maybe the package name was misspelled).", ce);
                 StatusManager.getManager().handle(myStatus, StatusManager.SHOW);

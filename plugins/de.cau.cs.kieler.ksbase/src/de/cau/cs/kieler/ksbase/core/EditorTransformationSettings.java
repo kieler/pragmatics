@@ -28,9 +28,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.model.xtend.transformation.AbstractTransformation;
-import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
+import de.cau.cs.kieler.ksbase.m2m.AbstractTransformation;
+import de.cau.cs.kieler.ksbase.m2m.ITransformationFramework;
 
 /**
  * Stores the KSBasE settings for one specific editor. This class is used by the
@@ -42,8 +42,6 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * @author mim
  * @kieler.design 2010-01-22 review by msp, skn
  */
-//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
-@SuppressWarnings("deprecation")
 public class EditorTransformationSettings implements Serializable {
 
     /** Serialization Id. **/
