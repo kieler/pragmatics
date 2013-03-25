@@ -458,7 +458,7 @@ public class HighlightEffect extends AbstractEffect {
                         if (o instanceof LabelEditPart) {
                             resetColor(((GraphicalEditPart) o).getFigure(), true);
                             resetColor(((GraphicalEditPart) o).getFigure(), false);
-                            ((GraphicalEditPart) o).getFigure().setOpaque(true);
+                            ((GraphicalEditPart) o).getFigure().setOpaque(false);
                         }
                     }
                 }
