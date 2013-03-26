@@ -373,43 +373,47 @@ public class HighlightEffect extends AbstractEffect {
                 // foreground color
                 if (foregroundColor != null) {
                     setColor(targetFigure, foregroundColor, true);
-                    if (highlightChildren) {
-                        for (Object o : targetEditPart.getChildren()) {
-                            if (o instanceof LabelEditPart) {
-                                if (childrenForegroundColor != null) {
-                                    setColor(((GraphicalEditPart) o).getFigure(),
-                                            childrenForegroundColor, true);
-                                } else {
-                                    setColor(((GraphicalEditPart) o).getFigure(), foregroundColor,
-                                            true);
-                                }
-                            }
-                        }
-                    }
                 } else {
                     resetColor(targetFigure, true);
                 }
-                // background color
-                if (backgroundColor != null) {
-                    setColor(targetFigure, backgroundColor, false);
-                    if (highlightChildren) {
-                        for (Object o : targetEditPart.getChildren()) {
-                            if (o instanceof LabelEditPart) {
-                                if (childrenBackgroundColor != null) {
-                                    setColor(((GraphicalEditPart) o).getFigure(),
-                                            childrenBackgroundColor, false);
-                                } else {
-                                    setColor(((GraphicalEditPart) o).getFigure(), backgroundColor,
-                                            false);
-                                    
-                                }
-                                ((GraphicalEditPart) o).getFigure().setOpaque(true);
+                
+                if ((foregroundColor != null || childrenForegroundColor != null) && highlightChildren) {
+                    for (Object o : targetEditPart.getChildren()) {
+                        if (o instanceof LabelEditPart) {
+                            if (childrenForegroundColor != null) {
+                                setColor(((GraphicalEditPart) o).getFigure(),
+                                        childrenForegroundColor, true);
+                            } else {
+                                setColor(((GraphicalEditPart) o).getFigure(), foregroundColor,
+                                        true);
                             }
                         }
                     }
+                }
+                
+                // background color
+                if (backgroundColor != null) {
+                    setColor(targetFigure, backgroundColor, false);
                 } else {
                     resetColor(targetFigure, false);
                 }
+                
+                if ((backgroundColor != null || childrenBackgroundColor != null) && highlightChildren) {
+                    for (Object o : targetEditPart.getChildren()) {
+                        if (o instanceof LabelEditPart) {
+                            if (childrenBackgroundColor != null) {
+                                setColor(((GraphicalEditPart) o).getFigure(),
+                                        childrenBackgroundColor, false);
+                            } else {
+                                setColor(((GraphicalEditPart) o).getFigure(), backgroundColor,
+                                        false);
+                                
+                            }
+                            ((GraphicalEditPart) o).getFigure().setOpaque(true);
+                        }
+                    }
+                }
+                
             }
         });
     }
