@@ -173,7 +173,9 @@ public class SWTGraphics2D extends Graphics2D {
         this.device = device;
 
         swtTransform = new Transform(device);
-        gc.setAntialias(SWT.ON);
+        if (gc != null) {
+            gc.setAntialias(SWT.ON);
+        }
     }
 
     /**
@@ -192,7 +194,9 @@ public class SWTGraphics2D extends Graphics2D {
         this.device = device;
 
         swtTransform = new Transform(device);
-        gc.setAntialias(SWT.ON);
+        if (gc != null) {
+            gc.setAntialias(SWT.ON);
+        }
     }
     
     
@@ -440,7 +444,6 @@ public class SWTGraphics2D extends Graphics2D {
             COLOR_CACHE.put(c, cachedColor);
         }
         gc.setBackground(cachedColor);
-        // TODO the correctness of this call must still be verified (chsch)
         gc.setAlpha(c.getAlpha());
     }
 
@@ -485,7 +488,7 @@ public class SWTGraphics2D extends Graphics2D {
      * @return
      */
     public int getAlpha() {
-        return gc.getAntialias();
+        return gc.getAlpha();
     }
 
     /**
@@ -1521,7 +1524,7 @@ public class SWTGraphics2D extends Graphics2D {
      * 
      * @author chsch
      * 
-     * @param s
+     * @param gp
      *            path to draw
      */
     public void drawGeneralPath(final GeneralPath gp) {
