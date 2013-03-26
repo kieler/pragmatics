@@ -20,7 +20,7 @@ import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.kaom.Link;
-import de.cau.cs.kieler.karma.ICustomCondition;
+import de.cau.cs.kieler.karma.conditions.ICustomCondition;
 
 /**
  * Condition to check an annotation of the source of a connection.

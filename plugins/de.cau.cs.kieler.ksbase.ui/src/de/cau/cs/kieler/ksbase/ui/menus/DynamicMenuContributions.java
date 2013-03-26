@@ -46,7 +46,6 @@ import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
 import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
-import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasEMenuContribution;
@@ -55,6 +54,7 @@ import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 import de.cau.cs.kieler.ksbase.ui.kivi.KSBasECombination;
+import de.cau.cs.kieler.ksbase.ui.m2m.XtendTransformationContext;
 
 /**
  * Creates menus for all registered editor transformation settings and
@@ -420,8 +420,6 @@ public final class DynamicMenuContributions {
         }
 
         
-        //Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
-        @SuppressWarnings("deprecation")
         @Override
         public EvaluationResult evaluate(final IEvaluationContext context) throws CoreException {
             List<EObject> selection = getCurrentSelection(context);

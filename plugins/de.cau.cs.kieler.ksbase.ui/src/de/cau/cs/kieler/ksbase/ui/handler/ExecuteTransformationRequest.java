@@ -19,15 +19,13 @@ import java.util.List;
 import org.eclipse.gef.Request;
 import org.eclipse.ui.IEditorPart;
 
-import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
+import de.cau.cs.kieler.ksbase.m2m.ITransformationFramework;
 
 /**
  * Request for the execution of a model transformation.
  * 
  * @author mim
  */
-//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
-@SuppressWarnings("deprecation")
 public class ExecuteTransformationRequest extends Request {
 
     /** The request used to initiate a transformation. */

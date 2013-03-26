@@ -21,31 +21,6 @@
       </toc>
    </extension>
    <extension
-         point="org.eclipse.ui.intro">
-      <introProductBinding
-            introId="org.eclipse.ui.intro.universal"
-            productId="de.cau.cs.kieler.core.product.product">
-      </introProductBinding>
-   </extension>
-   <extension
-         point="org.eclipse.ui.intro.configExtension">
-      <configExtension
-            configId="org.eclipse.ui.intro.universalConfig"
-            content="intro/introContent.xml">
-      </configExtension>
-   </extension>
-   <extension
-         point="org.eclipse.ui.statusHandlers">
-      <statusHandlerProductBinding
-            handlerId="de.cau.cs.kieler.core.ui.statusHandler"
-            productId="de.cau.cs.kieler.core.product.product">
-      </statusHandlerProductBinding>
-      <statusHandler
-            class="de.cau.cs.kieler.core.ui.errorhandler.GenericErrorHandler"
-            id="de.cau.cs.kieler.core.ui.statusHandler">
-      </statusHandler>
-   </extension>
-   <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <commonWizard
             type="new"
@@ -74,16 +49,4 @@
       </startup>
    </extension>
 
- <!--  <extension
-         point="org.eclipse.ui.intro.config">
-      <config
-            content="help/introContent.xml"
-            id="de.cau.cs.kieler.intro.config"
-            introId="org.eclipse.ui.intro.universal">
-         <presentation
-               home-page-id="root">
-         </presentation>
-      </config>
-   </extension>
--->
 </plugin>

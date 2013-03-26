@@ -20,7 +20,6 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.services.IEvaluationService;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.core.kivi.internal.KiviContributionItem;
 import de.cau.cs.kieler.ksbase.ui.menus.KSBasEContributionItem;
 
 /**

@@ -16,7 +16,6 @@ package de.cau.cs.kieler.karma.conditions;
 
 import org.eclipse.gef.EditPart;
 
-import de.cau.cs.kieler.karma.ICustomCondition;
 
 /**
  * This condition additional to an EObject also has an EditPart which can be used to 

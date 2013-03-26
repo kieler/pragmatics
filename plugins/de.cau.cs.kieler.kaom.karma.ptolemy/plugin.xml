@@ -8,7 +8,7 @@
             RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.renderingprovider.KaomRenderingProvider">
          <conditions>
             <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                   figureParam="MonitorValue"
                   figureSize="160,30"
                   key="ptolemyClass"
@@ -26,7 +26,7 @@
                      type="Entity">
                </listSizeCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
@@ -43,7 +43,7 @@
                      condition="de.cau.cs.kieler.kaom.karma.ptolemy.conditions.HasCommentsCondition">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
@@ -64,7 +64,7 @@
                      type="Entity">
                </listSizeCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
@@ -76,7 +76,7 @@
                      condition="de.cau.cs.kieler.kaom.karma.ptolemy.conditions.HasCommentsCondition">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
@@ -85,13 +85,13 @@
                   figureParam="inputPort"
                   figureSize="19,19">
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      figureParam="inputPort"
                      key="type"
                      value="inputPort">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
@@ -100,13 +100,13 @@
                   figureParam="outputPort"
                   figureSize="19,19">
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      figureParam="outputPort"
                      key="type"
                      value="outputPort">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
@@ -116,13 +116,13 @@
                   figureParam="valueDisplay//value"
                   layoutParam="valueDisplay//value">
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
                <customCondition
                      borderItemParam="valueDisplay"
-                     condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationExistsCondition"
                      figureParam="valueDisplay"
                      figureSize="70,30"
                      key="value"
@@ -136,13 +136,13 @@
                   figureSize="90,30"
                   layoutParam="valueDisplay//initialOutputs">
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
                <customCondition
                      borderItemParam="valueDisplay"
-                     condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationExistsCondition"
                      figureParam="valueDisplay"
                      figureSize="70,30"
                      key="initialOutputs"
@@ -156,13 +156,13 @@
                   figureSize="70,30"
                   layoutParam="valueDisplay//null">
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
                <customCondition
                      borderItemParam="valueDisplay"
-                     condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationExistsCondition"
                      figureParam="valueDisplay"
                      figureSize="70,30"
                      key="_icon"
@@ -171,13 +171,13 @@
                </customCondition>
             </compoundCondition>
             <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                   figureParam="accumulator"
                   key="ptolemyClass"
                   value="ptolemy.actor.lib.Accumulator">
             </customCondition>
             <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                   figureParam="_IconDescription"
                   key="language"
                   value="ptolemy">
@@ -199,7 +199,7 @@
                   figureSize="102,32"
                   layoutParam="Director">
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationExistsCondition"
                      figureParam="Director"
                      figureSize="102,32"
                      key="Director"
@@ -207,7 +207,7 @@
                      value="Director">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
@@ -225,12 +225,12 @@
                   figureParam="DOWN">
                <customCondition
                      borderItemParam="NORTH"
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="_cardinal"
                      value="NORTH">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
@@ -239,12 +239,12 @@
                   borderItemParam="EAST">
                <customCondition
                      borderItemParam="EAST"
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="_cardinal"
                      value="EAST">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
@@ -254,12 +254,12 @@
                   figureParam="UP">
                <customCondition
                      borderItemParam="SOUTH"
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="_cardinal"
                      value="SOUTH">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
@@ -268,12 +268,12 @@
                   borderItemParam="WEST">
                <customCondition
                      borderItemParam="WEST"
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="_cardinal"
                      value="WEST">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
@@ -282,12 +282,12 @@
                   borderItemParam="WEST">
                <customCondition
                      borderItemParam="WEST"
-                     condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationExistsCondition"
                      key="input"
                      value="input">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
@@ -296,12 +296,12 @@
                   borderItemParam="EAST">
                <customCondition
                      borderItemParam="EAST"
-                     condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationExistsCondition"
                      key="output"
                      value="output">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition>
@@ -311,12 +311,12 @@
                   figureParam="UP">
                <customCondition
                      borderItemParam="SOUTH"
-                     condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationExistsCondition"
                      key="inputoutput"
                      value="inputoutput">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="language"
                      value="ptolemy">
                </customCondition></compoundCondition>
@@ -331,7 +331,7 @@
             <compoundCondition
                   figureParam="stateConnection">
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      figureParam="connection"
                      key="language"
                      value="ptolemy">
@@ -344,7 +344,7 @@
                </customCondition>
             </compoundCondition>
             <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                   figureParam="connection"
                   key="language"
                   value="ptolemy">
@@ -366,17 +366,17 @@
                   figureParam="initialFinalState"
                   figureSize="30,30">
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="ptolemyClass"
                      value="ptolemy.domains.modal.kernel.State">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="isFinalState"
                      value="true">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="isInitialState"
                      value="true">
                </customCondition>
@@ -385,12 +385,12 @@
                   figureParam="initialState"
                   figureSize="30,30">
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="ptolemyClass"
                      value="ptolemy.domains.modal.kernel.State">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="isInitialState"
                      value="true">
                </customCondition>
@@ -399,18 +399,18 @@
                   figureParam="finalState"
                   figureSize="30,30">
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="ptolemyClass"
                      value="ptolemy.domains.modal.kernel.State">
                </customCondition>
                <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                      key="isFinalState"
                      value="true">
                </customCondition>
             </compoundCondition>
             <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  condition="de.cau.cs.kieler.karma.conditions.AnnotationCondition"
                   figureParam="normalState"
                   figureSize="30,30"
                   key="ptolemyClass"

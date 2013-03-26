@@ -32,7 +32,6 @@
     <module>de.cau.cs.kieler.core.krendering.extensions</module>
     <module>de.cau.cs.kieler.core.model</module>
     <module>de.cau.cs.kieler.core.model.gmf</module>
-    <module>de.cau.cs.kieler.core.model.xtend</module>
     <module>de.cau.cs.kieler.core.ui</module>
     <module>de.cau.cs.kieler.kaom</module>
     <module>de.cau.cs.kieler.kaom.custom</module>

@@ -43,11 +43,12 @@ import org.osgi.framework.Bundle;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.model.util.FeatureValueCondition;
-import de.cau.cs.kieler.core.model.util.ListSizeCondition;
-import de.cau.cs.kieler.core.util.CompoundCondition;
-import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.karma.conditions.CompoundCondition;
+import de.cau.cs.kieler.karma.conditions.FeatureValueCondition;
+import de.cau.cs.kieler.karma.conditions.ICondition;
+import de.cau.cs.kieler.karma.conditions.ICustomCondition;
+import de.cau.cs.kieler.karma.conditions.ListSizeCondition;
 
 /**
  * This class is for parsing the karma extension point and providing the conditions and additional
