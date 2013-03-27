@@ -318,7 +318,12 @@ public class HighlightEffect extends AbstractEffect {
                 if (targetFigure == null) {
                     return;
                 }
-
+                
+                if (targetFigure instanceof DefaultSizeNodeFigure) {
+                    targetFigure = (IFigure) ((DefaultSizeNodeFigure) targetFigure).getChildren()
+                            .get(0);
+                }
+                
                 if (targetFigure instanceof Shape) {
                     Shape shape = (Shape) targetFigure;
                     // line width
