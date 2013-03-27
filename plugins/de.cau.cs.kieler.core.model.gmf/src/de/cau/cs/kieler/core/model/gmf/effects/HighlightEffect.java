@@ -75,6 +75,8 @@ public class HighlightEffect extends AbstractEffect {
     private Color foregroundColor;
     /** the original background colors of the affected figures. */
     private Map<IFigure, Color> originalBackgroundColor = new HashMap<IFigure, Color>();
+    /** the original opaqueness of the affected figures **/
+    private Map<IFigure, Boolean> originalOpaqueness = new HashMap<IFigure, Boolean>();
     /** the new background highlight color. */
     private Color backgroundColor;
     /** true if direct children such as labels should be highlighted in the given color as well. */
@@ -394,6 +396,8 @@ public class HighlightEffect extends AbstractEffect {
                 // background color
                 if (backgroundColor != null) {
                     setColor(targetFigure, backgroundColor, false);
+                    originalOpaqueness.put(targetFigure, targetFigure.isOpaque());
+                    targetFigure.setOpaque(true);
                 } else {
                     resetColor(targetFigure, false);
                 }
@@ -457,6 +461,12 @@ public class HighlightEffect extends AbstractEffect {
                 // reset foreground and background color
                 resetColor(targetFigure, true);
                 resetColor(targetFigure, false);
+                Boolean oopq = originalOpaqueness.get(targetFigure);
+                if (oopq != null) {
+                    targetFigure.setOpaque(oopq);
+                }
+                
+                
                 if (highlightChildren) {
                     for (Object o : targetEditPart.getChildren()) {
                         if (o instanceof LabelEditPart) {
