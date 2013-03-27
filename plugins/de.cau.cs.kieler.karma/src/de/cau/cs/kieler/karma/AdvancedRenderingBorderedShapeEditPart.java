@@ -69,7 +69,6 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
         util = new AdvancedRenderingEditPartDelegate(conditions);
     }
 
-    
     @Override
     public void handleNotificationEvent(final Notification notification) {
         super.handleNotificationEvent(notification);
@@ -103,67 +102,29 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
      * expand/collapse button exchangable.
      */
     private void activateExchangableExpandCollapse() {
-        //Due to the nature of generics its not possible to do a real type check here.
-        //The only other option is too much overhead for too less gain.
+        // Due to the nature of generics its not possible to do a real type check here.
+        // The only other option is too much overhead for too less gain.
         @SuppressWarnings("unchecked")
         List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
         for (EditPart compartment : resizeableCompartments) {
             if (compartment instanceof IResizableCompartmentEditPart) {
                 IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
                 AdvancedRenderingResizableCompartmentEditPolicy arcep = 
-                    new AdvancedRenderingResizableCompartmentEditPolicy();
+                        new AdvancedRenderingResizableCompartmentEditPolicy();
                 resizeComp.installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, arcep);
             }
         }
     }
-    
+
     /**
      * set custom collapse figure.
-     * @param figure the new custom figure
+     * 
+     * @param figure
+     *            the new custom figure
      */
     public void setCollapseFigure(final IFigure figure) {
-        //Due to the nature of generics its not possible to do a real type check here.
-        //The only other option is too much overhead for too less gain.
-        @SuppressWarnings("unchecked")
-        List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
-        for (EditPart compartment : resizeableCompartments) {
-            if (compartment instanceof IResizableCompartmentEditPart) {
-                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
-                EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
-                if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
-                    ((AdvancedRenderingResizableCompartmentEditPolicy) epol).setCollapseFigure(figure);
-                }
-            }
-        }
-    }
-
-    /**
-     * set custom expand figure.
-     * @param figure the new custom figure
-     */
-    public void setExpandFigure(final IFigure figure) {
-        //Due to the nature of generics its not possible to do a real type check here.
-        //The only other option is too much overhead for too less gain.
-        @SuppressWarnings("unchecked")
-        List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
-        for (EditPart compartment : resizeableCompartments) {
-            if (compartment instanceof IResizableCompartmentEditPart) {
-                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
-                EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
-                if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
-                    ((AdvancedRenderingResizableCompartmentEditPolicy) epol).setExpandFigure(figure);
-                }
-            }
-        }
-    }
-
-    /**
-     * set custom collapse/expand locator.
-     * @param locator the new custom figure
-     */
-    public void setCollapseExpandLocator(final Locator locator) {
-        //Due to the nature of generics its not possible to do a real type check here.
-        //The only other option is too much overhead for too less gain.
+        // Due to the nature of generics its not possible to do a real type check here.
+        // The only other option is too much overhead for too less gain.
         @SuppressWarnings("unchecked")
         List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
         for (EditPart compartment : resizeableCompartments) {
@@ -172,19 +133,22 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
                 EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
                 if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
                     ((AdvancedRenderingResizableCompartmentEditPolicy) epol)
-                        .setCollapseExpandLocator(locator);
+                            .setCollapseFigure(figure);
                 }
             }
         }
     }
-    
+
     /**
-     * set custom size of the clickable area to expand/collapse.
-     * @param dim the size of the clickable area
+     * get custom collapse figure.
+     * 
+     * Return value might be null if nothing has been set or something goes wrong.
+     * 
+     * @return the custom figure
      */
-    public void setCollapseExpandSize(final Dimension dim) {
-        //Due to the nature of generics its not possible to do a real type check here.
-        //The only other option is too much overhead for too less gain.
+    public IFigure getCollapseFigure() {
+        // Due to the nature of generics its not possible to do a real type check here.
+        // The only other option is too much overhead for too less gain.
         @SuppressWarnings("unchecked")
         List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
         for (EditPart compartment : resizeableCompartments) {
@@ -192,12 +156,158 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
                 IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
                 EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
                 if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
-                    ((AdvancedRenderingResizableCompartmentEditPolicy) epol).setCollapseExpandSize(dim);
+                    return ((AdvancedRenderingResizableCompartmentEditPolicy) epol)
+                            .getCollapseFigure();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * set custom expand figure.
+     * 
+     * @param figure
+     *            the new custom figure
+     */
+    public void setExpandFigure(final IFigure figure) {
+        // Due to the nature of generics its not possible to do a real type check here.
+        // The only other option is too much overhead for too less gain.
+        @SuppressWarnings("unchecked")
+        List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
+        for (EditPart compartment : resizeableCompartments) {
+            if (compartment instanceof IResizableCompartmentEditPart) {
+                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
+                    ((AdvancedRenderingResizableCompartmentEditPolicy) epol)
+                            .setExpandFigure(figure);
                 }
             }
         }
     }
-    
+
+    /**
+     * get custom expand figure.
+     * 
+     * Return value might be null if nothing has been set or something goes wrong.
+     * 
+     * @return the custom figure
+     */
+    public IFigure getExpandFigure() {
+        // Due to the nature of generics its not possible to do a real type check here.
+        // The only other option is too much overhead for too less gain.
+        @SuppressWarnings("unchecked")
+        List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
+        for (EditPart compartment : resizeableCompartments) {
+            if (compartment instanceof IResizableCompartmentEditPart) {
+                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
+                    return ((AdvancedRenderingResizableCompartmentEditPolicy) epol)
+                            .getExpandFigure();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * set custom collapse/expand locator.
+     * 
+     * @param locator
+     *            the new custom locator
+     */
+    public void setCollapseExpandLocator(final Locator locator) {
+        // Due to the nature of generics its not possible to do a real type check here.
+        // The only other option is too much overhead for too less gain.
+        @SuppressWarnings("unchecked")
+        List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
+        for (EditPart compartment : resizeableCompartments) {
+            if (compartment instanceof IResizableCompartmentEditPart) {
+                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
+                    ((AdvancedRenderingResizableCompartmentEditPolicy) epol)
+                            .setCollapseExpandLocator(locator);
+                }
+            }
+        }
+    }
+
+    /**
+     * get custom collapse/expand locator.
+     * 
+     * Return value might be null if nothing has been set or something goes wrong.
+     * 
+     * @return the custom locator
+     */
+    public Locator getCollapseExpandLocator() {
+        // Due to the nature of generics its not possible to do a real type check here.
+        // The only other option is too much overhead for too less gain.
+        @SuppressWarnings("unchecked")
+        List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
+        for (EditPart compartment : resizeableCompartments) {
+            if (compartment instanceof IResizableCompartmentEditPart) {
+                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
+                    return ((AdvancedRenderingResizableCompartmentEditPolicy) epol)
+                            .getCollapseExpandLocator();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * set custom size of the clickable area to expand/collapse.
+     * 
+     * @param dim
+     *            the size of the clickable area
+     */
+    public void setCollapseExpandSize(final Dimension dim) {
+        // Due to the nature of generics its not possible to do a real type check here.
+        // The only other option is too much overhead for too less gain.
+        @SuppressWarnings("unchecked")
+        List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
+        for (EditPart compartment : resizeableCompartments) {
+            if (compartment instanceof IResizableCompartmentEditPart) {
+                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
+                    ((AdvancedRenderingResizableCompartmentEditPolicy) epol)
+                            .setCollapseExpandSize(dim);
+                }
+            }
+        }
+    }
+
+    /**
+     * get the custom size of the clickable area to expand/collapse.
+     * 
+     * Return value might be null if nothing has been set or something goes wrong.
+     * 
+     * @return the size of the clickable area
+     */
+    public Dimension getCollapseExpandSize() {
+        // Due to the nature of generics its not possible to do a real type check here.
+        // The only other option is too much overhead for too less gain.
+        @SuppressWarnings("unchecked")
+        List<EditPart> resizeableCompartments = (List<EditPart>) this.getResizableCompartments();
+        for (EditPart compartment : resizeableCompartments) {
+            if (compartment instanceof IResizableCompartmentEditPart) {
+                IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                EditPolicy epol = resizeComp.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (epol instanceof AdvancedRenderingResizableCompartmentEditPolicy) {
+                    return ((AdvancedRenderingResizableCompartmentEditPolicy) epol)
+                            .getCollapseExpandSize();
+                }
+            }
+        }
+        return null;
+    }
 
     @Override
     public void refresh() {

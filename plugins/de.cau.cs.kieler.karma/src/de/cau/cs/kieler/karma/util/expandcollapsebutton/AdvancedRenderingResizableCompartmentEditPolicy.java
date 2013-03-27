@@ -61,6 +61,14 @@ public class AdvancedRenderingResizableCompartmentEditPolicy extends ResizableCo
     public void setCollapseFigure(final IFigure figure) {
         this.collapseFigure = figure;
     }
+    
+    /**
+     * gets the custom collapse figure.
+     * @return the custom collapse figure
+     */
+    public IFigure getCollapseFigure() {
+        return this.collapseFigure;
+    }
 
     /**
      * set custom expand figure.
@@ -68,6 +76,14 @@ public class AdvancedRenderingResizableCompartmentEditPolicy extends ResizableCo
      */
     public void setExpandFigure(final IFigure figure) {
         this.expandFigure = figure;
+    }
+    
+    /**
+     * gets the custom expand figure.
+     * @return the custom expand figure
+     */
+    public IFigure getExpandFigure() {
+        return this.expandFigure;
     }
 
     /**
@@ -79,11 +95,27 @@ public class AdvancedRenderingResizableCompartmentEditPolicy extends ResizableCo
     }
     
     /**
+     * gets the custom collapse/expand locator.
+     * @return the custom locator
+     */
+    public Locator getCollapseExpandLocator() {
+        return this.collapseExpandLocator;
+    }
+    
+    /**
      * set custom size of the clickable area to expand/collapse.
      * @param dim the new size
      */
     public void setCollapseExpandSize(final Dimension dim) {
         this.collapseExpandSize = dim;
+    }
+    
+    /**
+     * gets the custom size of the clickable area to expand/collapse.
+     * @return the custom size
+     */
+    public Dimension getCollapseExpandSize() {
+        return this.collapseExpandSize;
     }
 
 }
