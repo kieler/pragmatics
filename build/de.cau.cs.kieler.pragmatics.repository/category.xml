@@ -35,7 +35,7 @@
    </feature>
    <feature url="features/de.cau.cs.kieler.kwebs.client.jaxws.source_0.1.2.qualifier.jar" id="de.cau.cs.kieler.kwebs.client.jaxws.feature.source" version="0.1.2.qualifier">
       <category name="kieler-prag-dev"/>
-   </feature> -->
+   </feature> 
    <feature url="features/de.cau.cs.kieler.kwebs.client.jeti_0.1.2.qualifier.jar" id="de.cau.cs.kieler.kwebs.client.jeti.feature" version="0.1.2.qualifier">
       <category name="kieler-prag"/>
    </feature>
