@@ -40,10 +40,11 @@
     <module>de.cau.cs.kieler.kaom.edit</module>
     <module>de.cau.cs.kieler.kaom.examples</module>
     <module>de.cau.cs.kieler.kaom.graphiti</module>
+    <!-- Disabled until we have a proper Ptolemy repository.
     <module>de.cau.cs.kieler.kaom.examples.ptolemy</module>
     <module>de.cau.cs.kieler.kaom.importer.ptolemy</module>
     <module>de.cau.cs.kieler.kaom.karma.ptolemy</module>
-    <module>de.cau.cs.kieler.kaom.ksbase.ptolemy</module>
+    <module>de.cau.cs.kieler.kaom.ksbase.ptolemy</module>-->
     <module>de.cau.cs.kieler.kaom.text</module>
     <module>de.cau.cs.kieler.kaom.text.ui</module>
     <module>de.cau.cs.kieler.karma</module>
