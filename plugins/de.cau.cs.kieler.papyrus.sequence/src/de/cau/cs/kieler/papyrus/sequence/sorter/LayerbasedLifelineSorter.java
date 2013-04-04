@@ -43,10 +43,10 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
     /**
      * Sorts the lifelines in a stairway-like fashion. {@inheritDoc}
      */
-    public List<SLifeline> sortLifelines(final SGraph graph, final LGraph lgraph, 
+    public List<SLifeline> sortLifelines(final SGraph graph, final LGraph lgraph,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Layer based lifeline sorting", 1);
-        
+
         lifelines.addAll(graph.getLifelines());
         sortedLifelines = new LinkedList<SLifeline>();
 
@@ -86,19 +86,31 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
         }
 
         progressMonitor.done();
-        
+
         return sortedLifelines;
     }
 
+    /**
+     * Place the given lifeline to the next position.
+     * 
+     * @param lifeline
+     *            the next lifeline to be placed
+     */
     private void assignToNextPosition(final SLifeline lifeline) {
         if (!sortedLifelines.contains(lifeline)) {
             sortedLifelines.add(lifeline);
-            lifeline.setHorizontalPosition(position);
+            lifeline.setHorizontalSlot(position);
             position++;
             lifelines.remove(lifeline);
         }
     }
 
+    /**
+     * Annotate the messages with a layer number.
+     * 
+     * @param lgraph
+     *            the layered graph
+     */
     private void addLayerToMessages(final LGraph lgraph) {
         for (Layer layer : lgraph.getLayers()) {
             int layerIndex = layer.getIndex();
@@ -111,9 +123,15 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
         }
     }
 
-    // Select lifeline x with outgoing message m_0 in the uppermost layer
-    // If there are different messages in that layer, select lifeline with best incoming/outgoing
-    // relation (more outgoing messages are desirable)
+    /**
+     * Select lifeline x with outgoing message m_0 in the uppermost layer. If there are different
+     * messages in that layer, select lifeline with best incoming/outgoing relation (more outgoing
+     * messages are desirable).
+     * 
+     * @param lgraph
+     *            the layered graph
+     * @return the uppermost message
+     */
     private SMessage findUppermostMessage(final LGraph lgraph) {
         List<LNode> candidates = new LinkedList<LNode>();
         for (Layer layer : lgraph.getLayers()) {
@@ -147,6 +165,16 @@ public class LayerbasedLifelineSorter implements ILifelineSorter {
         return null;
     }
 
+    /**
+     * Find the uppermost message of the given lifeline that is pointing at a lifeline that was not
+     * already set.
+     * 
+     * @param lgraph
+     *            the layered graph
+     * @param lifeline
+     *            the current lifeline
+     * @return the uppermost outgoing message
+     */
     private SMessage findUppermostOutgoingMessage(final LGraph lgraph, final SLifeline lifeline) {
         SMessage uppermostMessage = null;
         int bestLayer = lgraph.getLayers().size();
