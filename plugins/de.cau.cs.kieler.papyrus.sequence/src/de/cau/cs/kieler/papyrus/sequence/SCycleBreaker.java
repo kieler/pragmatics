@@ -150,7 +150,7 @@ public class SCycleBreaker {
      *            the uppermost node in the current chain
      */
     private void addUppermostNode(final LNode foundNode) {
-        LNode uppermost = null;
+        LNode uppermost = foundNode;
         float uppermostPos = Float.MAX_VALUE;
         int foundIndex = chain.indexOf(foundNode);
         for (int i = foundIndex; i < chain.size(); i++) {

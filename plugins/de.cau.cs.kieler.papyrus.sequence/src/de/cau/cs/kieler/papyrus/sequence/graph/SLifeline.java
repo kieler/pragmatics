@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.papyrus.sequence.graph;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -123,7 +124,17 @@ public final class SLifeline extends SGraphElement implements Comparable<SLifeli
     public Iterable<SMessage> getOutgoingMessages() {
         final SLifeline lifeline = this;
         return Iterables.filter(messages, new Predicate<SMessage>() {
+            private HashSet<SMessage> selfloops = new HashSet<SMessage>();
             public boolean apply(final SMessage message) {
+                // Workaround for selfloop messages that are returned twice if just checking the source
+                if (message.getSource() == message.getTarget()) {
+                    if (selfloops.contains(message)) {
+                        return false;
+                    } else {
+                        selfloops.add(message);
+                        return true;
+                    }
+                }
                 return message.getSource() == lifeline;
             }
         });
@@ -153,7 +164,17 @@ public final class SLifeline extends SGraphElement implements Comparable<SLifeli
     public Iterable<SMessage> getIncomingMessages() {
         final SLifeline lifeline = this;
         return Iterables.filter(messages, new Predicate<SMessage>() {
+            private HashSet<SMessage> selfloops = new HashSet<SMessage>();
             public boolean apply(final SMessage message) {
+                // Workaround for selfloop messages that are returned twice if just checking the target
+                if (message.getSource() == message.getTarget()) {
+                    if (selfloops.contains(message)) {
+                        return false;
+                    } else {
+                        selfloops.add(message);
+                        return true;
+                    }
+                }
                 return message.getTarget() == lifeline;
             }
         });

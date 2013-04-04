@@ -63,7 +63,7 @@ public class SGraphImporter {
      */
     public SGraph importGraph(final KNode topNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Import graph", 1);
-        
+
         // Create a graph object
         SGraph sgraph = new SGraph();
         // Initialize node-lifeline and edge-message maps
@@ -80,7 +80,8 @@ public class SGraphImporter {
 
         // Walk through lifelines (create their messages) and comments
         for (KNode node : topNode.getChildren()) {
-            String nodeType = node.getData(KShapeLayout.class).getProperty(PapyrusProperties.NODE_TYPE);
+            String nodeType = node.getData(KShapeLayout.class).getProperty(
+                    PapyrusProperties.NODE_TYPE);
             if (nodeType.equals("3001")) {
                 // Node is a lifeline
 
@@ -115,7 +116,7 @@ public class SGraphImporter {
         sgraph.setProperty(PapyrusProperties.AREAS, areas);
 
         progressMonitor.done();
-        
+
         return sgraph;
     }
 
@@ -129,9 +130,10 @@ public class SGraphImporter {
      *            the progress monitor
      * @return the layeredGraph
      */
-    public LGraph createLayeredGraph(final SGraph sgraph, final IKielerProgressMonitor progressMonitor) {
+    public LGraph createLayeredGraph(final SGraph sgraph,
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Create layered graph", 1);
-        
+
         LGraph lgraph = new LGraph();
 
         // Build a node for every message.
@@ -180,52 +182,8 @@ public class SGraphImporter {
             }
         }
 
-        // Add dummy nodes before the first messages of combined fragments to have enough space
-        // above the topmost message of the area
-        List<SequenceArea> areas = sgraph.getProperty(PapyrusProperties.AREAS);
-        if (areas != null) {
-            for (SequenceArea area : areas) {
-                if (area.getSubAreas().size() > 0) {
-                    LNode dummyNode = new LNode(lgraph);
-                    LPort dummyPortIn = new LPort(lgraph);
-                    LPort dummyPortOut = new LPort(lgraph);
-                    dummyPortIn.setNode(dummyNode);
-                    dummyPortOut.setNode(dummyNode);
-
-                    double minYPos = Double.MAX_VALUE;
-                    SMessage uppermostMessage = null;
-                    for (Object messageObj : area.getMessages()) {
-                        SMessage message = (SMessage) messageObj;
-                        if (message.getSourceYPos() < minYPos) {
-                            minYPos = message.getSourceYPos();
-                            uppermostMessage = message;
-                        }
-                    }
-                    if (uppermostMessage != null) {
-                        LNode node = uppermostMessage
-                                .getProperty(SequenceDiagramProperties.LAYERED_NODE);
-                        LPort port = new LPort(lgraph);
-                        port.setNode(node);
-
-                        // Copy list in order to avoid concurrent modification
-                        List<LEdge> incomingEdges = new LinkedList<LEdge>();
-                        for (LEdge edge : node.getIncomingEdges()) {
-                            incomingEdges.add(edge);
-                        }
-                        for (LEdge edge : incomingEdges) {
-                            edge.setTarget(dummyPortIn);
-                        }
-                        LEdge edge = new LEdge(lgraph);
-                        edge.setSource(dummyPortOut);
-                        edge.setTarget(port);
-                        lgraph.getLayerlessNodes().add(dummyNode);
-                    }
-                }
-            }
-        }
-
         progressMonitor.done();
-        
+
         return lgraph;
     }
 
@@ -245,7 +203,7 @@ public class SGraphImporter {
             final HashMap<KEdge, SMessage> edgeMap, final KNode node) {
 
         KShapeLayout commentLayout = node.getData(KShapeLayout.class);
-        
+
         // Get the node's type
         String nodeType = commentLayout.getProperty(PapyrusProperties.NODE_TYPE);
 
@@ -257,13 +215,14 @@ public class SGraphImporter {
         comment.setProperty(PapyrusProperties.ATTACHED_ELEMENT, attachedElement);
         // Attach connected edge to comment
         if (!node.getOutgoingEdges().isEmpty()) {
-            comment.setProperty(SequenceDiagramProperties.COMMENT_CONNECTION, 
-                    node.getOutgoingEdges().get(0));
+            comment.setProperty(SequenceDiagramProperties.COMMENT_CONNECTION, node
+                    .getOutgoingEdges().get(0));
         }
 
+        // Copy all the entries of the list of attached elements to the comment object
         List<Object> attachedTo = commentLayout.getProperty(PapyrusProperties.ATTACHED_TO);
         if (attachedTo != null) {
-            List<SGraphElement> attTo = new LinkedList<SGraphElement>();
+            List<SGraphElement> attTo = comment.getAttachedTo();
             for (Object att : attachedTo) {
                 if (att instanceof KNode) {
                     attTo.add(nodeMap.get(att));
@@ -271,11 +230,9 @@ public class SGraphImporter {
                     attTo.add(edgeMap.get(att));
                 }
             }
-            comment.getAttachedTo().addAll(attTo);
         }
 
-        comment.setProperty(PapyrusProperties.NODE_TYPE, nodeType);
-
+        // Copy layout information
         comment.getPosition().x = commentLayout.getXpos();
         comment.getPosition().y = commentLayout.getYpos();
         comment.getSize().x = commentLayout.getWidth();
@@ -283,7 +240,8 @@ public class SGraphImporter {
 
         // Handle time observations
         if (nodeType.equals("3020")) {
-            comment.getSize().x = sgraph.getProperty(SequenceDiagramProperties.TIME_OBSERVATION_WIDTH);
+            comment.getSize().x = sgraph
+                    .getProperty(SequenceDiagramProperties.TIME_OBSERVATION_WIDTH);
 
             // Find lifeline that is next to the time observation
             SLifeline nextLifeline = null;
@@ -415,7 +373,7 @@ public class SGraphImporter {
             KEdgeLayout layout = edge.getData(KEdgeLayout.class);
             message.setSourceYPos(layout.getSourcePoint().getY());
             message.setTargetYPos(layout.getTargetPoint().getY());
-            
+
             // Read size of the attached label
             double maxLabelLength = 0;
             for (KLabel label : edge.getLabels()) {
@@ -425,7 +383,7 @@ public class SGraphImporter {
                 }
             }
             message.setLabelWidth(maxLabelLength);
-            
+
             // Add message to the source and the target lifeline's list of messages
             sourceLL.addMessage(message);
             targetLL.addMessage(message);
@@ -433,8 +391,9 @@ public class SGraphImporter {
             // Put edge and message into the edge map
             edgeMap.put(edge, message);
 
-            // replace KEdge by its SMessage if it appears in one of the lifeline's
-            // executions
+            // Replace KEdge by its SMessage if it appears in one of the lifeline's executions. It
+            // is better to do it this way than running through the list of executions since that
+            // would lead to concurrent modification exceptions.
             if (sourceLL.getProperty(PapyrusProperties.EXECUTIONS) != null) {
                 for (SequenceExecution execution : sourceLL
                         .getProperty(PapyrusProperties.EXECUTIONS)) {
@@ -516,6 +475,7 @@ public class SGraphImporter {
 
             SLifeline sourceLL = nodeMap.get(edge.getSource());
             if (sourceLL == null) {
+                // TODO consider connections to comments and constraints!
                 // Create dummy lifeline as source since the message has no source lifeline
                 SLifeline dummy = new SLifeline();
                 dummy.setName("DummyLifeline");
@@ -528,7 +488,7 @@ public class SGraphImporter {
                 message.setProperty(Properties.ORIGIN, edge);
                 message.setComments(new LinkedList<SComment>());
                 message.setTargetYPos(layout.getTargetPoint().getY());
-                
+
                 // Add the message to the source and target lifeline's list of messages
                 sourceLL.addMessage(message);
                 targetLL.addMessage(message);
@@ -605,7 +565,7 @@ public class SGraphImporter {
             lifeline.setProperty(Properties.ORIGIN, node);
             nodeMap.put(node, lifeline);
             sgraph.addLifeline(lifeline);
-            
+
             // Copy layout information to lifeline
             lifeline.getPosition().x = layout.getXpos();
             lifeline.getPosition().y = layout.getYpos();

@@ -31,12 +31,14 @@ public class PapyrusLayoutConfig extends GmfLayoutConfig {
     @Override
     public void enrich(final LayoutContext context) {
         super.enrich(context);
-        if (context.getProperty(LayoutContext.DIAGRAM_PART).getClass().getSimpleName()
-                .equals("PackageEditPart")) {
-            // Disable LayoutOptions for the PackageEditPart
-            Set<LayoutOptionData.Target> optionTargets = context
-                    .getProperty(LayoutContext.OPT_TARGETS);
-            optionTargets.clear();
+        if (context.getProperty(LayoutContext.DIAGRAM_PART) != null) {
+            if (context.getProperty(LayoutContext.DIAGRAM_PART).getClass().getSimpleName()
+                    .equals("PackageEditPart")) {
+                // Disable LayoutOptions for the PackageEditPart
+                Set<LayoutOptionData.Target> optionTargets = context
+                        .getProperty(LayoutContext.OPT_TARGETS);
+                optionTargets.clear();
+            }
         }
     }
 }

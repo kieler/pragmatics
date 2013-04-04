@@ -118,8 +118,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
     private Map<EReference, KEdge> reference2EdgeMap;
 
     /** the cached layout configuration for GMF. */
-    private GmfLayoutConfig layoutConfig = new PapyrusLayoutConfig(); //new GmfLayoutConfig();
-    // TODO
+    private GmfLayoutConfig layoutConfig = new PapyrusLayoutConfig();
 
     /**
      * {@inheritDoc}

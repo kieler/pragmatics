@@ -86,9 +86,9 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
         if (parentNode.getParent() == null) {
             return;
         }
-        
+
         progressMonitor.begin("Sequence Diagrem Layouter", 1 + 1 + 1 + 1 + 1 + 1);
-        
+
         // Get layout properties
         KShapeLayout sourceShapeLayout = parentNode.getData(KShapeLayout.class);
         borderSpacing = sourceShapeLayout.getProperty(Properties.BORDER_SPACING);
@@ -102,8 +102,6 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
         labelAlignment = sourceShapeLayout.getProperty(SequenceDiagramProperties.LABEL_ALIGNMENT);
         LifelineSortingStrategy strategy = sourceShapeLayout
                 .getProperty(SequenceDiagramProperties.LIFELINE_SORTING);
-        
-        // TODO maybe apply the properties of the surrounding interaction?
 
         // Lifeline ordering algorithm.
         ILifelineSorter lifelineSorter;
@@ -160,6 +158,9 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      *            the layered graph
      */
     private void allocateSpace(final SGraph sgraph, final LGraph layeredGraph) {
+        // Allocate space for the header of combined fragments
+        allocateCFSpace(sgraph, layeredGraph);
+
         // Allocate space for comments by introducing dummy nodes
         allocateCommentSpace(sgraph, layeredGraph);
 
@@ -167,7 +168,42 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
         allocateEmptyAreaSpace(sgraph, layeredGraph);
 
         // Allocate space for lifeline header of "created" lifelines
-        allocateSpaceForCreatedLifelines(sgraph, layeredGraph);
+        // allocateSpaceForCreatedLifelines(sgraph, layeredGraph); // TODO
+    }
+
+    /**
+     * Allocate space for the header of combined fragments.
+     * 
+     * @param sgraph
+     *            the SGraph
+     * @param lgraph
+     *            the layered graph
+     */
+    private void allocateCFSpace(final SGraph sgraph, final LGraph lgraph) {
+        // Add dummy nodes before the first messages of combined fragments to have enough space
+        // above the topmost message of the area
+        List<SequenceArea> areas = sgraph.getProperty(PapyrusProperties.AREAS);
+        if (areas != null) {
+            for (SequenceArea area : areas) {
+                if (area.getSubAreas().size() > 0) {
+                    // Find the uppermost message contained in the combined fragment
+                    double minYPos = Double.MAX_VALUE;
+                    SMessage uppermostMessage = null;
+                    for (Object messageObj : area.getMessages()) {
+                        SMessage message = (SMessage) messageObj;
+                        if (message.getSourceYPos() < minYPos) {
+                            minYPos = message.getSourceYPos();
+                            uppermostMessage = message;
+                        }
+                    }
+                    if (uppermostMessage != null) {
+                        LNode node = uppermostMessage.getProperty(
+                                SequenceDiagramProperties.LAYERED_NODE);
+                        createDummyNode(lgraph, node, true);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -242,17 +278,17 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
      * @param lgraph
      *            the layered graph
      */
-    private void allocateSpaceForCreatedLifelines(final SGraph sgraph, final LGraph lgraph) {
-        for (SLifeline lifeline : sgraph.getLifelines()) {
-            for (SMessage message : lifeline.getIncomingMessages()) {
-                if (message.getProperty(SequenceDiagramProperties.MESSAGE_TYPE) == MessageType.CREATE) {
-                    // Add dummy below this messages node
-                    LNode node = message.getProperty(SequenceDiagramProperties.LAYERED_NODE);
-                    createDummyNode(lgraph, node, false);
-                }
-            }
-        }
-    }
+//    private void allocateSpaceForCreatedLifelines(final SGraph sgraph, final LGraph lgraph) {
+//        for (SLifeline lifeline : sgraph.getLifelines()) {
+//            for (SMessage message : lifeline.getIncomingMessages()) {
+//              if (message.getProperty(SequenceDiagramProperties.MESSAGE_TYPE) == MessageType.CREATE) {
+//                    // Add dummy below this messages node
+//                    LNode node = message.getProperty(SequenceDiagramProperties.LAYERED_NODE);
+//                    createDummyNode(lgraph, node, false);
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Creates a dummy node in the layered graph, that is placed near the given node. Every
@@ -381,10 +417,17 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
 
         // Check, if there are labels longer than the available space
         for (SMessage message : lifeline.getIncomingMessages()) {
-            if (message.getSource().getHorizontalSlot() == 1 + message.getTarget()
-                    .getHorizontalSlot()) {
+            int sourceSlot = message.getSource().getHorizontalSlot();
+            int targetSlot = message.getTarget().getHorizontalSlot();
+            if (Math.abs(sourceSlot - targetSlot) == 1) {
                 if (message.getLabelWidth() > spacing + lifeline.getSize().x) {
                     spacing = LABELMARGIN + message.getLabelWidth() - lifeline.getSize().x;
+                }
+                // Labels of create messages should not overlap the target's header
+                if (message.getProperty(SequenceDiagramProperties.MESSAGE_TYPE) == MessageType.CREATE) {
+                    if (message.getLabelWidth() > spacing + lifeline.getSize().x / 2) {
+                        spacing = LABELMARGIN + message.getLabelWidth() - lifeline.getSize().x / 2;
+                    }
                 }
             }
         }
@@ -723,12 +766,12 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                 int containmentSpacing = containmentDepth * containmentOffset;
 
                 areaLayout.setXpos((float) (area.getPosition().x - lifelineSpacing / 2 
-                                - containmentSpacing));
+                        - containmentSpacing));
                 areaLayout.setWidth((float) (area.getSize().x + lifelineSpacing 
                         + 2 * containmentSpacing));
 
-                areaLayout.setYpos((float) (area.getPosition().y + lifelineHeader - messageSpacing
-                        / 2 - containmentSpacing));
+                areaLayout.setYpos((float) (area.getPosition().y + lifelineHeader - messageSpacing / 2 
+                        - containmentSpacing));
                 areaLayout.setHeight((float) (area.getSize().y + messageSpacing 
                         + 2 * containmentSpacing));
 
@@ -981,7 +1024,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
             final List<SLifeline> lifelineOrder, final SLifeline lifeline,
             final List<SequenceExecution> executions) {
         /*
-         * TODO Set this to one if Papyrus team fixes its bug. Workaround for Papyrus bug.
+         * TODO Set this to one if Papyrus team fixes its bug. Workaround for Papyrus bug:
          * Y-coordinates are stored in a strange way by Papyrus. When the message starts or ends at
          * a lifeline, y-coordinates must be given relative to the lifeline. However, these relative
          * coordinates must be scaled as if the lifeline was having the height of its surrounding
@@ -1052,9 +1095,8 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
 
                 // Lost-messages end between its source and the next lifeline
                 if (message.getProperty(SequenceDiagramProperties.MESSAGE_TYPE) == MessageType.LOST) {
-                    targetPoint
-                            .setX((float) (lifeline.getPosition().x + lifeline.getSize().x 
-                                    + lifelineSpacing / 2));
+                    targetPoint.setX((float) (lifeline.getPosition().x + lifeline.getSize().x 
+                            + lifelineSpacing / 2));
                 }
             }
         }
@@ -1144,11 +1186,16 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                 // Message leads rightwards
                 switch (labelAlignment) {
                 case FIRST_CENTER:
-                    //Place labels centered between the source lifeline and its neighbored lifeline
-                    SLifeline nextLL = lifelineOrder.get(lifelineIndex + 1);
-                    double center = (llCenter + nextLL.getPosition().x + nextLL.getSize().x / 2) / 2;
-                    labelLayout.setXpos((float) (center - labelLayout.getWidth() / 2));
-                    break;
+                    // If the lifeline is the last lifeline (lost message), fall through to SOURCE
+                    // placement to avoid ArrayIndexOutOfBoundsException
+                    if (lifelineIndex + 1 < lifelineOrder.size()) {
+                        // Place labels centered between the source lifeline and its neighbored
+                        // lifeline
+                        SLifeline nextLL = lifelineOrder.get(lifelineIndex + 1);
+                        double center = (llCenter + nextLL.getPosition().x + nextLL.getSize().x / 2) / 2;
+                        labelLayout.setXpos((float) (center - labelLayout.getWidth() / 2));
+                        break;
+                    }
                 case SOURCE:
                     // Place labels near the source lifeline
                     labelLayout.setXpos((float) llCenter + LABELSPACING);
@@ -1160,17 +1207,26 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                     labelLayout.setXpos((float) ((llCenter + targetCenter) / 2 - labelLayout
                             .getWidth() / 2));
                 }
+                // Create messages should not overlap the target's header
+                if (message.getProperty(SequenceDiagramProperties.MESSAGE_TYPE) == MessageType.CREATE) {
+                    labelLayout.setXpos((float) (llCenter + LABELSPACING));
+                }
                 labelLayout.setYpos((float) ((message.getSourceYPos() - labelLayout.getHeight() - 2) 
                         * factor));
-            } else {
+            } else if (message.getTarget().getHorizontalSlot() < lifeline.getHorizontalSlot()) {
                 // Message leads leftwards
                 switch (labelAlignment) {
                 case FIRST_CENTER:
-                    //Place labels centered between the source lifeline and its neighbored lifeline
-                    SLifeline lastLL = lifelineOrder.get(lifelineIndex - 1);
-                    double center = (llCenter + lastLL.getPosition().x + lastLL.getSize().x / 2) / 2;
-                    labelLayout.setXpos((float) (center - labelLayout.getWidth() / 2));
-                    break;
+                    // If the lifeline is the first lifeline (found message), fall through to SOURCE
+                    // placement to avoid ArrayIndexOutOfBoundsException
+                    if (lifelineIndex > 0) {
+                        // Place labels centered between the source lifeline and its neighbored
+                        // lifeline
+                        SLifeline lastLL = lifelineOrder.get(lifelineIndex - 1);
+                        double center = (llCenter + lastLL.getPosition().x + lastLL.getSize().x / 2) / 2;
+                        labelLayout.setXpos((float) (center - labelLayout.getWidth() / 2));
+                        break;
+                    }
                 case SOURCE:
                     // Place labels near the source lifeline
                     labelLayout.setXpos((float) (llCenter - labelLayout.getWidth() - LABELSPACING));
@@ -1183,6 +1239,16 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
                             .getWidth() / 2));
                 }
                 labelLayout.setYpos((float) ((message.getSourceYPos() + 2) * factor));
+            } else {
+                // Message is selfloop
+                
+                // Center labels horizontally over the lifeline
+                labelLayout.setXpos((float) (lifeline.getPosition().x + lifeline.getSize().x / 2 
+                        - labelLayout.getWidth() / 2));
+                // Place labels between the two parts of the message
+                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                float firstBendYPos = edgeLayout.getBendPoints().get(0).getY();
+                labelLayout.setYpos(firstBendYPos + 2);
             }
         }
     }
@@ -1317,7 +1383,7 @@ public class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Set x position and width of an execution and check for minimum height. 
+     * Set x position and width of an execution and check for minimum height.
      * 
      * @param executions
      *            List of {@link SequenceExecution} at the given {@link SLifeline}
