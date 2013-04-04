@@ -40,15 +40,15 @@
    <!--   <feature url="features/de.cau.cs.kieler.kiml.graphiti.source_0.6.0.qualifier.jar" id="de.cau.cs.kieler.kiml.graphiti.source" version="0.6.0.qualifier">
       <category name="KIELER Development"/>
    </feature> -->
-   <feature url="features/de.cau.cs.kieler.synccharts_0.8.0.qualifier.jar" id="de.cau.cs.kieler.synccharts.feature" version="0.8.0.qualifier">
+   <!--   <feature url="features/de.cau.cs.kieler.synccharts_0.8.0.qualifier.jar" id="de.cau.cs.kieler.synccharts.feature" version="0.8.0.qualifier">
       <category name="KIELER"/>
-   </feature>
+   </feature> -->
    <!--   <feature url="features/de.cau.cs.kieler.synccharts.source_0.6.0.qualifier.jar" id="de.cau.cs.kieler.synccharts.source" version="0.6.0.qualifier">
       <category name="KIELER Development"/>
    </feature> -->
-   <feature url="features/de.cau.cs.kieler.klots_0.3.0.qualifier.jar" id="de.cau.cs.kieler.klots.feature" version="0.3.0.qualifier">
+   <!--   <feature url="features/de.cau.cs.kieler.klots_0.3.0.qualifier.jar" id="de.cau.cs.kieler.klots.feature" version="0.3.0.qualifier">
       <category name="KIELER"/>
-   </feature>
+   </feature> -->
    <!--   <feature url="features/de.cau.cs.kieler.klots.source_0.1.0.qualifier.jar" id="de.cau.cs.kieler.klots.source" version="0.1.0.qualifier">
       <category name="KIELER Development"/>
    </feature> -->

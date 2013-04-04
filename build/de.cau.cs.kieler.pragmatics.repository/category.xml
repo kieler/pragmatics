@@ -60,12 +60,12 @@
    <feature url="features/de.cau.cs.kieler.kiml.ogdf.source_0.5.1.qualifier.jar" id="de.cau.cs.kieler.kiml.ogdf.feature.source" version="0.5.1.qualifier">
       <category name="kieler-prag-dev"/>
    </feature>
-   <category-def name="kieler-prag" label="kieler-prag">
+   <category-def name="kieler-prag" label="KIELER Pragmatics">
       <description>
          Kiel Integrated Environment for Layout Eclipse RichClient, Nightly Build
       </description>
    </category-def>
-   <category-def name="kieler-prag-dev" label="kieler-prag-dev">
+   <category-def name="kieler-prag-dev" label="KIELER Pragmatics (Development)">
       <description>
          Kiel Integrated Environment for Layout Eclipse RichClient, Nightly Build (Sources and Additional Features)
       </description>

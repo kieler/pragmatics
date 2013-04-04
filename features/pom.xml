@@ -21,7 +21,6 @@
     <module>de.cau.cs.kieler.core.annotations.feature.source</module>
     <module>de.cau.cs.kieler.core.feature</module>
     <module>de.cau.cs.kieler.core.feature.source</module>
-    <module>de.cau.cs.kieler.dependencies.feature</module>
     <module>de.cau.cs.kieler.kaom.feature</module>
     <module>de.cau.cs.kieler.kaom.feature.source</module>
     <module>de.cau.cs.kieler.keg.feature</module>
