@@ -7,7 +7,7 @@ which can be read in the LICENSE file.
 
 The main directories of the repository are the following:
 
-  plugins        Source code for Eclipse plugins that are published in KIELER releases
+  plugins        Source code for Eclipse plugins published in KIELER releases
   plugins-dev    Source code for Eclipse plugins used for internal development
   features       Eclipse features for bundling public plugins
   build          Configuration files for automatic builds using Maven
