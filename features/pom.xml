@@ -26,7 +26,9 @@
     <module>de.cau.cs.kieler.kaom.feature.source</module>
     <module>de.cau.cs.kieler.keg.feature</module>
     <module>de.cau.cs.kieler.keg.feature.source</module>
+-->
     <module>de.cau.cs.kieler.kiml.gmf.feature</module>
+<!--
     <module>de.cau.cs.kieler.kiml.gmf.feature.source</module>
     <module>de.cau.cs.kieler.kiml.graphiti.feature</module>
     <module>de.cau.cs.kieler.kiml.graphiti.feature.source</module>
