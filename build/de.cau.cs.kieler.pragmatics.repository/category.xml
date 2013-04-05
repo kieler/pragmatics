@@ -62,12 +62,12 @@
    </feature>
    <category-def name="kieler-prag" label="KIELER Pragmatics">
       <description>
-         Kiel Integrated Environment for Layout Eclipse RichClient, Nightly Build
+         Kiel Integrated Environment for Layout Eclipse RichClient, Pragmatics components, Nightly Build
       </description>
    </category-def>
    <category-def name="kieler-prag-dev" label="KIELER Pragmatics (Development)">
       <description>
-         Kiel Integrated Environment for Layout Eclipse RichClient, Nightly Build (Sources and Additional Features)
+         Kiel Integrated Environment for Layout Eclipse RichClient, Pragmatics components, Nightly Build (Sources and Additional Features)
       </description>
    </category-def>
 </site>
