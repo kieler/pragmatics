@@ -30,6 +30,12 @@
    <feature url="features/de.cau.cs.kieler.kiml.graphiti.source_0.8.0.qualifier.jar" id="de.cau.cs.kieler.kiml.graphiti.feature.source" version="0.8.0.qualifier">
       <category name="kieler-prag-dev"/>
    </feature>
+   <feature url="features/de.cau.cs.kieler.klighd.feature_0.2.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature" version="0.2.0.qualifier">
+      <category name="kieler-prag"/>
+   </feature>
+   <feature url="features/de.cau.cs.kieler.klighd.feature.source_0.2.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature.source" version="0.2.0.qualifier">
+      <category name="kieler-prag-dev"/>
+   </feature>
    <feature url="features/de.cau.cs.kieler.kwebs.client.jaxws_0.1.2.qualifier.jar" id="de.cau.cs.kieler.kwebs.client.jaxws.feature" version="0.1.2.qualifier">
       <category name="kieler-prag"/>
    </feature>
