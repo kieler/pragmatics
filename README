@@ -1,0 +1,14 @@
+This repository holds the pragmatics components of the KIELER project, see
+
+  http://www.informatik.uni-kiel.de/rtsys/kieler/
+
+to learn more. The code is made available under the Eclipse Public License (EPL),
+which can be read in the LICENSE file.
+
+The main directories of the repository are the following:
+
+  plugins        Source code for Eclipse plugins that are published in KIELER releases
+  plugins-dev    Source code for Eclipse plugins used for internal development
+  features       Eclipse features for bundling public plugins
+  build          Configuration files for automatic builds using Maven
+  test           JUnit test plugins
