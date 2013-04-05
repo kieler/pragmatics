@@ -17,13 +17,18 @@
 <!-- all plugins need to be listed as module -->
 
   <modules>
+<!--
     <module>../test</module>
+-->
     <module>de.cau.cs.kieler.core</module>
+<!--
     <module>de.cau.cs.kieler.core.annotations</module>
     <module>de.cau.cs.kieler.core.annotations.edit</module>
     <module>de.cau.cs.kieler.core.annotations.text</module>
     <module>de.cau.cs.kieler.core.annotations.text.ui</module>
+-->
     <module>de.cau.cs.kieler.core.kgraph</module>
+<!--
     <module>de.cau.cs.kieler.core.kgraph.edit</module>
     <module>de.cau.cs.kieler.core.kgraph.text</module>
     <module>de.cau.cs.kieler.core.kgraph.text.ui</module>
@@ -55,24 +60,34 @@
     <module>de.cau.cs.kieler.keg.ksbase</module>
     <module>de.cau.cs.kieler.kex</module>
     <module>de.cau.cs.kieler.kex.ui</module>
+-->
     <module>de.cau.cs.kieler.kiml</module>
+<!--
     <module>de.cau.cs.kieler.kiml.evol</module>
     <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.kiml.formats</module>
     <module>de.cau.cs.kieler.kiml.formats.gml</module>
     <module>de.cau.cs.kieler.kiml.formats.svg</module>
+-->
     <module>de.cau.cs.kieler.kiml.gmf</module>
+<!--
     <module>de.cau.cs.kieler.kiml.grana</module>
     <module>de.cau.cs.kieler.kiml.graphiti</module>
     <module>de.cau.cs.kieler.kiml.graphviz.dot</module>
     <module>de.cau.cs.kieler.kiml.graphviz.layouter</module>
     <module>de.cau.cs.kieler.kiml.kivi</module>
     <module>de.cau.cs.kieler.kiml.ogdf</module>
+-->
     <module>de.cau.cs.kieler.kiml.service</module>
+<!--
     <module>de.cau.cs.kieler.kiml.smart</module>
+-->
     <module>de.cau.cs.kieler.kiml.ui</module>
+<!--
     <module>de.cau.cs.kieler.klay.force</module>
+-->
     <module>de.cau.cs.kieler.klay.layered</module>
+<!--
     <module>de.cau.cs.kieler.klay.planar</module>
     <module>de.cau.cs.kieler.klighd</module>
     <module>de.cau.cs.kieler.klighd.examples</module>
@@ -98,6 +113,7 @@
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>
     <module>org.graphdrawing.graphml</module>
+-->
   </modules>
 
 </project>
