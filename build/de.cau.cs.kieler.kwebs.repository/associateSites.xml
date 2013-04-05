@@ -1,8 +1,0 @@
-<associateSites>
-    <associateSite label="Juno" url="http://download.eclipse.org/releases/juno/" />
-    <associateSite label="The Eclipse Project Updates" url="http://download.eclipse.org/eclipse/updates/4.2" />
-    <associateSite label="Google Guava Libraries" url="http://guava-osgi.googlecode.com/svn/trunk/repository/" />
-    <associateSite label="Papyrus" url="http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/maintenance/juno" />
-    <associateSite label="Graphiti" url="http://download.eclipse.org/graphiti/updates/0.8.1" />
-    <associateSite label="Itemis" url="http://download.itemis.com/updates/releases" />
-</associateSites>
