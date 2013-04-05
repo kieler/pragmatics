@@ -3,7 +3,7 @@
    <description name="Papyrus Layout Nightly Builds" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly-papyrus/">
       Update site for the Papyrus Layout nightly builds
    </description>
-   <feature url="features/de.cau.cs.kieler.papyrus.layout_0.1.0.qualifier.jar" id="de.cau.cs.kieler.papyrus.layout.feature" version="0.1.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.papyrus.layout_0.2.0.qualifier.jar" id="de.cau.cs.kieler.papyrus.layout.feature" version="0.2.0.qualifier">
       <category name="Layout for Papyrus"/>
    </feature>
    <category-def name="Layout for Papyrus" label="Layout for Papyrus">
