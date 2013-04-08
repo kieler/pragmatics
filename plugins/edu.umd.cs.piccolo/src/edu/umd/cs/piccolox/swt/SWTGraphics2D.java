@@ -143,11 +143,11 @@ public class SWTGraphics2D extends Graphics2D {
     /** The current text style to use when drawing text. */
     protected TextStyle curTextStyle;
     /** The current stroke width to use when drawing lines. */
-    protected double lineWidth = 1.0;
-    /** The current stroke style to use when drawing lines. */
-    protected int lineStyle = SWT.LINE_SOLID;
-    /** The current stroke ending style to use when drawing lines. */
-    protected int lineCap = SWT.CAP_FLAT;
+    protected float lineWidth = 1f;
+//    /** The current stroke style to use when drawing lines. */
+//    protected int lineStyle = SWT.LINE_SOLID;
+//    /** The current stroke ending style to use when drawing lines. */
+//    protected int lineCap = SWT.CAP_FLAT;
     /** The state w.r.t. underlining when drawing text. */
     protected boolean underlining = false;
     /** The current text underline style to use when drawing text; is also controlled by {@link #underlining}. */
@@ -333,7 +333,9 @@ public class SWTGraphics2D extends Graphics2D {
      * the first one completely (which I however expected). Thus the method takes the last
      * configured clipping area (which will also be kept in mind in the @code{setClip(...)} &&
      * @code{clip} methods) and increases that bounding box by a surrounding line of the
-     * (zoom factor correct) line width. 
+     * (zoom factor correct) line width.
+     * 
+     * TODO: think about setting the lineWidth to zero, setting the clip, and restoring the lineWidth
      * 
      * @author chsch
      */
@@ -919,9 +921,8 @@ public class SWTGraphics2D extends Graphics2D {
             ptArray[2 * i + 1] = yPoints[i];
         }
 
-        gc.setLineWidth(getTransformedLineWidth());
-        gc.setLineStyle(this.lineStyle);
-        gc.setLineCap(this.lineCap);
+        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
+
         gc.drawPolyline(ptArray);
     }
     
@@ -934,9 +935,8 @@ public class SWTGraphics2D extends Graphics2D {
      */
     public void drawPolyline(final double[] pts) {
         final int[] intPts = SWTShapeManager.transform(pts, transform);
-        gc.setLineWidth(getTransformedLineWidth());
-        gc.setLineStyle(this.lineStyle);
-        gc.setLineCap(this.lineCap);
+        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
+
         gc.drawPolyline(intPts);
     }
     
@@ -950,9 +950,8 @@ public class SWTGraphics2D extends Graphics2D {
             ptArray[2 * i] = TEMP_POINT.x;
             ptArray[2 * i + 1] = TEMP_POINT.y;
         }
-        gc.setLineWidth(getTransformedLineWidth());
-        gc.setLineStyle(this.lineStyle);
-        gc.setLineCap(this.lineCap);
+        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
+
         gc.drawPolygon(ptArray);
     }
     
@@ -968,9 +967,8 @@ public class SWTGraphics2D extends Graphics2D {
      */
     public void drawPolygon(final double[] pts) {
         final int[] intPts = SWTShapeManager.transform(pts, transform);
-        gc.setLineWidth(getTransformedLineWidth());
-        gc.setLineStyle(this.lineStyle);
-        gc.setLineCap(this.lineCap);
+        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
+
         gc.drawPolygon(intPts);
     }
 
@@ -983,9 +981,8 @@ public class SWTGraphics2D extends Graphics2D {
      */
     public void fillPolygon(final double[] pts) {
         final int[] intPts = SWTShapeManager.transform(pts, transform);
-        gc.setLineWidth(getTransformedLineWidth());
-        gc.setLineStyle(this.lineStyle);
-        gc.setLineCap(this.lineCap);
+        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
+
         gc.fillPolygon(intPts);
     }
     
@@ -1031,9 +1028,8 @@ public class SWTGraphics2D extends Graphics2D {
         final double transformedX2 = (int) TEMP_POINT.getX();
         final double transformedY2 = (int) TEMP_POINT.getY();
 
-        gc.setLineWidth(getTransformedLineWidth());
-        gc.setLineStyle(this.lineStyle);
-        gc.setLineCap(this.lineCap);
+        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
+
         gc.drawLine((int) (transformedX1 + 0.5), (int) (transformedY1 + 0.5),
                 (int) (transformedX2 + 0.5), (int) (transformedY2 + 0.5));
     }
@@ -1252,9 +1248,8 @@ public class SWTGraphics2D extends Graphics2D {
         SWTShapeManager.transform(TEMP_RECT, transform);
         SWTShapeManager.awtToSWT(TEMP_RECT, SWT_RECT);
 
-        gc.setLineWidth(getTransformedLineWidth());
-        gc.setLineStyle(this.lineStyle);
-        gc.setLineCap(this.lineCap);
+        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
+
         gc.drawRectangle(SWT_RECT);
     }
 
@@ -1325,9 +1320,8 @@ public class SWTGraphics2D extends Graphics2D {
         final double tarcWidth = TEMP_RECT.getWidth();
         final double tarcHeight = TEMP_RECT.getHeight();
 
-        gc.setLineWidth(getTransformedLineWidth());
-        gc.setLineStyle(this.lineStyle);
-        gc.setLineCap(this.lineCap);
+        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
+
         gc.drawRoundRectangle((int) (tx + 0.5), (int) (ty + 0.5), (int) (twidth + 0.5),
                 (int) (theight + 0.5), (int) (tarcWidth + 0.5), (int) (tarcHeight + 0.5));
     }
@@ -1371,9 +1365,8 @@ public class SWTGraphics2D extends Graphics2D {
         final double tarcWidth = TEMP_RECT.getWidth();
         final double tarcHeight = TEMP_RECT.getHeight();
 
-        gc.setLineWidth(getTransformedLineWidth());
-        gc.setLineStyle(this.lineStyle);
-        gc.setLineCap(this.lineCap);
+        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
+
         gc.fillRoundRectangle((int) (tx + 0.5), (int) (ty + 0.5), (int) (twidth + 0.5),
                 (int) (theight + 0.5), (int) (tarcWidth + 0.5), (int) (tarcHeight + 0.5));
     }
@@ -1401,9 +1394,8 @@ public class SWTGraphics2D extends Graphics2D {
         TEMP_RECT.setRect(x, y, width, height);
         SWTShapeManager.transform(TEMP_RECT, transform);
 
-        gc.setLineWidth(getTransformedLineWidth());
-        gc.setLineStyle(this.lineStyle);
-        gc.setLineCap(this.lineCap);
+        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
+
         gc.drawOval((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
                 (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5));
     }
@@ -1477,9 +1469,8 @@ public class SWTGraphics2D extends Graphics2D {
         TEMP_RECT.setRect(x, y, width, height);
         SWTShapeManager.transform(TEMP_RECT, transform);
 
-        gc.setLineWidth(getTransformedLineWidth());
-        gc.setLineStyle(this.lineStyle);
-        gc.setLineCap(this.lineCap);
+        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
+
         gc.drawArc((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
                 (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5),
                 (int) (startAngle + 0.5), (int) (extent + 0.5));
@@ -1528,9 +1519,8 @@ public class SWTGraphics2D extends Graphics2D {
      *            path to draw
      */
     public void drawGeneralPath(final GeneralPath gp) {
-        gc.setLineWidth(getTransformedLineWidth());
-        gc.setLineStyle(this.lineStyle);
-        gc.setLineCap(this.lineCap);
+        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
+
         gc.drawPath(pathIterator2Path(gp.getPathIterator(transform)));
     }
 
@@ -1543,9 +1533,9 @@ public class SWTGraphics2D extends Graphics2D {
      *            path to draw
      */
     public void drawPath(final Path p) {
-        gc.setLineWidth((int) lineWidth);
-        gc.setLineStyle(this.lineStyle);
-        gc.setLineCap(this.lineCap);
+//        gc.setLineWidth((int) lineWidth);
+//        gc.setLineStyle(this.lineStyle);
+//        gc.setLineCap(this.lineCap);
         gc.setTransform(swtTransform);
         // FIXME this is a workaround for Eclipse Bug 335769
         gc.getGCData().state |= 1 << 9;
@@ -1629,7 +1619,7 @@ public class SWTGraphics2D extends Graphics2D {
      * @param lineWidth
      *            width of line when drawing shapes
      */
-    public void setLineWidth(final double lineWidth) {
+    public void setLineWidth(final float lineWidth) {
         this.lineWidth = lineWidth;
     }
 
@@ -1638,7 +1628,7 @@ public class SWTGraphics2D extends Graphics2D {
      * 
      * @return width of line when drawing shapes
      */
-    public double getLineWidth() {
+    public float getLineWidth() {
         return this.lineWidth;
     }
     
@@ -1655,58 +1645,70 @@ public class SWTGraphics2D extends Graphics2D {
     }
 
     /**
-     * Sets the line width to use when drawing shapes. <br>
-     * Must be one of the constants {@link SWT#LINE_SOLID}, {@link SWT#LINE_DASH},
-     * {@link SWT#LINE_DOT}, {@link SWT#LINE_DASHDOT} or {@link SWT#LINE_DASHDOTDOT}.
+     * Computes the width of the line after it passes through the current transform.
      * 
-     * @author chsch
-     * 
-     * @param lineStyle
-     *            style of lines when drawing shapes
+     * @return resulting width of line after being transform
      */
-    public void setLineStyle(final int lineStyle) {
-        this.lineStyle = lineStyle;
+    protected float getTransformedLineWidthFloat() {
+        TEMP_LINE_RECT.setRect(0, 0, lineWidth, lineWidth);
+        SWTShapeManager.transform(TEMP_LINE_RECT, transform);
+        
+        return (float) TEMP_LINE_RECT.getWidth();
     }
 
-    /**
-     * Returns the line width to use when drawing shapes.<br>
-     * Result is supposed to be one of the constants {@link SWT#LINE_SOLID}, {@link SWT#LINE_DASH},
-     * {@link SWT#LINE_DOT}, {@link SWT#LINE_DASHDOT} or {@link SWT#LINE_DASHDOTDOT}.
-     * 
-     * @author chsch
-     * 
-     * @return style of lines when drawing shapes
-     */
-    public int getLineStyle() {
-        return this.lineStyle;
-    }
-    
-    /**
-     * Sets the line width to use when drawing shapes. <br>
-     * Must be one of the constants {@link SWT#CAP_FLAT}, {@link SWT#CAP_ROUND}, or
-     * {@link SWT#CAP_SQUARE}.
-     * 
-     * @author chsch
-     * 
-     * @param lineCap
-     *            cap style of lines when drawing strokes
-     */
-    public void setLineCap(final int lineCap) {
-        this.lineCap = lineCap;
-    }
-
-    /**
-     * Returns the line width to use when drawing shapes. Result is supposed to be one of the
-     * constants {@link SWT#CAP_FLAT}, {@link SWT#CAP_ROUND}, or {@link SWT#CAP_SQUARE}.
-     * 
-     * @author chsch
-     * 
-     * @return cap style of lines when drawing strokes
-     */
-    public int getLineCap() {
-        return this.lineCap;
-    }
-    
+//    /**
+//     * Sets the line width to use when drawing shapes. <br>
+//     * Must be one of the constants {@link SWT#LINE_SOLID}, {@link SWT#LINE_DASH},
+//     * {@link SWT#LINE_DOT}, {@link SWT#LINE_DASHDOT} or {@link SWT#LINE_DASHDOTDOT}.
+//     * 
+//     * @author chsch
+//     * 
+//     * @param lineStyle
+//     *            style of lines when drawing shapes
+//     */
+//    public void setLineStyle(final int lineStyle) {
+//        this.lineStyle = lineStyle;
+//    }
+//
+//    /**
+//     * Returns the line width to use when drawing shapes.<br>
+//     * Result is supposed to be one of the constants {@link SWT#LINE_SOLID}, {@link SWT#LINE_DASH},
+//     * {@link SWT#LINE_DOT}, {@link SWT#LINE_DASHDOT} or {@link SWT#LINE_DASHDOTDOT}.
+//     * 
+//     * @author chsch
+//     * 
+//     * @return style of lines when drawing shapes
+//     */
+//    public int getLineStyle() {
+//        return this.lineStyle;
+//    }
+//    
+//    /**
+//     * Sets the line width to use when drawing shapes. <br>
+//     * Must be one of the constants {@link SWT#CAP_FLAT}, {@link SWT#CAP_ROUND}, or
+//     * {@link SWT#CAP_SQUARE}.
+//     * 
+//     * @author chsch
+//     * 
+//     * @param lineCap
+//     *            cap style of lines when drawing strokes
+//     */
+//    public void setLineCap(final int lineCap) {
+//        this.lineCap = lineCap;
+//    }
+//
+//    /**
+//     * Returns the line width to use when drawing shapes. Result is supposed to be one of the
+//     * constants {@link SWT#CAP_FLAT}, {@link SWT#CAP_ROUND}, or {@link SWT#CAP_SQUARE}.
+//     * 
+//     * @author chsch
+//     * 
+//     * @return cap style of lines when drawing strokes
+//     */
+//    public int getLineCap() {
+//        return this.lineCap;
+//    }
+//    
     /**
      * Fills a gradient rectangle of in the direction specified.
      * 
