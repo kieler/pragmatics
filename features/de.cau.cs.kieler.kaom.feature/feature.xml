@@ -296,13 +296,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.core.model.xtend"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.core.ui"
          download-size="0"
          install-size="0"
@@ -373,13 +366,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kaom.sim.ptolemy"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.kaom.text"
          download-size="0"
          install-size="0"
@@ -436,34 +422,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.sim.kiem"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.sim.kiem.config"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.sim.kiem.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.sim.kiem.ui.datacomponent"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.ksbase"
          download-size="0"
          install-size="0"
@@ -478,41 +436,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.sim.ptolemy"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kvid"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kvid.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.json"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.tu_berlin.cs.tfs.muvitorkit"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.core.model.gmf"
          download-size="0"
          install-size="0"
@@ -520,21 +443,7 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="org.ptolemy.moml"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.kiml.service"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.sim.kiem.ui.launching"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -553,18 +462,6 @@ litigation.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.sim.signals"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="de.cau.cs.kieler.sim.signals.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
    <plugin
          id="de.cau.cs.kieler.kiml.kivi"

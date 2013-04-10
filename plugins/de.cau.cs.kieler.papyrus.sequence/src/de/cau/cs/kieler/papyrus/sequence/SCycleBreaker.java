@@ -37,11 +37,15 @@ import de.cau.cs.kieler.papyrus.sequence.graph.SMessage;
  * 
  */
 public class SCycleBreaker {
+    /** The list of nodes that have to be split. */
     private HashSet<LNode> split;
+    /** The list of nodes that were already visited in the current iteration. */
     private List<LNode> chain;
 
     /**
-     * Break the cycles in the given layered graph.
+     * Break the cycles in the given layered graph. Cycles are broken by splitting one of the
+     * affected nodes (which represent messages). With that, this message is not drawn horizontally
+     * anymore.
      * 
      * @param lgraph
      *            the layered graph
@@ -141,9 +145,12 @@ public class SCycleBreaker {
 
     /**
      * Find uppermost LNode in the current cyclic chain and add it to the set of LNodes to be split.
+     * 
+     * @param foundNode
+     *            the uppermost node in the current chain
      */
     private void addUppermostNode(final LNode foundNode) {
-        LNode uppermost = null;
+        LNode uppermost = foundNode;
         float uppermostPos = Float.MAX_VALUE;
         int foundIndex = chain.indexOf(foundNode);
         for (int i = foundIndex; i < chain.size(); i++) {

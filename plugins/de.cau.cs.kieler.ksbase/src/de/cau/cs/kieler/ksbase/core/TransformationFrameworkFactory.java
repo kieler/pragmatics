@@ -14,16 +14,14 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.core;
 
-import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
-import de.cau.cs.kieler.core.model.xtend.transformation.xtend.XtendTransformationFramework;
+import de.cau.cs.kieler.ksbase.m2m.ITransformationFramework;
+import de.cau.cs.kieler.ksbase.m2m.XtendTransformationFramework;
 
 /**
  * The transformation framework for KSBasE.
  * 
  * @author mim
  */
-//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
-@SuppressWarnings("deprecation")
 public final class TransformationFrameworkFactory {
 
     /**

@@ -38,8 +38,8 @@ import org.osgi.framework.Bundle;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
+import de.cau.cs.kieler.ksbase.m2m.ITransformationFramework;
 
 /**
  * The main storage and management class. Contains a list of currently registered editors. Handles
@@ -48,8 +48,6 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * @author mim
  * @kieler.design 2010-01-22 review by msp, skn
  */
-// Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
-@SuppressWarnings("deprecation")
 public final class TransformationManager {
 
     /**

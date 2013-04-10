@@ -28,10 +28,15 @@ import de.cau.cs.kieler.core.math.KVector;
  * 
  */
 public class SequenceExecution {
+    /** The type of the execution. */
     private String type = "";
+    /** The list of connected messages. */
     private List<Object> messages;
+    /** The size of the execution. */
     private KVector size;
+    /** The position of the execution. */
     private KVector position;
+    /** The originating KNode of the execution. */
     private KNode origin;
 
     /**

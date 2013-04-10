@@ -190,7 +190,7 @@ public class EqualDistributionLifelineSorter implements ILifelineSorter {
         for (EDLSNode node : placedNodes) {
             SLifeline lifeline = correspondences.inverse().get(node);
             lifelines.add(lifeline);
-            lifeline.setHorizontalPosition(i);
+            lifeline.setHorizontalSlot(i);
             i++;
         }
 

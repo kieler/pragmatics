@@ -231,7 +231,7 @@
                   The custom condition class.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="de.cau.cs.kieler.karma.ICustomCondition:"/>
+                  <meta.attribute kind="java" basedOn="de.cau.cs.kieler.karma.conditions.ICustomCondition:"/>
                </appinfo>
             </annotation>
          </attribute>

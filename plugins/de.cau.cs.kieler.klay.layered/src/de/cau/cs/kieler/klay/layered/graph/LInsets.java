@@ -20,10 +20,10 @@ package de.cau.cs.kieler.klay.layered.graph;
  * @author cds
  * @see LInsets.Double
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
  */
 public class LInsets {
-    // Allow public fields in this utility classes.
+    // Allow public fields in these utility classes.
     // CHECKSTYLEOFF VisibilityModifier
     
     /**

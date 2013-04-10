@@ -297,4 +297,14 @@ public class SwitchableFigure extends Shape {
             ((Shape) currentFigure).setFill(fill);
         }
     }
+    
+    @Override
+    public void setOpaque(final boolean opaque) {
+    	currentFigure.setOpaque(opaque);
+    }
+    
+    public boolean isOpaque() {
+    	return currentFigure.isOpaque();
+    }
+    
 }

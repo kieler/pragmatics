@@ -9,7 +9,7 @@ Require-Bundle: de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.service,
- com.google.guava;bundle-version="10.0.1"
+ com.google.guava;bundle-version="10.0.0"
 Export-Package: de.cau.cs.kieler.klay.planar,
  de.cau.cs.kieler.klay.planar.flownetwork,
  de.cau.cs.kieler.klay.planar.graph,

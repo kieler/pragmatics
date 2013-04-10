@@ -47,12 +47,12 @@ import de.cau.cs.kieler.core.model.m2m.ITransformationListener;
 import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
 import de.cau.cs.kieler.core.model.m2m.TransformationObserver;
 import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.EObjectSelectionState;
-import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
-import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationEffect;
 import de.cau.cs.kieler.kiml.kivi.LayoutEffect;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
+import de.cau.cs.kieler.ksbase.ui.m2m.XtendTransformationContext;
+import de.cau.cs.kieler.ksbase.ui.m2m.XtendTransformationEffect;
 
 /**
  * A Combination triggering the KSBasE transformations from kivi menu contributions.
@@ -60,8 +60,6 @@ import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
  * @author ckru
  * 
  */
-//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
-@SuppressWarnings("deprecation")
 public class KSBasECombination extends AbstractCombination implements ITransformationListener {
 
     private EditorTransformationSettings editorSettings;

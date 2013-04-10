@@ -13,19 +13,11 @@
  */
 package de.cau.cs.kieler.core.model;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.internal.statushandlers.StatusHandlerDescriptor;
-import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.statushandlers.AbstractStatusHandler;
-import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
-
-import de.cau.cs.kieler.core.model.util.ModelErrorHandler;
-import de.cau.cs.kieler.core.ui.errorhandler.GenericErrorHandler;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -33,7 +25,6 @@ import de.cau.cs.kieler.core.ui.errorhandler.GenericErrorHandler;
  * @kieler.ignore Standard UI plug-in activator.
  * @author mim
  */
-@SuppressWarnings("restriction")
 public class CoreModelPlugin extends AbstractUIPlugin {
 
     /** The plug-in ID. **/
@@ -41,9 +32,6 @@ public class CoreModelPlugin extends AbstractUIPlugin {
 
     /** The shared instance. **/
     private static CoreModelPlugin plugin;
-
-    /** The model error handler. */
-    private ModelErrorHandler errorHandler;
 
     /** Logging instance. **/
     private ILog logger;
@@ -71,7 +59,6 @@ public class CoreModelPlugin extends AbstractUIPlugin {
      */
     @Override
     public void stop(final BundleContext context) throws Exception {
-        removeErrorListener();
         plugin = null;
         super.stop(context);
     }
@@ -121,52 +108,4 @@ public class CoreModelPlugin extends AbstractUIPlugin {
         }
     }
 
-    /**
-     * Returns the generic error handler.
-     * 
-     * @return the generic error error handler, or null
-     */
-    private static GenericErrorHandler getGenericErrorHandler() {
-        try {
-            StatusHandlerDescriptor desc = StatusHandlerRegistry.getDefault()
-                    .getDefaultHandlerDescriptor();
-            if (desc != null) {
-                AbstractStatusHandler handler = desc.getStatusHandler();
-                if (handler instanceof GenericErrorHandler) {
-                    return (GenericErrorHandler) handler;
-                }
-            }
-        } catch (CoreException exception) {
-            StatusManager.getManager().handle(exception, PLUGIN_ID);
-        } catch (IllegalStateException exception) {
-            // the workbench has not been initialized yet
-            StatusManager.getManager().handle(new Status(Status.ERROR, PLUGIN_ID,
-                    "Unable to retrieve the generic error handler.", exception));
-        }
-        return null;
-    }
-
-    /**
-     * Add the KIELER error handler to the generic error handler.
-     */
-    public void addErrorListener() {
-        errorHandler = new ModelErrorHandler();
-        GenericErrorHandler handler = getGenericErrorHandler();
-        if (handler != null) {
-            handler.addListener(errorHandler);
-        }
-    }
-
-    /**
-     * Remove the KIELER error handler from the generic error handler.
-     */
-    public void removeErrorListener() {
-        if (errorHandler != null) {
-            GenericErrorHandler handler = getGenericErrorHandler();
-            if (handler != null) {
-                handler.removeListener(errorHandler);
-            }
-            errorHandler = null;
-        }
-    }
 }

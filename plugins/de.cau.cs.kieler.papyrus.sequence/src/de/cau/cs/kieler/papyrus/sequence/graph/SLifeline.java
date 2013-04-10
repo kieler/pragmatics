@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.papyrus.sequence.graph;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,13 +38,13 @@ public final class SLifeline extends SGraphElement implements Comparable<SLifeli
     private static final long serialVersionUID = 1309361361029991404L;
     /** The owning graph. */
     private SGraph graph;
-    /** The name of the lifeline. TODO remove this? */
+    /** The name of the lifeline. */
     private String name = "Lifeline";
     /**
      * Lifelines are ordered one after another at the top of the diagram. This is the position of
      * the lifeline in this line.
      */
-    private int horizontalPosition;
+    private int horizontalSlot;
     /** The coordinates of the lifeline in the diagram. */
     private KVector position = new KVector();
     /** The size of the lifeline. */
@@ -123,7 +124,17 @@ public final class SLifeline extends SGraphElement implements Comparable<SLifeli
     public Iterable<SMessage> getOutgoingMessages() {
         final SLifeline lifeline = this;
         return Iterables.filter(messages, new Predicate<SMessage>() {
+            private HashSet<SMessage> selfloops = new HashSet<SMessage>();
             public boolean apply(final SMessage message) {
+                // Workaround for selfloop messages that are returned twice if just checking the source
+                if (message.getSource() == message.getTarget()) {
+                    if (selfloops.contains(message)) {
+                        return false;
+                    } else {
+                        selfloops.add(message);
+                        return true;
+                    }
+                }
                 return message.getSource() == lifeline;
             }
         });
@@ -153,7 +164,17 @@ public final class SLifeline extends SGraphElement implements Comparable<SLifeli
     public Iterable<SMessage> getIncomingMessages() {
         final SLifeline lifeline = this;
         return Iterables.filter(messages, new Predicate<SMessage>() {
+            private HashSet<SMessage> selfloops = new HashSet<SMessage>();
             public boolean apply(final SMessage message) {
+                // Workaround for selfloop messages that are returned twice if just checking the target
+                if (message.getSource() == message.getTarget()) {
+                    if (selfloops.contains(message)) {
+                        return false;
+                    } else {
+                        selfloops.add(message);
+                        return true;
+                    }
+                }
                 return message.getTarget() == lifeline;
             }
         });
@@ -224,23 +245,22 @@ public final class SLifeline extends SGraphElement implements Comparable<SLifeli
     }
 
     /**
-     * Get the horizontal position of the lifeline in the sequence of lifelines. TODO find a better
-     * formulation for that
+     * Get the number of the horizontal slot of the lifeline.
      * 
-     * @return the position
+     * @return the number of the slot
      */
-    public int getHorizontalPosition() {
-        return horizontalPosition;
+    public int getHorizontalSlot() {
+        return horizontalSlot;
     }
 
     /**
-     * Set the horizontal position of the lifeline in the sequence of lifelines.
+     * Set the number of the horizontal slot of the lifeline.
      * 
-     * @param horizontalPosition
-     *            the new position
+     * @param horizontalSlot
+     *            the new slot number
      */
-    public void setHorizontalPosition(final int horizontalPosition) {
-        this.horizontalPosition = horizontalPosition;
+    public void setHorizontalSlot(final int horizontalSlot) {
+        this.horizontalSlot = horizontalSlot;
     }
 
     /**

@@ -32,7 +32,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.model.m2m.TransformException;
-import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
+import de.cau.cs.kieler.ksbase.m2m.ITransformationFramework;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
@@ -40,8 +40,6 @@ import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
  * 
  * @author mim
  */
-//Some deprecated classes are still used as data storage. Not however the deprecated logic parts.
-@SuppressWarnings("deprecation")
 public class TransformationCommand extends AbstractTransactionalCommand {
 
     /** The component that handles execution of a transformation. **/

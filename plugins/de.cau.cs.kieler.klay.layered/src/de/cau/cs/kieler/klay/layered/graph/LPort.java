@@ -36,7 +36,7 @@ import de.cau.cs.kieler.kiml.options.PortSide;
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
  */
 public final class LPort extends LShape {
 
@@ -103,7 +103,7 @@ public final class LPort extends LShape {
     /**
      * Creates a port.
      * 
-     * @param graph the graph for which the label is created
+     * @param graph the graph for which the port is created
      */
     public LPort(final LGraph graph) {
         super(graph);
@@ -209,7 +209,7 @@ public final class LPort extends LShape {
     }
     
     /**
-     * Returns the name of the port.
+     * Returns the name of the port. The name is derived from the text of the first label, if any.
      * 
      * @return the name, or {@code null}
      */
@@ -267,7 +267,8 @@ public final class LPort extends LShape {
     }
     
     /**
-     * Returns an iterable over all the port's predecessor ports.
+     * Returns an iterable over all the port's predecessor ports. Predecessor ports are source
+     * ports of incoming edges of this port.
      * 
      * @return an iterable over all predecessor ports.
      */
@@ -293,7 +294,8 @@ public final class LPort extends LShape {
     }
     
     /**
-     * Returns an iterable over all the port's successor ports.
+     * Returns an iterable over all the port's successor ports. Successor ports are target
+     * ports of outgoing edges of this port.
      * 
      * @return an iterable over all successor ports.
      */

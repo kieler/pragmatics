@@ -29,10 +29,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * list of nodes that are not yet assigned to a layer. Layout algorithms are
  * required to layout the graph from left to right. If another layout direction
  * is desired, it can be obtained by pre-processing and post-processing the graph.
+ * In contrast to the KGraph structure, the LGraph is not EMF-based, but plain Java.
+ * It is optimized for being processed by a layer-based layout algorithm.
  * 
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
  */
 public final class LGraph extends LGraphElement implements Iterable<Layer> {
     

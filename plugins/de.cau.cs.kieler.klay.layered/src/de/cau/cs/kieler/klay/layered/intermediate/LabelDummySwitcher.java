@@ -23,7 +23,7 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
-import de.cau.cs.kieler.klay.layered.graph.LLabel.LSide;
+import de.cau.cs.kieler.klay.layered.graph.LLabel.LabelSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -80,7 +80,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
                         nodesToSwap.add(new Pair<LNode, LNode>(node, longEdge.get(middle)));
                     }
                     
-                    if (((LLabel) node.getProperty(Properties.ORIGIN)).getSide() == LSide.UP) {
+                    if (((LLabel) node.getProperty(Properties.ORIGIN)).getSide() == LabelSide.ABOVE) {
                         for (LPort port : node.getPorts()) {
                             port.getPosition().y = node.getSize().y;
                         }

@@ -12,8 +12,7 @@
   <modules>
     <module>../../plugins</module>
     <module>../../features</module>
-<!--  the RCA cannot be built in this repository
-    <module>../de.cau.cs.kieler.repository</module> -->
+    <module>../de.cau.cs.kieler.pragmatics.repository</module>
     <module>../de.cau.cs.kieler.kwebs.repository</module>
     <module>../de.cau.cs.kieler.papyrus.repository</module>
   </modules>
@@ -31,6 +30,11 @@
           <id>p2.juno42</id>
           <layout>p2</layout>
           <url>file:/home/java/repository/juno422/</url>
+        </repository>
+        <repository>
+          <id>p2.ptolemy</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy/</url>
         </repository>
         <repository>
           <id>p2.eclipse.juno</id>

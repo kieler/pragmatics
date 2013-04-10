@@ -32,7 +32,6 @@
     <module>de.cau.cs.kieler.core.krendering.extensions</module>
     <module>de.cau.cs.kieler.core.model</module>
     <module>de.cau.cs.kieler.core.model.gmf</module>
-    <module>de.cau.cs.kieler.core.model.xtend</module>
     <module>de.cau.cs.kieler.core.ui</module>
     <module>de.cau.cs.kieler.kaom</module>
     <module>de.cau.cs.kieler.kaom.custom</module>
@@ -41,11 +40,10 @@
     <module>de.cau.cs.kieler.kaom.edit</module>
     <module>de.cau.cs.kieler.kaom.examples</module>
     <module>de.cau.cs.kieler.kaom.graphiti</module>
-<!--  these plugins depend on org.ptolemy, which is in the semantics repository
     <module>de.cau.cs.kieler.kaom.examples.ptolemy</module>
     <module>de.cau.cs.kieler.kaom.importer.ptolemy</module>
     <module>de.cau.cs.kieler.kaom.karma.ptolemy</module>
-    <module>de.cau.cs.kieler.kaom.ksbase.ptolemy</module> -->
+    <module>de.cau.cs.kieler.kaom.ksbase.ptolemy</module>
     <module>de.cau.cs.kieler.kaom.text</module>
     <module>de.cau.cs.kieler.kaom.text.ui</module>
     <module>de.cau.cs.kieler.karma</module>

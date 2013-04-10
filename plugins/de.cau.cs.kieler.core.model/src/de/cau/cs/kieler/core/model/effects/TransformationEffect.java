@@ -16,6 +16,8 @@ package de.cau.cs.kieler.core.model.effects;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
@@ -23,7 +25,6 @@ import de.cau.cs.kieler.core.model.CoreModelPlugin;
 import de.cau.cs.kieler.core.model.m2m.ITransformationContext;
 import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
 import de.cau.cs.kieler.core.model.m2m.TransformationObserver;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 
 /**
  * A KiVi effect that executes a specific transformation.
@@ -95,24 +96,25 @@ public class TransformationEffect extends AbstractEffect {
         if (context != null && descriptor != null) {
             // execute the transformation
             if (monitored) {
-                MonitoredOperation operation = new MonitoredOperation() {
-
-                    @Override
-                    protected IStatus execute(final IProgressMonitor monitor) {
-                        context.execute(descriptor);
-                        TransformationObserver.getInstance().notifyListeners(context, descriptor);
-                        return Status.OK_STATUS;
-                    }
-                };
-                operation.runMonitored();
+                try {
+                    PlatformUI.getWorkbench().getProgressService().run(
+                            false, true, new IRunnableWithProgress() {
+                        public void run(final IProgressMonitor uiMonitor) {
+                            context.execute(descriptor);
+                            TransformationObserver.getInstance().notifyListeners(context, descriptor);
+                        }
+                    });
+                } catch (Exception exception) {
+                    IStatus status = new Status(Status.ERROR, CoreModelPlugin.PLUGIN_ID,
+                            "An error occurred while executiong the transformation.", exception);
+                    StatusManager.getManager().handle(status);
+                }
             } else {
                 context.execute(descriptor);
                 TransformationObserver.getInstance().notifyListeners(context, descriptor);
             }
         } else {
-            Status status = new Status(
-                    Status.ERROR,
-                    CoreModelPlugin.PLUGIN_ID,
+            IStatus status = new Status(Status.ERROR, CoreModelPlugin.PLUGIN_ID,
                     "A TransformationEffect could not be executed. Either the "
                             + "TransformationContext or the TransformationDescriptor has not been set.");
             StatusManager.getManager().handle(status);

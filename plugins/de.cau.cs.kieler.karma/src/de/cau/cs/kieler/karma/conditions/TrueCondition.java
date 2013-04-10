@@ -15,7 +15,6 @@ package de.cau.cs.kieler.karma.conditions;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.cau.cs.kieler.karma.ICustomCondition;
 
 /**
  * A condition that is always true. Should mainly be used for testing purposes.

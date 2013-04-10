@@ -22,7 +22,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
-import de.cau.cs.kieler.klay.layered.graph.LLabel.LSide;
+import de.cau.cs.kieler.klay.layered.graph.LLabel.LabelSide;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -131,7 +131,7 @@ public final class EndLabelProcessor implements ILayoutProcessor {
         // Calculate end label position based on side choice
         // Port side undefined can be left out, because there would be no reasonable
         // way of handling them
-        if (label.getSide() == LSide.UP) {
+        if (label.getSide() == LabelSide.ABOVE) {
             placeEndLabelUpwards(node, label, port);
         } else {
             placeEndLabelDownwards(node, label, port);

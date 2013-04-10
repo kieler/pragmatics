@@ -30,11 +30,11 @@ import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 /**
  * A service for providing bridges to graphical editing frameworks.
  * 
- * FIXME this service is still too specific and should be generalized
- * 
  * @kieler.ignore We'd like to get rid of this.
  * @author msp
+ * @deprecated We don't want to try to unify GMF and Graphiti anymore.
  */
+@Deprecated
 public final class GraphicalFrameworkService {
 
     /** framework identifier for GMF. */
