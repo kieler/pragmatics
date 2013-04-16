@@ -77,6 +77,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.TextLayout;
 import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.graphics.Transform;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * An extension to Graphics2D to support an SWT Piccolo Canvas with little modification to the
@@ -568,6 +569,9 @@ public class SWTGraphics2D extends Graphics2D {
 
         curFont = getFont(fontString);
     }
+    
+    private final static org.eclipse.swt.graphics.Color BLACK = Display.getDefault().getSystemColor(
+            SWT.COLOR_BLACK);
 
     /**
      * Set the font for this SWTGraphics2D to <code>font</code>.
@@ -583,27 +587,37 @@ public class SWTGraphics2D extends Graphics2D {
         }
         curFont = font;
 
-        if (underlining || strikeout) {
-            useTextStyle = true;
-            if (curTextStyle == null) {
-                curTextStyle = new TextStyle();
-            }
+        useTextStyle = underlining || strikeout;
+        
+        if (!useTextStyle) {
+            curTextStyle = null;
+        } else {
+            // unfortunately the TextStyle object can't be re-used in general,
+            //  since there are object identity tests in the lower level code
+            curTextStyle = new TextStyle();
             curTextStyle.font = curFont;
             curTextStyle.foreground = gc.getForeground();
+            
             // since PSWTText/PSWTStyledText cares itself on the background
             //  setting the curTextStyle.background is left here 
             
             if (strikeout) {
-                curTextStyle.strikeout = strikeout;
+                curTextStyle.strikeout = true;
                 curTextStyle.strikeoutColor = getColor(strikeoutColor);
+            } else {
+                curTextStyle.strikeout = false;
+                curTextStyle.strikeoutColor = BLACK; 
             }
+            
             if (underlining) {
                 curTextStyle.underline = true;
                 curTextStyle.underlineStyle = underline;
                 curTextStyle.underlineColor = getColor(underlineColor);
+            } else {
+                curTextStyle.underline = false;
+                curTextStyle.underlineStyle = SWT.UNDERLINE_SINGLE;
+                curTextStyle.underlineColor = BLACK;
             }
-        } else {
-            useTextStyle = false;
         }
     }
 
