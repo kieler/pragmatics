@@ -1435,6 +1435,8 @@ public class SWTGraphics2D extends Graphics2D {
         TEMP_RECT.setRect(x, y, width, height);
         SWTShapeManager.transform(TEMP_RECT, transform);
 
+        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
+
         gc.fillOval((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
                 (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5));
     }
@@ -1517,6 +1519,8 @@ public class SWTGraphics2D extends Graphics2D {
             final double startAngle, final double extent) {
         TEMP_RECT.setRect(x, y, width, height);
         SWTShapeManager.transform(TEMP_RECT, transform);
+
+        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
 
         gc.fillArc((int) (TEMP_RECT.getX() + 0.5), (int) (TEMP_RECT.getY() + 0.5),
                 (int) (TEMP_RECT.getWidth() + 0.5), (int) (TEMP_RECT.getHeight() + 0.5),
@@ -1664,6 +1668,9 @@ public class SWTGraphics2D extends Graphics2D {
      * @return resulting width of line after being transform
      */
     protected float getTransformedLineWidthFloat() {
+        // the following line does not work, as this method is called by
+        //  fill AND draw methods, and thus the width would be adjusted twice
+        // float lineWidth = gc.getGCData().lineWidth;
         TEMP_LINE_RECT.setRect(0, 0, lineWidth, lineWidth);
         SWTShapeManager.transform(TEMP_LINE_RECT, transform);
         
