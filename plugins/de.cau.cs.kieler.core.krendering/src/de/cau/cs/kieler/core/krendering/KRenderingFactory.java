@@ -357,6 +357,15 @@ public interface KRenderingFactory extends EFactory {
     KLineCap createKLineCap();
 
     /**
+     * Returns a new object of class '<em>KAction</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>KAction</em>'.
+     * @generated
+     */
+    KAction createKAction();
+
+    /**
      * Returns a new object of class '<em>KPoint Placement Data</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -364,24 +373,6 @@ public interface KRenderingFactory extends EFactory {
      * @generated
      */
     KPointPlacementData createKPointPlacementData();
-
-    /**
-     * Returns a new object of class '<em>KSelect Action</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>KSelect Action</em>'.
-     * @generated
-     */
-    KSelectAction createKSelectAction();
-
-    /**
-     * Returns a new object of class '<em>KExpand Action</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>KExpand Action</em>'.
-     * @generated
-     */
-    KExpandAction createKExpandAction();
 
     /**
      * Returns a new object of class '<em>KStyle Holder</em>'.
@@ -420,15 +411,6 @@ public interface KRenderingFactory extends EFactory {
     KTextUnderline createKTextUnderline();
 
     /**
-     * Returns a new object of class '<em>KCollapse Action</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>KCollapse Action</em>'.
-     * @generated
-     */
-    KCollapseAction createKCollapseAction();
-
-    /**
      * Returns a new object of class '<em>KStyle Ref</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -445,6 +427,15 @@ public interface KRenderingFactory extends EFactory {
      * @generated
      */
     KTextStrikeout createKTextStrikeout();
+
+    /**
+     * Returns a new object of class '<em>KLine Join</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>KLine Join</em>'.
+     * @generated
+     */
+    KLineJoin createKLineJoin();
 
     /**
      * Returns the package supported by this factory.

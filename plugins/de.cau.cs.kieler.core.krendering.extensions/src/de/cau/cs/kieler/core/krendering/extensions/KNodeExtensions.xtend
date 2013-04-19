@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.annotations.IntAnnotation
 import de.cau.cs.kieler.core.annotations.StringAnnotation
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.properties.IProperty
+import de.cau.cs.kieler.core.properties.Property
 import de.cau.cs.kieler.core.util.Pair
 
 import de.cau.cs.kieler.kiml.LayoutDataService
@@ -29,18 +30,19 @@ import de.cau.cs.kieler.kiml.LayoutOptionData$Type
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.util.KimlUtil
 import java.util.ArrayList
+import de.cau.cs.kieler.core.math.KVector
 
 /**
  * @author chsch
  */
 @ViewSynthesisShared
 class KNodeExtensions {
-	
+    
     private static val AnnotationsPackage annotationsPackage = AnnotationsPackage::eINSTANCE;
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////					KNodeExtensions
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////                    KNodeExtensions
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * A convenient getter preserving the element image relation by a create extension.
@@ -106,17 +108,27 @@ class KNodeExtensions {
     
     def KNode setNodeSize(KNode node, float width, float height) {
         return node => [
-            getData(typeof(KShapeLayout)).setSize(width, height)
+            getData(typeof(KShapeLayout)).setSize(width, height);
+            setMinimalNodeSize(width, height);
         ];
     }
     
-	def KNode addLayoutParam(KNode node, IProperty<?> property, Object value) {
-	    return node => [
-	        it.getData(typeof(KShapeLayout)).setProperty(property, value)
-	    ];
-	}
-	
-	
+    public static val IProperty<KVector> MINIMAL_NODE_SIZE = new Property<KVector>(
+            "klighd.minimalNodeSize", new KVector(10d, 10d));
+
+    def KNode setMinimalNodeSize(KNode node, float width, float height) {
+        return node => [
+            it.addLayoutParam(MINIMAL_NODE_SIZE, new KVector(width, height));
+        ];
+    }
+    
+    def KNode addLayoutParam(KNode node, IProperty<?> property, Object value) {
+        return node => [
+            it.getData(typeof(KShapeLayout)).setProperty(property, value)
+        ];
+    }
+    
+    
     /**
      * Helper transferring Annotations to shapes or the diagram.
      * 
@@ -146,5 +158,5 @@ class KNodeExtensions {
                 });
             }
         ];
-    }	
+    }
 }

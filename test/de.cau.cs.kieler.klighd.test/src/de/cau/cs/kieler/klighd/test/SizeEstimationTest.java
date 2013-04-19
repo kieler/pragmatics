@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klighd.test;
 
 import static de.cau.cs.kieler.klighd.KlighdConstants.KLIGHD_TESTING_EXPECTED_HEIGHT;
 import static de.cau.cs.kieler.klighd.KlighdConstants.KLIGHD_TESTING_EXPECTED_WIDTH;
+import static de.cau.cs.kieler.klighd.KlighdConstants.KLIGHD_TESTING_IGNORE;
 import static de.cau.cs.kieler.klighd.KlighdConstants.KLIGHD_TESTING_HEIGHT;
 import static de.cau.cs.kieler.klighd.KlighdConstants.KLIGHD_TESTING_WIDTH;
 
@@ -25,6 +26,7 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -36,9 +38,10 @@ import de.cau.cs.kieler.core.test.runners.ModelCollectionTestRunner.BundleId;
 import de.cau.cs.kieler.core.test.runners.ModelCollectionTestRunner.ModelFilter;
 import de.cau.cs.kieler.core.test.runners.ModelCollectionTestRunner.ModelPath;
 import de.cau.cs.kieler.core.test.runners.ModelCollectionTestRunner.StopOnFailure;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.klighd.krendering.PlacementUtil;
-import de.cau.cs.kieler.klighd.krendering.PlacementUtil.Bounds;
+import de.cau.cs.kieler.klighd.microlayout.Bounds;
+import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
 
 /**
  * Tests the node size estimation calculations in {@link PlacementUtil}. It does so by requiring the
@@ -97,10 +100,15 @@ public class SizeEstimationTest {
         
         KShapeLayout sl = node.getData(KShapeLayout.class);
         
+        boolean isIgnored = sl.getProperties().get(KLIGHD_TESTING_IGNORE) != null;
+        if (isIgnored) {
+            return;
+        }
+        
         boolean containsSizeData = sl.getProperties().get(KLIGHD_TESTING_EXPECTED_HEIGHT) != null;
         containsSizeData &= sl.getProperties().get(KLIGHD_TESTING_EXPECTED_WIDTH) != null;
         
-        if (!containsSizeData) {
+        if (!containsSizeData && !isIgnored) {
             throw new IllegalArgumentException(
                     "The KShapeLayout of the tested node must be equipped with properties"
                             + " named " + KLIGHD_TESTING_EXPECTED_HEIGHT + " and "
@@ -130,7 +138,18 @@ public class SizeEstimationTest {
      */
     @Test
     public void sizeEstimationTest(final KNode node) {
-        for (Iterator<KNode> it = Iterators.filter(node.eAllContents(), KNode.class); it.hasNext();) {
+        // reveal all KNodes that are not to be ignored ...
+        Iterator<KNode> it = Iterators.filter(
+                Iterators.filter(node.eAllContents(), KNode.class),
+                new Predicate<KNode>() {
+                    public boolean apply(final KNode node) {
+                        return node.getData(KShapeLayout.class).getProperties()
+                                .get(KLIGHD_TESTING_IGNORE) == null;
+                    }
+                });
+        
+        // ... and perform the size estimation test on the valid ones
+        for (; it.hasNext();) {
             performSizeEstimationTest(it.next());
         }
     }
@@ -145,6 +164,8 @@ public class SizeEstimationTest {
         sizeEstimationTest(node);
     }
     
+    private static final float DELTA = 0.5f;
+    
     private void performSizeEstimationTest(final KNode node) {
         if (node.getData(KRendering.class) == null) {
             // if no rendering is attached, there is nothing to test
@@ -152,29 +173,35 @@ public class SizeEstimationTest {
         }
         
         KShapeLayout sl = node.getData(KShapeLayout.class);
-        float expectedHeight = Float.parseFloat(sl.getProperties()
-                .get(KLIGHD_TESTING_EXPECTED_HEIGHT).toString());
-        float expectedWidth = Float.parseFloat(sl.getProperties()
-                .get(KLIGHD_TESTING_EXPECTED_WIDTH).toString());
+
+        Bounds expected = Bounds.of(
+            Float.parseFloat(sl.getProperties().get(KLIGHD_TESTING_EXPECTED_WIDTH).toString()),
+            Float.parseFloat(sl.getProperties().get(KLIGHD_TESTING_EXPECTED_HEIGHT).toString())
+        );
         
-        Bounds size = PlacementUtil.estimateSize(node);
+        Bounds actual = PlacementUtil.estimateSize(node);
         
         // put the estimated size into the node layout for testing the stability
         //  in the second run (second test; statement is useless in 2nd run)
-        sl.setSize(size.getWidth(), size.getHeight());
+        sl.setSize(actual.getWidth(), actual.getHeight());
         
-        if (size.getHeight() != expectedHeight && size.getWidth() != expectedWidth) {
-            throw new RuntimeException("Expected node height of " + expectedHeight
-                    + ", estimation gave " + size.getHeight() + ", expected node width of "
-                    + expectedWidth + ", estimation gave " + size.getWidth());
+        Pair<Boolean, Boolean> result = Bounds.compare(expected, actual, DELTA);
+        
+        String fragment = node.eResource().getURIFragment(node);
+                
+        if (!result.getFirst() && !result.getSecond()) {
+            throw new AssertionError("Node '" + fragment + "': Expected node height of "
+                    + expected.getHeight() + ", estimation gave " + actual.getHeight()
+                    + ", expected node width of " + expected.getWidth() + ", estimation gave "
+                    + actual.getWidth());
         }
-        if (size.getHeight() != expectedHeight) {
-            throw new RuntimeException("Expected node height of " + expectedHeight
-                    + ", estimation gave " + size.getHeight());
+        if (!result.getFirst()) {
+            throw new AssertionError("Node '" + fragment + "': Expected node width of "
+                    + expected.getWidth() + ", estimation gave " + actual.getWidth());
         }
-        if (size.getWidth() != expectedWidth) {
-            throw new RuntimeException("Expected node width of " + expectedWidth
-                    + ", estimation gave " + size.getWidth());
+        if (!result.getSecond()) {
+            throw new AssertionError("Node '" + fragment + "': Expected node height of "
+                    + expected.getHeight() + ", estimation gave " + actual.getHeight());
         }
     }
 }

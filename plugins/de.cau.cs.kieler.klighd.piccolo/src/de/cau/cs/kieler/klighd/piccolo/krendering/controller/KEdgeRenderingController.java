@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klighd.piccolo.krendering.controller;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,17 +32,17 @@ import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 import de.cau.cs.kieler.core.krendering.KRoundedBendsPolyline;
 import de.cau.cs.kieler.core.krendering.KSpline;
 import de.cau.cs.kieler.core.krendering.KStyle;
+import de.cau.cs.kieler.klighd.microlayout.Bounds;
 import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.krendering.KCustomConnectionFigureNode;
 import de.cau.cs.kieler.klighd.piccolo.krendering.KEdgeNode;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath;
 import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author mri
  */
-public class KEdgeRenderingController extends AbstractRenderingController<KEdge, KEdgeNode> {
+public class KEdgeRenderingController extends AbstractKGERenderingController<KEdge, KEdgeNode> {
 
     /**
      * Constructs a rendering controller for an edge.
@@ -123,8 +124,7 @@ public class KEdgeRenderingController extends AbstractRenderingController<KEdge,
         final PNodeController<PSWTAdvancedPath> controller =
                 (PNodeController<PSWTAdvancedPath>) 
                 createRendering(rendering,
-                        new ArrayList<KStyle>(0), parent, new PBounds(0, 0, 1, 1),
-                        getRepresentation());
+                        new ArrayList<KStyle>(0), parent, new Bounds(1, 1));
         if (rendering instanceof KSpline) {
             controller.getNode().setPathToSpline(parent.getBendPoints());
         } else if (rendering instanceof KRoundedBendsPolyline) {
@@ -170,8 +170,7 @@ public class KEdgeRenderingController extends AbstractRenderingController<KEdge,
         @SuppressWarnings("unchecked")
         final PNodeController<KCustomConnectionFigureNode> controller =
                 (PNodeController<KCustomConnectionFigureNode>) createRendering(rendering,
-                        new ArrayList<KStyle>(0), parent, new PBounds(0, 0, 1, 1),
-                        getRepresentation());
+                        Collections.<KStyle>emptyList(), parent, new Bounds(1, 1));
         controller.getNode().setPoints(parent.getBendPoints());
 
         parent.setRepresentationNode(controller.getNode());

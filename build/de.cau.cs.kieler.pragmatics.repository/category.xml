@@ -30,6 +30,12 @@
    <feature url="features/de.cau.cs.kieler.kiml.graphiti.source_0.8.0.qualifier.jar" id="de.cau.cs.kieler.kiml.graphiti.feature.source" version="0.8.0.qualifier">
       <category name="kieler-prag-dev"/>
    </feature>
+   <feature url="features/de.cau.cs.kieler.klighd.feature_0.2.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature" version="0.2.0.qualifier">
+      <category name="kieler-prag"/>
+   </feature>
+   <feature url="features/de.cau.cs.kieler.klighd.feature.source_0.2.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature.source" version="0.2.0.qualifier">
+      <category name="kieler-prag-dev"/>
+   </feature>
    <feature url="features/de.cau.cs.kieler.kwebs.client.jaxws_0.1.2.qualifier.jar" id="de.cau.cs.kieler.kwebs.client.jaxws.feature" version="0.1.2.qualifier">
       <category name="kieler-prag"/>
    </feature>
@@ -60,14 +66,14 @@
    <feature url="features/de.cau.cs.kieler.kiml.ogdf.source_0.5.1.qualifier.jar" id="de.cau.cs.kieler.kiml.ogdf.feature.source" version="0.5.1.qualifier">
       <category name="kieler-prag-dev"/>
    </feature>
-   <category-def name="kieler-prag" label="kieler-prag">
+   <category-def name="kieler-prag" label="KIELER Pragmatics">
       <description>
-         Kiel Integrated Environment for Layout Eclipse RichClient, Nightly Build
+         Kiel Integrated Environment for Layout Eclipse RichClient, Pragmatics components, Nightly Build
       </description>
    </category-def>
-   <category-def name="kieler-prag-dev" label="kieler-prag-dev">
+   <category-def name="kieler-prag-dev" label="KIELER Pragmatics (Development)">
       <description>
-         Kiel Integrated Environment for Layout Eclipse RichClient, Nightly Build (Sources and Additional Features)
+         Kiel Integrated Environment for Layout Eclipse RichClient, Pragmatics components, Nightly Build (Sources and Additional Features)
       </description>
    </category-def>
 </site>

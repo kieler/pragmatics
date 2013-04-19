@@ -17,10 +17,12 @@ import java.awt.Font;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.LineAttributes;
 import org.eclipse.swt.graphics.RGB;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.klighd.microlayout.Bounds;
 
 /**
  * This class contains definitions of initial & default values.
@@ -35,10 +37,49 @@ public final class KlighdConstants {
     public static final RGB BLACK = new RGB(0, 0, 0);
     
     /**
+     * Constant definition of the red {@link RGB} color constant.
+     */
+    public static final RGB BLUE = new RGB(0, 0, 255);
+    
+    /**
+     * Constant definition of the red {@link RGB} color constant.
+     */
+    public static final RGB GREEN = new RGB(0, 255, 0);
+    
+    /**
+     * Constant definition of the red {@link RGB} color constant.
+     */
+    public static final RGB RED = new RGB(255, 0, 0);
+    
+    /**
      * Constant definition of the white {@link RGB} color constant.
      */
     public static final RGB WHITE = new RGB(255, 255, 255);
 
+    /**
+     * Constant definition of the yellow {@link RGB} color constant.
+     */
+    public static final RGB YELLOW = new RGB(255, 255, 0);
+
+    /**
+     * Constant definition of the <i>full transparent</i> SWT alpha value.
+     * 
+     * @see #ALPHA_FULL_OPAQUE
+     */
+    public static final int ALPHA_FULL_TRANSPARENT = 0;
+    
+    /**
+     * Constant definition of the <i>full opaque</i> SWT alpha value.
+     * 
+     * @see #ALPHA_FULL_TRANSPARENT
+     */
+    public static final int ALPHA_FULL_OPAQUE = 255;
+    
+    /**
+     * Constant definition denoting the standard line drawing attributes.
+     */
+    public static final LineAttributes DEFAULT_LINE_ATTRIBUTES = new LineAttributes(1f);
+    
     /**
      * This font name is used for {@link de.cau.cs.kieler.core.krendering.KText KTexts}, if no related
      * {@link de.cau.cs.kieler.core.krendering.KFontName KFontName} style is attached.
@@ -86,24 +127,17 @@ public final class KlighdConstants {
     public static final int NO_FONT_UNDERLINING = -1;
     
     /**
-     * This constant defines the standard margin size around a KText rendering, if it is not defined
-     * by related placement data.
-     * 
-     * @Attention It is primitively incorporated in
-     * {@link de.cau.cs.kieler.klighd.krendering.PlacementUtil#estimateTextSize
-     * (de.cau.cs.kieler.core.krendering.KText) PlacementUtil#estimateTextSize(KText)}.
-     * I'm, however, not convinced that this is reasonable approach so I set it to zero for the
-     * moment.
-     */
-    public static final int DEFAULT_TEXT_PADDING = 0;
-
-
-    /**
      * Identifier of the built-in collapse expand action to be mentioned in instances of
      * {@link de.cau.cs.kieler.core.krendering.KAction KAction}.
      */
     public static final String ACTION_COLLAPSE_EXPAND = "klighd.collapse.expand";
 
+    /**
+     * The minimal size of {@link de.cau.cs.kieler.core.kgraph.KNode KNodes} that is applied in case
+     * no definition is given for a particular node.
+     */
+    public static final Bounds MINIMAL_NODE_BOUNDS = new Bounds(10, 10);
+    
     /**
      * Property indicating the auto expansion of a node if the value is true.<br>
      * This is property is currently to be attached to the nodes shape layout data during the view
@@ -121,6 +155,7 @@ public final class KlighdConstants {
      */
     public static final IProperty<Boolean> POPULATED = new Property<Boolean>("klighd.populated",
             false);
+    
     /**
      * A property for identifying whether a node is currently active. If a node is active, it is
      * visible.<br>
@@ -134,10 +169,35 @@ public final class KlighdConstants {
     // lazy loading/collapsing+expanding
     public static final IProperty<Boolean> ACTIVE = new Property<Boolean>("klighd.active", false);
 
+// chsch: the following definitions are not used yet but might be in future
+//    /**
+//     * An enumeration whose values denote the states of KNodes in a diagram.
+//     * 
+//     * @author chsch
+//     */
+//    public static enum KNodeState {
+//        /** Denotes the absence of any children of a {@link de.cau.cs.kieler.core.kgraph.KNode KNode}. */
+//        EMPTY,
+//        /** Denotes the potential presence of some children in a
+//         * {@link de.cau.cs.kieler.core.kgraph.KNode KNode}, none of them is loaded and visible. */
+//        COLLAPSED,
+//        /** Denotes the presence of children in a {@link de.cau.cs.kieler.core.kgraph.KNode KNode},
+//         * none of them is visible. */
+//        COLLAPSED_POPULATED,
+//        /** Denotes the presence of children in a {@link de.cau.cs.kieler.core.kgraph.KNode KNode},
+//         * and they are visible. */
+//        EXPANDED
+//    }
+//    
+//    /**
+//     * The property that is used to track the state of KNodes in a diagram.
+//     */
+//    public static final IProperty<KNodeState> KNODE_STATE = new Property<KlighdConstants.KNodeState>(
+//            "klighd.knodeState", KNodeState.EMPTY);
     
     /**
      * Property to be attached to the {@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
-     * KShapeLayout} of a view model's nodes in some regression tests.
+     * KShapeLayout} of a view model's nodes for properly performing regression tests.
      */
     public static final IProperty<Float> KLIGHD_TESTING_EXPECTED_HEIGHT = new Property<Float>(
             "klighd.testing.expected.height");
@@ -148,6 +208,15 @@ public final class KlighdConstants {
      */
     public static final IProperty<Float> KLIGHD_TESTING_EXPECTED_WIDTH = new Property<Float>(
             "klighd.testing.expected.width");
+
+    /**
+     * Property to be attached to the {@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
+     * KShapeLayout} of a view model's nodes in order to ignore those nodes.<br>
+     * <br>
+     * The id is also hard-coded in KGraphJavaValidator!
+     */
+    public static final IProperty<Boolean> KLIGHD_TESTING_IGNORE = new Property<Boolean>(
+            "klighd.testing.ignore", false);
 
     /**
      * Property to be attached to the {@link de.cau.cs.kieler.core.krendering.KText KTexts} of a

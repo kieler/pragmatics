@@ -45,6 +45,7 @@ import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -570,10 +571,10 @@ public class PSWTCanvas extends Composite implements PComponent {
         Graphics2D g2 = null;
         if (doubleBuffered) {
             imageGC = new GC(backBuffer);
-            g2 = new SWTGraphics2D(imageGC, getDisplay());
+            g2 = getGraphics2D(imageGC, getDisplay());
         }
         else {
-            g2 = new SWTGraphics2D(gc, getDisplay());
+            g2 = getGraphics2D(gc, getDisplay());
         }
 
         g2.setColor(Color.white);
@@ -627,6 +628,24 @@ public class PSWTCanvas extends Composite implements PComponent {
             // Dispose of the allocated image gc
             imageGC.dispose();
         }
+    }
+    
+    /**
+     * Getter providing a concrete {@link Graphics2D} implementation. Has been introduced to
+     * simplify the injection of customized implementations. It is called by the
+     * {@link #paintComponent(GC, int, int, int, int)} method, which did invoke the concrete
+     * constructor itself in the original version.
+     * 
+     * @author chsch
+     * 
+     * @param gc
+     *            The Eclipse Graphics Context onto which all Graphics2D operations are delegating
+     * @param device
+     *            Device onto which ultimately all gc operations are drawn onto
+     * @return a new {@link SWTGraphics2D} object.
+     */
+    protected Graphics2D getGraphics2D(GC gc, Device device) {
+        return new SWTGraphics2D(gc, device);
     }
 
     /**

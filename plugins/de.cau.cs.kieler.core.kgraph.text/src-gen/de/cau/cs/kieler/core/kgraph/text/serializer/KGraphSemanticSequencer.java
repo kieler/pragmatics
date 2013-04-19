@@ -11,6 +11,7 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.kgraph.text.krendering.serializer.KRenderingSemanticSequencer;
 import de.cau.cs.kieler.core.kgraph.text.services.KGraphGrammarAccess;
+import de.cau.cs.kieler.core.krendering.KAction;
 import de.cau.cs.kieler.core.krendering.KArc;
 import de.cau.cs.kieler.core.krendering.KAreaPlacementData;
 import de.cau.cs.kieler.core.krendering.KBackground;
@@ -32,6 +33,7 @@ import de.cau.cs.kieler.core.krendering.KImage;
 import de.cau.cs.kieler.core.krendering.KInvisibility;
 import de.cau.cs.kieler.core.krendering.KLeftPosition;
 import de.cau.cs.kieler.core.krendering.KLineCap;
+import de.cau.cs.kieler.core.krendering.KLineJoin;
 import de.cau.cs.kieler.core.krendering.KLineStyle;
 import de.cau.cs.kieler.core.krendering.KLineWidth;
 import de.cau.cs.kieler.core.krendering.KPointPlacementData;
@@ -46,9 +48,12 @@ import de.cau.cs.kieler.core.krendering.KRightPosition;
 import de.cau.cs.kieler.core.krendering.KRotation;
 import de.cau.cs.kieler.core.krendering.KRoundedBendsPolyline;
 import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
+import de.cau.cs.kieler.core.krendering.KShadow;
 import de.cau.cs.kieler.core.krendering.KSpline;
 import de.cau.cs.kieler.core.krendering.KStyleRef;
 import de.cau.cs.kieler.core.krendering.KText;
+import de.cau.cs.kieler.core.krendering.KTextStrikeout;
+import de.cau.cs.kieler.core.krendering.KTextUnderline;
 import de.cau.cs.kieler.core.krendering.KTopPosition;
 import de.cau.cs.kieler.core.krendering.KVerticalAlignment;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -139,6 +144,12 @@ public class KGraphSemanticSequencer extends KRenderingSemanticSequencer {
 				else break;
 			}
 		else if(semanticObject.eClass().getEPackage() == KRenderingPackage.eINSTANCE) switch(semanticObject.eClass().getClassifierID()) {
+			case KRenderingPackage.KACTION:
+				if(context == grammarAccess.getKActionRule()) {
+					sequence_KAction(context, (KAction) semanticObject); 
+					return; 
+				}
+				else break;
 			case KRenderingPackage.KARC:
 				if(context == grammarAccess.getKArcRule() ||
 				   context == grammarAccess.getKGraphDataRule() ||
@@ -290,6 +301,13 @@ public class KGraphSemanticSequencer extends KRenderingSemanticSequencer {
 					return; 
 				}
 				else break;
+			case KRenderingPackage.KLINE_JOIN:
+				if(context == grammarAccess.getKLineJoinRule() ||
+				   context == grammarAccess.getKStyleRule()) {
+					sequence_KLineJoin(context, (KLineJoin) semanticObject); 
+					return; 
+				}
+				else break;
 			case KRenderingPackage.KLINE_STYLE:
 				if(context == grammarAccess.getKLineStyleRule() ||
 				   context == grammarAccess.getKStyleRule()) {
@@ -386,6 +404,13 @@ public class KGraphSemanticSequencer extends KRenderingSemanticSequencer {
 					return; 
 				}
 				else break;
+			case KRenderingPackage.KSHADOW:
+				if(context == grammarAccess.getKShadowRule() ||
+				   context == grammarAccess.getKStyleRule()) {
+					sequence_KShadow(context, (KShadow) semanticObject); 
+					return; 
+				}
+				else break;
 			case KRenderingPackage.KSPLINE:
 				if(context == grammarAccess.getKGraphDataRule() ||
 				   context == grammarAccess.getKRenderingRule() ||
@@ -406,6 +431,20 @@ public class KGraphSemanticSequencer extends KRenderingSemanticSequencer {
 				   context == grammarAccess.getKRenderingRule() ||
 				   context == grammarAccess.getKTextRule()) {
 					sequence_KText(context, (KText) semanticObject); 
+					return; 
+				}
+				else break;
+			case KRenderingPackage.KTEXT_STRIKEOUT:
+				if(context == grammarAccess.getKStyleRule() ||
+				   context == grammarAccess.getKTextStrikeoutRule()) {
+					sequence_KTextStrikeout(context, (KTextStrikeout) semanticObject); 
+					return; 
+				}
+				else break;
+			case KRenderingPackage.KTEXT_UNDERLINE:
+				if(context == grammarAccess.getKStyleRule() ||
+				   context == grammarAccess.getKTextUnderlineRule()) {
+					sequence_KTextUnderline(context, (KTextUnderline) semanticObject); 
 					return; 
 				}
 				else break;
