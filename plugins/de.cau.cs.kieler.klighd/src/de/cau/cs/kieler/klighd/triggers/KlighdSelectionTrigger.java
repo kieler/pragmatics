@@ -177,7 +177,7 @@ public class KlighdSelectionTrigger extends AbstractTrigger {
         public class SelectionElement {
 
             /** the diagram element. */
-            private Object diagramElement;
+            private EObject diagramElement;
             /** the model element. */
             private Object modelElement = null;
 
@@ -187,7 +187,7 @@ public class KlighdSelectionTrigger extends AbstractTrigger {
              * @param diagramElement
              *            the diagram element
              */
-            public SelectionElement(final Object diagramElement) {
+            public SelectionElement(final EObject diagramElement) {
                 this.diagramElement = diagramElement;
             }
 
@@ -196,7 +196,7 @@ public class KlighdSelectionTrigger extends AbstractTrigger {
              * 
              * @return the diagram element
              */
-            public Object getDiagramElement() {
+            public EObject getDiagramElement() {
                 return diagramElement;
             }
 
