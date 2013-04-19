@@ -473,20 +473,6 @@ public class KRenderingSwitch<T> extends Switch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
-            case KRenderingPackage.KSELECT_ACTION: {
-                KSelectAction kSelectAction = (KSelectAction)theEObject;
-                T result = caseKSelectAction(kSelectAction);
-                if (result == null) result = caseKAction(kSelectAction);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KRenderingPackage.KEXPAND_ACTION: {
-                KExpandAction kExpandAction = (KExpandAction)theEObject;
-                T result = caseKExpandAction(kExpandAction);
-                if (result == null) result = caseKAction(kExpandAction);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
             case KRenderingPackage.KSTYLE_HOLDER: {
                 KStyleHolder kStyleHolder = (KStyleHolder)theEObject;
                 T result = caseKStyleHolder(kStyleHolder);
@@ -514,13 +500,6 @@ public class KRenderingSwitch<T> extends Switch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
-            case KRenderingPackage.KCOLLAPSE_ACTION: {
-                KCollapseAction kCollapseAction = (KCollapseAction)theEObject;
-                T result = caseKCollapseAction(kCollapseAction);
-                if (result == null) result = caseKAction(kCollapseAction);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
             case KRenderingPackage.KSTYLE_REF: {
                 KStyleRef kStyleRef = (KStyleRef)theEObject;
                 T result = caseKStyleRef(kStyleRef);
@@ -532,6 +511,13 @@ public class KRenderingSwitch<T> extends Switch<T> {
                 KTextStrikeout kTextStrikeout = (KTextStrikeout)theEObject;
                 T result = caseKTextStrikeout(kTextStrikeout);
                 if (result == null) result = caseKStyle(kTextStrikeout);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            case KRenderingPackage.KLINE_JOIN: {
+                KLineJoin kLineJoin = (KLineJoin)theEObject;
+                T result = caseKLineJoin(kLineJoin);
+                if (result == null) result = caseKStyle(kLineJoin);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -1230,36 +1216,6 @@ public class KRenderingSwitch<T> extends Switch<T> {
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>KSelect Action</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>KSelect Action</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseKSelectAction(KSelectAction object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>KExpand Action</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>KExpand Action</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseKExpandAction(KExpandAction object) {
-        return null;
-    }
-
-    /**
      * Returns the result of interpreting the object as an instance of '<em>KStyle Holder</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
@@ -1320,21 +1276,6 @@ public class KRenderingSwitch<T> extends Switch<T> {
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>KCollapse Action</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>KCollapse Action</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseKCollapseAction(KCollapseAction object) {
-        return null;
-    }
-
-    /**
      * Returns the result of interpreting the object as an instance of '<em>KStyle Ref</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
@@ -1361,6 +1302,21 @@ public class KRenderingSwitch<T> extends Switch<T> {
      * @generated
      */
     public T caseKTextStrikeout(KTextStrikeout object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>KLine Join</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>KLine Join</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseKLineJoin(KLineJoin object) {
         return null;
     }
 

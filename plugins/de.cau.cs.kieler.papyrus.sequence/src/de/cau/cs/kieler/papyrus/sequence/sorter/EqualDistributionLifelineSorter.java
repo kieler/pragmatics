@@ -93,7 +93,7 @@ public class EqualDistributionLifelineSorter implements ILifelineSorter {
                 // If a connected node is node placed yet, its TL-value has to be incremented by the
                 // connecting edge's weight
                 if (!node.isPlaced()) {
-                    node.setTl(node.getTl() + edges.get(node)); // += edges.get(node);
+                    node.setTl(node.getTl() + edges.get(node));
                 }
             }
         }
@@ -158,6 +158,7 @@ public class EqualDistributionLifelineSorter implements ILifelineSorter {
      */
     public List<SLifeline> sortLifelines(final SGraph sgraph, final LGraph lgraph,
             final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Equal distribution lifeline sorting", 1);
 
         // Create the simple graph representation that this algorithm works with.
         createEDLSNodes(sgraph);
@@ -197,6 +198,8 @@ public class EqualDistributionLifelineSorter implements ILifelineSorter {
         // Free memory
         placedNodes = null;
         correspondences = null;
+        
+        progressMonitor.done();
 
         // Return the list of lifelines in the calculated order
         return lifelines;
@@ -298,7 +301,7 @@ public class EqualDistributionLifelineSorter implements ILifelineSorter {
                 MessageType messageType = message
                         .getProperty(SequenceDiagramProperties.MESSAGE_TYPE);
                 if (oppositeNode == null && messageType != MessageType.LOST) {
-                    node.setTl(node.getTl() - 1); // -= 1;
+                    node.setTl(node.getTl() - 1);
                 }
             }
 
@@ -311,7 +314,7 @@ public class EqualDistributionLifelineSorter implements ILifelineSorter {
                 MessageType messageType = message
                         .getProperty(SequenceDiagramProperties.MESSAGE_TYPE);
                 if (oppositeNode == null && messageType != MessageType.FOUND) {
-                    node.setTl(node.getTl() + 1); // += 1;
+                    node.setTl(node.getTl() + 1);
                 }
             }
         }
@@ -356,26 +359,33 @@ public class EqualDistributionLifelineSorter implements ILifelineSorter {
         Layer firstLayer = layers.get(0);
         List<LNode> nodes = firstLayer.getNodes();
         if (nodes.size() > 1) {
-            // If there is more than one message in the first layer, return the one with the highest
+            // If there is more than one message in the first layer, return the one with the lowest
             // weighted node degree
             EDLSNode candidate = null;
-            int bestDegree = -1;
+            int bestDegree = Integer.MAX_VALUE;
             for (LNode node : nodes) {
                 SMessage message = (SMessage) node.getProperty(Properties.ORIGIN);
                 SLifeline sourceLifeline = message.getSource();
                 EDLSNode cand = correspondences.get(sourceLifeline);
-                if (cand.getWeightedDegree() > bestDegree) {
+                if (cand.getWeightedDegree() < bestDegree) {
                     bestDegree = cand.getWeightedDegree();
                     candidate = cand;
                 }
             }
+            candidate.setPlaced(true);
             return candidate;
         } else {
             // If there is just one message in the first layer, return the node corresponding to its
             // source lifeline
             SMessage message = (SMessage) nodes.get(0).getProperty(Properties.ORIGIN);
             SLifeline sourceLifeline = message.getSource();
-            return correspondences.get(sourceLifeline);
+            EDLSNode candidate = correspondences.get(sourceLifeline);
+            if (candidate == null) {
+                // Found messages have no source lifeline. Therefore their target is the first lifeline 
+                candidate = correspondences.get(message.getTarget());
+            }
+            candidate.setPlaced(true);
+            return candidate;
         }
     }
 
@@ -404,7 +414,6 @@ public class EqualDistributionLifelineSorter implements ILifelineSorter {
                     if (candidate.getTl() < node.getTl()) {
                         candidate = node;
                     }
-                    // TODO what, if this is equal too? highest message?
                 }
             }
         }

@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.views;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -45,8 +46,8 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
+import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.triggers.KlighdResourceDropTrigger;
 import de.cau.cs.kieler.klighd.triggers.KlighdResourceDropTrigger.KlighdResourceDropState;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
@@ -285,7 +286,7 @@ public class DiagramViewPart extends ViewPart {
         public void run() {
             final DiagramViewPart view = DiagramViewPart.this;
             try {
-                List<ILayoutConfig> options = null;
+                List<ILayoutConfig> options = Collections.emptyList();
                 if (this.dir != null) {
                     options = ImmutableList.<ILayoutConfig>of(new ButtonLayoutConfig(this.dir));
                 } else if (!Strings.isNullOrEmpty(this.keyValue)) {
@@ -295,8 +296,8 @@ public class DiagramViewPart extends ViewPart {
                     options = ImmutableList.<ILayoutConfig>of(new ButtonLayoutConfig(data,
                             keyValue.substring(index + 1)));
                 }
-                DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
-                layoutEngine.layout(view, null, true, false, false, true, options);
+                LightDiagramServices.getInstance().layoutDiagram(
+                        view.viewer.getCurrentViewContext(), true, true, options);
             } catch (UnsupportedOperationException e) {
                 StatusManager.getManager().handle(
                         new Status(IStatus.WARNING, KlighdPlugin.PLUGIN_ID,
@@ -309,7 +310,8 @@ public class DiagramViewPart extends ViewPart {
     /**
      * ButtonLayoutConfig.
      * 
-     * Special layout configuration handed over to the {@link DiagramLayoutEngine} if the
+     * Special layout configuration handed over to the
+     * {@link de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine DiagramLayoutEngine} if the
      * layout is invoked by the above introduced buttons.
      * 
      * @author chsch

@@ -29,12 +29,12 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.LayoutOptionProxy;
 import de.cau.cs.kieler.klighd.KlighdConstants;
-import de.cau.cs.kieler.klighd.krendering.PlacementUtil;
-import de.cau.cs.kieler.klighd.krendering.PlacementUtil.Bounds;
+import de.cau.cs.kieler.klighd.microlayout.Bounds;
+import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
 
 /**
- * Class provides method to train {@link KNode KNodes} for the {@link SizeEstimationTest}, i.e.
- * attaches required size properties as required by the test.
+ * Class provides a method to train {@link KNode KNodes} for the {@link SizeEstimationTest}, i.e.
+ * attaches required size properties as required by the test, as well as to add an 'ignore' tag.
  * 
  * @author chsch
  */
@@ -47,16 +47,29 @@ public final class SizeEstimationTrainer {
     }
     
     /**
-     * Methods trains the given KNode, i.e. attaches required size properties as required by the
+     * Method marks the given KNode as ignored by size estimation tests.
+     * 
+     * @param node
+     *            the KNode to be ignored
+     */
+    public static void ignore(final KNode node) {
+        PersistentEntry pe = KGraphFactory.eINSTANCE.createPersistentEntry();
+        pe.setKey(KlighdConstants.KLIGHD_TESTING_IGNORE.getId());
+        pe.setValue(Boolean.valueOf(true).toString());
+        node.getData(KShapeLayout.class).getPersistentEntries().add(pe);
+    }
+
+    /**
+     * Method trains the given KNode, i.e. attaches required size properties as required by the
      * {@link SizeEstimationTest}.
      * 
      * @param node
      *            the KNode to train.
      */
     public static void train(final KNode node) {
-        
+
         boolean textsPresent = false;
-        
+
         for (KText text : new Iterable<KText>() {
             public Iterator<KText> iterator() {
                 return Iterators.concat(Iterators.transform(node.getData().iterator(),
@@ -75,15 +88,15 @@ public final class SizeEstimationTrainer {
                     "0.0");
             LayoutOptionProxy.setProxyValue(text, KlighdConstants.KLIGHD_TESTING_WIDTH.getId(),
                     "0.0");
-            
+
             Bounds b = PlacementUtil.estimateTextSize(text);
-            
+
             getPE(text, KlighdConstants.KLIGHD_TESTING_HEIGHT.getId()).setValue(
                     Float.toString(b.getHeight()));
             getPE(text, KlighdConstants.KLIGHD_TESTING_WIDTH.getId()).setValue(
-                    Float.toString(b.getWidth()));            
+                    Float.toString(b.getWidth()));
         }
-        
+
         if (textsPresent) {
             KShapeLayout sl = node.getData(KShapeLayout.class);
             if (sl != null) {
@@ -95,10 +108,10 @@ public final class SizeEstimationTrainer {
             getPE(sl, KlighdConstants.KLIGHD_TESTING_EXPECTED_HEIGHT.getId()).setValue(
                     Float.toString(b.getHeight()));
             getPE(sl, KlighdConstants.KLIGHD_TESTING_EXPECTED_WIDTH.getId()).setValue(
-                    Float.toString(b.getWidth()));            
+                    Float.toString(b.getWidth()));
         }
     }
-    
+
     private static PersistentEntry getPE(final KGraphData data, final String id) {
         PersistentEntry pe = Iterables.find(data.getPersistentEntries(),
                 new Predicate<PersistentEntry>() {

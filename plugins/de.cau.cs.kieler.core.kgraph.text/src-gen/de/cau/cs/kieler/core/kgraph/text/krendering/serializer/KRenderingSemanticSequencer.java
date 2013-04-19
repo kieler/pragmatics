@@ -6,6 +6,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.kgraph.text.klayoutdata.serializer.KLayoutDataSemanticSequencer;
 import de.cau.cs.kieler.core.kgraph.text.krendering.services.KRenderingGrammarAccess;
+import de.cau.cs.kieler.core.krendering.KAction;
 import de.cau.cs.kieler.core.krendering.KArc;
 import de.cau.cs.kieler.core.krendering.KAreaPlacementData;
 import de.cau.cs.kieler.core.krendering.KBackground;
@@ -27,6 +28,7 @@ import de.cau.cs.kieler.core.krendering.KImage;
 import de.cau.cs.kieler.core.krendering.KInvisibility;
 import de.cau.cs.kieler.core.krendering.KLeftPosition;
 import de.cau.cs.kieler.core.krendering.KLineCap;
+import de.cau.cs.kieler.core.krendering.KLineJoin;
 import de.cau.cs.kieler.core.krendering.KLineStyle;
 import de.cau.cs.kieler.core.krendering.KLineWidth;
 import de.cau.cs.kieler.core.krendering.KPointPlacementData;
@@ -41,9 +43,12 @@ import de.cau.cs.kieler.core.krendering.KRightPosition;
 import de.cau.cs.kieler.core.krendering.KRotation;
 import de.cau.cs.kieler.core.krendering.KRoundedBendsPolyline;
 import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
+import de.cau.cs.kieler.core.krendering.KShadow;
 import de.cau.cs.kieler.core.krendering.KSpline;
 import de.cau.cs.kieler.core.krendering.KStyleRef;
 import de.cau.cs.kieler.core.krendering.KText;
+import de.cau.cs.kieler.core.krendering.KTextStrikeout;
+import de.cau.cs.kieler.core.krendering.KTextUnderline;
 import de.cau.cs.kieler.core.krendering.KTopPosition;
 import de.cau.cs.kieler.core.krendering.KVerticalAlignment;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -104,6 +109,12 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 				else break;
 			}
 		else if(semanticObject.eClass().getEPackage() == KRenderingPackage.eINSTANCE) switch(semanticObject.eClass().getClassifierID()) {
+			case KRenderingPackage.KACTION:
+				if(context == grammarAccess.getKActionRule()) {
+					sequence_KAction(context, (KAction) semanticObject); 
+					return; 
+				}
+				else break;
 			case KRenderingPackage.KARC:
 				if(context == grammarAccess.getKArcRule() ||
 				   context == grammarAccess.getKRenderingRule()) {
@@ -250,6 +261,13 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 					return; 
 				}
 				else break;
+			case KRenderingPackage.KLINE_JOIN:
+				if(context == grammarAccess.getKLineJoinRule() ||
+				   context == grammarAccess.getKStyleRule()) {
+					sequence_KLineJoin(context, (KLineJoin) semanticObject); 
+					return; 
+				}
+				else break;
 			case KRenderingPackage.KLINE_STYLE:
 				if(context == grammarAccess.getKLineStyleRule() ||
 				   context == grammarAccess.getKStyleRule()) {
@@ -339,6 +357,13 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 					return; 
 				}
 				else break;
+			case KRenderingPackage.KSHADOW:
+				if(context == grammarAccess.getKShadowRule() ||
+				   context == grammarAccess.getKStyleRule()) {
+					sequence_KShadow(context, (KShadow) semanticObject); 
+					return; 
+				}
+				else break;
 			case KRenderingPackage.KSPLINE:
 				if(context == grammarAccess.getKRenderingRule() ||
 				   context == grammarAccess.getKSplineRule()) {
@@ -357,6 +382,20 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 				if(context == grammarAccess.getKRenderingRule() ||
 				   context == grammarAccess.getKTextRule()) {
 					sequence_KText(context, (KText) semanticObject); 
+					return; 
+				}
+				else break;
+			case KRenderingPackage.KTEXT_STRIKEOUT:
+				if(context == grammarAccess.getKStyleRule() ||
+				   context == grammarAccess.getKTextStrikeoutRule()) {
+					sequence_KTextStrikeout(context, (KTextStrikeout) semanticObject); 
+					return; 
+				}
+				else break;
+			case KRenderingPackage.KTEXT_UNDERLINE:
+				if(context == grammarAccess.getKStyleRule() ||
+				   context == grammarAccess.getKTextUnderlineRule()) {
+					sequence_KTextUnderline(context, (KTextUnderline) semanticObject); 
 					return; 
 				}
 				else break;
@@ -380,10 +419,35 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
+	 *     (trigger=Trigger id=EString)
+	 */
+	protected void sequence_KAction(EObject context, KAction semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, KRenderingPackage.Literals.KACTION__ID) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KRenderingPackage.Literals.KACTION__ID));
+			if(transientValues.isValueTransient(semanticObject, KRenderingPackage.Literals.KACTION__TRIGGER) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KRenderingPackage.Literals.KACTION__TRIGGER));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getKActionAccess().getTriggerTriggerEnumRuleCall_3_0(), semanticObject.getTrigger());
+		feeder.accept(grammarAccess.getKActionAccess().getIdEStringParserRuleCall_5_0(), semanticObject.getId());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
 	 *     (
 	 *         startAngle=EFloat 
 	 *         arcAngle=EFloat 
-	 *         ((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? childPlacement=KPlacement? (children+=KRendering children+=KRendering*)?)?
+	 *         (
+	 *             (actions+=KAction actions+=KAction*)? 
+	 *             (styles+=KStyle styles+=KStyle*)? 
+	 *             placementData=KPlacementData? 
+	 *             childPlacement=KPlacement? 
+	 *             (children+=KRendering children+=KRendering*)?
+	 *         )?
 	 *     )
 	 */
 	protected void sequence_KArc(EObject context, KArc semanticObject) {
@@ -447,7 +511,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData?)?)
+	 *     (((actions+=KAction actions+=KAction*)? (styles+=KStyle styles+=KStyle*)? placementData=KPlacementData?)?)
 	 */
 	protected void sequence_KChildArea(EObject context, KChildArea semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -482,6 +546,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	 *         (
 	 *             className=EString 
 	 *             bundleName=EString 
+	 *             (actions+=KAction actions+=KAction*)? 
 	 *             (styles+=KStyle styles+=KStyle*)? 
 	 *             placementData=KPlacementData? 
 	 *             childPlacement=KPlacement? 
@@ -498,12 +563,12 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	 * Constraint:
 	 *     (
 	 *         rotateWithLine?='rotateWithLine'? 
-	 *         absolute=EFloat 
+	 *         absolute=EFloat? 
 	 *         relative=EFloat? 
 	 *         xOffset=EFloat? 
 	 *         yOffset=EFloat? 
-	 *         width=EFloat? 
-	 *         height=EFloat?
+	 *         width=EFloat 
+	 *         height=EFloat
 	 *     )
 	 */
 	protected void sequence_KDecoratorPlacementData(EObject context, KDecoratorPlacementData semanticObject) {
@@ -513,7 +578,15 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? childPlacement=KPlacement? (children+=KRendering children+=KRendering*)?)?)
+	 *     (
+	 *         (
+	 *             (actions+=KAction actions+=KAction*)? 
+	 *             (styles+=KStyle styles+=KStyle*)? 
+	 *             placementData=KPlacementData? 
+	 *             childPlacement=KPlacement? 
+	 *             (children+=KRendering children+=KRendering*)?
+	 *         )?
+	 *     )
 	 */
 	protected void sequence_KEllipse(EObject context, KEllipse semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -522,7 +595,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (bold?='bold' propagateToChildren?='!'?)
+	 *     (bold?='bold' propagateToChildren?='!'? modifierId=EString?)
 	 */
 	protected void sequence_KFontBold(EObject context, KFontBold semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -531,7 +604,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (italic?='italic' propagateToChildren?='!'?)
+	 *     (italic?='italic' propagateToChildren?='!'? modifierId=EString?)
 	 */
 	protected void sequence_KFontItalic(EObject context, KFontItalic semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -540,7 +613,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (name=EString propagateToChildren?='!'?)
+	 *     (name=EString propagateToChildren?='!'? modifierId=EString?)
 	 */
 	protected void sequence_KFontName(EObject context, KFontName semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -549,7 +622,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (size=EInt propagateToChildren?='!'?)
+	 *     (size=EInt propagateToChildren?='!'? modifierId=EString?)
 	 */
 	protected void sequence_KFontSize(EObject context, KFontSize semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -575,6 +648,8 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	/**
 	 * Constraint:
 	 *     (
+	 *         fixedWidth=EBoolean? 
+	 *         fixedHeight=EBoolean? 
 	 *         minCellWidth=EFloat? 
 	 *         minCellHeight=EFloat? 
 	 *         maxCellWidth=EFloat? 
@@ -590,7 +665,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (numColumns=EInt (topLeft=KPosition bottomRight=KPosition)?)
+	 *     (numColumns=EInt (topLeft=KPosition? bottomRight=KPosition?)?)
 	 */
 	protected void sequence_KGridPlacement(EObject context, KGridPlacement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -599,7 +674,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (horizontalAlignment=HorizontalAlignment propagateToChildren?='!'?)
+	 *     (horizontalAlignment=HorizontalAlignment propagateToChildren?='!'? modifierId=EString?)
 	 */
 	protected void sequence_KHorizontalAlignment(EObject context, KHorizontalAlignment semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -611,7 +686,13 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	 *     (
 	 *         bundleName=EString? 
 	 *         imagePath=EString 
-	 *         ((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? childPlacement=KPlacement? (children+=KRendering children+=KRendering*)?)?
+	 *         (
+	 *             (actions+=KAction actions+=KAction*)? 
+	 *             (styles+=KStyle styles+=KStyle*)? 
+	 *             placementData=KPlacementData? 
+	 *             childPlacement=KPlacement? 
+	 *             (children+=KRendering children+=KRendering*)?
+	 *         )?
 	 *     )
 	 */
 	protected void sequence_KImage(EObject context, KImage semanticObject) {
@@ -640,7 +721,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (lineCap=LineCap propagateToChildren?='!'?)
+	 *     (lineCap=LineCap propagateToChildren?='!'? modifierId=EString?)
 	 */
 	protected void sequence_KLineCap(EObject context, KLineCap semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -649,7 +730,16 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (lineStyle=LineStyle propagateToChildren?='!'?)
+	 *     (lineJoin=LineJoin propagateToChildren?='!'? miterLimit=EFloat? modifierId=EString?)
+	 */
+	protected void sequence_KLineJoin(EObject context, KLineJoin semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (lineStyle=LineStyle propagateToChildren?='!'? (dashPattern+=EFloat dashPattern+=EFloat*)? dashOffset=EFloat? modifierId=EString?)
 	 */
 	protected void sequence_KLineStyle(EObject context, KLineStyle semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -658,7 +748,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (lineWidth=EFloat propagateToChildren?='!'? functionId=EString?)
+	 *     (lineWidth=EFloat propagateToChildren?='!'? modifierId=EString?)
 	 */
 	protected void sequence_KLineWidth(EObject context, KLineWidth semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -669,8 +759,8 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	 * Constraint:
 	 *     (
 	 *         referencePoint=KPosition 
-	 *         verticalAlignment=VerticalAlignment? 
 	 *         horizontalAlignment=HorizontalAlignment? 
+	 *         verticalAlignment=VerticalAlignment? 
 	 *         horizontalMargin=EFloat? 
 	 *         verticalMargin=EFloat? 
 	 *         minWidth=EFloat? 
@@ -687,6 +777,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	 *     (
 	 *         (
 	 *             (points+=KPosition points+=KPosition*)? 
+	 *             (actions+=KAction actions+=KAction*)? 
 	 *             (styles+=KStyle styles+=KStyle*)? 
 	 *             placementData=KPlacementData? 
 	 *             childPlacement=KPlacement? 
@@ -704,6 +795,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	 *     (
 	 *         (
 	 *             (points+=KPosition points+=KPosition*)? 
+	 *             (actions+=KAction actions+=KAction*)? 
 	 *             (styles+=KStyle styles+=KStyle*)? 
 	 *             placementData=KPlacementData? 
 	 *             childPlacement=KPlacement? 
@@ -737,7 +829,15 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? childPlacement=KPlacement? (children+=KRendering children+=KRendering*)?)?)
+	 *     (
+	 *         (
+	 *             (actions+=KAction actions+=KAction*)? 
+	 *             (styles+=KStyle styles+=KStyle*)? 
+	 *             placementData=KPlacementData? 
+	 *             childPlacement=KPlacement? 
+	 *             (children+=KRendering children+=KRendering*)?
+	 *         )?
+	 *     )
 	 */
 	protected void sequence_KRectangle(EObject context, KRectangle semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -783,7 +883,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (rotation=EFloat propagateToChildren?='!'?)
+	 *     (rotation=EFloat propagateToChildren?='!'? modifierId=EString?)
 	 */
 	protected void sequence_KRotation(EObject context, KRotation semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -813,7 +913,13 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	 *     (
 	 *         cornerWidth=EFloat 
 	 *         cornerHeight=EFloat 
-	 *         ((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? childPlacement=KPlacement? (children+=KRendering children+=KRendering*)?)?
+	 *         (
+	 *             (actions+=KAction actions+=KAction*)? 
+	 *             (styles+=KStyle styles+=KStyle*)? 
+	 *             placementData=KPlacementData? 
+	 *             childPlacement=KPlacement? 
+	 *             (children+=KRendering children+=KRendering*)?
+	 *         )?
 	 *     )
 	 */
 	protected void sequence_KRoundedRectangle(EObject context, KRoundedRectangle semanticObject) {
@@ -823,7 +929,24 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? childPlacement=KPlacement? (children+=KRendering children+=KRendering*)?)?)
+	 *     (color=KColor propagateToChildren?='!'? modifierId=EString?)
+	 */
+	protected void sequence_KShadow(EObject context, KShadow semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (
+	 *         (
+	 *             (actions+=KAction actions+=KAction*)? 
+	 *             (styles+=KStyle styles+=KStyle*)? 
+	 *             placementData=KPlacementData? 
+	 *             childPlacement=KPlacement? 
+	 *             (children+=KRendering children+=KRendering*)?
+	 *         )?
+	 *     )
 	 */
 	protected void sequence_KSpline(EObject context, KSpline semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -832,7 +955,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (styleHolder=[KStyleHolder|EString] propagateToChildren?='!'?)
+	 *     (styleHolder=[KStyleHolder|EString] propagateToChildren?='!'? modifierId=EString?)
 	 */
 	protected void sequence_KStyleRef(EObject context, KStyleRef semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -841,9 +964,32 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
+	 *     (struckOut?='strikeOut' color=KColor? propagateToChildren?='!'? modifierId=EString?)
+	 */
+	protected void sequence_KTextStrikeout(EObject context, KTextStrikeout semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (underline=Underline color=KColor? propagateToChildren?='!'? modifierId=EString?)
+	 */
+	protected void sequence_KTextUnderline(EObject context, KTextUnderline semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
 	 *     (
 	 *         text=EString? 
-	 *         ((styles+=KStyle styles+=KStyle*)? placementData=KPlacementData? (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)?)?
+	 *         (
+	 *             (actions+=KAction actions+=KAction*)? 
+	 *             (styles+=KStyle styles+=KStyle*)? 
+	 *             placementData=KPlacementData? 
+	 *             (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)?
+	 *         )?
 	 *     )
 	 */
 	protected void sequence_KText(EObject context, KText semanticObject) {
@@ -872,7 +1018,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (verticalAlignment=VerticalAlignment propagateToChildren?='!'?)
+	 *     (verticalAlignment=VerticalAlignment propagateToChildren?='!'? modifierId=EString?)
 	 */
 	protected void sequence_KVerticalAlignment(EObject context, KVerticalAlignment semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -881,7 +1027,7 @@ public class KRenderingSemanticSequencer extends KLayoutDataSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (invisible?='invisible' functionId=EString?)
+	 *     (invisible?='invisible' modifierId=EString?)
 	 */
 	protected void sequence_KVisibility(EObject context, KInvisibility semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

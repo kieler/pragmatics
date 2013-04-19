@@ -119,6 +119,23 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      *            the name
      * @param model
      *            the input model
+     */
+    public KlighdDiagramEffect(final String id, final String name, final Object model) {
+        this.id = id;
+        this.name = name;
+        this.model = model;
+    }
+
+    /**
+     * Constructs an effect that opens a diagram view with the given input model, identifier and
+     * name or changes the input model and name of an existing view with that identifier.
+     * 
+     * @param id
+     *            the identifier
+     * @param name
+     *            the name
+     * @param model
+     *            the input model
      * @param theSourceWorkbenchPart
      *            the workbench part the element to be shown has been selected in
      */

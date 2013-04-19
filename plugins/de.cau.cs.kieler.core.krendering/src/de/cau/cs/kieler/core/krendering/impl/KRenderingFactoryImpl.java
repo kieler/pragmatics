@@ -104,16 +104,15 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
             case KRenderingPackage.KROUNDED_BENDS_POLYLINE: return createKRoundedBendsPolyline();
             case KRenderingPackage.KROTATION: return createKRotation();
             case KRenderingPackage.KLINE_CAP: return createKLineCap();
+            case KRenderingPackage.KACTION: return createKAction();
             case KRenderingPackage.KPOINT_PLACEMENT_DATA: return createKPointPlacementData();
-            case KRenderingPackage.KSELECT_ACTION: return createKSelectAction();
-            case KRenderingPackage.KEXPAND_ACTION: return createKExpandAction();
             case KRenderingPackage.KSTYLE_HOLDER: return createKStyleHolder();
             case KRenderingPackage.KINVISIBILITY: return createKInvisibility();
             case KRenderingPackage.KSHADOW: return createKShadow();
             case KRenderingPackage.KTEXT_UNDERLINE: return createKTextUnderline();
-            case KRenderingPackage.KCOLLAPSE_ACTION: return createKCollapseAction();
             case KRenderingPackage.KSTYLE_REF: return createKStyleRef();
             case KRenderingPackage.KTEXT_STRIKEOUT: return createKTextStrikeout();
+            case KRenderingPackage.KLINE_JOIN: return createKLineJoin();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -133,12 +132,14 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
                 return createHorizontalAlignmentFromString(eDataType, initialValue);
             case KRenderingPackage.VERTICAL_ALIGNMENT:
                 return createVerticalAlignmentFromString(eDataType, initialValue);
-            case KRenderingPackage.KTRIGGER:
-                return createKTriggerFromString(eDataType, initialValue);
             case KRenderingPackage.LINE_CAP:
                 return createLineCapFromString(eDataType, initialValue);
+            case KRenderingPackage.TRIGGER:
+                return createTriggerFromString(eDataType, initialValue);
             case KRenderingPackage.UNDERLINE:
                 return createUnderlineFromString(eDataType, initialValue);
+            case KRenderingPackage.LINE_JOIN:
+                return createLineJoinFromString(eDataType, initialValue);
             default:
                 throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
         }
@@ -158,12 +159,14 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
                 return convertHorizontalAlignmentToString(eDataType, instanceValue);
             case KRenderingPackage.VERTICAL_ALIGNMENT:
                 return convertVerticalAlignmentToString(eDataType, instanceValue);
-            case KRenderingPackage.KTRIGGER:
-                return convertKTriggerToString(eDataType, instanceValue);
             case KRenderingPackage.LINE_CAP:
                 return convertLineCapToString(eDataType, instanceValue);
+            case KRenderingPackage.TRIGGER:
+                return convertTriggerToString(eDataType, instanceValue);
             case KRenderingPackage.UNDERLINE:
                 return convertUnderlineToString(eDataType, instanceValue);
+            case KRenderingPackage.LINE_JOIN:
+                return convertLineJoinToString(eDataType, instanceValue);
             default:
                 throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
         }
@@ -534,29 +537,19 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
      * <!-- end-user-doc -->
      * @generated
      */
+    public KAction createKAction() {
+        KActionImpl kAction = new KActionImpl();
+        return kAction;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public KPointPlacementData createKPointPlacementData() {
         KPointPlacementDataImpl kPointPlacementData = new KPointPlacementDataImpl();
         return kPointPlacementData;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public KSelectAction createKSelectAction() {
-        KSelectActionImpl kSelectAction = new KSelectActionImpl();
-        return kSelectAction;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public KExpandAction createKExpandAction() {
-        KExpandActionImpl kExpandAction = new KExpandActionImpl();
-        return kExpandAction;
     }
 
     /**
@@ -604,16 +597,6 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
      * <!-- end-user-doc -->
      * @generated
      */
-    public KCollapseAction createKCollapseAction() {
-        KCollapseActionImpl kCollapseAction = new KCollapseActionImpl();
-        return kCollapseAction;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public KStyleRef createKStyleRef() {
         KStyleRefImpl kStyleRef = new KStyleRefImpl();
         return kStyleRef;
@@ -627,6 +610,16 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
     public KTextStrikeout createKTextStrikeout() {
         KTextStrikeoutImpl kTextStrikeout = new KTextStrikeoutImpl();
         return kTextStrikeout;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KLineJoin createKLineJoin() {
+        KLineJoinImpl kLineJoin = new KLineJoinImpl();
+        return kLineJoin;
     }
 
     /**
@@ -694,8 +687,8 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
      * <!-- end-user-doc -->
      * @generated
      */
-    public KTrigger createKTriggerFromString(EDataType eDataType, String initialValue) {
-        KTrigger result = KTrigger.get(initialValue);
+    public Trigger createTriggerFromString(EDataType eDataType, String initialValue) {
+        Trigger result = Trigger.get(initialValue);
         if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
         return result;
     }
@@ -705,7 +698,7 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
      * <!-- end-user-doc -->
      * @generated
      */
-    public String convertKTriggerToString(EDataType eDataType, Object instanceValue) {
+    public String convertTriggerToString(EDataType eDataType, Object instanceValue) {
         return instanceValue == null ? null : instanceValue.toString();
     }
 
@@ -746,6 +739,26 @@ public class KRenderingFactoryImpl extends EFactoryImpl implements KRenderingFac
      * @generated
      */
     public String convertUnderlineToString(EDataType eDataType, Object instanceValue) {
+        return instanceValue == null ? null : instanceValue.toString();
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public LineJoin createLineJoinFromString(EDataType eDataType, String initialValue) {
+        LineJoin result = LineJoin.get(initialValue);
+        if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+        return result;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String convertLineJoinToString(EDataType eDataType, Object instanceValue) {
         return instanceValue == null ? null : instanceValue.toString();
     }
 

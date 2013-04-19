@@ -206,7 +206,7 @@
         <details key="documentation" value="defines whether child elements of the rendering should inherit this style"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="functionId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="modifierId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="id of the function that should be called when layout is finished to change this style"/>
       </eAnnotations>
@@ -306,6 +306,18 @@
         <details key="documentation" value="hint layout to keep the height of the column the element is assigned to less than defined here. &#xA;If another element in this column has a minCellHeight that is higher than this maxHeight, &#xA;the maxHeight is ignored."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixedWidth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject"
+        defaultValueLiteral="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="This flag marks the child rendering to cover exactly the required width obtained by means of the minimal size estimation, except for width increases by the macro layout, i.e. by KIML, e.g. in a single column grid.&#xA;If false, more space may be assigned to the related child rendering, if necessary.&lt;br>&#xA;&lt;br>&#xA;This flag is the replacement of the concrete 'maxCellWidth' value and not examined by KLighD, yet."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixedHeight" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject"
+        defaultValueLiteral="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="This flag marks the child rendering to cover exactly the required height obtained by means of the minimal size estimation, except for height increases by the macro layout, i.e. by KIML, e.g. in a single row grid.&#xA;If false, more space may be assigned to the related child rendering, if necessary.&lt;br>&#xA;&lt;br>&#xA;This flag is the replacement of the concrete 'maxCellHeight' value and not examined by KLighD, yet."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KAreaPlacementData" eSuperTypes="#//KPlacementData">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -367,13 +379,17 @@
     <eLiterals name="DOT" value="2"/>
     <eLiterals name="DASHDOT" value="3"/>
     <eLiterals name="DASHDOTDOT" value="4"/>
+    <eLiterals name="CUSTOM" value="5"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KLineStyle" eSuperTypes="#//KStyle">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="defines the linestyle of a rendering by setting one of the available lineStyles"/>
+      <details key="documentation" value="Defines the line style of a rendering by setting one of the available values of the LineStyle enumeration.&#xA;'dashPattern' and 'dashOffset' are evaluated if and only if the literal 'CUSTOM' is chosen."/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="lineStyle" lowerBound="1"
         eType="#//LineStyle"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="dashPattern" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="dashOffset" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="HorizontalAlignment">
     <eLiterals name="LEFT"/>
@@ -502,6 +518,14 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="rotation" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="LineCap">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="LineCapStyles analog to SWT LineCapStyles"/>
+    </eAnnotations>
+    <eLiterals name="CAP_FLAT" literal="CAP_FLAT"/>
+    <eLiterals name="CAP_ROUND" value="1"/>
+    <eLiterals name="CAP_SQUARE" value="2"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KLineCap" eSuperTypes="#//KStyle">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="implements different line ending styles"/>
@@ -509,7 +533,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="lineCap" lowerBound="1"
         eType="#//LineCap"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KAction" abstract="true">
+  <eClassifiers xsi:type="ecore:EClass" name="KAction">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="performs action &lt;id> on &lt;trigger> event"/>
     </eAnnotations>
@@ -519,7 +543,7 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="trigger" lowerBound="1"
-        eType="#//KTrigger">
+        eType="#//Trigger">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="trigger that activates action"/>
       </eAnnotations>
@@ -568,26 +592,16 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="KTrigger">
+  <eClassifiers xsi:type="ecore:EEnum" name="Trigger">
     <eLiterals name="SINGLECLICK" literal="SINGLECLICK"/>
     <eLiterals name="DOUBLECLICK" value="1"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KSelectAction" eSuperTypes="#//KAction"/>
-  <eClassifiers xsi:type="ecore:EClass" name="KExpandAction" eSuperTypes="#//KAction"/>
   <eClassifiers xsi:type="ecore:EClass" name="KStyleHolder">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Element to define styles without attaching them to a specific rendering"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="styles" upperBound="-1"
         eType="#//KStyle" containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="LineCap">
-    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="LineCapStyles analog to SWT LineCapStyles"/>
-    </eAnnotations>
-    <eLiterals name="CAP_FLAT" literal="CAP_FLAT"/>
-    <eLiterals name="CAP_ROUND" value="1"/>
-    <eLiterals name="CAP_SQUARE" value="2"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KInvisibility" eSuperTypes="#//KStyle">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -617,7 +631,6 @@
     <eLiterals name="SQUIGGLE" value="4"/>
     <eLiterals name="LINK" value="5"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KCollapseAction" eSuperTypes="#//KAction"/>
   <eClassifiers xsi:type="ecore:EClass" name="KStyleRef" eSuperTypes="#//KStyle">
     <eStructuralFeatures xsi:type="ecore:EReference" name="styleHolder" lowerBound="1"
         eType="#//KStyleHolder"/>
@@ -628,5 +641,19 @@
         defaultValueLiteral="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="color" eType="#//KColor"
         containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="LineJoin">
+    <eLiterals name="JOIN_MITER" literal="JOIN_MITER"/>
+    <eLiterals name="JOIN_ROUND" value="1"/>
+    <eLiterals name="JOIN_BEVEL" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KLineJoin" eSuperTypes="#//KStyle">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Defines the line join style of a rendering by setting one of the available values of the LineJoin enumeration.&#xA;'miterLimit' is evaluated if and only if the literal 'MITER' is chosen."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lineJoin" lowerBound="1"
+        eType="#//LineJoin"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="miterLimit" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"
+        defaultValueLiteral="10"/>
   </eClassifiers>
 </ecore:EPackage>
