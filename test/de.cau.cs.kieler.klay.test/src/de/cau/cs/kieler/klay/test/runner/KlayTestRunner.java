@@ -17,9 +17,9 @@ import java.util.List;
 
 import org.junit.runners.model.FrameworkMethod;
 
-import de.cau.cs.kieler.core.test.runners.KielerTestRunner;
 import de.cau.cs.kieler.klay.test.KlayAutomatedJUnitTest;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
+import de.cau.cs.kieler.pragmatics.test.common.runners.KielerTestRunner;
 
 /**
  * This test runner is used by the GraphAutomatedTest.
