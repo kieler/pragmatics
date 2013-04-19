@@ -561,7 +561,6 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
                         AbstractBorderedShapeEditPart ioEditPart = 
                                 (AbstractBorderedShapeEditPart) childObj;
                         Rectangle ioBounds = getAbsoluteBounds(ioEditPart.getFigure());
-
                         KNode areaNode = KimlUtil.createInitializedNode();
                         mapping.getGraphMap().put(areaNode, ioEditPart);
                         SequenceArea subArea = new SequenceArea(areaNode);

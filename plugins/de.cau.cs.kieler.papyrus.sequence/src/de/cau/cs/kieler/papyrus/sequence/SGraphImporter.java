@@ -93,7 +93,7 @@ public class SGraphImporter {
 
             } else if (nodeType.equals("3009") || nodeType.equals("3008")
                     || nodeType.equals("3024") || nodeType.equals("3020")) {
-                // Node is comment or constraint
+                // Node is comment, constraint or time observation/constraint 
 
                 createComment(sgraph, nodeMap, edgeMap, node);
             }
@@ -414,8 +414,7 @@ public class SGraphImporter {
             // Append the message type of the edge to the message
             String messageType = layout.getProperty(PapyrusProperties.MESSAGE_TYPE);
             if (messageType.equals("4004")) {
-                message.setProperty(SequenceDiagramProperties.MESSAGE_TYPE,
-                        MessageType.ASYNCHRONOUS);
+                message.setProperty(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.ASYNCHRONOUS);
             } else if (messageType.equals("4006")) {
                 message.setProperty(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.CREATE);
             } else if (messageType.equals("4007")) {

@@ -16,6 +16,7 @@ package de.cau.cs.kieler.core.krendering.extensions
 import javax.inject.Inject
 import java.util.List
 
+import de.cau.cs.kieler.core.krendering.KArc
 import de.cau.cs.kieler.core.krendering.KChildArea
 import de.cau.cs.kieler.core.krendering.KContainerRendering
 import de.cau.cs.kieler.core.krendering.KPolyline
@@ -63,6 +64,12 @@ class KContainerRenderingExtensions {
         ]
     }
 
+    def KArc addArc(KContainerRendering cr) {
+        return renderingFactory.createKArc() => [
+            cr.children += it;
+        ];
+    }
+
     def KEllipse addEllipse(KContainerRendering cr) {
         return renderingFactory.createKEllipse() => [
             cr.children += it;
@@ -86,7 +93,7 @@ class KContainerRenderingExtensions {
     def KRoundedRectangle addRoundedRectangle(KContainerRendering cr, float cWidth, float cHeight, float lineWidth) {
         return renderingFactory.createKRoundedRectangle => [
             cr.children += it;
-            it.setCornerWidth = cWidth;
+            it.cornerWidth = cWidth;
             it.cornerHeight = cHeight;
             it.lineWidth = lineWidth;
         ];
