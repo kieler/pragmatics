@@ -13,10 +13,15 @@
  */
 package de.cau.cs.kieler.klighd.effects;
 
-import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
+import de.cau.cs.kieler.klighd.util.Iterables2;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 
@@ -30,7 +35,7 @@ public class KlighdSelectionEffect extends AbstractEffect {
     /** the view identifier. */
     private String viewId;
     /** the elements. */
-    private Object[] elements;
+    private Iterable<Object> elements;
     /** whether the elements are diagram elements or a model elements. */
     private boolean areDiagramElements;
 
@@ -47,7 +52,7 @@ public class KlighdSelectionEffect extends AbstractEffect {
     public KlighdSelectionEffect(final String viewId, final Object element,
             final boolean isDiagramElement) {
         this.viewId = viewId;
-        this.elements = new Object[] { element };
+        this.elements = Iterables2.singletonIterable(element);
         this.areDiagramElements = isDiagramElement;
     }
 
@@ -62,7 +67,7 @@ public class KlighdSelectionEffect extends AbstractEffect {
      *            true if the elements are diagram elements; false if the elements are model
      *            elements
      */
-    public KlighdSelectionEffect(final String viewId, final Object[] elements,
+    public KlighdSelectionEffect(final String viewId, final Iterable<Object> elements,
             final boolean areDiagramElements) {
         this.viewId = viewId;
         this.elements = elements;
@@ -76,25 +81,26 @@ public class KlighdSelectionEffect extends AbstractEffect {
         DiagramViewPart view = DiagramViewManager.getInstance().getView(viewId);
         if (view != null) {
             // get the diagram elements
-            Object[] theElements;
+            Iterable<EObject> theElements;
             if (areDiagramElements) {
-                theElements = elements;
+                theElements = Iterables.filter(elements, EObject.class);
             } else {
-                List<Object> temp = new LinkedList<Object>();
+                List<EObject> temp = Lists.newLinkedList();
                 for (Object modelElement : elements) {
-                    Object diagramElement =
+                    EObject diagramElement = (EObject)
                             view.getContextViewer().getCurrentViewContext()
                                     .getTargetElement(modelElement);
                     if (diagramElement != null) {
                         temp.add(diagramElement);
                     }
                 }
-                theElements = temp.toArray();
+                theElements = temp;
             }
+
             // select the elements
-            if (theElements.length > 0) {
+            // if (theElements.iterator().hasNext()) {
                 view.getContextViewer().setSelection(theElements);
-            }
+            // }
         }
     }
 

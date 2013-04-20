@@ -17,5 +17,7 @@ Require-Bundle: org.eclipse.core.runtime,
  de.cau.cs.kieler.core.ui
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: de.cau.cs.kieler.klighd.xtext
+Export-Package: de.cau.cs.kieler.klighd.xtext,
+ de.cau.cs.kieler.klighd.xtext.effects,
+ de.cau.cs.kieler.klighd.xtext.triggers
 DynamicImport-Package: * 
