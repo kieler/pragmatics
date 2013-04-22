@@ -1,0 +1,57 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2013 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+grammar de.cau.cs.kieler.klighd.kdiagram.KDiagram with org.eclipse.xtext.xbase.Xbase
+
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
+import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
+import "http://www.eclipse.org/xtend" as xtend
+
+generate kDiagram "http://www.cau.de/cs/kieler/klighd/kdiagram/KDiagram"
+
+
+DiagramSynthesis:
+    ('package' packageName=QualifiedName ';'?)?
+    (imports+=Import)*
+    
+    'diagram' name=QualifiedName mapping=MappingDefinition
+;
+
+Import returns xtend::XtendImport : 
+    'import' (
+        (static?='static' extension?='extension'? importedType=[types::JvmType|QualifiedName] '.' '*') 
+        | importedType=[types::JvmType|QualifiedName] 
+        | importedNamespace=QualifiedNameWithWildCard) ';'?
+;
+
+QualifiedNameWithWildCard :
+    QualifiedName  '.' '*';
+
+MappingDefinition returns XVariableDeclaration:
+    'for' type=JvmParameterizedTypeReference name=ValidID ':'?
+    (nodeMappings+=NodeMapping)+
+;
+
+NodeMapping:
+    'nodes' name=ID '=' elements=XExpression '{'
+        'depictedBy' figureType=[types::JvmType|QualifiedName]
+    '}'
+;
+
+EdgeMapping:
+    'edges' name=ID '=' elements=XExpression '{'
+        'from' from=XExpression
+        'to' to=XExpression
+        'depictedBy' figureType=[types::JvmType|QualifiedName]
+    '}'
+;

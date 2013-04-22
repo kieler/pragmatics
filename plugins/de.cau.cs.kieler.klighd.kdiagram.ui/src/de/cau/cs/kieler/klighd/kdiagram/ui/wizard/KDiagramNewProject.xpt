@@ -1,0 +1,42 @@
+«IMPORT de::cau::cs::kieler::klighd::kdiagram::ui::wizard»
+
+«DEFINE main FOR KDiagramProjectInfo»
+
+«EXPAND model FOR this»
+«REM»«EXPAND workflow FOR this»«ENDREM»
+
+«ENDDEFINE»
+
+«DEFINE model FOR KDiagramProjectInfo»
+«FILE "src/" + this.projectName + "/ExampleDiagram.kdiagram"-»
+package «this.projectName»;
+
+import org.eclipse.emf.ecore.*
+import de.cau.cs.kieler.core.krendering.*
+
+/*
+ * Simple exemplary diagram description. 
+ */
+diagram ExampleDiagram for /* the DSL type goes here */ EObject model:
+
+  nodes hugos = model.eContents {
+    depictedBy KEllipse
+  }
+«ENDFILE»
+«ENDDEFINE»
+
+«REM»
+«DEFINE workflow FOR KDiagramProjectInfo»
+«FILE "src/Generator.mwe2"-»
+module Generator
+
+var targetDir = "src-gen"
+var modelPath = "src/model"
+
+Workflow {
+	component = @workflow.KDiagramGenerator auto-inject {}
+}
+«ENDFILE»
+«ENDREM»
+
+«ENDDEFINE»
