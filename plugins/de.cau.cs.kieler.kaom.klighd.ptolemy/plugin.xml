@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.klighd.modelTransformations">
+      <transformation
+            class="de.cau.cs.kieler.kaom.klighd.ptolemy.KaomKrenderingTransformation"
+            id="de.cau.cs.kieler.kaom.karma.ptolemy.kaomklighdtransformation">
+      </transformation>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.core.kivi.combinations">
+      <combination
+            active="false"
+            class="de.cau.cs.kieler.kaom.klighd.ptolemy.KaomKlighdCombination"
+            description="every time a kaom diagram is opened a corresponding klighd view is opened as well"
+            name="kaom klight debug">
+      </combination>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="de.cau.cs.kieler.kaom.klighd.ptolemy.openkaomklighd"
+               label="Open Klighd Diagram"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                     <or>
+                        <test
+                              forcePluginActivation="false"
+                              property="org.eclipse.core.resources.extension"
+                              value="kaom">
+                        </test>
+                        <test
+                              forcePluginActivation="false"
+                              property="org.eclipse.core.resources.extension"
+                              value="kaot">
+                        </test>
+                     </or>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID"
+            defaultHandler="de.cau.cs.kieler.kaom.klighd.ptolemy.OpenKaomKlighdViewHandler"
+            description="Open a Klighd view for the selected model"
+            id="de.cau.cs.kieler.kaom.klighd.ptolemy.openkaomklighd"
+            name="openkaomklighd">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.cau.cs.kieler.klighd.views.DiagramEditorPart"
+            default="true"
+            filenames=".kaom"
+            icon="icons/klighd.gif"
+            id="de.cau.cs.kieler.kaom.klighd.ptolemy.krenderingeditor"
+            name="Kaom Diagram Viewer">
+      </editor>
+   </extension>
+
+</plugin>
