@@ -11,5 +11,4 @@ Require-Bundle: com.google.guava,
  org.eclipse.emf.ecore,
  org.junit,
  de.cau.cs.kieler.core
-Export-Package: de.cau.cs.kieler.core.test.math,
- de.cau.cs.kieler.core.test.runners
+Export-Package: de.cau.cs.kieler.core.test.math
