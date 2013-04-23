@@ -34,7 +34,9 @@
     <module>de.cau.cs.kieler.kiml.ogdf.feature</module>
     <module>de.cau.cs.kieler.kiml.ogdf.feature.source</module>
     <module>de.cau.cs.kieler.klighd.feature</module>
+<!--
     <module>de.cau.cs.kieler.klighd.feature.source</module>
+-->
     <module>de.cau.cs.kieler.kwebs.client.jaxws.feature</module>
     <module>de.cau.cs.kieler.kwebs.client.jaxws.feature.source</module>
     <module>de.cau.cs.kieler.kwebs.client.jeti.feature</module>
