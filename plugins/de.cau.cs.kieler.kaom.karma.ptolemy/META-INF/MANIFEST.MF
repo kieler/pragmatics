@@ -30,5 +30,4 @@ Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Export-Package: de.cau.cs.kieler.kaom.karma.ptolemy,
  de.cau.cs.kieler.kaom.karma.ptolemy.conditions,
  de.cau.cs.kieler.kaom.karma.ptolemy.figurecreation,
- de.cau.cs.kieler.kaom.karma.ptolemy.krendering,
  de.cau.cs.kieler.kaom.karma.ptolemy.renderingprovider
