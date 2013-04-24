@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kaom.karma.ptolemy.krendering;
+package de.cau.cs.kieler.kaom.klighd.ptolemy;
 
 import java.util.HashMap;
 import java.util.Iterator;
