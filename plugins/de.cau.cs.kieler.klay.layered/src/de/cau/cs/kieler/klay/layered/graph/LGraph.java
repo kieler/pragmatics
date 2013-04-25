@@ -107,9 +107,10 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
 
     /**
      * Returns the size of the graph, that is the bounding box that covers the
-     * whole drawing. The size does not include insets or anything.
+     * whole drawing. The size does not include insets or anything. Modifying the
+     * returned value changes the size of the graph.
      * 
-     * @return the size of the layered graph
+     * @return the size of the layered graph; modify to change the graph size.
      */
     public KVector getSize() {
         return size;
@@ -132,9 +133,10 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
     
     /**
      * Returns the insets of the graph. The insets determine the amount of space between
-     * the content area and the graph's actual border.
+     * the content area and the graph's actual border. Modifying the returned value
+     * changes the insets.
      * 
-     * @return the insets.
+     * @return the insets; modify to change the graph's insets.
      */
     public LInsets.Double getInsets() {
         return insets;
