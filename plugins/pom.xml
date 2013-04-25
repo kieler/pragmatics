@@ -73,7 +73,7 @@
     <module>de.cau.cs.kieler.kiml.ui</module>
     <module>de.cau.cs.kieler.klay.force</module>
     <module>de.cau.cs.kieler.klay.layered</module>
-    <module>de.cau.cs.kieler.klay.planar</module>+
+    <module>de.cau.cs.kieler.klay.planar</module>
     <module>de.cau.cs.kieler.klay.tree</module>
     <module>de.cau.cs.kieler.klighd</module>
     <module>de.cau.cs.kieler.klighd.examples</module>
