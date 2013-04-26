@@ -87,9 +87,10 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
             offset.y += groupSize.y;
         }
         
-        // Set the new graph's new size
-        result.getSize().x = offset.x;
-        result.getSize().y = offset.y;
+        // Set the new graph's new size (the component group sizes include additional spacing
+        // on the right and bottom sides which we need to subtract at this point)
+        result.getSize().x = offset.x - spacing;
+        result.getSize().y = offset.y - spacing;
         
         return result;
     }
