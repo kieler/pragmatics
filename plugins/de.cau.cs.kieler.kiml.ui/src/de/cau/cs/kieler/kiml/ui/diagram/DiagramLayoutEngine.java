@@ -226,8 +226,8 @@ public class DiagramLayoutEngine {
             protected void postUIexec() {
                 if (layoutMapping.get() != null) {
                     // check for visibility of the given workbench part
-                    boolean withAnimation = animate && workbenchPart != null
-                            && workbenchPart.getSite().getPage().isPartVisible(workbenchPart);
+                    boolean withAnimation = animate //&& workbenchPart != null
+                            ; // && workbenchPart.getSite().getPage().isPartVisible(workbenchPart);
                     int animationTime = calcAnimationTime(layoutMapping.get(), withAnimation);
                     layoutManager.applyLayout(layoutMapping.get(), zoom, animationTime);
                 }

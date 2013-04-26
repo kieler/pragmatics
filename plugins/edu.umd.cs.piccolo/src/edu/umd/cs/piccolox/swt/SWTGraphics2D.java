@@ -1667,7 +1667,7 @@ public class SWTGraphics2D extends Graphics2D {
      * 
      * @return resulting width of line after being transform
      */
-    protected float getTransformedLineWidthFloat() {
+    public float getTransformedLineWidthFloat() {
         // the following line does not work, as this method is called by
         //  fill AND draw methods, and thus the width would be adjusted twice
         // float lineWidth = gc.getGCData().lineWidth;

@@ -18,8 +18,10 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 
+import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
+import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
 // SUPPRESS CHECKSTYLE NEXT LineLength
 import de.cau.cs.kieler.klighd.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;
 // SUPPRESS CHECKSTYLE NEXT LineLength
@@ -53,8 +55,11 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
             if (resource == null || IterableExtensions.isNullOrEmpty(resource.getContents())) {
                 return;
             }
-            this.schedule(new KlighdUpdateDiagramEffect(id, state.getEditorInputPath().lastSegment(),
-                    resource.getContents().get(0), state.getEditor()));
+            KlighdUpdateDiagramEffect effect = new KlighdUpdateDiagramEffect(id, state
+                    .getEditorInputPath().lastSegment(), resource.getContents().get(0),
+                    state.getEditor());
+            effect.setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY, SimpleUpdateStrategy.ID);
+            this.schedule(effect);
         }
     }
 }
