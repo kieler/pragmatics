@@ -28,6 +28,8 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * A layout processor that is able to perform transformations on the coordinates of a graph.
@@ -48,8 +50,10 @@ public final class GraphTransformer implements ILayoutProcessor {
         MIRROR_AND_TRANSPOSE;
     }
     
+    
     /** the configured mode of the graph transformer. */
     private final Mode mode;
+    
     
     /**
      * Creates a graph transformer with the given mode.
@@ -59,6 +63,7 @@ public final class GraphTransformer implements ILayoutProcessor {
     public GraphTransformer(final Mode themode) {
         this.mode = themode;
     }
+    
     
     /**
      * {@inheritDoc}
@@ -89,6 +94,10 @@ public final class GraphTransformer implements ILayoutProcessor {
         monitor.done();
     }
     
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Mirror
+    
     /**
      * Mirror the x coordinates of the given graph.
      * 
@@ -110,23 +119,38 @@ public final class GraphTransformer implements ILayoutProcessor {
                 mirror(port.getAnchor(), port.getSize().x);
                 mirrorPortSide(port);
                 for (LEdge edge : port.getOutgoingEdges()) {
+                    // Mirror bend points
                     for (KVector bendPoint : edge.getBendPoints()) {
                         mirror(bendPoint, maxx);
                     }
+                    
+                    // Mirror junction points
                     KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
                     if (junctionPoints != null) {
                         for (KVector jp : junctionPoints) {
                             mirror(jp, maxx);
                         }
                     }
+                    
+                    // Mirror edge label positions
                     for (LLabel label : edge.getLabels()) {
                         mirror(label.getPosition(), maxx - label.getSize().x);
                     }
                 }
+                
+                // Mirror port label positions
                 for (LLabel label : port.getLabels()) {
                     mirror(label.getPosition(), -label.getSize().x);
                 }
             }
+            
+            // External port dummy?
+            // TODO: This is not enough for external port support to work, apparently
+            if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
+                mirrorExternalPortSide(node);
+            }
+            
+            // Mirror node label positions
             for (LLabel label : node.getLabels()) {
                 mirror(label.getPosition(), nodeSize.x - label.getSize().x);
             }
@@ -149,24 +173,21 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param port the port.
      */
     private void mirrorPortSide(final LPort port) {
-        switch (port.getSide()) {
-        case NORTH:
-            port.setSide(PortSide.SOUTH);
-            break;
-        
-        case SOUTH:
-            port.setSide(PortSide.NORTH);
-            break;
-        
-        case EAST:
-            port.setSide(PortSide.WEST);
-            break;
-        
-        case WEST:
-            port.setSide(PortSide.EAST);
-            break;
-        }
+        port.setSide(port.getSide().opposed());
     }
+    
+    /**
+     * Mirror the side of the external port represented by the given external port dummy.
+     * 
+     * @param node external port dummy node.
+     */
+    private void mirrorExternalPortSide(final LNode node) {
+        node.setProperty(Properties.EXT_PORT_SIDE, node.getProperty(Properties.EXT_PORT_SIDE).opposed());
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Transpose
     
     /**
      * Transpose the x and y coordinates of the given graph.
@@ -174,34 +195,54 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param nodes the nodes of the graph to transpose
      */
     private void transpose(final List<LNode> nodes) {
+        // Transpose nodes
         for (LNode node : nodes) {
             transpose(node.getPosition());
             transpose(node.getSize());
+            
+            // Transpose ports
             for (LPort port : node.getPorts()) {
                 transpose(port.getPosition());
                 transpose(port.getAnchor());
                 transpose(port.getSize());
                 transposePortSide(port);
+                
+                // Transpose edges
                 for (LEdge edge : port.getOutgoingEdges()) {
+                    // Transpose bend points
                     for (KVector bendPoint : edge.getBendPoints()) {
                         transpose(bendPoint);
                     }
+                    
+                    // Transpose junction points
                     KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
                     if (junctionPoints != null) {
                         for (KVector jp : junctionPoints) {
                             transpose(jp);
                         }
                     }
+                    
+                    // Transpose edge labels
                     for (LLabel label : edge.getLabels()) {
                         transpose(label.getPosition());
                         transpose(label.getSize());
                     }
                 }
+                
+                // Transpose port labels
                 for (LLabel label : port.getLabels()) {
                     transpose(label.getPosition());
                     transpose(label.getSize());
                 }
             }
+            
+            // External port dummy?
+            // TODO: This is not enough for external port support to work, apparently
+            if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
+                transposeExternalPortSide(node);
+            }
+            
+            // Transpose node labels
             for (LLabel label : node.getLabels()) {
                 transpose(label.getPosition());
                 transpose(label.getSize());
@@ -226,23 +267,42 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param p the port.
      */
     private void transposePortSide(final LPort p) {
-        switch (p.getSide()) {
+        p.setSide(transposePortSide(p.getSide()));
+    }
+    
+    /**
+     * Returns the transposed side of the given port side.
+     * 
+     * @param side the side to transpose.
+     * @return transposed port side.
+     */
+    private PortSide transposePortSide(final PortSide side) {
+        switch (side) {
         case NORTH:
-            p.setSide(PortSide.WEST);
-            break;
+            return PortSide.WEST;
         
         case WEST:
-            p.setSide(PortSide.NORTH);
-            break;
+            return PortSide.NORTH;
         
         case SOUTH:
-            p.setSide(PortSide.EAST);
-            break;
+            return PortSide.EAST;
         
         case EAST:
-            p.setSide(PortSide.SOUTH);
-            break;
+            return PortSide.SOUTH;
+            
+        default:
+            return PortSide.UNDEFINED;    
         }
+    }
+
+    /**
+     * Transpose the side of the external port represented by the given external port dummy.
+     * 
+     * @param node external port dummy node.
+     */
+    private void transposeExternalPortSide(final LNode node) {
+        node.setProperty(Properties.EXT_PORT_SIDE,
+                transposePortSide(node.getProperty(Properties.EXT_PORT_SIDE)));
     }
 
 }
