@@ -21,9 +21,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.kaom.Entity;
+import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
+import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
 
 public class OpenKaomKlighdViewHandler extends AbstractHandler implements IHandler {
 
@@ -41,7 +45,11 @@ public class OpenKaomKlighdViewHandler extends AbstractHandler implements IHandl
                         EList<EObject> objects = loadModel(file);
                         EObject obj = objects.get(0);
                         if (obj instanceof Entity) {
-                            IEffect effect = new KlighdUpdateDiagramEffect(file.getName(), obj);
+                            KlighdUpdateDiagramEffect effect = new KlighdUpdateDiagramEffect(file.getName(), obj);
+                            effect.setProperty(LightDiagramServices.REQUESTED_TRANSFORMATIONS,
+                                    Lists.newArrayList(KaomKrenderingTransformation.ID));
+                            effect.setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY,
+                                    SimpleUpdateStrategy.ID);
                             effect.execute();
                         }
                     }

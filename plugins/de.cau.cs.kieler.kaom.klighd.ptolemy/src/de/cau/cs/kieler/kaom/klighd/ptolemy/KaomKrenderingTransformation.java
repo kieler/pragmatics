@@ -51,7 +51,6 @@ import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KTopPosition;
 import de.cau.cs.kieler.core.krendering.Trigger;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
@@ -68,7 +67,6 @@ import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis;
-import de.cau.cs.kieler.klighd.util.ExpansionAwareProperty;
 
 /**
  * 
@@ -77,6 +75,8 @@ import de.cau.cs.kieler.klighd.util.ExpansionAwareProperty;
  */
 public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entity> {
 
+    public static final String ID = "de.cau.cs.kieler.kaom.klighd.ptolemy.KaomKrenderingTransformation";
+    
     private HashMap<EObject, KGraphElement> map = new HashMap<EObject, KGraphElement>();
     
     /**
