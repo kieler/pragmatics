@@ -28,6 +28,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.krendering.KAction;
 import de.cau.cs.kieler.core.krendering.KAreaPlacementData;
 import de.cau.cs.kieler.core.krendering.KBackground;
 import de.cau.cs.kieler.core.krendering.KBottomPosition;
@@ -45,7 +46,9 @@ import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
 import de.cau.cs.kieler.core.krendering.KRightPosition;
 import de.cau.cs.kieler.core.krendering.KRoundedBendsPolyline;
+import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KTopPosition;
+import de.cau.cs.kieler.core.krendering.Trigger;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
@@ -56,25 +59,25 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.klighd.TransformationContext;
-import de.cau.cs.kieler.klighd.transformations.AbstractTransformation;
+import de.cau.cs.kieler.klighd.KlighdConstants;
+import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis;
 
 /**
  * 
  * @author ckru
  *
  */
-public class KaomKrenderingTransformation extends AbstractTransformation<Entity, KNode> {
+public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entity> {
 
     private HashMap<EObject, KGraphElement> map = new HashMap<EObject, KGraphElement>();
     
     /**
      * {@inheritDoc}
      */
-    public KNode transform(final Entity model,
-            final TransformationContext<Entity, KNode> transformationContext) {
+    public KNode transform(final Entity model) {
         map.clear();
         KNode parent = KimlUtil.createInitializedNode();
         map.put(model, parent);
@@ -89,6 +92,12 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             }
         }
         k = addConnections(model, parent);
+        
+        for (KNode child : parent.getChildren()) {
+            child.getData(KShapeLayout.class).setProperty(KlighdConstants.KLIGHD_SELECTION_UNPICKABLE, true);
+            child.getData(KShapeLayout.class).setProperty(KlighdConstants.EXPAND, true);
+        }
+        
         return k;
     }
 
@@ -177,6 +186,14 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             if (e.getName() != null) {
                 l = KimlUtil.createInitializedLabel(n);
                 l.setText(e.getName());
+                KText t = factory.createKText();
+                t.setProperty(KlighdConstants.KLIGHD_SELECTION_UNPICKABLE, true);
+                l.getData().add(t);
+                KShapeLayout labelLayout = getKLayout(l);
+                labelLayout.setProperty(LayoutOptions.FONT_NAME, KlighdConstants.DEFAULT_FONT_NAME);
+                labelLayout.setProperty(LayoutOptions.FONT_SIZE, KlighdConstants.DEFAULT_FONT_SIZE);
+                labelLayout.setProperty(KlighdConstants.KLIGHD_SELECTION_UNPICKABLE, true);
+                    
             }
             KRendering ren = KRenderingProvider.getKNodeRendering(e);
             KRendering topRen = getKRendering(n);
@@ -188,10 +205,11 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
                 } else {
                     lay.setProperty(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.klay.layered");
                     lay.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
-                    if (e.getChildEntities() == null || e.getChildEntities().isEmpty()) {
+                    lay.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT, NodeLabelPlacement.outsideBottomCenter());
+                    //if (e.getChildEntities() == null || e.getChildEntities().isEmpty()) {
                         lay.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
-                        
-                    }
+
+                    //}
                 }
             }
             if (ren != null) {
@@ -211,7 +229,13 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
                 lay.setWidth(50);
             }
             map.put(e, n);
-            parent.getChildren().add(transformationhelper(e, n));
+            KNode child = transformationhelper(e, n);
+            getKLayout(child).setProperty(KlighdConstants.EXPAND, false);
+            KAction a = factory.createKAction();
+            a.setTrigger(Trigger.DOUBLECLICK);
+            a.setId(KlighdConstants.ACTION_COLLAPSE_EXPAND);
+            getKRendering(child).getActions().add(a);
+            parent.getChildren().add(child);
         }
         for (Relation r : element.getChildRelations()) {
             KNode n = KimlUtil.createInitializedNode();
@@ -239,14 +263,9 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             parent.getPorts().add(port);
             KRendering topRen = getKRendering(port);
             KShapeLayout lay = getKLayout(port);
+            lay.setProperty(KlighdConstants.KLIGHD_SELECTION_UNPICKABLE, true);
+            // chsch: the following call performs side effects on 'lay'
             KRendering ren = KRenderingProvider.getKPortRendering(p, lay, getKLayout(parent));
-            
-            /*
-            if (p.getName() != null) {
-                KLabel l = KimlUtil.createInitializedLabel(port);
-                l.setText(p.getName());
-            }
-            */
             
             if (topRen != null) {
                 getKRendering(port).getChildren().add(ren);
@@ -257,7 +276,6 @@ public class KaomKrenderingTransformation extends AbstractTransformation<Entity,
             if (lay != null) {
                 lay.setHeight(8);
                 lay.setWidth(8);
-                //lay.setProperty(LayoutOptions.PORT_SIDE, PortSide.SOUTH);
             }
             
         }

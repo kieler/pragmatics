@@ -23,11 +23,15 @@ import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KRectangle;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.importer.ptolemy.xtend.PtolemyInterface;
 import de.cau.cs.kieler.kaom.klighd.ptolemy.util.PtolemyFetcher;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 public class KRenderingProvider {
 
@@ -60,6 +64,8 @@ public class KRenderingProvider {
         
         StringAnnotation cardinal = (StringAnnotation)annotatable.getAnnotation("_cardinal");
 
+        KVector portAnchor = new KVector();
+        
         if(cardinal != null && cardinal.getValue() != null) {
             input = cardinal.getValue();
         } else {
@@ -68,13 +74,24 @@ public class KRenderingProvider {
             Annotation inoutAnn = annotatable.getAnnotation("inputoutput");
             if (inputAnn != null) {
                 input = "WEST";
+                portAnchor.x = 0;
+                portAnchor.y = 3.5;
+                layout.setProperty(LayoutOptions.OFFSET, -3f);
+                layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.WEST);
             } else if (outputAnn != null) {
                 input = "EAST";
+                portAnchor.x = 7;
+                portAnchor.y = 3.5;
+                layout.setProperty(LayoutOptions.OFFSET, 0f);
+                layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.EAST);
             } else if (inoutAnn != null) {
                 input = "SOUTH";
+                layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.SOUTH);
             }
             
         }
+        
+        layout.setProperty(Properties.PORT_ANCHOR, portAnchor);
         
         
         EObject parentObject = annotatable.eContainer();
@@ -111,7 +128,7 @@ public class KRenderingProvider {
                             } else {
                                 layout.setXpos(-1);
                                 //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.WEST);
-                                return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("gray", color), -4, 0, input);
+                                return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("gray", color), 0 /*-4*/, 0, input);
                             }
                         } else if (ptolemyPort instanceof ptolemy.actor.IOPort) {
                             // io multiports are white
@@ -131,7 +148,7 @@ public class KRenderingProvider {
                                 } else {
                                     layout.setXpos(-1);
                                     //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.WEST);
-                                    return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("white", color), -4, 0, input);
+                                    return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("white", color), 0 /*-4*/, 0, input);
                                 }
                             } else {
                                 // other io ports are black
@@ -150,7 +167,7 @@ public class KRenderingProvider {
                                 } else {
                                     layout.setXpos(-1);
                                     //layout.setProperty(LayoutOptions.PORT_SIDE, PortSide.WEST);
-                                    return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("black", color), -4, 0, input);
+                                    return figureProvider.getPortKRendering(FigureParserKRendering.lookupColor("black", color), 0 /*-4*/, 0, input);
                                 }
                             }
                         } else {
