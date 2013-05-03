@@ -5,7 +5,7 @@
          point="de.cau.cs.kieler.klighd.modelTransformations">
       <transformation
             class="de.cau.cs.kieler.kaom.klighd.ptolemy.KaomKrenderingTransformation"
-            id="de.cau.cs.kieler.kaom.karma.ptolemy.kaomklighdtransformation">
+            id="de.cau.cs.kieler.kaom.klighd.ptolemy.KaomKrenderingTransformation">
       </transformation>
    </extension>
    <extension
