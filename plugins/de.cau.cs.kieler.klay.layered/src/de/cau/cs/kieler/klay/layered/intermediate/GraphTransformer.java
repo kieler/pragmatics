@@ -145,7 +145,6 @@ public final class GraphTransformer implements ILayoutProcessor {
             }
             
             // External port dummy?
-            // TODO: This is not enough for external port support to work, apparently
             if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
                 mirrorExternalPortSide(node);
             }
@@ -237,7 +236,6 @@ public final class GraphTransformer implements ILayoutProcessor {
             }
             
             // External port dummy?
-            // TODO: This is not enough for external port support to work, apparently
             if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
                 transposeExternalPortSide(node);
             }

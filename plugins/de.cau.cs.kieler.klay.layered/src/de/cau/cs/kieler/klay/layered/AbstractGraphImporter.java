@@ -13,9 +13,14 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -28,6 +33,7 @@ import de.cau.cs.kieler.klay.layered.properties.EdgeConstraint;
 import de.cau.cs.kieler.klay.layered.properties.InLayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -45,6 +51,31 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.rating proposed yellow by msp
  */
 public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
+    
+    /**
+     * For free port constraints, this map maps port types and layout directions to the port side we
+     * will use for an external port.
+     */
+    private static final Map<PortType, Map<Direction, PortSide>> EXTERNAL_PORT_SIDE_MAP =
+            Maps.newEnumMap(PortType.class);
+    
+    // Initialize the external port side map.
+    static {
+        Map<Direction, PortSide> inputPortMap = Maps.newEnumMap(Direction.class);
+        inputPortMap.put(Direction.RIGHT, PortSide.WEST);
+        inputPortMap.put(Direction.LEFT, PortSide.EAST);
+        inputPortMap.put(Direction.DOWN, PortSide.NORTH);
+        inputPortMap.put(Direction.UP, PortSide.SOUTH);
+        EXTERNAL_PORT_SIDE_MAP.put(PortType.INPUT, inputPortMap);
+        
+        Map<Direction, PortSide> outputPortMap = Maps.newEnumMap(Direction.class);
+        outputPortMap.put(Direction.RIGHT, PortSide.EAST);
+        outputPortMap.put(Direction.LEFT, PortSide.WEST);
+        outputPortMap.put(Direction.DOWN, PortSide.SOUTH);
+        outputPortMap.put(Direction.UP, PortSide.NORTH);
+        EXTERNAL_PORT_SIDE_MAP.put(PortType.OUTPUT, outputPortMap);
+    }
+    
 
     // CHECKSTYLEOFF VisibilityModifier
     
@@ -99,6 +130,19 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
      *     the dummy represents, while the size of the dummy itself is set to {@code (0, 0)}.</li>
      * </ul>
      * 
+     * <p>The layout direction of a graph has implications on the side external ports are placed at.
+     * If port constraints imply fixed sides for ports, the {@link Properties#EXT_PORT_SIDE} property is
+     * set to whatever the external port's port side is. If the port side needs to be determined, it
+     * depends on the port type (input port or output port; determined by the number of incoming and
+     * outgoing edges) and on the layout direction as follows:</p>
+     * <table>
+     *   <tr><th></th>     <th>Input port</th><th>Output port</th></tr>
+     *   <tr><th>Right</th><td>WEST</td>      <td>EAST</td></tr>
+     *   <tr><th>Left</th> <td>EAST</td>      <td>WEST</td></tr>
+     *   <tr><th>Down</th> <td>NORTH</td>     <td>SOUTH</td></tr>
+     *   <tr><th>Up</th>   <td>SOUTH</td>     <td>NORTH</td></tr>
+     * </table>
+     * 
      * @param port the port object the dummy will represent.
      * @param portConstraints constraints for external ports.
      * @param portSide the side of the external port.
@@ -110,11 +154,12 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
      * @param portSize size of the port. Depending on the port's side, the created dummy will
      *                 have the same width or height as the port, with the other dimension set
      *                 to zero.
+     * @param layoutDirection layout direction of the node that owns the port.
      * @return a dummy node representing the external port.
      */
     protected LNode createExternalPortDummy(final KPort port, final PortConstraints portConstraints,
             final PortSide portSide, final int netFlow, final KVector portNodeSize,
-            final KVector portPosition, final KVector portSize) {
+            final KVector portPosition, final KVector portSize, final Direction layoutDirection) {
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
         PortSide finalExternalPortSide = portSide;
         
@@ -139,9 +184,9 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         // If the port constraints are free, we need to determine where to put the dummy (and its port)
         if (!portConstraints.isSideFixed()) {
             if (netFlow > 0) {
-                finalExternalPortSide = PortSide.EAST;
+                finalExternalPortSide = EXTERNAL_PORT_SIDE_MAP.get(PortType.OUTPUT).get(layoutDirection);
             } else {
-                finalExternalPortSide = PortSide.WEST;
+                finalExternalPortSide = EXTERNAL_PORT_SIDE_MAP.get(PortType.INPUT).get(layoutDirection);
             }
             portLayout.setProperty(LayoutOptions.PORT_SIDE, finalExternalPortSide);
         }
