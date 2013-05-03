@@ -42,7 +42,7 @@ public final class GraphTransformer implements ILayoutProcessor {
 
     /** definition of transformation modes. */
     public enum Mode {
-        /** mirror the x coordinates of the graph. */
+        /** mirror the coordinates of the graph. */
         MIRROR,
         /** transpose by swapping x and y coordinates. */
         TRANSPOSE,
@@ -172,7 +172,7 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param port the port.
      */
     private void mirrorPortSide(final LPort port) {
-        port.setSide(port.getSide().opposed());
+        port.setSide(getMirroredPortSide(port.getSide()));
     }
     
     /**
@@ -181,7 +181,27 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param node external port dummy node.
      */
     private void mirrorExternalPortSide(final LNode node) {
-        node.setProperty(Properties.EXT_PORT_SIDE, node.getProperty(Properties.EXT_PORT_SIDE).opposed());
+        node.setProperty(Properties.EXT_PORT_SIDE,
+                getMirroredPortSide(node.getProperty(Properties.EXT_PORT_SIDE)));
+    }
+    
+    /**
+     * Returns the port side that is horizontally mirrored from the given side.
+     * 
+     * @param side the side whose horizontal opposite to return.
+     * @return horizontal opposite of the given side.
+     */
+    private PortSide getMirroredPortSide(final PortSide side) {
+        switch (side) {
+        case EAST:
+            return PortSide.WEST;
+            
+        case WEST:
+            return PortSide.EAST;
+            
+        default:
+            return side;
+        }
     }
     
     
