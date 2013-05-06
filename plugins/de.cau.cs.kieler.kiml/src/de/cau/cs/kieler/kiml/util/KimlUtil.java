@@ -665,7 +665,7 @@ public final class KimlUtil {
                         LayoutOptionData<?> layoutOptionData = null;
                         
                         // try to get the layout option from the data service.
-                        layoutOptionData = dataService.getOptionData(key);
+                        layoutOptionData = dataService.getOptionDataBySuffix(key);
                         
                         // if we have a valid layout option, parse its value.
                         if (layoutOptionData != null) {

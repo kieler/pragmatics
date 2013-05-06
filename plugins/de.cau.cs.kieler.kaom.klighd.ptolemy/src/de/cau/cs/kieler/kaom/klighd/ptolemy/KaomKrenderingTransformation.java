@@ -14,6 +14,7 @@
 
 package de.cau.cs.kieler.kaom.klighd.ptolemy;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 
 import org.eclipse.emf.common.util.EList;
@@ -49,6 +50,7 @@ import de.cau.cs.kieler.core.krendering.KRoundedBendsPolyline;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KTopPosition;
 import de.cau.cs.kieler.core.krendering.Trigger;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
@@ -61,6 +63,7 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis;
@@ -72,6 +75,8 @@ import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis;
  */
 public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entity> {
 
+    public static final String ID = "de.cau.cs.kieler.kaom.klighd.ptolemy.KaomKrenderingTransformation";
+    
     private HashMap<EObject, KGraphElement> map = new HashMap<EObject, KGraphElement>();
     
     /**
@@ -196,6 +201,18 @@ public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entit
                     
             }
             KRendering ren = KRenderingProvider.getKNodeRendering(e);
+            KRendering collapsedRen = null;
+            
+            if (!e.getChildEntities().isEmpty()) {
+                collapsedRen = KRenderingProvider.getPtolemySvgRendering(e);
+                collapsedRen.setProperty(KlighdConstants.COLLAPSED_RENDERING, true);
+                
+                KAction a = KRenderingFactory.eINSTANCE.createKAction();
+                a.setTrigger(Trigger.DOUBLECLICK);
+                a.setId(KlighdConstants.ACTION_COLLAPSE_EXPAND);
+                collapsedRen.getActions().add(a);
+            }
+            
             KRendering topRen = getKRendering(n);
             KShapeLayout lay = getKLayout(n);
             if (lay != null) {
@@ -216,12 +233,20 @@ public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entit
                 if (topRen != null) {
                     getKRendering(n).getChildren().add(ren);
                 } else {
+                    if (collapsedRen != null) {
+                        n.getData().add(collapsedRen);
+                    }
                     n.getData().add(ren);
                 }
                 if (lay != null) {
                     if (ren.getPlacementData() != null && ren.getPlacementData() instanceof KAreaPlacementData) {
                         lay.setHeight(((KAreaPlacementData) ren.getPlacementData()).getBottomRight().getY().getAbsolute());
                         lay.setWidth(((KAreaPlacementData) ren.getPlacementData()).getBottomRight().getX().getAbsolute());
+
+                    } else {
+                        KVector minSize = new KVector(60, 40);
+                        lay.setProperty(KlighdConstants.MINIMAL_NODE_SIZE, minSize);
+                        lay.setProperty(LayoutOptions.SIZE_CONSTRAINT, EnumSet.of(SizeConstraint.MINIMUM_SIZE));
                     }
                 }
             } else {
@@ -231,10 +256,6 @@ public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entit
             map.put(e, n);
             KNode child = transformationhelper(e, n);
             getKLayout(child).setProperty(KlighdConstants.EXPAND, false);
-            KAction a = factory.createKAction();
-            a.setTrigger(Trigger.DOUBLECLICK);
-            a.setId(KlighdConstants.ACTION_COLLAPSE_EXPAND);
-            getKRendering(child).getActions().add(a);
             parent.getChildren().add(child);
         }
         for (Relation r : element.getChildRelations()) {
