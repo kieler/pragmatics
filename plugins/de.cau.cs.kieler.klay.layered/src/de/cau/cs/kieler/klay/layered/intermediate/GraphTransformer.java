@@ -115,7 +115,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             mirror(node.getPosition(), maxx - node.getSize().x);
             KVector nodeSize = node.getSize();
             for (LPort port : node.getPorts()) {
-                mirror(port.getPosition(), nodeSize.x);
+                mirror(port.getPosition(), nodeSize.x - port.getSize().x);
                 mirror(port.getAnchor(), port.getSize().x);
                 mirrorPortSide(port);
                 for (LEdge edge : port.getOutgoingEdges()) {
