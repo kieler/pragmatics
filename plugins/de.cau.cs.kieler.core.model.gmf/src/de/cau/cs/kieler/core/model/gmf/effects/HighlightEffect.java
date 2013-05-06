@@ -29,6 +29,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.RoundedRectangleBorder;
+import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.FillStyle;
@@ -388,7 +389,13 @@ public class HighlightEffect extends AbstractEffect {
                 if ((foregroundColor != null || childrenForegroundColor != null) && highlightChildren) {
                     for (Object o : targetEditPart.getChildren()) {
                         if (o instanceof LabelEditPart) {
-                        	String text =  ((Label)((LabelEditPart) o).getFigure()).getText();
+                        	LabelEditPart labelPart = (LabelEditPart) o;
+                        	String text = null;
+                        	if (labelPart.getFigure() instanceof Label) {
+                        		text =  ((Label) labelPart.getFigure()).getText();
+                        	} else if (labelPart.getFigure() instanceof WrappingLabel) {
+                        		text =  ((WrappingLabel) labelPart.getFigure()).getText();
+                        	}
                         	if (text != null && text != "") {
 		                        if (childrenForegroundColor != null) {
 		                            setColor(((GraphicalEditPart) o).getFigure(),
