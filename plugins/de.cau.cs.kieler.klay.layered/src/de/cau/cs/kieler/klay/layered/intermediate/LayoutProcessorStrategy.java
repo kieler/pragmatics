@@ -213,7 +213,7 @@ public enum LayoutProcessorStrategy {
             
         case LEFT_DIR_POSTPROCESSOR:
         case LEFT_DIR_PREPROCESSOR:
-            return new GraphTransformer(GraphTransformer.Mode.MIRROR);
+            return new GraphTransformer(GraphTransformer.Mode.MIRROR_X);
             
         case LONG_EDGE_JOINER:
             return new LongEdgeJoiner();
