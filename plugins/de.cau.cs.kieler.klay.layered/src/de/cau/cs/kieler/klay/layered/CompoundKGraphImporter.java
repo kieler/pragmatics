@@ -1084,7 +1084,7 @@ public final class CompoundKGraphImporter extends KGraphImporter {
                 .contains(SizeOptions.COMPUTE_INSETS)) {
             
             // Apply insets
-            LInsets.Double lInsets = node.getInsets();
+            LInsets lInsets = node.getInsets();
             KInsets kInsets = nodeLayout.getInsets();
             kInsets.setBottom((float) lInsets.bottom);
             kInsets.setTop((float) lInsets.top);

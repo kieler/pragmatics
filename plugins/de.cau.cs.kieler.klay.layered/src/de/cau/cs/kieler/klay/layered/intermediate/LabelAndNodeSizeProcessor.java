@@ -75,7 +75,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
      * 
      * <p><i>Note:</i> This is only valid for the currently processed node!</p>
      */
-    private LInsets.Double requiredPortLabelSpace = new LInsets.Double();
+    private LInsets requiredPortLabelSpace = new LInsets();
     
     /**
      * Node insets required by node labels placed inside the node. This is always set, but not always
@@ -83,7 +83,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
      * 
      * <p><i>Note:</i> This is only valid for the currently processed node!</p>
      */
-    private LInsets.Double requiredNodeLabelSpace = new LInsets.Double();
+    private LInsets requiredNodeLabelSpace = new LInsets();
     
     /**
      * Number of ports on the western side. Only used if port constraints are not
@@ -209,7 +209,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                  * were not taken into account when calculating the node's size, this may result in
                  * insets that, taken together, are larger than the node's actual size.
                  */
-                LInsets.Double nodeInsets = node.getInsets();
+                LInsets nodeInsets = node.getInsets();
                 nodeInsets.left = requiredNodeLabelSpace.left + requiredPortLabelSpace.left;
                 nodeInsets.right = requiredNodeLabelSpace.right + requiredPortLabelSpace.right;
                 nodeInsets.top = requiredNodeLabelSpace.top + requiredPortLabelSpace.top;
@@ -411,7 +411,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
             // Calculate the union of the two bounding boxes and calculate the margins
             Rectangle2D.union(portBox, labelBox, portBox);
 
-            LInsets.Double margin = port.getMargin();
+            LInsets margin = port.getMargin();
             margin.top = -portBox.y;
             margin.bottom = portBox.getMaxY() - port.getSize().y;
             margin.left = -portBox.x;
@@ -821,7 +821,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         for (LPort port : node.getPorts()) {
             float portOffset = port.getProperty(Properties.OFFSET);
             KVector portSize = port.getSize();
-            LInsets.Double portMargins = port.getMargin();
+            LInsets portMargins = port.getMargin();
             
             switch (port.getSide()) {
             case WEST:

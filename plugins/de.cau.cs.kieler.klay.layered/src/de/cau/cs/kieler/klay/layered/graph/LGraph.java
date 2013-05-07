@@ -44,7 +44,7 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
     /** the total size of the drawing, without offset. */
     private final KVector size = new KVector();
     /** the graph's insets. */
-    private final LInsets.Double insets = new LInsets.Double(0, 0, 0, 0);
+    private final LInsets insets = new LInsets(0, 0, 0, 0);
     /** the offset to be added to all positions. */
     private final KVector offset = new KVector();
     /** nodes that are not currently part of a layer. */
@@ -138,7 +138,7 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
      * 
      * @return the insets; modify to change the graph's insets.
      */
-    public LInsets.Double getInsets() {
+    public LInsets getInsets() {
         return insets;
     }
 

@@ -252,7 +252,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         
         PortConstraints constraints = layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         KVector graphSize = layeredGraph.getSize();
-        LInsets.Double graphInsets = layeredGraph.getInsets();
+        LInsets graphInsets = layeredGraph.getInsets();
         float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
         double graphWidth = graphSize.x + graphInsets.left + graphInsets.right + 2 * borderSpacing;
         double northY = 0 - graphInsets.top - borderSpacing - layeredGraph.getOffset().y;
@@ -706,7 +706,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
             final LGraph graph) {
         
         // Get some geometric values from the graph
-        LInsets.Double insets = graph.getInsets();
+        LInsets insets = graph.getInsets();
         float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
         KVector offset = graph.getOffset();
         KVector graphActualSize = graph.getActualSize();

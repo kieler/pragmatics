@@ -112,7 +112,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // copy the insets to the layered graph
         KInsets kinsets = sourceShapeLayout.getInsets();
-        LInsets.Double linsets = layeredGraph.getInsets();
+        LInsets linsets = layeredGraph.getInsets();
 
         linsets.left = kinsets.getLeft();
         linsets.right = kinsets.getRight();
@@ -797,7 +797,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                         .contains(SizeOptions.COMPUTE_INSETS)) {
                     
                     // Apply insets
-                    LInsets.Double lInsets = lnode.getInsets();
+                    LInsets lInsets = lnode.getInsets();
                     KInsets kInsets = nodeLayout.getInsets();
                     kInsets.setBottom((float) lInsets.bottom);
                     kInsets.setTop((float) lInsets.top);
