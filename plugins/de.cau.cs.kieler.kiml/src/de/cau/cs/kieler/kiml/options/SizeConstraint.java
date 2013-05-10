@@ -55,7 +55,8 @@ public enum SizeConstraint {
     
     /**
      * If set, a node's size will be at least the minimum size set on it. If no minimum size is set,
-     * the behaviour depends on whether the {@link #DEFAULT_MINIMUM_SIZE} constraint is set as well.
+     * the behavior depends on whether the {@link SizeOptions#DEFAULT_MINIMUM_SIZE} constraint is
+     * set as well.
      */
     MINIMUM_SIZE;
     
@@ -70,10 +71,18 @@ public enum SizeConstraint {
     }
     
     /**
-     * Returns a set containing the common combination of {@link #MINIMUM_SIZE},
-     * {@link #DEFAULT_MINIMUM_SIZE}, and {@link #PORTS}.
+     * Returns a set containing the {@link #MINIMUM_SIZE} constraint.
      * 
-     * @return set with default minimum size constraint combination with ports.
+     * @return set with minimum size constraint.
+     */
+    public static EnumSet<SizeConstraint> minimumSize() {
+        return EnumSet.of(MINIMUM_SIZE);
+    }
+    
+    /**
+     * Returns a set containing the common combination of {@link #MINIMUM_SIZE} and {@link #PORTS}.
+     * 
+     * @return set with minimum size constraint in combination with ports.
      */
     public static EnumSet<SizeConstraint> minimumSizeWithPorts() {
         return EnumSet.of(PORTS, MINIMUM_SIZE);
