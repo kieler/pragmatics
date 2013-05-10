@@ -36,6 +36,7 @@ import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -776,19 +777,23 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                     }
                 }
                 
-                // set label positions
-                for (LLabel llabel : lnode.getLabels()) {
-                    KLabel klabel = (KLabel) llabel.getProperty(Properties.ORIGIN);
-                    KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
-                    klabelLayout.applyVector(llabel.getPosition());
+                // set label positions, if they were not fixed
+                if (!lnode.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty()) {
+                    for (LLabel llabel : lnode.getLabels()) {
+                        KLabel klabel = (KLabel) llabel.getProperty(Properties.ORIGIN);
+                        KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+                        klabelLayout.applyVector(llabel.getPosition());
+                    }
                 }
                 
-                // set port labels
-                for (LPort lport : lnode.getPorts()) {
-                    for (LLabel label : lport.getLabels()) {
-                        KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
-                        KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
-                        klabelLayout.applyVector(label.getPosition());
+                // set port labels, if they were not fixed
+                if (lnode.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT) != PortLabelPlacement.FIXED) {
+                    for (LPort lport : lnode.getPorts()) {
+                        for (LLabel label : lport.getLabels()) {
+                            KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
+                            KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+                            klabelLayout.applyVector(label.getPosition());
+                        }
                     }
                 }
                 
