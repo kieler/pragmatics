@@ -65,7 +65,7 @@ public final class LayerSizeAndGraphHeightCalculator implements ILayoutProcessor
             // Calculate the layer's width
             for (LNode node : layer) {
                 KVector nodeSize = node.getSize();
-                LInsets.Double nodeMargin = node.getMargin();
+                LInsets nodeMargin = node.getMargin();
                 
                 layerSize.x = Math.max(
                         layerSize.x,

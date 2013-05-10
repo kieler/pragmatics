@@ -45,9 +45,9 @@ public final class LNode extends LShape {
     /** this node's labels. */
     private final List<LLabel> labels = new LinkedList<LLabel>();
     /** the margin area around this node. */
-    private final LInsets.Double margin = new LInsets.Double();
+    private final LInsets margin = new LInsets();
     /** the insets inside this node, usually reserved for port and label placement. */
-    private final LInsets.Double insets = new LInsets.Double();
+    private final LInsets insets = new LInsets();
     
     /**
      * Creates a node.
@@ -299,7 +299,7 @@ public final class LNode extends LShape {
      *  
      * @return the node's margin. May be modified.
      */
-    public LInsets.Double getMargin() {
+    public LInsets getMargin() {
         return margin;
     }
     
@@ -313,7 +313,7 @@ public final class LNode extends LShape {
      * 
      * @return the node's insets. May be modified.
      */
-    public LInsets.Double getInsets() {
+    public LInsets getInsets() {
         return insets;
     }
     
@@ -348,7 +348,7 @@ public final class LNode extends LShape {
         
         LGraph graph = owner.getGraph();
         
-        LInsets.Double graphInsets = graph.getInsets();
+        LInsets graphInsets = graph.getInsets();
         float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
         KVector offset = graph.getOffset();
         KVector pos = getPosition();

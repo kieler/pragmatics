@@ -50,7 +50,7 @@ public final class LPort extends LShape {
     /** the anchor point position. */
     private final KVector anchor = new KVector();
     /** the margin area around this port. */
-    private final LInsets.Double margin = new LInsets.Double();
+    private final LInsets margin = new LInsets();
     /** this port's labels. */
     private final List<LLabel> labels = new LinkedList<LLabel>();
     /** the edges going into the port. */
@@ -195,7 +195,7 @@ public final class LPort extends LShape {
      * 
      * @return the port's margin.
      */
-    public LInsets.Double getMargin() {
+    public LInsets getMargin() {
         return margin;
     }
     

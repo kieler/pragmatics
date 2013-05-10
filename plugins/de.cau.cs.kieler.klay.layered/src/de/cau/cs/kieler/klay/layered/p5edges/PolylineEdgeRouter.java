@@ -279,7 +279,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
         // If the node has a left or right margin, we need to ensure that the edges
         // connected to it are horizontal inside the margin (they might cross port
         // or edge labels otherwise)
-        LInsets.Double nodeMargin = node.getMargin();
+        LInsets nodeMargin = node.getMargin();
         
         for (LPort port : node.getPorts()) {
             if (port.getSide() == PortSide.EAST && nodeMargin.right > 0.0) {
