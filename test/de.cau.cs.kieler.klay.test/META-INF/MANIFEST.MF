@@ -17,3 +17,5 @@ Require-Bundle: org.eclipse.emf.transaction;bundle-version="1.4.0",
  de.cau.cs.kieler.klay.layered,
  de.cau.cs.kieler.klay.planar,
  de.cau.cs.kieler.pragmatics.test.common
+Export-Package: de.cau.cs.kieler.klay.test,
+ de.cau.cs.kieler.klay.test.utils

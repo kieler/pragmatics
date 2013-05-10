@@ -10,4 +10,5 @@ Require-Bundle: org.junit;bundle-version="4.8.0",
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.kiml,
- de.cau.cs.kieler.klay.layered
+ de.cau.cs.kieler.klay.layered,
+ de.cau.cs.kieler.klay.test
