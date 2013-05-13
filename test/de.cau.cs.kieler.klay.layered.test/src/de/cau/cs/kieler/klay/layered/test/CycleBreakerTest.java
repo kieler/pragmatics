@@ -17,7 +17,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Iterables;
@@ -37,12 +36,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.test.KlayAutomatedJUnitTest;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 import de.cau.cs.kieler.klay.test.utils.TestPath;
-// SUPPRESS CHECKSTYLE AvoidStarImport
-
-// SUPPRESS CHECKSTYLE AvoidStarImport
 
 /**
- * Basic Tests for the cycle removing phase.
+ * Basic tests for the cycle removing phase.
  * 
  * @author uru
  */
@@ -74,14 +70,6 @@ public class CycleBreakerTest extends KlayAutomatedJUnitTest {
     }
 
     /**
-     * Run the layered algorithm until the cycle breaker finished.
-     */
-    @Before
-    public void layout() {
-
-    }
-
-    /**
      * Tests whether the current graph is acyclic with the interactive strategy.
      */
     @Test
@@ -97,7 +85,16 @@ public class CycleBreakerTest extends KlayAutomatedJUnitTest {
         testWithStrategy(CycleBreakingStrategy.GREEDY, GreedyCycleBreaker.class);
     }
 
-    public void testWithStrategy(final CycleBreakingStrategy strategy,
+    /**
+     * Performs the actual test by applying the layout algorithm with the requested strategy until
+     * the cycle breaking phase finished. Afterwards the acyclic test is performed.
+     * 
+     * @param strategy
+     *            One of the available cycle breaking strategies.
+     * @param processor
+     *            The corresponding {{@link ILayoutPhase}
+     */
+    private void testWithStrategy(final CycleBreakingStrategy strategy,
             final Class<? extends ILayoutPhase> processor) {
         // set the desired strategy
         graphObject.getKnode().getData(KShapeLayout.class)
@@ -110,13 +107,22 @@ public class CycleBreakerTest extends KlayAutomatedJUnitTest {
         // check every component
         for (LGraph lg : lgraphs) {
             List<LNode> nodes = lg.getLayerlessNodes();
-            System.out.println(nodes);
-            assertTrue(recAcyclic(nodes));
+            assertTrue(recAcyclicCheck(nodes));
         }
     }
 
-    public boolean recAcyclic(final List<LNode> nodes) {
-
+    /**
+     * Tests if the passed graph is acyclic in a recursive manner.
+     * 
+     * 1. If no nodes exist, the graph is acyclic. 2. Check if any leaf node exists, i.e., a node
+     * with no outgoing edges. If not, the graph is cyclic. 3. Remove the identified leaf node and
+     * all incoming edges. Continue with 1.
+     * 
+     * @param nodes
+     *            the nodes composing the graph.
+     * @return {@code true} if the graph is acyclic, false otherwise.
+     */
+    private boolean recAcyclicCheck(final List<LNode> nodes) {
         // if graph is empty, it is acyclic
         if (nodes.isEmpty()) {
             return true;
@@ -133,14 +139,14 @@ public class CycleBreakerTest extends KlayAutomatedJUnitTest {
 
         if (leaf != null) {
             // trim the leaf and start recursion
-            return recAcyclic(trimLeaf(nodes, leaf));
+            return recAcyclicCheck(removeLeaf(nodes, leaf));
         } else {
             // graph is cyclic
             return false;
         }
     }
 
-    public static List<LNode> trimLeaf(final List<LNode> nodes, final LNode leaf) {
+    private static List<LNode> removeLeaf(final List<LNode> nodes, final LNode leaf) {
         // remove all incoming edges
         for (LEdge inc : leaf.getIncomingEdges()) {
             inc.getSource().getOutgoingEdges().remove(inc);
@@ -151,7 +157,7 @@ public class CycleBreakerTest extends KlayAutomatedJUnitTest {
         return cpy;
     }
 
-    public static boolean isLeaf(final LNode node) {
+    private static boolean isLeaf(final LNode node) {
         return Iterables.isEmpty(node.getOutgoingEdges());
     }
 
