@@ -396,14 +396,15 @@ public class HighlightEffect extends AbstractEffect {
                         	} else if (labelPart.getFigure() instanceof WrappingLabel) {
                         		text =  ((WrappingLabel) labelPart.getFigure()).getText();
                         	}
-                        	if (text != null && text != "") {
+                        	if (text != null && !text.equals("")) {
 		                        if (childrenForegroundColor != null) {
 		                            setColor(((GraphicalEditPart) o).getFigure(),
 		                                    childrenForegroundColor, true);
-		                        } else {
+		                        } /*else {
 		                            setColor(((GraphicalEditPart) o).getFigure(), foregroundColor,
 		                                    true);
 		                        }
+		                        */
                         	}
                         }
                     }
@@ -421,17 +422,23 @@ public class HighlightEffect extends AbstractEffect {
                 if ((backgroundColor != null || childrenBackgroundColor != null) && highlightChildren) {
                     for (Object o : targetEditPart.getChildren()) {
                         if (o instanceof LabelEditPart) {
-                        	String text =  ((Label)((LabelEditPart) o).getFigure()).getText();
-                        	if (text != null && text != "") {
-	                        	Object e =  ((LabelEditPart) o).getModel();
+                                LabelEditPart labelPart = (LabelEditPart) o;
+                                String text = null;
+                                if (labelPart.getFigure() instanceof Label) {
+                                        text =  ((Label) labelPart.getFigure()).getText();
+                                } else if (labelPart.getFigure() instanceof WrappingLabel) {
+                                        text =  ((WrappingLabel) labelPart.getFigure()).getText();
+                                }
+                        	if (text != null && !text.equals("")) {
 	                            if (childrenBackgroundColor != null) {
 	                                setColor(((GraphicalEditPart) o).getFigure(),
 	                                        childrenBackgroundColor, false);
-	                            } else {
+	                            } /*else {
 	                                setColor(((GraphicalEditPart) o).getFigure(), backgroundColor,
 	                                        false);
 	                                
 	                            }
+	                            */
 	                            //originalOpaqueness.put(((GraphicalEditPart) o).getFigure(), ((GraphicalEditPart) o).getFigure().isOpaque());
 	                            ((GraphicalEditPart) o).getFigure().setOpaque(true);
 	                            
