@@ -21,6 +21,10 @@ import org.junit.AfterClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.google.common.collect.Lists;
+
+import de.cau.cs.kieler.klay.test.config.DummyLayoutConfigurator;
+import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.runner.KlayTestRunner;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 import de.cau.cs.kieler.klay.test.utils.GraphTestUtil;
@@ -43,6 +47,7 @@ public abstract class KlayAutomatedJUnitTest {
 
     /** The graph files. */
     private static List<GraphTestObject> graphsList;
+    private static List<ILayoutConfigurator> configurators;
 
     /**
      * Initialization - Load the graphs to be tested. This is called in
@@ -52,6 +57,15 @@ public abstract class KlayAutomatedJUnitTest {
      */
     public void graphAutomatedTestInitialization() {
         graphsList = GraphTestUtil.loadGraphs(getBundleTestPath());
+        configurators = getConfigurators();
+
+        // guarantee that there is at least one configurator
+        if (configurators == null) {
+            configurators = Lists.newArrayList();
+        }
+        if (configurators.isEmpty()) {
+            configurators.add(new DummyLayoutConfigurator());
+        }
     }
 
     /**
@@ -61,17 +75,22 @@ public abstract class KlayAutomatedJUnitTest {
      * @return a Collection of GraphTestObject Objects
      */
     @Parameters
-    public static Collection<Object[]> getGraphs() {
-        LinkedList<Object[]> graphFilesList = new LinkedList<Object[]>();
+    public static Collection<Object[]> getParameters() {
+        LinkedList<Object[]> parameters = new LinkedList<Object[]>();
 
+        // create a parameter for each graph with each configurator
         if (graphsList != null) {
             for (GraphTestObject file : graphsList) {
-                Object[] objectArray = new Object[1];
-                objectArray[0] = file;
-                graphFilesList.add(objectArray);
+                for (ILayoutConfigurator c : configurators) {
+                    Object[] objectArray = new Object[2];
+                    objectArray[0] = file;
+                    objectArray[1] = c;
+                    parameters.add(objectArray);
+                }
             }
         }
-        return graphFilesList;
+
+        return parameters;
     }
 
     /**
@@ -81,6 +100,7 @@ public abstract class KlayAutomatedJUnitTest {
     public static void graphAutomatedTestWrapup() {
         // Clear all static fields
         graphsList = null;
+        configurators = null;
     }
 
     /**
@@ -102,5 +122,10 @@ public abstract class KlayAutomatedJUnitTest {
      * @return the Path
      */
     protected abstract TestPath[] getBundleTestPath();
+
+    /**
+     * @return a list with layout configurators.
+     */
+    protected abstract List<ILayoutConfigurator> getConfigurators();
 
 }
