@@ -396,14 +396,15 @@ public class HighlightEffect extends AbstractEffect {
                         	} else if (labelPart.getFigure() instanceof WrappingLabel) {
                         		text =  ((WrappingLabel) labelPart.getFigure()).getText();
                         	}
-                        	if (text != null && text != "") {
+                        	if (text != null && !text.equals("")) {
 		                        if (childrenForegroundColor != null) {
 		                            setColor(((GraphicalEditPart) o).getFigure(),
 		                                    childrenForegroundColor, true);
-		                        } else {
+		                        } /*else {
 		                            setColor(((GraphicalEditPart) o).getFigure(), foregroundColor,
 		                                    true);
 		                        }
+		                        */
                         	}
                         }
                     }
@@ -428,15 +429,16 @@ public class HighlightEffect extends AbstractEffect {
                                 } else if (labelPart.getFigure() instanceof WrappingLabel) {
                                         text =  ((WrappingLabel) labelPart.getFigure()).getText();
                                 }
-                        	if (text != null && text != "") {
+                        	if (text != null && !text.equals("")) {
 	                            if (childrenBackgroundColor != null) {
 	                                setColor(((GraphicalEditPart) o).getFigure(),
 	                                        childrenBackgroundColor, false);
-	                            } else {
+	                            } /*else {
 	                                setColor(((GraphicalEditPart) o).getFigure(), backgroundColor,
 	                                        false);
 	                                
 	                            }
+	                            */
 	                            //originalOpaqueness.put(((GraphicalEditPart) o).getFigure(), ((GraphicalEditPart) o).getFigure().isOpaque());
 	                            ((GraphicalEditPart) o).getFigure().setOpaque(true);
 	                            
