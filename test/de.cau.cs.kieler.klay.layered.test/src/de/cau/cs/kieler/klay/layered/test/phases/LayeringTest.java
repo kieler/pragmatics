@@ -102,7 +102,7 @@ public class LayeringTest extends AbstractLayeredPhaseTest {
             SimplePhaseLayoutConfigurator simple = (SimplePhaseLayoutConfigurator) configurator;
             lgraphs = layered.runLayoutTestUntil(simple.getStrategyImpl());
         } else {
-            throw new IllegalArgumentException("Every cycle breaking configurator should be "
+            throw new IllegalArgumentException("Every layering configurator should be "
                     + "a subclass of SimplePhaseLayoutConfigurator");
         }
     }
