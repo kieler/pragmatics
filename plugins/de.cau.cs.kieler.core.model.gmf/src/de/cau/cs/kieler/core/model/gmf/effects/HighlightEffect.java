@@ -421,9 +421,14 @@ public class HighlightEffect extends AbstractEffect {
                 if ((backgroundColor != null || childrenBackgroundColor != null) && highlightChildren) {
                     for (Object o : targetEditPart.getChildren()) {
                         if (o instanceof LabelEditPart) {
-                        	String text =  ((Label)((LabelEditPart) o).getFigure()).getText();
+                                LabelEditPart labelPart = (LabelEditPart) o;
+                                String text = null;
+                                if (labelPart.getFigure() instanceof Label) {
+                                        text =  ((Label) labelPart.getFigure()).getText();
+                                } else if (labelPart.getFigure() instanceof WrappingLabel) {
+                                        text =  ((WrappingLabel) labelPart.getFigure()).getText();
+                                }
                         	if (text != null && text != "") {
-	                        	Object e =  ((LabelEditPart) o).getModel();
 	                            if (childrenBackgroundColor != null) {
 	                                setColor(((GraphicalEditPart) o).getFigure(),
 	                                        childrenBackgroundColor, false);
