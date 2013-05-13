@@ -59,6 +59,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * some kind of pre or post processing. Implementations of the different main phases specify the
  * intermediate layout processors they require, which are automatically collected and inserted
  * between the main phases. The layout provider itself also specifies some dependencies.
+ * 
  * <pre>
  *           Intermediate Layout Processors
  * ---------------------------------------------------
@@ -72,16 +73,18 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *   Phase 1   Phase 2   Phase 3   Phase 4   Phase 5
  * </pre>
  * 
- * <p>This class provides methods for automatic unit testing, based around the concept of test runs. A
- * test run is executed as follows:</p>
+ * <p>
+ * This class provides methods for automatic unit testing, based around the concept of test runs. A
+ * test run is executed as follows:
+ * </p>
  * <ol>
- *   <li>Call {@link #prepareLayoutTest(LGraph, IKielerProgressMonitor)} to start a new run. The given
- *       graph might be split into its connected components.</li>
- *   <li>Call one of the actual test methods. {@link #runLayoutTestStep(IKielerProgressMonitor)} runs
- *       the next step of the algorithm. {@link #runLayoutTestUntil(IKielerProgressMonitor, Class)} runs
- *       the algorithm until a given layout processor has finished executing. Both methods resume
- *       execution from where the algorithm has stopped previously.</li>
- *   <li>Once the test run has finished, call {@link #finalizeLayoutTest()}.</li>
+ * <li>Call {@link #prepareLayoutTest(LGraph, IKielerProgressMonitor)} to start a new run. The given
+ * graph might be split into its connected components.</li>
+ * <li>Call one of the actual test methods. {@link #runLayoutTestStep(IKielerProgressMonitor)} runs
+ * the next step of the algorithm. {@link #runLayoutTestUntil(IKielerProgressMonitor, Class)} runs
+ * the algorithm until a given layout processor has finished executing. Both methods resume
+ * execution from where the algorithm has stopped previously.</li>
+ * <li>Once the test run has finished, call {@link #finalizeLayoutTest()}.</li>
  * </ol>
  * 
  * @see ILayoutPhase
@@ -111,11 +114,11 @@ public final class KlayLayered {
     /** connected components processor. */
     private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
     /** intermediate layout processor configuration. */
-    private IntermediateProcessingConfiguration intermediateProcessingConfiguration 
-                                         = new IntermediateProcessingConfiguration();
+    private IntermediateProcessingConfiguration intermediateProcessingConfiguration =
+            new IntermediateProcessingConfiguration();
     /** collection of instantiated intermediate modules. */
-    private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache 
-                 = new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
+    private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache =
+            new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
 
     /** list of layout processors that compose the current algorithm. */
     private List<ILayoutProcessor> algorithm = new LinkedList<ILayoutProcessor>();
@@ -124,15 +127,16 @@ public final class KlayLayered {
     /** index of the processor that is to be executed next during a layout test. */
     private int currentLayoutTestStep = 0;
 
-
     // /////////////////////////////////////////////////////////////////////////////
     // Regular Layout
-    
+
     /**
      * Does a layout on the given graph.
      * 
-     * @param lgraph the graph to layout.
-     * @param progressMonitor a progress monitor to show progress information in.
+     * @param lgraph
+     *            the graph to layout.
+     * @param progressMonitor
+     *            a progress monitor to show progress information in.
      * @return layered graph with layout applied.
      */
     public LGraph doLayout(final LGraph lgraph, final IKielerProgressMonitor progressMonitor) {
@@ -152,33 +156,31 @@ public final class KlayLayered {
         LGraph result = componentsProcessor.combine(components);
 
         progressMonitor.done();
-        
+
         return result;
     }
 
-
     // /////////////////////////////////////////////////////////////////////////////
     // Layout Testing
-    
+
     /**
-     * Prepares a test run of the layout algorithm. If a previous test run is still active, an exception
-     * is thrown. After this method has run, call {@link #layoutTestStep()} as often as there are layout
-     * processors. Once the test run is finished, call {@link #finalizeLayoutTest()}.
+     * Prepares a test run of the layout algorithm. If a previous test run is still active, an
+     * exception is thrown. After this method has run, call {@link #layoutTestStep()} as often as
+     * there are layout processors. Once the test run is finished, call
+     * {@link #finalizeLayoutTest()}.
      * 
-     * @param lgraph the input graph to initialize the test run with.
-     * @param progressMonitor a progress monitor to show progress information in.
-     * @throws IllegalStateException if a previous layout test run is still active.
+     * @param lgraph
+     *            the input graph to initialize the test run with.
+     * @throws IllegalStateException
+     *             if a previous layout test run is still active.
      */
-    public void prepareLayoutTest(final LGraph lgraph,
-            final IKielerProgressMonitor progressMonitor) {
-        
+    public void prepareLayoutTest(final LGraph lgraph) {
+
         // check if a previous layout test run is still active
         if (currentLayoutTestGraphs != null || currentLayoutTestStep != 0) {
             throw new IllegalStateException("Previous layout test run not finalized.");
         }
-        
-        progressMonitor.begin("Layered layout test preparations", 1);
-        
+
         // set special properties for the layered graph
         setOptions(lgraph);
 
@@ -188,44 +190,42 @@ public final class KlayLayered {
         // split the input graph into components
         currentLayoutTestGraphs = componentsProcessor.split(lgraph);
         currentLayoutTestStep = 0;
-        
-        progressMonitor.done();
     }
-    
+
     /**
-     * Checks if the current test run still has processors to be executed for the algorithm to finish.
+     * Checks if the current test run still has processors to be executed for the algorithm to
+     * finish.
      * 
-     * @return {@code true} if the current test run has not finished yet. If there is no current test
-     *         run, the result is undefined.
+     * @return {@code true} if the current test run has not finished yet. If there is no current
+     *         test run, the result is undefined.
      */
     public boolean isLayoutTestFinished() {
         return currentLayoutTestGraphs == null || currentLayoutTestStep >= algorithm.size();
     }
-    
+
     /**
-     * Runs the algorithm on the current test graphs up to the point where the given phase or processor
-     * has finished executing. If parts of the algorithm were already executed using this or other layout
-     * test methods, execution is resumed from there. If the given phase or processor is not among those
-     * processors that have not yet executed, an exception is thrown. Also, if there is no current layout
-     * test run, an exception is thrown.
+     * Runs the algorithm on the current test graphs up to the point where the given phase or
+     * processor has finished executing. If parts of the algorithm were already executed using this
+     * or other layout test methods, execution is resumed from there. If the given phase or
+     * processor is not among those processors that have not yet executed, an exception is thrown.
+     * Also, if there is no current layout test run, an exception is thrown.
      * 
-     * @param progressMonitor a progress monitor to show progress information in.
-     * @param phase the phase or processor to stop after.
+     * @param phase
+     *            the phase or processor to stop after.
      * @return list of connected components after the execution of the given phase.
-     * @throws IllegalStateException if no layout test run is currently active.
-     * @throws IllegalArgumentException if the given layout processor is not part of the processors that
-     *                                  are still to be executed.
+     * @throws IllegalStateException
+     *             if no layout test run is currently active.
+     * @throws IllegalArgumentException
+     *             if the given layout processor is not part of the processors that are still to be
+     *             executed.
      */
-    public List<LGraph> runLayoutTestUntil(final IKielerProgressMonitor progressMonitor,
-            final Class<? extends ILayoutProcessor> phase) {
+    public List<LGraph> runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase) {
 
         // check if a layout test run is active
         if (currentLayoutTestGraphs == null) {
             throw new IllegalStateException("No active layout test run.");
         }
-        
-        progressMonitor.begin("Layered layout test", 1);
-        
+
         // check if the given phase exists in our current algorithm configuration
         boolean phaseExists = false;
         int phaseIndex;
@@ -235,105 +235,97 @@ public final class KlayLayered {
                 break;
             }
         }
-        
+
         if (!phaseExists) {
-            throw new IllegalArgumentException("Given processor not part of the remaining algorithm.");
-        }
-        
-        // perform the layout up to and including that phase
-        int phasesToBeExecuted = phaseIndex - currentLayoutTestStep + 1;
-        for (; currentLayoutTestStep <= phaseIndex; currentLayoutTestStep++) {
-            layoutTest(currentLayoutTestGraphs,
-                    progressMonitor.subTask(1.0f / phasesToBeExecuted),
-                    algorithm.get(currentLayoutTestStep));
+            throw new IllegalArgumentException(
+                    "Given processor not part of the remaining algorithm.");
         }
 
-        progressMonitor.done();
-        
+        // perform the layout up to and including that phase
+        for (; currentLayoutTestStep <= phaseIndex; currentLayoutTestStep++) {
+            layoutTest(currentLayoutTestGraphs, algorithm.get(currentLayoutTestStep));
+        }
+
         return currentLayoutTestGraphs;
     }
-    
+
     /**
      * Runs the next step of the current layout test run. Throws exceptions if no layout test run is
      * currently active or if the current run has finished.
      * 
-     * @param progressMonitor a progress monitor to show progress information in.
      * @return list of connected components after the execution of the next step.
-     * @throws IllegalStateException if no layout test run is currently active or if the current run has
-     *                               finished executing.
+     * @throws IllegalStateException
+     *             if no layout test run is currently active or if the current run has finished
+     *             executing.
      */
-    public List<LGraph> runLayoutTestStep(final IKielerProgressMonitor progressMonitor) {
+    public List<LGraph> runLayoutTestStep() {
         // check if a layout test run is active
         if (currentLayoutTestGraphs == null) {
             throw new IllegalStateException("No active layout test run.");
         }
-        
+
         if (isLayoutTestFinished()) {
             throw new IllegalStateException("Current layout test run has finished.");
         }
-        
-        progressMonitor.begin("Layered layout test", 1);
-        
+
         // perform the next layout step
-        layoutTest(currentLayoutTestGraphs,
-                progressMonitor.subTask(1),
-                algorithm.get(currentLayoutTestStep));
+        layoutTest(currentLayoutTestGraphs, algorithm.get(currentLayoutTestStep));
         currentLayoutTestStep++;
 
-        progressMonitor.done();
-        
         return currentLayoutTestGraphs;
     }
-    
+
     /**
-     * Finalizes the current layout test run. After this method has been called, the next test run can
-     * be started by calling {@link #prepareLayoutTest(LGraph, IKielerProgressMonitor)}.
+     * Finalizes the current layout test run. After this method has been called, the next test run
+     * can be started by calling {@link #prepareLayoutTest(LGraph, IKielerProgressMonitor)}.
      * 
-     * @throws IllegalStateException if no layout test run is currently active.
+     * @throws IllegalStateException
+     *             if no layout test run is currently active.
      */
     public void finalizeLayoutTest() {
         // check if a layout test run is active
         if (currentLayoutTestGraphs == null) {
             throw new IllegalStateException("No active layout test run.");
         }
-        
+
         currentLayoutTestGraphs = null;
         currentLayoutTestStep = 0;
     }
-    
+
     /**
-     * Returns the current list of layout processors that make up the algorithm. This list is only valid
-     * and meaningful while a layout test is being run.
+     * Returns the current list of layout processors that make up the algorithm. This list is only
+     * valid and meaningful while a layout test is being run.
      * 
      * @return the algorithm's current configuration.
-     * @throws IllegalStateException if no layout test run is currently active.
+     * @throws IllegalStateException
+     *             if no layout test run is currently active.
      */
     public List<ILayoutProcessor> getLayoutTestConfiguration() {
         // check if a layout test run is active
         if (currentLayoutTestGraphs == null) {
             throw new IllegalStateException("No active layout test run.");
         }
-        
+
         return algorithm;
     }
-    
+
     /**
      * Returns the list of test graphs associated with the current layout test run. If connected
      * components processing is active, the list will contain one {@link LGraph} instance for each
      * connected component. Otherwise, the list will contain just one {@link LGraph}.
      * 
      * @return layout test graphs.
-     * @throws IllegalStateException if no layout test run is currently active.
+     * @throws IllegalStateException
+     *             if no layout test run is currently active.
      */
     public List<LGraph> getLayoutTestGraphs() {
         // check if a layout test run is active
         if (currentLayoutTestGraphs == null) {
             throw new IllegalStateException("No active layout test run.");
         }
-        
+
         return currentLayoutTestGraphs;
     }
-    
 
     // /////////////////////////////////////////////////////////////////////////////
     // Options and Modules Management
@@ -379,7 +371,7 @@ public final class KlayLayered {
                 cycleBreaker = new GreedyCycleBreaker();
             }
         }
-        
+
         // check which layering strategy to use
         LayeringStrategy layering = graph.getProperty(Properties.NODE_LAYERING);
         switch (layering) {
@@ -398,7 +390,7 @@ public final class KlayLayered {
                 layerer = new NetworkSimplexLayerer();
             }
         }
-        
+
         // check which crossing minimization strategy to use
         CrossingMinimizationStrategy crossminStrategy = graph.getProperty(Properties.CROSS_MIN);
         switch (crossminStrategy) {
@@ -412,7 +404,7 @@ public final class KlayLayered {
                 crossingMinimizer = new LayerSweepCrossingMinimizer();
             }
         }
-        
+
         // check which node placement strategy to use
         NodePlacementStrategy nodePlaceStrategy = graph.getProperty(Properties.NODE_PLACER);
         switch (nodePlaceStrategy) {
@@ -463,23 +455,23 @@ public final class KlayLayered {
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
-        algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
         algorithm.add(cycleBreaker);
-        algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
         algorithm.add(layerer);
-        algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
         algorithm.add(crossingMinimizer);
-        algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
         algorithm.add(nodePlacer);
-        algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_5));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_5));
         algorithm.add(edgeRouter);
-        algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingConfiguration.AFTER_PHASE_5));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.AFTER_PHASE_5));
     }
 
     /**
@@ -493,8 +485,8 @@ public final class KlayLayered {
      */
     private List<ILayoutProcessor> getIntermediateProcessorList(final int slotIndex) {
         // fetch the set of layout processors configured for the given slot
-        EnumSet<LayoutProcessorStrategy> processors = intermediateProcessingConfiguration
-                .getProcessors(slotIndex);
+        EnumSet<LayoutProcessorStrategy> processors =
+                intermediateProcessingConfiguration.getProcessors(slotIndex);
         List<ILayoutProcessor> result = new ArrayList<ILayoutProcessor>(processors.size());
 
         // iterate through the layout processors and add them to the result list; the EnumSet
@@ -528,13 +520,13 @@ public final class KlayLayered {
      */
     private IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
-        
+
         Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
 
         // Basic configuration
-        IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration(
-                BASELINE_PROCESSING_CONFIGURATION);
-        
+        IntermediateProcessingConfiguration configuration =
+                new IntermediateProcessingConfiguration(BASELINE_PROCESSING_CONFIGURATION);
+
         // port side processor, put to first slot only if requested and routing is orthogonal
         if (graph.getProperty(Properties.FEEDBACK_EDGES)
                 && graph.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
@@ -544,7 +536,7 @@ public final class KlayLayered {
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_3,
                     LayoutProcessorStrategy.PORT_SIDE_PROCESSOR);
         }
-        
+
         // graph transformations for unusual layout directions
         switch (graph.getProperty(LayoutOptions.DIRECTION)) {
         case LEFT:
@@ -566,7 +558,8 @@ public final class KlayLayered {
                     LayoutProcessorStrategy.UP_DIR_POSTPROCESSOR);
             break;
         default:
-            // This is either RIGHT or UNDEFINED, which is just mapped to RIGHT. Either way, we don't
+            // This is either RIGHT or UNDEFINED, which is just mapped to RIGHT. Either way, we
+            // don't
             // need any processors here
             break;
         }
@@ -584,7 +577,6 @@ public final class KlayLayered {
 
         return configuration;
     }
-    
 
     // /////////////////////////////////////////////////////////////////////////////
     // Layout
@@ -653,27 +645,20 @@ public final class KlayLayered {
     /**
      * Executes the given layout processor on the given list of graphs.
      * 
-     * @param graphs the list of graphs to be laid out.
-     * @param monitor a progress monitor.
-     * @param processor processor to execute.
+     * @param graphs
+     *            the list of graphs to be laid out.
+     * @param monitor
+     *            a progress monitor.
+     * @param processor
+     *            processor to execute.
      */
-    private void layoutTest(final List<LGraph> graphs, final IKielerProgressMonitor monitor,
-            final ILayoutProcessor processor) {
-        
-        monitor.begin("Component Layout", graphs.size());
-        
+    private void layoutTest(final List<LGraph> graphs, final ILayoutProcessor processor) {
+
         // invoke the layout processor on each of the given graphs
         for (LGraph graph : graphs) {
-            if (monitor.isCanceled()) {
-                return;
-            }
-            
-            processor.process(graph, monitor.subTask(1));
+            processor.process(graph, new BasicProgressMonitor());
         }
-
-        monitor.done();
     }
-    
 
     // /////////////////////////////////////////////////////////////////////////////
     // Debug
@@ -694,48 +679,48 @@ public final class KlayLayered {
         String path = Util.getDebugOutputPath();
         new File(path).mkdirs();
 
-        String debugFileName = Util.getDebugOutputFileBaseName(graph) + "fulldebug-slot"
-                + String.format("%1$02d", slotIndex);
+        String debugFileName =
+                Util.getDebugOutputFileBaseName(graph) + "fulldebug-slot"
+                        + String.format("%1$02d", slotIndex);
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
-    
-    
+
     // /////////////////////////////////////////////////////////////////////////////
     // Processing Configuration Constants
 
     /** intermediate processing configuration for basic graphs. */
-    private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION 
-            = new IntermediateProcessingConfiguration(null, null, null,
-            
+    private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
+            new IntermediateProcessingConfiguration(null, null, null,
+
             // Before Phase 4
-            EnumSet.of(LayoutProcessorStrategy.NODE_MARGIN_CALCULATOR,
-                    LayoutProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR),
-            
-            // Before Phase 5
-            EnumSet.of(LayoutProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR),
-            
-            null);
+                    EnumSet.of(LayoutProcessorStrategy.NODE_MARGIN_CALCULATOR,
+                            LayoutProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR),
+
+                    // Before Phase 5
+                    EnumSet.of(LayoutProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR),
+
+                    null);
 
     /** additional processor dependencies for flattened hierarchical graphs. */
-    private static final IntermediateProcessingConfiguration FLATTENED_HIERARCHY_PROCESSING_ADDITIONS 
-            = new IntermediateProcessingConfiguration(
-            
+    private static final IntermediateProcessingConfiguration FLATTENED_HIERARCHY_PROCESSING_ADDITIONS =
+            new IntermediateProcessingConfiguration(
+
             // Before Phase 1
-            EnumSet.of(LayoutProcessorStrategy.COMPOUND_CYCLE_PROCESSOR),
-            
-            // Before Phase 2
-            null, 
-            
-            // Before Phase 3
-            EnumSet.of(LayoutProcessorStrategy.COMPOUND_DUMMY_EDGE_REMOVER),
-            
-            // Before Phase 4
-            EnumSet.of(LayoutProcessorStrategy.SUBGRAPH_ORDERING_PROCESSOR, 
-                    LayoutProcessorStrategy.COMPOUND_SIDE_PROCESSOR),
-            
-            null,
-            
-            // After Phase 5
-            EnumSet.of(LayoutProcessorStrategy.COMPOUND_GRAPH_RESTORER));
+                    EnumSet.of(LayoutProcessorStrategy.COMPOUND_CYCLE_PROCESSOR),
+
+                    // Before Phase 2
+                    null,
+
+                    // Before Phase 3
+                    EnumSet.of(LayoutProcessorStrategy.COMPOUND_DUMMY_EDGE_REMOVER),
+
+                    // Before Phase 4
+                    EnumSet.of(LayoutProcessorStrategy.SUBGRAPH_ORDERING_PROCESSOR,
+                            LayoutProcessorStrategy.COMPOUND_SIDE_PROCESSOR),
+
+                    null,
+
+                    // After Phase 5
+                    EnumSet.of(LayoutProcessorStrategy.COMPOUND_GRAPH_RESTORER));
 
 }
