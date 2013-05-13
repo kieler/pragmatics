@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered.test;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Random;
 
 import org.junit.Test;
 
@@ -23,6 +24,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
@@ -51,6 +53,11 @@ public class CycleBreakerTest extends KlayAutomatedJUnitTest {
 
     private LayeredLayoutProvider layered = new LayeredLayoutProvider();
 
+    // Configuring the interactive cycle breaker
+    private static final int INTERACTIVE_MAX_POS = 100;
+    private static final int SEED = 1337;
+    private Random random = new Random(SEED);
+
     /**
      * Instantiates a new KlayTestExample test and set the graphObject to the current graph to test.
      * 
@@ -70,10 +77,23 @@ public class CycleBreakerTest extends KlayAutomatedJUnitTest {
     }
 
     /**
-     * Tests whether the current graph is acyclic with the interactive strategy.
+     * Tests whether the current graph is acyclic with the interactive strategy. For the interactive
+     * strategy it is important that every node has an assigned position.
      */
     @Test
     public void testAcyclicInteractive() {
+
+        // assign random coordinates to the nodes
+        for (KNode n : graphObject.getKnode().getChildren()) {
+            KShapeLayout shape = n.getData(KShapeLayout.class);
+            if (shape.getXpos() == 0) {
+                shape.setXpos(random.nextInt(INTERACTIVE_MAX_POS));
+            }
+            if (shape.getYpos() == 0) {
+                shape.setYpos(random.nextInt(INTERACTIVE_MAX_POS));
+            }
+        }
+
         testWithStrategy(CycleBreakingStrategy.INTERACTIVE, InteractiveCycleBreaker.class);
     }
 
