@@ -22,11 +22,14 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 /**
- * Calculates the size of each layer.
+ * Calculates the size of each layer, the height of the graph, and the graph's vertical offset. The
+ * graph's width cannot be set at this point since that would require the edge routing phase to have
+ * already finished.
  * 
  * <dl>
  *   <dt>Precondition:</dt>
  *     <dd>A layered graph with finished node placement.</dd>
+ *     <dd>Node margins are calculated.</dd>
  *   <dt>Postcondition:</dt>
  *     <dd>Layer sizes are set</dd>
  *     <dd>Graph's height is set</dd>
