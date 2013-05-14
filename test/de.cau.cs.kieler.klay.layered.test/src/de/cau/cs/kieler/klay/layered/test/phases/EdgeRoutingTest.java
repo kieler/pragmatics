@@ -78,7 +78,7 @@ public class EdgeRoutingTest extends AbstractLayeredPhaseTest {
     }
 
     /**
-     * Run the layout algorithm until the specified node placement strategy finished.
+     * Run the layout algorithm until the specified edge routing strategy finished.
      */
     @Before
     public void runUntil() {

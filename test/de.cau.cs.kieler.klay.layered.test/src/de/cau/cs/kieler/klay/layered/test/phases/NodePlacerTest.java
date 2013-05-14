@@ -92,7 +92,6 @@ public class NodePlacerTest extends AbstractLayeredPhaseTest {
             for (Layer layer : g.getLayers()) {
                 Double lastY = null;
                 for (LNode n : layer.getNodes()) {
-                    System.out.println(lastY + " " + n.getPosition().y);
                     if (lastY != null) {
                         assertTrue(lastY < n.getPosition().y);
                     }
@@ -130,8 +129,9 @@ public class NodePlacerTest extends AbstractLayeredPhaseTest {
 
         // consider margin as well
         double fstLowerLeft = fst.getPosition().y + fst.getSize().y + fst.getMargin().bottom;
+        double sndUpperLeft = snd.getPosition().y - snd.getMargin().top;
 
-        assertTrue(snd.getPosition().y > fstLowerLeft);
+        assertTrue(sndUpperLeft > fstLowerLeft);
     }
 
 }
