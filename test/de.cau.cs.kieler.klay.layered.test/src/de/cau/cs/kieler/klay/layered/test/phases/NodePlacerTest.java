@@ -23,7 +23,6 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
@@ -110,13 +109,29 @@ public class NodePlacerTest extends AbstractLayeredPhaseTest {
     public void testNonOverlapping() {
         for (LGraph g : lgraphs) {
             for (Layer layer : g.getLayers()) {
+                LNode last = null;
                 for (LNode n : layer.getNodes()) {
-
-                // check
-                
+                    // check
+                    if (last != null) {
+                        checkOverlapInHeight(last, n);
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * @param fst
+     *            the upper node
+     * @param the
+     *            lower node
+     */
+    private void checkOverlapInHeight(final LNode fst, final LNode snd) {
+
+        // consider margin as well
+        double fstLowerLeft = fst.getPosition().y + fst.getSize().y + fst.getMargin().bottom;
+
+        assertTrue(snd.getPosition().y > fstLowerLeft);
     }
 
 }
