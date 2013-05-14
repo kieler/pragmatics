@@ -36,6 +36,12 @@ public class TEdge extends MapPropertyHolder {
     private TNode source;
     /** the target node of the edge. */
     private TNode target;
+    
+    public TEdge(TNode source, TNode target) {
+        this.source = source;
+        this.target = target;
+    }
+    
 
     /**
      * {@inheritDoc}
@@ -95,5 +101,7 @@ public class TEdge extends MapPropertyHolder {
     public final void setTarget(final TNode theTarget) {
         target = theTarget;
     }
+    
+    
 
 }

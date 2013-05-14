@@ -16,6 +16,9 @@ package de.cau.cs.kieler.klay.tree;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
+import de.cau.cs.kieler.klay.tree.graph.TGraph;
+import de.cau.cs.kieler.klay.tree.graph.TGraphBuilder;
+import de.cau.cs.kieler.klay.tree.graph.TNode;
 
 /**
  * TODO: Document this class.
@@ -30,6 +33,9 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void doLayout(KNode parentNode, IKielerProgressMonitor progressMonitor) {
         // TODO Auto-generated method stub
+        TGraph graph = TGraphBuilder.createTGraphFromKGraph(parentNode);
+        
+        
     }
     
 }

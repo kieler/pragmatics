@@ -36,6 +36,12 @@ public class TGraph extends MapPropertyHolder {
     private LinkedList<TEdge> edges = new LinkedList<TEdge>();
     /** All labels of this graph. */
     private LinkedList<TLabel> labels = new LinkedList<TLabel>();
+        
+    TGraph() {
+        this.nodes = new LinkedList<TNode>();
+        this.edges = new LinkedList<TEdge>();
+        this.labels = new LinkedList<TLabel>();
+    }
 
     /**
      * {@inheritDoc}
@@ -78,5 +84,17 @@ public class TGraph extends MapPropertyHolder {
     public List<TLabel> getLabels() {
         return labels;
     }
-
+    
+    // TODO: adding label to node
+    public TNode addNode(TNode tnode) {
+        tnode = new TNode();
+        nodes.add(tnode);
+        return tnode;
+    }
+    
+    public TEdge addEdge(TNode source, TNode target) {
+        TEdge tedge = new TEdge(source, target);
+        edges.add(tedge);
+        return tedge;
+    }
 }

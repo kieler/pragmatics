@@ -13,8 +13,11 @@
  */
 package de.cau.cs.kieler.klay.tree.graph;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
  * A node in the T graph.
@@ -22,7 +25,7 @@ import java.util.List;
  * @author sor
  * @author sgu
  */
-public class TNode {
+public class TNode extends MapPropertyHolder {
 
     /** the serial version UID. */
     @SuppressWarnings("unused")
@@ -38,12 +41,19 @@ public class TNode {
     /** The parent node. */
     private TNode parent;
     /** List of child nodes. */
-    private List<TNode> children;
+    private LinkedList<TNode> children;
     
     /**
      * Create a new node.
      */
+    public TNode(final TNode parent) {
+        this.parent = parent;
+        this.children = new LinkedList<TNode>();
+    }
+    
     public TNode() {
+        this.parent = null;
+        this.children = new LinkedList<TNode>();
     }
     
     /**
@@ -130,6 +140,5 @@ public class TNode {
             depth++;
         }
         return depth;
-    }
-    
+    }    
 }
