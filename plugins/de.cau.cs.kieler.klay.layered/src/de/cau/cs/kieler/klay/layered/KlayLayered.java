@@ -212,6 +212,8 @@ public final class KlayLayered {
      * 
      * @param phase
      *            the phase or processor to stop after.
+     * @param inclusive
+     *            {@code true} if the specified phase should be executed as well
      * @return list of connected components after the execution of the given phase.
      * @throws IllegalStateException
      *             if no layout test run is currently active.
@@ -219,7 +221,8 @@ public final class KlayLayered {
      *             if the given layout processor is not part of the processors that are still to be
      *             executed.
      */
-    public List<LGraph> runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase) {
+    public List<LGraph> runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase,
+            final boolean inclusive) {
 
         // check if a layout test run is active
         if (currentLayoutTestGraphs == null) {
@@ -232,6 +235,9 @@ public final class KlayLayered {
         for (phaseIndex = currentLayoutTestStep; phaseIndex < algorithm.size(); phaseIndex++) {
             if (algorithm.get(phaseIndex).getClass().equals(phase)) {
                 phaseExists = true;
+                if (inclusive) {
+                    phaseIndex++;
+                }
                 break;
             }
         }
@@ -242,11 +248,26 @@ public final class KlayLayered {
         }
 
         // perform the layout up to and including that phase
-        for (; currentLayoutTestStep <= phaseIndex; currentLayoutTestStep++) {
+        for (; currentLayoutTestStep < phaseIndex; currentLayoutTestStep++) {
             layoutTest(currentLayoutTestGraphs, algorithm.get(currentLayoutTestStep));
         }
 
         return currentLayoutTestGraphs;
+    }
+
+    /**
+     * Performs the {@link #runLayoutTestUntil(Class, boolean)} methods with {@code inclusive} set
+     * to {@code true}.
+     * 
+     * @param phase
+     *            the phase or processor to stop after.
+     * 
+     * @return list of connected components after the execution of the given phase.
+     * 
+     * @see KlayLayered#runLayoutTestUntil(Class, boolean)
+     */
+    public List<LGraph> runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase) {
+        return runLayoutTestUntil(phase, true);
     }
 
     /**
