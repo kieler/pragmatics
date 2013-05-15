@@ -86,8 +86,9 @@ public class TGraph extends MapPropertyHolder {
     }
     
     // TODO: adding label to node
+	// TODO adding id to node
     public TNode addNode(TNode tnode) {
-        tnode = new TNode();
+        tnode = new TNode(0, this);
         nodes.add(tnode);
         return tnode;
     }
