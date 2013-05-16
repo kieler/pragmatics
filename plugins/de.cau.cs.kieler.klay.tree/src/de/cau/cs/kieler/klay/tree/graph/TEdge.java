@@ -37,6 +37,13 @@ public class TEdge extends MapPropertyHolder {
     /** the target node of the edge. */
     private TNode target;
     
+    /**
+     * Constructor for setting up a TEdge object
+     * @param source
+     *          the source node of the edge
+     * @param target
+     *          the target node of the edge
+     */
     public TEdge(TNode source, TNode target) {
         this.source = source;
         this.target = target;
