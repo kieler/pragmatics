@@ -42,7 +42,7 @@ public final class Properties {
     public static final IProperty<Integer> DEPTH = new Property<Integer>("DEPTH", 0);
     
     /**
-     * The fan out of a node in the nesting tree of a compound graph.
+     * The maximal fan out of a node in the nesting tree of a compound graph.
      */
     public static final IProperty<Integer> FAN = new Property<Integer>("FAN", 0);
     

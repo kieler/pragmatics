@@ -21,12 +21,14 @@ import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TGraphBuilder;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
+import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
  * TODO: Document this class.
@@ -44,7 +46,7 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void doLayout(KNode parentNode, IKielerProgressMonitor progressMonitor) {
-        // TODO Auto-generated method stub
+        //TODO move this algorithm into a phase and set all of KlayTree dolayout
         TGraph graph = TGraphBuilder.createTGraphFromKGraph(parentNode);
         progressMonitor.begin("Mr.T", 1);
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
@@ -82,7 +84,12 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
         	tempRoot = root.isEmpty() ? null : root.get(0); // SEND ERROR
         }
         
+        int depth = tempRoot.getProperty(Properties.DEPTH);
+        int fan = tempRoot.getProperty(Properties.FAN);
         
+        tempRoot.setPosition(new KVector(fan/2,0.0));
+       
+        //TODO complete algorithm
         for (TNode tNode : tempRoot.getChildren()) {
 			
 		}
