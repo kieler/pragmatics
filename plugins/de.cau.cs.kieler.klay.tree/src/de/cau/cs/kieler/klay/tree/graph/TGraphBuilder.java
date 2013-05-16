@@ -27,10 +27,21 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  */
 public class TGraphBuilder {
     
+    /**
+     * Create graph instance that is empty
+     * @return empty TGraph
+     */
     public static TGraph createEmptyGraph() {
         return new TGraph();
     }
     
+    /**
+     * Create a graph from a {@code KGraph} instance.
+     * 
+     * @param kgraph
+     *            a {@code KNode} to base the graph upon
+     * @return a graph corresponding to {@code kgraph}
+     */
     public static TGraph createTGraphFromKGraph(final KNode kgraph) {
         TGraph tgraph = new TGraph();
         HashMap<KNode, TNode> map = new HashMap<KNode, TNode>(kgraph.getChildren().size() * 2);
@@ -47,7 +58,9 @@ public class TGraphBuilder {
             for (KEdge edge : knode.getOutgoingEdges()) {
                 TNode source = map.get(edge.getSource());
                 TNode target = map.get(edge.getTarget());
-                TEdge tedge = new TEdge(source, target);
+                TEdge tedge = null;
+                tedge = tgraph.addEdge(source, target);
+                // TEdge tedge = new TEdge(source, target);
                 tedge.setProperty(Properties.ORIGIN, kgraph);
             }
         }
