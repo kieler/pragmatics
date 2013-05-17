@@ -36,7 +36,12 @@ public class TGraph extends MapPropertyHolder {
     private LinkedList<TEdge> edges = new LinkedList<TEdge>();
     /** All labels of this graph. */
     private LinkedList<TLabel> labels = new LinkedList<TLabel>();
-        
+    
+    
+    /**
+     * Default constructor that creates an empty graph.
+     * 
+     */
     TGraph() {
         this.nodes = new LinkedList<TNode>();
         this.edges = new LinkedList<TEdge>();
@@ -85,14 +90,32 @@ public class TGraph extends MapPropertyHolder {
         return labels;
     }
     
-    // TODO: adding label to node
-	// TODO adding id to node
-    public TNode addNode(TNode tnode) {
-        tnode = new TNode(0, this);
+    /**
+     * Add a new node to the graph.
+     * 
+     * @param tnode
+     *          the node to be added
+     * @param label
+     *          the label of the new node
+     * @param id
+     *          the id of the new node
+     * @return the new node in the graph
+     */
+    public TNode addNode(TNode tnode, String label, int id) {
+        tnode = new TNode(id, this, label);
         nodes.add(tnode);
         return tnode;
     }
     
+    /**
+     * Add a new edge to the graph.
+     * 
+     * @param source
+     *          the new edges source
+     * @param target
+     *          the new edges target
+     * @return the newly added edge
+     */
     public TEdge addEdge(TNode source, TNode target) {
         TEdge tedge = new TEdge(source, target);
         edges.add(tedge);

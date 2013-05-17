@@ -14,8 +14,11 @@
 package de.cau.cs.kieler.klay.tree.graph;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
+ * Abstract superclass for {@link TGraphElement}s that can have a position and a size.
+ * 
  * @author sor
  * @author sgu
  * 
@@ -38,9 +41,17 @@ public abstract class TShape extends TGraphElement {
 	 */
 	public TShape(final int id, final TGraph p) {
 		super(id, p);
-	}
-
+	} 
+	
 	/**
+	 * Implicit super constructor
+	 */
+	public TShape() {
+	    
+	}
+	
+
+    /**
 	 * Returns the element's current position. This is the coordinate of the
 	 * element's upper left corner.
 	 * 
