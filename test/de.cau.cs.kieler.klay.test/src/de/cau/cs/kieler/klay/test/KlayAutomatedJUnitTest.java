@@ -23,6 +23,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.klay.test.config.DummyLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.runner.KlayTestRunner;
@@ -56,6 +57,9 @@ public abstract class KlayAutomatedJUnitTest {
      * FIXME A static field is set in a method that is bound to a dummy instance. This is very bad.
      */
     public void graphAutomatedTestInitialization() {
+        // make sure the ui plugin is loaded, as it holds required options.
+        KimlUiPlugin.getDefault();
+        
         graphsList = GraphTestUtil.loadGraphs(getBundleTestPath());
         configurators = getConfigurators();
 
