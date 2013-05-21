@@ -23,8 +23,6 @@ import org.junit.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -73,10 +71,11 @@ public class PortListSorterTest extends AbstractLayeredProcessorTest {
 
         // guarantee that all node's port constraints are at least FIXED_ORDER
         // this way it can be guaranteed that the tests are applied at all
-        for (KNode n : graphObject.getKnode().getChildren()) {
-            KShapeLayout shape = n.getData(KShapeLayout.class);
-            if (invalidConstraints.contains(shape.getProperty(LayoutOptions.PORT_CONSTRAINTS))) {
-                shape.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+        for (LGraph g : layered.getLayoutTestGraphs()) {
+            for (LNode node : g.getLayerlessNodes()) {
+                if (invalidConstraints.contains(node.getProperty(LayoutOptions.PORT_CONSTRAINTS))) {
+                    node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+                }
             }
         }
 
