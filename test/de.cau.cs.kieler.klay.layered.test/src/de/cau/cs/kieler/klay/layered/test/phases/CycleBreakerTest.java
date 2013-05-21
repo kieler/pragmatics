@@ -32,8 +32,8 @@ import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
-import de.cau.cs.kieler.klay.test.config.SimplePhaseLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 
 /**
@@ -41,7 +41,7 @@ import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
  * 
  * @author uru
  */
-public class CycleBreakerTest extends AbstractLayeredPhaseTest {
+public class CycleBreakerTest extends AbstractLayeredProcessorTest {
 
     // Configuring the interactive cycle breaker
     private static final int INTERACTIVE_MAX_POS = 100;
@@ -105,13 +105,7 @@ public class CycleBreakerTest extends AbstractLayeredPhaseTest {
      */
     @Before
     public void runUntil() {
-        if (configurator instanceof SimplePhaseLayoutConfigurator) {
-            SimplePhaseLayoutConfigurator simple = (SimplePhaseLayoutConfigurator) configurator;
-            lgraphs = layered.runLayoutTestUntil(simple.getStrategyImpl());
-        } else {
-            throw new IllegalArgumentException("Every cycle breaking configurator should be "
-                    + "a subclass of SimplePhaseLayoutConfigurator");
-        }
+        lgraphs = layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl());
     }
 
     /**

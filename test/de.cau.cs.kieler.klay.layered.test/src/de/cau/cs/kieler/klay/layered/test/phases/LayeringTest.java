@@ -36,8 +36,8 @@ import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
-import de.cau.cs.kieler.klay.test.config.SimplePhaseLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 
 /**
@@ -45,7 +45,7 @@ import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
  * 
  * @author uru
  */
-public class LayeringTest extends AbstractLayeredPhaseTest {
+public class LayeringTest extends AbstractLayeredProcessorTest {
 
     // used for tests
     private String randomPrefix = String.valueOf(random.nextDouble());
@@ -98,13 +98,7 @@ public class LayeringTest extends AbstractLayeredPhaseTest {
             randomLabel.setText(randomString);
         }
 
-        if (configurator instanceof SimplePhaseLayoutConfigurator) {
-            SimplePhaseLayoutConfigurator simple = (SimplePhaseLayoutConfigurator) configurator;
-            lgraphs = layered.runLayoutTestUntil(simple.getStrategyImpl());
-        } else {
-            throw new IllegalArgumentException("Every layering configurator should be "
-                    + "a subclass of SimplePhaseLayoutConfigurator");
-        }
+        lgraphs = layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl());
     }
 
     /**

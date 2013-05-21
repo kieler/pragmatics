@@ -11,12 +11,13 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.test.config;
+package de.cau.cs.kieler.klay.layered.test.phases;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 
 /**
  * Configures a certain phase of the layered layout algorithm with a specific implementation.
@@ -27,7 +28,7 @@ public class SimplePhaseLayoutConfigurator implements ILayoutConfigurator {
 
     private IProperty<?> phase;
     private Object strategy;
-    private Class<? extends ILayoutPhase> strategyImpl;
+    private Class<? extends ILayoutProcessor> strategyImpl;
 
     /**
      * Exemplarily creation.
@@ -45,7 +46,7 @@ public class SimplePhaseLayoutConfigurator implements ILayoutConfigurator {
      *            the implementing {@link Class} of the phase.
      */
     public SimplePhaseLayoutConfigurator(final IProperty<?> phase, final Object strategy,
-            final Class<? extends ILayoutPhase> strategyImpl) {
+            final Class<? extends ILayoutProcessor> strategyImpl) {
         super();
         this.phase = phase;
         this.strategy = strategy;
@@ -69,7 +70,7 @@ public class SimplePhaseLayoutConfigurator implements ILayoutConfigurator {
     /**
      * @return the strategy
      */
-    public Class<? extends ILayoutPhase> getStrategyImpl() {
+    public Class<? extends ILayoutProcessor> getStrategyImpl() {
         return strategyImpl;
     }
 

@@ -32,8 +32,8 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.SplineEdgeRouter;
+import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
-import de.cau.cs.kieler.klay.test.config.SimplePhaseLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 
 /**
@@ -42,7 +42,7 @@ import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
  * @author uru
  * 
  */
-public class EdgeRoutingTest extends AbstractLayeredPhaseTest {
+public class EdgeRoutingTest extends AbstractLayeredProcessorTest {
 
     /** Epsilon value for double comparisons (equal). */
     private static final double COMPARE_EPSILON = 0.0001d;
@@ -82,13 +82,7 @@ public class EdgeRoutingTest extends AbstractLayeredPhaseTest {
      */
     @Before
     public void runUntil() {
-        if (configurator instanceof SimplePhaseLayoutConfigurator) {
-            SimplePhaseLayoutConfigurator simple = (SimplePhaseLayoutConfigurator) configurator;
-            lgraphs = layered.runLayoutTestUntil(simple.getStrategyImpl());
-        } else {
-            throw new IllegalArgumentException("Every edge routing configurator should be "
-                    + "a subclass of SimplePhaseLayoutConfigurator");
-        }
+        lgraphs = layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl());
     }
 
     /**

@@ -30,8 +30,8 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
-import de.cau.cs.kieler.klay.test.config.SimplePhaseLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 
 /**
@@ -40,7 +40,7 @@ import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
  * @author uru
  * 
  */
-public class CrossingMinimizationTest extends AbstractLayeredPhaseTest {
+public class CrossingMinimizationTest extends AbstractLayeredProcessorTest {
 
     private Multimap<Layer, LNode> layerNodesMap = HashMultimap.create();
 
@@ -77,25 +77,17 @@ public class CrossingMinimizationTest extends AbstractLayeredPhaseTest {
     @Before
     public void runUntil() {
 
-        if (configurator instanceof SimplePhaseLayoutConfigurator) {
-            SimplePhaseLayoutConfigurator simple = (SimplePhaseLayoutConfigurator) configurator;
-
-            // first run until layerer finished, remember a layer's nodes
-            lgraphs = layered.runLayoutTestUntil(simple.getStrategyImpl(), false);
-            for (LGraph g : lgraphs) {
-                for (Layer layer : g.getLayers()) {
-                    for (LNode node : layer.getNodes()) {
-                        layerNodesMap.put(layer, node);
-                    }
+        // first run until layerer finished, remember a layer's nodes
+        lgraphs = layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl(), false);
+        for (LGraph g : lgraphs) {
+            for (Layer layer : g.getLayers()) {
+                for (LNode node : layer.getNodes()) {
+                    layerNodesMap.put(layer, node);
                 }
             }
-
-            lgraphs = layered.runLayoutTestUntil(simple.getStrategyImpl(), true);
-        } else {
-            throw new IllegalArgumentException(
-                    "Every crossing minimization configurator should be "
-                            + "a subclass of SimplePhaseLayoutConfigurator");
         }
+
+        lgraphs = layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl(), true);
     }
 
     /**

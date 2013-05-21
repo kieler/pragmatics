@@ -29,8 +29,8 @@ import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
-import de.cau.cs.kieler.klay.test.config.SimplePhaseLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 
 /**
@@ -39,7 +39,7 @@ import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
  * @author uru
  * 
  */
-public class NodePlacerTest extends AbstractLayeredPhaseTest {
+public class NodePlacerTest extends AbstractLayeredProcessorTest {
 
     /**
      * Instantiates a new layer assignment test and set the graphObject to the current graph to
@@ -74,13 +74,7 @@ public class NodePlacerTest extends AbstractLayeredPhaseTest {
      */
     @Before
     public void runUntil() {
-        if (configurator instanceof SimplePhaseLayoutConfigurator) {
-            SimplePhaseLayoutConfigurator simple = (SimplePhaseLayoutConfigurator) configurator;
-            lgraphs = layered.runLayoutTestUntil(simple.getStrategyImpl());
-        } else {
-            throw new IllegalArgumentException("Every node placement configurator should be "
-                    + "a subclass of SimplePhaseLayoutConfigurator");
-        }
+        lgraphs = layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl());
     }
 
     /**

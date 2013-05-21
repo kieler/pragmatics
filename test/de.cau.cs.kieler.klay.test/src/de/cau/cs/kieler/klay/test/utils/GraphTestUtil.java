@@ -53,7 +53,7 @@ public final class GraphTestUtil {
      * is the test plugin's root. The path below leads to the repository root and then into
      * the {@code models} subfolder, which contains all test graphs.
      */
-    private static final String SOURCE_GRAPHS_DIRECTORY = "../../../models/keg/klay_tests/";
+    private static final String SOURCE_GRAPHS_DIRECTORY = "../../../models/graphs/klay_layered_tests/";
     
     /** the GMF file formats to load. */
     private static final ArrayList<String> GMF_GRAPHS_FORMATS = Lists.newArrayList(

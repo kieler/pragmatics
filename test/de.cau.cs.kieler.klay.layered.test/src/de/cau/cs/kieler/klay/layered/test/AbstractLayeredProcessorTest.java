@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.test.phases;
+package de.cau.cs.kieler.klay.layered.test;
 
 import java.util.List;
 import java.util.Random;
@@ -21,17 +21,18 @@ import org.junit.Before;
 import de.cau.cs.kieler.klay.layered.KlayLayered;
 import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.test.phases.SimplePhaseLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.KlayAutomatedJUnitTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 import de.cau.cs.kieler.klay.test.utils.TestPath;
 
 /**
- * Common setup for tests run for the layered layout algorithm.
+ * Common setup for processor tests of the layered layout algorithm.
  * 
  * @author uru
  */
-public abstract class AbstractLayeredPhaseTest extends KlayAutomatedJUnitTest {
+public abstract class AbstractLayeredProcessorTest extends KlayAutomatedJUnitTest {
 
     // CHECKSTYLEOFF Modifier - Members used in subclasses.
 
@@ -49,7 +50,7 @@ public abstract class AbstractLayeredPhaseTest extends KlayAutomatedJUnitTest {
      * called with the root node.
      */
     protected KlayLayered layered;
-    
+
     /** Chose a fixed seed to allow reproducibility of failing tests. */
     protected static final int SEED = 1337;
     /** random object if required. */
@@ -63,7 +64,7 @@ public abstract class AbstractLayeredPhaseTest extends KlayAutomatedJUnitTest {
      * @param config
      *            the layout configuration for a certain layout run
      */
-    public AbstractLayeredPhaseTest(final GraphTestObject testObject,
+    public AbstractLayeredProcessorTest(final GraphTestObject testObject,
             final ILayoutConfigurator config) {
         this.graphObject = testObject;
         this.configurator = config;
@@ -77,7 +78,7 @@ public abstract class AbstractLayeredPhaseTest extends KlayAutomatedJUnitTest {
     public void configure() {
         // apply the configurator
         configurator.applyConfiguration(graphObject.getKnode());
-
+        
         // get an instance of layered
         this.layered = layeredProvider.startLayoutTest(graphObject.getKnode());
     }
@@ -90,4 +91,17 @@ public abstract class AbstractLayeredPhaseTest extends KlayAutomatedJUnitTest {
         return testPaths;
     }
 
+    /**
+     * @return the current layout configurator casted to a {@link SimplePhaseLayoutConfigurator}.
+     * @throws IllegalArgumentException
+     *             if a different type of configurator is present.
+     */
+    protected SimplePhaseLayoutConfigurator getAndCheckSimpleConfig() {
+        if (configurator instanceof SimplePhaseLayoutConfigurator) {
+            return (SimplePhaseLayoutConfigurator) configurator;
+        } else {
+            throw new IllegalArgumentException("Test " + getClass().getSimpleName()
+                    + " requires a " + SimplePhaseLayoutConfigurator.class.getSimpleName() + ".");
+        }
+    }
 }
