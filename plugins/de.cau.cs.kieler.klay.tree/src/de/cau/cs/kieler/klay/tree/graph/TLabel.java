@@ -19,7 +19,7 @@ package de.cau.cs.kieler.klay.tree.graph;
  * @author sor
  * @author sgu
  */
-public class TLabel {
+public class TLabel extends TShape {
     
     /** the serial version UID. */
     @SuppressWarnings("unused")
@@ -37,11 +37,11 @@ public class TLabel {
      * @param fedge edge corresponding to this label
      */
     public TLabel(final TEdge tedge, final String text) {
-        this.label = text;
         this.edge = tedge;
+        this.label = text;
         edge.getLabels().add(this);
     }
-    
+        
     /**
      * {@inheritDoc}
      */

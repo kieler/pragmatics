@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.tree.graph;
 import java.util.HashMap;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
@@ -40,18 +41,24 @@ public class TGraphBuilder {
      * 
      * @param kgraph
      *            a {@code KNode} to base the graph upon
-     * @return a graph corresponding to {@code kgraph}
+     * @return a graph corresponding to {@code KGraph}
      */
     public static TGraph createTGraphFromKGraph(final KNode kgraph) {
+        int idCount = 0;
         TGraph tgraph = new TGraph();
         HashMap<KNode, TNode> map = new HashMap<KNode, TNode>(kgraph.getChildren().size() * 2);
         tgraph.setProperty(Properties.ORIGIN, kgraph);
         tgraph.copyProperties(kgraph.getData(KShapeLayout.class));
         
-        for (KNode knode : kgraph.getChildren()) {
+        for (KNode knode : kgraph.getChildren()) { 
+            String label = "";
+            if (knode.getLabels().isEmpty()) {
+                label = knode.getLabels().get(0).getText();
+            }
             TNode tnode = null;
-            tnode = tgraph.addNode(tnode); 
+            idCount = idCount++;
             tnode.setProperty(Properties.ORIGIN, kgraph);
+            tnode = tgraph.addNode(tnode, label, idCount);
             map.put(knode, tnode);
         }
         for (KNode knode : kgraph.getChildren()) {
@@ -62,6 +69,11 @@ public class TGraphBuilder {
                 tedge = tgraph.addEdge(source, target);
                 // TEdge tedge = new TEdge(source, target);
                 tedge.setProperty(Properties.ORIGIN, kgraph);
+                for (KLabel klabel : edge.getLabels()) {
+                    TLabel newLabel = new TLabel(tedge, klabel.getText());
+                    newLabel.setProperty(Properties.ORIGIN, klabel);
+                    tgraph.getLabels().add(newLabel);
+                }
             }
         }
         return tgraph;

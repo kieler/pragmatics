@@ -34,7 +34,7 @@ public abstract class TGraphElement extends MapPropertyHolder implements Compara
     
     /** The parent graph this element belongs to. */
     private TGraph parent;
-
+    
     /**
      * Create a graph element.
      * @param p 
@@ -44,6 +44,14 @@ public abstract class TGraphElement extends MapPropertyHolder implements Compara
     public TGraphElement(int id, TGraph p) {
         this.id = id;
         this.parent = p;
+    }
+    
+    /**
+     * Implicit super constructor.
+     * 
+     */
+    public TGraphElement() {
+        
     }
     
     /**
