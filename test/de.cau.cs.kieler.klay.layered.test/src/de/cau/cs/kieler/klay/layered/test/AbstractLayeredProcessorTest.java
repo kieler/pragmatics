@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered.test;
 import java.util.List;
 import java.util.Random;
 
+import org.junit.After;
 import org.junit.Before;
 
 import de.cau.cs.kieler.klay.layered.KlayLayered;
@@ -78,9 +79,19 @@ public abstract class AbstractLayeredProcessorTest extends KlayAutomatedJUnitTes
     public void configure() {
         // apply the configurator
         configurator.applyConfiguration(graphObject.getKnode());
-        
+
         // get an instance of layered
         this.layered = layeredProvider.startLayoutTest(graphObject.getKnode());
+    }
+
+    /**
+     * Cleanup some data.
+     */
+    @After
+    public void cleanup() {
+        graphObject = null;
+        lgraphs = null;
+        layered = null;
     }
 
     /**
