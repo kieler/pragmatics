@@ -26,6 +26,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
+import de.cau.cs.kieler.klay.tree.p1.testPhase;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
@@ -38,33 +39,29 @@ public final class KlayTree {
     // /////////////////////////////////////////////////////////////////////////////
     // Variables
 
-    //TODO build actual phase
+    // TODO build actual phase
     /** phase 1: test module. */
     private ILayoutPhase testPhase;
 
     /** intermediate layout processor configuration. */
-    private IntermediateProcessingConfiguration intermediateProcessingConfiguration 
-                                         = new IntermediateProcessingConfiguration();
+    private IntermediateProcessingConfiguration intermediateProcessingConfiguration = new IntermediateProcessingConfiguration();
 
     /** collection of instantiated intermediate modules. */
-    private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache 
-                 = new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
-    
+    private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache = new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
+
     /** list of layout processors that compose the current algorithm. */
     private List<ILayoutProcessor> algorithm = new LinkedList<ILayoutProcessor>();
 
-    /** index of the processor that is to be executed next during a layout test. */
-    private int currentLayoutTestStep = 0;
-
-
     // /////////////////////////////////////////////////////////////////////////////
     // Regular Layout
-    
+
     /**
      * Does a layout on the given graph.
      * 
-     * @param tgraph the graph to layout.
-     * @param progressMonitor a progress monitor to show progress information in.
+     * @param tgraph
+     *            the graph to layout.
+     * @param progressMonitor
+     *            a progress monitor to show progress information in.
      * @return tree graph with layout applied.
      */
     public TGraph doLayout(final TGraph tgraph, final IKielerProgressMonitor progressMonitor) {
@@ -78,11 +75,11 @@ public final class KlayTree {
 
         // do layout
         // maybe split the graph into multiple components and combine them after the layout
-        
+
         layout(tgraph, progressMonitor.subTask(1.0f));
 
         progressMonitor.done();
-        
+
         return tgraph;
     }
 
@@ -117,26 +114,28 @@ public final class KlayTree {
      *            the graph to be laid out.
      */
     private void updateModules(final TGraph graph) {
+        
+        // dummy phase
+        testPhase = new testPhase();
+        
         // check which cycle breaking strategy to use
-       
-        
+
         // check which crossing minimization strategy to use
-        
-        
+
         // check which node placement strategy to use
-        
 
         // check which edge router to use
-        
 
         // update intermediate processor configuration
         intermediateProcessingConfiguration.clear();
-        intermediateProcessingConfiguration
-                .addAll(testPhase.getIntermediateProcessingConfiguration(graph));
+        intermediateProcessingConfiguration.addAll(
+                testPhase.getIntermediateProcessingConfiguration(graph)).addAll(
+                this.getIntermediateProcessingConfiguration(graph));
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
-        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
         algorithm.add(testPhase);
     }
 
@@ -186,12 +185,12 @@ public final class KlayTree {
      */
     private IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final TGraph graph) {
-        
+
         // get graph properties
-        
+
         // Basic configuration
         IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration();
-        
+
         // graph transformations for unusual layout directions
         switch (graph.getProperty(LayoutOptions.DIRECTION)) {
         case LEFT:
@@ -201,13 +200,14 @@ public final class KlayTree {
             // ADD RIGHT_DIR_POSTPROCESSOR to IntermediateProcessingConfiguration
             break;
         case DOWN:
-         // ADD DOWN_DIR_POSTPROCESSOR to IntermediateProcessingConfiguration
+            // ADD DOWN_DIR_POSTPROCESSOR to IntermediateProcessingConfiguration
             break;
         case UP:
-         // ADD UP_DIR_POSTPROCESSOR to IntermediateProcessingConfiguration
+            // ADD UP_DIR_POSTPROCESSOR to IntermediateProcessingConfiguration
             break;
         default:
-            // This is either RIGHT or UNDEFINED, which is just mapped to RIGHT. Either way, we don't
+            // This is either RIGHT or UNDEFINED, which is just mapped to RIGHT. Either way, we
+            // don't
             // need any processors here
             break;
         }
@@ -216,7 +216,6 @@ public final class KlayTree {
 
         return configuration;
     }
-    
 
     // /////////////////////////////////////////////////////////////////////////////
     // Layout
@@ -246,44 +245,45 @@ public final class KlayTree {
                 System.out.println("   Slot " + String.format("%1$02d", i) + ": "
                         + algorithm.get(i).getClass().getName());
             }
-        } 
-            // invoke each layout processor
-            for (ILayoutProcessor processor : algorithm) {
-                if (monitor.isCanceled()) {
-                    return;
-                }
-                processor.process(graph, monitor.subTask(1));
+        }
+        // invoke each layout processor
+        for (ILayoutProcessor processor : algorithm) {
+            if (monitor.isCanceled()) {
+                return;
             }
+            processor.process(graph, monitor.subTask(1));
+        }
         monitor.done();
     }
 
     /**
      * Executes the given layout processor on the given list of graphs.
      * 
-     * @param graphs the list of graphs to be laid out.
-     * @param monitor a progress monitor.
-     * @param processor processor to execute.
+     * @param graphs
+     *            the list of graphs to be laid out.
+     * @param monitor
+     *            a progress monitor.
+     * @param processor
+     *            processor to execute.
      */
     private void layoutTest(final List<TGraph> graphs, final IKielerProgressMonitor monitor,
             final ILayoutProcessor processor) {
-        
+
         monitor.begin("Layout", graphs.size());
-        
+
         // invoke the layout processor on each of the given graphs
         for (TGraph graph : graphs) {
             if (monitor.isCanceled()) {
                 return;
             }
-            
+
             processor.process(graph, monitor.subTask(1));
         }
 
         monitor.done();
     }
-    
+
     // /////////////////////////////////////////////////////////////////////////////
     // Processing Configuration Constants
-
-    
 
 }

@@ -37,62 +37,16 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  */
 @SuppressWarnings("unused")
 public class TreeLayoutProvider extends AbstractLayoutProvider {
-    
-    /** default value for spacing between nodes. */
-    private static final float DEFAULT_SPACING = 15.0f;
 	
     /**
      * {@inheritDoc}
      */
     @Override
     public void doLayout(KNode parentNode, IKielerProgressMonitor progressMonitor) {
-        //TODO move this algorithm into a phase and set all of KlayTree dolayout
-        TGraph graph = TGraphBuilder.createTGraphFromKGraph(parentNode);
-        progressMonitor.begin("Mr.T", 1);
+        
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-
-        float objectSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
-        if (objectSpacing < 0) {
-            objectSpacing = DEFAULT_SPACING;
-        }
-
-        float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
-        if (borderSpacing < 0) {
-            borderSpacing = DEFAULT_SPACING;
-        }
         
-        // TODO structure add root or potential roots
-        List<TNode> root = new ArrayList<TNode>();
-        for (TNode tNode : graph.getNodes()) {
-			if (tNode.getParent() == null)
-				root.add(tNode);
-		}
-        
-        TNode tempRoot;
-        
-        Iterator<TNode> iterator = root.iterator();
-        if (iterator.hasNext()){
-        	iterator.next();
-        	tempRoot = iterator.next();
-        	for (; iterator.hasNext();) {
-        		TNode tNode = iterator.next();
-        		tNode.setParent(tempRoot);
-        		tempRoot.addChild(tNode);
-        	}
-        }
-        else{
-        	tempRoot = root.isEmpty() ? null : root.get(0); // SEND ERROR
-        }
-        
-        int depth = tempRoot.getProperty(Properties.DEPTH);
-        int fan = tempRoot.getProperty(Properties.FAN);
-        
-        tempRoot.setPosition(new KVector(fan/2,0.0));
-       
-        //TODO complete algorithm
-        for (TNode tNode : tempRoot.getChildren()) {
-			
-		}
+        // TODO bind this to KlayTree
     }
     
 }

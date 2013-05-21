@@ -41,6 +41,9 @@ public enum LayoutProcessorStrategy {
         
         switch (this) {
         
+        case TEST_PROCESSOR:
+            return new TestProcessor();
+        
         default:
             throw new IllegalArgumentException(
                     "No implementation is available for the layout processor " + this.toString());

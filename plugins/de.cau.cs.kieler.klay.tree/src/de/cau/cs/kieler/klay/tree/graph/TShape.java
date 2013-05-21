@@ -29,9 +29,9 @@ public abstract class TShape extends TGraphElement {
 	private static final long serialVersionUID = 1L;
 
 	/** the current position of the element. */
-	private KVector pos = new KVector();
+	private final KVector pos = new KVector();
 	/** the size of the element. */
-	private KVector size = new KVector();
+	private final KVector size = new KVector();
 
 	/**
 	 * Creates a shape in the context of the given graph.
@@ -69,22 +69,4 @@ public abstract class TShape extends TGraphElement {
 	public KVector getSize() {
 		return size;
 	}
-
-	/**
-	 * set the element's current position. This is the coordinate of the
-	 * element's upper left corner.
-	 * 
-	 */
-	public void setPosition(KVector pos) {
-		this.pos = pos;
-	}
-
-	/**
-	 * set the element's current size.
-	 * 
-	 */
-	public void setSize(KVector size) {
-		this.size = size;
-	}
-
 }
