@@ -14,13 +14,14 @@
 package de.cau.cs.kieler.klay.tree.properties;
 
 /**
+ * TODO: Document this class.
  * Definition of directions used in the T Graph radial level approach.
  * 
  * @author sor
  * @author sgu
  */
 public enum Direction {
-    
+
     /** the north */
     NORTH,
     /** the west */
@@ -29,7 +30,7 @@ public enum Direction {
     EAST,
     /** the south */
     SOUTH;
-    
+
     /**
      * Return the color used when writing debug output graphs. The colors are given as strings of
      * the form "#RGB", where each component is given as a two-digit hexadecimal value.
@@ -39,7 +40,8 @@ public enum Direction {
     public String getColor() {
         switch (this) {
 
-        default: return "#000000";
+        default:
+            return "#000000";
         }
     }
 

@@ -17,18 +17,21 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 
 /**
+ * TODO: Document this class.
  * 
  * @author sor
  * @author sgu
  */
 public interface ILayoutProcessor {
-    
+
     /**
      * Performs the phase's work on the given graph.
      * 
-     * @param tGraph a tree graph
-     * @param progressMonitor a progress monitor to track algorithm execution
+     * @param tGraph
+     *            a tree graph
+     * @param progressMonitor
+     *            a progress monitor to track algorithm execution
      */
     void process(TGraph tGraph, IKielerProgressMonitor progressMonitor);
-    
+
 }

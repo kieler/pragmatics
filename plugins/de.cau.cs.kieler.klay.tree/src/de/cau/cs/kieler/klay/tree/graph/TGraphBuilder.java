@@ -22,9 +22,10 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
+ * TODO: Document this class.
+ * 
  * @author sor
  * @author sgu
- *
  */
 public class TGraphBuilder {
     

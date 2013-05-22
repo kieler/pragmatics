@@ -14,34 +14,37 @@
 package de.cau.cs.kieler.klay.tree.graph;
 
 /**
+ * TODO: Document this class.
  * A label in the T graph.
  * 
  * @author sor
  * @author sgu
  */
 public class TLabel extends TShape {
-    
+
     /** the serial version UID. */
     @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
-    
+
     /** the edge this label is associated to. */
     private TEdge edge;
     /** label text. */
     private String label;
-    
+
     /**
      * Create a new label. The label is also put into the edge's list of labels.
      * 
-     * @param text the text of the new label
-     * @param fedge edge corresponding to this label
+     * @param text
+     *            the text of the new label
+     * @param fedge
+     *            edge corresponding to this label
      */
     public TLabel(final TEdge tedge, final String text) {
         this.edge = tedge;
         this.label = text;
         edge.getLabels().add(this);
     }
-        
+
     /**
      * {@inheritDoc}
      */
@@ -53,7 +56,7 @@ public class TLabel extends TShape {
             return "l_" + label;
         }
     }
-        
+
     /**
      * Returns the text of this label.
      * 
@@ -62,7 +65,7 @@ public class TLabel extends TShape {
     public String getText() {
         return label;
     }
-    
+
     /**
      * Returns the associated edge.
      * 
@@ -71,12 +74,12 @@ public class TLabel extends TShape {
     public TEdge getEdge() {
         return edge;
     }
-    
+
     /**
      * Refresh the label position, that is place it in the center of the edge.
      */
-    public void refreshPosition() { 
-        
+    public void refreshPosition() {
+
     }
 
 }

@@ -16,28 +16,30 @@ package de.cau.cs.kieler.klay.tree.graph;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
+ * TODO: Document this class.
+ * 
  * @author sor
  * @author sgu
- *
  */
 public abstract class TGraphElement extends MapPropertyHolder implements Comparable<TGraphElement> {
 
     /** the serial version UID. */
     private static final long serialVersionUID = 1L;
-    
+
     // CHECKSTYLEOFF VisibilityModifier
 
     /** Identifier value, may be arbitrarily used by algorithms. */
     public int id;
-    
+
     // CHECKSTYLEON VisibilityModifier
-    
+
     /** The parent graph this element belongs to. */
     private TGraph parent;
-    
+
     /**
      * Create a graph element.
-     * @param p 
+     * 
+     * @param p
      * @param id
      * 
      */
@@ -45,28 +47,27 @@ public abstract class TGraphElement extends MapPropertyHolder implements Compara
         this.id = id;
         this.parent = p;
     }
-    
+
     /**
      * Implicit super constructor.
      * 
      */
     public TGraphElement() {
-        
+
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public final boolean equals(final Object object) {
-//        if (object instanceof TGraphElement) {
-//            TGraphElement other = (TGraphElement) object;
-//            return this.hashCode == other.hashCode;
-//        }
+        // if (object instanceof TGraphElement) {
+        // TGraphElement other = (TGraphElement) object;
+        // return this.hashCode == other.hashCode;
+        // }
         return false;
     }
-    
-    
+
     /**
      * TODO find implementation and use case
      * 
@@ -75,5 +76,5 @@ public abstract class TGraphElement extends MapPropertyHolder implements Compara
     public final int compareTo(final TGraphElement other) {
         return this.hashCode() - other.hashCode();
     }
-    
+
 }

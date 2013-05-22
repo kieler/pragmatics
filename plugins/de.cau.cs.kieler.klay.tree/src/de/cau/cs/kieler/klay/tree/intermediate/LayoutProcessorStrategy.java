@@ -16,34 +16,36 @@ package de.cau.cs.kieler.klay.tree.intermediate;
 import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
 
 /**
+ * TODO: Document this class.
  * 
  * @author sor
  * @author sgu
  */
 public enum LayoutProcessorStrategy {
-    
-    /* In this enumeration, intermediate layout processors are listed by the earliest
-     * slot in which they can sensibly be used. The order in which they are listed is
-     * determined by the dependencies on other processors.
+
+    /*
+     * In this enumeration, intermediate layout processors are listed by the earliest slot in which
+     * they can sensibly be used. The order in which they are listed is determined by the
+     * dependencies on other processors.
      */
-    
+
     // Before Phase 1
-    
-    //TODO add actual processors
+
+    // TODO add actual processors
     TEST_PROCESSOR;
-    
+
     /**
      * Creates an instance of the layout processor described by this instance.
      * 
      * @return the layout processor.
      */
     public ILayoutProcessor create() {
-        
+
         switch (this) {
-        
+
         case TEST_PROCESSOR:
             return new TestProcessor();
-        
+
         default:
             throw new IllegalArgumentException(
                     "No implementation is available for the layout processor " + this.toString());

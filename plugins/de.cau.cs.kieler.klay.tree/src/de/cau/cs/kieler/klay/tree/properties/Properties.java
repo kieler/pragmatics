@@ -21,67 +21,69 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
+ * TODO: Document this class.
  * Property definitions for the T layouter.
  * 
  * @author sor
  * @author sgu
  */
 public final class Properties {
-    
+
     /** the original object from which a graph element was created. */
     public static final IProperty<Object> ORIGIN = new Property<Object>("origin");
-    
+
     /**
      * Random number generator for the algorithm.
      */
     public static final IProperty<Random> RANDOM = new Property<Random>("random");
-    
+
     /**
      * The longest path length of a node in the nesting tree of a compound graph.
      */
     public static final IProperty<Integer> DEPTH = new Property<Integer>("DEPTH", 0);
-    
+
     /**
      * The maximal fan out of a node in the nesting tree of a compound graph.
      */
     public static final IProperty<Integer> FAN = new Property<Integer>("FAN", 0);
-    
+
     /**
      * The level out of a node in the nesting tree of a compound graph.
      */
     public static final IProperty<Integer> LEVEL = new Property<Integer>("LEVEL", 0);
-    
+
     /**
      * The direction from the origin of a node in the nesting tree of a compound graph.
      */
     public static final IProperty<Direction> DIRC = new Property<Direction>("DIRC", Direction.SOUTH);
-    
+
     /** upper left corner of the graph's bounding box. */
     public static final IProperty<KVector> BB_UPLEFT = new Property<KVector>("boundingBox.upLeft");
     /** lower right corner of the graph's bounding box. */
-    public static final IProperty<KVector> BB_LOWRIGHT = new Property<KVector>("boundingBox.lowRight");
-    
-    ///////////////////////////////////////////////////////////////////////////////
+    public static final IProperty<KVector> BB_LOWRIGHT = new Property<KVector>(
+            "boundingBox.lowRight");
+
+    // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
-    
+
     /** minimal spacing between objects. */
-    public static final Property<Float> SPACING = new Property<Float>(
-            LayoutOptions.SPACING, 50.0f);
-    
+    public static final Property<Float> SPACING = new Property<Float>(LayoutOptions.SPACING, 50.0f);
+
     /** the aspect ratio for packing connected components. */
     public static final Property<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO, 1.0f, 1.0f);
 
     /** priority of nodes or edges. */
-    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 1);
-    
+    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
+            1);
+
     /** label spacing property. */
     public static final Property<Float> LABEL_SPACING = new Property<Float>(
             LayoutOptions.LABEL_SPACING, 5.0f, 0.0f);
-    
-    ///////////////////////////////////////////////////////////////////////////////
+
+    // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
-    
+
     /**
      * Hidden default constructor.
      */

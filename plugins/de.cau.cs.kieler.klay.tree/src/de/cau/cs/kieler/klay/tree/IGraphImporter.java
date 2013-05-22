@@ -2,19 +2,17 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- *
+ * 
  * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- *
+ * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.tree.intermediate;
+package de.cau.cs.kieler.klay.tree;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 
 /**
@@ -23,11 +21,21 @@ import de.cau.cs.kieler.klay.tree.graph.TGraph;
  * @author sor
  * @author sgu
  */
-public class TestProcessor implements ILayoutProcessor {
-
-    public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
-        // TODO implement actual processors
-
-    }
+public interface IGraphImporter<T> {
+    
+    /**
+     * Create a t-graph from the given graph.
+     * 
+     * @param graph the graph to turn into a t-graph
+     * @return a t-graph, or {@code null} if the input was not recognized
+     */
+    TGraph importGraph(T graph);
+    
+    /**
+     * Apply the computed layout of a t-graph to the original graph.
+     * 
+     * @param tGraph the graph for which layout is applied
+     */
+    void applyLayout(TGraph tGraph);
 
 }

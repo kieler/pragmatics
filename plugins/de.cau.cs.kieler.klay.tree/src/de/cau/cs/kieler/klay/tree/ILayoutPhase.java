@@ -15,21 +15,22 @@ package de.cau.cs.kieler.klay.tree;
 
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 
-
 /**
+ * TODO: Document this class.
  * 
  * @author sor
  * @author sgu
  */
 public interface ILayoutPhase extends ILayoutProcessor {
-    
+
     /**
      * Returns the intermediate layout processors this phase depends on.
      * 
-     * @param tGraph the tree graph to be processed. The configuration may
-     *              vary depending on certain properties of the graph.
+     * @param tGraph
+     *            the tree graph to be processed. The configuration may vary depending on certain
+     *            properties of the graph.
      * @return intermediate processing configuration. May be {@code null}.
      */
     IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(final TGraph tGraph);
-    
+
 }

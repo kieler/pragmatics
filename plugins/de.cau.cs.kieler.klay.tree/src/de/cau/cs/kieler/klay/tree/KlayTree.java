@@ -23,13 +23,13 @@ import java.util.Random;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.p1.testPhase;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
+ * TODO: Document this class.
  * 
  * @author sor
  * @author sgu
@@ -114,10 +114,10 @@ public final class KlayTree {
      *            the graph to be laid out.
      */
     private void updateModules(final TGraph graph) {
-        
+
         // dummy phase
         testPhase = new testPhase();
-        
+
         // check which cycle breaking strategy to use
 
         // check which crossing minimization strategy to use

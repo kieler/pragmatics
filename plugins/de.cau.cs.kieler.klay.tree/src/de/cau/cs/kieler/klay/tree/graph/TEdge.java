@@ -19,6 +19,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
+ * TODO: Document this class. 
  * A edge for the T graph
  * 
  * @author sor
@@ -36,19 +37,19 @@ public class TEdge extends MapPropertyHolder {
     private TNode source;
     /** the target node of the edge. */
     private TNode target;
-    
+
     /**
      * Constructor for setting up a TEdge object
+     * 
      * @param source
-     *          the source node of the edge
+     *            the source node of the edge
      * @param target
-     *          the target node of the edge
+     *            the target node of the edge
      */
     public TEdge(TNode source, TNode target) {
         this.source = source;
         this.target = target;
     }
-    
 
     /**
      * {@inheritDoc}
@@ -61,7 +62,7 @@ public class TEdge extends MapPropertyHolder {
             return "e_" + hashCode();
         }
     }
-    
+
     /**
      * Returns the source node.
      * 
@@ -79,7 +80,7 @@ public class TEdge extends MapPropertyHolder {
     public TNode getTarget() {
         return target;
     }
-    
+
     /**
      * Returns the list of labels associated with this edge.
      * 
@@ -98,7 +99,7 @@ public class TEdge extends MapPropertyHolder {
     public final void setSource(final TNode theSource) {
         source = theSource;
     }
-    
+
     /**
      * Sets the target vertex.
      * 
@@ -108,7 +109,5 @@ public class TEdge extends MapPropertyHolder {
     public final void setTarget(final TNode theTarget) {
         target = theTarget;
     }
-    
-    
 
 }

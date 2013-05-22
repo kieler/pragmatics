@@ -13,40 +13,46 @@
  */
 package de.cau.cs.kieler.klay.tree;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TGraphBuilder;
-import de.cau.cs.kieler.klay.tree.graph.TNode;
-import de.cau.cs.kieler.klay.tree.properties.Properties;
+
 
 /**
  * TODO: Document this class.
  * 
- * @author cds
+ * @author sor
+ * @author sgu
  */
 @SuppressWarnings("unused")
 public class TreeLayoutProvider extends AbstractLayoutProvider {
-	
+    
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Variables
+
+    /** the layout algorithm used for this layout. */
+    private KlayTree klayTree = new KlayTree();
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Regular Layout
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(KNode parentNode, IKielerProgressMonitor progressMonitor) {
+    public void doLayout(final KNode kgraph, IKielerProgressMonitor progressMonitor) {
+
+        TGraph tGraph =  TGraphBuilder.createTGraphFromKGraph(kgraph);
+        IGraphImporter<KNode> graphImporter = new KGraphImporter();
+
+        tGraph = klayTree.doLayout(tGraph, progressMonitor);
         
-        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        
-        // TODO bind this to KlayTree
+        // TODO apply the layout results to the original graph
+        graphImporter.applyLayout(tGraph);
     }
-    
+
 }

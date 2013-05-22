@@ -14,59 +14,57 @@
 package de.cau.cs.kieler.klay.tree.graph;
 
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
+ * TODO: Document this class.
  * Abstract superclass for {@link TGraphElement}s that can have a position and a size.
  * 
  * @author sor
  * @author sgu
- * 
  */
 public abstract class TShape extends TGraphElement {
 
-	/** the serial version UID. */
-	private static final long serialVersionUID = 1L;
+    /** the serial version UID. */
+    private static final long serialVersionUID = 1L;
 
-	/** the current position of the element. */
-	private final KVector pos = new KVector();
-	/** the size of the element. */
-	private final KVector size = new KVector();
-
-	/**
-	 * Creates a shape in the context of the given graph.
-	 * 
-	 * @param graph
-	 *            the graph for which the shape is created
-	 */
-	public TShape(final int id, final TGraph p) {
-		super(id, p);
-	} 
-	
-	/**
-	 * Implicit super constructor
-	 */
-	public TShape() {
-	    
-	}
-	
+    /** the current position of the element. */
+    private final KVector pos = new KVector();
+    /** the size of the element. */
+    private final KVector size = new KVector();
 
     /**
-	 * Returns the element's current position. This is the coordinate of the
-	 * element's upper left corner.
-	 * 
-	 * @return the position
-	 */
-	public KVector getPosition() {
-		return pos;
-	}
+     * Creates a shape in the context of the given graph.
+     * 
+     * @param graph
+     *            the graph for which the shape is created
+     */
+    public TShape(final int id, final TGraph p) {
+        super(id, p);
+    }
 
-	/**
-	 * Returns the element's current size.
-	 * 
-	 * @return the size
-	 */
-	public KVector getSize() {
-		return size;
-	}
+    /**
+     * Implicit super constructor
+     */
+    public TShape() {
+
+    }
+
+    /**
+     * Returns the element's current position. This is the coordinate of the element's upper left
+     * corner.
+     * 
+     * @return the position
+     */
+    public KVector getPosition() {
+        return pos;
+    }
+
+    /**
+     * Returns the element's current size.
+     * 
+     * @return the size
+     */
+    public KVector getSize() {
+        return size;
+    }
 }

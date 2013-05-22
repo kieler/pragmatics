@@ -23,7 +23,8 @@ package de.cau.cs.kieler.klay.tree.properties;
  * {@link Properties#GRAPH_PROPERTIES} property.
  * </p>
  * 
- * @author cds
+ * @author sor
+ * @author sgu
  */
 public enum GraphProperties {
 

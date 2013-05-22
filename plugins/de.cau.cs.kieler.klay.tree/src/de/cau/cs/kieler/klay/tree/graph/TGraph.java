@@ -19,30 +19,30 @@ import java.util.List;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
+ * TODO: Document this class.
  * A graph for the T layouter.
  * 
  * @author sor
  * @author sgu
  */
 public class TGraph extends MapPropertyHolder {
-    
+
     /** the serial version UID. */
     @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
-    
+
     /** All nodes of this graph. */
     private LinkedList<TNode> nodes = new LinkedList<TNode>();
     /** All edges of this graph. */
     private LinkedList<TEdge> edges = new LinkedList<TEdge>();
     /** All labels of this graph. */
     private LinkedList<TLabel> labels = new LinkedList<TLabel>();
-    
-    
+
     /**
      * Default constructor that creates an empty graph.
      * 
      */
-    TGraph() {
+    public TGraph() {
         this.nodes = new LinkedList<TNode>();
         this.edges = new LinkedList<TEdge>();
         this.labels = new LinkedList<TLabel>();
@@ -62,7 +62,7 @@ public class TGraph extends MapPropertyHolder {
         }
         return tmp;
     }
-    
+
     /**
      * Returns the list of edges for this graph.
      * 
@@ -89,16 +89,16 @@ public class TGraph extends MapPropertyHolder {
     public List<TLabel> getLabels() {
         return labels;
     }
-    
+
     /**
      * Add a new node to the graph.
      * 
      * @param tnode
-     *          the node to be added
+     *            the node to be added
      * @param label
-     *          the label of the new node
+     *            the label of the new node
      * @param id
-     *          the id of the new node
+     *            the id of the new node
      * @return the new node in the graph
      */
     public TNode addNode(TNode tnode, String label, int id) {
@@ -106,14 +106,14 @@ public class TGraph extends MapPropertyHolder {
         nodes.add(tnode);
         return tnode;
     }
-    
+
     /**
      * Add a new edge to the graph.
      * 
      * @param source
-     *          the new edges source
+     *            the new edges source
      * @param target
-     *          the new edges target
+     *            the new edges target
      * @return the newly added edge
      */
     public TEdge addEdge(TNode source, TNode target) {
