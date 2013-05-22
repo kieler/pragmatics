@@ -62,12 +62,7 @@ public final class LNode extends LShape {
      * {@inheritDoc}
      */
     public String toString() {
-        String name = getName();
-        if (name == null) {
-            return "n_" + id;
-        } else {
-            return "n_" + name;
-        }
+        return "n_" + getDesignation();
     }
     
     /**
@@ -80,6 +75,21 @@ public final class LNode extends LShape {
             return labels.get(0).getText();
         }
         return null;
+    }
+    
+    /**
+     * Returns the node's designation. The designation is either the name if that is not {@code null},
+     * or the node's ID otherwise.
+     * 
+     * @return the node's designation.
+     */
+    public String getDesignation() {
+        String name = getName();
+        if (name == null) {
+            return Integer.toString(id);
+        } else {
+            return name;
+        }
     }
 
     /**

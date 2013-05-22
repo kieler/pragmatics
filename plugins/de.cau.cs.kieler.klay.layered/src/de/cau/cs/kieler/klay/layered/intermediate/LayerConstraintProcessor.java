@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.kiml.UnsupportedConfigurationException;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -121,7 +122,12 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
      */
     private void assertNoIncoming(final LNode node) {
         for (LPort port : node.getPorts()) {
-            assert port.getIncomingEdges().isEmpty();
+            if (!port.getIncomingEdges().isEmpty()) {
+                throw new UnsupportedConfigurationException("Node '" + node.getDesignation()
+                        + "' has its layer constraint set to FIRST or FIRST_SEPARATE, but has at least "
+                        + "one incoming edge. Connections between nodes with these layer constraints "
+                        + "are not supported.");
+            }
         }
     }
     
@@ -132,7 +138,12 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
      */
     private void assertNoOutgoing(final LNode node) {
         for (LPort port : node.getPorts()) {
-            assert port.getOutgoingEdges().isEmpty();
+            if (!port.getOutgoingEdges().isEmpty()) {
+                throw new UnsupportedConfigurationException("Node '" + node.getDesignation()
+                        + "' has its layer constraint set to LAST or LAST_SEPARATE, but has at least "
+                        + "one outgoing edge. Connections between nodes with these layer constraints "
+                        + "are not supported.");
+            }
         }
     }
 
