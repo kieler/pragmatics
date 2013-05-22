@@ -64,20 +64,19 @@ public class MutationOperation implements IEvolutionaryOperation {
     public void process(final Population population, final IKielerProgressMonitor monitor) {
         monitor.begin("Mutation", 1);
         ILayoutConfig layoutConfig = population.getProperty(Population.DEFAULT_CONFIG);
-        LayoutContext layoutContext = population.getProperty(Population.DEFAULT_CONTEXT);
         
         ListIterator<Genome> genomeIter = population.listIterator();
         while (genomeIter.hasNext()) {
             Genome individual = genomeIter.next();
             if (random.nextDouble() < MUTATION_APPLICATION_PROBABILITY) {
-                Genome mutation = mutate(individual, layoutConfig, layoutContext, 1);
+                Genome mutation = mutate(individual, layoutConfig, 1);
                 genomeIter.set(mutation);
             }
         }
         
         monitor.done();
     }
-
+    
     /**
      * Mutate the genes of the given individual.
      * <p>
@@ -87,16 +86,35 @@ public class MutationOperation implements IEvolutionaryOperation {
      *
      * @param genome a genome
      * @param layoutConfig the layout configuration used to obtain default values
-     * @param layoutContext the layout context used to obtain default values
      * @param mutationFactor factor for mutation probability of genes
      * @return mutated copy of the given genome
      */
     public Genome mutate(final Genome genome, final ILayoutConfig layoutConfig,
-            final LayoutContext layoutContext, final double mutationFactor) {
+            final double mutationFactor) {
+        Genome newGenome = new Genome();
+        for (LayoutContext context : genome.getContexts()) {
+            mutate(genome, newGenome, layoutConfig, context, mutationFactor);
+        }
+        return newGenome;
+    }
+
+    /**
+     * Mutate the genes of the given individual into a new genome.
+     *
+     * @param oldGenome the original genome
+     * @param newGenome the new mutated genome
+     * @param layoutConfig the layout configuration used to obtain default values
+     * @param layoutContext the layout context used to obtain default values
+     * @param mutationFactor factor for mutation probability of genes
+     * @return mutated copy of the given genome
+     */
+    private void mutate(final Genome oldGenome, final Genome newGenome,
+            final ILayoutConfig layoutConfig, final LayoutContext layoutContext,
+            final double mutationFactor) {
         LayoutTypeData newLayoutType = null;
         LayoutAlgorithmData newLayoutAlgo = null;
-        Genome newGenome = new Genome(genome.getSize());
-        for (final Gene<?> gene : genome.getGenes()) {
+        newGenome.addContext(layoutContext, oldGenome.getSize(layoutContext));
+        for (final Gene<?> gene : oldGenome.getGenes(layoutContext)) {
             Gene<?> newGene = gene;
             TypeInfo<?> typeInfo = gene.getTypeInfo();
             GeneType geneType = typeInfo.getGeneType();
@@ -139,10 +157,8 @@ public class MutationOperation implements IEvolutionaryOperation {
                 }
             }
             
-            newGenome.getGenes().add(newGene);
+            newGenome.getGenes(layoutContext).add(newGene);
         }
-        
-        return newGenome;
     }
 
     /**

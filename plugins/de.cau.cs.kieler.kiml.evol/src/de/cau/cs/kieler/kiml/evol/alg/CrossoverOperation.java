@@ -16,11 +16,13 @@
  */
 package de.cau.cs.kieler.kiml.evol.alg;
 
+import java.util.Collection;
 import java.util.Random;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
@@ -109,43 +111,49 @@ public class CrossoverOperation implements IEvolutionaryOperation {
      */
     public Genome recombine(final Genome... genomes) {
         assert genomes.length > 1;
-        int size = genomes[0].getSize();
-        Genome newGenome = new Genome(size);
-        
-        // iterate genes and create a recombination for each one
-        LayoutTypeData layoutTypeData = null;
-        int algoIndex = 0;
-        for (int geneIndex = 0; geneIndex < size; geneIndex++) {
-            Gene<?>[] genes = new Gene[genomes.length];
-            for (int genomeIndex = 0; genomeIndex < genomes.length; genomeIndex++) {
-                assert genomes[genomeIndex].getSize() == size;
-                Gene<?> gene = genomes[genomeIndex].getGenes().get(geneIndex);
-                // check whether the layout algorithm has the correct layout type
-                if (layoutTypeData != null && gene.getTypeInfo().getGeneType() == GeneType.LAYOUT_ALGO
-                        && !layoutTypeData.getId().equals(
-                                ((LayoutAlgorithmData) gene.listValue()).getType())) {
-                    genes[genomeIndex] = Gene.create(null, gene.getTypeInfo(), false);
-                } else {
-                    genes[genomeIndex] = gene;
-                }
-            }
+        Genome newGenome = new Genome();
+        Collection<LayoutContext> contexts = genomes[0].getContexts();
+        // recombine each context independently
+        for (LayoutContext context : contexts) {
+            int size = genomes[0].getSize(context);
+            newGenome.addContext(context, size);
             
-            // create a recombination of the collected genes
-            GeneType geneType = genes[algoIndex].getTypeInfo().getGeneType();
-            boolean active = geneType == GeneType.LAYOUT_TYPE || geneType == GeneType.LAYOUT_ALGO
-                    || genes[algoIndex].isActive();
-            Gene<?> newGene = recombine(active, genes);
-            newGenome.getGenes().add(newGene);
-            
-            if (geneType == GeneType.LAYOUT_TYPE) {
-                // the layout type was crossed - get the new type to check the algorithm gene
-                layoutTypeData = (LayoutTypeData) newGene.listValue();
-            } else if (geneType == GeneType.LAYOUT_ALGO) {
-                // the algorithm was crossed - get the index of the new algorithm
+            // iterate genes and create a recombination for each one
+            LayoutTypeData layoutTypeData = null;
+            int algoIndex = 0;
+            for (int geneIndex = 0; geneIndex < size; geneIndex++) {
+                Gene<?>[] genes = new Gene[genomes.length];
                 for (int genomeIndex = 0; genomeIndex < genomes.length; genomeIndex++) {
-                    if (genes[genomeIndex].equals(newGene)) {
-                        algoIndex = genomeIndex;
-                        break;
+                    assert genomes[genomeIndex].getSize(context) == size;
+                    Gene<?> gene = genomes[genomeIndex].getGenes(context).get(geneIndex);
+                    // check whether the layout algorithm has the correct layout type
+                    if (layoutTypeData != null
+                            && gene.getTypeInfo().getGeneType() == GeneType.LAYOUT_ALGO
+                            && !layoutTypeData.getId().equals(
+                                    ((LayoutAlgorithmData) gene.listValue()).getType())) {
+                        genes[genomeIndex] = Gene.create(null, gene.getTypeInfo(), false);
+                    } else {
+                        genes[genomeIndex] = gene;
+                    }
+                }
+                
+                // create a recombination of the collected genes
+                GeneType geneType = genes[algoIndex].getTypeInfo().getGeneType();
+                boolean active = geneType == GeneType.LAYOUT_TYPE || geneType == GeneType.LAYOUT_ALGO
+                        || genes[algoIndex].isActive();
+                Gene<?> newGene = recombine(active, genes);
+                newGenome.getGenes(context).add(newGene);
+                
+                if (geneType == GeneType.LAYOUT_TYPE) {
+                    // the layout type was crossed - get the new type to check the algorithm gene
+                    layoutTypeData = (LayoutTypeData) newGene.listValue();
+                } else if (geneType == GeneType.LAYOUT_ALGO) {
+                    // the algorithm was crossed - get the index of the new algorithm
+                    for (int genomeIndex = 0; genomeIndex < genomes.length; genomeIndex++) {
+                        if (genes[genomeIndex].equals(newGene)) {
+                            algoIndex = genomeIndex;
+                            break;
+                        }
                     }
                 }
             }

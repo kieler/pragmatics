@@ -22,8 +22,6 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.alg.AbstractEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.alg.CrossoverOperation;
@@ -50,7 +48,7 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
     /** the initial number of individuals to create. */
     private static final int INITIAL_POPULATION = 16;
     /** the mutation boost for the initial population. */
-    private static final double INITIAL_MUTATION_BOOST = 3;
+    private static final double INITIAL_MUTATION_BOOST = 5;
     /** the metric result value for 50% weight adaption. */
     private static final float HALF_WEIGHT_METRIC = 0.7f;
     
@@ -130,11 +128,9 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
         population.setProperty(Population.EVALUATION_GRAPH, graph);
         
         // create an initial gene, the patriarch
-        Pair<ILayoutConfig, LayoutContext> configPair = GenomeFactory.createConfig(layoutMapping);
-        population.setProperty(Population.DEFAULT_CONFIG, configPair.getFirst());
-        population.setProperty(Population.DEFAULT_CONTEXT, configPair.getSecond());
-        Genome patriarch = GenomeFactory.createInitialGenome(layoutMapping, configPair.getFirst(),
-                configPair.getSecond());
+        ILayoutConfig layoutConfig = GenomeFactory.createConfig(layoutMapping);
+        population.setProperty(Population.DEFAULT_CONFIG, layoutConfig);
+        Genome patriarch = GenomeFactory.createInitialGenome(layoutMapping, layoutConfig);
         population.add(patriarch);
         progressMonitor.worked(1);
         
@@ -143,8 +139,8 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
         do {
             int mutationCount = population.size();
             for (int i = 0; i < mutationCount; i++) {
-                Genome mutation = mutationOperation.mutate(population.get(i), configPair.getFirst(),
-                        configPair.getSecond(), INITIAL_MUTATION_BOOST);
+                Genome mutation = mutationOperation.mutate(population.get(i), layoutConfig,
+                        INITIAL_MUTATION_BOOST);
                 population.add(mutation);
                 progressMonitor.worked(1);
             }

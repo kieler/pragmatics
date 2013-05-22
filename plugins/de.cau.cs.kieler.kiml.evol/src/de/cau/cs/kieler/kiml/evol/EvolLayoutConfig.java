@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.evol;
 
 import de.cau.cs.kieler.core.kgraph.KGraphData;
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
@@ -36,7 +37,7 @@ public class EvolLayoutConfig implements ILayoutConfig {
     /** the priority for the evolutionary layout configurator. */
     public static final int PRIORITY = 16;
     
-    /** property for activation of the evolutionary layout config. */
+    /** property for activation of the evolutionary layout configurator. */
     public static final Property<Boolean> ACTIVATION = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.evol", false);
     
@@ -56,10 +57,12 @@ public class EvolLayoutConfig implements ILayoutConfig {
      */
     public void enrich(final LayoutContext context) {
         LayoutEvolutionModel model = LayoutEvolutionModel.getInstance();
-        if (model.getSelected() != null) {
+        KGraphElement graphElement = context.getProperty(LayoutContext.GRAPH_ELEM);
+        if (model.getSelected() != null && graphElement != null) {
             context.setProperty(EVOL_MODEL, model);
             if (context.getProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS)) {
-                Gene<?> algorithmGene = model.getSelected().find(LayoutOptions.ALGORITHM.getId());
+                Gene<?> algorithmGene = model.getSelected().findGene(LayoutOptions.ALGORITHM.getId(),
+                        graphElement);
                 if (algorithmGene != null && algorithmGene.getValue() != null) {
                     String algorithm = (String) GenomeFactory.translateFromGene(algorithmGene);
                     
@@ -82,8 +85,9 @@ public class EvolLayoutConfig implements ILayoutConfig {
      */
     public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
         LayoutEvolutionModel model = context.getProperty(EVOL_MODEL);
-        if (model != null) {
-            Gene<?> gene = model.getSelected().find(optionData.getId());
+        KGraphElement graphElement = context.getProperty(LayoutContext.GRAPH_ELEM);
+        if (model != null && graphElement != null) {
+            Gene<?> gene = model.getSelected().findGene(optionData.getId(), graphElement);
             if (gene != null && gene.getValue() != null) {
                 return GenomeFactory.translateFromGene(gene);
             }
@@ -94,11 +98,13 @@ public class EvolLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KGraphData graphData, final LayoutContext context) {
-        LayoutEvolutionModel model = context.getProperty(EVOL_MODEL);
-        if (model != null) {
+    public void transferValues(final KGraphData graphData, final LayoutContext inputContext) {
+        LayoutEvolutionModel model = inputContext.getProperty(EVOL_MODEL);
+        KGraphElement graphElement = inputContext.getProperty(LayoutContext.GRAPH_ELEM);
+        if (model != null && graphElement != null) {
             LayoutDataService dataService = LayoutDataService.getInstance();
-            for (Gene<?> gene : model.getSelected().getGenes()) {
+            LayoutContext keyContext = model.getSelected().findContext(graphElement);
+            for (Gene<?> gene : model.getSelected().getGenes(keyContext)) {
                 if (gene.getValue() != null) {
                     LayoutOptionData<?> optionData = dataService.getOptionData(
                             gene.getTypeInfo().getId());

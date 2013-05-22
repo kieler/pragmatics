@@ -37,7 +37,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
@@ -164,7 +163,7 @@ public class EvaluationOperation implements IEvolutionaryOperation {
         }
         
         // sort the individuals by descending fitness
-        Collections.sort(population);
+        Collections.sort(population, new Genome.FitnessComparator());
         
         monitor.done();
     }
@@ -183,11 +182,10 @@ public class EvaluationOperation implements IEvolutionaryOperation {
 
         KNode testGraph = population.getProperty(Population.EVALUATION_GRAPH);
         ILayoutConfig layoutConfig = population.getProperty(Population.DEFAULT_CONFIG);
-        LayoutContext layoutContext = population.getProperty(Population.DEFAULT_CONTEXT);
 
         // perform layout on the evaluation graph
         KNode graph = EcoreUtil.copy(testGraph);
-        GenomeFactory.configureGraph(graph, genome, layoutConfig, layoutContext);
+        GenomeFactory.configureGraph(genome, layoutConfig);
         double executionTime;
         try {
             IKielerProgressMonitor layoutMonitor = progressMonitor.subTask(1);

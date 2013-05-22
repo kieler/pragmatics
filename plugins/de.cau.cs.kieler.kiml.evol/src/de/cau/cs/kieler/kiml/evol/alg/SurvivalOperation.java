@@ -77,7 +77,9 @@ public class SurvivalOperation implements IEvolutionaryOperation {
             survivors[i] = genomeIter.next();
         }
         
-        double minDist = survivors[0].getSize() * MIN_DIST_FACTOR;
+        int contextCount = survivors[0].getContexts().size();
+        int geneCount = survivors[0].getSize(survivors[0].getContexts().iterator().next());
+        double minDist = contextCount * geneCount * MIN_DIST_FACTOR;
         for (int i = MIN_SURVIVORS; i < surviveCount; i++) {
             Genome individual = null;
             int sampleCount = (int) Math.log(i) + 1;
