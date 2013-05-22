@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2013 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kaom.klighd.ptolemy;
 
 import java.net.MalformedURLException;
@@ -31,6 +44,12 @@ import de.cau.cs.kieler.core.krendering.KXPosition;
 import de.cau.cs.kieler.core.krendering.KYPosition;
 import de.cau.cs.kieler.core.krendering.impl.KRenderingFactoryImpl;
 
+/**
+ * Class for creating krenderings out of ptolemy svg figures.
+ * 
+ * @author ckru
+ * 
+ */
 public class FigureParserKRendering {
     /**
      * This is a utility class and thus the constructor is hidden.
@@ -40,11 +59,11 @@ public class FigureParserKRendering {
     }
 
     /**
-     * Create an draw2d figure out of an svg document.
+     * Create a krendering figure out of an svg document.
      * 
      * @param doc
      *            the svg document
-     * @return the draw2d figure equivalent to the svg
+     * @return the krendering equivalent to the svg
      */
     public static KRendering createFigure(final Document doc) {
         Element svgElement = (Element) doc.getElementsByTagName("svg").item(0);
@@ -89,13 +108,13 @@ public class FigureParserKRendering {
     }
 
     /**
-     * Parsing the svg and creating figures accordingly. Builds a hirachical structure.
+     * Parsing the svg and creating krenderings accordingly. Builds a hirachical structure.
      * 
      * @param root
      *            the top level svg element.
      * @param parentFigure
-     *            an invisible figure as container for the actual figures
-     * @return a hirachical figure representing the svg
+     *            an invisible krendering as container for the actual figures
+     * @return a hirachical krendering representing the svg
      */
     private static KContainerRendering buildFigure(final Element root,
             final KContainerRendering parentFigure) {
@@ -375,7 +394,7 @@ public class FigureParserKRendering {
                             + Float.parseFloat(childElement.getAttribute("height")));
 
                     String link = (String) childElement.getAttribute("xlink:href");
-                    String style = (String) childElement.getAttribute("style");
+                    //String style = (String) childElement.getAttribute("style");
                     URL url = ClassLoader.getSystemResource(link);
                     if (url == null) {
                         try {
@@ -420,10 +439,10 @@ public class FigureParserKRendering {
     }
 
     /**
-     * Applys the style attribute of the svg element to the figure.
+     * Applys the style attribute of the svg element to the krendering.
      * 
      * @param figure
-     *            the figure whoose style to set
+     *            the krendering whose style to set
      * @param style
      *            the style as a string
      */
@@ -463,10 +482,10 @@ public class FigureParserKRendering {
     }
 
     /**
-     * Applys the style attribute of the svg element to the figure.
+     * Applys the style attribute of the svg element to the krendering.
      * 
      * @param figure
-     *            the figure whoose style to set
+     *            the krendering whoose style to set
      * @param style
      *            the style as a string
      */
