@@ -14,23 +14,24 @@
 package de.cau.cs.kieler.klay.tree;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
  * TODO: Document this class.
- * 
- * TODO: convert applyLayout of force graph to tgraph
  * 
  * @author sor
  * @author sgu
@@ -44,28 +45,37 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      * {@inheritDoc}
      */
     public TGraph importGraph(final KNode kgraph) {
-        TGraph TGraph = new TGraph();
-        TGraph.setProperty(Properties.ORIGIN, kgraph);
+        TGraph tGraph = new TGraph();
+        tGraph.setProperty(Properties.ORIGIN, kgraph);
         
-        // copy the properties of the KGraph to the force graph
+        // copy the properties of the KGraph to the t-graph
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
-        TGraph.copyProperties(sourceShapeLayout);
-        TGraph.checkProperties(Properties.SPACING, Properties.ASPECT_RATIO);
+        tGraph.copyProperties(sourceShapeLayout);
+        tGraph.checkProperties(Properties.SPACING, Properties.ASPECT_RATIO);
                 
-        // keep a list of created nodes in the force graph
+        // keep a list of created nodes in the t-graph
         Map<KNode, TNode> elemMap = new HashMap<KNode, TNode>();
         
         // transform everything
-        transformNodes(kgraph, TGraph, elemMap);
-                
-        return TGraph;
+        transformNodes(kgraph, tGraph, elemMap);
+        transformEdges(kgraph, tGraph, elemMap);
+       
+        // set the fan for every node 
+        // TODO multiple parents of a node
+        for (TNode tNode : tGraph.getNodes()) {
+            if (tNode.getProperty(Properties.ROOT)) {
+                setFan(tNode);  
+            } 
+        }
+        
+        return tGraph;
     }
     
     /**
      * Transforms the nodes and ports defined by the given layout node.
      * 
      * @param parentNode the layout node whose edges to transform.
-     * @param tGraph the force graph.
+     * @param tGraph the t-graph.
      * @param elemMap the element map that maps the original {@code KGraph} elements to the
      *                transformed {@code TGraph} elements.
      */
@@ -73,15 +83,14 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             final Map<KNode, TNode> elemMap) {
         int index = 0;
         for (KNode knode : parentNode.getChildren()) {
-            // add a new node to the force graph, copying its size
+            // add a new node to the t-graph, copying its size
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
             
             String label = "";
             if (!knode.getLabels().isEmpty()) {
                 label = knode.getLabels().get(0).getText();
             }
-            TNode newNode = new TNode(0, tGraph, label);
-            newNode.id = index++;
+            TNode newNode = new TNode(index++, tGraph, label);
             newNode.setProperty(Properties.ORIGIN, knode);
             newNode.getPosition().x = nodeLayout.getXpos() + nodeLayout.getWidth() / 2;
             newNode.getPosition().y = nodeLayout.getYpos() + nodeLayout.getHeight() / 2;
@@ -89,19 +98,66 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             newNode.getSize().y = Math.max(nodeLayout.getHeight(), 1);
             tGraph.getNodes().add(newNode);
             
-            elemMap.put(knode, newNode);
-            
-            // port constraints cannot be undefined
-            PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-            if (portConstraints == PortConstraints.UNDEFINED) {
-                portConstraints = PortConstraints.FREE;
+            if (knode.getIncomingEdges().isEmpty()) {
+                newNode.setProperty(Properties.ROOT, true);
             }
             
-            // TODO consider ports
+            elemMap.put(knode, newNode);
             
             // set properties of the new node
             newNode.copyProperties(nodeLayout);
         }
+    }
+    
+    /**
+     * Transforms the edges defined by the given layout node.
+     * 
+     * @param parentNode the layout node whose edges to transform.
+     * @param tGraph the t-graph.
+     * @param elemMap the element map that maps the original {@code KGraph} elements to the
+     *                transformed {@code TGraph} elements.
+     */
+    private void transformEdges(final KNode parentNode, final TGraph tGraph,
+            final Map<KNode, TNode> elemMap) {
+        for (KNode knode : parentNode.getChildren()) {
+            for (KEdge kedge : knode.getOutgoingEdges()) {
+                // exclude edges that pass hierarchy bounds as well as self-loops
+                if (kedge.getTarget().getParent() == parentNode && knode != kedge.getTarget()) {
+                    KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+                    
+                    // create a edge
+                    TNode source = elemMap.get(knode);
+                    TNode target = elemMap.get(kedge.getTarget());
+                    TEdge newEdge = new TEdge(source, target);
+                    newEdge.setProperty(Properties.ORIGIN, kedge);
+                    tGraph.getEdges().add(newEdge);
+                    
+                    source.addChild(target);
+                    
+                    // TODO transform the edge's labels
+                    
+                    // set properties of the new edge
+                    newEdge.copyProperties(edgeLayout);
+                    newEdge.checkProperties(Properties.LABEL_SPACING);
+                }
+            }
+        }
+    } 
+    
+    
+    /**
+     * Calculates a fan for a node including its descendants.
+     * 
+     * @param tNode the tNode for which a fan should be calculated
+     * @return the fan of this node plus the fan of its descendants
+     */
+    private int setFan(final TNode tNode) {
+        int fan = 0;
+        for (TNode tChild : tNode.getChildren()) {
+            fan += setFan(tChild) < 1 ? 1 : setFan(tChild) ;
+        }
+        tNode.setProperty(Properties.FAN, fan);
+        return fan;
     }
        
     

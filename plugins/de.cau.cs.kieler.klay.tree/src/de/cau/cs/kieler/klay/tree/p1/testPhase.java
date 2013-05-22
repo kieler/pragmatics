@@ -41,6 +41,9 @@ public class testPhase implements ILayoutPhase {
 
     /** default value for spacing between nodes. */
     private static final float DEFAULT_SPACING = 15.0f;
+    
+    /** default value for spacing between nodes. */
+    private static final float DEFAULT_SIZE = 50.0f;
 
     /**
      * {@inheritDoc}
@@ -58,7 +61,7 @@ public class testPhase implements ILayoutPhase {
         // TODO structure add root or potential roots
         List<TNode> root = new ArrayList<TNode>();
         for (TNode tNode : tGraph.getNodes()) {
-            if (tNode.getParent() == null)
+            if (tNode.getProperty(Properties.ROOT))
                 root.add(tNode);
         }
 
@@ -66,7 +69,6 @@ public class testPhase implements ILayoutPhase {
 
         Iterator<TNode> iterator = root.iterator();
         if (iterator.hasNext()) {
-            iterator.next();
             tempRoot = iterator.next();
             for (; iterator.hasNext();) {
                 TNode tNode = iterator.next();
@@ -82,10 +84,12 @@ public class testPhase implements ILayoutPhase {
         // TODO find a use for tempRoot.getProperty(Properties.DEPTH)
 
         int parentFan = tempRoot.getProperty(Properties.FAN);
+        
 
-        tempRoot.getPosition().x = parentFan / 2;
+        tempRoot.getPosition().x = parentFan * DEFAULT_SIZE / 2;
         tempRoot.getPosition().y = 0;
 
+//        System.out.println("x: "+ tempRoot.getPosition().x);
         int childFan;
         int occupiedSpace = 0;
 
@@ -97,12 +101,15 @@ public class testPhase implements ILayoutPhase {
         while (!nextLevel.isEmpty()) {
             currentLevel = (ArrayList<TNode>) nextLevel.clone();
             nextLevel.clear();
-            depth++;
+            depth+=DEFAULT_SIZE;
             for (TNode tNode : currentLevel) {
                 childFan = tNode.getProperty(Properties.FAN);
-                occupiedSpace += childFan;
-                tNode.getPosition().x = occupiedSpace + childFan / 2;
+                tNode.getPosition().x = occupiedSpace + childFan * DEFAULT_SIZE / 2;
                 tNode.getPosition().y = depth;
+                System.out.println("x: "+ tNode.getPosition().x);
+                occupiedSpace += childFan < 1 ? 1 * DEFAULT_SIZE : childFan* DEFAULT_SIZE;
+                System.out.println("o: "+occupiedSpace);
+
                 nextLevel.addAll(tNode.getChildren());
             }
             occupiedSpace = 0;

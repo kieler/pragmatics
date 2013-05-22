@@ -46,6 +46,11 @@ public final class Properties {
      * The maximal fan out of a node in the nesting tree of a compound graph.
      */
     public static final IProperty<Integer> FAN = new Property<Integer>("FAN", 0);
+    
+    /**
+     * Is the node a root of a tree.
+     */
+    public static final IProperty<Boolean> ROOT = new Property<Boolean>("ROOT", false);
 
     /**
      * The level out of a node in the nesting tree of a compound graph.

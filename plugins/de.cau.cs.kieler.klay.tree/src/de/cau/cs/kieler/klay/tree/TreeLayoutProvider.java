@@ -19,7 +19,6 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TGraphBuilder;
 
-
 /**
  * TODO: Document this class.
  * 
@@ -28,16 +27,14 @@ import de.cau.cs.kieler.klay.tree.graph.TGraphBuilder;
  */
 @SuppressWarnings("unused")
 public class TreeLayoutProvider extends AbstractLayoutProvider {
-    
 
-    ///////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////
     // Variables
 
     /** the layout algorithm used for this layout. */
     private KlayTree klayTree = new KlayTree();
 
-
-    ///////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////
     // Regular Layout
 
     /**
@@ -46,12 +43,14 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void doLayout(final KNode kgraph, IKielerProgressMonitor progressMonitor) {
 
-        TGraph tGraph =  TGraphBuilder.createTGraphFromKGraph(kgraph);
         IGraphImporter<KNode> graphImporter = new KGraphImporter();
+        TGraph tGraph = graphImporter.importGraph(kgraph);
+        
+//        TGraph tGraph = TGraphBuilder.createTGraphFromKGraph(kgraph);
 
         tGraph = klayTree.doLayout(tGraph, progressMonitor);
-        
-        // TODO apply the layout results to the original graph
+
+        // apply the layout results to the original graph
         graphImporter.applyLayout(tGraph);
     }
 
