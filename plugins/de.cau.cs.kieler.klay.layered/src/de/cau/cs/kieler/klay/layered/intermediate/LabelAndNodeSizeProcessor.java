@@ -949,33 +949,68 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
             }
         } else if (nodeLabelPlacement.contains(NodeLabelPlacement.OUTSIDE)) {
             // TODO: Outside placement doesn't take ports and port labels into account yet.
-            boolean topOrBottom = false;
             
-            // Y coordinate
-            if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
-                labelGroupPos.y = -(nodeLabelsBoundingBox.y + labelSpacing);
-                topOrBottom = true;
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
-                labelGroupPos.y = (node.getSize().y - nodeLabelsBoundingBox.y) / 2.0;
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
-                labelGroupPos.y = node.getSize().y + labelSpacing;
-                topOrBottom = true;
-            }
-            
-            // X coordinate
-            if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
-                if (topOrBottom) {
-                    labelGroupPos.x = 0;
-                } else {
+            // Different placement logic depending on whether horizontal or vertical placement
+            // is prioritized
+            if (nodeLabelPlacement.contains(NodeLabelPlacement.H_PRIORITY)) {
+                boolean leftOrRight = false;
+                
+                // X coordinate
+                if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
                     labelGroupPos.x = -(nodeLabelsBoundingBox.x + labelSpacing);
-                }
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
-                labelGroupPos.x = (node.getSize().x - nodeLabelsBoundingBox.x) / 2.0;
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
-                if (topOrBottom) {
-                    labelGroupPos.x = node.getSize().x - nodeLabelsBoundingBox.x;
-                } else {
+                    leftOrRight = true;
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
+                    labelGroupPos.x = (node.getSize().x - nodeLabelsBoundingBox.x) / 2.0;
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
                     labelGroupPos.x = node.getSize().x + labelSpacing;
+                    leftOrRight = true;
+                }
+                
+                // Y coordinate
+                if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
+                    if (leftOrRight) {
+                        labelGroupPos.y = 0;
+                    } else {
+                        labelGroupPos.y = -(nodeLabelsBoundingBox.y + labelSpacing);
+                    }
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
+                    labelGroupPos.y = (node.getSize().y - nodeLabelsBoundingBox.y) / 2.0;
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
+                    if (leftOrRight) {
+                        labelGroupPos.y = node.getSize().y - nodeLabelsBoundingBox.y;
+                    } else {
+                        labelGroupPos.y = node.getSize().y + labelSpacing;
+                    }
+                }
+            } else {
+                boolean topOrBottom = false;
+                
+                // Y coordinate
+                if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
+                    labelGroupPos.y = -(nodeLabelsBoundingBox.y + labelSpacing);
+                    topOrBottom = true;
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
+                    labelGroupPos.y = (node.getSize().y - nodeLabelsBoundingBox.y) / 2.0;
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
+                    labelGroupPos.y = node.getSize().y + labelSpacing;
+                    topOrBottom = true;
+                }
+                
+                // X coordinate
+                if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
+                    if (topOrBottom) {
+                        labelGroupPos.x = 0;
+                    } else {
+                        labelGroupPos.x = -(nodeLabelsBoundingBox.x + labelSpacing);
+                    }
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
+                    labelGroupPos.x = (node.getSize().x - nodeLabelsBoundingBox.x) / 2.0;
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
+                    if (topOrBottom) {
+                        labelGroupPos.x = node.getSize().x - nodeLabelsBoundingBox.x;
+                    } else {
+                        labelGroupPos.x = node.getSize().x + labelSpacing;
+                    }
                 }
             }
         }
