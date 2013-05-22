@@ -125,7 +125,8 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
             if (!port.getIncomingEdges().isEmpty()) {
                 throw new UnsupportedConfigurationException("Node '" + node.getDesignation()
                         + "' has its layer constraint set to FIRST or FIRST_SEPARATE, but has at least "
-                        + "one incoming edge.");
+                        + "one incoming edge. Connections between nodes with these layer constraints "
+                        + "are not supported.");
             }
         }
     }
@@ -140,7 +141,8 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
             if (!port.getOutgoingEdges().isEmpty()) {
                 throw new UnsupportedConfigurationException("Node '" + node.getDesignation()
                         + "' has its layer constraint set to LAST or LAST_SEPARATE, but has at least "
-                        + "one outgoing edge.");
+                        + "one outgoing edge. Connections between nodes with these layer constraints "
+                        + "are not supported.");
             }
         }
     }
