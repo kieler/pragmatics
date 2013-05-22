@@ -74,7 +74,23 @@ public enum NodeLabelPlacement {
     /**
      * Place node labels on the outside of the node.
      */
-    OUTSIDE;
+    OUTSIDE,
+    
+    /**
+     * If set, the default behaviour is changed to give the horizontal placement priority over the
+     * vertical one. This option is only relevant for {@link #OUTSIDE} placement.
+     * 
+     * <p>The default behaviour is to first choose the northern or southern node side for placement of
+     * the label, according to the {@link #V_TOP} and {@link #V_BOTTOM} options. The horizontal placement
+     * is then constricted to the width of the node, thus resulting in labels that are placed above or
+     * below the node, but never to its left or right side.</p>
+     * 
+     * <p>If this option is set, the default behaviour is overridden and the horizontal placement options
+     * are evaluated first, thus causing the eastern or western node side to be chosen for placement of
+     * the label. The vertical placement options are then constricted to the height of the node, thus
+     * resulting in labels that are placed to the left or right of the node.</p>
+     */
+    H_PRIORITY;
     
     
     /**

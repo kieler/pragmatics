@@ -653,8 +653,10 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         LPort port;
         Direction direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
         boolean mergePorts = layeredGraph.getProperty(Properties.MERGE_PORTS);
+        
         if ((mergePorts || node.getProperty(LayoutOptions.HYPERNODE))
                 && !node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+            
             // Hypernodes have one output port and one input port
             final PortSide defaultSide = PortSide.fromDirection(direction);
             port = Util.provideCollectorPort(layeredGraph, node, type,
@@ -662,9 +664,11 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         } else {
             port = new LPort(layeredGraph);
             port.setNode(node);
+            
             KVector pos = port.getPosition();
             pos.x = endPoint.getX() - node.getPosition().x;
             pos.y = endPoint.getY() - node.getPosition().y;
+            
             KVector resizeRatio = node.getProperty(Properties.RESIZE_RATIO);
             if (resizeRatio != null) {
                 pos.scale(resizeRatio.x, resizeRatio.y);
@@ -690,6 +694,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 break;
             }
         }
+        
         return port;
     }
 
