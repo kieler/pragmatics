@@ -98,6 +98,7 @@ public class testPhase implements ILayoutPhase {
 
         nextLevel.addAll(tempRoot.getChildren());
 
+        // TODO treat size of nodes
         while (!nextLevel.isEmpty()) {
             currentLevel = (ArrayList<TNode>) nextLevel.clone();
             nextLevel.clear();
