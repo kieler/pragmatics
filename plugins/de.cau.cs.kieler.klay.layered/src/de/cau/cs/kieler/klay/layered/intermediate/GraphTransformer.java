@@ -13,13 +13,16 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -28,6 +31,8 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * A layout processor that is able to perform transformations on the coordinates of a graph.
@@ -40,16 +45,18 @@ public final class GraphTransformer implements ILayoutProcessor {
 
     /** definition of transformation modes. */
     public enum Mode {
-        /** mirror the x coordinates of the graph. */
-        MIRROR,
+        /** mirror the coordinates of the graph. */
+        MIRROR_X,
         /** transpose by swapping x and y coordinates. */
         TRANSPOSE,
         /** mirror and then transpose the graph. */
         MIRROR_AND_TRANSPOSE;
     }
     
+    
     /** the configured mode of the graph transformer. */
     private final Mode mode;
+    
     
     /**
      * Creates a graph transformer with the given mode.
@@ -59,6 +66,7 @@ public final class GraphTransformer implements ILayoutProcessor {
     public GraphTransformer(final Mode themode) {
         this.mode = themode;
     }
+    
     
     /**
      * {@inheritDoc}
@@ -71,8 +79,8 @@ public final class GraphTransformer implements ILayoutProcessor {
         }
         
         switch(mode) {
-        case MIRROR:
-            mirror(nodes);
+        case MIRROR_X:
+            mirrorX(nodes);
             break;
         case TRANSPOSE:
             transpose(nodes);
@@ -80,7 +88,8 @@ public final class GraphTransformer implements ILayoutProcessor {
             transpose(layeredGraph.getSize());
             break;
         case MIRROR_AND_TRANSPOSE:
-            mirror(nodes);
+            mirrorX(nodes);
+            mirrorY(nodes);
             transpose(nodes);
             transpose(layeredGraph.getOffset());
             transpose(layeredGraph.getSize());
@@ -89,12 +98,16 @@ public final class GraphTransformer implements ILayoutProcessor {
         monitor.done();
     }
     
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Mirror Horizontally
+    
     /**
      * Mirror the x coordinates of the given graph.
      * 
      * @param nodes the nodes of the graph to transpose
      */
-    private void mirror(final List<LNode> nodes) {
+    private void mirrorX(final List<LNode> nodes) {
         // determine the greatest x coordinate
         double maxx = 0;
         for (LNode node : nodes) {
@@ -103,44 +116,81 @@ public final class GraphTransformer implements ILayoutProcessor {
         
         // mirror all nodes, ports, edges, and labels
         for (LNode node : nodes) {
-            mirror(node.getPosition(), maxx - node.getSize().x);
+            mirrorX(node.getPosition(), maxx - node.getSize().x);
             KVector nodeSize = node.getSize();
             for (LPort port : node.getPorts()) {
-                mirror(port.getPosition(), nodeSize.x);
-                mirror(port.getAnchor(), port.getSize().x);
-                mirrorPortSide(port);
+                mirrorX(port.getPosition(), nodeSize.x - port.getSize().x);
+                mirrorX(port.getAnchor(), port.getSize().x);
+                mirrorNodeLabelPlacementX(node);
+                mirrorPortSideX(port);
                 for (LEdge edge : port.getOutgoingEdges()) {
+                    // Mirror bend points
                     for (KVector bendPoint : edge.getBendPoints()) {
-                        mirror(bendPoint, maxx);
+                        mirrorX(bendPoint, maxx);
                     }
+                    
+                    // Mirror junction points
                     KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
                     if (junctionPoints != null) {
                         for (KVector jp : junctionPoints) {
-                            mirror(jp, maxx);
+                            mirrorX(jp, maxx);
                         }
                     }
+                    
+                    // Mirror edge label positions
                     for (LLabel label : edge.getLabels()) {
-                        mirror(label.getPosition(), maxx - label.getSize().x);
+                        mirrorX(label.getPosition(), maxx - label.getSize().x);
                     }
                 }
+                
+                // Mirror port label positions
                 for (LLabel label : port.getLabels()) {
-                    mirror(label.getPosition(), -label.getSize().x);
+                    mirrorX(label.getPosition(), -label.getSize().x);
                 }
             }
-            for (LLabel label : node.getLabels()) {
-                mirror(label.getPosition(), nodeSize.x - label.getSize().x);
+            
+            // External port dummy?
+            if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
+                mirrorExternalPortSideX(node);
+            }
+
+            // Mirror node label positions if node label placement is fixed
+            if (node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty()) {
+                for (LLabel label : node.getLabels()) {
+                    mirrorX(label.getPosition(), nodeSize.x - label.getSize().x);
+                }
             }
         }
     }
-    
+
     /**
      * Mirror the x coordinate of the given vector and add an offset.
      * 
      * @param v a vector
      * @param offset offset for the x coordinate
      */
-    private void mirror(final KVector v, final double offset) {
+    private void mirrorX(final KVector v, final double offset) {
         v.x = offset - v.x;
+    }
+    
+    /**
+     * Horrizontally mirrors the node label placement options, if any are set.
+     * 
+     * @param node the node.
+     */
+    private void mirrorNodeLabelPlacementX(final LNode node) {
+        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+        if (oldPlacement.isEmpty()) {
+            return;
+        }
+        
+        if (oldPlacement.contains(NodeLabelPlacement.H_LEFT)) {
+            oldPlacement.remove(NodeLabelPlacement.H_LEFT);
+            oldPlacement.add(NodeLabelPlacement.H_RIGHT);
+        } else if (oldPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
+            oldPlacement.remove(NodeLabelPlacement.H_RIGHT);
+            oldPlacement.add(NodeLabelPlacement.H_LEFT);
+        }
     }
     
     /**
@@ -148,25 +198,175 @@ public final class GraphTransformer implements ILayoutProcessor {
      * 
      * @param port the port.
      */
-    private void mirrorPortSide(final LPort port) {
-        switch (port.getSide()) {
-        case NORTH:
-            port.setSide(PortSide.SOUTH);
-            break;
-        
-        case SOUTH:
-            port.setSide(PortSide.NORTH);
-            break;
-        
+    private void mirrorPortSideX(final LPort port) {
+        port.setSide(getMirroredPortSideX(port.getSide()));
+    }
+    
+    /**
+     * Mirror the side of the external port represented by the given external port dummy.
+     * 
+     * @param node external port dummy node.
+     */
+    private void mirrorExternalPortSideX(final LNode node) {
+        node.setProperty(Properties.EXT_PORT_SIDE,
+                getMirroredPortSideX(node.getProperty(Properties.EXT_PORT_SIDE)));
+    }
+    
+    /**
+     * Returns the port side that is horizontally mirrored from the given side.
+     * 
+     * @param side the side whose horizontal opposite to return.
+     * @return horizontal opposite of the given side.
+     */
+    private PortSide getMirroredPortSideX(final PortSide side) {
+        switch (side) {
         case EAST:
-            port.setSide(PortSide.WEST);
-            break;
-        
+            return PortSide.WEST;
+            
         case WEST:
-            port.setSide(PortSide.EAST);
-            break;
+            return PortSide.EAST;
+            
+        default:
+            return side;
         }
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Mirror Vertically
+    
+    /**
+     * Mirror the y coordinates of the given graph.
+     * 
+     * @param nodes the nodes of the graph to transpose
+     */
+    private void mirrorY(final List<LNode> nodes) {
+        // determine the greatest y coordinate
+        double maxy = 0;
+        for (LNode node : nodes) {
+            maxy = Math.max(maxy, node.getPosition().y + node.getSize().y);
+        }
+        
+        // mirror all nodes, ports, edges, and labels
+        for (LNode node : nodes) {
+            mirrorY(node.getPosition(), maxy - node.getSize().y);
+            KVector nodeSize = node.getSize();
+            for (LPort port : node.getPorts()) {
+                mirrorY(port.getPosition(), nodeSize.y - port.getSize().y);
+                mirrorY(port.getAnchor(), port.getSize().y);
+                mirrorNodeLabelPlacementY(node);
+                mirrorPortSideY(port);
+                for (LEdge edge : port.getOutgoingEdges()) {
+                    // Mirror bend points
+                    for (KVector bendPoint : edge.getBendPoints()) {
+                        mirrorY(bendPoint, maxy);
+                    }
+                    
+                    // Mirror junction points
+                    KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                    if (junctionPoints != null) {
+                        for (KVector jp : junctionPoints) {
+                            mirrorY(jp, maxy);
+                        }
+                    }
+                    
+                    // Mirror edge label positions
+                    for (LLabel label : edge.getLabels()) {
+                        mirrorY(label.getPosition(), maxy - label.getSize().y);
+                    }
+                }
+                
+                // Mirror port label positions
+                for (LLabel label : port.getLabels()) {
+                    mirrorY(label.getPosition(), -label.getSize().y);
+                }
+            }
+            
+            // External port dummy?
+            if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
+                mirrorExternalPortSideY(node);
+            }
+            
+            // Mirror node label positions if node label placement is fixed
+            if (node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty()) {
+                for (LLabel label : node.getLabels()) {
+                    mirrorY(label.getPosition(), nodeSize.y - label.getSize().y);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Mirror the y coordinate of the given vector and add an offset.
+     * 
+     * @param v a vector
+     * @param offset offset for the x coordinate
+     */
+    private void mirrorY(final KVector v, final double offset) {
+        v.y = offset - v.y;
+    }
+    
+    /**
+     * Vertically mirrors the node label placement options, if any are set.
+     * 
+     * @param node the node.
+     */
+    private void mirrorNodeLabelPlacementY(final LNode node) {
+        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+        if (oldPlacement.isEmpty()) {
+            return;
+        }
+        
+        if (oldPlacement.contains(NodeLabelPlacement.V_TOP)) {
+            oldPlacement.remove(NodeLabelPlacement.V_TOP);
+            oldPlacement.add(NodeLabelPlacement.V_BOTTOM);
+        } else if (oldPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
+            oldPlacement.remove(NodeLabelPlacement.V_BOTTOM);
+            oldPlacement.add(NodeLabelPlacement.V_TOP);
+        }
+    }
+    
+    /**
+     * Mirror the side of the given port. Undefined port sides are left untouched.
+     * 
+     * @param port the port.
+     */
+    private void mirrorPortSideY(final LPort port) {
+        port.setSide(getMirroredPortSideY(port.getSide()));
+    }
+    
+    /**
+     * Mirror the side of the external port represented by the given external port dummy.
+     * 
+     * @param node external port dummy node.
+     */
+    private void mirrorExternalPortSideY(final LNode node) {
+        node.setProperty(Properties.EXT_PORT_SIDE,
+                getMirroredPortSideY(node.getProperty(Properties.EXT_PORT_SIDE)));
+    }
+    
+    /**
+     * Returns the port side that is vertically mirrored from the given side.
+     * 
+     * @param side the side whose vertical opposite to return.
+     * @return vertical opposite of the given side.
+     */
+    private PortSide getMirroredPortSideY(final PortSide side) {
+        switch (side) {
+        case NORTH:
+            return PortSide.SOUTH;
+            
+        case SOUTH:
+            return PortSide.NORTH;
+            
+        default:
+            return side;
+        }
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Transpose
     
     /**
      * Transpose the x and y coordinates of the given graph.
@@ -174,37 +374,62 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param nodes the nodes of the graph to transpose
      */
     private void transpose(final List<LNode> nodes) {
+        // Transpose nodes
         for (LNode node : nodes) {
             transpose(node.getPosition());
             transpose(node.getSize());
+            
+            // Transpose ports
             for (LPort port : node.getPorts()) {
                 transpose(port.getPosition());
                 transpose(port.getAnchor());
                 transpose(port.getSize());
+                transposeNodeLabelPlacement(node);
                 transposePortSide(port);
+                
+                // Transpose edges
                 for (LEdge edge : port.getOutgoingEdges()) {
+                    // Transpose bend points
                     for (KVector bendPoint : edge.getBendPoints()) {
                         transpose(bendPoint);
                     }
+                    
+                    // Transpose junction points
                     KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
                     if (junctionPoints != null) {
                         for (KVector jp : junctionPoints) {
                             transpose(jp);
                         }
                     }
+                    
+                    // Transpose edge labels
                     for (LLabel label : edge.getLabels()) {
                         transpose(label.getPosition());
                         transpose(label.getSize());
                     }
                 }
+                
+                // Transpose port labels
                 for (LLabel label : port.getLabels()) {
                     transpose(label.getPosition());
                     transpose(label.getSize());
                 }
             }
+            
+            // External port dummy?
+            if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
+                transposeExternalPortSide(node);
+            }
+
+            // Transpose node label positions if node label placement is fixed (the label size must
+            // always be transposed)
+            boolean fixedNodeLabels = node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty();
             for (LLabel label : node.getLabels()) {
-                transpose(label.getPosition());
                 transpose(label.getSize());
+                
+                if (fixedNodeLabels) {
+                    transpose(label.getPosition());
+                }
             }
         }
     }
@@ -221,28 +446,88 @@ public final class GraphTransformer implements ILayoutProcessor {
     }
     
     /**
+     * Transposes the node label placement options, if any are set.
+     * 
+     * @param node the node.
+     */
+    private void transposeNodeLabelPlacement(final LNode node) {
+        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+        if (oldPlacement.isEmpty()) {
+            return;
+        }
+        
+        // Build up a new node label placement enumeration
+        EnumSet<NodeLabelPlacement> newPlacement = EnumSet.noneOf(NodeLabelPlacement.class);
+        
+        // Horizontal priority
+        if (!oldPlacement.contains(NodeLabelPlacement.H_PRIORITY)) {
+            newPlacement.add(NodeLabelPlacement.H_PRIORITY);
+        }
+        
+        // Horizontal alignment
+        if (oldPlacement.contains(NodeLabelPlacement.H_LEFT)) {
+            newPlacement.add(NodeLabelPlacement.V_TOP);
+        } else if (oldPlacement.contains(NodeLabelPlacement.H_CENTER)) {
+            newPlacement.add(NodeLabelPlacement.V_CENTER);
+        } else if (oldPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
+            newPlacement.add(NodeLabelPlacement.V_BOTTOM);
+        }
+        
+        // Vertical alignment
+        if (oldPlacement.contains(NodeLabelPlacement.V_TOP)) {
+            newPlacement.add(NodeLabelPlacement.H_LEFT);
+        } else if (oldPlacement.contains(NodeLabelPlacement.V_CENTER)) {
+            newPlacement.add(NodeLabelPlacement.H_CENTER);
+        } else if (oldPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
+            newPlacement.add(NodeLabelPlacement.H_RIGHT);
+        }
+        
+        // Apply new placement
+        node.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT, newPlacement);
+    }
+    
+    /**
      * Transpose the side of the given port. Undefined port sides are left untouched.
      * 
      * @param p the port.
      */
     private void transposePortSide(final LPort p) {
-        switch (p.getSide()) {
+        p.setSide(transposePortSide(p.getSide()));
+    }
+    
+    /**
+     * Returns the transposed side of the given port side.
+     * 
+     * @param side the side to transpose.
+     * @return transposed port side.
+     */
+    private PortSide transposePortSide(final PortSide side) {
+        switch (side) {
         case NORTH:
-            p.setSide(PortSide.WEST);
-            break;
+            return PortSide.WEST;
         
         case WEST:
-            p.setSide(PortSide.NORTH);
-            break;
+            return PortSide.NORTH;
         
         case SOUTH:
-            p.setSide(PortSide.EAST);
-            break;
+            return PortSide.EAST;
         
         case EAST:
-            p.setSide(PortSide.SOUTH);
-            break;
+            return PortSide.SOUTH;
+            
+        default:
+            return PortSide.UNDEFINED;    
         }
+    }
+
+    /**
+     * Transpose the side of the external port represented by the given external port dummy.
+     * 
+     * @param node external port dummy node.
+     */
+    private void transposeExternalPortSide(final LNode node) {
+        node.setProperty(Properties.EXT_PORT_SIDE,
+                transposePortSide(node.getProperty(Properties.EXT_PORT_SIDE)));
     }
 
 }

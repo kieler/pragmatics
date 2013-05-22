@@ -56,6 +56,8 @@ import de.cau.cs.kieler.core.krendering.KShadow
 import de.cau.cs.kieler.core.krendering.Trigger
 import de.cau.cs.kieler.core.krendering.LineJoin
 import de.cau.cs.kieler.core.krendering.KLineJoin
+import de.cau.cs.kieler.core.kgraph.KPort
+import de.cau.cs.kieler.core.krendering.KPolygon
 
 /**
  * This utility class contains various methods that are convenient while composing KRendering data.
@@ -82,9 +84,33 @@ class KRenderingExtensions {
         ];
     }
 
+    def KEllipse addEllipse(KPort port){
+        return renderingFactory.createKEllipse() => [
+            port.data.add(it)
+        ];
+    }
+
+    def KPolygon addPolygon(KNode node){
+        return renderingFactory.createKPolygon() => [
+            node.data.add(it)
+        ];
+    }
+
+    def KPolygon addPolygon(KPort port){
+        return renderingFactory.createKPolygon() => [
+            port.data.add(it)
+        ];
+    }
+
     def KRectangle addRectangle(KNode node){
         return renderingFactory.createKRectangle() => [
             node.data.add(it)
+        ];
+    }
+
+    def KRectangle addRectangle(KPort port){
+        return renderingFactory.createKRectangle() => [
+            port.data.add(it)
         ];
     }
 

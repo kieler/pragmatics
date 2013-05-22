@@ -150,7 +150,7 @@ public final class EndLabelProcessor implements ILayoutProcessor {
         KVector labelPosition = label.getPosition();
         KVector absolutePortPosition = KVector.sum(port.getPosition(), port.getNode().getPosition());
         KVector absolutePortAnchor = port.getAbsoluteAnchor();
-        LInsets.Double portMargin = port.getMargin();
+        LInsets portMargin = port.getMargin();
         
         // Actually calculate the coordinates
         switch (port.getSide()) {
@@ -202,7 +202,7 @@ public final class EndLabelProcessor implements ILayoutProcessor {
         KVector labelPosition = label.getPosition();
         KVector absolutePortPosition = KVector.sum(port.getPosition(), port.getNode().getPosition());
         KVector absolutePortAnchor = port.getAbsoluteAnchor();
-        LInsets.Double portMargin = port.getMargin();
+        LInsets portMargin = port.getMargin();
         
         // Actually calculate the coordinates
         switch (port.getSide()) {

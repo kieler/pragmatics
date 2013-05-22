@@ -338,10 +338,10 @@ public class PInputManager extends PBasicInputEventHandler implements PRoot.Inpu
             }
         }
 
+        processEvent(e, nextType);
         nextInput = null;
         nextInputSource = null;
 
-        processEvent(e, nextType);
 
         if (newCurrentCanvasPosition != null && newLastCanvasPosition != null) {
             currentCanvasPosition.setLocation(newCurrentCanvasPosition);

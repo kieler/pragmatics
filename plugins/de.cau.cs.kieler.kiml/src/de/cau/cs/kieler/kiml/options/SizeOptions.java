@@ -16,7 +16,8 @@ package de.cau.cs.kieler.kiml.options;
 /**
  * Size constraint options that modify how size constraints of a node are applied. Interpreting a
  * size option set on a node only makes sense when its size constraint is taken into consideration
- * as well.
+ * as well. <b>This enumeration is not set directly on {@link LayoutOptions#SIZE_OPTIONS}; instead,
+ * an {@code EnumSet} over this enumeration is used there.</b>
  * 
  * <p><i>Note:</i> Layout algorithms may only support a subset of these options.</p>
  *

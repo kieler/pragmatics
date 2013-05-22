@@ -19,7 +19,9 @@ import java.util.EnumSet;
  * Things to take into account when determining the size of a node. Each item of this enumeration
  * corresponds to something a layout algorithm should pay attention to when calculating node sizes.
  * Usually, one will use a combination of these values in an {@code EnumSet} instance, with the
- * empty set meaning that node sizes are fixed.
+ * empty set meaning that node sizes are fixed. <b>This enumeration is not set directly on
+ * {@link LayoutOptions#SIZE_CONSTRAINT}; instead, an {@code EnumSet} over this enumeration is used
+ * there.</b>
  * 
  * <p><i>Note:</i> Layout algorithms may only support a subset of these options.</p>
  *
@@ -53,7 +55,8 @@ public enum SizeConstraint {
     
     /**
      * If set, a node's size will be at least the minimum size set on it. If no minimum size is set,
-     * the behaviour depends on whether the {@link #DEFAULT_MINIMUM_SIZE} constraint is set as well.
+     * the behavior depends on whether the {@link SizeOptions#DEFAULT_MINIMUM_SIZE} constraint is
+     * set as well.
      */
     MINIMUM_SIZE;
     
@@ -68,10 +71,18 @@ public enum SizeConstraint {
     }
     
     /**
-     * Returns a set containing the common combination of {@link #MINIMUM_SIZE},
-     * {@link #DEFAULT_MINIMUM_SIZE}, and {@link #PORTS}.
+     * Returns a set containing the {@link #MINIMUM_SIZE} constraint.
      * 
-     * @return set with default minimum size constraint combination with ports.
+     * @return set with minimum size constraint.
+     */
+    public static EnumSet<SizeConstraint> minimumSize() {
+        return EnumSet.of(MINIMUM_SIZE);
+    }
+    
+    /**
+     * Returns a set containing the common combination of {@link #MINIMUM_SIZE} and {@link #PORTS}.
+     * 
+     * @return set with minimum size constraint in combination with ports.
      */
     public static EnumSet<SizeConstraint> minimumSizeWithPorts() {
         return EnumSet.of(PORTS, MINIMUM_SIZE);

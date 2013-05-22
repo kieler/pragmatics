@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.actions;
 
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.klighd.IAction;
 
 /**
@@ -22,6 +23,12 @@ import de.cau.cs.kieler.klighd.IAction;
  * @author chsch
  */
 public class CollapseExpandAction implements IAction {
+    
+    /**
+     * The extension id of this actions. This id is to be mentioned in instances of
+     * {@link de.cau.cs.kieler.core.krendering.KAction KAction}.
+     */
+    public static final String ID = "de.cau.cs.kieler.klighd.actions.CollapseExpandAction";
     
     /**
      * {@inheritDoc}.<br>
@@ -36,9 +43,9 @@ public class CollapseExpandAction implements IAction {
      * layout options.
      * 
      */
-    public boolean execute(final ActionContext context) {
+    public ILayoutConfig execute(final ActionContext context) {
         context.getViewer().toggleExpansion(context.getNode());
-        return true;
+        return null;
     }
     
 }

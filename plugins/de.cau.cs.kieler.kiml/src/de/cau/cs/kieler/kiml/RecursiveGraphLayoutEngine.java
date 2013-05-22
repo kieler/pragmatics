@@ -39,7 +39,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param progressMonitor monitor to which progress of the layout algorithms is reported
      */
     public void layout(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor) {
-        int nodeCount = countNodes(layoutGraph, true);
+        int nodeCount = countNodesRecursively(layoutGraph, true);
         progressMonitor.begin("Recursive Graph Layout", nodeCount);
         
         // perform recursive layout of the whole substructure of the given node
@@ -57,19 +57,31 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      */
     private void layoutRecursively(final KNode layoutNode,
             final IKielerProgressMonitor progressMonitor) {
+        
+        KShapeLayout layoutNodeShapeLayout = layoutNode.getData(KShapeLayout.class);
+        
         if (!layoutNode.getChildren().isEmpty()
-                && !layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
+                && !layoutNodeShapeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+            
+            // this node has children and is thus a compound node;
+            // fetch the layout algorithm that should be used to compute a layout for its content
             LayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
             AbstractLayoutProvider layoutProvider = algorithmData.getInstancePool().fetch();
-            // if the layout provider supports hierarchy, it is expected to layout the children
+            
+            // if the layout provider supports hierarchy, it is expected to layout the node's compound
+            // node children as well
             int nodeCount;
-            if (layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)
+            if (layoutNodeShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)
                     && (algorithmData.getFeatureSupport(GraphFeature.COMPOUND)
                             > LayoutAlgorithmData.MIN_PRIORITY
                         || algorithmData.getFeatureSupport(GraphFeature.CLUSTERS)
                             > LayoutAlgorithmData.MIN_PRIORITY)) {
-                nodeCount = countNodes(layoutNode, false);
+                
+                // the layout algorithm will compute a layout for all levels of hierarchy under the
+                // current one
+                nodeCount = countNodesRecursively(layoutNode, false);
             } else {
+                // layout each compound node contained in this node separately
                 nodeCount = layoutNode.getChildren().size();
                 for (KNode child : layoutNode.getChildren()) {
                     layoutRecursively(child, progressMonitor);
@@ -110,12 +122,12 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param countAncestors if true, the nodes on the ancestors path are also counted
      * @return total number of child layout nodes
      */
-    private int countNodes(final KNode layoutNode, final boolean countAncestors) {
+    private int countNodesRecursively(final KNode layoutNode, final boolean countAncestors) {
         // count the content of the given node
         int count = layoutNode.getChildren().size();
         for (KNode childNode : layoutNode.getChildren()) {
             if (!childNode.getChildren().isEmpty()) {
-                count += countNodes(childNode, false);
+                count += countNodesRecursively(childNode, false);
             }
         }
         // count the ancestors path

@@ -6,6 +6,7 @@
    <extension-point id="updateStrategies" name="UpdateStrategies" schema="schema/updateStrategies.exsd"/>
    <extension-point id="customFigureWrapper" name="CustomFigureWrapper" schema="schema/customFigureWrapper.exsd"/>
    <extension-point id="layoutPostProcessors" name="LayoutPostProcessors" schema="schema/layoutPostProcessors.exsd"/>
+   <extension-point id="actions" name="actions" schema="schema/actions.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <category
@@ -78,22 +79,16 @@
    <extension
          point="de.cau.cs.kieler.klighd.updateStrategies">
       <updateStrategy
-            class="de.cau.cs.kieler.klighd.krendering.UpdateStrategy"
-            id="de.cau.cs.kieler.klighd.krendering.UpdateStrategy">
-      </updateStrategy>
-      <updateStrategy
             class="de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy"
             id="de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy">
       </updateStrategy>
    </extension>
    <extension
-         point="org.eclipse.emf.compare.diff.engine">
-      <diffengine
-            engineClass="de.cau.cs.kieler.klighd.diff.KGraphDiffEngine"
-            label="KgtDiffEngine"
-            namespace="http://kieler.cs.cau.de/KGraph"
-            priority="normal">
-      </diffengine>
+         point="de.cau.cs.kieler.klighd.actions">
+      <action
+            class="de.cau.cs.kieler.klighd.actions.CollapseExpandAction"
+            id="de.cau.cs.kieler.klighd.actions.CollapseExpandAction">
+      </action>
    </extension>
 
 </plugin>

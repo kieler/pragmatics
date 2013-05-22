@@ -20,9 +20,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.ui.IWorkbenchPart;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Iterables;
 
@@ -41,6 +43,7 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -244,32 +247,18 @@ public class DiagramLayoutManager implements IDiagramLayoutManager<KGraphElement
         // iterate through the parent's active children and put copies in the layout graph;
         //  a child is active if it contains RenderingContextData and the 'true' value wrt.
         //  the property KlighdConstants.ACTIVE, see the predicate definition below
-        for (KNode node : Iterables.filter(parent.getChildren(), CHILD_ACTIVE)) {
+        for (KNode node : Iterables.filter(parent.getChildren(), RenderingContextData.CHILD_ACTIVE)) {
             createNode(mapping, node, layoutParent);
         }
     }
     
     /**
-     * A predicate definition used to drop inactive nodes while processing the layout input graph.<br>
-     * Currently all children of a node are active or non-active at a time, a selective filtering is
-     * not done so far (see e.g. GraphController#addExpansionListener). This might change in future.
+     * An internal property attached to a node's shape layout when the size of the node is affected
+     * by KIML. It is used to decide which value to rely on for the minimal node size.
      */
-    private static final Predicate<KNode> CHILD_ACTIVE = new Predicate<KNode>() {
-        public boolean apply(final KNode node) {
-            return !RenderingContextData.get(node).containsPoperty(KlighdConstants.ACTIVE)
-                    || RenderingContextData.get(node).getProperty(KlighdConstants.ACTIVE);
-        }
-    };
+    private static final IProperty<Boolean> INITIAL_NODE_SIZE = new Property<Boolean>(
+            "klighd.initialNodeSize", true);
     
-    /**
-     * A property definition that is used to store the initial minimal node size.<br>
-     * The {@link LayoutOptions#MIN_WIDTH}/{@link LayoutOptions#MIN_HEIGHT} properties are not sufficient
-     * as they have to be modified for hierarchical diagrams.
-     */
-    private static final IProperty<KVector> MINIMAL_NODE_SIZE = new Property<KVector>(
-            "klighd.minimalNodeSize", new KVector(KlighdConstants.MINIMAL_NODE_BOUNDS.getWidth(),
-                    KlighdConstants.MINIMAL_NODE_BOUNDS.getHeight()));
-
     /**
      * Creates a layout node for the node inside the given layout parent node.
      * 
@@ -287,6 +276,9 @@ public class DiagramLayoutManager implements IDiagramLayoutManager<KGraphElement
         // initialize with defaultLayout and try to get specific layout attached to the node
         KShapeLayout layoutLayout = layoutNode.getData(KShapeLayout.class);
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        
+        boolean isCompoundNode = RenderingContextData.get(node).getProperty(KlighdConstants.POPULATED)
+                && Iterables.any(node.getChildren(), RenderingContextData.CHILD_ACTIVE);
 
         Bounds size = null;
         if (nodeLayout != null) {
@@ -294,78 +286,48 @@ public class DiagramLayoutManager implements IDiagramLayoutManager<KGraphElement
             // so take that as node layout instead of the default-layout
             transferShapeLayout(nodeLayout, layoutLayout);
             
-            final IProperty<Float> pMW = LayoutOptions.MIN_WIDTH;
-            final IProperty<Float> pMH = LayoutOptions.MIN_HEIGHT;
-            
-            RenderingContextData rcd = RenderingContextData.get(node);
-
             // In the following the minimal width and height of the node is determined, which
             //  is used as a basis for the size estimation (necessary for grid-based micro layouts).
-            // This minimal size is saved in the RenderingContextData attached to the node at the
-            //  first time and re-used later on.
-            // TODO: This prevents size adjustments in textually formulated diagrams. 
+
+            // We start with standard minimal bounds given in the related constant. 
+            Bounds minSize = Bounds.of(KlighdConstants.MINIMAL_NODE_BOUNDS);
+            // check the definition of the minimal size property
+            boolean minNodeSizeIsSet = nodeLayout.getProperties().containsKey(
+                    KlighdConstants.MINIMAL_NODE_SIZE);
             
-            float minWidth = 0;
-            if (!rcd.containsPoperty(pMW)) {
-                
-                // minWidth is initialized with nodeLayout.width
-                minWidth = nodeLayout.getWidth();
-                
-                // if it is not initialized, i.e. 0f that is the default of MIN_WIDTH
-                if (minWidth == pMW.getDefault()) {
-                    // MIN_WIDTH is evaluated for nodeLayout
-                    minWidth = nodeLayout.getProperty(pMW);
-                }
-                // if this does not change the value, too, MINIMAL_NODE_SIZE is evaluated
-                //  that might be set by the diagram synthesis
-                //  if it is not set, its default value is taken
-                if (minWidth == pMW.getDefault()) {
-                    minWidth = (float) nodeLayout.getProperty(MINIMAL_NODE_SIZE).x;
-                }
-                // save the minWidth in the rendering context data
-                rcd.setProperty(pMW, minWidth);                
-            } else {
-                // load the minWidth from the rendering context data
-                minWidth = rcd.getProperty(pMW);
+            if (minNodeSizeIsSet) {
+                // if the minimal node size is given in terms of the dedicated property, use its values
+                minSize = Bounds.of(nodeLayout.getProperty(KlighdConstants.MINIMAL_NODE_SIZE));
+            } else if (!isCompoundNode || nodeLayout.getProperty(INITIAL_NODE_SIZE)) {
+                // otherwise, if the node is a non-compound one or the size is not yet modified by KIML
+                //  take the component-wise maximum of the standard bounds and 'nodelayout's values 
+                minSize = Bounds.max(minSize, Bounds.of(nodeLayout.getWidth(), nodeLayout.getHeight()));
             }
+                
+            // explicitly store the determined minimal node size in the layout data of the node
+            //  note that this information will be removed or overwritten by the update strategies
+            boolean deliver = nodeLayout.eDeliver();
+            nodeLayout.eSetDeliver(false);
+            nodeLayout.setProperty(KlighdConstants.MINIMAL_NODE_SIZE,
+                    new KVector(minSize.getWidth(), minSize.getHeight()));
+            nodeLayout.eSetDeliver(deliver);
 
-            // analogously
-            float minHeight = 0;
-            if (!rcd.containsPoperty(pMH)) {
-                minHeight = nodeLayout.getHeight();
-                if (minHeight == pMH.getDefault()) {
-                    minHeight = nodeLayout.getProperty(pMH);
-                }
-                if (minHeight == pMH.getDefault()) {
-                    minHeight = (float) nodeLayout.getProperty(MINIMAL_NODE_SIZE).y;
-                }
-                rcd.setProperty(pMH, minHeight);
-            } else {
-                minHeight = rcd.getProperty(pMH);
-            }
-
-            // integrate the minimal estimated node size
-            //  manipulating the nodeLayout of a hierarchical node with active children may cause
-            //   immediate glitches in the diagram, so only the MIN_WIDTH/MIN_HEIGHT properties are set
-            //  in case of non-hierarchical nodes the layoutLayout is updated since the size is required
-            //   during the layout and will be transfered while applying the resulting layout
             KRendering rootRendering = node.getData(KRendering.class);
+            // if a rendering definition is given ...
             if (rootRendering != null) {
                 
-                Bounds minSize = Bounds.max(
-                        Bounds.of(minWidth, minHeight),
-                        KlighdConstants.MINIMAL_NODE_BOUNDS);
-                
-                // calculate the minimal size need for the rendering ...
-                Bounds estimatedSize = PlacementUtil.estimateSize(rootRendering, minSize);
-                // new Bounds(layoutLayout.getWidth(), layoutLayout.getHeight()));
-                // ... and update the node size if it exceeds its size
-                
-                size = Bounds.max(minSize, estimatedSize);
-                if (Iterables.any(node.getChildren(), CHILD_ACTIVE)) {
-                    nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, size.getWidth());
-                    nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, size.getHeight());
-                } else {
+                // ... calculate the minimal required size based on the determined 'minSize' bounds
+                size = Bounds.max(minSize, PlacementUtil.estimateSize(rootRendering, minSize));
+
+                // integrate the minimal estimated node size
+                //  in case of a compound node, the minimal node size to be preserved by KIML must be
+                //   handed over by means of the MIN_WIDTH/MIN_HEIGHT properties
+                //  in case of non-compound nodes with SizeConstraint::MINIMUM_SIZE set, the property
+                //   definitions are also relevant 
+                nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, size.getWidth());
+                nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, size.getHeight());
+                if (!isCompoundNode) {
+                    // in case of non-compound nodes the node size is usually taken from the layoutLayout
                     layoutLayout.setSize(size.getWidth(), size.getHeight());
                 }
             }
@@ -389,7 +351,9 @@ public class DiagramLayoutManager implements IDiagramLayoutManager<KGraphElement
         }
 
         // process the child as new parent
-        processNodes(mapping, node, layoutNode);
+        if (isCompoundNode) {
+            processNodes(mapping, node, layoutNode);
+        }
 
         // store all the edges to process them later
         List<KEdge> edges = mapping.getProperty(EDGES);
@@ -440,6 +404,12 @@ public class DiagramLayoutManager implements IDiagramLayoutManager<KGraphElement
         // iterate through the list of collected edges
         List<KEdge> edges = mapping.getProperty(EDGES);
         for (KEdge edge : edges) {
+            
+            KEdgeLayout layout = edge.getData(KEdgeLayout.class);
+            if (layout == null || layout.getProperty(LayoutOptions.NO_LAYOUT)) {
+                continue;
+            }
+                
             KNode layoutSource = (KNode) graphMap.get(edge.getSource());
             KNode layoutTarget = (KNode) graphMap.get(edge.getTarget());
 
@@ -480,7 +450,7 @@ public class DiagramLayoutManager implements IDiagramLayoutManager<KGraphElement
         KEdgeLayout layoutLayout = layoutEdge.getData(KEdgeLayout.class);
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         if (edgeLayout != null) {
-            transferEdgeLayout(edgeLayout, layoutLayout, null);
+            transferEdgeLayout(edgeLayout, layoutLayout, true);
         }
 
         layoutEdge.setSource(layoutSource);
@@ -600,6 +570,7 @@ public class DiagramLayoutManager implements IDiagramLayoutManager<KGraphElement
                     KShapeLayout nodeLayout = element.getData(KShapeLayout.class);
                     if (nodeLayout != null) {
                         transferShapeLayout(layoutLayout, nodeLayout);
+                        nodeLayout.setProperty(INITIAL_NODE_SIZE, false);
                     }
                     return true;
                 }
@@ -608,7 +579,7 @@ public class DiagramLayoutManager implements IDiagramLayoutManager<KGraphElement
                     KEdgeLayout layoutLayout = layoutEdge.getData(KEdgeLayout.class);
                     KEdgeLayout edgeLayout = element.getData(KEdgeLayout.class);
                     if (edgeLayout != null) {
-                        transferEdgeLayout(layoutLayout, edgeLayout, layoutEdge);
+                        transferEdgeLayout(edgeLayout, layoutLayout, false);
                     }
                     return true;
                 }
@@ -652,54 +623,65 @@ public class DiagramLayoutManager implements IDiagramLayoutManager<KGraphElement
     /**
      * Transfers the source edge layout to the target edge layout.
      * 
-     * @param originEdgeLayout
-     *            the origin edge layout
-     * @param destEdgeLayout
+     * @param viewModelEdgeLayout
      *            the destination edge layout
-     * @param edge
-     *            the edge, or {@code null} if no point checking shall be performed
+     * @param layoutEdgeLayout
+     *            the origin edge layout
+     * @param viewModel2LayoutGraph
+     *            if true the transfer is to be done from viewModel to layout graph, if false the
+     *            other round
      */
-    private static void transferEdgeLayout(final KEdgeLayout originEdgeLayout,
-            final KEdgeLayout destEdgeLayout, final KEdge edge) {
+    private static void transferEdgeLayout(final KEdgeLayout viewModelEdgeLayout,
+            final KEdgeLayout layoutEdgeLayout, final boolean viewModel2LayoutGraph) {
+        
+        KEdge layoutEdge = (KEdge) layoutEdgeLayout.eContainer();
 
-        // do not notify listeners about any change on the displayed KGraph
-        final boolean deliver = destEdgeLayout.eDeliver();
-        destEdgeLayout.eSetDeliver(false);
+        // do not notify listeners about any change on the displayed KGraph in order
+        //  to avoid unnecessary diagram refresh cycles
+        final boolean deliver = viewModelEdgeLayout.eDeliver();
+        viewModelEdgeLayout.eSetDeliver(false);
 
-        destEdgeLayout.copyProperties(originEdgeLayout);
+        viewModelEdgeLayout.copyProperties(layoutEdgeLayout);
 
-        if (destEdgeLayout.getSourcePoint() == null) {
-            destEdgeLayout.setSourcePoint(KLayoutDataFactory.eINSTANCE.createKPoint());
+        if (viewModelEdgeLayout.getSourcePoint() == null) {
+            viewModelEdgeLayout.setSourcePoint(KLayoutDataFactory.eINSTANCE.createKPoint());
         }
-        if (edge == null) {
+        if (viewModel2LayoutGraph) {
             // transfer the source point without checking
-            KPoint sourcePoint = originEdgeLayout.getSourcePoint();
-            destEdgeLayout.getSourcePoint().setPos(sourcePoint.getX(), sourcePoint.getY());
+            KPoint sourcePoint = viewModelEdgeLayout.getSourcePoint();
+            layoutEdgeLayout.getSourcePoint().setPos(sourcePoint.getX(), sourcePoint.getY());
         } else {
-            KNode sourceNode = edge.getSource();
+            KNode layoutSourceNode = layoutEdge.getSource();
             KVector offset = new KVector();
+            
             // If the target is a descendant of the source, the edge's source point is already
             // relative to the source node's position.
-            if (!KimlUtil.isDescendant(edge.getTarget(), sourceNode)) {
-                KShapeLayout sourceLayout = sourceNode.getData(KShapeLayout.class);
+            if (!KimlUtil.isDescendant(layoutEdge.getTarget(), layoutSourceNode)) {
+                KShapeLayout sourceLayout = layoutSourceNode.getData(KShapeLayout.class);
                 offset.x = -sourceLayout.getXpos();
                 offset.y = -sourceLayout.getYpos();
             } else {
-                KShapeLayout sourceLayout = sourceNode.getData(KShapeLayout.class);
+                KShapeLayout sourceLayout = layoutSourceNode.getData(KShapeLayout.class);
                 offset.x = sourceLayout.getInsets().getLeft();
                 offset.y = sourceLayout.getInsets().getTop();
             }
-            checkAndCopyPoint(
-                    originEdgeLayout.getSourcePoint(), 
-                    destEdgeLayout.getSourcePoint(),
-                    //TODO: check for null value
-                    (KNode) destEdgeLayout.eContainer().eContainer(),
-                    sourceNode, edge.getSourcePort(), offset);
+            
+            boolean pointDeliver = viewModelEdgeLayout.getSourcePoint().eDeliver();
+            viewModelEdgeLayout.getSourcePoint().eSetDeliver(false);
+            
+            checkAndCopyPoint(layoutEdgeLayout.getSourcePoint(),
+                    viewModelEdgeLayout.getSourcePoint(), layoutSourceNode,
+                    layoutEdge.getSourcePort(), ((KEdge) viewModelEdgeLayout.eContainer())
+                            .getSource().getData(KRendering.class), offset);
+            
+            viewModelEdgeLayout.getSourcePoint().eSetDeliver(pointDeliver);
         }
 
         // transfer the bend points, reusing any existing KPoint instances
-        ListIterator<KPoint> originBendIter = originEdgeLayout.getBendPoints().listIterator();
-        ListIterator<KPoint> destBendIter = destEdgeLayout.getBendPoints().listIterator();
+        ListIterator<KPoint> originBendIter = (viewModel2LayoutGraph ? viewModelEdgeLayout
+                : layoutEdgeLayout).getBendPoints().listIterator();
+        ListIterator<KPoint> destBendIter = (viewModel2LayoutGraph ? layoutEdgeLayout
+                : viewModelEdgeLayout).getBendPoints().listIterator();
         while (originBendIter.hasNext()) {
             KPoint originPoint = originBendIter.next();
             KPoint destPoint;
@@ -717,43 +699,55 @@ public class DiagramLayoutManager implements IDiagramLayoutManager<KGraphElement
             destBendIter.remove();
         }
 
-        // reactivate notifications for the final modification
-        destEdgeLayout.eSetDeliver(deliver);
-        
-        if (destEdgeLayout.getTargetPoint() == null) {
-            destEdgeLayout.setTargetPoint(KLayoutDataFactory.eINSTANCE.createKPoint());
+        if (viewModelEdgeLayout.getTargetPoint() == null) {
+            viewModelEdgeLayout.setTargetPoint(KLayoutDataFactory.eINSTANCE.createKPoint());
         }
-        if (edge == null) {
+        if (viewModel2LayoutGraph) {
             // transfer the target point without checking
-            KPoint targetPoint = originEdgeLayout.getTargetPoint();
-            destEdgeLayout.getTargetPoint().setPos(targetPoint.getX(), targetPoint.getY());
-        } else {
-            KNode sourceNode = edge.getSource();
-            KNode targetNode = edge.getTarget();
+            KPoint targetPoint = viewModelEdgeLayout.getTargetPoint();
+            layoutEdgeLayout.getTargetPoint().setPos(targetPoint.getX(), targetPoint.getY());
+        } else {            
+            KNode layoutSourceNode = layoutEdge.getSource();
+            KNode layoutTargetNode = layoutEdge.getTarget();
             KVector offset = new KVector();
-            if (sourceNode.getParent() == targetNode.getParent()) {
+            
+            if (layoutSourceNode.getParent() == layoutTargetNode.getParent()) {
                 // The source and target are on the same level, so just subtract the target position.
-                KShapeLayout targetLayout = targetNode.getData(KShapeLayout.class);
+                KShapeLayout targetLayout = layoutTargetNode.getData(KShapeLayout.class);
                 offset.x = -targetLayout.getXpos();
                 offset.y = -targetLayout.getYpos();
             } else {
                 // The source and target are on different levels, so transform coordinate system.
-                KNode referenceNode = sourceNode;
-                if (!KimlUtil.isDescendant(targetNode, sourceNode)) {
+                KNode referenceNode = layoutSourceNode;
+                if (!KimlUtil.isDescendant(layoutTargetNode, layoutSourceNode)) {
                     referenceNode = referenceNode.getParent();
                 }
                 KimlUtil.toAbsolute(offset, referenceNode);
-                KimlUtil.toRelative(offset, targetNode.getParent());
-                KShapeLayout targetLayout = targetNode.getData(KShapeLayout.class);
+                KimlUtil.toRelative(offset, layoutTargetNode.getParent());
+                KShapeLayout targetLayout = layoutTargetNode.getData(KShapeLayout.class);
                 offset.x -= targetLayout.getXpos();
                 offset.y -= targetLayout.getYpos();
             }
-            checkAndCopyPoint(originEdgeLayout.getTargetPoint(), 
-                    destEdgeLayout.getTargetPoint(),
-                    //TODO: check for null value
-                    (KNode) destEdgeLayout.eContainer().eContainer(),
-                    targetNode, edge.getTargetPort(), offset);
+            boolean pointDeliver = viewModelEdgeLayout.getTargetPoint().eDeliver();
+            viewModelEdgeLayout.getTargetPoint().eSetDeliver(false);
+
+            checkAndCopyPoint(layoutEdgeLayout.getTargetPoint(),
+                    viewModelEdgeLayout.getTargetPoint(), layoutTargetNode,
+                    layoutEdge.getTargetPort(), ((KEdge) viewModelEdgeLayout.eContainer())
+                            .getTarget().getData(KRendering.class), offset);
+            
+            viewModelEdgeLayout.getTargetPoint().eSetDeliver(pointDeliver);
         }
+
+        // reactivate notifications & fire a notification
+        //  bringing the observing diagram controller to update the displayed diagram
+        viewModelEdgeLayout.eSetDeliver(deliver);
+        if (!viewModel2LayoutGraph) {
+            viewModelEdgeLayout.eNotify(new ENotificationImpl(
+                    (InternalEObject) viewModelEdgeLayout, Notification.SET,
+                    KLayoutDataPackage.KEDGE_LAYOUT__BEND_POINTS, null, null));
+        }
+
     }
     
     /**
@@ -764,23 +758,24 @@ public class DiagramLayoutManager implements IDiagramLayoutManager<KGraphElement
      * @param destinationPoint the point to which to copy the anchored position
      * @param node the corresponding node
      * @param port the corresponding port, or {@code null}
+     * @param rendering the rendering of the corresponding node
      * @param offset the offset that must be added to the source point in order to make it
      *          relative to the given node
      */
     private static void checkAndCopyPoint(final KPoint originPoint, final KPoint destinationPoint,
-            final KNode edgeLayoutContainer, final KNode node, final KPort port, final KVector offset) {
+            final KNode node, final KPort port, final KRendering rendering, final KVector offset) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         KVector p = originPoint.createVector();
         if (port == null) {
             p.add(offset);
             AnchorUtil.anchorPoint(p, nodeLayout.getWidth(), nodeLayout.getHeight(),
-                    edgeLayoutContainer.getData(KRendering.class));
+                    rendering);
         } else {
             KShapeLayout portLayout = port.getData(KShapeLayout.class);
             offset.translate(-portLayout.getXpos(), -portLayout.getYpos());
             p.add(offset);
             AnchorUtil.anchorPoint(p, portLayout.getWidth(), portLayout.getHeight(),
-                    edgeLayoutContainer.getData(KRendering.class));
+                    port.getData(KRendering.class));
         }
         destinationPoint.applyVector(p.sub(offset));
     }

@@ -15,13 +15,17 @@ package de.cau.cs.kieler.klighd;
 
 import java.awt.Font;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.LineAttributes;
 import org.eclipse.swt.graphics.RGB;
 
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.klighd.actions.CollapseExpandAction;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
 
 /**
@@ -86,7 +90,8 @@ public final class KlighdConstants {
      * 
      * Note: This is a AWT constant! 
      */
-    public static final String DEFAULT_FONT_NAME = Font.SANS_SERIF;
+    public static final String DEFAULT_FONT_NAME = Platform.getOS().equals(Platform.OS_WIN32) ? "Arial"
+            : Font.SANS_SERIF;
     
     /**
      * This font size is used for {@link de.cau.cs.kieler.core.krendering.KText KTexts}, if no related
@@ -130,13 +135,48 @@ public final class KlighdConstants {
      * Identifier of the built-in collapse expand action to be mentioned in instances of
      * {@link de.cau.cs.kieler.core.krendering.KAction KAction}.
      */
-    public static final String ACTION_COLLAPSE_EXPAND = "klighd.collapse.expand";
+    public static final String ACTION_COLLAPSE_EXPAND = CollapseExpandAction.ID;
 
     /**
      * The minimal size of {@link de.cau.cs.kieler.core.kgraph.KNode KNodes} that is applied in case
      * no definition is given for a particular node.
      */
-    public static final Bounds MINIMAL_NODE_BOUNDS = new Bounds(10, 10);
+    public static final Bounds MINIMAL_NODE_BOUNDS = Bounds.immutableCopy(new Bounds(10, 10));
+    
+    /**
+     * Property to determine the minimal size of a node that has to hold for the node's whole
+     * "life time".<br>
+     * The {@link de.cau.cs.kieler.kiml.options.LayoutOptions#MIN_WIDTH LayoutOptions#MIN_WIDTH}/
+     * {@link de.cau.cs.kieler.kiml.options.LayoutOptions#MIN_HEIGHT LayoutOptions#MIN_HEIGHT}
+     * properties are not sufficient as they have to be modified for hierarchical diagrams before
+     * each automatic layout run.<br>
+     * <br>
+     * <b>Caution</b>: This property has been defined in
+     * {@link de.cau.cs.kieler.core.krendering.extensions.KNodeExtensions KNodeExtensions}, too, in
+     * order to enable the independence of both bundles. This is possible as {@link IProperty
+     * IProperties} are determined to be equal or unequal based on their id's.
+     */
+    public static final IProperty<KVector> MINIMAL_NODE_SIZE = new Property<KVector>(
+            "klighd.minimalNodeSize", new KVector(KlighdConstants.MINIMAL_NODE_BOUNDS.getWidth(),
+                    KlighdConstants.MINIMAL_NODE_BOUNDS.getHeight()));
+
+    /**
+     * Property to be attached to root {@link de.cau.cs.kieler.core.krendering.KRendering
+     * KRendering} objects of {@link de.cau.cs.kieler.core.kgraph.KNode KNodes} during the view
+     * synthesis process indicating that the {@link de.cau.cs.kieler.core.krendering.KRendering
+     * KRendering} is to be shown in the collapsed state of the node.
+     */
+    public static final IProperty<Boolean> COLLAPSED_RENDERING = new Property<Boolean>(
+            "de.cau.cs.kieler.klighd.collapsedRendering", false);
+
+    /**
+     * Property to be attached to root {@link de.cau.cs.kieler.core.krendering.KRendering
+     * KRendering} objects of {@link de.cau.cs.kieler.core.kgraph.KNode KNodes} during the view
+     * synthesis process indicating that the {@link de.cau.cs.kieler.core.krendering.KRendering
+     * KRendering} is to be shown in the expanded state of the node.
+     */
+    public static final IProperty<Boolean> EXPANDED_RENDERING = new Property<Boolean>(
+            "de.cau.cs.kieler.klighd.expandedRendering", false);
     
     /**
      * Property indicating the auto expansion of a node if the value is true.<br>
@@ -145,56 +185,32 @@ public final class KlighdConstants {
      */
     public static final IProperty<Boolean> EXPAND = new Property<Boolean>("klighd.expand", true);
 
+    /**
+     * Property providing a URI to semantic elements to be depicted but that are to be loaded lazily.
+     * This is property is currently to be attached to the nodes shape layout data during the view
+     * synthesis process. 
+     */
+    public static final IProperty<URI> CHILD_URI = new Property<URI>("klighd.childURI");
 
     /**
-     * A property for identifying whether a node has been populated. If a node is populated, child
-     * nodes have been created once, e.g. in case of lazy loading.<br>
+     * Property indicating that the node has been populated. A node is populated, if and only if the
+     * node's child nodes are visible in the diagram.<br>
      * <br>
-     * <b>It is intended for KLighD internal use only!</b> 
-     * The property declaration has been moved here from klighd.piccolo's AbstractRenderingController.
+     * <b>It is intended for KLighD internal use only!</b> The property declaration has been moved
+     * here from klighd.piccolo's AbstractRenderingController.
      */
     public static final IProperty<Boolean> POPULATED = new Property<Boolean>("klighd.populated",
             false);
     
     /**
-     * A property for identifying whether a node is currently active. If a node is active, it is
-     * visible.<br>
+     * A property for identifying whether a node is currently active. A node is active if and only
+     * if it is visible.<br>
      * <br>
      * <b>It is intended for KLighD internal use only!</b> The property declaration has been moved
      * here from klighd.piccolo's AbstractRenderingController.
      */
-    // Review with mri: activate the subgraph:
-    // this is probably crucial in case the structure has been changed during an incremental update;
-    // the activity flag is also important in case of inter-level edges in combination with
-    // lazy loading/collapsing+expanding
     public static final IProperty<Boolean> ACTIVE = new Property<Boolean>("klighd.active", false);
 
-// chsch: the following definitions are not used yet but might be in future
-//    /**
-//     * An enumeration whose values denote the states of KNodes in a diagram.
-//     * 
-//     * @author chsch
-//     */
-//    public static enum KNodeState {
-//        /** Denotes the absence of any children of a {@link de.cau.cs.kieler.core.kgraph.KNode KNode}. */
-//        EMPTY,
-//        /** Denotes the potential presence of some children in a
-//         * {@link de.cau.cs.kieler.core.kgraph.KNode KNode}, none of them is loaded and visible. */
-//        COLLAPSED,
-//        /** Denotes the presence of children in a {@link de.cau.cs.kieler.core.kgraph.KNode KNode},
-//         * none of them is visible. */
-//        COLLAPSED_POPULATED,
-//        /** Denotes the presence of children in a {@link de.cau.cs.kieler.core.kgraph.KNode KNode},
-//         * and they are visible. */
-//        EXPANDED
-//    }
-//    
-//    /**
-//     * The property that is used to track the state of KNodes in a diagram.
-//     */
-//    public static final IProperty<KNodeState> KNODE_STATE = new Property<KlighdConstants.KNodeState>(
-//            "klighd.knodeState", KNodeState.EMPTY);
-    
     /**
      * Property to be attached to the {@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
      * KShapeLayout} of a view model's nodes for properly performing regression tests.

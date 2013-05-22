@@ -39,6 +39,7 @@ import de.cau.cs.kieler.kiml.options.Alignment;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -1073,10 +1074,12 @@ public final class CompoundKGraphImporter extends KGraphImporter {
         nodeLayout.setSize((float) size.x, (float) size.y);
         
         // set label positions
-        for (LLabel llabel : node.getLabels()) {
-            KLabel klabel = (KLabel) llabel.getProperty(Properties.ORIGIN);
-            KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
-            klabelLayout.applyVector(llabel.getPosition());
+        if (!node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty()) {
+            for (LLabel llabel : node.getLabels()) {
+                KLabel klabel = (KLabel) llabel.getProperty(Properties.ORIGIN);
+                KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+                klabelLayout.applyVector(llabel.getPosition());
+            }
         }
         
         // set node insets, if requested
@@ -1084,7 +1087,7 @@ public final class CompoundKGraphImporter extends KGraphImporter {
                 .contains(SizeOptions.COMPUTE_INSETS)) {
             
             // Apply insets
-            LInsets.Double lInsets = node.getInsets();
+            LInsets lInsets = node.getInsets();
             KInsets kInsets = nodeLayout.getInsets();
             kInsets.setBottom((float) lInsets.bottom);
             kInsets.setTop((float) lInsets.top);
@@ -1145,6 +1148,16 @@ public final class CompoundKGraphImporter extends KGraphImporter {
                 }
             }
         }
+        
+        if (representative.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT) != PortLabelPlacement.FIXED) {
+            for (LPort lport : representative.getPorts()) {
+                for (LLabel label : lport.getLabels()) {
+                    KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
+                    KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+                    klabelLayout.applyVector(label.getPosition());
+                }
+            }
+        }
     }
 
     /**
@@ -1159,12 +1172,24 @@ public final class CompoundKGraphImporter extends KGraphImporter {
      */
     private void compoundApplyPortLayout(final KNode kNode, final LGraph layeredGraph,
             final LNode representative) {
+        
+        boolean placePortLabels = representative.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT)
+                != PortLabelPlacement.FIXED;
+        
         for (LPort lport : representative.getPorts()) {
             Object origin = lport.getProperty(Properties.ORIGIN);
             if (origin instanceof KPort) {
                 KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
                 portLayout.setPos((float) (lport.getPosition().x - (lport.getSize().x / 2)),
                         (float) (lport.getPosition().y - (lport.getSize().y / 2)));
+                
+                if (placePortLabels) {
+                    for (LLabel label : lport.getLabels()) {
+                        KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
+                        KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+                        klabelLayout.applyVector(label.getPosition());
+                    }
+                }
             }
         }
     }

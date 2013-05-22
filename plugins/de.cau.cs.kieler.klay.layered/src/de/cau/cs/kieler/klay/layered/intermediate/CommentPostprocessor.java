@@ -88,7 +88,7 @@ public final class CommentPostprocessor implements ILayoutProcessor {
             final List<LNode> bottomBoxes, final double spacing) {
         KVector nodePos = node.getPosition();
         KVector nodeSize = node.getSize();
-        LInsets.Double margin = node.getMargin();
+        LInsets margin = node.getMargin();
         double totalWidth = nodeSize.x + margin.left + margin.right;
         
         if (topBoxes != null) {

@@ -17,11 +17,15 @@ import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.Trigger;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.klighd.util.ModelingUtil;
 
 /**
  * Common interface of classes providing implementations of
- * {@link de.cau.cs.kieler.core.krendering.KAction KActions}.
+ * {@link de.cau.cs.kieler.core.krendering.KAction KActions}.<br>
+ * <br>
+ * {@link IAction IActions} are currently assumed to be stateless and, thus, a singleton instance is
+ * created only.
  * 
  * @author chsch
  */
@@ -32,9 +36,10 @@ public interface IAction {
      * 
      * @param context
      *            an {@link ActionContext} instance providing various useful data.
-     * @return true of the action could be performed successful, false otherwise
+     * @return a specific {@link ILayoutConfig} to be incorporated while updating the layout after
+     *         the action has been performed, or <code>null</code>.
      */
-    boolean execute(ActionContext context);
+    ILayoutConfig execute(ActionContext context);
 
     /**
      * This class comprises various useful data required for performing things in diagrams.
@@ -97,6 +102,21 @@ public interface IAction {
          */
         public KRendering getRendering() {
             return rendering;
+        }
+
+
+        /**
+         * Reveals the source (domain) element associated with the given <code>node</code>
+         * if any exists, or <code>null</code>.
+         * 
+         * @param <T> the expected return type
+         * @param viewElement the {@link KNode} to get the associated source element for
+         * @return the related source (domain) element if any associated one exists, or <code>null</code>
+         */
+        @SuppressWarnings("unchecked")
+        public <T> T getDomainElement(final KNode viewElement) {
+            return (T) this.viewer.getContextViewer().getCurrentViewContext()
+                    .getSourceElement(viewElement);
         }
     }
 }
