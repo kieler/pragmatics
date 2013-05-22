@@ -89,7 +89,6 @@ public class testPhase implements ILayoutPhase {
         tempRoot.getPosition().x = parentFan * DEFAULT_SIZE / 2;
         tempRoot.getPosition().y = 0;
 
-//        System.out.println("x: "+ tempRoot.getPosition().x);
         int childFan;
         int occupiedSpace = 0;
 
@@ -98,6 +97,7 @@ public class testPhase implements ILayoutPhase {
 
         nextLevel.addAll(tempRoot.getChildren());
 
+        // TODO treat size
         while (!nextLevel.isEmpty()) {
             currentLevel = (ArrayList<TNode>) nextLevel.clone();
             nextLevel.clear();
