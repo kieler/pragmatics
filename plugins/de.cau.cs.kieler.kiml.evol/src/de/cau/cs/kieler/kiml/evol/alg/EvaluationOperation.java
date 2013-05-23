@@ -79,7 +79,7 @@ public class EvaluationOperation implements IEvolutionaryOperation {
     /** the execution time result for the time base. */
     private static final float EXECTIME_RESULT = 0.5f;
     /** time in milliseconds after which evaluations are aborted. */
-    private static final long EVAL_TIMEOUT = 7000;
+    private static final long EVAL_TIMEOUT = 3000;
 
     /** the graph layout engine used for executing configured layout on the evaluation graph. */
     private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();

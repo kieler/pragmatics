@@ -29,10 +29,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Resource;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -82,7 +85,7 @@ public class EvolutionDialog extends Dialog {
     /** the height of each preview image. */
     private static final int PREVIEW_HEIGHT = 150;
     /** the number of evolution steps to perform when the "Evolve" button is pressed. */
-    private static final int EVOLVE_STEPS = 4;
+    private static final int EVOLVE_STEPS = 1;
     /** the maximum value for sliders. */
     private static final int SLIDER_MAX = 100;
     
@@ -105,6 +108,8 @@ public class EvolutionDialog extends Dialog {
     private Map<String, Pair<Label, Slider>> metricControls = Maps.newHashMap();
     /** the label for the total fitness value. */
     private Label fitnessLabel;
+    /** the label for the generation number. */
+    private Label generationLabel;
     
     /**
      * Creates an evolution dialog.
@@ -200,6 +205,30 @@ public class EvolutionDialog extends Dialog {
         gridLayout.verticalSpacing = 8;
         metricsPane.setLayout(gridLayout);
         
+        // create buttons for changing all sliders at once
+        Composite buttonComposite = new Composite(metricsPane, SWT.NONE);
+        buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
+        buttonComposite.setLayout(new FillLayout());
+        Button all0Button = new Button(buttonComposite, SWT.PUSH | SWT.FLAT);
+        all0Button.setText("All to 0%");
+        all0Button.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent event) {
+                for (Pair<Label, Slider> metricControl : metricControls.values()) {
+                    metricControl.getSecond().setSelection(0);
+                }
+            }
+        });
+        Button all100Button = new Button(buttonComposite, SWT.PUSH | SWT.FLAT);
+        all100Button.setText("All to 100%");
+        all100Button.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent event) {
+                for (Pair<Label, Slider> metricControl : metricControls.values()) {
+                    metricControl.getSecond().setSelection(SLIDER_MAX);
+                }
+            }
+        });
+        
+        // create metrics sliders and labels
         AnalysisCategory category = AnalysisService.getInstance().getCategory(
                 EvaluationOperation.METRIC_CATEGORY);
         for (AnalysisData data : category.getAnalyses()) {
@@ -216,7 +245,6 @@ public class EvolutionDialog extends Dialog {
         gridData.horizontalSpan = 2;
         gridData.verticalIndent = 10;
         new Label(metricsPane, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(gridData);
-
         Label nameLabel = new Label(metricsPane, SWT.NONE);
         nameLabel.setText("Fitness: ");
         nameLabel.setToolTipText("The overall fitness of the individual.");
@@ -239,6 +267,13 @@ public class EvolutionDialog extends Dialog {
         progressBar = new ProgressBar(parent, SWT.HORIZONTAL);
         progressBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         progressBar.setVisible(false);
+        
+        // create the generation label
+        ((GridLayout) parent.getLayout()).numColumns++;
+        generationLabel = new Label(parent, SWT.NONE);
+        generationLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+        generationLabel.setText("Generation "
+                + LayoutEvolutionModel.getInstance().getGenerationNumber());
         
         // create the buttons
         createButton(parent, IDialogConstants.OK_ID, "Apply", true);
@@ -442,6 +477,9 @@ public class EvolutionDialog extends Dialog {
         }
 
         refreshPreviews();
+        generationLabel.setText("Generation "
+                + LayoutEvolutionModel.getInstance().getGenerationNumber());
+        generationLabel.getParent().layout();
     }
     
     /**
