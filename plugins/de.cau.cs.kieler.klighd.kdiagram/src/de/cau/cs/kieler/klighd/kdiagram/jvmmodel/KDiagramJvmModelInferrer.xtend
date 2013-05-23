@@ -27,7 +27,6 @@ import java.util.List
 import org.eclipse.xtext.common.types.JvmParameterizedTypeReference
 import org.eclipse.xtext.xbase.lib.Pair
 import com.google.common.collect.ImmutableList
-import com.google.common.collect.Lists
 import java.util.Iterator
 import com.google.common.collect.Iterators
 
@@ -92,11 +91,9 @@ class KDiagramJvmModelInferrer extends AbstractModelInferrer {
                                 ImmutableList::copyOf((type as JvmParameterizedTypeReference).getArguments())
                                 else null) as List<JvmTypeReference>
                 )
-            ].iterator().toList;
+            ].toList;
             method.body = [
-                append(
-                '''final KNode root = kNodeExtensions.createNode();
-                ''');
+                append('''final KNode root = kNodeExtensions.createNode();''').newLine();
                 val inputTypesIt = inputTypes.iterator();
                 for (NodeMapping nm : synthesis.mapping.nodeMappings) {
                     val pair = inputTypesIt.next;
@@ -106,21 +103,19 @@ class KDiagramJvmModelInferrer extends AbstractModelInferrer {
                     
                     if (manyIterable || manyIterator) {
                         val actualType = pair.value.head.type
-                        it.append('''root.getChildren().addAll(''')
-                            .append(clazz.newTypeRef(typeof(Lists)).type).append('''.newArrayList(
-                            ''').append(clazz.newTypeRef(if (manyIterable) typeof(Iterables) else typeof(Iterators)).type).append(".transform(");
+                        it.append(clazz.newTypeRef(typeof(Iterables)).type).append('''.addAll(''')
+                          .append('''root.getChildren(),''').increaseIndentation().newLine();
+
+                        it.append(clazz.newTypeRef(if (manyIterable) typeof(Iterables) else typeof(Iterators)).type).append(".transform(");
                         nm.elements.toJavaExpression(it);
-                        it.append(''',
-                        ''')
-                        it.append("new ")
-                            .append(typeof(Function).findDeclaredType(synthesis)).append("<")
+                        it.append(''',''').increaseIndentation().newLine();
+                        it.append("new ").append(typeof(Function).findDeclaredType(synthesis)).append("<")
                             .append(actualType).append(", ")
-                            .append(method.returnType.type).append('''>() {
-    public KNode apply(final «actualType.simpleName» input) {
-        return «nm.name»(input);
-    }
-})));
-''');
+                        it.append(method.returnType.type).append('''>() {''').increaseIndentation().newLine;
+                        it.append('''public KNode apply(final «actualType.simpleName» input) {''').increaseIndentation().newLine;
+                        it.append('''return «nm.name»(input);''').decreaseIndentation().newLine;
+                        it.append('''}''').decreaseIndentation().newLine;
+                        it.decreaseIndentation.append('''}));''').decreaseIndentation().newLine();
                     } else {
                         append('''root.getChildren().add(«nm.name»(''');                    
                         nm.elements.toJavaExpression(it);
@@ -140,15 +135,11 @@ class KDiagramJvmModelInferrer extends AbstractModelInferrer {
                                 else expressionType
                 it.parameters += mapping.createParameter("input", paramType);
                 it.body = [
-                    append('''final KNode node = kNodeExtensions.createNode(input);
-                    ''');
+                    append('''final KNode node = kNodeExtensions.createNode(input);''').newLine();
                     append(clazz.newTypeRef(typeof(KRendering)).type);
-                    append(''' r = kRenderingExtensions.add«mapping.figureType.simpleName.substring(1)»(node);
-                    ''');
-                    append('''
-                    node.getData().add(r);
-                    return node;
-                    ''');
+                    append(''' r = kRenderingExtensions.add«mapping.figureType.simpleName.substring(1)»(node);''').newLine();
+                    append('''node.getData().add(r);''').newLine();
+                    append('''return node;''');
                 ];
             ];
         }

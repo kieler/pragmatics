@@ -34,6 +34,7 @@ public class CustomizedKDiagramProjectCreator extends KDiagramProjectCreator {
         result.add(KRenderingPlugin.PLUGIN_ID);
         result.add(KRenderingExtensionsPlugin.PLUGIN_ID);
         result.add(KlighdPlugin.PLUGIN_ID);
+        result.add("org.eclipse.xtext.xbase.lib");
         return result;
     }
 
