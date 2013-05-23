@@ -21,8 +21,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -75,6 +78,8 @@ public class EvaluationOperation implements IEvolutionaryOperation {
     private static final float EXECTIME_TIMEBASE = 0.2f;
     /** the execution time result for the time base. */
     private static final float EXECTIME_RESULT = 0.5f;
+    /** time in milliseconds after which evaluations are aborted. */
+    private static final long EVAL_TIMEOUT = 7000;
 
     /** the graph layout engine used for executing configured layout on the evaluation graph. */
     private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();
@@ -150,13 +155,24 @@ public class EvaluationOperation implements IEvolutionaryOperation {
             }
             
             // wait for all tasks to finish execution
+            long startTime = System.currentTimeMillis();
             while (!futures.isEmpty()) {
+                Future<?> future = futures.removeFirst();
                 try {
+                    long elapsedTime = System.currentTimeMillis() - startTime;
                     // this call waits if necessary for the computation to complete
-                    futures.removeFirst().get();
+                    future.get(Math.max(0, EVAL_TIMEOUT - elapsedTime),
+                            TimeUnit.MILLISECONDS);
                     monitor.worked(1);
-                } catch (Exception exception) {
+                } catch (InterruptedException exception) {
+                    // the thread was interrupted - ignore this
+                } catch (ExecutionException exception) {
+                    if (exception.getCause() instanceof RuntimeException) {
+                        throw (RuntimeException) exception.getCause();
+                    }
                     throw new WrappedException(exception);
+                } catch (TimeoutException exception) {
+                    future.cancel(true);
                 }
             }
             
@@ -180,12 +196,16 @@ public class EvaluationOperation implements IEvolutionaryOperation {
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Evaluation", 2);
 
-        KNode testGraph = population.getProperty(Population.EVALUATION_GRAPH);
+        KNode evaluationGraph = population.getProperty(Population.EVALUATION_GRAPH);
         ILayoutConfig layoutConfig = population.getProperty(Population.DEFAULT_CONFIG);
+        
+        // create a copy of the evaluation graph
+        EcoreUtil.Copier copier = new EcoreUtil.Copier();
+        KNode graph = (KNode) copier.copy(evaluationGraph);
+        copier.copyReferences();
 
         // perform layout on the evaluation graph
-        KNode graph = EcoreUtil.copy(testGraph);
-        GenomeFactory.configureGraph(genome, layoutConfig);
+        GenomeFactory.configureGraph(genome, layoutConfig, copier);
         double executionTime;
         try {
             IKielerProgressMonitor layoutMonitor = progressMonitor.subTask(1);

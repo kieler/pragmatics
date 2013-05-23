@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.evol;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.emf.ecore.EObject;
@@ -352,15 +353,17 @@ public final class GenomeFactory {
      * 
      * @param genome the genome holding layout option values
      * @param config a layout configurator for obtaining default values
+     * @param graphMap map of context graph elements to elements of the test graph that is configured
      */
-    public static void configureGraph(final Genome genome, final ILayoutConfig config) {
+    public static void configureGraph(final Genome genome, final ILayoutConfig config,
+            final Map<EObject, EObject> graphMap) {
         LayoutDataService dataService = LayoutDataService.getInstance();
         for (LayoutContext context : genome.getContexts()) {
-            KGraphElement element = context.getProperty(LayoutContext.GRAPH_ELEM);
+            EObject element = graphMap.get(context.getProperty(LayoutContext.GRAPH_ELEM));
             if (element instanceof KNode) {
-                KShapeLayout parentLayout = element.getData(KShapeLayout.class);
+                KShapeLayout nodeLayout = ((KNode) element).getData(KShapeLayout.class);
                 // first transfer values from the layout configurator
-                config.transferValues(parentLayout, context);
+                config.transferValues(nodeLayout, context);
                 
                 // then transfer values from the given genome, overriding values of the configurator
                 for (Gene<?> gene : genome.getGenes(context)) {
@@ -368,7 +371,7 @@ public final class GenomeFactory {
                         LayoutOptionData<?> optionData = dataService.getOptionData(
                                 gene.getTypeInfo().getId());
                         if (optionData != null) {
-                            parentLayout.setProperty(optionData, translateFromGene(gene));
+                            nodeLayout.setProperty(optionData, translateFromGene(gene));
                         }
                     }
                 }
