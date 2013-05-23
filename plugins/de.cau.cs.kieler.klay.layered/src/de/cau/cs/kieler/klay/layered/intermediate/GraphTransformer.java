@@ -117,11 +117,12 @@ public final class GraphTransformer implements ILayoutProcessor {
         // mirror all nodes, ports, edges, and labels
         for (LNode node : nodes) {
             mirrorX(node.getPosition(), maxx - node.getSize().x);
+            mirrorNodeLabelPlacementX(node);
+            
             KVector nodeSize = node.getSize();
             for (LPort port : node.getPorts()) {
                 mirrorX(port.getPosition(), nodeSize.x - port.getSize().x);
                 mirrorX(port.getAnchor(), port.getSize().x);
-                mirrorNodeLabelPlacementX(node);
                 mirrorPortSideX(port);
                 for (LEdge edge : port.getOutgoingEdges()) {
                     // Mirror bend points
@@ -154,11 +155,9 @@ public final class GraphTransformer implements ILayoutProcessor {
                 mirrorExternalPortSideX(node);
             }
 
-            // Mirror node label positions if node label placement is fixed
-            if (node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty()) {
-                for (LLabel label : node.getLabels()) {
-                    mirrorX(label.getPosition(), nodeSize.x - label.getSize().x);
-                }
+            // Mirror node label positions
+            for (LLabel label : node.getLabels()) {
+                mirrorX(label.getPosition(), nodeSize.x - label.getSize().x);
             }
         }
     }
@@ -250,11 +249,12 @@ public final class GraphTransformer implements ILayoutProcessor {
         // mirror all nodes, ports, edges, and labels
         for (LNode node : nodes) {
             mirrorY(node.getPosition(), maxy - node.getSize().y);
+            mirrorNodeLabelPlacementY(node);
+            
             KVector nodeSize = node.getSize();
             for (LPort port : node.getPorts()) {
                 mirrorY(port.getPosition(), nodeSize.y - port.getSize().y);
                 mirrorY(port.getAnchor(), port.getSize().y);
-                mirrorNodeLabelPlacementY(node);
                 mirrorPortSideY(port);
                 for (LEdge edge : port.getOutgoingEdges()) {
                     // Mirror bend points
@@ -287,11 +287,9 @@ public final class GraphTransformer implements ILayoutProcessor {
                 mirrorExternalPortSideY(node);
             }
             
-            // Mirror node label positions if node label placement is fixed
-            if (node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty()) {
-                for (LLabel label : node.getLabels()) {
-                    mirrorY(label.getPosition(), nodeSize.y - label.getSize().y);
-                }
+            // Mirror node label positions
+            for (LLabel label : node.getLabels()) {
+                mirrorY(label.getPosition(), nodeSize.y - label.getSize().y);
             }
         }
     }
@@ -378,13 +376,13 @@ public final class GraphTransformer implements ILayoutProcessor {
         for (LNode node : nodes) {
             transpose(node.getPosition());
             transpose(node.getSize());
+            transposeNodeLabelPlacement(node);
             
             // Transpose ports
             for (LPort port : node.getPorts()) {
                 transpose(port.getPosition());
                 transpose(port.getAnchor());
                 transpose(port.getSize());
-                transposeNodeLabelPlacement(node);
                 transposePortSide(port);
                 
                 // Transpose edges
@@ -421,15 +419,10 @@ public final class GraphTransformer implements ILayoutProcessor {
                 transposeExternalPortSide(node);
             }
 
-            // Transpose node label positions if node label placement is fixed (the label size must
-            // always be transposed)
-            boolean fixedNodeLabels = node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty();
+            // Transpose node label positions
             for (LLabel label : node.getLabels()) {
                 transpose(label.getSize());
-                
-                if (fixedNodeLabels) {
-                    transpose(label.getPosition());
-                }
+                transpose(label.getPosition());
             }
         }
     }
@@ -458,6 +451,13 @@ public final class GraphTransformer implements ILayoutProcessor {
         
         // Build up a new node label placement enumeration
         EnumSet<NodeLabelPlacement> newPlacement = EnumSet.noneOf(NodeLabelPlacement.class);
+        
+        // Inside or outside
+        if (oldPlacement.contains(NodeLabelPlacement.INSIDE)) {
+            newPlacement.add(NodeLabelPlacement.INSIDE);
+        } else {
+            newPlacement.add(NodeLabelPlacement.OUTSIDE);
+        }
         
         // Horizontal priority
         if (!oldPlacement.contains(NodeLabelPlacement.H_PRIORITY)) {
