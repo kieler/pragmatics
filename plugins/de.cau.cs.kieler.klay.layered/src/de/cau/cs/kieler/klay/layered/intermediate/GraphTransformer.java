@@ -13,13 +13,16 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -114,6 +117,8 @@ public final class GraphTransformer implements ILayoutProcessor {
         // mirror all nodes, ports, edges, and labels
         for (LNode node : nodes) {
             mirrorX(node.getPosition(), maxx - node.getSize().x);
+            mirrorNodeLabelPlacementX(node);
+            
             KVector nodeSize = node.getSize();
             for (LPort port : node.getPorts()) {
                 mirrorX(port.getPosition(), nodeSize.x - port.getSize().x);
@@ -149,14 +154,14 @@ public final class GraphTransformer implements ILayoutProcessor {
             if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
                 mirrorExternalPortSideX(node);
             }
-            
+
             // Mirror node label positions
             for (LLabel label : node.getLabels()) {
                 mirrorX(label.getPosition(), nodeSize.x - label.getSize().x);
             }
         }
     }
-    
+
     /**
      * Mirror the x coordinate of the given vector and add an offset.
      * 
@@ -165,6 +170,26 @@ public final class GraphTransformer implements ILayoutProcessor {
      */
     private void mirrorX(final KVector v, final double offset) {
         v.x = offset - v.x;
+    }
+    
+    /**
+     * Horrizontally mirrors the node label placement options, if any are set.
+     * 
+     * @param node the node.
+     */
+    private void mirrorNodeLabelPlacementX(final LNode node) {
+        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+        if (oldPlacement.isEmpty()) {
+            return;
+        }
+        
+        if (oldPlacement.contains(NodeLabelPlacement.H_LEFT)) {
+            oldPlacement.remove(NodeLabelPlacement.H_LEFT);
+            oldPlacement.add(NodeLabelPlacement.H_RIGHT);
+        } else if (oldPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
+            oldPlacement.remove(NodeLabelPlacement.H_RIGHT);
+            oldPlacement.add(NodeLabelPlacement.H_LEFT);
+        }
     }
     
     /**
@@ -224,6 +249,8 @@ public final class GraphTransformer implements ILayoutProcessor {
         // mirror all nodes, ports, edges, and labels
         for (LNode node : nodes) {
             mirrorY(node.getPosition(), maxy - node.getSize().y);
+            mirrorNodeLabelPlacementY(node);
+            
             KVector nodeSize = node.getSize();
             for (LPort port : node.getPorts()) {
                 mirrorY(port.getPosition(), nodeSize.y - port.getSize().y);
@@ -278,6 +305,26 @@ public final class GraphTransformer implements ILayoutProcessor {
     }
     
     /**
+     * Vertically mirrors the node label placement options, if any are set.
+     * 
+     * @param node the node.
+     */
+    private void mirrorNodeLabelPlacementY(final LNode node) {
+        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+        if (oldPlacement.isEmpty()) {
+            return;
+        }
+        
+        if (oldPlacement.contains(NodeLabelPlacement.V_TOP)) {
+            oldPlacement.remove(NodeLabelPlacement.V_TOP);
+            oldPlacement.add(NodeLabelPlacement.V_BOTTOM);
+        } else if (oldPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
+            oldPlacement.remove(NodeLabelPlacement.V_BOTTOM);
+            oldPlacement.add(NodeLabelPlacement.V_TOP);
+        }
+    }
+    
+    /**
      * Mirror the side of the given port. Undefined port sides are left untouched.
      * 
      * @param port the port.
@@ -329,6 +376,7 @@ public final class GraphTransformer implements ILayoutProcessor {
         for (LNode node : nodes) {
             transpose(node.getPosition());
             transpose(node.getSize());
+            transposeNodeLabelPlacement(node);
             
             // Transpose ports
             for (LPort port : node.getPorts()) {
@@ -370,11 +418,11 @@ public final class GraphTransformer implements ILayoutProcessor {
             if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
                 transposeExternalPortSide(node);
             }
-            
-            // Transpose node labels
+
+            // Transpose node label positions
             for (LLabel label : node.getLabels()) {
-                transpose(label.getPosition());
                 transpose(label.getSize());
+                transpose(label.getPosition());
             }
         }
     }
@@ -388,6 +436,54 @@ public final class GraphTransformer implements ILayoutProcessor {
         double temp = v.x;
         v.x = v.y;
         v.y = temp;
+    }
+    
+    /**
+     * Transposes the node label placement options, if any are set.
+     * 
+     * @param node the node.
+     */
+    private void transposeNodeLabelPlacement(final LNode node) {
+        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+        if (oldPlacement.isEmpty()) {
+            return;
+        }
+        
+        // Build up a new node label placement enumeration
+        EnumSet<NodeLabelPlacement> newPlacement = EnumSet.noneOf(NodeLabelPlacement.class);
+        
+        // Inside or outside
+        if (oldPlacement.contains(NodeLabelPlacement.INSIDE)) {
+            newPlacement.add(NodeLabelPlacement.INSIDE);
+        } else {
+            newPlacement.add(NodeLabelPlacement.OUTSIDE);
+        }
+        
+        // Horizontal priority
+        if (!oldPlacement.contains(NodeLabelPlacement.H_PRIORITY)) {
+            newPlacement.add(NodeLabelPlacement.H_PRIORITY);
+        }
+        
+        // Horizontal alignment
+        if (oldPlacement.contains(NodeLabelPlacement.H_LEFT)) {
+            newPlacement.add(NodeLabelPlacement.V_TOP);
+        } else if (oldPlacement.contains(NodeLabelPlacement.H_CENTER)) {
+            newPlacement.add(NodeLabelPlacement.V_CENTER);
+        } else if (oldPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
+            newPlacement.add(NodeLabelPlacement.V_BOTTOM);
+        }
+        
+        // Vertical alignment
+        if (oldPlacement.contains(NodeLabelPlacement.V_TOP)) {
+            newPlacement.add(NodeLabelPlacement.H_LEFT);
+        } else if (oldPlacement.contains(NodeLabelPlacement.V_CENTER)) {
+            newPlacement.add(NodeLabelPlacement.H_CENTER);
+        } else if (oldPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
+            newPlacement.add(NodeLabelPlacement.H_RIGHT);
+        }
+        
+        // Apply new placement
+        node.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT, newPlacement);
     }
     
     /**

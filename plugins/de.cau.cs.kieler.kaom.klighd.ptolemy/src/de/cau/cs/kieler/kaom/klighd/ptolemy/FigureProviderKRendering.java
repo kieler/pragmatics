@@ -29,7 +29,6 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
@@ -46,7 +45,6 @@ import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KForeground;
 import de.cau.cs.kieler.core.krendering.KImage;
 import de.cau.cs.kieler.core.krendering.KLineWidth;
-import de.cau.cs.kieler.core.krendering.KPlacementData;
 import de.cau.cs.kieler.core.krendering.KPolygon;
 import de.cau.cs.kieler.core.krendering.KPosition;
 import de.cau.cs.kieler.core.krendering.KRectangle;
@@ -63,16 +61,23 @@ import diva.canvas.CanvasUtilities;
 import diva.canvas.Figure;
 import diva.canvas.toolbox.ImageFigure;
 
+/**
+ * Class for generating krendering Figures out of svg documents and EditorIcons.
+ * Also defines some selfmade krenderings for ports and special actors
+ * 
+ * @author ckru
+ *
+ */
 public class FigureProviderKRendering {
 
     private KRenderingFactory factory = KRenderingFactoryImpl.eINSTANCE;
-    
+
     /**
-     * Creates a draw2d ImageFigure out of an ptolemy EditorIcon.
+     * Creates a KImage out of an ptolemy EditorIcon.
      * 
      * @param icon
-     *            the EditorIcon to display in draw2d
-     * @return draw2d Figure representing the EditorIcon
+     *            the EditorIcon to display in klight
+     * @return KImage representing the EditorIcon
      */
     public KRendering createFigureFromIcon(final EditorIcon icon) {
         Figure shape = icon.createBackgroundFigure();
@@ -91,47 +96,43 @@ public class FigureProviderKRendering {
         org.eclipse.swt.graphics.Image image = new org.eclipse.swt.graphics.Image(
                 Display.getCurrent(), CoreUiUtil.convertAWTImageToSWT(resizedImage));
         /*
-        ImageFigureEx fig = new ImageFigureEx(image);
-        Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
-        fig.setMinimumSize(size.getCopy());
-        fig.setPreferredSize(size.getCopy());
-        fig.getBounds().setSize(size.getCopy());
-        fig.setSize(size.getCopy());
-        */
+         * ImageFigureEx fig = new ImageFigureEx(image); Dimension size = new
+         * Dimension(img.getWidth(null), img.getHeight(null)); fig.setMinimumSize(size.getCopy());
+         * fig.setPreferredSize(size.getCopy()); fig.getBounds().setSize(size.getCopy());
+         * fig.setSize(size.getCopy());
+         */
         KImage figure = factory.createKImage();
         figure.setImageObject(image);
         Rectangle rec = image.getBounds();
-        
+
         KAreaPlacementData placement = factory.createKAreaPlacementData();
 
         KPosition topleft = makeTopLeftKPosition(0, 0);
-       
-        ImageData data = image.getImageData();
+
+        // ImageData data = image.getImageData();
         KPosition bottomright = makeBottomRightKPosition(rec.width, rec.height);
 
         placement.setTopLeft(topleft);
         placement.setBottomRight(bottomright);
         /*
-        KGridPlacementData placement = factory.createKGridPlacementData();
-        placement.setHeightHint(rec.height);
-        placement.setWidthHint(rec.width);
-        */
+         * KGridPlacementData placement = factory.createKGridPlacementData();
+         * placement.setHeightHint(rec.height); placement.setWidthHint(rec.width);
+         */
         figure.setPlacementData(placement);
-        
-        
+
         return figure;
     }
 
     /**
-     * Create a figure for an entity representing an ptolemy input port.
+     * Create a krendering for an entity representing an ptolemy input port.
      * 
-     * @return the input port figure
+     * @return the input port krendering
      */
     public KRendering createInputPort() {
         KPolygon figure = factory.createKPolygon();
-        
-        //KPolylinePlacementData placement = factory.createKPolylinePlacementData();
-        //thats how ptolemy ports look like. no use for constants
+
+        // KPolylinePlacementData placement = factory.createKPolylinePlacementData();
+        // thats how ptolemy ports look like. no use for constants
         // CHECKSTYLEOFF MagicNumber
         figure.getPoints().add(makeTopLeftKPosition(0, 4));
         figure.getPoints().add(makeTopLeftKPosition(0, 14));
@@ -141,10 +142,9 @@ public class FigureProviderKRendering {
         figure.getPoints().add(makeTopLeftKPosition(10, 0));
         figure.getPoints().add(makeTopLeftKPosition(10, 4));
         figure.getPoints().add(makeTopLeftKPosition(0, 4));
-       // figure.setPlacementData(placement);
+        // figure.setPlacementData(placement);
         // CHECKSTYLEON MagicNumber
-        
-       
+
         KBackground background = factory.createKBackground();
         KColor backgroundColor = factory.createKColor();
         backgroundColor = FigureParserKRendering.lookupColor("black", backgroundColor);
@@ -155,16 +155,16 @@ public class FigureProviderKRendering {
     }
 
     /**
-     * Create a figure for an entity representing an ptolemy output port.
+     * Create a krendering for an entity representing an ptolemy output port.
      * 
-     * @return the output port figure
+     * @return the output port krendering
      */
     public KRendering createOutputPort() {
         KPolygon figure = factory.createKPolygon();
 
-//        KPolylinePlacementData placement = factory.createKPolylinePlacementData();
+        // KPolylinePlacementData placement = factory.createKPolylinePlacementData();
 
-        //thats how ptolemy ports look like. no use for constants
+        // thats how ptolemy ports look like. no use for constants
         // CHECKSTYLEOFF MagicNumber
         figure.getPoints().add(makeTopLeftKPosition(0, 0));
         figure.getPoints().add(makeTopLeftKPosition(0, 18));
@@ -174,19 +174,24 @@ public class FigureProviderKRendering {
         figure.getPoints().add(makeTopLeftKPosition(4, 4));
         figure.getPoints().add(makeTopLeftKPosition(0, 0));
         // CHECKSTYLEON MagicNumber
-       // figure.setPlacementData(placement);
-        
+        // figure.setPlacementData(placement);
+
         KBackground background = factory.createKBackground();
         KColor backgroundColor = factory.createKColor();
         backgroundColor = FigureParserKRendering.lookupColor("black", backgroundColor);
         background.setColor(backgroundColor);
         figure.getStyles().add(background);
-        
+
         return figure;
     }
 
+    /**
+     * Convenience method to create a top left KPosition.
+     * @param x the x value
+     * @param y the y value
+     * @return a KPosition according to given x and y coordinates
+     */
     private KPosition makeTopLeftKPosition(final float x, final float y) {
-        KRenderingFactory factory = KRenderingFactoryImpl.eINSTANCE;
         KPosition p = factory.createKPosition();
         KXPosition xp = factory.createKLeftPosition();
         xp.setAbsolute(x);
@@ -197,6 +202,12 @@ public class FigureProviderKRendering {
         return p;
     }
 
+    /**
+     * Convenience method to create a bottom right KPosition.
+     * @param x the x value
+     * @param y the y value
+     * @return a KPosition according to given x and y coordinates
+     */
     private KPosition makeBottomRightKPosition(final float x, final float y) {
         KPosition p = factory.createKPosition();
         KXPosition xp = factory.createKLeftPosition();
@@ -207,27 +218,27 @@ public class FigureProviderKRendering {
         p.setY(yp);
         return p;
     }
-    
+
     /**
-     * Create a draw2d figure out of an svg Document. FigureParser.createFigure does the actual
-     * work.
+     * Create a KRendering out of an svg Document. FigureParserKRendering.createFigure 
+     * does the actual work.
      * 
      * @param doc
      *            the Document holding the svg description
-     * @return the figure representing the svg
+     * @return the KRendering representing the svg
      */
     public KRendering createFigureFromSvg(final Document doc) {
         return FigureParserKRendering.createFigure(doc);
     }
 
     /**
-     * builds a default figure for this diagram.
+     * Builds a default KRendering for this diagram.
      * 
-     * @return the default figure
+     * @return the default KRendering
      */
     public KRendering getDefaultFigure() {
         KRectangle figure = factory.createKRectangle();
-        
+
         KBackground fill = factory.createKBackground();
         KColor fillColor = factory.createKColor();
         fillColor = FigureParserKRendering.lookupColor("white", fillColor);
@@ -238,7 +249,7 @@ public class FigureProviderKRendering {
         fill.setColor(strokeColor);
         figure.getStyles().add(fill);
         figure.getStyles().add(stroke);
-        
+
         KLineWidth strokeWidth = factory.createKLineWidth();
         strokeWidth.setLineWidth(1);
         figure.getStyles().add(strokeWidth);
@@ -246,11 +257,11 @@ public class FigureProviderKRendering {
     }
 
     /**
-     * method for generating a scalable image figure from a file.
+     * Method for generating a KRendering from an svg string.
      * 
      * @param svgString
      *            the string representing the svg image
-     * @return a scalable image figure
+     * @return a KRendering according to the input svg
      */
     private KRendering createSvg(final String svgString) {
         try {
@@ -298,6 +309,8 @@ public class FigureProviderKRendering {
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
             // White background since draw2 can't handle transparency well
+            // its plain white, leave me alone checkstyle
+            // CHECKSTYLEOFF MagicNumber
             graphics.setBackground(new Color(255, 255, 255, 255));
             graphics.clearRect(0, 0, (int) figure.getBounds().getWidth(), (int) figure.getBounds()
                     .getHeight());
@@ -307,13 +320,13 @@ public class FigureProviderKRendering {
     }
 
     /**
-     * Method holding a figure description used by directors.
+     * Method holding a KRendering description used by directors.
      * 
-     * @return a figure represention an director
+     * @return a KRendering representing an director
      */
     public KRendering createDirector() {
         KRectangle figure = factory.createKRectangle();
-        
+
         KBackground fill = factory.createKBackground();
         KColor fillColor = factory.createKColor();
         fillColor = FigureParserKRendering.lookupColor("green", fillColor);
@@ -322,13 +335,15 @@ public class FigureProviderKRendering {
         KColor strokeColor = factory.createKColor();
         strokeColor = FigureParserKRendering.lookupColor("black", strokeColor);
         stroke.setColor(strokeColor);
-        
+
         figure.getStyles().add(fill);
         figure.getStyles().add(stroke);
         KAreaPlacementData placement = factory.createKAreaPlacementData();
 
         KPosition topleft = makeTopLeftKPosition(0, 0);
 
+        // thats just how big they are, leave me alone checkstyle
+        // CHECKSTYLEOFF MagicNumber
         KPosition bottomright = makeBottomRightKPosition(100, 30);
 
         placement.setTopLeft(topleft);
@@ -356,7 +371,7 @@ public class FigureProviderKRendering {
     }
 
     /**
-     * Method for creating a custom monitorvalue figure.
+     * Method for creating a custom monitorvalue KRendering.
      * 
      * @param object
      *            the modelelement
@@ -367,7 +382,7 @@ public class FigureProviderKRendering {
         KLineWidth strokeWidth = factory.createKLineWidth();
         strokeWidth.setLineWidth(1);
         monitor.getStyles().add(strokeWidth);
-        
+
         KBackground fill = factory.createKBackground();
         KColor fillColor = factory.createKColor();
         fillColor = FigureParserKRendering.lookupColor("white", fillColor);
@@ -378,7 +393,7 @@ public class FigureProviderKRendering {
         fill.setColor(strokeColor);
         monitor.getStyles().add(fill);
         monitor.getStyles().add(stroke);
-        
+
         return monitor;
     }
 
@@ -387,7 +402,7 @@ public class FigureProviderKRendering {
     private static final int LABELLOCATION_Y = 8;
 
     /**
-     * A figure that displays a value.
+     * A KRendering that displays a value.
      * 
      * @param object
      *            the model element
@@ -395,7 +410,7 @@ public class FigureProviderKRendering {
      *            name of the annotation holding the value
      * @param part
      *            the editpart of the model element
-     * @return a figure that display the given value
+     * @return a KRendering that display the given value
      */
     public KRendering createValueFigure(final EObject object, final String valueAttribute,
             final EditPart part) {
@@ -453,14 +468,14 @@ public class FigureProviderKRendering {
     }
 
     /**
-     * A figure to display if things go haywire.
+     * A KRendering to display if things go haywire.
      * 
      * @return a red box with a questionmark in it
      */
     public KRendering getErrorFigure() {
-        
+
         KRectangle errorFigure = factory.createKRectangle();
-        
+
         KBackground fill = factory.createKBackground();
         KForeground stroke = factory.createKForeground();
         KColor strokeColor = factory.createKColor();
@@ -499,38 +514,46 @@ public class FigureProviderKRendering {
         return errorFigure;
     }
 
-    
-    
-    
     private static final float PORT_SIZE_LONG_SIDE = 7;
     private static final float PORT_SIZE_SHORT_SIDE = 3.5f;
-    //private static final int PORT_SIZE_BOUNDS = 8;
-    
-    public KRendering getPortKRendering(final KColor color, float xoffset, float yoffset, String input) {
+
+    // private static final int PORT_SIZE_BOUNDS = 8;
+
+    /**
+     * Create a port KRendering.
+     * @param color the proposed color of the port
+     * @param xoffset possible offset to push the port a bit inside its parent
+     * @param yoffset possible offset to push the port a bit inside its parent
+     * @param input direction of the port
+     * @return a port KRendering
+     */
+    public KRendering getPortKRendering(final KColor color, final float xoffset, final float yoffset,
+            final String input) {
         KPolygon figure = factory.createKPolygon();
-        
-        //KPolylinePlacementData placement = factory.createKPolylinePlacementData();
-        
+
+        // KPolylinePlacementData placement = factory.createKPolylinePlacementData();
+
         if (input.equals("SOUTH")) {
             figure.getPoints().add(createKPosition(0 + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
-            figure.getPoints().add(createKPosition(PORT_SIZE_LONG_SIDE + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
+            figure.getPoints().add(
+                    createKPosition(PORT_SIZE_LONG_SIDE + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
             figure.getPoints().add(createKPosition(PORT_SIZE_SHORT_SIDE + xoffset, 0 + yoffset));
             figure.getPoints().add(createKPosition(0 + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
         } else if (input.equals("NORTH")) {
             figure.getPoints().add(createKPosition(0 + xoffset, 0 + yoffset));
             figure.getPoints().add(createKPosition(PORT_SIZE_LONG_SIDE + xoffset, 0 + yoffset));
-            figure.getPoints().add(createKPosition(PORT_SIZE_SHORT_SIDE + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
+            figure.getPoints().add(
+                    createKPosition(PORT_SIZE_SHORT_SIDE + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
             figure.getPoints().add(createKPosition(0 + xoffset, 0 + yoffset));
         } else {
             figure.getPoints().add(createKPosition(0 + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
             figure.getPoints().add(createKPosition(0 + xoffset, 0 + yoffset));
-            figure.getPoints().add(createKPosition(PORT_SIZE_LONG_SIDE + xoffset, PORT_SIZE_SHORT_SIDE + yoffset));
+            figure.getPoints().add(
+                    createKPosition(PORT_SIZE_LONG_SIDE + xoffset, PORT_SIZE_SHORT_SIDE + yoffset));
             figure.getPoints().add(createKPosition(0 + xoffset, PORT_SIZE_LONG_SIDE + yoffset));
         }
-        
-        
 
-        //figure.setPlacementData(placement);
+        // figure.setPlacementData(placement);
         KBackground fill = factory.createKBackground();
         KForeground stroke = factory.createKForeground();
         KColor strokeColor = factory.createKColor();
@@ -539,13 +562,19 @@ public class FigureProviderKRendering {
         fill.setColor(color);
         figure.getStyles().add(fill);
         figure.getStyles().add(stroke);
-        
-        //figure.setLineWidth(1);
-        //figure.getBounds().setSize(PORT_SIZE_BOUNDS, PORT_SIZE_BOUNDS);
+
+        // figure.setLineWidth(1);
+        // figure.getBounds().setSize(PORT_SIZE_BOUNDS, PORT_SIZE_BOUNDS);
         return figure;
     }
 
-    private KPosition createKPosition(final float x,final float y) {
+    /**
+     * Convenience method to create a KPosition. 
+     * @param x the x value
+     * @param y the y value
+     * @return a top left KPosition object 
+     */
+    private KPosition createKPosition(final float x, final float y) {
         KPosition position = factory.createKPosition();
         KXPosition xp = factory.createKLeftPosition();
         xp.setAbsolute(x);
@@ -555,36 +584,45 @@ public class FigureProviderKRendering {
         position.setY(yp);
         return position;
     }
-    
+
+    /**
+     * Creating a KRendering representation of an relation.
+     * @return KRendering representation of an relation.
+     */
     public KRendering createRelation() {
-        //KPlacementData d;
+        // KPlacementData d;
         KPolygon relation = factory.createKPolygon();
-        
-        //KPolylinePlacementData placement = factory.createKPolylinePlacementData();
+
+        // KPolylinePlacementData placement = factory.createKPolylinePlacementData();
         relation.getPoints().add(createKPosition(5, 0));
         relation.getPoints().add(createKPosition(10, 5));
         relation.getPoints().add(createKPosition(5, 10));
         relation.getPoints().add(createKPosition(0, 5));
         relation.getPoints().add(createKPosition(5, 0));
-        
-        
-        //relation.setPlacementData(placement);
-        
+
+        // relation.setPlacementData(placement);
+
         KBackground fill = factory.createKBackground();
         KColor fillColor = factory.createKColor();
         fillColor = FigureParserKRendering.lookupColor("black", fillColor);
         fill.setColor(fillColor);
         relation.getStyles().add(fill);
-        
+
         return relation;
-        
+
     }
-    
+
+    /**
+     * KRendering representation of a State. Looks similar to Kieler ThinkCharts editor.
+     * Appearance might differ depending on the type of the state.
+     * @param entity the Entity that poses as a state.
+     * @return KRendering representation of a state. 
+     */
     public KRendering createStateRendering(final Entity entity) {
         Annotation isfinal = entity.getAnnotation("isFinalState");
         Annotation isinitial = entity.getAnnotation("isInitialState");
         KRoundedRectangle figure = factory.createKRoundedRectangle();
-        
+
         figure.setCornerHeight(30);
         figure.setCornerWidth(30);
         KAreaPlacementData placement = factory.createKAreaPlacementData();
@@ -597,10 +635,11 @@ public class FigureProviderKRendering {
         placement.setBottomRight(bottomright);
 
         figure.setPlacementData(placement);
-
+        
+        //check whether its an initial final state.
         if (isfinal != null && isinitial != null) {
             KRoundedRectangle innerfigure = factory.createKRoundedRectangle();
-            
+
             innerfigure.setCornerHeight(22);
             innerfigure.setCornerWidth(22);
             KAreaPlacementData innerplacement = factory.createKAreaPlacementData();
@@ -613,19 +652,21 @@ public class FigureProviderKRendering {
             innerplacement.setBottomRight(innerbottomright);
 
             innerfigure.setPlacementData(innerplacement);
-            
+
             figure.getChildren().add(innerfigure);
-            
+
             KLineWidth linewidth = factory.createKLineWidth();
             linewidth.setLineWidth(4);
             figure.getStyles().add(linewidth);
             KLineWidth innerlinewidth = factory.createKLineWidth();
             innerlinewidth.setLineWidth(4);
             innerfigure.getStyles().add(innerlinewidth);
+            
+        // its a final state    
         } else if (isfinal != null) {
-            
+
             KRoundedRectangle innerfigure = factory.createKRoundedRectangle();
-            
+
             innerfigure.setCornerHeight(22);
             innerfigure.setCornerWidth(22);
             KAreaPlacementData innerplacement = factory.createKAreaPlacementData();
@@ -638,26 +679,28 @@ public class FigureProviderKRendering {
             innerplacement.setBottomRight(innerbottomright);
 
             innerfigure.setPlacementData(innerplacement);
-            
+
             figure.getChildren().add(innerfigure);
-            
+
             KLineWidth linewidth = factory.createKLineWidth();
             linewidth.setLineWidth(1);
             figure.getStyles().add(linewidth);
             KLineWidth innerlinewidth = factory.createKLineWidth();
             innerlinewidth.setLineWidth(1);
             innerfigure.getStyles().add(innerlinewidth);
+        // its an initial state
         } else if (isinitial != null) {
             KLineWidth linewidth = factory.createKLineWidth();
             linewidth.setLineWidth(4);
             figure.getStyles().add(linewidth);
+        // boring ordinary state
         } else {
             KLineWidth linewidth = factory.createKLineWidth();
             linewidth.setLineWidth(1);
             figure.getStyles().add(linewidth);
         }
-        
+
         return figure;
     }
-    
+
 }

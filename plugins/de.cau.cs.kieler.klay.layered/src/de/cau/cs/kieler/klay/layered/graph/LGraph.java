@@ -238,13 +238,6 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
             return;
         }
         
-        // Start a subgraph for the layer
-        writer.write("    {\n");
-        
-        if (layerNumber != -1) {
-            writer.write("        rank=same;\n");
-        }
-        
         // Go through the layer's nodes
         int nodeNumber = -1;
         for (LNode node : nodes) {
@@ -301,11 +294,6 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
             writer.write(";\n");
         }
         
-        if (layerNumber != -1) {
-            // End the layer's subgraph
-            writer.write("    }\n");
-        }
-        
         // Write the edges
         for (LNode node : nodes) {
             // Go through all edges and output those that have this node as their source
@@ -328,11 +316,5 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
                 }
             }
         }
-        
-        if (layerNumber == -1) {
-            // End the layer's subgraph
-            writer.write("    }\n");
-        }
     }
-    
 }

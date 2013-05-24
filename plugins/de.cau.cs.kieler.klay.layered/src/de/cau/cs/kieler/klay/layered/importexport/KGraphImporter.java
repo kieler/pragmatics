@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered;
+package de.cau.cs.kieler.klay.layered.importexport;
 
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -40,6 +40,7 @@ import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
@@ -653,8 +654,10 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         LPort port;
         Direction direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
         boolean mergePorts = layeredGraph.getProperty(Properties.MERGE_PORTS);
+        
         if ((mergePorts || node.getProperty(LayoutOptions.HYPERNODE))
                 && !node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+            
             // Hypernodes have one output port and one input port
             final PortSide defaultSide = PortSide.fromDirection(direction);
             port = Util.provideCollectorPort(layeredGraph, node, type,
@@ -662,9 +665,11 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         } else {
             port = new LPort(layeredGraph);
             port.setNode(node);
+            
             KVector pos = port.getPosition();
             pos.x = endPoint.getX() - node.getPosition().x;
             pos.y = endPoint.getY() - node.getPosition().y;
+            
             KVector resizeRatio = node.getProperty(Properties.RESIZE_RATIO);
             if (resizeRatio != null) {
                 pos.scale(resizeRatio.x, resizeRatio.y);
@@ -690,6 +695,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 break;
             }
         }
+        
         return port;
     }
 
