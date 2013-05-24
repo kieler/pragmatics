@@ -558,6 +558,10 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         dummyOutputPort.setSide(PortSide.EAST);
         dummyOutputPort.setNode(dummy);
         
+        // Make sure the ports know about the dummy node
+        selfLoop.getSource().setProperty(Properties.PORT_DUMMY, dummy);
+        selfLoop.getTarget().setProperty(Properties.PORT_DUMMY, dummy);
+        
         // Disconnect the edge
         selfLoop.setSource(null);
         selfLoop.setTarget(null);
@@ -566,10 +570,6 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         
         // Set the crossing hint used for cross counting later
         dummy.setProperty(Properties.CROSSING_HINT, 2);
-        
-        // Make sure the ports know about the dummy node
-        selfLoop.getSource().setProperty(Properties.PORT_DUMMY, dummy);
-        selfLoop.getTarget().setProperty(Properties.PORT_DUMMY, dummy);
     }
     
     /**
