@@ -23,6 +23,8 @@ import org.junit.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -30,11 +32,12 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.intermediate.PortListSorter;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
+import de.cau.cs.kieler.klay.test.config.BasicLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
+import de.cau.cs.kieler.klay.test.utils.TestPath;
 
 /**
  * Basic tests for the {@link PortListSorter}.
@@ -44,7 +47,7 @@ import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 public class PortListSorterTest extends AbstractLayeredProcessorTest {
 
     /**
-     * The processor only consideres nodes with port constraints equal or more restrictive than
+     * The processor only considers nodes with port constraints equal or more restrictive than
      * FIXED_ORDER.
      */
     private ImmutableList<PortConstraints> invalidConstraints = ImmutableList.of(
@@ -60,7 +63,31 @@ public class PortListSorterTest extends AbstractLayeredProcessorTest {
      */
     @Override
     protected List<ILayoutConfigurator> getConfigurators() {
-        return Lists.newArrayList();
+        List<ILayoutConfigurator> list = Lists.newArrayList();
+        list.add(new BasicLayoutConfigurator("") {
+
+            public void applyConfiguration(final KNode root) {
+                // guarantee that all node's port constraints are at least FIXED_ORDER
+                // this way it can be guaranteed that the tests are applied at all
+                for (KNode n : root.getChildren()) {
+                    KShapeLayout layout = n.getData(KShapeLayout.class);
+                    if (invalidConstraints.contains(layout
+                            .getProperty(LayoutOptions.PORT_CONSTRAINTS))) {
+                        layout.setProperty(LayoutOptions.PORT_CONSTRAINTS,
+                                PortConstraints.FIXED_ORDER);
+                    }
+                }
+            }
+        });
+        return list;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected TestPath[] getBundleTestPath() {
+        TestPath[] testPaths = { new TestPath("random", false, false, TestPath.Type.KGRAPH) };
+        return testPaths;
     }
 
     /**
@@ -68,18 +95,6 @@ public class PortListSorterTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-
-        // guarantee that all node's port constraints are at least FIXED_ORDER
-        // this way it can be guaranteed that the tests are applied at all
-        for (LGraph g : layered.getLayoutTestGraphs()) {
-            for (LNode node : g.getLayerlessNodes()) {
-                if (invalidConstraints.contains(node.getProperty(LayoutOptions.PORT_CONSTRAINTS))) {
-                    node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
-                }
-            }
-        }
-
-        layered.getLayoutTestConfiguration().add(LayoutProcessorStrategy.PORT_LIST_SORTER.create());
         lgraphs = layered.runLayoutTestUntil(PortListSorter.class);
     }
 
@@ -112,13 +127,13 @@ public class PortListSorterTest extends AbstractLayeredProcessorTest {
 
                         // check the positions
                         if (port.getSide() == PortSide.NORTH) {
-                            assertTrue(lastPos < port.getPosition().x);
+                            assertTrue(lastPos <= port.getPosition().x);
                         } else if (port.getSide() == PortSide.EAST) {
-                            assertTrue(lastPos < port.getPosition().y);
+                            assertTrue(lastPos <= port.getPosition().y);
                         } else if (port.getSide() == PortSide.SOUTH) {
-                            assertTrue(lastPos > port.getPosition().x);
+                            assertTrue(lastPos >= port.getPosition().x);
                         } else if (port.getSide() == PortSide.WEST) {
-                            assertTrue(lastPos > port.getPosition().y);
+                            assertTrue(lastPos >= port.getPosition().y);
                         }
 
                     }
