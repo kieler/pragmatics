@@ -25,7 +25,6 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.intermediate.LongEdgeJoiner;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -61,7 +60,6 @@ public class LongEdgeJoinerTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        layered.getLayoutTestConfiguration().add(LayoutProcessorStrategy.LONG_EDGE_JOINER.create());
         lgraphs = layered.runLayoutTestUntil(LongEdgeJoiner.class, false);
 
         // count the number of overall nodes and of the tested type

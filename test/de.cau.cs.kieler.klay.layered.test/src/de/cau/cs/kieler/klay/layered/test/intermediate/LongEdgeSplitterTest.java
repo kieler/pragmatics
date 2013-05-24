@@ -25,7 +25,6 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.intermediate.LongEdgeSplitter;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
@@ -56,8 +55,6 @@ public class LongEdgeSplitterTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        layered.getLayoutTestConfiguration().add(
-                LayoutProcessorStrategy.LONG_EDGE_SPLITTER.create());
         lgraphs = layered.runLayoutTestUntil(LongEdgeSplitter.class);
     }
 

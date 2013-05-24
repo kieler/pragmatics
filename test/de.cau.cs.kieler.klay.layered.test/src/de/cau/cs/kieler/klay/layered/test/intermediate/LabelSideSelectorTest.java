@@ -29,29 +29,29 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
+import de.cau.cs.kieler.klay.layered.graph.LLabel.LabelSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.LabelDummyRemover;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.intermediate.LabelSideSelector;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.layered.test.config.OrthogonalEdgeRoutingLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
+import de.cau.cs.kieler.klay.test.utils.TestPath;
 
 /**
- * Basic tests for the {@link LabelDummyRemover}.
+ * Basic tests for the {@link LabelSideSelector}.
  * 
  * @author uru
  */
-public class LabelDummyRemoverTest extends AbstractLayeredProcessorTest {
-
-    private int noOverallNodes = 0;
-    private int noTypeNodes = 0;
+public class LabelSideSelectorTest extends AbstractLayeredProcessorTest {
 
     // CHECKSTYLEOFF javadoc
-    public LabelDummyRemoverTest(final GraphTestObject testObject, final ILayoutConfigurator config) {
+    public LabelSideSelectorTest(final GraphTestObject testObject, final ILayoutConfigurator config) {
         super(testObject, config);
     }
 
@@ -61,8 +61,6 @@ public class LabelDummyRemoverTest extends AbstractLayeredProcessorTest {
     @Override
     protected List<ILayoutConfigurator> getConfigurators() {
         List<ILayoutConfigurator> list = Lists.newArrayList();
-
-        // assure that the processor is added to the layout configuration
         list.add(new OrthogonalEdgeRoutingLayoutConfigurator() {
 
             @Override
@@ -74,8 +72,11 @@ public class LabelDummyRemoverTest extends AbstractLayeredProcessorTest {
                     for (KEdge e : n.getOutgoingEdges()) {
                         KLabel label = KimlUtil.createInitializedLabel(e);
                         label.setText(String.valueOf(random.nextDouble()));
+                        // CHECKSTYLEOFF Magic Numbers
                         label.getData(KShapeLayout.class).setProperty(
-                                LayoutOptions.EDGE_LABEL_PLACEMENT, EdgeLabelPlacement.CENTER);
+                                LayoutOptions.EDGE_LABEL_PLACEMENT,
+                                random.nextDouble() < 0.5 ? EdgeLabelPlacement.CENTER
+                                        : EdgeLabelPlacement.TAIL);
                     }
                 }
             }
@@ -84,44 +85,48 @@ public class LabelDummyRemoverTest extends AbstractLayeredProcessorTest {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    protected TestPath[] getBundleTestPath() {
+        TestPath[] testPaths = { new TestPath("random", false, false, TestPath.Type.KGRAPH),
+        // TODO LabelSideSelector is not added as processor if no edges are present
+        // new TestPath("label_placement", false, false, TestPath.Type.GMF)
+                };
+        return testPaths;
+    }
+
+    /**
      * Run the layout algorithm until the specified strategy finished.
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(LabelDummyRemover.class, false);
+        lgraphs = layered.runLayoutTestUntil(LabelSideSelector.class);
+    }
 
-        // count the number of overall nodes and of the tested type
+    /**
+     * All labels on ports and edges have an assigned {@link LabelSide}.
+     */
+    @Test
+    public void testRemovedNodes() {
         for (LGraph g : lgraphs) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
-                    noOverallNodes++;
-                    if (node.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
-                        noTypeNodes++;
+
+                    // port labels
+                    for (LPort port : node.getPorts()) {
+                        for (LLabel label : port.getLabels()) {
+                            assertTrue(label.getSide() != LabelSide.UNKNOWN);
+                        }
+                    }
+
+                    for (LEdge edge : node.getOutgoingEdges()) {
+                        for (LLabel label : edge.getLabels()) {
+                            assertTrue(label.getSide() != LabelSide.UNKNOWN);
+                        }
                     }
                 }
             }
         }
-
-        lgraphs = layered.runLayoutTestUntil(LabelDummyRemover.class, true);
-
-    }
-
-    /**
-     * No node exists with {@link NodeType} {@link NodeType#LABEL}. Only such nodes were deleted.
-     */
-    @Test
-    public void testRemovedNodes() {
-        int noNodesAfter = 0;
-        for (LGraph g : lgraphs) {
-            for (Layer layer : g.getLayers()) {
-                for (LNode node : layer.getNodes()) {
-                    assertTrue(node.getProperty(Properties.NODE_TYPE) != NodeType.LABEL);
-                    noNodesAfter++;
-                }
-            }
-        }
-
-        assertTrue(noNodesAfter == (noOverallNodes - noTypeNodes));
     }
 
 }

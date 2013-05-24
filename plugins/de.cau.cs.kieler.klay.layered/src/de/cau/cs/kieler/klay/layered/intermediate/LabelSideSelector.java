@@ -36,22 +36,29 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * <p>This intermediate processor is used to select the side of port and edge labels. It is chosen
- * between the sides UP and DOWN based on different strategies selected by a layout option.</p>
+ * <p>
+ * This intermediate processor is used to select the side of port and edge labels. It is chosen
+ * between the sides UP and DOWN based on different strategies selected by a layout option.
+ * </p>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a properly layered graph with fixed port orders.</dd>
- *   <dt>Postcondition:</dt><dd>the placement side is chosen for each label, and each label is
- *     annotated accordingly.</dd>
- *   <dt>Slots:</dt><dd>Before phase 4.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link HyperedgeDummyMerger}</dd>
- *                                   <dd>{@link InLayerConstraintProcessor}</dd>
- *                                   <dd>{@link SubgraphOrderingProcessor}</dd>
+ * <dt>Precondition:</dt>
+ * <dd>a properly layered graph with fixed port orders.</dd>
+ * <dt>Postcondition:</dt>
+ * <dd>the placement side is chosen for each label, and each label is annotated accordingly.</dd>
+ * <dt>Slots:</dt>
+ * <dd>Before phase 4.</dd>
+ * <dt>Same-slot dependencies:</dt>
+ * <dd>{@link HyperedgeDummyMerger}</dd>
+ * <dd>{@link InLayerConstraintProcessor}</dd>
+ * <dd>{@link SubgraphOrderingProcessor}</dd>
  * </dl>
- *
+ * 
  * @author jjc
  */
 public final class LabelSideSelector implements ILayoutProcessor {
+
+    private static final LabelSide DEFAULT_LABEL_SIDE = LabelSide.BELOW;
 
     /**
      * {@inheritDoc}
@@ -59,12 +66,12 @@ public final class LabelSideSelector implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         EdgeLabelSideSelection mode = layeredGraph.getProperty(Properties.EDGE_LABEL_SIDE);
         monitor.begin("Label side selection (" + mode + ")", 1);
-        
+
         List<LNode> nodes = new LinkedList<LNode>();
         for (Layer layer : layeredGraph.getLayers()) {
             nodes.addAll(layer.getNodes());
         }
-        
+
         switch (mode) {
         case ALWAYS_UP:
             alwaysUp(nodes);
@@ -82,14 +89,29 @@ public final class LabelSideSelector implements ILayoutProcessor {
             smart(nodes);
             break;
         }
-        
+
+        // iterate over all ports and check that a side is assigned
+        // edge-less ports may not get a side
+        for (Layer layer : layeredGraph.getLayers()) {
+            for (LNode lNode : layer.getNodes()) {
+                for (LPort port : lNode.getPorts()) {
+                    for (LLabel label : port.getLabels()) {
+                        if (label.getSide() == LabelSide.UNKNOWN) {
+                            label.setSide(DEFAULT_LABEL_SIDE);
+                        }
+                    }
+                }
+            }
+        }
+
         monitor.done();
     }
-    
+
     /**
      * Strategy which marks all labels for an UP placement.
      * 
-     * @param nodes All nodes of the graph
+     * @param nodes
+     *            All nodes of the graph
      */
     private void alwaysUp(final List<LNode> nodes) {
         for (LNode node : nodes) {
@@ -106,11 +128,12 @@ public final class LabelSideSelector implements ILayoutProcessor {
             }
         }
     }
-    
+
     /**
      * Strategy which marks all labels for an DOWN placement.
      * 
-     * @param nodes All nodes of the graph
+     * @param nodes
+     *            All nodes of the graph
      */
     private void alwaysDown(final List<LNode> nodes) {
         for (LNode node : nodes) {
@@ -129,10 +152,11 @@ public final class LabelSideSelector implements ILayoutProcessor {
     }
 
     /**
-     * Strategy that chooses a side depending on the direction of an edge, in this case
-     * UP direction-wise.
+     * Strategy that chooses a side depending on the direction of an edge, in this case UP
+     * direction-wise.
      * 
-     * @param nodes All nodes of the graph
+     * @param nodes
+     *            All nodes of the graph
      */
     private void directionUp(final List<LNode> nodes) {
         for (LNode node : nodes) {
@@ -143,9 +167,8 @@ public final class LabelSideSelector implements ILayoutProcessor {
                         || target.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
                     target = target.getProperty(Properties.LONG_EDGE_TARGET).getNode();
                 }
-                if ((node.getLayer().getIndex()
-                        < target.getLayer().getIndex()
-                        && !edge.getProperty(Properties.REVERSED))) {
+                if ((node.getLayer().getIndex() < target.getLayer().getIndex() && !edge
+                        .getProperty(Properties.REVERSED))) {
                     side = LabelSide.ABOVE;
                 } else {
                     side = LabelSide.BELOW;
@@ -164,10 +187,11 @@ public final class LabelSideSelector implements ILayoutProcessor {
     }
 
     /**
-     * Strategy that chooses a side depending on the direction of an edge, in this case
-     * DOWN direction-wise.
+     * Strategy that chooses a side depending on the direction of an edge, in this case DOWN
+     * direction-wise.
      * 
-     * @param nodes All nodes of the graph
+     * @param nodes
+     *            All nodes of the graph
      */
     private void directionDown(final List<LNode> nodes) {
         for (LNode node : nodes) {
@@ -178,9 +202,8 @@ public final class LabelSideSelector implements ILayoutProcessor {
                         || target.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
                     target = target.getProperty(Properties.LONG_EDGE_TARGET).getNode();
                 }
-                if ((node.getLayer().getIndex()
-                        < target.getLayer().getIndex()
-                        && !edge.getProperty(Properties.REVERSED))) {
+                if ((node.getLayer().getIndex() < target.getLayer().getIndex() && !edge
+                        .getProperty(Properties.REVERSED))) {
                     side = LabelSide.BELOW;
                 } else {
                     side = LabelSide.ABOVE;
@@ -197,11 +220,12 @@ public final class LabelSideSelector implements ILayoutProcessor {
             }
         }
     }
-    
+
     /**
      * Chooses label sides depending on certain patterns.
      * 
-     * @param nodes All nodes of the graph
+     * @param nodes
+     *            All nodes of the graph
      */
     private void smart(final List<LNode> nodes) {
         HashMap<LNode, LabelSide> nodeMarkers = Maps.newHashMapWithExpectedSize(nodes.size());
@@ -247,11 +271,13 @@ public final class LabelSideSelector implements ILayoutProcessor {
     }
 
     /**
-     * Get all ports on a certain side of a node.
-     * They are sorted descending by their position on the node.
+     * Get all ports on a certain side of a node. They are sorted descending by their position on
+     * the node.
      * 
-     * @param node The node to consider
-     * @param portSide The chosen side
+     * @param node
+     *            The node to consider
+     * @param portSide
+     *            The chosen side
      * @return A list of all ports on the chosen side of the node
      */
     private List<LPort> getPortsBySide(final LNode node, final PortSide portSide) {
@@ -272,5 +298,5 @@ public final class LabelSideSelector implements ILayoutProcessor {
         });
         return result;
     }
-    
+
 }

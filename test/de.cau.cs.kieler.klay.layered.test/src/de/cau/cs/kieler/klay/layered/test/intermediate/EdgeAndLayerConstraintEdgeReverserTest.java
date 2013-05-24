@@ -26,7 +26,6 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.intermediate.EdgeAndLayerConstraintEdgeReverser;
-import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
@@ -71,9 +70,6 @@ public class EdgeAndLayerConstraintEdgeReverserTest extends AbstractLayeredProce
      */
     @Before
     public void runUntil() {
-
-        layered.getLayoutTestConfiguration().add(
-                LayoutProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER.create());
         lgraphs = layered.runLayoutTestUntil(EdgeAndLayerConstraintEdgeReverser.class);
     }
 
@@ -92,7 +88,6 @@ public class EdgeAndLayerConstraintEdgeReverserTest extends AbstractLayeredProce
                         || constr == LayerConstraint.LAST_SEPARATE) {
                     assertTrue(Iterables.isEmpty(node.getOutgoingEdges()));
                 }
-
             }
         }
     }

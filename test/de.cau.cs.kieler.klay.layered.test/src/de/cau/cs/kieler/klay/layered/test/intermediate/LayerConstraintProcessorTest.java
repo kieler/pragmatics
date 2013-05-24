@@ -29,7 +29,6 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.LayerConstraintProcessor;
-import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
@@ -74,8 +73,6 @@ public class LayerConstraintProcessorTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        layered.getLayoutTestConfiguration().add(
-                LayoutProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR.create());
         lgraphs = layered.runLayoutTestUntil(LayerConstraintProcessor.class);
     }
 
@@ -138,60 +135,6 @@ public class LayerConstraintProcessorTest extends AbstractLayeredProcessorTest {
                     assertTrue(last.size() == 1 && last.contains(lastLayer - 1));
                 }
             }
-            //
-            // Set<LayerConstraint> first = Sets.newHashSet();
-            // Set<LayerConstraint> snd = Sets.newHashSet();
-            //
-            // Set<LayerConstraint> prelast = Sets.newHashSet();
-            // Set<LayerConstraint> last = Sets.newHashSet();
-            //
-            // // collect all constraints
-            // if (g.getLayers().size() > 0) {
-            // for (LNode node : g.getLayers().get(0)) {
-            // first.add(node.getProperty(Properties.LAYER_CONSTRAINT));
-            // }
-            // }
-            // if (g.getLayers().size() > 1) {
-            // for (LNode node : g.getLayers().get(1)) {
-            // snd.add(node.getProperty(Properties.LAYER_CONSTRAINT));
-            // }
-            // }
-            // if (g.getLayers().size() > 1) {
-            // for (LNode node : g.getLayers().get(g.getLayers().size() - 2)) {
-            // prelast.add(node.getProperty(Properties.LAYER_CONSTRAINT));
-            // }
-            // }
-            // if (g.getLayers().size() > 0) {
-            // for (LNode node : g.getLayers().get(g.getLayers().size() - 1)) {
-            // last.add(node.getProperty(Properties.LAYER_CONSTRAINT));
-            // }
-            // }
-            //
-            // // check FIRSTs
-            // if (first.contains(LayerConstraint.FIRST_SEPARATE)) {
-            // assertTrue(first.size() == 1);
-            // // second layer may only contain first if so
-            // if (snd.contains(LayerConstraint.FIRST)) {
-            // assertTrue(snd.size() == 1
-            // || (snd.size() == 2 && snd.contains(LayerConstraint.NONE)));
-            // }
-            // } else if (first.contains(LayerConstraint.FIRST)) {
-            // assertTrue(first.size() == 1
-            // || (first.size() == 2 && first.contains(LayerConstraint.NONE)));
-            // }
-            //
-            // // check LASTs
-            // if (last.contains(LayerConstraint.LAST_SEPARATE)) {
-            // assertTrue(last.size() == 1);
-            // if (prelast.contains(LayerConstraint.LAST)) {
-            // assertTrue(prelast.size() == 1
-            // || (prelast.size() == 2 && prelast.contains(LayerConstraint.NONE)));
-            // }
-            // } else if (last.contains(LayerConstraint.LAST)) {
-            // assertTrue(last.size() == 1
-            // || (last.size() == 2 && last.contains(LayerConstraint.NONE)));
-            // }
-
         }
     }
 }

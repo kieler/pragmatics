@@ -26,7 +26,6 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.intermediate.ReversedEdgeRestorer;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
@@ -59,8 +58,6 @@ public class ReversedEdgeRestorerTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        layered.getLayoutTestConfiguration().add(
-                LayoutProcessorStrategy.REVERSED_EDGE_RESTORER.create());
         lgraphs = layered.runLayoutTestUntil(ReversedEdgeRestorer.class);
 
     }

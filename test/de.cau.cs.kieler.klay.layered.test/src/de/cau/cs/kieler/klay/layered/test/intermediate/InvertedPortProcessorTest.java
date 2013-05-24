@@ -17,7 +17,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,12 +28,13 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.InvertedPortProcessor;
-import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
+import de.cau.cs.kieler.klay.layered.test.config.OrthogonalEdgeRoutingLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
+import de.cau.cs.kieler.klay.test.utils.TestPath;
 
 /**
  * Basic tests for the {@link InvertedPortProcessor}.
@@ -54,7 +54,20 @@ public class InvertedPortProcessorTest extends AbstractLayeredProcessorTest {
      */
     @Override
     protected List<ILayoutConfigurator> getConfigurators() {
-        return Lists.newArrayList();
+        List<ILayoutConfigurator> list = Lists.newArrayList();
+
+        // assure that the processor is added to the layout configuration
+        list.add(new OrthogonalEdgeRoutingLayoutConfigurator());
+        return list;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected TestPath[] getBundleTestPath() {
+        TestPath[] testPaths =
+                { new TestPath("north_south_ports", false, false, TestPath.Type.GMF) };
+        return testPaths;
     }
 
     /**
@@ -62,8 +75,6 @@ public class InvertedPortProcessorTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        layered.getLayoutTestConfiguration().add(
-                LayoutProcessorStrategy.INVERTED_PORT_PROCESSOR.create());
         lgraphs = layered.runLayoutTestUntil(InvertedPortProcessor.class);
     }
 
@@ -93,7 +104,7 @@ public class InvertedPortProcessorTest extends AbstractLayeredProcessorTest {
                             LNode source = edge.getSource().getNode();
                             // dummy in same layer
                             assertTrue(source.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE);
-                            Assert.assertTrue(source.getLayer().getIndex() == layer.getIndex());
+                            assertTrue(source.getLayer().getIndex() == layer.getIndex());
                         }
                     }
                 }

@@ -42,6 +42,7 @@ import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 
 /**
  * Class to load graphs from a given folder and its subfolders (optional).
@@ -185,9 +186,14 @@ public final class GraphTestUtil {
                     loadFilesFromDirectory(rootFolder, subfolder, GMF_GRAPHS_FORMATS);
             Collections.sort(graphFiles);
             List<GraphTestObject> graphObjects = new ArrayList<GraphTestObject>();
+            LayoutOptionManager mng = new LayoutOptionManager();
+            
             for (File gfile : graphFiles) {
                 LayoutMapping<?> mapping = getLayoutMappingForGraphFile(gfile);
 
+                // load possible {@link ILayoutConfig}s.
+                mng.configure(mapping, new BasicProgressMonitor());
+                
                 // apply layout when applyLayout = true
                 if (doLayout) {
                     DiagramLayoutEngine.INSTANCE.layout(mapping, new BasicProgressMonitor());
