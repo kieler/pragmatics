@@ -106,6 +106,8 @@ public class EvolutionDialog extends Dialog {
     private Label fitnessLabel;
     /** the label for the generation number. */
     private Label generationLabel;
+    /** controls to disable when no evolution model is available. */
+    private List<Control> disablingControls = new LinkedList<Control>();
     
     /**
      * Creates an evolution dialog.
@@ -163,18 +165,17 @@ public class EvolutionDialog extends Dialog {
         Population population = LayoutEvolutionModel.getInstance().getPopulation();
         for (int i = 0; i < INDIVIDUALS_DISPLAY; i++) {
             createPreviewArea(previewPane, i);
-            if (i < population.size()) {
-                Image image = createPreviewImage(population.get(i));
-                if (image == null) {
-                    // create an empty image in order to set the initial size
-                    image = new Image(getShell().getDisplay(), PREVIEW_WIDTH, PREVIEW_HEIGHT);
-                    resources.add(image);
-                    selectionButtons[i].setEnabled(false);
-                }
-                previewLabels[i].setImage(image);
-            } else {
+            Image image = null;
+            if (population != null && i < population.size()) {
+                image = createPreviewImage(population.get(i));
+            }
+            if (image == null) {
+                // create an empty image in order to set the initial size
+                image = new Image(getShell().getDisplay(), PREVIEW_WIDTH, PREVIEW_HEIGHT);
+                resources.add(image);
                 selectionButtons[i].setEnabled(false);
             }
+            previewLabels[i].setImage(image);
         }
         
         // create metrics area
@@ -254,10 +255,17 @@ public class EvolutionDialog extends Dialog {
                 + LayoutEvolutionModel.getInstance().getGenerationNumber());
         
         // create the buttons
-        createButton(parent, IDialogConstants.OK_ID, "Apply", true);
-        createButton(parent, IDialogConstants.PROCEED_ID, "Evolve", false);
-        createButton(parent, IDialogConstants.ABORT_ID, "Reset", false);
+        Button applyButton = createButton(parent, IDialogConstants.OK_ID, "Apply", true);
+        disablingControls.add(applyButton);
+        Button evolveButton = createButton(parent, IDialogConstants.PROCEED_ID, "Evolve", false);
+        disablingControls.add(evolveButton);
+        createButton(parent, IDialogConstants.ABORT_ID, "Restart", false);
         createButton(parent, IDialogConstants.CANCEL_ID, "Cancel", false);
+        
+        if (LayoutEvolutionModel.getInstance().getPopulation() == null) {
+            applyButton.setEnabled(false);
+            evolveButton.setEnabled(false);
+        }
     }
     
     /**
@@ -280,7 +288,7 @@ public class EvolutionDialog extends Dialog {
             evolve();
             break;
         case IDialogConstants.ABORT_ID:
-            reset();
+            restart();
             break;
         }
     }
@@ -383,11 +391,14 @@ public class EvolutionDialog extends Dialog {
         
         // set the initial value for the slider
         int value = SLIDER_MAX;
-        Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
-        if (metricWeights != null) {
-            Double weight = metricWeights.get(data.getId());
-            if (weight != null) {
-                value = (int) (weight * SLIDER_MAX);
+        if (population != null) {
+            Map<String, Double> metricWeights = population.getProperty(
+                    EvaluationOperation.METRIC_WEIGHT);
+            if (metricWeights != null) {
+                Double weight = metricWeights.get(data.getId());
+                if (weight != null) {
+                    value = (int) (weight * SLIDER_MAX);
+                }
             }
         }
         slider.setSelection(value);
@@ -463,7 +474,7 @@ public class EvolutionDialog extends Dialog {
     /**
      * Reset the population to initial values.
      */
-    private void reset() {
+    private void restart() {
         // make a new selection of layout options
         OptionSelectionDialog optionSelectionDialog = new OptionSelectionDialog(getShell(),
                 LayoutEvolutionModel.getInstance().getLayoutOptions());
@@ -495,6 +506,9 @@ public class EvolutionDialog extends Dialog {
             }
             
             refreshPreviews();
+            for (Control control : disablingControls) {
+                control.setEnabled(true);
+            }
         }
     }
     
@@ -525,7 +539,7 @@ public class EvolutionDialog extends Dialog {
         Population population = LayoutEvolutionModel.getInstance().getPopulation();
         Map<String, Float> metricsResult = null;
         Double fitness = null;
-        if (genomeIndex >= 0 && genomeIndex < population.size()) {
+        if (population != null && genomeIndex >= 0 && genomeIndex < population.size()) {
             Genome genome = population.get(genomeIndex);
             metricsResult = genome.getProperty(EvaluationOperation.METRIC_RESULT);
             fitness = genome.getProperty(Genome.FITNESS);

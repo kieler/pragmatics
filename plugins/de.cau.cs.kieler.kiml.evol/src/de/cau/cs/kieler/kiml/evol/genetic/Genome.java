@@ -24,7 +24,6 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
@@ -116,12 +115,12 @@ public class Genome extends MapPropertyHolder {
     /**
      * Find the stored layout context associated with the given graph element.
      * 
-     * @param graphElement a graph element
+     * @param diagramPart an element of the diagram
      * @return the associated layout context, or {@code null}
      */
-    public LayoutContext findContext(final KGraphElement graphElement) {
+    public LayoutContext findContext(final Object diagramPart) {
         for (LayoutContext context : geneMap.keySet()) {
-            if (context.getProperty(LayoutContext.GRAPH_ELEM).equals(graphElement)) {
+            if (context.getProperty(LayoutContext.DIAGRAM_PART).equals(diagramPart)) {
                 return context;
             }
         }
@@ -129,15 +128,15 @@ public class Genome extends MapPropertyHolder {
     }
 
     /**
-     * Find a gene with the given identifier in the context of the given graph element.
+     * Find a gene with the given identifier in the context of the given diagram element.
      *
      * @param theId a gene identifier
-     * @param graphElement a graph element
+     * @param diagramPart an element of the diagram
      * @return a gene with the given ID, or {@code null} if none can be found
      */
-    public Gene<?> findGene(final String theId, final KGraphElement graphElement) {
+    public Gene<?> findGene(final String theId, final Object diagramPart) {
         for (Map.Entry<LayoutContext, ArrayList<Gene<?>>> entry : geneMap.entrySet()) {
-            if (entry.getKey().getProperty(LayoutContext.GRAPH_ELEM).equals(graphElement)) {
+            if (entry.getKey().getProperty(LayoutContext.DIAGRAM_PART).equals(diagramPart)) {
                 for (Gene<?> gene : entry.getValue()) {
                     if (gene.getTypeInfo().getId().equals(theId)) {
                         return gene;

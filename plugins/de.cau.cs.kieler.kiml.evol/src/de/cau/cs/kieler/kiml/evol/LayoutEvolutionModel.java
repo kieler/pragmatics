@@ -135,7 +135,7 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
      */
     public void initializePopulation(final LayoutMapping<?> layoutMapping,
             final List<LayoutOptionData<?>> options, final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Initialize population", INITIAL_POPULATION + 2);
+        progressMonitor.begin("Initialize population", 3); // SUPPRESS CHECKSTYLE MagicNumber
         this.layoutOptions = options;
         
         Population population = new Population(2 * INITIAL_POPULATION);
@@ -157,12 +157,12 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
                 Genome mutation = mutationOperation.mutate(population.get(i), layoutConfig,
                         INITIAL_MUTATION_BOOST);
                 population.add(mutation);
-                progressMonitor.worked(1);
             }
         } while (population.size() < INITIAL_POPULATION);
+        progressMonitor.worked(1);
         
         // reset and evaluate the population
-        setPopulation(population);
+        setPopulation(population, progressMonitor.subTask(1));
         
         progressMonitor.done();
     }

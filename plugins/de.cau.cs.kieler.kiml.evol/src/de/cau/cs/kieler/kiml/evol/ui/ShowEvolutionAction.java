@@ -13,16 +13,11 @@
  */
 package de.cau.cs.kieler.kiml.evol.ui;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
@@ -32,11 +27,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.WrappedException;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.evol.EvolLayoutConfig;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
-import de.cau.cs.kieler.kiml.evol.LayoutEvolutionModel;
 import de.cau.cs.kieler.kiml.service.LayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
@@ -44,7 +36,6 @@ import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
-import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
@@ -111,12 +102,8 @@ public class ShowEvolutionAction extends Action {
                     LayoutMapping<?> layoutMapping = layoutManager.buildLayoutGraph(editorPart, null);
                     if (layoutMapping != null) {
                         
-                        // initialize the population if necessary
-                        if (initializePopulation(window.getShell(), layoutMapping)) {
-                            
-                            // display the evolution dialog
-                            doEvolution(window.getShell(), layoutMapping, editorPart);
-                        }
+                        // display the evolution dialog
+                        doEvolution(window.getShell(), layoutMapping, editorPart);
                         
                     } else {
                         MessageDialog.openError(window.getShell(), "No Active Diagram",
@@ -125,50 +112,6 @@ public class ShowEvolutionAction extends Action {
                 }
             }
         }
-    }
-    
-    /**
-     * Initialize the population of the layout evolution model. A dialog may be opened asking the
-     * user to select layout options.
-     * 
-     * @param shell the shell
-     * @param layoutMapping the layout mapping
-     * @return true if the process can continue, or false if the user aborted the option
-     *          selection dialog
-     */
-    private boolean initializePopulation(final Shell shell, final LayoutMapping<?> layoutMapping) {
-        final LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
-        if (evolutionModel.getPopulation() == null) {
-            // make a new selection of layout options
-            OptionSelectionDialog optionSelectionDialog = new OptionSelectionDialog(shell,
-                    evolutionModel.getLayoutOptions());
-            if (optionSelectionDialog.open() != OptionSelectionDialog.OK) {
-                return false;
-            }
-            
-            final List<LayoutOptionData<?>> selectedOptions = optionSelectionDialog.getSelection();
-            if (selectedOptions.isEmpty()) {
-                MessageDialog.openError(shell, "No Selected Options",
-                        "The evolutionary process requires at least one selected option.");
-                return false;
-            }
-            
-            try {
-                PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
-                        new IRunnableWithProgress() {
-                    public void run(final IProgressMonitor monitor) throws InvocationTargetException,
-                            InterruptedException {
-                        synchronized (evolutionModel) {
-                            evolutionModel.initializePopulation(layoutMapping, selectedOptions,
-                                    new ProgressMonitorAdapter(monitor));
-                        }
-                    }
-                });
-            } catch (Exception exception) {
-                throw new WrappedException(exception);
-            }
-        }
-        return true;
     }
     
     /**
