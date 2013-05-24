@@ -193,8 +193,7 @@ public final class CompoundKGraphImporter extends KGraphImporter {
         newNode.setProperty(Properties.K_PARENT, node.getParent());
         
         // Set flat position (position in relation to layout node) coordinates to support
-        // interactive
-        // mode
+        // interactive mode
         KVector flatPosVec = new KVector(0, 0);
         Util.getFlatPosition(node, kgraph, flatPosVec);
         newNode.getPosition().x = flatPosVec.x;
@@ -1146,6 +1145,7 @@ public final class CompoundKGraphImporter extends KGraphImporter {
      */
     private void applyPortLayout(final KNode kNode, final LGraph layeredGraph,
             final LNode representative) {
+        
         KShapeLayout nodeLayout = kNode.getData(KShapeLayout.class);
 
         // set port positions
@@ -1154,9 +1154,11 @@ public final class CompoundKGraphImporter extends KGraphImporter {
             
             for (LPort lport : representative.getPorts()) {
                 Object origin = lport.getProperty(Properties.ORIGIN);
+                
                 if (origin instanceof KPort) {
                     KShapeLayout portLayout = ((KPort) origin).getData(KShapeLayout.class);
                     portLayout.applyVector(lport.getPosition());
+                    portLayout.setProperty(LayoutOptions.PORT_SIDE, lport.getSide());
                 }
             }
         }

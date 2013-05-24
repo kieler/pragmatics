@@ -32,14 +32,14 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * nodes).
  * 
  * <dl>
- * <dt>Precondition:</dt>
- * <dd>a layered graph.</dd>
- * <dt>Postcondition:</dt>
- * <dd>the graph does not contain compound dummy edges</dd>
- * <dt>Slots:</dt>
- * <dd>Before phase 3.</dd>
- * <dt>Same-slot dependencies:</dt>
- * <dd>None.</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>a layered graph.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>the graph does not contain compound dummy edges</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>Before phase 3.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>None.</dd>
  * </dl>
  * 
  * @author ima
@@ -67,6 +67,7 @@ public final class CompoundDummyEdgeRemover implements ILayoutProcessor {
                 }
             }
         }
+        
         // Remove dummy edges.
         for (LEdge lEdge : dummyEdgeList) {
             lEdge.getSource().getOutgoingEdges().remove(lEdge);
@@ -78,9 +79,11 @@ public final class CompoundDummyEdgeRemover implements ILayoutProcessor {
             for (LNode node : layer) {
                 List<LPort> ports = node.getPorts();
                 List<LPort> removables = new LinkedList<LPort>();
-                for (int j = 0; j < ports.size(); j++) {
-                    LPort port = ports.get(j);
-                    if (port.getIncomingEdges().isEmpty() && port.getOutgoingEdges().isEmpty()) {
+                for (LPort port : ports) {
+                    if (port.getProperty(Properties.LEAVE_DUMMY_PORT)
+                            && port.getIncomingEdges().isEmpty()
+                            && port.getOutgoingEdges().isEmpty()) {
+                        
                         removables.add(port);
                     }
                 }
