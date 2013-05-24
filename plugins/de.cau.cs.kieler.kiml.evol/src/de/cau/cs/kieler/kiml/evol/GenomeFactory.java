@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.evol;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -79,10 +80,11 @@ public final class GenomeFactory {
      * 
      * @param layoutMapping a layout mapping
      * @param config a layout configurator for obtaining default values
+     * @param options the layout options to consider in the constructed genome
      * @return a genome filled with genes
      */
     public static Genome createInitialGenome(final LayoutMapping<?> layoutMapping,
-            final ILayoutConfig config) {
+            final ILayoutConfig config, final Collection<LayoutOptionData<?>> options) {
         LayoutDataService dataService = LayoutDataService.getInstance();
         LayoutOptionData<?> algoOptionData = dataService.getOptionData(
                 LayoutOptions.ALGORITHM.getId());
@@ -101,33 +103,30 @@ public final class GenomeFactory {
             // create layout context for the parent node
             LayoutContext context = createContext(parentNode, layoutMapping, config);
             genome.addContext(context, dataService.getOptionData().size() + 1);
-
-            // create gene for the layout type
             String algorithmId = (String) config.getValue(algoOptionData, context);
             String diagramType = (String) config.getValue(diagTypeData, context);
             LayoutAlgorithmData algorithmData = DefaultLayoutConfig.getLayouterData(
                     algorithmId, diagramType);
-            LayoutTypeData typeData = dataService.getTypeData(algorithmData.getType());
-            genome.getGenes(context).add(createLayoutTypeGene(typeData));
+
+            if (options.contains(algoOptionData)) {
+                // create genes for the layout type and algorithm
+                LayoutTypeData typeData = dataService.getTypeData(algorithmData.getType());
+                genome.getGenes(context).add(createLayoutTypeGene(typeData));
+                genome.getGenes(context).add(createAlgorithmGene(typeData, algorithmData));
+            }
             
-            // create gene for the layout algorithm
-            genome.getGenes(context).add(createAlgorithmGene(typeData, algorithmData));
-            
-            // create genes for the other layout options
-            for (LayoutOptionData<?> optionData : dataService.getOptionData()) {
-                if (optionData.getTargets().contains(LayoutOptionData.Target.PARENTS)
-                        && optionData.getVariance() > 0) {
-                    TypeInfo<?> typeInfo = createTypeInfo(optionData);
-                    if (typeInfo != null) {
-                        Gene<?> gene;
-                        if (algorithmData.knowsOption(optionData)) {
-                            gene = createDefaultGene(algorithmData, optionData, typeInfo, config,
-                                    context);
-                        } else {
-                            gene = Gene.create(null, typeInfo, false);
-                        }
-                        genome.getGenes(context).add(gene);
+            // create genes for the other layout options (the algorithm option is excluded)
+            for (LayoutOptionData<?> optionData : options) {
+                TypeInfo<?> typeInfo = createTypeInfo(optionData);
+                if (typeInfo != null) {
+                    Gene<?> gene;
+                    if (algorithmData.knowsOption(optionData)) {
+                        gene = createDefaultGene(algorithmData, optionData, typeInfo, config,
+                                context);
+                    } else {
+                        gene = Gene.create(null, typeInfo, false);
                     }
+                    genome.getGenes(context).add(gene);
                 }
             }
             

@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
@@ -22,6 +23,7 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.alg.AbstractEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.alg.CrossoverOperation;
@@ -80,6 +82,8 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
     
     /** the individual that was selected for meta layout. */
     private Genome selectedIndividual;
+    /** the layout options that are considered in meta layout. */
+    private List<LayoutOptionData<?>> layoutOptions;
     /** the executor service used for multi-threaded execution. */
     private ExecutorService executorService;
     
@@ -114,14 +118,25 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
     }
     
     /**
+     * Returns the list of layout options that are considered in meta layout.
+     * 
+     * @return the considered options
+     */
+    public List<LayoutOptionData<?>> getLayoutOptions() {
+        return layoutOptions;
+    }
+    
+    /**
      * Initialize the population of the evolution model.
      * 
      * @param layoutMapping a layout mapping from which to derive an initial configuration
+     * @param options the list of layout options that are considered in meta layout
      * @param progressMonitor a progress monitor
      */
     public void initializePopulation(final LayoutMapping<?> layoutMapping,
-            final IKielerProgressMonitor progressMonitor) {
+            final List<LayoutOptionData<?>> options, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Initialize population", INITIAL_POPULATION + 2);
+        this.layoutOptions = options;
         
         Population population = new Population(2 * INITIAL_POPULATION);
         KNode graph = layoutMapping.getLayoutGraph();
@@ -130,7 +145,7 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
         // create an initial gene, the patriarch
         ILayoutConfig layoutConfig = GenomeFactory.createConfig(layoutMapping);
         population.setProperty(Population.DEFAULT_CONFIG, layoutConfig);
-        Genome patriarch = GenomeFactory.createInitialGenome(layoutMapping, layoutConfig);
+        Genome patriarch = GenomeFactory.createInitialGenome(layoutMapping, layoutConfig, options);
         population.add(patriarch);
         progressMonitor.worked(1);
         

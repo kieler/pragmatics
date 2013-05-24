@@ -13,18 +13,16 @@
  */
 package de.cau.cs.kieler.kiml.evol.ui;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.MouseEvent;
@@ -45,17 +43,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.LayoutEvolutionModel;
 import de.cau.cs.kieler.kiml.evol.alg.EvaluationOperation;
@@ -67,7 +64,6 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisCategory;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.util.KGraphRenderer;
-import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
 
 /**
  * The main user interface for evolutionary meta layout.
@@ -102,7 +98,7 @@ public class EvolutionDialog extends Dialog {
     private Button[] selectionButtons;
     /** the labels for displaying individuals. */
     private Label[] previewLabels;
-    /** the progress bar for displaying progess of operations. */
+    /** the progress bar for displaying progress of operations. */
     private ProgressBar progressBar;
     /** the labels for displaying metrics results and the sliders for setting weights. */
     private Map<String, Pair<Label, Slider>> metricControls = Maps.newHashMap();
@@ -155,24 +151,6 @@ public class EvolutionDialog extends Dialog {
      */
     @Override
     protected Control createDialogArea(final Composite parent) {
-        final LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
-        if (evolutionModel.getPopulation() == null) {
-            try {
-                PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
-                        new IRunnableWithProgress() {
-                    public void run(final IProgressMonitor monitor) throws InvocationTargetException,
-                            InterruptedException {
-                        synchronized (evolutionModel) {
-                            evolutionModel.initializePopulation(layoutMapping,
-                                    new ProgressMonitorAdapter(monitor));
-                        }
-                    }
-                });
-            } catch (Exception exception) {
-                throw new WrappedException(exception);
-            }
-        }
-        
         Composite composite = (Composite) super.createDialogArea(parent);
         ((GridLayout) composite.getLayout()).numColumns = 2;
         
@@ -182,7 +160,7 @@ public class EvolutionDialog extends Dialog {
         selectionButtons = new Button[INDIVIDUALS_DISPLAY];
         previewLabels = new Label[INDIVIDUALS_DISPLAY];
         
-        Population population = evolutionModel.getPopulation();
+        Population population = LayoutEvolutionModel.getInstance().getPopulation();
         for (int i = 0; i < INDIVIDUALS_DISPLAY; i++) {
             createPreviewArea(previewPane, i);
             if (i < population.size()) {
@@ -486,30 +464,38 @@ public class EvolutionDialog extends Dialog {
      * Reset the population to initial values.
      */
     private void reset() {
-        try {
-            progressBar.setVisible(true);
-            BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-                public void run() {
-                    LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
-                    synchronized (evolutionModel) {
-                        // reinitialize the population
-                        evolutionModel.initializePopulation(layoutMapping,
-                                new ProgressBarMonitor(progressBar));                        
-                    }
-                }
-            });
-            // reset metric weights
-            for (Pair<Label, Slider> control : metricControls.values()) {
-                control.getSecond().setSelection(SLIDER_MAX);
+        // make a new selection of layout options
+        OptionSelectionDialog optionSelectionDialog = new OptionSelectionDialog(getShell(),
+                LayoutEvolutionModel.getInstance().getLayoutOptions());
+        if (optionSelectionDialog.open() == OptionSelectionDialog.OK) {
+            final List<LayoutOptionData<?>> selectedOptions = optionSelectionDialog.getSelection();
+            if (selectedOptions.isEmpty()) {
+                MessageDialog.openError(getShell(), "No Selected Options",
+                        "The evolutionary process requires at least one selected option.");
+                return;
             }
-        } catch (Throwable throwable) {
-            handleError(throwable);
-            return;
-        } finally {
-            progressBar.setVisible(false);
+                        
+            try {
+                progressBar.setVisible(true);
+                BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+                    public void run() {
+                        LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+                        synchronized (evolutionModel) {
+                            // reinitialize the population
+                            evolutionModel.initializePopulation(layoutMapping, selectedOptions,
+                                    new ProgressBarMonitor(progressBar));                        
+                        }
+                    }
+                });
+            } catch (Throwable throwable) {
+                handleError(throwable);
+                return;
+            } finally {
+                progressBar.setVisible(false);
+            }
+            
+            refreshPreviews();
         }
-        
-        refreshPreviews();
     }
     
     /**
