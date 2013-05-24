@@ -23,6 +23,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.keg.impl.KEGPackageImpl;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.klay.test.config.DummyLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
@@ -59,6 +60,7 @@ public abstract class KlayAutomatedJUnitTest {
     public void graphAutomatedTestInitialization() {
         // make sure the ui plugin is loaded, as it holds required options.
         KimlUiPlugin.getDefault();
+        KEGPackageImpl.init();
         
         graphsList = GraphTestUtil.loadGraphs(getBundleTestPath());
         configurators = getConfigurators();
