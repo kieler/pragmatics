@@ -45,9 +45,9 @@ public final class LNode extends LShape {
     /** this node's labels. */
     private final List<LLabel> labels = new LinkedList<LLabel>();
     /** the margin area around this node. */
-    private final LInsets.Double margin = new LInsets.Double();
+    private final LInsets margin = new LInsets();
     /** the insets inside this node, usually reserved for port and label placement. */
-    private final LInsets.Double insets = new LInsets.Double();
+    private final LInsets insets = new LInsets();
     
     /**
      * Creates a node.
@@ -62,12 +62,7 @@ public final class LNode extends LShape {
      * {@inheritDoc}
      */
     public String toString() {
-        String name = getName();
-        if (name == null) {
-            return "n_" + id;
-        } else {
-            return "n_" + name;
-        }
+        return "n_" + getDesignation();
     }
     
     /**
@@ -80,6 +75,21 @@ public final class LNode extends LShape {
             return labels.get(0).getText();
         }
         return null;
+    }
+    
+    /**
+     * Returns the node's designation. The designation is either the name if that is not {@code null},
+     * or the node's ID otherwise.
+     * 
+     * @return the node's designation.
+     */
+    public String getDesignation() {
+        String name = getName();
+        if (name == null) {
+            return Integer.toString(id);
+        } else {
+            return name;
+        }
     }
 
     /**
@@ -299,7 +309,7 @@ public final class LNode extends LShape {
      *  
      * @return the node's margin. May be modified.
      */
-    public LInsets.Double getMargin() {
+    public LInsets getMargin() {
         return margin;
     }
     
@@ -313,7 +323,7 @@ public final class LNode extends LShape {
      * 
      * @return the node's insets. May be modified.
      */
-    public LInsets.Double getInsets() {
+    public LInsets getInsets() {
         return insets;
     }
     
@@ -348,7 +358,7 @@ public final class LNode extends LShape {
         
         LGraph graph = owner.getGraph();
         
-        LInsets.Double graphInsets = graph.getInsets();
+        LInsets graphInsets = graph.getInsets();
         float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
         KVector offset = graph.getOffset();
         KVector pos = getPosition();

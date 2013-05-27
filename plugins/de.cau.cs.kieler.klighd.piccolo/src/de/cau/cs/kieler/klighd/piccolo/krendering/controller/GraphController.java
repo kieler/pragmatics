@@ -375,7 +375,6 @@ public class GraphController {
         if (sync) {
             installChildrenSyncAdapter(parentNode);
         }
-        
     }
 
     /**
@@ -408,6 +407,8 @@ public class GraphController {
                 nodeNode = new KNodeNode(node, parent);
                 RenderingContextData.get(node).setProperty(INode.NODE_REP, nodeNode);
                 if (record && isAutomaticallyArranged(node)) {
+                    // this avoids flickering and denotes the application of fade-in,
+                    //  see #handleRecordedChanges()
                     nodeNode.setVisible(false);
                 }
                 updateLayout(nodeNode);
@@ -490,7 +491,10 @@ public class GraphController {
             }
 
             // deactivate the subgraph
-            // deactivateSubgraph(node);
+            // Collapsing the node before removing it is required to catch all outgoing or incoming
+            //  edges, as in case of interlevel edges their representing KEdgeNodes are attached
+            //  to one of nodeNode's parents.
+            nodeNode.getChildArea().setExpanded(false);
 
             if (sync) {
                 uninstallEdgeSyncAdapter(node);
@@ -513,7 +517,7 @@ public class GraphController {
             // release the objects kept in mind
             nodeNode.getRenderingController().removeAllPNodeControllers();
             // release the node rendering controller
-//            nodeNode.setRenderingController(null);
+            // nodeNode.setRenderingController(null);
         }
     }
 
@@ -537,6 +541,8 @@ public class GraphController {
                 if (edgeRep == null) {
                     edgeRep = new KEdgeNode(edge);
                     if (record && isAutomaticallyArranged(edge)) {
+                        // this avoids flickering and denotes the application of fade-in,
+                        //  see #handleRecordedChanges()
                         edgeRep.setVisible(false);
                     }
                     updateLayout(edgeRep);
@@ -556,7 +562,7 @@ public class GraphController {
                 // update the offset of the edge layout to the containing child area
                 updateEdgeOffset(edgeRep);
             }            
-        } else /* if (edgeRep.getParent() == null) */ {
+        } else {
             
             // find and set the parent for the edge
             updateEdgeParent(edgeRep);
@@ -637,6 +643,8 @@ public class GraphController {
         if (portNode == null) {
             portNode = new KPortNode(port);
             if (record && isAutomaticallyArranged(port)) {
+                // this avoids flickering and denotes the application of fade-in,
+                //  see #handleRecordedChanges()
                 portNode.setVisible(false);
             }
             updateLayout(portNode);
@@ -700,6 +708,8 @@ public class GraphController {
         if (labelNode == null) {
             labelNode = new KLabelNode(label);
             if (record) {
+                // this avoids flickering and denotes the application of fade-in,
+                //  see #handleRecordedChanges()
                 labelNode.setVisible(false);
             }
             labelNode.setText(label.getText());
@@ -736,8 +746,7 @@ public class GraphController {
         }
     }
 
-    // private static final Point2D ZERO_ZERO = new Point2D.Double(0, 0);
-    
+
     /**
      * Applies the recorded layout changes by creating appropriate activities.
      */
@@ -764,12 +773,12 @@ public class GraphController {
                 Point2D[] bends = (Point2D[]) recordedChange.getValue();                
                 // Point2D[] curBends = (Point2D[]) edgeNode.getBendPoints();                
 
-                if (!edgeNode.getVisible() /* curBends.length == 2 && curBends[0].equals(ZERO_ZERO)
-                        && curBends[1].equals(ZERO_ZERO) */) {
+                if (!edgeNode.getVisible()) {
+                    // the visibility is set to false for newly introduced edges in #addEdge
+                    //  for avoiding unnecessary flickering and indicating to fade it in
                     activity = new FadeEdgeInActivity(edgeNode, bends, duration > 0 ? duration : 1);
                 } else {
-                    activity = new ApplyBendPointsActivity(edgeNode, bends, duration > 0 ? duration
-                            : 1);
+                    activity = new ApplyBendPointsActivity(edgeNode, bends, duration > 0 ? duration : 1);
                 }
             } else {
                 // shape layout changed
@@ -777,7 +786,9 @@ public class GraphController {
                 PBounds bounds = (PBounds) recordedChange.getValue();
                 
                 if (!shapeNode.getVisible()) {
-                    //shapeNode.getFullBounds().getX() == 0 && shapeNode.getFullBounds().getY() == 0) {
+                    // the visibility is set to false for newly introduced edges in #addNode,
+                    //  #addPort, and #addLabel for avoiding unnecessary flickering and indicating
+                    //  to fade it in
                     activity = new FadeNodeInActivity(shapeNode, bounds,
                             duration > 0 ? duration : 1);
                 } else { 

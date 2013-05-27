@@ -393,12 +393,13 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         // we always route north->south self-loops east to the node. This could later
         // change, though.
         for (LEdge edge : northSouthSelfLoopEdges) {
-            createDummyNode(layeredGraph, edge, dummyNodes, opposingSideDummyNodes, PortSide.EAST);
+            createNorthSouthSelfLoopDummyNodes(
+                    layeredGraph, edge, dummyNodes, opposingSideDummyNodes, PortSide.EAST);
         }
         
         // Second, create the dummy nodes that handle same-side self-loops
         for (LEdge edge : sameSideSelfLoopEdges) {
-            createDummyNode(layeredGraph, edge, dummyNodes);
+            createSameSideSelfLoopDummyNode(layeredGraph, edge, dummyNodes);
         }
         
         // We will now create dummy nodes for input ports and for output ports. How we create them
@@ -537,8 +538,9 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
      * @param selfLoop the self-loop edge.
      * @param dummyNodes list the created dummy node should be added to.
      */
-    private void createDummyNode(final LGraph layeredGraph, final LEdge selfLoop,
+    private void createSameSideSelfLoopDummyNode(final LGraph layeredGraph, final LEdge selfLoop,
             final List<LNode> dummyNodes) {
+        
         LNode dummy = new LNode(layeredGraph);
         dummy.setProperty(Properties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
@@ -582,7 +584,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
      * @param portSide on which sides on the dummy nodes the self-loop ports should be
      *                 placed.
      */
-    private void createDummyNode(final LGraph layeredGraph, final LEdge selfLoop,
+    private void createNorthSouthSelfLoopDummyNodes(final LGraph layeredGraph, final LEdge selfLoop,
             final List<LNode> northDummyNodes, final List<LNode> southDummyNodes,
             final PortSide portSide) {
         

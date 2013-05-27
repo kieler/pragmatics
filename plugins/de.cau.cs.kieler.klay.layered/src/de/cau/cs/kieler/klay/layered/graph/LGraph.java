@@ -44,7 +44,7 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
     /** the total size of the drawing, without offset. */
     private final KVector size = new KVector();
     /** the graph's insets. */
-    private final LInsets.Double insets = new LInsets.Double(0, 0, 0, 0);
+    private final LInsets insets = new LInsets(0, 0, 0, 0);
     /** the offset to be added to all positions. */
     private final KVector offset = new KVector();
     /** nodes that are not currently part of a layer. */
@@ -138,7 +138,7 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
      * 
      * @return the insets; modify to change the graph's insets.
      */
-    public LInsets.Double getInsets() {
+    public LInsets getInsets() {
         return insets;
     }
 
@@ -238,13 +238,6 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
             return;
         }
         
-        // Start a subgraph for the layer
-        writer.write("    {\n");
-        
-        if (layerNumber != -1) {
-            writer.write("        rank=same;\n");
-        }
-        
         // Go through the layer's nodes
         int nodeNumber = -1;
         for (LNode node : nodes) {
@@ -301,11 +294,6 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
             writer.write(";\n");
         }
         
-        if (layerNumber != -1) {
-            // End the layer's subgraph
-            writer.write("    }\n");
-        }
-        
         // Write the edges
         for (LNode node : nodes) {
             // Go through all edges and output those that have this node as their source
@@ -328,11 +316,5 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
                 }
             }
         }
-        
-        if (layerNumber == -1) {
-            // End the layer's subgraph
-            writer.write("    }\n");
-        }
     }
-    
 }

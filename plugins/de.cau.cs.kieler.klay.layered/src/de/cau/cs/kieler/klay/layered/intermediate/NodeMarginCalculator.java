@@ -182,7 +182,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
         }
         
         // Reset the margin
-        LInsets.Double margin = node.getMargin();
+        LInsets margin = node.getMargin();
         margin.top = node.getPosition().y - boundingBox.y;
         margin.bottom = boundingBox.getMaxY() - (node.getPosition().y + node.getSize().y);
         margin.left = node.getPosition().x - boundingBox.x;
@@ -199,7 +199,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
      * @param spacing the overall spacing value
      */
     private void processComments(final LNode node, final double spacing) {
-        LInsets.Double margin = node.getMargin();
+        LInsets margin = node.getMargin();
 
         // Consider comment boxes that are put on top of the node
         List<LNode> topBoxes = node.getProperty(Properties.TOP_COMMENTS);
