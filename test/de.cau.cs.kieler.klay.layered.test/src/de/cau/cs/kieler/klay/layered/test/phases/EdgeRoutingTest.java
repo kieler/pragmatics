@@ -44,9 +44,6 @@ import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
  */
 public class EdgeRoutingTest extends AbstractLayeredProcessorTest {
 
-    /** Epsilon value for double comparisons (equal). */
-    private static final double COMPARE_EPSILON = 0.0001d;
-
     /**
      * Instantiates a new layer assignment test and set the graphObject to the current graph to
      * test.
@@ -134,9 +131,5 @@ public class EdgeRoutingTest extends AbstractLayeredProcessorTest {
                 }
             }
         }
-    }
-
-    private boolean isCloseEnough(final double d1, final double d2) {
-        return (Math.abs(d1 - d2) < COMPARE_EPSILON);
     }
 }

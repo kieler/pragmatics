@@ -57,6 +57,9 @@ public abstract class AbstractLayeredProcessorTest extends KlayAutomatedJUnitTes
     /** random object if required. */
     protected Random random = new Random(SEED);
 
+    /** Epsilon value for double comparisons (equal). */
+    private static final double COMPARE_EPSILON = 0.0001d;
+
     // CHECKSTYLEON Modifier
 
     /**
@@ -114,5 +117,16 @@ public abstract class AbstractLayeredProcessorTest extends KlayAutomatedJUnitTes
             throw new IllegalArgumentException("Test " + getClass().getSimpleName()
                     + " requires a " + SimplePhaseLayoutConfigurator.class.getSimpleName() + ".");
         }
+    }
+
+    /**
+     * @param d1
+     *            first value
+     * @param d2
+     *            second value
+     * @return {@code true} if the two doubles are close enough to be considered equal.
+     */
+    protected boolean isCloseEnough(final double d1, final double d2) {
+        return (Math.abs(d1 - d2) < COMPARE_EPSILON);
     }
 }
