@@ -26,6 +26,8 @@ public final class LLabel extends LShape {
      *  Currently supported in orthogonal edge routing.
      */
     public enum LabelSide {
+        /** The label's placement side hasn't been decided yet. */
+        UNKNOWN,
         /** The label is placed above the edge. */
         ABOVE,
         /** The label is placed below the edge. */
@@ -39,7 +41,7 @@ public final class LLabel extends LShape {
     private String text;
     
     /** side of the label (if it's an edge label). */
-    private LabelSide side;
+    private LabelSide side = LabelSide.UNKNOWN;
     
     /**
      * Creates a label.
@@ -93,9 +95,14 @@ public final class LLabel extends LShape {
     /**
      * Sets the side of the edge on which to place the label.
      * 
-     * @param side the side to set
+     * @param side the side to set; must not be {@code null}.
+     * @throws IllegalArgumentException if {@code side == null}.
      */
     public void setSide(final LabelSide side) {
+        if (side == null) {
+            throw new IllegalArgumentException("side must not be null");
+        }
+        
         this.side = side;
     }
     
