@@ -104,8 +104,6 @@ public class InLayerConstraintProcessorTest extends AbstractLayeredProcessorTest
                 for (LNode node : layer.getNodes()) {
                     InLayerConstraint current = node.getProperty(Properties.IN_LAYER_CONSTRAINT);
 
-                    System.out.println(current);
-
                     if (last == null) {
                         last = current;
                     } else if (current != last) {

@@ -38,6 +38,7 @@ import de.cau.cs.kieler.klay.test.config.BasicLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 import de.cau.cs.kieler.klay.test.utils.TestPath;
+import de.cau.cs.kieler.klay.test.utils.TestPath.Type;
 
 /**
  * Basic tests for the {@link PortListSorter}.
@@ -86,7 +87,9 @@ public class PortListSorterTest extends AbstractLayeredProcessorTest {
      * {@inheritDoc}
      */
     protected TestPath[] getBundleTestPath() {
-        TestPath[] testPaths = { new TestPath("random", false, false, TestPath.Type.KGRAPH) };
+        TestPath[] testPaths =
+                { new TestPath("random", false, false, TestPath.Type.KGRAPH),
+                        new TestPath("random_w_ports", false, false, Type.GMF) };
         return testPaths;
     }
 
@@ -106,7 +109,6 @@ public class PortListSorterTest extends AbstractLayeredProcessorTest {
         for (LGraph g : lgraphs) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
-
                     Double lastPos = null;
                     PortSide lastSide = null;
 
