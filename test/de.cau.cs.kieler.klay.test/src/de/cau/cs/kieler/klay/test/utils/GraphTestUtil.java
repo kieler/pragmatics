@@ -187,13 +187,13 @@ public final class GraphTestUtil {
             Collections.sort(graphFiles);
             List<GraphTestObject> graphObjects = new ArrayList<GraphTestObject>();
             LayoutOptionManager mng = new LayoutOptionManager();
-            
+
             for (File gfile : graphFiles) {
                 LayoutMapping<?> mapping = getLayoutMappingForGraphFile(gfile);
 
                 // load possible {@link ILayoutConfig}s.
                 mng.configure(mapping, new BasicProgressMonitor());
-                
+
                 // apply layout when applyLayout = true
                 if (doLayout) {
                     DiagramLayoutEngine.INSTANCE.layout(mapping, new BasicProgressMonitor());
@@ -281,7 +281,9 @@ public final class GraphTestUtil {
      */
     private static LayoutMapping<?> getLayoutMappingForGraphFile(final File file) {
         // load the notation diagram element
-        URI uri = URI.createFileURI(file.toString());
+        // CARE: getAbsolutePath is important! Otherwise the possible proxies in the notation model
+        // cannot be resolved as the semantic model fails to be loaded with a FileNotFoundException.
+        URI uri = URI.createFileURI(file.getAbsolutePath().toString());
         ResourceSet resourceSet = new ResourceSetImpl();
         final Resource resource = resourceSet.createResource(uri);
 
