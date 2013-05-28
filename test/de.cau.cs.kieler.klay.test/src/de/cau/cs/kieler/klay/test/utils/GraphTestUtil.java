@@ -89,10 +89,11 @@ public final class GraphTestUtil {
         for (TestPath testPath : bundleTestPaths) {
             // For each TestPath load the graph files contained in its appropriate folder
             switch (testPath.getType()) {
-            case GMF:
-                graphTestObject.addAll(loadGMFGraphs(testPath.getFolder(),
-                        testPath.isLoadSubfolder(), testPath.isDoLayout()));
-                break;
+            // uru: we do not support GMF models during testing anymore
+            // case GMF:
+            // graphTestObject.addAll(loadGMFGraphs(testPath.getFolder(),
+            // testPath.isLoadSubfolder(), testPath.isDoLayout()));
+            // break;
             case KGRAPH:
                 graphTestObject.addAll(loadKGraphs(testPath.getFolder(),
                         testPath.isLoadSubfolder(), testPath.isDoLayout()));
