@@ -75,8 +75,6 @@ public class InvertedPortProcessorTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        System.out.println(layered.getLayoutTestGraphs());
-        System.out.println(layered.getLayoutTestConfiguration());
         lgraphs = layered.runLayoutTestUntil(InvertedPortProcessor.class);
     }
 
