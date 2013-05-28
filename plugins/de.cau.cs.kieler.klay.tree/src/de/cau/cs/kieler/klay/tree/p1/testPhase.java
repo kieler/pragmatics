@@ -58,7 +58,6 @@ public class testPhase implements ILayoutPhase {
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Mr.Test", 1);
 
-        // TODO structure add root or potential roots
         List<TNode> root = new ArrayList<TNode>();
         for (TNode tNode : tGraph.getNodes()) {
             if (tNode.getProperty(Properties.ROOT))

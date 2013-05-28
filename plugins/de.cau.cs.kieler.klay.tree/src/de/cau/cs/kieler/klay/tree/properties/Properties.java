@@ -56,6 +56,11 @@ public final class Properties {
      * The level out of a node in the nesting tree of a compound graph.
      */
     public static final IProperty<Integer> LEVEL = new Property<Integer>("LEVEL", 0);
+    
+    /**
+     * Is the node a root of a tree.
+     */
+    public static final IProperty<Integer> POSITION = new Property<Integer>("POSITION", 0);
 
     /**
      * The direction from the origin of a node in the nesting tree of a compound graph.
