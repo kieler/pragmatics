@@ -476,23 +476,23 @@ public final class KlayLayered {
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
         algorithm.add(cycleBreaker);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
         algorithm.add(layerer);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
         algorithm.add(crossingMinimizer);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
         algorithm.add(nodePlacer);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_5));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_5));
         algorithm.add(edgeRouter);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.AFTER_PHASE_5));
+        algorithm.addAll(
+                getIntermediateProcessorList(IntermediateProcessingConfiguration.AFTER_PHASE_5));
     }
 
     /**
