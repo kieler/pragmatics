@@ -24,6 +24,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
@@ -154,13 +155,22 @@ public class Genome extends MapPropertyHolder {
     public String toString() {
         StringBuilder result = new StringBuilder();
         for (Map.Entry<LayoutContext, ArrayList<Gene<?>>> entry : geneMap.entrySet()) {
-            result.append(entry.getKey().getProperty(LayoutContext.GRAPH_ELEM).toString()).append("(");
+            KGraphElement graphElement = entry.getKey().getProperty(LayoutContext.GRAPH_ELEM);
+            if (graphElement != null) {
+                String graphString = graphElement.toString();
+                if (graphString.length() <= 8) { // SUPPRESS CHECKSTYLE MagicNumber
+                    result.append(graphString);
+                } else {
+                    result.append(graphElement.eClass().getName());
+                }
+            }
+            result.append("(");
             ListIterator<Gene<?>> geneIter = entry.getValue().listIterator();
             while (geneIter.hasNext()) {
                 Gene<?> gene = geneIter.next();
-                if (gene.getValue() != null) {
+                if (gene.isActive() && gene.getValue() != null) {
                     if (geneIter.previousIndex() > 0) {
-                        result.append(" - ");
+                        result.append("|");
                     }
                     result.append(gene.toString());
                 }
@@ -180,54 +190,60 @@ public class Genome extends MapPropertyHolder {
     private static final double FLOAT_GENE_SCALE = 0.8;
 
     /**
-     * Returns the distance between the given genomes. The genomes must be
-     * compatible, i.e. have the same gene types in the same order.
+     * Returns the distance between the given genomes. The genomes must be compatible, i.e. have the
+     * same gene types in the same order. The distance is normalized over the number of genes and
+     * the number of layout contexts in the genomes.
      *
-     * @param genome0 a {@link Genome}
-     * @param genome1 another {@link Genome}
-     * @return the distance between the genomes
+     * @param genome0 a genome
+     * @param genome1 another genome
+     * @return the normalized distance between the genomes
      */
     public static double distance(final Genome genome0, final Genome genome1) {
         double dist = 0.0;
-
-        Iterator<ArrayList<Gene<?>>> geneListIter0 = genome0.geneMap.values().iterator();
-        Iterator<ArrayList<Gene<?>>> geneListIter1 = genome1.geneMap.values().iterator();
-        while (geneListIter0.hasNext() && geneListIter1.hasNext()) {
-            Iterator<Gene<?>> geneIter0 = geneListIter0.next().iterator();
-            Iterator<Gene<?>> geneIter1 = geneListIter1.next().iterator();
+        int contextCount = 0;
+        for (Map.Entry<LayoutContext, ArrayList<Gene<?>>> entry : genome0.geneMap.entrySet()) {
+            double contextDist = 0.0;
+            int geneCount = 0;
+            Iterator<Gene<?>> geneIter0 = entry.getValue().iterator();
+            Iterator<Gene<?>> geneIter1 = genome1.geneMap.get(entry.getKey()).iterator();
             while (geneIter0.hasNext() && geneIter1.hasNext()) {
                 Gene<?> gene0 = geneIter0.next();
                 Gene<?> gene1 = geneIter1.next();
     
-                if (!gene0.equals(gene1)) {
-                    switch (gene0.getTypeInfo().getGeneType()) {
-                    case LAYOUT_TYPE:
-                        dist += TYPE_GENE_DISTANCE;
-                        break;
-                    case LAYOUT_ALGO:
-                        dist += ALGO_GENE_DISTANCE;
-                        break;
-                    case FLOAT:
-                    case INTEGER:
-                        if (gene0.getValue() == null || gene1.getValue() == null) {
-                            dist += DEFAULT_GENE_DISTANCE;
-                        } else {
-                            // Distance of float genes is proportional to the absolute difference,
-                            // related to the variance in order to make it more comparable.
-                            double var0 = gene0.getTypeInfo().getVariance();
-                            double var1 = gene1.getTypeInfo().getVariance();
-                            double var = (var0 + var1) / 2;
-                            double absDiff = Math.abs(gene0.floatValue() - gene1.floatValue());
-                            dist += absDiff * FLOAT_GENE_SCALE / var;
+                if (gene0.isActive() || gene1.isActive()) {
+                    if (!gene0.equals(gene1)) {
+                        switch (gene0.getTypeInfo().getGeneType()) {
+                        case LAYOUT_TYPE:
+                            contextDist += TYPE_GENE_DISTANCE;
+                            break;
+                        case LAYOUT_ALGO:
+                            contextDist += ALGO_GENE_DISTANCE;
+                            break;
+                        case FLOAT:
+                        case INTEGER:
+                            if (gene0.getValue() == null || gene1.getValue() == null) {
+                                contextDist += DEFAULT_GENE_DISTANCE;
+                            } else {
+                                // Distance of float genes is proportional to the absolute difference,
+                                // related to the variance in order to make it more comparable.
+                                double var0 = gene0.getTypeInfo().getVariance();
+                                double var1 = gene1.getTypeInfo().getVariance();
+                                double var = (var0 + var1) / 2;
+                                double absDiff = Math.abs(gene0.floatValue() - gene1.floatValue());
+                                contextDist += absDiff * FLOAT_GENE_SCALE / var;
+                            }
+                            break;
+                        default:
+                            contextDist += DEFAULT_GENE_DISTANCE;
                         }
-                        break;
-                    default:
-                        dist += DEFAULT_GENE_DISTANCE;
                     }
+                    geneCount++;
                 }
             }
+            dist += contextDist / geneCount;
+            contextCount++;
         }
-        return dist;
+        return dist / contextCount;
     }
     
     /**

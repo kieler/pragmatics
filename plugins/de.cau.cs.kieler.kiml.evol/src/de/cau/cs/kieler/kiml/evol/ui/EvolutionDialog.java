@@ -84,6 +84,8 @@ public class EvolutionDialog extends Dialog {
     private static final int EVOLVE_STEPS = 1;
     /** the maximum value for sliders. */
     private static final int SLIDER_MAX = 100;
+    /** maximal difference for metric weights. */
+    private static final double MAX_WEIGHT_DIFF = 0.02;
     
     /** property for the preview image of an individual. */
     private static final IProperty<Image> PREVIEW_IMAGE = new Property<Image>("evol.previewImage");
@@ -424,17 +426,29 @@ public class EvolutionDialog extends Dialog {
      * Apply metric weights for all metrics.
      */
     private void applyMetricWeights() {
-        Population population = LayoutEvolutionModel.getInstance().getPopulation();
+        LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+        Population population = evolutionModel.getPopulation();
         Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
         if (metricWeights == null) {
             metricWeights = Maps.newHashMap();
             population.setProperty(EvaluationOperation.METRIC_WEIGHT, metricWeights);
         }
         
+        boolean weightsChanged = false;
         for (Map.Entry<String, Pair<Label, Slider>> entry : metricControls.entrySet()) {
             String id = entry.getKey();
             Slider slider = entry.getValue().getSecond();
-            metricWeights.put(id, (double) slider.getSelection() / SLIDER_MAX);
+            Double oldWeight = metricWeights.get(id);
+            double newWeight = (double) slider.getSelection() / SLIDER_MAX;
+            metricWeights.put(id, newWeight);
+            if (oldWeight != null && Math.abs(newWeight - oldWeight) > MAX_WEIGHT_DIFF) {
+                weightsChanged = true;
+            }
+        }
+        
+        if (weightsChanged) {
+            // recalculate all fitness values, since the weights have changed
+            evolutionModel.recalculateFitness();
         }
     }
     
@@ -509,6 +523,9 @@ public class EvolutionDialog extends Dialog {
             for (Control control : disablingControls) {
                 control.setEnabled(true);
             }
+            generationLabel.setText("Generation "
+                    + LayoutEvolutionModel.getInstance().getGenerationNumber());
+            generationLabel.getParent().layout();
         }
     }
     
@@ -577,25 +594,33 @@ public class EvolutionDialog extends Dialog {
         LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
         Population population = evolutionModel.getPopulation();
         // find the selected individuals
+        int selectedCount = 0;
         boolean[] selected = new boolean[evolutionModel.getPopulation().size()];
         for (int i = 0; i < selectionButtons.length; i++) {
             if (selectionButtons[i] != null && selectionButtons[i].getSelection()) {
                 selected[i] = true;
+                selectedCount++;
             }
         }
 
-        // adapt the metric weights based on selection
-        evolutionModel.adaptMetricWeights(selected);
-        
-        // refresh the weight sliders from the new values
-        Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
-        if (metricWeights != null) {
-            for (Map.Entry<String, Pair<Label, Slider>> entry : metricControls.entrySet()) {
-                String id = entry.getKey();
-                Double weight = metricWeights.get(id);
-                if (weight != null) {
-                    Slider slider = entry.getValue().getSecond();
-                    slider.setSelection((int) Math.round(weight * SLIDER_MAX));
+        if (selectedCount > 0) {
+            // adapt the metric weights based on selection
+            evolutionModel.adaptMetricWeights(selected);
+            
+            // recalculate all fitness values, since the weights have changed
+            evolutionModel.recalculateFitness();
+            
+            // refresh the weight sliders from the new values
+            Map<String, Double> metricWeights = population.getProperty(
+                    EvaluationOperation.METRIC_WEIGHT);
+            if (metricWeights != null) {
+                for (Map.Entry<String, Pair<Label, Slider>> entry : metricControls.entrySet()) {
+                    String id = entry.getKey();
+                    Double weight = metricWeights.get(id);
+                    if (weight != null) {
+                        Slider slider = entry.getValue().getSecond();
+                        slider.setSelection((int) Math.round(weight * SLIDER_MAX));
+                    }
                 }
             }
         }

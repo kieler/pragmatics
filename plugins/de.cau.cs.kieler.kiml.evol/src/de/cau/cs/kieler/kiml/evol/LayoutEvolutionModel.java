@@ -219,5 +219,36 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
             metricWeights.put(entry.getKey(), newWeight);
         }
     }
+    
+    /**
+     * Recalculate the fitness of all individuals after the weights have changed.
+     */
+    public void recalculateFitness() {
+        Population population = getPopulation();
+        Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
+        for (Genome genome : population) {
+            double rating = 0;
+            double totalWeight = 0;
+            Map<String, Float> metricsResult = genome.getProperty(EvaluationOperation.METRIC_RESULT);
+            for (Map.Entry<String, Float> resultEntry : metricsResult.entrySet()) {
+                Double weight = metricWeights.get(resultEntry.getKey());
+                if (weight == null) {
+                    rating += resultEntry.getValue();
+                    totalWeight += 1;
+                } else {
+                    rating += weight * resultEntry.getValue();
+                    totalWeight += weight;
+                }
+            }
+            
+            double fitness;
+            if (totalWeight == 0) {
+                fitness = 0;
+            } else {
+                fitness = rating / totalWeight;
+            }
+            genome.setProperty(Genome.FITNESS, fitness);
+        }
+    }
 
 }

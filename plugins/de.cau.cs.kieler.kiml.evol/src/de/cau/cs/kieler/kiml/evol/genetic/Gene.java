@@ -119,10 +119,15 @@ public final class Gene<T extends Comparable<? super T>> implements Serializable
      */
     @Override
     public String toString() {
-        if (value != null) {
-            return typeInfo.getId() + "=" + value.toString();
+        int dotIndex = typeInfo.getId().lastIndexOf('.');
+        String option = typeInfo.getId();
+        if (dotIndex >= 0 && dotIndex < typeInfo.getId().length() - 1) {
+            option = option.substring(dotIndex + 1);
         }
-        return typeInfo.getId() + "=null";
+        if (value != null) {
+            return option + "=" + value.toString();
+        }
+        return option + "=null";
     }
 
     /**
