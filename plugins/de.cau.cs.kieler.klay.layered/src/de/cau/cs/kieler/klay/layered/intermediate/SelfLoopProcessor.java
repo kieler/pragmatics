@@ -156,11 +156,14 @@ public final class SelfLoopProcessor implements ILayoutProcessor {
      */
     private LNode createDummy(final LGraph layeredGraph, final LEdge edge, final LPort sourcePort,
             final LPort targetPort) {
+        
         // Create a dummy node with an input port and an output port
         LNode dummyNode = new LNode(layeredGraph);
         dummyNode.setProperty(Properties.ORIGIN, edge);
         dummyNode.setProperty(Properties.NODE_TYPE, NodeType.LONG_EDGE);
         dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        dummyNode.setProperty(Properties.LONG_EDGE_SOURCE, sourcePort);
+        dummyNode.setProperty(Properties.LONG_EDGE_TARGET, targetPort);
         
         LPort dummyInput = new LPort(layeredGraph);
         dummyInput.setSide(PortSide.WEST);

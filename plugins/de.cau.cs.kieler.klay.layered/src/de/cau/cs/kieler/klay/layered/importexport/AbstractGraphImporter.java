@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered;
+package de.cau.cs.kieler.klay.layered.importexport;
 
 import java.util.Map;
 
@@ -24,6 +24,7 @@ import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.klay.layered.IGraphImporter;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -283,7 +284,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         
         // Get some properties of the graph
         KVector graphSize = graph.getSize();
-        LInsets.Double insets = graph.getInsets();
+        LInsets insets = graph.getInsets();
         float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
         KVector graphOffset = graph.getOffset();
         

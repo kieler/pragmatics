@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
-import java.util.List;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -21,6 +20,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
+import de.cau.cs.kieler.klay.layered.importexport.CompoundKGraphImporter;
+import de.cau.cs.kieler.klay.layered.importexport.KGraphImporter;
 
 /**
  * Layout provider to connect the layered layouter to the Eclipse based layout services.
@@ -34,11 +35,15 @@ import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
  */
 public final class LayeredLayoutProvider extends AbstractLayoutProvider {
 
-    // /////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
     // Variables
 
-    /** the layout algorithm. */
+    /** the layout algorithm used for regular layout runs. */
     private KlayLayered klayLayered = new KlayLayered();
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Regular Layout
 
     /**
      * {@inheritDoc}
@@ -69,27 +74,24 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
         // apply the layout results to the original graph
         graphImporter.applyLayout(result);
     }
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Layout Testing
     
     /**
-     * Does a layout on the given graph, but only to the point where the given phase or processor was
-     * executed. If connected components processing was active, the returned list will contain one
-     * layered graph for each connected component; if the processing was not active, the list will only
-     * contain one layered graph. Either way, the layered graphs are in the state they were in after
-     * execution of the given phase finished.
-     * 
-     * <p>If the given phase does not exist in the algorithm's configuration or is {@code null}, the
-     * returned result is the connected components just prior to the execution of the first phase.</p>
+     * Imports the given {@link KGraph} and returns an instance of {@link KlayLayered} prepared for a
+     * test run with the resulting {@link LGraph}. The layout test run methods can immediately be called
+     * on the returned object. Once finished, {@link KlayLayered#finalizeLayoutTest()} should be called.
      * 
      * <p><strong>Note:</strong> This method does not apply the layout back to the original kgraph!</p>
      * 
-     * @param kgraph the graph to layout.
-     * @param progressMonitor a progress monitor to show progress information in.
-     * @param phase the phase or processor to stop after.
-     * @return list of connected components after the execution of the given phase.
+     * @param kgraph the {@link KGraph} to be used for the layout test run.
+     * @return an instance of {@link KlayLayered} with
+     *         {@link KlayLayered#prepareLayoutTest(LGraph, IKielerProgressMonitor)} already called.
      */
-    public List<LGraph> doLayoutTest(final KNode kgraph,
-            final IKielerProgressMonitor progressMonitor,
-            final Class<? extends ILayoutProcessor> phase) {
+    public KlayLayered startLayoutTest(final KNode kgraph) {
+        
         // Create the hash code counter used to create all graph elements; this is used to ensure
         // that all hash codes are unique, but predictable independently of the object instances.
         HashCodeCounter hashCodeCounter = new HashCodeCounter();
@@ -107,9 +109,12 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
 
         LGraph layeredGraph = graphImporter.importGraph(kgraph);
-
-        // apply test layout
-        return klayLayered.doLayoutTest(layeredGraph, progressMonitor, phase);
+        
+        // return a new instance of KLay Layered initialized with the given layout test data
+        KlayLayered algorithm = new KlayLayered();
+        algorithm.prepareLayoutTest(layeredGraph);
+        
+        return algorithm;
     }
 
 }

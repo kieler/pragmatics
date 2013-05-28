@@ -75,7 +75,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
      * 
      * <p><i>Note:</i> This is only valid for the currently processed node!</p>
      */
-    private LInsets.Double requiredPortLabelSpace = new LInsets.Double();
+    private LInsets requiredPortLabelSpace = new LInsets();
     
     /**
      * Node insets required by node labels placed inside the node. This is always set, but not always
@@ -83,7 +83,14 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
      * 
      * <p><i>Note:</i> This is only valid for the currently processed node!</p>
      */
-    private LInsets.Double requiredNodeLabelSpace = new LInsets.Double();
+    private LInsets requiredNodeLabelSpace = new LInsets();
+    
+    /**
+     * Space required by the node labels if stacked vertically.
+     * 
+     * <p><i>Note:</i> This is only valid for the currently processed node!</p>
+     */
+    private KVector nodeLabelsBoundingBox = new KVector();
     
     /**
      * Number of ports on the western side. Only used if port constraints are not
@@ -176,16 +183,17 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 
                 /* PHASE 2 (DYNAMIC DONALD): CALCULATE INSETS
                  * We know the sides the ports will be placed at and we know where node labels are to
-                 * be placed. Calculate the node's insets accordingly. Note that we don't have to
-                 * know the final port positions to calculate the insets.
+                 * be placed. Calculate the node's insets accordingly. Also compute the amount of space
+                 * the node labels will need if stacked vertically. Note that we don't have to know the
+                 * final port or label positions to calculate all this stuff.
                  */
                 calculateRequiredPortLabelSpace(node);
                 calculateRequiredNodeLabelSpace(node, labelSpacing);
                 
                 
                 /* PHASE 3 (DANGEROUS DUCKLING): RESIZE NODE
-                 * If the node has a label (we currently only support one), the node insets might have
-                 * to be adjusted to reserve space for it, which is what this phase does.
+                 * If the node has labels, the node insets might have to be adjusted to reserve space
+                 * for them, which is what this phase does.
                  */
                 resizeNode(node, objectSpacing, labelSpacing);
                 
@@ -198,8 +206,8 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 placePorts(node, originalNodeSize);
                 
                 
-                /* PHASE 5 (HAPPY DUCK): PLACE NODE LABEL
-                 * With space reserved for the node label (we only support one), the label is placed.
+                /* PHASE 5 (HAPPY DUCK): PLACE NODE LABELS
+                 * With space reserved for the node labels, the labels are placed.
                  */
                 placeNodeLabels(node, labelSpacing);
                 
@@ -209,7 +217,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                  * were not taken into account when calculating the node's size, this may result in
                  * insets that, taken together, are larger than the node's actual size.
                  */
-                LInsets.Double nodeInsets = node.getInsets();
+                LInsets nodeInsets = node.getInsets();
                 nodeInsets.left = requiredNodeLabelSpace.left + requiredPortLabelSpace.left;
                 nodeInsets.right = requiredNodeLabelSpace.right + requiredPortLabelSpace.right;
                 nodeInsets.top = requiredNodeLabelSpace.top + requiredPortLabelSpace.top;
@@ -411,7 +419,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
             // Calculate the union of the two bounding boxes and calculate the margins
             Rectangle2D.union(portBox, labelBox, portBox);
 
-            LInsets.Double margin = port.getMargin();
+            LInsets margin = port.getMargin();
             margin.top = -portBox.y;
             margin.bottom = portBox.getMaxY() - port.getSize().y;
             margin.left = -portBox.x;
@@ -457,23 +465,33 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
     }
 
     /**
-     * Calculates the space required to accommodate the node label (if any) and sets
-     * {@link #requiredNodeLabelSpace}. If the label is placed at the top or at the bottom, the top
-     * or bottom insets are set. If it is centered vertically, the left or right insets are set if
-     * the label is horizontally aligned leftwards or rightwards. If it is centered in both directions,
-     * no insets are set. If it is placed outside the node, no insets are set.
+     * Calculates the space required to accommodate the node labels (if any) and sets
+     * {@link #requiredNodeLabelSpace} as well as {@link #nodeLabelsBoundingBox}. If the labels are
+     * placed at the top or at the bottom, the top or bottom insets are set. If it is centered
+     * vertically, the left or right insets are set if the labels are horizontally aligned leftwards
+     * or rightwards. If they are centered in both directions, no insets are set. If they are placed
+     * outside the node, no insets are set.
      * 
-     * <p><i>Note:</i> We currently only support one label per node.</p>
-     * 
-     * @param node the node in question.
-     * @param labelSpacing spacing between labels and other objects.
+     * @param node
+     *            the node in question.
+     * @param labelSpacing
+     *            spacing between labels and other objects.
      */
     private void calculateRequiredNodeLabelSpace(final LNode node, final double labelSpacing) {
-        // Retrieve first label, if any (we only support one label)
+        // Check if there are any labels
         if (node.getLabels().isEmpty()) {
             return;
         }
-        LLabel nodeLabel = node.getLabels().get(0);
+        
+        // Compute a bounding box for all labels stacked vertically
+        nodeLabelsBoundingBox.x = 0;
+        nodeLabelsBoundingBox.y = 0;
+        
+        for (LLabel label : node.getLabels()) {
+            nodeLabelsBoundingBox.x = Math.max(nodeLabelsBoundingBox.x, label.getSize().x);
+            nodeLabelsBoundingBox.y += label.getSize().y + labelSpacing;
+        }
+        nodeLabelsBoundingBox.y -= labelSpacing;
         
         // Retrieve label placement policy
         EnumSet<NodeLabelPlacement> nodeLabelPlacement =
@@ -483,15 +501,15 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         if (nodeLabelPlacement.contains(NodeLabelPlacement.INSIDE)) {
             // The primary distinction criterion is the vertical placement
             if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
-                requiredNodeLabelSpace.top = nodeLabel.getSize().y + labelSpacing;
+                requiredNodeLabelSpace.top = nodeLabelsBoundingBox.y + labelSpacing;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
-                requiredNodeLabelSpace.bottom = nodeLabel.getSize().y + labelSpacing;
+                requiredNodeLabelSpace.bottom = nodeLabelsBoundingBox.y + labelSpacing;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
                 // Check whether the label will be placed left or right
                 if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
-                    requiredNodeLabelSpace.left = nodeLabel.getSize().x + labelSpacing;
+                    requiredNodeLabelSpace.left = nodeLabelsBoundingBox.x + labelSpacing;
                 } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
-                    requiredNodeLabelSpace.right = nodeLabel.getSize().x + labelSpacing;
+                    requiredNodeLabelSpace.right = nodeLabelsBoundingBox.x + labelSpacing;
                 }
             }
         }
@@ -568,29 +586,30 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         
         // If the node label is to be accounted for, add its required space to the node size
         if (sizeConstraint.contains(SizeConstraint.NODE_LABELS) && !node.getLabels().isEmpty()) {
-            LLabel nodeLabel = node.getLabels().get(0);
             EnumSet<NodeLabelPlacement> nodeLabelPlacement =
                     node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
             
             // Check if the label is to be placed inside or outside the node
             if (nodeLabelPlacement.contains(NodeLabelPlacement.INSIDE)) {
-                // If the label is centered both horizontally and vertically, the insets are not set
-                if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)
-                        || nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
-                    
-                    nodeSize.x += nodeLabel.getSize().x + 2 * labelSpacing;
-                } else {
-                    nodeSize.x += requiredNodeLabelSpace.left + requiredNodeLabelSpace.right;
-                    nodeSize.y += requiredNodeLabelSpace.top + requiredNodeLabelSpace.bottom;
+                nodeSize.x += requiredNodeLabelSpace.left + requiredNodeLabelSpace.right;
+                nodeSize.y += requiredNodeLabelSpace.top + requiredNodeLabelSpace.bottom;
+
+                // For center placement, the insets don't cover everything
+                if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
+                    nodeSize.y += nodeLabelsBoundingBox.y + 2 * labelSpacing;
+                }
+
+                if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
+                    nodeSize.x += nodeLabelsBoundingBox.x + 2 * labelSpacing;
                 }
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.OUTSIDE)) {
                 // The node must be at least as high or wide as the label
                 if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)
                         || nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
                     
-                    nodeSize.x = Math.max(nodeSize.x, nodeLabel.getSize().x);
+                    nodeSize.x = Math.max(nodeSize.x, nodeLabelsBoundingBox.x);
                 } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
-                    nodeSize.y = Math.max(nodeSize.y, nodeLabel.getSize().y);
+                    nodeSize.y = Math.max(nodeSize.y, nodeLabelsBoundingBox.y);
                 }
             }
         }
@@ -821,7 +840,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         for (LPort port : node.getPorts()) {
             float portOffset = port.getProperty(Properties.OFFSET);
             KVector portSize = port.getSize();
-            LInsets.Double portMargins = port.getMargin();
+            LInsets portMargins = port.getMargin();
             
             switch (port.getSide()) {
             case WEST:
@@ -889,11 +908,9 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
     // PLACING NODE LABELS
     
     /**
-     * Calculates the position of the node's label.
+     * Calculates the position of the node's labels.
      * 
-     * <p><i>Note:</i> We currently only support one label per node.</p>
-     * 
-     * @param node the node whose label to place.
+     * @param node the node whose labels to place.
      * @param labelSpacing spacing between labels and other objects.
      */
     private void placeNodeLabels(final LNode node, final double labelSpacing) {
@@ -901,9 +918,9 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         if (node.getLabels().isEmpty()) {
             return;
         }
-        LLabel label = node.getLabels().get(0);
-        KVector labelPos = label.getPosition();
-        KVector labelSize = label.getSize();
+        
+        // Top left position where the node labels will start to be placed in a vertical stack
+        KVector labelGroupPos = new KVector();
         
         // Retrieve label placement policy
         EnumSet<NodeLabelPlacement> nodeLabelPlacement =
@@ -913,54 +930,146 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         if (nodeLabelPlacement.contains(NodeLabelPlacement.INSIDE)) {
             // Y coordinate
             if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
-                labelPos.y = requiredPortLabelSpace.top + labelSpacing;
+                labelGroupPos.y = requiredPortLabelSpace.top + labelSpacing;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
-                labelPos.y = (node.getSize().y - labelSize.y) / 2.0;
+                labelGroupPos.y = (node.getSize().y - nodeLabelsBoundingBox.y) / 2.0;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
-                labelPos.y = node.getSize().y - requiredPortLabelSpace.bottom
-                        - labelSize.y - labelSpacing;
+                labelGroupPos.y = node.getSize().y - requiredPortLabelSpace.bottom
+                        - nodeLabelsBoundingBox.y - labelSpacing;
             }
             
             // X coordinate
             if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
-                labelPos.x = requiredPortLabelSpace.left + labelSpacing;
+                labelGroupPos.x = requiredPortLabelSpace.left + labelSpacing;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
-                labelPos.x = (node.getSize().x - labelSize.x) / 2.0;
+                labelGroupPos.x = (node.getSize().x - nodeLabelsBoundingBox.x) / 2.0;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
-                labelPos.x = node.getSize().x - requiredPortLabelSpace.right
-                        - labelSize.x - labelSpacing;
+                labelGroupPos.x = node.getSize().x - requiredPortLabelSpace.right
+                        - nodeLabelsBoundingBox.x - labelSpacing;
             }
         } else if (nodeLabelPlacement.contains(NodeLabelPlacement.OUTSIDE)) {
             // TODO: Outside placement doesn't take ports and port labels into account yet.
-            boolean topOrBottom = false;
             
-            // Y coordinate
-            if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
-                labelPos.y = -(labelSize.y + labelSpacing);
-                topOrBottom = true;
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
-                labelPos.y = (node.getSize().y - labelSize.y) / 2.0;
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
-                labelPos.y = node.getSize().y + labelSpacing;
-                topOrBottom = true;
+            // Different placement logic depending on whether horizontal or vertical placement
+            // is prioritized
+            if (nodeLabelPlacement.contains(NodeLabelPlacement.H_PRIORITY)) {
+                boolean leftOrRight = false;
+                
+                // X coordinate
+                if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
+                    labelGroupPos.x = -(nodeLabelsBoundingBox.x + labelSpacing);
+                    leftOrRight = true;
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
+                    labelGroupPos.x = (node.getSize().x - nodeLabelsBoundingBox.x) / 2.0;
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
+                    labelGroupPos.x = node.getSize().x + labelSpacing;
+                    leftOrRight = true;
+                }
+                
+                // Y coordinate
+                if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
+                    if (leftOrRight) {
+                        labelGroupPos.y = 0;
+                    } else {
+                        labelGroupPos.y = -(nodeLabelsBoundingBox.y + labelSpacing);
+                    }
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
+                    labelGroupPos.y = (node.getSize().y - nodeLabelsBoundingBox.y) / 2.0;
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
+                    if (leftOrRight) {
+                        labelGroupPos.y = node.getSize().y - nodeLabelsBoundingBox.y;
+                    } else {
+                        labelGroupPos.y = node.getSize().y + labelSpacing;
+                    }
+                }
+            } else {
+                boolean topOrBottom = false;
+                
+                // Y coordinate
+                if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
+                    labelGroupPos.y = -(nodeLabelsBoundingBox.y + labelSpacing);
+                    topOrBottom = true;
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
+                    labelGroupPos.y = (node.getSize().y - nodeLabelsBoundingBox.y) / 2.0;
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
+                    labelGroupPos.y = node.getSize().y + labelSpacing;
+                    topOrBottom = true;
+                }
+                
+                // X coordinate
+                if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
+                    if (topOrBottom) {
+                        labelGroupPos.x = 0;
+                    } else {
+                        labelGroupPos.x = -(nodeLabelsBoundingBox.x + labelSpacing);
+                    }
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
+                    labelGroupPos.x = (node.getSize().x - nodeLabelsBoundingBox.x) / 2.0;
+                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
+                    if (topOrBottom) {
+                        labelGroupPos.x = node.getSize().x - nodeLabelsBoundingBox.x;
+                    } else {
+                        labelGroupPos.x = node.getSize().x + labelSpacing;
+                    }
+                }
             }
-            
-            // X coordinate
+        }
+        
+        // Place labels
+        applyNodeLabelPositions(node, labelGroupPos, labelSpacing);
+    }
+    
+    /**
+     * Places the given node's labels in a vertical stack, starting at the given position.
+     * 
+     * @param node the node whose labels are to be placed.
+     * @param startPosition coordinates where the first label is to be placed.
+     * @param labelSpacing space to be left between the labels.
+     */
+    private void applyNodeLabelPositions(final LNode node, final KVector startPosition,
+            final double labelSpacing) {
+        
+        // The horizontal alignment depends on where the labels are placed exactly
+        EnumSet<NodeLabelPlacement> nodeLabelPlacement =
+                node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+        NodeLabelPlacement horizontalPlacement = NodeLabelPlacement.H_CENTER;
+        
+        if (nodeLabelPlacement.contains(NodeLabelPlacement.INSIDE)) {
+            // Inside placement
             if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
-                if (topOrBottom) {
-                    labelPos.x = 0;
-                } else {
-                    labelPos.x = -(labelSize.x + labelSpacing);
-                }
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
-                labelPos.x = (node.getSize().x - labelSize.x) / 2.0;
+                horizontalPlacement = NodeLabelPlacement.H_LEFT;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
-                if (topOrBottom) {
-                    labelPos.x = node.getSize().x - labelSize.x;
-                } else {
-                    labelPos.x = node.getSize().x + labelSpacing;
-                }
+                horizontalPlacement = NodeLabelPlacement.H_RIGHT;
             }
+        } else {
+            // Outside placement; alignment is reversed
+            if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
+                horizontalPlacement = NodeLabelPlacement.H_RIGHT;
+            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
+                horizontalPlacement = NodeLabelPlacement.H_LEFT;
+            }
+        }
+        
+        // We have to keep track of the current y coordinate
+        double currentY = startPosition.y;
+        
+        // Place all labels
+        for (LLabel label : node.getLabels()) {
+            // Apply y coordinate
+            label.getPosition().y = currentY;
+            
+            // The x coordinate depends on the H_xxx constants
+            if (horizontalPlacement == NodeLabelPlacement.H_LEFT) {
+                label.getPosition().x = startPosition.x;
+            } else if (horizontalPlacement == NodeLabelPlacement.H_CENTER) {
+                label.getPosition().x = startPosition.x
+                        + (nodeLabelsBoundingBox.x - label.getSize().x) / 2.0; 
+            } else if (horizontalPlacement == NodeLabelPlacement.H_RIGHT) {
+                label.getPosition().x = startPosition.x + nodeLabelsBoundingBox.x - label.getSize().x;
+            }
+            
+            // Update y position
+            currentY += label.getSize().y + labelSpacing;
         }
     }
     

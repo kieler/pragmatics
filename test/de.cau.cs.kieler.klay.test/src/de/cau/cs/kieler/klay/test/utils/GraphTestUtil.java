@@ -32,14 +32,17 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Injector;
 
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.text.KGraphStandaloneSetup;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 
 /**
  * Class to load graphs from a given folder and its subfolders (optional).
@@ -49,18 +52,22 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 public final class GraphTestUtil {
 
     /**
-     * The test graph root directory. This is given relative to the working directory, which
-     * is the test plugin's root. The path below leads to the repository root and then into
-     * the {@code models} subfolder, which contains all test graphs.
+     * The test graph root directory. This is given relative to the working directory, which is the
+     * test plugin's root. The path below leads to the repository root and then into the
+     * {@code models} subfolder, which contains all test graphs.
      */
-    private static final String SOURCE_GRAPHS_DIRECTORY = "../../models/keg/klay_tests/";
-    
+    private static final String SOURCE_GRAPHS_DIRECTORY =
+            "../../../models/graphs/klay_layered_tests/";
+
     /** the GMF file formats to load. */
-    private static final ArrayList<String> GMF_GRAPHS_FORMATS = Lists.newArrayList(
-            "kegdi", "kaod", "kids");
+    private static final ArrayList<String> GMF_GRAPHS_FORMATS = Lists.newArrayList("kegdi", "kaod",
+            "kids");
     /** the KGraph file formats to load. */
-    private static final ArrayList<String> KGRAPH_FORMATS = Lists.newArrayList(
-            "kgraph", "kgx", "kgt");
+    private static final ArrayList<String> KGRAPH_FORMATS = Lists.newArrayList("kgraph", "kgx",
+            "kgt");
+
+    private static Injector xtextInjector = new KGraphStandaloneSetup()
+            .createInjectorAndDoEMFRegistration();
 
     /**
      * A private constructor to prevent instantiation.
@@ -69,7 +76,7 @@ public final class GraphTestUtil {
     }
 
     /**
-     * Load all graphs under the given list of  test paths.
+     * Load all graphs under the given list of test paths.
      * 
      * @param bundleTestPaths
      *            a list of the test folder + properties
@@ -82,19 +89,20 @@ public final class GraphTestUtil {
         for (TestPath testPath : bundleTestPaths) {
             // For each TestPath load the graph files contained in its appropriate folder
             switch (testPath.getType()) {
-            case GMF:
-                graphTestObject.addAll(loadGMFGraphs(testPath.getFolder(), testPath.isLoadSubfolder(),
-                        testPath.isDoLayout()));
-                break;
+            // uru: we do not support GMF models during testing anymore
+            // case GMF:
+            // graphTestObject.addAll(loadGMFGraphs(testPath.getFolder(),
+            // testPath.isLoadSubfolder(), testPath.isDoLayout()));
+            // break;
             case KGRAPH:
-                graphTestObject.addAll(loadKGraphs(testPath.getFolder(), testPath.isLoadSubfolder(),
-                        testPath.isDoLayout()));
+                graphTestObject.addAll(loadKGraphs(testPath.getFolder(),
+                        testPath.isLoadSubfolder(), testPath.isDoLayout()));
                 break;
             }
         }
         return graphTestObject;
     }
-    
+
     /**
      * Load all KGraphs under the given folder and sub-folder(optional) and apply the layout
      * algorithm(optional).
@@ -109,7 +117,7 @@ public final class GraphTestUtil {
      */
     public static List<GraphTestObject> loadKGraphs(final String folder, final boolean subfolder,
             final boolean doLayout) {
-       
+
         File rootFolder = new File(SOURCE_GRAPHS_DIRECTORY, folder);
 
         // test if the root folder is readable by the application
@@ -121,7 +129,7 @@ public final class GraphTestUtil {
             List<GraphTestObject> graphObjects = new ArrayList<GraphTestObject>();
             for (File gfile : graphFiles) {
                 URI uri = URI.createFileURI(gfile.toString());
-                ResourceSet resourceSet = new ResourceSetImpl();
+                ResourceSet resourceSet = xtextInjector.getInstance(ResourceSet.class);
                 Resource resource = resourceSet.createResource(uri);
 
                 try {
@@ -131,17 +139,17 @@ public final class GraphTestUtil {
                 }
                 if (resource.getContents().isEmpty()
                         || !(resource.getContents().get(0) instanceof KNode)) {
-                    throw new IllegalArgumentException("The selected file does not contain a graph: "
-                            + gfile);
+                    throw new IllegalArgumentException(
+                            "The selected file does not contain a graph: " + gfile);
                 }
                 KNode graph = (KNode) resource.getContents().get(0);
-                
+
                 // apply layout when applyLayout = true
                 if (doLayout) {
-                    EclipseLayoutInfoService.getInstance().getLayoutEngine().layout(graph,
-                            new BasicProgressMonitor());
+                    EclipseLayoutInfoService.getInstance().getLayoutEngine()
+                            .layout(graph, new BasicProgressMonitor());
                 }
-                     
+
                 // add the KNode to the list
                 graphObjects.add(new GraphTestObject(gfile, graph));
             }
@@ -168,24 +176,30 @@ public final class GraphTestUtil {
      */
     public static List<GraphTestObject> loadGMFGraphs(final String folder, final boolean subfolder,
             final boolean doLayout) {
-       
+
         File rootFolder = new File(SOURCE_GRAPHS_DIRECTORY, folder);
 
         // test if the root folder is readable by the application
         if (rootFolder.canRead()) {
 
             // load files from the directory
-            List<File> graphFiles = loadFilesFromDirectory(rootFolder, subfolder, GMF_GRAPHS_FORMATS);
+            List<File> graphFiles =
+                    loadFilesFromDirectory(rootFolder, subfolder, GMF_GRAPHS_FORMATS);
             Collections.sort(graphFiles);
             List<GraphTestObject> graphObjects = new ArrayList<GraphTestObject>();
+            LayoutOptionManager mng = new LayoutOptionManager();
+
             for (File gfile : graphFiles) {
                 LayoutMapping<?> mapping = getLayoutMappingForGraphFile(gfile);
-                
+
+                // load possible {@link ILayoutConfig}s.
+                mng.configure(mapping, new BasicProgressMonitor());
+
                 // apply layout when applyLayout = true
                 if (doLayout) {
                     DiagramLayoutEngine.INSTANCE.layout(mapping, new BasicProgressMonitor());
                 }
-                     
+
                 // add the KNode to the list
                 graphObjects.add(new GraphTestObject(gfile, mapping.getLayoutGraph()));
             }
@@ -229,8 +243,8 @@ public final class GraphTestUtil {
      *            if true then load subfolder graphs else only the given directory
      * @return return the List of graph files
      */
-    private static List<File> loadFilesFromDirectory(final File folder,
-            final boolean subfolder, final List<String> extensions) {
+    private static List<File> loadFilesFromDirectory(final File folder, final boolean subfolder,
+            final List<String> extensions) {
         List<File> files = new ArrayList<File>();
         // filter to select only files with SOURCE_GRAPHS_FORMAT extension or sub directories
         FileFilter filter = new FileFilter() {
@@ -268,7 +282,9 @@ public final class GraphTestUtil {
      */
     private static LayoutMapping<?> getLayoutMappingForGraphFile(final File file) {
         // load the notation diagram element
-        URI uri = URI.createFileURI(file.toString());
+        // CARE: getAbsolutePath is important! Otherwise the possible proxies in the notation model
+        // cannot be resolved as the semantic model fails to be loaded with a FileNotFoundException.
+        URI uri = URI.createFileURI(file.getAbsolutePath().toString());
         ResourceSet resourceSet = new ResourceSetImpl();
         final Resource resource = resourceSet.createResource(uri);
 
@@ -290,17 +306,18 @@ public final class GraphTestUtil {
             public void run() {
                 try {
                     Diagram diagram = (Diagram) resource.getContents().get(0);
-                    OffscreenEditPartFactory offscreenFactory = OffscreenEditPartFactory
-                            .getInstance();
+                    OffscreenEditPartFactory offscreenFactory =
+                            OffscreenEditPartFactory.getInstance();
                     Shell shell = Display.getDefault().getActiveShell();
                     if (shell == null) {
                         shell = new Shell();
                     }
-                    DiagramEditPart editPart = offscreenFactory.createDiagramEditPart(diagram, shell);
+                    DiagramEditPart editPart =
+                            offscreenFactory.createDiagramEditPart(diagram, shell);
 
                     // retrieve a kgraph representation of the diagram
-                    mapping.set(EclipseLayoutInfoService.getInstance()
-                            .getManager(null, editPart).buildLayoutGraph(null, editPart));
+                    mapping.set(EclipseLayoutInfoService.getInstance().getManager(null, editPart)
+                            .buildLayoutGraph(null, editPart));
                 } catch (Throwable throwable) {
                     wrappedException.set(throwable);
                 }
@@ -314,5 +331,5 @@ public final class GraphTestUtil {
 
         return mapping.get();
     }
-    
+
 }

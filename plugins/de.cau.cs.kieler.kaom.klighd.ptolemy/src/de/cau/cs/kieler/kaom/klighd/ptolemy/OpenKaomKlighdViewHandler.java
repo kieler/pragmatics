@@ -1,3 +1,17 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2012 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+
 package de.cau.cs.kieler.kaom.klighd.ptolemy;
 
 import java.util.HashMap;
@@ -23,15 +37,22 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
 import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
 
+/**
+ * Handler for kaom klight view menu button.
+ * @author ckru
+ *
+ */
 public class OpenKaomKlighdViewHandler extends AbstractHandler implements IHandler {
 
-    public Object execute(ExecutionEvent event) throws ExecutionException {
+    /**
+     * {@inheritDoc}
+     */
+    public Object execute(final ExecutionEvent event) throws ExecutionException {
         String commandid = event.getCommand().getId();
         if (commandid.endsWith("openkaomklighd")) {
             ISelection selection = HandlerUtil.getCurrentSelection(event);
@@ -59,7 +80,12 @@ public class OpenKaomKlighdViewHandler extends AbstractHandler implements IHandl
         return null;
     }
     
-    private EList<EObject> loadModel(IFile file) {
+    /**
+     * Load emf model from a given file.
+     * @param file the emf model file
+     * @return the loaded model
+     */
+    private EList<EObject> loadModel(final IFile file) {
             try {
                 ResourceSet resourceSet = new ResourceSetImpl();
                 Resource resource = resourceSet.getResource(URI.createPlatformResourceURI(
