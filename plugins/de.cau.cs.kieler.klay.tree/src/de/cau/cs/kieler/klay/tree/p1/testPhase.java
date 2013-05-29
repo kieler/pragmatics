@@ -23,6 +23,7 @@ import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
+import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 
@@ -40,8 +41,11 @@ public class testPhase implements ILayoutPhase {
                     IntermediateProcessingConfiguration.BEFORE_PHASE_2,
                     EnumSet.of(LayoutProcessorStrategy.TEST_PROCESSOR)
                     );
-    
+
     /** default value for spacing between nodes. */
+    private static final float DEFAULT_SPACING = 15.0f;
+    
+    /** default value for size of nodes. */
     private static final float DEFAULT_SIZE = 50.0f;
 
     /**
@@ -49,7 +53,6 @@ public class testPhase implements ILayoutPhase {
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final TGraph graph) {
-
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
@@ -83,7 +86,6 @@ public class testPhase implements ILayoutPhase {
 
         int parentFan = tempRoot.getProperty(Properties.FAN);
         
-
         tempRoot.getPosition().x = parentFan * DEFAULT_SIZE / 2;
         tempRoot.getPosition().y = 0;
 
@@ -99,18 +101,27 @@ public class testPhase implements ILayoutPhase {
         while (!nextLevel.isEmpty()) {
             currentLevel = (ArrayList<TNode>) nextLevel.clone();
             nextLevel.clear();
-            depth+=DEFAULT_SIZE;
+            depth += DEFAULT_SIZE;
             for (TNode tNode : currentLevel) {
                 childFan = tNode.getProperty(Properties.FAN);
                 tNode.getPosition().x = occupiedSpace + childFan * DEFAULT_SIZE / 2;
                 tNode.getPosition().y = depth;
                 occupiedSpace += childFan < 1 ? 1 * DEFAULT_SIZE : childFan* DEFAULT_SIZE;
+                System.out.println("x: " + tNode.getPosition().x);
+                System.out.println("o: " + occupiedSpace);
+
                 nextLevel.addAll(tNode.getChildren());
-//                System.out.println("x: "+ tNode.getPosition().x);
-                System.out.println("pos: "+ tNode.getProperty(Properties.POSITION));
+                
+                for (TEdge outgoingEdge : tNode.getOutgoingEdges()) {
+                    double sourcePos = outgoingEdge.getSource().getPosition().y;
+                    double targetPos = outgoingEdge.getTarget().getPosition().y;
+                    
+                    outgoingEdge.getBendPoints().add(sourcePos, targetPos);
+                }
             }
             occupiedSpace = 0;
         }
+        
         // TODO return graph and implement fan data
         progressMonitor.done();
     }

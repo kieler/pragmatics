@@ -16,6 +16,9 @@ package de.cau.cs.kieler.klay.tree.graph;
 import java.util.LinkedList;
 import java.util.List;
 
+
+
+
 /**
  * TODO: Document this class.
  * 
@@ -41,7 +44,9 @@ public class TNode extends TShape {
     private TNode parent;
     /** List of child nodes. */
     private LinkedList<TNode> children;
-
+    
+    private LinkedList<TEdge> outgoingEdges;
+    
     /**
      * Create a new node without parent and label.
      */
@@ -138,6 +143,15 @@ public class TNode extends TShape {
         }
         return children;
     }
+    
+    public List<TEdge> getOutgoingEdges() {
+        if (outgoingEdges == null) {
+            outgoingEdges = new LinkedList<TEdge>();
+        }
+        return outgoingEdges;
+    }
+    
+    
 
     /**
      * Returns the depth of this node in the compound hierarchy.
