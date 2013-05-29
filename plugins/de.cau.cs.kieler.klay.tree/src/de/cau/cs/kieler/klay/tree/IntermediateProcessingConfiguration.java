@@ -31,6 +31,14 @@ public final class IntermediateProcessingConfiguration {
 
     /** Constant for the processors that should come before phase 1. */
     public static final int BEFORE_PHASE_1 = 0;
+    /** Constant for the processors that should come before phase 2. */
+    public static final int BEFORE_PHASE_2 = 1;
+    /** Constant for the processors that should come before phase 3. */
+    public static final int BEFORE_PHASE_3 = 2;
+    /** Constant for the processors that should come before phase 4. */
+    public static final int BEFORE_PHASE_4 = 3;
+    /** Constant for the processors that should come before phase 5. */
+    public static final int BEFORE_PHASE_5 = 4;
     /** How many slots there are for intermediate processing. */
     // TODO count actual number of phases
     public static final int INTERMEDIATE_PHASE_SLOTS = 42;

@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
+import de.cau.cs.kieler.klay.tree.p1.ArrangeNodes;
 import de.cau.cs.kieler.klay.tree.p1.testPhase;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
@@ -40,7 +41,9 @@ public final class KlayTree {
     // Variables
 
     // TODO build actual phase
-    /** phase 1: test module. */
+    /** phase 1: cycle breaking module. */
+    private ILayoutPhase arrangeNodes;
+    /** phase 2: layering module. */
     private ILayoutPhase testPhase;
 
     /** intermediate layout processor configuration. */
@@ -116,6 +119,9 @@ public final class KlayTree {
     private void updateModules(final TGraph graph) {
 
         // dummy phase
+        arrangeNodes = new ArrangeNodes();
+        
+        // dummy phase
         testPhase = new testPhase();
 
         // check which cycle breaking strategy to use
@@ -128,14 +134,16 @@ public final class KlayTree {
 
         // update intermediate processor configuration
         intermediateProcessingConfiguration.clear();
-        intermediateProcessingConfiguration.addAll(
-                testPhase.getIntermediateProcessingConfiguration(graph)).addAll(
-                this.getIntermediateProcessingConfiguration(graph));
+        intermediateProcessingConfiguration
+                .addAll(arrangeNodes.getIntermediateProcessingConfiguration(graph))
+                .addAll(testPhase.getIntermediateProcessingConfiguration(graph))
+                .addAll(this.getIntermediateProcessingConfiguration(graph));
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
+        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
+        algorithm.add(arrangeNodes);
+        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
         algorithm.add(testPhase);
     }
 
