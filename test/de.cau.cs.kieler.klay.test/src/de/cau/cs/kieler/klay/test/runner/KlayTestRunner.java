@@ -18,6 +18,7 @@ import java.util.List;
 import org.junit.runners.model.FrameworkMethod;
 
 import de.cau.cs.kieler.klay.test.KlayAutomatedJUnitTest;
+import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 import de.cau.cs.kieler.pragmatics.test.common.runners.KielerTestRunner;
 
@@ -38,7 +39,8 @@ public class KlayTestRunner extends KielerTestRunner {
      * of the class to test (parameter values given to the constructor are NULL) and afterwards
      * calls the method for getting the parameters for the parameterized test run.
      * 
-     * @param klass the klass
+     * @param klass
+     *            the klass
      */
     public KlayTestRunner(final Class<?> klass) throws Throwable {
         super(klass);
@@ -64,7 +66,10 @@ public class KlayTestRunner extends KielerTestRunner {
         Object[] objectArray = parameterObjectList.get(parameterIndex);
         // The objectArray is always affected with a GraphTestObject that is why this method is save
         GraphTestObject file = (GraphTestObject) objectArray[0];
-        return file.getFile().getPath();
+        ILayoutConfigurator config = (ILayoutConfigurator) objectArray[1];
+        // IMPORTANT to include the index here, otherwise the junit view might get messed up
+        return "[" + parameterIndex + "]" + file.getFile().getPath() + "-"
+                + config.getDescription();
     }
 
     /**
@@ -75,7 +80,9 @@ public class KlayTestRunner extends KielerTestRunner {
             final FrameworkMethod method) {
         Object[] objectArray = parameterObjectList.get(parameterIndex);
         GraphTestObject file = (GraphTestObject) objectArray[0];
-        return method.getName().concat(" - ").concat(file.getFile().getName());
+        // IMPORTANT to include the index here, otherwise the junit view might get messed up
+        return method.getName().concat("[" + parameterIndex + "]").concat(" - ")
+                .concat(file.getFile().getName());
     }
 
 }

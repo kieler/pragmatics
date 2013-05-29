@@ -20,6 +20,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
+import de.cau.cs.kieler.klay.layered.importexport.CompoundKGraphImporter;
+import de.cau.cs.kieler.klay.layered.importexport.KGraphImporter;
 
 /**
  * Layout provider to connect the layered layouter to the Eclipse based layout services.
@@ -85,12 +87,10 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
      * <p><strong>Note:</strong> This method does not apply the layout back to the original kgraph!</p>
      * 
      * @param kgraph the {@link KGraph} to be used for the layout test run.
-     * @param progressMonitor a progress monitor to show progress information in.
      * @return an instance of {@link KlayLayered} with
      *         {@link KlayLayered#prepareLayoutTest(LGraph, IKielerProgressMonitor)} already called.
      */
-    public KlayLayered startLayoutTest(final KNode kgraph,
-            final IKielerProgressMonitor progressMonitor) {
+    public KlayLayered startLayoutTest(final KNode kgraph) {
         
         // Create the hash code counter used to create all graph elements; this is used to ensure
         // that all hash codes are unique, but predictable independently of the object instances.
@@ -112,7 +112,7 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
         
         // return a new instance of KLay Layered initialized with the given layout test data
         KlayLayered algorithm = new KlayLayered();
-        algorithm.prepareLayoutTest(layeredGraph, progressMonitor);
+        algorithm.prepareLayoutTest(layeredGraph);
         
         return algorithm;
     }
