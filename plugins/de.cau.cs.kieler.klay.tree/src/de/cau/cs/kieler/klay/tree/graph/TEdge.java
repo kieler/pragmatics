@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.tree.graph;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
@@ -37,6 +38,8 @@ public class TEdge extends MapPropertyHolder {
     private TNode source;
     /** the target node of the edge. */
     private TNode target;
+    
+    private KVectorChain bendPoints = new KVectorChain();
 
     /**
      * Constructor for setting up a TEdge object
@@ -108,6 +111,10 @@ public class TEdge extends MapPropertyHolder {
      */
     public final void setTarget(final TNode theTarget) {
         target = theTarget;
+    }
+    
+    public KVectorChain getBendPoints() {
+        return bendPoints;
     }
 
 }
