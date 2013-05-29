@@ -24,9 +24,10 @@ public class TestPath {
     /** Enumeration of graph types. */
     public static enum Type {
         /** KGraph files. */
-        KGRAPH,
+        KGRAPH
         /** GMF diagram files. */
-        GMF;
+        // uru: we do not allow GMF models anymore as they only cause headaches
+        // GMF;
     }
 
     /** the folder containing the graph files. */
