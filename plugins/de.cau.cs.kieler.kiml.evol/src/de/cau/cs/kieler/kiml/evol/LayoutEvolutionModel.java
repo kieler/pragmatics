@@ -146,6 +146,7 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
         ILayoutConfig layoutConfig = GenomeFactory.createConfig(layoutMapping);
         population.setProperty(Population.DEFAULT_CONFIG, layoutConfig);
         Genome patriarch = GenomeFactory.createInitialGenome(layoutMapping, layoutConfig, options);
+        GenomeFactory.checkGenome(patriarch);
         population.add(patriarch);
         progressMonitor.worked(1);
         
@@ -156,6 +157,7 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
             for (int i = 0; i < mutationCount; i++) {
                 Genome mutation = mutationOperation.mutate(population.get(i), layoutConfig,
                         INITIAL_MUTATION_BOOST);
+                GenomeFactory.checkGenome(mutation);
                 population.add(mutation);
             }
         } while (population.size() < INITIAL_POPULATION);

@@ -377,5 +377,34 @@ public final class GenomeFactory {
             }
         }
     }
+    
+    /**
+     * Check whether the given genome is consistent with respect to the active flags of its genes.
+     * 
+     * @param genome a genome
+     */
+    public static void checkGenome(final Genome genome) {
+        for (LayoutContext context : genome.getContexts()) {
+            LayoutAlgorithmData algoData = null;
+            for (Gene<?> gene : genome.getGenes(context)) {
+                TypeInfo<?> typeInfo = gene.getTypeInfo();
+                if (typeInfo.getGeneType() == TypeInfo.GeneType.LAYOUT_ALGO) {
+                    algoData = (LayoutAlgorithmData) gene.listValue();
+                } else if (algoData != null) {
+                    LayoutOptionData<?> optionData = (LayoutOptionData<?>) typeInfo.getTypeParam();
+                    boolean knowsOption = algoData.knowsOption(optionData);
+                    if (knowsOption && !gene.isActive()) {
+                        throw new IllegalStateException("Gene " + gene
+                                + " is inactive, but its algorithm " + algoData
+                                + " knows the option.");
+                    } else if (!knowsOption && gene.isActive()) {
+                        throw new IllegalStateException("Gene " + gene
+                                + " is active, but its algorithm " + algoData
+                                + " does not know the option.");
+                    }
+                }
+            }
+        }
+    }
 
 }

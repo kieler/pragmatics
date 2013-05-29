@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
+import de.cau.cs.kieler.kiml.evol.GenomeFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -96,6 +97,7 @@ public class CrossoverOperation implements IEvolutionaryOperation {
             } while (parent1 == parent2);
 
             Genome offspring = recombine(parent1, parent2);
+            GenomeFactory.checkGenome(offspring);
             population.add(offspring);
         }
         

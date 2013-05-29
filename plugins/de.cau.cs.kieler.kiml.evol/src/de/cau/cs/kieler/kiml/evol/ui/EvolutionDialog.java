@@ -475,9 +475,8 @@ public class EvolutionDialog extends Dialog {
         } catch (Throwable throwable) {
             handleError(throwable);
             return;
-        } finally {
-            progressBar.setVisible(false);
         }
+        progressBar.setVisible(false);
 
         refreshPreviews();
         generationLabel.setText("Generation "
@@ -515,9 +514,8 @@ public class EvolutionDialog extends Dialog {
             } catch (Throwable throwable) {
                 handleError(throwable);
                 return;
-            } finally {
-                progressBar.setVisible(false);
             }
+            progressBar.setVisible(false);
             
             refreshPreviews();
             for (Control control : disablingControls) {

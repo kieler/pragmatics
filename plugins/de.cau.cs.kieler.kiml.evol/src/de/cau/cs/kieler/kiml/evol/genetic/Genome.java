@@ -177,6 +177,9 @@ public class Genome extends MapPropertyHolder {
             }
             result.append(")");
         }
+        if (geneMap.isEmpty()) {
+            result.append("empty genome");
+        }
         return result.toString();
     }
 
