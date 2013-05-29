@@ -36,11 +36,11 @@ public class AreaMetric implements IAnalysis {
     /** lower bound of normalized area for linear region. */
     private static final double AREA_LOW = 50;
     /** upper bound of normalized area for linear region. */
-    private static final double AREA_HIGH = 2000;
+    private static final double AREA_HIGH = 1000;
     /** lower bound of metric value for linear region. */
     private static final double METRIC_LOW = 0.1;
     /** upper bound of metric value for linear region. */
-    private static final double METRIC_HIGH = 0.9;
+    private static final double METRIC_HIGH = 0.95;
 
     /**
      * {@inheritDoc}
