@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
 
@@ -149,7 +150,18 @@ public final class GenomeFactory {
     public static Gene<Integer> createLayoutTypeGene(final LayoutTypeData typeData) {
         List<LayoutTypeData> typeList = new ArrayList<LayoutTypeData>(LayoutDataService.getInstance()
                 .getTypeData());
+        // remove layout types that have no registered algorithms
+        ListIterator<LayoutTypeData> typeIter = typeList.listIterator();
+        while (typeIter.hasNext()) {
+            if (typeIter.next().getLayouters().isEmpty()) {
+                typeIter.remove();
+            }
+        }
+        
         int index = typeList.indexOf(typeData);
+        if (index < 0) {
+            throw new IllegalStateException("The active layout type is not registered.");
+        }
         TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(LAYOUT_TYPE_ID, GeneType.LAYOUT_TYPE, 0,
                 typeList.size() - 1, typeList, P_LAYOUT_TYPE_MUTATION, 1);
         return Gene.create(index, typeInfo, true);
@@ -183,6 +195,9 @@ public final class GenomeFactory {
         List<LayoutAlgorithmData> algoList = layoutType.getLayouters(); 
         TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(LayoutOptions.ALGORITHM.getId(),
                 GeneType.LAYOUT_ALGO, 0, algoList.size() - 1, algoList, P_LAYOUT_ALGO_MUTATION, 1);
+        if (algoList.isEmpty()) {
+            return Gene.create(null, typeInfo, false);
+        }
         int randomAlgoIndex = random.nextInt(algoList.size());
         return Gene.create(randomAlgoIndex, typeInfo, true);
     }
@@ -200,9 +215,10 @@ public final class GenomeFactory {
             return new TypeInfo<Integer>(optionData.getId(), GeneType.BOOLEAN, 0,
                     1, optionData, P_BOOLEAN_MUTATION, 1);
         case ENUM:
+            int enumConstCount = optionData.getOptionClass().getEnumConstants().length;
             return new TypeInfo<Integer>(optionData.getId(), GeneType.ENUM, 0,
-                    optionData.getOptionClass().getEnumConstants().length - 1,
-                    optionData, P_ENUM_MUTATION, 1);
+                    enumConstCount - 1, optionData,
+                    enumConstCount > 2 ? P_ENUM_MUTATION : P_BOOLEAN_MUTATION, 1);
         case INT:
             return new TypeInfo<Integer>(optionData.getId(), GeneType.INTEGER,
                     (Comparable<Integer>) optionData.getLowerBound(),

@@ -205,9 +205,9 @@ public class EvaluationOperation implements IEvolutionaryOperation {
         copier.copyReferences();
 
         // perform layout on the evaluation graph
-        GenomeFactory.configureGraph(genome, layoutConfig, copier);
         double executionTime;
         try {
+            GenomeFactory.configureGraph(genome, layoutConfig, copier);
             IKielerProgressMonitor layoutMonitor = progressMonitor.subTask(1);
             graphLayoutEngine.layout(graph, layoutMonitor);
             executionTime = layoutMonitor.getExecutionTime();

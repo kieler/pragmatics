@@ -131,6 +131,7 @@ public class CrossoverOperation implements IEvolutionaryOperation {
                     // check whether the layout algorithm has the correct layout type
                     if (layoutTypeData != null
                             && gene.getTypeInfo().getGeneType() == GeneType.LAYOUT_ALGO
+                            && gene.getValue() != null
                             && !layoutTypeData.getId().equals(
                                     ((LayoutAlgorithmData) gene.listValue()).getType())) {
                         genes[genomeIndex] = Gene.create(null, gene.getTypeInfo(), false);

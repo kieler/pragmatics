@@ -15,8 +15,12 @@ package de.cau.cs.kieler.klay.layered;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.HVLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
@@ -32,6 +36,10 @@ import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
  * @kieler.rating proposed yellow by msp
  */
 public final class LayeredLayoutProvider extends AbstractLayoutProvider {
+    
+    /** TODO remove after demo. */
+    public static final IProperty<HVLayout> HVLAYOUT = new Property<HVLayout>(
+            "de.cau.cs.kieler.hvlayout");
 
     ///////////////////////////////////////////////////////////////////////////////
     // Variables
@@ -54,6 +62,21 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
         IGraphImporter<KNode> graphImporter;
+        
+        // TODO remove after demo
+        HVLayout hvlayout = sourceShapeLayout.getProperty(HVLAYOUT);
+        if (hvlayout != null) {
+            switch (hvlayout) {
+            case HORIZONTAL:
+                sourceShapeLayout.setProperty(LayoutOptions.DIRECTION,
+                        Direction.RIGHT);
+                break;
+            case VERTICAL:
+                sourceShapeLayout.setProperty(LayoutOptions.DIRECTION,
+                        Direction.DOWN);
+                break;
+            }
+        }
 
         // Check if hierarchy handling for a compound graph is requested, choose importer accordingly
         boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);

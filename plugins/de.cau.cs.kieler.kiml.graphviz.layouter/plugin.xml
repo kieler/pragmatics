@@ -107,7 +107,7 @@
                option="de.cau.cs.kieler.graphviz.layerSpacingFactor">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.graphviz.hvlayout">
+               option="de.cau.cs.kieler.hvlayout">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -497,15 +497,6 @@
             type="float"
             upperBound="100.0"
             variance="0.5">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            class="de.cau.cs.kieler.kiml.graphviz.layouter.HVLayout"
-            default="HORIZONTAL"
-            description="Whether horizontal or vertical layout shall be done."
-            id="de.cau.cs.kieler.graphviz.hvlayout"
-            name="HV Layout"
-            type="enum">
       </layoutOption>
    </extension>
 

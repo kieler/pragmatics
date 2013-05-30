@@ -114,6 +114,7 @@ public class MutationOperation implements IEvolutionaryOperation {
             final double mutationFactor) {
         LayoutTypeData newLayoutType = null;
         LayoutAlgorithmData newLayoutAlgo = null;
+        boolean noAlgorithmInSelectedType = false;
         newGenome.addContext(layoutContext, oldGenome.getSize(layoutContext));
         for (Gene<?> gene : oldGenome.getGenes(layoutContext)) {
             TypeInfo<?> typeInfo = gene.getTypeInfo();
@@ -133,13 +134,22 @@ public class MutationOperation implements IEvolutionaryOperation {
                 } else if (gene.isActive()) {
                     gene = Gene.create(gene, false);
                 }
+            } else if (noAlgorithmInSelectedType) {
+                // the layout type has mutated, but the new type has no active algorithm
+                if (gene.isActive()) {
+                    gene = Gene.create(gene, false);
+                }
             }
 
             Gene<?> newGene = gene;
             if (newLayoutType != null && geneType == GeneType.LAYOUT_ALGO) {
                 // the layout type has changed, so we are forced to choose a different algorithm
                 newGene = GenomeFactory.createAlgorithmGene(newLayoutType, random);
-                newLayoutAlgo = (LayoutAlgorithmData) newGene.listValue();
+                if (newGene.getValue() != null) {
+                    newLayoutAlgo = (LayoutAlgorithmData) newGene.listValue();
+                } else {
+                    noAlgorithmInSelectedType = true;
+                }
                 
             } else if (gene.getValue() != null
                     && random.nextDouble() < typeInfo.getProbability() * mutationFactor) {

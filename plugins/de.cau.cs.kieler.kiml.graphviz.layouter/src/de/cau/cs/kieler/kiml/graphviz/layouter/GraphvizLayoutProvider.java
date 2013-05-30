@@ -39,6 +39,7 @@ import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotHandler;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool.Cleanup;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.HVLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.TransformationService;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
@@ -57,7 +58,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     
     /** TODO remove after demo. */
     public static final IProperty<HVLayout> HVLAYOUT = new Property<HVLayout>(
-            "de.cau.cs.kieler.graphviz.hvlayout");
+            "de.cau.cs.kieler.hvlayout");
 
     /** the serial call number for usage in debug mode. */
     private static int serialCallNo = 0;
