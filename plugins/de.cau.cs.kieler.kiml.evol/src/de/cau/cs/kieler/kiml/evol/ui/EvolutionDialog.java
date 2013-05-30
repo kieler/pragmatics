@@ -168,7 +168,7 @@ public class EvolutionDialog extends Dialog {
         for (int i = 0; i < INDIVIDUALS_DISPLAY; i++) {
             createPreviewArea(previewPane, i);
             Image image = null;
-            if (population != null && i < population.size()) {
+            if (i < population.size()) {
                 image = createPreviewImage(population.get(i));
             }
             if (image == null) {
@@ -264,7 +264,7 @@ public class EvolutionDialog extends Dialog {
         createButton(parent, IDialogConstants.ABORT_ID, "Restart", false);
         createButton(parent, IDialogConstants.CANCEL_ID, "Cancel", false);
         
-        if (LayoutEvolutionModel.getInstance().getPopulation() == null) {
+        if (LayoutEvolutionModel.getInstance().getPopulation().isEmpty()) {
             applyButton.setEnabled(false);
             evolveButton.setEnabled(false);
         }
@@ -278,18 +278,19 @@ public class EvolutionDialog extends Dialog {
         switch (buttonId) {
         case IDialogConstants.OK_ID:
             applyFirstSelected();
-            applyMetricWeights();
+            applyMetricWeights(false);
             okPressed();
             break;
         case IDialogConstants.CANCEL_ID:
             cancelPressed();
             break;
         case IDialogConstants.PROCEED_ID:
-            applyMetricWeights();
+            applyMetricWeights(true);
             adaptMetricWeights();
             evolve();
             break;
         case IDialogConstants.ABORT_ID:
+            applyMetricWeights(false);
             restart();
             break;
         }
@@ -393,14 +394,12 @@ public class EvolutionDialog extends Dialog {
         
         // set the initial value for the slider
         int value = SLIDER_MAX;
-        if (population != null) {
-            Map<String, Double> metricWeights = population.getProperty(
-                    EvaluationOperation.METRIC_WEIGHT);
-            if (metricWeights != null) {
-                Double weight = metricWeights.get(data.getId());
-                if (weight != null) {
-                    value = (int) (weight * SLIDER_MAX);
-                }
+        Map<String, Double> metricWeights = population.getProperty(
+                EvaluationOperation.METRIC_WEIGHT);
+        if (metricWeights != null) {
+            Double weight = metricWeights.get(data.getId());
+            if (weight != null) {
+                value = (int) (weight * SLIDER_MAX);
             }
         }
         slider.setSelection(value);
@@ -424,8 +423,10 @@ public class EvolutionDialog extends Dialog {
     
     /**
      * Apply metric weights for all metrics.
+     * 
+     * @param updateFitness whether fitness values shall be updated if required
      */
-    private void applyMetricWeights() {
+    private void applyMetricWeights(final boolean updateFitness) {
         LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
         Population population = evolutionModel.getPopulation();
         Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
@@ -446,7 +447,7 @@ public class EvolutionDialog extends Dialog {
             }
         }
         
-        if (weightsChanged) {
+        if (weightsChanged && updateFitness) {
             // recalculate all fitness values, since the weights have changed
             evolutionModel.recalculateFitness();
         }
@@ -593,7 +594,7 @@ public class EvolutionDialog extends Dialog {
         Population population = evolutionModel.getPopulation();
         // find the selected individuals
         int selectedCount = 0;
-        boolean[] selected = new boolean[evolutionModel.getPopulation().size()];
+        boolean[] selected = new boolean[population.size()];
         for (int i = 0; i < selectionButtons.length; i++) {
             if (selectionButtons[i] != null && selectionButtons[i].getSelection()) {
                 selected[i] = true;

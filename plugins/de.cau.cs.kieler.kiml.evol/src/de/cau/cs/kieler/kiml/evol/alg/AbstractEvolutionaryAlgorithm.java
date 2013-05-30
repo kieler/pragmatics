@@ -46,7 +46,7 @@ public abstract class AbstractEvolutionaryAlgorithm {
     private int generationNumber = 0;
 
     /** The current population. */
-    private Population population;
+    private Population population = new Population(0);
 
     /** The mutation operation. */
     private IEvolutionaryOperation mutationOperation = NULL_OPERATION;
