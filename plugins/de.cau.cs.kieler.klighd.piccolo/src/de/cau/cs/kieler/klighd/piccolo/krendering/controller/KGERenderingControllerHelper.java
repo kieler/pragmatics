@@ -44,6 +44,7 @@ import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
 import de.cau.cs.kieler.core.krendering.KSpline;
 import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.core.krendering.KText;
+import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.krendering.KCustomRenderingWrapperFactory;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
@@ -64,6 +65,9 @@ import edu.umd.cs.piccolox.swt.PSWTCanvas;
 import edu.umd.cs.piccolox.swt.PSWTImage;
 
 /**
+ * Collection of KRendering-related figure creation methods.<br>
+ * These methods are outsourced from {@link AbstractKGERenderingController} in order
+ * to reduce the size of that class.
  * 
  * @author chsch
  */
@@ -232,9 +236,12 @@ final class KGERenderingControllerHelper {
     static PNodeController<PSWTAdvancedPath> createArc(
             final AbstractKGERenderingController<?, ?> controller, final KArc arc,
             final List<KStyle> propagatedStyles, final PNode parent, final Bounds initialBounds) {
-        // create the rounded rectangle
+
+        // create the arc
         final PSWTAdvancedPath path = PSWTAdvancedPath.createArc(0, 0, initialBounds.getWidth(),
-                initialBounds.getHeight(), arc.getStartAngle(), arc.getArcAngle());
+                initialBounds.getHeight(), arc.getStartAngle(), arc.getArcAngle(), arc.getArcType()
+                        .getValue());
+
         path.setPaint((RGB) null);
         controller.initializeRenderingNode(path);
         path.translate(initialBounds.getX(), initialBounds.getY());
@@ -251,7 +258,7 @@ final class KGERenderingControllerHelper {
             public void setBounds(final Bounds bounds) {
                 // apply the bounds
                 getNode().setPathToArc(0, 0, bounds.getWidth(), bounds.getHeight(),
-                        arc.getStartAngle(), arc.getArcAngle());
+                        arc.getStartAngle(), arc.getArcAngle(), arc.getArcType().getValue());
                 NodeUtil.applyTranslation(getNode(), bounds.getX(), bounds.getY());
             }
         };
@@ -284,7 +291,8 @@ final class KGERenderingControllerHelper {
         controller.initializeRenderingNode(textNode);
 
         // supplement (chsch)
-        textNode.setPickable(true);
+        Boolean b = text.getProperty(KlighdConstants.KLIGHD_SELECTION_UNPICKABLE);
+        textNode.setPickable(b != null && b.equals(Boolean.TRUE) ? false : true);
 
         // create the alignment node wrapping the text
         final PAlignmentNode alignmentNode = new PAlignmentNode();
@@ -440,8 +448,7 @@ final class KGERenderingControllerHelper {
         if (polygon.getChildren().size() > 0) {
             List<KRendering> restChildren = Lists.newLinkedList();
             for (final KRendering rendering : polygon.getChildren()) {
-                if (PiccoloPlacementUtil.getDecoratorPlacementData(rendering) != null)
-                {
+                if (PiccoloPlacementUtil.getDecoratorPlacementData(rendering) != null) {
                     controller.handleDecoratorPlacementRendering(rendering, propagatedStyles, path);
                 } else {
                     restChildren.add(rendering);
@@ -450,19 +457,21 @@ final class KGERenderingControllerHelper {
 
             // handle children without decorator placement data if any
             if (restChildren.size() > 0) {
+                // chsch: Why is that proxy node needed. Don't see the point... 
+                // 
                 // create a proxy parent for the children without decorator placement data
-                final PNode proxyParent = new PEmptyNode();
-                path.addChild(proxyParent);
-                NodeUtil.applySmartBounds(proxyParent, path.getBoundsReference());
-                controller.addListener(PNode.PROPERTY_BOUNDS, path, proxyParent,
-                        new PropertyChangeListener() {
-                            public void propertyChange(final PropertyChangeEvent arg0) {
-                                NodeUtil.applySmartBounds(proxyParent, path.getBoundsReference());
-                            }
-                        });
+                // final PNode proxyParent = new PEmptyNode();
+                // path.addChild(proxyParent);
+                // NodeUtil.applySmartBounds(proxyParent, path.getBoundsReference());
+                // controller.addListener(PNode.PROPERTY_BOUNDS, path, proxyParent,
+                //         new PropertyChangeListener() {
+                //             public void propertyChange(final PropertyChangeEvent arg0) {
+                //                 NodeUtil.applySmartBounds(proxyParent, path.getBoundsReference());
+                //             }
+                //         });
 
                 controller.handleChildren(restChildren, polygon.getChildPlacement(), propagatedStyles,
-                        proxyParent);
+                        path); //proxyParent);
             }
         }
 
@@ -607,7 +616,6 @@ final class KGERenderingControllerHelper {
                 NodeUtil.applyTranslation(getNode(), bounds.getX(), bounds.getY());
             }
         };
-
     }
 
     /**
@@ -676,18 +684,6 @@ final class KGERenderingControllerHelper {
                 // apply the bounds
                 getNode().setBounds(0, 0, bounds.getWidth(), bounds.getHeight());
                 NodeUtil.applyTranslation(getNode(), bounds.getX(), bounds.getY());
-            }
-            
-            private float prevRotation = 0f;
-            
-            public void setRotation(final float rotation) {
-                // The point coordinates are a heuristic right now.
-                //  I'm afraid and I'm almost sure that this will not work in general...
-                // SUPPRESS CHECKSTYLE NEXT MagicNumber
-                getNode().rotateAboutPoint(Math.toRadians(rotation - prevRotation), 1.5, 1.5);
-                // Remember the rotation in this memory since this rotation needs to be reverted
-                //  (merged) with the subsequent rotation, since these rotations are absolute.
-                prevRotation = rotation;
             }
         };
     }

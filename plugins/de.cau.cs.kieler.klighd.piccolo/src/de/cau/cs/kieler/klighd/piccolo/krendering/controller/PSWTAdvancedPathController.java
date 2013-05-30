@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.LineCap;
 import de.cau.cs.kieler.core.krendering.LineJoin;
 import de.cau.cs.kieler.core.krendering.LineStyle;
+import de.cau.cs.kieler.klighd.piccolo.krendering.util.Styles;
 import de.cau.cs.kieler.klighd.piccolo.nodes.PSWTAdvancedPath;
 import de.cau.cs.kieler.klighd.piccolo.util.RGBGradient;
 
@@ -54,6 +55,7 @@ public abstract class PSWTAdvancedPathController extends PNodeController<PSWTAdv
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setForegroundGradient(final RGBGradient gradient) {
         getNode().setStrokeColor(gradient);
     }
@@ -70,6 +72,7 @@ public abstract class PSWTAdvancedPathController extends PNodeController<PSWTAdv
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setBackgroundGradient(final RGBGradient gradient) {
         getNode().setPaint(gradient);
     }
@@ -136,6 +139,7 @@ public abstract class PSWTAdvancedPathController extends PNodeController<PSWTAdv
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setLineJoin(final LineJoin lineJoin, final float miterLimit) {
         final LineAttributes lineAttributes = getNode().getLineAttributes();
         switch(lineJoin) {
@@ -154,14 +158,19 @@ public abstract class PSWTAdvancedPathController extends PNodeController<PSWTAdv
     /**
      * {@inheritDoc}
      */
-    public void setRotation(final float rotation) {
-        getNode().setRotation(Math.toRadians(rotation));
+    @Override
+    public void setShadow(final KColor color) {
+        getNode().setShadow(toRGB(color));
     }
     
     /**
      * {@inheritDoc}
      */
-    public void setShadow(final KColor color) {
-        getNode().setShadow(toRGB(color));
+    @Override
+    public void applyChanges(final Styles styles) {
+        super.applyChanges(styles);
+
+        // this simply flushes the internal update of the line attributes
+        getNode().setLineAttributes(getNode().getLineAttributes());
     }
 }
