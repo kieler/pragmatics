@@ -30,6 +30,8 @@ import com.google.common.collect.ImmutableList
 import java.util.Iterator
 import com.google.common.collect.Iterators
 
+
+
 /**
  * <p>Infers a JVM model from the source model.</p> 
  *
@@ -78,6 +80,19 @@ class KDiagramJvmModelInferrer extends AbstractModelInferrer {
         ]);
    	}
    	
+    @Inject
+    extension XbaseCompiler
+    
+    @Inject
+    extension TypesFactory
+    
+    @Inject
+    extension TypeReferences
+    
+    @Inject
+    extension XbaseTypeProvider
+
+    
    	def initialize(JvmGenericType clazz, DiagramSynthesis synthesis) {
         clazz.superTypes += synthesis.newTypeRef(typeof(AbstractDiagramSynthesis), synthesis?.mapping?.type)
         clazz.addKRenderingExtensions(synthesis);
@@ -93,37 +108,62 @@ class KDiagramJvmModelInferrer extends AbstractModelInferrer {
                 )
             ].toList;
             method.body = [
-                append('''final KNode root = kNodeExtensions.createNode();''').newLine();
+                append('''final KNode root = kNodeExtensions.createNode();''').newLine(); //.newLine();
                 val inputTypesIt = inputTypes.iterator();
                 for (NodeMapping nm : synthesis.mapping.nodeMappings) {
                     val pair = inputTypesIt.next;
                     val inputType = pair.key;
-                    val manyIterable = inputType?.isInstanceOf(typeof(Iterable))
-                    val manyIterator = inputType?.isInstanceOf(typeof(Iterator));
-                    
-                    if (manyIterable || manyIterator) {
-                        val actualType = pair.value.head.type
-                        it.append(clazz.newTypeRef(typeof(Iterables)).type).append('''.addAll(''')
-                          .append('''root.getChildren(),''').increaseIndentation().newLine();
 
-                        it.append(clazz.newTypeRef(if (manyIterable) typeof(Iterables) else typeof(Iterators)).type).append(".transform(");
+                    val collectionsHelper = switch(null) {
+                        case inputType?.isInstanceOf(typeof(Iterable)): clazz?.newTypeRef(typeof(Iterables))
+                        case inputType?.isInstanceOf(typeof(Iterator)): clazz?.newTypeRef(typeof(Iterators))
+                        default: null
+                    }?.type;
+                    
+                    if (collectionsHelper != null) {
+                        // the following instruction creates required Java statements
+                        //  for evaluating the node elements expression
+                        nm.elements.toJavaStatement(it, true);
+                        it.newLine().newLine();
+                        
+                        it.append(collectionsHelper).append('''.addAll(root.getChildren(),''')
+                          .increaseIndentation().newLine();
+                          
+                        it.append(collectionsHelper).append(".transform(");
+                        // this statement appends the expression
+                        //  that references the above created statement
                         nm.elements.toJavaExpression(it);
+                        
                         it.append(''',''').increaseIndentation().newLine();
+                        
+                        val actualType = pair.value.head.type
+                        
+                        // "new Function<@actualType@, KNode>() {"
                         it.append("new ").append(typeof(Function).findDeclaredType(synthesis)).append("<")
-                            .append(actualType).append(", ")
-                        it.append(method.returnType.type).append('''>() {''').increaseIndentation().newLine;
+                          .append(actualType).append(", ").append(method.returnType.type).append('''>() {''')
+                          .increaseIndentation().newLine;
+                        
                         it.append('''public KNode apply(final «actualType.simpleName» input) {''').increaseIndentation().newLine;
                         it.append('''return «nm.name»(input);''').decreaseIndentation().newLine;
                         it.append('''}''').decreaseIndentation().newLine;
+                        
                         it.decreaseIndentation.append('''}));''').decreaseIndentation().newLine();
                     } else {
-                        append('''root.getChildren().add(«nm.name»(''');                    
+                        // the following instruction creates required Java statements
+                        //  for evaluating the node elements expression
+                        nm.elements.toJavaStatement(it, true);
+                        it.newLine();
+                        
+                        it.append('''root.getChildren().add(«nm.name»(''');                    
+                        // this statement appends the expression
+                        //  that references the above created statement
                         nm.elements.toJavaExpression(it);
-                        append('''));
-                        ''');
+                        
+                        it.append('''));''').newLine();
                     }
                 }
-                append('''return root;''');
+                it.newLine();
+                it.append('''return root;''');
             ];
         ];
         
@@ -143,33 +183,22 @@ class KDiagramJvmModelInferrer extends AbstractModelInferrer {
                 ];
             ];
         }
-        
    	}
-   	
-   	@Inject
-   	extension XbaseCompiler
-   	
-   	@Inject
-    extension TypesFactory
-   	
-    @Inject
-    extension TypeReferences
-    
-    @Inject
-    extension XbaseTypeProvider
-    
+
     private val EXTENSIONS = newArrayList("KNode", "KEdge", "KPort", "KLabel", "KRendering",
         "KContainerRendering", "KPolyline", "KColor");     
 
    	def addKRenderingExtensions(JvmGenericType type, EObject helper) {
+   	    val annotationType = findDeclaredType(typeof(Inject), helper) as JvmAnnotationType
+   	    
    	    EXTENSIONS.forEach[ name |
    	        type.members += createJvmField() => [
-                it.annotations += createJvmAnnotationReference() => [
-                    it.setAnnotation(findDeclaredType(typeof(Inject), helper) as JvmAnnotationType);
-                ];
                 it.type = helper.newTypeRef(KRenderingExtensionsPlugin::PLUGIN_ID +"." + name + "Extensions");
        	        it.simpleName = name.toFirstLower + "Extensions";
        	        it.visibility = JvmVisibility::PRIVATE;
+                it.annotations += createJvmAnnotationReference() => [
+                    it.annotation = annotationType;
+                ];
    	        ];
    	    ];
    	}
