@@ -725,7 +725,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
             // Set x coordinate
             switch (extPortSide) {
             case EAST:
-                nodePosition.x = graph.getSize().x + 2 * borderSpacing + insets.right - offset.x;
+                nodePosition.x = graph.getSize().x + borderSpacing + insets.right - offset.x;
                 break;
             
             case WEST:
@@ -777,7 +777,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                 break;
             
             case SOUTH:
-                nodePosition.y = graph.getSize().y + 2 * borderSpacing + insets.bottom - offset.y;
+                nodePosition.y = graph.getSize().y + borderSpacing + insets.bottom - offset.y;
                 break;
             }
         }
