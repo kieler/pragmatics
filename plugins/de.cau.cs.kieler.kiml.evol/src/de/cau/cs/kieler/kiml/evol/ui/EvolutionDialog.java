@@ -20,11 +20,17 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -43,6 +49,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.collect.Maps;
@@ -158,8 +166,24 @@ public class EvolutionDialog extends Dialog {
         Composite composite = (Composite) super.createDialogArea(parent);
         ((GridLayout) composite.getLayout()).numColumns = 2;
         
+        // create a popup menu for copying the population to the clipboard
+        MenuManager popupMenuManager = new MenuManager();
+        popupMenuManager.add(new Action("Copy Population") {
+            private final Clipboard clipboard = new Clipboard(getShell().getDisplay());
+            public void run() {
+                LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+                clipboard.setContents(new Object[] { evolutionModel.toString() },
+                        new Transfer[] { TextTransfer.getInstance() });
+            }
+        });
+        IMenuService menuService = (IMenuService) PlatformUI.getWorkbench().getService(
+                IMenuService.class);
+        menuService.populateContributionManager(popupMenuManager, "popup:de.cau.cs.kieler.kiml.evol");
+        composite.setMenu(popupMenuManager.createContextMenu(composite));
+        
         // create preview areas
         Composite previewPane = new Composite(composite, SWT.NONE);
+        previewPane.setMenu(composite.getMenu());
         previewPane.setLayout(new GridLayout((int) Math.sqrt(INDIVIDUALS_DISPLAY), true));
         selectionButtons = new Button[INDIVIDUALS_DISPLAY];
         previewLabels = new Label[INDIVIDUALS_DISPLAY];
@@ -182,6 +206,7 @@ public class EvolutionDialog extends Dialog {
         
         // create metrics area
         Composite metricsPane = new Composite(composite, SWT.NONE);
+        metricsPane.setMenu(composite.getMenu());
         GridLayout gridLayout = new GridLayout(2, false);
         gridLayout.verticalSpacing = 8;
         metricsPane.setLayout(gridLayout);
@@ -304,6 +329,7 @@ public class EvolutionDialog extends Dialog {
      */
     private void createPreviewArea(final Composite parent, final int index) {
         Composite composite = new Composite(parent, SWT.NONE);
+        composite.setMenu(parent.getMenu());
         GridLayout gridLayout = new GridLayout();
         gridLayout.marginHeight = 0;
         gridLayout.marginWidth = 0;
@@ -311,6 +337,7 @@ public class EvolutionDialog extends Dialog {
         composite.setLayout(gridLayout);
         
         Label previewLabel = new Label(composite, SWT.BORDER);
+        previewLabel.setMenu(parent.getMenu());
         previewLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
         previewLabels[index] = previewLabel;
         previewLabel.addMouseTrackListener(new MouseTrackAdapter() {
@@ -377,19 +404,33 @@ public class EvolutionDialog extends Dialog {
         nameLabel.setText(data.getName() + ": ");
         nameLabel.setToolTipText(data.getDescription());
         nameLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
-        Label resultLabel = new Label(parent, SWT.NONE);
+        final Label resultLabel = new Label(parent, SWT.NONE);
         resultLabel.setText("100%");
         resultLabel.setVisible(false);
         resultLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
         
         // create slider for the weight
-        Slider slider = new Slider(parent, SWT.HORIZONTAL);
+        final Slider slider = new Slider(parent, SWT.HORIZONTAL);
         slider.setMinimum(0);
         slider.setMaximum(SLIDER_MAX);
         GridData gridData = new GridData(SWT.FILL, SWT.TOP, false, false);
         gridData.horizontalIndent = 20;
         gridData.horizontalSpan = 2;
         slider.setLayoutData(gridData);
+        slider.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent e) {
+                resultLabel.setText((100 * slider.getSelection() / SLIDER_MAX) + "%");
+            }
+        });
+        slider.addMouseListener(new MouseAdapter() {
+            public void mouseDown(final MouseEvent e) {
+                resultLabel.setText((100 * slider.getSelection() / SLIDER_MAX) + "%");
+                resultLabel.setVisible(true);
+            }
+            public void mouseUp(final MouseEvent e) {
+                resultLabel.setVisible(false);
+            }
+        });
         metricControls.put(data.getId(), new Pair<Label, Slider>(resultLabel, slider));
         
         // set the initial value for the slider

@@ -23,15 +23,22 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.alg.AbstractEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.alg.CrossoverOperation;
 import de.cau.cs.kieler.kiml.evol.alg.EvaluationOperation;
 import de.cau.cs.kieler.kiml.evol.alg.MutationOperation;
 import de.cau.cs.kieler.kiml.evol.alg.SurvivalOperation;
+import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
+import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
+import de.cau.cs.kieler.kiml.service.AnalysisService;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
@@ -255,6 +262,138 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
             }
             genome.setProperty(Genome.FITNESS, fitness);
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        AnalysisService analysisService = AnalysisService.getInstance();
+        LayoutDataService layoutDataService = LayoutDataService.getInstance();
+        Population population = getPopulation();
+        builder.append("Generation ").append(getGenerationNumber()).append('\n');
+        
+        Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
+        if (metricWeights != null) {
+            builder.append("Weights: ");
+            boolean firstMetric = true;
+            for (Map.Entry<String, Double> weightEntry : metricWeights.entrySet()) {
+                if (weightEntry.getValue() > 0) {
+                    if (!firstMetric) {
+                        builder.append(", ");
+                    }
+                    // SUPPRESS CHECKSTYLE NEXT MagicNumber
+                    builder.append(Math.round(weightEntry.getValue() * 100));
+                    builder.append("% ");
+                    if (weightEntry.getKey().equals(EvaluationOperation.EXEC_TIME_METRIC)) {
+                        builder.append("Execution Time");
+                    } else {
+                        builder.append(analysisService.getAnalysis(weightEntry.getKey()).getName());
+                    }
+                    firstMetric = false;
+                }
+            }
+            builder.append('\n');
+        }
+        
+        builder.append("Population:\n");
+        for (Genome genome : population) {
+            
+            builder.append("  ");
+            boolean firstContext = true;
+            for (LayoutContext context : genome.getContexts()) {
+                if (genome.getContexts().size() > 1) {
+                    if (!firstContext) {
+                        builder.append(' ');
+                    }
+                    builder.append("KNode").append(Integer.toHexString(
+                            context.getProperty(LayoutContext.GRAPH_ELEM).hashCode()));
+                    builder.append('(');
+                }
+                boolean firstGene = true;
+                for (Gene<?> gene : genome.getGenes(context)) {
+                    if (gene.isActive() && gene.getValue() != null) {
+                        if (!firstGene) {
+                            builder.append(", ");
+                        }
+                        
+                        if (gene.getTypeInfo().getGeneType() == GeneType.LAYOUT_TYPE) {
+                            builder.append("Type");
+                        } else {
+                            builder.append(layoutDataService.getOptionData(
+                                    gene.getTypeInfo().getId()).getName());
+                        }
+                        builder.append(" = ");
+                        switch (gene.getTypeInfo().getGeneType()) {
+                        case BOOLEAN:
+                            builder.append(Boolean.toString(gene.intValue() != 0));
+                            break;
+                        case ENUM:
+                            builder.append(gene.enumValue().toString());
+                            break;
+                        case FLOAT:
+                            builder.append(gene.floatValue());
+                            break;
+                        case INTEGER:
+                            builder.append(gene.intValue());
+                            break;
+                        case LAYOUT_ALGO:
+                            builder.append(((LayoutAlgorithmData) gene.listValue()).getName());
+                            break;
+                        case LAYOUT_TYPE:
+                            builder.append(((LayoutTypeData) gene.listValue()).getName());
+                            break;
+                        }
+                        
+                        firstGene = false;
+                    }
+                }
+                if (genome.getContexts().size() > 1) {
+                    builder.append(')');
+                }
+                firstContext = false;
+            }
+            if (genome.getContexts().isEmpty()) {
+                builder.append("empty genome");
+            }
+            
+            Map<String, Float> metricsResult = genome.getProperty(EvaluationOperation.METRIC_RESULT);
+            Double fitness = genome.getProperty(Genome.FITNESS);
+            if (metricsResult != null || fitness != null) {
+                builder.append("\n    => ");
+                boolean firstMetric = true;
+                if (fitness != null) {
+                    builder.append("Fitness: ");
+                    // SUPPRESS CHECKSTYLE NEXT MagicNumber
+                    builder.append(Math.round(fitness * 100));
+                    builder.append("%");
+                    firstMetric = false;
+                }
+                for (Map.Entry<String, Float> metricEntry : metricsResult.entrySet()) {
+                    Double weight = metricWeights.get(metricEntry.getKey());
+                    if (weight == null || weight > 0) {
+                        if (!firstMetric) {
+                            builder.append(", ");
+                        }
+                        if (metricEntry.getKey().equals(EvaluationOperation.EXEC_TIME_METRIC)) {
+                            builder.append("Execution Time");
+                        } else {
+                            builder.append(analysisService.getAnalysis(metricEntry.getKey()).getName());
+                        }
+                        builder.append(": ");
+                        // SUPPRESS CHECKSTYLE NEXT MagicNumber
+                        builder.append(Math.round(metricEntry.getValue() * 100));
+                        builder.append("%");
+                        firstMetric = false;
+                    }
+                }
+            }
+            builder.append('\n');
+        }
+        
+        return builder.toString();
     }
 
 }
