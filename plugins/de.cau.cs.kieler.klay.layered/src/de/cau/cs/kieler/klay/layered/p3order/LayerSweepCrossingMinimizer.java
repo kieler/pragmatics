@@ -820,6 +820,13 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 recentNormalNode = node;
                 northernSide = false;
             } else if (nodeType == NodeType.NORTH_SOUTH_PORT) {
+                // If we have a dummy that represents a self-loop, continue with the next one
+                // (self-loops have no influence on the number of crossings anyway, regardless of where
+                // they are placed)
+                if (node.getProperty(Properties.ORIGIN) instanceof LEdge) {
+                    continue;
+                }
+                
                 // Check if the dummy node belongs to a new normal node
                 LNode currentNormalNode = (LNode) node.getProperty(Properties.ORIGIN);
                 if (recentNormalNode != currentNormalNode) {
@@ -839,6 +846,10 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 for (LPort port : node.getPorts()) {
                     // We assume here that a port of a north / south dummy has either incoming or
                     // outgoing edges, but not both. So far, that's the case.
+                    assert port.getIncomingEdges().isEmpty() ^ port.getOutgoingEdges().isEmpty()
+                        : port.getIncomingEdges().size() + " incoming edges, "
+                        + port.getOutgoingEdges().size() + " outgoing edges";
+                    
                     if (!port.getIncomingEdges().isEmpty()) {
                         nodeInputPort = (LPort) port.getProperty(Properties.ORIGIN);
                     } else if (!port.getOutgoingEdges().isEmpty()) {

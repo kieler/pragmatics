@@ -90,6 +90,7 @@ public class ImageExportAction extends Action {
                             Rectangle area = new Rectangle(0, 0, (int) graphSize.getWidth() + 1,
                                     (int) graphSize.getHeight() + 1);
                             Image image = new Image(canvas.getDisplay(), area.width, area.height);
+                            canvas.getRenderer().markDirty(area);
                             canvas.getRenderer().render(graph, new GC(image), area);
                             monitor.worked(1);
                             if (monitor.isCanceled()) {

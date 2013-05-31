@@ -49,7 +49,6 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -820,7 +819,7 @@ public class SWTGraphics2D extends Graphics2D {
      *            specifies the iterator to be converted.
      * @return the corresponding path object. Must be disposed() when no longer used.
      */
-    private Path pathIterator2Path(final PathIterator iter) {
+    protected Path pathIterator2Path(final PathIterator iter) {
         final float[] coords = new float[6];
 
         final Path path = new Path(device);
@@ -1528,21 +1527,6 @@ public class SWTGraphics2D extends Graphics2D {
     }
 
     /**
-     * Draws the provided AWT GeneralPath respecting the current AWT transform without any caching.
-     * We need to assess whether this is OK w.r.t. the runtime performance.
-     * 
-     * @author chsch
-     * 
-     * @param gp
-     *            path to draw
-     */
-    public void drawGeneralPath(final GeneralPath gp) {
-        gc.getGCData().lineWidth = getTransformedLineWidthFloat();
-
-        gc.drawPath(pathIterator2Path(gp.getPathIterator(transform)));
-    }
-
-    /**
      * Draws the provided path.
      * 
      * @deprecated (chsch) Method doesn't handle the floating point 2 integer (awtToSwt) conversion! 
@@ -1551,9 +1535,6 @@ public class SWTGraphics2D extends Graphics2D {
      *            path to draw
      */
     public void drawPath(final Path p) {
-//        gc.setLineWidth((int) lineWidth);
-//        gc.setLineStyle(this.lineStyle);
-//        gc.setLineCap(this.lineCap);
         gc.setTransform(swtTransform);
         // FIXME this is a workaround for Eclipse Bug 335769
         gc.getGCData().state |= 1 << 9;
