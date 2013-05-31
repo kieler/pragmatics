@@ -250,7 +250,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         }
         
         if (offset == null) {
-            offset = KimlUtil.calcPortOffset(kport, portSide);
+            // if port coordinates are (0,0), we default to port offset 0 to make the common case
+            // frustration-free
+            if (portLayout.getXpos() == 0.0f && portLayout.getYpos() == 0.0f) {
+                offset = 0.0f;
+            } else {
+                offset = KimlUtil.calcPortOffset(kport, portSide);
+            }
             portLayout.setProperty(LayoutOptions.OFFSET, offset);
         }
         
