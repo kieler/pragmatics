@@ -137,7 +137,7 @@ public class TNode extends TShape {
      * 
      * @return the children
      */
-    public List<TNode> getChildren() {
+    public LinkedList<TNode> getChildren() {
         if (children == null) {
             children = new LinkedList<TNode>();
         }

@@ -154,7 +154,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
     private int setFan(final TNode tNode) {
         int fan = 0;
         for (TNode tChild : tNode.getChildren()) {
-            fan += setFan(tChild) < 1 ? 1 : setFan(tChild) ;
+            fan += setFan(tChild) < 1 ? 1 : setFan(tChild);
         }
         tNode.setProperty(Properties.FAN, fan);
         return fan;

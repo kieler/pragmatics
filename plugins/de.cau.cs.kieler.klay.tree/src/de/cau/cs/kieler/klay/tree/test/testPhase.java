@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.tree.p1;
+package de.cau.cs.kieler.klay.tree.test;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -38,8 +38,9 @@ public class testPhase implements ILayoutPhase {
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
             new IntermediateProcessingConfiguration(
-                    IntermediateProcessingConfiguration.BEFORE_PHASE_1,
-                    EnumSet.of(LayoutProcessorStrategy.TEST_PROCESSOR));
+                    IntermediateProcessingConfiguration.BEFORE_PHASE_2,
+                    EnumSet.of(LayoutProcessorStrategy.TEST_PROCESSOR)
+                    );
 
     /** default value for spacing between nodes. */
     private static final float DEFAULT_SPACING = 15.0f;
@@ -59,7 +60,6 @@ public class testPhase implements ILayoutPhase {
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Mr.Test", 1);
 
-        // TODO structure add root or potential roots
         List<TNode> root = new ArrayList<TNode>();
         for (TNode tNode : tGraph.getNodes()) {
             if (tNode.getProperty(Properties.ROOT))
@@ -106,8 +106,8 @@ public class testPhase implements ILayoutPhase {
                 childFan = tNode.getProperty(Properties.FAN);
                 tNode.getPosition().x = occupiedSpace + childFan * DEFAULT_SIZE / 2;
                 tNode.getPosition().y = depth;
-                System.out.println("x: " + tNode.getPosition().x);
                 occupiedSpace += childFan < 1 ? 1 * DEFAULT_SIZE : childFan* DEFAULT_SIZE;
+                System.out.println("x: " + tNode.getPosition().x);
                 System.out.println("o: " + occupiedSpace);
 
                 nextLevel.addAll(tNode.getChildren());
