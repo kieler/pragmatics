@@ -412,7 +412,7 @@ public class EvolutionDialog extends Dialog {
         // create slider for the weight
         final Slider slider = new Slider(parent, SWT.HORIZONTAL);
         slider.setMinimum(0);
-        slider.setMaximum(SLIDER_MAX);
+        slider.setMaximum(SLIDER_MAX + slider.getThumb());
         GridData gridData = new GridData(SWT.FILL, SWT.TOP, false, false);
         gridData.horizontalIndent = 20;
         gridData.horizontalSpan = 2;
