@@ -288,7 +288,9 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
         KVector graphOffset = graph.getOffset();
         
-        // The exact coordinates depend on the port's side...
+        // The exact coordinates depend on the port's side... (often enough, these calculations will
+        // give the same results as the port coordinates already computed, but depending on the kind of
+        // connected components processing, the computed coordinates might be wrong now)
         switch (portDummy.getProperty(Properties.EXT_PORT_SIDE)) {
         case NORTH:
             portPosition.x += insets.left + borderSpacing + graphOffset.x - (portWidth / 2.0);

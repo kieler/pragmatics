@@ -28,10 +28,16 @@ import java.util.Set;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.SizeConstraint;
+import de.cau.cs.kieler.kiml.options.SizeOptions;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.components.ComponentsProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
@@ -50,6 +56,7 @@ import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.SplineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -78,13 +85,13 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * test run is executed as follows:
  * </p>
  * <ol>
- * <li>Call {@link #prepareLayoutTest(LGraph, IKielerProgressMonitor)} to start a new run. The given
- * graph might be split into its connected components.</li>
- * <li>Call one of the actual test methods. {@link #runLayoutTestStep(IKielerProgressMonitor)} runs
- * the next step of the algorithm. {@link #runLayoutTestUntil(IKielerProgressMonitor, Class)} runs
- * the algorithm until a given layout processor has finished executing. Both methods resume
- * execution from where the algorithm has stopped previously.</li>
- * <li>Once the test run has finished, call {@link #finalizeLayoutTest()}.</li>
+ *   <li>Call {@link #prepareLayoutTest(LGraph, IKielerProgressMonitor)} to start a new run. The given
+ *     graph might be split into its connected components.</li>
+ *   <li>Call one of the actual test methods. {@link #runLayoutTestStep(IKielerProgressMonitor)} runs
+ *     the next step of the algorithm. {@link #runLayoutTestUntil(IKielerProgressMonitor, Class)} runs
+ *     the algorithm until a given layout processor has finished executing. Both methods resume
+ *     execution from where the algorithm has stopped previously.</li>
+ *   <li>Once the test run has finished, call {@link #finalizeLayoutTest()}.</li>
  * </ol>
  * 
  * @see ILayoutPhase
@@ -154,6 +161,9 @@ public final class KlayLayered {
             layout(comp, progressMonitor.subTask(1.0f / components.size()));
         }
         LGraph result = componentsProcessor.combine(components);
+        
+        // resize the resulting graph, according to minimal size constraints and such
+        resizeGraph(result);
 
         progressMonitor.done();
 
@@ -678,6 +688,74 @@ public final class KlayLayered {
         // invoke the layout processor on each of the given graphs
         for (LGraph graph : graphs) {
             processor.process(graph, new BasicProgressMonitor());
+        }
+    }
+
+    // /////////////////////////////////////////////////////////////////////////////
+    // Graph Resizing
+    
+    /**
+     * Sets the size of the given graph such that size constraints are adhered to. Major parts of this
+     * method are adapted from
+     * {@link KimlUtil#resizeNode(de.cau.cs.kieler.core.kgraph.KNode, float, float, boolean)}.
+     * 
+     * <p>Note: This method doesn't care about labels of compound nodes since those labels are not
+     * attached to the graph.</p>
+     * 
+     * @param graph the graph to resize.
+     */
+    private void resizeGraph(final LGraph graph) {
+        Set<SizeConstraint> sizeConstraint = graph.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+        Set<SizeOptions> sizeOptions = graph.getProperty(LayoutOptions.SIZE_OPTIONS);
+        
+        // remember the graph's old size
+        KVector oldSize = graph.getActualSize();
+        
+        // calculate the new size
+        if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
+            float minWidth = graph.getProperty(LayoutOptions.MIN_WIDTH);
+            float minHeight = graph.getProperty(LayoutOptions.MIN_HEIGHT);
+            
+            // if minimum width or height are not set, maybe default to default values
+            if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
+                if (minWidth <= 0) {
+                    minWidth = KimlUtil.DEFAULT_MIN_WIDTH;
+                }
+                
+                if (minHeight <= 0) {
+                    minHeight = KimlUtil.DEFAULT_MIN_HEIGHT;
+                }
+            }
+            
+            // apply new size
+            graph.applyActualSize(new KVector(
+                    Math.max(oldSize.x, minWidth),
+                    Math.max(oldSize.y, minHeight)));
+        }
+        
+        // get new size
+        KVector newSize = graph.getActualSize();
+        
+        // correct the position of eastern and southern hierarchical ports, if necessary
+        if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)
+                && (newSize.x > oldSize.x || newSize.y > oldSize.y)) {
+            
+            // iterate over the graph's nodes, looking for eastern / southern external ports (at this
+            // point, the graph's nodes are not divided into layers anymore)
+            for (LNode node : graph.getLayerlessNodes()) {
+                // we're only looking for external port dummies
+                if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
+                    continue;
+                }
+                
+                // check which side the external port is on
+                PortSide extPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
+                if (extPortSide == PortSide.EAST) {
+                    node.getPosition().x += (newSize.x - oldSize.x);
+                } else  if (extPortSide == PortSide.SOUTH) {
+                    node.getPosition().y += (newSize.y - oldSize.y);
+                }
+            }
         }
     }
 

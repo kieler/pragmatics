@@ -141,7 +141,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         KInsets insets = parentLayout.getInsets();
         totalWidth += insets.getLeft() + insets.getRight();
         totalHeight += insets.getTop() + insets.getBottom();
-        KimlUtil.resizeNode(parent, totalWidth, totalHeight, false);
+        KimlUtil.resizeNode(parent, totalWidth, totalHeight, false, true);
     }
     
     /** the maximal number of generated bend points for each edge. */

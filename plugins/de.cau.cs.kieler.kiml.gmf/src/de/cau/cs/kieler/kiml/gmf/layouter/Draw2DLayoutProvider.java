@@ -191,7 +191,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         Dimension layoutSize = graph.getLayoutSize();
         float width = insets.getLeft() + layoutSize.width + insets.getRight();
         float height = insets.getTop() + layoutSize.height + insets.getBottom();
-        KimlUtil.resizeNode(parentNode, width, height, false);
+        KimlUtil.resizeNode(parentNode, width, height, false, true);
     }
 
 }

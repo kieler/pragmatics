@@ -896,10 +896,10 @@ public final class CompoundKGraphImporter extends KGraphImporter {
 
             // ports have been positioned using dummy nodes
             parentLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-            KimlUtil.resizeNode(target, width, height, false);
+            KimlUtil.resizeNode(target, width, height, false, true);
         } else {
             // ports have not been positioned yet - leave this for next layouter
-            KimlUtil.resizeNode(target, width, height, true);
+            KimlUtil.resizeNode(target, width, height, true, true);
         }
     }
 

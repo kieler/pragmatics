@@ -55,15 +55,6 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
     private final HashCodeCounter hashCodeCounter;
     
     /**
-     * Returns the hash code counter for all graph elements, only visible by other package members.
-     * 
-     * @return the counter used to find a unique but predictable hash code.
-     */
-    HashCodeCounter hashCodeCounter() {
-        return hashCodeCounter;
-    }
-    
-    /**
      * Create a graph with a new hash code counter. This constructor should only be used when
      * the content does not matter, e.g. when the graph remains empty.
      */
@@ -103,6 +94,15 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
             return "G-layered" + layers.toString();
         }
         return "G[layerless" + layerlessNodes.toString() + ", layers" + layers.toString() + "]";
+    }
+    
+    /**
+     * Returns the hash code counter for all graph elements, only visible by other package members.
+     * 
+     * @return the counter used to find a unique but predictable hash code.
+     */
+    HashCodeCounter hashCodeCounter() {
+        return hashCodeCounter;
     }
 
     /**
@@ -183,6 +183,35 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
     public Iterator<Layer> iterator() {
         return layers.iterator();
     }
+    
+    /**
+     * Resizes the graph such that the next call to {@link #getActualSize()} will return the size
+     * given as a parameter here.
+     * 
+     * @param actualSize
+     *            the graph's new actual size.
+     * @throws IllegalArgumentException
+     *             if the new actual size is lower than the insets and border spacing required.
+     */
+    public void applyActualSize(final KVector actualSize) {
+        float borderSpacing = getProperty(Properties.BORDER_SPACING);
+        
+        // error checking
+        if (actualSize.x < insets.left + insets.right + 2 * borderSpacing) {
+            throw new IllegalArgumentException("width lower than insets and border spacing.");
+        }
+
+        if (actualSize.y < insets.top + insets.bottom + 2 * borderSpacing) {
+            throw new IllegalArgumentException("height lower than insets and border spacing.");
+        }
+        
+        // apply new size
+        size.x = actualSize.x - insets.left - insets.right - 2 * borderSpacing;
+        size.y = actualSize.y - insets.top - insets.bottom - 2 * borderSpacing;
+    }
+
+    // /////////////////////////////////////////////////////////////////////////////
+    // Debug
     
     /**
      * Outputs a representation of this graph in dot format to the given writer. The

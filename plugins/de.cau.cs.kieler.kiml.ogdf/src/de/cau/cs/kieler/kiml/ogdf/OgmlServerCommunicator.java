@@ -558,7 +558,7 @@ public class OgmlServerCommunicator {
         if (!(Double.isNaN(boundingBoxWidth) || Double.isNaN(boundingBoxHeight))) {
             float width = boundingBoxWidth + 2 * borderSpacing + insets.getLeft() + insets.getRight();
             float height = boundingBoxHeight + 2 * borderSpacing + insets.getTop() + insets.getBottom();
-            KimlUtil.resizeNode(parentNode, width, height, false);
+            KimlUtil.resizeNode(parentNode, width, height, false, true);
         }
         progressMonitor.done();
     }
