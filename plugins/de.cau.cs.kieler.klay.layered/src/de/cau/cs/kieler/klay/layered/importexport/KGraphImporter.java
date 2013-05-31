@@ -250,14 +250,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         }
         
         if (offset == null) {
-            // the offset can only be calculated if node size and port position are known; this can only
-            // be expected if port constraints are set to FIXED_RATIO or FIXED_POS
-            if (portConstraints.isRatioFixed() || portConstraints.isPosFixed()) {
-                offset = KimlUtil.calcPortOffset(kport, portSide);
-            } else {
-                offset = 0.0f;
-            }
-            
+            offset = KimlUtil.calcPortOffset(kport, portSide);
             portLayout.setProperty(LayoutOptions.OFFSET, offset);
         }
         
