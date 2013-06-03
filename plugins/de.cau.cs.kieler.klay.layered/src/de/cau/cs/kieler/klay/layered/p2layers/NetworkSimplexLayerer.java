@@ -25,6 +25,7 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.UnsupportedConfigurationException;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -78,10 +79,10 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
                 // After Phase 5
                 null);
     
-    /** additional processor dependencies for handling big nodes. */
-    private static final IntermediateProcessingConfiguration BIG_NODES_PROCESSING_ADDITIONS =
-        new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.BEFORE_PHASE_2,
-                LayoutProcessorStrategy.BIG_NODES_PROCESSOR);
+//    /** additional processor dependencies for handling big nodes. */
+//    private static final IntermediateProcessingConfiguration BIG_NODES_PROCESSING_ADDITIONS =
+//        new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.BEFORE_PHASE_2,
+//                LayoutProcessorStrategy.BIG_NODES_PROCESSOR);
     
     // ================================== Attributes ==============================================
 
@@ -220,7 +221,11 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
         
         // Additional dependencies
         if (graph.getProperty(Properties.DISTRIBUTE_NODES)) {
-            strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS);
+            // FIXME This option is not supported yet.
+            throw new UnsupportedConfigurationException(
+                    "Big nodes processing is currently not supported");
+            
+//            strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS);
         }
         
         return strategy;
