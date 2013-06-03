@@ -42,6 +42,9 @@ public class TNode extends TShape {
     private String label;
     /** The parent node. */
     private TNode parent;
+    
+    private TNode leftChild;
+    private TNode rightChild;
     /** List of child nodes. */
     private LinkedList<TNode> children;
     
@@ -53,6 +56,8 @@ public class TNode extends TShape {
     public TNode(final int id, final TGraph graph) {
         super(id, graph);
         this.parent = null;
+        this.rightChild = null;
+        this.leftChild = null;
         this.children = new LinkedList<TNode>();
     }
 
@@ -62,6 +67,8 @@ public class TNode extends TShape {
     public TNode(final int id, final TGraph graph, final TNode parent) {
         super(id, graph);
         this.parent = parent;
+        this.leftChild = null;
+        this.rightChild = null;
         this.children = new LinkedList<TNode>();
     }
 
@@ -75,6 +82,8 @@ public class TNode extends TShape {
         super(id, graph);
         this.label = label;
         this.parent = null;
+        this.leftChild = null;
+        this.rightChild = null;
         this.children = new LinkedList<TNode>();
     }
 
@@ -90,6 +99,8 @@ public class TNode extends TShape {
         super(id, graph);
         this.label = label;
         this.parent = parent;
+        this.leftChild = null;
+        this.rightChild = null;
         this.children = new LinkedList<TNode>();
     }
 
@@ -130,6 +141,14 @@ public class TNode extends TShape {
      */
     public TNode getParent() {
         return parent;
+    }
+    
+    public TNode getLeftChild() {
+        return leftChild;
+    }
+    
+    public TNode getRightChild() {
+        return rightChild;
     }
 
     /**
@@ -184,6 +203,16 @@ public class TNode extends TShape {
      */
     public void setParent(TNode parent) {
         this.parent = parent;
+    }
+    
+    public void setLeftChild(TNode leftChild) {
+        this.leftChild = leftChild;
+        children.add(leftChild);
+    }
+    
+    public void setRightChild(TNode rightChild) {
+        this.rightChild = rightChild;
+        children.add(rightChild);
     }
 
     /**

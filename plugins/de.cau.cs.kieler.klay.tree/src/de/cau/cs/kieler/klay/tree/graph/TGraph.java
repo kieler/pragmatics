@@ -121,4 +121,26 @@ public class TGraph extends MapPropertyHolder {
         edges.add(tedge);
         return tedge;
     }
+    
+    public boolean isLeaf(TNode tNode) {
+        if (tNode == null) {
+            return false;
+        }
+        else if (tNode.getLeftChild() == null && tNode.getRightChild() == null) {
+            return true;
+        }
+        else { 
+            isLeaf(tNode.getLeftChild());
+            isLeaf(tNode.getRightChild());
+        }
+        return true;
+    }
+    
+    public TNode getFirstChild(TNode tNode) {
+        return tNode.getChildren().getFirst();
+    }
+    
+    public TNode getLastChild(TNode tNode) {
+        return tNode.getChildren().getLast();
+    }
 }
