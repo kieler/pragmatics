@@ -137,6 +137,7 @@
             <version>0.0.1-SNAPSHOT</version>
           </docletArtifact>
           <useStandardDocletOptions>false</useStandardDocletOptions>
+          <additionalJOption>-p pragmatics</additionalJOption>
         </configuration>
 
         <!--        <executions>
