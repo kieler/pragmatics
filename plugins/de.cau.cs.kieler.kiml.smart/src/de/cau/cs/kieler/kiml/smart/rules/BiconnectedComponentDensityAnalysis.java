@@ -39,9 +39,6 @@ public class BiconnectedComponentDensityAnalysis implements IAnalysis {
     /** the identifier of the biconnected component density analysis. */
     public static final String ID = "de.cau.cs.kieler.kiml.smart.biconnectedComponentsDensity";
     
-    /** the density value for components of size 2. */
-    private static final double TWO_COMPONENT_DENS = 0.4;
-
     /**
      * {@inheritDoc}
      */
@@ -51,7 +48,7 @@ public class BiconnectedComponentDensityAnalysis implements IAnalysis {
         int graphSize = parentNode.getChildren().size();
         if (graphSize == 0) {
             progressMonitor.done();
-            return 1.0;
+            return 0.0d;
         }
         
         // gather the biconnected components as a list of hash sets
@@ -65,11 +62,13 @@ public class BiconnectedComponentDensityAnalysis implements IAnalysis {
         }
         
         // count the number of edges in each biconnected component
-        double density = 0;
+        double densitySum = 0;
+        int nodeSum = 0;
         for (Set<KNode> component : components) {
             int componentSize = component.size();
-            if (componentSize <= 2) {
-                density += TWO_COMPONENT_DENS;
+            // SUPPRESS CHECKSTYLE NEXT MagicNumber
+            if (componentSize <= 3) {
+                densitySum += componentSize;
             } else {
                 int edgeCount = 0;
                 for (KNode node : component) {
@@ -79,17 +78,21 @@ public class BiconnectedComponentDensityAnalysis implements IAnalysis {
                         }
                     }
                 }
-                int faultEdges = edgeCount - componentSize;
-                density += (double) (faultEdges * faultEdges) / componentSize;
+                // SUPPRESS CHECKSTYLE NEXT MagicNumber
+                densitySum += Math.min(2.0 * (edgeCount - componentSize) / (componentSize - 3),
+                        componentSize);
             }
+            nodeSum += componentSize;
         }
+        
+        double result = densitySum / nodeSum;
         
         dfsMap.clear();
         components.clear();
         lowpt = null;
         parent = null;
         progressMonitor.done();
-        return density >= graphSize ? 1.0 : density / graphSize;
+        return result;
     }
 
     /** the biconnected components found by the algorithm. */

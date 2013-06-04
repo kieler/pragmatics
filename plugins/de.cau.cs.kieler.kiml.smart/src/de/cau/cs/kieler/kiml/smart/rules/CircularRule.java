@@ -30,8 +30,6 @@ import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
  */
 public class CircularRule implements ISmartRule {
     
-    /** minimal number of nodes for full result. */
-    private static final int MIN_NODES = 4;
     /** the penalty factor for missing graph features. */
     private static final double FEATURE_PENALTY = 0.7;
 
@@ -45,11 +43,8 @@ public class CircularRule implements ISmartRule {
             double fp = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
                     LayoutTypeData.TYPE_CIRCLE);
     
-            double result = 1 - density;
-            if (nodeCount < MIN_NODES) {
-                result *= (double) nodeCount / MIN_NODES;
-            }
-            return result * Math.pow(FEATURE_PENALTY, fp);
+            // SUPPRESS CHECKSTYLE NEXT MagicNumber
+            return 2 * Math.abs(density - 0.5) * Math.pow(FEATURE_PENALTY, fp);
         }
         return 0;
     }

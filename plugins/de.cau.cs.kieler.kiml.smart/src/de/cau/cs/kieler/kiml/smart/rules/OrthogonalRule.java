@@ -32,8 +32,6 @@ public class OrthogonalRule implements ISmartRule {
     
     /** identifier of the planarity test analysis. */
     private static final String PLANARITY_ID = "de.cau.cs.kieler.klay.planarity";
-    /** minimal number of nodes for full result. */
-    private static final int MIN_NODES = 5;
     /** the penalty factor for missing graph features. */
     private static final double FEATURE_PENALTY = 0.7;
 
@@ -47,11 +45,8 @@ public class OrthogonalRule implements ISmartRule {
             double fp = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
                     LayoutTypeData.TYPE_ORTHOGONAL);
             
-            double result = 1 - (double) Math.min(crossingEdges, nodeCount) / nodeCount;
-            if (nodeCount < MIN_NODES) {
-                result *= (double) nodeCount / MIN_NODES;
-            }
-            return result * Math.pow(FEATURE_PENALTY, fp);
+            return (1 - (double) Math.min(crossingEdges, nodeCount) / nodeCount)
+                    * Math.pow(FEATURE_PENALTY, fp);
         }
         return 0;
     }
