@@ -68,7 +68,7 @@ public class BiconnectedComponentDensityAnalysis implements IAnalysis {
             int componentSize = component.size();
             // SUPPRESS CHECKSTYLE NEXT MagicNumber
             if (componentSize <= 3) {
-                densitySum += componentSize;
+                densitySum += componentSize / 2.0;
             } else {
                 int edgeCount = 0;
                 for (KNode node : component) {
