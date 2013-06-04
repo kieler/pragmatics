@@ -43,8 +43,8 @@ public class SurvivalOperation implements IEvolutionaryOperation {
     private static final int MIN_SURVIVORS = 5;
     /** Maximum number of individuals that may survive. */
     private static final int MAX_SURVIVORS = 100;
-    /** factor for minimal distance between surviving individuals. */
-    private static final double MIN_DIST_FACTOR = 0.1;
+    /** minimal distance between surviving individuals. */
+    private static final double MIN_DIST = 0.2;
     /** minimal fitness value for survivors. */
     private static final double MIN_FITNESS = 0.05;
 
@@ -73,12 +73,9 @@ public class SurvivalOperation implements IEvolutionaryOperation {
 
         Genome[] survivors = new Genome[surviveCount];
         Iterator<Genome> genomeIter = population.iterator();
-        for (int i = 0; i < MIN_SURVIVORS; i++) {
-            survivors[i] = genomeIter.next();
-        }
+        survivors[0] = genomeIter.next();
         
-        double minDist = survivors[0].getSize() * MIN_DIST_FACTOR;
-        for (int i = MIN_SURVIVORS; i < surviveCount; i++) {
+        for (int i = 1; i < surviveCount; i++) {
             Genome individual = null;
             int sampleCount = (int) Math.log(i) + 1;
             while (genomeIter.hasNext()) {
@@ -91,7 +88,7 @@ public class SurvivalOperation implements IEvolutionaryOperation {
                     for (int j = 0; j < sampleCount; j++) {
                         Genome sample = survivors[random.nextInt(i)];
                         double distance = Genome.distance(genome, sample);
-                        if (distance < minDist) {
+                        if (distance < MIN_DIST) {
                             distinct = false;
                             break;
                         }

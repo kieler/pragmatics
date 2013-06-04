@@ -18,13 +18,13 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.BendsAnalysis;
 import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
 import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCrossingsAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
 
 /**
- * Calculates a normalized "crosslessness" metric, based upon the number of
- * crossings. This does not care for hierarchies.
+ * Calculates a normalized "crosslessness" metric, based upon the number of crossings.
+ * See Helen C. Purchase, Metrics for Graph Drawing Aesthetics, 2002.
  *
  * @author bdu
  * @kieler.design proposed by msp
@@ -32,8 +32,8 @@ import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCrossingsAnalysis;
  */
 public class EdgeCrossingsMetric implements IAnalysis {
 
-    /** exponent for the calculated crossings ratio. */
-    private static final double CROSS_RATIO_EXP = 0.2;
+    /** split value for the two linear regions of the result metric. */
+    private static final double SCALE_SPLIT = 0.2;
 
     /**
      * {@inheritDoc}
@@ -44,21 +44,29 @@ public class EdgeCrossingsMetric implements IAnalysis {
         
         // EdgeCrossingsAnalysis result is Object[] {min, avg, max, sum}
         Object[] crossingsResult = (Object[]) results.get(EdgeCrossingsAnalysis.ID);
-        Object edgesResult = results.get(EdgeCountAnalysis.ID);
-        Object[] bendsResult = (Object[]) results.get(BendsAnalysis.ID);
-        int edgesCount = (Integer) edgesResult;
-        int bendsCount = (Integer) bendsResult[3]; // SUPPRESS CHECKSTYLE MagicNumber
         int crossingsCount = (Integer) crossingsResult[3]; // SUPPRESS CHECKSTYLE MagicNumber
+        Object edgesResult = results.get(EdgeCountAnalysis.ID);
+        int edgeCount = (Integer) edgesResult;
+        Object nodesResult = results.get(NodeCountAnalysis.ID);
+        int nodeCount = (Integer) nodesResult;
 
-        int edgesAuxCount = edgesCount + bendsCount;
-        int maxCrossingsCount = (edgesAuxCount * (edgesAuxCount - 1)) / 2;
-
-        assert crossingsCount <= maxCrossingsCount;
+        int maxCrossingsCount = (edgeCount * (edgeCount - 1)) / 2;
 
         float result;
-        if (maxCrossingsCount > 0) {
-            result = 1.0f - (float) Math.pow((double) crossingsCount / maxCrossingsCount,
-                    CROSS_RATIO_EXP);
+        if (crossingsCount >= maxCrossingsCount) {
+            result = 0.0f;
+        } else if (maxCrossingsCount > 0) {
+            // the number of crossings is divided in regions [0, splitCnt] and [splitCnt, maxCrCnt]
+            // where splitCnt = edgeCnt^3 / nodeCnt^2
+            double splitCount = Math.min((double) edgeCount * edgeCount * edgeCount
+                    / (nodeCount * nodeCount),
+                    maxCrossingsCount * (1 - SCALE_SPLIT));
+            if (crossingsCount <= splitCount) {
+                result = 1.0f - (float) ((1 - SCALE_SPLIT) * crossingsCount / splitCount);
+            } else {
+                result = (float) (SCALE_SPLIT * (1 - (crossingsCount - splitCount)
+                        / (maxCrossingsCount - splitCount)));
+            }
         } else {
             result = 1.0f;
         }

@@ -14,14 +14,18 @@
 package de.cau.cs.kieler.kiml.evol;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.IWorkbenchPart;
 
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
@@ -40,7 +44,6 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.LayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
  * A factory for genes and genomes.
@@ -78,46 +81,63 @@ public final class GenomeFactory {
      * 
      * @param layoutMapping a layout mapping
      * @param config a layout configurator for obtaining default values
-     * @param context a layout context for obtaining default value
+     * @param options the layout options to consider in the constructed genome
      * @return a genome filled with genes
      */
     public static Genome createInitialGenome(final LayoutMapping<?> layoutMapping,
-            final ILayoutConfig config, final LayoutContext context) {
+            final ILayoutConfig config, final Collection<LayoutOptionData<?>> options) {
         LayoutDataService dataService = LayoutDataService.getInstance();
         LayoutOptionData<?> algoOptionData = dataService.getOptionData(
                 LayoutOptions.ALGORITHM.getId());
-        String algorithmId = (String) config.getValue(algoOptionData, context);
         LayoutOptionData<?> diagTypeData = dataService.getOptionData(
                 LayoutOptions.DIAGRAM_TYPE.getId());
-        String diagramType = (String) config.getValue(diagTypeData, context);
-        LayoutAlgorithmData algorithmData = DefaultLayoutConfig.getLayouterData(
-                algorithmId, diagramType);
         
-        Genome genome = new Genome(dataService.getOptionData().size());
+        Genome genome = new Genome();
         
-        // create gene for the layout type
-        LayoutTypeData typeData = dataService.getTypeData(algorithmData.getType());
-        genome.getGenes().add(createLayoutTypeGene(typeData));
+        // traverse the compound hierarchy of the graph
+        LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
+        nodeQueue.add(layoutMapping.getLayoutGraph());
         
-        // create gene for the layout algorithm
-        genome.getGenes().add(createAlgorithmGene(typeData, algorithmData));
-        
-        // create genes for the other layout options
-        for (LayoutOptionData<?> optionData : dataService.getOptionData()) {
-            if (optionData.getTargets().contains(LayoutOptionData.Target.PARENTS)
-                    && optionData.getVariance() > 0) {
+        do {
+            KNode parentNode = nodeQueue.removeFirst();
+            
+            // create layout context for the parent node
+            LayoutContext context = createContext(parentNode, layoutMapping, config);
+            genome.addContext(context, dataService.getOptionData().size() + 1);
+            String algorithmId = (String) config.getValue(algoOptionData, context);
+            String diagramType = (String) config.getValue(diagTypeData, context);
+            LayoutAlgorithmData algorithmData = DefaultLayoutConfig.getLayouterData(
+                    algorithmId, diagramType);
+
+            if (options.contains(algoOptionData)) {
+                // create genes for the layout type and algorithm
+                LayoutTypeData typeData = dataService.getTypeData(algorithmData.getType());
+                genome.getGenes(context).add(createLayoutTypeGene(typeData));
+                genome.getGenes(context).add(createAlgorithmGene(typeData, algorithmData));
+            }
+            
+            // create genes for the other layout options (the algorithm option is excluded)
+            for (LayoutOptionData<?> optionData : options) {
                 TypeInfo<?> typeInfo = createTypeInfo(optionData);
                 if (typeInfo != null) {
                     Gene<?> gene;
                     if (algorithmData.knowsOption(optionData)) {
-                        gene = createDefaultGene(algorithmData, optionData, typeInfo, config, context);
+                        gene = createDefaultGene(algorithmData, optionData, typeInfo, config,
+                                context);
                     } else {
                         gene = Gene.create(null, typeInfo, false);
                     }
-                    genome.getGenes().add(gene);
+                    genome.getGenes(context).add(gene);
                 }
             }
-        }
+            
+            // look for other parent nodes
+            for (KNode child : parentNode.getChildren()) {
+                if (!child.getChildren().isEmpty()) {
+                    nodeQueue.add(child);
+                }
+            }
+        } while (!nodeQueue.isEmpty());
         return genome;
     }
     
@@ -130,7 +150,18 @@ public final class GenomeFactory {
     public static Gene<Integer> createLayoutTypeGene(final LayoutTypeData typeData) {
         List<LayoutTypeData> typeList = new ArrayList<LayoutTypeData>(LayoutDataService.getInstance()
                 .getTypeData());
+        // remove layout types that have no registered algorithms
+        ListIterator<LayoutTypeData> typeIter = typeList.listIterator();
+        while (typeIter.hasNext()) {
+            if (typeIter.next().getLayouters().isEmpty()) {
+                typeIter.remove();
+            }
+        }
+        
         int index = typeList.indexOf(typeData);
+        if (index < 0) {
+            throw new IllegalStateException("The active layout type is not registered.");
+        }
         TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(LAYOUT_TYPE_ID, GeneType.LAYOUT_TYPE, 0,
                 typeList.size() - 1, typeList, P_LAYOUT_TYPE_MUTATION, 1);
         return Gene.create(index, typeInfo, true);
@@ -164,6 +195,9 @@ public final class GenomeFactory {
         List<LayoutAlgorithmData> algoList = layoutType.getLayouters(); 
         TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(LayoutOptions.ALGORITHM.getId(),
                 GeneType.LAYOUT_ALGO, 0, algoList.size() - 1, algoList, P_LAYOUT_ALGO_MUTATION, 1);
+        if (algoList.isEmpty()) {
+            return Gene.create(null, typeInfo, false);
+        }
         int randomAlgoIndex = random.nextInt(algoList.size());
         return Gene.create(randomAlgoIndex, typeInfo, true);
     }
@@ -181,9 +215,10 @@ public final class GenomeFactory {
             return new TypeInfo<Integer>(optionData.getId(), GeneType.BOOLEAN, 0,
                     1, optionData, P_BOOLEAN_MUTATION, 1);
         case ENUM:
+            int enumConstCount = optionData.getOptionClass().getEnumConstants().length;
             return new TypeInfo<Integer>(optionData.getId(), GeneType.ENUM, 0,
-                    optionData.getOptionClass().getEnumConstants().length - 1,
-                    optionData, P_ENUM_MUTATION, 1);
+                    enumConstCount - 1, optionData,
+                    enumConstCount > 2 ? P_ENUM_MUTATION : P_BOOLEAN_MUTATION, 1);
         case INT:
             return new TypeInfo<Integer>(optionData.getId(), GeneType.INTEGER,
                     (Comparable<Integer>) optionData.getLowerBound(),
@@ -200,15 +235,13 @@ public final class GenomeFactory {
     }
     
     /**
-     * Create a layout configurator and context for obtaining default values.
+     * Create a layout configurator for obtaining default values.
+     * Note: the semantic layout configurations are not considered for default values.
      * 
      * @param layoutMapping a layout mapping created by a diagram layout manager
-     * @return a pair consisting of a layout configurator and a context that can be used
-     *          by that configurator
+     * @return a layout configurator
      */
-    public static Pair<ILayoutConfig, LayoutContext> createConfig(
-            final LayoutMapping<?> layoutMapping) {
-        // create basic layout configuration
+    public static ILayoutConfig createConfig(final LayoutMapping<?> layoutMapping) {
         CompoundLayoutConfig clc = new CompoundLayoutConfig();
         clc.add(new DefaultLayoutConfig());
         for (ILayoutConfig config : LayoutInfoService.getInstance().getActiveConfigs()) {
@@ -217,11 +250,23 @@ public final class GenomeFactory {
             }
         }
         clc.addAll(layoutMapping.getLayoutConfigs());
-        
+        return clc;
+    }
+    
+    /**
+     * Create a layout context for a graph element.
+     * 
+     * @param graphElement the graph element for which to create the context
+     * @param layoutMapping the layout mapping
+     * @param layoutConfig the layout configurator
+     * @return a layout context
+     */
+    public static LayoutContext createContext(final KGraphElement graphElement,
+            final LayoutMapping<?> layoutMapping, final ILayoutConfig layoutConfig) {
         // create a layout context for the given layout graph
         LayoutContext context = new LayoutContext();
-        context.setProperty(LayoutContext.GRAPH_ELEM, layoutMapping.getLayoutGraph());
-        Object diagramPart = layoutMapping.getGraphMap().get(layoutMapping.getLayoutGraph());
+        context.setProperty(LayoutContext.GRAPH_ELEM, graphElement);
+        Object diagramPart = layoutMapping.getGraphMap().get(graphElement);
         context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
         EObject modelElement = (EObject) layoutMapping.getAdapterFactory().getAdapter(
                 diagramPart, EObject.class);
@@ -229,18 +274,11 @@ public final class GenomeFactory {
         IWorkbenchPart workbenchPart = layoutMapping.getProperty(IWorkbenchPart.class);
         context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
         context.setProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS, true);
+
+        // enrich the layout context using the given configurator
+        layoutConfig.enrich(context);
         
-        // add semantic configurations from the extension point
-        if (modelElement != null) {
-            List<ILayoutConfig> semanticConfigs = EclipseLayoutInfoService.getInstance()
-                    .getSemanticConfigs(modelElement.eClass());
-            clc.addAll(semanticConfigs);
-        }
-
-        // enrich the layout context using the basic configuration
-        clc.enrich(context);
-
-        return new Pair<ILayoutConfig, LayoutContext>(clc, context);
+        return context;
     }
     
     /**
@@ -326,34 +364,61 @@ public final class GenomeFactory {
     }
     
     /**
-     * Configure a node using a given genome.
+     * Configure a graph using a given genome.
      * 
-     * @param parentNode the node to configure
      * @param genome the genome holding layout option values
      * @param config a layout configurator for obtaining default values
-     * @param context a layout context for obtaining default value
+     * @param graphMap map of context graph elements to elements of the test graph that is configured
      */
-    public static void configureGraph(final KNode parentNode, final Genome genome,
-            final ILayoutConfig config, final LayoutContext context) {
+    public static void configureGraph(final Genome genome, final ILayoutConfig config,
+            final Map<EObject, EObject> graphMap) {
         LayoutDataService dataService = LayoutDataService.getInstance();
-        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        // first transfer values from the layout configurator
-        config.transferValues(parentLayout, context);
-        
-        // then transfer values from the given genome, overriding values of the configurator
-        for (Gene<?> gene : genome.getGenes()) {
-            if (gene.getValue() != null) {
-                LayoutOptionData<?> optionData = dataService.getOptionData(gene.getTypeInfo().getId());
-                if (optionData != null) {
-                    parentLayout.setProperty(optionData, translateFromGene(gene));
+        for (LayoutContext context : genome.getContexts()) {
+            EObject element = graphMap.get(context.getProperty(LayoutContext.GRAPH_ELEM));
+            if (element instanceof KNode) {
+                KShapeLayout nodeLayout = ((KNode) element).getData(KShapeLayout.class);
+                // first transfer values from the layout configurator
+                config.transferValues(nodeLayout, context);
+                
+                // then transfer values from the given genome, overriding values of the configurator
+                for (Gene<?> gene : genome.getGenes(context)) {
+                    if (gene.getValue() != null) {
+                        LayoutOptionData<?> optionData = dataService.getOptionData(
+                                gene.getTypeInfo().getId());
+                        if (optionData != null) {
+                            nodeLayout.setProperty(optionData, translateFromGene(gene));
+                        }
+                    }
                 }
             }
         }
-        
-        // do the same for non-empty child nodes
-        for (KNode child : parentNode.getChildren()) {
-            if (!child.getChildren().isEmpty()) {
-                configureGraph(child, genome, config, context);
+    }
+    
+    /**
+     * Check whether the given genome is consistent with respect to the active flags of its genes.
+     * 
+     * @param genome a genome
+     */
+    public static void checkGenome(final Genome genome) {
+        for (LayoutContext context : genome.getContexts()) {
+            LayoutAlgorithmData algoData = null;
+            for (Gene<?> gene : genome.getGenes(context)) {
+                TypeInfo<?> typeInfo = gene.getTypeInfo();
+                if (typeInfo.getGeneType() == TypeInfo.GeneType.LAYOUT_ALGO) {
+                    algoData = (LayoutAlgorithmData) gene.listValue();
+                } else if (algoData != null) {
+                    LayoutOptionData<?> optionData = (LayoutOptionData<?>) typeInfo.getTypeParam();
+                    boolean knowsOption = algoData.knowsOption(optionData);
+                    if (knowsOption && !gene.isActive()) {
+                        throw new IllegalStateException("Gene " + gene
+                                + " is inactive, but its algorithm " + algoData
+                                + " knows the option.");
+                    } else if (!knowsOption && gene.isActive()) {
+                        throw new IllegalStateException("Gene " + gene
+                                + " is active, but its algorithm " + algoData
+                                + " does not know the option.");
+                    }
+                }
             }
         }
     }

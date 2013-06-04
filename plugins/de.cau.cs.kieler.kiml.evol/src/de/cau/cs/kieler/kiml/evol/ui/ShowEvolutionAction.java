@@ -20,6 +20,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -102,43 +103,55 @@ public class ShowEvolutionAction extends Action {
                     if (layoutMapping != null) {
                         
                         // display the evolution dialog
-                        EvolutionDialog dialog = new EvolutionDialog(window.getShell(), layoutMapping);
-                        int result;
-                        try {
-                            result = dialog.open();
-                        } catch (Throwable throwable) {
-                            IStatus status = new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID,
-                                    "Error while initializing evolution dialog.", throwable);
-                            StatusManager.getManager().handle(status,
-                                    StatusManager.SHOW | StatusManager.LOG);
-                            result = EvolutionDialog.CANCEL;
-                        }
-                        
-                        if (result == EvolutionDialog.OK) {
-                            // perform layout with the new configuration
-                            IPreferenceStore preferenceStore = KimlUiPlugin.getDefault()
-                                    .getPreferenceStore();
-                            boolean animation = preferenceStore.getBoolean(
-                                    LayoutHandler.PREF_ANIMATION);
-                            boolean zoomToFit = preferenceStore.getBoolean(
-                                    LayoutHandler.PREF_ZOOM);
-                            boolean progressDialog = preferenceStore.getBoolean(
-                                    LayoutHandler.PREF_PROGRESS);
-                            DiagramLayoutEngine.INSTANCE.layout(editorPart, null, animation,
-                                    progressDialog, false, zoomToFit);
-                            
-                            // refresh the layout view to update the configuration
-                            LayoutViewPart layoutView = LayoutViewPart.findView();
-                            if (layoutView != null) {
-                                layoutView.refresh();
-                            }
-                        }
+                        doEvolution(window.getShell(), layoutMapping, editorPart);
                         
                     } else {
                         MessageDialog.openError(window.getShell(), "No Active Diagram",
                                 "The evolutionary configurator is unable to acquire a diagram.");
                     }
                 }
+            }
+        }
+    }
+    
+    /**
+     * Perform evolution.
+     * 
+     * @param shell the shell
+     * @param layoutMapping the layout mapping
+     * @param editorPart the editor part
+     */
+    private void doEvolution(final Shell shell, final LayoutMapping<?> layoutMapping,
+            final IEditorPart editorPart) {
+        EvolutionDialog dialog = new EvolutionDialog(shell, layoutMapping);
+        int result;
+        try {
+            result = dialog.open();
+        } catch (Throwable throwable) {
+            IStatus status = new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID,
+                    "Error while initializing evolution dialog.", throwable);
+            StatusManager.getManager().handle(status,
+                    StatusManager.SHOW | StatusManager.LOG);
+            result = EvolutionDialog.CANCEL;
+        }
+        
+        if (result == EvolutionDialog.OK) {
+            // perform layout with the new configuration
+            IPreferenceStore preferenceStore = KimlUiPlugin.getDefault()
+                    .getPreferenceStore();
+            boolean animation = preferenceStore.getBoolean(
+                    LayoutHandler.PREF_ANIMATION);
+            boolean zoomToFit = preferenceStore.getBoolean(
+                    LayoutHandler.PREF_ZOOM);
+            boolean progressDialog = preferenceStore.getBoolean(
+                    LayoutHandler.PREF_PROGRESS);
+            DiagramLayoutEngine.INSTANCE.layout(editorPart, null, animation,
+                    progressDialog, false, zoomToFit);
+            
+            // refresh the layout view to update the configuration
+            LayoutViewPart layoutView = LayoutViewPart.findView();
+            if (layoutView != null) {
+                layoutView.refresh();
             }
         }
     }

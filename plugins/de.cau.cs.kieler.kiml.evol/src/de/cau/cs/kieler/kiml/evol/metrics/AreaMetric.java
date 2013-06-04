@@ -33,8 +33,14 @@ import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
  */
 public class AreaMetric implements IAnalysis {
     
-    /** exponent for the computed area. */
-    private static final double AREA_EXP = 0.05;
+    /** lower bound of normalized area for linear region. */
+    private static final double AREA_LOW = 50;
+    /** upper bound of normalized area for linear region. */
+    private static final double AREA_HIGH = 1000;
+    /** lower bound of metric value for linear region. */
+    private static final double METRIC_LOW = 0.1;
+    /** upper bound of metric value for linear region. */
+    private static final double METRIC_HIGH = 0.95;
 
     /**
      * {@inheritDoc}
@@ -49,15 +55,23 @@ public class AreaMetric implements IAnalysis {
 
         float xdim = (Float) dimsResult[0];
         float ydim = (Float) dimsResult[1];
-
-        float result = 1.0f;
         double area = xdim * ydim;
         if (elementCount > 0) {
             // normalize considering the number of nodes and edges
             area /= elementCount * elementCount;
         }
-        if (area > 1.0) {
-            result = 1.0f / (float) Math.pow(area, AREA_EXP);
+        
+        float result = 1.0f;
+        if (area > AREA_HIGH) {
+            // assign a very low rating
+            result = (float) (METRIC_LOW * AREA_HIGH / area);
+        } else if (area < AREA_LOW) {
+            // assign a very high rating
+            result = (float) (1 - (1 - METRIC_HIGH) * area / AREA_LOW);
+        } else {
+            // assign a medium rating
+            result = (float) ((1 - (area - AREA_LOW) / (AREA_HIGH - AREA_LOW))
+                    * (METRIC_HIGH - METRIC_LOW) + METRIC_LOW);
         }
         
         assert result >= 0 && result <= 1;
