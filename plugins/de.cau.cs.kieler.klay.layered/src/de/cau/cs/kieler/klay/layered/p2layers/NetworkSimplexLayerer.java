@@ -208,9 +208,11 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      */
     private Map<LEdge, Pair<LPort, LPort>> removedSelfLoops;
 
-    /** Maximum amount of dfs calls during the initial layering. */
+    /** Maximum number of dfs calls during the initial layering. */
     private int maximalDFSIterations = 0;
-    private int currentIterations = 0;
+    
+    /** Number of dfs calls done so far during the initial layering. */
+    private int currentDFSIterations = 0;
 
     // =============================== Initialization Methods =====================================
 
@@ -572,7 +574,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      */
     private void initLayering() {
 
-        currentIterations = 0;
+        currentDFSIterations = 0;
 
         // determine initial layering
         for (LNode node : sources) {
@@ -628,7 +630,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      */
     private void layeringDFS(final LNode node, final boolean reverse) {
 
-        if (currentIterations++ > maximalDFSIterations) {
+        if (currentDFSIterations++ > maximalDFSIterations) {
             throw new RuntimeException(
                     "The maximal amount of iterations of the NETWORK_SIMPLEX layerer has been"
                             + " exceeded. This might be due to the nature of the passed graph, e.g.,"

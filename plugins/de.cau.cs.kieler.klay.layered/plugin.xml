@@ -298,7 +298,7 @@
             default="10000000"
             description="Bounds the maximal DFS iterations of the network simplex layering strategy."
             id="de.cau.cs.kieler.klay.layered.networkSimplexMaxIterations"
-            name="Maximal Iterations"
+            name="Network Simplex Layering Maximal Iterations"
             type="int">
          <dependency
                option="de.cau.cs.kieler.klay.layered.nodeLayering"
