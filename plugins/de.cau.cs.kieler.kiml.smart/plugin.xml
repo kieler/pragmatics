@@ -29,6 +29,14 @@
             name="Biconnected Components Density"
             programmatic="false">
       </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.smart.rules.DegreeGreaterFourAnalysis"
+            description="The number of nodes that have more than four incident edges."
+            id="de.cau.cs.kieler.kiml.smart.degreeGreaterFour"
+            name="Degree greater 4"
+            programmatic="false">
+      </analysis>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.smart.layoutRules">
