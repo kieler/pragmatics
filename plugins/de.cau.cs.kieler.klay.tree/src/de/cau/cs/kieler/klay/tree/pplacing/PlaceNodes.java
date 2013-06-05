@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.tree.pplacing;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.math.KVector;
@@ -54,46 +55,54 @@ public class PlaceNodes {
             return 0;
     }
     
-    public void firstWalk(TNode tNode) {
+    public void firstWalk(TNode tNode, TNode leftNeighbour) {
+        // initial Prelim value of all leaves should be 0
         if (tGraph.isLeaf(tNode)) {
             setPrelim(tNode, 0);
-        
-            if(tNode.getLeftChild() != null) {
-                double calc = prelim.get(tNode.getLeftChild()) + silbingSeparation + 
-                        meanNodeSize(tNode.getLeftChild(), tNode).x;
+            setModifier(tNode, 0);
+            
+            TNode tmp = leftNeighbour;
+            // if a node is a leaf and has a leftNeighbour modify Prelim
+            if(tmp != null) {
+                double calc = getPrelim(tmp) + silbingSeparation + 
+                        meanNodeSize(tmp, tNode).x;
+                // the value of Prelim is: Prelim of left neighbour + silbingSeparation + mean node size
                 setPrelim(tNode, calc);
             }
         }
+        // in case tNode is not a leaf
         else {
+            // call this method recursively for every child of tNode
             TNode prev = null;
-            TNode def = tGraph.getNodes().get(0); // is first node in list first child of tNode???
-            for (TNode tmp : tGraph.getNodes()) {
-                firstWalk(tmp);
-                def = apportion(tmp);
-                prev = tmp;   
+            for (TNode start : tNode.getChildren()) {
+                firstWalk(start, prev);
+                prev = start;
             }
-            double midPoint = (getPrelim(tGraph.getFirstChild(tNode)) + 
+            // calculate midPoint
+            double midPoint = (getPrelim(tGraph.getFirstChild(tNode)) +
                     getPrelim(tGraph.getLastChild(tNode)))/2;
-                    if (tNode.getLeftChild() != null) {
-                        setPrelim(tNode, getPrelim(tNode.getLeftChild()) + 
-                                meanNodeSize(tNode, tNode.getLeftChild()).x);
-                        setModifier(tNode, getPrelim(tNode) - midPoint);
-                    }
-                    else {
-                        setPrelim(tNode, midPoint);
-                    }
+            // check existence of a leftNeighbour
+            TNode tmp = leftNeighbour;
+            if (tmp != null) {
+                // Prelim is Prelim of leftNeighbour + meanNodeSize + silbingSeparation
+                setPrelim(tNode, getPrelim(tmp) + meanNodeSize(tmp, tNode).x + silbingSeparation);
+                // Modifier is Prelim - midPoint
+                setModifier(tNode, getPrelim(tNode) - midPoint);
+            }
+            // no leftNeighbour, so modifier is 0 and prelim is just midPoint
+            else {
+                setPrelim(tNode, midPoint);
+            }
         }
-        
-        
     }
-
-    /**
-     * @param tmp
-     * @return
-     */
-    private TNode apportion(TNode tmp) {
-        // TODO Auto-generated method stub
-        return null;
+    
+    // recursive method, that adds modifier of ancestors to nodes
+    public void secondWalk(TNode tNode, double modifier, LinkedList<TNode> currentLevel) {
+        if (!tGraph.isLeaf(tNode)) {
+            for (TNode tmp : tNode.getChildren()) {
+                secondWalk(tNode, modifier + getModifier(tNode), tNode.getChildren());
+            }
+        }
     }
 
     /**
@@ -112,5 +121,7 @@ public class PlaceNodes {
         nodeSize.y = nodeHeight;
         return nodeSize;
     }
+    
+    
 
 }
