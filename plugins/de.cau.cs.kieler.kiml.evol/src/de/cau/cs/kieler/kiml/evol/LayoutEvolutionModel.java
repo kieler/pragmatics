@@ -371,22 +371,25 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
                     builder.append("%");
                     firstMetric = false;
                 }
-                for (Map.Entry<String, Float> metricEntry : metricsResult.entrySet()) {
-                    Double weight = metricWeights.get(metricEntry.getKey());
-                    if (weight == null || weight > 0) {
-                        if (!firstMetric) {
-                            builder.append(", ");
+                if (metricsResult != null) {
+                    for (Map.Entry<String, Float> metricEntry : metricsResult.entrySet()) {
+                        Double weight = metricWeights.get(metricEntry.getKey());
+                        if (weight == null || weight > 0) {
+                            if (!firstMetric) {
+                                builder.append(", ");
+                            }
+                            if (metricEntry.getKey().equals(EvaluationOperation.EXEC_TIME_METRIC)) {
+                                builder.append("Execution Time");
+                            } else {
+                                builder.append(analysisService.getAnalysis(metricEntry.getKey())
+                                        .getName());
+                            }
+                            builder.append(": ");
+                            // SUPPRESS CHECKSTYLE NEXT MagicNumber
+                            builder.append(Math.round(metricEntry.getValue() * 100));
+                            builder.append("%");
+                            firstMetric = false;
                         }
-                        if (metricEntry.getKey().equals(EvaluationOperation.EXEC_TIME_METRIC)) {
-                            builder.append("Execution Time");
-                        } else {
-                            builder.append(analysisService.getAnalysis(metricEntry.getKey()).getName());
-                        }
-                        builder.append(": ");
-                        // SUPPRESS CHECKSTYLE NEXT MagicNumber
-                        builder.append(Math.round(metricEntry.getValue() * 100));
-                        builder.append("%");
-                        firstMetric = false;
                     }
                 }
             }

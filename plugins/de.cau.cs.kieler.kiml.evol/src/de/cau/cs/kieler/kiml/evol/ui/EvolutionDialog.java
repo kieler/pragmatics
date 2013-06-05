@@ -169,11 +169,12 @@ public class EvolutionDialog extends Dialog {
         // create a popup menu for copying the population to the clipboard
         MenuManager popupMenuManager = new MenuManager();
         popupMenuManager.add(new Action("Copy Population") {
-            private final Clipboard clipboard = new Clipboard(getShell().getDisplay());
             public void run() {
                 LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+                Clipboard clipboard = new Clipboard(getShell().getDisplay());
                 clipboard.setContents(new Object[] { evolutionModel.toString() },
                         new Transfer[] { TextTransfer.getInstance() });
+                clipboard.dispose();
             }
         });
         IMenuService menuService = (IMenuService) PlatformUI.getWorkbench().getService(
