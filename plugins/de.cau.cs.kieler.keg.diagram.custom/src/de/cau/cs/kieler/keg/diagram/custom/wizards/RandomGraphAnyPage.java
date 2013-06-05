@@ -272,7 +272,7 @@ public class RandomGraphAnyPage extends WizardPage {
         Button outgoingSwitch = new Button(edgeGroup, SWT.RADIO | SWT.LEFT);
         outgoingSwitch.setText(Messages.RandomGraphAnyPage_outgoing_caption);
         outgoingSwitch.setToolTipText(Messages.RandomGraphAnyPage_outgoing_help);
-        outgoingSwitch.setLayoutData(new GridData(SWT.LEFT, SWT.NONE, false, false, 2, 1));
+        outgoingSwitch.setLayoutData(new GridData(SWT.LEFT, SWT.NONE, false, false, 4, 1));
         
         // Minimum
         label = new Label(edgeGroup, SWT.NONE);
@@ -290,6 +290,9 @@ public class RandomGraphAnyPage extends WizardPage {
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
         minOutSpinner.setLayoutData(gridData);
+        // fill the remaining space
+        new Label(edgeGroup, SWT.NONE).setLayoutData(
+                new GridData(SWT.NONE, SWT.NONE, false, false, 2, 1));
         
         // Maximum
         label = new Label(edgeGroup, SWT.NONE);
@@ -307,6 +310,9 @@ public class RandomGraphAnyPage extends WizardPage {
         gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
         gridData.widthHint = 80;
         maxOutSpinner.setLayoutData(gridData);
+        // fill the remaining space
+        new Label(edgeGroup, SWT.NONE).setLayoutData(
+                new GridData(SWT.NONE, SWT.NONE, false, false, 2, 1));
 
         // Event listeners
         edgesSpinner.addModifyListener(new ModifyListener() {
@@ -431,6 +437,7 @@ public class RandomGraphAnyPage extends WizardPage {
             edgesRelSwitch.setSelection(true);
             edgesRelSpinner.setEnabled(true);
             edgesRelVarianceSpinner.setEnabled(true);
+            break;
         case GRAPH_EDGES:
         default:
             edgesSwitch.setSelection(true);
@@ -560,13 +567,13 @@ public class RandomGraphAnyPage extends WizardPage {
         preferenceStore.setDefault(RandomGraphGenerator.EDGES_VARIANCE.getId(),
                 RandomGraphGenerator.EDGES_VARIANCE.getDefault());
         preferenceStore.setDefault(RandomGraphGenerator.EDGES_RELATIVE.getId(),
-                RandomGraphGenerator.EDGES_RELATIVE.getDefault());
+                (int) (RandomGraphGenerator.EDGES_RELATIVE.getDefault() * 100));
         preferenceStore.setDefault(RandomGraphGenerator.EDGES_REL_VARIANCE.getId(),
-                RandomGraphGenerator.EDGES_REL_VARIANCE.getDefault());
+                (int) (RandomGraphGenerator.EDGES_REL_VARIANCE.getDefault() * 100));
         preferenceStore.setDefault(RandomGraphGenerator.DENSITY.getId(),
-                RandomGraphGenerator.DENSITY.getDefault());
+                (int) (RandomGraphGenerator.DENSITY.getDefault() * 100));
         preferenceStore.setDefault(RandomGraphGenerator.DENSITY_VARIANCE.getId(),
-                RandomGraphGenerator.DENSITY_VARIANCE.getDefault());
+                (int) (RandomGraphGenerator.DENSITY_VARIANCE.getDefault() * 100));
         preferenceStore.setDefault(RandomGraphGenerator.MIN_OUTGOING_EDGES.getId(),
                 RandomGraphGenerator.MIN_OUTGOING_EDGES.getDefault());
         preferenceStore.setDefault(RandomGraphGenerator.MAX_OUTGOING_EDGES.getId(),

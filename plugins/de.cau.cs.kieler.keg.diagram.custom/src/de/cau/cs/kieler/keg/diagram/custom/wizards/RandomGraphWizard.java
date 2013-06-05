@@ -16,6 +16,7 @@ package de.cau.cs.kieler.keg.diagram.custom.wizards;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
+import java.util.Random;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -292,8 +293,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                     }
                     // contruct the file path
                     IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-                    IPath path =
-                            containerPath.get().append(
+                    IPath path = containerPath.get().append(
                                     new Path(nameWithoutExt + i + "." + ext.get())); //$NON-NLS-1$
                     IFile file = workspaceRoot.getFile(path);
                     // generate and serialize the graph
@@ -316,7 +316,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         monitor.begin(Messages.RandomGraphWizard_generate_and_serialize_task + file.getName(), 1);
         try {
             // generate
-            IRandomGraphGenerator generator = new RandomGraphGenerator();
+            IRandomGraphGenerator generator = new RandomGraphGenerator(new Random());
             Node graph = generator.generate(options);
             // serialize
             ResourceSet resourceSet = new ResourceSetImpl();
@@ -437,6 +437,16 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                     anyPage.getEdgeDetermination());
             options.setProperty(RandomGraphGenerator.NUMBER_OF_EDGES,
                     anyPage.getNumberOfEdges());
+            options.setProperty(RandomGraphGenerator.EDGES_VARIANCE,
+                    anyPage.getEdgesVariance());
+            options.setProperty(RandomGraphGenerator.EDGES_RELATIVE,
+                    anyPage.getRelativeNumberOfEdges());
+            options.setProperty(RandomGraphGenerator.EDGES_REL_VARIANCE,
+                    anyPage.getRelativeEdgesVariance());
+            options.setProperty(RandomGraphGenerator.DENSITY,
+                    anyPage.getDensity());
+            options.setProperty(RandomGraphGenerator.DENSITY_VARIANCE,
+                    anyPage.getDensityVariance());
             options.setProperty(RandomGraphGenerator.MIN_OUTGOING_EDGES,
                     anyPage.getMinOutgoingEdges());
             options.setProperty(RandomGraphGenerator.MAX_OUTGOING_EDGES,
@@ -447,6 +457,8 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                     anyPage.getMultiEdges());
             options.setProperty(RandomGraphGenerator.CYCLES,
                     anyPage.getCycles());
+            options.setProperty(RandomGraphGenerator.ISOLATED_NODES,
+                    anyPage.getIsolatedNodes());
             break;
         case TREE:
             options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES,
