@@ -430,15 +430,6 @@
            type="enum"
            variance="0">
      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            class="de.cau.cs.kieler.kiml.options.HVLayout"
-            default="HORIZONTAL"
-            description="Whether horizontal or vertical layout shall be done."
-            id="de.cau.cs.kieler.hvlayout"
-            name="HV Layout"
-            type="enum">
-      </layoutOption>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.layoutInfo">

@@ -27,8 +27,6 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -38,8 +36,6 @@ import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotExporter;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotHandler;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool.Cleanup;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.kiml.options.HVLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.TransformationService;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
@@ -56,10 +52,6 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationData;
  */
 public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     
-    /** TODO remove after demo. */
-    public static final IProperty<HVLayout> HVLAYOUT = new Property<HVLayout>(
-            "de.cau.cs.kieler.hvlayout");
-
     /** the serial call number for usage in debug mode. */
     private static int serialCallNo = 0;
     
@@ -116,21 +108,6 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
                 .getProperty(LayoutOptions.DEBUG_MODE);
         myCallNo = ++serialCallNo;
 
-        // TODO remove after demo
-        HVLayout hvlayout = parentNode.getData(KShapeLayout.class).getProperty(HVLAYOUT);
-        if (hvlayout != null) {
-            switch (hvlayout) {
-            case HORIZONTAL:
-                parentNode.getData(KShapeLayout.class).setProperty(LayoutOptions.DIRECTION,
-                        Direction.RIGHT);
-                break;
-            case VERTICAL:
-                parentNode.getData(KShapeLayout.class).setProperty(LayoutOptions.DIRECTION,
-                        Direction.DOWN);
-                break;
-            }
-        }
-        
         // start the graphviz process, or retrieve the previously used process
         graphvizTool.initialize();
 

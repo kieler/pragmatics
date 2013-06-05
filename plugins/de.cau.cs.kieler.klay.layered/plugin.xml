@@ -131,9 +131,6 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.feedBackEdges">
          </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.hvlayout">
-         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
