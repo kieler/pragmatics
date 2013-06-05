@@ -41,15 +41,16 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * optimal layering of all nodes in the graph concerning a minimal length of all edges using the
  * network simplex algorithm described in
  * <ul>
- *   <li> Emden R. Gansner, Eleftherios Koutsofios, Stephen C. North, Kiem-Phong Vo,
- *     A technique for drawing directed graphs. <i>Software Engineering</i> 19(3), pp. 214-230, 1993.
- *   </li>
+ * <li>Emden R. Gansner, Eleftherios Koutsofios, Stephen C. North, Kiem-Phong Vo, A technique for
+ * drawing directed graphs. <i>Software Engineering</i> 19(3), pp. 214-230, 1993.</li>
  * </ul>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>the graph has no cycles</dd>
- *   <dt>Postcondition:</dt><dd>all nodes have been assigned a layer such that
- *     edges connect only nodes from layers with increasing indices</dd>
+ * <dt>Precondition:</dt>
+ * <dd>the graph has no cycles</dd>
+ * <dt>Postcondition:</dt>
+ * <dd>all nodes have been assigned a layer such that edges connect only nodes from layers with
+ * increasing indices</dd>
  * </dl>
  * 
  * @author pdo
@@ -57,33 +58,33 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.rating proposed yellow by msp
  */
 public final class NetworkSimplexLayerer implements ILayoutPhase {
-    
+
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
-        new IntermediateProcessingConfiguration(
-                // Before Phase 1
-                EnumSet.of(LayoutProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER),
-                
-                // Before Phase 2
-                null,
-                
-                // Before Phase 3
-                EnumSet.of(LayoutProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR),
-                
-                // Before Phase 4
-                null,
-                
-                // Before Phase 5
-                null,
-                
-                // After Phase 5
-                null);
-    
-//    /** additional processor dependencies for handling big nodes. */
-//    private static final IntermediateProcessingConfiguration BIG_NODES_PROCESSING_ADDITIONS =
-//        new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.BEFORE_PHASE_2,
-//                LayoutProcessorStrategy.BIG_NODES_PROCESSOR);
-    
+            new IntermediateProcessingConfiguration(
+            // Before Phase 1
+                    EnumSet.of(LayoutProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER),
+
+                    // Before Phase 2
+                    null,
+
+                    // Before Phase 3
+                    EnumSet.of(LayoutProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR),
+
+                    // Before Phase 4
+                    null,
+
+                    // Before Phase 5
+                    null,
+
+                    // After Phase 5
+                    null);
+
+    // /** additional processor dependencies for handling big nodes. */
+    // private static final IntermediateProcessingConfiguration BIG_NODES_PROCESSING_ADDITIONS =
+    // new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.BEFORE_PHASE_2,
+    // LayoutProcessorStrategy.BIG_NODES_PROCESSOR);
+
     // ================================== Attributes ==============================================
 
     /** The layered graph all methods in this class operate on. */
@@ -200,34 +201,38 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * @see #cutvalues()
      */
     private int[] cutvalue;
-    
+
     /**
-     * A map storing self-loops that were removed prior to executing the actual algorithm. The
-     * map stores the edges' source and target ports so they can be reinserted later.
+     * A map storing self-loops that were removed prior to executing the actual algorithm. The map
+     * stores the edges' source and target ports so they can be reinserted later.
      */
     private Map<LEdge, Pair<LPort, LPort>> removedSelfLoops;
 
+    /** Maximum amount of dfs calls during the initial layering. */
+    private int maximalDFSIterations = 0;
+    private int currentIterations = 0;
+
     // =============================== Initialization Methods =====================================
-    
+
     /**
      * {@inheritDoc}
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
-        
+
         // Basic strategy
-        IntermediateProcessingConfiguration strategy = new IntermediateProcessingConfiguration(
-                BASELINE_PROCESSING_CONFIGURATION);
-        
+        IntermediateProcessingConfiguration strategy =
+                new IntermediateProcessingConfiguration(BASELINE_PROCESSING_CONFIGURATION);
+
         // Additional dependencies
         if (graph.getProperty(Properties.DISTRIBUTE_NODES)) {
             // FIXME This option is not supported yet.
             throw new UnsupportedConfigurationException(
                     "Big nodes processing is currently not supported");
-            
-//            strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS);
+
+            // strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS);
         }
-        
+
         return strategy;
     }
 
@@ -288,7 +293,8 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * 
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#connectedComponents(Collection)
      *      connectedComponents()
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#componentNodes componentNodes
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#componentNodes
+     *      componentNodes
      */
     private void connectedComponentsDFS(final LNode node) {
         nodeVisited[node.id] = true;
@@ -309,11 +315,10 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
     /**
      * Helper method for the network simplex layerer. It instantiates all necessary attributes for
      * the execution of the network simplex layerer and initializes them with their default values.
-     * All edges in the connected component given by the input
-     * argument will be determined, as well as the number of incoming and outgoing edges of each
-     * node ( {@code inDegree}, respectively {@code outDegree}). All sinks and source nodes in the
-     * connected component identified in this step will be added to {@code sinks}, respectively
-     * {@code sources}.
+     * All edges in the connected component given by the input argument will be determined, as well
+     * as the number of incoming and outgoing edges of each node ( {@code inDegree}, respectively
+     * {@code outDegree}). All sinks and source nodes in the connected component identified in this
+     * step will be added to {@code sinks}, respectively {@code sources}.
      * 
      * @param theNodes
      *            a {@code Collection} containing all nodes of the graph
@@ -350,7 +355,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
                         outDegree[node.id]++;
                     }
                 }
-                
+
                 for (LEdge edge : port.getIncomingEdges()) {
                     if (edge.getSource().getNode() == edge.getTarget().getNode()) {
                         // Self loops are stored in a map and removed later
@@ -387,26 +392,26 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
         }
         edges = theEdges;
         postOrder = 1;
-        
+
         // remove self loops
         for (LEdge edge : removedSelfLoops.keySet()) {
             edge.setSource(null);
             edge.setTarget(null);
         }
     }
-    
+
     /**
      * Restores the self loops removed prior to the actual algorithm's execution.
      */
     private void restoreSelfLoops() {
         for (LEdge edge : removedSelfLoops.keySet()) {
             Pair<LPort, LPort> endpoints = removedSelfLoops.get(edge);
-            
+
             edge.setSource(endpoints.getFirst());
             edge.setTarget(endpoints.getSecond());
         }
     }
-    
+
     /**
      * Release all created resources so the GC can reap them.
      */
@@ -436,8 +441,8 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
 
     /** factor by which the maximal number of iterations is multiplied. */
     private static final int ITER_LIMIT_FACTOR = 4;
-    
-    /**
+
+/**
      * The main method of the network simplex layerer. It determines an optimal layering of all
      * nodes in the graph concerning a minimal length of all edges by using the network simplex
      * algorithm described in {@literal Emden R. Gansner, Eleftherios Koutsofios, Stephen
@@ -454,10 +459,13 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      */
     public void process(final LGraph theLayeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Network-Simplex Layering", 1);
-        
+
         layeredGraph = theLayeredGraph;
         removedSelfLoops = new HashMap<LEdge, Pair<LPort, LPort>>();
         int thoroughness = theLayeredGraph.getProperty(Properties.THOROUGHNESS) * ITER_LIMIT_FACTOR;
+
+        maximalDFSIterations =
+                theLayeredGraph.getProperty(Properties.NETWORK_SIMPLEX_MAX_ITERATIONS);
 
         Collection<LNode> theNodes = layeredGraph.getLayerlessNodes();
         if (theNodes.size() < 1) {
@@ -493,10 +501,10 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
                 putNode(node);
             }
         }
-        
+
         // restore the self loops
         restoreSelfLoops();
-        
+
         // empty the list of unlayered nodes
         theNodes.clear();
 
@@ -527,8 +535,9 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
             while (tightTreeDFS(nodes.iterator().next()) < nodes.size()) {
                 // some nodes are still not part of the tree
                 LEdge e = minimalSlack();
-                int slack = layer[e.getTarget().getNode().id] - layer[e.getSource().getNode().id]
-                        - minSpan[e.id];
+                int slack =
+                        layer[e.getTarget().getNode().id] - layer[e.getSource().getNode().id]
+                                - minSpan[e.id];
                 if (treeNode[e.getTarget().getNode().id]) {
                     slack = -slack;
                 }
@@ -563,6 +572,8 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      */
     private void initLayering() {
 
+        currentIterations = 0;
+
         // determine initial layering
         for (LNode node : sources) {
             layeringDFS(node, false);
@@ -586,8 +597,8 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
             if (layer[edge.getTarget().getNode().id] <= revLayer[edge.getSource().getNode().id]) {
                 minSpan[edge.id] = 1;
             } else {
-                minSpan[edge.id] = Math
-                        .min(layer[edge.getTarget().getNode().id]
+                minSpan[edge.id] =
+                        Math.min(layer[edge.getTarget().getNode().id]
                                 - layer[edge.getSource().getNode().id], Math.min(revLayer[edge
                                 .getTarget().getNode().id]
                                 - revLayer[edge.getSource().getNode().id], layer[edge.getTarget()
@@ -595,27 +606,36 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
             }
         }
     }
-   
+
     /**
      * Helper method for the network simplex layerer. It determines an (initial) feasible layering
      * for the graph by traversing it by a modified depth-first-search arranging the nodes to the
      * layer representing their height in a DFS-tree with the input node as its root. Dependently of
      * the chosen mode indicated by {@code reverse}, this method traverses incoming edges (if
-     * {@code reverse = false}), or outgoing edges, if {@code reverse = true}, only. Therefore, this
+     * {@code reverse = true}), or outgoing edges, if {@code reverse = false}, only. Therefore, this
      * method should only be called with source nodes as argument in the first-mentioned case and
      * only with sink nodes in the latter case.
      * 
      * @param node
      *            the root of the DFS-subtree
      * @param reverse
-     *            the traversal direction of the depth-first-search. If {@code reverse = false}),
-     *            this method only traverses incoming edges. Otherwise, if {@code reverse = true},
+     *            the traversal direction of the depth-first-search. If {@code reverse = true}),
+     *            this method only traverses incoming edges. Otherwise, if {@code reverse = false},
      *            only outgoing edges will be traversed
      * 
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#layer layer
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#revLayer revLayer
      */
     private void layeringDFS(final LNode node, final boolean reverse) {
+
+        if (currentIterations++ > maximalDFSIterations) {
+            throw new RuntimeException(
+                    "The maximal amount of iterations of the NETWORK_SIMPLEX layerer has been"
+                            + " exceeded. This might be due to the nature of the passed graph, e.g.,"
+                            + " plenty highly connected nodes.\nEither try another layering strategy,"
+                            + " or increase the value of the \"Maximal Iterations\" property.");
+        }
+
         LNode target = null;
         if (reverse) {
             for (LPort port : node.getPorts()) {
@@ -657,8 +677,8 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
 
         for (LPort port : node.getPorts()) {
             for (LEdge edge : port.getConnectedEdges()) {
-                currentSpan = layer[edge.getTarget().getNode().id]
-                        - layer[edge.getSource().getNode().id];
+                currentSpan =
+                        layer[edge.getTarget().getNode().id] - layer[edge.getSource().getNode().id];
                 if (edge.getTarget() == port && currentSpan < minSpanIn) {
                     minSpanIn = currentSpan;
                 } else if (currentSpan < minSpanOut) {
@@ -713,7 +733,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
             }
         }
         return nodeCount;
-    }  
+    }
 
     /**
      * Helper method for the network simplex layerer. It returns the non-tree edge incident on the
@@ -733,8 +753,9 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
         for (LEdge edge : edges) {
             if (treeNode[edge.getSource().getNode().id] ^ treeNode[edge.getTarget().getNode().id]) {
                 // edge is non-tree edge and incident on the tree
-                curSlack = layer[edge.getTarget().getNode().id]
-                        - layer[edge.getSource().getNode().id] - minSpan[edge.id];
+                curSlack =
+                        layer[edge.getTarget().getNode().id] - layer[edge.getSource().getNode().id]
+                                - minSpan[edge.id];
                 if (curSlack < minSlack) {
                     minSlack = curSlack;
                     minSlackEdge = edge;
@@ -766,8 +787,8 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
             for (LEdge edge : port.getConnectedEdges()) {
                 if (treeEdge[edge.id] && !edgeVisited[edge.id]) {
                     edgeVisited[edge.id] = true;
-                    lowest = Math
-                            .min(lowest, postorderTraversal(getOpposite(port, edge).getNode()));
+                    lowest =
+                            Math.min(lowest, postorderTraversal(getOpposite(port, edge).getNode()));
                 }
             }
         }
@@ -965,7 +986,8 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * @throws IllegalArgumentException
      *             if either {@code leave} is no tree edge or {@code enter} is a tree edge already
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#enterEdge(LEdge) enterEdge()
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#enterEdge(LEdge)
+     *      enterEdge()
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#leaveEdge() leaveEdge()
      */
     private void exchange(final LEdge leave, final LEdge enter) {
@@ -980,8 +1002,9 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
         // update tree
         treeEdge[leave.id] = false;
         treeEdge[enter.id] = true;
-        int delta = layer[enter.getTarget().getNode().id] - layer[enter.getSource().getNode().id]
-                - minSpan[enter.id];
+        int delta =
+                layer[enter.getTarget().getNode().id] - layer[enter.getSource().getNode().id]
+                        - minSpan[enter.id];
         if (!isInHead(enter.getTarget().getNode(), leave)) {
             delta = -delta;
         }
