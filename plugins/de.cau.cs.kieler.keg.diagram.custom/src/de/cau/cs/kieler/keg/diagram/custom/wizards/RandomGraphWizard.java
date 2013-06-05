@@ -429,8 +429,10 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         // Graph-specific options
         switch (typePage.getGraphType()) {
         case ANY:
-            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES,
-                    anyPage.getNumberOfNodes());
+            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES_MIN,
+                    anyPage.getMinNumberOfNodes());
+            options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES_MAX,
+                    anyPage.getMaxNumberOfNodes());
             options.setProperty(RandomGraphGenerator.EDGE_DETERMINATION,
                     anyPage.getEdgeDetermination());
             options.setProperty(RandomGraphGenerator.NUMBER_OF_EDGES,

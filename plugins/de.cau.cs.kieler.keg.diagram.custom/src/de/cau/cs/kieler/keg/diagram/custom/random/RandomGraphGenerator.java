@@ -63,7 +63,11 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         /** number of edges in the graph. */
         GRAPH_EDGES,
         /** number of outgoing edges per node. */
-        OUTGOING_EDGES
+        OUTGOING_EDGES,
+        /** relative number of edges (relative to n). */
+        RELATIVE,
+        /** density (relative to n^2). */
+        DENSITY
     }
 
     // All other options depend on which GRAPH_TYPE has been selected
@@ -76,7 +80,13 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
 
     /** the option for the number of nodes. */
     public static final Property<Integer> NUMBER_OF_NODES = new Property<Integer>(
-            "basic.numberOfNodes", 1, 1);
+            "basic.numberOfNodes", 10, 1);
+    /** the option for the minimum number of nodes. */
+    public static final Property<Integer> NUMBER_OF_NODES_MIN = new Property<Integer>(
+            "basic.numberOfNodesMin", 10, 1);
+    /** the option for the maximum number of nodes. */
+    public static final Property<Integer> NUMBER_OF_NODES_MAX = new Property<Integer>(
+            "basic.numberOfNodesMax", 10, 1);
     /** the option for the chance of creating a compound node. */
     public static final Property<Float> HIERARCHY_CHANCE = new Property<Float>(
             "basic.hierarchyChance", 0.0f, 0.0f, 1.0f);
@@ -107,6 +117,21 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
     public static final Property<EdgeDetermination> EDGE_DETERMINATION =
             new Property<EdgeDetermination>("basic.edgeDetermination",
                     EdgeDetermination.GRAPH_EDGES);
+    /** the option for the variance in the number of edges. */
+    public static final Property<Integer> EDGES_VARIANCE = new Property<Integer>(
+            "basic.edgesVariance", 0, 0);
+    /** the option for the relative number of edges. */
+    public static final Property<Double> EDGES_RELATIVE = new Property<Double>(
+            "basic.relEdges", 1.5, 0.0);
+    /** the option for variance in the relative number of edges. */
+    public static final Property<Double> EDGES_REL_VARIANCE = new Property<Double>(
+            "basic.relEdgesVariance", 0.0, 0.0);
+    /** the option for graph density. */
+    public static final Property<Double> DENSITY = new Property<Double>(
+            "basic.density", 0.1, 0.0);
+    /** the option for variance in graph density. */
+    public static final Property<Double> DENSITY_VARIANCE = new Property<Double>(
+            "basic.densityVariance", 0.0, 0.0);
     /** the option for the minimum number of outgoing edges. */
     public static final Property<Integer> MIN_OUTGOING_EDGES = new Property<Integer>(
             "basic.minOutgoingEdges", 0, 0);
@@ -114,13 +139,17 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
     public static final Property<Integer> MAX_OUTGOING_EDGES = new Property<Integer>(
             "basic.maxOutgoingEdges", 0, 0);
     /** the option for allowing self-loops. */
-    public static final Property<Boolean> SELF_LOOPS = new Property<Boolean>("basic.selfLoops",
-            true);
+    public static final Property<Boolean> SELF_LOOPS = new Property<Boolean>(
+            "basic.selfLoops", true);
     /** the option for allowing multi-edges. */
-    public static final Property<Boolean> MULTI_EDGES = new Property<Boolean>("basic.multiEdges",
-            true);
+    public static final Property<Boolean> MULTI_EDGES = new Property<Boolean>(
+            "basic.multiEdges", true);
     /** the option for allowing cycles. */
-    public static final Property<Boolean> CYCLES = new Property<Boolean>("basic.cycles", true);
+    public static final Property<Boolean> CYCLES = new Property<Boolean>(
+            "basic.cycles", true);
+    /** the option for allowing isolated nodes. */
+    public static final Property<Boolean> ISOLATED_NODES = new Property<Boolean>(
+            "basic.isolatedNodes", true);
 
     // Options for GRAPH_TYPE TREE
 
