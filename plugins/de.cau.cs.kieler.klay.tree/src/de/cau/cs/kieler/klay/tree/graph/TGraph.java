@@ -37,7 +37,7 @@ public class TGraph extends MapPropertyHolder {
     private LinkedList<TEdge> edges = new LinkedList<TEdge>();
     /** All labels of this graph. */
     private LinkedList<TLabel> labels = new LinkedList<TLabel>();
-
+   
     /**
      * Default constructor that creates an empty graph.
      * 
@@ -89,6 +89,7 @@ public class TGraph extends MapPropertyHolder {
     public List<TLabel> getLabels() {
         return labels;
     }
+    
 
     /**
      * Add a new node to the graph.

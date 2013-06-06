@@ -13,20 +13,26 @@
  */
 package de.cau.cs.kieler.klay.tree.pplacing;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.klay.tree.ILayoutPhase;
+import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
+import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
  * @author sor
  * @author sgu
  *
  */
-public class PlaceNodes {
+public class PlaceNodes implements ILayoutPhase {
     
     private final Map<TNode, Double> prelim = new HashMap<TNode, Double>();
     private final Map<TNode, Double> modifier = new HashMap<TNode, Double>();
@@ -55,7 +61,10 @@ public class PlaceNodes {
             return 0;
     }
     
-    public void firstWalk(TNode tNode, TNode leftNeighbour) {
+    public void firstWalk(TNode tNode, TNode leftNeighbour, 
+            final IKielerProgressMonitor progressMonitor) {
+        
+        progressMonitor.begin("Processor place nodes - first walk", 2);
         // initial Prelim value of all leaves should be 0
         if (tGraph.isLeaf(tNode)) {
             setPrelim(tNode, 0);
@@ -75,7 +84,7 @@ public class PlaceNodes {
             // call this method recursively for every child of tNode
             TNode prev = null;
             for (TNode start : tNode.getChildren()) {
-                firstWalk(start, prev);
+                firstWalk(start, prev, progressMonitor);
                 prev = start;
             }
             // calculate midPoint
@@ -94,15 +103,19 @@ public class PlaceNodes {
                 setPrelim(tNode, midPoint);
             }
         }
+        progressMonitor.done();
     }
     
     // recursive method, that adds modifier of ancestors to nodes
-    public void secondWalk(TNode tNode, double modifier, LinkedList<TNode> currentLevel) {
+    public void secondWalk(TNode tNode, double modifier, LinkedList<TNode> currentLevel, 
+            final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Processor place nodes - second walk", 3);
         if (!tGraph.isLeaf(tNode)) {
             for (TNode tmp : tNode.getChildren()) {
-                secondWalk(tNode, modifier + getModifier(tNode), tNode.getChildren());
+                secondWalk(tNode, modifier + getModifier(tNode), tNode.getChildren(), progressMonitor);
             }
         }
+        progressMonitor.done();
     }
 
     /**
@@ -120,6 +133,38 @@ public class PlaceNodes {
         nodeSize.x = nodeWidth;
         nodeSize.y = nodeHeight;
         return nodeSize;
+    }
+    
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
+            new IntermediateProcessingConfiguration(
+            IntermediateProcessingConfiguration.BEFORE_PHASE_2,
+            EnumSet.of(LayoutProcessorStrategy.TEST_PROCESSOR));
+
+    /**
+     * {@inheritDoc}
+     */
+    public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
+        // TODO Auto-generated method stub
+        progressMonitor.begin("Processor order nodes", 2);
+        LinkedList<TNode> roots = new LinkedList<TNode>();
+        for (TNode tNode : tGraph.getNodes()) {
+            if (tNode.getProperty(Properties.ROOT))
+                roots.add(tNode);
+        }
+        TNode root = roots.getFirst();
+        firstWalk(root, null, progressMonitor.subTask(2.0f));
+        secondWalk(root, 0, roots, progressMonitor.subTask(3.0f));
+        progressMonitor.done();
+        
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(TGraph tGraph) {
+        // TODO Auto-generated method stub
+        return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
     
     
