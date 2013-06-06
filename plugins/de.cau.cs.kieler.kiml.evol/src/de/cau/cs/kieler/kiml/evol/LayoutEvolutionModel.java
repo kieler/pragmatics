@@ -343,7 +343,11 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
                             builder.append(((LayoutAlgorithmData) gene.listValue()).getName());
                             break;
                         case LAYOUT_TYPE:
-                            builder.append(((LayoutTypeData) gene.listValue()).getName());
+                            String typeName = ((LayoutTypeData) gene.listValue()).getName();
+                            if (typeName.length() == 0) {
+                                typeName = "Other";
+                            }
+                            builder.append(typeName);
                             break;
                         }
                         
