@@ -25,10 +25,10 @@ import org.eclipse.ui.PlatformUI;
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
 import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
 import de.cau.cs.kieler.core.kivi.ITrigger;
+import de.cau.cs.kieler.core.kivi.listeners.GlobalPartAdapter;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.ui.UnsupportedPartException;
-import de.cau.cs.kieler.core.ui.util.CombinedWorkbenchListener;
 import de.cau.cs.kieler.core.ui.util.EditorUtils;
 
 /**
@@ -44,12 +44,15 @@ public class DiagramTrigger extends AbstractTrigger implements IPartListener {
 
     private IWorkbenchPart currentEditor;
 
+    /** Listens to all parts within the workbench. */
+    private GlobalPartAdapter partListener;
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public void register() {
-        CombinedWorkbenchListener.addPartListener(this);
+        partListener = new GlobalPartAdapter(this);
         // test the active editor
         // else the initially open editor will not send events until the editor changes
         currentEditor = EditorUtils.getLastActiveEditor();
@@ -61,7 +64,7 @@ public class DiagramTrigger extends AbstractTrigger implements IPartListener {
      */
     @Override
     public void unregister() {
-        CombinedWorkbenchListener.removePartListener(this);
+        partListener.unregister();
     }
 
     /**

@@ -31,11 +31,11 @@ import org.eclipse.ui.part.FileEditorInput;
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
 import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
 import de.cau.cs.kieler.core.kivi.ITrigger;
+import de.cau.cs.kieler.core.kivi.listeners.GlobalPartAdapter;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.ui.util.CombinedWorkbenchListener;
 
 /**
  * A part trigger that fires trigger states if the active part has been switched.
@@ -78,18 +78,21 @@ public class PartTrigger extends AbstractTrigger implements IPartListener {
     private IWorkbenchPart currentActivePart = null;
 
     // private IWorkbenchPart lastActive = null;
+    
+    /** Listens to all parts within the workbench. */
+    private GlobalPartAdapter partListener;
 
     @Override
     public void register() {
         if (instance == null) {
             instance = this;
-            CombinedWorkbenchListener.addPartListener(instance);
-            // CombinedWorkbenchListener.addPartListener2(instance);
+            partListener = new GlobalPartAdapter(this);
         }
     }
 
     @Override
     public void unregister() {
+        partListener.unregister();
     }
 
     /*****************************
