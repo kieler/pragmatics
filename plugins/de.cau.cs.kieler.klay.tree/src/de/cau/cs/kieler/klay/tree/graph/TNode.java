@@ -16,9 +16,6 @@ package de.cau.cs.kieler.klay.tree.graph;
 import java.util.LinkedList;
 import java.util.List;
 
-
-
-
 /**
  * TODO: Document this class.
  * 
@@ -30,7 +27,6 @@ import java.util.List;
 public class TNode extends TShape {
 
     /** the serial version UID. */
-    @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
 
     // CHECKSTYLEOFF VisibilityModifier
@@ -42,14 +38,14 @@ public class TNode extends TShape {
     private String label;
     /** The parent node. */
     private TNode parent;
-    
+
     private TNode leftChild;
     private TNode rightChild;
     /** List of child nodes. */
     private LinkedList<TNode> children;
-    
+
     private LinkedList<TEdge> outgoingEdges;
-    
+
     /**
      * Create a new node without parent and label.
      */
@@ -142,11 +138,11 @@ public class TNode extends TShape {
     public TNode getParent() {
         return parent;
     }
-    
+
     public TNode getLeftChild() {
         return leftChild;
     }
-    
+
     public TNode getRightChild() {
         return rightChild;
     }
@@ -162,15 +158,13 @@ public class TNode extends TShape {
         }
         return children;
     }
-    
+
     public List<TEdge> getOutgoingEdges() {
         if (outgoingEdges == null) {
             outgoingEdges = new LinkedList<TEdge>();
         }
         return outgoingEdges;
     }
-    
-    
 
     /**
      * Returns the depth of this node in the compound hierarchy.
@@ -204,12 +198,12 @@ public class TNode extends TShape {
     public void setParent(TNode parent) {
         this.parent = parent;
     }
-    
+
     public void setLeftChild(TNode leftChild) {
         this.leftChild = leftChild;
         children.add(leftChild);
     }
-    
+
     public void setRightChild(TNode rightChild) {
         this.rightChild = rightChild;
         children.add(rightChild);

@@ -13,9 +13,11 @@
  */
 package de.cau.cs.kieler.klay.tree;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -29,6 +31,7 @@ import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
+import de.cau.cs.kieler.klay.tree.util.FillStrings;
 
 /**
  * TODO: Document this class.
@@ -37,8 +40,11 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  * @author sgu
  */
 public class KGraphImporter implements IGraphImporter<KNode> {
-    
-    ///////////////////////////////////////////////////////////////////////////////
+
+    Map<String, Integer> gloFanMap = new HashMap<String, Integer>();
+    ArrayList<TNode> roots = new ArrayList<TNode>();
+
+    // /////////////////////////////////////////////////////////////////////////////
     // Transformation KGraph -> TGraph
 
     /**
@@ -47,45 +53,75 @@ public class KGraphImporter implements IGraphImporter<KNode> {
     public TGraph importGraph(final KNode kgraph) {
         TGraph tGraph = new TGraph();
         tGraph.setProperty(Properties.ORIGIN, kgraph);
-        
+
         // copy the properties of the KGraph to the t-graph
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
         tGraph.copyProperties(sourceShapeLayout);
         tGraph.checkProperties(Properties.SPACING, Properties.ASPECT_RATIO);
-                
+
         // keep a list of created nodes in the t-graph
         Map<KNode, TNode> elemMap = new HashMap<KNode, TNode>();
-        
+
         // transform everything
         transformNodes(kgraph, tGraph, elemMap);
         transformEdges(kgraph, tGraph, elemMap);
-       
-        // set the fan for every node 
+
+        // set the fan for every node
         // TODO multiple parents of a node
-        for (TNode tNode : tGraph.getNodes()) {
-            if (tNode.getProperty(Properties.ROOT)) {
-                setFan(tNode);  
-            } 
+
+        // mark the roots for fan calculation
+        int digits = roots.isEmpty() ? 0 : (int) (Math.floor(Math.log10(roots.size() - 1)) + 1);
+        int index = 0;
+        for (TNode tNode : roots) {
+            String key = FillStrings.formatRight(String.valueOf(index++), digits);
+            tNode.setProperty(Properties.ID, key);
+            for (TNode tChild : tNode.getChildren()) {
+                tChild.setProperty(Properties.ID, key);
+                // check if the ID was set already by another relation
+                if (tChild.getProperty(Properties.ID) != null) {
+                    tChild.setProperty(Properties.MULTI, true);
+                }
+                // TODO add implementation for multiple inheritance
+                // the provisional stringId is the Id of the parent
+                tChild.setProperty(Properties.ID, key);
+            }
         }
-        
+
+        for (TNode tRoot : roots) {
+            calculateFan(tRoot.getChildren());
+        }
+
+        // set the fan for all nodes
+        for (TNode tNode : tGraph.getNodes()) {
+            String key = tNode.getProperty(Properties.ID);
+            int count = gloFanMap.get(key) != null ? gloFanMap.get(key) : 1;
+            tNode.setProperty(Properties.FAN, count);
+        }
+
         return tGraph;
     }
-    
+
     /**
      * Transforms the nodes and ports defined by the given layout node.
      * 
-     * @param parentNode the layout node whose edges to transform.
-     * @param tGraph the t-graph.
-     * @param elemMap the element map that maps the original {@code KGraph} elements to the
-     *                transformed {@code TGraph} elements.
+     * @param parentNode
+     *            the layout node whose edges to transform.
+     * @param tGraph
+     *            the t-graph.
+     * @param elemMap
+     *            the element map that maps the original {@code KGraph} elements to the transformed
+     *            {@code TGraph} elements.
      */
     private void transformNodes(final KNode parentNode, final TGraph tGraph,
             final Map<KNode, TNode> elemMap) {
         int index = 0;
+
         for (KNode knode : parentNode.getChildren()) {
             // add a new node to the t-graph, copying its size
+            // KShapeLayout tMap.getNodeMap().put(tMap.getNodeMap().size(), value) =
+            // knode.getData(KShapeLayout.class);
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-            
+
             String label = "";
             if (!knode.getLabels().isEmpty()) {
                 label = knode.getLabels().get(0).getText();
@@ -97,25 +133,30 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             newNode.getSize().x = Math.max(nodeLayout.getWidth(), 1);
             newNode.getSize().y = Math.max(nodeLayout.getHeight(), 1);
             tGraph.getNodes().add(newNode);
-            
+
+            // mark the potential roots
             if (knode.getIncomingEdges().isEmpty()) {
                 newNode.setProperty(Properties.ROOT, true);
+                roots.add(newNode);
             }
-            
+
             elemMap.put(knode, newNode);
-            
+
             // set properties of the new node
             newNode.copyProperties(nodeLayout);
         }
     }
-    
+
     /**
      * Transforms the edges defined by the given layout node.
      * 
-     * @param parentNode the layout node whose edges to transform.
-     * @param tGraph the t-graph.
-     * @param elemMap the element map that maps the original {@code KGraph} elements to the
-     *                transformed {@code TGraph} elements.
+     * @param parentNode
+     *            the layout node whose edges to transform.
+     * @param tGraph
+     *            the t-graph.
+     * @param elemMap
+     *            the element map that maps the original {@code KGraph} elements to the transformed
+     *            {@code TGraph} elements.
      */
     private void transformEdges(final KNode parentNode, final TGraph tGraph,
             final Map<KNode, TNode> elemMap) {
@@ -124,54 +165,104 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 // exclude edges that pass hierarchy bounds as well as self-loops
                 if (kedge.getTarget().getParent() == parentNode && knode != kedge.getTarget()) {
                     KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-                    
+
                     // create a edge
                     TNode source = elemMap.get(knode);
                     TNode target = elemMap.get(kedge.getTarget());
                     TEdge newEdge = new TEdge(source, target);
                     newEdge.setProperty(Properties.ORIGIN, kedge);
                     tGraph.getEdges().add(newEdge);
-                    
+
                     source.addChild(target);
-                    
+
                     // TODO transform the edge's labels
-                    
+
                     // set properties of the new edge
                     newEdge.copyProperties(edgeLayout);
                     newEdge.checkProperties(Properties.LABEL_SPACING);
                 }
             }
         }
-    } 
-    
-    
-    /**
-     * Calculates a fan for a node including its descendants.
-     * 
-     * @param tNode the tNode for which a fan should be calculated
-     * @return the fan of this node plus the fan of its descendants
-     */
-    private int setFan(final TNode tNode) {
-        int fan = 0;
-        for (TNode tChild : tNode.getChildren()) {
-            fan += setFan(tChild) < 1 ? 1 : setFan(tChild);
-        }
-        tNode.setProperty(Properties.FAN, fan);
-        return fan;
     }
-       
-    
-    ///////////////////////////////////////////////////////////////////////////////
-    // Apply Layout Results
-    
 
+    /**
+     * Calculates a fan for the nodes in the list currentLevel including their descendants.
+     * 
+     * @param currentLevel
+     *            the list of TNode for which the fan should be calculated.
+     */
+    private void calculateFan(final LinkedList<TNode> currentLevel) {
+        if (!currentLevel.isEmpty()) {
+
+            // the children of the current level are the next level
+            LinkedList<TNode> nextLevel = new LinkedList<TNode>();
+
+            // currentLevel is not empty so stringId will be set
+            String id = null;
+            String pId = null;
+
+            // the size of the which the stringId will be extended for this level
+            int digits = (int) (Math.floor(Math.log10(currentLevel.size() - 1)) + 1);
+
+            // set final stringId for all nodes in this level
+            // and set the provisional stringId for their children
+            int index = 0;
+            for (TNode tNode : currentLevel) {
+                // the final stringId is the stringId of the parent and the extension
+                if (pId != tNode.getProperty(Properties.ID)) {
+                    pId = tNode.getProperty(Properties.ID);
+                    index = 0;
+                }
+                id = pId + FillStrings.formatRight(String.valueOf(index++), digits);
+                tNode.setProperty(Properties.ID, id);
+                for (TNode tChild : tNode.getChildren()) {
+                    nextLevel.add(tChild);
+                    // check if the ID was set already by another relation
+                    if (tChild.getProperty(Properties.ID) != null) {
+                        tChild.setProperty(Properties.MULTI, true);
+                    }
+                    // TODO add implementation for multiple inheritance
+                    // the provisional stringId is the Id of the parent
+                    tChild.setProperty(Properties.ID, id);
+                }
+            }
+
+            // holds the occurences of descendants in this level
+            Map<String, Integer> locFanMap = new HashMap<String, Integer>();
+
+            // calculated occurences of descendants in this level
+            for (int i = 0; i < id.length() - digits; i++) {
+                for (TNode tNode : currentLevel) {
+                    String key = tNode.getProperty(Properties.ID).substring(0, i);
+                    int blockSize = locFanMap.get(key) != null ? locFanMap.get(key) + 1 : 1;
+                    locFanMap.put(key, blockSize);
+                }
+            }
+
+            // update the gloFanMap with the values from locFanMap
+            // will only increase the values
+            for (Entry<String, Integer> locEntry : locFanMap.entrySet()) {
+                Integer gloValue = gloFanMap.get(locEntry.getKey());
+                if ((gloValue == null) || (gloValue < locEntry.getValue())) {
+                    gloFanMap.put(locEntry.getKey(), locEntry.getValue());
+                }
+            }
+
+            // calculated the occurences in the deeper levels and add them to the global gloFanMap
+            calculateFan(nextLevel);
+
+        }
+    }
+
+    // /////////////////////////////////////////////////////////////////////////////
+    // Apply Layout Results
 
     /**
      * {@inheritDoc}
      */
     public void applyLayout(final TGraph TGraph) {
         KNode kgraph = (KNode) TGraph.getProperty(Properties.ORIGIN);
-        
+
         // determine the border spacing, which influences the offset
         KShapeLayout parentLayout = kgraph.getData(KShapeLayout.class);
         float borderSpacing = TGraph.getProperty(LayoutOptions.BORDER_SPACING);
@@ -179,10 +270,9 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             borderSpacing = Properties.SPACING.getDefault();
         }
         TGraph.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
-        
+
         // calculate the offset from border spacing and node distribution
-        double minXPos = Integer.MAX_VALUE, minYPos = Integer.MAX_VALUE,
-                maxXPos = Integer.MIN_VALUE, maxYPos = Integer.MIN_VALUE;
+        double minXPos = Integer.MAX_VALUE, minYPos = Integer.MAX_VALUE, maxXPos = Integer.MIN_VALUE, maxYPos = Integer.MIN_VALUE;
         for (TNode tNode : TGraph.getNodes()) {
             KVector pos = tNode.getPosition();
             KVector size = tNode.getSize();
@@ -192,11 +282,11 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             maxYPos = Math.max(maxYPos, pos.y + size.y / 2);
         }
         KVector offset = new KVector(borderSpacing - minXPos, borderSpacing - minYPos);
-        
+
         // process the nodes
         for (TNode tNode : TGraph.getNodes()) {
             Object object = tNode.getProperty(Properties.ORIGIN);
-            
+
             if (object instanceof KNode) {
                 // set the node position
                 KNode knode = (KNode) object;
@@ -206,14 +296,15 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 nodeLayout.setYpos((float) nodePos.y - nodeLayout.getHeight() / 2);
             }
         }
-        
+
         // set up the parent node
         KInsets insets = parentLayout.getInsets();
-        float width = (float) (maxXPos - minXPos) + 2 * borderSpacing
-                + insets.getLeft() + insets.getRight();
-        float height = (float) (maxYPos - minYPos) + 2 * borderSpacing
-                + insets.getTop() + insets.getBottom();
-        KimlUtil.resizeNode(kgraph, width, height, false);
+        float width = (float) (maxXPos - minXPos) + 2 * borderSpacing + insets.getLeft()
+                + insets.getRight();
+        float height = (float) (maxYPos - minYPos) + 2 * borderSpacing + insets.getTop()
+                + insets.getBottom();
+        // KimlUtil.resizeNode(kgraph, width, height, false);
+        KimlUtil.resizeNode(kgraph, width, height, false, false);
     }
-    
+
 }

@@ -107,8 +107,6 @@ public class testPhase implements ILayoutPhase {
                 tNode.getPosition().x = occupiedSpace + childFan * DEFAULT_SIZE / 2;
                 tNode.getPosition().y = depth;
                 occupiedSpace += childFan < 1 ? 1 * DEFAULT_SIZE : childFan* DEFAULT_SIZE;
-                System.out.println("x: " + tNode.getPosition().x);
-                System.out.println("o: " + occupiedSpace);
 
                 nextLevel.addAll(tNode.getChildren());
                 
@@ -127,3 +125,4 @@ public class testPhase implements ILayoutPhase {
     }
 
 }
+

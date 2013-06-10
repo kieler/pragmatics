@@ -21,8 +21,7 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
- * TODO: Document this class.
- * Property definitions for the T layouter.
+ * TODO: Document this class. Property definitions for the T layouter.
  * 
  * @author sor
  * @author sgu
@@ -32,39 +31,34 @@ public final class Properties {
     /** the original object from which a graph element was created. */
     public static final IProperty<Object> ORIGIN = new Property<Object>("origin");
 
-    /**
-     * Random number generator for the algorithm.
-     */
+    /** Random number generator for the algorithm. */
     public static final IProperty<Random> RANDOM = new Property<Random>("random");
 
-    /**
-     * The longest path length of a node in the nesting tree of a compound graph.
-     */
+    /** The longest path length of a node in the nesting tree of a compound graph. */
     public static final IProperty<Integer> DEPTH = new Property<Integer>("DEPTH", 0);
 
-    /**
-     * The maximal fan out of a node in the nesting tree of a compound graph.
-     */
+    /** The maximal fan out of a node in the nesting tree of a compound graph. */
     public static final IProperty<Integer> FAN = new Property<Integer>("FAN", 0);
-    
-    /**
-     * Is the node a root of a tree.
-     */
+
+    /** Is the node a root of a tree. */
     public static final IProperty<Boolean> ROOT = new Property<Boolean>("ROOT", false);
+    
+    /** This node has multiple inheritance. */
+    public static final IProperty<Boolean> MULTI = new Property<Boolean>("ROOT", false);
+
+    /** The level out of a node in the nesting tree of a compound graph. */
+    public static final IProperty<Integer> LEVEL = new Property<Integer>("LEVEL", 0);
 
     /**
-     * The level out of a node in the nesting tree of a compound graph.
+     * Id of of a real node. This Indicates the block by the most significant letters
+     * and level of the node by the length of the string.
      */
-    public static final IProperty<Integer> LEVEL = new Property<Integer>("LEVEL", 0);
-    
-    /**
-     * Is the node a root of a tree.
-     */
+    public static final IProperty<String> ID = new Property<String>("ID", null);
+
+    /** Is the node a root of a tree. */
     public static final IProperty<Integer> POSITION = new Property<Integer>("POSITION", 0);
 
-    /**
-     * The direction from the origin of a node in the nesting tree of a compound graph.
-     */
+    /** The direction from the origin of a node in the nesting tree of a compound graph. */
     public static final IProperty<Direction> DIRC = new Property<Direction>("DIRC", Direction.SOUTH);
 
     /** upper left corner of the graph's bounding box. */
@@ -94,9 +88,7 @@ public final class Properties {
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
 
-    /**
-     * Hidden default constructor.
-     */
+    /** Hidden default constructor. */
     private Properties() {
     }
 

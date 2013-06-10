@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.tree.porder;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
@@ -95,14 +94,12 @@ public class OrderNodes implements ILayoutPhase {
 
         if (currentLevel.isEmpty()) {
             for (TNode tENode : leaves) {
-                System.out.println("pos e: " + pos);
                 tENode.setProperty(Properties.POSITION, pos++);
             }
         } else {
             int size = inners.size();
 
             for (TNode tPNode : inners) {
-                System.out.println("pos c: " + pos);
                 tPNode.setProperty(Properties.POSITION, pos++);
                 arrangeLevel(tPNode.getChildren(), progressMonitor.subTask(1 / size));
 
@@ -119,7 +116,6 @@ public class OrderNodes implements ILayoutPhase {
                 while ((0 < fillGap) && notNull && it.hasPrevious()) {
                     TNode tNode = (TNode) it.previous();
                     if ((tNode.getProperty(Properties.FAN) == 0)) {
-                        System.out.println("pos f: " + pos);
                         tNode.setProperty(Properties.POSITION, pos++);
                         fillGap--;
                         it.remove();
