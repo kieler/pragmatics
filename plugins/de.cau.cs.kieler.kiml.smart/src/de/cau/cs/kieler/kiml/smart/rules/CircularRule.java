@@ -44,7 +44,7 @@ public class CircularRule implements ISmartRule {
                     LayoutTypeData.TYPE_CIRCLE);
     
             // SUPPRESS CHECKSTYLE NEXT MagicNumber
-            return 2 * Math.abs(density - 0.5) * Math.pow(FEATURE_PENALTY, fp);
+            return density * Math.pow(FEATURE_PENALTY, fp);
         }
         return 0;
     }

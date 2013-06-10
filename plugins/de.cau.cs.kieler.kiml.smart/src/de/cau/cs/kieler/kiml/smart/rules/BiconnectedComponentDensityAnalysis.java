@@ -28,7 +28,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
- * An analysis on the density (number of nodes and edges) of the biconnected components.
+ * An analysis on the density of the biconnected components.
  *
  * @author msp
  * @kieler.design proposed by msp
@@ -66,9 +66,10 @@ public class BiconnectedComponentDensityAnalysis implements IAnalysis {
         int nodeSum = 0;
         for (Set<KNode> component : components) {
             int componentSize = component.size();
+            double value;
             // SUPPRESS CHECKSTYLE NEXT MagicNumber
             if (componentSize <= 3) {
-                densitySum += componentSize / 2.0;
+                value = 1.0;
             } else {
                 int edgeCount = 0;
                 for (KNode node : component) {
@@ -78,10 +79,12 @@ public class BiconnectedComponentDensityAnalysis implements IAnalysis {
                         }
                     }
                 }
-                // SUPPRESS CHECKSTYLE NEXT MagicNumber
-                densitySum += Math.min(2.0 * (edgeCount - componentSize) / (componentSize - 3),
-                        componentSize);
+                // SUPPRESS CHECKSTYLE NEXT 3 MagicNumber
+                value = Math.min(2 * Math.abs(2.0 * (edgeCount - componentSize)
+                        / (componentSize * componentSize - 3 * componentSize)
+                        - 0.5), 1.0);
             }
+            densitySum += value * componentSize;
             nodeSum += componentSize;
         }
         
