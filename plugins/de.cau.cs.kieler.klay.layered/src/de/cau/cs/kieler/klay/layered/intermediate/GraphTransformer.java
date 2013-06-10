@@ -31,6 +31,8 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.properties.InLayerConstraint;
+import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -153,6 +155,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             // External port dummy?
             if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
                 mirrorExternalPortSideX(node);
+                mirrorLayerConstraintX(node);
             }
 
             // Mirror node label positions
@@ -227,6 +230,32 @@ public final class GraphTransformer implements ILayoutProcessor {
             
         default:
             return side;
+        }
+    }
+    
+    /**
+     * Horizontally mirrors the layer constraint set on a node. This is only meant for handling external
+     * port dummy nodes.
+     * 
+     * @param node the node whose layer constraint to mirror.
+     */
+    private void mirrorLayerConstraintX(final LNode node) {
+        switch (node.getProperty(Properties.LAYER_CONSTRAINT)) {
+        case FIRST:
+            node.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.LAST);
+            break;
+            
+        case FIRST_SEPARATE:
+            node.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
+            break;
+
+        case LAST:
+            node.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.FIRST);
+            break;
+            
+        case LAST_SEPARATE:
+            node.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.FIRST_SEPARATE);
+            break;
         }
     }
     
@@ -417,6 +446,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             // External port dummy?
             if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
                 transposeExternalPortSide(node);
+                transposeLayerConstraint(node);
             }
 
             // Transpose node label positions
@@ -528,6 +558,33 @@ public final class GraphTransformer implements ILayoutProcessor {
     private void transposeExternalPortSide(final LNode node) {
         node.setProperty(Properties.EXT_PORT_SIDE,
                 transposePortSide(node.getProperty(Properties.EXT_PORT_SIDE)));
+    }
+    
+    /**
+     * The layer constraint and in-layer constraint set on a node. A node with layer constraint
+     * {@link LayerConstraint#FIRST_SEPARATE} will end up with an in-layer constraint
+     * {@link InLayerConstraint#TOP}. This is only meant for external port dummy nodes and only
+     * supports the cases that can occur with them.
+     * 
+     * @param node the node whose layer constraint to mirror.
+     */
+    private void transposeLayerConstraint(final LNode node) {
+        LayerConstraint layerConstraint = node.getProperty(Properties.LAYER_CONSTRAINT);
+        InLayerConstraint inLayerConstraint = node.getProperty(Properties.IN_LAYER_CONSTRAINT);
+        
+        if (layerConstraint == LayerConstraint.FIRST_SEPARATE) {
+            node.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.NONE);
+            node.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.TOP);
+        } else if (layerConstraint == LayerConstraint.LAST_SEPARATE) {
+            node.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.NONE);
+            node.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.BOTTOM);
+        } else if (inLayerConstraint == InLayerConstraint.TOP) {
+            node.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.FIRST_SEPARATE);
+            node.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.NONE);
+        } else if (inLayerConstraint == InLayerConstraint.BOTTOM) {
+            node.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
+            node.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.NONE);
+        }
     }
 
 }
