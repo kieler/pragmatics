@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klay.tree;
 
+import java.util.List;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -33,6 +35,8 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
 
     /** the layout algorithm used for this layout. */
     private KlayTree klayTree = new KlayTree();
+    /** connected components processor. */
+    private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
 
     // /////////////////////////////////////////////////////////////////////////////
     // Regular Layout
@@ -45,10 +49,17 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
 
         IGraphImporter<KNode> graphImporter = new KGraphImporter();
         TGraph tGraph = graphImporter.importGraph(kgraph);
-        
-//        TGraph tGraph = TGraphBuilder.createTGraphFromKGraph(kgraph);
 
-        tGraph = klayTree.doLayout(tGraph, progressMonitor);
+        // split the input graph into components
+        List<TGraph> components = componentsProcessor.split(tGraph);
+
+        // perform the actual layout on the components
+        for (TGraph comp : components) {
+            klayTree.doLayout(comp, progressMonitor.subTask(1.0f / components.size()));
+        }
+
+        // pack the components back into one graph
+        tGraph = componentsProcessor.pack(components);
 
         // apply the layout results to the original graph
         graphImporter.applyLayout(tGraph);

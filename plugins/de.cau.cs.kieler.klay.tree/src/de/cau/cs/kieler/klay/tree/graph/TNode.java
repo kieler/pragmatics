@@ -51,6 +51,7 @@ public class TNode extends TShape {
      */
     public TNode(final int id, final TGraph graph) {
         super(id, graph);
+        this.id = id;
         this.parent = null;
         this.rightChild = null;
         this.leftChild = null;
@@ -62,6 +63,7 @@ public class TNode extends TShape {
      */
     public TNode(final int id, final TGraph graph, final TNode parent) {
         super(id, graph);
+        this.id = id;
         this.parent = parent;
         this.leftChild = null;
         this.rightChild = null;
@@ -76,6 +78,7 @@ public class TNode extends TShape {
      */
     public TNode(final int id, final TGraph graph, final String label) {
         super(id, graph);
+        this.id = id;
         this.label = label;
         this.parent = null;
         this.leftChild = null;
@@ -93,6 +96,7 @@ public class TNode extends TShape {
      */
     public TNode(final int id, final TGraph graph, final String label, final TNode parent) {
         super(id, graph);
+        this.id = id;
         this.label = label;
         this.parent = parent;
         this.leftChild = null;

@@ -260,20 +260,20 @@ public class KGraphImporter implements IGraphImporter<KNode> {
     /**
      * {@inheritDoc}
      */
-    public void applyLayout(final TGraph TGraph) {
-        KNode kgraph = (KNode) TGraph.getProperty(Properties.ORIGIN);
+    public void applyLayout(final TGraph tGraph) {
+        KNode kgraph = (KNode) tGraph.getProperty(Properties.ORIGIN);
 
         // determine the border spacing, which influences the offset
         KShapeLayout parentLayout = kgraph.getData(KShapeLayout.class);
-        float borderSpacing = TGraph.getProperty(LayoutOptions.BORDER_SPACING);
+        float borderSpacing = tGraph.getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
             borderSpacing = Properties.SPACING.getDefault();
         }
-        TGraph.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
+        tGraph.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
 
         // calculate the offset from border spacing and node distribution
         double minXPos = Integer.MAX_VALUE, minYPos = Integer.MAX_VALUE, maxXPos = Integer.MIN_VALUE, maxYPos = Integer.MIN_VALUE;
-        for (TNode tNode : TGraph.getNodes()) {
+        for (TNode tNode : tGraph.getNodes()) {
             KVector pos = tNode.getPosition();
             KVector size = tNode.getSize();
             minXPos = Math.min(minXPos, pos.x - size.x / 2);
@@ -284,7 +284,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         KVector offset = new KVector(borderSpacing - minXPos, borderSpacing - minYPos);
 
         // process the nodes
-        for (TNode tNode : TGraph.getNodes()) {
+        for (TNode tNode : tGraph.getNodes()) {
             Object object = tNode.getProperty(Properties.ORIGIN);
 
             if (object instanceof KNode) {
