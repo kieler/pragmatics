@@ -17,6 +17,8 @@ import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.grana.analyses.DirectedCycleAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.service.grana.analyses.LongestPathAnalysis;
 import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
 import de.cau.cs.kieler.kiml.smart.ISmartRule;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
@@ -31,6 +33,8 @@ import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
  */
 public class LayeredRule implements ISmartRule {
     
+    /** value at which to split the result for cyclic and acyclic graphs. */
+    private static final double SPLIT_VALUE = 0.875;
     /** the penalty factor for missing graph features. */
     private static final double FEATURE_PENALTY = 0.7;
 
@@ -44,8 +48,22 @@ public class LayeredRule implements ISmartRule {
             double fp = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
                     LayoutTypeData.TYPE_LAYERED);
             
-            return (1 - (double) Math.min(cycleCount, nodeCount) / nodeCount)
-                    * Math.pow(FEATURE_PENALTY, fp);
+            if (cycleCount == 0) {
+                int longestPath = (Integer) metaLayout.analyze(LongestPathAnalysis.ID) + 1;
+                double lpMeasure;
+                if (longestPath > nodeCount) {
+                    lpMeasure = (double) longestPath / nodeCount;
+                } else {
+                    lpMeasure = (double) nodeCount / longestPath;
+                }
+                return (lpMeasure * (1 - SPLIT_VALUE) + SPLIT_VALUE)
+                        * Math.pow(FEATURE_PENALTY, fp);
+                
+            } else {
+                int edgeCount = metaLayout.analyze(EdgeCountAnalysis.ID);
+                return Math.min(edgeCount / (nodeCount * cycleCount), 1.0) * SPLIT_VALUE
+                        * Math.pow(FEATURE_PENALTY, fp);
+            }
         }
         return 0;
     }

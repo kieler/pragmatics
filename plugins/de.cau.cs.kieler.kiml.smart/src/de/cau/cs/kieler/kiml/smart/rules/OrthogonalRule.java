@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.smart.rules;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
 import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
 import de.cau.cs.kieler.kiml.smart.ISmartRule;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
@@ -30,6 +31,8 @@ import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
  */
 public class OrthogonalRule implements ISmartRule {
     
+    /** weight of the planarity measure versus the number of nodes with degree > 4. */
+    private static final double PLANARITY_WEIGHT = 0.68;
     /** identifier of the planarity test analysis. */
     private static final String PLANARITY_ID = "de.cau.cs.kieler.klay.planarity";
     /** the penalty factor for missing graph features. */
@@ -42,10 +45,19 @@ public class OrthogonalRule implements ISmartRule {
         int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
         if (nodeCount > 0) {
             int crossingEdges = metaLayout.analyze(PLANARITY_ID);
+            int degreeG4Nodes = metaLayout.analyze(DegreeGreaterFourAnalysis.ID);
             double fp = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
                     LayoutTypeData.TYPE_ORTHOGONAL);
             
-            return (1 - (double) Math.min(crossingEdges, nodeCount) / nodeCount)
+            double planarityMeasure;
+            if (crossingEdges == 0) {
+                planarityMeasure = 1.0;
+            } else {
+                int edgeCount = metaLayout.analyze(EdgeCountAnalysis.ID);
+                planarityMeasure = Math.sqrt(Math.min(edgeCount / (nodeCount * crossingEdges), 1.0));
+            }
+            return (planarityMeasure * PLANARITY_WEIGHT
+                    + (1 - degreeG4Nodes / nodeCount) * (1 - PLANARITY_WEIGHT))
                     * Math.pow(FEATURE_PENALTY, fp);
         }
         return 0;
