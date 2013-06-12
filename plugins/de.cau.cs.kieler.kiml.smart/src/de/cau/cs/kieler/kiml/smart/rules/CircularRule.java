@@ -30,6 +30,8 @@ import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
  */
 public class CircularRule implements ISmartRule {
     
+    /** exponent for adaptation of value spread. */
+    private static final double EXPONENT = 9;
     /** the penalty factor for missing graph features. */
     private static final double FEATURE_PENALTY = 0.7;
 
@@ -44,7 +46,8 @@ public class CircularRule implements ISmartRule {
                     LayoutTypeData.TYPE_CIRCLE);
     
             // SUPPRESS CHECKSTYLE NEXT MagicNumber
-            return density * Math.pow(FEATURE_PENALTY, fp);
+            return Math.pow(density, EXPONENT)
+                    * Math.pow(FEATURE_PENALTY, fp);
         }
         return 0;
     }

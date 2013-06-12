@@ -32,7 +32,9 @@ import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
 public class OrthogonalRule implements ISmartRule {
     
     /** weight of the planarity measure versus the number of nodes with degree > 4. */
-    private static final double PLANARITY_WEIGHT = 0.68;
+    private static final double PLANARITY_WEIGHT = 0.7;
+    /** exponent for adaptation of value spread. */
+    private static final double EXPONENT = 0.5;
     /** identifier of the planarity test analysis. */
     private static final String PLANARITY_ID = "de.cau.cs.kieler.klay.planarity";
     /** the penalty factor for missing graph features. */
@@ -54,10 +56,11 @@ public class OrthogonalRule implements ISmartRule {
                 planarityMeasure = 1.0;
             } else {
                 int edgeCount = metaLayout.analyze(EdgeCountAnalysis.ID);
-                planarityMeasure = Math.sqrt(Math.min(edgeCount / (nodeCount * crossingEdges), 1.0));
+                planarityMeasure = Math.min(Math.pow(
+                        (double) edgeCount / (nodeCount * (crossingEdges + 1)), EXPONENT), 1.0);
             }
-            return (planarityMeasure * PLANARITY_WEIGHT
-                    + (1 - degreeG4Nodes / nodeCount) * (1 - PLANARITY_WEIGHT))
+            double degreeMeasure = 1 - (double) degreeG4Nodes / nodeCount;
+            return (planarityMeasure * PLANARITY_WEIGHT + degreeMeasure * (1 - PLANARITY_WEIGHT))
                     * Math.pow(FEATURE_PENALTY, fp);
         }
         return 0;
