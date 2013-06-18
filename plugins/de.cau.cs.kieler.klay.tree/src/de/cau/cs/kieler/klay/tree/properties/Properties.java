@@ -74,7 +74,7 @@ public final class Properties {
     // USER INTERFACE OPTIONS
 
     /** Minimal spacing between objects. */
-    public static final Property<Float> SPACING = new Property<Float>(LayoutOptions.SPACING, 50.0f);
+    public static final Property<Float> SPACING = new Property<Float>(LayoutOptions.SPACING, 20.0f);
 
     /** The aspect ratio for packing connected components. */
     public static final Property<Float> ASPECT_RATIO = new Property<Float>(

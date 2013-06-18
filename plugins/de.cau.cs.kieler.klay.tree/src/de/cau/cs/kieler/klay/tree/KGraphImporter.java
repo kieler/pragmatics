@@ -15,10 +15,7 @@ package de.cau.cs.kieler.klay.tree;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
@@ -31,7 +28,6 @@ import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
-import de.cau.cs.kieler.klay.tree.util.FillStrings;
 
 /**
  * TODO: Document this class.
@@ -66,38 +62,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         transformNodes(kgraph, tGraph, elemMap);
         transformEdges(kgraph, tGraph, elemMap);
 
-        // set the fan for every node
-        // TODO multiple parents of a node
-
-        // mark the roots for fan calculation
-        int digits = roots.isEmpty() ? 0 : (int) (Math.floor(Math.log10(roots.size() - 1)) + 1);
-        int index = 0;
-        for (TNode tNode : roots) {
-            String key = FillStrings.formatRight(String.valueOf(index++), digits);
-            tNode.setProperty(Properties.ID, key);
-            for (TNode tChild : tNode.getChildren()) {
-                tChild.setProperty(Properties.ID, key);
-                // check if the ID was set already by another relation
-                if (tChild.getProperty(Properties.ID) != null) {
-                    tChild.setProperty(Properties.MULTI, true);
-                }
-                // TODO add implementation for multiple inheritance
-                // the provisional stringId is the Id of the parent
-                tChild.setProperty(Properties.ID, key);
-            }
-        }
-
-        for (TNode tRoot : roots) {
-            calculateFan(tRoot.getChildren());
-        }
-
-        // set the fan for all nodes
-        for (TNode tNode : tGraph.getNodes()) {
-            String key = tNode.getProperty(Properties.ID);
-            int count = gloFanMap.get(key) != null ? gloFanMap.get(key) : 1;
-            tNode.setProperty(Properties.FAN, count);
-        }
-
         return tGraph;
     }
 
@@ -117,6 +81,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         int index = 0;
 
         for (KNode knode : parentNode.getChildren()) {
+            // TODO implement or remove the following
             // add a new node to the t-graph, copying its size
             // KShapeLayout tMap.getNodeMap().put(tMap.getNodeMap().size(), value) =
             // knode.getData(KShapeLayout.class);
@@ -133,12 +98,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             newNode.getSize().x = Math.max(nodeLayout.getWidth(), 1);
             newNode.getSize().y = Math.max(nodeLayout.getHeight(), 1);
             tGraph.getNodes().add(newNode);
-
-            // mark the potential roots
-            if (knode.getIncomingEdges().isEmpty()) {
-                newNode.setProperty(Properties.ROOT, true);
-                roots.add(newNode);
-            }
 
             elemMap.put(knode, newNode);
 
@@ -182,75 +141,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     newEdge.checkProperties(Properties.LABEL_SPACING);
                 }
             }
-        }
-    }
-
-    /**
-     * Calculates a fan for the nodes in the list currentLevel including their descendants.
-     * 
-     * @param currentLevel
-     *            the list of TNode for which the fan should be calculated.
-     */
-    private void calculateFan(final LinkedList<TNode> currentLevel) {
-        if (!currentLevel.isEmpty()) {
-
-            // the children of the current level are the next level
-            LinkedList<TNode> nextLevel = new LinkedList<TNode>();
-
-            // currentLevel is not empty so stringId will be set
-            String id = null;
-            String pId = null;
-
-            // the size of the which the stringId will be extended for this level
-            int digits = (int) (Math.floor(Math.log10(currentLevel.size() - 1)) + 1);
-
-            // set final stringId for all nodes in this level
-            // and set the provisional stringId for their children
-            int index = 0;
-            for (TNode tNode : currentLevel) {
-                // the final stringId is the stringId of the parent and the extension
-                if (pId != tNode.getProperty(Properties.ID)) {
-                    pId = tNode.getProperty(Properties.ID);
-                    index = 0;
-                }
-                id = pId + FillStrings.formatRight(String.valueOf(index++), digits);
-                tNode.setProperty(Properties.ID, id);
-                for (TNode tChild : tNode.getChildren()) {
-                    nextLevel.add(tChild);
-                    // check if the ID was set already by another relation
-                    if (tChild.getProperty(Properties.ID) != null) {
-                        tChild.setProperty(Properties.MULTI, true);
-                    }
-                    // TODO add implementation for multiple inheritance
-                    // the provisional stringId is the Id of the parent
-                    tChild.setProperty(Properties.ID, id);
-                }
-            }
-
-            // holds the occurences of descendants in this level
-            Map<String, Integer> locFanMap = new HashMap<String, Integer>();
-
-            // calculated occurences of descendants in this level
-            for (int i = 0; i < id.length() - digits; i++) {
-                for (TNode tNode : currentLevel) {
-                    String key = tNode.getProperty(Properties.ID).substring(0, i);
-                    int blockSize = locFanMap.get(key) != null ? locFanMap.get(key) + 1 : 1;
-                    locFanMap.put(key, blockSize);
-                }
-            }
-
-            // update the gloFanMap with the values from locFanMap
-            // will only increase the values
-            for (Entry<String, Integer> locEntry : locFanMap.entrySet()) {
-                Integer gloValue = gloFanMap.get(locEntry.getKey());
-                if ((gloValue == null) || (gloValue < locEntry.getValue())) {
-                    gloFanMap.put(locEntry.getKey(), locEntry.getValue());
-                }
-            }
-
-            // calculated the occurences in the deeper levels and add them to the global gloFanMap
-            calculateFan(nextLevel);
-
         }
     }
 

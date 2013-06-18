@@ -101,17 +101,6 @@ public class ComponentsProcessor {
                 }
             }
             return components;
-        } else {
-            TNode superRoot = new TNode(0, graph, "SUPER_ROOT");
-            for (TNode node : graph.getNodes()) {
-                if (node.getProperty(Properties.ROOT)) {
-                    superRoot.addChild(node);
-                    node.setProperty(Properties.ROOT, false);
-                }
-            }
-            superRoot.setProperty(Properties.ROOT, true);
-            superRoot.setProperty(Properties.DUMMY, true);
-            graph.getNodes().add(superRoot);
         }
         return Lists.newArrayList(graph);
     }
@@ -138,7 +127,7 @@ public class ComponentsProcessor {
             }
             // add the node to the component
             component.getNodes().add(node);
-            // follow all edges from this node 
+            // follow all edges from this node
             for (TEdge edge : incidence[node.id]) {
                 if (edge.getSource() != node) {
                     dfs(edge.getSource(), component);

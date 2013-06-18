@@ -10,6 +10,26 @@
             id="de.cau.cs.kieler.klay.tree"
             name="KLay Mr. Tree"
             type="de.cau.cs.kieler.type.tree">
+         <knownOption
+               default="SPACING"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               default="SPACING"
+               option="de.cau.cs.kieler.borderSpacing">
+         </knownOption>
+         <knownOption
+               default="true"
+               option="de.cau.cs.kieler.separateConnComp">
+         </knownOption>
+         <knownOption
+               default="1.0"
+               option="de.cau.cs.kieler.aspectRatio">
+         </knownOption>
+         <knownOption
+               default="RIGHT"
+               option="de.cau.cs.kieler.direction">
+         </knownOption>
       </layoutAlgorithm>
    </extension>
 
