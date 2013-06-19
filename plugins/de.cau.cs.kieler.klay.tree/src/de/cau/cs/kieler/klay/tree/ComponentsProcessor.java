@@ -16,12 +16,16 @@ package de.cau.cs.kieler.klay.tree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
@@ -80,12 +84,10 @@ public class ComponentsProcessor {
             // perform DFS starting on each node, collecting connected components
             List<TGraph> components = new ArrayList<TGraph>();
             for (TNode node : graph.getNodes()) {
-                if (node.getProperty(Properties.ROOT)) {
-                    TGraph comp = dfs(node, null);
-                    if (comp != null) {
-                        comp.copyProperties(graph);
-                        components.add(comp);
-                    }
+                TGraph comp = dfs(node, null);
+                if (comp != null) {
+                    comp.copyProperties(graph);
+                    components.add(comp);
                 }
             }
             incidence = null;
@@ -225,6 +227,30 @@ public class ComponentsProcessor {
             broadestRow = Math.max(broadestRow, xpos + size.x);
             highestBox = Math.max(highestBox, size.y);
             xpos += size.x + spacing;
+        }
+
+        Map<IProperty<?>, Object> propMerge = new HashMap<IProperty<?>, Object>();
+        Map<IProperty<?>, Object> debug = new HashMap<IProperty<?>, Object>();
+
+        for (TGraph tGraph : components) {
+            Map<IProperty<?>, Object> propComp = tGraph.getAllProperties();
+            for (Entry<IProperty<?>, Object> entry : propComp.entrySet()) {
+                if (propMerge.containsKey(entry.getKey())) {
+                    if (entry.getKey().getDefault() != entry.getValue()) {
+                        if (debug.containsKey(entry.getKey())) {
+                            System.err.println("Found different values for propertie "
+                                    + entry.getKey().getId() + " in components.");
+                        } else {
+                            propMerge.put(entry.getKey(), entry.getValue());
+                            result.setProperty(entry.getKey(), entry.getValue());
+                            debug.put(entry.getKey(), entry.getValue());
+                        }
+                    }
+                } else {
+                    propMerge.put(entry.getKey(), entry.getValue());
+                    result.setProperty(entry.getKey(), entry.getValue());
+                }
+            }
         }
 
         return result;

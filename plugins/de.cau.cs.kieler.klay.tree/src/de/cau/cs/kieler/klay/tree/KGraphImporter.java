@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.tree;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
@@ -36,9 +37,6 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  * @author sgu
  */
 public class KGraphImporter implements IGraphImporter<KNode> {
-
-    Map<String, Integer> gloFanMap = new HashMap<String, Integer>();
-    ArrayList<TNode> roots = new ArrayList<TNode>();
 
     // /////////////////////////////////////////////////////////////////////////////
     // Transformation KGraph -> TGraph
