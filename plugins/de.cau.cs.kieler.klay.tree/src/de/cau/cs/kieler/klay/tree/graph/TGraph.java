@@ -125,6 +125,7 @@ public class TGraph extends MapPropertyHolder {
     
     public boolean isLeaf(TNode tNode) {
         if (tNode == null) {
+            System.out.println("In erstem if");
             return false;
         }
         else if (tNode.getLeftChild() == null && tNode.getRightChild() == null) {

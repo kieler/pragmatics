@@ -15,8 +15,10 @@ package de.cau.cs.kieler.klay.tree.pplacing;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
@@ -32,11 +34,11 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  * @author sgu
  *
  */
-public class PlaceNodes implements ILayoutPhase {
+public class NodePlacer implements ILayoutPhase {
     
     private final Map<TNode, Double> prelim = new HashMap<TNode, Double>();
     private final Map<TNode, Double> modifier = new HashMap<TNode, Double>();
-    private final TGraph tGraph = null;
+    private TGraph tGraph = null;
     private double silbingSeparation = 10.0;
     
     private void setPrelim(TNode tNode, double value) {
@@ -103,6 +105,8 @@ public class PlaceNodes implements ILayoutPhase {
                 setPrelim(tNode, midPoint);
             }
         }
+
+        
         progressMonitor.done();
     }
     
@@ -112,7 +116,8 @@ public class PlaceNodes implements ILayoutPhase {
         progressMonitor.begin("Processor place nodes - second walk", 3);
         if (!tGraph.isLeaf(tNode)) {
             for (TNode tmp : tNode.getChildren()) {
-                secondWalk(tNode, modifier + getModifier(tNode), tNode.getChildren(), progressMonitor);
+                secondWalk(tmp, modifier + getModifier(tmp), tmp.getChildren(), 
+                        progressMonitor.subTask(3.0f));
             }
         }
         progressMonitor.done();
@@ -146,14 +151,17 @@ public class PlaceNodes implements ILayoutPhase {
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
         // TODO Auto-generated method stub
+        
         progressMonitor.begin("Processor order nodes", 2);
+        
+        this.tGraph = tGraph;
         LinkedList<TNode> roots = new LinkedList<TNode>();
         for (TNode tNode : tGraph.getNodes()) {
             if (tNode.getProperty(Properties.ROOT))
                 roots.add(tNode);
         }
         TNode root = roots.getFirst();
-        firstWalk(root, null, progressMonitor.subTask(2.0f));
+        firstWalk2(root, roots, progressMonitor.subTask(2.0f));
         secondWalk(root, 0, roots, progressMonitor.subTask(3.0f));
         progressMonitor.done();
         
@@ -165,6 +173,96 @@ public class PlaceNodes implements ILayoutPhase {
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(TGraph tGraph) {
         // TODO Auto-generated method stub
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
+    }
+    
+    
+    public void setPrevNodeAtLevel(TNode tNode, LinkedList<TNode> currentLevel) {
+        if (currentLevel.getFirst() != tNode) {
+            int i = 0;
+            while (currentLevel.get(i) != tNode) {
+                currentLevel.get(i+1);
+            }
+            currentLevel.set(i-1, tNode);
+        }
+    }
+    
+    
+    public TNode getPrevNodeAtLevel(TNode tNode, LinkedList<TNode> currentLevel) {
+        if (tNode == currentLevel.getFirst()) {
+            return null;
+        }
+        else {
+            int i = 0;
+            while (currentLevel.get(i) != tNode) {
+                currentLevel.get(i+1);
+            }
+            int prev = i-1;
+            return currentLevel.get(prev);
+        }
+    }
+    
+    public void firstWalk2(TNode tNode, LinkedList<TNode> currentLevel, 
+            final IKielerProgressMonitor progressMonitor) {
+        tNode.setLeftNeighbour(getPrevNodeAtLevel(tNode, currentLevel));
+        setPrevNodeAtLevel(tNode, currentLevel);
+        setModifier(tNode, 0);
+        System.out.println("Vor Blatttest!");
+        if (tGraph.isLeaf(tNode)) {
+            System.out.println("In Blatttest!");
+            if (tNode.getLeftNeighbour() != null) {
+                System.out.println("Im  2. if");
+                double calc = getPrelim(tNode.getLeftNeighbour()) + 
+                        silbingSeparation + meanNodeSize(tNode.getLeftNeighbour(), tNode).x;
+                System.out.println("Calc berechnet: "+calc);
+                setPrelim(tNode, calc);  
+            }
+            else {
+                setPrelim(tNode, 0);
+            }
+        }
+        else {
+            TNode leftMost = tNode.getChildren().get(0);
+            TNode rightMost = tNode.getChildren().get(0);
+            // currentLevel erhoehen?
+            firstWalk2(leftMost, currentLevel, progressMonitor.subTask(2.0f));
+            while (rightMost.getRightNeighbour() != null) {
+                rightMost.setRightNeighbour(rightMost);
+                // currentLevel erhoehen?
+                firstWalk2(rightMost, currentLevel, progressMonitor.subTask(2.0f));
+            }
+            double midPoint = (getPrelim(rightMost) + getPrelim(leftMost)) / 2;
+            System.out.println("Midpoint: " + midPoint);
+            if (tNode.getLeftNeighbour() != null) {
+                System.out.println("DRIN!");
+                setPrelim(tNode, getPrelim(tNode.getLeftNeighbour()) + silbingSeparation
+                        + meanNodeSize(tNode.getLeftNeighbour(), tNode).x);
+                setModifier(tNode, getPrelim(tNode)-midPoint);
+            }
+            else {
+                System.out.println("Letzter Test!");
+                setPrelim(tNode, midPoint);
+            }
+        }
+        Set prelimSet = prelim.entrySet();
+        Set modSet = modifier.entrySet();
+        Iterator i1 = prelimSet.iterator();
+        Iterator i2 = modSet.iterator();
+        
+        while(i1.hasNext()) {
+            Map.Entry me = (Map.Entry)i1.next();
+            System.out.print(me.getKey() + ": ");
+            System.out.println(me.getValue());
+        }
+        System.out.println("Modmap");
+        while(i2.hasNext()) {
+            Map.Entry me = (Map.Entry)i2.next();
+            System.out.print(me.getKey() + ": ");
+            System.out.println(me.getValue());
+            }
+            System.out.println(); 
+        
+        
+        
     }
     
     

@@ -41,6 +41,9 @@ public class TNode extends TShape {
 
     private TNode leftChild;
     private TNode rightChild;
+    
+    private TNode leftNeighbour;
+    private TNode rightNeighbour;
     /** List of child nodes. */
     private LinkedList<TNode> children;
 
@@ -55,6 +58,8 @@ public class TNode extends TShape {
         this.parent = null;
         this.rightChild = null;
         this.leftChild = null;
+        this.leftNeighbour = null;
+        this.rightNeighbour = null;
         this.children = new LinkedList<TNode>();
     }
 
@@ -67,6 +72,8 @@ public class TNode extends TShape {
         this.parent = parent;
         this.leftChild = null;
         this.rightChild = null;
+        this.leftNeighbour = null;
+        this.rightNeighbour = null;
         this.children = new LinkedList<TNode>();
     }
 
@@ -83,6 +90,8 @@ public class TNode extends TShape {
         this.parent = null;
         this.leftChild = null;
         this.rightChild = null;
+        this.leftNeighbour = null;
+        this.rightNeighbour = null;
         this.children = new LinkedList<TNode>();
     }
 
@@ -101,6 +110,8 @@ public class TNode extends TShape {
         this.parent = parent;
         this.leftChild = null;
         this.rightChild = null;
+        this.leftNeighbour = null;
+        this.rightNeighbour = null;
         this.children = new LinkedList<TNode>();
     }
 
@@ -149,6 +160,14 @@ public class TNode extends TShape {
 
     public TNode getRightChild() {
         return rightChild;
+    }
+    
+    public TNode getLeftNeighbour() {
+        return leftNeighbour;
+    }
+    
+    public TNode getRightNeighbour() {
+        return rightNeighbour;
     }
 
     /**
@@ -211,6 +230,14 @@ public class TNode extends TShape {
     public void setRightChild(TNode rightChild) {
         this.rightChild = rightChild;
         children.add(rightChild);
+    }
+    
+    public void setLeftNeighbour(TNode tNode) {
+        this.leftNeighbour = tNode;
+    }
+    
+    public void setRightNeighbour(TNode tNode) {
+        this.rightNeighbour = tNode;
     }
 
     /**

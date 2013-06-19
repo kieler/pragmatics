@@ -26,6 +26,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.porder.OrderNodes;
+import de.cau.cs.kieler.klay.tree.pplacing.NodePlacer;
 import de.cau.cs.kieler.klay.tree.test.testPhase;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
@@ -45,6 +46,8 @@ public final class KlayTree {
     private ILayoutPhase orderNodes;
     /** phase 2: layering module. */
     private ILayoutPhase testPhase;
+    
+    private ILayoutPhase placeNodes;
 
     /** intermediate layout processor configuration. */
     private IntermediateProcessingConfiguration intermediateProcessingConfiguration = new IntermediateProcessingConfiguration();
@@ -123,6 +126,8 @@ public final class KlayTree {
         
         // dummy phase
         testPhase = new testPhase();
+        
+        placeNodes = new NodePlacer();
 
         // check which cycle breaking strategy to use
 
@@ -137,6 +142,7 @@ public final class KlayTree {
         intermediateProcessingConfiguration
                 .addAll(orderNodes.getIntermediateProcessingConfiguration(graph))
                 .addAll(testPhase.getIntermediateProcessingConfiguration(graph))
+                .addAll(placeNodes.getIntermediateProcessingConfiguration(graph))
                 .addAll(this.getIntermediateProcessingConfiguration(graph));
 
         // construct the list of processors that make up the algorithm
@@ -145,6 +151,8 @@ public final class KlayTree {
         algorithm.add(orderNodes);
         algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
         algorithm.add(testPhase);
+        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
+        algorithm.add(placeNodes);
     }
 
     /**
@@ -259,7 +267,7 @@ public final class KlayTree {
             if (monitor.isCanceled()) {
                 return;
             }
-            processor.process(graph, monitor.subTask(1));
+            processor.process(graph, monitor.subTask(2));
         }
         monitor.done();
     }
@@ -285,7 +293,7 @@ public final class KlayTree {
                 return;
             }
 
-            processor.process(graph, monitor.subTask(1));
+            processor.process(graph, monitor.subTask(2));
         }
 
         monitor.done();
