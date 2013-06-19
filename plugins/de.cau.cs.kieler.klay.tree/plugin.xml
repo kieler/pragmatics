@@ -11,11 +11,11 @@
             name="KLay Mr. Tree"
             type="de.cau.cs.kieler.type.tree">
          <knownOption
-               default="SPACING"
+               default="20"
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               default="SPACING"
+               default="20"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
