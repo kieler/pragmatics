@@ -36,15 +36,13 @@ import de.cau.cs.kieler.klay.tree.graph.TNode;
 public class testPhase implements ILayoutPhase {
 
     /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
-            new IntermediateProcessingConfiguration(
-                    IntermediateProcessingConfiguration.BEFORE_PHASE_2,
-                    EnumSet.of(LayoutProcessorStrategy.TEST_PROCESSOR)
-                    );
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
+            IntermediateProcessingConfiguration.BEFORE_PHASE_2,
+            EnumSet.of(LayoutProcessorStrategy.TEST_PROCESSOR));
 
     /** default value for spacing between nodes. */
     private static final float DEFAULT_SPACING = 15.0f;
-    
+
     /** default value for size of nodes. */
     private static final float DEFAULT_SIZE = 50.0f;
 
@@ -80,49 +78,55 @@ public class testPhase implements ILayoutPhase {
             tempRoot = root.isEmpty() ? null : root.get(0); // SEND ERROR
         }
 
-        // TODO Structure add property for SPACING and BORDER_SPACING
-        int depth = 0;
-        // TODO find a use for tempRoot.getProperty(Properties.DEPTH)
+        if (tempRoot != null) {
 
-        int parentFan = tempRoot.getProperty(Properties.FAN);
-        
-        tempRoot.getPosition().x = parentFan * DEFAULT_SIZE / 2;
-        tempRoot.getPosition().y = 0;
+            // TODO Structure add property for SPACING and BORDER_SPACING
+            int depth = 0;
+            // TODO find a use for tempRoot.getProperty(Properties.DEPTH)
 
-        int childFan;
-        int occupiedSpace = 0;
+            // int parentFan = tempRoot.getProperty(Properties.FAN);
+            // debug
+            int parentFan = 42;
 
-        ArrayList<TNode> currentLevel = new ArrayList<TNode>();
-        ArrayList<TNode> nextLevel = new ArrayList<TNode>();
+            tempRoot.getPosition().x = parentFan * DEFAULT_SIZE / 2;
+            tempRoot.getPosition().y = 0;
 
-        nextLevel.addAll(tempRoot.getChildren());
+            int childFan;
+            int occupiedSpace = 0;
 
-        // TODO treat size
-        while (!nextLevel.isEmpty()) {
-            currentLevel = (ArrayList<TNode>) nextLevel.clone();
-            nextLevel.clear();
-            depth += DEFAULT_SIZE;
-            for (TNode tNode : currentLevel) {
-                childFan = tNode.getProperty(Properties.FAN);
-                tNode.getPosition().x = occupiedSpace + childFan * DEFAULT_SIZE / 2;
-                tNode.getPosition().y = depth;
-                occupiedSpace += childFan < 1 ? 1 * DEFAULT_SIZE : childFan* DEFAULT_SIZE;
+            ArrayList<TNode> currentLevel = new ArrayList<TNode>();
+            ArrayList<TNode> nextLevel = new ArrayList<TNode>();
 
-                nextLevel.addAll(tNode.getChildren());
-                
-                for (TEdge outgoingEdge : tNode.getOutgoingEdges()) {
-                    double sourcePos = outgoingEdge.getSource().getPosition().y;
-                    double targetPos = outgoingEdge.getTarget().getPosition().y;
-                    
-                    outgoingEdge.getBendPoints().add(sourcePos, targetPos);
+            nextLevel.addAll(tempRoot.getChildren());
+
+            // TODO treat size
+            while (!nextLevel.isEmpty()) {
+                currentLevel = (ArrayList<TNode>) nextLevel.clone();
+                nextLevel.clear();
+                depth += DEFAULT_SIZE;
+                for (TNode tNode : currentLevel) {
+                    // childFan = tNode.getProperty(Properties.FAN);
+                    // debug
+                    childFan = 42;
+                    tNode.getPosition().x = occupiedSpace + childFan * DEFAULT_SIZE / 2;
+                    tNode.getPosition().y = depth;
+                    occupiedSpace += childFan < 1 ? 1 * DEFAULT_SIZE : childFan * DEFAULT_SIZE;
+
+                    nextLevel.addAll(tNode.getChildren());
+
+                    for (TEdge outgoingEdge : tNode.getOutgoingEdges()) {
+                        double sourcePos = outgoingEdge.getSource().getPosition().y;
+                        double targetPos = outgoingEdge.getTarget().getPosition().y;
+
+                        outgoingEdge.getBendPoints().add(sourcePos, targetPos);
+                    }
                 }
+                occupiedSpace = 0;
             }
-            occupiedSpace = 0;
         }
-        
+
         // TODO return graph and implement fan data
         progressMonitor.done();
     }
 
 }
-

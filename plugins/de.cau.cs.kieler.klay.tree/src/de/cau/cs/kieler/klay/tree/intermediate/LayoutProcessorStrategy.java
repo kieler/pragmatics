@@ -32,7 +32,9 @@ public enum LayoutProcessorStrategy {
     // Before Phase 1
 
     // TODO add actual processors
-    TEST_PROCESSOR;
+    TEST_PROCESSOR,
+    FAN_PROCESSOR,
+    ROOT_PROCESSOR;
 
     /**
      * Creates an instance of the layout processor described by this instance.
@@ -46,6 +48,12 @@ public enum LayoutProcessorStrategy {
         case TEST_PROCESSOR:
             return new TestProcessor();
 
+        case FAN_PROCESSOR:
+            return new FanProcessor();
+
+        case ROOT_PROCESSOR:
+            return new RootProcessor();
+        
         default:
             throw new IllegalArgumentException(
                     "No implementation is available for the layout processor " + this.toString());
