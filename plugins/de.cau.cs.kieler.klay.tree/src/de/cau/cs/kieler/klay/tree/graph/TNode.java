@@ -48,6 +48,8 @@ public class TNode extends TShape {
     private LinkedList<TNode> children;
 
     private LinkedList<TEdge> outgoingEdges;
+    
+    private LinkedList<TEdge> incomeingEdges;
 
     /**
      * Create a new node without parent and label.
@@ -187,6 +189,13 @@ public class TNode extends TShape {
             outgoingEdges = new LinkedList<TEdge>();
         }
         return outgoingEdges;
+    }
+    
+    public List<TEdge> getInComingEdges() {
+        if (incomeingEdges == null) {
+            incomeingEdges = new LinkedList<TEdge>();
+        }
+        return incomeingEdges;
     }
 
     /**

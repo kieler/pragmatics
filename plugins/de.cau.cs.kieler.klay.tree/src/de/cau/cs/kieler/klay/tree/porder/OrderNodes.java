@@ -15,10 +15,10 @@ package de.cau.cs.kieler.klay.tree.porder;
 
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
@@ -39,8 +39,8 @@ public class OrderNodes implements ILayoutPhase {
 
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
-            IntermediateProcessingConfiguration.BEFORE_PHASE_1,
-            EnumSet.of(LayoutProcessorStrategy.TEST_PROCESSOR));
+            IntermediateProcessingConfiguration.BEFORE_PHASE_2, EnumSet.of(
+                    LayoutProcessorStrategy.ROOT_PROCESSOR,LayoutProcessorStrategy.FAN_PROCESSOR));
 
     /**
      * {@inheritDoc}
@@ -55,17 +55,24 @@ public class OrderNodes implements ILayoutPhase {
 
         progressMonitor.begin("Processor arrange node", 1);
 
+        TNode root = null;
         LinkedList<TNode> roots = new LinkedList<TNode>();
-        for (TNode tNode : tGraph.getNodes()) {
-            if (tNode.getProperty(Properties.ROOT))
-                roots.add(tNode);
+
+        Iterator<TNode> it = tGraph.getNodes().iterator();
+        while (root == null && it.hasNext()) {
+            TNode tNode = it.next();
+            if (tNode.getProperty(Properties.ROOT)) {
+                root = tNode;
+            }
         }
-        arrangeLevel(roots, progressMonitor.subTask(1.0f));
+        roots.add(root);
+        arrangeLevel(roots, 0, progressMonitor.subTask(1.0f));
 
         progressMonitor.done();
+
     }
 
-    private void arrangeLevel(LinkedList<TNode> currentLevel,
+    private void arrangeLevel(LinkedList<TNode> currentLevel, int level,
             final IKielerProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Processor arrange level", 1);
@@ -101,7 +108,7 @@ public class OrderNodes implements ILayoutPhase {
 
             for (TNode tPNode : inners) {
                 tPNode.setProperty(Properties.POSITION, pos++);
-                arrangeLevel(tPNode.getChildren(), progressMonitor.subTask(1 / size));
+                arrangeLevel(tPNode.getChildren(), ++level, progressMonitor.subTask(1 / size));
 
                 LinkedList<TNode> Children = tPNode.getChildren();
 

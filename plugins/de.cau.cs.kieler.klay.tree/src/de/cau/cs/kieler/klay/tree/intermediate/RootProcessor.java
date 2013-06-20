@@ -32,9 +32,12 @@ public class RootProcessor implements ILayoutProcessor {
     ArrayList<TNode> roots = new ArrayList<TNode>();
 
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
+        
+        roots.clear();
 
         for (TNode node : tGraph.getNodes()) {
-            if (node.getProperty(Properties.ROOT)) {
+            if (node.getInComingEdges().isEmpty()) {
+                node.setProperty(Properties.ROOT, true);
                 roots.add(node);
             }
         }

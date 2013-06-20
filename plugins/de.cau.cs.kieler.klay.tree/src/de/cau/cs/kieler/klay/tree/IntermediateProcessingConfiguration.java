@@ -107,13 +107,37 @@ public final class IntermediateProcessingConfiguration {
      * 
      * @param beforePhase1
      *            layout processors before phase 1. May be {@code null}.
+     * @param beforePhase2
+     *            layout processors before phase 2. May be {@code null}.
      */
     public IntermediateProcessingConfiguration(
-            final Collection<LayoutProcessorStrategy> beforePhase1) {
+            final Collection<LayoutProcessorStrategy> beforePhase1,
+            final Collection<LayoutProcessorStrategy> beforePhase2) {
 
         this();
 
-        addAll(BEFORE_PHASE_1, beforePhase1);
+        addAll(BEFORE_PHASE_1, beforePhase1).addAll(BEFORE_PHASE_2, beforePhase2);
+    }
+
+    /**
+     * Constructs a new strategy containing the given intermediate layout processors.
+     * 
+     * @param beforePhase1
+     *            layout processors before phase 1. May be {@code null}.
+     * @param beforePhase2
+     *            layout processors before phase 2. May be {@code null}.
+     * @param beforePhase3
+     *            layout processors before phase 3. May be {@code null}.
+     */
+    public IntermediateProcessingConfiguration(
+            final Collection<LayoutProcessorStrategy> beforePhase1,
+            final Collection<LayoutProcessorStrategy> beforePhase2,
+            final Collection<LayoutProcessorStrategy> beforePhase3) {
+
+        this();
+
+        addAll(BEFORE_PHASE_1, beforePhase1).addAll(BEFORE_PHASE_2, beforePhase2).addAll(
+                BEFORE_PHASE_3, beforePhase3);
     }
 
     /**

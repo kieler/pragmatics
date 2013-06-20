@@ -29,6 +29,7 @@ import de.cau.cs.kieler.klay.tree.porder.OrderNodes;
 import de.cau.cs.kieler.klay.tree.pplacing.NodePlacer;
 import de.cau.cs.kieler.klay.tree.test.testPhase;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
+import de.cau.cs.kieler.klay.tree.ptreeing.Treeing;
 
 /**
  * TODO: Document this class.
@@ -42,11 +43,11 @@ public final class KlayTree {
     // Variables
 
     // TODO build actual phase
-    /** phase 1: cycle breaking module. */
+    /** phase 1: treeing module. */
+    private ILayoutPhase treeing;
+    /** phase 2: order module. */
     private ILayoutPhase orderNodes;
-    /** phase 2: layering module. */
-    private ILayoutPhase testPhase;
-    
+    /** phase 3: arrange module. */
     private ILayoutPhase placeNodes;
 
     /** intermediate layout processor configuration. */
@@ -121,13 +122,20 @@ public final class KlayTree {
      */
     private void updateModules(final TGraph graph) {
 
-        // dummy phase
+        // build a tree
+        if (treeing == null) {            
+            treeing = new Treeing();
+        }
+        
+        // order nodes
+        if (orderNodes == null) {
         orderNodes = new OrderNodes();
+        }
         
-        // dummy phase
-        testPhase = new testPhase();
-        
+        // arrange nodes
+        if (placeNodes == null) {
         placeNodes = new NodePlacer();
+        }
 
         // check which cycle breaking strategy to use
 
@@ -140,17 +148,17 @@ public final class KlayTree {
         // update intermediate processor configuration
         intermediateProcessingConfiguration.clear();
         intermediateProcessingConfiguration
+                .addAll(treeing.getIntermediateProcessingConfiguration(graph))
                 .addAll(orderNodes.getIntermediateProcessingConfiguration(graph))
-                .addAll(testPhase.getIntermediateProcessingConfiguration(graph))
                 .addAll(placeNodes.getIntermediateProcessingConfiguration(graph))
                 .addAll(this.getIntermediateProcessingConfiguration(graph));
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
         algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
-        algorithm.add(orderNodes);
+        algorithm.add(treeing);
         algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
-        algorithm.add(testPhase);
+        algorithm.add(orderNodes);
         algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
         algorithm.add(placeNodes);
     }

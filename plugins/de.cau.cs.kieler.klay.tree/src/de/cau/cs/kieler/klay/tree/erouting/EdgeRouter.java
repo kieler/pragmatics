@@ -11,9 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.tree.p1;
-
-import java.util.EnumSet;
+package de.cau.cs.kieler.klay.tree.erouting;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
@@ -22,7 +20,6 @@ import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
-import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
@@ -34,9 +31,7 @@ public class EdgeRouter implements ILayoutPhase {
     
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
-            new IntermediateProcessingConfiguration(
-                    IntermediateProcessingConfiguration.BEFORE_PHASE_1,
-                    EnumSet.of(LayoutProcessorStrategy.TEST_PROCESSOR));
+            new IntermediateProcessingConfiguration();
 
     /**
      * {@inheritDoc}

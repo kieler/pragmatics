@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.tree;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -131,6 +130,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     tGraph.getEdges().add(newEdge);
 
                     source.addChild(target);
+                    source.getOutgoingEdges().add(newEdge);
+                    target.getInComingEdges().add(newEdge);
 
                     // TODO transform the edge's labels
 
@@ -191,8 +192,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 + insets.getRight();
         float height = (float) (maxYPos - minYPos) + 2 * borderSpacing + insets.getTop()
                 + insets.getBottom();
-        KimlUtil.resizeNode(kgraph, width, height, false);
-        //KimlUtil.resizeNode(kgraph, width, height, false, false);
+        //KimlUtil.resizeNode(kgraph, width, height, false);
+        KimlUtil.resizeNode(kgraph, width, height, false, false);
     }
 
 }

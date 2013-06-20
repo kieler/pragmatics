@@ -44,7 +44,7 @@ public final class Properties {
     public static final IProperty<Boolean> ROOT = new Property<Boolean>("ROOT", false);
     
     /** This node has multiple inheritance. */
-    public static final IProperty<Boolean> MULTI = new Property<Boolean>("ROOT", false);
+    public static final IProperty<Boolean> MULTI = new Property<Boolean>("MULTI", false);
 
     /** This is a dummy node. */
     public static final IProperty<Boolean> DUMMY = new Property<Boolean>("DUMMY", false);

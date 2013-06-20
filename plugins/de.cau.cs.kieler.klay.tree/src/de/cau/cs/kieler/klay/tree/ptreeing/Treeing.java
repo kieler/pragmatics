@@ -13,21 +13,16 @@
  */
 package de.cau.cs.kieler.klay.tree.ptreeing;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
-import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 
 /**
  * @author sor
@@ -39,9 +34,7 @@ public class Treeing implements ILayoutPhase {
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
             
-            new IntermediateProcessingConfiguration(
-            IntermediateProcessingConfiguration.BEFORE_PHASE_2,
-            EnumSet.of(LayoutProcessorStrategy.TEST_PROCESSOR));
+            new IntermediateProcessingConfiguration();
           
     
     /**

@@ -128,14 +128,17 @@ public class TGraph extends MapPropertyHolder {
             System.out.println("In erstem if");
             return false;
         }
-        else if (tNode.getLeftChild() == null && tNode.getRightChild() == null) {
-            return true;
+        else {
+            return tNode.getChildren().isEmpty();
         }
-        else { 
-            isLeaf(tNode.getLeftChild());
-            isLeaf(tNode.getRightChild());
-        }
-        return true;
+//        else if (tNode.getChildren().isEmpty()) {
+//            return true;
+//        }
+//        else { 
+//            isLeaf(tNode.getLeftChild());
+//            isLeaf(tNode.getRightChild());
+//        }
+//        return true;
     }
     
     public TNode getFirstChild(TNode tNode) {

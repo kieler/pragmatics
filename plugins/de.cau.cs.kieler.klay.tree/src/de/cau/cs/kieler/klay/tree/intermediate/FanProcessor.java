@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.klay.tree.intermediate;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,41 +35,37 @@ import de.cau.cs.kieler.klay.tree.util.FillStrings;
 public class FanProcessor implements ILayoutProcessor {
 
     Map<String, Integer> gloFanMap = new HashMap<String, Integer>();
-    ArrayList<TNode> roots = new ArrayList<TNode>();
 
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
         // set the fan for every node
         // TODO multiple parents of a node
 
-        for (TNode tNode : tGraph.getNodes()) {
-            if (tNode.getParent() == null) {
-             // mark the potential roots
-                tNode.setProperty(Properties.ROOT, true);
-                roots.add(tNode);
+        TNode root = null;
+        
+        gloFanMap.clear();
+
+        Iterator<TNode> it = tGraph.getNodes().iterator();
+        while (root == null && it.hasNext()) {
+            TNode tNode = it.next();
+            if (tNode.getProperty(Properties.ROOT)) {
+                root = tNode;
             }
         }
+        root.setProperty(Properties.ID, "0");
 
         // mark the roots for fan calculation
-        int digits = roots.isEmpty() ? 0 : (int) (Math.floor(Math.log10(roots.size() - 1)) + 1);
-        int index = 0;
-        for (TNode tNode : roots) {
-            String key = FillStrings.formatRight(String.valueOf(index++), digits);
-            tNode.setProperty(Properties.ID, key);
-            for (TNode tChild : tNode.getChildren()) {
-                tChild.setProperty(Properties.ID, key);
-                // check if the ID was set already by another relation
-                if (tChild.getProperty(Properties.ID) != null) {
-                    tChild.setProperty(Properties.MULTI, true);
-                }
-                // TODO add implementation for multiple inheritance
-                // the provisional stringId is the Id of the parent
-                tChild.setProperty(Properties.ID, key);
+        for (TNode tChild : root.getChildren()) {
+            tChild.setProperty(Properties.ID, "0");
+            // check if the ID was set already by another relation
+            if (tChild.getProperty(Properties.ID) != null) {
+                tChild.setProperty(Properties.MULTI, true);
             }
+            // TODO add implementation for multiple inheritance
+            // the provisional stringId is the Id of the parent
+            tChild.setProperty(Properties.ID, "0");
         }
 
-        for (TNode tRoot : roots) {
-            calculateFan(tRoot.getChildren());
-        }
+        calculateFan(root.getChildren());
 
         // set the fan for all nodes
         for (TNode tNode : tGraph.getNodes()) {
