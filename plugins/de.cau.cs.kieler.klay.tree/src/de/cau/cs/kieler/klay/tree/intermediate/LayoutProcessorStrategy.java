@@ -37,7 +37,7 @@ public enum LayoutProcessorStrategy {
     FAN_PROCESSOR,
     
     // Before Phase 3
-    NEIGHBOUR_PROC;
+    NEIGHBORS_PROC;
     
 
     /**
@@ -58,8 +58,8 @@ public enum LayoutProcessorStrategy {
         case FAN_PROCESSOR:
             return new FanProcessor();
             
-        case NEIGHBOUR_PROC:
-            return new NeighbourProcessor();
+        case NEIGHBORS_PROC:
+            return new NeighborsProcessor();
 
         default:
             throw new IllegalArgumentException(

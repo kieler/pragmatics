@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
- * TODO: Document this class.
+ * Manages the transformation of KGraphs to TGraphs.
  * 
  * @author sor
  * @author sgu
@@ -55,7 +55,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         // keep a list of created nodes in the t-graph
         Map<KNode, TNode> elemMap = new HashMap<KNode, TNode>();
 
-        // transform everything
+        // transform nodes and edges
         transformNodes(kgraph, tGraph, elemMap);
         transformEdges(kgraph, tGraph, elemMap);
 
@@ -84,10 +84,13 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             // knode.getData(KShapeLayout.class);
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
 
+            // copy label
             String label = "";
             if (!knode.getLabels().isEmpty()) {
                 label = knode.getLabels().get(0).getText();
             }
+
+            // create new tNode
             TNode newNode = new TNode(index++, tGraph, label);
             newNode.setProperty(Properties.ORIGIN, knode);
             newNode.getPosition().x = nodeLayout.getXpos() + nodeLayout.getWidth() / 2;
@@ -96,6 +99,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             newNode.getSize().y = Math.max(nodeLayout.getHeight(), 1);
             tGraph.getNodes().add(newNode);
 
+            // keep the corresponding tNode of each kNode for edge transformation
             elemMap.put(knode, newNode);
 
             // set properties of the new node
@@ -122,22 +126,25 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 if (kedge.getTarget().getParent() == parentNode && knode != kedge.getTarget()) {
                     KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
 
-                    // create a edge
+                    // find the corresponding source and target tNode of edge
                     TNode source = elemMap.get(knode);
                     TNode target = elemMap.get(kedge.getTarget());
+
+                    // create a edge and add edge to tGraph
                     TEdge newEdge = new TEdge(source, target);
                     newEdge.setProperty(Properties.ORIGIN, kedge);
                     tGraph.getEdges().add(newEdge);
-
-                    source.addChild(target);
-                    source.getOutgoingEdges().add(newEdge);
-                    target.getInComingEdges().add(newEdge);
 
                     // TODO transform the edge's labels
 
                     // set properties of the new edge
                     newEdge.copyProperties(edgeLayout);
                     newEdge.checkProperties(Properties.LABEL_SPACING);
+
+                    // update tNode accordingly
+                    source.addChild(target);
+                    source.getOutgoingEdges().add(newEdge);
+                    target.getInComingEdges().add(newEdge);
                 }
             }
         }
@@ -150,15 +157,18 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      * {@inheritDoc}
      */
     public void applyLayout(final TGraph tGraph) {
+        // get the corresponding kGraph
         KNode kgraph = (KNode) tGraph.getProperty(Properties.ORIGIN);
 
         // determine the border spacing, which influences the offset
-        KShapeLayout parentLayout = kgraph.getData(KShapeLayout.class);
+        KShapeLayout graphLayout = kgraph.getData(KShapeLayout.class);
+        
+        // check border spacing and update if necessary
         float borderSpacing = tGraph.getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
             borderSpacing = Properties.SPACING.getDefault();
+            tGraph.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
         }
-        tGraph.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
 
         // calculate the offset from border spacing and node distribution
         double minXPos = Integer.MAX_VALUE, minYPos = Integer.MAX_VALUE, maxXPos = Integer.MIN_VALUE, maxYPos = Integer.MIN_VALUE;
@@ -175,7 +185,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         // process the nodes
         for (TNode tNode : tGraph.getNodes()) {
             Object object = tNode.getProperty(Properties.ORIGIN);
-
             if (object instanceof KNode) {
                 // set the node position
                 KNode knode = (KNode) object;
@@ -186,13 +195,12 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             }
         }
 
-        // set up the parent node
-        KInsets insets = parentLayout.getInsets();
+        // set up the graph
+        KInsets insets = graphLayout.getInsets();
         float width = (float) (maxXPos - minXPos) + 2 * borderSpacing + insets.getLeft()
                 + insets.getRight();
         float height = (float) (maxYPos - minYPos) + 2 * borderSpacing + insets.getTop()
                 + insets.getBottom();
-        //KimlUtil.resizeNode(kgraph, width, height, false);
         KimlUtil.resizeNode(kgraph, width, height, false, false);
     }
 

@@ -17,9 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * TODO: Document this class.
- * 
- * A node in the T graph.
+ * A node in the T graph. Some properties are maybe null.
  * 
  * @author sor
  * @author sgu
@@ -29,51 +27,30 @@ public class TNode extends TShape {
     /** the serial version UID. */
     private static final long serialVersionUID = 1L;
 
-    // CHECKSTYLEOFF VisibilityModifier
-    /** the identifier number. */
-    public int id;
-    // CHECKSTYLEON VisibilityModifier
-
     /** the node label. */
     private String label;
-    /** The parent node. */
-    private TNode parent;
 
     private TNode leftChild;
     private TNode rightChild;
-    
+
     private TNode leftNeighbour;
     private TNode rightNeighbour;
     /** List of child nodes. */
     private LinkedList<TNode> children;
 
     private LinkedList<TEdge> outgoingEdges;
-    
+
     private LinkedList<TEdge> incomeingEdges;
+
+    // CONSTRUCTORS
 
     /**
      * Create a new node without parent and label.
      */
     public TNode(final int id, final TGraph graph) {
-        super(id, graph);
-        this.id = id;
-        this.parent = null;
+        super(id);
         this.rightChild = null;
         this.leftChild = null;
-        this.leftNeighbour = null;
-        this.rightNeighbour = null;
-        this.children = new LinkedList<TNode>();
-    }
-
-    /**
-     * Create a new node with given parent.
-     */
-    public TNode(final int id, final TGraph graph, final TNode parent) {
-        super(id, graph);
-        this.id = id;
-        this.parent = parent;
-        this.leftChild = null;
-        this.rightChild = null;
         this.leftNeighbour = null;
         this.rightNeighbour = null;
         this.children = new LinkedList<TNode>();
@@ -86,10 +63,8 @@ public class TNode extends TShape {
      *            the label text
      */
     public TNode(final int id, final TGraph graph, final String label) {
-        super(id, graph);
-        this.id = id;
+        super(id);
         this.label = label;
-        this.parent = null;
         this.leftChild = null;
         this.rightChild = null;
         this.leftNeighbour = null;
@@ -97,25 +72,7 @@ public class TNode extends TShape {
         this.children = new LinkedList<TNode>();
     }
 
-    /**
-     * Create a new node with given parent node and label.
-     * 
-     * @param label
-     *            the label text
-     * @param parent
-     *            the parent node
-     */
-    public TNode(final int id, final TGraph graph, final String label, final TNode parent) {
-        super(id, graph);
-        this.id = id;
-        this.label = label;
-        this.parent = parent;
-        this.leftChild = null;
-        this.rightChild = null;
-        this.leftNeighbour = null;
-        this.rightNeighbour = null;
-        this.children = new LinkedList<TNode>();
-    }
+    // GETTERS
 
     /**
      * {@inheritDoc}
@@ -148,26 +105,37 @@ public class TNode extends TShape {
     }
 
     /**
-     * Returns the parent node.
+     * Get the left child. Maybe null.
      * 
-     * @return the parent
+     * @return the left child
      */
-    public TNode getParent() {
-        return parent;
-    }
-
     public TNode getLeftChild() {
         return leftChild;
     }
 
+    /**
+     * Get the right child. Maybe null.
+     * 
+     * @return the right child
+     */
     public TNode getRightChild() {
         return rightChild;
     }
-    
+
+    /**
+     * Get the left neighbor. Maybe null.
+     * 
+     * @return the left neighbor
+     */
     public TNode getLeftNeighbour() {
         return leftNeighbour;
     }
-    
+
+    /**
+     * Get the right neighbor. Maybe null.
+     * 
+     * @return the right neighbor
+     */
     public TNode getRightNeighbour() {
         return rightNeighbour;
     }
@@ -184,33 +152,28 @@ public class TNode extends TShape {
         return children;
     }
 
+    /**
+     * Returns the list of outgoing edges, creating it if necessary.
+     * 
+     * @return list of outgoing edges
+     */
     public List<TEdge> getOutgoingEdges() {
         if (outgoingEdges == null) {
             outgoingEdges = new LinkedList<TEdge>();
         }
         return outgoingEdges;
     }
-    
+
+    /**
+     * Returns the list of incoming edges, creating it if necessary.
+     * 
+     * @return list of incoming edge
+     */
     public List<TEdge> getInComingEdges() {
         if (incomeingEdges == null) {
             incomeingEdges = new LinkedList<TEdge>();
         }
         return incomeingEdges;
-    }
-
-    /**
-     * Returns the depth of this node in the compound hierarchy.
-     * 
-     * @return the depth
-     */
-    public int getDepth() {
-        int depth = 0;
-        TNode node = parent;
-        while (node != null) {
-            node = node.getParent();
-            depth++;
-        }
-        return depth;
     }
 
     // SETTERS
@@ -224,34 +187,52 @@ public class TNode extends TShape {
     }
 
     /**
-     * Set the parent node.
+     * Set the left child and add it to the list of children.
      * 
+     * @param leftChild
+     *            the left child
      */
-    public void setParent(TNode parent) {
-        this.parent = parent;
-    }
-
     public void setLeftChild(TNode leftChild) {
         this.leftChild = leftChild;
         children.add(leftChild);
     }
 
+    /**
+     * Set the right child and add it to the list of children.
+     * 
+     * @param rightChild
+     *            the right child
+     */
     public void setRightChild(TNode rightChild) {
         this.rightChild = rightChild;
         children.add(rightChild);
     }
-    
+
+    /**
+     * Set the left neighbor.
+     * 
+     * @param tNode
+     *            the left neighbor
+     */
     public void setLeftNeighbour(TNode tNode) {
         this.leftNeighbour = tNode;
     }
-    
+
+    /**
+     * Set the right neighbor.
+     * 
+     * @param tNode
+     *            the right neighbor
+     */
     public void setRightNeighbour(TNode tNode) {
         this.rightNeighbour = tNode;
     }
 
     /**
-     * Set the list of children.
+     * Reset the list of children to a given list.
      * 
+     * @param children
+     *            the new list of children
      */
     public void setChildren(LinkedList<TNode> children) {
         this.children = children;
@@ -260,6 +241,8 @@ public class TNode extends TShape {
     /**
      * Add a node to the list of children.
      * 
+     * @param child
+     *            the child to be added
      */
     public void addChild(TNode child) {
         this.children.add(child);

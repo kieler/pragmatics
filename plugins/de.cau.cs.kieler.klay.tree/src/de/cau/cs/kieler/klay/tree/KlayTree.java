@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -27,12 +26,24 @@ import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.porder.OrderNodes;
 import de.cau.cs.kieler.klay.tree.pplacing.NodePlacer;
-import de.cau.cs.kieler.klay.tree.test.testPhase;
-import de.cau.cs.kieler.klay.tree.properties.Properties;
 import de.cau.cs.kieler.klay.tree.ptreeing.Treeing;
 
 /**
- * TODO: Document this class.
+ * Implement a layouter for trees. The T layouter uses the algorithm from
+ * "A Node-Positioning Algorithm for General Trees, John Q.Walker II" to layout trees. To do this it
+ * uses four phases plus a pree processing to build a corresponding data structure. The first phase
+ * "treeing" transforms the given graph to into a tree if necessary. To do this edges which destroy
+ * the tree property will be removed and stored to be restored in the post processing. In the second
+ * phase "orderNodes" the nodes of each level are seperated into leaves and inner nodes. And then
+ * whitespace in the level is filled with leaves. The third phase "placeNodes" uses the algorithm
+ * first mentioned from John Q.Walker II to compute the actual position of the nodes. The last phase
+ * routeEdges set the positions for the edges corresponding to the positions of the nodes.
+ * 
+ * Each phase uses intermediate processors for small computations on the graph. The corresponding
+ * processor are defined in each phase. Some are defined multiple times, but they are invoked only
+ * once.
+ * 
+ * The processors can determine roots of components and fan outs or level neighbors of nodes.
  * 
  * @author sor
  * @author sgu
@@ -42,7 +53,6 @@ public final class KlayTree {
     // /////////////////////////////////////////////////////////////////////////////
     // Variables
 
-    // TODO build actual phase
     /** phase 1: treeing module. */
     private ILayoutPhase treeing;
     /** phase 2: order module. */
@@ -74,15 +84,10 @@ public final class KlayTree {
     public TGraph doLayout(final TGraph tgraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Tree layout", 1);
 
-        // set special properties for the tree graph
-        setOptions(tgraph);
-
-        // update the modules depending on user options
+        // set up the phases and processors depending on user options
         updateModules(tgraph);
 
-        // do layout
-        // maybe split the graph into multiple components and combine them after the layout
-
+        // do layout for each component
         layout(tgraph, progressMonitor.subTask(1.0f));
 
         progressMonitor.done();
@@ -94,27 +99,6 @@ public final class KlayTree {
     // Options and Modules Management
 
     /**
-     * Set special layout options for the tree graph.
-     * 
-     * @param tGraph
-     *            a new tree graph
-     */
-    private void setOptions(final TGraph tGraph) {
-        // set the random number generator based on the random seed option
-        Integer randomSeed = tGraph.getProperty(LayoutOptions.RANDOM_SEED);
-        if (randomSeed != null) {
-            int val = randomSeed;
-            if (val == 0) {
-                tGraph.setProperty(Properties.RANDOM, new Random());
-            } else {
-                tGraph.setProperty(Properties.RANDOM, new Random(val));
-            }
-        } else {
-            tGraph.setProperty(Properties.RANDOM, new Random(1));
-        }
-    }
-
-    /**
      * Update the modules depending on user options.
      * 
      * @param graph
@@ -123,43 +107,42 @@ public final class KlayTree {
     private void updateModules(final TGraph graph) {
 
         // build a tree
-        if (treeing == null) {            
+        if (treeing == null) {
             treeing = new Treeing();
         }
-        
+
         // order nodes
         if (orderNodes == null) {
-        orderNodes = new OrderNodes();
+            orderNodes = new OrderNodes();
         }
-        
+
+        // set node placement strategy to use
         // arrange nodes
         if (placeNodes == null) {
-        placeNodes = new NodePlacer();
+            placeNodes = new NodePlacer();
         }
 
-        // check which cycle breaking strategy to use
-
-        // check which crossing minimization strategy to use
-
-        // check which node placement strategy to use
-
-        // check which edge router to use
+        // TODO set edge router to use
 
         // update intermediate processor configuration
         intermediateProcessingConfiguration.clear();
         intermediateProcessingConfiguration
                 .addAll(treeing.getIntermediateProcessingConfiguration(graph))
                 .addAll(orderNodes.getIntermediateProcessingConfiguration(graph))
-                .addAll(placeNodes.getIntermediateProcessingConfiguration(graph))
-                .addAll(this.getIntermediateProcessingConfiguration(graph));
+                .addAll(placeNodes.getIntermediateProcessingConfiguration(graph));
+        // TODO add intermediate processing configuration for block direction
+        // .addAll(this.getIntermediateProcessingConfiguration(graph));
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
-        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
         algorithm.add(treeing);
-        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
         algorithm.add(orderNodes);
-        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
         algorithm.add(placeNodes);
     }
 
@@ -199,47 +182,50 @@ public final class KlayTree {
         return result;
     }
 
-    /**
-     * Returns an intermediate processing configuration with processors not tied to specific phases.
-     * 
-     * @param graph
-     *            the tree graph to be processed. The configuration may vary depending on certain
-     *            properties of the graph.
-     * @return intermediate processing configuration. May be {@code null}.
-     */
-    private IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final TGraph graph) {
-
-        // get graph properties
-
-        // Basic configuration
-        IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration();
-
-        // graph transformations for unusual layout directions
-        switch (graph.getProperty(LayoutOptions.DIRECTION)) {
-        case LEFT:
-            // ADD LEFT_DIR_POSTPROCESSOR to IntermediateProcessingConfiguration
-            break;
-        case RIGHT:
-            // ADD RIGHT_DIR_POSTPROCESSOR to IntermediateProcessingConfiguration
-            break;
-        case DOWN:
-            // ADD DOWN_DIR_POSTPROCESSOR to IntermediateProcessingConfiguration
-            break;
-        case UP:
-            // ADD UP_DIR_POSTPROCESSOR to IntermediateProcessingConfiguration
-            break;
-        default:
-            // This is either RIGHT or UNDEFINED, which is just mapped to RIGHT. Either way, we
-            // don't
-            // need any processors here
-            break;
-        }
-
-        // Additional dependencies
-
-        return configuration;
-    }
+    // TODO add this for intermediate processing configuration for block direction
+    // /**
+    // * Returns an intermediate processing configuration with processors not tied to specific
+    // phases.
+    // *
+    // * @param graph
+    // * the tree graph to be processed. The configuration may vary depending on certain
+    // * properties of the graph.
+    // * @return intermediate processing configuration. May be {@code null}.
+    // */
+    // private IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+    // final TGraph graph) {
+    //
+    // // get graph properties
+    //
+    // // Basic configuration
+    // IntermediateProcessingConfiguration configuration = new
+    // IntermediateProcessingConfiguration();
+    //
+    // // graph transformations for unusual layout directions
+    // switch (graph.getProperty(LayoutOptions.DIRECTION)) {
+    // case LEFT:
+    // // ADD LEFT_DIR_POSTPROCESSOR to IntermediateProcessingConfiguration
+    // break;
+    // case RIGHT:
+    // // ADD RIGHT_DIR_POSTPROCESSOR to IntermediateProcessingConfiguration
+    // break;
+    // case DOWN:
+    // // ADD DOWN_DIR_POSTPROCESSOR to IntermediateProcessingConfiguration
+    // break;
+    // case UP:
+    // // ADD UP_DIR_POSTPROCESSOR to IntermediateProcessingConfiguration
+    // break;
+    // default:
+    // // This is either RIGHT or UNDEFINED, which is just mapped to RIGHT. Either way, we
+    // // don't
+    // // need any processors here
+    // break;
+    // }
+    //
+    // // Additional dependencies
+    //
+    // return configuration;
+    // }
 
     // /////////////////////////////////////////////////////////////////////////////
     // Layout
@@ -279,35 +265,4 @@ public final class KlayTree {
         }
         monitor.done();
     }
-
-    /**
-     * Executes the given layout processor on the given list of graphs.
-     * 
-     * @param graphs
-     *            the list of graphs to be laid out.
-     * @param monitor
-     *            a progress monitor.
-     * @param processor
-     *            processor to execute.
-     */
-    private void layoutTest(final List<TGraph> graphs, final IKielerProgressMonitor monitor,
-            final ILayoutProcessor processor) {
-
-        monitor.begin("Layout", graphs.size());
-
-        // invoke the layout processor on each of the given graphs
-        for (TGraph graph : graphs) {
-            if (monitor.isCanceled()) {
-                return;
-            }
-
-            processor.process(graph, monitor.subTask(2));
-        }
-
-        monitor.done();
-    }
-
-    // /////////////////////////////////////////////////////////////////////////////
-    // Processing Configuration Constants
-
 }

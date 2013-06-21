@@ -16,7 +16,6 @@ package de.cau.cs.kieler.klay.tree.graph;
 import de.cau.cs.kieler.core.math.KVector;
 
 /**
- * TODO: Document this class.
  * Abstract superclass for {@link TGraphElement}s that can have a position and a size.
  * 
  * @author sor
@@ -38,15 +37,15 @@ public abstract class TShape extends TGraphElement {
      * @param graph
      *            the graph for which the shape is created
      */
-    public TShape(final int id, final TGraph p) {
-        super(id, p);
+    public TShape(final int id) {
+        super(id);
     }
 
     /**
-     * Implicit super constructor
+     * Implicit super constructor.
+     * 
      */
     public TShape() {
-
     }
 
     /**

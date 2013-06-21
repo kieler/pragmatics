@@ -29,8 +29,8 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
 import de.cau.cs.kieler.klay.tree.util.SortTNodeProperty;
 
 /**
- * This phase put the nodes into an order, so that in each level the gaps between two nodes are
- * minimal in relation to the space needed for children. An
+ * This phase orders the nodes of each level by seperating the nodes into leaves and inner nodes.
+ * And then fill whitespace in the levels with corresponding leaves.
  * 
  * @author sor
  * @author sgu
@@ -40,7 +40,7 @@ public class OrderNodes implements ILayoutPhase {
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
             IntermediateProcessingConfiguration.BEFORE_PHASE_2, EnumSet.of(
-                    LayoutProcessorStrategy.ROOT_PROCESSOR,LayoutProcessorStrategy.FAN_PROCESSOR));
+                    LayoutProcessorStrategy.ROOT_PROCESSOR, LayoutProcessorStrategy.FAN_PROCESSOR));
 
     /**
      * {@inheritDoc}
@@ -51,13 +51,17 @@ public class OrderNodes implements ILayoutPhase {
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Processor arrange node", 1);
 
+        // find the root of the component
+        // expected only one root exists
         TNode root = null;
         LinkedList<TNode> roots = new LinkedList<TNode>();
-
         Iterator<TNode> it = tGraph.getNodes().iterator();
         while (root == null && it.hasNext()) {
             TNode tNode = it.next();
@@ -65,58 +69,77 @@ public class OrderNodes implements ILayoutPhase {
                 root = tNode;
             }
         }
+        // order each level
         roots.add(root);
-        arrangeLevel(roots, 0, progressMonitor.subTask(1.0f));
+        orderLevel(roots, 0, progressMonitor.subTask(1.0f));
 
         progressMonitor.done();
 
     }
 
-    private void arrangeLevel(LinkedList<TNode> currentLevel, int level,
+    /**
+     * Order each level by seperating the nodes into leaves and inner nodes. And then fill gaps with
+     * corresponding leaves.
+     * 
+     * @param currentLevel
+     * @param level
+     * @param progressMonitor
+     */
+    private void orderLevel(LinkedList<TNode> currentLevel, int level,
             final IKielerProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Processor arrange level", 1);
 
         int pos = 0;
 
+        // sort all nodes in this level by their fan out
+        // so the leaves are at the end of the list
         Collections.sort(currentLevel, new SortTNodeProperty(Properties.FAN));
 
-        int lastOcc = currentLevel.size();
-
+        // find the first occurence of a leave in the list
+        int firstOcc = currentLevel.size();
         ListIterator<TNode> it = currentLevel.listIterator(currentLevel.size());
         boolean notNull = true;
         while (notNull && it.hasPrevious()) {
             TNode tNode = (TNode) it.previous();
             if ((tNode.getProperty(Properties.FAN) == 0)) {
-                lastOcc--;
+                firstOcc--;
             } else {
                 notNull = false;
             }
         }
 
-        List<TNode> tmp = currentLevel.subList(0, lastOcc);
+        // seperate the level into leaves and inner nodes
+        List<TNode> tmp = currentLevel.subList(0, firstOcc);
         LinkedList<TNode> inners = new LinkedList<TNode>(tmp);
-        tmp = currentLevel.subList(lastOcc, currentLevel.size());
+        tmp = currentLevel.subList(firstOcc, currentLevel.size());
         LinkedList<TNode> leaves = new LinkedList<TNode>(tmp);
 
-        if (currentLevel.isEmpty()) {
+        // check if their are inner nodes left
+        if (inners.isEmpty()) {
+            // leave the leaves in their order
             for (TNode tENode : leaves) {
                 tENode.setProperty(Properties.POSITION, pos++);
             }
         } else {
+            
+            // order each level of descendants of the inner nodes
             int size = inners.size();
-
             for (TNode tPNode : inners) {
                 tPNode.setProperty(Properties.POSITION, pos++);
-                arrangeLevel(tPNode.getChildren(), ++level, progressMonitor.subTask(1 / size));
-
+                
+                // set the position of the children and set them in order
                 LinkedList<TNode> Children = tPNode.getChildren();
-
+                orderLevel(Children, ++level, progressMonitor.subTask(1 / size));
+                
+                // order the children by their reverse position
                 Collections.sort(Children,
                         Collections.reverseOrder(new SortTNodeProperty(Properties.POSITION)));
 
+                // reset the list of children with the new order
                 tPNode.setChildren(Children);
 
+                // fill gaps with leaves
                 it = leaves.listIterator(leaves.size());
                 int fillGap = tPNode.getChildren().size();
                 notNull = true;

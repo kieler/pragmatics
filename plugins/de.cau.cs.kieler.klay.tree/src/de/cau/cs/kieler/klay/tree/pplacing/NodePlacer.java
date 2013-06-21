@@ -142,7 +142,7 @@ public class NodePlacer implements ILayoutPhase {
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
             null, EnumSet.of(LayoutProcessorStrategy.ROOT_PROCESSOR),
-            EnumSet.of(LayoutProcessorStrategy.NEIGHBOUR_PROC));
+            EnumSet.of(LayoutProcessorStrategy.NEIGHBORS_PROC));
 
     /**
      * {@inheritDoc}

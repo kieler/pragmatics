@@ -16,10 +16,14 @@ package de.cau.cs.kieler.klay.tree;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 
 /**
- * TODO: Document this class.
+ * A layout phase is a special kind of layout processor that encapsulates an implementation of one
+ * of the algorithm's four main phases. A layout phase also specifies a configuration for the
+ * intermediate layout processors that it wants to have executed in between layout phases. (think
+ * dependencies)
  * 
  * @author sor
  * @author sgu
+ * @author cds
  */
 public interface ILayoutPhase extends ILayoutProcessor {
 

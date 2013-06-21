@@ -30,6 +30,10 @@
                default="RIGHT"
                option="de.cau.cs.kieler.direction">
          </knownOption>
+         <knownOption
+               default="false"
+               option="de.cau.cs.kieler.debugMode">
+         </knownOption>
       </layoutAlgorithm>
    </extension>
 

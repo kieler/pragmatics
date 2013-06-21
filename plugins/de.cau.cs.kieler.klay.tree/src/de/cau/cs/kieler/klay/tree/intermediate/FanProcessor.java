@@ -27,7 +27,8 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
 import de.cau.cs.kieler.klay.tree.util.FillStrings;
 
 /**
- * TODO: Document this class.
+ * A processor compute the maximal fan out for each node in the given graph. The maximal fan out of
+ * a node is the maximal number of descendants it got in one level.
  * 
  * @author sor
  * @author sgu
@@ -36,14 +37,17 @@ public class FanProcessor implements ILayoutProcessor {
 
     Map<String, Integer> gloFanMap = new HashMap<String, Integer>();
 
+    /**
+     * {@inheritDoc}
+     */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
-        // set the fan for every node
         // TODO multiple parents of a node
 
         TNode root = null;
-        
+        // clear map if processor is reused
         gloFanMap.clear();
 
+        // find the root of the component
         Iterator<TNode> it = tGraph.getNodes().iterator();
         while (root == null && it.hasNext()) {
             TNode tNode = it.next();

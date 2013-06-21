@@ -19,15 +19,14 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
-import de.cau.cs.kieler.klay.tree.graph.TGraphBuilder;
 
 /**
- * TODO: Document this class.
+ * Layout provider to connect the tree layouter to the Eclipse based layout services and orchestrate
+ * the pree layout processing .
  * 
  * @author sor
  * @author sgu
  */
-@SuppressWarnings("unused")
 public class TreeLayoutProvider extends AbstractLayoutProvider {
 
     // /////////////////////////////////////////////////////////////////////////////
@@ -47,6 +46,7 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void doLayout(final KNode kgraph, IKielerProgressMonitor progressMonitor) {
 
+        // build tGraph
         IGraphImporter<KNode> graphImporter = new KGraphImporter();
         TGraph tGraph = graphImporter.importGraph(kgraph);
 

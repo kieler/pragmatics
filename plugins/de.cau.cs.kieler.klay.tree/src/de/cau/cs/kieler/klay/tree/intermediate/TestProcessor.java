@@ -18,7 +18,7 @@ import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 
 /**
- * TODO: Document this class.
+ * A dummy processor for framework testing.
  * 
  * @author sor
  * @author sgu
@@ -26,8 +26,7 @@ import de.cau.cs.kieler.klay.tree.graph.TGraph;
 public class TestProcessor implements ILayoutProcessor {
 
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
-        // TODO implement actual processors
-
+        // no actual processors
     }
 
 }

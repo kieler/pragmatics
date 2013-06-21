@@ -16,10 +16,18 @@ package de.cau.cs.kieler.klay.tree;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 
 /**
- * TODO: Document this class.
+ * Interface for importer classes for graph structure. Graph importers
+ * should usually subclass
+ * {@link de.cau.cs.kieler.klay.tree.KGraphImporter KGraphImporter}
+ * instead of implementing this interface directly.
  * 
+ * <p>Graph importers are encouraged to set the {@link Properties#GRAPH_PROPERTIES}
+ * property on imported graphs.</p>
+ *
+ * @param <T> the type of graph that this importer can transform into a layered graph.
  * @author sor
  * @author sgu
+ * @author msp
  */
 public interface IGraphImporter<T> {
     

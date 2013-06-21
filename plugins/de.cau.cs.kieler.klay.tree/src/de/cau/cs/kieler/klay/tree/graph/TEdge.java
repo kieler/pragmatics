@@ -20,8 +20,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
- * TODO: Document this class. 
- * A edge for the T graph
+ * A edge for the T graph.
  * 
  * @author sor
  * @author sgu
@@ -29,7 +28,6 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 public class TEdge extends MapPropertyHolder {
 
     /** the serial version UID. */
-    @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
 
     /** the labels of the edge. */
@@ -38,7 +36,7 @@ public class TEdge extends MapPropertyHolder {
     private TNode source;
     /** the target node of the edge. */
     private TNode target;
-    
+
     private KVectorChain bendPoints = new KVectorChain();
 
     /**
@@ -76,12 +74,32 @@ public class TEdge extends MapPropertyHolder {
     }
 
     /**
+     * Sets the source node.
+     * 
+     * @param theSource
+     *            the source node set to
+     */
+    public final void setSource(final TNode theSource) {
+        source = theSource;
+    }
+
+    /**
      * Returns the target node.
      * 
      * @return the target node
      */
     public TNode getTarget() {
         return target;
+    }
+
+    /**
+     * Sets the target node.
+     * 
+     * @param theTarget
+     *            the target node
+     */
+    public final void setTarget(final TNode theTarget) {
+        target = theTarget;
     }
 
     /**
@@ -93,26 +111,6 @@ public class TEdge extends MapPropertyHolder {
         return labels;
     }
 
-    /**
-     * Sets the source vertex.
-     * 
-     * @param theSource
-     *            the source vertex set to
-     */
-    public final void setSource(final TNode theSource) {
-        source = theSource;
-    }
-
-    /**
-     * Sets the target vertex.
-     * 
-     * @param theTarget
-     *            the target vertex
-     */
-    public final void setTarget(final TNode theTarget) {
-        target = theTarget;
-    }
-    
     public KVectorChain getBendPoints() {
         return bendPoints;
     }

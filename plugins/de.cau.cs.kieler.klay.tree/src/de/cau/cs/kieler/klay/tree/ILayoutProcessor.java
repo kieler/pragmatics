@@ -17,10 +17,12 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 
 /**
- * TODO: Document this class.
+ * A layout processor processes a {@link de.cau.cs.kieler.klay.tree.graph.TGraph},performing layout
+ * related tasks on it.
  * 
  * @author sor
  * @author sgu
+ * @author cds
  */
 public interface ILayoutProcessor {
 

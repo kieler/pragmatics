@@ -29,7 +29,7 @@ import de.cau.cs.kieler.klay.tree.util.Key;
  * @author sor
  * @author sgu
  */
-public class NeighbourProcessor implements ILayoutProcessor {
+public class NeighborsProcessor implements ILayoutProcessor {
 
     HashMap<Key, TNode> globalMap = new HashMap<Key, TNode>();
     int numberOfNodes;

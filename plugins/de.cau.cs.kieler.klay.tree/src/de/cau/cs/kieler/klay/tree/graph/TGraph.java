@@ -19,8 +19,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
- * TODO: Document this class.
- * A graph for the T layouter.
+ * A graph for the T layouter. It consists of node, edges and labels.
  * 
  * @author sor
  * @author sgu
@@ -28,13 +27,13 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 public class TGraph extends MapPropertyHolder {
 
     /** the serial version UID. */
-    @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
 
     /** All nodes of this graph. */
     private LinkedList<TNode> nodes = new LinkedList<TNode>();
     /** All edges of this graph. */
     private LinkedList<TEdge> edges = new LinkedList<TEdge>();
+    // TODO check if a list of labels is necessary
     /** All labels of this graph. */
     private LinkedList<TLabel> labels = new LinkedList<TLabel>();
    
@@ -89,7 +88,6 @@ public class TGraph extends MapPropertyHolder {
     public List<TLabel> getLabels() {
         return labels;
     }
-    
 
     /**
      * Add a new node to the graph.
@@ -123,28 +121,24 @@ public class TGraph extends MapPropertyHolder {
         return tedge;
     }
     
+    // TODO document and move to tNode
     public boolean isLeaf(TNode tNode) {
         if (tNode == null) {
+            // TODO remove debug
             System.out.println("In erstem if");
             return false;
         }
         else {
             return tNode.getChildren().isEmpty();
         }
-//        else if (tNode.getChildren().isEmpty()) {
-//            return true;
-//        }
-//        else { 
-//            isLeaf(tNode.getLeftChild());
-//            isLeaf(tNode.getRightChild());
-//        }
-//        return true;
     }
     
+    // TODO document and move to tNode
     public TNode getFirstChild(TNode tNode) {
         return tNode.getChildren().getFirst();
     }
     
+    // TODO document and move to tNode
     public TNode getLastChild(TNode tNode) {
         return tNode.getChildren().getLast();
     }

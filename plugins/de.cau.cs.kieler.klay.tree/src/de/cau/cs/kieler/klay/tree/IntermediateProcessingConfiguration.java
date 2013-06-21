@@ -22,7 +22,12 @@ import java.util.Set;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 
 /**
- * TODO: Document this class.
+ * A strategy for intermediate layout processors to be used.
+ * 
+ * Layout algorithms use this processor between phases to do small computations, which are need for
+ * phases.
+ * 
+ * If a processor is defined multiple times between a phase, it is invoked only once.
  * 
  * @author sor
  * @author sgu
@@ -37,11 +42,8 @@ public final class IntermediateProcessingConfiguration {
     public static final int BEFORE_PHASE_3 = 2;
     /** Constant for the processors that should come before phase 4. */
     public static final int BEFORE_PHASE_4 = 3;
-    /** Constant for the processors that should come before phase 5. */
-    public static final int BEFORE_PHASE_5 = 4;
     /** How many slots there are for intermediate processing. */
-    // TODO count actual number of phases
-    public static final int INTERMEDIATE_PHASE_SLOTS = 42;
+    public static final int INTERMEDIATE_PHASE_SLOTS = 4;
 
     /** Array of sets describing which processors this strategy is composed of. */
     private List<Set<LayoutProcessorStrategy>> strategy = new ArrayList<Set<LayoutProcessorStrategy>>(
@@ -75,7 +77,7 @@ public final class IntermediateProcessingConfiguration {
      * @param slotIndex
      *            the slot index. Must be {@code >= 0} and {@code < INTERMEDIATE_PHASE_SLOTS}.
      * @param processor
-     *            the layout processor to add.
+     *            a single layout processor to add.
      */
     public IntermediateProcessingConfiguration(final int slotIndex,
             final LayoutProcessorStrategy processor) {
@@ -92,7 +94,7 @@ public final class IntermediateProcessingConfiguration {
      * @param slotIndex
      *            the slot index. Must be {@code >= 0} and {@code < INTERMEDIATE_PHASE_SLOTS}.
      * @param processors
-     *            the layout processors to add.
+     *            a collection of layout processors to add.
      */
     public IntermediateProcessingConfiguration(final int slotIndex,
             final Collection<LayoutProcessorStrategy> processors) {
@@ -106,9 +108,9 @@ public final class IntermediateProcessingConfiguration {
      * Constructs a new strategy containing the given intermediate layout processors.
      * 
      * @param beforePhase1
-     *            layout processors before phase 1. May be {@code null}.
+     *            collection of layout processors before phase 1. May be {@code null}.
      * @param beforePhase2
-     *            layout processors before phase 2. May be {@code null}.
+     *            collection of layout processors before phase 2. May be {@code null}.
      */
     public IntermediateProcessingConfiguration(
             final Collection<LayoutProcessorStrategy> beforePhase1,
@@ -123,11 +125,11 @@ public final class IntermediateProcessingConfiguration {
      * Constructs a new strategy containing the given intermediate layout processors.
      * 
      * @param beforePhase1
-     *            layout processors before phase 1. May be {@code null}.
+     *            collection of layout processors before phase 1. May be {@code null}.
      * @param beforePhase2
-     *            layout processors before phase 2. May be {@code null}.
+     *            collection of layout processors before phase 2. May be {@code null}.
      * @param beforePhase3
-     *            layout processors before phase 3. May be {@code null}.
+     *            collection of layout processors before phase 3. May be {@code null}.
      */
     public IntermediateProcessingConfiguration(
             final Collection<LayoutProcessorStrategy> beforePhase1,
