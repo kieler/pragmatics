@@ -243,14 +243,23 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
         Float offset = portLayout.getProperty(LayoutOptions.OFFSET);
         PortConstraints portConstraints = graphLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+        
         if (portSide == PortSide.UNDEFINED) {
             portSide = KimlUtil.calcPortSide(kport, direction);
             portLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
         }
+        
         if (offset == null) {
-            offset = KimlUtil.calcPortOffset(kport, portSide);
+            // if port coordinates are (0,0), we default to port offset 0 to make the common case
+            // frustration-free
+            if (portLayout.getXpos() == 0.0f && portLayout.getYpos() == 0.0f) {
+                offset = 0.0f;
+            } else {
+                offset = KimlUtil.calcPortOffset(kport, portSide);
+            }
             portLayout.setProperty(LayoutOptions.OFFSET, offset);
         }
+        
         LNode dummy = createExternalPortDummy(
                 kport,
                 portConstraints,
@@ -328,9 +337,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 // calculate the port side and offset from the port's current position
                 portSide = KimlUtil.calcPortSide(kport, direction);
                 portLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
+                
                 if (offset == null && portSide != PortSide.UNDEFINED) {
-                    offset = KimlUtil.calcPortOffset(kport, portSide);
-                    portLayout.setProperty(LayoutOptions.OFFSET, offset);
+                    // if port coordinates are (0,0), we default to port offset 0 to make the common case
+                    // frustration-free
+                    if (portLayout.getXpos() != 0.0f || portLayout.getYpos() != 0.0f) {
+                        offset = KimlUtil.calcPortOffset(kport, portSide);
+                    }
                 }
             }
 
@@ -878,22 +891,28 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             }
         }
 
-        // set up the parent node
-        KInsets insets = parentLayout.getInsets();
-        float width = (float) layeredGraph.getSize().x + 2 * borderSpacing + insets.getLeft()
-                + insets.getRight();
-        float height = (float) layeredGraph.getSize().y + 2 * borderSpacing + insets.getTop()
-                + insets.getBottom();
-
+        // setup the parent node
+        KVector actualGraphSize = layeredGraph.getActualSize();
+        
         if (layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).contains(
                 GraphProperties.EXTERNAL_PORTS)) {
-
-            // ports have been positioned using dummy nodes
+            
+            // ports have positions assigned, the graph's size is final
             parentLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-            KimlUtil.resizeNode(parentNode, width, height, false);
+            KimlUtil.resizeNode(
+                    parentNode,
+                    (float) actualGraphSize.x,
+                    (float) actualGraphSize.y,
+                    false,
+                    true);
         } else {
             // ports have not been positioned yet - leave this for next layouter
-            KimlUtil.resizeNode(parentNode, width, height, true);
+            KimlUtil.resizeNode(
+                    parentNode,
+                    (float) actualGraphSize.x,
+                    (float) actualGraphSize.y,
+                    true,
+                    true);
         }
     }
 

@@ -64,6 +64,7 @@ public final class Util {
      */
     public static void centerPoint(final KVector point, final KVector boundary,
             final PortSide side) {
+        
         switch (side) {
         case NORTH:
             point.x = boundary.x / 2;
@@ -85,23 +86,23 @@ public final class Util {
     }
 
     /**
-     * Return a collector port of given type, creating it if necessary. A
-     * collector port is used to merge all incident edges that originally had no
-     * ports.
+     * Return a collector port of given type, creating it if necessary. A collector port is used to
+     * merge all incident edges that originally had no ports.
      * 
      * @param layeredGraph
      *            the layered graph
      * @param node
      *            a node
      * @param type
-     *            if {@code INPUT}, an input collector port is returned; if
-     *            {@code OUTPUT}, an output collector port is returned
+     *            if {@code INPUT}, an input collector port is returned; if {@code OUTPUT}, an
+     *            output collector port is returned
      * @param side
      *            the side to set for a newly created port
      * @return a collector port
      */
     public static LPort provideCollectorPort(final LGraph layeredGraph,
             final LNode node, final PortType type, final PortSide side) {
+        
         LPort port = null;
         switch (type) {
         case INPUT:
@@ -151,9 +152,8 @@ public final class Util {
     }
 
     /**
-     * Returns the beginning of the file name used for debug output graphs while
-     * layouting the given layered graph. This will look something like
-     * {@code "143293-"}.
+     * Returns the beginning of the file name used for debug output graphs while layouting the given
+     * layered graph. This will look something like {@code "143293-"}.
      * 
      * @param graph
      *            the graph to return the base debug file name for.
@@ -169,15 +169,13 @@ public final class Util {
     // Layout of Compound Graphs
 
     /**
-     * Determines whether the given child node is a descendant of the parent
-     * node.
+     * Determines whether the given child node is a descendant of the parent node.
      * 
      * @param child
      *            a child node
      * @param parent
      *            a parent node
-     * @return true if {@code child} is a direct or indirect child of
-     *         {@code parent}
+     * @return true if {@code child} is a direct or indirect child of {@code parent}
      */
     public static boolean isDescendant(final LNode child, final LNode parent) {
         LNode cParent = parent;
@@ -213,15 +211,13 @@ public final class Util {
     }
 
     /**
-     * Finds and returns the given node's parent's representative in the
-     * LayeredGraph.
+     * Finds and returns the given node's parent's representative in the LayeredGraph.
      * 
      * @param child
      *            the node for which the parent representative is to be found.
-     * @return returns the LGraphElement representing the parent of the given
-     *         node in the original graph. Returned element can be instance of
-     *         LayeredGraph (in case the given Node is of depth level one, that
-     *         is directly contained by the layered graph) or LNode (any other
+     * @return returns the LGraphElement representing the parent of the given node in the original
+     *         graph. Returned element can be instance of LayeredGraph (in case the given Node is of
+     *         depth level one, that is directly contained by the layered graph) or LNode (any other
      *         case).
      */
     public static LGraphElement getParent(final LNode child) {
@@ -236,15 +232,13 @@ public final class Util {
     }
 
     /**
-     * Get the given node's children list. If the node is not of NodeType NORMAL
-     * oder UPPER_COMPOUND_BORDER and therefore directly representing a node of
-     * the original graph, get the children-list of the related compound border
-     * dummy.
+     * Get the given node's children list. If the node is not of NodeType NORMAL oder
+     * UPPER_COMPOUND_BORDER and therefore directly representing a node of the original graph, get
+     * the children-list of the related compound border dummy.
      * 
      * @param node
      *            the LNode, for which the children are to be returned
-     * @return the list of the representatives of the represented node's
-     *         children.
+     * @return the list of the representatives of the represented node's children.
      */
     public static LinkedList<LNode> getChildren(final LNode node) {
         NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
@@ -261,16 +255,14 @@ public final class Util {
      * Get the compound node an LNode belongs to.
      * 
      * @param node
-     *            The LNode for which the corresponding compound node is to be
-     *            returned.
+     *            The LNode for which the corresponding compound node is to be returned.
      * @param layeredGraph
      *            The layered Graph, which is to be laid out.
-     * @return Returns: A. The parent node for a leave node, if it is not a node
-     *         of the uppermost hierarchy level- in that case, null will be
-     *         returned. B. The compound node of which's representation the node
-     *         is part of for compound dummies. C. The node enclosing the
-     *         represented LGraphElement for dummies of another kind. Null, if
-     *         represented LGraphElement is of depth 1. D. null in default case.
+     * @return Returns: A. The parent node for a leave node, if it is not a node of the uppermost
+     *         hierarchy level- in that case, null will be returned. B. The compound node of which's
+     *         representation the node is part of for compound dummies. C. The node enclosing the
+     *         represented LGraphElement for dummies of another kind. Null, if represented
+     *         LGraphElement is of depth 1. D. null in default case.
      */
     public static LNode getRelatedCompoundNode(final LNode node, final LGraph layeredGraph) {
         // method is to return null in the default case
@@ -361,16 +353,14 @@ public final class Util {
     }
 
     /**
-     * Finds for a pair of LNodes the pair of ancestors with a common parent
-     * that is highest in depth in the inclusion tree. Each of the ancestors may
-     * be the given node itself.
+     * Finds for a pair of LNodes the pair of ancestors with a common parent that is highest in
+     * depth in the inclusion tree. Each of the ancestors may be the given node itself.
      * 
      * @param sourceTargetList
-     *            The pair of nodes is handed over as a List. The pair of
-     *            ancestors will be stored in the same list.
+     *            The pair of nodes is handed over as a List. The pair of ancestors will be stored
+     *            in the same list.
      * @param elemMap
-     *            The element map that maps the original KGraphElements to the
-     *            LGraphElements.
+     *            The element map that maps the original KGraphElements to the LGraphElements.
      */
     public static void propagatePair(final LinkedList<LNode> sourceTargetList,
             final HashMap<KGraphElement, LGraphElement> elemMap) {
@@ -418,19 +408,16 @@ public final class Util {
     }
 
     /**
-     * Recursively calculates an x and y value that denote the position of a
-     * KNode in reference to the position of an ancestor KNode (usually the
-     * layout node). The insets of the ancestor node are not included in the
-     * relative coordinates. The position is written to a given KVector.
+     * Recursively calculates an x and y value that denote the position of a KNode in reference to
+     * the position of an ancestor KNode (usually the layout node). The insets of the ancestor node
+     * are not included in the relative coordinates. The position is written to a given KVector.
      * 
      * @param posNode
-     *            The node, for whom the position-vector is to be calculated.
-     *            Must be a descendant (contained by) the refNode! Must not be
-     *            identical to refNode.
+     *            The node, for whom the position-vector is to be calculated. Must be a descendant
+     *            (contained by) the refNode! Must not be identical to refNode.
      * @param refNode
-     *            The node whose position serves as reference point. This node
-     *            has to be an ancestor of the posNode (which means that it
-     *            contains the posNode)!
+     *            The node whose position serves as reference point. This node has to be an ancestor
+     *            of the posNode (which means that it contains the posNode)!
      * @param posVec
      *            The KVector the calculated position is written to.
      */
@@ -461,14 +448,13 @@ public final class Util {
     }
 
     /**
-     * Returns the KNode the given node is representing (in case of normal or
-     * compound dummy nodes) or directly related to - port node in case of Port
-     * dummies, target node origin in case of long edge dummies.
+     * Returns the KNode the given node is representing (in case of normal or compound dummy nodes)
+     * or directly related to - port node in case of Port dummies, target node origin in case of
+     * long edge dummies.
      * 
      * @param node
      *            The node for which to find the related KNode.
-     * @return The KNode represented by the given node or directly related to
-     *         it.
+     * @return The KNode represented by the given node or directly related to it.
      */
     private static KNode getRelatedKNode(final LNode node) {
         KNode retNode;

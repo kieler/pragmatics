@@ -798,7 +798,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                                     nodeOffset.x = -(baseOffset.x + leftx);
                                     nodeOffset.y = -(baseOffset.y + topy);
                                 }
-                                KimlUtil.resizeNode(parentNode, width, height, false);
+                                KimlUtil.resizeNode(parentNode, width, height, false, true);
                                 parentLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT,
                                         SizeConstraint.fixed());
                                 break attr_loop;
