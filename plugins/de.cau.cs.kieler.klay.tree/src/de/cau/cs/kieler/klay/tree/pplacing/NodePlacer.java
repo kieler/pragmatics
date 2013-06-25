@@ -13,12 +13,15 @@
  */
 package de.cau.cs.kieler.klay.tree.pplacing;
 
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
@@ -37,10 +40,30 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  */
 public class NodePlacer implements ILayoutPhase {
 
-    private final Map<TNode, Double> prelim = new HashMap<TNode, Double>();
-    private final Map<TNode, Double> modifier = new HashMap<TNode, Double>();
+    Comparator<TNode> comparator = new Comparator<TNode>() {
+        public int compare(TNode t1, TNode t2) {
+            if (t1.getLabel().length() < t2.getLabel().length()) {
+                return -1;
+            } else {
+                if (t1.getLabel().length() > t2.getLabel().length()) {
+                    return 1;
+                } else {
+                    return t1.getLabel().compareTo(t2.getLabel());
+                }
+            }
+        }
+    };
+
+    private final TreeMap<TNode, Double> prelim = new TreeMap<TNode, Double>(comparator);
+    private final TreeMap<TNode, Double> modifier = new TreeMap<TNode, Double>(comparator);
     private TGraph tGraph = null;
-    private double silbingSeparation = 10.0;
+    private double spacing = 20f;
+    
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
+            null, EnumSet.of(LayoutProcessorStrategy.ROOT_PROC),
+            EnumSet.of(LayoutProcessorStrategy.NEIGHBORS_PROC),
+            EnumSet.of(LayoutProcessorStrategy.COORDINATE_PROC));
 
     private void setPrelim(TNode tNode, double value) {
         prelim.put(tNode, value);
@@ -76,7 +99,7 @@ public class NodePlacer implements ILayoutPhase {
             TNode tmp = leftNeighbour;
             // if a node is a leaf and has a leftNeighbour modify Prelim
             if (tmp != null) {
-                double calc = getPrelim(tmp) + silbingSeparation + meanNodeSize(tmp, tNode).x;
+                double calc = getPrelim(tmp) + spacing + meanNodeSize(tmp, tNode).x;
                 // the value of Prelim is: Prelim of left neighbour + silbingSeparation + mean node
                 // size
                 setPrelim(tNode, calc);
@@ -97,7 +120,7 @@ public class NodePlacer implements ILayoutPhase {
             TNode tmp = leftNeighbour;
             if (tmp != null) {
                 // Prelim is Prelim of leftNeighbour + meanNodeSize + silbingSeparation
-                setPrelim(tNode, getPrelim(tmp) + meanNodeSize(tmp, tNode).x + silbingSeparation);
+                setPrelim(tNode, getPrelim(tmp) + meanNodeSize(tmp, tNode).x + spacing);
                 // Modifier is Prelim - midPoint
                 setModifier(tNode, getPrelim(tNode) - midPoint);
             }
@@ -110,14 +133,16 @@ public class NodePlacer implements ILayoutPhase {
     }
 
     // recursive method, that adds modifier of ancestors to nodes
-    public void secondWalk(TNode tNode, double modifier, LinkedList<TNode> currentLevel,
+    public void secondWalk(TNode tNode, LinkedList<TNode> currentLevel,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor place nodes - second walk", 3);
         if (!tGraph.isLeaf(tNode)) {
+            double xCoor = getPrelim(tNode);
             for (TNode tmp : tNode.getChildren()) {
-                secondWalk(tmp, modifier + getModifier(tmp), tmp.getChildren(),
-                        progressMonitor.subTask(3.0f));
+                secondWalk(tmp, tmp.getChildren(), progressMonitor.subTask(3.0f));
+                xCoor += getModifier(tmp);
             }
+            tNode.setProperty(Properties.XCOOR, (int) Math.round(xCoor));
         }
         progressMonitor.done();
     }
@@ -128,7 +153,6 @@ public class NodePlacer implements ILayoutPhase {
      * @return
      */
     private KVector meanNodeSize(TNode leftNode, TNode rightNode) {
-        // TODO Auto-generated method stub
         KVector nodeSize = new KVector();
         double nodeWidth = 0;
         double nodeHeight = 0;
@@ -138,11 +162,6 @@ public class NodePlacer implements ILayoutPhase {
         nodeSize.y = nodeHeight;
         return nodeSize;
     }
-
-    /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
-            null, EnumSet.of(LayoutProcessorStrategy.ROOT_PROCESSOR),
-            EnumSet.of(LayoutProcessorStrategy.NEIGHBORS_PROC));
 
     /**
      * {@inheritDoc}
@@ -156,6 +175,9 @@ public class NodePlacer implements ILayoutPhase {
         modifier.clear();
 
         this.tGraph = tGraph;
+
+        spacing = tGraph.getProperty(Properties.SPACING);
+
         LinkedList<TNode> roots = new LinkedList<TNode>();
         for (TNode tNode : tGraph.getNodes()) {
             if (tNode.getProperty(Properties.ROOT))
@@ -164,25 +186,27 @@ public class NodePlacer implements ILayoutPhase {
         TNode root = roots.getFirst();
         firstWalk2(root, progressMonitor.subTask(2.0f));
 
-        Set prelimSet = prelim.entrySet();
-        Set modSet = modifier.entrySet();
-        Iterator i1 = prelimSet.iterator();
-        Iterator i2 = modSet.iterator();
-
-        while (i1.hasNext()) {
-            Map.Entry me = (Map.Entry) i1.next();
-            System.out.print(me.getKey() + ": ");
-            System.out.println(me.getValue());
-        }
+        Set<Entry<TNode, Double>> modSet = modifier.entrySet();
         System.out.println("Modmap");
-        while (i2.hasNext()) {
-            Map.Entry me = (Map.Entry) i2.next();
-            System.out.print(me.getKey() + ": ");
-            System.out.println(me.getValue());
+        for (Entry<TNode, Double> entry : modSet) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
         }
-        System.out.println();
 
-        secondWalk(root, 0, roots, progressMonitor.subTask(3.0f));
+        secondWalk(root, roots, progressMonitor.subTask(3.0f));
+
+        System.out.println("X COOR");
+
+        Set<Entry<TNode, Double>> prelimSet = prelim.entrySet();
+
+        for (Entry<TNode, Double> entry : prelimSet) {
+            System.out
+                    .println(entry.getKey() + ": " + entry.getKey().getProperty(Properties.XCOOR));
+        }
+
+        // for (Entry<TNode, Double> entry : prelimSet) {
+        // KVector pos = entry.getKey().getPosition();
+        // pos.x = entry.getValue();
+        // }
         progressMonitor.done();
 
     }
@@ -219,8 +243,6 @@ public class NodePlacer implements ILayoutPhase {
     }
 
     public void firstWalk2(TNode tNode, final IKielerProgressMonitor progressMonitor) {
-        // tNode.setLeftNeighbour(getPrevNodeAtLevel(tNode, currentLevel));
-        // setPrevNodeAtLevel(tNode, currentLevel);
         setModifier(tNode, 0);
         System.out.println("Vor Blatttest!");
         if (tGraph.isLeaf(tNode)) {
@@ -228,7 +250,7 @@ public class NodePlacer implements ILayoutPhase {
             TNode lN = tNode.getLeftNeighbour();
             if (lN != null) {
                 System.out.println("Im  2. if");
-                double calc = getPrelim(lN) + silbingSeparation + meanNodeSize(lN, tNode).x;
+                double calc = getPrelim(lN) + spacing + meanNodeSize(lN, tNode).x;
                 System.out.println("Calc berechnet: " + calc);
                 setPrelim(tNode, calc);
             } else {
@@ -241,20 +263,13 @@ public class NodePlacer implements ILayoutPhase {
             for (TNode child : tNode.getChildren()) {
                 firstWalk2(child, progressMonitor.subTask(2.0f));
             }
-
-            // while (rightMost.getRightNeighbour() != null) {
-            // rightMost = rightMost.getRightNeighbour();
-            // // currentLevel erhoehen?
-            // firstWalk2(rightMost, currentLevel, progressMonitor.subTask(2.0f));
-            // }
             double midPoint = (getPrelim(rightMost) + getPrelim(leftMost)) / 2;
             System.out.println("Midpoint: " + midPoint);
             if (tNode.getLeftNeighbour() != null) {
                 System.out.println("DRIN!");
                 setPrelim(
                         tNode,
-                        getPrelim(tNode.getLeftNeighbour())
-                                + tGraph.getProperty(LayoutOptions.SPACING)
+                        getPrelim(tNode.getLeftNeighbour()) + spacing
                                 + meanNodeSize(tNode.getLeftNeighbour(), tNode).x);
                 setModifier(tNode, getPrelim(tNode) - midPoint);
             } else {

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
@@ -24,14 +25,15 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
 import de.cau.cs.kieler.klay.tree.util.Key;
 
 /**
- * A processor which determine the local neighbors for all nodes in the graph. A local neighbor is a
- * node in the same level and which got the same parent and is located to the right or left of the
- * other node.
+ * A processor which set the final coordinates for each node in a given graph. The property XCOOR
+ * has to be set before this processor is called.
  * 
  * @author sor
  * @author sgu
  */
-public class NeighborsProcessor implements ILayoutProcessor {
+public class CoordianteProcessor implements ILayoutProcessor {
+
+    double spacing = 20f;
 
     HashMap<Key, TNode> globalMap = new HashMap<Key, TNode>();
     int numberOfNodes;
@@ -41,7 +43,9 @@ public class NeighborsProcessor implements ILayoutProcessor {
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
 
-        progressMonitor.begin("Processor set neighbours", 1);
+        progressMonitor.begin("Processor set coordinates", 1);
+
+        spacing = tGraph.getProperty(Properties.SPACING);
 
         TNode root = null;
         // clear map if processor is reused
@@ -56,44 +60,56 @@ public class NeighborsProcessor implements ILayoutProcessor {
             TNode tNode = it.next();
             if (tNode.getProperty(Properties.ROOT)) {
                 root = tNode;
+                KVector pos = tNode.getPosition();
+                pos.x = tNode.getProperty(Properties.XCOOR);
+                pos.y = 0;
             }
         }
 
-        // start with the root and level down by dsf
-        setNeighbours(root.getChildren(), progressMonitor.subTask(1.0f));
+        // start with the root and level down by bsf
+        setCoordiantes(root.getChildren(), 1, progressMonitor.subTask(1.0f));
 
         progressMonitor.done();
 
     }
 
     /**
-     * Set the neighbors of each node in the current level and for their children.
+     * Set the coordinate for each node in a given level and all underlying levels.
      * 
      * @param currentLevel
      *            the list of TNode for which the neighbors should be calculated
+     * @param level
+     *            the level index
      * @param progressMonitor
+     *            the current progress monitor
      */
-    private void setNeighbours(final LinkedList<TNode> currentLevel,
+    private void setCoordiantes(final LinkedList<TNode> currentLevel, int level,
             IKielerProgressMonitor progressMonitor) {
 
+        // if the level is empty there is nothing to do
         if (!currentLevel.isEmpty()) {
 
             LinkedList<TNode> nextLevel = new LinkedList<TNode>();
+            // the y coordinate is constant the spacing
+            // TODO add implementation to take into account the nodes height 
+            double y = spacing * level;
+            // TODO remove debug
+            System.out.println("level: " + level + " spacing: " + spacing + " y: " + y);
 
-            TNode lN = null;
-
-            // the left neighbor is the previous processed node
-            // the right neighbor of the left neighbor is the current node
+            // set the coordinates for each node in the current level
+            // and collect the nodes of the next level
             for (TNode tNode : currentLevel) {
-                nextLevel = tNode.getChildren();
-                // determine neighbors by dfs and only in subtrees
-                setNeighbours(nextLevel, progressMonitor.subTask(nextLevel.size() / numberOfNodes));
-                if (lN != null) {
-                    lN.setRightNeighbour(tNode);
-                }
-                tNode.setLeftNeighbour(lN);
-                lN = tNode;
+                nextLevel.addAll(tNode.getChildren());
+                KVector pos = tNode.getPosition();
+                pos.x = tNode.getProperty(Properties.XCOOR);
+                pos.y = (int) Math.round(y);
+                // TODO remove debug
+                System.out.println("Set coordiante x: " + pos.x + " y: " + pos.y);
             }
+
+            // go to the next level
+            setCoordiantes(nextLevel, ++level,
+                    progressMonitor.subTask(nextLevel.size() / numberOfNodes));
         }
 
     }

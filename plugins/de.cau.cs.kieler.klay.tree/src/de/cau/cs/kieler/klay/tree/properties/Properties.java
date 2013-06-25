@@ -51,6 +51,9 @@ public final class Properties {
     
     /** The level out of a node in the nesting tree of a compound graph. */
     public static final IProperty<Integer> LEVEL = new Property<Integer>("LEVEL", 0);
+    
+    /** The x coordinate of the node in the level.*/
+    public static final IProperty<Integer> XCOOR = new Property<Integer>("XCOOR", 0);
 
     /**
      * Id of of a real node. This Indicates the block by the most significant letters

@@ -32,6 +32,9 @@ public class RootProcessor implements ILayoutProcessor {
 
     ArrayList<TNode> roots = new ArrayList<TNode>();
 
+    /**
+     * {@inheritDoc}
+     */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
 
         // clear list of roots if processor is reused

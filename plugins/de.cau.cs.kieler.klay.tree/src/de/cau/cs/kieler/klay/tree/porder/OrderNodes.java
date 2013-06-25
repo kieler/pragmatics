@@ -40,7 +40,7 @@ public class OrderNodes implements ILayoutPhase {
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
             IntermediateProcessingConfiguration.BEFORE_PHASE_2, EnumSet.of(
-                    LayoutProcessorStrategy.ROOT_PROCESSOR, LayoutProcessorStrategy.FAN_PROCESSOR));
+                    LayoutProcessorStrategy.ROOT_PROC, LayoutProcessorStrategy.FAN_PROC));
 
     /**
      * {@inheritDoc}

@@ -135,15 +135,13 @@ public final class KlayTree {
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
+        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
         algorithm.add(treeing);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
+        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
         algorithm.add(orderNodes);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
+        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
         algorithm.add(placeNodes);
+        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
     }
 
     /**

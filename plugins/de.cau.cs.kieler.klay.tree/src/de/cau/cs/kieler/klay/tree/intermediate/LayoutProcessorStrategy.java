@@ -16,7 +16,8 @@ package de.cau.cs.kieler.klay.tree.intermediate;
 import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
 
 /**
- * TODO: Document this class.
+ * Definition of available intermediate layout processors for the tree layouter. This enumeration
+ * also serves as a factory for intermediate layout processors.
  * 
  * @author sor
  * @author sgu
@@ -30,15 +31,22 @@ public enum LayoutProcessorStrategy {
      */
 
     // Before Phase 1
+    /** Test processor for framework tests, can be removed after algorithm is live */
     TEST_PROCESSOR,
-    
+
     // Before Phase 2
-    ROOT_PROCESSOR,
-    FAN_PROCESSOR,
-    
+    /** Determine the root of a given graph */
+    ROOT_PROC,
+    /** Compute the fanout of each node in a given graph */
+    FAN_PROC,
+
     // Before Phase 3
-    NEIGHBORS_PROC;
-    
+    /** Determine the local neighbors of each node in a given graph */
+    NEIGHBORS_PROC,
+
+    // Before Phase 4
+    /** Set the coordinates for each node in a given graph */
+    COORDINATE_PROC;
 
     /**
      * Creates an instance of the layout processor described by this instance.
@@ -52,14 +60,17 @@ public enum LayoutProcessorStrategy {
         case TEST_PROCESSOR:
             return new TestProcessor();
 
-        case ROOT_PROCESSOR:
+        case ROOT_PROC:
             return new RootProcessor();
-            
-        case FAN_PROCESSOR:
+
+        case FAN_PROC:
             return new FanProcessor();
-            
+
         case NEIGHBORS_PROC:
             return new NeighborsProcessor();
+
+        case COORDINATE_PROC:
+            return new CoordianteProcessor();
 
         default:
             throw new IllegalArgumentException(

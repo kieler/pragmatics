@@ -143,6 +143,30 @@ public final class IntermediateProcessingConfiguration {
     }
 
     /**
+     * Constructs a new strategy containing the given intermediate layout processors.
+     * 
+     * @param beforePhase1
+     *            collection of layout processors before phase 1. May be {@code null}.
+     * @param beforePhase2
+     *            collection of layout processors before phase 2. May be {@code null}.
+     * @param beforePhase3
+     *            collection of layout processors before phase 3. May be {@code null}.
+     * @param beforePhase4
+     *            collection of layout processors before phase 4. May be {@code null}.
+     */
+    public IntermediateProcessingConfiguration(
+            final Collection<LayoutProcessorStrategy> beforePhase1,
+            final Collection<LayoutProcessorStrategy> beforePhase2,
+            final Collection<LayoutProcessorStrategy> beforePhase3,
+            final Collection<LayoutProcessorStrategy> beforePhase4) {
+
+        this();
+
+        addAll(BEFORE_PHASE_1, beforePhase1).addAll(BEFORE_PHASE_2, beforePhase2)
+                .addAll(BEFORE_PHASE_3, beforePhase3).addAll(BEFORE_PHASE_4, beforePhase4);
+    }
+
+    /**
      * Returns the layout processors in the given slot. Modifications of the returned set do not
      * result in modifications of this strategy. Note that iterating over the returned
      * {@code EnumSet} will iterate over the elements in the natural order in which they occur in
