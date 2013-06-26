@@ -76,7 +76,6 @@
        </knownOption>
     </layoutAlgorithm>
  </extension>
-<!-- deactivated for testing - reactivate when finished
  <extension
        point="org.eclipse.gmf.runtime.diagram.ui.layoutProviders">
     <layoutProvider
@@ -86,6 +85,5 @@
        </Priority>
     </layoutProvider>
  </extension>
--->
 
 </plugin>
