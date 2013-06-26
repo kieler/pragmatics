@@ -28,7 +28,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
- * An analysis on the density (number of nodes and edges) of the biconnected components.
+ * An analysis on the density of the biconnected components.
  *
  * @author msp
  * @kieler.design proposed by msp
@@ -39,9 +39,6 @@ public class BiconnectedComponentDensityAnalysis implements IAnalysis {
     /** the identifier of the biconnected component density analysis. */
     public static final String ID = "de.cau.cs.kieler.kiml.smart.biconnectedComponentsDensity";
     
-    /** the density value for components of size 2. */
-    private static final double TWO_COMPONENT_DENS = 0.4;
-
     /**
      * {@inheritDoc}
      */
@@ -51,7 +48,7 @@ public class BiconnectedComponentDensityAnalysis implements IAnalysis {
         int graphSize = parentNode.getChildren().size();
         if (graphSize == 0) {
             progressMonitor.done();
-            return 1.0;
+            return 0.0d;
         }
         
         // gather the biconnected components as a list of hash sets
@@ -65,11 +62,14 @@ public class BiconnectedComponentDensityAnalysis implements IAnalysis {
         }
         
         // count the number of edges in each biconnected component
-        double density = 0;
+        double densitySum = 0;
+        int nodeSum = 0;
         for (Set<KNode> component : components) {
             int componentSize = component.size();
-            if (componentSize <= 2) {
-                density += TWO_COMPONENT_DENS;
+            double value;
+            // SUPPRESS CHECKSTYLE NEXT MagicNumber
+            if (componentSize <= 3) {
+                value = 1.0;
             } else {
                 int edgeCount = 0;
                 for (KNode node : component) {
@@ -79,17 +79,23 @@ public class BiconnectedComponentDensityAnalysis implements IAnalysis {
                         }
                     }
                 }
-                int faultEdges = edgeCount - componentSize;
-                density += (double) (faultEdges * faultEdges) / componentSize;
+                // SUPPRESS CHECKSTYLE NEXT 3 MagicNumber
+                value = Math.min(2 * Math.abs(2.0 * (edgeCount - componentSize)
+                        / (componentSize * componentSize - 3 * componentSize)
+                        - 0.5), 1.0);
             }
+            densitySum += value * componentSize;
+            nodeSum += componentSize;
         }
+        
+        double result = densitySum / nodeSum;
         
         dfsMap.clear();
         components.clear();
         lowpt = null;
         parent = null;
         progressMonitor.done();
-        return density >= graphSize ? 1.0 : density / graphSize;
+        return result;
     }
 
     /** the biconnected components found by the algorithm. */

@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.smart.rules;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
 import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
 import de.cau.cs.kieler.kiml.smart.ISmartRule;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
@@ -30,10 +31,12 @@ import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
  */
 public class OrthogonalRule implements ISmartRule {
     
+    /** weight of the planarity measure versus the number of nodes with degree > 4. */
+    private static final double PLANARITY_WEIGHT = 0.7;
+    /** exponent for adaptation of value spread. */
+    private static final double EXPONENT = 0.5;
     /** identifier of the planarity test analysis. */
     private static final String PLANARITY_ID = "de.cau.cs.kieler.klay.planarity";
-    /** minimal number of nodes for full result. */
-    private static final int MIN_NODES = 5;
     /** the penalty factor for missing graph features. */
     private static final double FEATURE_PENALTY = 0.7;
 
@@ -44,14 +47,21 @@ public class OrthogonalRule implements ISmartRule {
         int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
         if (nodeCount > 0) {
             int crossingEdges = metaLayout.analyze(PLANARITY_ID);
+            int degreeG4Nodes = metaLayout.analyze(DegreeGreaterFourAnalysis.ID);
             double fp = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
                     LayoutTypeData.TYPE_ORTHOGONAL);
             
-            double result = 1 - (double) Math.min(crossingEdges, nodeCount) / nodeCount;
-            if (nodeCount < MIN_NODES) {
-                result *= (double) nodeCount / MIN_NODES;
+            double planarityMeasure;
+            if (crossingEdges == 0) {
+                planarityMeasure = 1.0;
+            } else {
+                int edgeCount = metaLayout.analyze(EdgeCountAnalysis.ID);
+                planarityMeasure = Math.min(Math.pow(
+                        (double) edgeCount / (nodeCount * (crossingEdges + 1)), EXPONENT), 1.0);
             }
-            return result * Math.pow(FEATURE_PENALTY, fp);
+            double degreeMeasure = 1 - (double) degreeG4Nodes / nodeCount;
+            return (planarityMeasure * PLANARITY_WEIGHT + degreeMeasure * (1 - PLANARITY_WEIGHT))
+                    * Math.pow(FEATURE_PENALTY, fp);
         }
         return 0;
     }

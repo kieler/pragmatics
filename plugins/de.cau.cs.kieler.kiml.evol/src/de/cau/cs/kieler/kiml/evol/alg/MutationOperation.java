@@ -64,20 +64,20 @@ public class MutationOperation implements IEvolutionaryOperation {
     public void process(final Population population, final IKielerProgressMonitor monitor) {
         monitor.begin("Mutation", 1);
         ILayoutConfig layoutConfig = population.getProperty(Population.DEFAULT_CONFIG);
-        LayoutContext layoutContext = population.getProperty(Population.DEFAULT_CONTEXT);
         
         ListIterator<Genome> genomeIter = population.listIterator();
         while (genomeIter.hasNext()) {
             Genome individual = genomeIter.next();
             if (random.nextDouble() < MUTATION_APPLICATION_PROBABILITY) {
-                Genome mutation = mutate(individual, layoutConfig, layoutContext, 1);
+                Genome mutation = mutate(individual, layoutConfig, 1);
+                GenomeFactory.checkGenome(mutation);
                 genomeIter.set(mutation);
             }
         }
         
         monitor.done();
     }
-
+    
     /**
      * Mutate the genes of the given individual.
      * <p>
@@ -87,62 +87,86 @@ public class MutationOperation implements IEvolutionaryOperation {
      *
      * @param genome a genome
      * @param layoutConfig the layout configuration used to obtain default values
-     * @param layoutContext the layout context used to obtain default values
      * @param mutationFactor factor for mutation probability of genes
      * @return mutated copy of the given genome
      */
     public Genome mutate(final Genome genome, final ILayoutConfig layoutConfig,
-            final LayoutContext layoutContext, final double mutationFactor) {
+            final double mutationFactor) {
+        Genome newGenome = new Genome();
+        for (LayoutContext context : genome.getContexts()) {
+            mutate(genome, newGenome, layoutConfig, context, mutationFactor);
+        }
+        return newGenome;
+    }
+
+    /**
+     * Mutate the genes of the given individual into a new genome.
+     *
+     * @param oldGenome the original genome
+     * @param newGenome the new mutated genome
+     * @param layoutConfig the layout configuration used to obtain default values
+     * @param layoutContext the layout context used to obtain default values
+     * @param mutationFactor factor for mutation probability of genes
+     * @return mutated copy of the given genome
+     */
+    private void mutate(final Genome oldGenome, final Genome newGenome,
+            final ILayoutConfig layoutConfig, final LayoutContext layoutContext,
+            final double mutationFactor) {
         LayoutTypeData newLayoutType = null;
         LayoutAlgorithmData newLayoutAlgo = null;
-        Genome newGenome = new Genome(genome.getSize());
-        for (final Gene<?> gene : genome.getGenes()) {
-            Gene<?> newGene = gene;
+        boolean noAlgorithmInSelectedType = false;
+        newGenome.addContext(layoutContext, oldGenome.getSize(layoutContext));
+        for (Gene<?> gene : oldGenome.getGenes(layoutContext)) {
             TypeInfo<?> typeInfo = gene.getTypeInfo();
             GeneType geneType = typeInfo.getGeneType();
-            if (newLayoutType != null && geneType == GeneType.LAYOUT_ALGO) {
-                
-                // the layout type has changed, so we are forced to choose a different algorithm
-                newGene = GenomeFactory.createAlgorithmGene(newLayoutType, random);
-                newLayoutAlgo = (LayoutAlgorithmData) newGene.listValue();
-                
-            } else if (newLayoutAlgo != null) {
-                // we mutated the layout algorithm, so all other genes must be validated
+            
+            if (newLayoutAlgo != null) {
+                // update the active flag of the gene in order to match the new algorithm
                 LayoutOptionData<?> optionData = (LayoutOptionData<?>) typeInfo.getTypeParam();
                 if (newLayoutAlgo.knowsOption(optionData)) {
-                    if (gene.getValue() != null) {
-                        if (random.nextDouble() < typeInfo.getProbability() * mutationFactor) {
-                            newGene = mutate(gene);
-                        } else if (!gene.isActive()) {
-                            newGene = Gene.create(gene, true);
-                        }
-                    } else  {
+                    if (gene.getValue() == null) {
                         // the gene previously had no assigned value - generate one
-                        newGene = GenomeFactory.createDefaultGene(newLayoutAlgo, optionData,
+                        gene = GenomeFactory.createDefaultGene(newLayoutAlgo, optionData,
                                 typeInfo, layoutConfig, layoutContext);
+                    } else if (!gene.isActive()) {
+                        gene = Gene.create(gene, true);
                     }
                 } else if (gene.isActive()) {
-                    newGene = Gene.create(gene, false);
+                    gene = Gene.create(gene, false);
+                }
+            } else if (noAlgorithmInSelectedType) {
+                // the layout type has mutated, but the new type has no active algorithm
+                if (gene.isActive()) {
+                    gene = Gene.create(gene, false);
+                }
+            }
+
+            Gene<?> newGene = gene;
+            if (newLayoutType != null && geneType == GeneType.LAYOUT_ALGO) {
+                // the layout type has changed, so we are forced to choose a different algorithm
+                newGene = GenomeFactory.createAlgorithmGene(newLayoutType, random);
+                if (newGene.getValue() != null) {
+                    newLayoutAlgo = (LayoutAlgorithmData) newGene.listValue();
+                } else {
+                    noAlgorithmInSelectedType = true;
                 }
                 
-            } else if (gene.getValue() != null) {
-                if (random.nextDouble() < typeInfo.getProbability() * mutationFactor) {
-                    newGene = mutate(gene);
-                    
-                    if (geneType == GeneType.LAYOUT_TYPE) {
-                        // we mutated the layout type 
-                        newLayoutType = (LayoutTypeData) newGene.listValue();
-                    } else if (geneType == GeneType.LAYOUT_ALGO) {
-                        // we mutated the layout algorithm
-                        newLayoutAlgo = (LayoutAlgorithmData) newGene.listValue();
-                    }
+            } else if (gene.getValue() != null
+                    && random.nextDouble() < typeInfo.getProbability() * mutationFactor) {
+                // unleash the mutant
+                newGene = mutate(gene);
+                
+                if (geneType == GeneType.LAYOUT_TYPE) {
+                    // we mutated the layout type 
+                    newLayoutType = (LayoutTypeData) newGene.listValue();
+                } else if (geneType == GeneType.LAYOUT_ALGO) {
+                    // we mutated the layout algorithm
+                    newLayoutAlgo = (LayoutAlgorithmData) newGene.listValue();
                 }
             }
             
-            newGenome.getGenes().add(newGene);
+            newGenome.getGenes(layoutContext).add(newGene);
         }
-        
-        return newGenome;
     }
 
     /**
@@ -176,7 +200,7 @@ public class MutationOperation implements IEvolutionaryOperation {
                 double ub = (Integer) upperBound;
                 newValue = scaleToUpperBound(newValue, Math.max(oldValue, ub - hv), ub);
             }
-            return Gene.create((int) Math.round(newValue), typeInfo, true);
+            return Gene.create((int) Math.round(newValue), typeInfo, gene.isActive());
         }
             
         case FLOAT:
@@ -197,7 +221,7 @@ public class MutationOperation implements IEvolutionaryOperation {
                 double ub = (Float) upperBound;
                 newValue = scaleToUpperBound(newValue, Math.max(oldValue, ub - hv), ub);
             }
-            return Gene.create((float) newValue, typeInfo, true);
+            return Gene.create((float) newValue, typeInfo, gene.isActive());
         }
             
         default:
@@ -215,7 +239,7 @@ public class MutationOperation implements IEvolutionaryOperation {
                     newValue++;
                 }
             }
-            return Gene.create(newValue, typeInfo, true);
+            return Gene.create(newValue, typeInfo, gene.isActive());
         }
     }
     

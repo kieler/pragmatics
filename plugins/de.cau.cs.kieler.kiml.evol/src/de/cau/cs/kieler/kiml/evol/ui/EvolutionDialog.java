@@ -13,26 +13,33 @@
  */
 package de.cau.cs.kieler.kiml.evol.ui;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Resource;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -43,16 +50,17 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.LayoutEvolutionModel;
 import de.cau.cs.kieler.kiml.evol.alg.EvaluationOperation;
@@ -64,7 +72,6 @@ import de.cau.cs.kieler.kiml.service.grana.AnalysisCategory;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.util.KGraphRenderer;
-import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
 
 /**
  * The main user interface for evolutionary meta layout.
@@ -82,9 +89,11 @@ public class EvolutionDialog extends Dialog {
     /** the height of each preview image. */
     private static final int PREVIEW_HEIGHT = 150;
     /** the number of evolution steps to perform when the "Evolve" button is pressed. */
-    private static final int EVOLVE_STEPS = 4;
+    private static final int EVOLVE_STEPS = 1;
     /** the maximum value for sliders. */
     private static final int SLIDER_MAX = 100;
+    /** maximal difference for metric weights. */
+    private static final double MAX_WEIGHT_DIFF = 0.02;
     
     /** property for the preview image of an individual. */
     private static final IProperty<Image> PREVIEW_IMAGE = new Property<Image>("evol.previewImage");
@@ -99,12 +108,16 @@ public class EvolutionDialog extends Dialog {
     private Button[] selectionButtons;
     /** the labels for displaying individuals. */
     private Label[] previewLabels;
-    /** the progress bar for displaying progess of operations. */
+    /** the progress bar for displaying progress of operations. */
     private ProgressBar progressBar;
     /** the labels for displaying metrics results and the sliders for setting weights. */
     private Map<String, Pair<Label, Slider>> metricControls = Maps.newHashMap();
     /** the label for the total fitness value. */
     private Label fitnessLabel;
+    /** the label for the generation number. */
+    private Label generationLabel;
+    /** controls to disable when no evolution model is available. */
+    private List<Control> disablingControls = new LinkedList<Control>();
     
     /**
      * Creates an evolution dialog.
@@ -150,56 +163,79 @@ public class EvolutionDialog extends Dialog {
      */
     @Override
     protected Control createDialogArea(final Composite parent) {
-        final LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
-        if (evolutionModel.getPopulation() == null) {
-            try {
-                PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
-                        new IRunnableWithProgress() {
-                    public void run(final IProgressMonitor monitor) throws InvocationTargetException,
-                            InterruptedException {
-                        synchronized (evolutionModel) {
-                            evolutionModel.initializePopulation(layoutMapping,
-                                    new ProgressMonitorAdapter(monitor));
-                        }
-                    }
-                });
-            } catch (Exception exception) {
-                throw new WrappedException(exception);
-            }
-        }
-        
         Composite composite = (Composite) super.createDialogArea(parent);
         ((GridLayout) composite.getLayout()).numColumns = 2;
         
+        // create a popup menu for copying the population to the clipboard
+        MenuManager popupMenuManager = new MenuManager();
+        popupMenuManager.add(new Action("Copy Population") {
+            public void run() {
+                LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+                Clipboard clipboard = new Clipboard(getShell().getDisplay());
+                clipboard.setContents(new Object[] { evolutionModel.toString() },
+                        new Transfer[] { TextTransfer.getInstance() });
+                clipboard.dispose();
+            }
+        });
+        IMenuService menuService = (IMenuService) PlatformUI.getWorkbench().getService(
+                IMenuService.class);
+        menuService.populateContributionManager(popupMenuManager, "popup:de.cau.cs.kieler.kiml.evol");
+        composite.setMenu(popupMenuManager.createContextMenu(composite));
+        
         // create preview areas
         Composite previewPane = new Composite(composite, SWT.NONE);
+        previewPane.setMenu(composite.getMenu());
         previewPane.setLayout(new GridLayout((int) Math.sqrt(INDIVIDUALS_DISPLAY), true));
         selectionButtons = new Button[INDIVIDUALS_DISPLAY];
         previewLabels = new Label[INDIVIDUALS_DISPLAY];
         
-        Population population = evolutionModel.getPopulation();
+        Population population = LayoutEvolutionModel.getInstance().getPopulation();
         for (int i = 0; i < INDIVIDUALS_DISPLAY; i++) {
             createPreviewArea(previewPane, i);
+            Image image = null;
             if (i < population.size()) {
-                Image image = createPreviewImage(population.get(i));
-                if (image == null) {
-                    // create an empty image in order to set the initial size
-                    image = new Image(getShell().getDisplay(), PREVIEW_WIDTH, PREVIEW_HEIGHT);
-                    resources.add(image);
-                    selectionButtons[i].setEnabled(false);
-                }
-                previewLabels[i].setImage(image);
-            } else {
+                image = createPreviewImage(population.get(i));
+            }
+            if (image == null) {
+                // create an empty image in order to set the initial size
+                image = new Image(getShell().getDisplay(), PREVIEW_WIDTH, PREVIEW_HEIGHT);
+                resources.add(image);
                 selectionButtons[i].setEnabled(false);
             }
+            previewLabels[i].setImage(image);
         }
         
         // create metrics area
         Composite metricsPane = new Composite(composite, SWT.NONE);
+        metricsPane.setMenu(composite.getMenu());
         GridLayout gridLayout = new GridLayout(2, false);
         gridLayout.verticalSpacing = 8;
         metricsPane.setLayout(gridLayout);
         
+        // create buttons for changing all sliders at once
+        Composite buttonComposite = new Composite(metricsPane, SWT.NONE);
+        buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
+        buttonComposite.setLayout(new FillLayout());
+        Button all0Button = new Button(buttonComposite, SWT.PUSH | SWT.FLAT);
+        all0Button.setText("All to 0%");
+        all0Button.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent event) {
+                for (Pair<Label, Slider> metricControl : metricControls.values()) {
+                    metricControl.getSecond().setSelection(0);
+                }
+            }
+        });
+        Button all100Button = new Button(buttonComposite, SWT.PUSH | SWT.FLAT);
+        all100Button.setText("All to 100%");
+        all100Button.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent event) {
+                for (Pair<Label, Slider> metricControl : metricControls.values()) {
+                    metricControl.getSecond().setSelection(SLIDER_MAX);
+                }
+            }
+        });
+        
+        // create metrics sliders and labels
         AnalysisCategory category = AnalysisService.getInstance().getCategory(
                 EvaluationOperation.METRIC_CATEGORY);
         for (AnalysisData data : category.getAnalyses()) {
@@ -216,7 +252,6 @@ public class EvolutionDialog extends Dialog {
         gridData.horizontalSpan = 2;
         gridData.verticalIndent = 10;
         new Label(metricsPane, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(gridData);
-
         Label nameLabel = new Label(metricsPane, SWT.NONE);
         nameLabel.setText("Fitness: ");
         nameLabel.setToolTipText("The overall fitness of the individual.");
@@ -240,11 +275,25 @@ public class EvolutionDialog extends Dialog {
         progressBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         progressBar.setVisible(false);
         
+        // create the generation label
+        ((GridLayout) parent.getLayout()).numColumns++;
+        generationLabel = new Label(parent, SWT.NONE);
+        generationLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+        generationLabel.setText("Generation "
+                + LayoutEvolutionModel.getInstance().getGenerationNumber());
+        
         // create the buttons
-        createButton(parent, IDialogConstants.OK_ID, "Apply", true);
-        createButton(parent, IDialogConstants.PROCEED_ID, "Evolve", false);
-        createButton(parent, IDialogConstants.ABORT_ID, "Reset", false);
+        Button applyButton = createButton(parent, IDialogConstants.OK_ID, "Apply", true);
+        disablingControls.add(applyButton);
+        Button evolveButton = createButton(parent, IDialogConstants.PROCEED_ID, "Evolve", false);
+        disablingControls.add(evolveButton);
+        createButton(parent, IDialogConstants.ABORT_ID, "Restart", false);
         createButton(parent, IDialogConstants.CANCEL_ID, "Cancel", false);
+        
+        if (LayoutEvolutionModel.getInstance().getPopulation().isEmpty()) {
+            applyButton.setEnabled(false);
+            evolveButton.setEnabled(false);
+        }
     }
     
     /**
@@ -255,19 +304,20 @@ public class EvolutionDialog extends Dialog {
         switch (buttonId) {
         case IDialogConstants.OK_ID:
             applyFirstSelected();
-            applyMetricWeights();
+            applyMetricWeights(false);
             okPressed();
             break;
         case IDialogConstants.CANCEL_ID:
             cancelPressed();
             break;
         case IDialogConstants.PROCEED_ID:
-            applyMetricWeights();
+            applyMetricWeights(true);
             adaptMetricWeights();
             evolve();
             break;
         case IDialogConstants.ABORT_ID:
-            reset();
+            applyMetricWeights(false);
+            restart();
             break;
         }
     }
@@ -280,6 +330,7 @@ public class EvolutionDialog extends Dialog {
      */
     private void createPreviewArea(final Composite parent, final int index) {
         Composite composite = new Composite(parent, SWT.NONE);
+        composite.setMenu(parent.getMenu());
         GridLayout gridLayout = new GridLayout();
         gridLayout.marginHeight = 0;
         gridLayout.marginWidth = 0;
@@ -287,6 +338,7 @@ public class EvolutionDialog extends Dialog {
         composite.setLayout(gridLayout);
         
         Label previewLabel = new Label(composite, SWT.BORDER);
+        previewLabel.setMenu(parent.getMenu());
         previewLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
         previewLabels[index] = previewLabel;
         previewLabel.addMouseTrackListener(new MouseTrackAdapter() {
@@ -353,24 +405,39 @@ public class EvolutionDialog extends Dialog {
         nameLabel.setText(data.getName() + ": ");
         nameLabel.setToolTipText(data.getDescription());
         nameLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
-        Label resultLabel = new Label(parent, SWT.NONE);
+        final Label resultLabel = new Label(parent, SWT.NONE);
         resultLabel.setText("100%");
         resultLabel.setVisible(false);
         resultLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
         
         // create slider for the weight
-        Slider slider = new Slider(parent, SWT.HORIZONTAL);
+        final Slider slider = new Slider(parent, SWT.HORIZONTAL);
         slider.setMinimum(0);
-        slider.setMaximum(SLIDER_MAX);
+        slider.setMaximum(SLIDER_MAX + slider.getThumb());
         GridData gridData = new GridData(SWT.FILL, SWT.TOP, false, false);
         gridData.horizontalIndent = 20;
         gridData.horizontalSpan = 2;
         slider.setLayoutData(gridData);
+        slider.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent e) {
+                resultLabel.setText((100 * slider.getSelection() / SLIDER_MAX) + "%");
+            }
+        });
+        slider.addMouseListener(new MouseAdapter() {
+            public void mouseDown(final MouseEvent e) {
+                resultLabel.setText((100 * slider.getSelection() / SLIDER_MAX) + "%");
+                resultLabel.setVisible(true);
+            }
+            public void mouseUp(final MouseEvent e) {
+                resultLabel.setVisible(false);
+            }
+        });
         metricControls.put(data.getId(), new Pair<Label, Slider>(resultLabel, slider));
         
         // set the initial value for the slider
         int value = SLIDER_MAX;
-        Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
+        Map<String, Double> metricWeights = population.getProperty(
+                EvaluationOperation.METRIC_WEIGHT);
         if (metricWeights != null) {
             Double weight = metricWeights.get(data.getId());
             if (weight != null) {
@@ -398,19 +465,33 @@ public class EvolutionDialog extends Dialog {
     
     /**
      * Apply metric weights for all metrics.
+     * 
+     * @param updateFitness whether fitness values shall be updated if required
      */
-    private void applyMetricWeights() {
-        Population population = LayoutEvolutionModel.getInstance().getPopulation();
+    private void applyMetricWeights(final boolean updateFitness) {
+        LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+        Population population = evolutionModel.getPopulation();
         Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
         if (metricWeights == null) {
             metricWeights = Maps.newHashMap();
             population.setProperty(EvaluationOperation.METRIC_WEIGHT, metricWeights);
         }
         
+        boolean weightsChanged = false;
         for (Map.Entry<String, Pair<Label, Slider>> entry : metricControls.entrySet()) {
             String id = entry.getKey();
             Slider slider = entry.getValue().getSecond();
-            metricWeights.put(id, (double) slider.getSelection() / SLIDER_MAX);
+            Double oldWeight = metricWeights.get(id);
+            double newWeight = (double) slider.getSelection() / SLIDER_MAX;
+            metricWeights.put(id, newWeight);
+            if (oldWeight != null && Math.abs(newWeight - oldWeight) > MAX_WEIGHT_DIFF) {
+                weightsChanged = true;
+            }
+        }
+        
+        if (weightsChanged && updateFitness) {
+            // recalculate all fitness values, since the weights have changed
+            evolutionModel.recalculateFitness();
         }
     }
     
@@ -437,41 +518,56 @@ public class EvolutionDialog extends Dialog {
         } catch (Throwable throwable) {
             handleError(throwable);
             return;
-        } finally {
-            progressBar.setVisible(false);
         }
+        progressBar.setVisible(false);
 
         refreshPreviews();
+        generationLabel.setText("Generation "
+                + LayoutEvolutionModel.getInstance().getGenerationNumber());
+        generationLabel.getParent().layout();
     }
     
     /**
      * Reset the population to initial values.
      */
-    private void reset() {
-        try {
-            progressBar.setVisible(true);
-            BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-                public void run() {
-                    LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
-                    synchronized (evolutionModel) {
-                        // reinitialize the population
-                        evolutionModel.initializePopulation(layoutMapping,
-                                new ProgressBarMonitor(progressBar));                        
-                    }
-                }
-            });
-            // reset metric weights
-            for (Pair<Label, Slider> control : metricControls.values()) {
-                control.getSecond().setSelection(SLIDER_MAX);
+    private void restart() {
+        // make a new selection of layout options
+        OptionSelectionDialog optionSelectionDialog = new OptionSelectionDialog(getShell(),
+                LayoutEvolutionModel.getInstance().getLayoutOptions());
+        if (optionSelectionDialog.open() == OptionSelectionDialog.OK) {
+            final List<LayoutOptionData<?>> selectedOptions = optionSelectionDialog.getSelection();
+            if (selectedOptions.isEmpty()) {
+                MessageDialog.openError(getShell(), "No Selected Options",
+                        "The evolutionary process requires at least one selected option.");
+                return;
             }
-        } catch (Throwable throwable) {
-            handleError(throwable);
-            return;
-        } finally {
+                        
+            try {
+                progressBar.setVisible(true);
+                BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+                    public void run() {
+                        LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+                        synchronized (evolutionModel) {
+                            // reinitialize the population
+                            evolutionModel.initializePopulation(layoutMapping, selectedOptions,
+                                    new ProgressBarMonitor(progressBar));                        
+                        }
+                    }
+                });
+            } catch (Throwable throwable) {
+                handleError(throwable);
+                return;
+            }
             progressBar.setVisible(false);
+            
+            refreshPreviews();
+            for (Control control : disablingControls) {
+                control.setEnabled(true);
+            }
+            generationLabel.setText("Generation "
+                    + LayoutEvolutionModel.getInstance().getGenerationNumber());
+            generationLabel.getParent().layout();
         }
-        
-        refreshPreviews();
     }
     
     /**
@@ -501,7 +597,7 @@ public class EvolutionDialog extends Dialog {
         Population population = LayoutEvolutionModel.getInstance().getPopulation();
         Map<String, Float> metricsResult = null;
         Double fitness = null;
-        if (genomeIndex >= 0 && genomeIndex < population.size()) {
+        if (population != null && genomeIndex >= 0 && genomeIndex < population.size()) {
             Genome genome = population.get(genomeIndex);
             metricsResult = genome.getProperty(EvaluationOperation.METRIC_RESULT);
             fitness = genome.getProperty(Genome.FITNESS);
@@ -539,25 +635,33 @@ public class EvolutionDialog extends Dialog {
         LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
         Population population = evolutionModel.getPopulation();
         // find the selected individuals
-        boolean[] selected = new boolean[evolutionModel.getPopulation().size()];
+        int selectedCount = 0;
+        boolean[] selected = new boolean[population.size()];
         for (int i = 0; i < selectionButtons.length; i++) {
             if (selectionButtons[i] != null && selectionButtons[i].getSelection()) {
                 selected[i] = true;
+                selectedCount++;
             }
         }
 
-        // adapt the metric weights based on selection
-        evolutionModel.adaptMetricWeights(selected);
-        
-        // refresh the weight sliders from the new values
-        Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
-        if (metricWeights != null) {
-            for (Map.Entry<String, Pair<Label, Slider>> entry : metricControls.entrySet()) {
-                String id = entry.getKey();
-                Double weight = metricWeights.get(id);
-                if (weight != null) {
-                    Slider slider = entry.getValue().getSecond();
-                    slider.setSelection((int) Math.round(weight * SLIDER_MAX));
+        if (selectedCount > 0) {
+            // adapt the metric weights based on selection
+            evolutionModel.adaptMetricWeights(selected);
+            
+            // recalculate all fitness values, since the weights have changed
+            evolutionModel.recalculateFitness();
+            
+            // refresh the weight sliders from the new values
+            Map<String, Double> metricWeights = population.getProperty(
+                    EvaluationOperation.METRIC_WEIGHT);
+            if (metricWeights != null) {
+                for (Map.Entry<String, Pair<Label, Slider>> entry : metricControls.entrySet()) {
+                    String id = entry.getKey();
+                    Double weight = metricWeights.get(id);
+                    if (weight != null) {
+                        Slider slider = entry.getValue().getSecond();
+                        slider.setSelection((int) Math.round(weight * SLIDER_MAX));
+                    }
                 }
             }
         }

@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.smart.rules;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
 import de.cau.cs.kieler.kiml.smart.ISmartRule;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
 import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
@@ -30,8 +29,6 @@ import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
  */
 public class TreeRule implements ISmartRule {
     
-    /** minimal number of nodes for full result. */
-    private static final int MIN_NODES = 2;
     /** the penalty factor for missing graph features. */
     private static final double FEATURE_PENALTY = 0.7;
 
@@ -41,15 +38,10 @@ public class TreeRule implements ISmartRule {
     public double suitability(final MetaLayout metaLayout) {
         boolean isTree = metaLayout.analyze(TreeAnalysis.ID);
         if (isTree) {
-            int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
             double fp = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
                     LayoutTypeData.TYPE_TREE);
             
-            double result = 1;
-            if (nodeCount < MIN_NODES) {
-                result *= (double) nodeCount / MIN_NODES;
-            }
-            return result * Math.pow(FEATURE_PENALTY, fp);
+            return Math.pow(FEATURE_PENALTY, fp);
         }
         return 0;
     }

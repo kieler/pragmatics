@@ -19,7 +19,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 
 /**
@@ -37,9 +36,6 @@ public class Population extends ArrayList<Genome> {
     /** property for the layout configuration used for obtaining default values. */
     public static final IProperty<ILayoutConfig> DEFAULT_CONFIG = new Property<ILayoutConfig>(
             "evol.defaultConfig");
-    /** property for the layout context used for obtaining default values. */
-    public static final IProperty<LayoutContext> DEFAULT_CONTEXT = new Property<LayoutContext>(
-            "evol.defaultContext");
 
     /** The serial version UID. */
     private static final long serialVersionUID = -8591635951271498010L;

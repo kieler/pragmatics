@@ -34,7 +34,7 @@ import de.cau.cs.kieler.klay.layered.importexport.KGraphImporter;
  * @kieler.rating proposed yellow by msp
  */
 public final class LayeredLayoutProvider extends AbstractLayoutProvider {
-
+    
     ///////////////////////////////////////////////////////////////////////////////
     // Variables
 
@@ -56,7 +56,7 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
         IGraphImporter<KNode> graphImporter;
-
+        
         // Check if hierarchy handling for a compound graph is requested, choose importer accordingly
         boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
         if (isCompound) {
