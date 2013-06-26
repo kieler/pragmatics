@@ -201,7 +201,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 + insets.getRight();
         float height = (float) (maxYPos - minYPos) + 2 * borderSpacing + insets.getTop()
                 + insets.getBottom();
-        KimlUtil.resizeNode(kgraph, width, height, false, false);
+        //KimlUtil.resizeNode(kgraph, width, height, false, false);
+        KimlUtil.resizeNode(kgraph, width, height, false);
     }
 
 }
