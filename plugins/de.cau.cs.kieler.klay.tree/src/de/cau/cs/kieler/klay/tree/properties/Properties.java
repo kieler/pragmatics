@@ -13,12 +13,16 @@
  */
 package de.cau.cs.kieler.klay.tree.properties;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.klay.tree.graph.TEdge;
 
 /**
  * TODO: Document this class. Property definitions for the T layouter.
@@ -51,6 +55,10 @@ public final class Properties {
     
     /** The level out of a node in the nesting tree of a compound graph. */
     public static final IProperty<Integer> LEVEL = new Property<Integer>("LEVEL", 0);
+    
+    /** A list containing all edges that were marked to remove in the treeing phase. */
+    public static final IProperty<List<TEdge>> REMOVABLE_EDGES = new Property<List<TEdge>>(
+            "REMOVABLE_EDGES", new LinkedList<TEdge>());
     
     /** The x coordinate of the node in the level.*/
     public static final IProperty<Integer> XCOOR = new Property<Integer>("XCOOR", 0);

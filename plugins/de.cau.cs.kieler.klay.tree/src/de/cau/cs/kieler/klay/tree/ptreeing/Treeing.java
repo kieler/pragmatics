@@ -13,116 +13,124 @@
  */
 package de.cau.cs.kieler.klay.tree.ptreeing;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
+import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
  * @author sor
  * @author sgu
- *
+ * 
  */
 public class Treeing implements ILayoutPhase {
-    
+
     /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
-            
-            new IntermediateProcessingConfiguration();
-          
-    
+
+    // first phase gets no intermediateProcessingConfiguration?!
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
+            null, null);
+
     /**
      * {@inheritDoc}
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
-        
-        // TODO Auto-generated method stub  
+
+        progressMonitor.begin("Treeing phase", 1);
+
+        this.tGraph = tGraph;
+        collectEdges(tGraph);
+
+        progressMonitor.done();
     }
 
-    
     /**
      * {@inheritDoc}
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(TGraph tGraph) {
-        
+
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
-    
-    
-    private boolean[] seen;
-    
-    List<TEdge>[] eliminated;
-    
-    public void init(TGraph tGraph) {
+
+    private int[] checked;
+
+    private boolean[] visited;
+
+    List<TEdge> eliminated;
+
+    private TGraph tGraph;
+
+    private void init(TGraph tGraph) {
+
         int size = tGraph.getNodes().size();
-        eliminated = new LinkedList[size];
-        seen = new boolean[size];
+        eliminated = new LinkedList<TEdge>();
+        checked = new int[size];
+        visited = new boolean[size];
+        Arrays.fill(visited, false);
+        Arrays.fill(checked, 0);
     }
-    
-    
+
     /**
-     * Create a list with the edges to remove. These edges should be all multiple edges
-     * except one.
+     * Create a list with the edges to remove. These edges should be all edges that destroy the
+     * tree-property.
      * 
-     * @param TGraph where to collect the edges
-     * @return the list with all edges to remove
+     * @param TGraph
+     *            where to collect the edges
      */
-    public List<TEdge> collectMultipleEdges(TGraph tGraph) {
+    private void collectEdges(TGraph tGraph) {
+
         init(tGraph);
-        List<TEdge>[] edges = new LinkedList[tGraph.getEdges().size()];
-        List<TEdge> edgesToRemove = new LinkedList<TEdge>();
+        // start DFS on every node in graph
         for (TNode tNode : tGraph.getNodes()) {
-            edges = searchEdges(tNode, null);
-            if (edges[tNode.id] != null) {
-                int start = 0;
-                for (int i = 1; i < edges[tNode.id].size(); i++) {
-                    edgesToRemove.set(start, edges[tNode.id].get(i));
-                    start++;
-                }
+            // initial condition: all nodes have checked value of 0, which defines 'unvisited'
+            if (checked[tNode.id] == 0) {
+                checked[tNode.id] = 1;
+                dfs(tNode, tGraph);
             }
+            // if a node has already been visited
+            if (checked[tNode.id] == 1) {
+                checked[tNode.id] = 2;
+
+                // add all incoming edges of that node to a list
+                for (TEdge e : tNode.getInComingEdges()) {
+                    eliminated.add(e);
+                    // and set source and target of the edge to null
+                    e.setSource(null);
+                    e.setTarget(null);
+                }
+                dfs(tNode, tGraph);
+            }
+            // set the list containing bad edges as graph property
+            tGraph.setProperty(Properties.REMOVABLE_EDGES, eliminated);
         }
-        // TODO do some POST-PROCESSING
-        return edgesToRemove;
+        for (int i = 0; i < eliminated.size(); i++) {
+            System.out.println("ELIMINATED!");
+            System.out.println(eliminated.get(i));
+        }
     }
-    
-    
+
     /**
-     * This method performs a DFS on a given graph. If a node has been visited it must have
-     * multiple outgoing edges. These edges are written in a list.
+     * This method performs a DFS on a given graph till all nodes of the graph have been visited
      * 
-     * @param node to start DFS
-     * @param graph to start DFS
-     * @return the list including multiple edges
+     * @param node
+     *            to start DFS
+     * @param graph
+     *            to start DFS
      */
-    public List<TEdge>[] searchEdges(TNode tNode, TGraph tGraph) {
-        if (seen[tNode.id] == false) {
-            seen[tNode.id] = true;
-            
-            for (TEdge edge : tGraph.getEdges()) {
-                if (edge.getSource() != tNode) {
-                    searchEdges(edge.getSource(), tGraph);
-                }
-                if (edge.getTarget() != tNode) {
-                    searchEdges(edge.getTarget(), tGraph);
-                }
+    private void dfs(TNode tNode, TGraph tGraph) {
+
+        if (visited[tNode.id] == false) {
+            visited[tNode.id] = true;
+            for (TEdge e : tGraph.getEdges()) {
+                TNode node = e.getTarget();
+                dfs(node, tGraph);
             }
-            return null;
-        }
-        else {
-            eliminated[tNode.id] = tNode.getOutgoingEdges();
-            return eliminated;
         }
     }
-    
-    
-
-    
-    
-    
-
 }
