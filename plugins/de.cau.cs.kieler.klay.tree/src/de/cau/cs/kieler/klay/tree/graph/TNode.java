@@ -18,6 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.klay.tree.properties.Properties;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 
 /**
  * A node in the T graph. Some properties are maybe null.
@@ -43,10 +45,10 @@ public class TNode extends TShape {
     private TNode rightNeighbour;
 
     /** List of outgoing edges. */
-    private LinkedList<TEdge> outgoingEdges;
+    private LinkedList<TEdge> outgoingEdges = new LinkedList<TEdge>();
 
     /** List of incoming edges. */
-    private LinkedList<TEdge> incomeingEdges;
+    private LinkedList<TEdge> incomingEdges = new LinkedList<TEdge>();
 
     // CONSTRUCTORS
 
@@ -95,16 +97,6 @@ public class TNode extends TShape {
     }
 
     /**
-     * Returns whether this node is a compound node.
-     * 
-     * @return true if compound
-     */
-    public boolean isCompound() {
-        LinkedList<TNode> children = getChildren();
-        return children != null && children.size() > 0;
-    }
-
-    /**
      * Returns the label text of this node.
      * 
      * @return the label
@@ -132,11 +124,12 @@ public class TNode extends TShape {
     }
 
     /**
-     * Returns the list of parents, creating it if necessary.
+     * Returns the list of parents, creating it from outgoing edges. Parents are sources of incoming
+     * edges of this node.
      * 
      * @return the list of parents
      */
-    public LinkedList<TNode> getParents() {
+    public LinkedList<TNode> getParentsCopy() {
         LinkedList<TNode> parents = new LinkedList<TNode>();
         for (TEdge iEdge : getInComingEdges()) {
             parents.add(iEdge.getSource());
@@ -145,25 +138,83 @@ public class TNode extends TShape {
     }
 
     /**
-     * Returns the first parent, creating it from outgoing edges.
+     * Returns an iterable over all the parents. Parents are sources of incoming edges of this node.
      * 
-     * @return a single parent
+     * @return an iterable over all parents.
      */
-    public TNode getParent() {
-        return getParents().getFirst();
+    public Iterable<TNode> getParents() {
+        return new Iterable<TNode>() {
+            public Iterator<TNode> iterator() {
+                final Iterator<TEdge> edgesIter = getInComingEdges().iterator();
+
+                return new Iterator<TNode>() {
+                    public boolean hasNext() {
+                        return edgesIter.hasNext();
+                    }
+
+                    public TNode next() {
+                        return edgesIter.next().getSource();
+                    }
+
+                    public void remove() {
+                        edgesIter.remove();
+                    }
+                };
+            }
+
+        };
     }
 
     /**
-     * Returns the list of children, creating it from outgoing edges.
+     * Returns the first parent, by taking it from outgoing edges.
+     * 
+     * @return a single parent or null if there is no
+     */
+    public TNode getParent() {
+        return Iterables.getFirst(getParents(), null);
+    }
+
+    /**
+     * Returns the list of children, creating it from outgoing edges. Children are targets of
+     * outgoing edges of this node.
      * 
      * @return the list of children
      */
-    public LinkedList<TNode> getChildren() {
+    public LinkedList<TNode> getChildrenCopy() {
         LinkedList<TNode> children = new LinkedList<TNode>();
         for (TEdge iEdge : getOutgoingEdges()) {
             children.add(iEdge.getTarget());
         }
         return children;
+    }
+
+    /**
+     * Returns an iterable over all the children. Children are targets of outgoing edges of this
+     * node.
+     * 
+     * @return an iterable over all children.
+     */
+    public Iterable<TNode> getChildren() {
+        return new Iterable<TNode>() {
+            public Iterator<TNode> iterator() {
+                final Iterator<TEdge> edgesIter = getOutgoingEdges().iterator();
+
+                return new Iterator<TNode>() {
+                    public boolean hasNext() {
+                        return edgesIter.hasNext();
+                    }
+
+                    public TNode next() {
+                        return edgesIter.next().getTarget();
+                    }
+
+                    public void remove() {
+                        edgesIter.remove();
+                    }
+                };
+            }
+
+        };
     }
 
     /**
@@ -184,10 +235,10 @@ public class TNode extends TShape {
      * @return list of incoming edge
      */
     public List<TEdge> getInComingEdges() {
-        if (incomeingEdges == null) {
-            incomeingEdges = new LinkedList<TEdge>();
+        if (incomingEdges == null) {
+            incomingEdges = new LinkedList<TEdge>();
         }
-        return incomeingEdges;
+        return incomingEdges;
     }
 
     // SETTERS
@@ -228,7 +279,7 @@ public class TNode extends TShape {
      *            the new list of parents
      */
     public void setParents(LinkedList<TNode> parents) {
-        LinkedList<TEdge> incomeingEdges = new LinkedList<TEdge>();
+        LinkedList<TEdge> incomingEdges = new LinkedList<TEdge>();
         for (TNode parent : parents) {
             List<TEdge> outgoingEdges = parent.getOutgoingEdges();
             Iterator<TEdge> it = outgoingEdges.iterator();
@@ -245,7 +296,7 @@ public class TNode extends TShape {
                 graph.getEdges().add(iEdge);
                 parent.getOutgoingEdges().add(iEdge);
             }
-            incomeingEdges.add(iEdge);
+            incomingEdges.add(iEdge);
         }
 
         for (TEdge tEdge : getInComingEdges()) {
@@ -254,7 +305,8 @@ public class TNode extends TShape {
             tEdge.setSource(null);
         }
 
-        this.incomeingEdges = incomeingEdges;
+        this.incomingEdges.clear();
+        this.incomingEdges.addAll(incomingEdges);
     }
 
     /**
@@ -305,7 +357,8 @@ public class TNode extends TShape {
             tEdge.setTarget(null);
         }
 
-        this.outgoingEdges = outgoingEdges;
+        this.outgoingEdges.clear();
+        this.outgoingEdges.addAll(outgoingEdges);
     }
 
     /**
@@ -320,5 +373,16 @@ public class TNode extends TShape {
         graph.getEdges().add(newEdge);
         getOutgoingEdges().add(newEdge);
         child.getInComingEdges().add(newEdge);
+    }
+    
+    // ATTRIBUTES
+    
+    /**
+     * Returns whether this node is a leaf.
+     * 
+     * @return true if node is a leaf
+     */
+    public boolean isLeaf() {
+        return getOutgoingEdges().isEmpty();
     }
 }

@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.tree.intermediate;
 
+import java.awt.List;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -56,21 +57,10 @@ public class FanProcessor implements ILayoutProcessor {
             }
         }
 
-        root.setProperty(Properties.ID, "0");
-
-        // mark the roots for fan calculation
-        for (TNode tChild : root.getChildren()) {
-            tChild.setProperty(Properties.ID, "0");
-            // check if the ID was set already by another relation
-            if (tChild.getProperty(Properties.ID) != null) {
-                tChild.setProperty(Properties.MULTI, true);
-            }
-            // TODO add implementation for multiple inheritance
-            // the provisional stringId is the Id of the parent
-            tChild.setProperty(Properties.ID, "0");
-        }
-
-        calculateFan(root.getChildren());
+        LinkedList<TNode> rootLevel = new LinkedList<TNode>();
+        rootLevel.add(root);
+        
+        calculateFan(rootLevel);
 
         // set the fan for all nodes
         for (TNode tNode : tGraph.getNodes()) {

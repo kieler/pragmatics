@@ -67,7 +67,7 @@ public class CoordianteProcessor implements ILayoutProcessor {
         }
 
         // start with the root and level down by bsf
-        setCoordiantes(root.getChildren(), 1, progressMonitor.subTask(1.0f));
+        setCoordiantes(root.getChildrenCopy(), 1, progressMonitor.subTask(1.0f));
 
         progressMonitor.done();
 
@@ -99,7 +99,7 @@ public class CoordianteProcessor implements ILayoutProcessor {
             // set the coordinates for each node in the current level
             // and collect the nodes of the next level
             for (TNode tNode : currentLevel) {
-                nextLevel.addAll(tNode.getChildren());
+                nextLevel.addAll(tNode.getChildrenCopy());
                 KVector pos = tNode.getPosition();
                 pos.x = tNode.getProperty(Properties.XCOOR);
                 pos.y = (int) Math.round(y);

@@ -20,6 +20,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
@@ -52,91 +54,29 @@ public class NodePlacer implements ILayoutPhase {
 
     private final TreeMap<TNode, Double> prelim = new TreeMap<TNode, Double>(comparator);
     private final TreeMap<TNode, Double> modifier = new TreeMap<TNode, Double>(comparator);
-    private TGraph tGraph = null;
     private double spacing = 20f;
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(TGraph tGraph) {
+        return INTERMEDIATE_PROCESSING_CONFIGURATION;
+    }
+
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
             null, EnumSet.of(LayoutProcessorStrategy.ROOT_PROC),
             EnumSet.of(LayoutProcessorStrategy.NEIGHBORS_PROC),
             EnumSet.of(LayoutProcessorStrategy.COORDINATE_PROC));
 
-    private void setPrelim(TNode tNode, double value) {
-        prelim.put(tNode, value);
-    }
-
-    private double getPrelim(TNode tNode) {
-        if (tNode != null)
-            return prelim.get(tNode);
-        else
-            return 0;
-    }
-
-    private void setModifier(TNode tNode, double value) {
-        modifier.put(tNode, value);
-    }
-
-    private double getModifier(TNode tNode) {
-        if (tNode != null)
-            return modifier.get(tNode);
-        else
-            return 0;
-    }
-
-    public void firstWalk(TNode tNode, TNode leftNeighbour,
-            final IKielerProgressMonitor progressMonitor) {
-
-        progressMonitor.begin("Processor place nodes - first walk", 2);
-        // initial Prelim value of all leaves should be 0
-        if (tGraph.isLeaf(tNode)) {
-            setPrelim(tNode, 0);
-            setModifier(tNode, 0);
-
-            TNode tmp = leftNeighbour;
-            // if a node is a leaf and has a leftNeighbour modify Prelim
-            if (tmp != null) {
-                double calc = getPrelim(tmp) + spacing + meanNodeSize(tmp, tNode).x;
-                // the value of Prelim is: Prelim of left neighbour + silbingSeparation + mean node
-                // size
-                setPrelim(tNode, calc);
-            }
-        }
-        // in case tNode is not a leaf
-        else {
-            // call this method recursively for every child of tNode
-            TNode prev = null;
-            for (TNode start : tNode.getChildren()) {
-                firstWalk(start, prev, progressMonitor);
-                prev = start;
-            }
-            // calculate midPoint
-            double midPoint = (getPrelim(tGraph.getFirstChild(tNode)) + getPrelim(tGraph
-                    .getLastChild(tNode))) / 2;
-            // check existence of a leftNeighbour
-            TNode tmp = leftNeighbour;
-            if (tmp != null) {
-                // Prelim is Prelim of leftNeighbour + meanNodeSize + silbingSeparation
-                setPrelim(tNode, getPrelim(tmp) + meanNodeSize(tmp, tNode).x + spacing);
-                // Modifier is Prelim - midPoint
-                setModifier(tNode, getPrelim(tNode) - midPoint);
-            }
-            // no leftNeighbour, so modifier is 0 and prelim is just midPoint
-            else {
-                setPrelim(tNode, midPoint);
-            }
-        }
-        progressMonitor.done();
-    }
-
     // recursive method, that adds modifier of ancestors to nodes
-    public void secondWalk(TNode tNode, LinkedList<TNode> currentLevel,
-            final IKielerProgressMonitor progressMonitor) {
+    public void secondWalk(TNode tNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor place nodes - second walk", 3);
-        if (!tGraph.isLeaf(tNode)) {
-            double xCoor = getPrelim(tNode);
+        if (!tNode.isLeaf()) {
+            double xCoor = prelim.get(tNode);
             for (TNode tmp : tNode.getChildren()) {
-                secondWalk(tmp, tmp.getChildren(), progressMonitor.subTask(3.0f));
-                xCoor += getModifier(tmp);
+                secondWalk(tmp, progressMonitor.subTask(3.0f));
+                xCoor += modifier.get(tmp);
             }
             tNode.setProperty(Properties.XCOOR, (int) Math.round(xCoor));
         }
@@ -144,19 +84,25 @@ public class NodePlacer implements ILayoutPhase {
     }
 
     /**
-     * @param leftChild
-     * @param tNode
-     * @return
+     * This function returns the mean width of the two passed nodes. It adds the width of the right
+     * half of lefthand node to the left half of righthand node. If all nodes are the same width,
+     * this is a trivial calculation.
+     * 
+     * @param leftNode
+     *            the lefthand node
+     * @param rightNode
+     *            the rightthand node
+     * @return the sum of the width
      */
-    private KVector meanNodeSize(TNode leftNode, TNode rightNode) {
-        KVector nodeSize = new KVector();
-        double nodeWidth = 0;
-        double nodeHeight = 0;
-        nodeWidth = (leftNode.getSize().x + rightNode.getSize().x) / 2;
-        nodeHeight = (leftNode.getSize().y + rightNode.getSize().y) / 2;
-        nodeSize.x = nodeWidth;
-        nodeSize.y = nodeHeight;
-        return nodeSize;
+    private double meanNodeWidth(TNode leftNode, TNode rightNode) {
+        double nodeWidth = 0d;
+        if (leftNode != null) {
+            nodeWidth += leftNode.getSize().x / 2d;
+        }
+        if (rightNode != null) {
+            nodeWidth += rightNode.getSize().x / 2d;
+        }
+        return nodeWidth;
     }
 
     /**
@@ -164,12 +110,10 @@ public class NodePlacer implements ILayoutPhase {
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
 
-        progressMonitor.begin("Processor order nodes", 2);
+        progressMonitor.begin("Processor order nodes", 5f);
 
         prelim.clear();
         modifier.clear();
-
-        this.tGraph = tGraph;
 
         spacing = tGraph.getProperty(Properties.SPACING);
 
@@ -178,29 +122,31 @@ public class NodePlacer implements ILayoutPhase {
             if (tNode.getProperty(Properties.ROOT))
                 roots.add(tNode);
         }
+
         TNode root = roots.getFirst();
-        firstWalk2(root, progressMonitor.subTask(2.0f));
+
+        firstWalk(root, progressMonitor.subTask(2f));
 
         Set<Entry<TNode, Double>> modSet = modifier.entrySet();
-        System.out.println("Modmap");
         for (Entry<TNode, Double> entry : modSet) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
 
-        System.out.println("X COOR");
+        System.out.println("first walk");
 
         Set<Entry<TNode, Double>> prelimSet = prelim.entrySet();
 
         for (Entry<TNode, Double> entry : prelimSet) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
-        
-        secondWalk(root, roots, progressMonitor.subTask(3.0f));
 
-        System.out.println("X COOR");
+        secondWalk(root, progressMonitor.subTask(3f));
+
+        System.out.println("secodn walk");
 
         for (Entry<TNode, Double> entry : prelimSet) {
-            System.out.println(entry.getKey() + ": " + entry.getKey().getProperty(Properties.XCOOR));
+            System.out
+                    .println(entry.getKey() + ": " + entry.getKey().getProperty(Properties.XCOOR));
         }
 
         // for (Entry<TNode, Double> entry : prelimSet) {
@@ -211,71 +157,104 @@ public class NodePlacer implements ILayoutPhase {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(TGraph tGraph) {
-        // TODO Auto-generated method stub
-        return INTERMEDIATE_PROCESSING_CONFIGURATION;
-    }
+    public void firstWalk(TNode cN, final IKielerProgressMonitor progressMonitor) {
+        modifier.put(cN, 0d);
+        TNode lN = cN.getLeftNeighbour();
 
-    public void setPrevNodeAtLevel(TNode tNode, LinkedList<TNode> currentLevel) {
-        if (currentLevel.getFirst() != tNode) {
-            int i = 0;
-            while (currentLevel.get(i) != tNode) {
-                currentLevel.get(i + 1);
-            }
-            currentLevel.set(i - 1, tNode);
-        }
-    }
-
-    public TNode getPrevNodeAtLevel(TNode tNode, LinkedList<TNode> currentLevel) {
-        if (tNode == currentLevel.getFirst()) {
-            return null;
-        } else {
-            int i = 0;
-            while (currentLevel.get(i) != tNode) {
-                currentLevel.get(i + 1);
-            }
-            int prev = i - 1;
-            return currentLevel.get(prev);
-        }
-    }
-
-    public void firstWalk2(TNode tNode, final IKielerProgressMonitor progressMonitor) {
-        setModifier(tNode, 0);
-        System.out.println("Vor Blatttest!");
-        if (tGraph.isLeaf(tNode)) {
-            System.out.println("In Blatttest!");
-            TNode lN = tNode.getLeftNeighbour();
+        if (cN.isLeaf()) {
             if (lN != null) {
-                System.out.println("Im  2. if");
-                double calc = getPrelim(lN) + spacing + meanNodeSize(lN, tNode).x;
-                System.out.println("Calc berechnet: " + calc);
-                setPrelim(tNode, calc);
+                /**
+                 * Determine the preliminary x-coordinate based on: the preliminary x-coordinate of
+                 * the left sibling, the separation between sibling nodes, and tHe mean size of left
+                 * sibling and current node.
+                 */
+                double p = prelim.get(lN) + spacing + meanNodeWidth(lN, cN);
+                prelim.put(cN, p);
             } else {
-                setPrelim(tNode, 0);
+                prelim.put(cN, 0d);
             }
         } else {
-            TNode leftMost = tNode.getChildren().get(0);
-            TNode rightMost = tNode.getChildren().get(tNode.getChildren().size() - 1);
-            // currentLevel erhoehen?
-            for (TNode child : tNode.getChildren()) {
-                firstWalk2(child, progressMonitor.subTask(2.0f));
+            /**
+             * This Node is not a leaf, so call this procedure recursively for each of its
+             * offspring.
+             */
+            for (TNode child : cN.getChildren()) {
+                firstWalk(child, progressMonitor.subTask(2.0f));
             }
-            double midPoint = (getPrelim(rightMost) + getPrelim(leftMost)) / 2;
-            System.out.println("Midpoint: " + midPoint);
-            if (tNode.getLeftNeighbour() != null) {
-                System.out.println("DRIN!");
-                setPrelim(
-                        tNode,
-                        getPrelim(tNode.getLeftNeighbour()) + spacing
-                                + meanNodeSize(tNode.getLeftNeighbour(), tNode).x);
-                setModifier(tNode, getPrelim(tNode) - midPoint);
+
+            TNode lM = Iterables.getFirst(cN.getChildren(), null);
+            TNode rM = Iterables.getLast(cN.getChildren(), null);
+            double midPoint = (prelim.get(rM) + prelim.get(lM)) / 2;
+
+            if (lN != null) {
+                double p = prelim.get(lN) + spacing + meanNodeWidth(lN, cN);
+                prelim.put(cN, p);
+                modifier.put(cN, prelim.get(cN) - midPoint);
             } else {
-                System.out.println("Letzter Test!");
-                setPrelim(tNode, midPoint);
+                prelim.put(cN, midPoint);
             }
+        }
+    }
+
+    public void apportion(TNode cN, int level, final IKielerProgressMonitor progressMonitor) {
+        TNode leftmost = Iterables.getFirst(cN.getChildren(), null);
+        TNode neighbor = leftmost != null ? leftmost.getLeftNeighbour() : null;
+        int compareDepth = 1;
+        while (leftmost != null && neighbor != null) {
+            /** Compute the location of Leftmost and where it should be with respect to Neighbor. */
+            double leftModSum = 0;
+            double rightModSum = 0;
+            TNode ancestorLeftmost = leftmost;
+            TNode ancestorNeighbor = neighbor;
+            for (int i = 0; i < compareDepth; i++) {
+                ancestorLeftmost = ancestorLeftmost.getParent();
+                ancestorNeighbor = ancestorNeighbor.getParent();
+                rightModSum = rightModSum + modifier.get(ancestorLeftmost);
+                leftModSum = leftModSum + modifier.get(ancestorNeighbor);
+            }
+            /**
+             * (* Find the floveDistance, and apply it to Node's subtree. Add appropriate portions
+             * to smaller interior subtrees.
+             */
+            double moveDistance = prelim.get(neighbor) + leftModSum + spacing
+                    + meanNodeWidth(leftmost, neighbor) - prelim.get(leftmost) - rightModSum;
+
+            if (moveDistance > 0) {
+                /** Count interior sibling subtrees in LeftSiblings */
+                TNode tempPtr = cN;
+                int leftSiblings = 0;
+                while (tempPtr != null && ancestorNeighbor != null) {
+                    leftSiblings++;
+                    tempPtr = tempPtr.getLeftNeighbour();
+                }
+                /** Apply portions to appropriate leftsibling subtrees. */
+                if (tempPtr != null) {
+                    double portion = moveDistance / leftSiblings;
+                    tempPtr = cN;
+                    while (tempPtr == ancestorNeighbor) {
+                        prelim.put(tempPtr, prelim.get(tempPtr) + moveDistance);
+                        modifier.put(tempPtr, modifier.get(tempPtr) + moveDistance);
+                        tempPtr = tempPtr.getLeftNeighbour();
+                    }
+                } else {
+                    /**
+                     * Don't need to move anything--it needs to be done by an ancestor because
+                     * AncestorNeighbor and AncestorLeftmost are not siblings of each other.
+                     */
+                    return;
+                }
+            }
+            /**
+             * Determine the leftmost descendant of Node at the next lower level to compare its
+             * positioning against that of its Neighbor.
+             */
+        }
+        compareDepth++;
+        if (leftmost.isLeaf()) {
+            // TODO Leftmost <- GETLEFTMOST(Node, 0, CompareDepth);
+            leftmost = null;
+        } else {
+            leftmost = Iterables.getFirst(leftmost.getChildren(), null);
         }
     }
 

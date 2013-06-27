@@ -60,7 +60,7 @@ public class NeighborsProcessor implements ILayoutProcessor {
         }
 
         // start with the root and level down by dsf
-        setNeighbours(root.getChildren(), progressMonitor.subTask(1.0f));
+        setNeighbours(root.getChildrenCopy(), progressMonitor.subTask(1.0f));
 
         progressMonitor.done();
 
@@ -85,7 +85,7 @@ public class NeighborsProcessor implements ILayoutProcessor {
             // the left neighbor is the previous processed node
             // the right neighbor of the left neighbor is the current node
             for (TNode tNode : currentLevel) {
-                nextLevel = tNode.getChildren();
+                nextLevel = tNode.getChildrenCopy();
                 // determine neighbors by dfs and only in subtrees
                 setNeighbours(nextLevel, progressMonitor.subTask(nextLevel.size() / numberOfNodes));
                 if (lN != null) {

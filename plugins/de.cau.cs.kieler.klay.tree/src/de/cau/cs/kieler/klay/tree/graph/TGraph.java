@@ -16,6 +16,8 @@ package de.cau.cs.kieler.klay.tree.graph;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
@@ -119,15 +121,5 @@ public class TGraph extends MapPropertyHolder {
         TEdge tedge = new TEdge(source, target);
         edges.add(tedge);
         return tedge;
-    }
-    
-    // TODO document and move to tNode
-    public TNode getFirstChild(TNode tNode) {
-        return tNode.getChildren().getFirst();
-    }
-    
-    // TODO document and move to tNode
-    public TNode getLastChild(TNode tNode) {
-        return tNode.getChildren().getLast();
     }
 }

@@ -156,7 +156,7 @@ public class OrderNodes implements ILayoutPhase {
                 tPNode.setProperty(Properties.POSITION, pos++);
                 
                 // set the position of the children and set them in order
-                LinkedList<TNode> Children = tPNode.getChildren();
+                LinkedList<TNode> Children = tPNode.getChildrenCopy();
                 orderLevel(Children, ++level, progressMonitor.subTask(1 / size));
                 
                 // order the children by their reverse position
@@ -168,7 +168,7 @@ public class OrderNodes implements ILayoutPhase {
 
                 // fill gaps with leaves
                 it = leaves.listIterator(leaves.size());
-                int fillGap = tPNode.getChildren().size();
+                int fillGap = tPNode.getOutgoingEdges().size();
                 notNull = true;
                 while ((0 < fillGap) && notNull && it.hasPrevious()) {
                     TNode tNode = (TNode) it.previous();
