@@ -17,7 +17,6 @@ import java.util.Comparator;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
-import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
  * TODO: Document this class.

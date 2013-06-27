@@ -14,11 +14,15 @@
 package de.cau.cs.kieler.klay.tree.porder;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.TreeMap;
+import java.util.Map.Entry;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
@@ -37,6 +41,23 @@ import de.cau.cs.kieler.klay.tree.util.SortTNodeProperty;
  */
 public class OrderNodes implements ILayoutPhase {
 
+    Comparator<TNode> comparator = new Comparator<TNode>() {
+        public int compare(TNode t1, TNode t2) {
+            if (t1.getLabel().length() < t2.getLabel().length()) {
+                return -1;
+            } else {
+                if (t1.getLabel().length() > t2.getLabel().length()) {
+                    return 1;
+                } else {
+                    return t1.getLabel().compareTo(t2.getLabel());
+                }
+            }
+        }
+    };
+
+    private final TreeMap<TNode, Integer> debug = new TreeMap<TNode, Integer>(comparator);
+    
+    
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
             IntermediateProcessingConfiguration.BEFORE_PHASE_2, EnumSet.of(
@@ -73,6 +94,10 @@ public class OrderNodes implements ILayoutPhase {
         roots.add(root);
         orderLevel(roots, 0, progressMonitor.subTask(1.0f));
 
+        for (Entry<TNode, Integer> entry : debug.entrySet()) {
+            System.out.println("ORDER : " + entry.getKey() + ": " + entry.getValue());
+        }
+        
         progressMonitor.done();
 
     }
@@ -119,6 +144,7 @@ public class OrderNodes implements ILayoutPhase {
         if (inners.isEmpty()) {
             // leave the leaves in their order
             for (TNode tENode : leaves) {
+                debug.put(tENode, pos);
                 tENode.setProperty(Properties.POSITION, pos++);
             }
         } else {
@@ -126,6 +152,7 @@ public class OrderNodes implements ILayoutPhase {
             // order each level of descendants of the inner nodes
             int size = inners.size();
             for (TNode tPNode : inners) {
+                debug.put(tPNode, pos);
                 tPNode.setProperty(Properties.POSITION, pos++);
                 
                 // set the position of the children and set them in order
@@ -146,6 +173,7 @@ public class OrderNodes implements ILayoutPhase {
                 while ((0 < fillGap) && notNull && it.hasPrevious()) {
                     TNode tNode = (TNode) it.previous();
                     if ((tNode.getProperty(Properties.FAN) == 0)) {
+                        debug.put(tNode, pos);
                         tNode.setProperty(Properties.POSITION, pos++);
                         fillGap--;
                         it.remove();

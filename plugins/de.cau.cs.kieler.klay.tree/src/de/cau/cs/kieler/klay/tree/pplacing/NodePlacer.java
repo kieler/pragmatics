@@ -15,17 +15,13 @@ package de.cau.cs.kieler.klay.tree.pplacing;
 
 import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
@@ -167,7 +163,6 @@ public class NodePlacer implements ILayoutPhase {
      * {@inheritDoc}
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
-        // TODO Auto-generated method stub
 
         progressMonitor.begin("Processor order nodes", 2);
 
@@ -192,15 +187,20 @@ public class NodePlacer implements ILayoutPhase {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
 
-        secondWalk(root, roots, progressMonitor.subTask(3.0f));
-
         System.out.println("X COOR");
 
         Set<Entry<TNode, Double>> prelimSet = prelim.entrySet();
 
         for (Entry<TNode, Double> entry : prelimSet) {
-            System.out
-                    .println(entry.getKey() + ": " + entry.getKey().getProperty(Properties.XCOOR));
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+        
+        secondWalk(root, roots, progressMonitor.subTask(3.0f));
+
+        System.out.println("X COOR");
+
+        for (Entry<TNode, Double> entry : prelimSet) {
+            System.out.println(entry.getKey() + ": " + entry.getKey().getProperty(Properties.XCOOR));
         }
 
         // for (Entry<TNode, Double> entry : prelimSet) {

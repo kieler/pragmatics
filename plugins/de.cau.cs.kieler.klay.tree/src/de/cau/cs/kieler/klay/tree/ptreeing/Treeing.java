@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.tree.ptreeing;
 
-import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 
