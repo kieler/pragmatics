@@ -34,7 +34,8 @@ public class Treeing implements ILayoutPhase {
     /** intermediate processing configuration. */
     
     // first phase gets no intermediateProcessingConfiguration?!
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
+            new IntermediateProcessingConfiguration(
             null, null);
           
     
@@ -45,7 +46,6 @@ public class Treeing implements ILayoutPhase {
         
         progressMonitor.begin("Treeing phase", 1);
         
-
         this.tGraph = tGraph;
         collectEdges(tGraph);
         
@@ -75,6 +75,7 @@ public class Treeing implements ILayoutPhase {
         int size = tGraph.getNodes().size();
         eliminated = new LinkedList<TEdge>();
         checked = new int[size];
+        visited = new boolean[size];
         Arrays.fill(visited, false);
         Arrays.fill(checked, 0);
     }
@@ -89,23 +90,32 @@ public class Treeing implements ILayoutPhase {
     private void collectEdges(TGraph tGraph) {
         
         init(tGraph);
-        TEdge edge = new TEdge(null, null);
+        // start DFS on every node in graph
         for (TNode tNode : tGraph.getNodes()) {
+            // initial condition: all nodes have checked value of 0, which defines 'unvisited'
             if (checked[tNode.id] == 0) {
                 checked[tNode.id] = 1;
                 dfs(tNode, tGraph);
             }
+            // if a node has already been visited
             if (checked[tNode.id] == 1) {
                 checked[tNode.id] = 2;
                 
+                // add all incoming edges of that node to a list 
                 for (TEdge e : tNode.getInComingEdges()) {
                     eliminated.add(e);
+                    // and set source and target of the edge to null
                     e.setSource(null);
                     e.setTarget(null);
                 }
                 dfs(tNode, tGraph);
             }
+            // set the list containing bad edges as graph property
             tGraph.setProperty(Properties.REMOVABLE_EDGES, eliminated);
+        }
+        for (int i = 0; i < eliminated.size(); i++) {
+            System.out.println("ELIMINATED!");
+            System.out.println(eliminated.get(i));
         }
     }
     
