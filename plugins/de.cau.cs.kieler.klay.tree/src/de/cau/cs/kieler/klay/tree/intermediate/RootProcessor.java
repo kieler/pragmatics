@@ -49,7 +49,17 @@ public class RootProcessor implements ILayoutProcessor {
         }
         // if there are more than one root add a super root and set the current roots as its
         // children
-        if (1 < roots.size()) {
+        switch (roots.size()) {
+        case 0:
+            // TODO ASSERT NO NODES ARE THERE
+            TNode root =  new TNode(0,tGraph, "DUMMY_ROOT");
+            root.setProperty(Properties.ROOT, true);
+
+        case 1:
+
+            break;
+
+        default:
             TNode superRoot = new TNode(0, tGraph, "SUPER_ROOT");
             for (TNode tRoot : roots) {
                 superRoot.addChild(tRoot);
@@ -58,6 +68,7 @@ public class RootProcessor implements ILayoutProcessor {
             superRoot.setProperty(Properties.ROOT, true);
             superRoot.setProperty(Properties.DUMMY, true);
             tGraph.getNodes().add(superRoot);
+            break;
         }
     }
 }
