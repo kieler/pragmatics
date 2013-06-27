@@ -55,6 +55,7 @@ public class RootProcessor implements ILayoutProcessor {
             TNode root =  new TNode(0,tGraph, "DUMMY_ROOT");
             root.setProperty(Properties.ROOT, true);
             root.setProperty(Properties.DUMMY, true);
+            tGraph.getNodes().add(root);
         case 1:
 
             break;
