@@ -13,8 +13,11 @@
  */
 package de.cau.cs.kieler.klay.tree.graph;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
  * A node in the T graph. Some properties are maybe null.
@@ -27,49 +30,54 @@ public class TNode extends TShape {
     /** the serial version UID. */
     private static final long serialVersionUID = 1L;
 
+    /** the graph it belongs to. */
+    private TGraph graph;
+
     /** the node label. */
     private String label;
 
-    private TNode leftChild;
-    private TNode rightChild;
-
+    /** lefthand node . */
     private TNode leftNeighbour;
-    private TNode rightNeighbour;
-    /** List of child nodes. */
-    private LinkedList<TNode> children;
 
+    /** righthand node . */
+    private TNode rightNeighbour;
+
+    /** List of outgoing edges. */
     private LinkedList<TEdge> outgoingEdges;
 
+    /** List of incoming edges. */
     private LinkedList<TEdge> incomeingEdges;
 
     // CONSTRUCTORS
 
     /**
-     * Create a new node without parent and label.
+     * Create a new node with given label.
+     * 
+     * @param id
+     *            a unique identification
+     * @param graph
+     *            the graph it belong s to
+     * @param label
+     *            the label
      */
-    public TNode(final int id, final TGraph graph) {
-        super(id);
-        this.rightChild = null;
-        this.leftChild = null;
-        this.leftNeighbour = null;
-        this.rightNeighbour = null;
-        this.children = new LinkedList<TNode>();
+    public TNode(final int id, final TGraph graph, final String label) {
+        this(id, graph);
+        this.label = label;
     }
 
     /**
-     * Create a new node with given label.
+     * Create a new node a label.
      * 
-     * @param label
-     *            the label text
+     * @param id
+     *            a unique identification
+     * @param graph
+     *            the graph it belong s to
      */
-    public TNode(final int id, final TGraph graph, final String label) {
+    public TNode(final int id, final TGraph graph) {
         super(id);
-        this.label = label;
-        this.leftChild = null;
-        this.rightChild = null;
+        this.graph = graph;
         this.leftNeighbour = null;
         this.rightNeighbour = null;
-        this.children = new LinkedList<TNode>();
     }
 
     // GETTERS
@@ -92,6 +100,7 @@ public class TNode extends TShape {
      * @return true if compound
      */
     public boolean isCompound() {
+        LinkedList<TNode> children = getChildren();
         return children != null && children.size() > 0;
     }
 
@@ -102,24 +111,6 @@ public class TNode extends TShape {
      */
     public String getLabel() {
         return label;
-    }
-
-    /**
-     * Get the left child. Maybe null.
-     * 
-     * @return the left child
-     */
-    public TNode getLeftChild() {
-        return leftChild;
-    }
-
-    /**
-     * Get the right child. Maybe null.
-     * 
-     * @return the right child
-     */
-    public TNode getRightChild() {
-        return rightChild;
     }
 
     /**
@@ -141,13 +132,36 @@ public class TNode extends TShape {
     }
 
     /**
-     * Returns the list of children, creating it if necessary.
+     * Returns the list of parents, creating it if necessary.
      * 
-     * @return the children
+     * @return the list of parents
+     */
+    public LinkedList<TNode> getParents() {
+        LinkedList<TNode> parents = new LinkedList<TNode>();
+        for (TEdge iEdge : getInComingEdges()) {
+            parents.add(iEdge.getSource());
+        }
+        return parents;
+    }
+
+    /**
+     * Returns the first parent, creating it from outgoing edges.
+     * 
+     * @return a single parent
+     */
+    public TNode getParent() {
+        return getParents().getFirst();
+    }
+
+    /**
+     * Returns the list of children, creating it from outgoing edges.
+     * 
+     * @return the list of children
      */
     public LinkedList<TNode> getChildren() {
-        if (children == null) {
-            children = new LinkedList<TNode>();
+        LinkedList<TNode> children = new LinkedList<TNode>();
+        for (TEdge iEdge : getOutgoingEdges()) {
+            children.add(iEdge.getTarget());
         }
         return children;
     }
@@ -187,28 +201,6 @@ public class TNode extends TShape {
     }
 
     /**
-     * Set the left child and add it to the list of children.
-     * 
-     * @param leftChild
-     *            the left child
-     */
-    public void setLeftChild(TNode leftChild) {
-        this.leftChild = leftChild;
-        children.add(leftChild);
-    }
-
-    /**
-     * Set the right child and add it to the list of children.
-     * 
-     * @param rightChild
-     *            the right child
-     */
-    public void setRightChild(TNode rightChild) {
-        this.rightChild = rightChild;
-        children.add(rightChild);
-    }
-
-    /**
      * Set the left neighbor.
      * 
      * @param tNode
@@ -229,22 +221,104 @@ public class TNode extends TShape {
     }
 
     /**
-     * Reset the list of children to a given list.
+     * Reset the list of parents to a given list, by finding all edges from the parents to this node
+     * and reset the existing edges. If no edge exists a dummy edge is added.
+     * 
+     * @param children
+     *            the new list of parents
+     */
+    public void setParents(LinkedList<TNode> parents) {
+        LinkedList<TEdge> incomeingEdges = new LinkedList<TEdge>();
+        for (TNode parent : parents) {
+            List<TEdge> outgoingEdges = parent.getOutgoingEdges();
+            Iterator<TEdge> it = outgoingEdges.iterator();
+            TEdge iEdge = null;
+            while (it.hasNext() && iEdge == null) {
+                TEdge oEdge = (TEdge) it.next();
+                if (oEdge.getTarget() == this) {
+                    iEdge = oEdge;
+                }
+            }
+            if (iEdge == null) {
+                iEdge = new TEdge(parent, this);
+                iEdge.setProperty(Properties.DUMMY, true);
+                graph.getEdges().add(iEdge);
+                parent.getOutgoingEdges().add(iEdge);
+            }
+            incomeingEdges.add(iEdge);
+        }
+
+        for (TEdge tEdge : getInComingEdges()) {
+            tEdge.setTarget(null);
+            tEdge.getSource().getOutgoingEdges().remove(tEdge);
+            tEdge.setSource(null);
+        }
+
+        this.incomeingEdges = incomeingEdges;
+    }
+
+    /**
+     * Add a node to the list of parents, by adding a appropriate dummy edge to the graph.
+     * 
+     * @param child
+     *            the child to be added
+     */
+    public void addPartent(TNode parent) {
+        TEdge newEdge = new TEdge(parent, this);
+        newEdge.setProperty(Properties.DUMMY, true);
+        graph.getEdges().add(newEdge);
+        getInComingEdges().add(newEdge);
+        parent.getOutgoingEdges().add(newEdge);
+    }
+
+    /**
+     * Reset the list of children to a given list, by finding all edges from the children to this
+     * node and reset the existing edges. If no edge exists a dummy edge is added.
      * 
      * @param children
      *            the new list of children
      */
     public void setChildren(LinkedList<TNode> children) {
-        this.children = children;
+        LinkedList<TEdge> outgoingEdges = new LinkedList<TEdge>();
+        for (TNode child : children) {
+            List<TEdge> incomingEdges = child.getInComingEdges();
+            Iterator<TEdge> it = incomingEdges.iterator();
+            TEdge oEdge = null;
+            while (it.hasNext() && oEdge == null) {
+                TEdge iEdge = (TEdge) it.next();
+                if (iEdge.getTarget() == this) {
+                    oEdge = iEdge;
+                }
+            }
+            if (oEdge == null) {
+                oEdge = new TEdge(this, child);
+                oEdge.setProperty(Properties.DUMMY, true);
+                graph.getEdges().add(oEdge);
+                child.getInComingEdges().add(oEdge);
+            }
+            outgoingEdges.add(oEdge);
+        }
+
+        for (TEdge tEdge : getOutgoingEdges()) {
+            tEdge.setSource(null);
+            tEdge.getTarget().getInComingEdges().remove(tEdge);
+            tEdge.setTarget(null);
+        }
+
+        this.outgoingEdges = outgoingEdges;
     }
 
     /**
-     * Add a node to the list of children.
+     * Add a node to the list of children, by adding a appropriate dummy edge to the graph.
      * 
      * @param child
      *            the child to be added
      */
     public void addChild(TNode child) {
-        this.children.add(child);
+        TEdge newEdge = new TEdge(this, child);
+        newEdge.setProperty(Properties.DUMMY, true);
+        graph.getEdges().add(newEdge);
+        getOutgoingEdges().add(newEdge);
+        child.getInComingEdges().add(newEdge);
     }
 }

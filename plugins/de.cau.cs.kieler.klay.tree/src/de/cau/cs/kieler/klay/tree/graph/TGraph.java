@@ -122,18 +122,6 @@ public class TGraph extends MapPropertyHolder {
     }
     
     // TODO document and move to tNode
-    public boolean isLeaf(TNode tNode) {
-        if (tNode == null) {
-            // TODO remove debug
-            System.out.println("In erstem if");
-            return false;
-        }
-        else {
-            return tNode.getChildren().isEmpty();
-        }
-    }
-    
-    // TODO document and move to tNode
     public TNode getFirstChild(TNode tNode) {
         return tNode.getChildren().getFirst();
     }

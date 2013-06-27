@@ -143,6 +143,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
                     // update tNode accordingly
                     source.addChild(target);
+                    target.addPartent(source);
                     source.getOutgoingEdges().add(newEdge);
                     target.getInComingEdges().add(newEdge);
                 }

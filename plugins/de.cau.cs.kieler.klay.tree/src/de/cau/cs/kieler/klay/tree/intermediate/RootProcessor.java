@@ -62,6 +62,7 @@ public class RootProcessor implements ILayoutProcessor {
 
         default:
             TNode superRoot = new TNode(0, tGraph, "SUPER_ROOT");
+            
             for (TNode tRoot : roots) {
                 superRoot.addChild(tRoot);
                 tRoot.setProperty(Properties.ROOT, false);
