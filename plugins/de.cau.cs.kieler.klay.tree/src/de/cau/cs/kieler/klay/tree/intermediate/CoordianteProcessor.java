@@ -67,7 +67,7 @@ public class CoordianteProcessor implements ILayoutProcessor {
         }
 
         // start with the root and level down by bsf
-        setCoordiantes(root.getChildrenCopy(), 1, progressMonitor.subTask(1.0f));
+        setCoordiantes(root.getChildrenCopy(), progressMonitor.subTask(1.0f));
 
         progressMonitor.done();
 
@@ -83,7 +83,7 @@ public class CoordianteProcessor implements ILayoutProcessor {
      * @param progressMonitor
      *            the current progress monitor
      */
-    private void setCoordiantes(final LinkedList<TNode> currentLevel, int level,
+    private void setCoordiantes(final LinkedList<TNode> currentLevel,
             IKielerProgressMonitor progressMonitor) {
 
         // if the level is empty there is nothing to do
@@ -91,10 +91,8 @@ public class CoordianteProcessor implements ILayoutProcessor {
 
             LinkedList<TNode> nextLevel = new LinkedList<TNode>();
             // the y coordinate is constant the spacing
-            // TODO add implementation to take into account the nodes height 
-            double y = spacing * level;
             // TODO remove debug
-            System.out.println("level: " + level + " spacing: " + spacing + " y: " + y);
+            System.out.println("spacing: " + spacing);
 
             // set the coordinates for each node in the current level
             // and collect the nodes of the next level
@@ -102,14 +100,13 @@ public class CoordianteProcessor implements ILayoutProcessor {
                 nextLevel.addAll(tNode.getChildrenCopy());
                 KVector pos = tNode.getPosition();
                 pos.x = tNode.getProperty(Properties.XCOOR);
-                pos.y = (int) Math.round(y);
+                pos.y = tNode.getProperty(Properties.YCOOR);
                 // TODO remove debug
                 System.out.println("Set coordiante x: " + pos.x + " y: " + pos.y);
             }
 
             // go to the next level
-            setCoordiantes(nextLevel, ++level,
-                    progressMonitor.subTask(nextLevel.size() / numberOfNodes));
+            setCoordiantes(nextLevel, progressMonitor.subTask(nextLevel.size() / numberOfNodes));
         }
 
     }

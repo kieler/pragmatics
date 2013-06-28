@@ -15,7 +15,9 @@ package de.cau.cs.kieler.klay.tree.intermediate;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
@@ -24,9 +26,9 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
 import de.cau.cs.kieler.klay.tree.util.Key;
 
 /**
- * A processor which determine the local neighbors for all nodes in the graph. A local neighbor is a
- * node in the same level and which got the same parent and is located to the right or left of the
- * other node.
+ * A processor which determine the neighbors and siblings for all nodes in the graph. A neighbor is
+ * the current node's nearest node, at the same level. A siblings is a neighbor with the same
+ * parent.
  * 
  * @author sor
  * @author sgu
@@ -41,7 +43,7 @@ public class NeighborsProcessor implements ILayoutProcessor {
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
 
-        progressMonitor.begin("Processor set neighbours", 1);
+        progressMonitor.begin("Processor set neighbors", 1f);
 
         TNode root = null;
         // clear map if processor is reused
@@ -59,41 +61,65 @@ public class NeighborsProcessor implements ILayoutProcessor {
             }
         }
 
+        // TODO assert root is not null
+
         // start with the root and level down by dsf
-        setNeighbours(root.getChildrenCopy(), progressMonitor.subTask(1.0f));
+        setNeighbors(root.getChildren(), progressMonitor);
 
         progressMonitor.done();
 
     }
 
     /**
-     * Set the neighbors of each node in the current level and for their children.
+     * Set the neighbors of each node in the current level and for their children. A neighbor is the
+     * current node's nearest node, at the same level. A siblings is a neighbor with the same
+     * parent.
      * 
-     * @param currentLevel
-     *            the list of TNode for which the neighbors should be calculated
+     * @param currentlevel
+     *            the list of TNode at the same level, for which the neighbors and siblings should be determined
      * @param progressMonitor
      */
-    private void setNeighbours(final LinkedList<TNode> currentLevel,
+    private void setNeighbors(final Iterable<TNode> currentlevel,
             IKielerProgressMonitor progressMonitor) {
 
-        if (!currentLevel.isEmpty()) {
+        // only do something in filled levels
+        if (!Iterables.isEmpty(currentlevel)) {
+            // create subtask for recursive descent
+            IKielerProgressMonitor sT = progressMonitor.subTask(Iterables.size(currentlevel)
+                    / numberOfNodes);
 
-            LinkedList<TNode> nextLevel = new LinkedList<TNode>();
+            // build empty iterator
+            Iterable<TNode> nextLevel = new Iterable<TNode>() {
+
+                public Iterator<TNode> iterator() {
+                    return Iterators.emptyIterator();
+                }
+            };
 
             TNode lN = null;
 
             // the left neighbor is the previous processed node
             // the right neighbor of the left neighbor is the current node
-            for (TNode tNode : currentLevel) {
-                nextLevel = tNode.getChildrenCopy();
-                // determine neighbors by dfs and only in subtrees
-                setNeighbours(nextLevel, progressMonitor.subTask(nextLevel.size() / numberOfNodes));
+            for (TNode cN : currentlevel) {
+                // append the children of the current node to the next level
+                nextLevel = Iterables.concat(nextLevel, cN.getChildren());
                 if (lN != null) {
-                    lN.setRightNeighbour(tNode);
+                    lN.setProperty(Properties.RIGHTNEIGHBOR, cN);
+                    cN.setProperty(Properties.LEFTNEIGHBOR, lN);
+                    if (cN.getParent() == lN.getParent()) {
+                        lN.setProperty(Properties.RIGHTSIBLING, cN);
+                        cN.setProperty(Properties.LEFTSIBLING, lN);
+                    }
                 }
-                tNode.setLeftNeighbour(lN);
-                lN = tNode;
+
+                lN = cN;
             }
+
+            // add amount of work units to the whole task
+            sT.done();
+
+            // determine neighbors by bfs and for the whole graph
+            setNeighbors(nextLevel, progressMonitor);
         }
 
     }

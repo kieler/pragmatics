@@ -15,12 +15,14 @@ package de.cau.cs.kieler.klay.tree.pplacing;
 
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
@@ -56,6 +58,9 @@ public class NodePlacer implements ILayoutPhase {
     private final TreeMap<TNode, Double> modifier = new TreeMap<TNode, Double>(comparator);
     private double spacing = 20f;
 
+    private double xTopAdjustment;
+    private double yTopAdjustment;
+
     /**
      * {@inheritDoc}
      */
@@ -70,16 +75,26 @@ public class NodePlacer implements ILayoutPhase {
             EnumSet.of(LayoutProcessorStrategy.COORDINATE_PROC));
 
     // recursive method, that adds modifier of ancestors to nodes
-    public void secondWalk(TNode tNode, final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Processor place nodes - second walk", 3);
-        if (!tNode.isLeaf()) {
-            double xCoor = prelim.get(tNode);
-            for (TNode tmp : tNode.getChildren()) {
-                secondWalk(tmp, progressMonitor.subTask(3.0f));
-                xCoor += modifier.get(tmp);
-            }
-            tNode.setProperty(Properties.XCOOR, (int) Math.round(xCoor));
-        }
+    public void secondWalk(TNode tNode, int level, double modsum,
+            final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Processor place nodes - second walk", 1f);
+        double xTemp = xTopAdjustment + prelim.get(tNode) + modsum;
+        double yTemp = yTopAdjustment + level * spacing;
+        /** Check to see that xTemp and yTemp are of the proper size for your application. */
+        if (!(xTemp < 0) && !(yTemp < 0)) {
+            tNode.setProperty(Properties.XCOOR, (int) Math.round(xTemp));
+            tNode.setProperty(Properties.YCOOR, (int) Math.round(yTemp));
+            /** Apply the flodifier value for this node to all its offspring.*/
+            //TODO continue
+        } 
+//        if (!tNode.isLeaf()) {
+//            double xCoor = prelim.get(tNode);
+//            for (TNode tmp : tNode.getChildren()) {
+//                secondWalk(tmp, progressMonitor.subTask(3.0f));
+//                xCoor += modifier.get(tmp);
+//            }
+//            tNode.setProperty(Properties.XCOOR, (int) Math.round(xCoor));
+//        }
         progressMonitor.done();
     }
 
@@ -110,7 +125,7 @@ public class NodePlacer implements ILayoutPhase {
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
 
-        progressMonitor.begin("Processor order nodes", 5f);
+        progressMonitor.begin("Processor order nodes", 1f);
 
         prelim.clear();
         modifier.clear();
@@ -125,7 +140,12 @@ public class NodePlacer implements ILayoutPhase {
 
         TNode root = roots.getFirst();
 
-        firstWalk(root, progressMonitor.subTask(2f));
+        /** Do the preliminary positioning with a postorder walk. */
+        firstWalk(root, 0, progressMonitor.subTask(1f));
+
+        /** Determine how to adjust all the nodes with respect to the location of the root. */
+        xTopAdjustment = root.getPosition().x - prelim.get(root);
+        yTopAdjustment = root.getPosition().y;
 
         Set<Entry<TNode, Double>> modSet = modifier.entrySet();
         for (Entry<TNode, Double> entry : modSet) {
@@ -140,9 +160,9 @@ public class NodePlacer implements ILayoutPhase {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
 
-        secondWalk(root, progressMonitor.subTask(3f));
+        secondWalk(root, 0, 0d, progressMonitor.subTask(1f));
 
-        System.out.println("secodn walk");
+        System.out.println("second walk");
 
         for (Entry<TNode, Double> entry : prelimSet) {
             System.out
@@ -157,18 +177,18 @@ public class NodePlacer implements ILayoutPhase {
 
     }
 
-    public void firstWalk(TNode cN, final IKielerProgressMonitor progressMonitor) {
+    public void firstWalk(TNode cN, int level, final IKielerProgressMonitor progressMonitor) {
         modifier.put(cN, 0d);
-        TNode lN = cN.getLeftNeighbour();
+        TNode lS = cN.getProperty(Properties.LEFTSIBLING);
 
         if (cN.isLeaf()) {
-            if (lN != null) {
+            if (lS != null) {
                 /**
                  * Determine the preliminary x-coordinate based on: the preliminary x-coordinate of
                  * the left sibling, the separation between sibling nodes, and tHe mean size of left
                  * sibling and current node.
                  */
-                double p = prelim.get(lN) + spacing + meanNodeWidth(lN, cN);
+                double p = prelim.get(lS) + spacing + meanNodeWidth(lS, cN);
                 prelim.put(cN, p);
             } else {
                 prelim.put(cN, 0d);
@@ -179,26 +199,28 @@ public class NodePlacer implements ILayoutPhase {
              * offspring.
              */
             for (TNode child : cN.getChildren()) {
-                firstWalk(child, progressMonitor.subTask(2.0f));
+                // TODO work units
+                firstWalk(child, level + 1, progressMonitor.subTask(1f));
             }
 
             TNode lM = Iterables.getFirst(cN.getChildren(), null);
             TNode rM = Iterables.getLast(cN.getChildren(), null);
             double midPoint = (prelim.get(rM) + prelim.get(lM)) / 2;
 
-            if (lN != null) {
-                double p = prelim.get(lN) + spacing + meanNodeWidth(lN, cN);
+            if (lS != null) {
+                double p = prelim.get(lS) + spacing + meanNodeWidth(lS, cN);
                 prelim.put(cN, p);
                 modifier.put(cN, prelim.get(cN) - midPoint);
+                apportion(cN, level);
             } else {
                 prelim.put(cN, midPoint);
             }
         }
     }
 
-    public void apportion(TNode cN, int level, final IKielerProgressMonitor progressMonitor) {
+    public void apportion(TNode cN, int level) {
         TNode leftmost = Iterables.getFirst(cN.getChildren(), null);
-        TNode neighbor = leftmost != null ? leftmost.getLeftNeighbour() : null;
+        TNode neighbor = leftmost != null ? leftmost.getProperty(Properties.LEFTNEIGHBOR) : null;
         int compareDepth = 1;
         while (leftmost != null && neighbor != null) {
             /** Compute the location of Leftmost and where it should be with respect to Neighbor. */
@@ -223,9 +245,9 @@ public class NodePlacer implements ILayoutPhase {
                 /** Count interior sibling subtrees in LeftSiblings */
                 TNode tempPtr = cN;
                 int leftSiblings = 0;
-                while (tempPtr != null && ancestorNeighbor != null) {
+                while (tempPtr != null && tempPtr != ancestorNeighbor) {
                     leftSiblings++;
-                    tempPtr = tempPtr.getLeftNeighbour();
+                    tempPtr = tempPtr.getProperty(Properties.LEFTSIBLING);
                 }
                 /** Apply portions to appropriate leftsibling subtrees. */
                 if (tempPtr != null) {
@@ -234,7 +256,8 @@ public class NodePlacer implements ILayoutPhase {
                     while (tempPtr == ancestorNeighbor) {
                         prelim.put(tempPtr, prelim.get(tempPtr) + moveDistance);
                         modifier.put(tempPtr, modifier.get(tempPtr) + moveDistance);
-                        tempPtr = tempPtr.getLeftNeighbour();
+                        moveDistance -= portion;
+                        tempPtr = tempPtr.getProperty(Properties.LEFTSIBLING);
                     }
                 } else {
                     /**
@@ -249,13 +272,49 @@ public class NodePlacer implements ILayoutPhase {
              * positioning against that of its Neighbor.
              */
         }
+
         compareDepth++;
         if (leftmost.isLeaf()) {
-            // TODO Leftmost <- GETLEFTMOST(Node, 0, CompareDepth);
-            leftmost = null;
+            leftmost = getLeftMost(cN.getChildren(), compareDepth);
         } else {
             leftmost = Iterables.getFirst(leftmost.getChildren(), null);
         }
+    }
+
+    /**
+     * This method returns the leftmost node at the given level. This is implemented using a
+     * postorder walk of the subtree under given level, depth levels down. Depth here refers to the
+     * level below where the leftmost descendant is being found.
+     * 
+     * @param currentlevel
+     *            a list of nodes at level one
+     * @param depth
+     *            the depth to search for
+     * @return the leftmost descendant at depth levels down
+     */
+    private TNode getLeftMost(final Iterable<TNode> currentlevel, int depth) {
+
+        if (1 < depth) {
+            depth--;
+            // build empty iterator
+            Iterable<TNode> nextLevel = new Iterable<TNode>() {
+
+                public Iterator<TNode> iterator() {
+                    return Iterators.emptyIterator();
+                }
+            };
+
+            // the left neighbor is the previous processed node
+            // the right neighbor of the left neighbor is the current node
+            for (TNode cN : currentlevel) {
+                // append the children of the current node to the next level
+                nextLevel = Iterables.concat(nextLevel, cN.getChildren());
+            }
+
+            // determine neighbors by bfs and for the whole graph
+            getLeftMost(nextLevel, depth);
+        }
+        return Iterables.getFirst(currentlevel, null);
     }
 
 }

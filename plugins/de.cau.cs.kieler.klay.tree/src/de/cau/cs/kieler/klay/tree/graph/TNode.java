@@ -19,7 +19,6 @@ import java.util.List;
 
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 
 /**
  * A node in the T graph. Some properties are maybe null.
@@ -37,12 +36,6 @@ public class TNode extends TShape {
 
     /** the node label. */
     private String label;
-
-    /** lefthand node . */
-    private TNode leftNeighbour;
-
-    /** righthand node . */
-    private TNode rightNeighbour;
 
     /** List of outgoing edges. */
     private LinkedList<TEdge> outgoingEdges = new LinkedList<TEdge>();
@@ -78,8 +71,6 @@ public class TNode extends TShape {
     public TNode(final int id, final TGraph graph) {
         super(id);
         this.graph = graph;
-        this.leftNeighbour = null;
-        this.rightNeighbour = null;
     }
 
     // GETTERS
@@ -103,24 +94,6 @@ public class TNode extends TShape {
      */
     public String getLabel() {
         return label;
-    }
-
-    /**
-     * Get the left neighbor. Maybe null.
-     * 
-     * @return the left neighbor
-     */
-    public TNode getLeftNeighbour() {
-        return leftNeighbour;
-    }
-
-    /**
-     * Get the right neighbor. Maybe null.
-     * 
-     * @return the right neighbor
-     */
-    public TNode getRightNeighbour() {
-        return rightNeighbour;
     }
 
     /**
@@ -252,26 +225,6 @@ public class TNode extends TShape {
     }
 
     /**
-     * Set the left neighbor.
-     * 
-     * @param tNode
-     *            the left neighbor
-     */
-    public void setLeftNeighbour(TNode tNode) {
-        this.leftNeighbour = tNode;
-    }
-
-    /**
-     * Set the right neighbor.
-     * 
-     * @param tNode
-     *            the right neighbor
-     */
-    public void setRightNeighbour(TNode tNode) {
-        this.rightNeighbour = tNode;
-    }
-
-    /**
      * Reset the list of parents to a given list, by finding all edges from the parents to this node
      * and reset the existing edges. If no edge exists a dummy edge is added.
      * 
@@ -374,9 +327,9 @@ public class TNode extends TShape {
         getOutgoingEdges().add(newEdge);
         child.getInComingEdges().add(newEdge);
     }
-    
+
     // ATTRIBUTES
-    
+
     /**
      * Returns whether this node is a leaf.
      * 
