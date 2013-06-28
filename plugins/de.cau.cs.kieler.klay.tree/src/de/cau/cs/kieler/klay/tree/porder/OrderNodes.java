@@ -94,10 +94,6 @@ public class OrderNodes implements ILayoutPhase {
         roots.add(root);
         orderLevel(roots, 0, progressMonitor.subTask(1.0f));
 
-        for (Entry<TNode, Integer> entry : debug.entrySet()) {
-            System.out.println("ORDER : " + entry.getKey() + ": " + entry.getValue());
-        }
-        
         progressMonitor.done();
 
     }

@@ -142,8 +142,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     newEdge.checkProperties(Properties.LABEL_SPACING);
 
                     // update tNode accordingly
-                    source.addChild(target);
-                    target.addPartent(source);
                     source.getOutgoingEdges().add(newEdge);
                     target.getInComingEdges().add(newEdge);
                 }

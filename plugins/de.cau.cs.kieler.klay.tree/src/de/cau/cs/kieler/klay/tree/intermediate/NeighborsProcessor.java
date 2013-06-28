@@ -76,7 +76,8 @@ public class NeighborsProcessor implements ILayoutProcessor {
      * parent.
      * 
      * @param currentlevel
-     *            the list of TNode at the same level, for which the neighbors and siblings should be determined
+     *            the list of TNode at the same level, for which the neighbors and siblings should
+     *            be determined
      * @param progressMonitor
      */
     private void setNeighbors(final Iterable<TNode> currentlevel,
@@ -87,6 +88,8 @@ public class NeighborsProcessor implements ILayoutProcessor {
             // create subtask for recursive descent
             IKielerProgressMonitor sT = progressMonitor.subTask(Iterables.size(currentlevel)
                     / numberOfNodes);
+
+            sT.begin("Set neighbors in level", 1f);
 
             // build empty iterator
             Iterable<TNode> nextLevel = new Iterable<TNode>() {

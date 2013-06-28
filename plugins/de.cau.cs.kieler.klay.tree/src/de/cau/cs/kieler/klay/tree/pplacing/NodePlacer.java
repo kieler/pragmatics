@@ -78,23 +78,20 @@ public class NodePlacer implements ILayoutPhase {
     public void secondWalk(TNode tNode, int level, double modsum,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor place nodes - second walk", 1f);
-        double xTemp = xTopAdjustment + prelim.get(tNode) + modsum;
-        double yTemp = yTopAdjustment + level * spacing;
-        /** Check to see that xTemp and yTemp are of the proper size for your application. */
-        if (!(xTemp < 0) && !(yTemp < 0)) {
-            tNode.setProperty(Properties.XCOOR, (int) Math.round(xTemp));
-            tNode.setProperty(Properties.YCOOR, (int) Math.round(yTemp));
-            /** Apply the flodifier value for this node to all its offspring.*/
-            //TODO continue
-        } 
-//        if (!tNode.isLeaf()) {
-//            double xCoor = prelim.get(tNode);
-//            for (TNode tmp : tNode.getChildren()) {
-//                secondWalk(tmp, progressMonitor.subTask(3.0f));
-//                xCoor += modifier.get(tmp);
-//            }
-//            tNode.setProperty(Properties.XCOOR, (int) Math.round(xCoor));
-//        }
+        if (tNode != null) {
+            double xTemp = xTopAdjustment + prelim.get(tNode) + modsum;
+            double yTemp = yTopAdjustment + level * spacing;
+            /** Check to see that xTemp and yTemp are of the proper size for your application. */
+            if (!(xTemp < 0) && !(yTemp < 0)) {
+                System.out.println("Set " + tNode.getLabel() + " to position (" + Math.round(xTemp)
+                        + "," + Math.round(yTemp) + ")");
+                tNode.setProperty(Properties.XCOOR, (int) Math.round(xTemp));
+                tNode.setProperty(Properties.YCOOR, (int) Math.round(yTemp));
+                /** Apply the modifier value for this node to all its offspring. */
+                secondWalk(Iterables.getFirst(tNode.getChildren(), null), level + 1, modsum,
+                        progressMonitor);
+            }
+        }
         progressMonitor.done();
     }
 
@@ -141,12 +138,13 @@ public class NodePlacer implements ILayoutPhase {
         TNode root = roots.getFirst();
 
         /** Do the preliminary positioning with a postorder walk. */
-        firstWalk(root, 0, progressMonitor.subTask(1f));
+        firstWalk(root, 0, progressMonitor.subTask(0f));
 
         /** Determine how to adjust all the nodes with respect to the location of the root. */
         xTopAdjustment = root.getPosition().x - prelim.get(root);
         yTopAdjustment = root.getPosition().y;
 
+        System.out.println("modifier set");
         Set<Entry<TNode, Double>> modSet = modifier.entrySet();
         for (Entry<TNode, Double> entry : modSet) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
@@ -160,7 +158,7 @@ public class NodePlacer implements ILayoutPhase {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
 
-        secondWalk(root, 0, 0d, progressMonitor.subTask(1f));
+        secondWalk(root, 0, 0d, progressMonitor.subTask(0f));
 
         System.out.println("second walk");
 
@@ -169,10 +167,6 @@ public class NodePlacer implements ILayoutPhase {
                     .println(entry.getKey() + ": " + entry.getKey().getProperty(Properties.XCOOR));
         }
 
-        // for (Entry<TNode, Double> entry : prelimSet) {
-        // KVector pos = entry.getKey().getPosition();
-        // pos.x = entry.getValue();
-        // }
         progressMonitor.done();
 
     }
