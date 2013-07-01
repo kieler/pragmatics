@@ -532,8 +532,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
                 if (!GmfLayoutConfig.isNoLayout(childNodeEditPart)) {
-                    createNode(mapping, childNodeEditPart, parentEditPart, parentLayoutNode,
-                            kinsets);
+                    createNode(mapping, childNodeEditPart, parentEditPart, parentLayoutNode, kinsets);
                 }
 
             // process a label of the current node
