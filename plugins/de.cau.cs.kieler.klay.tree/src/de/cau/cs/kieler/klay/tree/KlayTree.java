@@ -25,6 +25,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.erouting.EdgeRouter;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
+import de.cau.cs.kieler.klay.tree.porder.OrderBalance;
 import de.cau.cs.kieler.klay.tree.porder.OrderNodes;
 import de.cau.cs.kieler.klay.tree.pplacing.NodePlacer;
 import de.cau.cs.kieler.klay.tree.ptreeing.Treeing;
@@ -116,7 +117,7 @@ public final class KlayTree {
 
         // order nodes
         if (orderNodes == null) {
-            orderNodes = new OrderNodes();
+            orderNodes = new OrderBalance();
         }
 
         // set node placement strategy to use

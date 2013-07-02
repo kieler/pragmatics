@@ -42,7 +42,6 @@ public class FanProcessor implements ILayoutProcessor {
      * {@inheritDoc}
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
-        // TODO implement monitor
         progressMonitor.begin("Processor compute fanout", 1);
         TNode root = null;
         // clear map if processor is reused
@@ -65,7 +64,7 @@ public class FanProcessor implements ILayoutProcessor {
         // set the fan for all nodes
         for (TNode tNode : tGraph.getNodes()) {
             String key = tNode.getProperty(Properties.ID);
-            int count = gloFanMap.get(key) != null ? gloFanMap.get(key) : 1;
+            int count = gloFanMap.get(key) != null ? gloFanMap.get(key) : 0;
             tNode.setProperty(Properties.FAN, count);
         }
         progressMonitor.done();

@@ -17,22 +17,21 @@ import java.util.Comparator;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.klay.tree.graph.TEdge;
-import de.cau.cs.kieler.klay.tree.graph.TNode;
 
 /**
- * Sorts a list of TNodes by the given property of the nodes.
+ * Sorts a list of TEdges by the given property of the targets of the edges.
  * 
  * @author sor
  * @author sgu
  */
-public class SortTNodeProperty implements Comparator<TNode> {
+public class SortTEdgeTargetProperty implements Comparator<TEdge> {
     IProperty<Integer> property;
 
-    public SortTNodeProperty(IProperty<Integer> property) {
+    public SortTEdgeTargetProperty(IProperty<Integer> property) {
         this.property = property;
     }
 
-    public int compare(TNode t1, TNode t2) {
-        return t2.getProperty(property) - t1.getProperty(property);
+    public int compare(TEdge t1, TEdge t2) {
+        return t2.getTarget().getProperty(property) - t1.getTarget().getProperty(property);
     }
 }

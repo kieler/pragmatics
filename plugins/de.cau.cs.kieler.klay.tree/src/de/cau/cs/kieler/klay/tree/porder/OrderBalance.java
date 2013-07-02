@@ -14,13 +14,10 @@
 package de.cau.cs.kieler.klay.tree.porder;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.TreeMap;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
@@ -30,7 +27,7 @@ import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 import de.cau.cs.kieler.klay.tree.util.FindNode;
-import de.cau.cs.kieler.klay.tree.util.SortTNodeProperty;
+import de.cau.cs.kieler.klay.tree.util.SortTEdgeTargetProperty;
 
 /**
  * This phase orders the nodes of each level by seperating the nodes into leaves and inner nodes.
@@ -44,7 +41,8 @@ public class OrderBalance implements ILayoutPhase {
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
             IntermediateProcessingConfiguration.BEFORE_PHASE_2, EnumSet.of(
-                    LayoutProcessorStrategy.ROOT_PROC, LayoutProcessorStrategy.NEIGHBORS_PROC));
+                    LayoutProcessorStrategy.ROOT_PROC, LayoutProcessorStrategy.FAN_PROC,
+                    LayoutProcessorStrategy.NEIGHBORS_PROC));
 
     /**
      * {@inheritDoc}
@@ -65,7 +63,6 @@ public class OrderBalance implements ILayoutPhase {
         // find the root of the component
         // expected only one root exists
         TNode root = null;
-        LinkedList<TNode> roots = new LinkedList<TNode>();
         Iterator<TNode> it = tGraph.getNodes().iterator();
         while (root == null && it.hasNext()) {
             TNode tNode = it.next();
@@ -74,8 +71,24 @@ public class OrderBalance implements ILayoutPhase {
             }
         }
         // order each level
-        roots.add(root);
-        orderLevel(roots, 0, progressMonitor.subTask(1.0f));
+
+        TNode lM = FindNode.getLeftMost(root.getChildren());
+
+        if (lM.getParent() != null && lM.getParent() != root) {
+            TNode parent = lM.getParent().getParent();
+            TNode leftMost = parent;
+            while (leftMost.getProperty(Properties.LEFTNEIGHBOR) != null) {
+                leftMost = leftMost.getProperty(Properties.LEFTNEIGHBOR);
+            }
+            orderLevel(leftMost);
+        }
+
+        for (TNode tNode : tGraph.getNodes()) {
+            tNode.setProperty(Properties.RIGHTNEIGHBOR, null);
+            tNode.setProperty(Properties.LEFTNEIGHBOR, null);
+            tNode.setProperty(Properties.RIGHTSIBLING, null);
+            tNode.setProperty(Properties.LEFTSIBLING, null);
+        }
 
         progressMonitor.done();
 
@@ -87,39 +100,64 @@ public class OrderBalance implements ILayoutPhase {
      * 
      * @param currentLevel
      * @param level
-     * @param progressMonitor
      */
-    private void orderLevel(LinkedList<TNode> currentLevel, int level,
-            final IKielerProgressMonitor progressMonitor) {
+    private void orderLevel(TNode leftMost) {
+        if (leftMost != null) {
 
-        progressMonitor.begin("Processor arrange level", 1);
+            TNode currentNode = leftMost;
 
-        TNode lM = FindNode.getLeftMost(currentLevel);
-        
-        TNode parent= lM.getParent().getParent();
-        
-        
-        List<TEdge> childBalanced = new LinkedList<TEdge>();
-        
-        for (TNode child : parent.getChildren()) {
-            
-        }
- 
-        
-        // reset the list of children with the new order
-        List<TEdge> sortedOutEdges = new LinkedList<TEdge>();
+            while (currentNode != null) {
+                // sort all nodes in this level by their fan out
+                // so the leaves are at the end of the list
+                List<TEdge> outgoing = currentNode.getOutgoingEdges();
 
-        for (TNode child : parent.getChildren()) {
-            for (TEdge tEdge : parent.getOutgoingEdges()) {
-                if (tEdge.getTarget() == child) {
-                    sortedOutEdges.add(tEdge);
+                Collections.sort(outgoing, new SortTEdgeTargetProperty(Properties.FAN));
+
+                List<TEdge> balanced = new LinkedList<TEdge>();
+
+                boolean innerOdd = true;
+                while (!outgoing.isEmpty()) {
+                    int gaps = outgoing.get(0).getTarget().getProperty(Properties.FAN);
+                    int index;
+
+                    if (innerOdd) {
+                        index = balanced.size();
+                        balanced.add(outgoing.get(0));
+                    } else {
+                        index = 0;
+                        balanced.add(index, outgoing.get(0));
+                    }
+                    outgoing.remove(0);
+                    innerOdd = !innerOdd;
+
+                    int indexEnd = outgoing.size();
+                    boolean leavesOdd = false;
+                    while (0 < gaps && 0 < indexEnd) {
+                        indexEnd--;
+                        if (outgoing.get(indexEnd).getTarget().getProperty(Properties.FAN) == 0) {
+                            gaps--;
+                            if (leavesOdd) {
+                                balanced.add(outgoing.get(indexEnd));
+                            } else {
+                                balanced.add(index, outgoing.get(indexEnd));
+                            }
+                            outgoing.remove(indexEnd);
+                            leavesOdd = !leavesOdd;
+                        } else {
+                            gaps = 0;
+                        }
+                    }
                 }
-            }
-        }
-        parent.getOutgoingEdges().clear();
-        parent.getOutgoingEdges().addAll(sortedOutEdges);
 
-        
-        progressMonitor.done();
+                // reset the list of children with the new order
+                // currentNode.getOutgoingEdges().clear();
+                currentNode.getOutgoingEdges().addAll(balanced);
+
+                currentNode = currentNode.getProperty(Properties.RIGHTNEIGHBOR);
+            }
+
+            orderLevel(leftMost.getParent());
+        }
+
     }
 }
