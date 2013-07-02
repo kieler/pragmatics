@@ -20,7 +20,6 @@ import com.google.common.collect.Iterators;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
-import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
@@ -76,21 +75,21 @@ public class NeighborsProcessor implements ILayoutProcessor {
      * current node's nearest node, at the same level. A siblings is a neighbor with the same
      * parent.
      * 
-     * @param currentlevel
-     *            the list of TNode at the same level, for which the neighbors and siblings should be determined
+     * @param currentLevel
+     *            the list of TNode at the same level, for which the neighbors and siblings should
+     *            be determined
      * @param progressMonitor
      */
-    private void setNeighbors(final Iterable<TNode> currentlevel,
+    private void setNeighbors(final Iterable<TNode> currentLevel,
             IKielerProgressMonitor progressMonitor) {
-
         // only do something in filled levels
-        if (!Iterables.isEmpty(currentlevel)) {
+        if (!Iterables.isEmpty(currentLevel)) {
             // create subtask for recursive descent
-            IKielerProgressMonitor sT = progressMonitor.subTask(Iterables.size(currentlevel)
+            IKielerProgressMonitor sT = progressMonitor.subTask(Iterables.size(currentLevel)
                     / numberOfNodes);
 
             sT.begin("proceed with level", 1f);
-            
+
             // build empty iterator
             Iterable<TNode> nextLevel = new Iterable<TNode>() {
 
@@ -103,8 +102,9 @@ public class NeighborsProcessor implements ILayoutProcessor {
 
             // the left neighbor is the previous processed node
             // the right neighbor of the left neighbor is the current node
-            for (TNode cN : currentlevel) {
+            for (TNode cN : currentLevel) {
                 // append the children of the current node to the next level
+                nextLevel = Iterables.concat(nextLevel, cN.getChildren());
                 if (lN != null) {
                     lN.setProperty(Properties.RIGHTNEIGHBOR, cN);
                     cN.setProperty(Properties.LEFTNEIGHBOR, lN);
