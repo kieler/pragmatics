@@ -45,7 +45,8 @@ public class Treeing implements ILayoutPhase {
         progressMonitor.begin("Treeing phase", 1);
 
         this.tGraph = tGraph;
-        collectEdges(tGraph);
+        //TODO uncomment
+        //collectEdges(tGraph);
 
         progressMonitor.done();
     }

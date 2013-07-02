@@ -20,6 +20,7 @@ import com.google.common.collect.Iterators;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
+import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
@@ -88,6 +89,8 @@ public class NeighborsProcessor implements ILayoutProcessor {
             IKielerProgressMonitor sT = progressMonitor.subTask(Iterables.size(currentlevel)
                     / numberOfNodes);
 
+            sT.begin("proceed with level", 1f);
+            
             // build empty iterator
             Iterable<TNode> nextLevel = new Iterable<TNode>() {
 
@@ -102,7 +105,6 @@ public class NeighborsProcessor implements ILayoutProcessor {
             // the right neighbor of the left neighbor is the current node
             for (TNode cN : currentlevel) {
                 // append the children of the current node to the next level
-                nextLevel = Iterables.concat(nextLevel, cN.getChildren());
                 if (lN != null) {
                     lN.setProperty(Properties.RIGHTNEIGHBOR, cN);
                     cN.setProperty(Properties.LEFTNEIGHBOR, lN);

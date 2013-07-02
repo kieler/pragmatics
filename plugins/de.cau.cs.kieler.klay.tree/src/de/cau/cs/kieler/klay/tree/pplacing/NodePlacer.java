@@ -180,7 +180,7 @@ public class NodePlacer implements ILayoutPhase {
     public void firstWalk(TNode cN, int level, final IKielerProgressMonitor progressMonitor) {
         modifier.put(cN, 0d);
         TNode lS = cN.getProperty(Properties.LEFTSIBLING);
-
+        
         if (cN.isLeaf()) {
             if (lS != null) {
                 /**
