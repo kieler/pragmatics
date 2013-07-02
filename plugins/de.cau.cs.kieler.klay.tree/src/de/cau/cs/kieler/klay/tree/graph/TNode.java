@@ -225,44 +225,6 @@ public class TNode extends TShape {
     }
 
     /**
-     * Reset the list of parents to a given list, by finding all edges from the parents to this node
-     * and reset the existing edges. If no edge exists a dummy edge is added.
-     * 
-     * @param children
-     *            the new list of parents
-     */
-    public void setParents(LinkedList<TNode> parents) {
-        LinkedList<TEdge> incomingEdges = new LinkedList<TEdge>();
-        for (TNode parent : parents) {
-            List<TEdge> outgoingEdges = parent.getOutgoingEdges();
-            Iterator<TEdge> it = outgoingEdges.iterator();
-            TEdge iEdge = null;
-            while (it.hasNext() && iEdge == null) {
-                TEdge oEdge = (TEdge) it.next();
-                if (oEdge.getTarget() == this) {
-                    iEdge = oEdge;
-                }
-            }
-            if (iEdge == null) {
-                iEdge = new TEdge(parent, this);
-                iEdge.setProperty(Properties.DUMMY, true);
-                graph.getEdges().add(iEdge);
-                parent.getOutgoingEdges().add(iEdge);
-            }
-            incomingEdges.add(iEdge);
-        }
-
-        for (TEdge tEdge : getInComingEdges()) {
-            tEdge.setTarget(null);
-            tEdge.getSource().getOutgoingEdges().remove(tEdge);
-            tEdge.setSource(null);
-        }
-
-        this.incomingEdges.clear();
-        this.incomingEdges.addAll(incomingEdges);
-    }
-
-    /**
      * Add a node to the list of parents, by adding a appropriate dummy edge to the graph.
      * 
      * @param child
@@ -274,44 +236,6 @@ public class TNode extends TShape {
         graph.getEdges().add(newEdge);
         getInComingEdges().add(newEdge);
         parent.getOutgoingEdges().add(newEdge);
-    }
-
-    /**
-     * Reset the list of children to a given list, by finding all edges from the children to this
-     * node and reset the existing edges. If no edge exists a dummy edge is added.
-     * 
-     * @param children
-     *            the new list of children
-     */
-    public void setChildren(LinkedList<TNode> children) {
-        LinkedList<TEdge> outgoingEdges = new LinkedList<TEdge>();
-        for (TNode child : children) {
-            List<TEdge> incomingEdges = child.getInComingEdges();
-            Iterator<TEdge> it = incomingEdges.iterator();
-            TEdge oEdge = null;
-            while (it.hasNext() && oEdge == null) {
-                TEdge iEdge = (TEdge) it.next();
-                if (iEdge.getTarget() == this) {
-                    oEdge = iEdge;
-                }
-            }
-            if (oEdge == null) {
-                oEdge = new TEdge(this, child);
-                oEdge.setProperty(Properties.DUMMY, true);
-                graph.getEdges().add(oEdge);
-                child.getInComingEdges().add(oEdge);
-            }
-            outgoingEdges.add(oEdge);
-        }
-
-        for (TEdge tEdge : getOutgoingEdges()) {
-            tEdge.setSource(null);
-            tEdge.getTarget().getInComingEdges().remove(tEdge);
-            tEdge.setTarget(null);
-        }
-
-        this.outgoingEdges.clear();
-        this.outgoingEdges.addAll(outgoingEdges);
     }
 
     /**

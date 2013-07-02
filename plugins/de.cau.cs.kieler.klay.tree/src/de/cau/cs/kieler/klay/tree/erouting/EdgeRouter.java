@@ -38,15 +38,14 @@ public class EdgeRouter implements ILayoutPhase {
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Edge routing", 1);
-        float spacing = tGraph.getProperty(Properties.SPACING);
         
         for (TNode tnode : tGraph.getNodes()) {
             for (TEdge tedge : tnode.getOutgoingEdges()) {
-                KVector bendPoint = new KVector(
-                        tedge.getSource().getPosition().y,
-                        tedge.getTarget().getPosition().y
-                        );
-                tedge.getBendPoints().add(bendPoint);   
+                tedge.getBendPoints().clear();
+                KVector sourcePoint = tedge.getSource().getPosition();
+                KVector targetpoint = tedge.getTarget().getPosition();
+                tedge.getBendPoints().add(sourcePoint);
+                tedge.getBendPoints().add(targetpoint);
             }
         }
     }

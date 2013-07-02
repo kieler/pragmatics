@@ -59,7 +59,7 @@ public class FanProcessor implements ILayoutProcessor {
 
         LinkedList<TNode> rootLevel = new LinkedList<TNode>();
         rootLevel.add(root);
-        
+
         calculateFan(rootLevel);
 
         // set the fan for all nodes
@@ -99,7 +99,11 @@ public class FanProcessor implements ILayoutProcessor {
                     pId = tNode.getProperty(Properties.ID);
                     index = 0;
                 }
-                id = pId + FillStrings.formatRight(String.valueOf(index++), digits);
+                if (pId != null) {                    
+                    id = pId + FillStrings.formatRight(String.valueOf(index++), digits);
+                }else{
+                    id = FillStrings.formatRight(String.valueOf(index++), digits);
+                }
                 tNode.setProperty(Properties.ID, id);
                 for (TNode tChild : tNode.getChildren()) {
                     nextLevel.add(tChild);
@@ -139,5 +143,4 @@ public class FanProcessor implements ILayoutProcessor {
 
         }
     }
-
 }

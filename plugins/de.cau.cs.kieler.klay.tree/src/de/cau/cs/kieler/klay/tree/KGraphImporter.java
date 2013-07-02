@@ -19,6 +19,7 @@ import java.util.Map;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -130,20 +131,23 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     TNode source = elemMap.get(knode);
                     TNode target = elemMap.get(kedge.getTarget());
 
-                    // create a edge and add edge to tGraph
-                    TEdge newEdge = new TEdge(source, target);
-                    newEdge.setProperty(Properties.ORIGIN, kedge);
-                    tGraph.getEdges().add(newEdge);
+                    if (source != null && target != null) {
+                        // create a edge and add edge to tGraph
+                        TEdge newEdge = new TEdge(source, target);
+                        newEdge.setProperty(Properties.ORIGIN, kedge);
 
-                    // TODO transform the edge's labels
+                        // TODO transform the edge's labels
 
-                    // set properties of the new edge
-                    newEdge.copyProperties(edgeLayout);
-                    newEdge.checkProperties(Properties.LABEL_SPACING);
+                        // set properties of the new edge
+                        newEdge.copyProperties(edgeLayout);
+                        newEdge.checkProperties(Properties.LABEL_SPACING);
 
-                    // update tNode accordingly
-                    source.getOutgoingEdges().add(newEdge);
-                    target.getInComingEdges().add(newEdge);
+                        // update tNode accordingly
+                        source.getOutgoingEdges().add(newEdge);
+                        target.getInComingEdges().add(newEdge);
+
+                        tGraph.getEdges().add(newEdge);
+                    }
                 }
             }
         }
@@ -161,7 +165,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
         // determine the border spacing, which influences the offset
         KShapeLayout graphLayout = kgraph.getData(KShapeLayout.class);
-        
+
         // check border spacing and update if necessary
         float borderSpacing = tGraph.getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
@@ -194,6 +198,20 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             }
         }
 
+        // process the edges
+        for (TEdge tEdge : tGraph.getEdges()) {
+            KEdge kedge = (KEdge) tEdge.getProperty(Properties.ORIGIN);
+            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+            KVectorChain bendPoints = tEdge.getBendPoints();
+
+            // add the source port and target port positions to the vector chain
+            bendPoints.addFirst(tEdge.getSource().getPosition());
+            bendPoints.addLast(tEdge.getTarget().getPosition());
+
+            edgeLayout.getBendPoints().clear();
+            edgeLayout.applyVectorChain(bendPoints);
+        }
+
         // set up the graph
         KInsets insets = graphLayout.getInsets();
         float width = (float) (maxXPos - minXPos) + 2 * borderSpacing + insets.getLeft()
@@ -201,7 +219,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         float height = (float) (maxYPos - minYPos) + 2 * borderSpacing + insets.getTop()
                 + insets.getBottom();
         KimlUtil.resizeNode(kgraph, width, height, false, false);
-        //KimlUtil.resizeNode(kgraph, width, height, false);
+        // KimlUtil.resizeNode(kgraph, width, height, false);
     }
 
 }

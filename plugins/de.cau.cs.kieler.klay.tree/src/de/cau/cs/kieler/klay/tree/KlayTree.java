@@ -23,6 +23,7 @@ import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.tree.erouting.EdgeRouter;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.porder.OrderNodes;
 import de.cau.cs.kieler.klay.tree.pplacing.NodePlacer;
@@ -59,6 +60,8 @@ public final class KlayTree {
     private ILayoutPhase orderNodes;
     /** phase 3: arrange module. */
     private ILayoutPhase placeNodes;
+    /** phase 4: route module. */
+    private ILayoutPhase edgeRouter;
 
     /** intermediate layout processor configuration. */
     private IntermediateProcessingConfiguration intermediateProcessingConfiguration = new IntermediateProcessingConfiguration();
@@ -122,6 +125,12 @@ public final class KlayTree {
             placeNodes = new NodePlacer();
         }
 
+        // set node placement strategy to use
+        // arrange nodes
+        if (edgeRouter == null) {
+            edgeRouter = new EdgeRouter();
+        }
+
         // TODO set edge router to use
 
         // update intermediate processor configuration
@@ -129,19 +138,25 @@ public final class KlayTree {
         intermediateProcessingConfiguration
                 .addAll(treeing.getIntermediateProcessingConfiguration(graph))
                 .addAll(orderNodes.getIntermediateProcessingConfiguration(graph))
-                .addAll(placeNodes.getIntermediateProcessingConfiguration(graph));
+                .addAll(placeNodes.getIntermediateProcessingConfiguration(graph))
+                .addAll(edgeRouter.getIntermediateProcessingConfiguration(graph));
         // TODO add intermediate processing configuration for block direction
         // .addAll(this.getIntermediateProcessingConfiguration(graph));
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
-        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
         algorithm.add(treeing);
-        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
         algorithm.add(orderNodes);
-        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
         algorithm.add(placeNodes);
-        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
+        algorithm.add(edgeRouter);
     }
 
     /**

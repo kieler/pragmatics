@@ -13,14 +13,9 @@
  */
 package de.cau.cs.kieler.klay.tree.pplacing;
 
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
@@ -39,22 +34,6 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  */
 public class NodePlacer implements ILayoutPhase {
 
-    Comparator<TNode> comparator = new Comparator<TNode>() {
-        public int compare(TNode t1, TNode t2) {
-            if (t1.getLabel().length() < t2.getLabel().length()) {
-                return -1;
-            } else {
-                if (t1.getLabel().length() > t2.getLabel().length()) {
-                    return 1;
-                } else {
-                    return t1.getLabel().compareTo(t2.getLabel());
-                }
-            }
-        }
-    };
-
-    private final TreeMap<TNode, Double> prelim = new TreeMap<TNode, Double>(comparator);
-    private final TreeMap<TNode, Double> modifier = new TreeMap<TNode, Double>(comparator);
     private double spacing = 20f;
 
     private double xTopAdjustment;
@@ -83,7 +62,7 @@ public class NodePlacer implements ILayoutPhase {
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor place nodes - second walk", 1f);
         if (tNode != null) {
-            double xTemp = xTopAdjustment + prelim.get(tNode) + modsum;
+            double xTemp = xTopAdjustment + tNode.getProperty(Properties.PRELIM) + modsum;
             double yTemp = yTopAdjustment + level * spacing;
             /** Check to see that xTemp and yTemp are of the proper size for your application. */
             if (!(xTemp < 0) && !(yTemp < 0)) {
@@ -92,7 +71,7 @@ public class NodePlacer implements ILayoutPhase {
                 /** Apply the modifier value for this node to all its offspring. */
                 if (!tNode.isLeaf()) {
                     secondWalk(Iterables.getFirst(tNode.getChildren(), null), level + 1, modsum
-                            + modifier.get(tNode), progressMonitor.subTask(1f));
+                            + tNode.getProperty(Properties.MODIFIER), progressMonitor.subTask(1f));
                 }
                 if (tNode.getProperty(Properties.RIGHTSIBLING) != null) {
                     secondWalk(tNode.getProperty(Properties.RIGHTSIBLING), level, modsum,
@@ -132,9 +111,6 @@ public class NodePlacer implements ILayoutPhase {
 
         progressMonitor.begin("Processor order nodes", 1f);
 
-        prelim.clear();
-        modifier.clear();
-
         spacing = tGraph.getProperty(Properties.SPACING);
 
         LinkedList<TNode> roots = new LinkedList<TNode>();
@@ -156,13 +132,13 @@ public class NodePlacer implements ILayoutPhase {
         yTopAdjustment = root.getPosition().y;
 
         secondWalk(root, 0, 0d, progressMonitor.subTask(1f));
-        
+
         progressMonitor.done();
 
     }
 
     public void firstWalk(TNode cN, int level, final IKielerProgressMonitor progressMonitor) {
-        modifier.put(cN, 0d);
+        cN.setProperty(Properties.MODIFIER, 0d);
         TNode lS = cN.getProperty(Properties.LEFTSIBLING);
 
         if (cN.isLeaf()) {
@@ -172,11 +148,11 @@ public class NodePlacer implements ILayoutPhase {
                  * the left sibling, the separation between sibling nodes, and tHe mean size of left
                  * sibling and current node.
                  */
-                double p = prelim.get(lS) + spacing + meanNodeWidth(lS, cN);
-                prelim.put(cN, p);
+                double p = lS.getProperty(Properties.PRELIM) + spacing + meanNodeWidth(lS, cN);
+                cN.setProperty(Properties.PRELIM, p);
             } else {
                 /** No sibling on the left to worry about. */
-                prelim.put(cN, 0d);
+                cN.setProperty(Properties.PRELIM, 0d);
             }
         } else {
             /**
@@ -190,15 +166,15 @@ public class NodePlacer implements ILayoutPhase {
 
             TNode lM = Iterables.getFirst(cN.getChildren(), null);
             TNode rM = Iterables.getLast(cN.getChildren(), null);
-            double midPoint = (prelim.get(rM) + prelim.get(lM)) / 2;
+            double midPoint = (rM.getProperty(Properties.PRELIM) + lM.getProperty(Properties.PRELIM)) / 2;
 
             if (lS != null) {
-                double p = prelim.get(lS) + spacing + meanNodeWidth(lS, cN);
-                prelim.put(cN, p);
-                modifier.put(cN, prelim.get(cN) - midPoint);
+                double p = lS.getProperty(Properties.PRELIM) + spacing + meanNodeWidth(lS, cN);
+                cN.setProperty(Properties.PRELIM, p);
+                cN.setProperty(Properties.MODIFIER, cN.getProperty(Properties.PRELIM) - midPoint);
                 apportion(cN, level);
             } else {
-                prelim.put(cN, midPoint);
+                cN.setProperty(Properties.PRELIM, midPoint);
             }
         }
     }
@@ -216,15 +192,15 @@ public class NodePlacer implements ILayoutPhase {
             for (int i = 0; i < compareDepth; i++) {
                 ancestorLeftmost = ancestorLeftmost.getParent();
                 ancestorNeighbor = ancestorNeighbor.getParent();
-                rightModSum += modifier.get(ancestorLeftmost);
-                leftModSum += modifier.get(ancestorNeighbor);
+                rightModSum += ancestorLeftmost.getProperty(Properties.MODIFIER);
+                leftModSum += ancestorNeighbor.getProperty(Properties.MODIFIER);
             }
             /**
              * (* Find the MoveDistance, and apply it to Node's subtree. Add appropriate portions to
              * smaller interior subtrees.
              */
-            double prN = prelim.get(neighbor);
-            double prL = prelim.get(leftmost);
+            double prN = neighbor.getProperty(Properties.PRELIM);
+            double prL = leftmost.getProperty(Properties.PRELIM);
             double mean = meanNodeWidth(leftmost, neighbor);
 
             double moveDistance = prN + leftModSum + spacing + mean - prL - rightModSum;
@@ -242,8 +218,8 @@ public class NodePlacer implements ILayoutPhase {
                     double portion = moveDistance / leftSiblings;
                     tempPtr = cN;
                     while (tempPtr != ancestorNeighbor) {
-                        prelim.put(tempPtr, prelim.get(tempPtr) + moveDistance);
-                        modifier.put(tempPtr, modifier.get(tempPtr) + moveDistance);
+                        tempPtr.setProperty(Properties.PRELIM, tempPtr.getProperty(Properties.PRELIM) + moveDistance);
+                        tempPtr.setProperty(Properties.MODIFIER, tempPtr.getProperty(Properties.MODIFIER) + moveDistance);
                         moveDistance -= portion;
                         tempPtr = tempPtr.getProperty(Properties.LEFTSIBLING);
                     }

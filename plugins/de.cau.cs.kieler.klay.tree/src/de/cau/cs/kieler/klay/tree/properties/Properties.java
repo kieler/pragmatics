@@ -83,11 +83,17 @@ public final class Properties {
      * Id of of a real node. This Indicates the block by the most significant letters and level of
      * the node by the length of the string.
      */
-    public static final IProperty<String> ID = new Property<String>("ID", null);
+    public static final IProperty<String> ID = new Property<String>("ID", "");
 
     /** Is the node a root of a tree. */
     public static final IProperty<Integer> POSITION = new Property<Integer>("POSITION", 0);
 
+    /** A preliminary x-coordinate. */
+    public static final IProperty<Double> PRELIM = new Property<Double>("PRELIM", 0d);
+    
+    /** A modifier x-coordinate. */
+    public static final IProperty<Double> MODIFIER = new Property<Double>("MODIFIER", 0d);
+    
     /** The direction from the origin of a node in the nesting tree of a compound graph. */
     public static final IProperty<Direction> DIRC = new Property<Direction>("DIRC", Direction.SOUTH);
 

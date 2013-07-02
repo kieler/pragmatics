@@ -24,6 +24,7 @@ import java.util.TreeMap;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
+import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
@@ -54,8 +55,7 @@ public class OrderNodes implements ILayoutPhase {
     };
 
     private final TreeMap<TNode, Integer> debug = new TreeMap<TNode, Integer>(comparator);
-    
-    
+
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
             IntermediateProcessingConfiguration.BEFORE_PHASE_2, EnumSet.of(
@@ -91,7 +91,7 @@ public class OrderNodes implements ILayoutPhase {
         // order each level
         roots.add(root);
         orderLevel(roots, 0, progressMonitor.subTask(1.0f));
-        
+
         progressMonitor.done();
 
     }
@@ -142,23 +142,34 @@ public class OrderNodes implements ILayoutPhase {
                 tENode.setProperty(Properties.POSITION, pos++);
             }
         } else {
-            
+
             // order each level of descendants of the inner nodes
             int size = inners.size();
             for (TNode tPNode : inners) {
                 debug.put(tPNode, pos);
                 tPNode.setProperty(Properties.POSITION, pos++);
-                
+
                 // set the position of the children and set them in order
                 LinkedList<TNode> Children = tPNode.getChildrenCopy();
                 orderLevel(Children, ++level, progressMonitor.subTask(1 / size));
-                
+
                 // order the children by their reverse position
                 Collections.sort(Children,
                         Collections.reverseOrder(new SortTNodeProperty(Properties.POSITION)));
 
                 // reset the list of children with the new order
-                tPNode.setChildren(Children);
+                List<TEdge> sortedOutEdges = new LinkedList<TEdge>();
+
+                for (TNode tNode : Children) {
+                    for (TEdge tEdge : tPNode.getOutgoingEdges()) {
+                        if (tEdge.getTarget() == tNode) {
+                            sortedOutEdges.add(tEdge);
+                        }
+                    }
+                }
+                tPNode.getOutgoingEdges().clear();
+                tPNode.getOutgoingEdges().addAll(sortedOutEdges);
+                
 
                 // fill gaps with leaves
                 it = leaves.listIterator(leaves.size());
