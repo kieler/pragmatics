@@ -21,8 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.TreeMap;
-import java.util.Map.Entry;
-
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
@@ -93,7 +91,7 @@ public class OrderNodes implements ILayoutPhase {
         // order each level
         roots.add(root);
         orderLevel(roots, 0, progressMonitor.subTask(1.0f));
-
+        
         progressMonitor.done();
 
     }

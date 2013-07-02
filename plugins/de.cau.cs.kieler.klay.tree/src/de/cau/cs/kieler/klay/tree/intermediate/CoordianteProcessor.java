@@ -90,9 +90,6 @@ public class CoordianteProcessor implements ILayoutProcessor {
         if (!currentLevel.isEmpty()) {
 
             LinkedList<TNode> nextLevel = new LinkedList<TNode>();
-            // the y coordinate is constant the spacing
-            // TODO remove debug
-            System.out.println("spacing: " + spacing);
 
             // set the coordinates for each node in the current level
             // and collect the nodes of the next level
@@ -101,8 +98,6 @@ public class CoordianteProcessor implements ILayoutProcessor {
                 KVector pos = tNode.getPosition();
                 pos.x = tNode.getProperty(Properties.XCOOR);
                 pos.y = tNode.getProperty(Properties.YCOOR);
-                // TODO remove debug
-                System.out.println("Set coordiante x: " + pos.x + " y: " + pos.y);
             }
 
             // go to the next level
