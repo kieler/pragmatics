@@ -31,7 +31,7 @@ import de.cau.cs.kieler.core.kivi.AbstractTrigger;
 import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
 import de.cau.cs.kieler.core.kivi.ITrigger;
 import de.cau.cs.kieler.core.kivi.ITriggerState;
-import de.cau.cs.kieler.core.ui.util.CombinedWorkbenchListener;
+import de.cau.cs.kieler.core.kivi.listeners.GlobalPartAdapter;
 import de.cau.cs.kieler.core.ui.util.EditorUtils;
 import de.cau.cs.kieler.klighd.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;
 
@@ -48,6 +48,9 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
 
     private static final String KIELER_XTEXT_ERROR_MARKER_ID
             = "de.cau.cs.kieler.core.model.xtext.errorMarker";     
+    
+    /** Listens to all parts within the workbench. */
+    private GlobalPartAdapter partListener;
     
     /**
      * Default constructor, needed by KIVi.
@@ -67,7 +70,7 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
     @Override
     @SuppressWarnings("deprecation")
     public void register() {
-        CombinedWorkbenchListener.addPartListener(this);
+        partListener = new GlobalPartAdapter(this);
         this.partActivated(EditorUtils.getLastActiveEditor());
     }
 
@@ -76,7 +79,7 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
      */
     @Override
     public void unregister() {
-        CombinedWorkbenchListener.removePartListener(this);
+        partListener.unregister();
     }
 
     private void attachToXtextEditor(final XtextEditor editor, final boolean opened) {

@@ -55,8 +55,6 @@ public class AspectRatioMetric implements IAnalysis {
             // the aspect ratio is narrower than the optimal value
             result = ratio / GOLDEN_RATIO;
         }
-        // take the square root for lower consideration of deviation
-        result = (float) Math.sqrt(result);
 
         assert result >= 0 && result <= 1;
         progressMonitor.done();

@@ -157,7 +157,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         // adjust parent size
         float width = insets.getLeft() + (float) parentSize.x + insets.getRight();
         float height = insets.getTop() + (float) parentSize.y + insets.getBottom();
-        KimlUtil.resizeNode(parentNode, width, height, false);
+        KimlUtil.resizeNode(parentNode, width, height, false, true);
     }
 
     /**

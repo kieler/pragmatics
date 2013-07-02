@@ -76,7 +76,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                     float width = nodeLayout.getProperty(LayoutOptions.MIN_WIDTH);
                     float height = nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT);
                     if (width > 0 && height > 0) {
-                        KimlUtil.resizeNode(node, width, height, true);
+                        KimlUtil.resizeNode(node, width, height, true, true);
                     }
                 }
             }
@@ -143,7 +143,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         KInsets insets = parentLayout.getInsets();
         float newWidth = maxx + borderSpacing + insets.getLeft() + insets.getRight();
         float newHeight = maxy + borderSpacing + insets.getTop() + insets.getBottom();
-        KimlUtil.resizeNode(layoutNode, newWidth, newHeight, true);
+        KimlUtil.resizeNode(layoutNode, newWidth, newHeight, true, true);
         progressMonitor.done();
     }
     

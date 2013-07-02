@@ -368,6 +368,13 @@
             id="de.cau.cs.kieler.kiml.grana.undirectedCycles"
             name="Undirected Cycles">
       </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.service.grana.analyses.LongestPathAnalysis"
+            description="The number of edges on the longest path (for acyclic graphs)."
+            id="de.cau.cs.kieler.kiml.grana.longestPath"
+            name="Longest Path">
+      </analysis>
    </extension>
 
 </plugin>

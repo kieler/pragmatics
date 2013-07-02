@@ -100,8 +100,18 @@ public class KSBasECombination extends AbstractCombination implements ITransform
         // don't perform transformation if only selection changed.
         if (button.getSequenceNumber() > selection.getSequenceNumber()) {
             KSBasETransformation transformation = transformations.get(button.getButtonId());
+            
+            IEditorPart editor = button.getEditor();
+            executeTransformation(transformation, editor, selection);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void executeTransformation(final KSBasETransformation transformation, final IEditorPart editor, final EObjectSelectionState selection) {
+        // don't perform transformation if only selection changed.
             if (transformation != null) {
-                IEditorPart editor = button.getEditor();
                 List<EObject> selectionList = new ArrayList<EObject>();
 
                 if (editor instanceof DiagramDocumentEditor) {
@@ -130,7 +140,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                     if (transformation.getTransformationClass() != null) {
                         evokeXtend2(transformation, selectionList, diagramEditor);
                         refreshEditPolicy(diagramEditor);
-                        evokeLayout(selectionList, rootObject, button);
+                        evokeLayout(selectionList, rootObject, editor);
                         // do xtend1 stuff
                     } else {
                         // map the selection to the parameters of this transformation
@@ -145,7 +155,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                         if (selectionMapping != null) {
                             evokeXtend(transformation, selectionMapping, diagramEditor);
                             // refreshEditPolicy(diagramEditor);
-                            evokeLayout(selectionList, rootObject, button);
+                            evokeLayout(selectionList, rootObject, editor);
 
                         }
                     }
@@ -157,7 +167,6 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                     }
                 }
             }
-        }
     }
 
     /**
@@ -408,12 +417,12 @@ public class KSBasECombination extends AbstractCombination implements ITransform
      *            the button triggering this combination to get the editor from
      */
     private void evokeLayout(final List<EObject> selectionList, final EObject rootObject,
-            final ButtonState button) {
+            final IEditorPart editor) {
         LayoutEffect layout = null;
         if (selectionList.get(0) == rootObject) {
-            layout = new LayoutEffect(button.getEditor(), rootObject, false);
+            layout = new LayoutEffect(editor, rootObject, false);
         } else {
-            layout = new LayoutEffect(button.getEditor(), rootObject, false);
+            layout = new LayoutEffect(editor, rootObject, false);
         }
         layout.schedule();
     }

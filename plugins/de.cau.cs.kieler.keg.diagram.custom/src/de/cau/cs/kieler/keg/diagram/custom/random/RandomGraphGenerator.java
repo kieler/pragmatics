@@ -19,7 +19,9 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
@@ -40,6 +42,7 @@ import de.cau.cs.kieler.keg.Port;
  * The basic KEG random graph generator.
  * 
  * @author mri
+ * @author msp
  * @kieler.ignore (excluded from review process)
  */
 public class RandomGraphGenerator implements IRandomGraphGenerator {
@@ -54,8 +57,8 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         BICONNECTED,
         /** a triconnected graph. */
         TRICONNECTED,
-        /** an acyclic graph without transitiv edges. */
-        ACYCLIC_NO_TRANSITIV_EDGES
+        /** an acyclic graph without transitive edges. */
+        ACYCLIC_NO_TRANSITIVE_EDGES
     }
 
     /** the possible ways to determine edges. */
@@ -63,7 +66,11 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         /** number of edges in the graph. */
         GRAPH_EDGES,
         /** number of outgoing edges per node. */
-        OUTGOING_EDGES
+        OUTGOING_EDGES,
+        /** relative number of edges (relative to n). */
+        RELATIVE,
+        /** density (relative to n^2). */
+        DENSITY
     }
 
     // All other options depend on which GRAPH_TYPE has been selected
@@ -76,7 +83,13 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
 
     /** the option for the number of nodes. */
     public static final Property<Integer> NUMBER_OF_NODES = new Property<Integer>(
-            "basic.numberOfNodes", 1, 1);
+            "basic.numberOfNodes", 10, 1);
+    /** the option for the minimum number of nodes. */
+    public static final Property<Integer> NUMBER_OF_NODES_MIN = new Property<Integer>(
+            "basic.numberOfNodesMin", 10, 1);
+    /** the option for the maximum number of nodes. */
+    public static final Property<Integer> NUMBER_OF_NODES_MAX = new Property<Integer>(
+            "basic.numberOfNodesMax", 10, 1);
     /** the option for the chance of creating a compound node. */
     public static final Property<Float> HIERARCHY_CHANCE = new Property<Float>(
             "basic.hierarchyChance", 0.0f, 0.0f, 1.0f);
@@ -107,6 +120,21 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
     public static final Property<EdgeDetermination> EDGE_DETERMINATION =
             new Property<EdgeDetermination>("basic.edgeDetermination",
                     EdgeDetermination.GRAPH_EDGES);
+    /** the option for the variance in the number of edges. */
+    public static final Property<Integer> EDGES_VARIANCE = new Property<Integer>(
+            "basic.edgesVariance", 0, 0);
+    /** the option for the relative number of edges. */
+    public static final Property<Double> EDGES_RELATIVE = new Property<Double>(
+            "basic.relEdges", 1.5, 0.0);
+    /** the option for variance in the relative number of edges. */
+    public static final Property<Double> EDGES_REL_VARIANCE = new Property<Double>(
+            "basic.relEdgesVariance", 0.0, 0.0);
+    /** the option for graph density. */
+    public static final Property<Double> DENSITY = new Property<Double>(
+            "basic.density", 0.1, 0.0);
+    /** the option for variance in graph density. */
+    public static final Property<Double> DENSITY_VARIANCE = new Property<Double>(
+            "basic.densityVariance", 0.0, 0.0);
     /** the option for the minimum number of outgoing edges. */
     public static final Property<Integer> MIN_OUTGOING_EDGES = new Property<Integer>(
             "basic.minOutgoingEdges", 0, 0);
@@ -114,13 +142,17 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
     public static final Property<Integer> MAX_OUTGOING_EDGES = new Property<Integer>(
             "basic.maxOutgoingEdges", 0, 0);
     /** the option for allowing self-loops. */
-    public static final Property<Boolean> SELF_LOOPS = new Property<Boolean>("basic.selfLoops",
-            true);
+    public static final Property<Boolean> SELF_LOOPS = new Property<Boolean>(
+            "basic.selfLoops", true);
     /** the option for allowing multi-edges. */
-    public static final Property<Boolean> MULTI_EDGES = new Property<Boolean>("basic.multiEdges",
-            true);
+    public static final Property<Boolean> MULTI_EDGES = new Property<Boolean>(
+            "basic.multiEdges", true);
     /** the option for allowing cycles. */
-    public static final Property<Boolean> CYCLES = new Property<Boolean>("basic.cycles", true);
+    public static final Property<Boolean> CYCLES = new Property<Boolean>(
+            "basic.cycles", true);
+    /** the option for allowing isolated nodes. */
+    public static final Property<Boolean> ISOLATED_NODES = new Property<Boolean>(
+            "basic.isolatedNodes", true);
 
     // Options for GRAPH_TYPE TREE
 
@@ -149,6 +181,8 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
     /** the KEG factory. */
     private static KEGFactory factory = KEGFactory.eINSTANCE;
 
+    /** the random number generator used to generate the graph. */
+    private Random random;
     /** the label counter used to generate labels. */
     private int labelCounter = 0;
     /** the chance for creating a compound node. */
@@ -173,6 +207,15 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
     private boolean multiEdges;
     /** whether to allow cycles. */
     private boolean cycles;
+    
+    /**
+     * Create a random graph generator with given random number generator.
+     * 
+     * @param random a random number generator
+     */
+    public RandomGraphGenerator(final Random random) {
+        this.random = random;
+    }
 
     /**
      * {@inheritDoc}
@@ -194,20 +237,59 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         cycles = options.getProperty(CYCLES);
         // generate the graph
         Node graph = factory.createNode();
-        int n = options.getProperty(NUMBER_OF_NODES);
         
         switch (options.getProperty(GRAPH_TYPE)) {
         case ANY: {
+            int minNodes = options.getProperty(NUMBER_OF_NODES_MIN);
+            int maxNodes = options.getProperty(NUMBER_OF_NODES_MAX);
+            int n = randomInt(minNodes, maxNodes);
             int m = options.getProperty(NUMBER_OF_EDGES);
             int minOut = options.getProperty(MIN_OUTGOING_EDGES);
             int maxOut = options.getProperty(MAX_OUTGOING_EDGES);
             switch (options.getProperty(EDGE_DETERMINATION)) {
-            case GRAPH_EDGES:
+            case GRAPH_EDGES: {
+                int var = options.getProperty(EDGES_VARIANCE);
+                if (var > 0) {
+                    m += Math.round(random.nextGaussian() * var);
+                }
+                if (m < 0) {
+                    m = 0;
+                }
                 createAnyGraph(graph, n, m, 0);
                 break;
-            case OUTGOING_EDGES:
+            }
+            case RELATIVE: {
+                double rel = options.getProperty(EDGES_RELATIVE);
+                double var = options.getProperty(EDGES_REL_VARIANCE);
+                if (var > 0) {
+                    rel += random.nextGaussian() * var;
+                }
+                m = (int) Math.round(rel * n);
+                if (m < 0) {
+                    m = 0;
+                }
+                createAnyGraph(graph, n, m, 0);
+                break;
+            }
+            case DENSITY: {
+                double d = options.getProperty(DENSITY);
+                double var = options.getProperty(DENSITY_VARIANCE);
+                if (var > 0) {
+                    d += random.nextGaussian() * var;
+                }
+                m = (int) (Math.round(d * n * n));
+                if (m < 0) {
+                    m = 0;
+                }
+                createAnyGraph(graph, n, m, 0);
+                break;
+            }
+            case OUTGOING_EDGES: {
                 createAnyGraph(graph, n, minOut, maxOut, 0);
                 break;
+            }
+            default:
+                throw new IllegalArgumentException("Selected edge determination is not supported.");
             }
             if (crossHierarchyEdges) {
                 // collect all created nodes and create edges arbitrarily
@@ -238,6 +320,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         }
         
         case TREE: {
+            int n = options.getProperty(NUMBER_OF_NODES);
             int maxDegree = options.getProperty(MAX_DEGREE);
             int maxWidth = options.getProperty(MAX_WIDTH);
             createTree(graph, n, maxDegree, maxWidth, 0);
@@ -245,19 +328,22 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         }
         
         case BICONNECTED: {
+            int n = options.getProperty(NUMBER_OF_NODES);
             int m = options.getProperty(NUMBER_OF_EDGES);
             createBiconnectedGraph(graph, n, m, 0);
             break;
         }
         
         case TRICONNECTED: {
-            float p1 = (float) Math.random();
+            int n = options.getProperty(NUMBER_OF_NODES);
+            float p1 = random.nextFloat();
             float p2 = 1.0f - p1;
             createTriconnectedGraph(graph, n, p1, p2, 0);
             break;
         }
         
-        case ACYCLIC_NO_TRANSITIV_EDGES: {
+        case ACYCLIC_NO_TRANSITIVE_EDGES: {
+            int n = options.getProperty(NUMBER_OF_NODES);
             int m = options.getProperty(NUMBER_OF_EDGES);
             boolean planar = options.getProperty(PLANAR);
             // FIXME: long edges option causes algorithm failure
@@ -267,6 +353,18 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         }
         
         }
+        
+        // remove isolated nodes if requested
+        if (!options.getProperty(ISOLATED_NODES)) {
+            ListIterator<KNode> nodeIter = graph.getChildren().listIterator();
+            while (nodeIter.hasNext()) {
+                KNode node = nodeIter.next();
+                if (node.getIncomingEdges().isEmpty() && node.getOutgoingEdges().isEmpty()) {
+                    nodeIter.remove();
+                }
+            }
+        }
+        
         return graph;
     }
 
@@ -311,7 +409,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         // recursively create hierarchy if applicable
         if (hierarchyChance > 0.0f && hierarchyLevel != maxHierarchyLevel) {
             for (Node node : nodes) {
-                if (!node.isHypernode() && Math.random() < hierarchyChance) {
+                if (!node.isHypernode() && random.nextFloat() < hierarchyChance) {
                     // determine the number of nodes in the compound node
                     int cn = randomInt(1, (int) (hierarchyNodesFactor * n));
                     // preserve density for number of edges
@@ -350,7 +448,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         // recursively create hierarchy if applicable
         if (hierarchyChance > 0.0f && hierarchyLevel != maxHierarchyLevel) {
             for (Node node : nodes) {
-                if (!node.isHypernode() && Math.random() < hierarchyChance) {
+                if (!node.isHypernode() && random.nextFloat() < hierarchyChance) {
                     // determine the number of nodes in the compound node
                     int cn = randomInt(1, (int) (hierarchyNodesFactor * n));
                     createAnyGraph(node, cn, minOut, maxOut, hierarchyLevel + 1);
@@ -415,7 +513,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         if (hierarchyChance > 0.0f && hierarchyLevel != maxHierarchyLevel) {
             for (KNode knode : parent.getChildren()) {
                 Node node = (Node) knode;
-                if (!node.isHypernode() && Math.random() < hierarchyChance) {
+                if (!node.isHypernode() && random.nextFloat() < hierarchyChance) {
                     // determine the number of nodes in the compound node
                     int cn = randomInt(1, (int) (hierarchyNodesFactor * n));
                     createTree(node, cn, maxDeg, maxWidth, hierarchyLevel + 1);
@@ -478,7 +576,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         // recursively create hierarchy if applicable
         if (hierarchyChance > 0.0f && hierarchyLevel != maxHierarchyLevel) {
             for (Node node : nodes) {
-                if (!node.isHypernode() && Math.random() < hierarchyChance) {
+                if (!node.isHypernode() && random.nextFloat() < hierarchyChance) {
                     // determine the number of nodes in the compound node
                     int cn = randomInt(1, (int) (hierarchyNodesFactor * n));
                     // preserve density for number of edges
@@ -563,7 +661,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
                 int mark = marks[j];
                 marks[j] = 0;
                 // decide to with which node each neighbor is connected
-                double x = Math.random();
+                double x = random.nextDouble();
                 switch (mark) {
                 case 0:
                     if (x < p1) {
@@ -606,7 +704,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         if (hierarchyChance > 0.0f && hierarchyLevel != maxHierarchyLevel) {
             for (KNode knode : parent.getChildren()) {
                 Node node = (Node) knode;
-                if (!node.isHypernode() && Math.random() < hierarchyChance) {
+                if (!node.isHypernode() && random.nextFloat() < hierarchyChance) {
                     // determine the number of nodes in the compound node
                     int cn = randomInt(1, (int) (hierarchyNodesFactor * n));
                     createTriconnectedGraph(node, cn, p1, p2, hierarchyLevel + 1);
@@ -660,7 +758,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
             nnr[totNumber] = node;
             vrt[totNumber++] = 0;
             realCount++;
-            float r = (float) Math.random();
+            float r = random.nextFloat();
             if (totNumber == 1 && singleSource || realCount == n || r * r * n < 1) {
                 if (longEdges && numberOfLayers != 0) {
                     vrt[totNumber++] = 1;
@@ -677,7 +775,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
                 n2 = fst[l];
                 leftN[n2] = n1;
                 while (n1 < fst[l] && n2 < fst[l + 1]) {
-                    float r = (float) Math.random();
+                    float r = random.nextFloat();
                     if (n1 != fst[l] - 1
                             && (n2 == fst[l + 1] - 1 || r < (float) (fst[l] - fst[l - 1])
                                     / (float) (fst[l + 1] - fst[l - 1]))) {
@@ -717,7 +815,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
                 if (vrt[n2] == 0) {
                     connected = !singleSource;
                     for (n1 = leftN[n2]; n1 <= rightN[n2] || !connected; n1++) {
-                        float r = (float) Math.random();
+                        float r = random.nextFloat();
                         if (r < x1 / x2 || n1 > rightN[n2]) {
                             next = (n1 <= rightN[n2] ? n1 : randomInt(leftN[n2], rightN[n2]));
                             act = n2;
@@ -765,7 +863,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         if (hierarchyChance > 0.0f && hierarchyLevel != maxHierarchyLevel) {
             for (KNode knode : parent.getChildren()) {
                 Node node = (Node) knode;
-                if (!node.isHypernode() && Math.random() < hierarchyChance) {
+                if (!node.isHypernode() && random.nextFloat() < hierarchyChance) {
                     // determine the number of nodes in the compound node
                     int cn = randomInt(1, (int) (hierarchyNodesFactor * n));
                     // preserve density for number of edges
@@ -940,7 +1038,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
      */
     private Node createNode(final KNode parent) {
         Node node = factory.createNode();
-        if (hypernodeChance > 0.0f && Math.random() < hypernodeChance) {
+        if (hypernodeChance > 0.0f && random.nextFloat() < hypernodeChance) {
             node.setHypernode(true);
         } else {
             // hypernodes are not labeled
@@ -1002,7 +1100,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
             if (edgeDirectedChance == 1.0f) {
                 directed = true;
             } else {
-                directed = Math.random() < edgeDirectedChance;
+                directed = random.nextFloat() < edgeDirectedChance;
             }
         } else {
             directed = false;
@@ -1024,7 +1122,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
      */
     private Port retrievePort(final Node node, final boolean source) {
         // We might want to reuse an existing port
-        if (reusePortsChance > 0.0f && Math.random() < reusePortsChance) {
+        if (reusePortsChance > 0.0f && random.nextFloat() < reusePortsChance) {
             // Collect candidate ports for reuse
             List<Port> reuseCandidates = Lists.newLinkedList();
             
@@ -1078,7 +1176,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
             if (edgeDirectedChance == 1.0f) {
                 directed = true;
             } else {
-                directed = Math.random() < edgeDirectedChance;
+                directed = random.nextFloat() < edgeDirectedChance;
             }
         } else {
             directed = false;
@@ -1392,8 +1490,8 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
      *            the maximal number
      * @return a random integer number
      */
-    private static int randomInt(final int from, final int to) {
-        return from + (int) Math.round((to - from) * Math.random());
+    private int randomInt(final int from, final int to) {
+        return from + random.nextInt(to - from + 1);
     }
 
     /**

@@ -64,7 +64,7 @@
             id="de.cau.cs.kieler.kiml.evol.edgeCrossingsMetric"
             name="Edge Crossings">
          <dependency
-               analysis="de.cau.cs.kieler.kiml.grana.bendpointCount">
+               analysis="de.cau.cs.kieler.kiml.grana.nodeCount">
          </dependency>
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">

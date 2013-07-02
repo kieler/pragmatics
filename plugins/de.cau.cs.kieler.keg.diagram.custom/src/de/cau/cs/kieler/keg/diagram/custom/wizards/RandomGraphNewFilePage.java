@@ -51,6 +51,12 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
     /** the preference key for the filename. */
     private static final String PREFERENCE_FILENAME
             = "randomWizard.filename"; //$NON-NLS-1$
+    /** the preference key for the time-based randomization seed. */
+    private static final String PREFERENCE_TIME_BASED_SEED
+            = "randomWizard.timeBasedSeed"; //$NON-NLS-1$
+    /** the preference key for the randomization seed value. */
+    private static final String PREFERENCE_RANDOM_SEED
+            = "randomWizard.randomSeedValue"; //$NON-NLS-1$
 
     /** the number of graphs to be created. */
     private int numberOfGraphs;
@@ -58,6 +64,10 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
     private boolean diagramFiles;
     /** whether to automatically open the diagrams in an editor. */
     private boolean openDiagramFiles;
+    /** whether to use a time-based randomization seed. */
+    private boolean timeBasedSeed;
+    /** fixed value for randomization seed. */
+    private int randomSeed;
 
     /**
      * Constructs the new file wizard page.
@@ -82,7 +92,7 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
     // CHECKSTYLEOFF MagicNumber
     protected void createAdvancedControls(final Composite parent) {
         // group box
-        Group group = new Group(parent, SWT.NULL);
+        Group group = new Group(parent, SWT.NONE);
         group.setText(Messages.RandomGraphNewFilePage_options_group_caption);
         
         GridData gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
@@ -92,7 +102,7 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
         group.setLayout(layout);
         
         // add option for a number of graphs to be created
-        Label label = new Label(group, SWT.NULL);
+        Label label = new Label(group, SWT.NONE);
         label.setText(Messages.RandomGraphNewFilePage_number_of_graphs_caption);
         
         final Spinner graphsSpinner = new Spinner(group, SWT.BORDER | SWT.SINGLE);
@@ -126,8 +136,32 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
         gridData.horizontalIndent = 30;
         openButton.setLayoutData(gridData);
         
+        // add option for time-based randomization seed
+        final Button timeSeedButton = new Button(group, SWT.CHECK);
+        timeSeedButton.setText(Messages.RandomGraphNewFilePage_time_seed_caption);
+        timeSeedButton.setToolTipText(Messages.RandomGraphNewFilePage_time_seed_help);
+        timeSeedButton.setSelection(timeBasedSeed);
+        
+        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData.horizontalSpan = 2;
+        gridData.verticalIndent = 10;
+        timeSeedButton.setLayoutData(gridData);
+        
+        // add option for random number generator seed
+        label = new Label(group, SWT.NONE);
+        label.setText(Messages.RandomGraphNewFilePage_random_seed_caption);
+        
+        final Spinner seedSpinner = new Spinner(group, SWT.BORDER | SWT.SINGLE);
+        seedSpinner.setToolTipText(Messages.RandomGraphNewFilePage_random_seed_help);
+        seedSpinner.setValues(randomSeed, 0, Integer.MAX_VALUE, 0, 1, 10);
+        seedSpinner.setEnabled(!timeBasedSeed);
+        
+        gridData = new GridData(SWT.LEFT, SWT.NONE, false, false);
+        gridData.widthHint = 50;
+        seedSpinner.setLayoutData(gridData);
+        
         // create the advanced options and hide them
-        Composite advanced = new Composite(group, SWT.NULL);
+        Composite advanced = new Composite(group, SWT.NONE);
         advanced.setVisible(false);
         gridData = new GridData(SWT.FILL, SWT.NONE, true, false);
         gridData.exclude = true;
@@ -142,7 +176,6 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
                 numberOfGraphs = graphsSpinner.getSelection();
             }
         });
-        
         openButton.addSelectionListener(new SelectionListenerAdapter() {
             public void widgetSelected(final SelectionEvent e) {
                 openDiagramFiles = openButton.getSelection();
@@ -160,6 +193,17 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
                 }
             }
         });
+        timeSeedButton.addSelectionListener(new SelectionListenerAdapter() {
+            public void widgetSelected(final SelectionEvent e) {
+                timeBasedSeed = timeSeedButton.getSelection();
+                seedSpinner.setEnabled(!timeBasedSeed);
+            }
+        });
+        seedSpinner.addModifyListener(new ModifyListener() {
+            public void modifyText(final ModifyEvent e) {
+                randomSeed = seedSpinner.getSelection();
+            }
+        });
     }
 
     // CHECKSTYLEON MagicNumber
@@ -172,6 +216,8 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
         preferenceStore.setValue(PREFERENCE_NUMBER_OF_GRAPHS, numberOfGraphs);
         preferenceStore.setValue(PREFERENCE_DIAGRAM_FILES, diagramFiles);
         preferenceStore.setValue(PREFERENCE_OPEN_DIAGRAM_FILES, openDiagramFiles);
+        preferenceStore.setValue(PREFERENCE_TIME_BASED_SEED, timeBasedSeed);
+        preferenceStore.setValue(PREFERENCE_RANDOM_SEED, randomSeed);
         preferenceStore.setValue(PREFERENCE_FILENAME, getFileName());
     }
 
@@ -180,6 +226,8 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
         numberOfGraphs = preferenceStore.getInt(PREFERENCE_NUMBER_OF_GRAPHS);
         diagramFiles = preferenceStore.getBoolean(PREFERENCE_DIAGRAM_FILES);
         openDiagramFiles = preferenceStore.getBoolean(PREFERENCE_OPEN_DIAGRAM_FILES);
+        timeBasedSeed = preferenceStore.getBoolean(PREFERENCE_TIME_BASED_SEED);
+        randomSeed = preferenceStore.getInt(PREFERENCE_RANDOM_SEED);
         setFileName(preferenceStore.getString(PREFERENCE_FILENAME));
     }
 
@@ -188,6 +236,8 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
         preferenceStore.setDefault(PREFERENCE_NUMBER_OF_GRAPHS, 1);
         preferenceStore.setDefault(PREFERENCE_DIAGRAM_FILES, false);
         preferenceStore.setDefault(PREFERENCE_OPEN_DIAGRAM_FILES, false);
+        preferenceStore.setDefault(PREFERENCE_TIME_BASED_SEED, true);
+        preferenceStore.setDefault(PREFERENCE_RANDOM_SEED, 0);
         preferenceStore.setDefault(PREFERENCE_FILENAME, "random.keg"); //$NON-NLS-1$
     }
 
@@ -216,6 +266,24 @@ public class RandomGraphNewFilePage extends WizardNewFileCreationPage {
      */
     public boolean getOpenDiagramFiles() {
         return openDiagramFiles;
+    }
+    
+    /**
+     * Returns whether a time-based randomization seed shall be used.
+     * 
+     * @return true if a time-based randomization seed shall be used
+     */
+    public boolean getTimeBasedSeed() {
+        return timeBasedSeed;
+    }
+    
+    /**
+     * Returns the randomization seed value.
+     * 
+     * @return the randomization seed
+     */
+    public int getRandomSeedValue() {
+        return randomSeed;
     }
 
     /**

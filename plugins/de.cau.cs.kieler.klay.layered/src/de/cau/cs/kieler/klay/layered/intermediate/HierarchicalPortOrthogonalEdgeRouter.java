@@ -163,10 +163,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                 
                 LNode replacedDummy = (LNode) node.getProperty(Properties.EXT_PORT_REPLACED_DUMMY);
                 if (replacedDummy != null) {
-                    // The origin should be a hierarchical port dummy. Better check that
-                    if (replacedDummy.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
-                        continue;
-                    }
+                    assert replacedDummy.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT;
                     
                     // Restore the origin and connect the node to it
                     restoreDummy(replacedDummy, restoredDummies);

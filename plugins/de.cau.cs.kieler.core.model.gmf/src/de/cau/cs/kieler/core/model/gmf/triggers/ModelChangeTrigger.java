@@ -29,16 +29,18 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
 import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
 import de.cau.cs.kieler.core.kivi.ITrigger;
 import de.cau.cs.kieler.core.kivi.ITriggerState;
+import de.cau.cs.kieler.core.kivi.listeners.GlobalPartAdapter;
 import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.ui.UnsupportedPartException;
-import de.cau.cs.kieler.core.ui.util.CombinedWorkbenchListener;
 import de.cau.cs.kieler.core.ui.util.EditorUtils;
 
 /**
@@ -62,6 +64,9 @@ public class ModelChangeTrigger extends AbstractTrigger implements IPartListener
             .createNotifierTypeFilter(NotationPackage.eINSTANCE.getGuide())));
 
     private IWorkbenchPart currentEditor;
+    
+    /** Listens to all parts within the workbench. */
+    private GlobalPartAdapter partListener;
 
     /**
      * {@inheritDoc}
@@ -69,7 +74,7 @@ public class ModelChangeTrigger extends AbstractTrigger implements IPartListener
     @SuppressWarnings("deprecation")
     @Override
     public void register() {
-        CombinedWorkbenchListener.addPartListener(this);
+        partListener = new GlobalPartAdapter(this);
         final ResourceSetListener that = this;
         // register with the active editor
         // else the initially open editor will not send events until the editor changes
@@ -86,7 +91,7 @@ public class ModelChangeTrigger extends AbstractTrigger implements IPartListener
      */
     @Override
     public void unregister() {
-        CombinedWorkbenchListener.removePartListener(this);
+        partListener.unregister();
         // cmot: Fixed null pointer exception when trying to disable KIVi
         if (currentEditor != null) {
             TransactionalEditingDomain transactionalEditingDomain = getEditingDomain(currentEditor);

@@ -391,7 +391,7 @@ public class KGraphRenderer {
             parent = parent.getParent();
         }
         KNode node = parent;
-        KVector offset = new KVector(baseOffset);
+        KVector offset = new KVector();
         while (node != graph) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             KInsets insets = nodeLayout.getInsets();
@@ -399,6 +399,7 @@ public class KGraphRenderer {
                     nodeLayout.getYpos() + insets.getTop());
             node = node.getParent();
         }
+        offset.scale(scale).add(baseOffset);
         
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         PaintRectangle rect = boundsMap.get(edge);
@@ -411,18 +412,15 @@ public class KGraphRenderer {
             if (edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
                 bendPoints = KielerMath.approximateSpline(bendPoints);
             }
-            bendPoints.scale(scale);
+            bendPoints.scale(scale).translate(offset);
             KVector point1 = bendPoints.getFirst();
             for (KVector point2 : bendPoints) {
-                graphics.drawLine((int) Math.round(point1.x + offset.x),
-                        (int) Math.round(point1.y + offset.y),
-                        (int) Math.round(point2.x + offset.x),
-                        (int) Math.round(point2.y + offset.y));
+                graphics.drawLine((int) Math.round(point1.x), (int) Math.round(point1.y),
+                        (int) Math.round(point2.x), (int) Math.round(point2.y));
                 point1 = point2;
             }
             // draw an arrow at the last segment of the connection
-            int[] arrowPoly = makeArrow(bendPoints.get(bendPoints.size() - 2), bendPoints.getLast(),
-                    offset);
+            int[] arrowPoly = makeArrow(bendPoints.get(bendPoints.size() - 2), bendPoints.getLast());
             if (arrowPoly != null) {
                 graphics.fillPolygon(arrowPoly);
             }
@@ -440,15 +438,14 @@ public class KGraphRenderer {
      * 
      * @param point1 source point
      * @param point2 target point
-     * @param offset offset value to be added to coordinates
      * @return array of coordinates for the arrow polygon, or null if the given source and target
      *         points are equal
      */
-    private int[] makeArrow(final KVector point1, final KVector point2, final KVector offset) {
+    private int[] makeArrow(final KVector point1, final KVector point2) {
         if (!(point1.x == point2.x && point1.y == point2.y) && ARROW_WIDTH * scale >= 2) {
             int[] arrow = new int[6];
-            arrow[0] = (int) Math.round(point2.x + offset.x);
-            arrow[1] = (int) Math.round(point2.y + offset.y);
+            arrow[0] = (int) Math.round(point2.x);
+            arrow[1] = (int) Math.round(point2.y);
 
             double vectX = point1.x - point2.x;
             double vectY = point1.y - point2.y;
@@ -460,10 +457,10 @@ public class KGraphRenderer {
             double orthX = normY * ARROW_WIDTH / 2 * scale;
             double orthY = -normX * ARROW_WIDTH / 2 * scale;
 
-            arrow[2] = (int) Math.round(neckX + orthX + offset.x);
-            arrow[3] = (int) Math.round(neckY + orthY + offset.y);
-            arrow[4] = (int) Math.round(neckX - orthX + offset.x);
-            arrow[5] = (int) Math.round(neckY - orthY + offset.y);
+            arrow[2] = (int) Math.round(neckX + orthX);
+            arrow[3] = (int) Math.round(neckY + orthY);
+            arrow[4] = (int) Math.round(neckX - orthX);
+            arrow[5] = (int) Math.round(neckY - orthY);
             return arrow;
         } else {
             return null;

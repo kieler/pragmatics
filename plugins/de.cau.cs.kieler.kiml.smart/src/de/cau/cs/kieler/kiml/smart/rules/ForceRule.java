@@ -30,8 +30,6 @@ import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
  */
 public class ForceRule implements ISmartRule {
     
-    /** minimal number of nodes for full result. */
-    private static final int MIN_NODES = 4;
     /** the penalty factor for missing graph features. */
     private static final double FEATURE_PENALTY = 0.8;
 
@@ -45,11 +43,7 @@ public class ForceRule implements ISmartRule {
                     LayoutTypeData.TYPE_FORCE);
             
             // force based layout is always applicable to some degree, so take it as fallback solution
-            double result = SmartLayoutConfig.SUITABILITY_THRESHOLD;
-            if (nodeCount < MIN_NODES) {
-                result *= (double) nodeCount / MIN_NODES;
-            }
-            return result * Math.pow(FEATURE_PENALTY, fp);
+            return SmartLayoutConfig.SUITABILITY_THRESHOLD * Math.pow(FEATURE_PENALTY, fp);
         }
         return 0;
     }

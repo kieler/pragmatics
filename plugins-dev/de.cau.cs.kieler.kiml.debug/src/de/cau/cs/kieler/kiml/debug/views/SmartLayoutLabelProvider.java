@@ -84,7 +84,7 @@ public class SmartLayoutLabelProvider extends LabelProvider {
             if (resultData.getSuitability() < 0) {
                 return name + ": failed";
             } else {
-                int suitability = (int) (resultData.getSuitability() * 100);
+                int suitability = (int) Math.round((resultData.getSuitability() * 100));
                 int priority = resultData.getSmartRuleData().getPriority();
                 if (priority != 0) {
                     return name + ": " + suitability + "%, priority " + priority;
