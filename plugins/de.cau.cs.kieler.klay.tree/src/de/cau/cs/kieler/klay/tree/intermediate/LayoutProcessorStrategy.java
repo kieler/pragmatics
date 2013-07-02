@@ -39,10 +39,12 @@ public enum LayoutProcessorStrategy {
     ROOT_PROC,
     /** Compute the fanout of each node in a given graph */
     FAN_PROC,
-
-    // Before Phase 3
     /** Determine the local neighbors of each node in a given graph */
     NEIGHBORS_PROC,
+
+    // Before Phase 3
+    /** Determine the height of each level in the given graph */
+    LEVEL_HEIGHT,
 
     // Before Phase 4
     /** Set the coordinates for each node in a given graph */
@@ -68,6 +70,9 @@ public enum LayoutProcessorStrategy {
 
         case NEIGHBORS_PROC:
             return new NeighborsProcessor();
+
+        case LEVEL_HEIGHT:
+            return new LevelHeightProcessor();
 
         case COORDINATE_PROC:
             return new CoordianteProcessor();

@@ -79,6 +79,9 @@ public final class Properties {
     /** The y coordinate of the node in the level. */
     public static final IProperty<Integer> YCOOR = new Property<Integer>("YCOOR", 0);
 
+    /** The y height of the nodes level. */
+    public static final IProperty<Double> LEVELHEIGHT = new Property<Double>("LEVELHEIGHT", 0d);
+
     /**
      * Id of of a real node. This Indicates the block by the most significant letters and level of
      * the node by the length of the string.
@@ -90,10 +93,10 @@ public final class Properties {
 
     /** A preliminary x-coordinate. */
     public static final IProperty<Double> PRELIM = new Property<Double>("PRELIM", 0d);
-    
+
     /** A modifier x-coordinate. */
     public static final IProperty<Double> MODIFIER = new Property<Double>("MODIFIER", 0d);
-    
+
     /** The direction from the origin of a node in the nesting tree of a compound graph. */
     public static final IProperty<Direction> DIRC = new Property<Direction>("DIRC", Direction.SOUTH);
 

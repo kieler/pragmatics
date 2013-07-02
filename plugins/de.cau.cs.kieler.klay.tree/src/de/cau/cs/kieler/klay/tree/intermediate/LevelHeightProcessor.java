@@ -26,14 +26,13 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
 import de.cau.cs.kieler.klay.tree.util.Key;
 
 /**
- * A processor which determine the neighbors and siblings for all nodes in the graph. A neighbor is
- * the current node's nearest node, at the same level. A siblings is a neighbor with the same
- * parent.
+ * A processor which determine the height for each level by setting it to the height of the tallest
+ * node of the level.
  * 
  * @author sor
  * @author sgu
  */
-public class NeighborsProcessor implements ILayoutProcessor {
+public class LevelHeightProcessor implements ILayoutProcessor {
 
     HashMap<Key, TNode> globalMap = new HashMap<Key, TNode>();
     int numberOfNodes;
@@ -43,7 +42,7 @@ public class NeighborsProcessor implements ILayoutProcessor {
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
 
-        progressMonitor.begin("Processor set neighbors", 1f);
+        progressMonitor.begin("Processor determine the height for each level", 1f);
 
         TNode root = null;
         // clear map if processor is reused
@@ -71,9 +70,8 @@ public class NeighborsProcessor implements ILayoutProcessor {
     }
 
     /**
-     * Set the neighbors of each node in the current level and for their children. A neighbor is the
-     * current node's nearest node, at the same level. A siblings is a neighbor with the same
-     * parent.
+     * Set the height property for each node in the current level and for their children. The height
+     * is the height of the tallest node in the level.
      * 
      * @param currentLevel
      *            the list of TNode at the same level, for which the neighbors and siblings should
@@ -99,23 +97,19 @@ public class NeighborsProcessor implements ILayoutProcessor {
                 }
             };
 
-            TNode lN = null;
+            double height = 0d;
 
-            // the left neighbor is the previous processed node
-            // the right neighbor of the left neighbor is the current node
             for (TNode cN : currentLevel) {
                 // append the children of the current node to the next level
                 nextLevel = Iterables.concat(nextLevel, cN.getChildren());
-                if (lN != null) {
-                    lN.setProperty(Properties.RIGHTNEIGHBOR, cN);
-                    cN.setProperty(Properties.LEFTNEIGHBOR, lN);
-                    if (cN.getParent() == lN.getParent()) {
-                        lN.setProperty(Properties.RIGHTSIBLING, cN);
-                        cN.setProperty(Properties.LEFTSIBLING, lN);
-                    }
+                // check if the node is the tallest node so far
+                if (height < cN.getSize().y) {
+                    height = cN.getSize().y;
                 }
-
-                lN = cN;
+            }
+            for (TNode cN : currentLevel) {
+                // set the level height for the node
+                cN.setProperty(Properties.LEVELHEIGHT, height);
             }
 
             // add amount of work units to the whole task

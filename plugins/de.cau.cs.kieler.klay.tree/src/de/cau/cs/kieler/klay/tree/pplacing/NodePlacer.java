@@ -26,6 +26,7 @@ import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
+import de.cau.cs.kieler.klay.tree.util.FindNode;
 
 /**
  * @author sor
@@ -49,32 +50,33 @@ public class NodePlacer implements ILayoutPhase {
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
             null, EnumSet.of(LayoutProcessorStrategy.ROOT_PROC),
-            EnumSet.of(LayoutProcessorStrategy.NEIGHBORS_PROC),
+            EnumSet.of(LayoutProcessorStrategy.LEVEL_HEIGHT,LayoutProcessorStrategy.NEIGHBORS_PROC),
             EnumSet.of(LayoutProcessorStrategy.COORDINATE_PROC));
 
     /**
      * @param tNode
-     * @param level
+     * @param yCoor
      * @param modsum
      * @param progressMonitor
      */
-    public void secondWalk(TNode tNode, int level, double modsum,
+    public void secondWalk(TNode tNode, double yCoor, double modsum,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor place nodes - second walk", 1f);
         if (tNode != null) {
             double xTemp = xTopAdjustment + tNode.getProperty(Properties.PRELIM) + modsum;
-            double yTemp = yTopAdjustment + level * spacing;
+            double yTemp = yCoor + spacing + tNode.getProperty(Properties.LEVELHEIGHT);
             /** Check to see that xTemp and yTemp are of the proper size for your application. */
             if (!(xTemp < 0) && !(yTemp < 0)) {
                 tNode.setProperty(Properties.XCOOR, (int) Math.round(xTemp));
                 tNode.setProperty(Properties.YCOOR, (int) Math.round(yTemp));
                 /** Apply the modifier value for this node to all its offspring. */
                 if (!tNode.isLeaf()) {
-                    secondWalk(Iterables.getFirst(tNode.getChildren(), null), level + 1, modsum
-                            + tNode.getProperty(Properties.MODIFIER), progressMonitor.subTask(1f));
+                    secondWalk(Iterables.getFirst(tNode.getChildren(), null), yTemp,
+                            modsum + tNode.getProperty(Properties.MODIFIER),
+                            progressMonitor.subTask(1f));
                 }
                 if (tNode.getProperty(Properties.RIGHTSIBLING) != null) {
-                    secondWalk(tNode.getProperty(Properties.RIGHTSIBLING), level, modsum,
+                    secondWalk(tNode.getProperty(Properties.RIGHTSIBLING), yCoor, modsum,
                             progressMonitor.subTask(1f));
                 }
             }
@@ -131,7 +133,7 @@ public class NodePlacer implements ILayoutPhase {
         xTopAdjustment = root.getPosition().x;
         yTopAdjustment = root.getPosition().y;
 
-        secondWalk(root, 0, 0d, progressMonitor.subTask(1f));
+        secondWalk(root, root.getProperty(Properties.LEVELHEIGHT), 0d, progressMonitor.subTask(1f));
 
         progressMonitor.done();
 
@@ -166,7 +168,8 @@ public class NodePlacer implements ILayoutPhase {
 
             TNode lM = Iterables.getFirst(cN.getChildren(), null);
             TNode rM = Iterables.getLast(cN.getChildren(), null);
-            double midPoint = (rM.getProperty(Properties.PRELIM) + lM.getProperty(Properties.PRELIM)) / 2;
+            double midPoint = (rM.getProperty(Properties.PRELIM) + lM
+                    .getProperty(Properties.PRELIM)) / 2;
 
             if (lS != null) {
                 double p = lS.getProperty(Properties.PRELIM) + spacing + meanNodeWidth(lS, cN);
@@ -218,8 +221,10 @@ public class NodePlacer implements ILayoutPhase {
                     double portion = moveDistance / leftSiblings;
                     tempPtr = cN;
                     while (tempPtr != ancestorNeighbor) {
-                        tempPtr.setProperty(Properties.PRELIM, tempPtr.getProperty(Properties.PRELIM) + moveDistance);
-                        tempPtr.setProperty(Properties.MODIFIER, tempPtr.getProperty(Properties.MODIFIER) + moveDistance);
+                        tempPtr.setProperty(Properties.PRELIM,
+                                tempPtr.getProperty(Properties.PRELIM) + moveDistance);
+                        tempPtr.setProperty(Properties.MODIFIER,
+                                tempPtr.getProperty(Properties.MODIFIER) + moveDistance);
                         moveDistance -= portion;
                         tempPtr = tempPtr.getProperty(Properties.LEFTSIBLING);
                     }
@@ -237,45 +242,11 @@ public class NodePlacer implements ILayoutPhase {
              */
             compareDepth++;
             if (leftmost.isLeaf()) {
-                leftmost = getLeftMost(cN.getChildren(), compareDepth);
+                leftmost = FindNode.getLeftMost(cN.getChildren(), compareDepth);
             } else {
                 leftmost = Iterables.getFirst(leftmost.getChildren(), null);
             }
             neighbor = leftmost != null ? leftmost.getProperty(Properties.LEFTNEIGHBOR) : null;
         }
     }
-
-    /**
-     * This method returns the leftmost node at the given level. This is implemented using a
-     * postorder walk of the subtree under given level, depth levels down. Depth here refers to the
-     * level below where the leftmost descendant is being found.
-     * 
-     * @param currentlevel
-     *            a list of nodes at level one
-     * @param depth
-     *            the depth to search for
-     * @return the leftmost descendant at depth levels down
-     */
-    private TNode getLeftMost(final Iterable<TNode> currentlevel, int depth) {
-
-        if (1 < depth) {
-            depth--;
-            // build empty iterator
-            Iterable<TNode> nextLevel = new Iterable<TNode>() {
-
-                public Iterator<TNode> iterator() {
-                    return Iterators.emptyIterator();
-                }
-            };
-
-            for (TNode cN : currentlevel) {
-                // append the children of the current node to the next level
-                nextLevel = Iterables.concat(nextLevel, cN.getChildren());
-            }
-
-            return getLeftMost(nextLevel, depth);
-        }
-        return Iterables.getFirst(currentlevel, null);
-    }
-
 }
