@@ -51,7 +51,6 @@ import de.cau.cs.kieler.klighd.views.DiagramEditorPart;
  */
 public class PtolemyEditPart extends DiagramEditorPart {
 
-
     /**
      * Map containing a standard list of parser features used for loading EMF resources.
      */
@@ -120,12 +119,7 @@ public class PtolemyEditPart extends DiagramEditorPart {
                 resourceMoml.load(inputStream, Collections.EMPTY_MAP);
             } else {
                 // load a URI-based resource
-                // resource = resourceSet.createResource(uri);
-                // resource.load(Collections.EMPTY_MAP);
-
-                // Load the source model
                 resourceMoml = resourceSet.getResource(uri, true);
-                // ptModel = (DocumentRoot) srcResource.getContents().get(0);
             }
         } catch (IOException exception) {
             throw new PartInitException("An error occurred while loading the resource.", exception);
@@ -148,16 +142,12 @@ public class PtolemyEditPart extends DiagramEditorPart {
         // Transform and optimize
         Entity kaomModel = null;
 
-//        try {
-            kaomModel = transformation.transform(ptModel);
-            optimization.optimize(kaomModel);
-            
-            model = kaomModel;
-//        } catch (Exception e) {
-//            throw new CoreException(new Status(IStatus.ERROR, PtolemyRCPPlugin.PLUGIN_ID,
-//                    "Model transformation failed: " + e.getMessage(), e));
-//        }
+        kaomModel = transformation.transform(ptModel);
+        optimization.optimize(kaomModel);
 
+        model = kaomModel;
+
+        // FIXME
         // Advanced annotation handling, if requested
         // if (advancedAnnotationsHandling) {
         // PtolemyAnnotationHandler annotationHandler = new PtolemyAnnotationHandler(
@@ -165,9 +155,8 @@ public class PtolemyEditPart extends DiagramEditorPart {
         //
         // annotationHandler.handleAnnotations();
         // }
-  System.out.println(kaomModel);          
-            
     }
+    
+    
 
-  
 }

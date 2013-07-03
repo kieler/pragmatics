@@ -66,7 +66,7 @@
       
       <activityPatternBinding
             activityId="de.cau.cs.kieler.ptolemy.rcp.activity"
-            pattern="menu:file\?after=rename">
+            pattern="org\.eclipse\.ui\.edit\.text\.actionSet\..*">
       </activityPatternBinding>
       
       <activityPatternBinding
@@ -294,6 +294,12 @@
                id="*">
          </hiddenMenuItem>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.cau.cs.kieler.ptolemy.rcp.PtolemyRCPPlugin">
+      </startup>
    </extension>
 
 </plugin>
