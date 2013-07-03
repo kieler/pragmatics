@@ -24,7 +24,7 @@ import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
  */
 public enum LayoutProcessorStrategy {
 
-    /*
+    /**
      * In this enumeration, intermediate layout processors are listed by the earliest slot in which
      * they can sensibly be used. The order in which they are listed is determined by the
      * dependencies on other processors.

@@ -24,21 +24,27 @@ import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
+ * TODO Document this class
+ * 
  * @author sor
  * @author sgu
- *
+ * 
  */
 public class TreeingProcessor implements ILayoutProcessor {
 
-    List<TEdge> edges = new LinkedList<TEdge>();
+    /**
+     * TODO Document
+     */
+    private List<TEdge> edges = new LinkedList<TEdge>();
+
     /**
      * {@inheritDoc}
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
-        
+
         edges.clear();
         edges = tGraph.getProperty(Properties.REMOVABLE_EDGES);
-        
+
         for (TEdge e : edges) {
             TNode src = e.getSource();
             TNode target = e.getTarget();

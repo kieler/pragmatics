@@ -30,29 +30,31 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  */
 public class RootProcessor implements ILayoutProcessor {
 
-    ArrayList<TNode> roots = new ArrayList<TNode>();
+    private ArrayList<TNode> roots = new ArrayList<TNode>();
 
     /**
      * {@inheritDoc}
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
 
-        // clear list of roots if processor is reused
+        /** clear list of roots if processor is reused */
         roots.clear();
 
-        // find all roots in the graph
+        /** find all roots in the graph */
         for (TNode node : tGraph.getNodes()) {
             if (node.getInComingEdges().isEmpty()) {
                 node.setProperty(Properties.ROOT, true);
                 roots.add(node);
             }
         }
-        // if there are more than one root add a super root and set the current roots as its
-        // children
+        /**
+         * if there are more than one root add a super root and set the current roots as its
+         * children
+         */
         switch (roots.size()) {
         case 0:
             // TODO ASSERT NO NODES ARE THERE
-            TNode root =  new TNode(0,tGraph, "DUMMY_ROOT");
+            TNode root = new TNode(0, tGraph, "DUMMY_ROOT");
             root.setProperty(Properties.ROOT, true);
             root.setProperty(Properties.DUMMY, true);
             tGraph.getNodes().add(root);
@@ -62,7 +64,7 @@ public class RootProcessor implements ILayoutProcessor {
 
         default:
             TNode superRoot = new TNode(0, tGraph, "SUPER_ROOT");
-            
+
             for (TNode tRoot : roots) {
                 superRoot.addChild(tRoot);
                 tRoot.setProperty(Properties.ROOT, false);

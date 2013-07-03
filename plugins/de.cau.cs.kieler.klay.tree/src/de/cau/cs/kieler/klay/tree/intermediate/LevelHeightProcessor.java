@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.tree.intermediate;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
@@ -23,7 +22,6 @@ import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
-import de.cau.cs.kieler.klay.tree.util.Key;
 
 /**
  * A processor which determine the height for each level by setting it to the height of the tallest
@@ -34,8 +32,8 @@ import de.cau.cs.kieler.klay.tree.util.Key;
  */
 public class LevelHeightProcessor implements ILayoutProcessor {
 
-    HashMap<Key, TNode> globalMap = new HashMap<Key, TNode>();
-    int numberOfNodes;
+    /** number of nodes in the graph */
+    private int numberOfNodes;
 
     /**
      * {@inheritDoc}
@@ -44,14 +42,11 @@ public class LevelHeightProcessor implements ILayoutProcessor {
 
         progressMonitor.begin("Processor determine the height for each level", 1f);
 
-        TNode root = null;
-        // clear map if processor is reused
-        globalMap.clear();
-
-        // save number of nodes for progress computation
+        /** save number of nodes for progress computation */
         numberOfNodes = tGraph.getNodes().isEmpty() ? 1 : tGraph.getNodes().size();
 
-        // find the root of the component
+        TNode root = null;
+        /** find the root of the component */
         Iterator<TNode> it = tGraph.getNodes().iterator();
         while (root == null && it.hasNext()) {
             TNode tNode = it.next();
@@ -62,7 +57,7 @@ public class LevelHeightProcessor implements ILayoutProcessor {
 
         // TODO assert root is not null
 
-        // start with the root and level down by dsf
+        /** start with the root and level down by dsf */
         setNeighbors(root.getChildren(), progressMonitor);
 
         progressMonitor.done();
@@ -81,15 +76,15 @@ public class LevelHeightProcessor implements ILayoutProcessor {
      */
     private void setNeighbors(final Iterable<TNode> currentLevel,
             IKielerProgressMonitor progressMonitor) {
-        // only do something in filled levels
+        /** only do something in filled levels */
         if (!Iterables.isEmpty(currentLevel)) {
-            // create subtask for recursive descent
+            /** create subtask for recursive descent */
             IKielerProgressMonitor sT = progressMonitor.subTask(Iterables.size(currentLevel)
                     / numberOfNodes);
 
             sT.begin("Set neighbors in level", 1f);
 
-            // build empty iterator
+            /** build empty iterator */
             Iterable<TNode> nextLevel = new Iterable<TNode>() {
 
                 public Iterator<TNode> iterator() {
@@ -100,22 +95,22 @@ public class LevelHeightProcessor implements ILayoutProcessor {
             double height = 0d;
 
             for (TNode cN : currentLevel) {
-                // append the children of the current node to the next level
+                /** append the children of the current node to the next level */
                 nextLevel = Iterables.concat(nextLevel, cN.getChildren());
-                // check if the node is the tallest node so far
+                /** check if the node is the tallest node so far */
                 if (height < cN.getSize().y) {
                     height = cN.getSize().y;
                 }
             }
             for (TNode cN : currentLevel) {
-                // set the level height for the node
+                /** set the level height for the node */
                 cN.setProperty(Properties.LEVELHEIGHT, height);
             }
 
-            // add amount of work units to the whole task
+            /** add amount of work units to the whole task */
             sT.done();
 
-            // determine neighbors by bfs and for the whole graph
+            /** determine neighbors by bfs and for the whole graph */
             setNeighbors(nextLevel, progressMonitor);
         }
 

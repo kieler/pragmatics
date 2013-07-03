@@ -201,15 +201,26 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         // process the edges
         for (TEdge tEdge : tGraph.getEdges()) {
             KEdge kedge = (KEdge) tEdge.getProperty(Properties.ORIGIN);
-            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-            KVectorChain bendPoints = tEdge.getBendPoints();
+            // TODO ASSERT origin ist not null
+            if (kedge != null) {
 
-            // add the source port and target port positions to the vector chain
-            bendPoints.addFirst(tEdge.getSource().getPosition());
-            bendPoints.addLast(tEdge.getTarget().getPosition());
+                KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+                KVectorChain bendPoints = tEdge.getBendPoints();
 
-            edgeLayout.getBendPoints().clear();
-            edgeLayout.applyVectorChain(bendPoints);
+                // add the source port and target port positions to the vector chain
+                // TODO ASSERT target and source are not null
+                if (tEdge.getSource() != null) {
+                    bendPoints.addFirst(tEdge.getSource().getPosition());
+                }
+                if (tEdge.getTarget() != null) {
+                    bendPoints.addLast(tEdge.getTarget().getPosition());
+                }
+
+                edgeLayout.getBendPoints().clear();
+                if (!bendPoints.isEmpty()) {
+                    edgeLayout.applyVectorChain(bendPoints);
+                }
+            }
         }
 
         // set up the graph
@@ -218,8 +229,9 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 + insets.getRight();
         float height = (float) (maxYPos - minYPos) + 2 * borderSpacing + insets.getTop()
                 + insets.getBottom();
-        //KimlUtil.resizeNode(kgraph, width, height, false, false);
-        KimlUtil.resizeNode(kgraph, width, height, false);
+        KimlUtil.resizeNode(kgraph, width, height, false, false);
+        // TODO STOP THIS BUG
+        // KimlUtil.resizeNode(kgraph, width, height, false);
     }
 
 }

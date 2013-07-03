@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klay.tree.graph.TNode;
  * @author sgu
  */
 public class SortTNodeProperty implements Comparator<TNode> {
-    IProperty<Integer> property;
+    private IProperty<Integer> property;
 
     public SortTNodeProperty(IProperty<Integer> property) {
         this.property = property;

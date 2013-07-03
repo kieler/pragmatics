@@ -74,13 +74,21 @@ public class TEdge extends MapPropertyHolder {
     }
 
     /**
-     * Sets the source node.
+     * Sets the source node and update it's outgoing list accordingly.
      * 
      * @param theSource
      *            the source node set to
      */
     public final void setSource(final TNode theSource) {
-        source = theSource;
+        if (source != theSource) {
+            if (source != null && source.getOutgoingEdges().contains(this)) {
+                source.getOutgoingEdges().remove(this);
+            }
+            if (theSource != null && !theSource.getOutgoingEdges().contains(this)) {
+                theSource.getOutgoingEdges().add(this);
+            }
+            source = theSource;
+        }
     }
 
     /**
@@ -93,13 +101,21 @@ public class TEdge extends MapPropertyHolder {
     }
 
     /**
-     * Sets the target node.
+     * Sets the target node and update it's incoming list accordingly.
      * 
      * @param theTarget
      *            the target node
      */
     public final void setTarget(final TNode theTarget) {
-        target = theTarget;
+        if (target != theTarget) {
+            if (target != null && target.getInComingEdges().contains(this)) {
+                target.getInComingEdges().remove(this);
+            }
+            if (theTarget != null && !theTarget.getInComingEdges().contains(this)) {
+                theTarget.getInComingEdges().add(this);
+            }
+            target = theTarget;
+        }
     }
 
     /**

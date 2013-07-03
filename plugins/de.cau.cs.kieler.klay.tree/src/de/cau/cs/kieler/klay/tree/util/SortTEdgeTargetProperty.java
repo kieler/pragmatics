@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klay.tree.graph.TEdge;
  * @author sgu
  */
 public class SortTEdgeTargetProperty implements Comparator<TEdge> {
-    IProperty<Integer> property;
+    private IProperty<Integer> property;
 
     public SortTEdgeTargetProperty(IProperty<Integer> property) {
         this.property = property;

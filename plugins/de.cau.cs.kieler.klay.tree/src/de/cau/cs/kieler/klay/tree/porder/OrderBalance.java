@@ -30,8 +30,12 @@ import de.cau.cs.kieler.klay.tree.util.FindNode;
 import de.cau.cs.kieler.klay.tree.util.SortTEdgeTargetProperty;
 
 /**
- * This phase orders the nodes of each level by seperating the nodes into leaves and inner nodes.
- * And then fill whitespace in the levels with corresponding leaves.
+ * This phase orders the nodes of each level by seperating the children of nodes into leaves and
+ * inner nodes. And then fill whitespace in the levels with corresponding leaves.
+ * 
+ * It starts two levels above the deepest level, because the deepest level contains only nodes and
+ * therefore no reordering is necessary. And the level above the deepest level contains only
+ * children of the level above, which are ordered by the their parents.
  * 
  * @author sor
  * @author sgu
@@ -60,8 +64,7 @@ public class OrderBalance implements ILayoutPhase {
 
         progressMonitor.begin("Processor arrange node", 1);
 
-        // find the root of the component
-        // expected only one root exists
+        /** find the root of the component expected only one root exists */
         TNode root = null;
         Iterator<TNode> it = tGraph.getNodes().iterator();
         while (root == null && it.hasNext()) {
@@ -70,52 +73,67 @@ public class OrderBalance implements ILayoutPhase {
                 root = tNode;
             }
         }
-        // order each level
+        /** order each level */
 
+        /** start two levels above the deepest level at the leftmost node */
         TNode lM = FindNode.getLeftMost(root.getChildren());
 
+        /** if there are only the root and one level or less no reordering is necessary */
         if (lM.getParent() != null && lM.getParent() != root) {
             TNode parent = lM.getParent().getParent();
             TNode leftMost = parent;
+            /** go to the leftmost node in this level */
             while (leftMost.getProperty(Properties.LEFTNEIGHBOR) != null) {
                 leftMost = leftMost.getProperty(Properties.LEFTNEIGHBOR);
             }
+            /** start the order at the leftmost node */
             orderLevel(leftMost);
         }
 
+        /**
+         * reset the structure properties of each node to null, because the order of the graph has
+         * changed
+         */
         for (TNode tNode : tGraph.getNodes()) {
             tNode.setProperty(Properties.RIGHTNEIGHBOR, null);
             tNode.setProperty(Properties.LEFTNEIGHBOR, null);
             tNode.setProperty(Properties.RIGHTSIBLING, null);
             tNode.setProperty(Properties.LEFTSIBLING, null);
         }
-        
-     // TODO DEBUG
-//        System.out.println();
-//        System.out.println();
-//        progressMonitor.done();
-
     }
 
     /**
-     * Order each level by seperating the nodes into leaves and inner nodes. And then fill gaps with
-     * corresponding leaves.
+     * Order each level by seperating the children of the nodes into leaves and inner nodes. And
+     * then fill gaps with corresponding leaves.
      * 
-     * @param currentLevel
-     * @param level
+     * @param leftMost
+     *            the leftmost node in a level
      */
     private void orderLevel(TNode leftMost) {
         if (leftMost != null) {
 
+            /** copy current to iterate over the copy */
             TNode currentNode = leftMost;
 
             while (currentNode != null) {
-                // sort all nodes in this level by their fan out
-                // so the leaves are at the end of the list
+                /**
+                 * sort all children of this node by their fan out so the leaves are at the end of
+                 * the list
+                 */
                 List<TEdge> outgoing = currentNode.getOutgoingEdges();
 
                 Collections.sort(outgoing, new SortTEdgeTargetProperty(Properties.FAN));
 
+                /**
+                 * Add each child to a balanced list where the fat child are in the middle and the
+                 * thin child are at the borders. Leaves fill the places between the inner child,
+                 * also starting at fattest node in the middle.
+                 * 
+                 * eg. bigger number means fatter nodes, zero means leaf
+                 * 
+                 * unbalanced: 0 1 0 0 4 0 0 9 0 7 2 0 3 0 0 2 3 6 0 0 
+                 * balanced  : 2 3 4 6 0 0 0 0 0 9 0 0 0 0 0 7 0 3 2 1
+                 */
                 List<TEdge> balanced = new LinkedList<TEdge>();
 
                 boolean innerOdd = false;
@@ -152,21 +170,15 @@ public class OrderBalance implements ILayoutPhase {
                     }
                 }
 
-                // reset the list of children with the new order
-                
-                // TODO DEBUG
-//                System.out.print("\n"+currentNode.getLabel()+":");
-//                for (TEdge tEdge : balanced) {
-//                    System.out.print(" "+tEdge.getTarget().getLabel());
-//                }
-                
+                /** reset the list of children with the new order */
                 currentNode.getOutgoingEdges().addAll(balanced);
 
+                /** go on with the next node to the right */
                 currentNode = currentNode.getProperty(Properties.RIGHTNEIGHBOR);
             }
 
+            /** this level has been ordered, go on with the next level above */
             orderLevel(leftMost.getParent());
         }
-
     }
 }

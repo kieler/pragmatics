@@ -40,7 +40,7 @@ import de.cau.cs.kieler.klay.tree.util.SortTNodeProperty;
  */
 public class OrderNodes implements ILayoutPhase {
 
-    Comparator<TNode> comparator = new Comparator<TNode>() {
+    private Comparator<TNode> comparator = new Comparator<TNode>() {
         public int compare(TNode t1, TNode t2) {
             if (t1.getLabel().length() < t2.getLabel().length()) {
                 return -1;
@@ -169,7 +169,6 @@ public class OrderNodes implements ILayoutPhase {
                 }
                 tPNode.getOutgoingEdges().clear();
                 tPNode.getOutgoingEdges().addAll(sortedOutEdges);
-                
 
                 // fill gaps with leaves
                 it = leaves.listIterator(leaves.size());

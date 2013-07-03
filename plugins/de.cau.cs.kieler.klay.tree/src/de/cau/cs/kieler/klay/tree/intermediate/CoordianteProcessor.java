@@ -31,11 +31,8 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  */
 public class CoordianteProcessor implements ILayoutProcessor {
 
-    /** default spacing */
-    double spacing = 20f;
-
     /** number of nodes in the graph */
-    int numberOfNodes;
+    private int numberOfNodes;
 
     /**
      * {@inheritDoc}
@@ -44,13 +41,10 @@ public class CoordianteProcessor implements ILayoutProcessor {
 
         progressMonitor.begin("Processor set coordinates", 1);
 
-        /** set the spacing according to the user inputs */
-        spacing = tGraph.getProperty(Properties.SPACING);
-
-        // save number of nodes for progress computation
+        /** save number of nodes for progress computation */
         numberOfNodes = tGraph.getNodes().isEmpty() ? 1 : tGraph.getNodes().size();
 
-        // find the root of the component
+        /** find the root of the component */
         TNode root = null;
         Iterator<TNode> it = tGraph.getNodes().iterator();
         while (root == null && it.hasNext()) {
@@ -63,7 +57,7 @@ public class CoordianteProcessor implements ILayoutProcessor {
             }
         }
 
-        // start with the root and level down by bsf
+        /** start with the root and level down by bsf */
         setCoordiantes(root.getChildrenCopy(), progressMonitor.subTask(1.0f));
 
         progressMonitor.done();
@@ -83,13 +77,15 @@ public class CoordianteProcessor implements ILayoutProcessor {
     private void setCoordiantes(final LinkedList<TNode> currentLevel,
             IKielerProgressMonitor progressMonitor) {
 
-        // if the level is empty there is nothing to do
+        /** if the level is empty there is nothing to do */
         if (!currentLevel.isEmpty()) {
 
             LinkedList<TNode> nextLevel = new LinkedList<TNode>();
 
-            // set the coordinates for each node in the current level
-            // and collect the nodes of the next level
+            /**
+             * set the coordinates for each node in the current level and collect the nodes of the
+             * next level
+             */
             for (TNode tNode : currentLevel) {
                 nextLevel.addAll(tNode.getChildrenCopy());
                 KVector pos = tNode.getPosition();
@@ -97,7 +93,7 @@ public class CoordianteProcessor implements ILayoutProcessor {
                 pos.y = tNode.getProperty(Properties.YCOOR);
             }
 
-            // go to the next level
+            /** go to the next level */
             setCoordiantes(nextLevel, progressMonitor.subTask(nextLevel.size() / numberOfNodes));
         }
 

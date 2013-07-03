@@ -26,7 +26,7 @@ import de.cau.cs.kieler.klay.tree.graph.TGraph;
 public class TestProcessor implements ILayoutProcessor {
 
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
-        // no actual processors
+        /** no actual processors */
     }
 
 }

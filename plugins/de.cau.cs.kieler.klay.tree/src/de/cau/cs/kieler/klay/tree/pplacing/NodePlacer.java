@@ -114,7 +114,7 @@ public class NodePlacer implements ILayoutPhase {
      * @param progressMonitor
      *            the current progress monitor
      */
-    public void firstWalk(TNode cN, int level, final IKielerProgressMonitor progressMonitor) {
+    private void firstWalk(TNode cN, int level, final IKielerProgressMonitor progressMonitor) {
         cN.setProperty(Properties.MODIFIER, 0d);
         TNode lS = cN.getProperty(Properties.LEFTSIBLING);
 
@@ -176,7 +176,7 @@ public class NodePlacer implements ILayoutPhase {
      * @param level
      *            the level of the root in the global tree
      */
-    public void apportion(TNode cN, int level) {
+    private void apportion(TNode cN, int level) {
         /** Initialize the leftmost and neighbor corresponding to the root of the subtree */
         TNode leftmost = Iterables.getFirst(cN.getChildren(), null);
         TNode neighbor = leftmost != null ? leftmost.getProperty(Properties.LEFTNEIGHBOR) : null;
