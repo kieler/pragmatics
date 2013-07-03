@@ -15,6 +15,7 @@
     <module>../de.cau.cs.kieler.pragmatics.repository</module>
     <module>../de.cau.cs.kieler.kwebs.repository</module>
     <module>../de.cau.cs.kieler.papyrus.repository</module>
+    <module>../de.cau.cs.kieler.ptolemy.rcp.repository</module>
   </modules>
 
   <profiles>

@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ptolemy RCP Product
+Bundle-SymbolicName: de.cau.cs.kieler.ptolemy.rcp.repository;singleton:=true
+Bundle-Version: 0.0.1.qualifier
