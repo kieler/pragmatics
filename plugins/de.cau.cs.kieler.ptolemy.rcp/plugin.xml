@@ -261,10 +261,6 @@
                value="icons/PtolemyII256x256.png,icons/PtolemyII256x256.png,icons/PtolemyII256x256.png,icons/PtolemyII256x256.png,icons/PtolemyII256x256.png">
          </property>
          <property
-               name="startupProgressRect"
-               value="5,275,445,15">
-         </property>
-         <property
                name="appName"
                value="KIELER Ptolemy Product">
          </property>
@@ -280,9 +276,13 @@
                name="startupForegroundColor"
                value="000000">
          </property>
+          <property
+                name="startupMessageRect"
+                value="7,252,445,20">
+          </property>
          <property
-               name="startupMessageRect"
-               value="7,252,445,20">
+               name="startupProgressRect"
+               value="5,275,445,15">
          </property>
       </product>
    </extension>
