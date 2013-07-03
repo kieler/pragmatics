@@ -6,7 +6,7 @@
       <editor
             class="de.cau.cs.kieler.ptolemy.rcp.PtolemyEditPart"
             default="true"
-            extensions="moml"
+            extensions="moml, xml"
             id="de.cau.cs.kieler.ptolemy.rcp.editor"
             icon="icons/PtolemyII16x16.png"
             name="Ptolemy Viewer">
@@ -300,6 +300,13 @@
       <startup
             class="de.cau.cs.kieler.ptolemy.rcp.PtolemyRCPPlugin">
       </startup>
+   </extension>
+   <extension
+         point="org.eclipse.emf.ecore.extension_parser">
+      <parser
+            class="org.ptolemy.moml.util.MomlResourceFactoryImpl"
+            type="xml">
+      </parser>
    </extension>
 
 </plugin>

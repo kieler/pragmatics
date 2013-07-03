@@ -121,42 +121,41 @@ public class PtolemyEditPart extends DiagramEditorPart {
                 // load a URI-based resource
                 resourceMoml = resourceSet.getResource(uri, true);
             }
+
+            if (resourceMoml.getContents().isEmpty()) {
+                throw new PartInitException("The resource is empty.");
+            }
+
+            ptModel = (DocumentRoot) resourceMoml.getContents().get(0);
+
+            // Two steps: transformation, and optimization
+            Injector injector = Guice.createInjector();
+
+            Ptolemy2KaomTransformation transformation =
+                    injector.getInstance(Ptolemy2KaomTransformation.class);
+            Ptolemy2KaomOptimization optimization =
+                    injector.getInstance(Ptolemy2KaomOptimization.class);
+
+            // Transform and optimize
+            Entity kaomModel = null;
+
+            kaomModel = transformation.transform(ptModel);
+            optimization.optimize(kaomModel);
+
+            model = kaomModel;
+
+            // FIXME
+            // Advanced annotation handling, if requested
+            // if (advancedAnnotationsHandling) {
+            // PtolemyAnnotationHandler annotationHandler = new PtolemyAnnotationHandler(
+            // (XMLResource) srcResource, ptModel, kaomModel, heuristicsOverride);
+            //
+            // annotationHandler.handleAnnotations();
+            // }
+
         } catch (IOException exception) {
             throw new PartInitException("An error occurred while loading the resource.", exception);
         }
-
-        if (resourceMoml.getContents().isEmpty()) {
-            throw new PartInitException("The resource is empty.");
-        }
-
-        ptModel = (DocumentRoot) resourceMoml.getContents().get(0);
-
-        // Two steps: transformation, and optimization
-        Injector injector = Guice.createInjector();
-
-        Ptolemy2KaomTransformation transformation =
-                injector.getInstance(Ptolemy2KaomTransformation.class);
-        Ptolemy2KaomOptimization optimization =
-                injector.getInstance(Ptolemy2KaomOptimization.class);
-
-        // Transform and optimize
-        Entity kaomModel = null;
-
-        kaomModel = transformation.transform(ptModel);
-        optimization.optimize(kaomModel);
-
-        model = kaomModel;
-
-        // FIXME
-        // Advanced annotation handling, if requested
-        // if (advancedAnnotationsHandling) {
-        // PtolemyAnnotationHandler annotationHandler = new PtolemyAnnotationHandler(
-        // (XMLResource) srcResource, ptModel, kaomModel, heuristicsOverride);
-        //
-        // annotationHandler.handleAnnotations();
-        // }
     }
-    
-    
 
 }
