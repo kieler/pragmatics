@@ -13,9 +13,12 @@
  */
 package de.cau.cs.kieler.klay.tree.ptreeing;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
@@ -32,21 +35,20 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
 public class Treeing implements ILayoutPhase {
 
     /** intermediate processing configuration. */
-
     // first phase gets no intermediateProcessingConfiguration?!
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
-            null, null);
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
+            new IntermediateProcessingConfiguration(null, null);
 
     /**
      * {@inheritDoc}
      */
-    public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
+    public void process(TGraph theGraph, IKielerProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Treeing phase", 1);
 
-        this.tGraph = tGraph;
-        //TODO uncomment
-        //collectEdges(tGraph);
+        this.tGraph = theGraph;
+        init(tGraph);
+        collectEdges(tGraph);
 
         progressMonitor.done();
     }
@@ -58,12 +60,12 @@ public class Treeing implements ILayoutPhase {
 
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
+    
+    private Map<TNode, Integer> checkedMap = new HashMap<TNode, Integer>();
 
-    private int[] checked;
+    private TNode[] visited;
 
-    private boolean[] visited;
-
-    List<TEdge> eliminated;
+    private List<TEdge> eliminated;
 
     private TGraph tGraph;
 
@@ -71,66 +73,104 @@ public class Treeing implements ILayoutPhase {
 
         int size = tGraph.getNodes().size();
         eliminated = new LinkedList<TEdge>();
-        checked = new int[size];
-        visited = new boolean[size];
-        Arrays.fill(visited, false);
-        Arrays.fill(checked, 0);
+        visited = new TNode[size];
+        
+        // initialize Map with 0 at every node value
+        for (int i = 0; i < size; i++) {
+            checkedMap.put(tGraph.getNodes().get(i), 0);
+        }
     }
 
+    
     /**
      * Create a list with the edges to remove. These edges should be all edges that destroy the
-     * tree-property.
+     * tree-property. For now these are all edges that conclude circles, so the treeing will
+     * work for graphs that contain one cycle.
      * 
      * @param TGraph
      *            where to collect the edges
      */
     private void collectEdges(TGraph tGraph) {
 
-        init(tGraph);
         // start DFS on every node in graph
-        for (TNode tNode : tGraph.getNodes()) {
+        for (TNode tNode : tGraph.getNodes() ) {
+            // delete multiple incoming/ outgoing edges except one first
+            if (tNode.getInComingEdges().size() > 1) {
+                for (int i = 1; i < tNode.getInComingEdges().size()-1; i++) {
+                    eliminated.add(tNode.getInComingEdges().get(i));
+                    tNode.getInComingEdges().get(i).setSource(null);
+                    tNode.getInComingEdges().get(i).setTarget(null);
+                }
+            }
+            if (tNode.getOutgoingEdges().size() > 1) {
+                for (int i = 1; i < tNode.getOutgoingEdges().size()-1; i++) {
+                    eliminated.add(tNode.getOutgoingEdges().get(i));
+                    tNode.getOutgoingEdges().get(i).setSource(null);
+                    tNode.getOutgoingEdges().get(i).setTarget(null);
+                }
+            }
             // initial condition: all nodes have checked value of 0, which defines 'unvisited'
-            if (checked[tNode.id] == 0) {
-                checked[tNode.id] = 1;
+            if (checkedMap.get(tNode) == 0 && visited[tNode.id] == null) {
+                // if a unvisited node gets visited, mark this node with a 1
+                checkedMap.put(tNode, 1);
+                // look what nodes can be found from that node on
                 dfs(tNode, tGraph);
             }
             // if a node has already been visited
-            if (checked[tNode.id] == 1) {
-                checked[tNode.id] = 2;
-
-                // add all incoming edges of that node to a list
-                for (TEdge e : tNode.getInComingEdges()) {
-                    eliminated.add(e);
-                    // and set source and target of the edge to null
-                    e.setSource(null);
-                    e.setTarget(null);
+            if (checkedMap.get(tNode) == 1 && visited[tNode.id] != null) {
+                // mark that node as visited twice
+                checkedMap.put(tNode, 2);
+                if (tNode.getInComingEdges().size() > 0) {
+                    // and add all incoming edges of that node to a list
+                    for (TEdge e : tNode.getInComingEdges()) {
+                        if (!eliminated.contains(e)) {
+                            eliminated.add(e);
+                            System.out.println("Added: " + e);
+                            e.setSource(null);
+                            e.setTarget(null);
+ 
+                            System.out.println("Number of elements in List: " + eliminated.size());
+                        }
+                    }
                 }
+                else {
+                    for (TEdge e : tNode.getOutgoingEdges()) {
+                        if (!eliminated.contains(e)) {
+                            eliminated.add(e);
+                            System.out.println("Added: " + e);
+                            e.setSource(null);
+                            e.setTarget(null);
+                        }
+                    }
+                }
+                // recurse to handle all nodes in the graph
                 dfs(tNode, tGraph);
             }
-            // set the list containing bad edges as graph property
+            // set the list of collected edges as a graph property
             tGraph.setProperty(Properties.REMOVABLE_EDGES, eliminated);
-        }
-        for (int i = 0; i < eliminated.size(); i++) {
-            System.out.println("ELIMINATED!");
-            System.out.println(eliminated.get(i));
         }
     }
 
+    
     /**
      * This method performs a DFS on a given graph till all nodes of the graph have been visited
      * 
      * @param node
      *            to start DFS
      * @param graph
-     *            to start DFS
+     *            to perform DFS in
      */
     private void dfs(TNode tNode, TGraph tGraph) {
-
-        if (visited[tNode.id] == false) {
-            visited[tNode.id] = true;
-            for (TEdge e : tGraph.getEdges()) {
-                TNode node = e.getTarget();
-                dfs(node, tGraph);
+        
+        if (visited[tNode.id] == null) {
+            visited[tNode.id] = tNode;
+            
+            Iterator<TNode> iterator = tNode.getChildren().iterator();
+            while (iterator.hasNext()) {
+                TNode node = (TNode)iterator.next();
+                if (node != null) {
+                    dfs(node, tGraph);
+                }
             }
         }
     }
