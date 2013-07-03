@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Ptolemy RCP
+Bundle-Name: %pluginName
 Bundle-SymbolicName: de.cau.cs.kieler.ptolemy.rcp;singleton:=true
 Bundle-Version: 0.0.1.qualifier
 Bundle-Activator: de.cau.cs.kieler.ptolemy.rcp.PtolemyRCPPlugin
@@ -22,4 +22,5 @@ Require-Bundle: org.eclipse.core.runtime,
  de.cau.cs.kieler.kiml.service;bundle-version="0.4.0",
  de.cau.cs.kieler.kiml;bundle-version="0.12.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: %providerName
