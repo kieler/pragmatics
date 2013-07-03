@@ -39,6 +39,8 @@ public enum LayoutProcessorStrategy {
     ROOT_PROC,
     /** Compute the fanout of each node in a given graph */
     FAN_PROC,
+    
+    // Before Phase 2 and 3
     /** Determine the local neighbors of each node in a given graph */
     NEIGHBORS_PROC,
 

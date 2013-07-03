@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.tree.intermediate;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -22,7 +21,6 @@ import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
-import de.cau.cs.kieler.klay.tree.util.Key;
 
 /**
  * A processor which set the final coordinates for each node in a given graph. The property XCOOR
@@ -33,9 +31,10 @@ import de.cau.cs.kieler.klay.tree.util.Key;
  */
 public class CoordianteProcessor implements ILayoutProcessor {
 
+    /** default spacing */
     double spacing = 20f;
 
-    HashMap<Key, TNode> globalMap = new HashMap<Key, TNode>();
+    /** number of nodes in the graph */
     int numberOfNodes;
 
     /**
@@ -45,16 +44,14 @@ public class CoordianteProcessor implements ILayoutProcessor {
 
         progressMonitor.begin("Processor set coordinates", 1);
 
+        /** set the spacing according to the user inputs */
         spacing = tGraph.getProperty(Properties.SPACING);
-
-        TNode root = null;
-        // clear map if processor is reused
-        globalMap.clear();
 
         // save number of nodes for progress computation
         numberOfNodes = tGraph.getNodes().isEmpty() ? 1 : tGraph.getNodes().size();
 
         // find the root of the component
+        TNode root = null;
         Iterator<TNode> it = tGraph.getNodes().iterator();
         while (root == null && it.hasNext()) {
             TNode tNode = it.next();

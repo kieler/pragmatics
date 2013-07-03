@@ -20,25 +20,27 @@ import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
-import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
+ * TODO implement smart edge routing
+ * 
+ * This calls implements a dull edge routing by setting jsut source and target of a edge.
+ * 
  * @author sor
  * @author sgu
- *
+ * 
  */
 public class EdgeRouter implements ILayoutPhase {
-    
+
     /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
-            new IntermediateProcessingConfiguration();
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration();
 
     /**
      * {@inheritDoc}
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Edge routing", 1);
-        
+        progressMonitor.begin("Dull edge routing", 1);
+
         for (TNode tnode : tGraph.getNodes()) {
             for (TEdge tedge : tnode.getOutgoingEdges()) {
                 tedge.getBendPoints().clear();
@@ -54,10 +56,7 @@ public class EdgeRouter implements ILayoutPhase {
      * {@inheritDoc}
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(TGraph tGraph) {
-        return INTERMEDIATE_PROCESSING_CONFIGURATION ;
+        return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
-    
-    
-    
 
 }

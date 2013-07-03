@@ -16,7 +16,6 @@ package de.cau.cs.kieler.klay.tree.util;
 import java.util.Comparator;
 
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 
 /**

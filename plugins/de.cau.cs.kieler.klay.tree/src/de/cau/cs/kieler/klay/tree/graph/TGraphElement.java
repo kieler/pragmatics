@@ -16,7 +16,8 @@ package de.cau.cs.kieler.klay.tree.graph;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
- * Abstract superclass for the layers, nodes, ports, and edges of a tree graph (and the graph itself).
+ * Abstract superclass for the layers, nodes, ports, and edges of a tree graph (and the graph
+ * itself).
  * 
  * @author sor
  * @author sgu
@@ -41,14 +42,14 @@ public abstract class TGraphElement extends MapPropertyHolder implements Compara
         super();
         this.id = id;
     }
-    
+
     /**
      * Implicit super constructor.
      * 
      */
     public TGraphElement() {
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -89,8 +89,11 @@ public class OrderBalance implements ILayoutPhase {
             tNode.setProperty(Properties.RIGHTSIBLING, null);
             tNode.setProperty(Properties.LEFTSIBLING, null);
         }
-
-        progressMonitor.done();
+        
+     // TODO DEBUG
+//        System.out.println();
+//        System.out.println();
+//        progressMonitor.done();
 
     }
 
@@ -115,7 +118,7 @@ public class OrderBalance implements ILayoutPhase {
 
                 List<TEdge> balanced = new LinkedList<TEdge>();
 
-                boolean innerOdd = true;
+                boolean innerOdd = false;
                 while (!outgoing.isEmpty()) {
                     int gaps = outgoing.get(0).getTarget().getProperty(Properties.FAN);
                     int index;
@@ -150,7 +153,13 @@ public class OrderBalance implements ILayoutPhase {
                 }
 
                 // reset the list of children with the new order
-                // currentNode.getOutgoingEdges().clear();
+                
+                // TODO DEBUG
+//                System.out.print("\n"+currentNode.getLabel()+":");
+//                for (TEdge tEdge : balanced) {
+//                    System.out.print(" "+tEdge.getTarget().getLabel());
+//                }
+                
                 currentNode.getOutgoingEdges().addAll(balanced);
 
                 currentNode = currentNode.getProperty(Properties.RIGHTNEIGHBOR);

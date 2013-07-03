@@ -43,7 +43,6 @@ public abstract class TShape extends TGraphElement {
 
     /**
      * Implicit super constructor.
-     * 
      */
     public TShape() {
     }

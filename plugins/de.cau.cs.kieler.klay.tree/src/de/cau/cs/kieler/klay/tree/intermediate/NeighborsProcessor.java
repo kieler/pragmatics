@@ -62,7 +62,6 @@ public class NeighborsProcessor implements ILayoutProcessor {
         }
 
         // TODO assert root is not null
-
         // start with the root and level down by dsf
         setNeighbors(root.getChildren(), progressMonitor);
 

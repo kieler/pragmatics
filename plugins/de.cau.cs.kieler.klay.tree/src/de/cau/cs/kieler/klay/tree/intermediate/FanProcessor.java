@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.tree.intermediate;
 
-import java.awt.List;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -36,6 +35,7 @@ import de.cau.cs.kieler.klay.tree.util.FillStrings;
  */
 public class FanProcessor implements ILayoutProcessor {
 
+    // this map temporarily contains the fan of each node in the given graph
     Map<String, Integer> gloFanMap = new HashMap<String, Integer>();
 
     /**
@@ -43,10 +43,11 @@ public class FanProcessor implements ILayoutProcessor {
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor compute fanout", 1);
-        TNode root = null;
+        
         // clear map if processor is reused
         gloFanMap.clear();
 
+        TNode root = null;
         // find the root of the component
         Iterator<TNode> it = tGraph.getNodes().iterator();
         while (root == null && it.hasNext()) {
@@ -98,19 +99,14 @@ public class FanProcessor implements ILayoutProcessor {
                     pId = tNode.getProperty(Properties.ID);
                     index = 0;
                 }
-                if (pId != null) {                    
+                if (pId != null) {
                     id = pId + FillStrings.formatRight(String.valueOf(index++), digits);
-                }else{
+                } else {
                     id = FillStrings.formatRight(String.valueOf(index++), digits);
                 }
                 tNode.setProperty(Properties.ID, id);
                 for (TNode tChild : tNode.getChildren()) {
                     nextLevel.add(tChild);
-                    // check if the ID was set already by another relation
-                    if (tChild.getProperty(Properties.ID) != null) {
-                        tChild.setProperty(Properties.MULTI, true);
-                    }
-                    // TODO add implementation for multiple inheritance
                     // the provisional stringId is the Id of the parent
                     tChild.setProperty(Properties.ID, id);
                 }

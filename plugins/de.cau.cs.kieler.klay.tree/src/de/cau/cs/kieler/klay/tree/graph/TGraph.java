@@ -16,8 +16,6 @@ package de.cau.cs.kieler.klay.tree.graph;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.google.common.collect.Iterables;
-
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
