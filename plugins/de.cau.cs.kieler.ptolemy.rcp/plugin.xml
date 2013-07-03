@@ -255,7 +255,7 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.ui.ide.workbench"
-            name="Ptolemy Product">
+            name="KIELER Ptolemy Product">
          <property
                name="windowImages"
                value="icons/PtolemyII256x256.png,icons/PtolemyII256x256.png,icons/PtolemyII256x256.png,icons/PtolemyII256x256.png,icons/PtolemyII256x256.png">
@@ -266,7 +266,7 @@
          </property>
          <property
                name="appName"
-               value="Ptolemy Product">
+               value="KIELER Ptolemy Product">
          </property>
          <property
                name="preferenceCustomization"
