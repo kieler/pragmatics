@@ -46,6 +46,7 @@ import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
 import de.cau.cs.kieler.core.krendering.KRightPosition;
 import de.cau.cs.kieler.core.krendering.KRoundedBendsPolyline;
+import de.cau.cs.kieler.core.krendering.KShadow;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KTopPosition;
 import de.cau.cs.kieler.core.krendering.Trigger;
@@ -189,6 +190,7 @@ public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entit
                 a.setTrigger(Trigger.DOUBLECLICK);
                 a.setId(KlighdConstants.ACTION_COLLAPSE_EXPAND);
                 collapsedRen.getActions().add(a);
+                
             }
 
             KRendering topRen = getKRendering(n);
@@ -220,10 +222,16 @@ public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entit
                 } else {
                     if (collapsedRen != null) {
                         n.getData().add(collapsedRen);
+                        
+                        // and add a shadow
+                        KShadow shadow = KRenderingFactory.eINSTANCE.createKShadow();
+                        KColor color = KRenderingFactory.eINSTANCE.createKColor();
+                        shadow.setColor(color);
+                        ren.getStyles().add(shadow);
                     }
                     n.getData().add(ren);
                 }
-
+                
                 // set the size of the knode according to the rendering
                 if (lay != null) {
                     if (ren.getPlacementData() != null

@@ -8,6 +8,7 @@
             default="true"
             extensions="moml"
             id="de.cau.cs.kieler.ptolemy.rcp.editor"
+            icon="icons/PtolemyII16x16.png"
             name="Ptolemy Viewer">
       </editor>
    </extension>
@@ -284,6 +285,15 @@
                value="7,252,445,20">
          </property>
       </product>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="de.cau.cs.kieler.ptolemy.rcp.perspective">
+         <hiddenMenuItem
+               id="*">
+         </hiddenMenuItem>
+      </perspectiveExtension>
    </extension>
 
 </plugin>
