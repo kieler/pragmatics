@@ -66,12 +66,10 @@ public class PtolemyRCPPlugin extends AbstractUIPlugin implements IStartup {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void earlyStartup() {
         // switch to the ui thread
         Display.getDefault().syncExec(new Runnable() {
 
-            @Override
             public void run() {
                 for (IWorkbenchWindow workbenchWindow : PlatformUI.getWorkbench()
                         .getWorkbenchWindows()) {

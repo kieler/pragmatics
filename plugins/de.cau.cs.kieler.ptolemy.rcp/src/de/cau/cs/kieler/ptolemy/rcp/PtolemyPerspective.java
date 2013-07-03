@@ -25,7 +25,6 @@ public class PtolemyPerspective implements IPerspectiveFactory {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void createInitialLayout(IPageLayout layout) {
     }
 
