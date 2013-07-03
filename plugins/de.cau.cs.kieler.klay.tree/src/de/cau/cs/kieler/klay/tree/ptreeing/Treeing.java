@@ -94,6 +94,7 @@ public class Treeing implements ILayoutPhase {
 
         // start DFS on every node in graph
         for (TNode tNode : tGraph.getNodes() ) {
+            // delete multiple incoming/ outgoing edges except one first
             if (tNode.getInComingEdges().size() > 1) {
                 for (int i = 1; i < tNode.getInComingEdges().size()-1; i++) {
                     eliminated.add(tNode.getInComingEdges().get(i));
