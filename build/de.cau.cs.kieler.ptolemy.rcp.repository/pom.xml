@@ -39,7 +39,7 @@
           <products>
             <product>
               <id>de.cau.cs.kieler.ptolemy.rcp.product</id>
-              <rootFolder>kieler</rootFolder>
+              <rootFolder>prcp</rootFolder>
               <archiveFileName>ptolemy_rcp_${buildQualifier}</archiveFileName>
             </product>
           </products>
