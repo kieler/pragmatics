@@ -24,7 +24,7 @@ import de.cau.cs.kieler.klay.tree.graph.TNode;
 /**
  * TODO implement smart edge routing
  * 
- * This calls implements a dull edge routing by setting jsut source and target of a edge.
+ * This class implements a dull edge routing by setting just source and target of a edge.
  * 
  * @author sor
  * @author sgu

@@ -30,8 +30,8 @@ import de.cau.cs.kieler.klay.tree.util.FindNode;
 import de.cau.cs.kieler.klay.tree.util.SortTEdgeTargetProperty;
 
 /**
- * This phase orders the nodes of each level by seperating the children of nodes into leaves and
- * inner nodes. And then fill whitespace in the levels with corresponding leaves.
+ * This phase orders the nodes of each level by separating the children of nodes into leaves and
+ * inner nodes. It then fill whitespaces in the levels with corresponding leaves.
  * 
  * It starts two levels above the deepest level, because the deepest level contains only nodes and
  * therefore no reordering is necessary. And the level above the deepest level contains only

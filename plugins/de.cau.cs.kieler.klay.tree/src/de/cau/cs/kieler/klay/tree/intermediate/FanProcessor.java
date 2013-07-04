@@ -27,8 +27,8 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
 import de.cau.cs.kieler.klay.tree.util.FillStrings;
 
 /**
- * A processor compute the maximal fan out for each node in the given graph. The maximal fan out of
- * a node is the maximal number of descendants it got in one level.
+ * A processor that computes the maximal fan out for each node in the given graph. The maximal fan out of
+ * a node is the maximal number of descendants it has got in one level.
  * 
  * @author sor
  * @author sgu
