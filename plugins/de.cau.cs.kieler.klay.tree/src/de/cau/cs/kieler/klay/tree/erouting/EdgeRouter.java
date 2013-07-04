@@ -44,10 +44,6 @@ public class EdgeRouter implements ILayoutPhase {
         for (TNode tnode : tGraph.getNodes()) {
             for (TEdge tedge : tnode.getOutgoingEdges()) {
                 tedge.getBendPoints().clear();
-                KVector sourcePoint = tedge.getSource().getPosition();
-                KVector targetpoint = tedge.getTarget().getPosition();
-                tedge.getBendPoints().add(sourcePoint);
-                tedge.getBendPoints().add(targetpoint);
             }
         }
     }

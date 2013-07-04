@@ -73,13 +73,15 @@ public class OrderBalance implements ILayoutPhase {
                 root = tNode;
             }
         }
-        /** order each level */
-
+        
+        /** check if a root is there */
+        if(root!=null){
+        
         /** start two levels above the deepest level at the leftmost node */
         TNode lM = FindNode.getLeftMost(root.getChildren());
 
         /** if there are only the root and one level or less no reordering is necessary */
-        if (lM.getParent() != null && lM.getParent() != root) {
+        if (lM != null && lM.getParent() != root) {
             TNode parent = lM.getParent().getParent();
             TNode leftMost = parent;
             /** go to the leftmost node in this level */
@@ -88,18 +90,20 @@ public class OrderBalance implements ILayoutPhase {
             }
             /** start the order at the leftmost node */
             orderLevel(leftMost);
+            
+            /**
+             * reset the structure properties of each node to null, because the order of the graph has
+             * changed
+             */
+            for (TNode tNode : tGraph.getNodes()) {
+                tNode.setProperty(Properties.RIGHTNEIGHBOR, null);
+                tNode.setProperty(Properties.LEFTNEIGHBOR, null);
+                tNode.setProperty(Properties.RIGHTSIBLING, null);
+                tNode.setProperty(Properties.LEFTSIBLING, null);
+            }
+        }
         }
 
-        /**
-         * reset the structure properties of each node to null, because the order of the graph has
-         * changed
-         */
-        for (TNode tNode : tGraph.getNodes()) {
-            tNode.setProperty(Properties.RIGHTNEIGHBOR, null);
-            tNode.setProperty(Properties.LEFTNEIGHBOR, null);
-            tNode.setProperty(Properties.RIGHTSIBLING, null);
-            tNode.setProperty(Properties.LEFTSIBLING, null);
-        }
     }
 
     /**

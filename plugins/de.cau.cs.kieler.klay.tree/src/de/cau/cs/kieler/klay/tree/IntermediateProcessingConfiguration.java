@@ -37,13 +37,17 @@ public final class IntermediateProcessingConfiguration {
     /** Constant for the processors that should come before phase 1. */
     public static final int BEFORE_PHASE_1 = 0;
     /** Constant for the processors that should come before phase 2. */
+    public static final int AFTER_PHASE_1 = 1;
     public static final int BEFORE_PHASE_2 = 1;
     /** Constant for the processors that should come before phase 3. */
+    public static final int AFTER_PHASE_2 = 2;
     public static final int BEFORE_PHASE_3 = 2;
     /** Constant for the processors that should come before phase 4. */
+    public static final int AFTER_PHASE_3 = 3;
     public static final int BEFORE_PHASE_4 = 3;
     /** How many slots there are for intermediate processing. */
-    public static final int INTERMEDIATE_PHASE_SLOTS = 4;
+    public static final int AFTER_PHASE_4 = 4;
+    public static final int INTERMEDIATE_PHASE_SLOTS = 5;
 
     /** Array of sets describing which processors this strategy is composed of. */
     private List<Set<LayoutProcessorStrategy>> strategy = new ArrayList<Set<LayoutProcessorStrategy>>(

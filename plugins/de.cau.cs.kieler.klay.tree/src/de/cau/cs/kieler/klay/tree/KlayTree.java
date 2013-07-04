@@ -155,6 +155,8 @@ public final class KlayTree {
         algorithm
                 .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
         algorithm.add(edgeRouter);
+        algorithm
+                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.AFTER_PHASE_4));
     }
 
     /**

@@ -37,6 +37,9 @@ public class TEdge extends MapPropertyHolder {
     /** the target node of the edge. */
     private TNode target;
 
+    /**
+     * The inner bend points of the edge, without the source and target point.
+     */
     private KVectorChain bendPoints = new KVectorChain();
 
     /**
@@ -127,6 +130,9 @@ public class TEdge extends MapPropertyHolder {
         return labels;
     }
 
+    /**
+     * @return  The inner bend points of the edge, WITHOUT the source and target point.
+     */
     public KVectorChain getBendPoints() {
         return bendPoints;
     }

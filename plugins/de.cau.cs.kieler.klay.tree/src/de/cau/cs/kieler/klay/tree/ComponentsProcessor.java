@@ -230,20 +230,24 @@ public class ComponentsProcessor {
         }
 
         Map<IProperty<?>, Object> propMerge = new HashMap<IProperty<?>, Object>();
+
         Map<IProperty<?>, Object> debug = new HashMap<IProperty<?>, Object>();
 
         for (TGraph tGraph : components) {
+            boolean debugMode = tGraph.getProperty(LayoutOptions.DEBUG_MODE);
             Map<IProperty<?>, Object> propComp = tGraph.getAllProperties();
             for (Entry<IProperty<?>, Object> entry : propComp.entrySet()) {
                 if (propMerge.containsKey(entry.getKey())) {
                     if (entry.getKey().getDefault() != entry.getValue()) {
-                        if (debug.containsKey(entry.getKey())) {
+                        if (debugMode && debug.containsKey(entry.getKey())) {
                             System.err.println("Found different values for propertie "
                                     + entry.getKey().getId() + " in components.");
                         } else {
                             propMerge.put(entry.getKey(), entry.getValue());
                             result.setProperty(entry.getKey(), entry.getValue());
-                            debug.put(entry.getKey(), entry.getValue());
+                            if (debugMode) {
+                                debug.put(entry.getKey(), entry.getValue());
+                            }
                         }
                     }
                 } else {
@@ -272,16 +276,19 @@ public class ComponentsProcessor {
             final double offsety) {
         KVector graphOffset = new KVector(offsetx, offsety);
         graphOffset.sub(sourceGraph.getProperty(Properties.BB_UPLEFT));
+
         for (TNode node : sourceGraph.getNodes()) {
             node.getPosition().add(graphOffset);
             destGraph.getNodes().add(node);
         }
+
         for (TEdge edge : sourceGraph.getEdges()) {
             for (KVector bendpoint : edge.getBendPoints()) {
                 bendpoint.add(graphOffset);
             }
             destGraph.getEdges().add(edge);
         }
+
         for (TLabel label : sourceGraph.getLabels()) {
             label.getPosition().add(graphOffset);
             destGraph.getLabels().add(label);

@@ -50,7 +50,10 @@ public enum LayoutProcessorStrategy {
 
     // Before Phase 4
     /** Set the coordinates for each node in a given graph */
-    COORDINATE_PROC;
+    COORDINATE_PROC,
+    
+    // After Phase 4
+    DETREEIFYING_PROC;
 
     /**
      * Creates an instance of the layout processor described by this instance.
@@ -78,6 +81,9 @@ public enum LayoutProcessorStrategy {
 
         case COORDINATE_PROC:
             return new CoordianteProcessor();
+            
+        case DETREEIFYING_PROC:
+            return new DeTreeingProcessor();
 
         default:
             throw new IllegalArgumentException(

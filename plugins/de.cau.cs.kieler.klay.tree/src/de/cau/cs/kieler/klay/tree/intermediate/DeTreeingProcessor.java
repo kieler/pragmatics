@@ -32,25 +32,19 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  * @author sgu
  * 
  */
-public class TreeingProcessor implements ILayoutProcessor {
-
-    /**
-     * TODO Document
-     */
-    private List<TEdge> edges = new LinkedList<TEdge>();
+public class DeTreeingProcessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
 
-        edges.clear();
-        edges = tGraph.getProperty(Properties.REMOVABLE_EDGES);
+        List<TEdge>  edges = tGraph.getProperty(Properties.REMOVABLE_EDGES);
 
-        for (TEdge e : edges) {
-            TNode src = e.getSource();
-            TNode target = e.getTarget();
-            tGraph.addEdge(src, target);
+        for (TEdge tEdge : edges) {
+            tEdge.getSource().getOutgoingEdges().add(tEdge);
+            tEdge.getTarget().getInComingEdges().add(tEdge);
         }
+
     }
 }
