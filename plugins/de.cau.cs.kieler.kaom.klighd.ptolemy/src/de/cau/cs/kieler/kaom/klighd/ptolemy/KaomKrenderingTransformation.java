@@ -213,7 +213,7 @@ public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entit
                     lay.setProperty(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.klay.layered");
                     lay.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
                     lay.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT,
-                            NodeLabelPlacement.outsideTopCenter());
+                            NodeLabelPlacement.outsideTopLeft());
                     // if (e.getChildEntities() == null || e.getChildEntities().isEmpty()) {
                     lay.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
 
