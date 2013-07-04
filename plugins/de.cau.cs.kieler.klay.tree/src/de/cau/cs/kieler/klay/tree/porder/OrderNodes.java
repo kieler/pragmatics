@@ -32,8 +32,8 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
 import de.cau.cs.kieler.klay.tree.util.SortTNodeProperty;
 
 /**
- * This phase orders the nodes of each level by seperating the nodes into leaves and inner nodes.
- * And then fill whitespace in the levels with corresponding leaves.
+ * This phase orders the nodes of each level by separating the nodes into leaves and inner nodes.
+ * It then fills whitespaces in the levels with corresponding leaves.
  * 
  * @author sor
  * @author sgu

@@ -23,7 +23,7 @@ import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
- * A processor which set the final coordinates for each node in a given graph. The property XCOOR
+ * A processor which sets the final coordinates for each node in a given graph. The property XCOOR
  * has to be set before this processor is called.
  * 
  * @author sor

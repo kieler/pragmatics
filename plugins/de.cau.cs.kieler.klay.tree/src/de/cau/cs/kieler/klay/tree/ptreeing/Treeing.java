@@ -28,9 +28,16 @@ import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
+ * This phase should create a tree, if a graph is hardly a tree.
+ * 
+ * It should for example look for cycles in a tree and remove that cycles. This cycle breaking is done 
+ * through eliminating the edge that destroys the tree property and putting that edge into a list.
+ * So this phase builds up a list with removed edges, so that the KLay Tree algorithm can operate on the
+ * newly constructed graph which is now a tree. The previously removed edges could be reinserted during
+ * a post-processing.
+ * 
  * @author sor
  * @author sgu
- * 
  */
 public class Treeing implements ILayoutPhase {
 

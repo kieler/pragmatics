@@ -24,7 +24,9 @@ import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
- * TODO Document this class
+ * This processor should run as a post-processor after the first phase. It should run through 
+ * the list of edges that once destroyed the tree property and simply insert that edges directly after
+ * layouting the graph.
  * 
  * @author sor
  * @author sgu

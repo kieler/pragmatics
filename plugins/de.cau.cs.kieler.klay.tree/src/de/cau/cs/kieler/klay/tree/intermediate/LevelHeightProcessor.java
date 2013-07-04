@@ -24,7 +24,7 @@ import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
- * A processor which determine the height for each level by setting it to the height of the tallest
+ * A processor which determines the height for each level by setting it to the height of the tallest
  * node of the level.
  * 
  * @author sor
