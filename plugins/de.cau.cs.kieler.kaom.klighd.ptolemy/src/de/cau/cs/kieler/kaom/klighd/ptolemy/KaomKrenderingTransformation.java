@@ -16,14 +16,19 @@ package de.cau.cs.kieler.kaom.klighd.ptolemy;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.graphics.RGB;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
+import de.cau.cs.kieler.core.annotations.TypedStringAnnotation;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -178,6 +183,19 @@ public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entit
                 labelLayout.setProperty(LayoutOptions.FONT_NAME, KlighdConstants.DEFAULT_FONT_NAME);
                 labelLayout.setProperty(LayoutOptions.FONT_SIZE, KlighdConstants.DEFAULT_FONT_SIZE);
                 labelLayout.setProperty(KlighdConstants.KLIGHD_SELECTION_UNPICKABLE, true);
+
+                // tooltip
+                List<String> annotationStrings = Lists.newLinkedList();
+                for (Annotation a : e.getAnnotations()) {
+                    if (a instanceof TypedStringAnnotation) {
+                        TypedStringAnnotation tsa = (TypedStringAnnotation) a;
+                        if (!tsa.getName().startsWith("_")) {
+                            annotationStrings.add(tsa.getName() + ": " + tsa.getValue());
+                        }
+                    }
+                }
+                KShapeLayout tooltipLayout = getKLayout(n);
+                tooltipLayout.setProperty(LayoutOptions.TOOLTIP, Joiner.on("\n").join(annotationStrings));
 
             }
 
