@@ -57,8 +57,8 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
         BICONNECTED,
         /** a triconnected graph. */
         TRICONNECTED,
-        /** an acyclic graph without transitiv edges. */
-        ACYCLIC_NO_TRANSITIV_EDGES
+        /** an acyclic graph without transitive edges. */
+        ACYCLIC_NO_TRANSITIVE_EDGES
     }
 
     /** the possible ways to determine edges. */
@@ -342,7 +342,7 @@ public class RandomGraphGenerator implements IRandomGraphGenerator {
             break;
         }
         
-        case ACYCLIC_NO_TRANSITIV_EDGES: {
+        case ACYCLIC_NO_TRANSITIVE_EDGES: {
             int n = options.getProperty(NUMBER_OF_NODES);
             int m = options.getProperty(NUMBER_OF_EDGES);
             boolean planar = options.getProperty(PLANAR);

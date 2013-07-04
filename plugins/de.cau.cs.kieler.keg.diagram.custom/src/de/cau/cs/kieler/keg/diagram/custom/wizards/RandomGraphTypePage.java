@@ -94,7 +94,7 @@ public class RandomGraphTypePage extends WizardPage {
                 composite,
                 Messages.RandomGraphTypePage_ante_graph_type_caption,
                 Messages.RandomGraphTypePage_ante_graph_type_help,
-                RandomGraphGenerator.GraphType.ACYCLIC_NO_TRANSITIV_EDGES,
+                RandomGraphGenerator.GraphType.ACYCLIC_NO_TRANSITIVE_EDGES,
                 graphType);
         addRadioButton(
                 composite,

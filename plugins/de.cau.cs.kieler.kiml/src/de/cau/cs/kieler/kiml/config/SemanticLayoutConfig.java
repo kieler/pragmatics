@@ -27,7 +27,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2013-07-01 review KI-38 by cds, uru
  */
 public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
     
@@ -149,6 +149,7 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
                     } else {
                         optionData = layoutDataService.getOptionData(property.getId());
                     }
+                    
                     if (optionData != null) {
                         Object value = getSemanticValue(element, optionData);
                         graphData.setProperty(property, value);
@@ -174,6 +175,7 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
                     } else {
                         optionData = layoutDataService.getOptionData(property.getId());
                     }
+                    
                     if (optionData != null) {
                         setSemanticValue(element, optionData, null);
                     }

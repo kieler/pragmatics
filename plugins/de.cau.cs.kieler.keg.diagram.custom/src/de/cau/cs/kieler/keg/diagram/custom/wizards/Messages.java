@@ -75,9 +75,13 @@ public class Messages extends NLS {
     public static String RandomGraphBiconnectedPage_title;
     public static String RandomGraphNewFilePage_create_diagrams_caption;
     public static String RandomGraphNewFilePage_create_diagrams_help;
+    public static String RandomGraphNewFilePage_time_seed_caption;
+    public static String RandomGraphNewFilePage_time_seed_help;
     public static String RandomGraphNewFilePage_description;
     public static String RandomGraphNewFilePage_number_of_graphs_caption;
     public static String RandomGraphNewFilePage_number_of_graphs_help;
+    public static String RandomGraphNewFilePage_random_seed_caption;
+    public static String RandomGraphNewFilePage_random_seed_help;
     public static String RandomGraphNewFilePage_open_diagrams_caption;
     public static String RandomGraphNewFilePage_open_diagrams_help;
     public static String RandomGraphNewFilePage_options_group_caption;

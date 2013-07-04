@@ -25,10 +25,13 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 
 /**
  * A layout configurator that can be used to generate on-the-fly layout options.
+ * Use {@link #setValue(IProperty, Object, IProperty, Object)} to set a layout option value for a
+ * particular context. All values configured this way are held in a hash map that is queried when
+ * the configurator is applied to the layout graph.
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating 2011-01-13 proposed yellow msp
+ * @kieler.rating yellow 2013-07-01 review KI-38 by cds, uru
  */
 public class VolatileLayoutConfig implements ILayoutConfig {
     
@@ -86,9 +89,12 @@ public class VolatileLayoutConfig implements ILayoutConfig {
      */
     public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
         for (IProperty<?> contextKey : contextKeys) {
+            // retrieve the object stored under this key from the context
             Object object = context.getProperty(contextKey);
+            // retrieve the map of options that have been set for that object
             Map<IProperty<?>, Object> contextOptions = optionMap.get(object);
             if (contextOptions != null) {
+                // get the value set for the given layout option, if any
                 Object value = contextOptions.get(optionData);
                 if (value != null) {
                     return value;

@@ -147,7 +147,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                 return biconnectedPage;
             case TRICONNECTED:
                 return triconnectedPage;
-            case ACYCLIC_NO_TRANSITIV_EDGES:
+            case ACYCLIC_NO_TRANSITIVE_EDGES:
                 return antePage;
             case ANY:
             default:
@@ -249,10 +249,16 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         IPropertyHolder options = getOptions();
         final Maybe<Boolean> createDiagram = new Maybe<Boolean>();
         final Maybe<Boolean> openDiagram = new Maybe<Boolean>();
+        final Maybe<Random> random = new Maybe<Random>();
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 createDiagram.set(newFilePage.getCreateDiagramFiles());
                 openDiagram.set(newFilePage.getOpenDiagramFiles());
+                if (newFilePage.getTimeBasedSeed()) {
+                    random.set(new Random());
+                } else {
+                    random.set(new Random(newFilePage.getRandomSeedValue()));
+                }
             }
         });
         // do the generation
@@ -267,7 +273,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                 // generate and serialize the graph
                 try {
                     generateAndSerialize(file.get(), createDiagram.get(), openDiagram.get(),
-                            options, monitor.subTask(1));
+                            options, random.get(), monitor.subTask(1));
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
                 }
@@ -287,19 +293,29 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
                 String nameWithoutExt = 
                     name.get().substring(0, name.get().lastIndexOf(".")); //$NON-NLS-1$
                 // generate the desired number of graphs
-                for (int i = 0; i < numberOfGraphs; ++i) {
+                int graphNumber = 1;
+                int decimalPlaces = (int) Math.log10(numberOfGraphs) + 1;
+                for (int i = 0; i < numberOfGraphs; i++) {
                     if (monitor.isCanceled()) {
                         throw new InterruptedException();
                     }
-                    // contruct the file path
-                    IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-                    IPath path = containerPath.get().append(
-                                    new Path(nameWithoutExt + i + "." + ext.get())); //$NON-NLS-1$
-                    IFile file = workspaceRoot.getFile(path);
+                    
+                    // construct the file path
+                    IFile file;
+                    do {
+                        int p = (int) Math.log10(graphNumber) + 1;
+                        String fileName = nameWithoutExt + generateZeros(decimalPlaces - p)
+                                + graphNumber + "." + ext.get();
+                        IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+                        IPath path = containerPath.get().append(new Path(fileName));
+                        file = workspaceRoot.getFile(path);
+                        graphNumber++;
+                    } while (file.exists());
+                    
                     // generate and serialize the graph
                     try {
                         generateAndSerialize(file, createDiagram.get(), openDiagram.get(), options,
-                                monitor.subTask(1));
+                                random.get(), monitor.subTask(1));
                     } catch (Throwable throwable) {
                         throwable.printStackTrace();
                     }
@@ -309,14 +325,40 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
             monitor.done();
         }
     }
+    
+    /**
+     * Generate a string with n zeros.
+     * 
+     * @param n the number of zeros
+     * @return a string with n zeros
+     */
+    private static String generateZeros(final int n) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            result.append('0');
+        }
+        return result.toString();
+    }
 
+    /**
+     * Generate a random graph and serialize it to the given file.
+     * 
+     * @param file target file for serialization
+     * @param createDiagram whether to create a diagram file
+     * @param openDiagram whether to open the diagram file
+     * @param options the generation options map
+     * @param random the random number generator
+     * @param monitor the progress monitor
+     * @throws IOException if the file cannot be written
+     * @throws CoreException if the file cannot be refreshed
+     */
     private void generateAndSerialize(final IFile file, final boolean createDiagram,
-            final boolean openDiagram, final IPropertyHolder options,
+            final boolean openDiagram, final IPropertyHolder options, final Random random,
             final IKielerProgressMonitor monitor) throws IOException, CoreException {
         monitor.begin(Messages.RandomGraphWizard_generate_and_serialize_task + file.getName(), 1);
         try {
             // generate
-            IRandomGraphGenerator generator = new RandomGraphGenerator(new Random());
+            IRandomGraphGenerator generator = new RandomGraphGenerator(random);
             Node graph = generator.generate(options);
             // serialize
             ResourceSet resourceSet = new ResourceSetImpl();
@@ -478,7 +520,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
             options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES,
                     triconnectedPage.getNumberOfNodes());
             break;
-        case ACYCLIC_NO_TRANSITIV_EDGES:
+        case ACYCLIC_NO_TRANSITIVE_EDGES:
             options.setProperty(RandomGraphGenerator.NUMBER_OF_NODES,
                     antePage.getNumberOfNodes());
             options.setProperty(RandomGraphGenerator.NUMBER_OF_EDGES,
@@ -526,7 +568,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
         case TRICONNECTED:
             triconnectedPage.savePreferences();
             break;
-        case ACYCLIC_NO_TRANSITIV_EDGES:
+        case ACYCLIC_NO_TRANSITIVE_EDGES:
             antePage.savePreferences();
             break;
         }

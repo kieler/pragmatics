@@ -33,11 +33,12 @@ import de.cau.cs.kieler.kiml.config.SemanticLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
- * A semantic layout configurations for annotations.
+ * A semantic layout configurator for annotations. This enables to specify layout option values in
+ * the annotations of KAOM elements. 
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2013-07-01 review KI-38 by cds, uru
  */
 public class AnnotationsLayoutConfig extends SemanticLayoutConfig {
     
@@ -58,6 +59,7 @@ public class AnnotationsLayoutConfig extends SemanticLayoutConfig {
     @Override
     protected IProperty<?>[] getAffectedOptions(final EObject semanticElem) {
         if (semanticElem instanceof Annotatable) {
+            // run though all annotations and check whether their name matches some layout option id
             LayoutDataService dataService = LayoutDataService.getInstance();
             List<LayoutOptionData<?>> data = new LinkedList<LayoutOptionData<?>>();
             for (Annotation annotation : ((Annotatable) semanticElem).getAnnotations()) {
@@ -72,7 +74,9 @@ public class AnnotationsLayoutConfig extends SemanticLayoutConfig {
     }
 
     /**
-     * Return an annotation that matches the given identifier, if present.
+     * Return an annotation that matches the given identifier, if present. If an annotation is
+     * found that matches only the last segment (separated by '.') of the identifier, and no
+     * perfect match is present, the partially matching annotation is returned.
      * 
      * @param annotatable an annotatable object
      * @param optionId a layout option identifier
@@ -102,6 +106,10 @@ public class AnnotationsLayoutConfig extends SemanticLayoutConfig {
             String value = ((StringAnnotation) annotation).getValue();
             if (optionData.equals(LayoutOptions.ALGORITHM)) {
                 LayoutDataService dataService = LayoutDataService.getInstance();
+                // The string value of the "algorithm" layout option can either refer to a layout
+                // algorithm identifier or a layout type identifier. It is sufficient for the
+                // annotation to contain only a suffix of the identifier. This code checks whether
+                // there is a layout algorithm or type that matches the annotation value.
                 ILayoutData layoutData = dataService.getAlgorithmDataBySuffix(value);
                 if (layoutData != null) {
                     return layoutData.getId();
@@ -158,14 +166,23 @@ public class AnnotationsLayoutConfig extends SemanticLayoutConfig {
         } else if (annotation instanceof IntAnnotation) {
             if (optionData.getType() == LayoutOptionData.Type.INT && value instanceof Integer) {
                 ((IntAnnotation) annotation).setValue((Integer) value);
+            } else {
+                throw new IllegalStateException("The integer annotation " + annotation.getName()
+                        + " does not fit to the corresponding layout option.");
             }
         } else if (annotation instanceof FloatAnnotation) {
             if (optionData.getType() == LayoutOptionData.Type.FLOAT && value instanceof Float) {
                 ((FloatAnnotation) annotation).setValue((Float) value);
+            } else {
+                throw new IllegalStateException("The float annotation " + annotation.getName()
+                        + " does not fit to the corresponding layout option.");
             }
         } else if (annotation instanceof BooleanAnnotation) {
             if (optionData.getType() == LayoutOptionData.Type.BOOLEAN && value instanceof Boolean) {
                 ((BooleanAnnotation) annotation).setValue((Boolean) value);
+            } else {
+                throw new IllegalStateException("The boolean annotation " + annotation.getName()
+                        + " does not fit to the corresponding layout option.");
             }
         }
     }
