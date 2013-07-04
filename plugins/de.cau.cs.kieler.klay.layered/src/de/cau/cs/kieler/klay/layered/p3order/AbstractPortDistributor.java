@@ -218,7 +218,7 @@ abstract class AbstractPortDistributor {
                             continue;
                         }
                         
-                        // TODO Find out if it's an input port, an output port, or both
+                        // Find out if it's an input port, an output port, or both
                         boolean input = false;
                         boolean output = false;
                         for (LPort portDummyPort : portDummy.getPorts()) {
