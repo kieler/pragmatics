@@ -35,8 +35,11 @@ import de.cau.cs.kieler.klay.tree.util.FillStrings;
  */
 public class FanProcessor implements ILayoutProcessor {
 
-    /** this map temporarily contains the fan of each node in the given graph */
+    /** this map temporarily contains the maximal fan of each node in the given graph */
     Map<String, Integer> gloFanMap = new HashMap<String, Integer>();
+
+    /** this map temporarily contains the number of descendants of each node in the given graph */
+    Map<String, Integer> gloDescMap = new HashMap<String, Integer>();
 
     /**
      * {@inheritDoc}
@@ -46,6 +49,7 @@ public class FanProcessor implements ILayoutProcessor {
 
         /** clear map if processor is reused */
         gloFanMap.clear();
+        gloDescMap.clear();
 
         TNode root = null;
         /** find the root of the component */
@@ -62,12 +66,15 @@ public class FanProcessor implements ILayoutProcessor {
 
         calculateFan(rootLevel);
 
-        /** set the fan for all nodes */
+        /** set the fan and descendants for all nodes */
         for (TNode tNode : tGraph.getNodes()) {
             String key = tNode.getProperty(Properties.ID);
-            int count = gloFanMap.get(key) != null ? gloFanMap.get(key) : 0;
-            tNode.setProperty(Properties.FAN, count);
+            int fan = gloFanMap.get(key) != null ? gloFanMap.get(key) : 0;
+            tNode.setProperty(Properties.FAN, fan);
+            int desc = 1 + (gloDescMap.get(key) != null ? gloDescMap.get(key) : 0);
+            tNode.setProperty(Properties.DESCENDANTS, desc);
         }
+
         progressMonitor.done();
     }
 
@@ -88,7 +95,7 @@ public class FanProcessor implements ILayoutProcessor {
             String pId = null;
 
             /** the size of the which the stringId will be extended for this level */
-            int digits = (int) (Math.floor(Math.log10(currentLevel.size() - 1)) + 1);
+            int digits = (int) (Math.floor(Math.log10(currentLevel.size())) + 1);
 
             /**
              * set final stringId for all nodes in this level and set the provisional stringId for
@@ -120,7 +127,7 @@ public class FanProcessor implements ILayoutProcessor {
             /** calculated occurences of descendants in this level */
             for (int i = 0; i < id.length() - digits; i++) {
                 for (TNode tNode : currentLevel) {
-                    String key = tNode.getProperty(Properties.ID).substring(0, i);
+                    String key = tNode.getProperty(Properties.ID).substring(0, i + 1);
                     int blockSize = locFanMap.get(key) != null ? locFanMap.get(key) + 1 : 1;
                     locFanMap.put(key, blockSize);
                 }
@@ -128,8 +135,11 @@ public class FanProcessor implements ILayoutProcessor {
 
             /** update the gloFanMap with the values from locFanMap will only increase the values */
             for (Entry<String, Integer> locEntry : locFanMap.entrySet()) {
-                Integer gloValue = gloFanMap.get(locEntry.getKey());
-                if ((gloValue == null) || (gloValue < locEntry.getValue())) {
+                Integer gloValue = gloDescMap.get(locEntry.getKey()) != null ? gloDescMap
+                        .get(locEntry.getKey()) : 0;
+                gloDescMap.put(locEntry.getKey(), locEntry.getValue() + gloValue);
+                gloValue = gloFanMap.get(locEntry.getKey());
+                if (gloValue == null || gloValue < locEntry.getValue()) {
                     gloFanMap.put(locEntry.getKey(), locEntry.getValue());
                 }
             }

@@ -36,8 +36,7 @@ import de.cau.cs.kieler.klay.tree.util.FindNode;
  * 
  * Second is the concept of using two fields for the positioning of each node. These two fields are:
  * 
- * • a preliminary x-coordinate 
- * • a modifier field.
+ * • a preliminary x-coordinate • a modifier field.
  * 
  * Two tree traversals are used to produce the final x-coordinate of a node. The first traversal
  * assigns the preliminary x-coordinate and modifier fields for each node; the second traversal
@@ -209,23 +208,23 @@ public class NodePlacer implements ILayoutPhase {
 
             if (0 < moveDistance) {
                 /** Count interior sibling subtrees in LeftSiblings */
-                TNode tempPtr = cN;
+                TNode leftSibling = cN;
                 int leftSiblings = 0;
-                while (tempPtr != null && tempPtr != ancestorNeighbor) {
+                while (leftSibling != null && leftSibling != ancestorNeighbor) {
                     leftSiblings++;
-                    tempPtr = tempPtr.getProperty(Properties.LEFTSIBLING);
+                    leftSibling = leftSibling.getProperty(Properties.LEFTSIBLING);
                 }
                 /** Apply portions to appropriate leftsibling subtrees. */
-                if (tempPtr != null) {
+                if (leftSibling != null) {
                     double portion = moveDistance / (double) leftSiblings;
-                    tempPtr = cN;
-                    while (tempPtr != ancestorNeighbor) {
-                        tempPtr.setProperty(Properties.PRELIM,
-                                tempPtr.getProperty(Properties.PRELIM) + moveDistance);
-                        tempPtr.setProperty(Properties.MODIFIER,
-                                tempPtr.getProperty(Properties.MODIFIER) + moveDistance);
+                    leftSibling = cN;
+                    while (leftSibling != ancestorNeighbor) {
+                        double newPr = leftSibling.getProperty(Properties.PRELIM) + moveDistance;
+                        leftSibling.setProperty(Properties.PRELIM, newPr);
+                        double newMod = leftSibling.getProperty(Properties.MODIFIER) + moveDistance;
+                        leftSibling.setProperty(Properties.MODIFIER, newMod);
                         moveDistance -= portion;
-                        tempPtr = tempPtr.getProperty(Properties.LEFTSIBLING);
+                        leftSibling = leftSibling.getProperty(Properties.LEFTSIBLING);
                     }
                 } else {
                     /**

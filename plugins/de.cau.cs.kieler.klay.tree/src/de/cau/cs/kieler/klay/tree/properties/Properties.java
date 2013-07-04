@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.tree.properties;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -44,12 +43,12 @@ public final class Properties {
 
     /** The maximal fan out of a node in the nesting tree of a compound graph. */
     public static final IProperty<Integer> FAN = new Property<Integer>("FAN", 0);
+    
+    /** The number of descendants of the node. */
+    public static final IProperty<Integer> DESCENDANTS = new Property<Integer>("DESCENDANTS", 0);
 
     /** This is a root. */
     public static final IProperty<Boolean> ROOT = new Property<Boolean>("ROOT", false);
-
-    /** This node has multiple inheritance. */
-    public static final IProperty<Boolean> MULTI = new Property<Boolean>("MULTI", false);
 
     /** the lefthand node at the same level. */
     public static final IProperty<TNode> LEFTNEIGHBOR = new Property<TNode>("LEFTNEIGHBOR", null);

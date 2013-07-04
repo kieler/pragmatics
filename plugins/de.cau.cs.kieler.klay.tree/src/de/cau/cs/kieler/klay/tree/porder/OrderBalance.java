@@ -155,7 +155,7 @@ public class OrderBalance implements ILayoutPhase {
                     boolean leavesOdd = false;
                     while (0 < gaps && 0 < indexEnd) {
                         indexEnd--;
-                        if (outgoing.get(indexEnd).getTarget().getProperty(Properties.FAN) == 0) {
+                        if (outgoing.get(indexEnd).getTarget().isLeaf()) {
                             gaps--;
                             if (leavesOdd) {
                                 balanced.add(outgoing.get(indexEnd));
