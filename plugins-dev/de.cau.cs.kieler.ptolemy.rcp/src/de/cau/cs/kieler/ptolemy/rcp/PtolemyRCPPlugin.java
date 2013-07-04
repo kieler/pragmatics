@@ -6,6 +6,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ActionSetContributionItem;
+import org.eclipse.ui.internal.PluginActionContributionItem;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -24,9 +26,11 @@ public class PtolemyRCPPlugin extends AbstractUIPlugin implements IStartup {
     // The shared instance
     private static PtolemyRCPPlugin plugin;
 
+    private static final String OPEN_FILE = "org.eclipse.ui.openLocalFile";
+
     /** a list with all accepted menu contributions. */
-    final ImmutableSet<String> acceptedMenuContribs = ImmutableSet
-            .of("org.eclipse.ui.openLocalFile");
+    final ImmutableSet<String> acceptedMenuContribs = ImmutableSet.of(OPEN_FILE, "quit",
+            "reopenEditors", "mru", "null", "quit", "fileEnd", "org.eclipse.ui.file.exit");
 
     /**
      * The constructor
@@ -78,7 +82,8 @@ public class PtolemyRCPPlugin extends AbstractUIPlugin implements IStartup {
                     ww.setCoolBarVisible(false);
                     ww.setPerspectiveBarVisible(false);
 
-                    // hide ALL menus that we do not accpet
+                    // hide ALL menus that we do not accept
+                    // keep in mind, that the plugin.xml also hides elements!
                     MenuManager mm = ww.getMenuManager();
                     for (IContributionItem item : mm.getItems()) {
                         if (item instanceof MenuManager) {
@@ -86,6 +91,7 @@ public class PtolemyRCPPlugin extends AbstractUIPlugin implements IStartup {
                             for (IContributionItem innerItem : ((MenuManager) item).getItems()) {
                                 if (acceptedMenuContribs.contains(innerItem.getId())) {
                                     allInvisible = false;
+                                    specialTreatment(innerItem);
                                 } else {
                                     innerItem.setVisible(false);
                                 }
@@ -104,6 +110,17 @@ public class PtolemyRCPPlugin extends AbstractUIPlugin implements IStartup {
                 }
             }
         });
+    }
+
+    private void specialTreatment(final IContributionItem item) {
+
+        if (item.getId().equals(OPEN_FILE)) {
+            // rename
+            ActionSetContributionItem cItem = (ActionSetContributionItem) item;
+            PluginActionContributionItem paItem =
+                    (PluginActionContributionItem) cItem.getInnerItem();
+            paItem.getAction().setText("Open...");
+        }
     }
 
 }

@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.swt.graphics.RGB;
 
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
@@ -79,9 +80,14 @@ public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entit
     /**
      * id of this transformation.
      */
-    public static final String ID = "de.cau.cs.kieler.kaom.klighd.ptolemy.KaomKrenderingTransformation";
+    public static final String ID =
+            "de.cau.cs.kieler.kaom.klighd.ptolemy.KaomKrenderingTransformation";
 
     private HashMap<EObject, KGraphElement> map = new HashMap<EObject, KGraphElement>();
+
+    private static final RGB COMPOSITE_BACKGROUND_COLOR = new RGB(16, 78, 139);
+    private static final int COMPOSITE_BACKGROUND_ALPHA = 10;
+    private static final float EDGE_LINE_WIDTH = 2;
 
     /**
      * {@inheritDoc}
@@ -190,7 +196,7 @@ public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entit
                 a.setTrigger(Trigger.DOUBLECLICK);
                 a.setId(KlighdConstants.ACTION_COLLAPSE_EXPAND);
                 collapsedRen.getActions().add(a);
-                
+
             }
 
             KRendering topRen = getKRendering(n);
@@ -207,7 +213,7 @@ public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entit
                     lay.setProperty(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.klay.layered");
                     lay.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
                     lay.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT,
-                            NodeLabelPlacement.outsideBottomCenter());
+                            NodeLabelPlacement.outsideTopCenter());
                     // if (e.getChildEntities() == null || e.getChildEntities().isEmpty()) {
                     lay.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
 
@@ -222,16 +228,27 @@ public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entit
                 } else {
                     if (collapsedRen != null) {
                         n.getData().add(collapsedRen);
-                        
-                        // and add a shadow
+
+                        // add a shadow
                         KShadow shadow = KRenderingFactory.eINSTANCE.createKShadow();
                         KColor color = KRenderingFactory.eINSTANCE.createKColor();
                         shadow.setColor(color);
                         ren.getStyles().add(shadow);
+
+                        // add a cummulating background
+                        KBackground bg = KRenderingFactory.eINSTANCE.createKBackground();
+                        KColor bgColor = KRenderingFactory.eINSTANCE.createKColor();
+                        bgColor.setRed(COMPOSITE_BACKGROUND_COLOR.red);
+                        bgColor.setGreen(COMPOSITE_BACKGROUND_COLOR.green);
+                        bgColor.setBlue(COMPOSITE_BACKGROUND_COLOR.blue);
+                        bg.setAlpha(COMPOSITE_BACKGROUND_ALPHA);
+                        bg.setColor(bgColor);
+                        ren.getStyles().add(bg);
+
                     }
                     n.getData().add(ren);
                 }
-                
+
                 // set the size of the knode according to the rendering
                 if (lay != null) {
                     if (ren.getPlacementData() != null
@@ -336,7 +353,7 @@ public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entit
                             "ptolemy.domains.modal.kernel.State")) {
                 edgeRendering = factory.createKSpline();
                 KLineWidth linewidth = factory.createKLineWidth();
-                linewidth.setLineWidth(1.6f);
+                linewidth.setLineWidth(EDGE_LINE_WIDTH);
                 edgeRendering.getStyles().add(linewidth);
                 this.addArrowToEdge(edgeRendering);
 
@@ -344,6 +361,9 @@ public class KaomKrenderingTransformation extends AbstractDiagramSynthesis<Entit
             } else {
                 edgeRendering = factory.createKRoundedBendsPolyline();
                 ((KRoundedBendsPolyline) edgeRendering).setBendRadius(5);
+                KLineWidth linewidth = factory.createKLineWidth();
+                linewidth.setLineWidth(EDGE_LINE_WIDTH);
+                edgeRendering.getStyles().add(linewidth);
             }
 
             EList<KGraphData> data = edge.getData();

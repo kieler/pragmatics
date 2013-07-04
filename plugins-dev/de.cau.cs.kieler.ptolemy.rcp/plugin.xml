@@ -47,10 +47,6 @@
             activityId="de.cau.cs.kieler.ptolemy.rcp.activity"
             pattern="org\.eclipse\.ui\.file\.close.*">
       </activityPatternBinding>
-            <activityPatternBinding
-            activityId="de.cau.cs.kieler.ptolemy.rcp.activity"
-            pattern="org\.eclipse\.ui\.file\..*">
-      </activityPatternBinding>
       <activityPatternBinding
             activityId="de.cau.cs.kieler.ptolemy.rcp.activity"
             pattern="org\.eclipse\.ui\.file\.export">

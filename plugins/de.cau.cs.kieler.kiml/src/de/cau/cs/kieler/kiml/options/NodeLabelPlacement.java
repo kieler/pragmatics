@@ -131,4 +131,13 @@ public enum NodeLabelPlacement {
     public static EnumSet<NodeLabelPlacement> outsideBottomCenter() {
         return EnumSet.of(OUTSIDE, V_BOTTOM, H_CENTER);
     }
+    
+    /**
+     * Returns a node label placement to place the node label outside the node, centered on top..
+     * 
+     * @return node lable placement for outside top center placement.
+     */
+    public static EnumSet<NodeLabelPlacement> outsideTopCenter() {
+        return EnumSet.of(OUTSIDE, V_TOP, H_CENTER);
+    }
 }
