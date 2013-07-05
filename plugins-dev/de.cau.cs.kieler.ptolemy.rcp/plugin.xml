@@ -269,16 +269,8 @@
                value="de.cau.cs.kieler.ptolemy.rcp.perspective">
          </property>
          <property
-               name="startupForegroundColor"
-               value="000000">
-         </property>
-          <property
-                name="startupMessageRect"
-                value="7,252,445,20">
-          </property>
-         <property
                name="startupProgressRect"
-               value="5,275,445,15">
+               value="19,301,207,15">
          </property>
          <property
                name="cssTheme"
@@ -287,6 +279,14 @@
           <property
                name="applicationCSSResources"
                value="platform:/plugin/org.eclipse.platform/images/">
+          </property>
+          <property
+                name="startupForegroundColor"
+                value="000000">
+          </property>
+          <property
+                name="startupMessageRect"
+                value="7,252,0,0">
           </property>
       </product>
    </extension>
