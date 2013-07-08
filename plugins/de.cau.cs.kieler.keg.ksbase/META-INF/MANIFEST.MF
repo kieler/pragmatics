@@ -10,8 +10,7 @@ Require-Bundle: org.eclipse.gmf.runtime.diagram.ui;bundle-version="1.4.0",
  de.cau.cs.kieler.keg,
  de.cau.cs.kieler.ksbase,
  de.cau.cs.kieler.ksbase.ui,
- de.cau.cs.kieler.core.ui,
- de.cau.cs.kieler.core.model.gmf
+ de.cau.cs.kieler.core.ui
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-Activator: de.cau.cs.kieler.keg.ksbase.KEGKsbasePlugin
 Bundle-ActivationPolicy: lazy

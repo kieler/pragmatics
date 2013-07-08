@@ -30,11 +30,11 @@ import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
-import de.cau.cs.kieler.core.model.gmf.figures.RoundedRectangleFigure;
 import de.cau.cs.kieler.karma.AdvancedRenderingBorderedShapeEditPart;
 import de.cau.cs.kieler.karma.SwitchableFigure;
 import de.cau.cs.kieler.keg.custom.KEGNode;
 import de.cau.cs.kieler.keg.custom.NodeLayout;
+import de.cau.cs.kieler.keg.custom.RoundedRectangleFigure;
 import de.cau.cs.kieler.keg.diagram.edit.policies.Node2CanonicalEditPolicy;
 import de.cau.cs.kieler.keg.diagram.edit.policies.Node2ItemSemanticEditPolicy;
 import de.cau.cs.kieler.keg.diagram.part.GraphsVisualIDRegistry;

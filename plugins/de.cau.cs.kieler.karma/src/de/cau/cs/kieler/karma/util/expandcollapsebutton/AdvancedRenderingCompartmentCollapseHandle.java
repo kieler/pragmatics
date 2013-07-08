@@ -37,7 +37,7 @@ import org.eclipse.gmf.runtime.notation.DrawerStyle;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
+import de.cau.cs.kieler.karma.IAdvancedRenderingEditPart;
 
 /**
  * This class is basically the same as the standard gmf CompartmentCollapseHandle. In addition it
