@@ -51,8 +51,6 @@
     <module>de.cau.cs.kieler.keg.diagram</module>
     <module>de.cau.cs.kieler.keg.diagram.custom</module>
     <module>de.cau.cs.kieler.keg.edit</module>
-    <module>de.cau.cs.kieler.keg.importer</module>
-    <module>de.cau.cs.kieler.keg.ksbase</module>
     <module>de.cau.cs.kieler.kex</module>
     <module>de.cau.cs.kieler.kex.ui</module>
     <module>de.cau.cs.kieler.kiml</module>
