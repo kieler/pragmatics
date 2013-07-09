@@ -19,9 +19,9 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.xtend.XtendFacade;
 import org.eclipse.xtend.expression.Variable;
 
-import de.cau.cs.kieler.core.model.effects.TransformationEffect;
-import de.cau.cs.kieler.core.model.m2m.ITransformationContext;
-import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
+import de.cau.cs.kieler.ksbase.m2m.ITransformationContext;
+import de.cau.cs.kieler.ksbase.m2m.TransformationDescriptor;
+import de.cau.cs.kieler.ksbase.ui.effects.TransformationEffect;
 
 /**
  * Xtend implementation of an {@link TransformationEffect}.

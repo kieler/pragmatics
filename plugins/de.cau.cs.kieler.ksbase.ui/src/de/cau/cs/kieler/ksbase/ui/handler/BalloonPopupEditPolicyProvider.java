@@ -25,7 +25,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.diagram.ui.internal.editparts.NoteAttachmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvider;
 
-import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
+import de.cau.cs.kieler.ksbase.ui.legacy.IBalloonContribution;
 import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
 
 /**
