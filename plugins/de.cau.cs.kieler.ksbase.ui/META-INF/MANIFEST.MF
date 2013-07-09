@@ -4,40 +4,31 @@ Bundle-Name: KIELER Structure Based Editing UI Infrastructure (GMF)
 Bundle-SymbolicName: de.cau.cs.kieler.ksbase.ui;singleton:=true
 Bundle-Version: 0.7.1.qualifier
 Bundle-Activator: de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin
-Require-Bundle: org.eclipse.ui.ide;bundle-version="3.5.0",
- org.eclipse.emf.mwe.core;bundle-version="1.0.0",
- org.eclipse.gmf.runtime.diagram.ui;bundle-version="1.2.0",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.8.0",
+ org.eclipse.core.resources;bundle-version="3.8.1",
  org.eclipse.core.expressions;bundle-version="3.4.0",
- org.eclipse.gmf.runtime.diagram.ui.resources.editor;bundle-version="1.4.1",
+ org.eclipse.jface;bundle-version="3.8.102",
+ org.eclipse.ui.ide;bundle-version="3.5.0",
+ org.eclipse.ui.workbench;bundle-version="3.104.0",
+ org.eclipse.emf.ecore.xmi;bundle-version="2.8.1",
+ org.eclipse.emf.mwe.core;bundle-version="1.0.0",
  org.eclipse.emf.mwe.utils;bundle-version="1.2.0",
+ org.eclipse.emf.transaction;bundle-version="1.4.0",
+ org.eclipse.emf.workspace;bundle-version="1.5.1",
  org.eclipse.xtend.util.stdlib;bundle-version="1.2.0",
- de.cau.cs.kieler.ksbase,
+ com.google.guava;bundle-version="10.0.1",
+ de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.ui,
  de.cau.cs.kieler.core.kivi,
- de.cau.cs.kieler.core,
- de.cau.cs.kieler.kiml.kivi
+ de.cau.cs.kieler.kiml.kivi,
+ de.cau.cs.kieler.ksbase
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: de.cau.cs.kieler.ksbase.ui;uses:="org.eclipse.ui.plugin,org.osgi.framework",
- de.cau.cs.kieler.ksbase.ui.handler;
-  uses:="org.eclipse.core.runtime,
-   org.eclipse.gmf.runtime.emf.commands.core.command,
-   org.eclipse.ui,
-   org.eclipse.gef.editpolicies,
-   org.eclipse.core.commands,
-   org.eclipse.gmf.runtime.common.core.service,
-   org.eclipse.gmf.runtime.common.core.command,
-   org.eclipse.osgi.util,
-   de.cau.cs.kieler.ksbase.core,
-   org.eclipse.gmf.runtime.diagram.ui.editpolicies,
-   org.eclipse.gef.commands,
-   org.eclipse.gmf.runtime.diagram.ui.services.editpolicy,
-   org.eclipse.jface.viewers,
-   org.eclipse.emf.transaction,
-   org.eclipse.gef",
+ de.cau.cs.kieler.ksbase.ui.effects,
  de.cau.cs.kieler.ksbase.ui.kivi,
  de.cau.cs.kieler.ksbase.ui.listener,
+ de.cau.cs.kieler.ksbase.ui.m2m,
  de.cau.cs.kieler.ksbase.ui.menus,
- de.cau.cs.kieler.ksbase.ui.test;uses:="org.eclipse.core.expressions",
  de.cau.cs.kieler.ksbase.ui.utils
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
