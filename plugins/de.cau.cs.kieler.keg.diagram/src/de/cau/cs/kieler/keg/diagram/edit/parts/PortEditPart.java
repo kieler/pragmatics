@@ -35,8 +35,8 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
 
-import de.cau.cs.kieler.core.model.gmf.figures.layout.LabelLocator;
 import de.cau.cs.kieler.keg.custom.KEGPort;
+import de.cau.cs.kieler.keg.custom.LabelLocator;
 import de.cau.cs.kieler.keg.diagram.edit.policies.PortItemSemanticEditPolicy;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;
 import de.cau.cs.kieler.keg.diagram.part.GraphsVisualIDRegistry;

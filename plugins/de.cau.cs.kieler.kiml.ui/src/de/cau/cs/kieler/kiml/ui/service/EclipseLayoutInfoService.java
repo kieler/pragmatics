@@ -180,16 +180,38 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
                 break;
             }
         }
+        
         if (manager != null) {
             if (adapterType == null) {
-                // use the layout manager's diagram part type as adapter type
+                // Use the layout manager's diagram part type as adapter type
                 Class[] adapterList = manager.getAdapterList();
-                if (adapterList != null && adapterList.length > 0) {
+                if (adapterList != null && adapterList.length > 0 && adapterList[0] != null) {
                     return manager.getAdapter(adaptableObject, adapterList[0]);
                 }
             } else {
                 // use the adapter type given as parameter
                 return manager.getAdapter(adaptableObject, adapterType);
+            }
+        } else {
+            
+            // Try to find a layout manager that is able to adapt to the given object even
+            // if it doesn't officially support it
+            for (Pair<Integer, IDiagramLayoutManager<?>> entry : managers) {
+                manager = entry.getSecond();
+                Object adapter = null;
+                if (adapterType == null) {
+                    // Use the layout manager's diagram part type as adapter type
+                    Class[] adapterList = manager.getAdapterList();
+                    if (adapterList != null && adapterList.length > 0 && adapterList[0] != null) {
+                        adapter = manager.getAdapter(adaptableObject, adapterList[0]);
+                    }
+                } else {
+                    // use the adapter type given as parameter
+                    adapter = manager.getAdapter(adaptableObject, adapterType);
+                }
+                if (adapter != null) {
+                    return adapter;
+                }
             }
         }
         return null;

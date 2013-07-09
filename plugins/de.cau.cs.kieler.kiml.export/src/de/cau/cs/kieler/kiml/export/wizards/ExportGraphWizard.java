@@ -36,6 +36,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.export.ExportPlugin;
 import de.cau.cs.kieler.kiml.export.handlers.GraphFileHandler;
+import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 
 /**
  * A wizard for exporting graphs from workspace.
@@ -112,7 +113,7 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
      */
     private boolean exportSelectedGraphs() {
         // get the target format selected from the user
-        final String targetFormat = workspaceSourcesPage.getTargetFormat();
+        final GraphFormatData targetFormat = workspaceSourcesPage.getTargetFormat();
         final IPath targetDirectory = workspaceSourcesPage.getTargetWorkspaceDirectory();
         final Maybe<Boolean> result = new Maybe<Boolean>(true);
         try {

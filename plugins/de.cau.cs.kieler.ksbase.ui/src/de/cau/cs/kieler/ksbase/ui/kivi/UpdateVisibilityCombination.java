@@ -16,7 +16,7 @@ package de.cau.cs.kieler.ksbase.ui.kivi;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.EObjectSelectionState;
+import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
 
 /**
  * 
@@ -31,7 +31,7 @@ public class UpdateVisibilityCombination extends AbstractCombination {
     /**
      * {@inheritDoc}
      */
-    public void execute(final EObjectSelectionState selection) {
+    public void execute(final SelectionState selection) {
         if (selection.getWorkbenchPart() instanceof IEditorPart) {
             UpdateVisibilityEffect effect = new UpdateVisibilityEffect(
                     (IEditorPart) selection.getWorkbenchPart());

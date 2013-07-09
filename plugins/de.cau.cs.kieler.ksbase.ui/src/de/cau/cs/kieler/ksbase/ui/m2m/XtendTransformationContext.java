@@ -21,8 +21,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.xtend.XtendFacade;
 import org.eclipse.xtend.expression.Variable;
 
-import de.cau.cs.kieler.core.model.m2m.ITransformationContext;
-import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
+import de.cau.cs.kieler.ksbase.m2m.ITransformationContext;
+import de.cau.cs.kieler.ksbase.m2m.TransformationDescriptor;
 
 /**
  * {@link ITransformationContext} for the execution of Xtend transformations.

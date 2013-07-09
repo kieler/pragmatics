@@ -18,8 +18,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
-import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
+import de.cau.cs.kieler.karma.IAdvancedRenderingEditPart;
+import de.cau.cs.kieler.karma.util.GmfFrameworkBridge;
 
 /**
  * This effect requests a reevaluation of the rendering associated with a given model element.
@@ -41,7 +41,7 @@ public class ReevaluateRenderingEffect extends AbstractEffect {
      */
     public ReevaluateRenderingEffect(final EObject modelElement) {
         this.modelElement = modelElement;
-        EditPart p = new GmfFrameworkBridge().getEditPart(modelElement);
+        EditPart p = GmfFrameworkBridge.getEditPart(modelElement);
         if (p instanceof IAdvancedRenderingEditPart) {
             this.part = (IAdvancedRenderingEditPart) p;
         }

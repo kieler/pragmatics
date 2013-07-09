@@ -42,9 +42,7 @@ Require-Bundle: org.eclipse.core.runtime,
  de.cau.cs.kieler.core.kgraph;visibility:=reexport,
  de.cau.cs.kieler.core.kgraph.edit;visibility:=reexport,
  de.cau.cs.kieler.core.ui;visibility:=reexport,
- de.cau.cs.kieler.karma;visibility:=reexport,
- de.cau.cs.kieler.core.model.gmf,
- de.cau.cs.kieler.core.model
+ de.cau.cs.kieler.karma;visibility:=reexport
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true

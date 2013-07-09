@@ -273,13 +273,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.core.model"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.core.ui"
          download-size="0"
          install-size="0"
@@ -316,20 +309,6 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.keg.edit"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.keg.importer"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.keg.ksbase"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -399,28 +378,7 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.ksbase"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.ksbase.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.graphdrawing.graphml"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.model.gmf"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -470,13 +428,6 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.kiml.formats.gml"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.kivi"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -23,8 +23,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
-import de.cau.cs.kieler.core.model.gmf.figures.SplineConnection;
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartDelegate;
 
 /**
@@ -66,10 +65,7 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
         super.handleNotificationEvent(notification);
         IFigure figure = super.getFigure();
         util.handleNotificationEvent(notification, figure, this.getModelElement(), this);
-        if (figure instanceof SplineConnection) {
-            //((SplineConnection) figure).drawJoinPointDecoration(this);
-        	((SplineConnection) figure).setPart(this);
-        }
+        handleSplineConnection(figure);
         
     }
     
@@ -96,10 +92,7 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
         if (updateTriggerFigure) {
             updateTriggerFigure = false;
             util.updateFigure(figure, this.getModelElement(), this, true);
-            if (figure instanceof SplineConnection) {
-                //((SplineConnection) figure).drawJoinPointDecoration(this);
-            	((SplineConnection) figure).setPart(this);
-            }
+            handleSplineConnection(figure);
 
         }
         return figure;
@@ -110,6 +103,33 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
      */
     public IFigure getPrimaryShape() {
         return super.getFigure();
+    }
+
+    /** class name of the KIELER SplineConnection. */
+    private static final String SPLINE_CONNECTION
+            = "de.cau.cs.kieler.core.model.gmf.figures.SplineConnection";
+
+    /**
+     * Handle the KIELER SplineConnection class without a direct reference to it. Reflection is used
+     * to avoid a dependency to its containing plugin.
+     * 
+     * @param edgeFigure the edge figure instance
+     */
+    private void handleSplineConnection(final IFigure edgeFigure) {
+        boolean isSC;
+        Class<?> clazz = edgeFigure.getClass();
+        do {
+            isSC = clazz.getCanonicalName().equals(SPLINE_CONNECTION);
+            clazz = clazz.getSuperclass();
+        } while (!isSC && clazz != null);
+        if (isSC) {
+            clazz = edgeFigure.getClass();
+            try {
+                clazz.getMethod("setPart", ConnectionNodeEditPart.class).invoke(edgeFigure, this);
+            } catch (Exception exception) {
+                throw new WrappedException(exception);
+            }
+        }
     }
     
 }

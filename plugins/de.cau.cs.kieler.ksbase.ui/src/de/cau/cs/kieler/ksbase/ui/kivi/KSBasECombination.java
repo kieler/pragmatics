@@ -43,14 +43,17 @@ import org.eclipse.ui.PlatformUI;
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
-import de.cau.cs.kieler.core.model.m2m.ITransformationListener;
-import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
-import de.cau.cs.kieler.core.model.m2m.TransformationObserver;
-import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.EObjectSelectionState;
+import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
+import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.kiml.kivi.LayoutEffect;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
+import de.cau.cs.kieler.ksbase.m2m.ITransformationListener;
+import de.cau.cs.kieler.ksbase.m2m.TransformationDescriptor;
+import de.cau.cs.kieler.ksbase.m2m.TransformationObserver;
+import de.cau.cs.kieler.ksbase.ui.legacy.GraphicalFrameworkService;
+import de.cau.cs.kieler.ksbase.ui.legacy.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.ksbase.ui.m2m.XtendTransformationContext;
 import de.cau.cs.kieler.ksbase.ui.m2m.XtendTransformationEffect;
 
@@ -96,7 +99,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
     /**
      * {@inheritDoc}
      */
-    public void execute(final ButtonState button, final EObjectSelectionState selection) {
+    public void execute(final ButtonState button, final SelectionState selection) { //final EObjectSelectionState selection) {
         // don't perform transformation if only selection changed.
         if (button.getSequenceNumber() > selection.getSequenceNumber()) {
             KSBasETransformation transformation = transformations.get(button.getButtonId());
@@ -109,7 +112,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
     /**
      * {@inheritDoc}
      */
-    public void executeTransformation(final KSBasETransformation transformation, final IEditorPart editor, final EObjectSelectionState selection) {
+    public void executeTransformation(final KSBasETransformation transformation, final IEditorPart editor, final SelectionState selection) {
         // don't perform transformation if only selection changed.
             if (transformation != null) {
                 List<EObject> selectionList = new ArrayList<EObject>();
@@ -163,10 +166,50 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                 } else { // editor is no Diagram Editor
                          // do xtend2 stuff
                     if (transformation.getTransformationClass() != null) {
-                        evokeXtend2(transformation, selection.getSelectedObjects(), null);
+                        
+                        // TODO call the bitch
+                        
+                        evokeXtend2(transformation, getEObjectSelection(selection), null);
                     }
                 }
             }
+    }
+    
+    
+    private List<EObject> getEObjectSelection(SelectionState selection) {
+        
+        IGraphicalFrameworkBridge bridge = null;
+        try {
+            bridge = GraphicalFrameworkService.getInstance().getBridge(selection.getWorkbenchPart());
+        } catch (UnsupportedPartException exception) {
+            // nothing
+        }
+        if (bridge != null) {
+            List<EObject> list = null;
+            list = new ArrayList<EObject>();
+            for (Object o : selection.getSelection()) {
+                EObject element = bridge.getElement(o);
+                if (element != null) {
+                    list.add(element);
+                }
+            }
+            return list;
+        } else {
+            // case 2: Selection still consists of EObjects, e.g. in EMF Tree Editor
+            // Question: is this also true for Xtext?
+            List<EObject> eObjectList = new ArrayList<EObject>(selection.getSelection().size());
+            try {
+                for (Object o : selection.getSelection()) {
+                    eObjectList.add((EObject) o);
+                }
+                return eObjectList;
+            } catch (ClassCastException e) {
+                // case 3: Selection consists of plain Java objects
+                e.printStackTrace();
+                return null;
+            }
+        }
+        
     }
 
     /**

@@ -29,7 +29,6 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPar
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IResizableCompartmentEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.core.model.gmf.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartDelegate;
 import de.cau.cs.kieler.karma.util.expandcollapsebutton.AdvancedRenderingResizableCompartmentEditPolicy;
 

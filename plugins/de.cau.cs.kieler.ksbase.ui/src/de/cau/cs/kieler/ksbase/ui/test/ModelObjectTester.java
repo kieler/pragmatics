@@ -20,13 +20,13 @@ import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.core.model.gmf.util.GmfModelingUtil;
-import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
+import de.cau.cs.kieler.ksbase.core.TransformException;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.m2m.AbstractTransformation;
 import de.cau.cs.kieler.ksbase.m2m.ITransformationFramework;
+import de.cau.cs.kieler.ksbase.ui.legacy.GmfModelingUtil;
 
 /**
  * A property tester which checks if a selected diagram object matches a given

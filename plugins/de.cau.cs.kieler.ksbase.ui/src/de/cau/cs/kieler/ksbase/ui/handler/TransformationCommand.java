@@ -31,7 +31,7 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.core.model.m2m.TransformException;
+import de.cau.cs.kieler.ksbase.core.TransformException;
 import de.cau.cs.kieler.ksbase.m2m.ITransformationFramework;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 

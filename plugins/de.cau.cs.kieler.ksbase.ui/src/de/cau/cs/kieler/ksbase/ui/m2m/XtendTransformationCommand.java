@@ -20,7 +20,7 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.xtend.XtendFacade;
 
-import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
+import de.cau.cs.kieler.ksbase.m2m.TransformationDescriptor;
 
 /**
  * A command executing an xtend transformation. To support undo functionality it's important that

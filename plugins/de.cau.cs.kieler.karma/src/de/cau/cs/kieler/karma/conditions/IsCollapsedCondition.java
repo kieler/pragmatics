@@ -27,8 +27,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import de.cau.cs.kieler.core.model.gmf.GmfFrameworkBridge;
 import de.cau.cs.kieler.karma.KarmaPlugin;
+import de.cau.cs.kieler.karma.util.GmfFrameworkBridge;
 
 /**
  * Condition for evaluating whether a model element is in a collapsed state in the opened diagram. 
@@ -45,8 +45,7 @@ public class IsCollapsedCondition extends IEditPartSensitiveCondition<EObject> {
     public boolean evaluate(final EObject object) {
         EditPart objectEditPart = this.getEditPart();
         if (objectEditPart == null) {
-            GmfFrameworkBridge gmfBridge = new GmfFrameworkBridge();
-            objectEditPart = gmfBridge.getEditPart(object);
+            objectEditPart = GmfFrameworkBridge.getEditPart(object);
             if (objectEditPart == null) {
                 IEditorPart editorPart = this.getActiveEditor();
                 if ((editorPart != null) && (editorPart instanceof DiagramDocumentEditor)) {
