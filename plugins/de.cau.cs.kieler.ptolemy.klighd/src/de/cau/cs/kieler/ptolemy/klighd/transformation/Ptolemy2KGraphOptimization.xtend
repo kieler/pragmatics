@@ -23,6 +23,7 @@ import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.kiml.util.KimlUtil
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+import de.cau.cs.kieler.core.annotations.Annotation
 
 /**
  * Optimizes a KGraph model freshly transformed from a Ptolemy2 model. This is part two of the Ptolemy
@@ -36,7 +37,7 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConst
  * @author haf
  * @kieler.rating yellow 2012-06-14 KI-12 cmot, grh
  */
-class Ptolemy2KaomOptimization {
+class Ptolemy2KGraphOptimization {
     
     /**
      * Extensions used during the transformation. To make things easier. And stuff.
@@ -461,6 +462,10 @@ class Ptolemy2KaomOptimization {
             return
         }
         
+        // Remember annotations to be removed later to avoid concurrent modification exceptions
+        // (although I don't quite understand why they occur in the first place)
+        val List<Annotation> annotationsToBeRemoved = newArrayList()
+        
         // Look at the node's annotations
         val annotationsIterator = root.annotations.listIterator
         while (annotationsIterator.hasNext()) {
@@ -484,13 +489,18 @@ class Ptolemy2KaomOptimization {
                     
                     // Annotate the new node with the original annotation and remove that from its
                     // former node
-                    annotationsIterator.remove()
+                    annotationsToBeRemoved.add(annotation)
                     directorNode.annotations.add(tsAnnotation)
                     
                     // Add the new node to the root element
                     root.children.add(directorNode)
                 }
             }
+        }
+        
+        // Remove annotations
+        for (annotation : annotationsToBeRemoved) {
+            root.annotations.remove(annotation)
         }
         
         // Recurse into child nodes

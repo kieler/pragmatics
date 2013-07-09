@@ -66,7 +66,7 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConst
  * @author haf
  * @kieler.rating yellow 2012-06-15 KI-12 cmot, grh
  */
-class Ptolemy2KaomTransformation {
+class Ptolemy2KGraphTransformation {
     
     /**
      * Extensions used during the transformation. To make things easier. And stuff.

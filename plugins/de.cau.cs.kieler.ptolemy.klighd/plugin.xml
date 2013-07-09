@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.cau.cs.kieler.ptolemy.klighd.PtolemyEditPart"
+            default="true"
+            extensions="moml"
+            icon="icons/PtolemyII16x16.png"
+            id="de.cau.cs.kieler.ptolemy.klighd.editor"
+            name="Ptolemy Model Viewer">
+      </editor>
+   </extension>
+
+</plugin>

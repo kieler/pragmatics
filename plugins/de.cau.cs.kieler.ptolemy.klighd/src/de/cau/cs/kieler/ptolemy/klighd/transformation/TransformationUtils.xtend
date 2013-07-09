@@ -140,13 +140,7 @@ class TransformationUtils {
      * @return the annotation or {@code null} if there is none with the given key.
      */
     def Annotation getAnnotation(KGraphElement element, String key) {
-        for (annotation : getAnnotations(element)) {
-            if (annotation.name.equals(key)) {
-                return annotation;
-            }
-        }
-        
-        return null;
+        return getAnnotations(element).findFirst([a | a.name.equals(key)])
     }
     
     /**
@@ -184,13 +178,10 @@ class TransformationUtils {
      * @param key the annotation's key.
      */
     def void removeAnnotation(KGraphElement element, String key) {
-        val annotations = getAnnotations(element);
-        
-        for (annotation : annotations) {
-            if (annotation.name.equals(key)) {
-                annotations.remove(annotation);
-                return;
-            }
+        val annotations = getAnnotations(element)
+        val annotation = getAnnotation(element, key)
+        if (annotation != null) {
+            annotations.remove(annotation);
         }
     }
 
