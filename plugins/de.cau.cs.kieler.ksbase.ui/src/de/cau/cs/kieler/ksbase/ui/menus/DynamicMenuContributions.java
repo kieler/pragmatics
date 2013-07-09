@@ -218,68 +218,12 @@ public final class DynamicMenuContributions {
          */
         private List<EObject> getCurrentSelection(final IEvaluationContext context) {
 
+            // get a fitting handler and the selection
             activeHandler = KSBasEUIPlugin.getDefault().getFittingKSBasEHandler(context);
             if (activeHandler != null) {
                 return activeHandler.getSelection(context);
             }
             
-            // FIXME reactivate!
-            // if (defaultVar instanceof List) {
-            // if (!((List<?>) defaultVar).isEmpty()) {
-            // Object realvar = ((List<?>) defaultVar).get(0);
-            // IDiagramEditDomain domain = null;
-            // if (realvar instanceof DiagramEditPart) {
-            // DiagramEditPart diagramPart = (DiagramEditPart) realvar;
-            // domain = diagramPart.getDiagramEditDomain();
-            // } else if (realvar instanceof EditPart) {
-            // EditPart part = (EditPart) realvar;
-            // EditDomain editDomain = part.getRoot().getViewer().getEditDomain();
-            // if (editDomain instanceof IDiagramEditDomain) {
-            // domain = (IDiagramEditDomain) editDomain;
-            // }
-            // }
-            //
-            // if (domain != null && domain instanceof DiagramEditDomain) {
-            // IEditorPart editor = ((DiagramEditDomain) domain).getEditorPart();
-            // final DiagramDocumentEditor diagramEditor = (DiagramDocumentEditor) editor;
-            // this.transDomain = diagramEditor.getEditingDomain();
-            // @SuppressWarnings("unchecked")
-            // List<EditPart> selectedParts = diagramEditor.getDiagramGraphicalViewer()
-            // .getSelectedEditParts();
-            // EditPart root = diagramEditor.getDiagramGraphicalViewer().getRootEditPart();
-            // IGraphicalEditPart groot = (IGraphicalEditPart) root.getChildren().get(0);
-            // EObject rootObject = groot.getNotationView().getElement();
-            //
-            // // get the current selection
-            // List<EObject> selectionList = new ArrayList<EObject>();
-            // for (EditPart part : selectedParts) {
-            // if (part instanceof IGraphicalEditPart) {
-            // IGraphicalEditPart gpart = (IGraphicalEditPart) part;
-            // selectionList.add(gpart.getNotationView().getElement());
-            // }
-            // }
-            // // if the selection is empty assume the root object as selected
-            // if (selectionList.isEmpty()) {
-            // selectionList.add(rootObject);
-            // }
-            // return selectionList;
-            // } else {
-            // // no Diagram EditDomain found -> still try to look for EObjects directly,
-            // // maybe
-            // // we have some structural EMF Editor like the tree editor (haf)
-            // List<EObject> eObjects = new ArrayList<EObject>(
-            // ((List<?>) defaultVar).size());
-            // try {
-            // for (Object o : (List<?>) defaultVar) {
-            // eObjects.add((EObject) o);
-            // }
-            // return eObjects;
-            // } catch (ClassCastException e) {
-            // // ignore exception
-            // }
-            // }
-            // }
-            // }
             return null;
         }
 

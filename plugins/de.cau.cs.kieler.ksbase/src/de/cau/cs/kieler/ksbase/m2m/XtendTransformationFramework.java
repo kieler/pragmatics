@@ -94,8 +94,7 @@ public class XtendTransformationFramework implements ITransformationFramework {
         List<EObject> slist = null;
         if (parametersToMap == null) {
             // FIXME
-            // extension point handler? global eclipse selection?
-            // slist = GmfModelingUtil.getModelElementsFromSelection();
+            throw new RuntimeException("If you meet this error, this isn't dead code as expected!");
         } else {
             slist = new LinkedList<EObject>();
             slist.addAll(parametersToMap);
@@ -227,8 +226,8 @@ public class XtendTransformationFramework implements ITransformationFramework {
         String withFileExt = fileName;
 
         if (withFileExt.contains("." + XtendFile.FILE_EXTENSION)) {
-            withFileExt = withFileExt.substring(0,
-                    withFileExt.indexOf("." + XtendFile.FILE_EXTENSION));
+            withFileExt =
+                    withFileExt.substring(0, withFileExt.indexOf("." + XtendFile.FILE_EXTENSION));
         }
         xtendFacade = XtendFacade.create(withFileExt);
         // Register all meta models
@@ -305,8 +304,8 @@ public class XtendTransformationFramework implements ITransformationFramework {
                 Reader reader = new InputStreamReader(fileName.openStream());
                 Object o = parser.parse(reader, "features.ext"); //$NON-NLS-1$
                 if (o != null) {
-                    LinkedList<AbstractTransformation> transformations
-                            = new LinkedList<AbstractTransformation>();
+                    LinkedList<AbstractTransformation> transformations =
+                            new LinkedList<AbstractTransformation>();
                     XtendFile xtFile = (XtendFile) o;
                     for (Extension ext : xtFile.getExtensions()) {
                         // Only read in-place methods

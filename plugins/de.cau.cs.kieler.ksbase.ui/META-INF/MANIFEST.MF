@@ -30,6 +30,5 @@ Export-Package: de.cau.cs.kieler.ksbase.ui;uses:="org.eclipse.ui.plugin,org.osgi
  de.cau.cs.kieler.ksbase.ui.listener,
  de.cau.cs.kieler.ksbase.ui.m2m,
  de.cau.cs.kieler.ksbase.ui.menus,
- de.cau.cs.kieler.ksbase.ui.test;uses:="org.eclipse.core.expressions",
  de.cau.cs.kieler.ksbase.ui.utils
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel

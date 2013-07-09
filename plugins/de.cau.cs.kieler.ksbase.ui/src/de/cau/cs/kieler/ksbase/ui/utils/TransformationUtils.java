@@ -57,7 +57,7 @@ public class TransformationUtils implements ITransformationEventListener {
     /**
      * Remember the last selection performed after a transformation to avoid selecting it again.
      */
-    private EObject lastSelection;
+//    private EObject lastSelection;
 
     /**
      * Pre-transformation code, empty right now.
