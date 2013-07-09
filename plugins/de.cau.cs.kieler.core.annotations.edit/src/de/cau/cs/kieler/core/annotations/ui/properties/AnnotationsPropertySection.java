@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.core.annotations.ui.properties;
 
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
@@ -39,9 +40,6 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.ui.properties.AddAnnotationAction.AddHow;
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
-import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 
 /**
  * Property section for annotatable objects.
@@ -207,27 +205,20 @@ public class AnnotationsPropertySection extends AbstractPropertySection {
         if (getSelection() instanceof IStructuredSelection) {
             IStructuredSelection selection = (IStructuredSelection) getSelection();
             Object object = selection.getFirstElement();
-            try {
-                IGraphicalFrameworkBridge frameworkBridge = GraphicalFrameworkService.getInstance()
-                        .getBridge(object);
-                if (!(object instanceof Annotatable)) {
-                    object = frameworkBridge.getElement(object);
-                }
-                if (annotatable == object) {
-                    viewer.refresh();
+            if (!(object instanceof Annotatable)) {
+                object = extractModel(object);
+            }
+            if (annotatable == object) {
+                viewer.refresh();
+            } else {
+                if (object instanceof Annotatable) {
+                    annotatable = (Annotatable) object;
+                    editingDomain = extractEditingDomain(selection.getFirstElement());
                 } else {
-                    if (object instanceof Annotatable) {
-                        annotatable = (Annotatable) object;
-                        editingDomain = frameworkBridge.getEditingDomain(selection
-                                .getFirstElement());
-                    } else {
-                        annotatable = null;
-                        editingDomain = null;
-                    }
-                    viewer.setInput(object);
+                    annotatable = null;
+                    editingDomain = null;
                 }
-            } catch (UnsupportedPartException e) {
-                /* haf: nothing. Cannot refresh if there is no diagram available. */
+                viewer.setInput(object);
             }
         }
     }
@@ -269,6 +260,35 @@ public class AnnotationsPropertySection extends AbstractPropertySection {
         if (selection.length > 0 && selection[0].getData() instanceof Annotation) {
             return (Annotation) selection[0].getData();
         } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Extract the domain model element using reflection.
+     * 
+     * @param object an edit part or similar
+     * @return the domain model element, or null
+     */
+    private static EObject extractModel(final Object object) {
+        try {
+            Object model = object.getClass().getMethod("getModel").invoke(object);
+            return (EObject) model.getClass().getMethod("getElement").invoke(model);
+        } catch (Exception exception) {
+            return null;
+        }
+    }
+    
+    /**
+     * Extract the editing domain using reflection.
+     * 
+     * @param object an edit part or similar
+     * @return the domain model element, or null
+     */
+    private static EditingDomain extractEditingDomain(final Object object) {
+        try {
+            return (EditingDomain) object.getClass().getMethod("getEditingDomain").invoke(object);
+        } catch (Exception exception) {
             return null;
         }
     }
