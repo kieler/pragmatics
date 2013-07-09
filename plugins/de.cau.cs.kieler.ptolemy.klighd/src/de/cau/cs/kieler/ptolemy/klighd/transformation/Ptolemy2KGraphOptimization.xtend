@@ -1,0 +1,501 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2012 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+package de.cau.cs.kieler.ptolemy.klighd.transformation
+
+
+import com.google.inject.Inject
+import java.util.List
+
+import de.cau.cs.kieler.core.annotations.TypedStringAnnotation
+import de.cau.cs.kieler.core.kgraph.KNode
+import de.cau.cs.kieler.core.kgraph.KPort
+import de.cau.cs.kieler.core.kgraph.KEdge
+import de.cau.cs.kieler.kiml.util.KimlUtil
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+
+/**
+ * Optimizes a KGraph model freshly transformed from a Ptolemy2 model. This is part two of the Ptolemy
+ * model import process.
+ * 
+ * <p>In this part, edge directions are computed, relations that only connect two ports are replaced
+ * by a single edge, special annotations are replaced by nodes (the Ptolemy director, ...), and
+ * edges that connect states are changed.</p>
+ * 
+ * @author cds
+ * @author haf
+ * @kieler.rating yellow 2012-06-14 KI-12 cmot, grh
+ */
+class Ptolemy2KaomOptimization {
+    
+    /**
+     * Extensions used during the transformation. To make things easier. And stuff.
+     */
+    @Inject extension TransformationUtils
+    
+    
+    /**
+     * Optimizes the given KGraph model.
+     * 
+     * <p>The order in which we do that is partly important. We can remove a relation if it has only
+     * one incoming and one outgoing edge. In order to determine this, we need to have inferred the
+     * edge directions. When we remove ports from states or convert annotations to nodes is less
+     * important.</p>
+     * 
+     * @param kGraph the model to optimize.
+     */
+    def void optimize(KNode kGraph) {
+        // Infer edge directions
+        inferEdgeDirections(kGraph)
+        
+        // Remove ports from nodes that represent states
+        makeStatesPortless(kGraph)
+        
+        // Remove unnecessary relations
+        removeUnnecessaryRelations(kGraph)
+        
+        // Convert special annotations into nodes
+        convertAnnotationsToNodes(kGraph)
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Inference of Edge Directions
+    
+    /**
+     * Infers the direction of the edges in the model tree rooted at the given node.
+     * 
+     * <p>First, a list of all ports of known and unknown type, all edge of unknown direction, and all
+     * relations are collected. In that process, the direction of edges connected to ports of known type
+     * is inferred.</p>
+     * 
+     * <p>Second, an attempt is made to infer the type of ports of yet unknown type. This succeeds if
+     * the port is connected to an edge whose direction is known. The direction of all edges connected
+     * to such a port is inferred in that process.</p>
+     * 
+     * <p>Third, all relations are traversed, looking for a relation with only incoming or only outgoing
+     * edges and just one edge of unknown direction. If such a relation is found, the direction of that
+     * one edge is inferred. If no such relation is found, an undirected edge's direction is randomly
+     * fixed.</p>
+     * 
+     * <p>Repeat at step two.</p>
+     * 
+     * <p>By this time, either all edge directions have been inferred or there are some edges left whose
+     * direction cannot be determined with the information available. These edges are left untouched,
+     * since we might as well leave them in the direction they currently have.</p>
+     * 
+     * @param kGraph root of the graph.
+     */
+    def private void inferEdgeDirections(KNode kGraph) {
+        val List<KPort> knownPorts = newArrayList()
+        val List<KPort> unknownPorts = newArrayList()
+        val List<KEdge> unknownEdges = newArrayList()
+        val List<KNode> unknownRelations = newArrayList()
+        
+        // STEP 1: Fill the lists
+        gatherModelElements(kGraph, knownPorts, unknownPorts, unknownEdges, unknownRelations)
+        
+        // For each known port, set the direction of its incident edges
+        for (knownPort : knownPorts) {
+            propagatePortTypeToIncidentEdges(knownPort, unknownEdges)
+        }
+        
+        // STEPS 2 AND 3: Infer port types and traverse relations
+        var portTypesChanged = false
+        var relationsChanged = false
+        var randomEdgeFixed = false
+        
+        /* This loop runs until no port types have changed, no relations have changed, and no random
+         * edge has been fixed. It always terminates since the one factor that determines if one of
+         * these changes is if there are any undirected edges remaining in the model. The way the loop
+         * works is that with each iteration, at least one edge's direction is fixed. Assuming that the
+         * model only contains a finite number of edges, this loop thus has to terminate.
+         */
+        do {
+            portTypesChanged = inferPortTypes(unknownPorts, unknownEdges)
+            relationsChanged = traverseRelations(unknownRelations, unknownEdges, true)
+            
+            if (!(portTypesChanged || relationsChanged)) {
+                // See if an edge can be randomly fixed
+                randomEdgeFixed = traverseRelations(unknownRelations, unknownEdges, false)
+            }
+        } while (portTypesChanged || relationsChanged || randomEdgeFixed)
+    }
+    
+    /**
+     * Traverses the model, filling the given lists with interesting elements: ports of known and
+     * unknown type, edges of unknown direction, and relations with incident edges of unknown
+     * direction. The lists can then be iterated over instead of always having to iterate over the
+     * whole model again and again.
+     * 
+     * @param root the root of the model tree.
+     * @param knownPorts list to which ports of known type are added.
+     * @param unknownPorts list to which ports of unknown type are added.
+     * @param unknownLinks list to which edges of unknown direction are added.
+     * @param unknownRelations list to which relations with incident edges of unknown direction
+     *                         are added.
+     */
+    def private void gatherModelElements(KNode root, List<KPort> knownPorts, List<KPort> unknownPorts,
+        List<KEdge> unknownEdges, List<KNode> unknownRelations) {
+        
+        // Chceck if this node is a relation node
+        if (root.markedAsHypernode) {
+            unknownRelations.add(root)
+        }
+        
+        // Iterate over the entity's ports
+        for (port : root.ports) {
+            if (port.markedAsInputPort|| port.markedAsOutputPort) {
+                knownPorts.add(port)
+            } else {
+                unknownPorts.add(port)
+            }
+        }
+        
+        // Iterate over the entity's outgoing edges
+        for (edge : root.outgoingEdges) {
+            if (edge.markedAsUndirected) {
+                unknownEdges.add(edge)
+            }
+        }
+        
+        // Recurse into child entities
+        for (child : root.children) {
+            gatherModelElements(child, knownPorts, unknownPorts, unknownEdges, unknownRelations)
+        }
+    }
+    
+    /**
+     * For a port of known type, sets the directions of its incident unknown edges accordingly. This
+     * succeeds if the port is marked as being either an input port or an output port, not both.
+     * 
+     * @param port the port.
+     * @param unknownEdges list of edges with unknown direction. Edges whose direction is set are
+     *                     removed from this list.
+     * @return {@code true} if at least one edge's direction is fixed or reversed.
+     */
+    def private boolean propagatePortTypeToIncidentEdges(KPort port, List<KEdge> unknownEdges) {
+        val List<KEdge> edgesToBeReversed = newArrayList()
+        val List<KEdge> edgesToBeKept = newArrayList() 
+        var result = false
+        
+        if (port.markedAsInputPort && !port.markedAsOutputPort) {
+            // Reverse outgoing edges, keep incoming edges
+            edgesToBeReversed.addAll(port.edges.filter([e | e.source == port]))
+            edgesToBeKept.addAll(port.edges.filter([e | e.target == port]))
+        } else if (port.markedAsOutputPort && !port.markedAsInputPort) {
+            // Reverse incoming edges, keep outgoing edges
+            edgesToBeReversed.addAll(port.edges.filter([e | e.target == port]))
+            edgesToBeKept.addAll(port.edges.filter([e | e.source == port]))
+        }
+        
+        // Reverse edges and mark as directed
+        for (edge : edgesToBeReversed) {
+            edge.reverseEdge()
+            result = true
+            
+            if (edge.markedAsUndirected) {
+                edge.markAsUndirected(false)
+                unknownEdges.remove(edge)
+            }
+        }
+        
+        // Mark remaining edges as directed
+        for (edge : edgesToBeKept) {
+            if (edge.markedAsUndirected) {
+                edge.markAsUndirected(false)
+                unknownEdges.remove(edge)
+                result = true
+            }
+        }
+        
+        return result
+    }
+    
+    /**
+     * Iterates over the given list of ports of unknown type and tries to infer the type of as many
+     * ports as possible. For ports whose type is inferred, the incident edges are fixed accordingly.
+     * 
+     * @param unknownPorts list of unknown ports. Ports whose type is set are removed from this list.
+     * @param unknownEdges list of edges with unknown direction. Edges whose direction is set are
+     *                     removed from this list.
+     * @return {@code true} if at least one edge's direction is fixed.
+     */
+    def private boolean inferPortTypes(List<KPort> unknownPorts, List<KEdge> unknownEdges) {
+        var result = false
+        
+        // Iterate over all the ports of unknown type using a list iterator, since we want to be able
+        // to remove ports from the list in the process
+        val unknownPortsIterator = unknownPorts.listIterator
+        while (unknownPortsIterator.hasNext()) {
+            val unknownPort = unknownPortsIterator.next()
+            
+            if (containsDirectedEdge(unknownPort.edges.filter(
+                [e | e.targetPort == unknownPort]))) {
+                
+                // The port has an incoming edge of known direction -> mark as input port
+                unknownPort.markAsInputPort()
+            } else if (containsDirectedEdge(unknownPort.edges.filter(
+                [e | e.sourcePort == unknownPort]))) {
+                
+                // The port has an outgoing link of known direction -> mark as output port
+                unknownPort.markAsOutputPort()
+            } else if (isInputPortName(unknownPort.name)) {
+                // The port is named like an input port -> mark as input port
+                unknownPort.markAsInputPort()
+            } else if (isOutputPortName(unknownPort.name)) {
+                // The port is named like an output port -> mark as output port
+                unknownPort.markAsOutputPort()
+            }
+            
+            // If the port's type is now known, fix incident edge directions accordingly and remove
+            // from the list of unknown ports
+            if (unknownPort.markedAsInputPort ||unknownPort.markedAsOutputPort) {
+                result = propagatePortTypeToIncidentEdges(unknownPort, unknownEdges) || result
+                unknownPortsIterator.remove()
+            }
+        }
+        
+        return result
+    }
+    
+    /**
+     * Iterates over the list of relations with unknown edges and tries to infer edge directions. This is
+     * done by looking for relations with only incoming or only outgoing edges whose direction is known,
+     * and edges whose direction is unknown. This method can operate in two different modes regarding
+     * the number of edges with unknown direction.
+     * 
+     * <p>The first mode is conservative. For each undirected edge it only fixes its direction if it
+     * is the only undirected edge incident to a relation. This is the safe mode of operation.</p>
+     * 
+     * <p>The second mode also accepts relations with more than one incident undirected edge. It takes
+     * the first of them, sets its direction and returns, thereby only fixing the direction of at most
+     * one edge in the whole model. This mode is used to fix an edge's direction if the other methods
+     * cannot infer any more edge directions.</p>
+     * 
+     * @param unknownRelation list of relations with unknown incident edges. Relations whose incident
+     *                        edges are all fixed are removed from this list.
+     * @param unknownEdges list of edges with unknown direction. Edges whose direction is set are
+     *                     removed from this list.
+     * @param conservative if {@code false}, operates in a mode that fixes a single edge more or less
+     *                     at random, if possible.
+     * @return {@code true} if at least one edge's direction is fixed or reversed.
+     */
+    def private boolean traverseRelations(List<KNode> unknownRelations, List<KEdge> unknownEdges,
+        boolean conservative) {
+        
+        var result = false
+        
+        // Iterate over all the relations with incident edges of unknown direction using a list
+        // iterator, since we want to be able to remove relations from the list in the process
+        val unknownRelationsIterator = unknownRelations.listIterator
+        while (unknownRelationsIterator.hasNext()) {
+            val unknownRelation = unknownRelationsIterator.next()
+            var fixedEdgeInThisIteration = false
+            
+            // Find all incident edges of known direction
+            val fixedIncomingEdges = unknownRelation.incomingEdges.filter(l | !l.markedAsUndirected)
+            val fixedOutgoingEdges = unknownRelation.outgoingEdges
+            val undirectedIncidentEdges =
+                unknownRelation.incidentEdges.filter(l | l.markedAsUndirected)
+            
+            // If there is only one undirected incident edge...
+            val undirectedIncidentEdgesSize = undirectedIncidentEdges.size
+            
+            if ((conservative && undirectedIncidentEdgesSize == 1)
+                || (!conservative && undirectedIncidentEdgesSize > 0)) {
+                
+                val undirectedEdge = undirectedIncidentEdges.iterator().next()
+                
+                // ...and only incoming or outgoing directed edges...
+                if (fixedIncomingEdges.size > 0 && fixedOutgoingEdges.size == 0) {
+                    // ...the undirected edge must be outgoing
+                    if (undirectedEdge.source != unknownRelation) {
+                        undirectedEdge.reverseEdge()
+                    }
+                    
+                    undirectedEdge.markAsUndirected(false)
+                    unknownEdges.remove(undirectedEdge)
+                    fixedEdgeInThisIteration = true
+                } else if (fixedOutgoingEdges.size > 0 && fixedIncomingEdges.size == 0) {
+                    // ...the undirected edge must be incoming
+                    if (undirectedEdge.target != unknownRelation) {
+                        undirectedEdge.reverseEdge()
+                    }
+                    
+                    undirectedEdge.markAsUndirected(false)
+                    unknownEdges.remove(undirectedEdge)
+                    fixedEdgeInThisIteration = true
+                }
+            }
+            
+            // Check if we fixed an edge
+            if (fixedEdgeInThisIteration) {
+                result = true
+                
+                // Remove relation from the list of unknown relations if all edge directions are
+                // now fixed
+                if (undirectedIncidentEdgesSize == 1) {
+                    unknownRelationsIterator.remove()
+                }
+                
+                // If we're not in conservative mode, return without touching further edges
+                if (!conservative) {
+                    return result
+                }
+            }
+        }
+        
+        return result
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Removal of State Ports
+    
+    /**
+     * Removes ports from nodes representing modal model states in the model rooted at the given root
+     * entity. Also, nodes containing such states are annotated for the layout algorithm to know to
+     * use a layout algorithm for state machines.
+     * 
+     * @param root the model tree's root entity.
+     */
+    def private void makeStatesPortless(KNode root) {
+        // Check if we have a Ptolemy state
+        if (root.getStringAnnotationValue(ANNOTATION_PTOLEMY_CLASS).equals(
+            "ptolemy.domains.modal.kernel.State")) {
+            
+            // Iterate over the state's ports
+            for (port : root.ports) {
+                // Iterate over the port's incident edges
+                for (edge : port.edges) {
+                    // In the former version of the transformation, we would make sure the edges would
+                    // face into the correct direction. However, this should in theory have already been
+                    // inferred, so we skip this and hope for the best. Amen.
+                    
+                    // Connect the edge to the state instead of the port
+                    if (edge.sourcePort == port) {
+                        edge.sourcePort = null
+                    } else {
+                        edge.targetPort = null
+                    }
+                }
+            }
+            
+            // Get rid of the state's ports
+            root.ports.clear()
+            
+            // Annotate the state's parent to use a proper layout algorithm
+            (root.eContainer as KNode).addStringAnnotation("DiagramType", "StateMachine")
+        }
+        
+        // Recurse into child nodes
+        for (child : root.children) {
+            makeStatesPortless(child)
+        }
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Removal of Unnecessary Relations
+    
+    /**
+     * Recursively removes unnecessary relations in the model rooted at the given node. Unnecessary
+     * relations are those that have one incoming and one outgoing edge.
+     * 
+     * @param root the model's root node. 
+     */
+    def private void removeUnnecessaryRelations(KNode root) {
+        val relationsIterator = root.children.filter([c | c.markedAsHypernode]).iterator
+        while (relationsIterator.hasNext()) {
+            val relation = relationsIterator.next()
+            
+            // Check if the relation has only one incoming and one outgoing edge
+            if (relation.incomingEdges.size() == 1 && relation.outgoingEdges.size() == 1) {
+                val inEdge = relation.incomingEdges.get(0)
+                val outEdge = relation.outgoingEdges.get(0)
+                
+                // TODO: This code assumes that the source and target port are null; check if that is true
+                inEdge.target = outEdge.target
+                
+                // Remove the outgoing edge
+                outEdge.source = null
+                outEdge.target = null
+                (outEdge.eContainer as KNode).outgoingEdges.remove(outEdge)
+                
+                // Remove the relation
+                relationsIterator.remove()
+            }
+        }
+        
+        // Recurse into child nodes
+        for (child : root.children) {
+            removeUnnecessaryRelations(child)
+        }
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Transformation of Certain Annotations into Nodes
+    
+    /**
+     * Converts certain annotations into nodes of their own right. In particular, Ptolemy directors
+     * are persisted as annotations in Ptolemy models, but need to be nodes in KGraph models to be
+     * correctly displayed.
+     * 
+     * @param root root element of the model to look for convertible annotations in.
+     */
+    def private void convertAnnotationsToNodes(KNode root) {
+        // Only consider nodes that were not themselves created from annotations
+        if (root.markedAsFormerAnnotationNode) {
+            return
+        }
+        
+        // Look at the node's annotations
+        val annotationsIterator = root.annotations.listIterator
+        while (annotationsIterator.hasNext()) {
+            val annotation = annotationsIterator.next()
+            
+            // The annotation must be a TypedStringAnnotation for us to be interested
+            if (annotation instanceof TypedStringAnnotation) {
+                val tsAnnotation = annotation as TypedStringAnnotation
+                
+                // Check if the annotation denotes a Ptolemy director
+                if (tsAnnotation.type.endsWith("Director")) {
+                    // Create a new node for it
+                    val directorNode = KimlUtil::createInitializedNode()
+                    
+                    // Set the name, add language annotation and mark it as having been created from
+                    // an annotation
+                    directorNode.name = tsAnnotation.name
+                    directorNode.markAsPtolemyElement()
+                    directorNode.addAnnotation("Director")
+                    directorNode.markAsFormerAnnotationNode(true)
+                    
+                    // Annotate the new node with the original annotation and remove that from its
+                    // former node
+                    annotationsIterator.remove()
+                    directorNode.annotations.add(tsAnnotation)
+                    
+                    // Add the new node to the root element
+                    root.children.add(directorNode)
+                }
+            }
+        }
+        
+        // Recurse into child nodes
+        for (child : root.children) {
+            convertAnnotationsToNodes(child)
+        }
+    }
+}

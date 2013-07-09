@@ -223,9 +223,9 @@ class TransformationUtils {
         val annotation = getAnnotation(element, key)
         
         if (annotation instanceof StringAnnotation) {
-            (annotation as StringAnnotation).value
+            return (annotation as StringAnnotation).value
         } else {
-            ""
+            return ""
         }
     }
     
@@ -265,7 +265,7 @@ class TransformationUtils {
      * @return {@code true} if the edge is marked as undirected, {@code false} otherwise.
      */
     def boolean isMarkedAsUndirected(KEdge edge) {
-        edge.hasAnnotation("undirected")
+        return edge.hasAnnotation("undirected")
     }
     
     /**
@@ -284,7 +284,7 @@ class TransformationUtils {
      * @return {@code true} if the port is marked as being an input port, {@code false} otherwise.
      */
     def boolean isMarkedAsInputPort(KPort port) {
-        port.hasAnnotation("input")
+        return port.hasAnnotation("input")
     }
     
     /**
@@ -303,7 +303,7 @@ class TransformationUtils {
      * @return {@code true} if the port is marked as being an output port, {@code false} otherwise.
      */
     def boolean isMarkedAsOutputPort(KPort port) {
-        port.hasAnnotation("output")
+        return port.hasAnnotation("output")
     }
     
     /**
@@ -331,7 +331,7 @@ class TransformationUtils {
      * @return {@code true} if it is marked, {@code false} otherwise.
      */
     def boolean isMarkedAsFormerAnnotationNode(KNode node) {
-        node.hasAnnotation("annotationNode")
+        return node.hasAnnotation("annotationNode")
     }
     
     /**
@@ -352,7 +352,7 @@ class TransformationUtils {
      */
     def boolean isMarkedAsHypernode(KNode node) {
         val shapeLayout = node.getData(typeof(KShapeLayout))
-        shapeLayout.getProperty(LayoutOptions::HYPERNODE)
+        return shapeLayout.getProperty(LayoutOptions::HYPERNODE)
     }
     
     
@@ -373,7 +373,7 @@ class TransformationUtils {
             }
         }
         
-        false
+        return false
     }
     
     /**
@@ -397,14 +397,14 @@ class TransformationUtils {
      * @param edges list of edges to check for directed edges.
      * @return {@code true} if at least one edge is of known direction.
      */
-    def boolean containsDirectedEdge(List<KEdge> edges) {
+    def boolean containsDirectedEdge(Iterable<KEdge> edges) {
         for (edge : edges) {
             if (!edge.isMarkedAsUndirected()) {
                 return true
             }
         }
         
-        false
+        return false
     }
     
     /**
@@ -419,6 +419,6 @@ class TransformationUtils {
         incidentEdges.addAll(node.incomingEdges)
         incidentEdges.addAll(node.outgoingEdges)
         
-        incidentEdges
+        return incidentEdges
     }
 }
