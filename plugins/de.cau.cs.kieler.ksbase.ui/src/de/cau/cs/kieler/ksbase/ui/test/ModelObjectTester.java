@@ -20,13 +20,14 @@ import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.PlatformUI;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformException;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.m2m.AbstractTransformation;
 import de.cau.cs.kieler.ksbase.m2m.ITransformationFramework;
-import de.cau.cs.kieler.ksbase.ui.legacy.GmfModelingUtil;
 
 /**
  * A property tester which checks if a selected diagram object matches a given
@@ -74,8 +75,10 @@ public class ModelObjectTester extends PropertyTester {
                     .getTransformationById((String) args[1]);
             if (t != null) {
                 // Convert selection to model elements:
-                List<EObject> modelElements = GmfModelingUtil
-                        .getModelElementsFromSelection();
+                // FIXME ksbref
+//                List<EObject> modelElements = GmfModelingUtil
+//                        .getModelElementsFromSelection();
+                List<EObject> modelElements = Lists.newArrayList();
                 boolean executable = false;
                 for (List<String> params : t.getParameterList()) {
                     if (evaluateTransformation(editor, t.getTransformation(),
