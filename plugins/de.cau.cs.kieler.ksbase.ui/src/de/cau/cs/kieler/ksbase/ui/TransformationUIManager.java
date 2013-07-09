@@ -33,12 +33,12 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.core.model.gmf.util.GmfModelingUtil;
 import de.cau.cs.kieler.kiml.kivi.LayoutEffect;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
 import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationRequest;
+import de.cau.cs.kieler.ksbase.ui.legacy.GmfModelingUtil;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 import de.cau.cs.kieler.ksbase.ui.utils.TransformationUtils;
 

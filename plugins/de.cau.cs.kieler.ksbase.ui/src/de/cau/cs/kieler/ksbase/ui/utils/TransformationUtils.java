@@ -25,8 +25,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
+import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
+import de.cau.cs.kieler.ksbase.ui.legacy.GraphicalFrameworkService;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 
 /**

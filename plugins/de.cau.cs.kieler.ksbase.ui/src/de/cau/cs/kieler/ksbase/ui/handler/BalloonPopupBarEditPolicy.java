@@ -32,9 +32,9 @@ import org.eclipse.gmf.runtime.emf.type.core.requests.IEditCommandRequest;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
 
-import de.cau.cs.kieler.core.model.gmf.policies.BalloonMouseListener;
-import de.cau.cs.kieler.core.model.gmf.policies.DiagramPopupBarPolicy;
-import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
+import de.cau.cs.kieler.ksbase.ui.legacy.BalloonMouseListener;
+import de.cau.cs.kieler.ksbase.ui.legacy.DiagramPopupBarPolicy;
+import de.cau.cs.kieler.ksbase.ui.legacy.IBalloonContribution;
 
 /**
  * Policy for displaying balloons.

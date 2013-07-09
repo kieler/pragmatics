@@ -44,16 +44,16 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorPart;
 
-import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
-import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasEMenuContribution;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
+import de.cau.cs.kieler.ksbase.m2m.TransformationDescriptor;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 import de.cau.cs.kieler.ksbase.ui.kivi.KSBasECombination;
+import de.cau.cs.kieler.ksbase.ui.legacy.IBalloonContribution;
 import de.cau.cs.kieler.ksbase.ui.m2m.XtendTransformationContext;
 
 /**

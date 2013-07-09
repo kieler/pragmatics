@@ -28,12 +28,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
 
-import de.cau.cs.kieler.core.model.gmf.policies.IBalloonContribution;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.m2m.AbstractTransformation;
 import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
+import de.cau.cs.kieler.ksbase.ui.legacy.IBalloonContribution;
 import de.cau.cs.kieler.ksbase.ui.test.ModelObjectTester;
 
 /**

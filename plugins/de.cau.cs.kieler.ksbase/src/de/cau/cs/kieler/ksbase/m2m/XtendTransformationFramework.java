@@ -34,9 +34,8 @@ import org.eclipse.xtend.expression.EvaluationException;
 import org.eclipse.xtend.typesystem.emf.EcoreUtil2;
 import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 
-import de.cau.cs.kieler.core.model.CoreModelPlugin;
-import de.cau.cs.kieler.core.model.gmf.util.GmfModelingUtil;
-import de.cau.cs.kieler.core.model.m2m.TransformException;
+import de.cau.cs.kieler.ksbase.KSBasEPlugin;
+import de.cau.cs.kieler.ksbase.core.TransformException;
 
 /**
  * An implementation of the ITransformationFramework interface for the use with the Xtend framework.
@@ -94,7 +93,9 @@ public class XtendTransformationFramework implements ITransformationFramework {
             final String... parameter) {
         List<EObject> slist = null;
         if (parametersToMap == null) {
-            slist = GmfModelingUtil.getModelElementsFromSelection();
+            // FIXME
+            // extension point handler? global eclipse selection?
+            // slist = GmfModelingUtil.getModelElementsFromSelection();
         } else {
             slist = new LinkedList<EObject>();
             slist.addAll(parametersToMap);
@@ -278,7 +279,7 @@ public class XtendTransformationFramework implements ITransformationFramework {
                 throw new TransformException(e0);
             }
         } else {
-            CoreModelPlugin.getDefault().logError(
+            KSBasEPlugin.getDefault().logError(
                     "Could not execute transformation: Transformation not initalized properly");
         }
         initalized = false;
@@ -328,10 +329,10 @@ public class XtendTransformationFramework implements ITransformationFramework {
                     return transformations;
                 }
             } catch (SecurityException sec) {
-                CoreModelPlugin.getDefault().logError(
+                KSBasEPlugin.getDefault().logError(
                         "Unable to parse Xtend file: Not allowed to open file."); //$NON-NLS-1$
             } catch (IOException e) {
-                CoreModelPlugin.getDefault().logError(
+                KSBasEPlugin.getDefault().logError(
                         "Unable to parse Xtend file: Error while reading file."); //$NON-NLS-1$
             }
         }
