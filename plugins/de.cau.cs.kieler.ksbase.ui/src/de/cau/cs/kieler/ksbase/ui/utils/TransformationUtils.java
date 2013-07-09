@@ -15,9 +15,6 @@ package de.cau.cs.kieler.ksbase.ui.utils;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gef.EditPart;
-import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -27,7 +24,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
-import de.cau.cs.kieler.ksbase.ui.legacy.GraphicalFrameworkService;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 
 /**
@@ -61,7 +57,7 @@ public class TransformationUtils implements ITransformationEventListener {
     /**
      * Remember the last selection performed after a transformation to avoid selecting it again.
      */
-    private EObject lastSelection;
+//    private EObject lastSelection;
 
     /**
      * Pre-transformation code, empty right now.
@@ -79,25 +75,26 @@ public class TransformationUtils implements ITransformationEventListener {
      * @param args
      *            The transformation arguments, see {@link TransformationUIManager}
      * 
+     * @deprecated not used, delete after refactor
      */
     public void transformationExecuted(final Object[] args) {
-        if (selection != null && selection != lastSelection) {
-            if (args != null && args.length == 2 && args[1] instanceof IEditorPart) {
-                IEditorPart activeEditor = (IEditorPart) args[1];
-                if (activeEditor instanceof IDiagramWorkbenchPart) {
-                    EditPart p = 
-                            GraphicalFrameworkService.getInstance()
-                                .getBridge(activeEditor).getEditPart(selection);
-                    if (p != null) {
-                        ((IEditorPart) args[1]).getEditorSite().getSelectionProvider()
-                                .setSelection(new StructuredSelection(p));
-                    }
-                }
-            }
-            // Remember selection so we don't automatically select this object again.
-            // Don't set to null to let others use the selection as well.
-            lastSelection = selection;
-        }
+//        if (selection != null && selection != lastSelection) {
+//            if (args != null && args.length == 2 && args[1] instanceof IEditorPart) {
+//                IEditorPart activeEditor = (IEditorPart) args[1];
+//                if (activeEditor instanceof IDiagramWorkbenchPart) {
+//                    EditPart p = 
+//                            GraphicalFrameworkService.getInstance()
+//                                .getBridge(activeEditor).getEditPart(selection);
+//                    if (p != null) {
+//                        ((IEditorPart) args[1]).getEditorSite().getSelectionProvider()
+//                                .setSelection(new StructuredSelection(p));
+//                    }
+//                }
+//            }
+//            // Remember selection so we don't automatically select this object again.
+//            // Don't set to null to let others use the selection as well.
+//            lastSelection = selection;
+//        }
     }
 
     /**
