@@ -30,8 +30,6 @@
     <module>de.cau.cs.kieler.core.kivi</module>
     <module>de.cau.cs.kieler.core.krendering</module>
     <module>de.cau.cs.kieler.core.krendering.extensions</module>
-    <module>de.cau.cs.kieler.core.model</module>
-    <module>de.cau.cs.kieler.core.model.gmf</module>
     <module>de.cau.cs.kieler.core.ui</module>
     <module>de.cau.cs.kieler.karma</module>
     <module>de.cau.cs.kieler.keg</module>
