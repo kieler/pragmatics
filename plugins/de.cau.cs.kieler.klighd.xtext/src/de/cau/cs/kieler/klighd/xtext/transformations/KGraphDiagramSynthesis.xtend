@@ -30,7 +30,7 @@ import de.cau.cs.kieler.kiml.options.PortConstraints
 import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
 import java.util.Collection
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.util.EcoreUtil.Copier
+import org.eclipse.emf.ecore.util.EcoreUtil$Copier
 
 /**
  * Synthesizes a copy of the given {@code KNode} and enriches it with a selection of default renderings
