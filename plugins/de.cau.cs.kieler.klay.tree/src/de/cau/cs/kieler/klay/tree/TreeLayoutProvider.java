@@ -22,7 +22,7 @@ import de.cau.cs.kieler.klay.tree.graph.TGraph;
 
 /**
  * Layout provider to connect the tree layouter to the Eclipse based layout services and orchestrate
- * the pree layout processing .
+ * the pre layout processing .
  * 
  * @author sor
  * @author sgu

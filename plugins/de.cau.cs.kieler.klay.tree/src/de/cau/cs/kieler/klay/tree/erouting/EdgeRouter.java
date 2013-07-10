@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.tree.erouting;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.tree.graph.TEdge;
@@ -22,7 +21,7 @@ import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 
 /**
- * TODO implement smart edge routing
+ * TODO: implement smart edge routing
  * 
  * This class implements a dull edge routing by setting just source and target of a edge.
  * 
@@ -33,7 +32,8 @@ import de.cau.cs.kieler.klay.tree.graph.TNode;
 public class EdgeRouter implements ILayoutPhase {
 
     /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration();
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
+            new IntermediateProcessingConfiguration();
 
     /**
      * {@inheritDoc}

@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.klay.tree.util;
 
 /**
- * This class give some method for efficiently string operations in KILL style (Keep it laborious
+ * This class give some method for efficiently string operations in KILL style (keep it laborious
  * and long).
  * 
  * Why simple when it can be complicated.

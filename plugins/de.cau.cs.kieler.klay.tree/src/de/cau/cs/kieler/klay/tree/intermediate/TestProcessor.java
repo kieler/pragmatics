@@ -27,7 +27,10 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  * @author sgu
  */
 public class TestProcessor implements ILayoutProcessor {
-
+    
+    /**
+     * {@inheritDoc}
+     */
     public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
         if (tGraph.getProperty(LayoutOptions.DEBUG_MODE)) {
             for (TNode node : tGraph.getNodes()) {

@@ -14,13 +14,11 @@
 package de.cau.cs.kieler.klay.tree.intermediate;
 
 import java.util.List;
-import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
 import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
-import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**

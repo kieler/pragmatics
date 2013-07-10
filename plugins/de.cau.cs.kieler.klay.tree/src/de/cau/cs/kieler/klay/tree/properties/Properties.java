@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 
 /**
- * TODO: Document this class. Property definitions for the T layouter.
+ * Property definitions for the T layouter.
  * 
  * @author sor
  * @author sgu

@@ -27,21 +27,21 @@ import de.cau.cs.kieler.klay.tree.erouting.EdgeRouter;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.porder.OrderBalance;
 import de.cau.cs.kieler.klay.tree.pplacing.NodePlacer;
-import de.cau.cs.kieler.klay.tree.ptreeing.Treeing;
+import de.cau.cs.kieler.klay.tree.ptreeing.DFSTreeifyer;
 
 /**
- * Implement a layouter for trees. The T layouter uses the algorithm from
+ * Implements a layout algorithm for trees. The tree layouter uses the algorithm from
  * "A Node-Positioning Algorithm for General Trees, John Q.Walker II" to layout trees. To do this it
- * uses four phases plus a pree processing to build a corresponding data structure. The first phase
- * "treeing" transforms the given graph to into a tree if necessary. To do this edges which destroy
- * the tree property will be removed and stored to be restored in the post processing. In the second
- * phase "orderNodes" the nodes of each level are seperated into leaves and inner nodes. And then
- * whitespace in the level is filled with leaves. The third phase "placeNodes" uses the algorithm
- * first mentioned from John Q.Walker II to compute the actual position of the nodes. The last phase
- * routeEdges set the positions for the edges corresponding to the positions of the nodes.
+ * uses four phases plus a pre-processing to build a corresponding data structure. The first phase
+ * "treeifying" transforms the given graph into a tree if necessary. To do this, edges which destroy
+ * the tree property will be removed and stored, so that they can be reinserted during a post processing. 
+ * In the second phase "orderNodes" the nodes of each level are separated into leaves and inner nodes. 
+ * And then whitespace in the level is filled with leaves. The third phase "NodePlacer" uses the 
+ * algorithm first mentioned from John Q.Walker II to compute the actual position of the nodes. 
+ * The last phase routeEdges sets the positions for the edges corresponding to the positions of the nodes.
  * 
  * Each phase uses intermediate processors for small computations on the graph. The corresponding
- * processor are defined in each phase. Some are defined multiple times, but they are invoked only
+ * processors are defined in each phase. Some are defined multiple times, but they are invoked only
  * once.
  * 
  * The processors can determine roots of components and fan outs or level neighbors of nodes.
@@ -55,11 +55,11 @@ public final class KlayTree {
     // Variables
 
     /** phase 1: treeing module. */
-    private ILayoutPhase treeing;
+    private ILayoutPhase dfsTreeifyer;
     /** phase 2: order module. */
-    private ILayoutPhase orderNodes;
+    private ILayoutPhase nodeOrderer;
     /** phase 3: arrange module. */
-    private ILayoutPhase placeNodes;
+    private ILayoutPhase nodePlacer;
     /** phase 4: route module. */
     private ILayoutPhase edgeRouter;
 
@@ -110,19 +110,19 @@ public final class KlayTree {
     private void updateModules(final TGraph graph) {
 
         // build a tree
-        if (treeing == null) {
-            treeing = new Treeing();
+        if (dfsTreeifyer == null) {
+            dfsTreeifyer = new DFSTreeifyer();
         }
 
         // order nodes
-        if (orderNodes == null) {
-            orderNodes = new OrderBalance();
+        if (nodeOrderer == null) {
+            nodeOrderer = new OrderBalance();
         }
 
         // set node placement strategy to use
         // arrange nodes
-        if (placeNodes == null) {
-            placeNodes = new NodePlacer();
+        if (nodePlacer == null) {
+            nodePlacer = new NodePlacer();
         }
 
         // set node placement strategy to use
@@ -134,9 +134,9 @@ public final class KlayTree {
         // update intermediate processor configuration
         intermediateProcessingConfiguration.clear();
         intermediateProcessingConfiguration
-                .addAll(treeing.getIntermediateProcessingConfiguration(graph))
-                .addAll(orderNodes.getIntermediateProcessingConfiguration(graph))
-                .addAll(placeNodes.getIntermediateProcessingConfiguration(graph))
+                .addAll(dfsTreeifyer.getIntermediateProcessingConfiguration(graph))
+                .addAll(nodeOrderer.getIntermediateProcessingConfiguration(graph))
+                .addAll(nodePlacer.getIntermediateProcessingConfiguration(graph))
                 .addAll(edgeRouter.getIntermediateProcessingConfiguration(graph));
         // TODO add intermediate processing configuration for block direction
         // .addAll(this.getIntermediateProcessingConfiguration(graph));
@@ -145,13 +145,13 @@ public final class KlayTree {
         algorithm.clear();
         algorithm
                 .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
-        algorithm.add(treeing);
+        algorithm.add(dfsTreeifyer);
         algorithm
                 .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
-        algorithm.add(orderNodes);
+        algorithm.add(nodeOrderer);
         algorithm
                 .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
-        algorithm.add(placeNodes);
+        algorithm.add(nodePlacer);
         algorithm
                 .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
         algorithm.add(edgeRouter);

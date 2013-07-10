@@ -18,8 +18,8 @@ import de.cau.cs.kieler.klay.tree.graph.TGraph;
 /**
  * A layout phase is a special kind of layout processor that encapsulates an implementation of one
  * of the algorithm's four main phases. A layout phase also specifies a configuration for the
- * intermediate layout processors that it wants to have executed in between layout phases. (think
- * dependencies)
+ * intermediate layout processors that it wants to have executed in between layout phases (remember
+ * possible dependencies).
  * 
  * @author sor
  * @author sgu

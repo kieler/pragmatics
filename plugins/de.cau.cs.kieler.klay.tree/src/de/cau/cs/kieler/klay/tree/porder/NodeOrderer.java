@@ -38,7 +38,7 @@ import de.cau.cs.kieler.klay.tree.util.SortTNodeProperty;
  * @author sor
  * @author sgu
  */
-public class OrderNodes implements ILayoutPhase {
+public class NodeOrderer implements ILayoutPhase {
 
     private Comparator<TNode> comparator = new Comparator<TNode>() {
         public int compare(TNode t1, TNode t2) {

@@ -13,11 +13,8 @@
  */
 package de.cau.cs.kieler.klay.tree.ptreeing;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
@@ -29,7 +26,7 @@ import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
- * This phase should create a tree, if a graph is hardly a tree.
+ * This phase should create a tree out of a graph that is hardly a tree.
  * 
  * It should for example look for cycles in a tree and remove that cycles. This cycle breaking is
  * done through eliminating the edge that destroys the tree property and putting that edge into a
@@ -39,11 +36,11 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  * 
  * @author sor
  * @author sgu
+ * @author msp
  */
-public class Treeing implements ILayoutPhase {
+public class DFSTreeifyer implements ILayoutPhase {
 
     /** intermediate processing configuration. */
-    // first phase gets no intermediateProcessingConfiguration?!
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
             new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.AFTER_PHASE_4,LayoutProcessorStrategy.DETREEIFYING_PROC);
 
@@ -52,7 +49,7 @@ public class Treeing implements ILayoutPhase {
      */
     public void process(TGraph theGraph, IKielerProgressMonitor progressMonitor) {
 
-        progressMonitor.begin("Treeing phase", 1);
+        progressMonitor.begin("DFS Treeifying phase", 1);
 
         this.tGraph = theGraph;
         init(tGraph);
@@ -69,14 +66,17 @@ public class Treeing implements ILayoutPhase {
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
+    /** marks the nodes that have been visited during DFS */
     private int[] visited;
 
+    /** a list with the edges that can be removed */
     private List<TEdge> eliminated;
 
+    /** a TGraph */
     private TGraph tGraph;
 
     /**
-     * TODO comment
+     * Initializes all previously defined structures of a TGraph with useful values.
      * 
      * @param tGraph
      */
@@ -86,7 +86,7 @@ public class Treeing implements ILayoutPhase {
         eliminated = new LinkedList<TEdge>();
         visited = new int[size];
 
-        // initialize Map with 0 at every node value
+        /** for using id property initialize ids first */
         int id = 0;
         for (TNode node : tGraph.getNodes()) {
             node.id = id++;
@@ -95,8 +95,7 @@ public class Treeing implements ILayoutPhase {
 
     /**
      * Create a list with the edges to remove. These edges should be all edges that destroy the
-     * tree-property. For now these are all edges that conclude circles, so the treeing will work
-     * for graphs that contain one cycle.
+     * tree-property. 
      * 
      * @param TGraph
      *            where to collect the edges
@@ -105,69 +104,15 @@ public class Treeing implements ILayoutPhase {
 
         // start DFS on every node in graph
         for (TNode tNode : tGraph.getNodes()) {
-            List<TEdge> tmp;
-            // delete multiple incoming/ outgoing edges except one first
-            // if (tNode.getInComingEdges().size() > 1) {
-            // tmp = tNode.getInComingEdges().subList(0, tNode.getInComingEdges().size() - 1);
-            // for (Iterator<TEdge> tmpIt = tmp.iterator(); tmpIt.hasNext();) {
-            // TEdge tEdge = (TEdge) tmpIt.next();
-            // tmpIt.remove();
-            // tEdge.setSource(null);
-            // tEdge.setTarget(null);
-            // }
-            // eliminated.addAll(tmp);
-            // }
-            //
-            // if (tNode.getOutgoingEdges().size() > 1) {
-            // tmp = tNode.getOutgoingEdges().subList(0, tNode.getOutgoingEdges().size() - 1);
-            // for (Iterator<TEdge> tmpIt = tmp.iterator(); tmpIt.hasNext();) {
-            // TEdge tEdge = (TEdge) tmpIt.next();
-            // tmpIt.remove();
-            // tEdge.setSource(null);
-            // tEdge.setTarget(null);
-            // }
-            // eliminated.addAll(tmp);
-            // }
-            // initial condition: all nodes have checked value of 0, which defines 'unvisited'
+            // if the node has not been visited yet
             if (visited[tNode.id] == 0) {
-                // if a unvisited node gets visited, mark this node with a 1
-
-                // look what nodes can be found from that node on
+                // call DFS on that node
                 dfs(tNode);
-                visited[tNode.id]=2;
+                // if we come back to that node again, set the node as root
+                visited[tNode.id] = 2;
             }
-//            // if a node has already been visited
-//            if (checkedMap.get(tNode) == 1 && visited[tNode.id] != null) {
-//                // mark that node as visited twice
-//                checkedMap.put(tNode, 2);
-//                if (tNode.getInComingEdges().size() > 0) {
-//                    // and add all incoming edges of that node to a list
-//                    for (TEdge e : tNode.getInComingEdges()) {
-//                        if (!eliminated.contains(e)) {
-//                            eliminated.add(e);
-//                            System.out.println("Added: " + e);
-//                            e.setSource(null);
-//                            e.setTarget(null);
-//
-//                            System.out.println("Number of elements in List: " + eliminated.size());
-//                        }
-//                    }
-//                } else {
-//                    for (Iterator<TEdge> it = tNode.getOutgoingEdges().iterator(); it.hasNext();) {
-//                        TEdge e = (TEdge) it.next();
-//                        if (!eliminated.contains(e)) {
-//                            eliminated.add(e);
-//                            it.remove();
-//                            System.out.println("Added: " + e);
-//                            e.setSource(null);
-//                            e.setTarget(null);
-//                        }
-//                    }
-//                }
-//                // recurse to handle all nodes in the graph
-//                dfs(tNode);
-//            }
         }
+        // remove the found edges out of graph structure
         for (TEdge tEdge : eliminated) {
             tEdge.getSource().getOutgoingEdges().remove(tEdge);
             tEdge.getTarget().getInComingEdges().remove(tEdge);
@@ -181,24 +126,27 @@ public class Treeing implements ILayoutPhase {
      * 
      * @param node
      *            to start DFS
-     * @param graph
-     *            to perform DFS in
      */
     private void dfs(TNode tNode) {
+        // dfs starts on a node and marks that node as visited
         visited[tNode.id] = 1;
 
+        // go to all child nodes of start node
         for (TEdge tEdge : tNode.getOutgoingEdges()) {
             TNode target = tEdge.getTarget();
+            // if a child has been visited
             if (visited[target.id] == 1) {
+                // put that edge to the list that contains the edges to remove
                 eliminated.add(tEdge);
             } else {
+                // if a previous root can be visited from another node unmark the root property
                 if (visited[target.id] == 2) {
                     visited[target.id] = 1;
                 } else {
+                    // recurse
                     dfs(target);
                 }
             }
         }
     }
-
 }

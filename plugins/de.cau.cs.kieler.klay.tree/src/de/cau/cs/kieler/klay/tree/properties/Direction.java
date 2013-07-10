@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.tree.properties;
 
 /**
- * TODO: Document this class.
  * Definition of directions used in the T Graph radial level approach.
  * 
  * @author sor

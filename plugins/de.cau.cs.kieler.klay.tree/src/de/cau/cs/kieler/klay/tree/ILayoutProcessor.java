@@ -17,7 +17,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 
 /**
- * A layout processor processes a {@link de.cau.cs.kieler.klay.tree.graph.TGraph},performing layout
+ * A layout processor processes a {@link de.cau.cs.kieler.klay.tree.graph.TGraph}, performing layout
  * related tasks on it.
  * 
  * @author sor

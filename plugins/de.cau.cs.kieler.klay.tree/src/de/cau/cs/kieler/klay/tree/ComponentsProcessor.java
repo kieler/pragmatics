@@ -34,10 +34,13 @@ import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
- * TODO: Document this class.
+ * A processor that is able to split an input graph into connected components and to pack those
+ * components after layout.
  * 
  * @author sor
  * @author sgu
+ * @author msp
+ * @author cds
  */
 public class ComponentsProcessor {
 
