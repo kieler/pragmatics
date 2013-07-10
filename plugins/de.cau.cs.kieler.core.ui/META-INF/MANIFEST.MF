@@ -21,11 +21,8 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.5.0",
  com.google.guava;bundle-version="10.0.0",
  de.cau.cs.kieler.core
 Export-Package: de.cau.cs.kieler.core.ui,
- de.cau.cs.kieler.core.ui.commands,
- de.cau.cs.kieler.core.ui.listeners,
  de.cau.cs.kieler.core.ui.util,
  de.cau.cs.kieler.core.ui.wizards
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-Activator: de.cau.cs.kieler.core.ui.CoreUIPlugin
 Bundle-ActivationPolicy: lazy

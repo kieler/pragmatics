@@ -12,7 +12,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.gmf.runtime.diagram.ui;bundle-version="1.4.0";visibility:=reexport,
  org.eclipse.gmf.runtime.diagram.ui.resources.editor;bundle-version="1.4.0",
  de.cau.cs.kieler.core,
- de.cau.cs.kieler.core.ui,
  de.cau.cs.kieler.core.annotations,
  de.cau.cs.kieler.core.kivi;bundle-version="0.3.0",
  com.google.guava;bundle-version="10.0.0"

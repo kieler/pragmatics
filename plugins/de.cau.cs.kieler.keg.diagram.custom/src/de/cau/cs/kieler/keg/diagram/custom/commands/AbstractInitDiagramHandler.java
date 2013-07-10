@@ -58,7 +58,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.ui.commands.AffectedFileSelectionDialog;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.keg.diagram.custom.KEGDiagramPlugin;
 
