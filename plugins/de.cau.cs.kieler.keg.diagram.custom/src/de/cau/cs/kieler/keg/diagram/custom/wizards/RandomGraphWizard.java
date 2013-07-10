@@ -55,7 +55,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
-import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.keg.diagram.custom.KEGDiagramPlugin;
 import de.cau.cs.kieler.keg.Node;
@@ -64,6 +63,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
 import de.cau.cs.kieler.keg.diagram.edit.parts.NodeEditPart;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorUtil;
+import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
 
 /**
  * The new-wizard for creating random KEG graphs.
