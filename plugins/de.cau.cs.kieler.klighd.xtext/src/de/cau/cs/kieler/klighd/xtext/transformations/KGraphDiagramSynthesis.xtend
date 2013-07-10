@@ -13,21 +13,27 @@
  */
 package de.cau.cs.kieler.klighd.xtext.transformations
 
-import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
-import de.cau.cs.kieler.core.kgraph.KNode
+import com.google.common.collect.ImmutableList
+import com.google.common.collect.ImmutableMap
 import com.google.inject.Inject
+import de.cau.cs.kieler.core.kgraph.KEdge
+import de.cau.cs.kieler.core.kgraph.KGraphElement
+import de.cau.cs.kieler.core.kgraph.KLabel
+import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
-import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
-import org.eclipse.emf.ecore.util.EcoreUtil$Copier
-import org.eclipse.emf.ecore.EObject
-import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.kgraph.KLabel
-import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
+import de.cau.cs.kieler.core.properties.IProperty
+import de.cau.cs.kieler.kiml.options.LayoutOptions
+import de.cau.cs.kieler.kiml.options.PortConstraints
+import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
+import java.util.Collection
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.util.EcoreUtil.Copier
 
 /**
- * Synthesises a copy of the given {@code KNode} and enriches it with a selection of default renderings
+ * Synthesizes a copy of the given {@code KNode} and enriches it with a selection of default renderings
  * where no explicit renderings are specified. To be more precise, the following renderings are added
  * if necessary:
  * <ul>
@@ -56,6 +62,13 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     
     @Inject
     extension KPolylineExtensions
+    
+    override getRecommendedLayoutOptions() {
+        return ImmutableMap::<IProperty<?>, Collection<?>>of(
+            LayoutOptions::PORT_CONSTRAINTS, ImmutableList::copyOf(PortConstraints::values),
+            LayoutOptions::SPACING, ImmutableList::of(0, 255)
+        );
+    }
     
     /**
      * Transforms the given graph into an equivalent graph that may be enriched with additional
