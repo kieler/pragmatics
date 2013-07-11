@@ -8,7 +8,6 @@ import org.eclipse.gmf.runtime.diagram.ui.preferences.IPreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbench;
@@ -16,7 +15,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.keg.custom.KEGFigureProvider;
 import de.cau.cs.kieler.keg.custom.KEGNode;
 import de.cau.cs.kieler.keg.diagram.edit.parts.Node2EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.Node4EditPart;
@@ -49,9 +47,6 @@ public class DiagramAppearancePreferencePage extends AppearancePreferencePage {
             rgb = PreferenceConverter.getColor(getPreferenceStore(),
                     IPreferenceConstants.PREF_FILL_COLOR);
             Color bgColor = new Color(null, rgb);
-            // set the color for in the KEG figure provider
-            KEGFigureProvider.setForegroundColor(fgColor);
-            KEGFigureProvider.setBackgroundColor(bgColor);
             // set the color for the open editors
             IWorkbench wb = PlatformUI.getWorkbench();
             if (wb != null) {
@@ -110,13 +105,5 @@ public class DiagramAppearancePreferencePage extends AppearancePreferencePage {
         Color lineColor = DiagramColorConstants.black;
         PreferenceConverter.setDefault(store, IPreferenceConstants.PREF_LINE_COLOR,
                 lineColor.getRGB());
-        // initialize classes which depend on the preferences
-        RGB rgb = PreferenceConverter.getColor(store, IPreferenceConstants.PREF_LINE_COLOR);
-        Color fgColor = new Color(null, rgb);
-        rgb = PreferenceConverter.getColor(store, IPreferenceConstants.PREF_FILL_COLOR);
-        Color bgColor = new Color(null, rgb);
-        // set the color for in the KEG figure provider
-        KEGFigureProvider.setForegroundColor(fgColor);
-        KEGFigureProvider.setBackgroundColor(bgColor);
     }
 }
