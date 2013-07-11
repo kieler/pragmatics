@@ -17,6 +17,7 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 import com.google.inject.Inject
 import java.util.ArrayList
 import java.util.List
+
 import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Status
@@ -32,17 +33,19 @@ import org.ptolemy.moml.RelationType
 import de.cau.cs.kieler.core.annotations.Annotatable
 import de.cau.cs.kieler.core.annotations.AnnotationsFactory
 import de.cau.cs.kieler.core.annotations.TypedStringAnnotation
+import de.cau.cs.kieler.core.kgraph.KGraphElement
+import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.core.kgraph.KGraphElement
+
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
 
 /**
- * Transforms a Ptolemy2 model to a KGraph. This is part one of the Ptolemy model transformation
- * process, with part two consisting of the optimization of the transformed model as defined in
- * {@code Ptolemy2KaomOptimization}.
+ * Transforms a Ptolemy2 model to a KGraph. This is step one of the Ptolemy model transformation
+ * process, with step two consisting of the optimization of the transformed model as defined in
+ * {@code Ptolemy2KGraphOptimization}, and step three consisting of providing the KRendering information
+ * necessary to display the model as defined in {@code Ptolemy2KGraphVisualization}.
  * 
  * <p>In this part, all Ptolemy entities, relations and links are transformed to their KGraph
  * counterparts. The transformed objects are annotated to originate from a Ptolemy2 model. This
@@ -68,14 +71,13 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConst
  */
 class Ptolemy2KGraphTransformation {
     
-    /**
-     * Extensions used during the transformation. To make things easier. And stuff.
-     */
-    @Inject extension TransformationUtils
-    
-    /**
-     * Interface to the Ptolemy library.
-     */
+    /** Accessing annotations. */
+    @Inject extension AnnotationExtensions
+    /** Accessing labels for elements. */
+    @Inject extension LabelExtensions
+    /** Marking elements. */
+    @Inject extension MarkerExtensions
+    /** Interface to the Ptolemy library. */
     @Inject PtolemyInterface ptolemy
     
     /**

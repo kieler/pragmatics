@@ -13,20 +13,16 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
-
 import com.google.inject.Inject
-import java.util.List
-
 import de.cau.cs.kieler.core.annotations.TypedStringAnnotation
+import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.kiml.util.KimlUtil
-import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
-import de.cau.cs.kieler.core.annotations.Annotation
+import java.util.List
 
 /**
- * Optimizes a KGraph model freshly transformed from a Ptolemy2 model. This is part two of the Ptolemy
+ * Optimizes a KGraph model freshly transformed from a Ptolemy2 model. This is step two of the Ptolemy
  * model import process.
  * 
  * <p>In this part, edge directions are computed, relations that only connect two ports are replaced
@@ -39,10 +35,16 @@ import de.cau.cs.kieler.core.annotations.Annotation
  */
 class Ptolemy2KGraphOptimization {
     
-    /**
-     * Extensions used during the transformation. To make things easier. And stuff.
-     */
-    @Inject extension TransformationUtils
+    /** Marking nodes. */
+    @Inject extension AnnotationExtensions
+    /** Marking nodes. */
+    @Inject extension LabelExtensions
+    /** Marking nodes. */
+    @Inject extension MarkerExtensions
+    /** Miscellaneous stuff to make my life easier. */
+    @Inject extension MiscellaneousExtensions
+    /** Marking nodes. */
+    @Inject extension PortExtensions
     
     
     /**
@@ -373,9 +375,7 @@ class Ptolemy2KGraphOptimization {
      */
     def private void makeStatesPortless(KNode root) {
         // Check if we have a Ptolemy state
-        if (root.getStringAnnotationValue(ANNOTATION_PTOLEMY_CLASS).equals(
-            "ptolemy.domains.modal.kernel.State")) {
-            
+        if (root.markedAsState) {
             // Iterate over the state's ports
             for (port : root.ports) {
                 // Iterate over the port's incident edges
@@ -397,7 +397,7 @@ class Ptolemy2KGraphOptimization {
             root.ports.clear()
             
             // Annotate the state's parent to use a proper layout algorithm
-            (root.eContainer as KNode).addStringAnnotation("DiagramType", "StateMachine")
+            (root.eContainer as KNode).markAsStateMachineContainer()
         }
         
         // Recurse into child nodes
@@ -418,6 +418,8 @@ class Ptolemy2KGraphOptimization {
      */
     def private void removeUnnecessaryRelations(KNode root) {
         val relationsIterator = root.children.filter([c | c.markedAsHypernode]).iterator
+        val List<KNode> nodesToBeRemoved = newArrayList()
+        
         while (relationsIterator.hasNext()) {
             val relation = relationsIterator.next()
             
@@ -426,17 +428,23 @@ class Ptolemy2KGraphOptimization {
                 val inEdge = relation.incomingEdges.get(0)
                 val outEdge = relation.outgoingEdges.get(0)
                 
-                // TODO: This code assumes that the source and target port are null; check if that is true
                 inEdge.target = outEdge.target
+                inEdge.targetPort = outEdge.targetPort
                 
                 // Remove the outgoing edge
                 outEdge.source = null
                 outEdge.target = null
-                (outEdge.eContainer as KNode).outgoingEdges.remove(outEdge)
+                outEdge.sourcePort = null
+                outEdge.targetPort = null
                 
                 // Remove the relation
-                relationsIterator.remove()
+                nodesToBeRemoved += relation
             }
+        }
+        
+        // Remove relations
+        for (node : nodesToBeRemoved) {
+            root.children.remove(node)
         }
         
         // Recurse into child nodes
@@ -457,23 +465,25 @@ class Ptolemy2KGraphOptimization {
      * @param root root element of the model to look for convertible annotations in.
      */
     def private void convertAnnotationsToNodes(KNode root) {
+        System::out.println("Looking for directors...")
+        
         // Only consider nodes that were not themselves created from annotations
         if (root.markedAsFormerAnnotationNode) {
             return
         }
-        
-        // Remember annotations to be removed later to avoid concurrent modification exceptions
-        // (although I don't quite understand why they occur in the first place)
-        val List<Annotation> annotationsToBeRemoved = newArrayList()
         
         // Look at the node's annotations
         val annotationsIterator = root.annotations.listIterator
         while (annotationsIterator.hasNext()) {
             val annotation = annotationsIterator.next()
             
+            System::out.println(annotation.name)
+            
             // The annotation must be a TypedStringAnnotation for us to be interested
             if (annotation instanceof TypedStringAnnotation) {
                 val tsAnnotation = annotation as TypedStringAnnotation
+                
+                System::out.println(tsAnnotation.type)
                 
                 // Check if the annotation denotes a Ptolemy director
                 if (tsAnnotation.type.endsWith("Director")) {
@@ -484,23 +494,21 @@ class Ptolemy2KGraphOptimization {
                     // an annotation
                     directorNode.name = tsAnnotation.name
                     directorNode.markAsPtolemyElement()
-                    directorNode.addAnnotation("Director")
-                    directorNode.markAsFormerAnnotationNode(true)
+                    directorNode.markAsDirector()
+                    directorNode.markAsFormerAnnotationNode()
                     
                     // Annotate the new node with the original annotation and remove that from its
-                    // former node
-                    annotationsToBeRemoved.add(annotation)
-                    directorNode.annotations.add(tsAnnotation)
+                    // former node)
+                    directorNode.addTypedStringAnnotation(
+                        tsAnnotation.name, tsAnnotation.type, tsAnnotation.value)
+                    annotationsIterator.remove()
                     
                     // Add the new node to the root element
-                    root.children.add(directorNode)
+                    root.children += directorNode
+                    
+                    System::out.println("FOUND A DIRECTOR")
                 }
             }
-        }
-        
-        // Remove annotations
-        for (annotation : annotationsToBeRemoved) {
-            root.annotations.remove(annotation)
         }
         
         // Recurse into child nodes

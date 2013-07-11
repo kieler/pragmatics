@@ -25,4 +25,9 @@ public final class PluginConstants {
      */
     public static final String PLUGIN_ID = "de.cau.cs.kieler.ptolemy.klighd";
     
+    /**
+     * The Ptolemy editor's ID.
+     */
+    public static final String EDITOR_ID = "de.cau.cs.kieler.ptolemy.klighd.editor";
+    
 }

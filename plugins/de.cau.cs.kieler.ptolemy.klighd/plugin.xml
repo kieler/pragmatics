@@ -4,13 +4,20 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="de.cau.cs.kieler.ptolemy.klighd.PtolemyEditPart"
+            class="de.cau.cs.kieler.ptolemy.klighd.PtolemyEditorPart"
             default="true"
             extensions="moml"
             icon="icons/PtolemyII16x16.png"
             id="de.cau.cs.kieler.ptolemy.klighd.editor"
             name="Ptolemy Model Viewer">
       </editor>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.modelTransformations">
+      <transformation
+            class="de.cau.cs.kieler.klighd.transformations.GuiceBasedTransformationFactory:de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis"
+            id="de.cau.cs.kieler.klighd.examples.uml2.UML2UseCaseDiagramSynthesis">
+      </transformation>
    </extension>
 
 </plugin>

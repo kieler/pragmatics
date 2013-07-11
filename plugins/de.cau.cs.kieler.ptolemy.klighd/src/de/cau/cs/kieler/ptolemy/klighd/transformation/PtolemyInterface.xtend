@@ -49,10 +49,12 @@ import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
  */
 class PtolemyInterface {
     
-    /**
-     * Utility methods.
-     */
-    @Inject extension TransformationUtils
+    /** Accessing annotations. */
+    @Inject extension AnnotationExtensions
+    /** Marking nodes. */
+    @Inject extension MarkerExtensions
+    /** Labeling nodes and ports. */
+    @Inject extension LabelExtensions
     
     /**
      * A cache mapping qualified class names of Ptolemy actors to their actual instances. If an actor
@@ -97,7 +99,7 @@ class PtolemyInterface {
                     }
                     
                     // TODO: Set the name
-//                    kaomPort.name = ptPort.name
+                    kgraphPort.name = ptPort.name
                     kgraphPort.markAsPtolemyElement()
                     
                     // Copy attributes
@@ -185,9 +187,10 @@ class PtolemyInterface {
      * Tries to instantiate the entity referenced by the given entity type.
      * 
      * @param ptEntity entity type describing the entity to instantiate.
+     * @return the instantiated entity.
      * @throws Exception if the instantiation fails.
      */
-    def private dispatch Entity instantiatePtolemyEntity(EntityType ptEntity) {
+    def dispatch Entity instantiatePtolemyEntity(EntityType ptEntity) {
         instantiatePtolemyEntityWithCache(ptEntity.class1, ptEntity.name)
     }
     
@@ -195,10 +198,22 @@ class PtolemyInterface {
      * Tries to instantiate the entity referenced by the given class type.
      * 
      * @param ptClass class type describing the entity to instantiate.
+     * @return the instantiated entity.
      * @throws Exception if the instantiation fails.
      */
-    def private dispatch Entity instantiatePtolemyEntity(ClassType ptClass) {
+    def dispatch Entity instantiatePtolemyEntity(ClassType ptClass) {
         instantiatePtolemyEntityWithCache(ptClass.^extends, ptClass.name)
+    }
+    
+    /**
+     * Tries to instantiate the entity referenced by the given class name.
+     * 
+     * @param className name of the class of the entity to instantiate.
+     * @return the instantiated entity.
+     * @throws Exception if the instantiation fails.
+     */
+    def dispatch Entity instantiatePtolemyEntity(String className) {
+        instantiatePtolemyEntityWithCache(className, "anEntity")
     }
     
     /**
@@ -252,7 +267,7 @@ class PtolemyInterface {
      * @return the instantiated actor.
      * @throws Exception if the instantiation fails.
      */
-    def Entity instantiatePtolemyActor(String className, String entityName) {
+    def private Entity instantiatePtolemyActor(String className, String entityName) {
         // Get our hands at Ptolemy's internal MoML parser
         MoMLParser::setMoMLFilters(BackwardCompatibility::allFilters())
         val parser = new MoMLParser()
@@ -280,7 +295,7 @@ class PtolemyInterface {
      * @return the instantiated actor.
      * @throws Exception if the instantiation fails.
      */
-    def Entity instantiatePtolemyState(String className, String entityName) {
+    def private Entity instantiatePtolemyState(String className, String entityName) {
         // Get our hands at Ptolemy's internal MoML parser
         MoMLParser::setMoMLFilters(BackwardCompatibility::allFilters())
         val parser = new MoMLParser()
