@@ -19,10 +19,6 @@
   <modules>
     <module>../test</module>
     <module>de.cau.cs.kieler.core</module>
-    <module>de.cau.cs.kieler.core.annotations</module>
-    <module>de.cau.cs.kieler.core.annotations.edit</module>
-    <module>de.cau.cs.kieler.core.annotations.text</module>
-    <module>de.cau.cs.kieler.core.annotations.text.ui</module>
     <module>de.cau.cs.kieler.core.kgraph</module>
     <module>de.cau.cs.kieler.core.kgraph.text</module>
     <module>de.cau.cs.kieler.core.kgraph.text.ui</module>
