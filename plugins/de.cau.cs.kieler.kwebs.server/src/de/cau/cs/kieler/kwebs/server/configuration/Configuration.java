@@ -113,52 +113,6 @@ public final class Configuration extends Properties {
     public static final String HTTPSKEYSTORE_JKS_PASS
         = PREFIX + "httpsKeystore.jks.pass";
 
-    // jETI properties
-
-    /** Shall service be published via jETI? */
-    public static final String PUBLISH_JETI
-        = PREFIX + "publishJeti";
-
-    /** . */
-    public static final String JETI_PROVIDER_ID
-        = PREFIX + "jeti.provider.id";
-
-    /** . */
-    public static final String JETI_SESSIONSTIMEOUT
-        = PREFIX + "jeti.sessions.timeout";
-
-    /** . */
-    public static final String JETI_SESSIONSCHECKINTERVAL
-        = PREFIX + "jeti.sessions.checkinterval";
-
-    /** . */
-    public static final String JETI_DEBUG
-        = PREFIX + "jeti.debug";
-
-    /** . */
-    public static final String JETI_TOOLXML
-        = PREFIX + "jeti.toolxml";
-
-    /** . */
-    public static final String JETI_SERVERHOSTNAME
-        = PREFIX + "jeti.server.hostname";
-
-    /** . */
-    public static final String JETI_CONNECTORSEPPPORT
-        = PREFIX + "jeti.connector.sepp.port";
-
-    /** . */
-    public static final String JETI_SESSIONSFOLDER
-        = PREFIX + "jeti.sessions.folder";
-
-    /** . */
-    public static final String JETI_LOG4JCONFIG
-        = PREFIX + "jeti.log4j.config";
-
-    /** . */
-    public static final String JETI_LOGPATH
-        = PREFIX + "jeti.logpath";
-
     // Graphviz preferences
 
     /** Path to the graphviz executable. */
