@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id$
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://kieler.cs.cau.de/KEG"
+            class="de.cau.cs.kieler.keg.KEGPackage"
+            genModel="model/graphs.genmodel"/>
+   </extension>
+
+   <extension
+         point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
+      <editpolicyProvider
+            class="de.cau.cs.kieler.keg.custom.KEGDeletionPolicyProvider">
+         <Priority
+               name="Lowest">
+         </Priority>
+      </editpolicyProvider>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.karma">
+      <configuration
+            RenderingProvider="de.cau.cs.kieler.keg.custom.KEGFigureProvider">
+         <conditions>
+            <customCondition
+                  condition="de.cau.cs.kieler.keg.custom.NoPortsCondition"
+                  figureParam="noPorts">
+            </customCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.keg.custom.PortsCondition"
+                  figureParam="ports">
+            </customCondition></conditions>
+         <package
+               class="de.cau.cs.kieler.core.kgraph.KGraphPackage">
+         </package>
+         <package
+               class="de.cau.cs.kieler.keg.KEGPackage">
+         </package>
+         <editPart
+               editPart="de.cau.cs.kieler.keg.diagram.edit.parts.Node2EditPart">
+         </editPart>
+         <editPart
+               editPart="de.cau.cs.kieler.keg.diagram.edit.parts.Node4EditPart">
+         </editPart>
+      </configuration>
+   </extension>
+   <extension point="org.eclipse.emf.edit.itemProviderAdapterFactories">
+      <factory
+            uri="http://kieler.cs.cau.de/KGraph"
+            class="de.cau.cs.kieler.keg.kgraph.provider.KGraphItemProviderAdapterFactory"
+            supportedTypes=
+              "org.eclipse.emf.edit.provider.IEditingDomainItemProvider
+               org.eclipse.emf.edit.provider.IStructuredItemContentProvider
+               org.eclipse.emf.edit.provider.ITreeItemContentProvider
+               org.eclipse.emf.edit.provider.IItemLabelProvider
+               org.eclipse.emf.edit.provider.IItemPropertySource"/>
+      <factory
+            uri="http://kieler.cs.cau.de/KEG"
+            class="de.cau.cs.kieler.keg.provider.KEGItemProviderAdapterFactory"
+            supportedTypes=
+              "org.eclipse.emf.edit.provider.IEditingDomainItemProvider
+               org.eclipse.emf.edit.provider.IStructuredItemContentProvider
+               org.eclipse.emf.edit.provider.ITreeItemContentProvider
+               org.eclipse.emf.edit.provider.IItemLabelProvider
+               org.eclipse.emf.edit.provider.IItemPropertySource"/>
+   </extension>
+   
+</plugin>

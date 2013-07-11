@@ -1,0 +1,42 @@
+modeltype GMFGEN uses gmfgen('http://www.eclipse.org/gmf/2009/GenModel');
+
+transformation GraphsCustomization(inout gmfgen:GMFGEN);
+
+main() {
+	var model := gmfgen.rootObjects()![GenEditorGenerator];
+
+	model.dynamicTemplates :=true;
+	model.templateDirectory := "de.cau.cs.kieler.keg/gmf-templates";
+	model.sameFileForDiagramAndModel := false;
+	
+	model.domainFileExtension := "keg";
+	model.diagramFileExtension := "kegdi";
+	
+	// some general plugin settings
+	model.plugin.requiredPlugins += "de.cau.cs.kieler.core.ui";
+    model.plugin.requiredPlugins += "de.cau.cs.kieler.core.model";
+    model.plugin.requiredPlugins += "de.cau.cs.kieler.core.model.gmf";
+	model.plugin.requiredPlugins += "de.cau.cs.kieler.karma";
+	model.plugin.version := "0.2.0.qualifier";
+	model.plugin.provider := "Christian-Albrechts-Universität zu Kiel";
+	model.plugin.name := "KIELER Graph Diagrams";
+	
+	// use our own category for the "new" wizard
+	model.diagram.creationWizardCategoryID := "de.cau.cs.kieler";
+	
+	// correct the edge label placement
+	model.diagram.allSubobjectsOfType(GenLink)[GenLink] ->map edgeSettings();
+}
+
+mapping inout GenLink::edgeSettings(){	
+	self.allSubobjectsOfType(GenLinkLabel)[GenLinkLabel] ->map edgeLabelSettings();
+}
+
+mapping inout GenLinkLabel::edgeLabelSettings(){
+	self.alignment := switch {
+		// SOURCE and TARGET seem to be confused but they are not -> gmf problem
+		case (self.editPartClassName.startsWith('EdgeHead'))  LinkLabelAlignment::SOURCE;
+		case (self.editPartClassName.startsWith('EdgeMid')) LinkLabelAlignment::MIDDLE;
+		case (self.editPartClassName.startsWith('EdgeTail')) LinkLabelAlignment::TARGET;
+	};
+}
