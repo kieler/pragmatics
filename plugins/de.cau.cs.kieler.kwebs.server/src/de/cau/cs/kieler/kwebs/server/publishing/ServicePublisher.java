@@ -43,10 +43,6 @@ public final class ServicePublisher {
     private IServerManager jaxwsHttpsManager
         = new HttpsServerManager();
 
-    /** Manager for publishing via jETI. */
-    private IServerManager jetiManager
-        = new JetiServerManager();
-
     /** Manager for publishing diverse support handlers. */
     private IServerManager supportManager
         = new SupportingServerManager();
@@ -97,11 +93,6 @@ public final class ServicePublisher {
                 publishHTTPS = Configuration.INSTANCE.
                     getConfigProperty(Configuration.JAXWS_PUBLISH_HTTPS).equalsIgnoreCase("true");
             }
-            boolean publishJETI = false;
-            if (Configuration.INSTANCE.hasConfigProperty(Configuration.PUBLISH_JETI)) {
-                publishJETI = Configuration.INSTANCE.
-                    getConfigProperty(Configuration.PUBLISH_JETI).equalsIgnoreCase("true");
-            }
             boolean publishSUPP = true;
             if (Configuration.INSTANCE.hasConfigProperty(Configuration.PUBLISH_SUPPORTSERVER)) {
                 publishSUPP = Configuration.INSTANCE.
@@ -139,10 +130,6 @@ public final class ServicePublisher {
                 jaxwsHttpsManager.setAddress(address);
                 jaxwsHttpsManager.publish(jaxwsService);
             }
-            if (publishJETI) {
-                Logger.log("Publishing layout service via jETI");
-                jetiManager.publish(null);
-            }
             // Publish the support server
             if (publishSUPP) {
                 Logger.log("Publishing support server");
@@ -162,7 +149,6 @@ public final class ServicePublisher {
     public synchronized void unpublish() {
         jaxwsHttpManager.unpublish();
         jaxwsHttpsManager.unpublish();
-        jetiManager.unpublish();
         supportManager.unpublish();
     }
 
@@ -173,7 +159,7 @@ public final class ServicePublisher {
      */
     public synchronized boolean isPublished() {
         return (jaxwsHttpManager.isPublished() || jaxwsHttpsManager.isPublished()
-                || jetiManager.isPublished() || supportManager.isPublished());
+                || supportManager.isPublished());
     }
 
 }

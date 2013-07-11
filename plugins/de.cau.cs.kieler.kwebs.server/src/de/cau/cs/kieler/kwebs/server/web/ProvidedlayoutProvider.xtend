@@ -431,12 +431,12 @@ class ProvidedlayoutProvider
      * @param requestData
      *            the data of the request
      */
-    def private CharSequence generateForPreviewImage(
+    def private generateForPreviewImage(
         ResourceProcessingExchange processingExchange
     ) 
     {
         val Map<String, String> params = processingExchange.getParams()
-        val String                 id     = params.get(PARAM_PREVIEWIMAGE)
+        val String id = params.get(PARAM_PREVIEWIMAGE)
         if (id == null) {
             return ''''''
         }

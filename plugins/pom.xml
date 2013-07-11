@@ -56,16 +56,10 @@
     <module>de.cau.cs.kieler.kwebs</module>
     <module>de.cau.cs.kieler.kwebs.client</module>
     <module>de.cau.cs.kieler.kwebs.client.jaxws</module>
-    <module>de.cau.cs.kieler.kwebs.client.jeti</module>
     <module>de.cau.cs.kieler.kwebs.jaxws</module>
     <module>de.cau.cs.kieler.kwebs.server</module>
     <module>de.cau.cs.kieler.papyrus</module>
     <module>de.cau.cs.kieler.papyrus.sequence</module>
-    <module>de.unido.ls5.eti.client</module>
-    <module>de.unido.ls5.eti.common</module>
-    <module>de.unido.ls5.eti.connector.sepp</module>
-    <module>de.unido.ls5.eti.sps.apis</module>
-    <module>de.unido.ls5.eti.toolserver</module>
     <module>edu.umd.cs.piccolo</module>
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>
