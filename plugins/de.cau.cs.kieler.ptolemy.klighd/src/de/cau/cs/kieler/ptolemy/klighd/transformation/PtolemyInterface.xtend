@@ -14,9 +14,15 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.core.kgraph.KPort
+import de.cau.cs.kieler.kiml.util.KimlUtil
+import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.List
+import org.eclipse.core.runtime.CoreException
+import org.eclipse.core.runtime.IStatus
+import org.eclipse.core.runtime.Status
 import org.eclipse.emf.ecore.EObject
 import org.ptolemy.moml.ClassType
 import org.ptolemy.moml.EntityType
@@ -26,18 +32,11 @@ import ptolemy.kernel.CompositeEntity
 import ptolemy.kernel.Entity
 import ptolemy.kernel.util.Attribute
 import ptolemy.kernel.util.NamedObj
-import ptolemy.kernel.util.StringAttribute
 import ptolemy.moml.MoMLParser
 import ptolemy.moml.filter.BackwardCompatibility
-import de.cau.cs.kieler.core.annotations.Annotatable
-import de.cau.cs.kieler.core.annotations.AnnotationsFactory
-import de.cau.cs.kieler.kiml.util.KimlUtil
-import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.core.kgraph.KGraphElement
-import org.eclipse.core.runtime.CoreException
-import org.eclipse.core.runtime.IStatus
-import org.eclipse.core.runtime.Status
-import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
+import ptolemy.kernel.util.StringAttribute
+
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.PtolemyInterface.*
 
 /**
  * Provides an interface to the Ptolemy library to instantiate actors. This is used during the
@@ -87,30 +86,30 @@ class PtolemyInterface {
             for (port : actor.portList) {
                 if (port instanceof IOPort) {
                     val IOPort ptPort = port as IOPort
-                    val KPort kgraphPort = KimlUtil::createInitializedPort()
+                    val KPort kPort = KimlUtil::createInitializedPort()
                     
                     // Find out whether it is an input or an output port (or even both)
                     if (ptPort.input) {
-                        kgraphPort.markAsInputPort()
+                        kPort.markAsInputPort()
                     }
                     
                     if (ptPort.output) {
-                        kgraphPort.markAsOutputPort()
+                        kPort.markAsOutputPort()
                     }
                     
-                    // TODO: Set the name
-                    kgraphPort.name = ptPort.name
-                    kgraphPort.markAsPtolemyElement()
+                    // Set the name
+                    kPort.name = ptPort.name
+                    kPort.markAsPtolemyElement()
                     
-                    // Copy attributes
+                    // Turn attributes into properties
                     for (attribute : ptPort.attributeList) {
                         if (attribute instanceof Attribute) {
-                            turnAttributeIntoAnnotation(kgraphPort, attribute as Attribute)
+                            turnAttributeIntoAnnotation(kPort, attribute as Attribute)
                         }
                     }
                     
                     // Add the created port to our result list
-                    result.add(kgraphPort)
+                    result.add(kPort)
                 }
             }
         }
@@ -120,61 +119,24 @@ class PtolemyInterface {
     }
     
     /**
-     * Makes an annotation out of the given attribute and attaches it to the given KGraph element.
+     * Makes an annotation out of the given attribute and attaches it to the given object.
      * Recursively adds attributes of the attributes to the correspondingly created annotations.
      * 
      * @param element the KGraph element to annotate with the transformed attribute.
-     * @param ptAttribute the attribute to turn into an annotation
+     * @param ptAttribute the attribute to turn into an annotation.
      */
-    def private void turnAttributeIntoAnnotation(KGraphElement element, Attribute ptAttribute) {
-        // Create an annotation for the attribute
-        val kgraphAnnotation = AnnotationsFactory::eINSTANCE.createTypedStringAnnotation()
+    def private void turnAttributeIntoAnnotation(EObject element, Attribute ptAttribute) {
+        val property = element.addAnnotation(ptAttribute.name, "", ptAttribute.className)
         
-        kgraphAnnotation.name = ptAttribute.name
-        kgraphAnnotation.type = ptAttribute.className
-        
-        // If the attribute is a StringAttribute, assign its value
+        // Check if we have a string attribute
         if (ptAttribute instanceof StringAttribute) {
-            kgraphAnnotation.value = (ptAttribute as StringAttribute).valueAsString
+            property.value = (ptAttribute as StringAttribute).valueAsString
         }
-        
-        // Add the annotation
-        getAnnotations(element).add(kgraphAnnotation)
         
         // Recursively add further attributes
         for (attribute : ptAttribute.attributeList) {
             if (attribute instanceof Attribute) {
-                turnAttributeIntoAnnotation(kgraphAnnotation, attribute as Attribute)
-            }
-        }
-    }
-    
-    /**
-     * Makes an annotation out of the given attribute and attaches it to the given annotatable.
-     * Recursively adds attributes of the attributes to the correspondingly created annotations.
-     * 
-     * @param annotatable the annotatable object to annotate with the transformed attribute.
-     * @param ptAttribute the attribute to turn into an annotation
-     */
-    def private void turnAttributeIntoAnnotation(Annotatable annotatable, Attribute ptAttribute) {
-        // Create an annotation for the attribute
-        val kgraphAnnotation = AnnotationsFactory::eINSTANCE.createTypedStringAnnotation()
-        
-        kgraphAnnotation.name = ptAttribute.name
-        kgraphAnnotation.type = ptAttribute.className
-        
-        // If the attribute is a StringAttribute, assign its value
-        if (ptAttribute instanceof StringAttribute) {
-            kgraphAnnotation.value = (ptAttribute as StringAttribute).valueAsString
-        }
-        
-        // Add the annotation
-        annotatable.annotations.add(kgraphAnnotation)
-        
-        // Recursively add further attributes
-        for (attribute : ptAttribute.attributeList) {
-            if (attribute instanceof Attribute) {
-                turnAttributeIntoAnnotation(kgraphAnnotation, attribute as Attribute)
+                turnAttributeIntoAnnotation(property, attribute as Attribute)
             }
         }
     }

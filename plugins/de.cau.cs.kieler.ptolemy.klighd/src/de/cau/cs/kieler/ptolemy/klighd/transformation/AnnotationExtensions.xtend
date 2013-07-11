@@ -13,16 +13,15 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
-import de.cau.cs.kieler.core.annotations.Annotation
-import de.cau.cs.kieler.core.annotations.AnnotationsFactory
-import de.cau.cs.kieler.core.annotations.StringAnnotation
-import de.cau.cs.kieler.core.annotations.TypedStringAnnotation
 import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties
 import java.util.List
+import org.ptolemy.moml.MomlFactory
+import org.ptolemy.moml.PropertyType
+import org.eclipse.emf.ecore.EObject
 
 /**
  * Utility methods regarding annotations used by the Ptolemy to KGraph transformation.
@@ -32,26 +31,41 @@ import java.util.List
  */
 class AnnotationExtensions {
     
+    /** Factory used to create MoML model instances. */
+    val momlFactory = MomlFactory::eINSTANCE
+    
+    
     /**
-     * Returns the annotations stored in the Ptolemy annotations property of the given KGraph element.
-     * This method looks for the property in the element's KShapeLayout.
+     * Returns the annotations of the given object.
+     * This particular method looks for the property in the element's KShapeLayout.
      * 
-     * @param element the KGraph element.
+     * @param element the object.
      * @return the annotations list or {@code null} if none was found.
      */
-    def dispatch List<Annotation> getAnnotations(KGraphElement element) {
-        return element.getData(typeof(KShapeLayout))?.getProperty(PtolemyProperties::PT_ANNOTATIONS);
+    def dispatch List<PropertyType> getAnnotations(KGraphElement element) {
+        return element.getData(typeof(KShapeLayout))?.getProperty(PtolemyProperties::PT_PROPERTIES);
     }
     
     /**
-     * Returns the annotations stored in the Ptolemy annotations property of the given KGraph edge.
-     * This method looks for the property in the edge's KEdgeLayout.
+     * Returns the annotations of the given object.
+     * This particular method looks for the property in the element's KEdgeLayout.
      * 
-     * @param element the KGraph edge.
+     * @param element the object.
      * @return the annotations list or {@code null} if none was found.
      */
-    def dispatch List<Annotation> getAnnotations(KEdge element) {
-        return element.getData(typeof(KEdgeLayout))?.getProperty(PtolemyProperties::PT_ANNOTATIONS);
+    def dispatch List<PropertyType> getAnnotations(KEdge element) {
+        return element.getData(typeof(KEdgeLayout))?.getProperty(PtolemyProperties::PT_PROPERTIES);
+    }
+    
+    /**
+     * Returns the annotations of the given object.
+     * This particular method looks for the properties directly attached to the element.
+     * 
+     * @param element the object.
+     * @return the annotations list or {@code null} if none was found.
+     */
+    def dispatch List<PropertyType> getAnnotations(PropertyType element) {
+        return element.annotations;
     }
     
     /**
@@ -61,8 +75,19 @@ class AnnotationExtensions {
      * @param key the key of the annotation to return.
      * @return the annotation or {@code null} if there is none with the given key.
      */
-    def Annotation getAnnotation(KGraphElement element, String key) {
-        return getAnnotations(element).findFirst([a | a.name.equals(key)])
+    def PropertyType getAnnotation(EObject element, String key) {
+        return getAnnotations(element).findFirst([p | p.name.equals(key)])
+    }
+    
+    /**
+     * Returns the value of the string annotation with the given key, if any.
+     * 
+     * @param element the KGraph element to fetch the annotation from.
+     * @param key the annotation's key.
+     * @return the annotation's value, if it exists, or the empty string if it doesn't.
+     */
+    def String getAnnotationValue(KGraphElement element, String key) {
+        return getAnnotation(element, key)?.value
     }
     
     /**
@@ -73,7 +98,7 @@ class AnnotationExtensions {
      * @param key key of the annotation to look for.
      * @return {@code true} if such an annotation exists, {@code false} otherwise.
      */
-    def boolean hasAnnotation(KGraphElement element, String key) {
+    def boolean hasAnnotation(EObject element, String key) {
         return getAnnotation(element, key) != null
     }
     
@@ -83,27 +108,18 @@ class AnnotationExtensions {
      * 
      * @param element the KGraph element.
      * @param key the annotation's key.
+     * @return the created property.
      */
-    def void addAnnotation(KGraphElement element, String key) {
+    def PropertyType addAnnotation(EObject element, String key) {
         if (!hasAnnotation(element, key)) {
-            val Annotation annotation = AnnotationsFactory::eINSTANCE.createAnnotation();
-            annotation.setName(key);
+            val property = momlFactory.createPropertyType()
+            property.name = key
             
-            getAnnotations(element).add(annotation);
-        }
-    }
-    
-    /**
-     * Removes the annotation with the given key, if any exists, from the given KGraph element.
-     * 
-     * @param element the KGraph element.
-     * @param key the annotation's key.
-     */
-    def void removeAnnotation(KGraphElement element, String key) {
-        val annotations = getAnnotations(element)
-        val annotation = getAnnotation(element, key)
-        if (annotation != null) {
-            annotations.remove(annotation);
+            element.annotations.add(property);
+            
+            return property;
+        } else {
+            element.getAnnotation(key)
         }
     }
 
@@ -114,31 +130,19 @@ class AnnotationExtensions {
      * @param element the KGraph element.
      * @param key the annotation's key.
      * @param value the annotation's value.
+     * @return the created property.
      */
-    def void addStringAnnotation(KGraphElement element, String key, String value) {
+    def PropertyType addAnnotation(EObject element, String key, String value) {
         if (!hasAnnotation(element, key)) {
-            val StringAnnotation annotation = AnnotationsFactory::eINSTANCE.createStringAnnotation()
-            annotation.setName(key)
-            annotation.setValue(value)
+            val property = momlFactory.createPropertyType()
+            property.name = key
+            property.value = value
             
-            getAnnotations(element).add(annotation)
-        }
-    }
-    
-    /**
-     * Returns the value of the string annotation with the given key, if any.
-     * 
-     * @param element the KGraph element to fetch the annotation from.
-     * @param key the annotation's key.
-     * @return the annotation's value, if it exists, or the empty string if it doesn't.
-     */
-    def String getStringAnnotationValue(KGraphElement element, String key) {
-        val annotation = getAnnotation(element, key)
-        
-        if (annotation instanceof StringAnnotation) {
-            return (annotation as StringAnnotation).value
+            element.annotations.add(property);
+            
+            return property;
         } else {
-            return ""
+            element.getAnnotation(key)
         }
     }
 
@@ -150,16 +154,34 @@ class AnnotationExtensions {
      * @param key the annotation's key.
      * @param type the annotation's tyape.
      * @param value the annotation's value.
+     * @return the created property.
      */
-    def void addTypedStringAnnotation(KGraphElement element, String key, String type, String value) {
+    def PropertyType addAnnotation(EObject element, String key, String value, String type) {
         if (!hasAnnotation(element, key)) {
-            val TypedStringAnnotation annotation =
-                AnnotationsFactory::eINSTANCE.createTypedStringAnnotation()
-            annotation.name = key
-            annotation.type = type
-            annotation.value = value
+            val property = momlFactory.createPropertyType()
+            property.name = key
+            property.value = value
+            property.setClass(type)
             
-            getAnnotations(element).add(annotation)
+            element.annotations.add(property);
+            
+            return property;
+        } else {
+            element.getAnnotation(key)
+        }
+    }
+    
+    /**
+     * Removes the annotation with the given key, if any exists, from the given KGraph element.
+     * 
+     * @param element the KGraph element.
+     * @param key the annotation's key.
+     */
+    def void removeAnnotation(EObject element, String key) {
+        val annotations = getAnnotations(element)
+        val annotation = getAnnotation(element, key)
+        if (annotation != null) {
+            annotations.remove(annotation);
         }
     }
     

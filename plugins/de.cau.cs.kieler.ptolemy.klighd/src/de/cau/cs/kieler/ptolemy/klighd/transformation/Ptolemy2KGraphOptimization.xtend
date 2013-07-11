@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.annotations.TypedStringAnnotation
 import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
@@ -465,8 +464,6 @@ class Ptolemy2KGraphOptimization {
      * @param root root element of the model to look for convertible annotations in.
      */
     def private void convertAnnotationsToNodes(KNode root) {
-        System::out.println("Looking for directors...")
-        
         // Only consider nodes that were not themselves created from annotations
         if (root.markedAsFormerAnnotationNode) {
             return
@@ -477,37 +474,26 @@ class Ptolemy2KGraphOptimization {
         while (annotationsIterator.hasNext()) {
             val annotation = annotationsIterator.next()
             
-            System::out.println(annotation.name)
-            
-            // The annotation must be a TypedStringAnnotation for us to be interested
-            if (annotation instanceof TypedStringAnnotation) {
-                val tsAnnotation = annotation as TypedStringAnnotation
+            // Check if the annotation denotes a Ptolemy director
+            if (annotation.class_ != null && annotation.class_.endsWith("Director")) {
+                // Create a new node for it
+                val directorNode = KimlUtil::createInitializedNode()
                 
-                System::out.println(tsAnnotation.type)
+                // Set the name, add language annotation and mark it as having been created from
+                // an annotation
+                directorNode.name = annotation.name
+                directorNode.markAsPtolemyElement()
+                directorNode.markAsDirector()
+                directorNode.markAsFormerAnnotationNode()
                 
-                // Check if the annotation denotes a Ptolemy director
-                if (tsAnnotation.type.endsWith("Director")) {
-                    // Create a new node for it
-                    val directorNode = KimlUtil::createInitializedNode()
-                    
-                    // Set the name, add language annotation and mark it as having been created from
-                    // an annotation
-                    directorNode.name = tsAnnotation.name
-                    directorNode.markAsPtolemyElement()
-                    directorNode.markAsDirector()
-                    directorNode.markAsFormerAnnotationNode()
-                    
-                    // Annotate the new node with the original annotation and remove that from its
-                    // former node)
-                    directorNode.addTypedStringAnnotation(
-                        tsAnnotation.name, tsAnnotation.type, tsAnnotation.value)
-                    annotationsIterator.remove()
-                    
-                    // Add the new node to the root element
-                    root.children += directorNode
-                    
-                    System::out.println("FOUND A DIRECTOR")
-                }
+                // Annotate the new node with the original annotation and remove that from its
+                // former node)
+                directorNode.addAnnotation(
+                    annotation.name, annotation.value, annotation.class_)
+                annotationsIterator.remove()
+                
+                // Add the new node to the root element
+                root.children += directorNode
             }
         }
         

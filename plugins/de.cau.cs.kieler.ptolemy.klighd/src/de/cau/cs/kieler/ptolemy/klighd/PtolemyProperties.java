@@ -16,7 +16,8 @@ package de.cau.cs.kieler.ptolemy.klighd;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.annotations.Annotation;
+import org.ptolemy.moml.PropertyType;
+
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 
@@ -27,14 +28,13 @@ import de.cau.cs.kieler.core.properties.Property;
  */
 public final class PtolemyProperties {
     /**
-     * Attributes of the original Ptolemy object a KGraph element was created from. Such attributes are
-     * saved as a property with a list of annotations instead of being converted to first-class
-     * properties. This is mainly because we don't know in advance which kinds of attributes Ptolemy
-     * objects can have, and because attributes can have attributes themselves. The latter concept maps
-     * nicely to the way annotations are defined.
+     * Properties of the original Ptolemy object a KGraph element was created from. Such properties are
+     * saved as a property with a list instead of being converted to first-class properties. This is
+     * mainly because we don't know in advance which kinds of properties Ptolemy objects can have, and
+     * because properties can have properties themselves.
      */
-    public static final IProperty<List<Annotation>> PT_ANNOTATIONS =
-            new Property<List<Annotation>>("ptolemy.annotations", new ArrayList<Annotation>());
+    public static final IProperty<List<PropertyType>> PT_PROPERTIES =
+            new Property<List<PropertyType>>("ptolemy.properties", new ArrayList<PropertyType>());
     
     
     /**

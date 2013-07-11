@@ -40,7 +40,7 @@ class MarkerExtensions {
      * @param element the element to mark.
      */
     def void markAsPtolemyElement(KGraphElement element) {
-        addStringAnnotation(element, ANNOTATION_LANGUAGE, ANNOTATION_LANGUAGE_PTOLEMY)
+        addAnnotation(element, ANNOTATION_LANGUAGE, ANNOTATION_LANGUAGE_PTOLEMY)
     }
     
     /**
@@ -196,8 +196,12 @@ class MarkerExtensions {
      * @return {@code true} if the node represents a state.
      */
     def boolean isMarkedAsState(KNode node) {
-        return node.getStringAnnotationValue(ANNOTATION_PTOLEMY_CLASS).equals(
-            "ptolemy.domains.modal.kernel.State")
+        val propertyValue = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS)
+        if (propertyValue == null) {
+            return false
+        } else {
+            return propertyValue.equals("ptolemy.domains.modal.kernel.State")
+        }
     }
     
 }

@@ -13,11 +13,9 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
-
 import com.google.inject.Inject
 import java.util.ArrayList
 import java.util.List
-
 import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Status
@@ -29,10 +27,6 @@ import org.ptolemy.moml.LinkType
 import org.ptolemy.moml.PortType
 import org.ptolemy.moml.PropertyType
 import org.ptolemy.moml.RelationType
-
-import de.cau.cs.kieler.core.annotations.Annotatable
-import de.cau.cs.kieler.core.annotations.AnnotationsFactory
-import de.cau.cs.kieler.core.annotations.TypedStringAnnotation
 import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
@@ -133,7 +127,7 @@ class Ptolemy2KGraphTransformation {
         
         // Add annotations identifying this node as having been created from a Ptolemy entity
         kNode.markAsPtolemyElement()
-        kNode.addStringAnnotation(ANNOTATION_PTOLEMY_CLASS, ptEntity.class1)
+        kNode.addAnnotation(ANNOTATION_PTOLEMY_CLASS, ptEntity.class1)
         
         // Add the required ports, relations, links, and child entities
         kNode.addProperties(ptEntity.property)
@@ -158,7 +152,7 @@ class Ptolemy2KGraphTransformation {
         
         // Add annotations identifying this node as having been created from a Ptolemy entity
         kNode.markAsPtolemyElement()
-        kNode.addStringAnnotation(ANNOTATION_PTOLEMY_CLASS, ptClass.^extends)
+        kNode.addAnnotation(ANNOTATION_PTOLEMY_CLASS, ptClass.^extends)
         
         // Add the required ports, relations, links, and child entities
         kNode.addProperties(ptClass.property)
@@ -388,48 +382,7 @@ class Ptolemy2KGraphTransformation {
      * @param ptProperties list of properties to transform.
      */
     def private addProperties(KGraphElement element, List<PropertyType> ptProperties) {
-        // Transform all properties
-        for (ptProperty : ptProperties) {
-            val TypedStringAnnotation propertyAnnotation =
-                AnnotationsFactory::eINSTANCE.createTypedStringAnnotation()
-            
-            // Save the name, value, and class of the annotation
-            propertyAnnotation.name = ptProperty.name
-            propertyAnnotation.value = ptProperty.value
-            propertyAnnotation.type = ptProperty.class_
-            
-            // Recursively add the property's properties
-            propertyAnnotation.addProperties(ptProperty.property)
-            
-            // Add the property annotation
-            getAnnotations(element).add(propertyAnnotation)
-        }
-    }
-    
-    /**
-     * Recursively transforms the given list of properties and adds them to the given annotatable
-     * object.
-     * 
-     * @param annotatable object to add the transformed properties to.
-     * @param ptProperties list of properties to transform.
-     */
-    def private addProperties(Annotatable annotatable, List<PropertyType> ptProperties) {
-        // Transform all properties
-        for (ptProperty : ptProperties) {
-            val TypedStringAnnotation propertyAnnotation =
-                AnnotationsFactory::eINSTANCE.createTypedStringAnnotation()
-            
-            // Save the name, value, and class of the annotation
-            propertyAnnotation.name = ptProperty.name
-            propertyAnnotation.value = ptProperty.value
-            propertyAnnotation.type = ptProperty.class_
-            
-            // Recursively add the property's properties
-            propertyAnnotation.addProperties(ptProperty.property)
-            
-            // Add the property annotation
-            annotatable.annotations.add(propertyAnnotation)
-        }
+        element.annotations.addAll(ptProperties)
     }
     
     /**
