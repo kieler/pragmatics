@@ -17,7 +17,6 @@
   <!-- all features are listed as modules -->
 
   <modules>
-    <module>de.cau.cs.kieler.keg.feature</module>
     <module>de.cau.cs.kieler.kiml.gmf.feature</module>
     <module>de.cau.cs.kieler.kiml.graphiti.feature</module>
     <module>de.cau.cs.kieler.kiml.graphviz.feature</module>
