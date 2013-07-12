@@ -32,11 +32,12 @@ import ptolemy.kernel.CompositeEntity
 import ptolemy.kernel.Entity
 import ptolemy.kernel.util.Attribute
 import ptolemy.kernel.util.NamedObj
+import ptolemy.kernel.util.StringAttribute
 import ptolemy.moml.MoMLParser
 import ptolemy.moml.filter.BackwardCompatibility
-import ptolemy.kernel.util.StringAttribute
+import ptolemy.actor.parameters.ParameterPort
 
-import static de.cau.cs.kieler.ptolemy.klighd.transformation.PtolemyInterface.*
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
 
 /**
  * Provides an interface to the Ptolemy library to instantiate actors. This is used during the
@@ -54,6 +55,7 @@ class PtolemyInterface {
     @Inject extension MarkerExtensions
     /** Labeling nodes and ports. */
     @Inject extension LabelExtensions
+    
     
     /**
      * A cache mapping qualified class names of Ptolemy actors to their actual instances. If an actor
@@ -78,24 +80,15 @@ class PtolemyInterface {
         
         // Try to instantiate the actor (this is where an exception might be thrown which is propagated
         // up to the caling method)
-        var Entity actor = null
-        actor = instantiatePtolemyEntity(entity)
+        var Entity ptActor = null
+        ptActor = instantiatePtolemyEntity(entity)
         
         // Add its ports
-        if (actor != null) {
-            for (port : actor.portList) {
+        if (ptActor != null) {
+            for (port : ptActor.portList) {
                 if (port instanceof IOPort) {
                     val IOPort ptPort = port as IOPort
                     val KPort kPort = KimlUtil::createInitializedPort()
-                    
-                    // Find out whether it is an input or an output port (or even both)
-                    if (ptPort.input) {
-                        kPort.markAsInputPort()
-                    }
-                    
-                    if (ptPort.output) {
-                        kPort.markAsOutputPort()
-                    }
                     
                     // Set the name
                     kPort.name = ptPort.name
@@ -106,6 +99,31 @@ class PtolemyInterface {
                         if (attribute instanceof Attribute) {
                             turnAttributeIntoAnnotation(kPort, attribute as Attribute)
                         }
+                    }
+                    
+                    // Find out whether it is an input or an output port (or even both)
+                    if (ptPort.input || kPort.hasAnnotation("input")
+                        || kPort.hasAnnotation("inputoutput")) {
+                        
+                        kPort.markAsInputPort()
+                    }
+                    
+                    if (ptPort.output || kPort.hasAnnotation("output")
+                        || kPort.hasAnnotation("inputoutput")) {
+                        
+                        kPort.markAsOutputPort()
+                    }
+                    
+                    // Remember if this is a multiport
+                    if (ptPort.multiport) {
+                        kPort.addAnnotation(IS_MULTIPORT)
+                    }
+                    
+                    // Annotate with the port type (we currently distinguish two port types)
+                    if (ptPort instanceof ParameterPort) {
+                        kPort.addAnnotation(IS_PARAMETER_PORT)
+                    } else {
+                        kPort.addAnnotation(IS_IO_PORT)
                     }
                     
                     // Add the created port to our result list

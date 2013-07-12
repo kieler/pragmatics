@@ -33,11 +33,8 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     
     override transform(DocumentRoot model) {
         val kgraph = transformation.transform(model)
-        System::out.println("Transformed")
         optimization.optimize(kgraph)
-        System::out.println("Optimized")
         visualization.visualize(kgraph)
-        System::out.println("Visualized")
         
         return kgraph
     }

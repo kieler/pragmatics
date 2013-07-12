@@ -157,7 +157,7 @@ class Ptolemy2KGraphOptimization {
         
         // Iterate over the entity's ports
         for (port : root.ports) {
-            if (port.markedAsInputPort|| port.markedAsOutputPort) {
+            if (port.markedAsInputPort || port.markedAsOutputPort) {
                 knownPorts.add(port)
             } else {
                 unknownPorts.add(port)

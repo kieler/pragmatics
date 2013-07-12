@@ -15,10 +15,16 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KNode
+import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
+import de.cau.cs.kieler.kiml.options.LayoutOptions
+import de.cau.cs.kieler.kiml.options.PortSide
+
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.
@@ -26,12 +32,14 @@ import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
  * @author ckru
  * @author cds
  */
-class PtolemyFigureProvider {
+class KRenderingFigureProvider {
     
     /** Marking nodes. */
     @Inject extension AnnotationExtensions
     /** Extensions used during the transformation. To make things easier. And stuff. */
     @Inject extension MiscellaneousExtensions
+    /** Create KRenderings from Ptolemy figures. */
+    @Inject extension PtolemyFigureInterface
     /** Color stuff. */
     @Inject extension KColorExtensions
     /** Rendering stuff. */
@@ -39,6 +47,10 @@ class PtolemyFigureProvider {
     
     /** Rendering factory used to instantiate KRendering instances. */
     val renderingFactory = KRenderingFactory::eINSTANCE
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Node Renderings
     
     
     /**
@@ -130,7 +142,100 @@ class PtolemyFigureProvider {
      * @return the rendering.
      */
     def KRendering createRegularNodeRendering(KNode node) {
-        return createDefaultRendering(node)
+        val ptRendering = createPtolemyFigureRendering(node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS))
+        return ptRendering ?: createDefaultRendering(node)
+    }
+    
+    /**
+     * Creates a rendering for an accumulator node. This needs to be a separate case because the SVG
+     * description for accumulator nodes in Ptolemy is broken.
+     * 
+     * @param node the node to create the rendering information for.
+     * @return the rendering.
+     */
+    def KRendering createAccumulatorNodeRendering(KNode node) {
+        val accumulatorSvg = "<svg height=\"41\" width=\"41\" >"
+                + "<rect height=\"40\" style=\"fill:white;stroke:black;stroke-width:1\" "
+                + "width=\"40\" x=\"0.0\" y=\"0.0\" />"
+                + "<path d=\"m 29.126953,6.2304687 0,3.0410157 -13.833984,0 8.789062,9.3515626 "
+                + "-8.789062,10.335937 14.554687,0 0,3.041016 -18.246093,0 "
+                + "0,-3.550781 8.419921,-9.826172 -8.419921,-8.9648439 0,-3.4277344 z\" />"
+                + "</svg>"
+        return SvgUtils::createFigureFromSvg(accumulatorSvg)
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Port Renderings
+    
+    /** Width / height of a port. */
+    private val PORT_SIZE = 7f
+    
+    /** Half the width / height of a port. */
+    private val PORT_SIZE_HALF = 3.5f
+    
+    
+    /**
+     * Creates a rendering for a port.
+     * 
+     * @param port the port to create the rendering information for.
+     * @return the rendering.
+     */
+    def KRendering createPortRendering(KPort port) {
+        val layout = port.getData(typeof(KShapeLayout))
+        
+        // Determine the port color
+        val portFillColor = if (port.hasAnnotation(IS_PARAMETER_PORT)) {
+            // Parameter ports are gray
+            SvgUtils::lookupColor("gray")
+        } else if (port.hasAnnotation(IS_IO_PORT) && port.hasAnnotation(IS_MULTIPORT)) {
+            // IO Multiports are white
+            SvgUtils::lookupColor("white")
+        } else {
+            // All other ports are black
+            SvgUtils::lookupColor("black")
+        }
+        
+        // Create the triangle (depending on the port size)
+        val polygon = port.addPolygon()
+        switch layout.getProperty(LayoutOptions::PORT_SIDE) {
+            case PortSide::NORTH: {
+                polygon.points += createKPosition(
+                    LEFT, 0, 0, TOP, 0, 0)
+                polygon.points += createKPosition(
+                    LEFT, PORT_SIZE, 0, TOP, 0, 0)
+                polygon.points += createKPosition(
+                    LEFT, PORT_SIZE_HALF, 0, TOP, PORT_SIZE, 0)
+                polygon.points += createKPosition(
+                    LEFT, 0, 0, TOP, 0, 0)
+            }
+            case PortSide::SOUTH: {
+                polygon.points += createKPosition(
+                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
+                polygon.points += createKPosition(
+                    LEFT, PORT_SIZE, 0, TOP, PORT_SIZE, 0)
+                polygon.points += createKPosition(
+                    LEFT, PORT_SIZE_HALF, 0, TOP, 0, 0)
+                polygon.points += createKPosition(
+                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
+            }
+            default: {
+                polygon.points += createKPosition(
+                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
+                polygon.points += createKPosition(
+                    LEFT, 0, 0, TOP, 0, 0)
+                polygon.points += createKPosition(
+                    LEFT, PORT_SIZE, 0, TOP, PORT_SIZE_HALF, 0)
+                polygon.points += createKPosition(
+                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
+            }
+        }
+        
+        // Set color properties
+        polygon.setBackground(portFillColor)
+        polygon.setForeground(SvgUtils::lookupColor("black"))
+        
+        return polygon
     }
     
 }

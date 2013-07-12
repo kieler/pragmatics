@@ -33,9 +33,15 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement
 import de.cau.cs.kieler.kiml.options.PortConstraints
+import de.cau.cs.kieler.kiml.options.PortLabelPlacement
+import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.kiml.options.SizeConstraint
+import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klighd.KlighdConstants
 import java.util.EnumSet
+import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement
+
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -46,6 +52,8 @@ import java.util.EnumSet
 @ViewSynthesisShared
 class Ptolemy2KGraphVisualization {
     
+    /** Access to annotations. */
+    @Inject extension AnnotationExtensions
     /** Access to marked nodes. */
     @Inject extension MarkerExtensions
     /** Extensions used during the transformation. To make things easier. And stuff. */
@@ -57,7 +65,9 @@ class Ptolemy2KGraphVisualization {
     /** Extensions for creating renderings. */
     @Inject extension KRenderingExtensions
     /** Utility class that provides renderings. */
-    @Inject extension PtolemyFigureProvider
+    @Inject extension KRenderingFigureProvider
+    
+    val renderingFactory = KRenderingFactory::eINSTANCE
     
     
     /**
@@ -67,10 +77,10 @@ class Ptolemy2KGraphVisualization {
      */
     def void visualize(KNode kGraph) {
         // The first level is definitely a compound node
-        addCompoundNodeRendering(kGraph)
+        kGraph.addCompoundNodeRendering(true)
         
         // Recurse into subnodes
-        visualizeRecursively(kGraph)
+        visualizeRecursively(kGraph, true)
     }
     
     /**
@@ -78,25 +88,17 @@ class Ptolemy2KGraphVisualization {
      * calls itself recursively with each of the nodes.
      * 
      * @param node the node to visualize.
+     * @param firstLevel {@code true} if the given node is the root of the graph. Used to auto-expand
+     *                   compound nodes on the first level.
      */
-    def private void visualizeRecursively(KNode node) {
-        // Visualize ports
-        for (port : node.ports) {
-            port.addPortRendering()
-        }
-        
-        // Visualize outgoing edges
-        for (edge : node.outgoingEdges) {
-            edge.addEdgeRendering()
-        }
-        
+    def private void visualizeRecursively(KNode node, boolean firstLevel) {
         // Visualize child nodes
         for (child : node.children) {
-            // Check which kind of a node we have
+            // Add child node rendering
             if (!child.children.empty) {
                 // We have a compound node
-                child.addCompoundNodeRendering()
-                visualizeRecursively(child)
+                child.addCompoundNodeRendering(firstLevel)
+                visualizeRecursively(child, false)
             } else if (child.markedAsHypernode) {
                 // We have a hypernode (a relation node, in Ptolemy speak)
                 child.addRelationNodeRendering()
@@ -110,6 +112,21 @@ class Ptolemy2KGraphVisualization {
                 // We have a regular node
                 child.addRegularNodeRendering()
             }
+            
+            // Add label rendering
+            child.addLabelRendering()
+            
+            // Add port rendering
+            for (port : child.ports) {
+                port.addPortRendering()
+                port.addLabelRendering()
+            }
+            
+            // Add edge rendering
+            for (edge : child.outgoingEdges) {
+                edge.addEdgeRendering()
+                edge.addLabelRendering()
+            }
         }
     }
     
@@ -121,10 +138,14 @@ class Ptolemy2KGraphVisualization {
      * Renders the given node as a compound node.
      * 
      * @param node the node to attach the rendering information to.
+     * @param expand {@code true} if the node should initially be expanded.
      */
-    def private void addCompoundNodeRendering(KNode node) {
+    def private void addCompoundNodeRendering(KNode node, boolean expand) {
         val layout = node.layout as KShapeLayout
         layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
+        layout.setProperty(KlighdConstants::EXPAND, expand)
+        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
+            NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         
         // Check if this is a state machine
         if (node.markedAsStateMachineContainer) {
@@ -148,9 +169,9 @@ class Ptolemy2KGraphVisualization {
         expandedRendering.actions.add(collapseAction)
         
         // Add a rendering for the collapsed version of this node
-        // TODO: Retrieve the collapsed rendering
-        val KRendering collapsedRendering = node.addEllipse();
+        val KRendering collapsedRendering = createRegularNodeRendering(node)
         collapsedRendering.setProperty(KlighdConstants::COLLAPSED_RENDERING, true)
+        node.data += collapsedRendering
         
         val KAction expandAction = KRenderingFactory::eINSTANCE.createKAction()
         expandAction.setTrigger(Trigger::DOUBLECLICK)
@@ -161,13 +182,16 @@ class Ptolemy2KGraphVisualization {
     }
     
     /**
-     * Renders the given node as a relation node.
+     * Renders the given node as a relation node. Also removes the relation's labels.
      * 
      * @param node the node to attach the rendering information to.
      */
     def private void addRelationNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
         layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
+        
+        // Remove the relation's labels
+        node.labels.clear()
         
         // Create the rendering
         node.data += createRelationNodeRendering(node)
@@ -185,6 +209,8 @@ class Ptolemy2KGraphVisualization {
     def private void addDirectorNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
         layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
+        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
+            NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         
         // Create the rendering
         val rendering = createDirectorNodeRendering(node)
@@ -202,6 +228,9 @@ class Ptolemy2KGraphVisualization {
     def private void addStateNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
         layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
+        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
+            NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
+        layout.setProperty(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE)
         
         // Create the rendering
         val rendering = createStateNodeRendering(node)
@@ -219,15 +248,20 @@ class Ptolemy2KGraphVisualization {
     def private void addRegularNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
         layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
+        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
+            NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
+        layout.setProperty(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE)
         layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
         
-        // Create the rendering
-        val rendering = createRegularNodeRendering(node)
+        // Some kinds of nodes require special treatment
+        var KRendering rendering = switch node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS) {
+            case "ptolemy.actor.lib.Accumulator" : createAccumulatorNodeRendering(node)
+            default : createRegularNodeRendering(node)
+        }
         node.data += rendering
         
-        
-        // TODO: Calculate layout size.
-        layout.setLayoutSize(null)
+        // Calculate layout size.
+        layout.setLayoutSize(rendering)
     }
     
     
@@ -243,7 +277,59 @@ class Ptolemy2KGraphVisualization {
         val layout = port.layout as KShapeLayout
         layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
         
+        // Remove the port's labels
+        // TODO: Instead of doing this, we should think about changing their appearance
+        port.labels.clear()
         
+        // Find the port type
+        val inputPort = port.markedAsInputPort
+        val outputPort = port.markedAsOutputPort
+        
+        // Find the port side
+        val ptolemySpecifiedPortSide = port.getAnnotationValue("_cardinal")
+        var portSide = PortSide::UNDEFINED
+        
+        // If Ptolemy specifies a port side, use that
+        try {
+            portSide = PortSide::valueOf(ptolemySpecifiedPortSide)
+        } catch (Exception e) {
+            // Happens if there is no port side or the specification doesn't match our expectations
+        }
+        
+        // If the port side is still undefined, infer it from the port type
+        if (portSide == PortSide::UNDEFINED) {
+            if (inputPort && outputPort) {
+                portSide = PortSide::SOUTH
+            } else if (inputPort) {
+                portSide = PortSide::WEST
+            } else {
+                portSide = PortSide::EAST
+            }
+        }
+        
+        layout.setProperty(LayoutOptions::PORT_SIDE, portSide)
+        
+        // Set port properties depending on the port side
+        switch portSide {
+            case PortSide::NORTH: {
+                layout.setProperty(LayoutOptions::OFFSET, 0f)
+            }
+            case PortSide::SOUTH: {
+                layout.setProperty(LayoutOptions::OFFSET, 0f)
+            }
+            case PortSide::EAST: {
+                layout.setProperty(LayoutOptions::OFFSET, 0f)
+                layout.setProperty(Properties::PORT_ANCHOR, new KVector(7, 3.5))
+            }
+            case PortSide::WEST: {
+                layout.setProperty(LayoutOptions::OFFSET, 0f)
+                layout.setProperty(Properties::PORT_ANCHOR, new KVector(0, 3.5))
+            }
+        }
+        
+        // Add rendering
+        val rendering = createPortRendering(port)
+        port.data += rendering
         
         // Add size information
         layout.width = 8
@@ -269,6 +355,25 @@ class Ptolemy2KGraphVisualization {
         } else {
             // We have a regular edge
             edge.addRoundedBendsPolyline(5f, 1.6f)
+        }
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Rendering of Labels
+    
+    /**
+     * Attaches rendering information to all labels of the given element.
+     * 
+     * @param elemtent the element.
+     */
+    def private void addLabelRendering(KLabeledGraphElement element) {
+        for (label : element.labels) {
+            val layout = label.layout as KShapeLayout
+            layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
+            
+            // Add empty text rendering
+            label.data += renderingFactory.createKText()
         }
     }
     

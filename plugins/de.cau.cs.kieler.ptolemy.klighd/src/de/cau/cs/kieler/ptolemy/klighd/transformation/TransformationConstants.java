@@ -42,6 +42,24 @@ public final class TransformationConstants {
     public static final String PORT_NAME_SEPARATOR_REGEX = "\\.";
     
     
+    // PORT TYPES
+    
+    /**
+     * Name for an annotation that marks a port as being a multiport.
+     */
+    public static final String IS_MULTIPORT = "multiport";
+    
+    /**
+     * Name of an annotation that marks a port as being a ParameterPort instance.
+     */
+    public static final String IS_PARAMETER_PORT = "parameterPort";
+    
+    /**
+     * Name of an annotation that marks a port as being an IOPort instance.
+     */
+    public static final String IS_IO_PORT = "ioPort";
+    
+    
     // ANNOTATION CONSTANTS
     
     /**
