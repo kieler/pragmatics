@@ -62,8 +62,6 @@ class Ptolemy2KGraphVisualization {
     @Inject extension KEdgeExtensions
     /** Extensions for creating polylines. */
     @Inject extension KPolylineExtensions
-    /** Extensions for creating renderings. */
-    @Inject extension KRenderingExtensions
     /** Utility class that provides renderings. */
     @Inject extension KRenderingFigureProvider
     
@@ -146,6 +144,7 @@ class Ptolemy2KGraphVisualization {
         layout.setProperty(KlighdConstants::EXPAND, expand)
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
+        layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
         
         // Check if this is a state machine
         if (node.markedAsStateMachineContainer) {

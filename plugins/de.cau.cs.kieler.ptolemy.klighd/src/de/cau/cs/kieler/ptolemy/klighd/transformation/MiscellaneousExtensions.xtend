@@ -62,9 +62,11 @@ class MiscellaneousExtensions {
     def void reverseEdge(KEdge edge) {
         val oldSource = edge.source
         val oldSourcePort = edge.sourcePort
+        val oldTarget = edge.target
+        val oldTargetPort = edge.targetPort
         
-        edge.source = edge.target
-        edge.sourcePort = edge.targetPort
+        edge.source = oldTarget
+        edge.sourcePort = oldTargetPort
         edge.target = oldSource
         edge.targetPort = oldSourcePort
     }

@@ -193,12 +193,12 @@ class Ptolemy2KGraphOptimization {
         
         if (port.markedAsInputPort && !port.markedAsOutputPort) {
             // Reverse outgoing edges, keep incoming edges
-            edgesToBeReversed.addAll(port.edges.filter([e | e.source == port]))
-            edgesToBeKept.addAll(port.edges.filter([e | e.target == port]))
+            edgesToBeReversed.addAll(port.edges.filter([e | e.sourcePort == port]))
+            edgesToBeKept.addAll(port.edges.filter([e | e.targetPort == port]))
         } else if (port.markedAsOutputPort && !port.markedAsInputPort) {
             // Reverse incoming edges, keep outgoing edges
-            edgesToBeReversed.addAll(port.edges.filter([e | e.target == port]))
-            edgesToBeKept.addAll(port.edges.filter([e | e.source == port]))
+            edgesToBeReversed.addAll(port.edges.filter([e | e.targetPort == port]))
+            edgesToBeKept.addAll(port.edges.filter([e | e.sourcePort == port]))
         }
         
         // Reverse edges and mark as directed
@@ -307,7 +307,7 @@ class Ptolemy2KGraphOptimization {
             
             // Find all incident edges of known direction
             val fixedIncomingEdges = unknownRelation.incomingEdges.filter(l | !l.markedAsUndirected)
-            val fixedOutgoingEdges = unknownRelation.outgoingEdges
+            val fixedOutgoingEdges = unknownRelation.outgoingEdges.filter(l | !l.markedAsUndirected)
             val undirectedIncidentEdges =
                 unknownRelation.incidentEdges.filter(l | l.markedAsUndirected)
             
