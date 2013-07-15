@@ -25,6 +25,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.PortSide
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+import de.cau.cs.kieler.core.krendering.KContainerRendering
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.
@@ -133,6 +134,26 @@ class KRenderingFigureProvider {
         }
         
         return outerCircle
+    }
+    
+    /**
+     * Creates a rendering for a node that displays a value.
+     * 
+     * @param node the node to create the rendering information for.
+     * @param value the value the node should display.
+     * @return the rendering.
+     */
+    def KRendering createValueDisplayingNodeRendering(KNode node, String value) {
+        val nodeRendering = createDefaultRendering(node) as KContainerRendering
+        
+        // Add a text field to the default rendering
+        nodeRendering.children += renderingFactory.createKText() => [text |
+            text.text = value
+            text.setSurroundingSpace(5, 0)
+            text.setForeground(GraphicsUtils::lookupColor("darkgrey"))
+        ]
+        
+        return nodeRendering
     }
     
     /**

@@ -109,6 +109,9 @@ class Ptolemy2KGraphVisualization {
             } else if (child.markedAsState) {
                 // We have a state machine state
                 child.addStateNodeRendering()
+            } else if (child.markedAsConstActor) {
+                // We have a const actor whose rendering is a bit special
+                child.addConstNodeRendering()
             } else {
                 // We have a regular node
                 child.addRegularNodeRendering()
@@ -232,6 +235,27 @@ class Ptolemy2KGraphVisualization {
         
         // Set size
         layout.setLayoutSize(rendering)
+    }
+    
+    /**
+     * Renders the given node as a Const node, with the constant displayed in it.
+     * 
+     * @param node the node to attach the rendering information to.
+     */
+    def private void addConstNodeRendering(KNode node) {
+        val layout = node.layout as KShapeLayout
+        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
+            NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
+        layout.setProperty(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE)
+        layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
+        
+        // Create the rendering
+        val rendering = createValueDisplayingNodeRendering(node,
+            node.getAnnotationValue("value") ?: "")
+        node.data += rendering
+        
+        // Calculate layout size.
+//        layout.setLayoutSize(rendering)
     }
     
     /**

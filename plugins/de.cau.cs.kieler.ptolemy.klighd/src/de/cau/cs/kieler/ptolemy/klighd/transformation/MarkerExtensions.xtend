@@ -190,6 +190,21 @@ class MarkerExtensions {
     }
     
     /**
+     * Checks if the given node is a Ptolemy Const actor.
+     * 
+     * @param node the node to check.
+     * @return {@code true} if the node represents a Const actor.
+     */
+    def boolean isMarkedAsConstActor(KNode node) {
+        val propertyValue = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS)
+        if (propertyValue == null) {
+            return false
+        } else {
+            return propertyValue.equals("ptolemy.actor.lib.Const")
+        }
+    }
+    
+    /**
      * Checks if the given node is a Ptolemy state machine model state.
      * 
      * @param node the node to check.
