@@ -15,9 +15,9 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KEdge
+import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.core.krendering.KAction
 import de.cau.cs.kieler.core.krendering.KAreaPlacementData
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
@@ -39,7 +39,6 @@ import de.cau.cs.kieler.kiml.options.SizeConstraint
 import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klighd.KlighdConstants
 import java.util.EnumSet
-import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
 
@@ -62,6 +61,8 @@ class Ptolemy2KGraphVisualization {
     @Inject extension KEdgeExtensions
     /** Extensions for creating polylines. */
     @Inject extension KPolylineExtensions
+    /** Utility class that provides renderings. */
+    @Inject extension KRenderingExtensions
     /** Utility class that provides renderings. */
     @Inject extension KRenderingFigureProvider
     
@@ -153,29 +154,19 @@ class Ptolemy2KGraphVisualization {
         } else {
             layout.setProperty(LayoutOptions::ALGORITHM, "de.cau.cs.kieler.klay.layered")
             layout.setProperty(LayoutOptions::EDGE_ROUTING, EdgeRouting::ORTHOGONAL)
-            layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT,
-                NodeLabelPlacement::outsideBottomCenter)
         }
         
         // Create the rendering for this node
         val KRendering expandedRendering = createDefaultRendering(node)
         expandedRendering.setProperty(KlighdConstants::EXPANDED_RENDERING, true)
+        expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
         node.data += expandedRendering
-        
-        val KAction collapseAction = KRenderingFactory::eINSTANCE.createKAction()
-        collapseAction.setTrigger(Trigger::DOUBLECLICK)
-        collapseAction.setId(KlighdConstants::ACTION_COLLAPSE_EXPAND)
-        expandedRendering.actions.add(collapseAction)
         
         // Add a rendering for the collapsed version of this node
         val KRendering collapsedRendering = createRegularNodeRendering(node)
         collapsedRendering.setProperty(KlighdConstants::COLLAPSED_RENDERING, true)
+        collapsedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
         node.data += collapsedRendering
-        
-        val KAction expandAction = KRenderingFactory::eINSTANCE.createKAction()
-        expandAction.setTrigger(Trigger::DOUBLECLICK)
-        expandAction.setId(KlighdConstants::ACTION_COLLAPSE_EXPAND)
-        collapsedRendering.actions.add(expandAction)
         
         layout.setLayoutSize(expandedRendering)
     }
