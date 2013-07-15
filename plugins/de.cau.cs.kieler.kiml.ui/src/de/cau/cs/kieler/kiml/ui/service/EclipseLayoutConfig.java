@@ -203,14 +203,14 @@ public class EclipseLayoutConfig implements ILayoutConfig {
      * Return the dynamic value for the size constraint option.
      * 
      * @param context a context for layout configuration
-     * @return {@code FIXED} if the selected node has no children, and {@code MIN_PORTS} or
-     *          {@code MIN_DEFAULT} otherwise
+     * @return {@code null} if the selected node has no children, and {@code MINIMUM_SIZE}
+     *          / {@code PORTS} otherwise
      */
     private EnumSet<SizeConstraint> getSizeConstraintValue(final LayoutContext context) {
         Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
         if (targets != null && targets.contains(LayoutOptionData.Target.NODES)) {
             if (!targets.contains(LayoutOptionData.Target.PARENTS)) {
-                return SizeConstraint.fixed();
+                return null; // default value: SizeConstraint.fixed()
             }
             Boolean hasPorts = context.getProperty(DefaultLayoutConfig.HAS_PORTS);
             if (hasPorts != null && hasPorts) {
@@ -218,7 +218,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             }
             return EnumSet.of(SizeConstraint.MINIMUM_SIZE);
         }
-        return SizeConstraint.fixed();
+        return null; // default value: SizeConstraint.fixed()
     }
     
     /**

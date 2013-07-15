@@ -19,44 +19,14 @@
   <modules>
     <module>../test</module>
     <module>de.cau.cs.kieler.core</module>
-    <module>de.cau.cs.kieler.core.annotations</module>
-    <module>de.cau.cs.kieler.core.annotations.edit</module>
-    <module>de.cau.cs.kieler.core.annotations.text</module>
-    <module>de.cau.cs.kieler.core.annotations.text.ui</module>
     <module>de.cau.cs.kieler.core.kgraph</module>
-    <module>de.cau.cs.kieler.core.kgraph.edit</module>
     <module>de.cau.cs.kieler.core.kgraph.text</module>
     <module>de.cau.cs.kieler.core.kgraph.text.ui</module>
     <module>de.cau.cs.kieler.core.kivi</module>
     <module>de.cau.cs.kieler.core.krendering</module>
     <module>de.cau.cs.kieler.core.krendering.extensions</module>
-    <module>de.cau.cs.kieler.core.model</module>
-    <module>de.cau.cs.kieler.core.model.gmf</module>
     <module>de.cau.cs.kieler.core.ui</module>
-    <module>de.cau.cs.kieler.kaom</module>
-    <module>de.cau.cs.kieler.kaom.custom</module>
-    <module>de.cau.cs.kieler.kaom.diagram</module>
-    <module>de.cau.cs.kieler.kaom.diagram.custom</module>
-    <module>de.cau.cs.kieler.kaom.edit</module>
-    <module>de.cau.cs.kieler.kaom.examples</module>
-    <module>de.cau.cs.kieler.kaom.graphiti</module>
-    <module>de.cau.cs.kieler.kaom.examples.ptolemy</module>
-    <module>de.cau.cs.kieler.kaom.importer.ptolemy</module>
-    <module>de.cau.cs.kieler.kaom.karma.ptolemy</module>
-    <module>de.cau.cs.kieler.kaom.ksbase.ptolemy</module>
-    <module>de.cau.cs.kieler.kaom.text</module>
-    <module>de.cau.cs.kieler.kaom.text.ui</module>
-    <module>de.cau.cs.kieler.karma</module>
-    <module>de.cau.cs.kieler.keg</module>
-    <module>de.cau.cs.kieler.keg.diagram</module>
-    <module>de.cau.cs.kieler.keg.diagram.custom</module>
-    <module>de.cau.cs.kieler.keg.edit</module>
-    <module>de.cau.cs.kieler.keg.importer</module>
-    <module>de.cau.cs.kieler.keg.ksbase</module>
-    <module>de.cau.cs.kieler.kex</module>
-    <module>de.cau.cs.kieler.kex.ui</module>
     <module>de.cau.cs.kieler.kiml</module>
-    <module>de.cau.cs.kieler.kiml.evol</module>
     <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.kiml.formats</module>
     <module>de.cau.cs.kieler.kiml.formats.gml</module>
@@ -69,7 +39,6 @@
     <module>de.cau.cs.kieler.kiml.kivi</module>
     <module>de.cau.cs.kieler.kiml.ogdf</module>
     <module>de.cau.cs.kieler.kiml.service</module>
-    <module>de.cau.cs.kieler.kiml.smart</module>
     <module>de.cau.cs.kieler.kiml.ui</module>
     <module>de.cau.cs.kieler.klay.force</module>
     <module>de.cau.cs.kieler.klay.layered</module>
@@ -85,17 +54,11 @@
     <module>de.cau.cs.kieler.kwebs</module>
     <module>de.cau.cs.kieler.kwebs.client</module>
     <module>de.cau.cs.kieler.kwebs.client.jaxws</module>
-    <module>de.cau.cs.kieler.kwebs.client.jeti</module>
     <module>de.cau.cs.kieler.kwebs.jaxws</module>
     <module>de.cau.cs.kieler.kwebs.server</module>
     <module>de.cau.cs.kieler.papyrus</module>
     <module>de.cau.cs.kieler.papyrus.sequence</module>
     <module>de.cau.cs.kieler.ptolemy.klighd</module>
-    <module>de.unido.ls5.eti.client</module>
-    <module>de.unido.ls5.eti.common</module>
-    <module>de.unido.ls5.eti.connector.sepp</module>
-    <module>de.unido.ls5.eti.sps.apis</module>
-    <module>de.unido.ls5.eti.toolserver</module>
     <module>edu.umd.cs.piccolo</module>
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>

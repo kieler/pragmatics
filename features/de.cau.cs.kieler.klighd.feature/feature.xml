@@ -2,11 +2,11 @@
 <feature
       id="de.cau.cs.kieler.klighd.feature"
       label="KIELER Lightweight Diagrams infrastructure"
-      version="0.2.0.qualifier"
+      version="0.1.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
-      The KLighD project contributes infrastructure for easy and fast synthesis of model representations.
+      The KLighD project contributes infrastructure for easy and fast synthesis of graphical model representations in form of node-link-diagrams.
    </description>
 
    <copyright>
@@ -218,10 +218,9 @@ litigation.
    </url>
 
    <requires>
-      <import feature="com.google.guava.runtime.feature" version="10.0.1" match="compatible"/>
-      <import feature="org.eclipse.xtext.runtime" version="2.3.0.v201206120633" match="compatible"/>
-      <import feature="de.cau.cs.kieler.kiml.graphviz.feature" version="0.6.0" match="compatible"/>
-      <import feature="de.cau.cs.kieler.kiml.ogdf.feature" version="0.4.0" match="compatible"/>
+      <import feature="com.google.guava.runtime.feature" version="11.0.0" match="compatible"/>
+      <import feature="org.eclipse.xtext.xbase.lib" version="2.4.0" match="compatible"/>
+      <import feature="org.eclipse.platform" version="3.8.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -232,42 +231,7 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.core.annotations"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.annotations.edit"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.annotations.text"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.annotations.text.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.core.kivi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.model"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -324,6 +288,55 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.core.krendering.extensions"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klay.force"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.ksbase"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.ksbase.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.kivi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.service"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

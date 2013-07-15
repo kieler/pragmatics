@@ -13,12 +13,19 @@
  */
 package de.cau.cs.kieler.kiml.ui.diagram;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -42,6 +49,7 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 import de.cau.cs.kieler.kiml.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The entry class for automatic layout of graphical diagrams.
@@ -67,6 +75,8 @@ public class DiagramLayoutEngine {
      */
     public static final IProperty<IDiagramLayoutManager<?>> DIAGRAM_LM
             = new Property<IDiagramLayoutManager<?>>("layoutEngine.diagramLayoutManager");
+    /** preference identifier for debug graph output. */
+    public static final String PREF_DEBUG_OUTPUT = "kiml.debug.graph";
     
     /**
      * Perform layout on the given workbench part.
@@ -226,8 +236,8 @@ public class DiagramLayoutEngine {
             protected void postUIexec() {
                 if (layoutMapping.get() != null) {
                     // check for visibility of the given workbench part
-                    boolean withAnimation = animate //&& workbenchPart != null
-                            ; // && workbenchPart.getSite().getPage().isPartVisible(workbenchPart);
+                    boolean withAnimation = animate && (workbenchPart == null
+                            || workbenchPart.getSite().getPage().isPartVisible(workbenchPart));
                     int animationTime = calcAnimationTime(layoutMapping.get(), withAnimation);
                     layoutManager.applyLayout(layoutMapping.get(), zoom, animationTime);
                 }
@@ -493,6 +503,11 @@ public class DiagramLayoutEngine {
         try {
             // configure the layout graph using a layout option manager
             layoutOptionManager.configure(mapping, progressMonitor.subTask(CONFIGURE_WORK));
+            
+            // export the layout graph for debugging
+            if (KimlUiPlugin.getDefault().getPreferenceStore().getBoolean(PREF_DEBUG_OUTPUT)) {
+                exportLayoutGraph(mapping.getLayoutGraph());
+            }
 
             // perform layout on the layout graph
             layoutEngine.layout(mapping.getLayoutGraph(), progressMonitor.subTask(LAYOUT_WORK));
@@ -537,6 +552,37 @@ public class DiagramLayoutEngine {
      */
     public void addListener(final IListener listener) {
         layoutListeners.add(listener);
+    }
+    
+    /**
+     * Export the given layout graph in KGraph format.
+     * 
+     * @param graph the parent node of the layout graph
+     */
+    private void exportLayoutGraph(final KNode graph) {
+        String path = System.getProperty("user.home");
+        if (path != null) {
+            if (path.endsWith(File.separator)) {
+                path += "tmp" + File.separator + "layout" + File.separator
+                        + Integer.toHexString(graph.hashCode()) + ".kgraph";
+            } else {
+                path += File.separator + "tmp" + File.separator + "layout" + File.separator
+                        + Integer.toHexString(graph.hashCode()) + ".kgraph";
+            }
+            
+            // serialize all properties of the graph
+            KimlUtil.persistDataElements(graph);
+            
+            // save the KGraph to a file
+            ResourceSet resourceSet = new ResourceSetImpl();
+            Resource resource = resourceSet.createResource(URI.createFileURI(path));
+            resource.getContents().add(graph);
+            try {
+                resource.save(Collections.emptyMap());
+            } catch (IOException e) {
+                // ignore the exception and abort the layout graph exporting
+            }
+        }
     }
 
 }

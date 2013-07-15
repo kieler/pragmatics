@@ -6,12 +6,6 @@
    <feature url="features/net.ogdf.bin_2.0.0.qualifier.jar" id="net.ogdf.bin.feature" version="2.0.0.qualifier" os="linux,macosx,solaris,win32" arch="sparc,x86,x86_64">
       <category name="kieler-layout"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.kaom_0.6.0.qualifier.jar" id="de.cau.cs.kieler.kaom.feature" version="0.6.0.qualifier">
-      <category name="kieler-editors"/>
-   </feature>
-      <feature url="features/de.cau.cs.kieler.kaom.source_0.6.0.qualifier.jar" id="de.cau.cs.kieler.kaom.feature.source" version="0.6.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature> 
    <feature url="features/de.cau.cs.kieler.keg_0.6.0.qualifier.jar" id="de.cau.cs.kieler.keg.feature" version="0.6.0.qualifier">
       <category name="kieler-editors"/>
    </feature>

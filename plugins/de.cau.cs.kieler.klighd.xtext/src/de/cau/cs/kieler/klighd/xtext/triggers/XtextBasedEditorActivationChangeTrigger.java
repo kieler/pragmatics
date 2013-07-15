@@ -17,8 +17,14 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.XtextEditor;
@@ -32,7 +38,7 @@ import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
 import de.cau.cs.kieler.core.kivi.ITrigger;
 import de.cau.cs.kieler.core.kivi.ITriggerState;
 import de.cau.cs.kieler.core.kivi.listeners.GlobalPartAdapter;
-import de.cau.cs.kieler.core.ui.util.EditorUtils;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.klighd.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;
 
 // SUPPRESS CHECKSTYLE PREVIOUS 10 LineLength
@@ -47,7 +53,51 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
         IXtextModelListener, IPartListener {
 
     private static final String KIELER_XTEXT_ERROR_MARKER_ID
-            = "de.cau.cs.kieler.core.model.xtext.errorMarker";     
+            = "de.cau.cs.kieler.core.model.xtext.errorMarker";
+    
+    /**
+     * Return the last active editor. Returns the active editor of the current page if it is not
+     * null. This might happen when you maximize a view and minimize it again. Returns the first
+     * editor of any open editors if the active editor is null.
+     * 
+     * @author haf
+     * 
+     * @return the last open active editor, which may be {@code null} if there is no open editor
+     * @deprecated 
+     */
+    private static IEditorPart getLastActiveEditor() {
+        final Maybe<IEditorPart> editor = Maybe.create();
+        Runnable runnable = new Runnable() {
+            public void run() {
+                IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+                if (window == null) {
+                    return;
+                }
+                IWorkbenchPage page = window.getActivePage();
+                if (page == null) {
+                    return;
+                }
+                editor.set(page.getActiveEditor());
+                if (editor.get() == null) {
+                    IEditorReference[] editors = page.getEditorReferences();
+                    if (editors.length > 0) {
+                        editor.set(editors[0].getEditor(true));
+                    }
+                }
+            }
+        };
+        
+        Display display = Display.getCurrent();
+        if (display == null) {
+            display = PlatformUI.getWorkbench().getDisplay();
+            display.syncExec(runnable);
+        } else {
+            // we are currently in the UI thread, so just execute the code
+            runnable.run();
+        }
+        
+        return editor.get();
+    }
     
     /** Listens to all parts within the workbench. */
     private GlobalPartAdapter partListener;
@@ -68,10 +118,9 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("deprecation")
     public void register() {
         partListener = new GlobalPartAdapter(this);
-        this.partActivated(EditorUtils.getLastActiveEditor());
+        this.partActivated(getLastActiveEditor());
     }
 
     /**

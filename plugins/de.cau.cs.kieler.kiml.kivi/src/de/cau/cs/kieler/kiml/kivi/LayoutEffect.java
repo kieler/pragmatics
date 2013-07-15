@@ -27,8 +27,6 @@ import org.eclipse.ui.PlatformUI;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.UndoEffect;
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
@@ -36,6 +34,7 @@ import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
+import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
  * Performs automatic layout on a diagram editor for a given selection. The layout
@@ -48,11 +47,37 @@ import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
  * @kieler.rating proposed yellow by msp
  */
 public class LayoutEffect extends AbstractEffect {
+    
+    /**
+     * Find a diagram part that belongs to the given workbench part and domain model object.
+     * 
+     * @param workbenchPart a workbench part, or null
+     * @param object a domain model object, or null
+     * @return the corresponding diagram part, or null
+     */
+    @SuppressWarnings("rawtypes")
+    static Object findDiagramPart(final IWorkbenchPart workbenchPart, final EObject object) {
+        if (workbenchPart == null) {
+            return EclipseLayoutInfoService.getInstance().getAdapter(object, null);
+        } else {
+            IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance().getManager(
+                    workbenchPart, null);
+            if (layoutManager != null) {
+                Class[] adapterList = layoutManager.getAdapterList();
+                if (adapterList != null && adapterList.length > 0 && adapterList[0] != null) {
+                    if (object == null) {
+                        return layoutManager.getAdapter(workbenchPart, adapterList[0]);
+                    } else {
+                        return layoutManager.getAdapter(object, adapterList[0]);
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
     /** the diagram editor containing the diagram to layout. */
     private IWorkbenchPart diagramEditor;
-    /** The bridge to a concrete graphical framework corresponding to this editor. */
-    private IGraphicalFrameworkBridge bridge;
     /** the selected diagram part. */
     private Object diagramPart;
     /** whether to zoom before or after layout. */
@@ -83,8 +108,7 @@ public class LayoutEffect extends AbstractEffect {
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object) {
         this.diagramEditor = workbenchPart;
-        this.bridge = GraphicalFrameworkService.getInstance().getBridge(workbenchPart);
-        this.diagramPart = bridge.getEditPart(object);
+        this.diagramPart = findDiagramPart(workbenchPart, object);
     }
 
     /**
