@@ -15,6 +15,7 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KEdge
+import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
@@ -116,10 +117,14 @@ class Ptolemy2KGraphVisualization {
             // Add label rendering
             child.addLabelRendering()
             
+            // Add tool tip
+            child.addToolTip()
+            
             // Add port rendering
             for (port : child.ports) {
                 port.addPortRendering()
                 port.addLabelRendering()
+                port.addToolTip()
             }
             
             // Add edge rendering
@@ -365,6 +370,36 @@ class Ptolemy2KGraphVisualization {
             
             // Add empty text rendering
             label.data += renderingFactory.createKText()
+        }
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Tool Tips
+    
+    /**
+     * Generates a tool tip for the given element based on its properties.
+     * 
+     * @param element the element to generate the tooltip for.
+     */
+    def private void addToolTip(KGraphElement element) {
+        val toolTip = new StringBuffer()
+        
+        // Look for properties that don't start with an underscore (these are the ones we want the
+        // user to see)
+        for (property : element.annotations) {
+            if (!property.name.startsWith("_")) {
+                toolTip.append("\n").append(property.name)
+                
+                if (property.value != null && property.value.length() > 0) {
+                    toolTip.append(": ").append(property.value)
+                }
+            }
+        }
+        
+        // If we have found something, display them as tooltip
+        if (toolTip.length > 0) {
+            element.KRendering.setProperty(KlighdProperties::TOOLTIP, toolTip.substring(1))
         }
     }
     

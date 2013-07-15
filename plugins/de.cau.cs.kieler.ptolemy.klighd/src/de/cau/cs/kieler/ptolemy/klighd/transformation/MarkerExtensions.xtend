@@ -53,9 +53,9 @@ class MarkerExtensions {
      */
     def void markAsUndirected(KEdge edge, boolean mark) {
         if (mark) {
-            edge.addAnnotation("undirected")
+            edge.addAnnotation("_undirected")
         } else {
-            edge.removeAnnotation("undirected")
+            edge.removeAnnotation("_undirected")
         }
     }
     
@@ -66,7 +66,7 @@ class MarkerExtensions {
      * @return {@code true} if the edge is marked as undirected, {@code false} otherwise.
      */
     def boolean isMarkedAsUndirected(KEdge edge) {
-        return edge.hasAnnotation("undirected")
+        return edge.hasAnnotation("_undirected")
     }
     
     /**
@@ -75,7 +75,7 @@ class MarkerExtensions {
      * @param port the port to mark.
      */
     def void markAsInputPort(KPort port) {
-        port.addAnnotation("input")
+        port.addAnnotation("_input")
     }
     
     /**
@@ -85,7 +85,7 @@ class MarkerExtensions {
      * @return {@code true} if the port is marked as being an input port, {@code false} otherwise.
      */
     def boolean isMarkedAsInputPort(KPort port) {
-        return port.hasAnnotation("input")
+        return port.hasAnnotation("_input")
     }
     
     /**
@@ -94,7 +94,7 @@ class MarkerExtensions {
      * @param port the port to mark.
      */
     def void markAsOutputPort(KPort port) {
-        port.addAnnotation("output")
+        port.addAnnotation("_output")
     }
     
     /**
@@ -104,7 +104,7 @@ class MarkerExtensions {
      * @return {@code true} if the port is marked as being an output port, {@code false} otherwise.
      */
     def boolean isMarkedAsOutputPort(KPort port) {
-        return port.hasAnnotation("output")
+        return port.hasAnnotation("_output")
     }
     
     /**
@@ -116,7 +116,7 @@ class MarkerExtensions {
      * @param node the node to mark.
      */
     def void markAsFormerAnnotationNode(KNode node) {
-        node.addAnnotation("annotationNode")
+        node.addAnnotation("_annotationNode")
     }
     
     /**
@@ -126,7 +126,7 @@ class MarkerExtensions {
      * @return {@code true} if it is marked, {@code false} otherwise.
      */
     def boolean isMarkedAsFormerAnnotationNode(KNode node) {
-        return node.hasAnnotation("annotationNode")
+        return node.hasAnnotation("_annotationNode")
     }
     
     /**
@@ -156,7 +156,7 @@ class MarkerExtensions {
      * @param node the node to be marked.
      */
     def void markAsStateMachineContainer(KNode node) {
-        node.addAnnotation("stateMachineContainer")
+        node.addAnnotation("_stateMachineContainer")
     }
     
     /**
@@ -167,7 +167,7 @@ class MarkerExtensions {
      *         otherwise.
      */
     def boolean isMarkedAsStateMachineContainer(KNode node) {
-        return node.hasAnnotation("stateMachineContainer")
+        return node.hasAnnotation("_stateMachineContainer")
     }
     
     /**
@@ -176,7 +176,7 @@ class MarkerExtensions {
      * @param node the node to be marked.
      */
     def void markAsDirector(KNode node) {
-        node.addAnnotation("director")
+        node.addAnnotation("_director")
     }
     
     /**
@@ -186,7 +186,7 @@ class MarkerExtensions {
      * @return {@code true} if the node is a director node.
      */
     def boolean isMarkedAsDirector(KNode node) {
-        return node.hasAnnotation("director")
+        return node.hasAnnotation("_director")
     }
     
     /**
