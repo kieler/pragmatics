@@ -7,7 +7,7 @@
     <groupId>de.cau.cs.kieler</groupId>
     <artifactId>parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <relativePath>../build/de.cau.cs.kieler.parent/pom.xml</relativePath>
+    <relativePath>../../build/de.cau.cs.kieler.parent/pom.xml</relativePath>
   </parent>
   
   <groupId>de.cau.cs.kieler</groupId>
