@@ -118,6 +118,14 @@ public final class Properties {
     /** Priority of nodes or edges. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
             1);
+    
+    /** If the algorithm run in debug mode how many test graph should be generated. */
+    public static final IProperty<Integer> TEST_GRAPHS = new Property<Integer>(
+            "de.cau.cs.kieler.klay.tree.testGraph", 0);
+    
+    /** If the algorithm run in debug mode how many nodes should be in each test graph. */
+    public static final IProperty<Integer> TEST_NODES = new Property<Integer>(
+            "de.cau.cs.kieler.klay.tree.testNodes", 0);
 
     /** Label spacing property. */
     public static final Property<Float> LABEL_SPACING = new Property<Float>(

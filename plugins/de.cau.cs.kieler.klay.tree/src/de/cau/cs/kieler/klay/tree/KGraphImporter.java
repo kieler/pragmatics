@@ -79,10 +79,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         int index = 0;
 
         for (KNode knode : parentNode.getChildren()) {
-            // TODO implement or remove the following
-            // add a new node to the t-graph, copying its size
-            // KShapeLayout tMap.getNodeMap().put(tMap.getNodeMap().size(), value) =
-            // knode.getData(KShapeLayout.class);
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
 
             // copy label
@@ -94,9 +90,9 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             // create new tNode
             TNode newNode = new TNode(index++, tGraph, label);
             newNode.setProperty(Properties.ORIGIN, knode);
-            newNode.getPosition().x = nodeLayout.getXpos() + nodeLayout.getWidth() / 2;
             newNode.getPosition().y = nodeLayout.getYpos() + nodeLayout.getHeight() / 2;
             newNode.getSize().x = Math.max(nodeLayout.getWidth(), 1);
+            newNode.getPosition().x = nodeLayout.getXpos() + nodeLayout.getWidth() / 2;
             newNode.getSize().y = Math.max(nodeLayout.getHeight(), 1);
             tGraph.getNodes().add(newNode);
 
@@ -230,7 +226,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         float height = (float) (maxYPos - minYPos) + 2 * borderSpacing + insets.getTop()
                 + insets.getBottom();
         KimlUtil.resizeNode(kgraph, width, height, false, false);
-        //KimlUtil.resizeNode(kgraph, width, height, false);
+        // KimlUtil.resizeNode(kgraph, width, height, false);
         // TODO STOP THIS BUG
     }
 

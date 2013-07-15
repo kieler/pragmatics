@@ -89,7 +89,7 @@ public class OrderBalance implements ILayoutPhase {
                 leftMost = leftMost.getProperty(Properties.LEFTNEIGHBOR);
             }
             /** start the order at the leftmost node */
-            orderLevel(leftMost);
+            orderLevel(leftMost, false);
             
             /**
              * reset the structure properties of each node to null, because the order of the graph has
@@ -113,7 +113,7 @@ public class OrderBalance implements ILayoutPhase {
      * @param leftMost
      *            the leftmost node in a level
      */
-    private void orderLevel(TNode leftMost) {
+    private void orderLevel(TNode leftMost,boolean odd) {
         if (leftMost != null) {
 
             /** copy current to iterate over the copy */
@@ -140,7 +140,7 @@ public class OrderBalance implements ILayoutPhase {
                  */
                 List<TEdge> balanced = new LinkedList<TEdge>();
 
-                boolean innerOdd = false;
+                boolean innerOdd = odd;
                 while (!outgoing.isEmpty()) {
                     int gaps = outgoing.get(0).getTarget().getProperty(Properties.FAN);
                     int index;
@@ -156,7 +156,7 @@ public class OrderBalance implements ILayoutPhase {
                     innerOdd = !innerOdd;
 
                     int indexEnd = outgoing.size();
-                    boolean leavesOdd = false;
+                    boolean leavesOdd = odd;
                     while (0 < gaps && 0 < indexEnd) {
                         indexEnd--;
                         if (outgoing.get(indexEnd).getTarget().isLeaf()) {
@@ -180,9 +180,8 @@ public class OrderBalance implements ILayoutPhase {
                 /** go on with the next node to the right */
                 currentNode = currentNode.getProperty(Properties.RIGHTNEIGHBOR);
             }
-
             /** this level has been ordered, go on with the next level above */
-            orderLevel(leftMost.getParent());
+            orderLevel(leftMost.getParent(),!odd);
         }
     }
 }
