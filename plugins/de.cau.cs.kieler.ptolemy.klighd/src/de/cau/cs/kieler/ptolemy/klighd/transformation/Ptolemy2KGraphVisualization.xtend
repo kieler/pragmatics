@@ -77,11 +77,11 @@ class Ptolemy2KGraphVisualization {
      * @param kGraph the KGraph created from a Ptolemy model.
      */
     def void visualize(KNode kGraph) {
-        // The first level is definitely a compound node
-        kGraph.addCompoundNodeRendering(true)
+        // Set the layout lagorithm for the graph
+        kGraph.setLayoutAlgorithm()
         
         // Recurse into subnodes
-        visualizeRecursively(kGraph, true)
+        visualizeRecursively(kGraph)
     }
     
     /**
@@ -92,14 +92,14 @@ class Ptolemy2KGraphVisualization {
      * @param firstLevel {@code true} if the given node is the root of the graph. Used to auto-expand
      *                   compound nodes on the first level.
      */
-    def private void visualizeRecursively(KNode node, boolean firstLevel) {
+    def private void visualizeRecursively(KNode node) {
         // Visualize child nodes
         for (child : node.children) {
             // Add child node rendering
             if (!child.children.empty) {
                 // We have a compound node
-                child.addCompoundNodeRendering(firstLevel)
-                visualizeRecursively(child, false)
+                child.addCompoundNodeRendering()
+                visualizeRecursively(child)
             } else if (child.markedAsHypernode) {
                 // We have a hypernode (a relation node, in Ptolemy speak)
                 child.addRelationNodeRendering()
@@ -146,28 +146,19 @@ class Ptolemy2KGraphVisualization {
      * Renders the given node as a compound node.
      * 
      * @param node the node to attach the rendering information to.
-     * @param expand {@code true} if the node should initially be expanded.
      */
-    def private void addCompoundNodeRendering(KNode node, boolean expand) {
+    def private void addCompoundNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
-        layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
-        layout.setProperty(KlighdProperties::EXPAND, expand)
+        layout.setProperty(KlighdProperties::EXPAND, false)
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
         layout.setProperty(LayoutOptions::SIZE_CONSTRAINT, SizeConstraint::fixed)
         
-        // Check if this is a state machine
-        if (node.markedAsStateMachineContainer) {
-            layout.setProperty(LayoutOptions::ALGORITHM, "de.cau.cs.kieler.graphviz.dot")
-            layout.setProperty(LayoutOptions::DIRECTION, Direction::RIGHT)
-        } else {
-            layout.setProperty(LayoutOptions::ALGORITHM, "de.cau.cs.kieler.klay.layered")
-            layout.setProperty(LayoutOptions::EDGE_ROUTING, EdgeRouting::ORTHOGONAL)
-        }
+        node.setLayoutAlgorithm()
         
         // Create the rendering for this node
-        val KRendering expandedRendering = createDefaultRendering(node)
+        val KRendering expandedRendering = createExpandedCompoundNodeRendering(node)
         expandedRendering.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
         expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
         node.data += expandedRendering
@@ -253,9 +244,6 @@ class Ptolemy2KGraphVisualization {
         val rendering = createValueDisplayingNodeRendering(node,
             node.getAnnotationValue("value") ?: "")
         node.data += rendering
-        
-        // Calculate layout size.
-//        layout.setLayoutSize(rendering)
     }
     
     /**
@@ -367,7 +355,7 @@ class Ptolemy2KGraphVisualization {
             edge.addSpline(1.6f).addArrowDecorator()
         } else {
             // We have a regular edge
-            edge.addRoundedBendsPolyline(5f, 1.6f)
+            edge.addRoundedBendsPolyline(5f, 2f)
         }
     }
     
@@ -445,6 +433,23 @@ class Ptolemy2KGraphVisualization {
             // Use a default minimum size
             layout.setProperty(KlighdProperties::MINIMAL_NODE_SIZE, new KVector(60, 40))
             layout.setProperty(LayoutOptions::SIZE_CONSTRAINT, EnumSet::of(SizeConstraint::MINIMUM_SIZE))
+        }
+    }
+    
+    /**
+     * Sets the layout algorithm of the given node depending on which kind of diagram the node hosts.
+     * 
+     * @param node the node to set the layout algorithm information on.
+     */
+    def private void setLayoutAlgorithm(KNode node) {
+        val layout = node.layout
+        // Check if this is a state machine
+        if (node.markedAsStateMachineContainer) {
+            layout.setProperty(LayoutOptions::ALGORITHM, "de.cau.cs.kieler.graphviz.dot")
+            layout.setProperty(LayoutOptions::DIRECTION, Direction::RIGHT)
+        } else {
+            layout.setProperty(LayoutOptions::ALGORITHM, "de.cau.cs.kieler.klay.layered")
+            layout.setProperty(LayoutOptions::EDGE_ROUTING, EdgeRouting::ORTHOGONAL)
         }
     }
 }

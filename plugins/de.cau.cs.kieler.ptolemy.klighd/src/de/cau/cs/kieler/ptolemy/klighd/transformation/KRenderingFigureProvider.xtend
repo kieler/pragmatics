@@ -60,7 +60,51 @@ class KRenderingFigureProvider {
      * @return the created rendering.
      */
     def KRendering createDefaultRendering(KNode node) {
-        return renderingFactory.createKRectangle()
+        val rendering = renderingFactory.createKRectangle() => [rect |
+            rect.setBackgroundColor(255, 255, 255)
+        ]
+        
+        return rendering
+    }
+    
+    /**
+     * Creates a rendering for an expanded compound node.
+     * 
+     * @param node the node to create the rendering information for.
+     * @return the rendering.
+     */
+    def KRendering createExpandedCompoundNodeRendering(KNode node) {
+        // This is the code for representing expanded compound nodes as rounded rectangles with
+        // progressively darker grey backgrounds
+        val rendering = renderingFactory.createKRoundedRectangle() => [rect |
+            rect.cornerHeight = 15
+            rect.cornerWidth = 15
+            rect.setLineWidth(0)
+            rect.styles += renderingFactory.createKBackground() => [bg |
+                bg.alpha = 10
+                bg.color = renderingFactory.createKColor() => [col |
+                    col.red = 16
+                    col.green = 78
+                    col.blue = 139
+                ]
+            ]
+        ]
+
+        // This in turn is the code for representing expanded compound nodes as regular rectangles
+        // with drop shadows
+//        val rendering = renderingFactory.createKRectangle() => [rect |
+//            rect.styles += renderingFactory.createKBackground() => [bg |
+//                bg.alpha = 10
+//                bg.color = renderingFactory.createKColor() => [col |
+//                    col.red = 16
+//                    col.green = 78
+//                    col.blue = 139
+//                ]
+//            ]
+//            rect.setShadow(GraphicsUtils::lookupColor("darkgrey"))
+//        ]
+        
+        return rendering
     }
     
     /**
@@ -70,7 +114,7 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createRelationNodeRendering(KNode node) {
-        renderingFactory.createKPolygon() => [poly |
+        return renderingFactory.createKPolygon() => [poly |
             poly.points += createKPosition(5, 0)
             poly.points += createKPosition(10, 5)
             poly.points += createKPosition(5, 10)

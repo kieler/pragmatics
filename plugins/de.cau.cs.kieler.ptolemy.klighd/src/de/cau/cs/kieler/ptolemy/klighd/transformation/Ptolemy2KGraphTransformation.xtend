@@ -98,7 +98,7 @@ class Ptolemy2KGraphTransformation {
      * @return the transformed KGraph node.
      * @throws IllegalStateException if this class's instance has already been used.
      */
-    def create kGraph : KimlUtil::createInitializedNode() transform(DocumentRoot ptDocumentRoot) {
+    def KNode transform(DocumentRoot ptDocumentRoot) {
         if (alreadyUsed) {
             throw new IllegalStateException("Transformations cannot be reused.")
         }
@@ -107,13 +107,15 @@ class Ptolemy2KGraphTransformation {
         // transformed objects as the KGraph's children
         val kEntityNode = ptDocumentRoot.entity?.transform()
         if (kEntityNode != null) {
-            kGraph.children.add(kEntityNode)
+            return kEntityNode
         }
         
         val kClassNode = ptDocumentRoot.class_?.transform()
         if (kClassNode != null) {
-            kGraph.children.add(kClassNode)
+            return kClassNode
         }
+        
+        return null
     }
     
     /**
