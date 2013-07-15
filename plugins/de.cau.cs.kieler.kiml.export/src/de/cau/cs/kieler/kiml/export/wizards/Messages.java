@@ -22,7 +22,6 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
     
     private static final String BUNDLE_NAME = "de.cau.cs.kieler.kiml.export.wizards.messages"; //$NON-NLS-1$
-    public static String ExportGraphOptionsPage_create_diagrams_message;
     public static String ExportGraphOptionsPage_file_format_caption;
     public static String ExportGraphOptionsPage_message;
     public static String ExportGraphOptionsPage_no_Exporter_error;

@@ -13,26 +13,20 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
-import java.util.EnumSet;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
-import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
+import de.cau.cs.kieler.kiml.ui.LayoutOptionLabelProvider;
 import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
@@ -41,7 +35,7 @@ import de.cau.cs.kieler.kiml.ui.Messages;
  * <p>Here's a small peculiarity concerning the descriptions of layout options: calling
  * {@link #getDescription()} only returns the first sentence of an option's description,
  * to be displayed in the status bar. To retrieve the full description, call
- * {@link #getFullDescription()}.</p>
+ * {@link #getLongDescription()}.</p>
  *
  * @author msp
  * @kieler.design proposed by msp
@@ -49,102 +43,6 @@ import de.cau.cs.kieler.kiml.ui.Messages;
  */
 public class LayoutPropertyDescriptor implements IPropertyDescriptor {
 
-    /** label provider used for layout options. */
-    private class LayoutOptionLabelProvider extends LabelProvider {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Image getImage(final Object element) {
-            KimlUiPlugin.Images images = KimlUiPlugin.getDefault().getImages();
-            switch (optionData.getType()) {
-            case OBJECT:
-            case STRING:
-                return images.getPropText();
-            case BOOLEAN:
-                if ((Integer) element == 1) {
-                    return images.getPropTrue();
-                } else {
-                    return images.getPropFalse();
-                }
-            case REMOTE_ENUM:
-            case REMOTE_ENUMSET:
-            case ENUM:
-            case ENUMSET:
-                return images.getPropChoice();
-            case INT:
-                return images.getPropInt();
-            case FLOAT:
-                return images.getPropFloat();
-            default:
-                return null;
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        @SuppressWarnings("rawtypes")
-        public String getText(final Object element) {
-            switch (optionData.getType()) {
-            case STRING:
-                LayoutDataService layoutServices = LayoutDataService.getInstance();
-                if (LayoutOptions.ALGORITHM.equals(optionData)) {
-                    String layoutHint = (String) element;
-                    LayoutTypeData layoutType = layoutServices.getTypeData(layoutHint);
-                    if (layoutType != null) {
-                        return layoutType.toString();
-                    }
-                    LayoutAlgorithmData layouterData = layoutServices.getAlgorithmData(layoutHint);
-                    if (layouterData != null) {
-                        return layouterData.toString();
-                    }
-                    return Messages.getString("kiml.ui.8");
-                } else {
-                    return (String) element;
-                }
-            case BOOLEAN:
-            case REMOTE_ENUM:
-            case ENUM:
-                return optionData.getChoices()[(Integer) element];
-            case REMOTE_ENUMSET:
-            case ENUMSET:
-                if (element instanceof String) {
-                    return (String) element;
-                } else if (element instanceof String[]) {
-                    String[] arr = (String[]) element;
-                    if (arr.length == 0) {
-                        return "";
-                    } else {
-                        StringBuilder builder = new StringBuilder();
-                        
-                        for (String s : arr) {
-                            builder.append(", ").append(s);
-                        }
-                        
-                        return builder.substring(2);
-                    }
-                } else if (element instanceof EnumSet) {
-                    EnumSet set = (EnumSet) element;
-                    if (set.isEmpty()) {
-                        return "";
-                    }
-                    
-                    StringBuilder builder = new StringBuilder();
-                    for (Object o : set) {
-                        builder.append(", " + ((Enum) o).name());
-                    }
-                    return builder.substring(2);
-                }
-            default:
-                return element.toString();
-            }
-        }
-        
-    }
-    
     /** the layout option data associated with this property descriptor. */
     private LayoutOptionData<?> optionData;
     /** the label provider for this property descriptor. */
@@ -279,7 +177,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      */
     public ILabelProvider getLabelProvider() {
         if (labelProvider == null) {
-            labelProvider = new LayoutOptionLabelProvider();
+            labelProvider = new LayoutOptionLabelProvider(optionData);
         }
         return labelProvider;
     }

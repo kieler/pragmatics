@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
@@ -43,6 +44,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         preferenceStore.setDefault(EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE, true);
         preferenceStore.setDefault(LayoutViewPart.PREF_CATEGORIES, true);
         preferenceStore.setDefault(LayoutViewPart.PREF_ADVANCED, false);
+        preferenceStore.setDefault(DiagramLayoutEngine.PREF_DEBUG_OUTPUT, false);
     }
 
 }

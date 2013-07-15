@@ -58,7 +58,11 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.BiMap;
 
@@ -193,27 +197,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         figure.translateToAbsolute(bounds);
         return bounds;
     }
-    
-    /**
-     * Calculates an absolute position for one of the bend points of the given connection.
-     * 
-     * @param connection a connection figure
-     * @param index the index in the point list
-     * @return the absolute point
-     * @deprecated this method does not correctly compensate panning of the diagram
-     *          (deprecated since July 2012)
-     */
-    public static Point getAbsolutePoint(final Connection connection, final int index) {
-        Point point = new Point(connection.getPoints().getPoint(index)) {
-            static final long serialVersionUID = 1;
-            @Override
-            public void performScale(final double factor) {
-                // don't perform any scaling to avoid distortion by the zoom level
-            }
-        };
-        connection.translateToAbsolute(point);
-        return point;
-    }
 
     /**
      * Finds the diagram edit part of an edit part.
@@ -238,6 +221,65 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             }
         }
         return (DiagramEditPart) ep;
+    }
+    
+    /**
+     * Find the edit part that corresponds to the given model or notation element in the
+     * currently active editor part.
+     * 
+     * @param object a domain model or view element
+     * @return the corresponding edit part, or {@code null}
+     */
+    public static IGraphicalEditPart getEditPartFromActiveEditor(final EObject object) {
+        final Maybe<IGraphicalEditPart> editPart = new Maybe<IGraphicalEditPart>();
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+            public void run() {
+                IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench()
+                        .getActiveWorkbenchWindow();
+                if (workbenchWindow != null) {
+                    IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+                    if (workbenchPage != null) {
+                        IEditorPart editorPart = workbenchPage.getActiveEditor();
+                        if (editorPart instanceof DiagramEditor) {
+                            DiagramEditPart diagramEditPart = ((DiagramEditor) editorPart)
+                                    .getDiagramEditPart();
+                            if (object instanceof View) {
+                                editPart.set((IGraphicalEditPart) diagramEditPart.getViewer()
+                                        .getEditPartRegistry().get(object));
+                            } else {
+                                editPart.set(getEditPart(diagramEditPart, object));
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        return editPart.get();
+    }
+    
+    /**
+     * Find an edit part that is contained in the given diagram edit part. The edit part should
+     * correspond to the given model element.
+     * 
+     * @param dep a diagram edit part
+     * @param element a model element
+     * @return the corresponding edit part, or {@code null}
+     */
+    public static IGraphicalEditPart getEditPart(final DiagramEditPart dep, final EObject element) {
+        EditPart found = dep.findEditPart(dep, element);
+        if (found instanceof IGraphicalEditPart) {
+            return (IGraphicalEditPart) found;
+        } else {
+            for (Object connection : dep.getConnections()) {
+                if (connection instanceof IGraphicalEditPart) {
+                    IGraphicalEditPart ep = (IGraphicalEditPart) connection;
+                    if (element.equals(ep.getNotationView().getElement())) {
+                        return ep;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -267,6 +309,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     return ((DiagramEditor) object).getDiagramEditPart();
                 } else if (object instanceof DiagramRootEditPart) {
                     return ((DiagramRootEditPart) object).getContents();
+                } else if (object instanceof EObject) {
+                    return getEditPartFromActiveEditor((EObject) object);
                 }
             } else if (adapterType.isAssignableFrom(EObject.class)) {
                 if (object instanceof IGraphicalEditPart) {
