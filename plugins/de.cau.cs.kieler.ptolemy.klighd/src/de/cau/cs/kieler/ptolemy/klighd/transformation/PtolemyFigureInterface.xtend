@@ -17,7 +17,6 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
-import de.cau.cs.kieler.core.ui.util.CoreUiUtil
 import diva.canvas.CanvasUtilities
 import diva.canvas.Figure
 import diva.canvas.toolbox.ImageFigure
@@ -73,7 +72,7 @@ class PtolemyFigureInterface {
         if (icons.empty) {
             // We couldn't load any icons; try to load SVG description and turn it into a KRendering
             val Document svgDocument = loadSvgForEntity(entity)
-            val figure = SvgUtils::createFigureFromSvg(svgDocument)
+            val figure = GraphicsUtils::createFigureFromSvg(svgDocument)
             return figure
         } else {
             return createRenderingFromIcon(icons.get(0))
@@ -105,7 +104,7 @@ class PtolemyFigureInterface {
         graphics.dispose()
         
         val org.eclipse.swt.graphics.Image swtImage = new org.eclipse.swt.graphics.Image(
-                Display::getCurrent(), CoreUiUtil::convertAWTImageToSWT(resizedImage))
+                Display::getCurrent(), GraphicsUtils::convertToSwt(resizedImage))
         
         // Now that we have the image, create a KRendering version of it
         val kImage = renderingFactory.createKImage()
@@ -159,11 +158,11 @@ class PtolemyFigureInterface {
             } catch (Exception e) {
                 // The parsing failed, which might be due to missing blanks due to typos; repair that
                 // and try to parse again
-                svgString = SvgUtils::repairString(svgString)
+                svgString = GraphicsUtils::repairString(svgString)
                 svgDocument = xmlParser.parser(svgString)
             }
             
-            svgDocument = SvgUtils::repairSvg(svgDocument)
+            svgDocument = GraphicsUtils::repairSvg(svgDocument)
             return svgDocument
         } catch (Exception e) {
             return null

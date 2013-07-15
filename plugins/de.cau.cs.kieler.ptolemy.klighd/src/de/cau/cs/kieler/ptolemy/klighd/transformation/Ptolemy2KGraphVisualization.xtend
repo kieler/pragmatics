@@ -38,6 +38,7 @@ import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.kiml.options.SizeConstraint
 import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klighd.KlighdConstants
+import de.cau.cs.kieler.klighd.util.KlighdProperties
 import java.util.EnumSet
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
@@ -141,8 +142,8 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addCompoundNodeRendering(KNode node, boolean expand) {
         val layout = node.layout as KShapeLayout
-        layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
-        layout.setProperty(KlighdConstants::EXPAND, expand)
+        layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
+        layout.setProperty(KlighdProperties::EXPAND, expand)
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
@@ -158,13 +159,13 @@ class Ptolemy2KGraphVisualization {
         
         // Create the rendering for this node
         val KRendering expandedRendering = createDefaultRendering(node)
-        expandedRendering.setProperty(KlighdConstants::EXPANDED_RENDERING, true)
+        expandedRendering.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
         expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
         node.data += expandedRendering
         
         // Add a rendering for the collapsed version of this node
         val KRendering collapsedRendering = createRegularNodeRendering(node)
-        collapsedRendering.setProperty(KlighdConstants::COLLAPSED_RENDERING, true)
+        collapsedRendering.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
         collapsedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
         node.data += collapsedRendering
         
@@ -178,7 +179,7 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addRelationNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
-        layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
+        layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
         
         // Remove the relation's labels
         node.labels.clear()
@@ -198,7 +199,7 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addDirectorNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
-        layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
+        layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         
@@ -217,7 +218,7 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addStateNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
-        layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
+        layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         layout.setProperty(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE)
@@ -237,7 +238,7 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addRegularNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
-        layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
+        layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         layout.setProperty(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE)
@@ -265,7 +266,7 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addPortRendering(KPort port) {
         val layout = port.layout as KShapeLayout
-        layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
+        layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
         
         // Remove the port's labels
         // TODO: Instead of doing this, we should think about changing their appearance
@@ -337,7 +338,7 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addEdgeRendering(KEdge edge) {
         val layout = edge.layout
-        layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
+        layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
         
         if (edge.source.markedAsState || edge.target.markedAsState) {
             // We have an edge in a state machine
@@ -360,7 +361,7 @@ class Ptolemy2KGraphVisualization {
     def private void addLabelRendering(KLabeledGraphElement element) {
         for (label : element.labels) {
             val layout = label.layout as KShapeLayout
-            layout.setProperty(KlighdConstants::KLIGHD_SELECTION_UNPICKABLE, true)
+            layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
             
             // Add empty text rendering
             label.data += renderingFactory.createKText()
@@ -393,7 +394,7 @@ class Ptolemy2KGraphVisualization {
             layout.width = placementData.bottomRight.x.absolute
         } else {
             // Use a default minimum size
-            layout.setProperty(KlighdConstants::MINIMAL_NODE_SIZE, new KVector(60, 40))
+            layout.setProperty(KlighdProperties::MINIMAL_NODE_SIZE, new KVector(60, 40))
             layout.setProperty(LayoutOptions::SIZE_CONSTRAINT, EnumSet::of(SizeConstraint::MINIMUM_SIZE))
         }
     }

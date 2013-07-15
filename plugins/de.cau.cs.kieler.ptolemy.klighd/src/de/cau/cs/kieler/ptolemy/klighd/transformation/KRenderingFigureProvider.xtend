@@ -161,7 +161,7 @@ class KRenderingFigureProvider {
                 + "-8.789062,10.335937 14.554687,0 0,3.041016 -18.246093,0 "
                 + "0,-3.550781 8.419921,-9.826172 -8.419921,-8.9648439 0,-3.4277344 z\" />"
                 + "</svg>"
-        return SvgUtils::createFigureFromSvg(accumulatorSvg)
+        return GraphicsUtils::createFigureFromSvg(accumulatorSvg)
     }
     
     
@@ -187,13 +187,13 @@ class KRenderingFigureProvider {
         // Determine the port color
         val portFillColor = if (port.hasAnnotation(IS_PARAMETER_PORT)) {
             // Parameter ports are gray
-            SvgUtils::lookupColor("gray")
+            GraphicsUtils::lookupColor("gray")
         } else if (port.hasAnnotation(IS_IO_PORT) && port.hasAnnotation(IS_MULTIPORT)) {
             // IO Multiports are white
-            SvgUtils::lookupColor("white")
+            GraphicsUtils::lookupColor("white")
         } else {
             // All other ports are black
-            SvgUtils::lookupColor("black")
+            GraphicsUtils::lookupColor("black")
         }
         
         // Create the triangle (depending on the port size)
@@ -233,7 +233,7 @@ class KRenderingFigureProvider {
         
         // Set color properties
         polygon.setBackground(portFillColor)
-        polygon.setForeground(SvgUtils::lookupColor("black"))
+        polygon.setForeground(GraphicsUtils::lookupColor("black"))
         
         return polygon
     }

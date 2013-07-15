@@ -13,6 +13,10 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd.transformation;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DirectColorModel;
+import java.awt.image.IndexColorModel;
+import java.awt.image.WritableRaster;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
@@ -20,6 +24,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.RGB;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -47,14 +54,74 @@ import de.cau.cs.kieler.core.krendering.KXPosition;
 import de.cau.cs.kieler.core.krendering.KYPosition;
 
 /**
- * Contains utility methods for handling SVG output from Ptolemy.
+ * Contains utility methods for handling SVG output from Ptolemy and graphics-related stuff.
  * 
  * <p>This class is not meant to be instantiated.</p>
  * 
  * @author ckru
  * @author cds
  */
-public class SvgUtils {
+public class GraphicsUtils {
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // SWT to SWT Graphics
+    
+    /**
+     * Helper method for converting AWT images into SWT ones.
+     * 
+     * @param bufferedImage The {@link BufferedImage} resulting from the first step of conversion
+     * @return The SWT {@link ImageData} for the given image
+     */
+    public static ImageData convertToSwt(final BufferedImage bufferedImage) {
+        if (bufferedImage.getColorModel() instanceof DirectColorModel) {
+            DirectColorModel colorModel = (DirectColorModel) bufferedImage.getColorModel();
+            PaletteData palette = new PaletteData(colorModel.getRedMask(),
+                    colorModel.getGreenMask(), colorModel.getBlueMask());
+            ImageData data = new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(),
+                    colorModel.getPixelSize(), palette);
+            WritableRaster raster = bufferedImage.getRaster();
+            final int rasterSize = 3;
+            int[] pixelArray = new int[rasterSize];
+            for (int y = 0; y < data.height; y++) {
+                for (int x = 0; x < data.width; x++) {
+                    raster.getPixel(x, y, pixelArray);
+                    int pixel = palette.getPixel(new RGB(pixelArray[0], pixelArray[1],
+                            pixelArray[2]));
+                    data.setPixel(x, y, pixel);
+                }
+            }
+            return data;
+        } else if (bufferedImage.getColorModel() instanceof IndexColorModel) {
+            IndexColorModel colorModel = (IndexColorModel) bufferedImage.getColorModel();
+            int size = colorModel.getMapSize();
+            byte[] reds = new byte[size];
+            byte[] greens = new byte[size];
+            byte[] blues = new byte[size];
+            colorModel.getReds(reds);
+            colorModel.getGreens(greens);
+            colorModel.getBlues(blues);
+            RGB[] rgbs = new RGB[size];
+            final int mask = 0xFF;
+            for (int i = 0; i < rgbs.length; i++) {
+                rgbs[i] = new RGB(reds[i] & mask, greens[i] & mask, blues[i] & mask);
+            }
+            PaletteData palette = new PaletteData(rgbs);
+            ImageData data = new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(),
+                    colorModel.getPixelSize(), palette);
+            data.transparentPixel = colorModel.getTransparentPixel();
+            WritableRaster raster = bufferedImage.getRaster();
+            int[] pixelArray = new int[1];
+            for (int y = 0; y < data.height; y++) {
+                for (int x = 0; x < data.width; x++) {
+                    raster.getPixel(x, y, pixelArray);
+                    data.setPixel(x, y, pixelArray[0]);
+                }
+            }
+            return data;
+        }
+        return null;
+    }
+    
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // SVG Repair
@@ -855,7 +922,7 @@ public class SvgUtils {
     /**
      * This class is not meant to be instantiated.
      */
-    private SvgUtils() {
+    private GraphicsUtils() {
         
     }
 }
