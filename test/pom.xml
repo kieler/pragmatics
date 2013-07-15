@@ -19,7 +19,7 @@
 <!-- all plugins need to be listed as module -->
 
   <modules>
-    <module>de.cau.cs.kieler.core.kivi.test</module>
+    <!-- module>de.cau.cs.kieler.core.kivi.test</module -->
     <module>de.cau.cs.kieler.core.test</module>
 <!-- these tests require files from the models repository -->
     <module>de.cau.cs.kieler.klay.layered.test</module>
