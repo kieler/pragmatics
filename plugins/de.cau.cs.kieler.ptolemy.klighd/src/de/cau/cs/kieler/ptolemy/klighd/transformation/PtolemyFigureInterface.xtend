@@ -73,7 +73,8 @@ class PtolemyFigureInterface {
         if (icons.empty) {
             // We couldn't load any icons; try to load SVG description and turn it into a KRendering
             val Document svgDocument = loadSvgForEntity(entity)
-            return SvgUtils::createFigureFromSvg(svgDocument)
+            val figure = SvgUtils::createFigureFromSvg(svgDocument)
+            return figure
         } else {
             return createRenderingFromIcon(icons.get(0))
         }
@@ -88,12 +89,11 @@ class PtolemyFigureInterface {
     def private KRendering createRenderingFromIcon(EditorIcon icon) {
         val ptFigure = icon.createBackgroundFigure()
         val figureImage = ptFigure.toImage()
-        val resizedImage = new BufferedImage(figureImage.getWidth(null), figureImage.getHeight(null),
-            BufferedImage::TYPE_INT_RGB)
+        val width = figureImage.getWidth(null)
+        val height = figureImage.getHeight(null)
+        val resizedImage = new BufferedImage(width, height, BufferedImage::TYPE_INT_RGB)
         
         val graphics = resizedImage.createGraphics()
-        graphics.drawImage(figureImage, 0, 0, null)
-        graphics.dispose()
         graphics.setComposite(AlphaComposite::Src)
         graphics.setRenderingHint(RenderingHints::KEY_INTERPOLATION,
             RenderingHints::VALUE_INTERPOLATION_BILINEAR)
@@ -101,6 +101,8 @@ class PtolemyFigureInterface {
             RenderingHints::VALUE_RENDER_QUALITY)
         graphics.setRenderingHint(RenderingHints::KEY_ANTIALIASING,
             RenderingHints::VALUE_ANTIALIAS_ON)
+        graphics.drawImage(figureImage, 0, 0, null)
+        graphics.dispose()
         
         val org.eclipse.swt.graphics.Image swtImage = new org.eclipse.swt.graphics.Image(
                 Display::getCurrent(), CoreUiUtil::convertAWTImageToSWT(resizedImage))
