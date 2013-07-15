@@ -18,6 +18,8 @@ import java.util.Map;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.XMLResource;
+import org.ptolemy.moml.util.MomlResourceFactoryImpl;
+
 import com.google.common.collect.Maps;
 import de.cau.cs.kieler.klighd.views.DiagramEditorPart;
 
@@ -57,6 +59,8 @@ public class PtolemyEditorPart extends DiagramEditorPart {
     protected void configureResourceSet(ResourceSet set) {
         set.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
         set.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
+        set.getResourceFactoryRegistry().getExtensionToFactoryMap()
+                .put("xml", new MomlResourceFactoryImpl());
     }
 
 }

@@ -47,17 +47,17 @@ public final class TransformationConstants {
     /**
      * Name for an annotation that marks a port as being a multiport.
      */
-    public static final String IS_MULTIPORT = "multiport";
+    public static final String IS_MULTIPORT = "_multiport";
     
     /**
      * Name of an annotation that marks a port as being a ParameterPort instance.
      */
-    public static final String IS_PARAMETER_PORT = "parameterPort";
+    public static final String IS_PARAMETER_PORT = "_parameterPort";
     
     /**
      * Name of an annotation that marks a port as being an IOPort instance.
      */
-    public static final String IS_IO_PORT = "ioPort";
+    public static final String IS_IO_PORT = "_ioPort";
     
     
     // ANNOTATION CONSTANTS
@@ -66,7 +66,7 @@ public final class TransformationConstants {
      * Name for an annotation describing where a model element originally came from if it was
      * transformed from another model.
      */
-    public static final String ANNOTATION_LANGUAGE = "language";
+    public static final String ANNOTATION_LANGUAGE = "_language";
     
     /**
      * Value of the {@link #ANNOTATION_LANGUAGE} annotation identifying elements transformed from a
@@ -78,7 +78,7 @@ public final class TransformationConstants {
      * Name for an annotation describing the original class name of an element imported from a
      * Ptolemy model.
      */
-    public static final String ANNOTATION_PTOLEMY_CLASS = "ptolemyClass";
+    public static final String ANNOTATION_PTOLEMY_CLASS = "_ptolemyClass";
     
     
     /**
