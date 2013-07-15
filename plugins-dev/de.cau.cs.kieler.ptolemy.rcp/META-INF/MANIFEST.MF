@@ -13,14 +13,12 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore.xmi;bundle-version="2.8.1",
  org.ptolemy.moml;bundle-version="1.0.1",
  com.google.inject;bundle-version="3.0.0",
- de.cau.cs.kieler.kaom;bundle-version="0.3.2",
- de.cau.cs.kieler.kaom.importer.ptolemy;bundle-version="0.2.1",
- de.cau.cs.kieler.kaom.klighd.ptolemy;bundle-version="0.1.0",
  de.cau.cs.kieler.klay.layered;bundle-version="0.4.0",
  de.cau.cs.kieler.klighd;bundle-version="0.2.0",
  de.cau.cs.kieler.klighd.piccolo;bundle-version="0.2.0",
  de.cau.cs.kieler.kiml;bundle-version="0.12.0",
- de.cau.cs.kieler.kiml.service;bundle-version="0.4.0"
+ de.cau.cs.kieler.kiml.service;bundle-version="0.4.0",
+ de.cau.cs.kieler.ptolemy.klighd;bundle-version="0.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: %providerName

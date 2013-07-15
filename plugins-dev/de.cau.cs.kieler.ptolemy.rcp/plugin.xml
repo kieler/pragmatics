@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="de.cau.cs.kieler.ptolemy.rcp.PtolemyEditPart"
+            class="de.cau.cs.kieler.ptolemy.klighd.PtolemyEditorPart"
             default="true"
             extensions="moml, xml"
             id="de.cau.cs.kieler.ptolemy.rcp.editor"
