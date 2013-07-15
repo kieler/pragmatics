@@ -92,8 +92,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     /**
      * A switch class for KGraph elements that determines the layout option targets.
      */
-    private final KGraphSwitch<Set<LayoutOptionData.Target>> kgraphSwitch
-            = new KGraphSwitch<Set<LayoutOptionData.Target>>() {
+    public static class OptionTargetSwitch extends KGraphSwitch<Set<LayoutOptionData.Target>> {
         
         @Override
         public Set<LayoutOptionData.Target> caseKNode(final KNode node) {
@@ -123,6 +122,9 @@ public class DefaultLayoutConfig implements ILayoutConfig {
         }
         
     };
+    
+    /** the cached switch for computing layout option targets. */
+    private OptionTargetSwitch kgraphSwitch = new OptionTargetSwitch();
 
     /**
      * {@inheritDoc}

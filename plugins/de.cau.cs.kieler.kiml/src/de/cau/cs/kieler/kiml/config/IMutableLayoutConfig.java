@@ -23,7 +23,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2013-07-01 review KI-38 by cds, uru
  */
 public interface IMutableLayoutConfig extends ILayoutConfig {
     

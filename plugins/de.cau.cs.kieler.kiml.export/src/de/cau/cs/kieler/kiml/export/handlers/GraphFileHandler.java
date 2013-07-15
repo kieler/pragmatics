@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml.export.handlers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -32,9 +31,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import de.cau.cs.kieler.core.WrappedException;
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.service.TransformationService;
 import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
@@ -42,6 +41,7 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 
 /**
  *  This class is responsible for transforming and exporting graphs from graphical diagrams.
@@ -53,8 +53,8 @@ public class GraphFileHandler {
     
     /** The source file to export.  */
     private IPath sourceFile;
-    /** The target format to export file into ( without leading period ). */
-    private String targetFormat;
+    /** The target format to export file into. */
+    private GraphFormatData targetFormat;
     /** The target directory to export file into. */
     private IPath targetDirectory;
     /** The workspace directory. */    
@@ -65,11 +65,11 @@ public class GraphFileHandler {
      * @param sourceFile
      *            the source file
      * @param targetFormat
-     *            the target format(extension) without leading period
+     *            the target format
      * @param targetDirectory
      *            the target directory
      */
-    public GraphFileHandler(final IPath sourceFile, final String targetFormat,
+    public GraphFileHandler(final IPath sourceFile, final GraphFormatData targetFormat,
             final IPath targetDirectory) {
         super();
         this.sourceFile = sourceFile;
@@ -95,7 +95,7 @@ public class GraphFileHandler {
     /**
      * @return the targetFormat
      */
-    public String getTargetFormat() {
+    public GraphFormatData getTargetFormat() {
         return targetFormat;
     }
 
@@ -103,7 +103,7 @@ public class GraphFileHandler {
      * @param targetFormat
      *            the targetFormat to set (without leading period))
      */
-    public void setTargetFormat(final String targetFormat) {
+    public void setTargetFormat(final GraphFormatData targetFormat) {
         this.targetFormat = targetFormat;
     }
 
@@ -134,12 +134,15 @@ public class GraphFileHandler {
      * @return the Workspace targetIPath
      */
     public IPath getWorkspaceTargetIPath() {
+        String sourceFileName = sourceFile.toFile().getName();
+        String extension = targetFormat.getExtensions()[0];
         // get the last dot position
-        int dotPos = this.sourceFile.toFile().getName().toString().lastIndexOf(".");
+        int dotPos = sourceFileName.lastIndexOf(".");
+        if (dotPos < 0) {
+            dotPos = sourceFileName.length();
+        }
         // replace the file extension with the new one
-        
-        return this.targetDirectory.append(this.sourceFile.toFile().getName().substring(0, dotPos)
-                .concat(".").concat(this.getTargetFormat()));
+        return targetDirectory.append(sourceFileName.substring(0, dotPos) + "." + extension);
     }
 
     /**
@@ -207,9 +210,11 @@ public class GraphFileHandler {
             throw new RuntimeException("No layout manager could be retrieved for the selected file.");
         }
         LayoutMapping<?> mapping = layoutManager.buildLayoutGraph(null, editPart.get());
-        KNode inputGraph = mapping.getLayoutGraph();
+        
+        // configure the new kgraph to obtain all layout options
+        new LayoutOptionManager().configure(mapping, new BasicProgressMonitor(0));
 
-        return inputGraph;
+        return mapping.getLayoutGraph();
     }
 
     /**
@@ -230,23 +235,7 @@ public class GraphFileHandler {
      */
     public String graphToString() {
         // get the selected configuration
-        return performExport(getKGraph(), getGraphFormatData().getHandler());
-    }
-
-    /**
-     * function to return the selected GraphFormatData.
-     * 
-     * @return a GraphFormatData
-     */
-    public GraphFormatData getGraphFormatData() {
-        Collection<GraphFormatData> formatData = TransformationService.getInstance()
-                .getFormatData();
-        for (GraphFormatData gfd : formatData) {
-            if (gfd.getName().toLowerCase().equals(targetFormat)) {
-                return gfd;
-            }
-        }
-        return null;
+        return performExport(getKGraph(), targetFormat.getHandler());
     }
 
 }

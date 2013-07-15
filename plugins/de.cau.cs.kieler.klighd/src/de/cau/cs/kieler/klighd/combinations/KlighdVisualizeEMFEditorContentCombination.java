@@ -20,18 +20,19 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
+import org.eclipse.ui.part.FileEditorInput;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.model.triggers.PartTrigger;
-import de.cau.cs.kieler.core.model.triggers.PartTrigger.EditorState;
-import de.cau.cs.kieler.core.model.triggers.PartTrigger.EventType;
-import de.cau.cs.kieler.core.model.triggers.SelectionTrigger.SelectionState;
+import de.cau.cs.kieler.core.kivi.triggers.PartTrigger;
+import de.cau.cs.kieler.core.kivi.triggers.PartTrigger.EditorState;
+import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
 import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
 
 /**
  * This combination in is charge of visualizing EMF tree editors' content graphically.
+ * 
  * @author chsch
  */
 public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombination {
@@ -54,19 +55,26 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
             return;
         }
         
-        IPath inputPath = es.getProperty(PartTrigger.EDITOR_INPUT_PATH);
-        if (inputPath == null) { // Fix of KIELER-2135
+        IPath editorInputPath = null;
+        if (es.getEditorPart().getEditorInput() instanceof FileEditorInput) {
+            FileEditorInput fileEditorInput = (FileEditorInput) es.getEditorPart().getEditorInput();
+            if (fileEditorInput.getFile() != null
+                    && fileEditorInput.getFile().getLocationURI() != null) {
+                editorInputPath = fileEditorInput.getPath();
+            }
+        }
+        if (editorInputPath == null) { // Fix of KIELER-2135
             return;
         }
         
-        String id = inputPath.toPortableString().replace(":", "");
+        String id = editorInputPath.toPortableString().replace(":", "");
         // the replacement is needed since the secondary view ids seem to be required
         //  to be free of ':', which will be violated on windows determining them this way. 
 
         if (this.latestState() == es) {            
             // in case the combination is fired by an editor change ...
             
-            if (es.getEventType() == EventType.ACTIVE_EDITOR_CLOSED) {
+            if (es.getEventType() == PartTrigger.EventType.ACTIVE_EDITOR_CLOSED) {
                 this.schedule(new KlighdCloseDiagramEffect(id));
                 
             } else {            
@@ -76,27 +84,27 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
                         .getResources();
                 if (!resources.isEmpty() && !resources.get(0).getContents().isEmpty()) {
 
-                    this.schedule(new KlighdUpdateDiagramEffect(id, inputPath.lastSegment(), EcoreUtil
-                            .getRootContainer(resources.get(0).getContents().get(0)), es
-                            .getEditorPart()));
+                    this.schedule(new KlighdUpdateDiagramEffect(id, editorInputPath.lastSegment(),
+                            EcoreUtil.getRootContainer(resources.get(0).getContents().get(0)),
+                            es.getEditorPart()));
                 }
             }
         } else {
             // otherwise the selection is examined ...            
-            if (!ss.getSelectedObjects().isEmpty()
-                    && (ss.getSelectedObjects().get(0) instanceof Resource || ss
-                            .getSelectedObjects().get(0) instanceof EObject)) {
+            if (!ss.getSelection().isEmpty()
+                    && (ss.getSelection().get(0) instanceof Resource || ss
+                            .getSelection().get(0) instanceof EObject)) {
 
-                Object selected = ss.getSelectedObjects().get(0);
+                Object selected = ss.getSelection().get(0);
                 if (selected instanceof Resource && !((Resource) selected).getContents().isEmpty()) {
-                    this.schedule(new KlighdDiagramEffect(id, inputPath.lastSegment(),
+                    this.schedule(new KlighdDiagramEffect(id, editorInputPath.lastSegment(),
                             ((Resource) selected).getContents().get(0), es.getEditorPart()));
                     return;
                 }
                 if (selected instanceof EObject) {
                     this.schedule(
                             new KlighdUpdateDiagramEffect(
-                            id, inputPath.lastSegment(), EcoreUtil
+                            id, editorInputPath.lastSegment(), EcoreUtil
                             .getRootContainer((EObject) selected), es.getEditorPart()));
                     return;
                 }

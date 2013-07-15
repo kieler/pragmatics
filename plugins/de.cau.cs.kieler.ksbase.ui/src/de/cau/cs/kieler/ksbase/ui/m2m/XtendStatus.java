@@ -35,7 +35,7 @@ import org.eclipse.emf.ecore.xml.type.AnyType;
 import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.issues.MWEDiagnostic;
 
-import de.cau.cs.kieler.core.model.CoreModelPlugin;
+import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
  * Class to create a MultiStatus object from an Issues object that contains
@@ -89,7 +89,7 @@ public class XtendStatus implements IStatus {
 
             // add exception if there is one
             if (myException != null) {
-                IStatus status = new Status(IStatus.ERROR, CoreModelPlugin.PLUGIN_ID, "Exception "
+                IStatus status = new Status(IStatus.ERROR, KSBasEPlugin.PLUGIN_ID, "Exception "
                         + myException.getMessage(), myException);
                 myStatus.add(status);
                 severity = IStatus.ERROR;
@@ -102,7 +102,7 @@ public class XtendStatus implements IStatus {
             MWEDiagnostic[] tempDiags = myIssues.getErrors();
             for (int i = 0; i < tempDiags.length; i++) {
                 MWEDiagnostic diagnostic = tempDiags[i];
-                IStatus status = new Status(IStatus.ERROR, CoreModelPlugin.PLUGIN_ID, "Error: "
+                IStatus status = new Status(IStatus.ERROR, KSBasEPlugin.PLUGIN_ID, "Error: "
                         + diagnostic.getMessage(), diagnostic.getException());
                 myStatus.add(status);
                 severity = IStatus.ERROR;
@@ -114,7 +114,7 @@ public class XtendStatus implements IStatus {
             tempDiags = myIssues.getWarnings();
             for (int i = 0; i < tempDiags.length; i++) {
                 MWEDiagnostic diagnostic = tempDiags[i];
-                IStatus status = new Status(IStatus.WARNING, CoreModelPlugin.PLUGIN_ID, "Warning: "
+                IStatus status = new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID, "Warning: "
                         + diagnostic.getMessage(), diagnostic.getException());
                 myStatus.add(status);
                 if (firstException == null) {
@@ -128,7 +128,7 @@ public class XtendStatus implements IStatus {
             tempDiags = myIssues.getInfos();
             for (int i = 0; i < tempDiags.length; i++) {
                 MWEDiagnostic diagnostic = tempDiags[i];
-                IStatus status = new Status(IStatus.INFO, CoreModelPlugin.PLUGIN_ID, "Info: "
+                IStatus status = new Status(IStatus.INFO, KSBasEPlugin.PLUGIN_ID, "Info: "
                         + diagnostic.getMessage(), diagnostic.getException());
                 myStatus.add(status);
                 if (firstException == null) {
@@ -142,7 +142,7 @@ public class XtendStatus implements IStatus {
             // add warnings about unknown features
             Map<EObject, AnyType> unknownFeatures = getUnknownFeatures();
             for (EObject targetObject : unknownFeatures.keySet()) {
-                IStatus status = new Status(IStatus.WARNING, CoreModelPlugin.PLUGIN_ID,
+                IStatus status = new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
                         "Unknown XML feature found in input. Unknown feature: \n"
                                 + serialize(unknownFeatures.get(targetObject)) + "\nfor Object\n"
                                 + targetObject.toString());
@@ -203,7 +203,7 @@ public class XtendStatus implements IStatus {
      * {@inheritDoc}
      */
     public String getPlugin() {
-        return CoreModelPlugin.PLUGIN_ID;
+        return KSBasEPlugin.PLUGIN_ID;
     }
 
     /**
