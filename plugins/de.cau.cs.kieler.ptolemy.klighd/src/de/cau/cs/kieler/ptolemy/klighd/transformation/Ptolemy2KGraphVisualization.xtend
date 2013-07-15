@@ -152,6 +152,7 @@ class Ptolemy2KGraphVisualization {
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
+        layout.setProperty(LayoutOptions::SIZE_CONSTRAINT, SizeConstraint::fixed)
         
         // Check if this is a state machine
         if (node.markedAsStateMachineContainer) {
@@ -174,7 +175,7 @@ class Ptolemy2KGraphVisualization {
         collapsedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
         node.data += collapsedRendering
         
-        layout.setLayoutSize(expandedRendering)
+        layout.setLayoutSize(collapsedRendering)
     }
     
     /**
@@ -184,7 +185,6 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addRelationNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
-        layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
         
         // Remove the relation's labels
         node.labels.clear()
@@ -204,7 +204,6 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addDirectorNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
-        layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         
@@ -223,7 +222,6 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addStateNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
-        layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         layout.setProperty(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE)
@@ -243,7 +241,6 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addRegularNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
-        layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         layout.setProperty(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE)
@@ -271,7 +268,6 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addPortRendering(KPort port) {
         val layout = port.layout as KShapeLayout
-        layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
         
         // Remove the port's labels
         // TODO: Instead of doing this, we should think about changing their appearance
@@ -342,9 +338,6 @@ class Ptolemy2KGraphVisualization {
      * @param edge the edge to add rendering information to.
      */
     def private void addEdgeRendering(KEdge edge) {
-        val layout = edge.layout
-        layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
-        
         if (edge.source.markedAsState || edge.target.markedAsState) {
             // We have an edge in a state machine
             edge.addSpline(1.6f).addArrowDecorator()
@@ -365,9 +358,6 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addLabelRendering(KLabeledGraphElement element) {
         for (label : element.labels) {
-            val layout = label.layout as KShapeLayout
-            layout.setProperty(KlighdProperties::KLIGHD_SELECTION_UNPICKABLE, true)
-            
             // Add empty text rendering
             label.data += renderingFactory.createKText()
         }
