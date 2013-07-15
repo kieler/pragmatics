@@ -18,13 +18,9 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.core.model.GraphicalFrameworkService;
-import de.cau.cs.kieler.core.model.IGraphicalFrameworkBridge;
-import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -84,12 +80,10 @@ public class SetOptionsEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        try {
-            IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
-                    .getBridge(workbenchPart);
-            EditPart editPart = bridge.getEditPart(modelElement);
-            IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
-                    .getManager(workbenchPart, editPart);
+        Object diagramPart = LayoutEffect.findDiagramPart(workbenchPart, modelElement);
+        if (diagramPart != null) {
+            IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
+                    workbenchPart, diagramPart);
             if (manager != null) {
                 final IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(
                         null, ILayoutConfig.class);
@@ -97,11 +91,12 @@ public class SetOptionsEffect extends AbstractEffect {
                     // build a layout context for setting the option
                     final LayoutContext context = new LayoutContext();
                     context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
-                    context.setProperty(LayoutContext.DIAGRAM_PART, editPart);
+                    context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
                     layoutConfig.enrich(context);
                     
                     // get an editing domain and execute the command
-                    EditingDomain editingDomain = bridge.getEditingDomain(editPart);
+                    EditingDomain editingDomain = (EditingDomain) manager.getAdapter(diagramPart,
+                            EditingDomain.class);
                     KimlUiUtil.runModelChange(new Runnable() {
                         public void run() {
                             for (Map.Entry<String, Object> entry : optionMap.entrySet()) {
@@ -115,8 +110,6 @@ public class SetOptionsEffect extends AbstractEffect {
                     }, editingDomain, Messages.getString("kiml.ui.40"));
                 }
             }
-        } catch (UnsupportedPartException exception) {
-            // ignore exception
         }
     }
 

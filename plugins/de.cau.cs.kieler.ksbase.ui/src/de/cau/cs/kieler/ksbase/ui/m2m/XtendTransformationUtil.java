@@ -47,9 +47,9 @@ import org.eclipse.xtend.typesystem.emf.EcoreUtil2;
 import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 import org.eclipse.xtend.util.stdlib.ExtIssueReporter;
 
-import de.cau.cs.kieler.core.model.m2m.TransformException;
-import de.cau.cs.kieler.core.ui.ProgressMonitorAdapter;
 import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
+import de.cau.cs.kieler.ksbase.core.TransformException;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**

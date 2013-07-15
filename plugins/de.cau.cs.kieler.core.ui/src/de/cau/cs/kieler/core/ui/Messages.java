@@ -29,18 +29,6 @@ public final class Messages extends NLS {
     // CHECKSTYLEOFF JavadocVariable
     // CHECKSTYLEOFF VisibilityModifier
     // CHECKSTYLEOFF StaticVariableName
-    public static String GenericErrorHandler_OutOfMemoryError;
-    public static String GenericErrorHandler_StackOverflowError;
-    public static String GenericErrorHandler_VirtualMachineError;
-    public static String GenericErrorHandler_SWTError;
-    public static String GenericErrorHandler_FatalError;
-    public static String GenericErrorHandler_FatalRecursiveError;
-    public static String GenericErrorHandler_FatalErrorTitle;
-    public static String GenericErrorHandler_ExceptionHandled;
-    public static String GenericErrorHandler_InternalErrorNoArg;
-    public static String GenericErrorHandler_InternalErrorOneArg;
-    public static String ModelErrorHandler_MarkerError;
-    public static String ModelErrorHandler_MarkerCreationError;
     public static String DoubleFieldEditor_doubleBounds;
     public static String FileSystemResourcesPage_containerSelectionDialog_message;
     public static String FileSystemResourcesPage_containerSelectionDialog_title;
@@ -54,11 +42,9 @@ public final class Messages extends NLS {
     public static String FileSystemResourcesPage_targetGroup_browse;
     public static String FileSystemResourcesPage_targetGroup_text;
     public static String FileSystemResourcesPage_title;
-    public static String KielerPreferencePage_Text;
     public static String ResourceTreeAndListPage_deselectAllButton_text;
     public static String ResourceTreeAndListPage_selectAllButton_text;
     public static String ResourceTreeAndListPage_task_itemDiscovery;
-    public static String TextViewer_2;
     public static String WorkspaceResourcesPage_containerSelectionDialog_message;
     public static String WorkspaceResourcesPage_containerSelectionDialog_title;
     public static String WorkspaceResourcesPage_errors_noFileSelected;

@@ -66,7 +66,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     }
     
     /** the cached layout configuration for Graphiti. */
-    private GraphitiLayoutConfig layoutConfig = new GraphitiLayoutConfig();
+    private GraphitiLayoutConfig layoutConfig = new GraphitiLayoutConfig(this);
 
     /**
      * {@inheritDoc}
@@ -224,11 +224,39 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     protected void buildLayoutGraphRecursively(final LayoutMapping<PictogramElement> mapping,
             final ContainerShape parentElement, final KNode parentNode) {
         for (Shape shape : parentElement.getChildren()) {
-            // relevant shapes are those that can be connected
-            if (!shape.getAnchors().isEmpty()) {
+            if (isNodeShape(shape)) {
                 createNode(mapping, parentNode, shape);
             }
         }
+    }
+    
+    /**
+     * Determine whether the given shape shall be treated as a node in the layout graph.
+     * 
+     * <p>This implementation always returns {@code true}. Subclasses may override this in order
+     * to implement some checks for excluding shapes that are not to be included in the layout
+     * graph.</p>
+     * 
+     * @param shape a shape
+     * @return whether the shape shall be treated a a node
+     */
+    protected boolean isNodeShape(final Shape shape) {
+        return true;
+    }
+    
+    /**
+     * Determine whether the given anchor shall be treated as a port in the layout graph.
+     * 
+     * <p>This implementation returns true if the anchor has a graphics algorithm and it is
+     * either a {@link BoxRelativeAnchor} or a {@link FixPointAnchor}. Subclasses may override
+     * this.</p>
+     * 
+     * @param anchor an anchor
+     * @return whether the anchor shall be treated a a port
+     */
+    protected boolean isPortAnchor(final Anchor anchor) {
+        return anchor.getGraphicsAlgorithm() != null
+                && (anchor instanceof BoxRelativeAnchor || anchor instanceof FixPointAnchor);
     }
     
     /**
@@ -288,7 +316,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
 
         for (Anchor anchor : shape.getAnchors()) {
             // box-relative anchors and fixed-position anchors are interpreted as ports
-            if (anchor.getGraphicsAlgorithm() != null) {
+            if (isPortAnchor(anchor)) {
                 if (anchor instanceof BoxRelativeAnchor) {
                     createPort(mapping, childNode, (BoxRelativeAnchor) anchor);
                 } else if (anchor instanceof FixPointAnchor) {

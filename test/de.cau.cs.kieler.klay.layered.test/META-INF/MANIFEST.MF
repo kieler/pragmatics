@@ -12,5 +12,4 @@ Require-Bundle: org.junit;bundle-version="4.8.0",
  de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.klay.layered,
  de.cau.cs.kieler.klay.test,
- de.cau.cs.kieler.pragmatics.test.common,
- de.cau.cs.kieler.kiml.gmf
+ de.cau.cs.kieler.pragmatics.test.common

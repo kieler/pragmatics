@@ -632,10 +632,11 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
 
         if (currentDFSIterations++ > maximalDFSIterations) {
             throw new RuntimeException(
-                    "The maximal amount of iterations of the NETWORK_SIMPLEX layerer has been"
-                            + " exceeded. This might be due to the nature of the passed graph, e.g.,"
-                            + " plenty highly connected nodes.\nEither try another layering strategy,"
-                            + " or increase the value of the \"Maximal Iterations\" property.");
+                    "The maximal number of iterations of the NETWORK_SIMPLEX layering strategy has"
+                            + " been exceeded. This might be due to the nature of the passed graph,"
+                            + " e.g. many highly connected nodes.\nEither try another layering"
+                            + " strategy, or increase the value of the \"Layering Max. Iterations\""
+                            + " option.");
         }
 
         LNode target = null;

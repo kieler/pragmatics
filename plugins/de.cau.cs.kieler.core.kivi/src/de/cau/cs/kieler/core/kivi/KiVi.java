@@ -36,7 +36,6 @@ import de.cau.cs.kieler.core.kivi.internal.CombinationsWorker;
 import de.cau.cs.kieler.core.kivi.internal.EffectsWorker;
 import de.cau.cs.kieler.core.kivi.internal.IEffectsListener;
 import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
-import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 
 /**
  * Core controller for the view management.
@@ -358,8 +357,8 @@ public class KiVi {
                 }
                 // clear references to created effects in order to release system resources
                 effects.clear();
-            } catch (UnsupportedPartException e) {
-                error(combo, triggerState, e);
+            } catch (RuntimeException exception) {
+                error(combo, triggerState, exception);
             }
 
         }

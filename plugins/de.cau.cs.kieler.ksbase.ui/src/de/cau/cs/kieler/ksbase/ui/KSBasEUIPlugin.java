@@ -14,12 +14,23 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.ui;
 
+import java.util.List;
+
+import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import com.google.common.collect.Lists;
+
+import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
+import de.cau.cs.kieler.ksbase.ui.kivi.IKSBasEHandler;
 import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
 
 /**
@@ -37,6 +48,8 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
 
     /** Logging instance. **/
     private ILog logger;
+
+    private List<IKSBasEHandler> handlers = Lists.newLinkedList();
 
     /**
      * The constructor.
@@ -95,6 +108,7 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
         super.start(context);
         KSBasEUIPlugin.plugin = this;
         logger = KSBasEUIPlugin.plugin.getLog();
+        readHandlerExtensionPoint();
         DynamicMenuContributions.INSTANCE.createAllMenuContributions();
     }
 
@@ -120,6 +134,51 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      */
     public static KSBasEUIPlugin getDefault() {
         return plugin;
+    }
+
+    /**
+     * @param part
+     * @param selection
+     * @return the _first_ matching {@link IKSBasEHandler} for the passed parameters.
+     */
+    public IKSBasEHandler getFittingKSBasEHandler(final IWorkbenchPart part,
+           final SelectionState selection) {
+
+        for (IKSBasEHandler handler : handlers) {
+            if (handler.canHandle(part, selection)) {
+                return handler;
+            }
+        }
+
+        return null;
+    }
+    
+    public IKSBasEHandler getFittingKSBasEHandler(final IEvaluationContext context) {
+
+        for (IKSBasEHandler handler : handlers) {
+            if (handler.canHandle(context)) {
+                return handler;
+            }
+        }
+
+        return null;
+    }
+
+    private void readHandlerExtensionPoint() {
+        // read extension point
+        IConfigurationElement[] elements =
+                RegistryFactory.getRegistry().getConfigurationElementsFor(
+                        "de.cau.cs.kieler.ksbase.ui.handlers");
+        // get all ksbase handlers
+        for (IConfigurationElement element : elements) {
+            try {
+                IKSBasEHandler handler =
+                        (IKSBasEHandler) element.createExecutableExtension("class");
+                handlers.add(handler);
+            } catch (CoreException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

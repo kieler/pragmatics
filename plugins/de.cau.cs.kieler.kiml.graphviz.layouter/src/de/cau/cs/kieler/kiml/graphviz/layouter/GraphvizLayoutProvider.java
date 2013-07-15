@@ -51,7 +51,7 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationData;
  * @kieler.rating proposed yellow by msp
  */
 public class GraphvizLayoutProvider extends AbstractLayoutProvider {
-
+    
     /** the serial call number for usage in debug mode. */
     private static int serialCallNo = 0;
     
