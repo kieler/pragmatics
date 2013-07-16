@@ -370,7 +370,8 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
          *         {@link org.eclipse.ui.IEditorInput}.
          */
         public IPath getEditorInputPath() {
-            if (this.editor.getEditorInput().getClass().equals(FileEditorInput.class)
+            if (this.editor != null && this.editor.getEditorInput() != null
+                    && this.editor.getEditorInput().getClass().equals(FileEditorInput.class)
                     && ((FileEditorInput) this.editor.getEditorInput()).getFile() != null
                     && ((FileEditorInput) this.editor.getEditorInput()).getFile()
                             .getLocationURI() != null) {

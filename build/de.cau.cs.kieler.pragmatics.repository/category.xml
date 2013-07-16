@@ -6,12 +6,6 @@
    <feature url="features/net.ogdf.bin_2.0.0.qualifier.jar" id="net.ogdf.bin.feature" version="2.0.0.qualifier" os="linux,macosx,solaris,win32" arch="sparc,x86,x86_64">
       <category name="kieler-layout"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.keg_0.6.0.qualifier.jar" id="de.cau.cs.kieler.keg.feature" version="0.6.0.qualifier">
-      <category name="kieler-editors"/>
-   </feature>
-      <feature url="features/de.cau.cs.kieler.keg.source_0.6.0.qualifier.jar" id="de.cau.cs.kieler.keg.feature.source" version="0.6.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
    <feature url="features/de.cau.cs.kieler.kiml.gmf_0.8.0.qualifier.jar" id="de.cau.cs.kieler.kiml.gmf.feature" version="0.8.0.qualifier">
       <category name="kieler-layout"/>
    </feature>
@@ -24,10 +18,16 @@
    <feature url="features/de.cau.cs.kieler.kiml.graphiti.source_0.8.0.qualifier.jar" id="de.cau.cs.kieler.kiml.graphiti.feature.source" version="0.8.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.feature_0.2.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature" version="0.2.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.feature_0.1.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature" version="0.1.0.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.feature.source_0.2.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature.source" version="0.2.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.feature.source_0.1.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature.source" version="0.1.0.qualifier">
+      <category name="kieler-sources"/>
+   </feature>
+   <feature url="features/de.cau.cs.kieler.klighd.examples.feature_0.1.0.qualifier.jar" id="de.cau.cs.kieler.klighd.examples.feature" version="0.1.0.qualifier">
+      <category name="kieler-klighd"/>
+   </feature>
+   <feature url="features/de.cau.cs.kieler.klighd.examples.feature.source_0.1.0.qualifier.jar" id="de.cau.cs.kieler.klighd.examples.feature.source" version="0.1.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
    <feature url="features/de.cau.cs.kieler.kwebs.client.jaxws_0.1.2.qualifier.jar" id="de.cau.cs.kieler.kwebs.client.jaxws.feature" version="0.1.2.qualifier">
@@ -36,12 +36,6 @@
    <feature url="features/de.cau.cs.kieler.kwebs.client.jaxws.source_0.1.2.qualifier.jar" id="de.cau.cs.kieler.kwebs.client.jaxws.feature.source" version="0.1.2.qualifier">
       <category name="kieler-sources"/>
    </feature> 
-   <feature url="features/de.cau.cs.kieler.kwebs.client.jeti_0.1.2.qualifier.jar" id="de.cau.cs.kieler.kwebs.client.jeti.feature" version="0.1.2.qualifier">
-      <category name="kieler-layout"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.kwebs.client.jeti.source_0.1.2.qualifier.jar" id="de.cau.cs.kieler.kwebs.client.jeti.feature.source" version="0.1.2.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
    <feature url="features/de.cau.cs.kieler.kiml.graphviz_0.7.1.qualifier.jar" id="de.cau.cs.kieler.kiml.graphviz.feature" version="0.7.1.qualifier">
       <category name="kieler-layout"/>
    </feature>
