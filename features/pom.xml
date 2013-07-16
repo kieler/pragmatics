@@ -26,7 +26,6 @@
     <module>de.cau.cs.kieler.kwebs.client.jaxws.feature</module>
     <module>de.cau.cs.kieler.kwebs.server.feature</module>
     <module>de.cau.cs.kieler.papyrus.layout.feature</module>
-    <module>de.unido.ls5.eti.toolserver.feature</module>
     <module>net.ogdf.bin.feature</module>
   </modules>
 
