@@ -133,6 +133,9 @@ public final class LayoutOptions {
     public static final IProperty<PortSide> PORT_SIDE = new Property<PortSide>(
             "de.cau.cs.kieler.portSide", PortSide.UNDEFINED);
 
+    /** Specifies whether the given attribute is a tooltip. */
+    public static final IProperty<String> TOOLTIP = new Property<String>(
+            "de.cau.cs.kieler.tooltip", null);
     
     ///////  USER INTERFACE LAYOUT OPTIONS  ///////
 

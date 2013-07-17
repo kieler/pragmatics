@@ -1939,7 +1939,7 @@ public class SWTGraphics2D extends Graphics2D {
      * @see java.awt.Graphics#create()
      */
     public Graphics create() {
-        return null;
+        return new SWTGraphics2D(gc, device);
     }
 
     /**
