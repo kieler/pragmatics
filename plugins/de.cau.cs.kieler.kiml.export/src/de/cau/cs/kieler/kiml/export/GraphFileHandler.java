@@ -74,7 +74,7 @@ public class GraphFileHandler {
      * @param resourceSet the resource set
      * @return a graph for the given diagram
      */
-    private static KNode retreiveGmfGraph(final Diagram diagram, final ResourceSet resourceSet) {
+    private static KNode retrieveGmfGraph(final Diagram diagram, final ResourceSet resourceSet) {
         // create a diagram edit part
         TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain(resourceSet);
         final Maybe<DiagramEditPart> editPart = new Maybe<DiagramEditPart>();
@@ -184,7 +184,7 @@ public class GraphFileHandler {
         if (content instanceof KNode) {
             return (KNode) content;
         } else if (content instanceof Diagram) {
-            return retreiveGmfGraph((Diagram) content, resourceSet);
+            return retrieveGmfGraph((Diagram) content, resourceSet);
         } else {
             throw new IllegalArgumentException(
                     "The selected file does not contain a supported format.");
