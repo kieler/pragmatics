@@ -377,13 +377,14 @@ class Ptolemy2KGraphOptimization {
         if (root.markedAsState) {
             // Iterate over the state's ports
             for (port : root.ports) {
-                // Iterate over the port's incident edges
-                for (edge : port.edges) {
+                // Remove edges from the port while it still has any
+                while (!port.edges.empty) {
                     // In the former version of the transformation, we would make sure the edges would
                     // face into the correct direction. However, this should in theory have already been
                     // inferred, so we skip this and hope for the best. Amen.
                     
                     // Connect the edge to the state instead of the port
+                    val edge = port.edges.get(0)
                     if (edge.sourcePort == port) {
                         edge.sourcePort = null
                     } else {
