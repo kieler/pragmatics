@@ -2,7 +2,10 @@ package de.cau.cs.kieler.ptolemy.rcp;
 
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -27,6 +30,8 @@ public class PtolemyRCPPlugin extends AbstractUIPlugin implements IStartup {
     private static PtolemyRCPPlugin plugin;
 
     private static final String OPEN_FILE = "org.eclipse.ui.openLocalFile";
+
+    private static final String STATUS_BAR_CLASS = "org.eclipse.jface.action.StatusLine";
 
     /** a list with all accepted menu contributions. */
     final ImmutableSet<String> acceptedMenuContribs = ImmutableSet.of(OPEN_FILE, "quit",
@@ -72,7 +77,7 @@ public class PtolemyRCPPlugin extends AbstractUIPlugin implements IStartup {
      */
     public void earlyStartup() {
         // switch to the ui thread
-        Display.getDefault().syncExec(new Runnable() {
+        Display.getDefault().asyncExec(new Runnable() {
 
             public void run() {
                 for (IWorkbenchWindow workbenchWindow : PlatformUI.getWorkbench()
@@ -81,6 +86,22 @@ public class PtolemyRCPPlugin extends AbstractUIPlugin implements IStartup {
                     WorkbenchWindow ww = (WorkbenchWindow) workbenchWindow;
                     ww.setCoolBarVisible(false);
                     ww.setPerspectiveBarVisible(false);
+                    ww.setStatusLineVisible(false);
+                    ww.setFastViewBarVisible(false);
+
+                    // find the composite that hosts the status line and dispose it
+                    Shell shell = ww.getShell();
+                    for (Control c : shell.getChildren()) {
+                        if (c instanceof Composite) {
+                            for (Control c2 : ((Composite) c).getChildren()) {
+                                if (c2.getClass().getName().equals(STATUS_BAR_CLASS)) {
+                                    c.setVisible(false);
+                                    c.dispose();
+                                }
+                            }
+                        }
+                    }
+                    shell.layout();
 
                     // hide ALL menus that we do not accept
                     // keep in mind, that the plugin.xml also hides elements!
