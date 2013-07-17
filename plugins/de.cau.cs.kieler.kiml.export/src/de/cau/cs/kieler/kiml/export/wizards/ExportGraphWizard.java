@@ -19,11 +19,15 @@ import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -31,11 +35,12 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.export.ExportPlugin;
-import de.cau.cs.kieler.kiml.export.handlers.GraphFileHandler;
+import de.cau.cs.kieler.kiml.export.GraphFileHandler;
 import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
 
 /**
@@ -95,12 +100,14 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
             return false;
         }
 
-        if (!exportSelectedGraphs()) {
-            return false;
-        }
+        // Export the selected graphs
+        exportSelectedGraphs();
         
         // Save dialog settings
         workspaceSourcesPage.saveDialogSettings();
+        
+        // refresh the target directory
+        refreshTargetDirectory();
 
         return true;
     }
@@ -108,14 +115,11 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
     /**
      * Export the selected graphs. If the target file exists for a graph, then ask for replace,
      * ignore, or cancel.
-     * 
-     * @return true if the operation was finished, false if it was canceled by the user
      */
-    private boolean exportSelectedGraphs() {
+    private void exportSelectedGraphs() {
         // get the target format selected from the user
         final GraphFormatData targetFormat = workspaceSourcesPage.getTargetFormat();
         final IPath targetDirectory = workspaceSourcesPage.getTargetWorkspaceDirectory();
-        final Maybe<Boolean> result = new Maybe<Boolean>(true);
         try {
             getContainer().run(true, true, new IRunnableWithProgress() {
                 public void run(final IProgressMonitor monitor)
@@ -151,8 +155,6 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
                             
                             switch (dialogSelection.get()) {
                             case 2:// Cancel
-                                result.set(false);
-                                monitor.done();
                                 return;
                             case 1:// Replace
                                 exportGraph(graphFileHandler);
@@ -174,9 +176,32 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
             IStatus status = new Status(Status.ERROR, ExportPlugin.PLUGIN_ID,
                     "An error occurred while executing graph export.", exception);
             StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.BLOCK);
-            result.set(false);
         }
-        return result.get();
+    }
+    
+    /**
+     * Refresh the target directory so the created files are made visible.
+     */
+    private void refreshTargetDirectory() {
+        try {
+            PlatformUI.getWorkbench().getProgressService().run(
+                    false, true, new IRunnableWithProgress() {
+                public void run(final IProgressMonitor monitor) {
+                    IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+                    IResource resource = workspaceRoot.findMember(
+                            workspaceSourcesPage.getTargetWorkspaceDirectory());
+                    try {
+                        resource.refreshLocal(IResource.DEPTH_ONE, monitor);
+                    } catch (CoreException exception) {
+                        throw new WrappedException(exception);
+                    }
+                }
+            });
+        } catch (Exception exception) {
+            IStatus status = new Status(Status.ERROR, ExportPlugin.PLUGIN_ID,
+                    "An error occurred while refreshing the target directory.", exception);
+            StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.BLOCK);
+        }
     }
 
     /**
@@ -188,8 +213,9 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
      */
     private void exportGraph(final GraphFileHandler graphFileHandler) {
         try {
+            String graph = graphFileHandler.graphToString();
             Writer writer = new FileWriter(graphFileHandler.getAbsoluteTargetFile());
-            writer.write(graphFileHandler.graphToString());
+            writer.write(graph);
             writer.close();
         } catch (Throwable exception) {
             exception.printStackTrace();

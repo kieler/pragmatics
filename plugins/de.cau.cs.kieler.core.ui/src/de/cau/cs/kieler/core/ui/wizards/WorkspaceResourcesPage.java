@@ -260,6 +260,9 @@ public class WorkspaceResourcesPage extends ResourceTreeAndListPage {
                 if (o instanceof IFolder || o instanceof IProject) {
                     targetComboHistoryManager.recordAndDisplay(
                             ((IResource) o).getFullPath().makeRelative().toString());
+                } else if (o instanceof IFile) {
+                    targetComboHistoryManager.recordAndDisplay(
+                            ((IResource) o).getParent().getFullPath().makeRelative().toString());
                 }
             }
         }
