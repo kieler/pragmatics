@@ -13,13 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.export.wizards;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -27,7 +29,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -35,9 +36,9 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.export.ExportPlugin;
 import de.cau.cs.kieler.kiml.export.GraphFileHandler;
@@ -47,6 +48,7 @@ import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
  * A wizard for exporting graphs from workspace.
  * 
  * @author wah
+ * @author msp
  * @kieler.ignore (excluded from review process)
  */
 public class ExportGraphWizard extends Wizard implements IExportWizard {
@@ -105,9 +107,6 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
         
         // Save dialog settings
         workspaceSourcesPage.saveDialogSettings();
-        
-        // refresh the target directory
-        refreshTargetDirectory();
 
         return true;
     }
@@ -126,14 +125,17 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
                     throws InvocationTargetException, InterruptedException {
                     List<IPath> files = workspaceSourcesPage.getSourceFiles(null);
                     monitor.beginTask("Export graphs", files.size());
+                    IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
                     
                     // for all selected files
                     for (IPath sourceFile : files) {
 
                         final GraphFileHandler graphFileHandler = new GraphFileHandler(sourceFile,
                                 targetFormat, targetDirectory);
+                        final IFile file = workspaceRoot.getFile(graphFileHandler
+                                .getWorkspaceTarget());
 
-                        if (graphFileHandler.getAbsoluteTargetFile().exists()) {
+                        if (file.exists()) {
 
                             // display a confirmation dialog
                             final Maybe<Integer> dialogSelection = new Maybe<Integer>();
@@ -144,7 +146,7 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
                                             ExportGraphWizard.this.getShell(),
                                             "Confirm", null,
                                             "A file named '"
-                                            + graphFileHandler.getWorkspaceTargetFile().getName()
+                                            + file.getName()
                                             + "' already exists in '"
                                             + targetDirectory
                                             + "'. Do you want to replace it?", MessageDialog.NONE,
@@ -157,11 +159,11 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
                             case 2:// Cancel
                                 return;
                             case 1:// Replace
-                                exportGraph(graphFileHandler);
+                                exportGraph(graphFileHandler, file);
                                 break;
                             }
                         } else {
-                            exportGraph(graphFileHandler);
+                            exportGraph(graphFileHandler, file);
                         }
                         monitor.worked(1);
                     }
@@ -178,60 +180,35 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
             StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.BLOCK);
         }
     }
-    
-    /**
-     * Refresh the target directory so the created files are made visible.
-     */
-    private void refreshTargetDirectory() {
-        try {
-            PlatformUI.getWorkbench().getProgressService().run(
-                    false, true, new IRunnableWithProgress() {
-                public void run(final IProgressMonitor monitor) {
-                    IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-                    IResource resource = workspaceRoot.findMember(
-                            workspaceSourcesPage.getTargetWorkspaceDirectory());
-                    try {
-                        resource.refreshLocal(IResource.DEPTH_ONE, monitor);
-                    } catch (CoreException exception) {
-                        throw new WrappedException(exception);
-                    }
-                }
-            });
-        } catch (Exception exception) {
-            IStatus status = new Status(Status.ERROR, ExportPlugin.PLUGIN_ID,
-                    "An error occurred while refreshing the target directory.", exception);
-            StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.BLOCK);
-        }
-    }
 
     /**
      * Export the graph with the new format in the target directory.
      * 
-     * @param sourceFile
-     * @param targetFile
-     * @param targetFormat
+     * @param graphFileHandler
+     * @param file
      */
-    private void exportGraph(final GraphFileHandler graphFileHandler) {
+    private void exportGraph(final GraphFileHandler graphFileHandler, final IFile file) {
         try {
             String graph = graphFileHandler.graphToString();
-            Writer writer = new FileWriter(graphFileHandler.getAbsoluteTargetFile());
-            writer.write(graph);
-            writer.close();
+            if (file.exists()) {
+                file.setContents(new ByteArrayInputStream(graph.getBytes()), IFile.FORCE, null);
+            } else {
+                file.create(new ByteArrayInputStream(graph.getBytes()), IFile.FORCE, null);
+            }
         } catch (Throwable exception) {
-            exception.printStackTrace();
+            throw new WrappedException(exception);
         }
     }
 
     /**
      * If target directory exists then return true. If not then ask to create it.
      * 
-     * 
      * @return return true if target directory is ready, false otherwise
      */
     private boolean checkTargetDirectory() {
-        IPath targetPath = ResourcesPlugin.getWorkspace().getRoot().getLocation()
-                .append(workspaceSourcesPage.getTargetWorkspaceDirectory());
-        if (new File(targetPath.toString()).exists()) {
+        IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+        IFolder folder = workspaceRoot.getFolder(workspaceSourcesPage.getTargetWorkspaceDirectory());
+        if (folder.exists()) {
             return true;
         } else {
             if (MessageDialog.openConfirm(null,
@@ -239,23 +216,31 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
                             .getTargetWorkspaceDirectory().toString()
                             + " "
                             + Messages.ExportGraphWizard_question_createTargetFolder)) {
-                return createTargetDirectory();
+                try {
+                    LinkedList<IContainer> containers = new LinkedList<IContainer>();
+                    // gather all containers that do not exist
+                    IContainer container = folder;
+                    do {
+                        containers.addFirst(container);
+                        container = container.getParent();
+                    } while (!container.exists());
+                    // create each container starting with the lowest
+                    for (IContainer c : containers) {
+                        if (c instanceof IFolder) {
+                            ((IFolder) c).create(true, false, null);
+                        } else if (c instanceof IProject) {
+                            ((IProject) c).create(null, null);
+                        }
+                    }
+                } catch (CoreException exception) {
+                    StatusManager.getManager().handle(exception.getStatus(),
+                            StatusManager.LOG | StatusManager.BLOCK);
+                }
+                return true;
             } else {
                 return false;
             }
-
         }
-    }
-
-    /**
-     * create the target directory if not exists.
-     * 
-     * @return true if success false otherwise
-     */
-    private boolean createTargetDirectory() {
-        IPath targetPath = ResourcesPlugin.getWorkspace().getRoot().getLocation()
-                .append(workspaceSourcesPage.getTargetWorkspaceDirectory());
-        return new File(targetPath.toString()).mkdirs();
     }
 
 }

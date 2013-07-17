@@ -13,11 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.export;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -48,6 +46,7 @@ import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
  *  This class is responsible for transforming and exporting graphs from graphical diagrams.
  * 
  * @author wah
+ * @author msp
  * @kieler.ignore (excluded from review process)
  */
 public class GraphFileHandler {
@@ -115,8 +114,6 @@ public class GraphFileHandler {
     private GraphFormatData targetFormat;
     /** The target directory to export file into. */
     private IPath targetDirectory;
-    /** The workspace directory. */    
-    private IPath workspacePath = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 
     /**
      * 
@@ -136,33 +133,10 @@ public class GraphFileHandler {
     }
 
     /**
-     * @return the Workspace sourceFile
-     */
-    public File getWorkspaceSourceFile() {
-        return new File(sourceFile.toString());
-    }
-
-    /**
-     * @param sourceFile
-     *            the sourceFile to set
-     */
-    public void setSourceFile(final IPath sourceFile) {
-        this.sourceFile = sourceFile;
-    }
-
-    /**
      * @return the targetFormat
      */
     public GraphFormatData getTargetFormat() {
         return targetFormat;
-    }
-
-    /**
-     * @param targetFormat
-     *            the targetFormat to set (without leading period))
-     */
-    public void setTargetFormat(final GraphFormatData targetFormat) {
-        this.targetFormat = targetFormat;
     }
 
     /**
@@ -173,25 +147,9 @@ public class GraphFileHandler {
     }
 
     /**
-     * @return the Absolute targetDirectory
-     */
-    public IPath getAbsoluteTargetDirectory() {
-        return workspacePath.append(targetDirectory);
-    }
-
-    /**
-     * @param tarDirectory 
-     *            the targetDirectory to set
-     *            
-     */
-    public void setDirectory(final IPath tarDirectory) {
-        this.targetDirectory = tarDirectory;
-    }
-
-    /**
      * @return the Workspace targetIPath
      */
-    public IPath getWorkspaceTargetIPath() {
+    public IPath getWorkspaceTarget() {
         String sourceFileName = sourceFile.toFile().getName();
         String extension = targetFormat.getExtensions()[0];
         // get the last dot position
@@ -204,34 +162,13 @@ public class GraphFileHandler {
     }
 
     /**
-     * @return the absolute targetIPath
-     */
-    public IPath getAbsoluteTargetIPath() {
-        return workspacePath.append(getWorkspaceTargetIPath());
-    }
-
-    /**
-     * @return the workspace targetFile
-     */
-    public File getWorkspaceTargetFile() {
-        return this.getWorkspaceTargetIPath().toFile();
-    }
-
-    /**
-     * @return the absolute targetFile
-     */
-    public File getAbsoluteTargetFile() {
-        return workspacePath.append(this.getWorkspaceTargetIPath()).toFile();
-    }
-
-    /**
      * Retrieve a graph from the selected file.
      * 
      * @return the KGraph
      */
     private KNode retreiveGraph() {
         // load the notation diagram element
-        URI uri = URI.createPlatformResourceURI(this.getWorkspaceSourceFile().toString(), true);
+        URI uri = URI.createPlatformResourceURI(sourceFile.toString(), true);
         ResourceSet resourceSet = new ResourceSetImpl();
         final Resource resource = resourceSet.createResource(uri);
         try {
