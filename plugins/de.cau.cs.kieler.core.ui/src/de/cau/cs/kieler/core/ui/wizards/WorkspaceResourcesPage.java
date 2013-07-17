@@ -257,7 +257,14 @@ public class WorkspaceResourcesPage extends ResourceTreeAndListPage {
                 }
             } };
         } else {
-            return new ViewerFilter[0];
+            return new ViewerFilter[] {new ViewerFilter() {
+                @Override
+                public boolean select(final Viewer viewer, final Object parentElement,
+                        final Object element) {
+                    
+                    return element instanceof IFile;
+                }
+            } };
         }
     }
     
