@@ -219,9 +219,15 @@ litigation.
    </url>
 
    <requires>
-      <import feature="com.google.guava.runtime.feature" version="10.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.platform" version="3.8.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext.xbase.lib" version="2.3.0" match="greaterOrEqual"/>
+      <import feature="org.apache.batik.swing" version="1.6.0"/>
+      <import plugin="org.apache.commons.logging"/>
+      <import plugin="org.antlr.runtime"/>
+      <import plugin="org.apache.log4j"/>
+      <import feature="com.google.guava.runtime.feature" version="8.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.gef" version="3.6.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.gmf" version="1.4.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.gmf.runtime.notation" version="1.4.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
