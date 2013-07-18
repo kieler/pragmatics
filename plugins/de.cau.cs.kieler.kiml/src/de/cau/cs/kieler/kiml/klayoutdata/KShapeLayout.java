@@ -53,7 +53,7 @@ import de.cau.cs.kieler.core.math.KVector;
  * @model
  * @generated
  */
-public interface KShapeLayout extends KGraphData {
+public interface KShapeLayout extends KLayoutData {
     /**
      * Returns the value of the '<em><b>Xpos</b></em>' attribute.
      * The default value is <code>"0.0f"</code>.
