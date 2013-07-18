@@ -219,7 +219,6 @@ litigation.
    </url>
 
    <requires>
-      <import feature="org.apache.batik.swing" version="1.6.0"/>
       <import plugin="org.apache.commons.logging"/>
       <import plugin="org.antlr.runtime"/>
       <import plugin="org.apache.log4j"/>
