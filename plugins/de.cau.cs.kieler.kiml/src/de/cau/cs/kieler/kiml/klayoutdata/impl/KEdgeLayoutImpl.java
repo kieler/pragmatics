@@ -79,7 +79,8 @@ public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
     
     /**
      * <!-- begin-user-doc -->
-     * Whether the position or size has been modified.
+     * Whether the position or size has been modified. This flag is package-visible, since
+     * {@link KPointImpl} needs direct access to it.
      * <!-- end-user-doc -->
      * @generated NOT
      */
@@ -151,8 +152,9 @@ public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
             msgs = basicSetSourcePoint(newSourcePoint, msgs);
             if (msgs != null) msgs.dispatch();
         }
-        else if (eNotificationRequired())
+        else if (eNotificationRequired()) {
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KEDGE_LAYOUT__SOURCE_POINT, newSourcePoint, newSourcePoint));
+        }
     }
 
     /**
@@ -179,7 +181,7 @@ public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     public void setTargetPoint(KPoint newTargetPoint) {
         if (newTargetPoint != targetPoint) {
@@ -193,8 +195,9 @@ public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
             msgs = basicSetTargetPoint(newTargetPoint, msgs);
             if (msgs != null) msgs.dispatch();
         }
-        else if (eNotificationRequired())
+        else if (eNotificationRequired()) {
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KEDGE_LAYOUT__TARGET_POINT, newTargetPoint, newTargetPoint));
+        }
     }
 
     /**
@@ -248,22 +251,20 @@ public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
         }
         return vectorChain;
     }
-    
+
     /**
      * <!-- begin-user-doc -->
-     * Whether the source point, target point, or bend points have been modified since this edge
-     * layout was created or the flag was reset.
+     * {@inheritDoc}
      * <!-- end-user-doc -->
-     * @return true if the source point, target point, or bend points have been modified
      * @generated NOT
      */
     public boolean isModified() {
         return modified;
     }
-    
+
     /**
      * <!-- begin-user-doc -->
-     * Reset the modification flag to {@code false}. Layout algorithms should not do this.
+     * {@inheritDoc}
      * <!-- end-user-doc -->
      * @generated NOT
      */
