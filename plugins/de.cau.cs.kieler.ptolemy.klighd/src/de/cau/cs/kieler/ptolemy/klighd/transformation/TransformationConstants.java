@@ -22,7 +22,7 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation;
  * 
  * @author cds
  */
-public final class TransformationConstants {
+final class TransformationConstants {
     
     // PORT NAMES
     

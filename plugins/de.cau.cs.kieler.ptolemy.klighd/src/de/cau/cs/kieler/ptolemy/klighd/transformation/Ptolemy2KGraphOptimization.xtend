@@ -63,8 +63,9 @@ class Ptolemy2KGraphOptimization {
         // Remove ports from nodes that represent states
         makeStatesPortless(kGraph)
         
-        // Remove unnecessary relations
-        removeUnnecessaryRelations(kGraph)
+        // Remove either unnecessary or all relations
+//        removeUnnecessaryRelations(kGraph)
+        removeAllRelations(kGraph)
         
         // Convert special annotations into nodes
         convertAnnotationsToNodes(kGraph)
@@ -482,6 +483,103 @@ class Ptolemy2KGraphOptimization {
         // Recurse into child nodes
         for (child : root.children) {
             removeUnnecessaryRelations(child)
+        }
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Removal of All Relations
+    
+    /**
+     * Recursively removes unnecessary relations in the model rooted at the given node. Unnecessary
+     * relations are those that have one incoming and one outgoing edge.
+     * 
+     * @param root the model's root node. 
+     */
+    def private void removeAllRelations(KNode root) {
+        /* Several Steps:
+         * 1. Divide relations into groups. All relations of a particular group belong to
+         *    one hyperedge. Also gather all connection points to non-relation nodes. Note
+         *    that this step may result in relations that cannot be removed because they
+         *    have only incoming or only outgoing connections. This would be due to problems
+         *    during edge direction inference.
+         *    This step is outsourced to HyperedgeGatherer.
+         * 2. Iterate over hyperedges. Remove all relations and edges and add new edges that
+         *    connect all source nodes and ports to all target nodes and ports.
+         */
+        
+        // 1. Gather hyperedges
+        val magic = new HyperedgeGatherer(root)
+        magic.gatherHyperedges()
+        
+
+        // 2. Remove all relations and edges and add new edges
+        for (hyperedge : magic.hyperedges) {
+            // Remove relations and edges
+            for (relation : hyperedge.relations) {
+                root.children.remove(relation)
+                
+                // Remove edges
+                while (!relation.incomingEdges.empty) {
+                    val edge = relation.incomingEdges.get(0)
+                    edge.sourcePort = null
+                    edge.source = null
+                    edge.targetPort = null
+                    edge.target = null
+                }
+                
+                while (!relation.outgoingEdges.empty) {
+                    val edge = relation.outgoingEdges.get(0)
+                    edge.sourcePort = null
+                    edge.source = null
+                    edge.targetPort = null
+                    edge.target = null
+                }
+            }
+            
+            // Add new edges
+            for (sourceNode : hyperedge.sourceNodes) {
+                for (targetNode : hyperedge.targetNodes) {
+                    val newEdge = KimlUtil::createInitializedEdge()
+                    newEdge.source = sourceNode
+                    
+                    newEdge.target = targetNode
+                }
+                
+                for (targetPort : hyperedge.targetPorts) {
+                    val newEdge = KimlUtil::createInitializedEdge()
+                    newEdge.source = sourceNode
+                    
+                    newEdge.target = targetPort.node
+                    newEdge.targetPort = targetPort
+                }
+            }
+            
+            for (sourcePort : hyperedge.sourcePorts) {
+                for (targetNode : hyperedge.targetNodes) {
+                    val newEdge = KimlUtil::createInitializedEdge()
+                    newEdge.source = sourcePort.node
+                    newEdge.sourcePort = sourcePort
+                    
+                    newEdge.target = targetNode
+                }
+                
+                for (targetPort : hyperedge.targetPorts) {
+                    val newEdge = KimlUtil::createInitializedEdge()
+                    newEdge.source = sourcePort.node
+                    newEdge.sourcePort = sourcePort
+                    
+                    newEdge.target = targetPort.node
+                    newEdge.targetPort = targetPort
+                }
+            }
+        }
+        
+        // Recurse into sub-levels
+        for (node : root.children) {
+            if (!node.children.empty) {
+                removeAllRelations(node)
+            }
         }
     }
     
