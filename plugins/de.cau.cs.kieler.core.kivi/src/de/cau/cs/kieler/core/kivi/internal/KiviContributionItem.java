@@ -289,7 +289,9 @@ IWorkbenchContribution {
                 if (event.getNewValue() != null
                         && ((Boolean) event.getNewValue()).booleanValue() != visible) {
                     this.visible = ((Boolean) event.getNewValue()).booleanValue();
-                    item.setVisible(visible);
+                    if (item != null) {
+                        item.setVisible(visible);
+                    }
                     /*
                      * IContributionManager parent = null; if (item instanceof ContributionItem) {
                      * parent = ((ContributionItem) item).getParent();
