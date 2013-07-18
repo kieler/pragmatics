@@ -181,6 +181,10 @@ class Ptolemy2KGraphOptimization {
      * For a port of known type, sets the directions of its incident unknown edges accordingly. This
      * succeeds if the port is marked as being either an input port or an output port, not both.
      * 
+     * <p>Note that for hierarchical ports, the port type is only valid for connections to its node's
+     * environment. Children of the node must treat a hierarchical input port as being an output port,
+     * and the other way round for hierarchical output ports.</p>
+     * 
      * @param port the port.
      * @param unknownEdges list of edges with unknown direction. Edges whose direction is set are
      *                     removed from this list.
@@ -188,17 +192,33 @@ class Ptolemy2KGraphOptimization {
      */
     def private boolean propagatePortTypeToIncidentEdges(KPort port, List<KEdge> unknownEdges) {
         val List<KEdge> edgesToBeReversed = newArrayList()
-        val List<KEdge> edgesToBeKept = newArrayList() 
+        val List<KEdge> edgesToBeKept = newArrayList()
         var result = false
         
         if (port.markedAsInputPort && !port.markedAsOutputPort) {
-            // Reverse outgoing edges, keep incoming edges
-            edgesToBeReversed.addAll(port.edges.filter([e | e.sourcePort == port]))
-            edgesToBeKept.addAll(port.edges.filter([e | e.targetPort == port]))
+            // Edges connected to the node's inside must be outgoing, edges connected to the node's
+            // outside must be incoming
+            for (edge : port.edges) {
+                if (port.node.children.contains(edge.source)) {
+                    edgesToBeReversed += edge
+                } else if (edge.sourcePort == port && port.node.parent.children.contains(edge.target)) {
+                    edgesToBeReversed += edge
+                } else {
+                    edgesToBeKept += edge
+                }
+            }
         } else if (port.markedAsOutputPort && !port.markedAsInputPort) {
-            // Reverse incoming edges, keep outgoing edges
-            edgesToBeReversed.addAll(port.edges.filter([e | e.targetPort == port]))
-            edgesToBeKept.addAll(port.edges.filter([e | e.sourcePort == port]))
+            // Edges connected to the node's inside must be incoming, edges connected to the node's
+            // outside must be outgoing
+            for (edge : port.edges) {
+                if (port.node.children.contains(edge.target)) {
+                    edgesToBeReversed += edge
+                } else if (edge.targetPort == port && port.node.parent.children.contains(edge.source)) {
+                    edgesToBeReversed += edge
+                } else {
+                    edgesToBeKept += edge
+                }
+            }
         }
         
         // Reverse edges and mark as directed
@@ -241,17 +261,29 @@ class Ptolemy2KGraphOptimization {
         val unknownPortsIterator = unknownPorts.listIterator
         while (unknownPortsIterator.hasNext()) {
             val unknownPort = unknownPortsIterator.next()
+            val directedIncomingEdge = getFirstDirectedEdge(unknownPort.edges.filter(
+                [e | e.targetPort == unknownPort]))
+            val directedOutgoingEdge = getFirstDirectedEdge(unknownPort.edges.filter(
+                [e | e.sourcePort == unknownPort]))
             
-            if (containsDirectedEdge(unknownPort.edges.filter(
-                [e | e.targetPort == unknownPort]))) {
-                
-                // The port has an incoming edge of known direction -> mark as input port
-                unknownPort.markAsInputPort()
-            } else if (containsDirectedEdge(unknownPort.edges.filter(
-                [e | e.sourcePort == unknownPort]))) {
-                
-                // The port has an outgoing link of known direction -> mark as output port
-                unknownPort.markAsOutputPort()
+            if (directedIncomingEdge != null) {
+                // The port has an incoming edge of known direction!
+                if (unknownPort.node.children.contains(directedIncomingEdge.source)) {
+                    // Connection from the inside -> the port is an output port
+                    unknownPort.markAsOutputPort()
+                } else {
+                    // Connection from the outside -> the port is an input port
+                    unknownPort.markAsInputPort()
+                }
+            } else if (directedOutgoingEdge != null) {
+                // The port has an outgoing edge of known direction!
+                if (unknownPort.node.children.contains(directedIncomingEdge.target)) {
+                    // Connection to the inside -> the port is an input port
+                    unknownPort.markAsInputPort()
+                } else {
+                    // Connection to the outside -> the port is an output port
+                    unknownPort.markAsOutputPort()
+                }
             } else if (isInputPortName(unknownPort.name)) {
                 // The port is named like an input port -> mark as input port
                 unknownPort.markAsInputPort()
@@ -486,12 +518,6 @@ class Ptolemy2KGraphOptimization {
                 directorNode.markAsPtolemyElement()
                 directorNode.markAsDirector()
                 directorNode.markAsFormerAnnotationNode()
-                
-                // Annotate the new node with the original annotation and remove that from its
-                // former node)
-                directorNode.addAnnotation(
-                    annotation.name, annotation.value, annotation.class_)
-                annotationsIterator.remove()
                 
                 // Add the new node to the root element
                 root.children += directorNode
