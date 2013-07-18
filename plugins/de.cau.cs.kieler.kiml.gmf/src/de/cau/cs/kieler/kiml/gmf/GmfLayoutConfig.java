@@ -35,7 +35,6 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
@@ -44,6 +43,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
 
@@ -366,7 +366,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KGraphData graphData, final LayoutContext context) {
+    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
         Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         if (editPart instanceof IGraphicalEditPart) {
             // add user defined global layout options
@@ -393,7 +393,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      * @param prefix the expected prefix of the property keys
      * @param view a notation view
      */
-    private void transferValues(final KGraphData graphData, final String prefix,
+    private void transferValues(final KLayoutData graphData, final String prefix,
             final View view) {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         for (Object obj : view.getStyles()) {

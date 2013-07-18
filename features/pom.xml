@@ -17,6 +17,7 @@
   <!-- all features are listed as modules -->
 
   <modules>
+    <module>de.cau.cs.kieler.kgraph.feature</module>
     <module>de.cau.cs.kieler.kiml.gmf.feature</module>
     <module>de.cau.cs.kieler.kiml.graphiti.feature</module>
     <module>de.cau.cs.kieler.kiml.graphviz.feature</module>
@@ -26,6 +27,7 @@
     <module>de.cau.cs.kieler.kwebs.client.jaxws.feature</module>
     <module>de.cau.cs.kieler.kwebs.server.feature</module>
     <module>de.cau.cs.kieler.papyrus.layout.feature</module>
+    <module>de.cau.cs.kieler.ptview.feature</module>
     <module>net.ogdf.bin.feature</module>
   </modules>
 

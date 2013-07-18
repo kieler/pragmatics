@@ -14,6 +14,8 @@
 package de.cau.cs.kieler.kiml.ui;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -71,7 +73,10 @@ public class AlgorithmSelectionDialog extends Dialog {
     /** the selection provider for layout algorithms and types. */
     private ISelectionProvider selectionProvider;
     /** the cached preview images. */
-    private Map<ILayoutData, Image> imageCache = new HashMap<ILayoutData, Image>();
+    private final Map<ILayoutData, Image> imageCache = new HashMap<ILayoutData, Image>();
+    /** the selection listeners that are added to the tree viewer when it is created. */
+    private List<ISelectionChangedListener> selectionListeners
+            = new LinkedList<ISelectionChangedListener>();
     
     /**
      * Creates a layout algorithm dialog.
@@ -91,6 +96,32 @@ public class AlgorithmSelectionDialog extends Dialog {
     protected void configureShell(final Shell shell) {
         super.configureShell(shell);
         shell.setText(Messages.getString("kiml.ui.58")); //$NON-NLS-1$
+    }
+    
+    /**
+     * Add a selection listener that is notified when an algorithm or type is selected.
+     * 
+     * @param listener a listener
+     */
+    public void addAlgorithmSelectionListener(final ISelectionChangedListener listener) {
+        if (selectionProvider != null) {
+            selectionProvider.addSelectionChangedListener(listener);
+        } else {
+            selectionListeners.add(listener);
+        }
+    }
+    
+    /**
+     * Remove a selection listener for algorithm or type changes.
+     * 
+     * @param listener a listener
+     */
+    public void removeAlgorithmSelectionListener(final ISelectionChangedListener listener) {
+        if (selectionProvider != null) {
+            selectionProvider.removeSelectionChangedListener(listener);
+        } else {
+            selectionListeners.remove(listener);
+        }
     }
     
     /**
@@ -265,7 +296,11 @@ public class AlgorithmSelectionDialog extends Dialog {
         gridData.minimumWidth = SELECTION_WIDTH;
         composite.setLayoutData(gridData);
         
+        // register all selection listeners that have been stored in a list
         selectionProvider = treeViewer;
+        for (ISelectionChangedListener listener : selectionListeners) {
+            selectionProvider.addSelectionChangedListener(listener);
+        }
         return composite;
     }
     

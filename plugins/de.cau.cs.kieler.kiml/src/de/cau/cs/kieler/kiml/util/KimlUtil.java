@@ -42,6 +42,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -657,8 +658,8 @@ public final class KimlUtil {
         TreeIterator<EObject> iterator = graph.eAllContents();
         while (iterator.hasNext()) {
             EObject eObject = iterator.next();
-            if (eObject instanceof KGraphData) {
-                KGraphData kgraphData = (KGraphData) eObject;
+            if (eObject instanceof KLayoutData) {
+                KLayoutData kgraphData = (KLayoutData) eObject;
                 for (PersistentEntry persistentEntry : kgraphData.getPersistentEntries()) {
                     String key = persistentEntry.getKey();
                     String value = persistentEntry.getValue();
