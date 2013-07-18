@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
@@ -21,6 +20,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -97,7 +97,7 @@ public class EvolLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KGraphData graphData, final LayoutContext inputContext) {
+    public void transferValues(final KLayoutData graphData, final LayoutContext inputContext) {
         LayoutEvolutionModel model = inputContext.getProperty(EVOL_MODEL);
         Object diagramPart = inputContext.getProperty(LayoutContext.DIAGRAM_PART);
         if (model != null && diagramPart != null) {

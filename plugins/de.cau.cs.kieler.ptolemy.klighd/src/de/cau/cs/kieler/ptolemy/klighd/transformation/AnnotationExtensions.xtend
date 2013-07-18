@@ -13,16 +13,13 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
-import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KGraphElement
-import de.cau.cs.kieler.core.properties.IPropertyHolder
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties
 import java.util.List
 import org.eclipse.emf.ecore.EObject
 import org.ptolemy.moml.MomlFactory
 import org.ptolemy.moml.PropertyType
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
 
 /**
  * Utility methods regarding annotations used by the Ptolemy to KGraph transformation.
@@ -37,23 +34,13 @@ class AnnotationExtensions {
     
     
     /**
-     * Returns the shape layout of the given element.
+     * Returns the layout data of the given element.
      * 
      * @param element the object.
-     * @return the shape layout or {@code null} if none was found.
+     * @return the shape layout or edge layout, or {@code null} if none was found.
      */
-    def dispatch IPropertyHolder getLayout(KGraphElement element) {
-        return element.getData(typeof(KShapeLayout))
-    }
-    
-    /**
-     * Returns the edge layout of the given object.
-     * 
-     * @param element the object.
-     * @return the edge layout or {@code null} if none was found.
-     */
-    def dispatch IPropertyHolder getLayout(KEdge element) {
-        return element.getData(typeof(KEdgeLayout))
+    def KLayoutData getLayout(KGraphElement element) {
+        return element.getData(typeof(KLayoutData))
     }
     
     /**

@@ -15,7 +15,6 @@
  */
 package de.cau.cs.kieler.kiml.klayoutdata;
 
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.math.KVector;
 
 
