@@ -42,6 +42,10 @@
                priority="1">
          </layoutFilter>
       </preFilters>
+      <supportHandler
+            implementation="de.cau.cs.kieler.kwebs.server.web.LiveLayoutHandler"
+            path="/live">
+      </supportHandler>
    </extension>
    <extension
          point="de.cau.cs.kieler.kwebs.server.logging">
