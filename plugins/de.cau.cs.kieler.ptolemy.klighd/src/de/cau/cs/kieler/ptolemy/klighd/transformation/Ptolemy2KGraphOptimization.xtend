@@ -45,6 +45,8 @@ class Ptolemy2KGraphOptimization {
     /** Marking nodes. */
     @Inject extension PortExtensions
     
+    @Inject CommentsExtractor commentsExtractor
+    
     
     /**
      * Optimizes the given KGraph model.
@@ -69,6 +71,9 @@ class Ptolemy2KGraphOptimization {
         
         // Convert special annotations into nodes
         convertAnnotationsToNodes(kGraph)
+        
+        // Convert comments into nodes
+        commentsExtractor.extractComments(kGraph, null)
     }
     
     

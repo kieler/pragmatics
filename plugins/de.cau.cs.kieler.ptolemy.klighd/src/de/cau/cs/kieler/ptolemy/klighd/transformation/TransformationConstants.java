@@ -60,6 +60,24 @@ final class TransformationConstants {
     public static final String IS_IO_PORT = "_ioPort";
     
     
+    // PROPERTY TYPES
+    
+    /**
+     * Type of annotations that describe a comment.
+     */
+    public static final String TYPE_COMMENT = "ptolemy.vergil.kernel.attributes.TextAttribute";
+    
+    /**
+     * Type of annotations that hold the text of comments.
+     */
+    public static final String TYPE_COMMENT_TEXT = "ptolemy.kernel.util.StringAttribute";
+    
+    /**
+     * Name of the annotation that holds the text of a comment.
+     */
+    public static final String NAME_COMMENT_TEXT = "text";
+    
+    
     // ANNOTATION CONSTANTS
     
     /**

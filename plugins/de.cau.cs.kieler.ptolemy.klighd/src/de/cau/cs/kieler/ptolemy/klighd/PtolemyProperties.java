@@ -36,6 +36,11 @@ public final class PtolemyProperties {
     public static final IProperty<List<PropertyType>> PT_PROPERTIES =
             new Property<List<PropertyType>>("ptolemy.properties", new ArrayList<PropertyType>());
     
+    /**
+     * The text a comment node should display.
+     */
+    public static final IProperty<String> COMMENT_TEXT = new Property<String>("comment.text", null);
+    
     
     /**
      * This class is not to be instantiated.

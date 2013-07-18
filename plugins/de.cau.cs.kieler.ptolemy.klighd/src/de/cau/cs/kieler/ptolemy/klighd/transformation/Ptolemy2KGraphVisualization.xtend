@@ -106,6 +106,9 @@ class Ptolemy2KGraphVisualization {
             } else if (child.markedAsDirector) {
                 // We have a director node
                 child.addDirectorNodeRendering()
+            } else if (child.markedAsComment) {
+                // We have a comment node
+                child.addCommentNodeRendering()
             } else if (child.markedAsState) {
                 // We have a state machine state
                 child.addStateNodeRendering()
@@ -207,6 +210,17 @@ class Ptolemy2KGraphVisualization {
         
         // Set size
         layout.setLayoutSize(rendering)
+    }
+    
+    /**
+     * Renders the given node as a comment node.
+     * 
+     * @param node the node to attach the rendering information to.
+     */
+    def private void addCommentNodeRendering(KNode node) {
+        // Create the rendering
+        val rendering = createCommentNodeRendering(node)
+        node.data += rendering
     }
     
     /**

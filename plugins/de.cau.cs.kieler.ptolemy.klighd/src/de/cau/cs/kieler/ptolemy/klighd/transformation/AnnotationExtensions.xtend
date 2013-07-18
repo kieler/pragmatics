@@ -75,7 +75,7 @@ class AnnotationExtensions {
      * @return the annotations list or {@code null} if none was found.
      */
     def dispatch List<PropertyType> getAnnotations(PropertyType element) {
-        return element.annotations;
+        return element.property
     }
     
     /**
