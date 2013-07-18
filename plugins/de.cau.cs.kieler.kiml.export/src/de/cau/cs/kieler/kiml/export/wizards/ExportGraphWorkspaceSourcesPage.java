@@ -62,10 +62,6 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      * The top margin of the target group combo box.
      */
     private static final int DEFAULT_TARGET_GROUP_MARGIN_TOP = 20;
-    /**
-     * The graph files extension able to be converted.
-     */
-    private static final String[] GRAPH_FILE_EXTENSIONS = { "kegdi", "kaod", "kids" };
 
     /** the file format combo. */
     private Combo fileFormatCombo;
@@ -79,7 +75,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      *            the selection the wizard was called on.
      */
     public ExportGraphWorkspaceSourcesPage(final IStructuredSelection selection) {
-        super(PAGE_NAME, true, GRAPH_FILE_EXTENSIONS, selection);
+        super(PAGE_NAME, true, null, selection, true, true);
         this.setTitle(Messages.ExportGraphWizard_title);
         this.setDescription(Messages.ExportGraphWizard_Exporting_workspace_task);
         this.setMessage(Messages.ExportGraphWizard_Exporting_workspace_task);
