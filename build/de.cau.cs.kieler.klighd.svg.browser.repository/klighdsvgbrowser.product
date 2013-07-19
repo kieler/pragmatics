@@ -26,14 +26,10 @@
       <plugin id="com.google.inject"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="de.cau.cs.kieler.core"/>
-      <plugin id="de.cau.cs.kieler.core.annotations"/>
-      <plugin id="de.cau.cs.kieler.core.annotations.text"/>
-      <plugin id="de.cau.cs.kieler.core.kexpressions"/>
       <plugin id="de.cau.cs.kieler.core.kgraph"/>
       <plugin id="de.cau.cs.kieler.core.kivi"/>
       <plugin id="de.cau.cs.kieler.core.krendering"/>
       <plugin id="de.cau.cs.kieler.core.krendering.extensions"/>
-      <plugin id="de.cau.cs.kieler.core.model"/>
       <plugin id="de.cau.cs.kieler.core.ui"/>
       <plugin id="de.cau.cs.kieler.kiml"/>
       <plugin id="de.cau.cs.kieler.kiml.ogdf"/>
@@ -47,9 +43,6 @@
       <plugin id="de.cau.cs.kieler.klighd.piccolo.draw2d" fragment="true"/>
       <plugin id="de.cau.cs.kieler.klighd.piccolo.svg"/>
       <plugin id="de.cau.cs.kieler.ptolemy.klighd"/>
-      <plugin id="de.cau.cs.kieler.synccharts"/>
-      <plugin id="de.cau.cs.kieler.synccharts.klighd"/>
-      <plugin id="de.cau.cs.kieler.synccharts.text"/>
       <plugin id="edu.umd.cs.piccolo"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.inject"/>
@@ -87,15 +80,9 @@
       <plugin id="org.eclipse.core.expressions"/>
       <plugin id="org.eclipse.core.filebuffers"/>
       <plugin id="org.eclipse.core.filesystem"/>
-      <plugin id="org.eclipse.core.filesystem.aix.ppc" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.aix.ppc64" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.hpux.ia64_32" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.linux.ppc" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.linux.ppc64" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.linux.x86" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.macosx" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.solaris.sparc" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.jobs"/>
@@ -214,17 +201,8 @@
       <plugin id="org.eclipse.swt"/>
       <plugin id="org.eclipse.swt.cocoa.macosx" fragment="true"/>
       <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.aix.ppc" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.aix.ppc64" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.hpux.ia64_32" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.ppc" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.ppc64" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.s390" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.s390x" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.x86" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.solaris.sparc" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.solaris.x86" fragment="true"/>
       <plugin id="org.eclipse.swt.win32.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.swt.win32.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.team.core"/>
