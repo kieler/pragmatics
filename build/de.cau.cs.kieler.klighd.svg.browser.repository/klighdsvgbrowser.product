@@ -7,11 +7,11 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-rootFolder e:/Uni/ma/models</programArgs>
+      <programArgs>-consoleLog -rootFolder e:/Uni/ma/models</programArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
-   <launcher>
+   <launcher name="KlighDning">
       <solaris/>
       <win useIco="false">
          <bmp/>
