@@ -15,19 +15,128 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KNode
+import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.kiml.util.KimlUtil
+import java.awt.geom.Point2D
+import java.util.List
+import org.eclipse.emf.ecore.util.FeatureMap
 import org.eclipse.emf.ecore.xmi.XMLResource
+import org.eclipse.emf.ecore.xml.type.AnyType
+import org.ptolemy.moml.PropertyType
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
-import org.ptolemy.moml.PropertyType
-import org.eclipse.emf.ecore.util.FeatureMap
-import org.eclipse.emf.ecore.xml.type.AnyType
-import java.util.List
-import de.cau.cs.kieler.core.util.Pair
 
 /**
- * TODO Document
+ * Extracts comments from the model and turns them into special comment nodes. Also tries to find the
+ * entities the comments probably refer to and attaches them to these entities.
+ * 
+ * <p>In Ptolemy, certain annotations in a model are like comments in source code.
+ * There are two ways how they can be represented in MOML:</p>
+ * 
+ * <ol>
+ *   <li>Using a property of type "ptolemy.vergil.kernel.attributes.TextAttribute"
+ *       with another property named "text", as follows:
+ *     <pre>
+ *        &lt;property
+ *              name="Annotation2"
+ *              class="ptolemy.vergil.kernel.attributes.TextAttribute"&gt;
+ *              
+ *              &lt;property
+ *                      name="text"
+ *                      class="ptolemy.kernel.util.StringAttribute"
+ *                      value="This is my annotation's text."&gt;
+ *              &lt;/property&gt;
+ *              &lt;property
+ *                      name="_location"
+ *                      class="ptolemy.kernel.util.Location"
+ *                      value="[140.0, 440.0]"&gt;
+ *              &lt;/property&gt;
+ *        &lt;/property&gt;
+ *     </pre>
+ *   </li>
+ *   
+ *   <li>Using a property of type "ptolemy.kernel.util.Attribute" with an SVG
+ *       as its "_iconDescription" property, as follows:
+ *     <pre>
+ *        &lt;property
+ *              name="annotation3"
+ *              class="ptolemy.kernel.util.Attribute"&gt;
+ *              
+ *              &lt;property
+ *                      name="_iconDescription"
+ *                      class="ptolemy.kernel.util.SingletonConfigurableAttribute"&gt;
+ *                      
+ *                      &lt;configure&gt;&lt;svg&gt;
+ *                              &lt;text x="20" y="20" style="..."&gt;
+ *                                      This is my annotation's text.
+ *                              &lt;/text&gt;
+ *                      &lt;/svg&gt;&lt;/configure&gt;
+ *              &lt;/property&gt;
+ *              &lt;property
+ *                      name="_location"
+ *                      class="ptolemy.kernel.util.Location"
+ *                      value="[325.0, 10.0]"&gt;
+ *              &lt;/property&gt;
+ *        &lt;/property&gt;
+ *     </pre>
+ *   </li>
+ * </ol>
+ *      
+ * <p>while the first version is straightforward, the latter version causes a whole
+ * lot of problems. The {@code configure} element is a mixed
+ * element, which means that it can contain anything, not just XML. However, it
+ * does contain XML (usually an {@code svg} element and its children), which
+ * disturbs the quiet peace of the parser. (which, in turn, disturbs my quiet peace.)
+ * The {@code configure} element and its children are then dropped by the parser
+ * during the transformation and are added to a list of unknown features. Recovering
+ * such comments is one of the two tasks of this handler.</p>
+ * 
+ * <p>The second task is recognizing links between comments and model elements. Such
+ * links indicate that a comment is providing additional information for a model
+ * element, and should be preserved. In the MoML file, such a link is represented by
+ * the following property:</p>
+ * 
+ * <pre>
+ *   &lt;property
+ *         name="_location"
+ *         class="ptolemy.kernel.util.RelativeLocation"
+ *         value="[-195.0, -80.0]"&gt;
+ *         
+ *         &lt;property
+ *               name="relativeTo"
+ *               class="ptolemy.kernel.util.StringAttribute"
+ *               value="Const"/&gt;
+ *         &lt;property
+ *               name="relativeToElementName"
+ *               class="ptolemy.kernel.util.StringAttribute"
+ *               value="entity"/&gt;
+ *   &lt;/property&gt;
+ * </pre>
+ * 
+ * <p>That is, the annotation's {@code _location} property is extended by two additional
+ * properties that define that the location is to be interpreted relative to a given
+ * model element. So far, we only support linking comments to entities, but that could
+ * well be changed.</p>
+ * 
+ * <p>We start by extracting comments and turning them into nodes. After that's done,
+ * the model is traversed in an attempt to link comments to the model elements they are
+ * most likely referring to. There are two cases here:</p>
+ * 
+ * <ol>
+ *   <li>The model contains explicit links between at least one comment and model
+ *   element. In this case, we assume that the model developer added all the links he
+ *   wants explicitly and only transform such links into the our way of representing
+ *   them.</li>
+ *   
+ *   <li>The model does not contain any such explicit link. In this case, a heuristic
+ *   is applied to each comment, trying to find the entity it is probably referring to.
+ *   The heuristic simply looks for the nearest entity and checks if the distance is
+ *   within a certain threshold value.
+ * </ol>
+ * 
+ * <p>This is still kind of experimental. It does work, but the heuristic is quite
+ * simpllistic and doesn't always give correct results.</p>
  * 
  * @author cds
  */
@@ -44,6 +153,11 @@ class CommentsExtractor {
     
     /** If true, the attachment heuristics are disabled once explicitly attached comments are found. */
     val boolean heuristicsOverride = false
+    /**
+     * The maximum distance between a comment node and a regular node for them to be considered to be
+     * attached by the comment attachment heuristic.
+     */
+    val double maxAttachmentDistance = 10000.0
     
     /** List of comment nodes created in the process. */
     var List<KNode> createdCommentNodes
@@ -178,7 +292,12 @@ class CommentsExtractor {
             if (explicitAttachment != null) {
                 explicitAttachments += new Pair(commentNode, explicitAttachment)
             } else if (explicitAttachments.empty || !heuristicsOverride) {
-                // TODO Run our heuristic to find an implicit attachment
+                // Run our heuristic to find an implicit attachment
+                val heuristicAttachment = findNearestNonCommentSibling(commentNode)
+                
+                if (heuristicAttachment != null) {
+                    heuristicAttachments += new Pair(commentNode, heuristicAttachment)
+                }
             }
         }
         
@@ -223,7 +342,48 @@ class CommentsExtractor {
         return null
     }
     
+    /**
+     * Finds the node whose position is nearest to the given comment node's position that is not a
+     * comment node and not further away than the maximum attachment distance.
+     * 
+     * @param commentNode the node whose nearest sibling to find.
+     * @return the nearest sibling or {@code null} if none could be found within the maximum distance.
+     */
+    def private KNode findNearestNonCommentSibling(KNode commentNode) {
+        // Find the comment node's position in the original diagram
+        val commentLocation = getPtolemyLocation(commentNode)
+        
+        var currentNearestDistance = maxAttachmentDistance + 1
+        var KNode currentNearestSibling = null
+        
+        for (sibling : commentNode.parent.children) {
+            if (!sibling.markedAsComment) {
+                val distance = computeDistance(commentLocation, getPtolemyLocation(sibling))
+                
+                if (distance < currentNearestDistance && distance <= maxAttachmentDistance) {
+                    currentNearestDistance = distance
+                    currentNearestSibling = sibling
+                }
+            }
+        }
+        
+        return currentNearestSibling
+    }
     
+    /**
+     * Compute a measure of distance between the two given locations. The current implementation simply
+     * returns the square of the euclidean distance, which is perfectly fine.
+     * 
+     * @param location1 one location.
+     * @param location2 the other location.
+     * @return a measure of distance between the two locations.
+     */
+    def private double computeDistance(Point2D$Double location1, Point2D$Double location2) {
+        val deltaX = location2.x - location1.x
+        val deltaY = location2.y - location1.y
+        
+        return deltaX * deltaX + deltaY * deltaY
+    }
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -277,6 +437,41 @@ class CommentsExtractor {
         }
         
         return null
+    }
+    
+    /**
+     * Retrieves the position of the given node in the original Ptolemy diagram, if any. This method
+     * is a create method because the positions don't change and we like Xtend to cache already
+     * calculated positions for us.
+     * 
+     * @param node the node whose location to retrieve.
+     * @return the location or some point way out if there was a problem.
+     */
+    def private create location : new Point2D$Double() getPtolemyLocation(KNode node) {
+        // Initialize point with ridiculous values
+        location.x = 2e20
+        location.y = 2e20
+        
+        // Get location annotation
+        val locationAnnotation = node.getAnnotation(ANNOTATION_LOCATION)
+        if (locationAnnotation == null) {
+            return
+        }
+        
+        // Try parsing the location information by splitting the string into an array of components.
+        // Locations have one of the following three representations:
+        //   "[140.0, 20.0]"     "{140.0, 20.0}"     "140.0, 20.0"
+        val locationString = locationAnnotation.value.replaceAll("[\\s\\[\\]{}]+", "")
+        val locationArray = locationString.split(",")
+        
+        if (locationArray.size == 2) {
+            try {
+                location.x = Double::valueOf(locationArray.get(0))
+                location.y = Double::valueOf(locationArray.get(1))
+            } catch (NumberFormatException e) {
+                
+            }
+        }
     }
     
 }
