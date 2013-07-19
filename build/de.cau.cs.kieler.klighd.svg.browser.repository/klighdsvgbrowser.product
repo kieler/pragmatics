@@ -7,7 +7,9 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-consoleLog -rootFolder e:/Uni/ma/models</programArgs>
+      <programArgs>-consoleLog 
+-rootFolder
+e:/Uni/ma/models</programArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
@@ -240,5 +242,10 @@
       <plugin id="org.w3c.dom.svg"/>
    </plugins>
 
+   <configurations>
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="false" startLevel="3" />
+      <plugin id="org.eclipse.equinox.event" autoStart="false" startLevel="3" />
+   </configurations>
 
 </product>
