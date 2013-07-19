@@ -73,7 +73,7 @@ class Ptolemy2KGraphOptimization {
         convertAnnotationsToNodes(kGraph)
         
         // Convert comments into nodes
-        commentsExtractor.extractComments(kGraph)
+        commentsExtractor.extractAndAttachComments(kGraph)
     }
     
     

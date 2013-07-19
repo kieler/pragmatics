@@ -221,6 +221,12 @@ class Ptolemy2KGraphVisualization {
         // Create the rendering
         val rendering = createCommentNodeRendering(node)
         node.data += rendering
+        
+        // The rendering of all the comments edges is also special
+        for (edge : node.incidentEdges) {
+            val edgeRendering = createCommentEdgeRendering(edge)
+            edge.data += edgeRendering
+        }
     }
     
     /**

@@ -14,11 +14,13 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.krendering.KContainerRendering
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
+import de.cau.cs.kieler.core.krendering.LineStyle
 import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
@@ -167,6 +169,22 @@ class KRenderingFigureProvider {
         ]
         
         return rectangle
+    }
+    
+    /**
+     * Creates a rendering for an edge that attaches a comment node to a commented node.
+     * 
+     * @param edge the edge to create the rendering information for.
+     * @return the rendering.
+     */
+    def KRendering createCommentEdgeRendering(KEdge edge) {
+        val polyline = renderingFactory.createKPolyline() => [line |
+            line.lineStyle = LineStyle::DASH
+            line.lineWidth = 1
+            line.foreground = GraphicsUtils::lookupColor("grey")
+        ]
+        
+        return polyline
     }
     
     /**
