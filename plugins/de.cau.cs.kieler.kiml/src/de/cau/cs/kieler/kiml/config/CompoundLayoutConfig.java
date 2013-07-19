@@ -17,9 +17,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * A layout configurator that is composed of multiple other configurators.
@@ -119,7 +119,7 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
      * The contained layout configurators are called in reversed order so those with higher priorities
      * overwrite options set by those with lower priority.
      */
-    public void transferValues(final KGraphData graphData, final LayoutContext context) {
+    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
         ListIterator<ILayoutConfig> configIter = configs.listIterator(configs.size());
         while (configIter.hasPrevious()) {
             ILayoutConfig conf = configIter.previous();

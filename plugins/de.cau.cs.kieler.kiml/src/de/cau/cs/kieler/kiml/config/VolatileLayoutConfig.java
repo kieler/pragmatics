@@ -18,10 +18,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * A layout configurator that can be used to generate on-the-fly layout options.
@@ -143,7 +143,7 @@ public class VolatileLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KGraphData graphData, final LayoutContext context) {
+    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
         for (IProperty<?> contextKey : contextKeys) {
             Object object = context.getProperty(contextKey);
             Map<IProperty<?>, Object> contextOptions = optionMap.get(object);

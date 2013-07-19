@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.kgraph.feature"
-      label="KIELER KGraph Editing and Visualization"
+      id="de.cau.cs.kieler.ptview.feature"
+      label="KIELER Ptolemy Viewer"
       version="0.1.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
-      Textual editing of KGraphs and visualization using KLighD technology.
-This feature is all you need to start developing layout algorithms.
+      Adds a KLighD-based editor for viewing Ptolemy models in Eclipse.
    </description>
 
    <copyright>
@@ -219,25 +218,16 @@ litigation.
    </url>
 
    <requires>
-      <import plugin="org.apache.commons.logging"/>
       <import plugin="org.antlr.runtime"/>
       <import plugin="org.apache.log4j"/>
       <import feature="com.google.guava.runtime.feature" version="8.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.gef" version="3.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.gmf" version="1.4.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.gmf.runtime.notation" version="1.4.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtext.sdk" version="2.3.1" match="greaterOrEqual"/>
+      <import feature="org.ptolemy.feature" version="8.1.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
          id="de.cau.cs.kieler.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.kivi"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -300,20 +290,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.klay.force"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.kivi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.kiml"
          download-size="0"
          install-size="0"
@@ -356,63 +332,14 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.export"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.formats"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.formats.gml"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.formats.svg"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.grana"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.graphviz.dot"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.graphviz.layouter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.ogdf"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.klighd.incremental"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.ptolemy.klighd"
          download-size="0"
          install-size="0"
          version="0.0.0"

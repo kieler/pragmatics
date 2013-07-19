@@ -30,9 +30,8 @@ import de.cau.cs.kieler.core.kgraph.impl.KEdgeImpl;
 import de.cau.cs.kieler.core.kgraph.impl.KLabelImpl;
 import de.cau.cs.kieler.core.kgraph.impl.KNodeImpl;
 import de.cau.cs.kieler.core.kgraph.impl.KPortImpl;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -91,21 +90,13 @@ public final class Graphs {
      */
     private static void moveGraphElementLayout(final KGraphElement sourceElement,
             final KGraphElement targetElement) {
-        KShapeLayout sourceKSL = sourceElement.getData(KShapeLayout.class);
-        KEdgeLayout sourceKEL = sourceElement.getData(KEdgeLayout.class);
-        if (sourceKSL != null) {
-            KShapeLayout targetKSL = targetElement.getData(KShapeLayout.class);
-            if (targetKSL != null) {
-                targetElement.getData().remove(targetKSL);
+        KLayoutData sourceData = sourceElement.getData(KLayoutData.class);
+        if (sourceData != null) {
+            KLayoutData targetData = targetElement.getData(KLayoutData.class);
+            if (targetData != null) {
+                targetElement.getData().remove(targetData);
             }
-            targetElement.getData().add(sourceKSL);
-        }
-        if (sourceKEL != null) {
-            KEdgeLayout targetKEL = targetElement.getData(KEdgeLayout.class);
-            if (targetKEL != null) {
-                targetElement.getData().remove(targetKEL);
-            }
-            targetElement.getData().add(sourceKEL);
+            targetElement.getData().add(sourceData);
         }
     }
 

@@ -15,11 +15,11 @@ package de.cau.cs.kieler.kiml.config;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -136,7 +136,7 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public final void transferValues(final KGraphData graphData, final LayoutContext context) {
+    public final void transferValues(final KLayoutData graphData, final LayoutContext context) {
         EObject element = context.getProperty(LayoutContext.DOMAIN_MODEL);
         if (element != null) {
             LayoutDataService layoutDataService = LayoutDataService.getInstance();
