@@ -479,9 +479,20 @@ class Ptolemy2KGraphTransformation {
             }
         }
         
-        // Add all of these ports to the kaom entity
+        // Add all of these ports to the knode and mark them as input or output port, if necessary
         for (port : ports) {
             port.node = knode
+            
+            if (!(port.markedAsInputPort || port.markedAsOutputPort)) {
+                // Find out whether it is an input or an output port (or even both)
+                if (port.hasAnnotation("input") || port.hasAnnotation("inputoutput")) {
+                    port.markAsInputPort()
+                }
+                
+                if (port.hasAnnotation("output") || port.hasAnnotation("inputoutput")) {
+                    port.markAsOutputPort()
+                }
+            }
         }
     }
     

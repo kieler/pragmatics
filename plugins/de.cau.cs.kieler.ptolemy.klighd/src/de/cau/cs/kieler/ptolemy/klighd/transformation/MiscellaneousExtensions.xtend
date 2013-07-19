@@ -72,19 +72,19 @@ class MiscellaneousExtensions {
     }
     
     /**
-     * Checks if the given list of edges contains at least one edge of known direction.
+     * Returns the first edge in the list that is marked as having a fixed direction.
      * 
      * @param edges list of edges to check for directed edges.
-     * @return {@code true} if at least one edge is of known direction.
+     * @return the first edge of known direction that is found or {@code null} if none could be found.
      */
-    def boolean containsDirectedEdge(Iterable<KEdge> edges) {
+    def KEdge getFirstDirectedEdge(Iterable<KEdge> edges) {
         for (edge : edges) {
             if (!edge.isMarkedAsUndirected()) {
-                return true
+                return edge
             }
         }
         
-        return false
+        return null
     }
     
     /**

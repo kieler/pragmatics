@@ -22,7 +22,7 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation;
  * 
  * @author cds
  */
-public final class TransformationConstants {
+final class TransformationConstants {
     
     // PORT NAMES
     
@@ -60,6 +60,21 @@ public final class TransformationConstants {
     public static final String IS_IO_PORT = "_ioPort";
     
     
+    // PROPERTY TYPES
+    
+    public static final String TYPE_ATTRIBUTE = "ptolemy.kernel.util.Attribute";
+    
+    /**
+     * Type of annotations that describe a comment.
+     */
+    public static final String TYPE_TEXT_ATTRIBUTE = "ptolemy.vergil.kernel.attributes.TextAttribute";
+    
+    /**
+     * Type of annotations that hold the text of comments.
+     */
+    public static final String TYPE_STRING_ATTRIBUTE = "ptolemy.kernel.util.StringAttribute";
+    
+    
     // ANNOTATION CONSTANTS
     
     /**
@@ -79,6 +94,26 @@ public final class TransformationConstants {
      * Ptolemy model.
      */
     public static final String ANNOTATION_PTOLEMY_CLASS = "_ptolemyClass";
+    
+    /**
+     * Name of the annotation that specifies the name of the element a comment is explicitly attached to.
+     */
+    public static final String ANNOTATION_RELATIVE_TO ="relativeTo";
+    
+    /**
+     * Name of the annotation that specifies the type of the element a comment is explicitly attached to.
+     */
+    public static final String ANNOTATION_RELATIVE_TO_ELEMENT_NAME = "relativeToElementName";
+    
+    /**
+     * Name of the annotation that holds the text of a comment.
+     */
+    public static final String ANNOTATION_COMMENT_TEXT = "text";
+    
+    /**
+     * Name of the annotation that holds an element's location.
+     */
+    public static final String ANNOTATION_LOCATION = "_location";
     
     
     /**

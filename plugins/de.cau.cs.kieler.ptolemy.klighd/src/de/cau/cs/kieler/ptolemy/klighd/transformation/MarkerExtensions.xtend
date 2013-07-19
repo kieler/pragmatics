@@ -151,6 +151,27 @@ class MarkerExtensions {
     }
     
     /**
+     * Marks the given node as being a comment node.
+     * 
+     * @param node the node to be marked.
+     */
+    def void markAsComment(KNode node) {
+        val shapeLayout = node.getData(typeof(KShapeLayout))
+        shapeLayout.setProperty(LayoutOptions::COMMENT_BOX, true)
+    }
+    
+    /**
+     * Checks if the given node is marked as being a comment node.
+     * 
+     * @param node the node to check.
+     * @return {@code true} if the node is marked as being a comment node, {@code false} otherwise.
+     */
+    def boolean isMarkedAsComment(KNode node) {
+        val shapeLayout = node.getData(typeof(KShapeLayout))
+        return shapeLayout.getProperty(LayoutOptions::COMMENT_BOX)
+    }
+    
+    /**
      * Marks the given node as containing a state machine.
      * 
      * @param node the node to be marked.
