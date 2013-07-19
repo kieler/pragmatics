@@ -74,6 +74,11 @@ public class LiveLayoutHandler implements HttpHandler {
         // perform the layout
         String outGraph = new LiveLayoutService().doLayout(graph, informat, outformat, opts);
 
+        // fixes
+        if (outformat.equals("org.w3.svg")) {
+            outGraph = fixSvg(outGraph);
+        }
+
         // send the result graph
         http.sendResponseHeaders(HTTP_OK, outGraph.length());
         OutputStream os = http.getResponseBody();
@@ -91,6 +96,21 @@ public class LiveLayoutHandler implements HttpHandler {
         }
 
         return params;
+    }
+
+    /**
+     * The used jquery scripts for dragging and zooming require that the id of the outermost g
+     * element is 'group'.
+     */
+    private String fixSvg(final String graph) {
+
+        String res3 = graph.substring(graph.indexOf("<svg") - 1, graph.length());
+        String res4 = res3.replaceFirst("width=", "w=");
+        String res5 = res4.replaceFirst("height=", "w=");
+        StringBuffer sb = new StringBuffer(res5);
+        sb.insert(sb.indexOf("<g") + 2, " id=\"group\"");
+
+        return sb.toString();
     }
 
 }

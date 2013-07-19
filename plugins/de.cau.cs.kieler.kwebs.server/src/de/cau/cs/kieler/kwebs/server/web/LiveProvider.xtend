@@ -29,6 +29,11 @@ class LiveProvider extends AbstractProvider {
 		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
 		<script	src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 		<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+		<script src="scripts/jquery.event.drag.js"></script>
+		<script src="scripts/jquery.mousewheel.js"></script>
+		<script src="scripts/jquery.svg.js"></script>
+		<script src="scripts/jquery.svg.extras.js"></script>
+		
 		<style>
 			body {
 				background-color: #5781BB;
@@ -40,15 +45,30 @@ class LiveProvider extends AbstractProvider {
 				font-size: 10px;
 			}
 			
-			.content {
-				margin-right: 10px;
+			#resGraph {
+				width: 100%;
+				height: 500px;
+			}
+			
+			.container-fluid {
+			}
+			
+			.row-fluid {
+				min-width: 10px;
 			}
 			
 			svg {
 				width: 100%;
 				height: 100%;
 			}
+			
+			td.body {
+				padding-left: 10px;
+			} 
 
+			textarea {
+				resize: none;
+			}
 		</style>
 		'''
 	}
@@ -58,15 +78,31 @@ class LiveProvider extends AbstractProvider {
 	 */
 	override getBody(ResourceProcessingExchange processingExchange) {
 		val exGraph = "digraph finite_state_machine {\n   rankdir=LR;\n   size=\"8,5\"\n  node [shape = doublecircle]; LR_0 LR_3 LR_4 LR_8;\n node [shape = circle];\n    LR_0 -> LR_2 [ label = \"SS(B)\" ];\n   LR_0 -> LR_1 [ label = \"SS(S)\" ];\n   LR_1 -> LR_3 [ label = \"S($end)\" ];\n LR_2 -> LR_6 [ label = \"SS(b)\" ];\n   LR_2 -> LR_5 [ label = \"SS(a)\" ];\n   LR_2 -> LR_4 [ label = \"S(A)\" ];\n    LR_5 -> LR_7 [ label = \"S(b)\" ];\n    LR_5 -> LR_5 [ label = \"S(a)\" ];\n    LR_6 -> LR_6 [ label = \"S(b)\" ];\n    LR_6 -> LR_5 [ label = \"S(a)\" ];\n    LR_7 -> LR_8 [ label = \"S(b)\" ];\n    LR_7 -> LR_5 [ label = \"S(a)\" ];\n    LR_8 -> LR_6 [ label = \"S(b)\" ];\n    LR_8 -> LR_5 [ label = \"S(a)\" ];\n}";
-		val exOptions = 
-		'''
-		spacing: 100,
-		algorithm: de.cau.cs.kieler.klay.layered
-		''';
+		val exOptions = "spacing: 100,\nalgorithm: de.cau.cs.kieler.klay.layered";
 		
 		'''
+			<div class="">
+				<div class="row-fluid">
+					<div id="srcGraph" class="span8">
+						<h4>Input Graph</h4>
+						<textarea id="srcArea">«exGraph»</textarea>
+					</div>
+					<div id="config" class="span4">
+						<h4>Config</h4>
+						<textarea id="configArea">«exOptions»</textarea>
+					</div>
+				</div>
+				<div class="span12 "><button id="layout" class="btn pull-right" style="margin-right: 10px">Layout</button><span id="working"></span></div>
+			</div>
+			<div id="resGraph" class=""></div>
 			<script>
 			$(function() {
+
+				// init the svg with zoom and pan
+				$('#resGraph').svg();
+				$('#resGraph').addScalability();
+				$('#resGraph').addDraggable();
+				
 				var svg = $('#resGraph');
 				
 				$('#layout').click(function() {
@@ -88,18 +124,6 @@ class LiveProvider extends AbstractProvider {
 				});
 			});
 			</script>
-			<div class="row-fluid fill content">
-				<div id="srcGraph" class="span8">
-					<h4>Input Graph</h4>
-					<textarea id="srcArea">«exGraph»</textarea>
-				</div>
-				<div id="config" class="span4">
-					<h4>Config</h4>
-					<textarea id="configArea">«exOptions»</textarea>
-				</div>
-				<div class="span12 "><button id="layout" class="btn pull-right" style="margin-right: 10px">Layout</button><span id="working"></span></div>
-				<div id="resGraph" class="span12 fill"></div>
-			</div>
 		'''
 	}
 	
