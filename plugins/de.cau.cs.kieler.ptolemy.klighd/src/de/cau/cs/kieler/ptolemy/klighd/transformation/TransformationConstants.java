@@ -62,15 +62,17 @@ final class TransformationConstants {
     
     // PROPERTY TYPES
     
+    public static final String TYPE_ATTRIBUTE = "ptolemy.kernel.util.Attribute";
+    
     /**
      * Type of annotations that describe a comment.
      */
-    public static final String TYPE_COMMENT = "ptolemy.vergil.kernel.attributes.TextAttribute";
+    public static final String TYPE_TEXT_ATTRIBUTE = "ptolemy.vergil.kernel.attributes.TextAttribute";
     
     /**
      * Type of annotations that hold the text of comments.
      */
-    public static final String TYPE_COMMENT_TEXT = "ptolemy.kernel.util.StringAttribute";
+    public static final String TYPE_STRING_ATTRIBUTE = "ptolemy.kernel.util.StringAttribute";
     
     /**
      * Name of the annotation that holds the text of a comment.

@@ -92,11 +92,11 @@ class AnnotationExtensions {
     /**
      * Returns the value of the string annotation with the given key, if any.
      * 
-     * @param element the KGraph element to fetch the annotation from.
+     * @param element the element to fetch the annotation from.
      * @param key the annotation's key.
      * @return the annotation's value, if it exists, or the empty string if it doesn't.
      */
-    def String getAnnotationValue(KGraphElement element, String key) {
+    def String getAnnotationValue(EObject element, String key) {
         return getAnnotation(element, key)?.value
     }
     
