@@ -87,6 +87,7 @@ public class KLayoutDataSwitch<T> extends Switch<T> {
             case KLayoutDataPackage.KSHAPE_LAYOUT: {
                 KShapeLayout kShapeLayout = (KShapeLayout)theEObject;
                 T result = caseKShapeLayout(kShapeLayout);
+                if (result == null) result = caseKLayoutData(kShapeLayout);
                 if (result == null) result = caseKGraphData(kShapeLayout);
                 if (result == null) result = caseEMapPropertyHolder(kShapeLayout);
                 if (result == null) result = caseIPropertyHolder(kShapeLayout);
@@ -96,9 +97,19 @@ public class KLayoutDataSwitch<T> extends Switch<T> {
             case KLayoutDataPackage.KEDGE_LAYOUT: {
                 KEdgeLayout kEdgeLayout = (KEdgeLayout)theEObject;
                 T result = caseKEdgeLayout(kEdgeLayout);
+                if (result == null) result = caseKLayoutData(kEdgeLayout);
                 if (result == null) result = caseKGraphData(kEdgeLayout);
                 if (result == null) result = caseEMapPropertyHolder(kEdgeLayout);
                 if (result == null) result = caseIPropertyHolder(kEdgeLayout);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            case KLayoutDataPackage.KLAYOUT_DATA: {
+                KLayoutData kLayoutData = (KLayoutData)theEObject;
+                T result = caseKLayoutData(kLayoutData);
+                if (result == null) result = caseKGraphData(kLayoutData);
+                if (result == null) result = caseEMapPropertyHolder(kLayoutData);
+                if (result == null) result = caseIPropertyHolder(kLayoutData);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -154,6 +165,21 @@ public class KLayoutDataSwitch<T> extends Switch<T> {
      * @generated
      */
     public T caseKEdgeLayout(KEdgeLayout object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>KLayout Data</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>KLayout Data</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseKLayoutData(KLayoutData object) {
         return null;
     }
 

@@ -36,7 +36,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPart;
 
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutContext;
@@ -44,6 +43,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
 
@@ -315,7 +315,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KGraphData graphData, final LayoutContext context) {
+    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
         PictogramElement pe = context.getProperty(PICTO_ELEM);
         if (pe != null) {
             // add user defined global layout options
@@ -336,7 +336,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      * @param prefix the prefix for the property key
      * @param pe a pictogram element
      */
-    private void transferValues(final KGraphData graphData, final String prefix,
+    private void transferValues(final KLayoutData graphData, final String prefix,
             final PictogramElement pe) {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         for (Property prop : pe.getProperties()) {

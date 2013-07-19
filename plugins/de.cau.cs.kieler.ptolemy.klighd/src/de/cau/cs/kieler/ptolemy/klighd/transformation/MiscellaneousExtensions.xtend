@@ -15,7 +15,6 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.kgraph.KGraphData
 import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
@@ -25,6 +24,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import java.util.List
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
 
 /**
  * Utility methods used by the Ptolemy to KGraph transformation.
@@ -110,7 +110,7 @@ class MiscellaneousExtensions {
      * @param element the element whose layout information to return.
      * @return layout information of the element.
      */
-    def KGraphData getLayout(KGraphElement element) {
+    def KLayoutData getLayout(KGraphElement element) {
         if (element instanceof KEdge) {
             // Return the edge layout, if any
             var edgeLayout = element.getData(typeof(KEdgeLayout))

@@ -71,6 +71,43 @@ public interface KLayoutDataPackage extends EPackage {
     KLayoutDataPackage eINSTANCE = de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl.init();
 
     /**
+     * The meta object id for the '{@link de.cau.cs.kieler.kiml.klayoutdata.KLayoutData <em>KLayout Data</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
+     * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl#getKLayoutData()
+     * @generated
+     */
+    int KLAYOUT_DATA = 2;
+
+    /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLAYOUT_DATA__PROPERTIES = KGraphPackage.KGRAPH_DATA__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLAYOUT_DATA__PERSISTENT_ENTRIES = KGraphPackage.KGRAPH_DATA__PERSISTENT_ENTRIES;
+
+    /**
+     * The number of structural features of the '<em>KLayout Data</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLAYOUT_DATA_FEATURE_COUNT = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 0;
+
+    /**
      * The meta object id for the '{@link de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl <em>KShape Layout</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -87,7 +124,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KSHAPE_LAYOUT__PROPERTIES = KGraphPackage.KGRAPH_DATA__PROPERTIES;
+    int KSHAPE_LAYOUT__PROPERTIES = KLAYOUT_DATA__PROPERTIES;
 
     /**
      * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
@@ -96,7 +133,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KSHAPE_LAYOUT__PERSISTENT_ENTRIES = KGraphPackage.KGRAPH_DATA__PERSISTENT_ENTRIES;
+    int KSHAPE_LAYOUT__PERSISTENT_ENTRIES = KLAYOUT_DATA__PERSISTENT_ENTRIES;
 
     /**
      * The feature id for the '<em><b>Xpos</b></em>' attribute.
@@ -105,7 +142,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KSHAPE_LAYOUT__XPOS = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 0;
+    int KSHAPE_LAYOUT__XPOS = KLAYOUT_DATA_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Ypos</b></em>' attribute.
@@ -114,7 +151,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KSHAPE_LAYOUT__YPOS = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 1;
+    int KSHAPE_LAYOUT__YPOS = KLAYOUT_DATA_FEATURE_COUNT + 1;
 
     /**
      * The feature id for the '<em><b>Width</b></em>' attribute.
@@ -123,7 +160,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KSHAPE_LAYOUT__WIDTH = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 2;
+    int KSHAPE_LAYOUT__WIDTH = KLAYOUT_DATA_FEATURE_COUNT + 2;
 
     /**
      * The feature id for the '<em><b>Height</b></em>' attribute.
@@ -132,7 +169,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KSHAPE_LAYOUT__HEIGHT = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 3;
+    int KSHAPE_LAYOUT__HEIGHT = KLAYOUT_DATA_FEATURE_COUNT + 3;
 
     /**
      * The feature id for the '<em><b>Insets</b></em>' containment reference.
@@ -141,7 +178,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KSHAPE_LAYOUT__INSETS = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 4;
+    int KSHAPE_LAYOUT__INSETS = KLAYOUT_DATA_FEATURE_COUNT + 4;
 
     /**
      * The number of structural features of the '<em>KShape Layout</em>' class.
@@ -150,7 +187,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KSHAPE_LAYOUT_FEATURE_COUNT = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 5;
+    int KSHAPE_LAYOUT_FEATURE_COUNT = KLAYOUT_DATA_FEATURE_COUNT + 5;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl <em>KEdge Layout</em>}' class.
@@ -169,7 +206,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KEDGE_LAYOUT__PROPERTIES = KGraphPackage.KGRAPH_DATA__PROPERTIES;
+    int KEDGE_LAYOUT__PROPERTIES = KLAYOUT_DATA__PROPERTIES;
 
     /**
      * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
@@ -178,7 +215,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KEDGE_LAYOUT__PERSISTENT_ENTRIES = KGraphPackage.KGRAPH_DATA__PERSISTENT_ENTRIES;
+    int KEDGE_LAYOUT__PERSISTENT_ENTRIES = KLAYOUT_DATA__PERSISTENT_ENTRIES;
 
     /**
      * The feature id for the '<em><b>Bend Points</b></em>' containment reference list.
@@ -187,7 +224,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KEDGE_LAYOUT__BEND_POINTS = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 0;
+    int KEDGE_LAYOUT__BEND_POINTS = KLAYOUT_DATA_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Source Point</b></em>' containment reference.
@@ -196,7 +233,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KEDGE_LAYOUT__SOURCE_POINT = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 1;
+    int KEDGE_LAYOUT__SOURCE_POINT = KLAYOUT_DATA_FEATURE_COUNT + 1;
 
     /**
      * The feature id for the '<em><b>Target Point</b></em>' containment reference.
@@ -205,7 +242,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KEDGE_LAYOUT__TARGET_POINT = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 2;
+    int KEDGE_LAYOUT__TARGET_POINT = KLAYOUT_DATA_FEATURE_COUNT + 2;
 
     /**
      * The number of structural features of the '<em>KEdge Layout</em>' class.
@@ -214,7 +251,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KEDGE_LAYOUT_FEATURE_COUNT = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 3;
+    int KEDGE_LAYOUT_FEATURE_COUNT = KLAYOUT_DATA_FEATURE_COUNT + 3;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kiml.klayoutdata.impl.KPointImpl <em>KPoint</em>}' class.
@@ -224,7 +261,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl#getKPoint()
      * @generated
      */
-    int KPOINT = 2;
+    int KPOINT = 3;
 
     /**
      * The feature id for the '<em><b>X</b></em>' attribute.
@@ -262,7 +299,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl#getKInsets()
      * @generated
      */
-    int KINSETS = 3;
+    int KINSETS = 4;
 
     /**
      * The feature id for the '<em><b>Top</b></em>' attribute.
@@ -318,7 +355,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl#getKIdentifier()
      * @generated
      */
-    int KIDENTIFIER = 4;
+    int KIDENTIFIER = 5;
 
     /**
      * The feature id for the '<em><b>Properties</b></em>' map.
@@ -365,7 +402,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl#getKVector()
      * @generated
      */
-    int KVECTOR = 5;
+    int KVECTOR = 6;
 
     /**
      * The feature id for the '<em><b>X</b></em>' attribute.
@@ -402,7 +439,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl#getKVectorChain()
      * @generated
      */
-    int KVECTOR_CHAIN = 6;
+    int KVECTOR_CHAIN = 7;
 
     /**
      * The number of structural features of the '<em>KVector Chain</em>' class.
@@ -521,6 +558,16 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      */
     EReference getKEdgeLayout_TargetPoint();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.klayoutdata.KLayoutData <em>KLayout Data</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>KLayout Data</em>'.
+     * @see de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
+     * @generated
+     */
+    EClass getKLayoutData();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.klayoutdata.KPoint <em>KPoint</em>}'.
@@ -778,6 +825,16 @@ public interface KLayoutDataPackage extends EPackage {
          * @generated
          */
         EReference KEDGE_LAYOUT__TARGET_POINT = eINSTANCE.getKEdgeLayout_TargetPoint();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.kiml.klayoutdata.KLayoutData <em>KLayout Data</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
+         * @see de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl#getKLayoutData()
+         * @generated
+         */
+        EClass KLAYOUT_DATA = eINSTANCE.getKLayoutData();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.kiml.klayoutdata.impl.KPointImpl <em>KPoint</em>}' class.

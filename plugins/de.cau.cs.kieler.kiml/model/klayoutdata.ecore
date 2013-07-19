@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ecore:EPackage xmi:version="2.0"
-    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="klayoutdata"
-    nsURI="http://kieler.cs.cau.de/KLayoutData" nsPrefix="klayoutdata">
-  <eClassifiers xsi:type="ecore:EClass" name="KShapeLayout" eSuperTypes="platform:/resource/de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KGraphData">
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="klayoutdata" nsURI="http://kieler.cs.cau.de/KLayoutData" nsPrefix="klayoutdata">
+  <eClassifiers xsi:type="ecore:EClass" name="KShapeLayout" eSuperTypes="#//KLayoutData">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="This layout data contains information for graph elements for which rectangular&#xA;shape is assumed for layout, such as nodes, ports, and labels. Each graph element&#xA;has either a shape layout or an edge layout attached. The shape layout of nodes&#xA;has insets.&#xA;&lt;p>&#xA;Layout coordinates for nodes, ports, and node labels are relative to the parent&#xA;node. The insets of the parent node are not included in the relative coordinates&#xA;of child nodes, but they are included in the relative coordinates of ports and&#xA;node labels. For edge labels the rules defined in {@link KEdgeLayout} apply.&#xA;Port labels are relative to their ports.&#xA;&lt;/p>"/>
     </eAnnotations>
@@ -43,7 +41,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="insets" eType="#//KInsets"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KEdgeLayout" eSuperTypes="platform:/resource/de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KGraphData">
+  <eClassifiers xsi:type="ecore:EClass" name="KEdgeLayout" eSuperTypes="#//KLayoutData">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="This layout data contains special information for edges, such as bend points.&#xA;Each graph element has either a shape layout or an edge layout attached.&#xA;&lt;p>&#xA;All layout coordinates for edges are defined to be relative to the parent of&#xA;the source node, except when the target node is directly or indirectly contained&#xA;in the source node, in which case all coordinates are relative to the source node&#xA;itself. The insets of the reference node are not included in relative coordinates.&#xA;&lt;/p>"/>
     </eAnnotations>
@@ -76,6 +74,22 @@
         <details key="documentation" value="The target point is the point at which the edge touches the target node&#xA;or target port. The coordinates of target points must obey the general&#xA;rules for edge coordinates defined above."/>
       </eAnnotations>
     </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KLayoutData" abstract="true" interface="true"
+      eSuperTypes="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KGraphData">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Common interface for shape layouts and edge layouts. Shape layouts are&#xA;used by nodes, ports, and labels, while edge layouts are used by edges."/>
+    </eAnnotations>
+    <eOperations name="isModified" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Whether the concrete layout data have been modified since the layout data instance&#xA;was created or the modification flag was reset. For shape layouts this refers to the&#xA;position or size, and for edge layouts it refers to the source point, target point, or&#xA;bend points."/>
+      </eAnnotations>
+    </eOperations>
+    <eOperations name="resetModificationFlag">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Reset the modification flag to {@code false}. Layout algorithms should not do this."/>
+      </eAnnotations>
+    </eOperations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KPoint">
     <eOperations name="setPos">
@@ -122,7 +136,7 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="right" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KIdentifier" eSuperTypes="platform:/resource/de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KGraphData">
+  <eClassifiers xsi:type="ecore:EClass" name="KIdentifier" eSuperTypes="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KGraphData">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Can be used for unique identification of KGraph elements."/>
     </eAnnotations>
