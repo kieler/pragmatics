@@ -54,6 +54,11 @@
           <layout>p2</layout>
           <url>http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/maintenance/juno</url>
         </repository>
+        <repository>
+          <id>p2.jetty</id>
+          <layout>p2</layout>
+          <url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x</url>
+        </repository>
       </repositories>
     </profile>
   </profiles>
