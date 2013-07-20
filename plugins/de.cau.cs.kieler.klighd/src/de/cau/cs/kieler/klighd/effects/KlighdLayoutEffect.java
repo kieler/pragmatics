@@ -13,24 +13,10 @@
  */
 package de.cau.cs.kieler.klighd.effects;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.IWorkbenchPart;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
-
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
-import de.cau.cs.kieler.klighd.IViewer;
-import de.cau.cs.kieler.klighd.KlighdDataManager;
-import de.cau.cs.kieler.klighd.StyleModificationContext;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 
 /**
@@ -271,25 +257,6 @@ public class KlighdLayoutEffect extends AbstractEffect {
             DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
             layoutEngine.layout(workbenchPart, diagramPart, doAnimate, progressBar,
                     layoutAncestors, doZoom, null);
-
-            final List<KStyle> styles = Lists.newLinkedList();
-            Iterables.addAll(styles, new Iterable<KStyle>() {
-                public Iterator<KStyle> iterator() {
-                    @SuppressWarnings("unchecked")
-                    IViewer<EObject> viewer = (IViewer<EObject>) KlighdLayoutEffect.this.diagramPart;
-                    Iterator<EObject> it = viewer.getModel().eAllContents();
-                    return Iterators.filter(Iterators.filter(it, KStyle.class),
-                            new Predicate<KStyle>() {
-                                public boolean apply(final KStyle style) {
-                                    return !Strings.isNullOrEmpty(style.getModifierId());
-                                }
-                            });
-                }
-            });
-            for (KStyle s : styles) {
-                KlighdDataManager.getInstance().getStyleModifierById(s.getModifierId())
-                        .modify(new StyleModificationContext(s));
-            }
         } catch (UnsupportedOperationException e) {
             // ignore
         }
