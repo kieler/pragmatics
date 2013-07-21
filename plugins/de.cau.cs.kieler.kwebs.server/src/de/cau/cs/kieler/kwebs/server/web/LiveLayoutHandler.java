@@ -56,8 +56,8 @@ public class LiveLayoutHandler implements HttpHandler {
         String graph = params.get("graph");
 
         // formats
-        String informat = "org.graphviz.dot";
-        String outformat = "org.w3.svg";
+        String informat = params.get("iFormat");
+        String outformat = params.get("oFormat");
 
         // config
         String config = params.get("config");
@@ -74,9 +74,11 @@ public class LiveLayoutHandler implements HttpHandler {
         // perform the layout
         String outGraph = new LiveLayoutService().doLayout(graph, informat, outformat, opts);
 
-        // fixes
+        // fixes for an svg
         if (outformat.equals("org.w3.svg")) {
             outGraph = fixSvg(outGraph);
+        } else {
+            outGraph = "<pre class='pre-scrollable'>" + fixXML(outGraph) + "</pre>";
         }
 
         // send the result graph
@@ -113,4 +115,7 @@ public class LiveLayoutHandler implements HttpHandler {
         return sb.toString();
     }
 
+    private String fixXML(final String graph) {
+        return graph.replace(">", "&gt;").replace("<", "&lt;");
+    }
 }

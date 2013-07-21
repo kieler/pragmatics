@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
- * Copyright 2011 by
+ * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *     + Department of Computer Science
  *         + Real-Time and Embedded Systems Group
@@ -19,7 +19,12 @@ package de.cau.cs.kieler.kwebs.server.web
  * 
  * @author uru
  */
+import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService
+
 class LiveProvider extends AbstractProvider {
+
+	val DEFAULT_INPUT_FORMAT = "org.graphviz.dot"
+	val DEFAULT_OUTPUT_FORMAT = "org.w3.svg"
 
 	/**
 	 * 
@@ -39,9 +44,13 @@ class LiveProvider extends AbstractProvider {
 				background-color: #5781BB;
 			}
 		
+			[class*="span"] {
+				margin-left: 0px;	
+			}
+			
 		  	#srcArea, #configArea {
 				width: 100%;
-				height: 300px;
+				height: 300px;	
 				font-size: 10px;
 			}
 			
@@ -69,6 +78,10 @@ class LiveProvider extends AbstractProvider {
 			textarea {
 				resize: none;
 			}
+			
+			.pre-scrollable {
+				max-height: 500px;
+			}
 		</style>
 		'''
 	}
@@ -79,6 +92,7 @@ class LiveProvider extends AbstractProvider {
 	override getBody(ResourceProcessingExchange processingExchange) {
 		val exGraph = "digraph finite_state_machine {\n   rankdir=LR;\n   size=\"8,5\"\n  node [shape = doublecircle]; LR_0 LR_3 LR_4 LR_8;\n node [shape = circle];\n    LR_0 -> LR_2 [ label = \"SS(B)\" ];\n   LR_0 -> LR_1 [ label = \"SS(S)\" ];\n   LR_1 -> LR_3 [ label = \"S($end)\" ];\n LR_2 -> LR_6 [ label = \"SS(b)\" ];\n   LR_2 -> LR_5 [ label = \"SS(a)\" ];\n   LR_2 -> LR_4 [ label = \"S(A)\" ];\n    LR_5 -> LR_7 [ label = \"S(b)\" ];\n    LR_5 -> LR_5 [ label = \"S(a)\" ];\n    LR_6 -> LR_6 [ label = \"S(b)\" ];\n    LR_6 -> LR_5 [ label = \"S(a)\" ];\n    LR_7 -> LR_8 [ label = \"S(b)\" ];\n    LR_7 -> LR_5 [ label = \"S(a)\" ];\n    LR_8 -> LR_6 [ label = \"S(b)\" ];\n    LR_8 -> LR_5 [ label = \"S(a)\" ];\n}";
 		val exOptions = "spacing: 100,\nalgorithm: de.cau.cs.kieler.klay.layered";
+		val formats = ServerLayoutDataService::instance.serviceDataModel.supportedFormats
 		
 		'''
 			<div class="">
@@ -92,9 +106,28 @@ class LiveProvider extends AbstractProvider {
 						<textarea id="configArea">«exOptions»</textarea>
 					</div>
 				</div>
-				<div class="span12 "><button id="layout" class="btn pull-right" style="margin-right: 10px">Layout</button><span id="working"></span></div>
+				<div class="span12">
+					<div class="input-prepend">
+						<span class="add-on">Input Format</span>
+						<select id="inputFormat" class="span2">
+							«formats.map(f |
+								'''<option «if(f.id == DEFAULT_INPUT_FORMAT) '''selected="selected"'''» value="«f.id»">«f.name»</option>'''
+							).join»
+						</select>
+					</div>
+					<div class="input-prepend">
+						<span class="add-on">Output Format</span>
+						<select id="outputFormat" class="span2">
+							«formats.map(f |
+								'''<option «if(f.id == DEFAULT_OUTPUT_FORMAT) '''selected="selected"'''» value="«f.id»">«f.name»</option>'''
+							).join»
+						</select>
+					</div>
+					<button id="layout" class="btn pull-right" style="margin-right: 10px">Layout</button><span id="working"></span>
+				</div>
 			</div>
-			<div id="resGraph" class=""></div>
+			<div id="resGraph" class="row-fluid span12"></div>
+			 
 			<script>
 			$(function() {
 
@@ -107,18 +140,22 @@ class LiveProvider extends AbstractProvider {
 				
 				$('#layout').click(function() {
 					var graph = $("#srcArea").val();
-					var config = '{' + $('#configArea').val() + '}'; 
+					var config = '{' + $('#configArea').val() + '}';
+					var iFormat = $('#inputFormat > option:selected').val();
+					var oFormat = $('#outputFormat > option:selected').val();
 					
 					$.ajax({
 						type: 'GET',
 						url: '/live', 
 						data: {
 							graph: graph,
-							config: config
+							config: config,
+							iFormat: iFormat,
+							oFormat: oFormat
 						}, 
 						success: function(svggraph) {
 							svg.html(svggraph);
-							console.log("got it");
+							console.log("got it " + svggraph);
 						}
 					});
 				});
