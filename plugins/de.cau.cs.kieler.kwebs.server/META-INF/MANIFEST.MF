@@ -15,8 +15,7 @@ Require-Bundle: org.eclipse.core.runtime,
  de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.service,
  de.cau.cs.kieler.kwebs,
- de.cau.cs.kieler.kwebs.jaxws,
- org.json;bundle-version="0.1.0"
+ de.cau.cs.kieler.kwebs.jaxws
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.cau.cs.kieler.kwebs.server,
  de.cau.cs.kieler.kwebs.server.configuration,

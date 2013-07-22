@@ -62,6 +62,7 @@ public class LiveLayoutHandler implements HttpHandler {
         // config
         String config = params.get("config");
         List<GraphLayoutOption> opts = Lists.newLinkedList();
+        
         try {
             JSONObject obj = new JSONObject(config);
             for (String key : JSONObject.getNames(obj)) {
