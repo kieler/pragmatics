@@ -34,7 +34,7 @@ final class TransformationConstants {
     /**
      * Possible names for output ports. Used to infer port types during the transformation.
      */
-    public static final String[] PORT_NAMES_OUTPUT = {"out", "output"};
+    public static final String[] PORT_NAMES_OUTPUT = {"out", "output", "outgoingPort"};
     
     /**
      * Regular expression for the separator character used in port names.
