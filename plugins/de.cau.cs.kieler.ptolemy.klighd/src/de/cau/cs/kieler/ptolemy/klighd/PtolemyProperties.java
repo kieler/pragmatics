@@ -20,6 +20,7 @@ import org.ptolemy.moml.PropertyType;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.core.util.Pair;
 
 /**
  * Properties used when representing Ptolemy models as KGraphs.
@@ -40,6 +41,13 @@ public final class PtolemyProperties {
      * The text a comment node should display.
      */
     public static final IProperty<String> COMMENT_TEXT = new Property<String>("comment.text", null);
+    
+    /**
+     * The parameters a parameter node should display. This is a list of pairs of Strings, each
+     * containing the name and the value of a parameter.
+     */
+    public static final IProperty<List<Pair<String, String>>> PT_PARAMETERS =
+            new Property<List<Pair<String, String>>>("ptolemy.parameters", null);
     
     
     /**

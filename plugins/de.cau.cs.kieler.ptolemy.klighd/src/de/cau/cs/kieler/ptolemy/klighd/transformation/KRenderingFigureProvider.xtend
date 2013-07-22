@@ -172,6 +172,70 @@ class KRenderingFigureProvider {
     }
     
     /**
+     * Creates a rendering for a parameter node. Parameter nodes display model parameters in a grid-like
+     * fashion.
+     * 
+     * @param node the node to create the rendering information for.
+     * @return the rendering.
+     */
+    def KRendering createParameterNodeRendering(KNode node) {
+        // Create the surrounding container rendering with a three-column grid placement
+        val rectangle = renderingFactory.createKRectangle() => [rec |
+            rec.foregroundInvisible = true
+            rec.childPlacement = renderingFactory.createKGridPlacement() => [grid |
+                grid.numColumns = 3
+            ]
+        ]
+        
+        // Find the parameters that should be displayed
+        val parameters = node.layout.getProperty(PT_PARAMETERS)
+        
+        // Visualize each parameter
+        for (parameter : parameters) {
+            val circle = renderingFactory.createKEllipse() => [ell |
+                ell.background = GraphicsUtils::lookupColor("blue")
+                ell.setGridPlacementData(
+                    15,
+                    15,
+                    createKPosition(LEFT, -4, 0.5f, TOP, -4, 0.5f),
+                    createKPosition(RIGHT, -4, 0.5f, BOTTOM, -4, 0.5f))
+                ell.lineWidth = 1
+            ]
+            rectangle.children += circle
+            
+            val nameText = renderingFactory.createKText()  => [name |
+                name.text = parameter.first + ":"
+                name.horizontalAlignment = H_LEFT
+                name.setFontSize(KlighdConstants::DEFAULT_FONT_SIZE - 2)
+                name.setGridPlacementData(
+                    0,
+                    // We need to specify a minimum height to work around a grid placement bug that
+                    // would cause the cell not to be high enough for the label
+                    20,
+                    createKPosition(LEFT, 0, 0, TOP, 3, 0),
+                    createKPosition(RIGHT, 5, 0, BOTTOM, 3, 0))
+            ]
+            rectangle.children += nameText
+            
+            val valueText = renderingFactory.createKText()  => [value |
+                value.text = parameter.second
+                value.horizontalAlignment = H_LEFT
+                value.setFontSize(KlighdConstants::DEFAULT_FONT_SIZE - 2)
+                value.setGridPlacementData(
+                    0,
+                    // We need to specify a minimum height to work around a grid placement bug that
+                    // would cause the cell not to be high enough for the label
+                    20,
+                    createKPosition(LEFT, 5, 0, TOP, 3, 0),
+                    createKPosition(RIGHT, 5, 0, BOTTOM, 3, 0))
+            ]
+            rectangle.children += valueText
+        }
+        
+        return rectangle
+    }
+    
+    /**
      * Creates a rendering for an edge that attaches a comment node to a commented node.
      * 
      * @param edge the edge to create the rendering information for.

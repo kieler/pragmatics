@@ -109,6 +109,9 @@ class Ptolemy2KGraphVisualization {
             } else if (child.markedAsComment) {
                 // We have a comment node
                 child.addCommentNodeRendering()
+            } else if (child.markedAsParameterNode) {
+                // We have a parameter node that displays model parameters
+                child.addParameterNodeRendering()
             } else if (child.markedAsState) {
                 // We have a state machine state
                 child.addStateNodeRendering()
@@ -227,6 +230,17 @@ class Ptolemy2KGraphVisualization {
             val edgeRendering = createCommentEdgeRendering(edge)
             edge.data += edgeRendering
         }
+    }
+    
+    /**
+     * Renders the given node as a parameter node.
+     * 
+     * @param node the node to attach the rendering information to.
+     */
+    def private void addParameterNodeRendering(KNode node) {
+        // Create the rendering
+        val rendering = createParameterNodeRendering(node)
+        node.data += rendering
     }
     
     /**
