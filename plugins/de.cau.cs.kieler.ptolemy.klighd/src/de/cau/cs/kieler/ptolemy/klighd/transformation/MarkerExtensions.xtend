@@ -211,6 +211,25 @@ class MarkerExtensions {
     }
     
     /**
+     * Marks the given node as being a parameter node that displays model parameters.
+     * 
+     * @param node the node to be marked.
+     */
+    def void markAsParameterNode(KNode node) {
+        node.addAnnotation("_parameters")
+    }
+    
+    /**
+     * Checks if the given node is marked as being a parameter node.
+     * 
+     * @param node the node to check.
+     * @return {@code true} if the node is a parameter node.
+     */
+    def boolean isMarkedAsParameterNode(KNode node) {
+        return node.hasAnnotation("_parameters")
+    }
+    
+    /**
      * Checks if the given node is a Ptolemy Const actor.
      * 
      * @param node the node to check.
@@ -222,6 +241,7 @@ class MarkerExtensions {
             return false
         } else {
             return propertyValue.equals("ptolemy.actor.lib.Const")
+                || propertyValue.equals("ptolemy.actor.lib.StringConst")
         }
     }
     

@@ -17,8 +17,13 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
+import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.kiml.util.KimlUtil
 import java.util.List
+import org.ptolemy.moml.PropertyType
+
+import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
 
 /**
  * Optimizes a KGraph model freshly transformed from a Ptolemy2 model. This is step two of the Ptolemy
@@ -34,17 +39,17 @@ import java.util.List
  */
 class Ptolemy2KGraphOptimization {
     
-    /** Marking nodes. */
+    /** Handling annotations. */
     @Inject extension AnnotationExtensions
-    /** Marking nodes. */
+    /** Handling labels. */
     @Inject extension LabelExtensions
     /** Marking nodes. */
     @Inject extension MarkerExtensions
     /** Miscellaneous stuff to make my life easier. */
     @Inject extension MiscellaneousExtensions
-    /** Marking nodes. */
+    /** Handling ports. */
     @Inject extension PortExtensions
-    
+    /** Handling comments. */
     @Inject CommentsExtractor commentsExtractor
     
     
@@ -605,7 +610,9 @@ class Ptolemy2KGraphOptimization {
             return
         }
         
-        // Look at the node's annotations
+        // Look at the node's annotations and collect parameters that should be visualized later
+        val List<PropertyType> parameterList = newLinkedList()
+        
         val annotationsIterator = root.annotations.listIterator
         while (annotationsIterator.hasNext()) {
             val annotation = annotationsIterator.next()
@@ -624,7 +631,30 @@ class Ptolemy2KGraphOptimization {
                 
                 // Add the new node to the root element
                 root.children += directorNode
+            } else if (annotation.class_ != null && annotation.class_.equals(TYPE_PARAMETER)) {
+                parameterList.add(annotation)
             }
+        }
+        
+        // Check if we need to create a parameter node
+        if (!root.children.empty && !parameterList.empty) {
+            // Make a list out of the parameters
+            val List<Pair<String, String>> parameterPairs = newLinkedList()
+            for (parameter : parameterList) {
+                parameterPairs.add(new Pair(parameter.name, parameter.value))
+            }
+            
+            // Create a new node for it
+            val parameterNode = KimlUtil::createInitializedNode()
+            
+            // TODO Mark as parameter node and tell it about the parameters it should display
+            parameterNode.markAsPtolemyElement()
+            parameterNode.markAsFormerAnnotationNode()
+            parameterNode.markAsParameterNode()
+            parameterNode.layout.setProperty(PT_PARAMETERS, parameterPairs)
+            
+            // Add the new node to the root element
+            root.children += parameterNode
         }
         
         // Recurse into child nodes

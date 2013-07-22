@@ -34,7 +34,7 @@ final class TransformationConstants {
     /**
      * Possible names for output ports. Used to infer port types during the transformation.
      */
-    public static final String[] PORT_NAMES_OUTPUT = {"out", "output"};
+    public static final String[] PORT_NAMES_OUTPUT = {"out", "output", "outgoingPort"};
     
     /**
      * Regular expression for the separator character used in port names.
@@ -60,8 +60,11 @@ final class TransformationConstants {
     public static final String IS_IO_PORT = "_ioPort";
     
     
-    // PROPERTY TYPES
+    // ANNOTATION TYPES
     
+    /**
+     * Trype of attributes.
+     */
     public static final String TYPE_ATTRIBUTE = "ptolemy.kernel.util.Attribute";
     
     /**
@@ -73,6 +76,11 @@ final class TransformationConstants {
      * Type of annotations that hold the text of comments.
      */
     public static final String TYPE_STRING_ATTRIBUTE = "ptolemy.kernel.util.StringAttribute";
+    
+    /**
+     * Type of annotations that define parameters of models.
+     */
+    public static final String TYPE_PARAMETER = "ptolemy.data.expr.Parameter";
     
     
     // ANNOTATION CONSTANTS

@@ -61,7 +61,7 @@ tr.header td {
 }
 tr.footer td {
 	background-color : #5781bb;
-	background       : url('../images/footer.png');
+	/*background       : url('../images/footer.png');*/
 	background-repeat: no-repeat;
 }
 tr.menu {
@@ -89,9 +89,11 @@ td.body {
 tr.empty td {
 	padding          : 20px;
 	background-color : #ffffff;
-	border-width     : 0px 1px 0px 1px;
+	border-width     : 0px 1px 1px 1px;
 	border-style     : solid;
 	border-color     : #5b5b5b;
+	border-radius    : 0px 0px 6px 6px;
+    box-shadow       : 0px 2px 4px 0px rgba(0, 0, 0, 0.067);
 }
 .title { 
 	font-size		 : 16pt;

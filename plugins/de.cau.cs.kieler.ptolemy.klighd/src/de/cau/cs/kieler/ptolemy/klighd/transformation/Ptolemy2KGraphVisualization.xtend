@@ -55,6 +55,8 @@ class Ptolemy2KGraphVisualization {
     
     /** Access to annotations. */
     @Inject extension AnnotationExtensions
+    /** Access to labels. */
+    @Inject extension LabelExtensions
     /** Access to marked nodes. */
     @Inject extension MarkerExtensions
     /** Extensions used during the transformation. To make things easier. And stuff. */
@@ -109,6 +111,9 @@ class Ptolemy2KGraphVisualization {
             } else if (child.markedAsComment) {
                 // We have a comment node
                 child.addCommentNodeRendering()
+            } else if (child.markedAsParameterNode) {
+                // We have a parameter node that displays model parameters
+                child.addParameterNodeRendering()
             } else if (child.markedAsState) {
                 // We have a state machine state
                 child.addStateNodeRendering()
@@ -230,22 +235,25 @@ class Ptolemy2KGraphVisualization {
     }
     
     /**
+     * Renders the given node as a parameter node.
+     * 
+     * @param node the node to attach the rendering information to.
+     */
+    def private void addParameterNodeRendering(KNode node) {
+        // Create the rendering
+        val rendering = createParameterNodeRendering(node)
+        node.data += rendering
+    }
+    
+    /**
      * Renders the given node as a state machine state.
      * 
      * @param node the node to attach the rendering information to.
      */
     def private void addStateNodeRendering(KNode node) {
-        val layout = node.layout as KShapeLayout
-        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
-            NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
-        layout.setProperty(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE)
-        
         // Create the rendering
         val rendering = createStateNodeRendering(node)
         node.data += rendering
-        
-        // Set size
-        layout.setLayoutSize(rendering)
     }
     
     /**
@@ -301,10 +309,6 @@ class Ptolemy2KGraphVisualization {
     def private void addPortRendering(KPort port) {
         val layout = port.layout as KShapeLayout
         
-        // Remove the port's labels
-        // TODO: Instead of doing this, we should think about changing their appearance
-        port.labels.clear()
-        
         // Find the port type
         val inputPort = port.markedAsInputPort
         val outputPort = port.markedAsOutputPort
@@ -354,6 +358,12 @@ class Ptolemy2KGraphVisualization {
         // Add rendering
         val rendering = createPortRendering(port)
         port.data += rendering
+        
+        // Remove the port's label and put it into the tool tip text
+        if (port.name.length > 0) {
+            rendering.setProperty(KlighdProperties::TOOLTIP, "Port: " + port.name)
+            port.labels.clear()
+        }
         
         // Add size information
         layout.width = 8
@@ -405,7 +415,10 @@ class Ptolemy2KGraphVisualization {
      * @param element the element to generate the tooltip for.
      */
     def private void addToolTip(KGraphElement element) {
-        val toolTip = new StringBuffer()
+        val toolTip = new StringBuffer("\n" + element.KRendering.getProperty(KlighdProperties::TOOLTIP))
+        if (toolTip.length == 1) {
+            toolTip.deleteCharAt(0)
+        }
         
         // Look for properties that don't start with an underscore (these are the ones we want the
         // user to see)

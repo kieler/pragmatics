@@ -83,6 +83,10 @@ abstract class AbstractProvider
                                                 <td class='button'>
                                                     <a href='Contact.html'>Contact</a>
                                                 </td>
+                                                <td class='spacer'>&nbsp;|&nbsp;</td>
+                                                <td class='button'>
+                                                    <a href='Live.html'>Live</a>
+                                                </td>
                                             </tr>
                                         </table>
                                     </td>

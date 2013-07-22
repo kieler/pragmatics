@@ -41,6 +41,8 @@ class KRenderingFigureProvider {
     
     /** Marking nodes. */
     @Inject extension AnnotationExtensions
+    /** Handling labels. */
+    @Inject extension LabelExtensions
     /** Extensions used during the transformation. To make things easier. And stuff. */
     @Inject extension MiscellaneousExtensions
     /** Create KRenderings from Ptolemy figures. */
@@ -154,9 +156,9 @@ class KRenderingFigureProvider {
     def KRendering createCommentNodeRendering(KNode node) {
         val rectangle = renderingFactory.createKRectangle() => [rec |
             rec.background = renderingFactory.createKColor() => [col |
-                col.red = 251
+                col.red = 255
                 col.green = 255
-                col.blue = 222
+                col.blue = 204
             ]
             rec.setLineWidth(0)
         ]
@@ -167,6 +169,70 @@ class KRenderingFigureProvider {
             text.setSurroundingSpace(5, 0)
             text.setFontSize(KlighdConstants::DEFAULT_FONT_SIZE - 2)
         ]
+        
+        return rectangle
+    }
+    
+    /**
+     * Creates a rendering for a parameter node. Parameter nodes display model parameters in a grid-like
+     * fashion.
+     * 
+     * @param node the node to create the rendering information for.
+     * @return the rendering.
+     */
+    def KRendering createParameterNodeRendering(KNode node) {
+        // Create the surrounding container rendering with a three-column grid placement
+        val rectangle = renderingFactory.createKRectangle() => [rec |
+            rec.foregroundInvisible = true
+            rec.childPlacement = renderingFactory.createKGridPlacement() => [grid |
+                grid.numColumns = 3
+            ]
+        ]
+        
+        // Find the parameters that should be displayed
+        val parameters = node.layout.getProperty(PT_PARAMETERS)
+        
+        // Visualize each parameter
+        for (parameter : parameters) {
+            val circle = renderingFactory.createKEllipse() => [ell |
+                ell.background = GraphicsUtils::lookupColor("blue")
+                ell.setGridPlacementData(
+                    15,
+                    15,
+                    createKPosition(LEFT, -4, 0.5f, TOP, -4, 0.5f),
+                    createKPosition(RIGHT, -4, 0.5f, BOTTOM, -4, 0.5f))
+                ell.lineWidth = 1
+            ]
+            rectangle.children += circle
+            
+            val nameText = renderingFactory.createKText()  => [name |
+                name.text = parameter.first + ":"
+                name.horizontalAlignment = H_LEFT
+                name.setFontSize(KlighdConstants::DEFAULT_FONT_SIZE - 2)
+                name.setGridPlacementData(
+                    0,
+                    // We need to specify a minimum height to work around a grid placement bug that
+                    // would cause the cell not to be high enough for the label
+                    20,
+                    createKPosition(LEFT, 0, 0, TOP, 3, 0),
+                    createKPosition(RIGHT, 5, 0, BOTTOM, 3, 0))
+            ]
+            rectangle.children += nameText
+            
+            val valueText = renderingFactory.createKText()  => [value |
+                value.text = parameter.second
+                value.horizontalAlignment = H_LEFT
+                value.setFontSize(KlighdConstants::DEFAULT_FONT_SIZE - 2)
+                value.setGridPlacementData(
+                    0,
+                    // We need to specify a minimum height to work around a grid placement bug that
+                    // would cause the cell not to be high enough for the label
+                    20,
+                    createKPosition(LEFT, 5, 0, TOP, 3, 0),
+                    createKPosition(RIGHT, 5, 0, BOTTOM, 3, 0))
+            ]
+            rectangle.children += valueText
+        }
         
         return rectangle
     }
@@ -198,13 +264,24 @@ class KRenderingFigureProvider {
         val isInitial = node.hasAnnotation("isInitialState")
         val lineWidth = if (isInitial) 4 else 1
         
+        // Reset the regular label and replace it with a KText element; since we're using GraphViz dot
+        // to layout state machines, the label wouldn't be placed properly anyway
+        val label = renderingFactory.createKText() => [text |
+            text.text = node.name
+            text.setAreaPlacementData(
+                createKPosition(LEFT, 14, 0, TOP, 8, 0),
+                createKPosition(RIGHT, 14, 0, BOTTOM, 8, 0)
+            )
+        ]
+        node.name = ""
+        
         // Create the outer circle (which may remain the only one)
         val outerCircle = renderingFactory.createKRoundedRectangle() => [rec |
             rec.cornerHeight = 30
-            rec.cornerWidth = 30
+            rec.cornerWidth = 15
             rec.setAreaPlacementData(
                 createKPosition(LEFT, 0, 0, TOP, 0, 0),
-                createKPosition(LEFT, 30, 0, TOP, 30, 0)
+                createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0)
             )
             rec.lineWidth = lineWidth
         ]
@@ -213,14 +290,17 @@ class KRenderingFigureProvider {
         if (isFinal) {
             val innerCircle = renderingFactory.createKRoundedRectangle() => [rec |
                 rec.cornerHeight = 22
-                rec.cornerWidth = 22
+                rec.cornerWidth = 8
                 rec.setAreaPlacementData(
                     createKPosition(LEFT, 3, 0, TOP, 3, 0),
-                    createKPosition(LEFT, 27, 0, TOP, 27, 0)
+                    createKPosition(RIGHT, 3, 0, BOTTOM, 3, 0)
                 )
                 rec.lineWidth = lineWidth
             ]
+            innerCircle.children += label
             outerCircle.children += innerCircle
+        } else {
+            outerCircle.children += label
         }
         
         return outerCircle
