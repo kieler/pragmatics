@@ -222,6 +222,7 @@ class MarkerExtensions {
             return false
         } else {
             return propertyValue.equals("ptolemy.actor.lib.Const")
+                || propertyValue.equals("ptolemy.actor.lib.StringConst")
         }
     }
     

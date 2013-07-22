@@ -34,17 +34,17 @@ import java.util.List
  */
 class Ptolemy2KGraphOptimization {
     
-    /** Marking nodes. */
+    /** Handling annotations. */
     @Inject extension AnnotationExtensions
-    /** Marking nodes. */
+    /** Handling labels. */
     @Inject extension LabelExtensions
     /** Marking nodes. */
     @Inject extension MarkerExtensions
     /** Miscellaneous stuff to make my life easier. */
     @Inject extension MiscellaneousExtensions
-    /** Marking nodes. */
+    /** Handling ports. */
     @Inject extension PortExtensions
-    
+    /** Handling comments. */
     @Inject CommentsExtractor commentsExtractor
     
     
