@@ -355,19 +355,17 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
     
     /**
      * <!-- begin-user-doc -->
-     * Whether the position or size has been modified since this shape layout was created or the
-     * flag was reset.
+     * {@inheritDoc}
      * <!-- end-user-doc -->
-     * @return true if the position or size has been modified
      * @generated NOT
      */
     public boolean isModified() {
         return modified;
     }
-    
+
     /**
      * <!-- begin-user-doc -->
-     * Reset the modification flag to {@code false}. Layout algorithms should not do this.
+     * {@inheritDoc}
      * <!-- end-user-doc -->
      * @generated NOT
      */

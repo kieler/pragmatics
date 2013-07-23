@@ -52,6 +52,7 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.LayoutOptionValidator;
 import de.cau.cs.kieler.kiml.ui.AlgorithmSelectionDialog;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
@@ -73,6 +74,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     private Button progressCheckBox;
     /** checkbox for edge routing style. */
     private Button obliqueCheckBox;
+    /** checkbox for debug graph output. */
+    private Button debugCheckBox;
     /** list of layout option entries. */
     private List<OptionsTableProvider.DataEntry> optionEntries;
     /** table viewer to refresh after changes to the option table data. */
@@ -146,6 +149,13 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         obliqueCheckBox.setToolTipText(Messages.getString("kiml.ui.70")); //$NON-NLS-1$
         obliqueCheckBox.setSelection(getPreferenceStore().getBoolean(
                 EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE));
+        
+        // add checkbox for debug graph output
+        debugCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
+        debugCheckBox.setText(Messages.getString("kiml.ui.71")); //$NON-NLS-1$
+        debugCheckBox.setToolTipText(Messages.getString("kiml.ui.72")); //$NON-NLS-1$
+        debugCheckBox.setSelection(getPreferenceStore().getBoolean(
+                DiagramLayoutEngine.PREF_DEBUG_OUTPUT));
         
         FillLayout layout = new FillLayout(SWT.VERTICAL);
         layout.marginWidth = MARGIN_WIDTH;
@@ -496,6 +506,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         progressCheckBox.setSelection(preferenceStore.getDefaultBoolean(LayoutHandler.PREF_PROGRESS));
         obliqueCheckBox.setSelection(preferenceStore.getDefaultBoolean(
                 EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE));
+        debugCheckBox.setSelection(preferenceStore.getDefaultBoolean(
+                DiagramLayoutEngine.PREF_DEBUG_OUTPUT));
         
         // clear the layout options table
         for (OptionsTableProvider.DataEntry entry : optionEntries) {
@@ -518,6 +530,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         preferenceStore.setValue(LayoutHandler.PREF_PROGRESS, progressCheckBox.getSelection());
         preferenceStore.setValue(EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE,
                 obliqueCheckBox.getSelection());
+        preferenceStore.setValue(DiagramLayoutEngine.PREF_DEBUG_OUTPUT, debugCheckBox.getSelection());
         
         // store data for the diagram element and diagram type options
         for (OptionsTableProvider.DataEntry entry : optionEntries) {

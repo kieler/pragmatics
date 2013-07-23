@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -55,6 +56,13 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
      * @generated
      */
     private EClass kEdgeLayoutEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass kLayoutDataEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -250,6 +258,15 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getKLayoutData() {
+        return kLayoutDataEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getKPoint() {
         return kPointEClass;
     }
@@ -411,6 +428,8 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
         createEReference(kEdgeLayoutEClass, KEDGE_LAYOUT__SOURCE_POINT);
         createEReference(kEdgeLayoutEClass, KEDGE_LAYOUT__TARGET_POINT);
 
+        kLayoutDataEClass = createEClass(KLAYOUT_DATA);
+
         kPointEClass = createEClass(KPOINT);
         createEAttribute(kPointEClass, KPOINT__X);
         createEAttribute(kPointEClass, KPOINT__Y);
@@ -462,8 +481,9 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
         // Set bounds for type parameters
 
         // Add supertypes to classes
-        kShapeLayoutEClass.getESuperTypes().add(theKGraphPackage.getKGraphData());
-        kEdgeLayoutEClass.getESuperTypes().add(theKGraphPackage.getKGraphData());
+        kShapeLayoutEClass.getESuperTypes().add(this.getKLayoutData());
+        kEdgeLayoutEClass.getESuperTypes().add(this.getKLayoutData());
+        kLayoutDataEClass.getESuperTypes().add(theKGraphPackage.getKGraphData());
         kIdentifierEClass.getESuperTypes().add(theKGraphPackage.getKGraphData());
 
         // Initialize classes and features; add operations and parameters
@@ -496,6 +516,12 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
         addEParameter(op, this.getKVectorChain(), "points", 0, 1, IS_UNIQUE, IS_ORDERED);
 
         addEOperation(kEdgeLayoutEClass, this.getKVectorChain(), "createVectorChain", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+        initEClass(kLayoutDataEClass, KLayoutData.class, "KLayoutData", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+        addEOperation(kLayoutDataEClass, ecorePackage.getEBoolean(), "isModified", 1, 1, IS_UNIQUE, IS_ORDERED);
+
+        addEOperation(kLayoutDataEClass, null, "resetModificationFlag", 0, 1, IS_UNIQUE, IS_ORDERED);
 
         initEClass(kPointEClass, KPoint.class, "KPoint", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKPoint_X(), ecorePackage.getEFloat(), "x", "0.0f", 0, 1, KPoint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -13,9 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.config;
 
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * Layout option configurator interface. Implementations are used to determine the
@@ -60,12 +60,12 @@ public interface ILayoutConfig {
     Object getValue(LayoutOptionData<?> optionData, LayoutContext context);
     
     /**
-     * Transfer all non-default values that are managed by this layout configurator to the given
-     * graph data holder.
+     * Transfer all non-default layout option values that are managed by this layout configurator
+     * to the given layout data instance.
      * 
-     * @param graphData a graph data instance that can hold layout options
+     * @param layoutData a layout data instance that can hold layout options
      * @param context a context for layout configuration
      */
-    void transferValues(KGraphData graphData, LayoutContext context);
+    void transferValues(KLayoutData layoutData, LayoutContext context);
 
 }

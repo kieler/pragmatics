@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -81,6 +83,20 @@ public class WorkspaceResourcesPage extends ResourceTreeAndListPage {
     private String[] extensions = null;
     
     /**
+     * Whether the source group should be initialized from the selection fed into the page.
+     * If {@code true}, all items we can find in the selection are pre-selected in the
+     * source group.
+     */
+    private boolean initializeSourceGroupFromSelection = true;
+    
+    /**
+     * Whether the target combo folder should be initialized from the selection fed into the
+     * page. If {@code true}, the first folder we find in the selection is used as the default
+     * target folder.
+     */
+    private boolean initializeTargetGroupFromSelection = false;
+    
+    /**
      * The selection on which the wizard was invoked.
      */
     private IStructuredSelection selection = null;
@@ -90,7 +106,9 @@ public class WorkspaceResourcesPage extends ResourceTreeAndListPage {
     
     
     /**
-     * Constructs a new instance with the given name.
+     * Constructs a new instance with the given name. Initially, all items in the given
+     * selection are pre-selected in the source group. The target folder is empty or
+     * restored from the last usage of the page.
      * 
      * @param pageName name of the page. Used as part of the IDs the dialog
      *                 settings are saved as.
@@ -104,6 +122,31 @@ public class WorkspaceResourcesPage extends ResourceTreeAndListPage {
     public WorkspaceResourcesPage(final String pageName, final boolean showTargetGroup,
             final String[] fileExtensions, final IStructuredSelection selection) {
         
+        this(pageName, showTargetGroup, fileExtensions, selection, true, false);
+    }
+    
+    /**
+     * Constructs a new instance with the given name. Initially, all items in the given
+     * selection are pre-selected in the source group. The target folder is empty or
+     * restored from the last usage of the page.
+     * 
+     * @param pageName name of the page. Used as part of the IDs the dialog
+     *                 settings are saved as.
+     * @param showTargetGroup if {@code true}, a target group is created
+     *                        where the user can select a folder in the
+     *                        workspace to import to.
+     * @param fileExtensions array of allowed file name extensions without
+     *                       preceding dot. May be {@code null}.
+     * @param selection the selection on which the wizard was invoked.
+     * @param initSourceFromSelection {@code true} if the given selection should be used
+     *                                to pre-select elements on the page.
+     * @param initTargetFromSelection {@code true} if the given selection should be used
+     *                                to pre-select a target folder.
+     */
+    public WorkspaceResourcesPage(final String pageName, final boolean showTargetGroup,
+            final String[] fileExtensions, final IStructuredSelection selection,
+            final boolean initSourceFromSelection, final boolean initTargetFromSelection) {
+        
         super(pageName);
         
         setTitle(Messages.WorkspaceResourcesPage_title);
@@ -111,6 +154,8 @@ public class WorkspaceResourcesPage extends ResourceTreeAndListPage {
         
         this.showTargetGroup = showTargetGroup;
         this.selection = selection;
+        this.initializeSourceGroupFromSelection = initSourceFromSelection;
+        this.initializeTargetGroupFromSelection = initTargetFromSelection;
         
         // Save extensions
         if (fileExtensions != null) {
@@ -188,17 +233,37 @@ public class WorkspaceResourcesPage extends ResourceTreeAndListPage {
     protected void initializeControls() {
         setResourceTreeInput(ResourcesPlugin.getWorkspace().getRoot());
         
-        // Try to show and select the elements the wizard was invoked on
-        Iterator<?> iterator = selection.iterator();
-        
-        while (iterator.hasNext()) {
-            Object o = iterator.next();
+        // Initialize source group from selection
+        if (initializeSourceGroupFromSelection) {
+            Iterator<?> iterator = selection.iterator();
             
-            // We can only select files
-            if (o instanceof IFile) {
-                selectAndRevealElement(o, true);
-            } else {
-                selectAndRevealElement(o, false);
+            while (iterator.hasNext()) {
+                Object o = iterator.next();
+                
+                // We can only select files
+                if (o instanceof IFile) {
+                    selectAndRevealElement(o, true);
+                } else {
+                    selectAndRevealElement(o, false);
+                }
+            }
+        }
+        
+        // Initialize target group from selection
+        if (initializeTargetGroupFromSelection) {
+            Iterator<?> iterator = selection.iterator();
+            
+            while (iterator.hasNext()) {
+                Object o = iterator.next();
+                
+                // We can only select file containers
+                if (o instanceof IFolder || o instanceof IProject) {
+                    targetComboHistoryManager.recordAndDisplay(
+                            ((IResource) o).getFullPath().makeRelative().toString());
+                } else if (o instanceof IFile) {
+                    targetComboHistoryManager.recordAndDisplay(
+                            ((IResource) o).getParent().getFullPath().makeRelative().toString());
+                }
             }
         }
         
@@ -257,7 +322,14 @@ public class WorkspaceResourcesPage extends ResourceTreeAndListPage {
                 }
             } };
         } else {
-            return new ViewerFilter[0];
+            return new ViewerFilter[] {new ViewerFilter() {
+                @Override
+                public boolean select(final Viewer viewer, final Object parentElement,
+                        final Object element) {
+                    
+                    return element instanceof IFile;
+                }
+            } };
         }
     }
     

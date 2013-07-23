@@ -78,18 +78,27 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
         IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
                 workbenchPart, object);
         if (manager != null && manager.getAdapterList().length > 0) {
-            LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
             Object diagramPart = manager.getAdapter(object, manager.getAdapterList()[0]);
-            EObject domainElement = (EObject) manager.getAdapter(object, EObject.class);
-            ILayoutConfig elc = (ILayoutConfig) manager.getAdapter(null, ILayoutConfig.class);
-            EditingDomain editingDomain = (EditingDomain) manager.getAdapter(object,
-                    EditingDomain.class);
             if (diagramPart != null) {
+                ILayoutConfig managerLayoutConfig = (ILayoutConfig) manager.getAdapter(workbenchPart,
+                        ILayoutConfig.class);
+                EObject domainElement = (EObject) manager.getAdapter(object, EObject.class);
+                
+                // create a compound layout configurator using the layout option manager
+                LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
                 IMutableLayoutConfig layoutConfig;
-                if (elc == null) {
+                if (managerLayoutConfig == null) {
                     layoutConfig = optionManager.createConfig(domainElement);
                 } else {
-                    layoutConfig = optionManager.createConfig(domainElement, elc);
+                    layoutConfig = optionManager.createConfig(domainElement, managerLayoutConfig);
+                }
+                
+                // obtain an editing domain from the selected object or from the workbench part
+                EditingDomain editingDomain = (EditingDomain) manager.getAdapter(object,
+                        EditingDomain.class);
+                if (editingDomain == null) {
+                    editingDomain = (EditingDomain) manager.getAdapter(workbenchPart,
+                            EditingDomain.class);
                 }
                 
                 LayoutContext context = new LayoutContext();

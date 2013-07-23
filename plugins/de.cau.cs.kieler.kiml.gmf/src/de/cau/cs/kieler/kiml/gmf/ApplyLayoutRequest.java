@@ -20,11 +20,9 @@ import java.util.List;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl;
-import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * Request for automatic layout on a set of edit parts of a diagram.
@@ -63,16 +61,7 @@ public class ApplyLayoutRequest extends Request {
      * @param editPart the corresponding edit part
      */
     public void addElement(final KGraphElement element, final GraphicalEditPart editPart) {
-        boolean modified = false;
-        if (element instanceof KEdge) {
-            KEdgeLayoutImpl edgeLayout = element.getData(KEdgeLayoutImpl.class);
-            modified = edgeLayout.isModified();
-        } else {
-            KShapeLayoutImpl shapeLayout = element.getData(KShapeLayoutImpl.class);
-            modified = shapeLayout.isModified();
-        }
-        
-        if (modified) {
+        if (element.getData(KLayoutData.class).isModified()) {
             mappingList.add(new Pair<KGraphElement, GraphicalEditPart>(element, editPart));
         }
     }

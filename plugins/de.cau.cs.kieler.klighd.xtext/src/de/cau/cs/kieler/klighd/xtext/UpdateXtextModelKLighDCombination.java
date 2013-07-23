@@ -15,19 +15,22 @@ package de.cau.cs.kieler.klighd.xtext;
 
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
+import de.cau.cs.kieler.core.util.RunnableWithResult;
 
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
 import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
-// SUPPRESS CHECKSTYLE NEXT LineLength
+import de.cau.cs.kieler.klighd.util.KlighdProperties;
 import de.cau.cs.kieler.klighd.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;
-// SUPPRESS CHECKSTYLE NEXT LineLength
 import de.cau.cs.kieler.klighd.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;
+// SUPPRESS CHECKSTYLE PREVIOUS 2 LineLength
 
 /**
  * A combination for initializing/refreshing of KLighD views of Xtext-based models.
@@ -67,7 +70,27 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
                     state.getEditorInputPath().lastSegment(),
                     resource.getContents().get(0),
                     state.getEditor());
-            effect.setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY, SimpleUpdateStrategy.ID);
+            effect.setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY,
+                    getRequestedUpdateStrategy(state));
+            effect.setProperty(KlighdProperties.MODEL_ACCESS, new RunnableWithResult<EObject>() {
+
+                private EObject result = null;
+                
+                public void run() {
+                    state.getEditor().getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
+
+                        @Override
+                        public void process(final XtextResource state) throws Exception {
+                            result = state.getContents().get(0);
+                        }
+                    });
+                }
+
+                public EObject getResult() {
+                    return result;
+                }
+                
+            });
             
             // Subclasses may specify IDs of transformations that must explicitly be used to display
             // the model in the KLighD view
@@ -93,5 +116,19 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
      */
     protected List<String> getRequestedTransformations(final XtextModelChangeState state) {
         return null;
+    }
+    
+    /**
+     * Returns the id of {@link de.cau.cs.kieler.klighd.IUpdateStrategy IUpdateStrategy} to be used
+     * when visualizing a given model. Default implementation returns
+     * {@code SimpleUpdateStrategy.ID}. May be overridden by subclasses.
+     * 
+     * @param state
+     *            a {@link de.cau.cs.kieler.core.kivi.ITriggerState} carrying the necessary
+     *            information.
+     * @return a registered {@link de.cau.cs.kieler.klighd.IUpdateStrategy IUpdateStrategy}'s id.
+     */
+    protected String getRequestedUpdateStrategy(final XtextModelChangeState state) {
+        return SimpleUpdateStrategy.ID;
     }
 }
