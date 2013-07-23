@@ -62,23 +62,31 @@ class Ptolemy2KGraphOptimization {
      * important.</p>
      * 
      * @param kGraph the model to optimize.
+     * @param showComments {@code true} if comments should be imported.
+     * @param hideRelations {@code true} if relations should be replaced by hyperedges; otherwise, we
+     *                      only try and hide as many relations as possible.
      */
-    def void optimize(KNode kGraph) {
+    def void optimize(KNode kGraph, boolean showComments, boolean hideRelations) {
         // Infer edge directions
         inferEdgeDirections(kGraph)
         
+        // Remove either unnecessary or all relations
+        if (hideRelations) {
+            removeAllRelations(kGraph)
+        } else {
+            removeUnnecessaryRelations(kGraph)
+        }
+        
         // Remove ports from nodes that represent states
         makeStatesPortless(kGraph)
-        
-        // Remove either unnecessary or all relations
-//        removeUnnecessaryRelations(kGraph)
-        removeAllRelations(kGraph)
         
         // Convert special annotations into nodes
         convertAnnotationsToNodes(kGraph)
         
         // Convert comments into nodes
-        commentsExtractor.extractAndAttachComments(kGraph)
+        if (showComments) {
+            commentsExtractor.extractAndAttachComments(kGraph)
+        }
     }
     
     
@@ -406,51 +414,6 @@ class Ptolemy2KGraphOptimization {
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Removal of State Ports
-    
-    /**
-     * Removes ports from nodes representing modal model states in the model rooted at the given root
-     * entity. Also, nodes containing such states are annotated for the layout algorithm to know to
-     * use a layout algorithm for state machines.
-     * 
-     * @param root the model tree's root entity.
-     */
-    def private void makeStatesPortless(KNode root) {
-        // Check if we have a Ptolemy state
-        if (root.markedAsState) {
-            // Iterate over the state's ports
-            for (port : root.ports) {
-                // Remove edges from the port while it still has any
-                while (!port.edges.empty) {
-                    // In the former version of the transformation, we would make sure the edges would
-                    // face into the correct direction. However, this should in theory have already been
-                    // inferred, so we skip this and hope for the best. Amen.
-                    
-                    // Connect the edge to the state instead of the port
-                    val edge = port.edges.get(0)
-                    if (edge.sourcePort == port) {
-                        edge.sourcePort = null
-                    } else {
-                        edge.targetPort = null
-                    }
-                }
-            }
-            
-            // Get rid of the state's ports
-            root.ports.clear()
-            
-            // Annotate the state's parent to use a proper layout algorithm
-            (root.eContainer as KNode).markAsStateMachineContainer()
-        }
-        
-        // Recurse into child nodes
-        for (child : root.children) {
-            makeStatesPortless(child)
-        }
-    }
-    
-    
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Removal of Unnecessary Relations
     
     /**
@@ -471,6 +434,7 @@ class Ptolemy2KGraphOptimization {
                 val inEdge = relation.incomingEdges.get(0)
                 val outEdge = relation.outgoingEdges.get(0)
                 
+                // Reroute the incoming edge
                 inEdge.target = outEdge.target
                 inEdge.targetPort = outEdge.targetPort
                 
@@ -479,6 +443,9 @@ class Ptolemy2KGraphOptimization {
                 outEdge.target = null
                 outEdge.sourcePort = null
                 outEdge.targetPort = null
+                
+                // Add the relation's annotations to the incoming edge
+                inEdge.annotations += relation.annotations
                 
                 // Remove the relation
                 nodesToBeRemoved += relation
@@ -525,6 +492,18 @@ class Ptolemy2KGraphOptimization {
 
         // 2. Remove all relations and edges and add new edges
         for (hyperedge : magic.hyperedges) {
+            // If the hyperedge has only a single relation, one source, and one target, we copy the
+            // relation's annotations to the edge that will be replacing it. This will help preserve
+            // guard expressions, actions, etc. for state transitions.
+            val preserveRelationAnnotations = hyperedge.relations.size == 1
+                && (hyperedge.sourceNodes.size + hyperedge.sourcePorts.size) == 1
+                && (hyperedge.targetNodes.size + hyperedge.targetPorts.size) == 1
+            val List<PropertyType> relationAnnotations = newArrayList()
+            
+            if (preserveRelationAnnotations) {
+                relationAnnotations += hyperedge.relations.get(0).annotations
+            }
+            
             // Remove relations and edges
             for (relation : hyperedge.relations) {
                 root.children.remove(relation)
@@ -551,6 +530,8 @@ class Ptolemy2KGraphOptimization {
             for (sourceNode : hyperedge.sourceNodes) {
                 for (targetNode : hyperedge.targetNodes) {
                     val newEdge = KimlUtil::createInitializedEdge()
+                    newEdge.annotations += relationAnnotations
+                    
                     newEdge.source = sourceNode
                     
                     newEdge.target = targetNode
@@ -558,6 +539,8 @@ class Ptolemy2KGraphOptimization {
                 
                 for (targetPort : hyperedge.targetPorts) {
                     val newEdge = KimlUtil::createInitializedEdge()
+                    newEdge.annotations += relationAnnotations
+                    
                     newEdge.source = sourceNode
                     
                     newEdge.target = targetPort.node
@@ -568,6 +551,8 @@ class Ptolemy2KGraphOptimization {
             for (sourcePort : hyperedge.sourcePorts) {
                 for (targetNode : hyperedge.targetNodes) {
                     val newEdge = KimlUtil::createInitializedEdge()
+                    newEdge.annotations += relationAnnotations
+                    
                     newEdge.source = sourcePort.node
                     newEdge.sourcePort = sourcePort
                     
@@ -576,6 +561,8 @@ class Ptolemy2KGraphOptimization {
                 
                 for (targetPort : hyperedge.targetPorts) {
                     val newEdge = KimlUtil::createInitializedEdge()
+                    newEdge.annotations += relationAnnotations
+                    
                     newEdge.source = sourcePort.node
                     newEdge.sourcePort = sourcePort
                     
@@ -590,6 +577,45 @@ class Ptolemy2KGraphOptimization {
             if (!node.children.empty) {
                 removeAllRelations(node)
             }
+        }
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Removal of State Ports
+    
+    /**
+     * Removes ports from nodes representing modal model states in the model rooted at the given root
+     * entity. Also, nodes containing such states are annotated for the layout algorithm to know to
+     * use a layout algorithm for state machines.
+     * 
+     * @param root the model tree's root entity.
+     */
+    def private void makeStatesPortless(KNode root) {
+        // Check if we have a Ptolemy state
+        if (root.markedAsState) {
+            // Iterate over the state's ports
+            for (port : root.ports) {
+                // Remove edges from the port while it still has any
+                while (!port.edges.empty) {
+                    // In the former version of the transformation, we would make sure the edges would
+                    // face into the correct direction. However, this should in theory have already been
+                    // inferred, so we skip this and hope for the best. Amen.
+                    
+                    // Make the edge portless
+                    val edge = port.edges.get(0)
+                    edge.sourcePort = null
+                    edge.targetPort = null
+                }
+            }
+            
+            // Get rid of the state's ports
+            root.ports.clear()
+        }
+        
+        // Recurse into child nodes
+        for (child : root.children) {
+            makeStatesPortless(child)
         }
     }
     
@@ -631,7 +657,7 @@ class Ptolemy2KGraphOptimization {
                 
                 // Add the new node to the root element
                 root.children += directorNode
-            } else if (annotation.class_ != null && annotation.class_.equals(TYPE_PARAMETER)) {
+            } else if (annotation.class_ != null && annotation.class_.equals(ANNOTATION_TYPE_PARAMETER)) {
                 parameterList.add(annotation)
             }
         }
