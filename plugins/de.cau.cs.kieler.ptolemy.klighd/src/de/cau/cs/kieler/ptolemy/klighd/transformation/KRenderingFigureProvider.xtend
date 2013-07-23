@@ -39,10 +39,12 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConst
  */
 class KRenderingFigureProvider {
     
-    /** Marking nodes. */
+    /** Accessing annotations. */
     @Inject extension AnnotationExtensions
     /** Handling labels. */
     @Inject extension LabelExtensions
+    /** Marking nodes. */
+    @Inject extension MarkerExtensions
     /** Extensions used during the transformation. To make things easier. And stuff. */
     @Inject extension MiscellaneousExtensions
     /** Create KRenderings from Ptolemy figures. */
@@ -81,18 +83,29 @@ class KRenderingFigureProvider {
      */
     def KRendering createExpandedCompoundNodeRendering(KNode node) {
         // This is the code for representing expanded compound nodes as rounded rectangles with
-        // progressively darker grey backgrounds
+        // progressively darker backgrounds whose color depends on whether the expanded node is
+        // a regular node or whether it displays a state refinement
+        val bgColor = if (node.markedAsState) {
+            renderingFactory.createKColor() => [col |
+                col.red = 204
+                col.green = 255
+                col.blue = 204
+            ]
+        } else {
+            renderingFactory.createKColor() => [col |
+                col.red = 16
+                col.green = 78
+                col.blue = 139
+            ]
+        }
+        
         val rendering = renderingFactory.createKRoundedRectangle() => [rect |
             rect.cornerHeight = 15
             rect.cornerWidth = 15
             rect.setLineWidth(0)
             rect.styles += renderingFactory.createKBackground() => [bg |
                 bg.alpha = 10
-                bg.color = renderingFactory.createKColor() => [col |
-                    col.red = 16
-                    col.green = 78
-                    col.blue = 139
-                ]
+                bg.color = bgColor
             ]
         ]
 
@@ -265,6 +278,17 @@ class KRenderingFigureProvider {
         val lineWidth = if (isInitial) 3 else 1
         val initialFinalInset = if (isInitial) 4 else 3
         
+        // The background color depends on whether the state has a refinement
+        val bgColor = if (node.markedAsHavingRefinement) {
+            renderingFactory.createKColor() => [col |
+                col.red = 204
+                col.green = 255
+                col.blue = 204
+            ]
+        } else {
+            GraphicsUtils::lookupColor("white")
+        }
+        
         // Reset the regular label and replace it with a KText element; since we're using GraphViz dot
         // to layout state machines, the label wouldn't be placed properly anyway
         val label = renderingFactory.createKText() => [text |
@@ -285,6 +309,7 @@ class KRenderingFigureProvider {
                 createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0)
             )
             rec.lineWidth = lineWidth
+            rec.background = bgColor
         ]
         
         // If this is a final state, we need to add an inner circle as well

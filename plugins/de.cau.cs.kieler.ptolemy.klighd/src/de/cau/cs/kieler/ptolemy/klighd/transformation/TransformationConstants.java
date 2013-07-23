@@ -51,34 +51,42 @@ final class TransformationConstants {
     // ENTITY TYPES
     
     /** Class of an entity that houses a finite state machine. */
-    public static final String ENTITY_FSM = "ptolemy.domains.modal.kernel.FSMActor";
+    public static final String ENTITY_CLASS_FSM = "ptolemy.domains.modal.kernel.FSMActor";
     
     /** Class of an entity that houses a modal model. */
-    public static final String ENTITY_MODAL_MODEL = "ptolemy.domains.modal.modal.ModalModel";
+    public static final String ENTITY_CLASS_MODAL_MODEL = "ptolemy.domains.modal.modal.ModalModel";
     
     /** Class of an entity that is the controller of a modal model. */
-    public static final String ENTITY_MODEL_CONTROLLER = "ptolemy.domains.modal.modal.ModalController";
+    public static final String ENTITY_CLASS_MODEL_CONTROLLER =
+            "ptolemy.domains.modal.modal.ModalController";
     
     /** Class of an entity that is a refinement for modal model states. */
-    public static final String ENTITY_STATE_REFINEMENT = "ptolemy.domains.modal.modal.Refinement";
+    public static final String ENTITY_CLASS_STATE_REFINEMENT = "ptolemy.domains.modal.modal.Refinement";
+    
+    
+    // ENTITY NAMES
+    
+    /** Name of the entity that contains the modal model states. */
+    public static final String ENTITY_NAME_MODAL_CONTROLLER = "_Controller";
     
     
     // ANNOTATION TYPES
     
     /** Trype of attributes. */
-    public static final String TYPE_ATTRIBUTE = "ptolemy.kernel.util.Attribute";
+    public static final String ANNOTATION_TYPE_ATTRIBUTE = "ptolemy.kernel.util.Attribute";
     
     /** Type of annotations that describe a comment. */
-    public static final String TYPE_TEXT_ATTRIBUTE = "ptolemy.vergil.kernel.attributes.TextAttribute";
+    public static final String ANNOTATION_TYPE_TEXT_ATTRIBUTE =
+            "ptolemy.vergil.kernel.attributes.TextAttribute";
     
     /** Type of annotations that hold the text of comments. */
-    public static final String TYPE_STRING_ATTRIBUTE = "ptolemy.kernel.util.StringAttribute";
+    public static final String ANNOTATION_TYPE_STRING_ATTRIBUTE = "ptolemy.kernel.util.StringAttribute";
     
     /** Type of annotations that define parameters of models. */
-    public static final String TYPE_PARAMETER = "ptolemy.data.expr.Parameter";
+    public static final String ANNOTATION_TYPE_PARAMETER = "ptolemy.data.expr.Parameter";
     
     
-    // ANNOTATION CONSTANTS
+    // ANNOTATION NAMES
     
     /**
      * Name for an annotation describing where a model element originally came from if it was
@@ -113,6 +121,21 @@ final class TransformationConstants {
     
     /** Name of the annotation that holds an element's location. */
     public static final String ANNOTATION_LOCATION = "_location";
+    
+    /** Name of the annotation that holds the name of a state's refinement. */
+    public static final String ANNOTATION_REFINEMENT_NAME = "refinementName";
+    
+    /** Name of the annotation that holds an annotation text for a state machine relation. */
+    public static final String ANNOTATION_ANNOTATION = "annotation";
+    
+    /** Name of the annotation that holds the guard expression for a state machine relation. */
+    public static final String ANNOTATION_GUARD_EXPRESSION = "guardExpression";
+    
+    /** Name of the annotation that holds the output actions for a state machine relation. */
+    public static final String ANNOTATION_OUTPUT_ACTIONS = "outputActions";
+    
+    /** Name of the annotation that holds the set actions for a state machine relation. */
+    public static final String ANNOTATION_SET_ACTIONS = "setActions";
     
     
     /**

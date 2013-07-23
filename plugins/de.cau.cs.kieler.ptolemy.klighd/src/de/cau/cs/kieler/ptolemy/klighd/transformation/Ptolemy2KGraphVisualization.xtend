@@ -43,6 +43,7 @@ import de.cau.cs.kieler.klighd.util.KlighdProperties
 import java.util.EnumSet
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -391,6 +392,38 @@ class Ptolemy2KGraphVisualization {
             // We have a regular edge
             edge.addRoundedBendsPolyline(5f, 2f)
         }
+        
+        // If the edge has state transition annotations, we need to visualize those
+        val labelText = new StringBuffer()
+        
+        val annotation = edge.getAnnotationValue(ANNOTATION_ANNOTATION)
+        if (!annotation.nullOrEmpty) {
+            labelText.append("\n" + annotation)
+        }
+        
+        val guardExpression = edge.getAnnotationValue(ANNOTATION_GUARD_EXPRESSION)
+        if (!guardExpression.nullOrEmpty) {
+            labelText.append("\nGuard: " + guardExpression)
+        }
+        
+        val outputActions = edge.getAnnotationValue(ANNOTATION_OUTPUT_ACTIONS)
+        if (!outputActions.nullOrEmpty) {
+            labelText.append("\nOutput: " + outputActions)
+        }
+        
+        val setActions = edge.getAnnotationValue(ANNOTATION_SET_ACTIONS)
+        if (!setActions.nullOrEmpty) {
+            labelText.append("\nSet: " + setActions)
+        }
+        
+        // Actually set the label text if we found anything worthwhile and also set the edge
+        // label placement accordingly
+        if (labelText.length > 0) {
+            edge.name = labelText.substring(1)
+            
+            val layout = edge.labels.get(0).layout
+            layout.setProperty(LayoutOptions::EDGE_LABEL_PLACEMENT, EdgeLabelPlacement::CENTER)
+        }
     }
     
     
@@ -405,7 +438,13 @@ class Ptolemy2KGraphVisualization {
     def private void addLabelRendering(KLabeledGraphElement element) {
         for (label : element.labels) {
             // Add empty text rendering
-            label.data += renderingFactory.createKText()
+            val ktext = renderingFactory.createKText()
+            label.data += ktext
+            
+            // Make the text of edge labels 
+            if (element instanceof KEdge) {
+                ktext.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
+            }
         }
     }
     
