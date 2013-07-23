@@ -62,14 +62,20 @@ class Ptolemy2KGraphOptimization {
      * important.</p>
      * 
      * @param kGraph the model to optimize.
+     * @param showComments {@code true} if comments should be imported.
+     * @param hideRelations {@code true} if relations should be replaced by hyperedges; otherwise, we
+     *                      only try and hide as many relations as possible.
      */
-    def void optimize(KNode kGraph) {
+    def void optimize(KNode kGraph, boolean showComments, boolean hideRelations) {
         // Infer edge directions
         inferEdgeDirections(kGraph)
         
         // Remove either unnecessary or all relations
-//        removeUnnecessaryRelations(kGraph)
-        removeAllRelations(kGraph)
+        if (hideRelations) {
+            removeAllRelations(kGraph)
+        } else {
+            removeUnnecessaryRelations(kGraph)
+        }
         
         // Remove ports from nodes that represent states
         makeStatesPortless(kGraph)
@@ -78,7 +84,9 @@ class Ptolemy2KGraphOptimization {
         convertAnnotationsToNodes(kGraph)
         
         // Convert comments into nodes
-        commentsExtractor.extractAndAttachComments(kGraph)
+        if (showComments) {
+            commentsExtractor.extractAndAttachComments(kGraph)
+        }
     }
     
     
