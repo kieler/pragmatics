@@ -131,12 +131,32 @@ class Ptolemy2KGraphTransformation {
         kNode.markAsPtolemyElement()
         kNode.addAnnotation(ANNOTATION_PTOLEMY_CLASS, ptEntity.class1)
         
-        // Add the required ports, relations, links, and child entities
+        // Add properties and ports
         kNode.addProperties(ptEntity.property)
         kNode.addChildPorts(ptEntity)
-        kNode.addChildEntities(ptEntity.entity)
-        kNode.addChildRelations(ptEntity.relation)
-        kNode.addChildLinks(ptEntity.link)
+        
+        // Check if we have an FSM, a modal model, or a regular node
+        switch (ptEntity.class1) {
+            case ENTITY_FSM: {
+                // Mark as a state machine and then add the required relations, links, and child
+                // entities as usual
+                kNode.markAsStateMachineContainer()
+                kNode.addChildEntities(ptEntity.entity)
+                kNode.addChildRelations(ptEntity.relation)
+                kNode.addChildLinks(ptEntity.link)
+            }
+            
+            case ENTITY_MODAL_MODEL: {
+                
+            }
+            
+            default: {
+                // Add the required relations, links, and child entities
+                kNode.addChildEntities(ptEntity.entity)
+                kNode.addChildRelations(ptEntity.relation)
+                kNode.addChildLinks(ptEntity.link)
+            }
+        }
     }
     
     /**
@@ -156,12 +176,32 @@ class Ptolemy2KGraphTransformation {
         kNode.markAsPtolemyElement()
         kNode.addAnnotation(ANNOTATION_PTOLEMY_CLASS, ptClass.^extends)
         
-        // Add the required ports, relations, links, and child entities
+        // Add properties and ports
         kNode.addProperties(ptClass.property)
         kNode.addChildPorts(ptClass)
-        kNode.addChildEntities(ptClass.entity)
-        kNode.addChildRelations(ptClass.relation)
-        kNode.addChildLinks(ptClass.link)
+        
+        // Check if we have an FSM, a modal model, or a regular node
+        switch (ptClass.^extends) {
+            case ENTITY_FSM: {
+                // Mark as a state machine and then add the required relations, links, and child
+                // entities as usual
+                kNode.markAsStateMachineContainer()
+                kNode.addChildEntities(ptClass.entity)
+                kNode.addChildRelations(ptClass.relation)
+                kNode.addChildLinks(ptClass.link)
+            }
+            
+            case ENTITY_MODAL_MODEL: {
+                
+            }
+            
+            default: {
+                // Add the required relations, links, and child entities
+                kNode.addChildEntities(ptClass.entity)
+                kNode.addChildRelations(ptClass.relation)
+                kNode.addChildLinks(ptClass.link)
+            }
+        }
     }
     
     /**

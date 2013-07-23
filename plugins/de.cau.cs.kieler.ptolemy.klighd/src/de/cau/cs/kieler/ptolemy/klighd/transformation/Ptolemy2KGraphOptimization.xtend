@@ -67,12 +67,12 @@ class Ptolemy2KGraphOptimization {
         // Infer edge directions
         inferEdgeDirections(kGraph)
         
-        // Remove ports from nodes that represent states
-        makeStatesPortless(kGraph)
-        
         // Remove either unnecessary or all relations
 //        removeUnnecessaryRelations(kGraph)
         removeAllRelations(kGraph)
+        
+        // Remove ports from nodes that represent states
+        makeStatesPortless(kGraph)
         
         // Convert special annotations into nodes
         convertAnnotationsToNodes(kGraph)
@@ -406,51 +406,6 @@ class Ptolemy2KGraphOptimization {
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Removal of State Ports
-    
-    /**
-     * Removes ports from nodes representing modal model states in the model rooted at the given root
-     * entity. Also, nodes containing such states are annotated for the layout algorithm to know to
-     * use a layout algorithm for state machines.
-     * 
-     * @param root the model tree's root entity.
-     */
-    def private void makeStatesPortless(KNode root) {
-        // Check if we have a Ptolemy state
-        if (root.markedAsState) {
-            // Iterate over the state's ports
-            for (port : root.ports) {
-                // Remove edges from the port while it still has any
-                while (!port.edges.empty) {
-                    // In the former version of the transformation, we would make sure the edges would
-                    // face into the correct direction. However, this should in theory have already been
-                    // inferred, so we skip this and hope for the best. Amen.
-                    
-                    // Connect the edge to the state instead of the port
-                    val edge = port.edges.get(0)
-                    if (edge.sourcePort == port) {
-                        edge.sourcePort = null
-                    } else {
-                        edge.targetPort = null
-                    }
-                }
-            }
-            
-            // Get rid of the state's ports
-            root.ports.clear()
-            
-            // Annotate the state's parent to use a proper layout algorithm
-            (root.eContainer as KNode).markAsStateMachineContainer()
-        }
-        
-        // Recurse into child nodes
-        for (child : root.children) {
-            makeStatesPortless(child)
-        }
-    }
-    
-    
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Removal of Unnecessary Relations
     
     /**
@@ -590,6 +545,45 @@ class Ptolemy2KGraphOptimization {
             if (!node.children.empty) {
                 removeAllRelations(node)
             }
+        }
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Removal of State Ports
+    
+    /**
+     * Removes ports from nodes representing modal model states in the model rooted at the given root
+     * entity. Also, nodes containing such states are annotated for the layout algorithm to know to
+     * use a layout algorithm for state machines.
+     * 
+     * @param root the model tree's root entity.
+     */
+    def private void makeStatesPortless(KNode root) {
+        // Check if we have a Ptolemy state
+        if (root.markedAsState) {
+            // Iterate over the state's ports
+            for (port : root.ports) {
+                // Remove edges from the port while it still has any
+                while (!port.edges.empty) {
+                    // In the former version of the transformation, we would make sure the edges would
+                    // face into the correct direction. However, this should in theory have already been
+                    // inferred, so we skip this and hope for the best. Amen.
+                    
+                    // Make the edge portless
+                    val edge = port.edges.get(0)
+                    edge.sourcePort = null
+                    edge.targetPort = null
+                }
+            }
+            
+            // Get rid of the state's ports
+            root.ports.clear()
+        }
+        
+        // Recurse into child nodes
+        for (child : root.children) {
+            makeStatesPortless(child)
         }
     }
     

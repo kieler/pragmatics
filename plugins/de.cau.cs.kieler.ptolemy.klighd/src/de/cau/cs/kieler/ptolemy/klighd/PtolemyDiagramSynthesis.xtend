@@ -13,12 +13,16 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd
 
-import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
-import org.ptolemy.moml.DocumentRoot
-import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformation
+import com.google.common.collect.ImmutableMap
 import com.google.inject.Inject
+import de.cau.cs.kieler.core.properties.IProperty
+import de.cau.cs.kieler.kiml.options.LayoutOptions
+import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphOptimization
+import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformation
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphVisualization
+import java.util.Collection
+import org.ptolemy.moml.DocumentRoot
 
 /**
  * Synthesis for turning Ptolemy models into KGraphs.
@@ -37,6 +41,12 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         visualization.visualize(kgraph)
         
         return kgraph
+    }
+    
+    override getRecommendedLayoutOptions() {
+        ImmutableMap::<IProperty<?>, Collection<?>>of(
+            LayoutOptions::SPACING, newArrayList(0f, 200f)
+        )
     }
     
 }
