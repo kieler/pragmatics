@@ -93,7 +93,7 @@ public class LiveLayoutHandler implements HttpHandler {
         if (outformat.equals("org.w3.svg")) {
             outGraph = fixSvg(outGraph);
         } else {
-            outGraph = "<pre class='pre-scrollable'>" + fixXML(outGraph) + "</pre>";
+            outGraph = "<pre class='pre-scrollable prettyprint'>" + fixXML(outGraph) + "</pre>";
         }
 
         // send the result graph

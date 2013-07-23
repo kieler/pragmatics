@@ -32,12 +32,15 @@ class LiveProvider extends AbstractProvider {
 	override getHeaders(ResourceProcessingExchange processingExchange) {
 		'''
 		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+		<link href="styles/prettify.css" type="text/css" rel="stylesheet" />
+		
 		<script	src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 		<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 		<script src="scripts/jquery.event.drag.js"></script>
 		<script src="scripts/jquery.mousewheel.js"></script>
 		<script src="scripts/jquery.svg.js"></script>
 		<script src="scripts/jquery.svg.extras.js"></script>
+		<script src="scripts/prettify.js"></script>
 		
 		<style>
 			body {
@@ -83,6 +86,10 @@ class LiveProvider extends AbstractProvider {
 			.pre-scrollable {
 				max-height: 500px;
 			}
+			
+			.pre.prettyprint {
+				border: 1px solid rgba(0, 0, 0, 0.15);
+			}
 		</style>
 		'''
 	}
@@ -91,8 +98,6 @@ class LiveProvider extends AbstractProvider {
 	 * 
 	 */
 	override getBody(ResourceProcessingExchange processingExchange) {
-		val exGraph = "digraph finite_state_machine {\n   rankdir=LR;\n   size=\"8,5\"\n  node [shape = doublecircle]; LR_0 LR_3 LR_4 LR_8;\n node [shape = circle];\n    LR_0 -> LR_2 [ label = \"SS(B)\" ];\n   LR_0 -> LR_1 [ label = \"SS(S)\" ];\n   LR_1 -> LR_3 [ label = \"S($end)\" ];\n LR_2 -> LR_6 [ label = \"SS(b)\" ];\n   LR_2 -> LR_5 [ label = \"SS(a)\" ];\n   LR_2 -> LR_4 [ label = \"S(A)\" ];\n    LR_5 -> LR_7 [ label = \"S(b)\" ];\n    LR_5 -> LR_5 [ label = \"S(a)\" ];\n    LR_6 -> LR_6 [ label = \"S(b)\" ];\n    LR_6 -> LR_5 [ label = \"S(a)\" ];\n    LR_7 -> LR_8 [ label = \"S(b)\" ];\n    LR_7 -> LR_5 [ label = \"S(a)\" ];\n    LR_8 -> LR_6 [ label = \"S(b)\" ];\n    LR_8 -> LR_5 [ label = \"S(a)\" ];\n}";
-		val exOptions = "spacing: 100,\nalgorithm: de.cau.cs.kieler.klay.layered";
 		val formats = ServerLayoutDataService::instance.serviceDataModel.supportedFormats
 		
 		'''
@@ -100,11 +105,13 @@ class LiveProvider extends AbstractProvider {
 				<div class="row-fluid span12">
 					<div id="srcGraph" class="span8">
 						<h4>Input Graph</h4>
-						<textarea id="srcArea">«exGraph»</textarea>
+			<textarea id="srcArea">
+			</textarea>
 					</div>
 					<div id="config" class="span4">
 						<h4>Config</h4>
-						<textarea id="configArea">«exOptions»</textarea>
+			<textarea id="configArea">
+			</textarea>
 					</div>
 				</div>
 				<div class="row-fluid span12">
@@ -163,6 +170,9 @@ class LiveProvider extends AbstractProvider {
 							// show graph section and hide errors
 							$('#resGraph').show();
 							$('#errors').hide();
+							
+							// call the prettifier
+							prettyPrint();
 						},
 						error: function(error) {
 							// hide the graph section
@@ -173,6 +183,12 @@ class LiveProvider extends AbstractProvider {
 						}
 					});
 				});
+				
+				// add initial example data
+				var exGraph ="digraph finite_state_machine {\n  rankdir=LR;\n  size=\"8,5\"\n  LR_0 LR_3 LR_4 LR_8;\n  LR_0 -> LR_2 [ label =\"SS(B)\" ];\n  LR_0 -> LR_1 [ label = \"SS(S)\" ];\n  LR_1 -> LR_3 [ label = \"S($end)\" ];\n  LR_2 -> LR_6 [ label =\"SS(b)\" ];\n  LR_2 -> LR_5 [ label = \"SS(a)\" ];\n  LR_2 -> LR_4 [ label = \"S(A)\" ];\n  LR_5 -> LR_7 [ label = \"S(b)\"];\n  LR_5 -> LR_5 [ label = \"S(a)\" ];\n  LR_6 -> LR_6 [ label = \"S(b)\" ];\n  LR_6 -> LR_5 [ label = \"S(a)\" ];\n  LR_7 -> LR_8 [ label = \"S(b)\" ];\n  LR_7 -> LR_5 [ label = \"S(a)\" ];\n  LR_8 -> LR_6 [ label = \"S(b)\" ];\n  LR_8-> LR_5 [ label = \"S(a)\" ];\n}";
+				$('#srcArea').val(exGraph);
+				var exConfig = "spacing: 100,\nalgorithm: de.cau.cs.kieler.klay.layered";
+				$('#configArea').val(exConfig);
 			});
 			</script>
 		'''
