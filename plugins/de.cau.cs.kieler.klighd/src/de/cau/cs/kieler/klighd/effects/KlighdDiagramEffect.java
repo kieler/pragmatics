@@ -25,7 +25,7 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
-import de.cau.cs.kieler.klighd.views.DiagramViewPart;
+import de.cau.cs.kieler.klighd.views.IDiagramWorkbenchPart;
 
 /**
  * A view management effect for showing models in a KLighD view.
@@ -49,7 +49,7 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
     // the following fields are valid AFTER the effect has been executed
 
     /** the created/updated view. */
-    private transient DiagramViewPart view = null;
+    private transient IDiagramWorkbenchPart view = null;
     /** the created viewer. */
     private transient IViewer<?> viewer = null;
 
@@ -197,7 +197,7 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      * @return the view or null when called before the effect executed, the execute failed or was
      *         invalid
      */
-    public DiagramViewPart getView() {
+    public IDiagramWorkbenchPart getView() {
         return view;
     }
 
@@ -298,7 +298,7 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      * @param view
      *            the view
      */
-    protected void setView(final DiagramViewPart view) {
+    protected void setView(final IDiagramWorkbenchPart view) {
         this.view = view;
     }
 
