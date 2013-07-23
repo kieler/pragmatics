@@ -136,6 +136,17 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param child the figure of a child edit part
      * @return the insets to add to the relative coordinates of the child
      */
+    protected Insets calcSpecificInsets(final IFigure parent, final IFigure child) {
+        return calcInsets(parent, child);
+    }
+    
+    /**
+     * Determines the insets for a parent figure, relative to the given child.
+     * 
+     * @param parent the figure of a parent edit part
+     * @param child the figure of a child edit part
+     * @return the insets to add to the relative coordinates of the child
+     */
     public static Insets calcInsets(final IFigure parent, final IFigure child) {
         Insets result = new Insets(0);
         IFigure currentChild = child;
@@ -633,7 +644,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         // set insets if not yet defined
         if (kinsets.get() == null) {
             KInsets ki = parentKNode.getData(KShapeLayout.class).getInsets();
-            Insets insets = calcInsets(parentEditPart.getFigure(), nodeFigure);
+            Insets insets = calcSpecificInsets(parentEditPart.getFigure(), nodeFigure);
             ki.setLeft(insets.left);
             ki.setTop(insets.top);
             ki.setRight(insets.right);
