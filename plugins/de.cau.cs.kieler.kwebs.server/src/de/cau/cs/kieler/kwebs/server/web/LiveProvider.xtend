@@ -43,6 +43,10 @@ class LiveProvider extends AbstractProvider {
 			body {
 				background-color: #5781BB;
 			}
+			
+			.alert-error {
+				font-size: 13px;
+			}
 		
 			[class*="span"] {
 				margin-left: 0px;	
@@ -57,9 +61,6 @@ class LiveProvider extends AbstractProvider {
 			#resGraph {
 				width: 100%;
 				height: 500px;
-			}
-			
-			.container-fluid {
 			}
 			
 			.row-fluid {
@@ -95,8 +96,8 @@ class LiveProvider extends AbstractProvider {
 		val formats = ServerLayoutDataService::instance.serviceDataModel.supportedFormats
 		
 		'''
-			<div class="">
-				<div class="row-fluid">
+			<div class="container">
+				<div class="row-fluid span12">
 					<div id="srcGraph" class="span8">
 						<h4>Input Graph</h4>
 						<textarea id="srcArea">«exGraph»</textarea>
@@ -106,10 +107,10 @@ class LiveProvider extends AbstractProvider {
 						<textarea id="configArea">«exOptions»</textarea>
 					</div>
 				</div>
-				<div class="span12">
+				<div class="row-fluid span12">
 					<div class="input-prepend">
 						<span class="add-on">Input Format</span>
-						<select id="inputFormat" class="span2">
+						<select id="inputFormat" class="span6">
 							«formats.map(f |
 								'''<option «if(f.id == DEFAULT_INPUT_FORMAT) '''selected="selected"'''» value="«f.id»">«f.name»</option>'''
 							).join»
@@ -117,7 +118,7 @@ class LiveProvider extends AbstractProvider {
 					</div>
 					<div class="input-prepend">
 						<span class="add-on">Output Format</span>
-						<select id="outputFormat" class="span2">
+						<select id="outputFormat" class="span6">
 							«formats.map(f |
 								'''<option «if(f.id == DEFAULT_OUTPUT_FORMAT) '''selected="selected"'''» value="«f.id»">«f.name»</option>'''
 							).join»
@@ -125,9 +126,13 @@ class LiveProvider extends AbstractProvider {
 					</div>
 					<button id="layout" class="btn pull-right" style="margin-right: 10px">Layout</button><span id="working"></span>
 				</div>
-			</div>
-			<div id="resGraph" class="row-fluid span12"></div>
+			
+				<div class="row-fluid span12">
+					<div id="errors" class="alert alert-error" style="display: none;"></div>
+				</div>
+				<div id="resGraph" class="row-fluid span12"></div>
 			 
+			 </div>
 			<script>
 			$(function() {
 
@@ -155,7 +160,16 @@ class LiveProvider extends AbstractProvider {
 						}, 
 						success: function(svggraph) {
 							svg.html(svggraph);
-							console.log("got it " + svggraph);
+							// show graph section and hide errors
+							$('#resGraph').show();
+							$('#errors').hide();
+						},
+						error: function(error) {
+							// hide the graph section
+							$('#resGraph').hide();
+							// show errors
+							$('#errors').html(error.responseText);
+							$('#errors').show();	
 						}
 					});
 				});
