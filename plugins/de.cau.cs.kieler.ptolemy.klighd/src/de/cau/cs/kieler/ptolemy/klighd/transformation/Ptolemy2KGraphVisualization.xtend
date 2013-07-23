@@ -24,7 +24,6 @@ import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.Trigger
 import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
-import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.core.krendering.extensions.ViewSynthesisShared
 import de.cau.cs.kieler.core.math.KVector
@@ -64,8 +63,6 @@ class Ptolemy2KGraphVisualization {
     @Inject extension MiscellaneousExtensions
     /** Extensions for creating edge renderings. */
     @Inject extension KEdgeExtensions
-    /** Extensions for creating polylines. */
-    @Inject extension KPolylineExtensions
     /** Utility class that provides renderings. */
     @Inject extension KRenderingExtensions
     /** Utility class that provides renderings. */
@@ -386,43 +383,44 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addEdgeRendering(KEdge edge) {
         if (edge.source.markedAsState || edge.target.markedAsState) {
-            // We have an edge in a state machine
-            edge.addSpline(1.6f).addArrowDecorator()
+            // If the edge has state transition annotations, we need to visualize those
+            val labelText = new StringBuffer()
+            
+            val annotation = edge.getAnnotationValue(ANNOTATION_ANNOTATION)
+            if (!annotation.nullOrEmpty) {
+                labelText.append("\n" + annotation)
+            }
+            
+            val guardExpression = edge.getAnnotationValue(ANNOTATION_GUARD_EXPRESSION)
+            if (!guardExpression.nullOrEmpty) {
+                labelText.append("\nGuard: " + guardExpression)
+            }
+            
+            val outputActions = edge.getAnnotationValue(ANNOTATION_OUTPUT_ACTIONS)
+            if (!outputActions.nullOrEmpty) {
+                labelText.append("\nOutput: " + outputActions)
+            }
+            
+            val setActions = edge.getAnnotationValue(ANNOTATION_SET_ACTIONS)
+            if (!setActions.nullOrEmpty) {
+                labelText.append("\nSet: " + setActions)
+            }
+            
+            // Actually set the label text if we found anything worthwhile and also set the edge
+            // label placement accordingly
+            if (labelText.length > 0) {
+                edge.name = labelText.substring(1)
+                
+                val layout = edge.labels.get(0).layout
+                layout.setProperty(LayoutOptions::EDGE_LABEL_PLACEMENT, EdgeLabelPlacement::CENTER)
+            }
+            
+            // Now finally add an edge rendering, which in turn depends on additional stuff...
+            val rendering = createTransitionRendering(edge)
+            edge.data += rendering
         } else {
             // We have a regular edge
             edge.addRoundedBendsPolyline(5f, 2f)
-        }
-        
-        // If the edge has state transition annotations, we need to visualize those
-        val labelText = new StringBuffer()
-        
-        val annotation = edge.getAnnotationValue(ANNOTATION_ANNOTATION)
-        if (!annotation.nullOrEmpty) {
-            labelText.append("\n" + annotation)
-        }
-        
-        val guardExpression = edge.getAnnotationValue(ANNOTATION_GUARD_EXPRESSION)
-        if (!guardExpression.nullOrEmpty) {
-            labelText.append("\nGuard: " + guardExpression)
-        }
-        
-        val outputActions = edge.getAnnotationValue(ANNOTATION_OUTPUT_ACTIONS)
-        if (!outputActions.nullOrEmpty) {
-            labelText.append("\nOutput: " + outputActions)
-        }
-        
-        val setActions = edge.getAnnotationValue(ANNOTATION_SET_ACTIONS)
-        if (!setActions.nullOrEmpty) {
-            labelText.append("\nSet: " + setActions)
-        }
-        
-        // Actually set the label text if we found anything worthwhile and also set the edge
-        // label placement accordingly
-        if (labelText.length > 0) {
-            edge.name = labelText.substring(1)
-            
-            val layout = edge.labels.get(0).layout
-            layout.setProperty(LayoutOptions::EDGE_LABEL_PLACEMENT, EdgeLabelPlacement::CENTER)
         }
     }
     

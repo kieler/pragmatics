@@ -22,6 +22,8 @@ import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.LineStyle
 import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.LayoutOptions
@@ -53,6 +55,10 @@ class KRenderingFigureProvider {
     @Inject extension KColorExtensions
     /** Rendering stuff. */
     @Inject extension KRenderingExtensions
+    /** Rendering stuff. */
+    @Inject extension KEdgeExtensions
+    /** Rendering stuff. */
+    @Inject extension KPolylineExtensions
     
     /** Rendering factory used to instantiate KRendering instances. */
     val renderingFactory = KRenderingFactory::eINSTANCE
@@ -273,8 +279,8 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createStateNodeRendering(KNode node) {
-        val isFinal = (node.getAnnotationValue("isFinalState") ?: "").equals("true")
-        val isInitial = (node.getAnnotationValue("isInitialState") ?: "").equals("true")
+        val isFinal = node.getAnnotationBooleanValue("isFinalState")
+        val isInitial = node.getAnnotationBooleanValue("isInitialState")
         val lineWidth = if (isInitial) 3 else 1
         val initialFinalInset = if (isInitial) 4 else 3
         
@@ -379,6 +385,31 @@ class KRenderingFigureProvider {
                 + "0,-3.550781 8.419921,-9.826172 -8.419921,-8.9648439 0,-3.4277344 z\" />"
                 + "</svg>"
         return GraphicsUtils::createFigureFromSvg(accumulatorSvg)
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Edge Renderings
+    
+    /**
+     * Creates a rendering for an edge that represents a transition in a state machine.
+     */
+    def KRendering createTransitionRendering(KEdge edge) {
+        val rendering = renderingFactory.createKSpline() => [spline |
+            spline.lineWidth = 1.6f
+            
+            // Special rendering options for transition types
+            if (edge.getAnnotationBooleanValue(ANNOTATION_NONDETERMINISTIC_TRANSITION)) {
+                spline.foreground = GraphicsUtils::lookupColor("red")
+            }
+            
+            if (edge.getAnnotationBooleanValue(ANNOTATION_DEFAULT_TRANSITION)) {
+                spline.lineStyle = LineStyle::DASH
+            }
+        ]
+        rendering.addArrowDecorator()
+        
+        return rendering
     }
     
     

@@ -88,6 +88,23 @@ class AnnotationExtensions {
     }
     
     /**
+     * Returns the boolean value of the annotation with the given key, if any.
+     * 
+     * @param element the element to fetch the annotation from.
+     * @param key the annotation's key.
+     * @return {@code true} if the annotation exists and is true, {@code false} otherwise.
+     */
+    def boolean getAnnotationBooleanValue(EObject element, String key) {
+        val annotation = getAnnotation(element, key)
+        
+        if (annotation == null) {
+            return false
+        } else {
+            return annotation.value.equals("true")
+        }
+    }
+    
+    /**
      * Checks if the given KGraph element has a Ptolemy annotation of the given key. This method queries
      * the shape layout of the given element.
      * 

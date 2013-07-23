@@ -24,7 +24,8 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.klighd.views.DiagramEditorPart;
 
 /**
- * TODO: Document.
+ * Editor part for displaying Ptolemy models in a KLighD viewer. The editor part disables certain EMF
+ * loading checks and stuff.
  * 
  * @author uru
  * @author cds

@@ -137,6 +137,24 @@ final class TransformationConstants {
     /** Name of the annotation that holds the set actions for a state machine relation. */
     public static final String ANNOTATION_SET_ACTIONS = "setActions";
     
+    /** Name of the annotation that identifies reset transitions. */
+    public static final String ANNOTATION_RESET_TRANSITION = "reset";
+    
+    /** Name of the annotation that identifies reset transitions. */
+    public static final String ANNOTATION_PREEMPTIVE_TRANSITION = "preemptive";
+    
+    /** Name of the annotation that identifies reset transitions. */
+    public static final String ANNOTATION_IMMEDIATE_TRANSITION = "immediate";
+    
+    /** Name of the annotation that identifies reset transitions. */
+    public static final String ANNOTATION_DEFAULT_TRANSITION = "defaultTransition";
+    
+    /** Name of the annotation that identifies reset transitions. */
+    public static final String ANNOTATION_ERROR_TRANSITION = "errorTransition";
+    
+    /** Name of the annotation that identifies reset transitions. */
+    public static final String ANNOTATION_NONDETERMINISTIC_TRANSITION = "nondeterministic";
+    
     
     /**
      * This class is not meant to be instantiated.
