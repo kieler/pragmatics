@@ -22,6 +22,8 @@ import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.LineStyle
 import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.LayoutOptions
@@ -39,10 +41,12 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConst
  */
 class KRenderingFigureProvider {
     
-    /** Marking nodes. */
+    /** Accessing annotations. */
     @Inject extension AnnotationExtensions
     /** Handling labels. */
     @Inject extension LabelExtensions
+    /** Marking nodes. */
+    @Inject extension MarkerExtensions
     /** Extensions used during the transformation. To make things easier. And stuff. */
     @Inject extension MiscellaneousExtensions
     /** Create KRenderings from Ptolemy figures. */
@@ -51,6 +55,10 @@ class KRenderingFigureProvider {
     @Inject extension KColorExtensions
     /** Rendering stuff. */
     @Inject extension KRenderingExtensions
+    /** Rendering stuff. */
+    @Inject extension KEdgeExtensions
+    /** Rendering stuff. */
+    @Inject extension KPolylineExtensions
     
     /** Rendering factory used to instantiate KRendering instances. */
     val renderingFactory = KRenderingFactory::eINSTANCE
@@ -81,18 +89,29 @@ class KRenderingFigureProvider {
      */
     def KRendering createExpandedCompoundNodeRendering(KNode node) {
         // This is the code for representing expanded compound nodes as rounded rectangles with
-        // progressively darker grey backgrounds
+        // progressively darker backgrounds whose color depends on whether the expanded node is
+        // a regular node or whether it displays a state refinement
+        val bgColor = if (node.markedAsState) {
+            renderingFactory.createKColor() => [col |
+                col.red = 204
+                col.green = 255
+                col.blue = 204
+            ]
+        } else {
+            renderingFactory.createKColor() => [col |
+                col.red = 16
+                col.green = 78
+                col.blue = 139
+            ]
+        }
+        
         val rendering = renderingFactory.createKRoundedRectangle() => [rect |
             rect.cornerHeight = 15
             rect.cornerWidth = 15
             rect.setLineWidth(0)
             rect.styles += renderingFactory.createKBackground() => [bg |
                 bg.alpha = 10
-                bg.color = renderingFactory.createKColor() => [col |
-                    col.red = 16
-                    col.green = 78
-                    col.blue = 139
-                ]
+                bg.color = bgColor
             ]
         ]
 
@@ -260,10 +279,21 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createStateNodeRendering(KNode node) {
-        val isFinal = (node.getAnnotationValue("isFinalState") ?: "").equals("true")
-        val isInitial = (node.getAnnotationValue("isInitialState") ?: "").equals("true")
+        val isFinal = node.getAnnotationBooleanValue("isFinalState")
+        val isInitial = node.getAnnotationBooleanValue("isInitialState")
         val lineWidth = if (isInitial) 3 else 1
         val initialFinalInset = if (isInitial) 4 else 3
+        
+        // The background color depends on whether the state has a refinement
+        val bgColor = if (node.markedAsHavingRefinement) {
+            renderingFactory.createKColor() => [col |
+                col.red = 204
+                col.green = 255
+                col.blue = 204
+            ]
+        } else {
+            GraphicsUtils::lookupColor("white")
+        }
         
         // Reset the regular label and replace it with a KText element; since we're using GraphViz dot
         // to layout state machines, the label wouldn't be placed properly anyway
@@ -285,6 +315,7 @@ class KRenderingFigureProvider {
                 createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0)
             )
             rec.lineWidth = lineWidth
+            rec.background = bgColor
         ]
         
         // If this is a final state, we need to add an inner circle as well
@@ -354,6 +385,31 @@ class KRenderingFigureProvider {
                 + "0,-3.550781 8.419921,-9.826172 -8.419921,-8.9648439 0,-3.4277344 z\" />"
                 + "</svg>"
         return GraphicsUtils::createFigureFromSvg(accumulatorSvg)
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Edge Renderings
+    
+    /**
+     * Creates a rendering for an edge that represents a transition in a state machine.
+     */
+    def KRendering createTransitionRendering(KEdge edge) {
+        val rendering = renderingFactory.createKSpline() => [spline |
+            spline.lineWidth = 1.6f
+            
+            // Special rendering options for transition types
+            if (edge.getAnnotationBooleanValue(ANNOTATION_NONDETERMINISTIC_TRANSITION)) {
+                spline.foreground = GraphicsUtils::lookupColor("red")
+            }
+            
+            if (edge.getAnnotationBooleanValue(ANNOTATION_DEFAULT_TRANSITION)) {
+                spline.lineStyle = LineStyle::DASH
+            }
+        ]
+        rendering.addArrowDecorator()
+        
+        return rendering
     }
     
     

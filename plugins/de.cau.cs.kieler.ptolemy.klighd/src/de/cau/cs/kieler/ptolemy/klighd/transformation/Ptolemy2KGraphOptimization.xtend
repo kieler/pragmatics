@@ -62,14 +62,20 @@ class Ptolemy2KGraphOptimization {
      * important.</p>
      * 
      * @param kGraph the model to optimize.
+     * @param showComments {@code true} if comments should be imported.
+     * @param hideRelations {@code true} if relations should be replaced by hyperedges; otherwise, we
+     *                      only try and hide as many relations as possible.
      */
-    def void optimize(KNode kGraph) {
+    def void optimize(KNode kGraph, boolean showComments, boolean hideRelations) {
         // Infer edge directions
         inferEdgeDirections(kGraph)
         
         // Remove either unnecessary or all relations
-//        removeUnnecessaryRelations(kGraph)
-        removeAllRelations(kGraph)
+        if (hideRelations) {
+            removeAllRelations(kGraph)
+        } else {
+            removeUnnecessaryRelations(kGraph)
+        }
         
         // Remove ports from nodes that represent states
         makeStatesPortless(kGraph)
@@ -78,7 +84,9 @@ class Ptolemy2KGraphOptimization {
         convertAnnotationsToNodes(kGraph)
         
         // Convert comments into nodes
-        commentsExtractor.extractAndAttachComments(kGraph)
+        if (showComments) {
+            commentsExtractor.extractAndAttachComments(kGraph)
+        }
     }
     
     
@@ -426,6 +434,7 @@ class Ptolemy2KGraphOptimization {
                 val inEdge = relation.incomingEdges.get(0)
                 val outEdge = relation.outgoingEdges.get(0)
                 
+                // Reroute the incoming edge
                 inEdge.target = outEdge.target
                 inEdge.targetPort = outEdge.targetPort
                 
@@ -434,6 +443,9 @@ class Ptolemy2KGraphOptimization {
                 outEdge.target = null
                 outEdge.sourcePort = null
                 outEdge.targetPort = null
+                
+                // Add the relation's annotations to the incoming edge
+                inEdge.annotations += relation.annotations
                 
                 // Remove the relation
                 nodesToBeRemoved += relation
@@ -480,6 +492,18 @@ class Ptolemy2KGraphOptimization {
 
         // 2. Remove all relations and edges and add new edges
         for (hyperedge : magic.hyperedges) {
+            // If the hyperedge has only a single relation, one source, and one target, we copy the
+            // relation's annotations to the edge that will be replacing it. This will help preserve
+            // guard expressions, actions, etc. for state transitions.
+            val preserveRelationAnnotations = hyperedge.relations.size == 1
+                && (hyperedge.sourceNodes.size + hyperedge.sourcePorts.size) == 1
+                && (hyperedge.targetNodes.size + hyperedge.targetPorts.size) == 1
+            val List<PropertyType> relationAnnotations = newArrayList()
+            
+            if (preserveRelationAnnotations) {
+                relationAnnotations += hyperedge.relations.get(0).annotations
+            }
+            
             // Remove relations and edges
             for (relation : hyperedge.relations) {
                 root.children.remove(relation)
@@ -506,6 +530,8 @@ class Ptolemy2KGraphOptimization {
             for (sourceNode : hyperedge.sourceNodes) {
                 for (targetNode : hyperedge.targetNodes) {
                     val newEdge = KimlUtil::createInitializedEdge()
+                    newEdge.annotations += relationAnnotations
+                    
                     newEdge.source = sourceNode
                     
                     newEdge.target = targetNode
@@ -513,6 +539,8 @@ class Ptolemy2KGraphOptimization {
                 
                 for (targetPort : hyperedge.targetPorts) {
                     val newEdge = KimlUtil::createInitializedEdge()
+                    newEdge.annotations += relationAnnotations
+                    
                     newEdge.source = sourceNode
                     
                     newEdge.target = targetPort.node
@@ -523,6 +551,8 @@ class Ptolemy2KGraphOptimization {
             for (sourcePort : hyperedge.sourcePorts) {
                 for (targetNode : hyperedge.targetNodes) {
                     val newEdge = KimlUtil::createInitializedEdge()
+                    newEdge.annotations += relationAnnotations
+                    
                     newEdge.source = sourcePort.node
                     newEdge.sourcePort = sourcePort
                     
@@ -531,6 +561,8 @@ class Ptolemy2KGraphOptimization {
                 
                 for (targetPort : hyperedge.targetPorts) {
                     val newEdge = KimlUtil::createInitializedEdge()
+                    newEdge.annotations += relationAnnotations
+                    
                     newEdge.source = sourcePort.node
                     newEdge.sourcePort = sourcePort
                     
@@ -625,7 +657,7 @@ class Ptolemy2KGraphOptimization {
                 
                 // Add the new node to the root element
                 root.children += directorNode
-            } else if (annotation.class_ != null && annotation.class_.equals(TYPE_PARAMETER)) {
+            } else if (annotation.class_ != null && annotation.class_.equals(ANNOTATION_TYPE_PARAMETER)) {
                 parameterList.add(annotation)
             }
         }

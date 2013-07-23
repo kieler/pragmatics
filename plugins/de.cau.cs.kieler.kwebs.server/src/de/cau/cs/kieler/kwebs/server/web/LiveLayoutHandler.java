@@ -41,6 +41,7 @@ import de.cau.cs.kieler.kwebs.server.service.LiveLayoutService;
 public class LiveLayoutHandler implements HttpHandler {
 
     private static final int HTTP_OK = 200;
+    private static final int HTTP_ERROR = 500; // internal server error
 
     /**
      * {@inheritDoc}
@@ -62,24 +63,37 @@ public class LiveLayoutHandler implements HttpHandler {
         // config
         String config = params.get("config");
         List<GraphLayoutOption> opts = Lists.newLinkedList();
-        
+
         try {
             JSONObject obj = new JSONObject(config);
             for (String key : JSONObject.getNames(obj)) {
                 opts.add(new GraphLayoutOption(key, obj.getString(key)));
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
+            sendError(http, "The passed configuration data is invalid. It has to be a "
+                    + "comma-seperated list of valid layout options, see "
+                    + "<a href='ProvidedLayout.html'>here</a> for further information on "
+                    + "these options.", e);
+            return;
         }
 
         // perform the layout
-        String outGraph = new LiveLayoutService().doLayout(graph, informat, outformat, opts);
+        String outGraph = "";
+        try {
+            outGraph = new LiveLayoutService().doLayout(graph, informat, outformat, opts);
+        } catch (Throwable t) {
+            // t.printStackTrace();
+            sendError(http, "Could not process the input graph, make sure that the "
+                    + "correct input format is selected and the input itself is well-formed.", t);
+            return;
+        }
 
         // fixes for an svg
         if (outformat.equals("org.w3.svg")) {
             outGraph = fixSvg(outGraph);
         } else {
-            outGraph = "<pre class='pre-scrollable'>" + fixXML(outGraph) + "</pre>";
+            outGraph = "<pre class='pre-scrollable prettyprint'>" + fixXML(outGraph) + "</pre>";
         }
 
         // send the result graph
@@ -88,6 +102,22 @@ public class LiveLayoutHandler implements HttpHandler {
         os.write(outGraph.getBytes());
         os.close();
 
+    }
+
+    private void sendError(final HttpExchange http, final String text, final Throwable t)
+            throws IOException {
+
+        // add the exception within a pre environment to the error string
+        String error = "<h4>Error:</h4> " + text;
+        if (t != null) {
+            error += "<br /><br /><pre>" + t.getMessage() + "</pre>";
+        }
+
+        // send the response
+        http.sendResponseHeaders(HTTP_ERROR, error.getBytes().length);
+        OutputStream os = http.getResponseBody();
+        os.write(error.getBytes());
+        os.close();
     }
 
     private Map<String, String> getParams(final String query) {

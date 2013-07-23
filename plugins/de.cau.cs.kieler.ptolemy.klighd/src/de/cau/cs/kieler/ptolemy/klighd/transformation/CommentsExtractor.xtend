@@ -193,12 +193,12 @@ class CommentsExtractor {
     def private void extractComments(KNode root) {
         // Iterate through the node's annotations looking for comments
         for (annotation : root.annotations) {
-            if ((annotation.class_ ?: "").equals(TYPE_TEXT_ATTRIBUTE)) {
+            if ((annotation.class_ ?: "").equals(ANNOTATION_TYPE_TEXT_ATTRIBUTE)) {
                 // Create comment node and keep annotations of the original comment
                 val commentNode = addCommentNode(root,
                     annotation.getAnnotationValue(ANNOTATION_COMMENT_TEXT) ?: "")
                 commentNode.annotations += annotation.annotations
-            } else if ((annotation.class_ ?: "").equals(TYPE_ATTRIBUTE)) {
+            } else if ((annotation.class_ ?: "").equals(ANNOTATION_TYPE_ATTRIBUTE)) {
                 // Check if there is an _iconDescription attribute
                 val iconDescription = annotation.getAnnotation("_iconDescription")
                 
