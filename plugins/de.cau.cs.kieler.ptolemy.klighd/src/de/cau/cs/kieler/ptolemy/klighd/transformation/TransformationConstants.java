@@ -26,60 +26,55 @@ final class TransformationConstants {
     
     // PORT NAMES
     
-    /**
-     * Possible names for input ports. Used to infer port types during the transformation.
-     */
+    /** Possible names for input ports. Used to infer port types during the transformation. */
     public static final String[] PORT_NAMES_INPUT = {"in", "input", "incomingPort"};
     
-    /**
-     * Possible names for output ports. Used to infer port types during the transformation.
-     */
+    /** Possible names for output ports. Used to infer port types during the transformation. */
     public static final String[] PORT_NAMES_OUTPUT = {"out", "output", "outgoingPort"};
     
-    /**
-     * Regular expression for the separator character used in port names.
-     */
+    /** Regular expression for the separator character used in port names. */
     public static final String PORT_NAME_SEPARATOR_REGEX = "\\.";
     
     
     // PORT TYPES
     
-    /**
-     * Name for an annotation that marks a port as being a multiport.
-     */
+    /** Name for an annotation that marks a port as being a multiport. */
     public static final String IS_MULTIPORT = "_multiport";
     
-    /**
-     * Name of an annotation that marks a port as being a ParameterPort instance.
-     */
+    /** Name of an annotation that marks a port as being a ParameterPort instance. */
     public static final String IS_PARAMETER_PORT = "_parameterPort";
     
-    /**
-     * Name of an annotation that marks a port as being an IOPort instance.
-     */
+    /** Name of an annotation that marks a port as being an IOPort instance. */
     public static final String IS_IO_PORT = "_ioPort";
+    
+    
+    // ENTITY TYPES
+    
+    /** Class of an entity that houses a finite state machine. */
+    public static final String ENTITY_FSM = "ptolemy.domains.modal.kernel.FSMActor";
+    
+    /** Class of an entity that houses a modal model. */
+    public static final String ENTITY_MODAL_MODEL = "ptolemy.domains.modal.modal.ModalModel";
+    
+    /** Class of an entity that is the controller of a modal model. */
+    public static final String ENTITY_MODEL_CONTROLLER = "ptolemy.domains.modal.modal.ModalController";
+    
+    /** Class of an entity that is a refinement for modal model states. */
+    public static final String ENTITY_STATE_REFINEMENT = "ptolemy.domains.modal.modal.Refinement";
     
     
     // ANNOTATION TYPES
     
-    /**
-     * Trype of attributes.
-     */
+    /** Trype of attributes. */
     public static final String TYPE_ATTRIBUTE = "ptolemy.kernel.util.Attribute";
     
-    /**
-     * Type of annotations that describe a comment.
-     */
+    /** Type of annotations that describe a comment. */
     public static final String TYPE_TEXT_ATTRIBUTE = "ptolemy.vergil.kernel.attributes.TextAttribute";
     
-    /**
-     * Type of annotations that hold the text of comments.
-     */
+    /** Type of annotations that hold the text of comments. */
     public static final String TYPE_STRING_ATTRIBUTE = "ptolemy.kernel.util.StringAttribute";
     
-    /**
-     * Type of annotations that define parameters of models.
-     */
+    /** Type of annotations that define parameters of models. */
     public static final String TYPE_PARAMETER = "ptolemy.data.expr.Parameter";
     
     
@@ -113,14 +108,10 @@ final class TransformationConstants {
      */
     public static final String ANNOTATION_RELATIVE_TO_ELEMENT_NAME = "relativeToElementName";
     
-    /**
-     * Name of the annotation that holds the text of a comment.
-     */
+    /** Name of the annotation that holds the text of a comment. */
     public static final String ANNOTATION_COMMENT_TEXT = "text";
     
-    /**
-     * Name of the annotation that holds an element's location.
-     */
+    /** Name of the annotation that holds an element's location. */
     public static final String ANNOTATION_LOCATION = "_location";
     
     

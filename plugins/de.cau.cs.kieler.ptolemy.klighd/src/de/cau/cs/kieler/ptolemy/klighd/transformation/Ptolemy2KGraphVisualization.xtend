@@ -208,6 +208,7 @@ class Ptolemy2KGraphVisualization {
         val layout = node.layout as KShapeLayout
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
+        layout.setProperty(LayoutOptions::PRIORITY, 1000)
         
         // Create the rendering
         val rendering = createDirectorNodeRendering(node)
@@ -240,6 +241,9 @@ class Ptolemy2KGraphVisualization {
      * @param node the node to attach the rendering information to.
      */
     def private void addParameterNodeRendering(KNode node) {
+        val layout = node.layout as KShapeLayout
+        layout.setProperty(LayoutOptions::PRIORITY, 800)
+        
         // Create the rendering
         val rendering = createParameterNodeRendering(node)
         node.data += rendering

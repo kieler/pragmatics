@@ -260,9 +260,10 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createStateNodeRendering(KNode node) {
-        val isFinal = node.hasAnnotation("isFinalState")
-        val isInitial = node.hasAnnotation("isInitialState")
-        val lineWidth = if (isInitial) 4 else 1
+        val isFinal = (node.getAnnotationValue("isFinalState") ?: "").equals("true")
+        val isInitial = (node.getAnnotationValue("isInitialState") ?: "").equals("true")
+        val lineWidth = if (isInitial) 3 else 1
+        val initialFinalInset = if (isInitial) 4 else 3
         
         // Reset the regular label and replace it with a KText element; since we're using GraphViz dot
         // to layout state machines, the label wouldn't be placed properly anyway
@@ -290,10 +291,10 @@ class KRenderingFigureProvider {
         if (isFinal) {
             val innerCircle = renderingFactory.createKRoundedRectangle() => [rec |
                 rec.cornerHeight = 22
-                rec.cornerWidth = 8
+                rec.cornerWidth = 12
                 rec.setAreaPlacementData(
-                    createKPosition(LEFT, 3, 0, TOP, 3, 0),
-                    createKPosition(RIGHT, 3, 0, BOTTOM, 3, 0)
+                    createKPosition(LEFT, initialFinalInset, 0, TOP, initialFinalInset, 0),
+                    createKPosition(RIGHT, initialFinalInset, 0, BOTTOM, initialFinalInset, 0)
                 )
                 rec.lineWidth = lineWidth
             ]
