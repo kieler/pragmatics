@@ -14,18 +14,23 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
+import de.cau.cs.kieler.core.krendering.KContainerRendering
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
+import de.cau.cs.kieler.core.krendering.LineStyle
 import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.PortSide
+import de.cau.cs.kieler.klighd.KlighdConstants
 
+import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
-import de.cau.cs.kieler.core.krendering.KContainerRendering
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.
@@ -35,8 +40,12 @@ import de.cau.cs.kieler.core.krendering.KContainerRendering
  */
 class KRenderingFigureProvider {
     
-    /** Marking nodes. */
+    /** Accessing annotations. */
     @Inject extension AnnotationExtensions
+    /** Handling labels. */
+    @Inject extension LabelExtensions
+    /** Marking nodes. */
+    @Inject extension MarkerExtensions
     /** Extensions used during the transformation. To make things easier. And stuff. */
     @Inject extension MiscellaneousExtensions
     /** Create KRenderings from Ptolemy figures. */
@@ -45,6 +54,8 @@ class KRenderingFigureProvider {
     @Inject extension KColorExtensions
     /** Rendering stuff. */
     @Inject extension KRenderingExtensions
+    /** Rendering stuff. */
+    @Inject extension KPolylineExtensions
     
     /** Rendering factory used to instantiate KRendering instances. */
     val renderingFactory = KRenderingFactory::eINSTANCE
@@ -75,18 +86,29 @@ class KRenderingFigureProvider {
      */
     def KRendering createExpandedCompoundNodeRendering(KNode node) {
         // This is the code for representing expanded compound nodes as rounded rectangles with
-        // progressively darker grey backgrounds
+        // progressively darker backgrounds whose color depends on whether the expanded node is
+        // a regular node or whether it displays a state refinement
+        val bgColor = if (node.markedAsState) {
+            renderingFactory.createKColor() => [col |
+                col.red = 204
+                col.green = 255
+                col.blue = 204
+            ]
+        } else {
+            renderingFactory.createKColor() => [col |
+                col.red = 16
+                col.green = 78
+                col.blue = 139
+            ]
+        }
+        
         val rendering = renderingFactory.createKRoundedRectangle() => [rect |
             rect.cornerHeight = 15
             rect.cornerWidth = 15
             rect.setLineWidth(0)
             rect.styles += renderingFactory.createKBackground() => [bg |
                 bg.alpha = 10
-                bg.color = renderingFactory.createKColor() => [col |
-                    col.red = 16
-                    col.green = 78
-                    col.blue = 139
-                ]
+                bg.color = bgColor
             ]
         ]
 
@@ -142,39 +164,172 @@ class KRenderingFigureProvider {
     }
     
     /**
+     * Creates a rendering for a comment node.
+     * 
+     * @param node the node to create the rendering information for.
+     * @return the rendering.
+     */
+    def KRendering createCommentNodeRendering(KNode node) {
+        val rectangle = renderingFactory.createKRectangle() => [rec |
+            rec.background = renderingFactory.createKColor() => [col |
+                col.red = 255
+                col.green = 255
+                col.blue = 204
+            ]
+            rec.setLineWidth(0)
+        ]
+        
+        // Add the comment's text
+        rectangle.children += renderingFactory.createKText() => [text |
+            text.text = node.layout.getProperty(COMMENT_TEXT)
+            text.setSurroundingSpace(5, 0)
+            text.setFontSize(KlighdConstants::DEFAULT_FONT_SIZE - 2)
+        ]
+        
+        return rectangle
+    }
+    
+    /**
+     * Creates a rendering for a parameter node. Parameter nodes display model parameters in a grid-like
+     * fashion.
+     * 
+     * @param node the node to create the rendering information for.
+     * @return the rendering.
+     */
+    def KRendering createParameterNodeRendering(KNode node) {
+        // Create the surrounding container rendering with a three-column grid placement
+        val rectangle = renderingFactory.createKRectangle() => [rec |
+            rec.foregroundInvisible = true
+            rec.childPlacement = renderingFactory.createKGridPlacement() => [grid |
+                grid.numColumns = 3
+            ]
+        ]
+        
+        // Find the parameters that should be displayed
+        val parameters = node.layout.getProperty(PT_PARAMETERS)
+        
+        // Visualize each parameter
+        for (parameter : parameters) {
+            val circle = renderingFactory.createKEllipse() => [ell |
+                ell.background = GraphicsUtils::lookupColor("blue")
+                ell.setGridPlacementData(
+                    15,
+                    15,
+                    createKPosition(LEFT, -4, 0.5f, TOP, -4, 0.5f),
+                    createKPosition(RIGHT, -4, 0.5f, BOTTOM, -4, 0.5f))
+                ell.lineWidth = 1
+            ]
+            rectangle.children += circle
+            
+            val nameText = renderingFactory.createKText()  => [name |
+                name.text = parameter.first + ":"
+                name.horizontalAlignment = H_LEFT
+                name.setFontSize(KlighdConstants::DEFAULT_FONT_SIZE - 2)
+                name.setGridPlacementData(
+                    0,
+                    // We need to specify a minimum height to work around a grid placement bug that
+                    // would cause the cell not to be high enough for the label
+                    20,
+                    createKPosition(LEFT, 0, 0, TOP, 3, 0),
+                    createKPosition(RIGHT, 5, 0, BOTTOM, 3, 0))
+            ]
+            rectangle.children += nameText
+            
+            val valueText = renderingFactory.createKText()  => [value |
+                value.text = parameter.second
+                value.horizontalAlignment = H_LEFT
+                value.setFontSize(KlighdConstants::DEFAULT_FONT_SIZE - 2)
+                value.setGridPlacementData(
+                    0,
+                    // We need to specify a minimum height to work around a grid placement bug that
+                    // would cause the cell not to be high enough for the label
+                    20,
+                    createKPosition(LEFT, 5, 0, TOP, 3, 0),
+                    createKPosition(RIGHT, 5, 0, BOTTOM, 3, 0))
+            ]
+            rectangle.children += valueText
+        }
+        
+        return rectangle
+    }
+    
+    /**
+     * Creates a rendering for an edge that attaches a comment node to a commented node.
+     * 
+     * @param edge the edge to create the rendering information for.
+     * @return the rendering.
+     */
+    def KRendering createCommentEdgeRendering(KEdge edge) {
+        val polyline = renderingFactory.createKPolyline() => [line |
+            line.lineStyle = LineStyle::DASH
+            line.lineWidth = 1
+            line.foreground = GraphicsUtils::lookupColor("grey")
+        ]
+        
+        return polyline
+    }
+    
+    /**
      * Creates a rendering for a state node.
      * 
      * @param node the node to create the rendering information for.
      * @return the rendering.
      */
     def KRendering createStateNodeRendering(KNode node) {
-        val isFinal = node.hasAnnotation("isFinalState")
-        val isInitial = node.hasAnnotation("isInitialState")
-        val lineWidth = if (isInitial) 4 else 1
+        val isFinal = node.getAnnotationBooleanValue("isFinalState")
+        val isInitial = node.getAnnotationBooleanValue("isInitialState")
+        val lineWidth = if (isInitial) 3 else 1
+        val initialFinalInset = if (isInitial) 4 else 3
+        
+        // The background color depends on whether the state has a refinement
+        val bgColor = if (node.markedAsHavingRefinement) {
+            renderingFactory.createKColor() => [col |
+                col.red = 204
+                col.green = 255
+                col.blue = 204
+            ]
+        } else {
+            GraphicsUtils::lookupColor("white")
+        }
+        
+        // Reset the regular label and replace it with a KText element; since we're using GraphViz dot
+        // to layout state machines, the label wouldn't be placed properly anyway
+        val label = renderingFactory.createKText() => [text |
+            text.text = node.name
+            text.setAreaPlacementData(
+                createKPosition(LEFT, 14, 0, TOP, 8, 0),
+                createKPosition(RIGHT, 14, 0, BOTTOM, 8, 0)
+            )
+        ]
+        node.name = ""
         
         // Create the outer circle (which may remain the only one)
         val outerCircle = renderingFactory.createKRoundedRectangle() => [rec |
             rec.cornerHeight = 30
-            rec.cornerWidth = 30
+            rec.cornerWidth = 15
             rec.setAreaPlacementData(
                 createKPosition(LEFT, 0, 0, TOP, 0, 0),
-                createKPosition(LEFT, 30, 0, TOP, 30, 0)
+                createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0)
             )
             rec.lineWidth = lineWidth
+            rec.background = bgColor
         ]
         
         // If this is a final state, we need to add an inner circle as well
         if (isFinal) {
             val innerCircle = renderingFactory.createKRoundedRectangle() => [rec |
                 rec.cornerHeight = 22
-                rec.cornerWidth = 22
+                rec.cornerWidth = 12
                 rec.setAreaPlacementData(
-                    createKPosition(LEFT, 3, 0, TOP, 3, 0),
-                    createKPosition(LEFT, 27, 0, TOP, 27, 0)
+                    createKPosition(LEFT, initialFinalInset, 0, TOP, initialFinalInset, 0),
+                    createKPosition(RIGHT, initialFinalInset, 0, BOTTOM, initialFinalInset, 0)
                 )
                 rec.lineWidth = lineWidth
             ]
+            innerCircle.children += label
             outerCircle.children += innerCircle
+        } else {
+            outerCircle.children += label
         }
         
         return outerCircle
@@ -227,6 +382,31 @@ class KRenderingFigureProvider {
                 + "0,-3.550781 8.419921,-9.826172 -8.419921,-8.9648439 0,-3.4277344 z\" />"
                 + "</svg>"
         return GraphicsUtils::createFigureFromSvg(accumulatorSvg)
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Edge Renderings
+    
+    /**
+     * Creates a rendering for an edge that represents a transition in a state machine.
+     */
+    def KRendering createTransitionRendering(KEdge edge) {
+        val rendering = renderingFactory.createKSpline() => [spline |
+            spline.lineWidth = 1.6f
+            
+            // Special rendering options for transition types
+            if (edge.getAnnotationBooleanValue(ANNOTATION_NONDETERMINISTIC_TRANSITION)) {
+                spline.foreground = GraphicsUtils::lookupColor("red")
+            }
+            
+            if (edge.getAnnotationBooleanValue(ANNOTATION_DEFAULT_TRANSITION)) {
+                spline.lineStyle = LineStyle::DASH
+            }
+        ]
+        rendering.addArrowDecorator()
+        
+        return rendering
     }
     
     

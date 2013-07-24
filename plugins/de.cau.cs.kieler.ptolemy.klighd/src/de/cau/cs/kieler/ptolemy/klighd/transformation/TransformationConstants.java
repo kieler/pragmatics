@@ -22,45 +22,71 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation;
  * 
  * @author cds
  */
-public final class TransformationConstants {
+final class TransformationConstants {
     
     // PORT NAMES
     
-    /**
-     * Possible names for input ports. Used to infer port types during the transformation.
-     */
+    /** Possible names for input ports. Used to infer port types during the transformation. */
     public static final String[] PORT_NAMES_INPUT = {"in", "input", "incomingPort"};
     
-    /**
-     * Possible names for output ports. Used to infer port types during the transformation.
-     */
-    public static final String[] PORT_NAMES_OUTPUT = {"out", "output"};
+    /** Possible names for output ports. Used to infer port types during the transformation. */
+    public static final String[] PORT_NAMES_OUTPUT = {"out", "output", "outgoingPort"};
     
-    /**
-     * Regular expression for the separator character used in port names.
-     */
+    /** Regular expression for the separator character used in port names. */
     public static final String PORT_NAME_SEPARATOR_REGEX = "\\.";
     
     
     // PORT TYPES
     
-    /**
-     * Name for an annotation that marks a port as being a multiport.
-     */
+    /** Name for an annotation that marks a port as being a multiport. */
     public static final String IS_MULTIPORT = "_multiport";
     
-    /**
-     * Name of an annotation that marks a port as being a ParameterPort instance.
-     */
+    /** Name of an annotation that marks a port as being a ParameterPort instance. */
     public static final String IS_PARAMETER_PORT = "_parameterPort";
     
-    /**
-     * Name of an annotation that marks a port as being an IOPort instance.
-     */
+    /** Name of an annotation that marks a port as being an IOPort instance. */
     public static final String IS_IO_PORT = "_ioPort";
     
     
-    // ANNOTATION CONSTANTS
+    // ENTITY TYPES
+    
+    /** Class of an entity that houses a finite state machine. */
+    public static final String ENTITY_CLASS_FSM = "ptolemy.domains.modal.kernel.FSMActor";
+    
+    /** Class of an entity that houses a modal model. */
+    public static final String ENTITY_CLASS_MODAL_MODEL = "ptolemy.domains.modal.modal.ModalModel";
+    
+    /** Class of an entity that is the controller of a modal model. */
+    public static final String ENTITY_CLASS_MODEL_CONTROLLER =
+            "ptolemy.domains.modal.modal.ModalController";
+    
+    /** Class of an entity that is a refinement for modal model states. */
+    public static final String ENTITY_CLASS_STATE_REFINEMENT = "ptolemy.domains.modal.modal.Refinement";
+    
+    
+    // ENTITY NAMES
+    
+    /** Name of the entity that contains the modal model states. */
+    public static final String ENTITY_NAME_MODAL_CONTROLLER = "_Controller";
+    
+    
+    // ANNOTATION TYPES
+    
+    /** Trype of attributes. */
+    public static final String ANNOTATION_TYPE_ATTRIBUTE = "ptolemy.kernel.util.Attribute";
+    
+    /** Type of annotations that describe a comment. */
+    public static final String ANNOTATION_TYPE_TEXT_ATTRIBUTE =
+            "ptolemy.vergil.kernel.attributes.TextAttribute";
+    
+    /** Type of annotations that hold the text of comments. */
+    public static final String ANNOTATION_TYPE_STRING_ATTRIBUTE = "ptolemy.kernel.util.StringAttribute";
+    
+    /** Type of annotations that define parameters of models. */
+    public static final String ANNOTATION_TYPE_PARAMETER = "ptolemy.data.expr.Parameter";
+    
+    
+    // ANNOTATION NAMES
     
     /**
      * Name for an annotation describing where a model element originally came from if it was
@@ -79,6 +105,55 @@ public final class TransformationConstants {
      * Ptolemy model.
      */
     public static final String ANNOTATION_PTOLEMY_CLASS = "_ptolemyClass";
+    
+    /**
+     * Name of the annotation that specifies the name of the element a comment is explicitly attached to.
+     */
+    public static final String ANNOTATION_RELATIVE_TO ="relativeTo";
+    
+    /**
+     * Name of the annotation that specifies the type of the element a comment is explicitly attached to.
+     */
+    public static final String ANNOTATION_RELATIVE_TO_ELEMENT_NAME = "relativeToElementName";
+    
+    /** Name of the annotation that holds the text of a comment. */
+    public static final String ANNOTATION_COMMENT_TEXT = "text";
+    
+    /** Name of the annotation that holds an element's location. */
+    public static final String ANNOTATION_LOCATION = "_location";
+    
+    /** Name of the annotation that holds the name of a state's refinement. */
+    public static final String ANNOTATION_REFINEMENT_NAME = "refinementName";
+    
+    /** Name of the annotation that holds an annotation text for a state machine relation. */
+    public static final String ANNOTATION_ANNOTATION = "annotation";
+    
+    /** Name of the annotation that holds the guard expression for a state machine relation. */
+    public static final String ANNOTATION_GUARD_EXPRESSION = "guardExpression";
+    
+    /** Name of the annotation that holds the output actions for a state machine relation. */
+    public static final String ANNOTATION_OUTPUT_ACTIONS = "outputActions";
+    
+    /** Name of the annotation that holds the set actions for a state machine relation. */
+    public static final String ANNOTATION_SET_ACTIONS = "setActions";
+    
+    /** Name of the annotation that identifies reset transitions. */
+    public static final String ANNOTATION_RESET_TRANSITION = "reset";
+    
+    /** Name of the annotation that identifies reset transitions. */
+    public static final String ANNOTATION_PREEMPTIVE_TRANSITION = "preemptive";
+    
+    /** Name of the annotation that identifies reset transitions. */
+    public static final String ANNOTATION_IMMEDIATE_TRANSITION = "immediate";
+    
+    /** Name of the annotation that identifies reset transitions. */
+    public static final String ANNOTATION_DEFAULT_TRANSITION = "defaultTransition";
+    
+    /** Name of the annotation that identifies reset transitions. */
+    public static final String ANNOTATION_ERROR_TRANSITION = "errorTransition";
+    
+    /** Name of the annotation that identifies reset transitions. */
+    public static final String ANNOTATION_NONDETERMINISTIC_TRANSITION = "nondeterministic";
     
     
     /**

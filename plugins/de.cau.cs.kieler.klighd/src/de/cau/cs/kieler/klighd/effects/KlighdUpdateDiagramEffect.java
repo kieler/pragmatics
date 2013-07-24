@@ -18,7 +18,7 @@ import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
-import de.cau.cs.kieler.klighd.views.DiagramViewPart;
+import de.cau.cs.kieler.klighd.views.IDiagramWorkbenchPart;
 
 /**
  * A view management effect for updating a KLighD view. When performing a model update, the new
@@ -109,7 +109,7 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
         final IPropertyHolder propertyHolder = this;
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
-                DiagramViewPart view;
+                IDiagramWorkbenchPart view;
                 if (DiagramViewManager.getInstance().getView(getId()) == null) {
                     view = DiagramViewManager.getInstance().createView(getId(), getName(),
                             getModel(), propertyHolder);

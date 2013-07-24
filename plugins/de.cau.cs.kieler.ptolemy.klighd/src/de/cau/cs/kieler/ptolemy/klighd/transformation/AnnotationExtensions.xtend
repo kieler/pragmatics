@@ -62,7 +62,7 @@ class AnnotationExtensions {
      * @return the annotations list or {@code null} if none was found.
      */
     def dispatch List<PropertyType> getAnnotations(PropertyType element) {
-        return element.annotations;
+        return element.property
     }
     
     /**
@@ -79,12 +79,29 @@ class AnnotationExtensions {
     /**
      * Returns the value of the string annotation with the given key, if any.
      * 
-     * @param element the KGraph element to fetch the annotation from.
+     * @param element the element to fetch the annotation from.
      * @param key the annotation's key.
      * @return the annotation's value, if it exists, or the empty string if it doesn't.
      */
-    def String getAnnotationValue(KGraphElement element, String key) {
+    def String getAnnotationValue(EObject element, String key) {
         return getAnnotation(element, key)?.value
+    }
+    
+    /**
+     * Returns the boolean value of the annotation with the given key, if any.
+     * 
+     * @param element the element to fetch the annotation from.
+     * @param key the annotation's key.
+     * @return {@code true} if the annotation exists and is true, {@code false} otherwise.
+     */
+    def boolean getAnnotationBooleanValue(EObject element, String key) {
+        val annotation = getAnnotation(element, key)
+        
+        if (annotation == null) {
+            return false
+        } else {
+            return annotation.value.equals("true")
+        }
     }
     
     /**

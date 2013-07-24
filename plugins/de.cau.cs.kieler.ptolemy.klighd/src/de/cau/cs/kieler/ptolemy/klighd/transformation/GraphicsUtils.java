@@ -61,7 +61,7 @@ import de.cau.cs.kieler.core.krendering.KYPosition;
  * @author ckru
  * @author cds
  */
-public class GraphicsUtils {
+final class GraphicsUtils {
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // SWT to SWT Graphics

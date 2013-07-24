@@ -13,12 +13,16 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd
 
-import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
-import org.ptolemy.moml.DocumentRoot
-import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformation
+import com.google.common.collect.ImmutableSet
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.TransformationOption
+import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphOptimization
+import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformation
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphVisualization
+import org.ptolemy.moml.DocumentRoot
+
+import static de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis.*
 
 /**
  * Synthesis for turning Ptolemy models into KGraphs.
@@ -26,6 +30,14 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphVisualizatio
  * @author cds
  */
 public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRoot> {
+    
+    // Our transformation options
+    static val TransformationOption SHOW_COMMENTS = TransformationOption::createCheckOption(
+        "Show comments", true)
+    static val TransformationOption HIDE_RELATIONS = TransformationOption::createCheckOption(
+        "Hide relations", true)
+    
+    // The parts of our transformation
     @Inject Ptolemy2KGraphTransformation transformation
     @Inject Ptolemy2KGraphOptimization optimization
     @Inject Ptolemy2KGraphVisualization visualization
@@ -33,10 +45,15 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     
     override transform(DocumentRoot model) {
         val kgraph = transformation.transform(model)
-        optimization.optimize(kgraph)
+        optimization.optimize(kgraph, SHOW_COMMENTS.optionBooleanValue,
+            HIDE_RELATIONS.optionBooleanValue)
         visualization.visualize(kgraph)
         
         return kgraph
+    }
+    
+    override getTransformationOptions() {
+        return ImmutableSet::of(SHOW_COMMENTS, HIDE_RELATIONS)
     }
     
 }
