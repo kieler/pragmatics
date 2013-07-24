@@ -87,7 +87,7 @@ class LiveProvider extends AbstractProvider {
 				max-height: 500px;
 			}
 			
-			.pre.prettyprint {
+			pre.prettyprint {
 				border: 1px solid rgba(0, 0, 0, 0.15);
 			}
 		</style>
@@ -135,7 +135,7 @@ class LiveProvider extends AbstractProvider {
 				</div>
 			
 				<div class="row-fluid span12">
-					<div id="errors" class="alert alert-error" style="display: none;"></div>
+					<div id="errorDiv" class="alert alert-error" style="display: none;"></div>
 				</div>
 				<div id="resGraph" class="row-fluid span12"></div>
 			 
@@ -167,9 +167,9 @@ class LiveProvider extends AbstractProvider {
 						}, 
 						success: function(svggraph) {
 							svg.html(svggraph);
-							// show graph section and hide errors
+							// show graph section and hide errorDiv
 							$('#resGraph').show();
-							$('#errors').hide();
+							$('#errorDiv').hide();
 							
 							// call the prettifier
 							prettyPrint();
@@ -177,9 +177,9 @@ class LiveProvider extends AbstractProvider {
 						error: function(error) {
 							// hide the graph section
 							$('#resGraph').hide();
-							// show errors
-							$('#errors').html(error.responseText);
-							$('#errors').show();	
+							// show errorDiv
+							$('#errorDiv').html(error.responseText);
+							$('#errorDiv').show();	
 						}
 					});
 				});
