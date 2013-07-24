@@ -69,11 +69,11 @@ public class PtolemyEditorPart extends DiagramEditorPart {
                 .put("xml", new MomlResourceFactoryImpl());
     }
 
-    @Override
-    protected IPropertyHolder configureKlighdProperties() {
-        IPropertyHolder configuration = new MapPropertyHolder();
-        configuration.setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY, UpdateStrategy.ID);
-        return configuration;
-    }
+//    @Override
+//    protected IPropertyHolder configureKlighdProperties() {
+//        IPropertyHolder configuration = new MapPropertyHolder();
+//        configuration.setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY, UpdateStrategy.ID);
+//        return configuration;
+//    }
 
 }

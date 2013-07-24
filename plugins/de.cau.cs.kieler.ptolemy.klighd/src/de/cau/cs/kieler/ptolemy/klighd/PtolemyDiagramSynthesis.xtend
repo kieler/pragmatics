@@ -52,8 +52,8 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         return kgraph
     }
     
-//    override getTransformationOptions() {
-//        return ImmutableSet::of(SHOW_COMMENTS, HIDE_RELATIONS)
-//    }
+    override getTransformationOptions() {
+        return ImmutableSet::of(SHOW_COMMENTS, HIDE_RELATIONS)
+    }
     
 }
