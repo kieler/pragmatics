@@ -230,6 +230,16 @@ class MarkerExtensions {
     }
     
     /**
+     * Checks if the given node has a state refinement.
+     * 
+     * @param node the node to check.
+     * @return {@code true} if the node has a refinement.
+     */
+    def boolean isMarkedAsHavingRefinement(KNode node) {
+        return node.hasAnnotation(ANNOTATION_REFINEMENT_NAME)
+    }
+    
+    /**
      * Checks if the given node is a Ptolemy Const actor.
      * 
      * @param node the node to check.

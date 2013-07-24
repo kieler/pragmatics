@@ -137,7 +137,7 @@ class Ptolemy2KGraphTransformation {
         
         // Check if we have an FSM, a modal model, or a regular node
         switch (ptEntity.class1) {
-            case ENTITY_FSM: {
+            case ENTITY_CLASS_FSM: {
                 // Mark as a state machine and then add the required relations, links, and child
                 // entities as usual
                 kNode.markAsStateMachineContainer()
@@ -146,8 +146,18 @@ class Ptolemy2KGraphTransformation {
                 kNode.addChildLinks(ptEntity.link)
             }
             
-            case ENTITY_MODAL_MODEL: {
+            case ENTITY_CLASS_MODAL_MODEL: {
+                // Mark as a state machine
+                kNode.markAsStateMachineContainer()
                 
+                // The actual states are found in the state machine controller
+                for (child : ptEntity.entity) {
+                    if (child.name.equals(ENTITY_NAME_MODAL_CONTROLLER)) {
+                        kNode.addChildEntities(child.entity)
+                        kNode.addChildRelations(child.relation)
+                        kNode.addChildLinks(child.link)
+                    }
+                }
             }
             
             default: {
@@ -182,7 +192,7 @@ class Ptolemy2KGraphTransformation {
         
         // Check if we have an FSM, a modal model, or a regular node
         switch (ptClass.^extends) {
-            case ENTITY_FSM: {
+            case ENTITY_CLASS_FSM: {
                 // Mark as a state machine and then add the required relations, links, and child
                 // entities as usual
                 kNode.markAsStateMachineContainer()
@@ -191,7 +201,7 @@ class Ptolemy2KGraphTransformation {
                 kNode.addChildLinks(ptClass.link)
             }
             
-            case ENTITY_MODAL_MODEL: {
+            case ENTITY_CLASS_MODAL_MODEL: {
                 
             }
             
