@@ -22,7 +22,6 @@ import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.LineStyle
 import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
-import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
@@ -55,8 +54,6 @@ class KRenderingFigureProvider {
     @Inject extension KColorExtensions
     /** Rendering stuff. */
     @Inject extension KRenderingExtensions
-    /** Rendering stuff. */
-    @Inject extension KEdgeExtensions
     /** Rendering stuff. */
     @Inject extension KPolylineExtensions
     
