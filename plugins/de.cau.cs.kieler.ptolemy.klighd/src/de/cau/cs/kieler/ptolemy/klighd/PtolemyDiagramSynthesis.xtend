@@ -33,9 +33,9 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     
     // Our transformation options
     static val TransformationOption SHOW_COMMENTS = TransformationOption::createCheckOption(
-        "Show comments", true)
-    static val TransformationOption HIDE_RELATIONS = TransformationOption::createCheckOption(
-        "Hide relations", true)
+        "Comments", true)
+    static val TransformationOption SHOW_RELATIONS = TransformationOption::createCheckOption(
+        "Relations", false)
     
     // The parts of our transformation
     @Inject Ptolemy2KGraphTransformation transformation
@@ -46,14 +46,14 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     override transform(DocumentRoot model) {
         val kgraph = transformation.transform(model)
         optimization.optimize(kgraph, SHOW_COMMENTS.optionBooleanValue,
-            HIDE_RELATIONS.optionBooleanValue)
+            !SHOW_RELATIONS.optionBooleanValue)
         visualization.visualize(kgraph)
         
         return kgraph
     }
     
     override getTransformationOptions() {
-        return ImmutableSet::of(SHOW_COMMENTS, HIDE_RELATIONS)
+        return ImmutableSet::of(SHOW_COMMENTS, SHOW_RELATIONS)
     }
     
 }
