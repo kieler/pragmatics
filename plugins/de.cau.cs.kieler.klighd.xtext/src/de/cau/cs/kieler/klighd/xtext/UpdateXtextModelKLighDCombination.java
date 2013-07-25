@@ -17,12 +17,13 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.util.RunnableWithResult;
-
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
@@ -77,6 +78,14 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
                 private EObject result = null;
                 
                 public void run() {
+                    XtextEditor editor = state.getEditor();
+                    if (editor == null) {
+                        return;
+                    }
+                    IXtextDocument document = editor.getDocument();
+                    if (document == null) {
+                        return;
+                    }
                     state.getEditor().getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
 
                         @Override
