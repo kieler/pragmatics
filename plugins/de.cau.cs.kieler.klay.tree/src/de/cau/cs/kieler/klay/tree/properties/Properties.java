@@ -119,6 +119,10 @@ public final class Properties {
     public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
             1);
     
+    /** Tells the node order which weighting it should use. */
+    public static final IProperty<OrderWeighting> WEIGHTING = new Property<OrderWeighting>(
+            "de.cau.cs.kieler.klay.tree.weighting", OrderWeighting.DESCENDANTS);
+    
     /** If the algorithm run in debug mode how many test graph should be generated. */
     public static final IProperty<Integer> TEST_GRAPHS = new Property<Integer>(
             "de.cau.cs.kieler.klay.tree.testGraph", 0);

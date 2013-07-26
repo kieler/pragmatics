@@ -59,19 +59,17 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
 
             GenTestGraph testGenerator = new GenTestGraph();
 
-            for (int i = 0; i < 2000; i++) {
+            for (int i = 0; i < graphs; i++) {
 
-                KNode testGraph = testGenerator.generateKgraph(2000);
-                
+                KNode testGraph = testGenerator.generateKgraph(nodes);
+
                 process(testGraph, progressMonitor);
 
                 testGenerator.exportLayoutGraph(testGraph);
 
             }
-        } else {
-            process(kgraph, progressMonitor);
         }
-
+        process(kgraph, progressMonitor);
     }
 
     /**

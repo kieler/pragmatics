@@ -34,6 +34,18 @@
                default="false"
                option="de.cau.cs.kieler.debugMode">
          </knownOption>
+         <knownOption
+               default="DESCENDANTS"
+               option="de.cau.cs.kieler.klay.tree.weighting">
+         </knownOption>
+         <knownOption
+               default="0"
+               option="de.cau.cs.kieler.klay.tree.testGraph">
+         </knownOption>
+         <knownOption
+               default="0"
+               option="de.cau.cs.kieler.klay.tree.testNodes">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -55,6 +67,15 @@
                   name="Test nodes"
                   type="int">
       </layoutOption>
+            <layoutOption
+                  appliesTo="parents"
+                  class="de.cau.cs.kieler.klay.tree.properties.OrderWeighting"
+                  default="DESCENDANTS"
+                  description="Tells the node order which weighting it should use"
+                  id="de.cau.cs.kieler.klay.tree.weighting"
+                  name="Weighting of Nodes"
+                  type="enum">
+            </layoutOption>
    </extension>
 
 </plugin>

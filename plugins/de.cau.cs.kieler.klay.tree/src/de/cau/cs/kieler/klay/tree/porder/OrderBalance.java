@@ -19,12 +19,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.tree.properties.OrderWeighting;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 import de.cau.cs.kieler.klay.tree.util.FindNode;
 import de.cau.cs.kieler.klay.tree.util.SortTEdgeTargetProperty;
@@ -41,6 +43,11 @@ import de.cau.cs.kieler.klay.tree.util.SortTEdgeTargetProperty;
  * @author sgu
  */
 public class OrderBalance implements ILayoutPhase {
+
+    /**
+     * Tells the node order which weighting it should use.
+     */
+    IProperty<Integer> weighting;
 
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
@@ -64,6 +71,13 @@ public class OrderBalance implements ILayoutPhase {
 
         progressMonitor.begin("Processor arrange node", 1);
 
+        /** get the weighting from the userinterface */
+        if (tGraph.getProperty(Properties.WEIGHTING).equals(OrderWeighting.DESCENDANTS)) {
+            weighting = Properties.DESCENDANTS;
+        } else {
+            weighting = Properties.FAN;
+        }
+
         /** find the root of the component expected only one root exists */
         TNode root = null;
         Iterator<TNode> it = tGraph.getNodes().iterator();
@@ -73,35 +87,35 @@ public class OrderBalance implements ILayoutPhase {
                 root = tNode;
             }
         }
-        
-        /** check if a root is there */
-        if(root!=null){
-        
-        /** start two levels above the deepest level at the leftmost node */
-        TNode lM = FindNode.getLeftMost(root.getChildren());
 
-        /** if there are only the root and one level or less no reordering is necessary */
-        if (lM != null && lM.getParent() != root) {
-            TNode parent = lM.getParent().getParent();
-            TNode leftMost = parent;
-            /** go to the leftmost node in this level */
-            while (leftMost.getProperty(Properties.LEFTNEIGHBOR) != null) {
-                leftMost = leftMost.getProperty(Properties.LEFTNEIGHBOR);
+        /** check if a root is there */
+        if (root != null) {
+
+            /** start two levels above the deepest level at the leftmost node */
+            TNode lM = FindNode.getLeftMost(root.getChildren());
+
+            /** if there are only the root and one level or less no reordering is necessary */
+            if (lM != null && lM.getParent() != root) {
+                TNode parent = lM.getParent().getParent();
+                TNode leftMost = parent;
+                /** go to the leftmost node in this level */
+                while (leftMost.getProperty(Properties.LEFTNEIGHBOR) != null) {
+                    leftMost = leftMost.getProperty(Properties.LEFTNEIGHBOR);
+                }
+                /** start the order at the leftmost node */
+                orderLevel(leftMost, false);
+
+                /**
+                 * reset the structure properties of each node to null, because the order of the
+                 * graph has changed
+                 */
+                for (TNode tNode : tGraph.getNodes()) {
+                    tNode.setProperty(Properties.RIGHTNEIGHBOR, null);
+                    tNode.setProperty(Properties.LEFTNEIGHBOR, null);
+                    tNode.setProperty(Properties.RIGHTSIBLING, null);
+                    tNode.setProperty(Properties.LEFTSIBLING, null);
+                }
             }
-            /** start the order at the leftmost node */
-            orderLevel(leftMost, false);
-            
-            /**
-             * reset the structure properties of each node to null, because the order of the graph has
-             * changed
-             */
-            for (TNode tNode : tGraph.getNodes()) {
-                tNode.setProperty(Properties.RIGHTNEIGHBOR, null);
-                tNode.setProperty(Properties.LEFTNEIGHBOR, null);
-                tNode.setProperty(Properties.RIGHTSIBLING, null);
-                tNode.setProperty(Properties.LEFTSIBLING, null);
-            }
-        }
         }
 
     }
@@ -113,7 +127,7 @@ public class OrderBalance implements ILayoutPhase {
      * @param leftMost
      *            the leftmost node in a level
      */
-    private void orderLevel(TNode leftMost,boolean odd) {
+    private void orderLevel(TNode leftMost, boolean odd) {
         if (leftMost != null) {
 
             /** copy current to iterate over the copy */
@@ -126,7 +140,7 @@ public class OrderBalance implements ILayoutPhase {
                  */
                 List<TEdge> outgoing = currentNode.getOutgoingEdges();
 
-                Collections.sort(outgoing, new SortTEdgeTargetProperty(Properties.FAN));
+                Collections.sort(outgoing, new SortTEdgeTargetProperty(weighting));
 
                 /**
                  * Add each child to a balanced list where the fat child are in the middle and the
@@ -142,7 +156,7 @@ public class OrderBalance implements ILayoutPhase {
 
                 boolean innerOdd = odd;
                 while (!outgoing.isEmpty()) {
-                    int gaps = outgoing.get(0).getTarget().getProperty(Properties.FAN);
+                    int gaps = outgoing.get(0).getTarget().getProperty(weighting);
                     int index;
 
                     if (innerOdd) {
@@ -181,7 +195,7 @@ public class OrderBalance implements ILayoutPhase {
                 currentNode = currentNode.getProperty(Properties.RIGHTNEIGHBOR);
             }
             /** this level has been ordered, go on with the next level above */
-            orderLevel(leftMost.getParent(),!odd);
+            orderLevel(leftMost.getParent(), !odd);
         }
     }
 }
