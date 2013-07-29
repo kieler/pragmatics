@@ -254,7 +254,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         double graphWidth = graphSize.x + graphInsets.left + graphInsets.right + 2 * borderSpacing;
         double northY = 0 - graphInsets.top - borderSpacing - layeredGraph.getOffset().y;
         double southY = graphSize.y + graphInsets.top + graphInsets.bottom + 2 * borderSpacing
-                + layeredGraph.getOffset().y;
+                - layeredGraph.getOffset().y;
         
         // Lists of northern and southern external port dummies
         List<LNode> northernDummies = new LinkedList<LNode>();
@@ -385,17 +385,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         
         Arrays.sort(dummyArray, new Comparator<LNode>() {
             public int compare(final LNode a, final LNode b) {
-                double diff = a.getPosition().x - b.getPosition().x;
-                
-                // We cannot simply return diff cast to an int: if diff == 0.4, the returned value
-                // would be 0, which is wrong
-                if (diff < 0.0) {
-                    return -1;
-                } else if (diff > 0.0) {
-                    return 1;
-                } else {
-                    return 0;
-                }
+                return Double.compare(a.getPosition().x, b.getPosition().x);
             }
         });
         
@@ -420,18 +410,8 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         
         Arrays.sort(dummyArray, new Comparator<LNode>() {
             public int compare(final LNode a, final LNode b) {
-                double diff = a.getProperty(Properties.PORT_RATIO_OR_POSITION)
-                        - b.getProperty(Properties.PORT_RATIO_OR_POSITION);
-                
-                // We cannot simply return diff cast to an int: if diff == 0.4, the returned value
-                // would be 0, which is wrong
-                if (diff < 0.0) {
-                    return -1;
-                } else if (diff > 0.0) {
-                    return 1;
-                } else {
-                    return 0;
-                }
+                return Double.compare(a.getProperty(Properties.PORT_RATIO_OR_POSITION),
+                        b.getProperty(Properties.PORT_RATIO_OR_POSITION));
             }
         });
         
@@ -618,7 +598,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                 KVectorChain incomingEdgeBendPoints = new KVectorChain(nodeToOriginEdge.getBendPoints());
                 
                 KVector firstBendPoint = new KVector(nodeInPort.getPosition());
-                firstBendPoint.add(new KVector(node.getPosition()));
+                firstBendPoint.add(node.getPosition());
                 incomingEdgeBendPoints.add(0, firstBendPoint);
                 
                 // Compute bend points for outgoing edges
@@ -626,7 +606,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                         nodeToOriginEdge.getBendPoints());
                 
                 KVector lastBendPoint = new KVector(nodeOutPort.getPosition());
-                lastBendPoint.add(new KVector(node.getPosition()));
+                lastBendPoint.add(node.getPosition());
                 outgoingEdgeBendPoints.add(lastBendPoint);
                 
                 // Retrieve the original hierarchical port dummy
@@ -638,7 +618,8 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                 
                 for (LEdge edge : edges) {
                     edge.setTarget(replacedDummyPort);
-                    edge.getBendPoints().addAll(incomingEdgeBendPoints);
+                    edge.getBendPoints().addAllAsCopies(
+                            edge.getBendPoints().size(), incomingEdgeBendPoints);
                 }
                 
                 // Reroute all the output port's edges
@@ -647,7 +628,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                 
                 for (LEdge edge : edges) {
                     edge.setSource(replacedDummyPort);
-                    edge.getBendPoints().addAll(0, outgoingEdgeBendPoints);
+                    edge.getBendPoints().addAllAsCopies(0, outgoingEdgeBendPoints);
                 }
                 
                 // Remove connection between node and original hierarchical port dummy
