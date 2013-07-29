@@ -1,10 +1,10 @@
-package de.cau.cs.kieler.klighd.piccolo.svg.server
+package de.cau.cs.kieler.klighdning
 
 import org.eclipse.core.resources.IContainer
 import org.eclipse.core.resources.IFile
 import org.eclipse.core.resources.IResource
 import org.eclipse.core.resources.IWorkspaceRoot
-import java.io.File
+import java.io.File 
 
 class HtmlGenerator {
     
@@ -17,7 +17,7 @@ class HtmlGenerator {
         val html = root.projects.map [ project |
             toHtml(project) 
         ].join("\n")
-        
+         
         "<ul id='tree'>" + html + "</ul>"
     }
     

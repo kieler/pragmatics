@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="KlighD SVG Browser" uid="de.cau.cs.kieler.klighd.piccolo.svg.product" id="de.cau.cs.kieler.klighd.piccolo.svg.product" application="de.cau.cs.kieler.klighd.piccolo.svg.Browser" version="0.1.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="KlighD SVG Browser" uid="de.cau.cs.kieler.klighdning.product" id="de.cau.cs.kieler.klighdning.product" application="de.cau.cs.kieler.klighdning.Browser" version="0.1.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -44,6 +44,7 @@ e:/Uni/ma/models</programArgs>
       <plugin id="de.cau.cs.kieler.klighd.piccolo"/>
       <plugin id="de.cau.cs.kieler.klighd.piccolo.draw2d" fragment="true"/>
       <plugin id="de.cau.cs.kieler.klighd.piccolo.svg"/>
+      <plugin id="de.cau.cs.kieler.klighdning"/>
       <plugin id="de.cau.cs.kieler.ptolemy.klighd"/>
       <plugin id="edu.umd.cs.piccolo"/>
       <plugin id="javax.annotation"/>

@@ -2,13 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="de.cau.cs.kieler.klighd.extensions">
-      <viewer
-            class="de.cau.cs.kieler.klighd.piccolo.svg.legacy.PiccoloSVGViewerProvider"
-            id="de.cau.cs.kieler.klighd.piccolo.svg.viewer">
-      </viewer>
-   </extension>
-   <extension
          id="Browser"
          point="org.eclipse.core.runtime.applications">
       <application
@@ -16,7 +9,7 @@
             thread="main"
             visible="true">
          <run
-               class="de.cau.cs.kieler.klighd.piccolo.svg.BrowseServerApplication">
+               class="de.cau.cs.kieler.klighdning.BrowseServerApplication">
          </run>
       </application>
    </extension>
@@ -24,7 +17,7 @@
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
-            application="de.cau.cs.kieler.klighd.piccolo.svg.Browser"
+            application="de.cau.cs.kieler.klighdning.Browser"
             name="KlighD SVG Browser">
          <property
                name="appName"
