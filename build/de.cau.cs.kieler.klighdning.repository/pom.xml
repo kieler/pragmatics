@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <version>0.1.0-SNAPSHOT</version>
-  <artifactId>de.cau.cs.kieler.klighd.svg.browser.repository</artifactId>
+  <artifactId>de.cau.cs.kieler.klighdning.repository</artifactId>
   <packaging>eclipse-repository</packaging>
   <name>KlighDning Model Browser</name>
 
@@ -38,7 +38,7 @@
         <configuration>
           <products>
             <product>
-              <id>de.cau.cs.kieler.klighd.piccolo.svg.product</id>
+              <id>de.cau.cs.kieler.klighdning.product</id>
               <rootFolder>klighdning</rootFolder>
               <archiveFileName>KlighDning_${buildQualifier}</archiveFileName>
             </product>
