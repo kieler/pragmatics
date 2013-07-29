@@ -68,15 +68,22 @@ class Ptolemy2KGraphVisualization {
     /** Utility class that provides renderings. */
     @Inject extension KRenderingFigureProvider
     
+    /** Rendering factory used to create stuff. */
     val renderingFactory = KRenderingFactory::eINSTANCE
+    /** alpha value of the background of expanded compound nodes. */
+    var compoundNodeAlpha = 10
     
     
     /**
      * Annotates the given KGraph with the information necessary to render it as a Ptolemy model.
      * 
      * @param kGraph the KGraph created from a Ptolemy model.
+     * @param compoundNodeAlpha alpha value of the background of expanded compound nodes. A higher value
+     *                          translates to more intense backgrounds. INTENSE!
      */
-    def void visualize(KNode kGraph) {
+    def void visualize(KNode kGraph, int compoundNodeAlpha) {
+        this.compoundNodeAlpha = compoundNodeAlpha
+        
         // Set the layout lagorithm for the graph
         kGraph.setLayoutAlgorithm()
         
@@ -164,7 +171,7 @@ class Ptolemy2KGraphVisualization {
         node.setLayoutAlgorithm()
         
         // Create the rendering for this node
-        val KRendering expandedRendering = createExpandedCompoundNodeRendering(node)
+        val KRendering expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha)
         expandedRendering.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
         expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
         node.data += expandedRendering

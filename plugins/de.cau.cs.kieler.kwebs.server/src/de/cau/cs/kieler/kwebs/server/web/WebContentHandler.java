@@ -357,8 +357,7 @@ public class WebContentHandler implements HttpHandler {
      *            if an exception occurs
      */
     private void forward(final HttpExchange exchange, final String uri) throws IOException {
-        String forward = exchange.getHttpContext().getPath()
-                         + "/" + uri;
+        String forward = exchange.getHttpContext().getPath() + uri;
         Headers headers = exchange.getResponseHeaders();
         headers.add("Location", forward);
         exchange.sendResponseHeaders(HttpURLConnection.HTTP_MOVED_PERM, 0);
