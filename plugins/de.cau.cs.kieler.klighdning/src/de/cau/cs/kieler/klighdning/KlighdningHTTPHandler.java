@@ -135,13 +135,12 @@ public class KlighdningHTTPHandler extends AbstractHandler {
                         Set<String> fragments = Sets.newHashSet(Splitter.on("$").split(perma));
                         System.out.println(fragments);
                         getViewer.applyPermalink(fragments);
-                        // FIXME perma is not coming through
-                        // request:
-                        // /resource/ptolemy/ci/ci_queuetest1.moml?perma=baseModel.kgraph%23//@children.0$baseModel.kgraph%23//@children.2
 
-                        String transform = request.getParameterMap().get("transform")[0];
-                        System.out.println(transform);
-                        getViewer.setSvgTransform(transform);
+                        String[] transform = request.getParameterMap().get("transform");
+                        if (transform != null && transform.length > 0) {
+                            System.out.println(transform[0]);
+                            getViewer.setSvgTransform(transform[0]);
+                        }
 
                         SVGLayoutProvider.getInstance().layout(getViewer);
 

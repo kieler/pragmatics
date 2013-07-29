@@ -39,3 +39,43 @@ svg {
 [class*="span"] {
     margin-left: 0px;
 }
+
+#control {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.ctrlBox {
+    margin:auto;
+    margin-bottom: 5px;
+    background-color: #eeeeee;
+    border-radius: 6px 6px 6px 6px;
+    border-width: 1px;
+    border-color: #CCCCCC;
+    border-style: solid;
+    border-color: #CCCCCC;
+    border-style: solid;
+    border-style: solid;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
+}
+
+.ctrlBox:hover {
+    background-color: #dddddd;
+}
+
+#zoomIn, #zoomOut {
+    display: inline-block;
+    width: 20px;
+}
+
+#permaLink {
+    padding: 4px;
+}
+
+a#permaLink {
+    font-color: #000000;
+    decoration: none;
+}

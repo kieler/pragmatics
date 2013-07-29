@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class BrowseServerApplication implements IApplication {
 
-    // A dummy shell is required to obey to piccolos class hierarchy.
+    // A dummy shell is required to obey to piccolo's class hierarchy.
     private final Shell shell = new Shell();
 
     private String rootFolder = null;

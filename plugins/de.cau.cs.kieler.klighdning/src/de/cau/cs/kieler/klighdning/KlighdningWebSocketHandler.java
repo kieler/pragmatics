@@ -178,11 +178,6 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
             throw new IllegalArgumentException("The json object requires a 'type' field.");
         }
 
-        // add perma link
-        String perma = getCurrentViewer().assemblePermaLink();
-        System.out.println("PERMA LINK: " + perma);
-        jsonMap.put("perma", perma);
-
         String json = JSON.toString(jsonMap);
         broadcastJson(json, broadcastType);
     }
@@ -209,6 +204,14 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
             // TODO check why on F5 no close signal is send, remove the connection here
             e.printStackTrace();
         }
+    }
+
+    private void broadcastPermaLink() {
+        // add perma link
+        String perma = "/resource" + getCurrentViewer().assemblePermaLink();
+        System.out.println("PERMA LINK: " + perma);
+
+        broadcastJson("type", "PERMALINK", "perma", perma);
     }
 
     private void sendError(String error) {
@@ -337,6 +340,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                             // applyLayout();
 
                             layoutBroadcastSVG();
+                            broadcastPermaLink();
                         } catch (Exception e) {
                             e.printStackTrace();
                             // TODO pass the exception to the outside
@@ -366,6 +370,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                         // broadcastSVG();
 
                         layoutBroadcastSVG();
+                        broadcastPermaLink();
                     }
                 });
             } else if (type.equals("TRANSFORM")) {
@@ -382,7 +387,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                 });
 
                 broadcastJson(Broadcast.AllButThis, "type", "TRANSFORM", "transform", transform);
-
+                broadcastPermaLink();
             }
 
         } catch (Exception e) {

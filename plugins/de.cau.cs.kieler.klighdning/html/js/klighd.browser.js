@@ -52,7 +52,7 @@ window.onbeforeunload = function() {
 var connection = null;
 
 $('#connect').click(function() {
-  
+
   // remove possibly old svg
   $('#viewport').html();
 
@@ -111,10 +111,17 @@ $('#connect').click(function() {
     } else if (json.type === "TRANSFORM") {
       $('#group').attr("transform", json.transform);
 
+    } else if (json.type === "PERMALINK") {
+      // if we get a perma link, update
+      if (json.perma) {
+        $('#permaLink > a').prop("href", json.perma);
+      } else {
+        $('#permaLink > a').prop("href", "#");
+      }
+      
     } else if (json.type === "ERROR") {
       error(json.data);
     }
-
   };
 
   // -- Try to connect
