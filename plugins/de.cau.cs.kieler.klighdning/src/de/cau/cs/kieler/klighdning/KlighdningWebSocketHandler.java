@@ -49,12 +49,13 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
     private boolean verbose = true;
 
+    // FIXME remove the statics
     // room mappings
-    private Map<String, PiccoloSVGBrowseViewer> roomViewerMap = Maps.newConcurrentMap();
-    private MultiMap<String> roomConnectionMap = new MultiMap<String>();
+    private static Map<String, PiccoloSVGBrowseViewer> roomViewerMap = Maps.newConcurrentMap();
+    private static MultiMap<String> roomConnectionMap = new MultiMap<String>();
 
     // single browsing mapping
-    private Map<Connection, PiccoloSVGBrowseViewer> individualConnectionMap = Maps
+    private static Map<Connection, PiccoloSVGBrowseViewer> individualConnectionMap = Maps
             .newConcurrentMap();
 
     private String currentRoom = null;
@@ -184,7 +185,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
     private void broadcastJson(final String json, final Broadcast broadcastType) {
         try {
-
+            
             if (broadcastType != Broadcast.OnlyThis && currentRoom != null) {
                 @SuppressWarnings("unchecked")
                 List<Connection> cons = roomConnectionMap.getValues(currentRoom);
@@ -288,12 +289,15 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                         layoutBroadcastSVG(Broadcast.OnlyThis);
                     }
                 });
+                
+                System.out.println(connection);
 
             } else if (type.equals("LEAVE")) {
                 /*
                  * LEAVE -------------------------------------------------------------------
                  */
                 leaveCurrentRoom(true);
+                System.out.println(connection);
 
             } else if (type.equals("RESOURCE")) {
                 /*
@@ -329,6 +333,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                     public void run() {
                         PiccoloSVGBrowseViewer viewer = getCurrentViewer();
                         viewer.getCanvas().setBounds(0, 0, 870, 600);
+                        viewer.setSvgTransform(null);
 
                         // translate and set the model
                         try {

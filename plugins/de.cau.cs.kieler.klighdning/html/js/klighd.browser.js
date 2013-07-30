@@ -1,7 +1,22 @@
 // init svg
-$('#viewport').svg();
-$('#viewport').addScalability();
-$('#viewport').addDraggable();
+//$('#viewport').svg();
+//$('#viewport').addScalability();
+//$('#viewport').addDraggable();
+var zoomPanManager = $('#viewport').zoomPan();
+
+// new
+$('#zoomIn').click(function() {
+  zoomPanManager.each(function(k, m) {
+    console.log(zoomPanManager);
+    console.log(m);
+    m.zpm.zoom(1.25);
+  });
+});
+$('#zoomOut').click(function() {
+  zoomPanManager.each(function(k, m) {
+    m.zpm.zoom(0.75);
+  });
+});
 
 /**
  * ----------------------------------------------------------------------------------------------------------
@@ -54,7 +69,8 @@ var connection = null;
 $('#connect').click(function() {
 
   // remove possibly old svg
-  $('#viewport').html();
+  $('#viewport').html("");
+  hideErrors();
 
   var host = window.location.host;
   connection = new WebSocket('ws://' + host + '/', "protocol.svgws");
@@ -78,6 +94,7 @@ $('#connect').click(function() {
 
     if (json.type === "SVG") {
       // set the svg
+      $('#viewport').html("");
       $('#viewport').html(json.data);
 
       // attach a mousedown listener to handle expanding of hierarchical nodes
@@ -101,7 +118,6 @@ $('#connect').click(function() {
 
       // translate events
       $('#group').change(function(e) {
-        console.log("change " + e);
         sendJson({
           type : 'TRANSFORM',
           transform : $(this).attr('transform')
@@ -118,7 +134,7 @@ $('#connect').click(function() {
       } else {
         $('#permaLink > a').prop("href", "#");
       }
-      
+
     } else if (json.type === "ERROR") {
       error(json.data);
     }
@@ -221,6 +237,11 @@ function loadRepository() {
           type : 'RESOURCE',
           path : path
         }));
+        
+        // clear the current transform
+        zoomPanManager.each(function(k, m) {
+          m.zpm.reset();
+        });
       });
 
       /*
