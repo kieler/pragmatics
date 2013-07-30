@@ -285,7 +285,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                 break;
             }
             
-            // Set y coordinats and add the dummy to its respective list
+            // Set y coordinates and add the dummy to its respective list
             switch (dummy.getProperty(Properties.EXT_PORT_SIDE)) {
             case NORTH:
                 dummy.getPosition().y = northY;
@@ -589,15 +589,10 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                 // restored just a while ago
                 LEdge nodeToOriginEdge = nodeOriginPort.getOutgoingEdges().get(0);
                 
-                // If we have a northern port dummy, we must apply the graph offset
-                if (node.getProperty(Properties.EXT_PORT_SIDE) == PortSide.NORTH) {
-                    nodeToOriginEdge.getBendPoints().translate(0.0, -northernExtPortEdgeRoutingHeight);
-                }
-                
                 // Compute bend points for incoming edges
                 KVectorChain incomingEdgeBendPoints = new KVectorChain(nodeToOriginEdge.getBendPoints());
                 
-                KVector firstBendPoint = new KVector(nodeInPort.getPosition());
+                KVector firstBendPoint = new KVector(nodeOriginPort.getPosition());
                 firstBendPoint.add(node.getPosition());
                 incomingEdgeBendPoints.add(0, firstBendPoint);
                 
@@ -605,7 +600,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                 KVectorChain outgoingEdgeBendPoints = KVectorChain.reverse(
                         nodeToOriginEdge.getBendPoints());
                 
-                KVector lastBendPoint = new KVector(nodeOutPort.getPosition());
+                KVector lastBendPoint = new KVector(nodeOriginPort.getPosition());
                 lastBendPoint.add(node.getPosition());
                 outgoingEdgeBendPoints.add(lastBendPoint);
                 
