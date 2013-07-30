@@ -95,13 +95,13 @@ public enum LayoutProcessorStrategy {
     COMPOUND_SIDE_PROCESSOR,
     
     // Before Phase 5
-    
-    /** Calculate the size of layers. */
-    LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR,
+
     /** Adjusts the width of hierarchical port dummy nodes. */
     HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR,
     /** Fix coordinates of hierarchical port dummy nodes. */
     HIERARCHICAL_PORT_POSITION_PROCESSOR,
+    /** Calculate the size of layers. */
+    LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR,
     
     // After Phase 5
     
