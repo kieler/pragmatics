@@ -156,7 +156,7 @@ public class OrderBalance implements ILayoutPhase {
 
                 boolean innerOdd = odd;
                 while (!outgoing.isEmpty()) {
-                    int gaps = outgoing.get(0).getTarget().getProperty(weighting);
+                    int gaps = outgoing.get(0).getTarget().getProperty(Properties.FAN);
                     int index;
 
                     if (innerOdd) {
