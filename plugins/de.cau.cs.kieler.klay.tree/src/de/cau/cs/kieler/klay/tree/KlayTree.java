@@ -23,11 +23,11 @@ import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
-import de.cau.cs.kieler.klay.tree.erouting.EdgeRouter;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
-import de.cau.cs.kieler.klay.tree.porder.OrderBalance;
-import de.cau.cs.kieler.klay.tree.pplacing.NodePlacer;
-import de.cau.cs.kieler.klay.tree.ptreeing.DFSTreeifyer;
+import de.cau.cs.kieler.klay.tree.p1treeify.DFSTreeifyer;
+import de.cau.cs.kieler.klay.tree.p2order.OrderBalance;
+import de.cau.cs.kieler.klay.tree.p3place.NodePlacer;
+import de.cau.cs.kieler.klay.tree.p4route.EdgeRouter;
 
 /**
  * Implements a layout algorithm for trees. The tree layouter uses the algorithm from

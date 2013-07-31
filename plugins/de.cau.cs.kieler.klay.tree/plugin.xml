@@ -38,36 +38,9 @@
                default="DESCENDANTS"
                option="de.cau.cs.kieler.klay.tree.weighting">
          </knownOption>
-         <knownOption
-               default="0"
-               option="de.cau.cs.kieler.klay.tree.testGraph">
-         </knownOption>
-         <knownOption
-               default="0"
-               option="de.cau.cs.kieler.klay.tree.testNodes">
-         </knownOption>
       </layoutAlgorithm>
-      <layoutOption
-            advanced="true"
-            appliesTo="parents"
-            default="0"
-            description="Number of test graph."
-            id="de.cau.cs.kieler.klay.tree.testGraph"
-            lowerBound="0"
-            name="Test graphs"
-            type="int">
-      </layoutOption>
             <layoutOption
                   advanced="true"
-                  appliesTo="parents"
-                  default="0"
-                  description="Number of nodes in each test graph."
-                  id="de.cau.cs.kieler.klay.tree.testNodes"
-                  lowerBound="0"
-                  name="Test nodes"
-                  type="int">
-      </layoutOption>
-            <layoutOption
                   appliesTo="parents"
                   class="de.cau.cs.kieler.klay.tree.properties.OrderWeighting"
                   default="DESCENDANTS"

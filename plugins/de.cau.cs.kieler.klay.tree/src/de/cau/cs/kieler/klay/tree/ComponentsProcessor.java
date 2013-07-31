@@ -29,7 +29,6 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
-import de.cau.cs.kieler.klay.tree.graph.TLabel;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
@@ -142,7 +141,6 @@ public class ComponentsProcessor {
                 }
                 // add the edges an labels to the component
                 component.getEdges().add(edge);
-                component.getLabels().addAll(edge.getLabels());
             }
             return component;
         }
@@ -290,11 +288,6 @@ public class ComponentsProcessor {
                 bendpoint.add(graphOffset);
             }
             destGraph.getEdges().add(edge);
-        }
-
-        for (TLabel label : sourceGraph.getLabels()) {
-            label.getPosition().add(graphOffset);
-            destGraph.getLabels().add(label);
         }
     }
 
