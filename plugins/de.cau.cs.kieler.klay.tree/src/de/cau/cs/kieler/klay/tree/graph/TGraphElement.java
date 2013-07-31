@@ -27,7 +27,6 @@ public abstract class TGraphElement extends MapPropertyHolder implements Compara
     /** the serial version UID. */
     private static final long serialVersionUID = 1L;
 
-    // TODO check if necessary
     /** Identifier value, may be arbitrarily used by algorithms. */
     public int id;
 

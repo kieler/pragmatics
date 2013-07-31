@@ -95,8 +95,7 @@ public class NodePlacer implements ILayoutPhase {
         firstWalk(root, 0, progressMonitor.subTask(.5f));
 
         /** Do the final positioning with a preorder walk. */
-        secondWalk(root, root.getProperty(Properties.LEVELHEIGHT) + yTopAdjustment, xTopAdjustment,
-                progressMonitor.subTask(.5f));
+        secondWalk(root, root.getProperty(Properties.LEVELHEIGHT) + yTopAdjustment, xTopAdjustment, progressMonitor.subTask(.5f));
 
         progressMonitor.done();
     }

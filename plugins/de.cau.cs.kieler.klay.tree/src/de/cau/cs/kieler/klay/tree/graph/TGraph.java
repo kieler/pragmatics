@@ -33,9 +33,6 @@ public class TGraph extends MapPropertyHolder {
     private LinkedList<TNode> nodes = new LinkedList<TNode>();
     /** All edges of this graph. */
     private LinkedList<TEdge> edges = new LinkedList<TEdge>();
-    // TODO check if a list of labels is necessary
-    /** All labels of this graph. */
-    private LinkedList<TLabel> labels = new LinkedList<TLabel>();
    
     /**
      * Default constructor that creates an empty graph.
@@ -44,7 +41,6 @@ public class TGraph extends MapPropertyHolder {
     public TGraph() {
         this.nodes = new LinkedList<TNode>();
         this.edges = new LinkedList<TEdge>();
-        this.labels = new LinkedList<TLabel>();
     }
 
     /**
@@ -78,15 +74,6 @@ public class TGraph extends MapPropertyHolder {
      */
     public List<TNode> getNodes() {
         return nodes;
-    }
-
-    /**
-     * Returns the list of labels for this graph.
-     * 
-     * @return the labels
-     */
-    public List<TLabel> getLabels() {
-        return labels;
     }
 
     /**

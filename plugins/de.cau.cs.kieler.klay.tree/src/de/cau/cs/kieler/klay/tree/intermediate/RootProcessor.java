@@ -53,7 +53,7 @@ public class RootProcessor implements ILayoutProcessor {
          */
         switch (roots.size()) {
         case 0:
-            // TODO ASSERT NO NODES ARE THERE
+            // TODO assert no nodes are there
             TNode root = new TNode(0, tGraph, "DUMMY_ROOT");
             root.setProperty(Properties.ROOT, true);
             root.setProperty(Properties.DUMMY, true);

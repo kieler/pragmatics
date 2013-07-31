@@ -197,7 +197,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         // process the edges
         for (TEdge tEdge : tGraph.getEdges()) {
             KEdge kedge = (KEdge) tEdge.getProperty(Properties.ORIGIN);
-            // TODO ASSERT origin ist not null
+            // TODO ASSERT origin is not null
             if (kedge != null) {
 
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
