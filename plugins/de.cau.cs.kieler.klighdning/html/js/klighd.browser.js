@@ -1,22 +1,5 @@
-// init svg
-//$('#viewport').svg();
-//$('#viewport').addScalability();
-//$('#viewport').addDraggable();
-var zoomPanManager = $('#viewport').zoomPan();
-
-// new
-$('#zoomIn').click(function() {
-  zoomPanManager.each(function(k, m) {
-    console.log(zoomPanManager);
-    console.log(m);
-    m.zpm.zoom(1.25);
-  });
-});
-$('#zoomOut').click(function() {
-  zoomPanManager.each(function(k, m) {
-    m.zpm.zoom(0.75);
-  });
-});
+// The zoom manager
+var zoomPanManager = null;
 
 /**
  * ----------------------------------------------------------------------------------------------------------
@@ -48,7 +31,29 @@ function initState() {
   $('#joinDiv').show();
   $('#leaveDiv').hide();
   hideErrors();
+  
 }
+
+/**
+ * ----------------------------------------------------------------------------------------------------------
+ * The manual controls for zooming.
+ */
+$('#zoomIn').click(function() {
+  if(!zoomPanManager) {
+    return;
+  }
+  zoomPanManager.each(function(k, m) {
+    m.zpm.zoom(1.20);
+  });
+});
+$('#zoomOut').click(function() {
+  if(!zoomPanManager) {
+    return;
+  }
+  zoomPanManager.each(function(k, m) {
+    m.zpm.zoom(0.8);
+  });
+});
 
 /**
  * ----------------------------------------------------------------------------------------------------------
@@ -66,7 +71,7 @@ window.onbeforeunload = function() {
 // the actual connection
 var connection = null;
 
-$('#connect').click(function() {
+var webSocketConnect = function() {
 
   // remove possibly old svg
   $('#viewport').html("");
@@ -96,6 +101,9 @@ $('#connect').click(function() {
       // set the svg
       $('#viewport').html("");
       $('#viewport').html(json.data);
+
+      // attach zoom pan functionality
+      zoomPanManager = $('#viewport').zoomPan();
 
       // attach a mousedown listener to handle expanding of hierarchical nodes
       var expandFun = function(d) {
@@ -151,7 +159,7 @@ $('#connect').click(function() {
     }
   }, 500);
 
-});
+};
 
 /**
  * ----------------------------------------------------------------------------------------------------------
@@ -237,7 +245,7 @@ function loadRepository() {
           type : 'RESOURCE',
           path : path
         }));
-        
+
         // clear the current transform
         zoomPanManager.each(function(k, m) {
           m.zpm.reset();
@@ -274,5 +282,11 @@ $(function() {
 
   // get the initial content
   loadRepository();
+  
+  // try to connect automatically
+  webSocketConnect();
+  
+  // register reconnect button
+  $('#connect').click(webSocketConnect);
 
 });
