@@ -37,7 +37,8 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  *   <dt>Slots:</dt>
  *     <dd>Before phase 5.</dd>
  *   <dt>Same-slot dependencies:</dt>
- *     <dd>None.</dd>
+ *     <dd>{@link HierarchicalPortDummySizeProcessor}</dd>
+ *     <dd>{@link HierarchicalPortPositionProcessor}</dd>
  * </dl>
  * 
  * @author cds
