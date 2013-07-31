@@ -209,6 +209,7 @@ public final class DiagramViewManager implements IPartListener {
             }
         }
         
+        // 'diagramView' is supposed to be non-null here
         if (viewContext == null) {
             viewContext = diagramView.getContextViewer().getCurrentViewContext();
             if (viewContext == null) {
@@ -228,7 +229,7 @@ public final class DiagramViewManager implements IPartListener {
                     propertyHolder)) {
                 return null;
             }
-            LightDiagramServices.getInstance().layoutDiagram(viewContext, true, true);
+            LightDiagramServices.getInstance().layoutDiagram(viewContext);
         }
         
         
@@ -346,8 +347,7 @@ public final class DiagramViewManager implements IPartListener {
                 viewContext.getProperty(LightDiagramServices.VIEWER).setRecording(true);
                 LightDiagramServices.getInstance().updateViewContext(viewContext, model);
                 
-                boolean animate = false;
-                LightDiagramServices.getInstance().layoutDiagram(viewContext, animate, true);
+                LightDiagramServices.getInstance().layoutDiagram(viewContext, false);
 
                 // fill the options pane according to the the incorporated transformations
                 diagramView.getContextViewer().updateOptions(true);

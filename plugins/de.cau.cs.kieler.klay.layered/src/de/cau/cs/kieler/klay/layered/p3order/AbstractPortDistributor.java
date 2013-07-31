@@ -176,12 +176,6 @@ abstract class AbstractPortDistributor {
             }
         }
     }
-
-    /**
-     * A float value large enough to be sure that there will never be that many ports on either side
-     * of a node.
-     */
-    private static final float ABSURDLY_LARGE_FLOAT = 1000f;
     
     /**
      * Distribute the ports of the given node by their sides, connected ports, and input or output
@@ -203,6 +197,9 @@ abstract class AbstractPortDistributor {
                 // the minimum and maximum barycenter values assigned for ports of this node
                 float minBarycenter = 0.0f;
                 float maxBarycenter = 0.0f;
+                
+                // a float value large enough to ensure that barycenters of south ports work fine
+                float absurdlyLargeFloat = 2 * node.getLayer().getNodes().size() + 1;
                 
                 // calculate barycenter values for the ports of the node
                 PortIteration:
@@ -237,7 +234,7 @@ abstract class AbstractPortDistributor {
                             // to output ports or input&&output ports)
                             sum = port.getSide() == PortSide.NORTH
                                     ? -portDummy.getIndex()
-                                    : ABSURDLY_LARGE_FLOAT - portDummy.getIndex();
+                                    : absurdlyLargeFloat - portDummy.getIndex();
                         } else if (output && (input ^ output)) {
                             // It's an output port; the index of its dummy node is its sort key
                             // (for northern output ports, the key must be larger than the ones assigned
@@ -249,7 +246,9 @@ abstract class AbstractPortDistributor {
                             // output ports
                             // North: input ports < 0.0, output ports > 0.0
                             // South: input ports > FLOAT_MAX / 2, output ports near zero
-                            sum = port.getSide() == PortSide.NORTH ? 0.0f : ABSURDLY_LARGE_FLOAT / 2f;
+                            sum = port.getSide() == PortSide.NORTH
+                                    ? 0.0f
+                                    : absurdlyLargeFloat / 2f;
                         }
                     } else {
                         // add up all ranks of connected ports
