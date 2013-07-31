@@ -23,7 +23,7 @@
 <script src="js/jquery.svg.js"></script>
 <script src="js/jquery.svg.extras.js"></script>
 <script src="js/jquery.event.drag-2.2.js"></script>
- <script type="text/javascript" src="jquery-svgpan.js"></script>
+<script type="text/javascript" src="jquery-svgpan.js"></script>
 <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 <!-- script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script-->
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -43,16 +43,28 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span2 navi">
-                <button class="btn" id="connect">Connect</button>
-                <button class="btn" id="gitRefresh">Git Refresh</button>
-                <div id="joinDiv" class="input-append">
-                    <input id="room" class="input-small" type="text" placeholder="Room">
-                    <button id="join" class="btn" type="button">Join</button>
+                <!-- Button group with the controls -->
+                <div class="btn-group">
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> Control <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" id="connect">Reconnect </a></li>
+                        <li><a href="#" id="gitRefresh">Git Refresh</a></li>
+                    </ul>
                 </div>
-                <div id="leaveDiv" style="display: none;">
-                    <div id="currentRoom"></div>
-                    <button id="leave" class="btn" type="button">Leave</button>
+                <!-- Rooms -->
+                <div class="row-fluid">
+                    <div id="joinDiv" class="input-append">
+                        <input id="room" class="input-small" type="text" placeholder="Room">
+                        <button id="join" class="btn" type="button">Join</button>
+                    </div>
+                    <div id="leaveDiv" style="display: none;">
+                        <div id="currentRoom"></div>
+                        <button id="leave" class="btn" type="button">Leave</button>
+                    </div>
                 </div>
+
+                <!-- Message Area -->
                 <div id="messages">Unconnected</div>
                 <div id="errors" class="alert alert-error" style="display: none;"></div>
                 <div id="data"></div>
@@ -66,8 +78,8 @@
             <div id="permaLink" class="ctrlBox">
                 <a href="" target="_blank">PermaLink</a>
             </div>
-            <div id="zoomIn" class="ctrlBox">+</div>
-            <div id="zoomOut" class="ctrlBox">-</div>
+            <div id="zoomIn" class="ctrlBox"><i class="icon-plus"></i></div>
+            <div id="zoomOut" class="ctrlBox"><i class="icon-minus"></i></div>
         </div>
     </div>
 </body>

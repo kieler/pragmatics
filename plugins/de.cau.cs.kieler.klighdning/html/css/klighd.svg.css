@@ -5,6 +5,7 @@ body {
 .navi {
     font-family: "Trebuchet MS", "Helvetica", "Arial", "Verdana", "sans-serif";
     font-size: 62.5%;
+    margin-top: 5px;
 }
 
 #viewport {
@@ -70,11 +71,12 @@ svg {
     width: 20px;
 }
 
+
 #permaLink {
     padding: 4px;
 }
 
-a#permaLink {
+#permaLink > a, #permaLink > a:focus, #permaLink > a:hover {
     font-color: #000000;
-    decoration: none;
+    text-decoration: none;
 }
