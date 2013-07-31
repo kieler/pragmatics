@@ -30,10 +30,6 @@ public enum LayoutProcessorStrategy {
      * dependencies on other processors.
      */
 
-    // Before Phase 1
-    /** Test processor for framework tests, can be removed after algorithm is live */
-    TEST_PROCESSOR,
-
     // Before Phase 2
     /** Determine the root of a given graph */
     ROOT_PROC,
@@ -50,7 +46,7 @@ public enum LayoutProcessorStrategy {
 
     // Before Phase 4
     /** Set the coordinates for each node in a given graph */
-    COORDINATE_PROC,
+    NODE_POSITION_PROC,
     
     // After Phase 4
     DETREEIFYING_PROC;
@@ -64,9 +60,6 @@ public enum LayoutProcessorStrategy {
 
         switch (this) {
 
-        case TEST_PROCESSOR:
-            return new TestProcessor();
-
         case ROOT_PROC:
             return new RootProcessor();
 
@@ -79,11 +72,11 @@ public enum LayoutProcessorStrategy {
         case LEVEL_HEIGHT:
             return new LevelHeightProcessor();
 
-        case COORDINATE_PROC:
-            return new CoordianteProcessor();
+        case NODE_POSITION_PROC:
+            return new NodePositionProcessor();
             
         case DETREEIFYING_PROC:
-            return new DeTreeingProcessor();
+            return new Untreeifyer();
 
         default:
             throw new IllegalArgumentException(

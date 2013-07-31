@@ -16,13 +16,12 @@ package de.cau.cs.kieler.klay.tree.graph;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
- * Abstract superclass for the layers, nodes, ports, and edges of a tree graph (and the graph
- * itself).
+ * Abstract superclass for the layers, nodes, ports, and edges of a tree graph.
  * 
  * @author sor
  * @author sgu
  */
-public abstract class TGraphElement extends MapPropertyHolder implements Comparable<TGraphElement> {
+public abstract class TGraphElement extends MapPropertyHolder {
 
     /** the serial version UID. */
     private static final long serialVersionUID = 1L;
@@ -49,10 +48,4 @@ public abstract class TGraphElement extends MapPropertyHolder implements Compara
     public TGraphElement() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public final int compareTo(final TGraphElement other) {
-        return this.hashCode() - other.hashCode();
-    }
 }

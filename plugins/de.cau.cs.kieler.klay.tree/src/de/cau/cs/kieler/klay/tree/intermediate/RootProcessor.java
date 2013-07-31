@@ -42,7 +42,7 @@ public class RootProcessor implements ILayoutProcessor {
 
         /** find all roots in the graph */
         for (TNode node : tGraph.getNodes()) {
-            if (node.getInComingEdges().isEmpty()) {
+            if (node.getIncomingEdges().isEmpty()) {
                 node.setProperty(Properties.ROOT, true);
                 roots.add(node);
             }

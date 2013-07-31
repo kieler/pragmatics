@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.klay.tree.properties.Properties;
-import com.google.common.collect.Iterables;
 
 /**
  * A node in the T graph. Some properties are maybe null.
@@ -97,20 +96,6 @@ public class TNode extends TShape {
     }
 
     /**
-     * Returns the list of parents, creating it from outgoing edges. Parents are sources of incoming
-     * edges of this node.
-     * 
-     * @return the list of parents
-     */
-    public LinkedList<TNode> getParentsCopy() {
-        LinkedList<TNode> parents = new LinkedList<TNode>();
-        for (TEdge iEdge : getInComingEdges()) {
-            parents.add(iEdge.getSource());
-        }
-        return parents;
-    }
-
-    /**
      * Returns an iterable over all the parents. Parents are sources of incoming edges of this node.
      * 
      * @return an iterable over all parents.
@@ -118,7 +103,7 @@ public class TNode extends TShape {
     public Iterable<TNode> getParents() {
         return new Iterable<TNode>() {
             public Iterator<TNode> iterator() {
-                final Iterator<TEdge> edgesIter = getInComingEdges().iterator();
+                final Iterator<TEdge> edgesIter = getIncomingEdges().iterator();
 
                 return new Iterator<TNode>() {
                     public boolean hasNext() {
@@ -141,10 +126,14 @@ public class TNode extends TShape {
     /**
      * Returns the first parent, by taking it from outgoing edges.
      * 
-     * @return a single parent or null if there is no
+     * @return a single parent or null if there is none
      */
     public TNode getParent() {
-        return Iterables.getFirst(getParents(), null);
+        List<TEdge> edges = getIncomingEdges();
+        if (edges.isEmpty()) {
+            return null;
+        }
+        return edges.get(0).getSource();
     }
 
     /**
@@ -207,7 +196,7 @@ public class TNode extends TShape {
      * 
      * @return list of incoming edge
      */
-    public List<TEdge> getInComingEdges() {
+    public List<TEdge> getIncomingEdges() {
         if (incomingEdges == null) {
             incomingEdges = new LinkedList<TEdge>();
         }
@@ -225,16 +214,16 @@ public class TNode extends TShape {
     }
 
     /**
-     * Add a node to the list of parents, by adding a appropriate dummy edge to the graph.
+     * Add a node to the list of parents, by adding an appropriate dummy edge to the graph.
      * 
      * @param child
      *            the child to be added
      */
-    public void addPartent(TNode parent) {
+    public void addParent(TNode parent) {
         TEdge newEdge = new TEdge(parent, this);
         newEdge.setProperty(Properties.DUMMY, true);
         graph.getEdges().add(newEdge);
-        getInComingEdges().add(newEdge);
+        getIncomingEdges().add(newEdge);
         parent.getOutgoingEdges().add(newEdge);
     }
 
@@ -249,7 +238,7 @@ public class TNode extends TShape {
         newEdge.setProperty(Properties.DUMMY, true);
         graph.getEdges().add(newEdge);
         getOutgoingEdges().add(newEdge);
-        child.getInComingEdges().add(newEdge);
+        child.getIncomingEdges().add(newEdge);
     }
 
     // ATTRIBUTES

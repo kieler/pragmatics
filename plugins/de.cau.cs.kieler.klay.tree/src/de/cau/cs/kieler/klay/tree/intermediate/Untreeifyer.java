@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  * @author sgu
  * 
  */
-public class DeTreeingProcessor implements ILayoutProcessor {
+public class Untreeifyer implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
@@ -41,7 +41,7 @@ public class DeTreeingProcessor implements ILayoutProcessor {
 
         for (TEdge tEdge : edges) {
             tEdge.getSource().getOutgoingEdges().add(tEdge);
-            tEdge.getTarget().getInComingEdges().add(tEdge);
+            tEdge.getTarget().getIncomingEdges().add(tEdge);
         }
 
     }

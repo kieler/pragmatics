@@ -111,11 +111,11 @@ public class TEdge extends MapPropertyHolder {
      */
     public final void setTarget(final TNode theTarget) {
         if (target != theTarget) {
-            if (target != null && target.getInComingEdges().contains(this)) {
-                target.getInComingEdges().remove(this);
+            if (target != null && target.getIncomingEdges().contains(this)) {
+                target.getIncomingEdges().remove(this);
             }
-            if (theTarget != null && !theTarget.getInComingEdges().contains(this)) {
-                theTarget.getInComingEdges().add(this);
+            if (theTarget != null && !theTarget.getIncomingEdges().contains(this)) {
+                theTarget.getIncomingEdges().add(this);
             }
             target = theTarget;
         }

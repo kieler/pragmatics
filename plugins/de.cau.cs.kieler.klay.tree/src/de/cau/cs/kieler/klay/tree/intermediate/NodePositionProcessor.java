@@ -29,7 +29,7 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  * @author sor
  * @author sgu
  */
-public class CoordianteProcessor implements ILayoutProcessor {
+public class NodePositionProcessor implements ILayoutProcessor {
 
     /** number of nodes in the graph */
     private int numberOfNodes;

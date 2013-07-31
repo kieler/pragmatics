@@ -115,7 +115,7 @@ public class DFSTreeifyer implements ILayoutPhase {
         // remove the found edges out of graph structure
         for (TEdge tEdge : eliminated) {
             tEdge.getSource().getOutgoingEdges().remove(tEdge);
-            tEdge.getTarget().getInComingEdges().remove(tEdge);
+            tEdge.getTarget().getIncomingEdges().remove(tEdge);
         }
         // set the list of collected edges as a graph property
         tGraph.setProperty(Properties.REMOVABLE_EDGES, eliminated);
