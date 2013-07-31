@@ -883,7 +883,6 @@ public final class BKNodePlacer implements ILayoutPhase {
     }
 
     /**
-     * 
      * Auxiliary method for getting the size of a layer.
      * 
      * @param layeredGraph The containing layered graph
@@ -895,7 +894,6 @@ public final class BKNodePlacer implements ILayoutPhase {
     }
 
     /**
-     * 
      * Auxiliary method for getting the node on a certain position of a layer.
      * 
      * @param layeredGraph The containing layered graph
@@ -911,7 +909,6 @@ public final class BKNodePlacer implements ILayoutPhase {
     }
 
     /**
-     * 
      * Checks whether the given node is part of a long edge between the two given layers.
      * 
      * @param node Possible long edge node
@@ -1031,7 +1028,6 @@ public final class BKNodePlacer implements ILayoutPhase {
     }
     
     /**
-     * 
      * Checks whether any north-south port dummies are included in the block
      * given by the root node.
      * 
@@ -1044,7 +1040,6 @@ public final class BKNodePlacer implements ILayoutPhase {
     }
     
     /**
-     * 
      * Checks whether any regular nodes are included in the block
      * given by the root node.
      * 

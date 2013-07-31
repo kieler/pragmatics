@@ -37,12 +37,15 @@ import java.util.List
 import java.util.Collection
 import javax.inject.Inject
 
+import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EClassifier
+import org.eclipse.emf.ecore.EEnum
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
 
 import static extension com.google.common.base.Strings.*
+import org.eclipse.emf.ecore.EAttribute
 
 /**
  * This diagram synthesis implementation demonstrates the usage of KLighD for the purpose of
@@ -53,6 +56,7 @@ import static extension com.google.common.base.Strings.*
  *  <li>Depicting the selected classes only.</li>
  *  <li>Depicting the selected classes, and directly related ones.</li>
  *  <li>Depicting all classes of the Ecore model, the selected ones are highlighted.</li>
+ *  <li>Depicting the attributes of the classes</li>
  * <ol>
  */
 class EcoreDiagramSynthesis extends AbstractDiagramSynthesis<EModelElementCollection> {
@@ -87,6 +91,10 @@ class EcoreDiagramSynthesis extends AbstractDiagramSynthesis<EModelElementCollec
     private static val TransformationOption CLASS_FILTER = TransformationOption::createChoiceOption(CLASS_FILTER_NAME,
        ImmutableList::of(CHOSEN, CHOSEN_AND_RELATED, ALL), CHOSEN_AND_RELATED);
 
+    /**
+     * Option to activate/deactivate the attribute lists.
+     */
+    private static val TransformationOption ATTRIBUTES = TransformationOption::createCheckOption("Attributes/Literals", false);
     
     /**
      * {@inheritDoc}<br>
@@ -94,13 +102,20 @@ class EcoreDiagramSynthesis extends AbstractDiagramSynthesis<EModelElementCollec
      * Registers the diagram filter option declared above, which allow users to tailor the constructed diagrams.
      */
     override public getTransformationOptions() {
-        return ImmutableSet::of(CLASS_FILTER);
+        return ImmutableSet::of(CLASS_FILTER, ATTRIBUTES);
     }
     
+    /**
+     * {@inheritDoc}<br>
+     * <br>
+     * Registers reasonable layout options that are recommended to users to tailor the constructed diagram layouts.
+     */
     override public getRecommendedLayoutOptions() {
-        return ImmutableMap::<IProperty<?>, Collection<?>>of(LayoutOptions::SPACING, newArrayList(0, 255));
+        return ImmutableMap::<IProperty<?>, Collection<?>>of(
+            LayoutOptions::DIRECTION, Direction::values().drop(1).sortBy[ it.name ],
+            LayoutOptions::SPACING, newArrayList(0, 255)
+        );
     }
-
 
     /**
      * {@inheritDoc}<br>
@@ -131,14 +146,31 @@ class EcoreDiagramSynthesis extends AbstractDiagramSynthesis<EModelElementCollec
                 // The chosen classes ...
                 val chosenClasses = choice.filter(typeof(EClass)).toList => [
                    // ... are inspected, and ...
+                   val ePackage = choice.filter(typeof(EClass))?.head?.eContainer as EPackage;
 	               it.forEach[
-	                   // .. their referenced classes ...
-	                   depictedClasses.addAll(it.EStructuralFeatures.filter(typeof(EReference)).map[it.EType])
+	                   // ... their referenced classes ...
+                       depictedClasses.addAll(it.EStructuralFeatures.filter(typeof(EReference)).map[it.EType])
+                       // ... the classes referenced by their attributes (those contained in the current package)
+                       depictedClasses.addAll(it.EStructuralFeatures.filter(typeof(EAttribute)).map[it.EType]
+                                                .filter[it.eContainer == ePackage]
+                       )
 	               ];
                    it.forEach[
                        // ... as well as there super classes are put into the list of depicted classes, too.
                        depictedClasses.addAll(it.ESuperTypes)
                    ];
+
+                   depictedClasses.addAll(
+                       ((ePackage?.EClassifiers as List<EClassifier>)?:emptyList).filter(typeof(EClass)).filter[
+                           // look for candidates whose super types are in the choice
+                           val sts = Lists::newArrayList(it.ESuperTypes as Iterable<EClass>);
+                           // look for candidates whose reference types are in the choice
+                           sts.retainAll(choice);
+                           val rts = Lists::newArrayList(it.EReferences as Iterable<EReference>).map[it.EType];
+                           rts.retainAll(choice);
+                           !sts.empty || !rts.empty
+                       ]
+                   );
                 ];
 
                 depictedClasses.createElementFigures(it);
@@ -186,16 +218,64 @@ class EcoreDiagramSynthesis extends AbstractDiagramSynthesis<EModelElementCollec
 	def createClassifierFigures(Iterable<EClassifier> classes, KNode rootNode) {
 		classes.filterNull.forEach[ EClassifier clazz |
             rootNode.children += clazz.createNode().putToLookUpWith(clazz) => [
-                it.addRectangle /*(30, 30, 2)*/ => [
+                it.addRectangle => [
+                    it.gridPlacement = 1;
                     it.lineWidth = 2;
                     it.setBackgroundGradient("white".color, KlighdConstants::ALPHA_FULL_OPAQUE, "lemon".color, 255, 0)
                     it.shadow = "black".color;
-                    it.addText(clazz.name.nullToEmpty).putToLookUpWith(clazz) => [
-                        it.setFontSize(20);
-                        it.setFontBold(true);
-                        it.setSurroundingSpace(20, 0);
+                    it.addRectangle => [
+                        it.lineWidth = 2;
+                        val typeText = if (EcorePackage::eINSTANCE.getEEnum.isInstance(clazz))
+                            it.addText("<<Enum>>") => [
+                                it.fontSize = 13;
+                                it.fontItalic = true;
+                                it.verticalAlignment = V_CENTRAL; 
+                                it.setGridPlacementData().from(LEFT, 15, 0, TOP, 15, 0)
+                                                         .to(RIGHT, 15, 0, BOTTOM, 35, 0);
+                            ];
+                        it.addText(clazz.name.nullToEmpty).putToLookUpWith(clazz) => [
+                            it.fontSize = 15;
+                            it.fontBold = true;
+                            if (typeText == null) {
+                                it.setSurroundingSpace(20, 0, 15, 0);
+                            } else {
+                                it.setGridPlacementData().from(LEFT, 20, 0, TOP, 35, 0)
+                                                         .to(RIGHT, 20, 0, BOTTOM, 15, 0);
+                            }
+                        ];
                     ];
-                ];         
+                    if (!ATTRIBUTES.optionBooleanValue) {
+                        return;
+                    }
+                    if (EcorePackage::eINSTANCE.getEClass.isInstance(clazz)) {
+                        it.addRectangle => [ rect |
+                            rect.invisible = true;
+                            rect.setSurroundingSpaceGrid(5, 0)
+                            rect.setGridPlacement(1).to(RIGHT, 0, 0, BOTTOM, 2, 0);
+                            (clazz as EClass).EAttributes.forEach[
+                                rect.addText(it.name + " : " + it.EAttributeType.name) => [
+                                    it.horizontalAlignment = H_LEFT
+                                    it.verticalAlignment = V_CENTRAL
+                                    it.setSurroundingSpaceGrid(3, 0);
+                                ];
+                            ];
+                        ];
+                    }
+                    if (EcorePackage::eINSTANCE.getEEnum.isInstance(clazz)) {
+                        it.addRectangle => [ rect |
+                            rect.invisible = true;
+                            rect.setSurroundingSpaceGrid(5, 0)
+                            rect.setGridPlacement(1).to(RIGHT, 0, 0, BOTTOM, 2, 0);
+                            (clazz as EEnum).ELiterals.forEach[
+                                rect.addText(it.name + " (" + it.literal + ")") => [
+                                    it.horizontalAlignment = H_LEFT
+                                    it.verticalAlignment = V_CENTRAL
+                                    it.setSurroundingSpaceGrid(3, 0);
+                                ];
+                            ];
+                        ];
+                    }
+                ];
             ];
 		];
 	}
@@ -215,6 +295,7 @@ class EcoreDiagramSynthesis extends AbstractDiagramSynthesis<EModelElementCollec
 	       	it.target = ref.EType.node;
 	        it.addPolyline() => [
 	            it.lineWidth = 2;
+	            it.foreground = "gray25".color
 	            it.addArrowDecorator();
 	            if (ref.containment) {
     	            it.addPolygon() => [
@@ -223,7 +304,8 @@ class EcoreDiagramSynthesis extends AbstractDiagramSynthesis<EModelElementCollec
                         it.points += createKPosition(RIGHT, 0, 0, TOP, 0, 0.5f);
                         it.points += createKPosition(LEFT, 0, 0.5f, BOTTOM, 0, 0);
                         it.setDecoratorPlacementData(24, 12, 12, 0, true);
-                        it.background = "black".color;
+                        it.foreground = "gray25".color
+                        it.background = "gray25".color;
     	            ];
 	            }
 	        ];
@@ -245,6 +327,7 @@ class EcoreDiagramSynthesis extends AbstractDiagramSynthesis<EModelElementCollec
 	        it.target = parent.node;
 	        it.data addPolyline() => [
                 it.lineWidth = 2;
+                it.foreground = "gray25".color
                 it.addInheritanceTriangleArrowDecorator();
 	        ];		    
 		];

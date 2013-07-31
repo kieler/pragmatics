@@ -430,6 +430,9 @@ public class DiagramController {
                 // add the node
                 parent.getChildArea().addNode(nodeNode);
                 RenderingContextData.get(node).setProperty(KlighdInternalProperties.ACTIVE, true);
+
+                // touch the expansion state, see the methods javadoc for details
+                nodeNode.getChildArea().touchExpanded();
             }
 
             // add all incoming edges
@@ -1768,7 +1771,8 @@ public class DiagramController {
         if (shapeLayout != null && shapeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
             return false;
         }
-        shapeLayout = ModelingUtil.eContainerOfType(element, KNode.class).getData(KShapeLayout.class);
+        final KNode container = ModelingUtil.eContainerOfType(element, KNode.class);
+        shapeLayout = container == null ? null : container.getData(KShapeLayout.class);
         if (shapeLayout != null && shapeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
             return false;
         }

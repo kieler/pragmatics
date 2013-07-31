@@ -227,12 +227,13 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
             margin.bottom += maxHeight + spacing;
         }
         
+        // Check if the maximum width of the comments is wider than the node itself, which the comments
+        // are centered on
         double maxCommentWidth = Math.max(topWidth, bottomWidth);
-        double totalWidth = node.getSize().x + margin.left + margin.right;
-        if (maxCommentWidth > totalWidth) {
-            double extra = (maxCommentWidth - totalWidth) / 2;
-            margin.left += extra;
-            margin.right += extra;
+        if (maxCommentWidth > node.getSize().x) {
+            double protrusion = (maxCommentWidth - node.getSize().x) / 2;
+            margin.left = Math.max(margin.left, protrusion);
+            margin.right = Math.max(margin.right, protrusion);
         }
     }
     

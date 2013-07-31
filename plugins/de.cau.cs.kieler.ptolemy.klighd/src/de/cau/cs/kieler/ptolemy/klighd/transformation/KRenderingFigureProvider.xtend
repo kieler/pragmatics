@@ -82,9 +82,10 @@ class KRenderingFigureProvider {
      * Creates a rendering for an expanded compound node.
      * 
      * @param node the node to create the rendering information for.
+     * @param alpha the alpha value of the compound node background.
      * @return the rendering.
      */
-    def KRendering createExpandedCompoundNodeRendering(KNode node) {
+    def KRendering createExpandedCompoundNodeRendering(KNode node, int alpha) {
         // This is the code for representing expanded compound nodes as rounded rectangles with
         // progressively darker backgrounds whose color depends on whether the expanded node is
         // a regular node or whether it displays a state refinement
@@ -107,7 +108,7 @@ class KRenderingFigureProvider {
             rect.cornerWidth = 15
             rect.setLineWidth(0)
             rect.styles += renderingFactory.createKBackground() => [bg |
-                bg.alpha = 10
+                bg.alpha = alpha
                 bg.color = bgColor
             ]
         ]
@@ -116,7 +117,7 @@ class KRenderingFigureProvider {
         // with drop shadows
 //        val rendering = renderingFactory.createKRectangle() => [rect |
 //            rect.styles += renderingFactory.createKBackground() => [bg |
-//                bg.alpha = 10
+//                bg.alpha = alpha
 //                bg.color = renderingFactory.createKColor() => [col |
 //                    col.red = 16
 //                    col.green = 78
