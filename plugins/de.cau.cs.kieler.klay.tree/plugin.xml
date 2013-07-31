@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutProviders">
+      <layoutAlgorithm
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.klay.tree.TreeLayoutProvider"
+            description="Tree-based layout algorithm of the KIELER Layouters project."
+            id="de.cau.cs.kieler.klay.tree"
+            name="KLay Mr. Tree"
+            type="de.cau.cs.kieler.type.tree">
+         <knownOption
+               default="20"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               default="20"
+               option="de.cau.cs.kieler.borderSpacing">
+         </knownOption>
+         <knownOption
+               default="true"
+               option="de.cau.cs.kieler.separateConnComp">
+         </knownOption>
+         <knownOption
+               default="1.0"
+               option="de.cau.cs.kieler.aspectRatio">
+         </knownOption>
+         <knownOption
+               default="RIGHT"
+               option="de.cau.cs.kieler.direction">
+         </knownOption>
+         <knownOption
+               default="false"
+               option="de.cau.cs.kieler.debugMode">
+         </knownOption>
+         <knownOption
+               default="DESCENDANTS"
+               option="de.cau.cs.kieler.klay.tree.weighting">
+         </knownOption>
+         <knownOption
+               default="0"
+               option="de.cau.cs.kieler.klay.tree.testGraph">
+         </knownOption>
+         <knownOption
+               default="0"
+               option="de.cau.cs.kieler.klay.tree.testNodes">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0"
+            description="Number of test graph."
+            id="de.cau.cs.kieler.klay.tree.testGraph"
+            lowerBound="0"
+            name="Test graphs"
+            type="int">
+      </layoutOption>
+            <layoutOption
+                  advanced="true"
+                  appliesTo="parents"
+                  default="0"
+                  description="Number of nodes in each test graph."
+                  id="de.cau.cs.kieler.klay.tree.testNodes"
+                  lowerBound="0"
+                  name="Test nodes"
+                  type="int">
+      </layoutOption>
+            <layoutOption
+                  appliesTo="parents"
+                  class="de.cau.cs.kieler.klay.tree.properties.OrderWeighting"
+                  default="DESCENDANTS"
+                  description="Tells the node order which weighting it should use"
+                  id="de.cau.cs.kieler.klay.tree.weighting"
+                  name="Weighting of Nodes"
+                  type="enum">
+            </layoutOption>
+   </extension>
+
+</plugin>
