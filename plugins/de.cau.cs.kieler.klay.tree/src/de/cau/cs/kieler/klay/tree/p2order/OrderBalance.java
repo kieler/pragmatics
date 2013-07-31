@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.tree.p2order;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -29,7 +30,6 @@ import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.properties.OrderWeighting;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 import de.cau.cs.kieler.klay.tree.util.FindNode;
-import de.cau.cs.kieler.klay.tree.util.SortTEdgeTargetProperty;
 
 /**
  * This phase orders the nodes of each level by separating the children of nodes into leaves and
@@ -44,17 +44,17 @@ import de.cau.cs.kieler.klay.tree.util.SortTEdgeTargetProperty;
  */
 public class OrderBalance implements ILayoutPhase {
 
-    /**
-     * Tells the node order which weighting it should use.
-     */
-    IProperty<Integer> weighting;
-
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
             IntermediateProcessingConfiguration.BEFORE_PHASE_2, EnumSet.of(
                     LayoutProcessorStrategy.ROOT_PROC, LayoutProcessorStrategy.FAN_PROC,
                     LayoutProcessorStrategy.NEIGHBORS_PROC));
 
+    /**
+     * Tells the node order which weighting it should use.
+     */
+    private IProperty<Integer> weighting;
+    
     /**
      * {@inheritDoc}
      */
@@ -198,4 +198,20 @@ public class OrderBalance implements ILayoutPhase {
             orderLevel(leftMost.getParent(), !odd);
         }
     }
+    
+    /**
+     * A comparator for edge targets that uses the given property.
+     */
+    private static class SortTEdgeTargetProperty implements Comparator<TEdge> {
+        private IProperty<Integer> property;
+
+        public SortTEdgeTargetProperty(IProperty<Integer> property) {
+            this.property = property;
+        }
+
+        public int compare(TEdge t1, TEdge t2) {
+            return t2.getTarget().getProperty(property) - t1.getTarget().getProperty(property);
+        }
+    }
+    
 }

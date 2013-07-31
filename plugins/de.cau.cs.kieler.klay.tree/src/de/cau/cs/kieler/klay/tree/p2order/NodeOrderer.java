@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.TreeMap;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.properties.PropertyHolderComparator;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.tree.graph.TEdge;
@@ -29,7 +30,6 @@ import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
-import de.cau.cs.kieler.klay.tree.util.SortTNodeProperty;
 
 /**
  * This phase orders the nodes of each level by separating the nodes into leaves and inner nodes.
@@ -113,7 +113,7 @@ public class NodeOrderer implements ILayoutPhase {
 
         // sort all nodes in this level by their fan out
         // so the leaves are at the end of the list
-        Collections.sort(currentLevel, new SortTNodeProperty(Properties.FAN));
+        Collections.sort(currentLevel, PropertyHolderComparator.with(Properties.FAN));
 
         // find the first occurence of a leave in the list
         int firstOcc = currentLevel.size();
@@ -150,17 +150,17 @@ public class NodeOrderer implements ILayoutPhase {
                 tPNode.setProperty(Properties.POSITION, pos++);
 
                 // set the position of the children and set them in order
-                LinkedList<TNode> Children = tPNode.getChildrenCopy();
-                orderLevel(Children, ++level, progressMonitor.subTask(1 / size));
+                LinkedList<TNode> children = tPNode.getChildrenCopy();
+                orderLevel(children, ++level, progressMonitor.subTask(1 / size));
 
                 // order the children by their reverse position
-                Collections.sort(Children,
-                        Collections.reverseOrder(new SortTNodeProperty(Properties.POSITION)));
+                Collections.sort(children,
+                        Collections.reverseOrder(PropertyHolderComparator.with(Properties.POSITION)));
 
                 // reset the list of children with the new order
                 List<TEdge> sortedOutEdges = new LinkedList<TEdge>();
 
-                for (TNode tNode : Children) {
+                for (TNode tNode : children) {
                     for (TEdge tEdge : tPNode.getOutgoingEdges()) {
                         if (tEdge.getTarget() == tNode) {
                             sortedOutEdges.add(tEdge);
