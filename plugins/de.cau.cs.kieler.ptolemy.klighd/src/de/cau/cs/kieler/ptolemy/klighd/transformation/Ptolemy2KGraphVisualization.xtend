@@ -319,11 +319,8 @@ class Ptolemy2KGraphVisualization {
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
         
-        val rendering = createDirectorNodeRendering(node)
+        val rendering = createModalModelPortRendering(node)
         node.data += rendering
-        
-        // Set size
-        layout.setLayoutSize(rendering)
     }
     
     /**

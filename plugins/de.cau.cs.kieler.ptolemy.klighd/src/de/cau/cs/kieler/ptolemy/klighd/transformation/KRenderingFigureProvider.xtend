@@ -357,6 +357,64 @@ class KRenderingFigureProvider {
     }
     
     /**
+     * Creates a rendering for a node that represents a modal model port.
+     * 
+     * @param node the node to create the rendering information for.
+     * @return the rendering.
+     */
+    def KRendering createModalModelPortRendering(KNode node) {
+        val input = node.markedAsInputPort
+        val output = node.markedAsOutputPort
+        val multiport = node.hasAnnotation("multiport")
+        val polygon = renderingFactory.createKPolygon()
+        
+        if (input && !output) {
+            polygon.points += createKPosition(10, 0)
+            polygon.points += createKPosition(20, 10)
+            polygon.points += createKPosition(10, 20)
+            polygon.points += createKPosition(10, 15)
+            polygon.points += createKPosition(0, 15)
+            polygon.points += createKPosition(0, 5)
+            polygon.points += createKPosition(10, 5)
+            polygon.points += createKPosition(10, 0)
+        } else if (!input && output) {
+            polygon.points += createKPosition(0, 0)
+            polygon.points += createKPosition(5, 5)
+            polygon.points += createKPosition(20, 5)
+            polygon.points += createKPosition(20, 15)
+            polygon.points += createKPosition(5, 15)
+            polygon.points += createKPosition(0, 20)
+            polygon.points += createKPosition(0, 0)
+        } else if (input && output) {
+            polygon.points += createKPosition(0, 5)
+            polygon.points += createKPosition(7, 5)
+            polygon.points += createKPosition(7, 0)
+            polygon.points += createKPosition(12, 5)
+            polygon.points += createKPosition(20, 5)
+            polygon.points += createKPosition(20, 15)
+            polygon.points += createKPosition(12, 15)
+            polygon.points += createKPosition(7, 20)
+            polygon.points += createKPosition(7, 15)
+            polygon.points += createKPosition(0, 15)
+            polygon.points += createKPosition(0, 5)
+        } else {
+            polygon.points += createKPosition(0, 5)
+            polygon.points += createKPosition(20, 5)
+            polygon.points += createKPosition(20, 15)
+            polygon.points += createKPosition(0, 15)
+            polygon.points += createKPosition(0, 5)
+        }
+        
+        if (multiport) {
+            polygon.setBackgroundColor(255, 255, 255)
+        } else {
+            polygon.setBackgroundColor(0, 0, 0)
+        }
+        
+        return polygon
+    }
+    
+    /**
      * Creates a rendering for a regular node.
      * 
      * @param node the node to create the rendering information for.
