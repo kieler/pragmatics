@@ -162,11 +162,11 @@ public final class ForsterConstraintResolver implements IConstraintResolver {
                         if (predecessor.barycenter.floatValue() == nodeGroup.barycenter.floatValue()) {
                             if (nodeGroups.indexOf(predecessor) > nodeGroups.indexOf(nodeGroup)) {
                                 // The predecessor has equal barycenter, but higher index
-                                return Pair.create(predecessor, nodeGroup);
+                                return Pair.of(predecessor, nodeGroup);
                             }
                         } else if (predecessor.barycenter > nodeGroup.barycenter) {
                             // The predecessor has greater barycenter and thus also higher index
-                            return Pair.create(predecessor, nodeGroup);
+                            return Pair.of(predecessor, nodeGroup);
                         }
                     }
                 }
