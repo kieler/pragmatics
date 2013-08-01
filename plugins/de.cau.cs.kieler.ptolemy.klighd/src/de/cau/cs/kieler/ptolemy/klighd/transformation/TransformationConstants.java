@@ -63,6 +63,15 @@ final class TransformationConstants {
     /** Class of an entity that is a refinement for modal model states. */
     public static final String ENTITY_CLASS_STATE_REFINEMENT = "ptolemy.domains.modal.modal.Refinement";
     
+    /** Class of an entity that is a state machine state. */
+    public static final String ENTITY_CLASS_STATE = "ptolemy.domains.modal.kernel.State";
+    
+    /** Class of an entity that is a Const actor. */
+    public static final String ENTITY_CLASS_CONST = "ptolemy.actor.lib.Const";
+    
+    /** Class of an entity that is a String Const actor. */
+    public static final String ENTITY_CLASS_STRING_CONST = "ptolemy.actor.lib.StringConst";
+    
     
     // ENTITY NAMES
     

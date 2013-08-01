@@ -20,6 +20,8 @@ import org.eclipse.emf.ecore.EObject
 import org.ptolemy.moml.MomlFactory
 import org.ptolemy.moml.PropertyType
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
+import org.ptolemy.moml.EntityType
+import org.ptolemy.moml.ClassType
 
 /**
  * Utility methods regarding annotations used by the Ptolemy to KGraph transformation.
@@ -63,6 +65,28 @@ class AnnotationExtensions {
      */
     def dispatch List<PropertyType> getAnnotations(PropertyType element) {
         return element.property
+    }
+    
+    /**
+     * Returns the annotations of the given entity.
+     * This particular method looks for the properties directly attached to the entity.
+     * 
+     * @param entity the entity.
+     * @return the annotations list or {@code null} if none was found.
+     */
+    def dispatch List<PropertyType> getAnnotations(EntityType entity) {
+        return entity.property
+    }
+    
+    /**
+     * Returns the annotations of the given entity.
+     * This particular method looks for the properties directly attached to the entity.
+     * 
+     * @param entity the entity.
+     * @return the annotations list or {@code null} if none was found.
+     */
+    def dispatch List<PropertyType> getAnnotations(ClassType entity) {
+        return entity.property
     }
     
     /**

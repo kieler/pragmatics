@@ -250,8 +250,8 @@ class MarkerExtensions {
         if (propertyValue == null) {
             return false
         } else {
-            return propertyValue.equals("ptolemy.actor.lib.Const")
-                || propertyValue.equals("ptolemy.actor.lib.StringConst")
+            return propertyValue.equals(ENTITY_CLASS_CONST)
+                || propertyValue.equals(ENTITY_CLASS_STRING_CONST)
         }
     }
     
@@ -266,7 +266,7 @@ class MarkerExtensions {
         if (propertyValue == null) {
             return false
         } else {
-            return propertyValue.equals("ptolemy.domains.modal.kernel.State")
+            return propertyValue.equals(ENTITY_CLASS_STATE)
         }
     }
     

@@ -103,8 +103,12 @@ class Ptolemy2KGraphVisualization {
         // Visualize child nodes
         for (child : node.children) {
             // Add child node rendering
-            if (!child.children.empty) {
-                // We have a compound node
+            if (child.markedAsState) {
+                // We have a state machine state (which may also be a compound state)
+                child.addStateNodeRendering()
+                visualizeRecursively(child)
+            } else if (!child.children.empty) {
+                // We have a compound node that is not a state
                 child.addCompoundNodeRendering()
                 visualizeRecursively(child)
             } else if (child.markedAsHypernode) {
@@ -119,9 +123,6 @@ class Ptolemy2KGraphVisualization {
             } else if (child.markedAsParameterNode) {
                 // We have a parameter node that displays model parameters
                 child.addParameterNodeRendering()
-            } else if (child.markedAsState) {
-                // We have a state machine state
-                child.addStateNodeRendering()
             } else if (child.markedAsConstActor) {
                 // We have a const actor whose rendering is a bit special
                 child.addConstNodeRendering()
@@ -170,19 +171,49 @@ class Ptolemy2KGraphVisualization {
         
         node.setLayoutAlgorithm()
         
-        // Create the rendering for this node
-        val KRendering expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha)
+        // Create the rendering for the expanded version of this node
+        val expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha)
         expandedRendering.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
         expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
         node.data += expandedRendering
         
         // Add a rendering for the collapsed version of this node
-        val KRendering collapsedRendering = createRegularNodeRendering(node)
+        val collapsedRendering = createRegularNodeRendering(node)
         collapsedRendering.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
         collapsedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
         node.data += collapsedRendering
         
         layout.setLayoutSize(collapsedRendering)
+    }
+    
+    /**
+     * Renders the given node as a state machine state.
+     * 
+     * @param node the node to attach the rendering information to.
+     */
+    def private void addStateNodeRendering(KNode node) {
+        if (node.children.empty) {
+            val rendering = createStateNodeRendering(node)
+            node.data += rendering
+        } else {
+            val layout = node.layout as KShapeLayout
+            layout.setProperty(KlighdProperties::EXPAND, false)
+            layout.setProperty(LayoutOptions::SIZE_CONSTRAINT, SizeConstraint::fixed)
+            
+            node.setLayoutAlgorithm()
+            
+            // Add a rendering for the collapsed version of this node
+            val collapsedRendering = createStateNodeRendering(node)
+            collapsedRendering.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
+            collapsedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
+            node.data += collapsedRendering
+            
+            // Create the rendering for the expanded version of this node
+            val expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha)
+            expandedRendering.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
+            expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
+            node.data += expandedRendering
+        }
     }
     
     /**
@@ -251,17 +282,6 @@ class Ptolemy2KGraphVisualization {
         
         // Create the rendering
         val rendering = createParameterNodeRendering(node)
-        node.data += rendering
-    }
-    
-    /**
-     * Renders the given node as a state machine state.
-     * 
-     * @param node the node to attach the rendering information to.
-     */
-    def private void addStateNodeRendering(KNode node) {
-        // Create the rendering
-        val rendering = createStateNodeRendering(node)
         node.data += rendering
     }
     

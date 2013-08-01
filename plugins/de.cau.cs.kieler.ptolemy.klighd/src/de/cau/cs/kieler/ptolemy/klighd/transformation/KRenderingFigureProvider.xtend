@@ -89,7 +89,7 @@ class KRenderingFigureProvider {
         // This is the code for representing expanded compound nodes as rounded rectangles with
         // progressively darker backgrounds whose color depends on whether the expanded node is
         // a regular node or whether it displays a state refinement
-        val bgColor = if (node.markedAsState) {
+        val bgColor = if (node.markedAsStateMachineContainer) {
             renderingFactory.createKColor() => [col |
                 col.red = 204
                 col.green = 255

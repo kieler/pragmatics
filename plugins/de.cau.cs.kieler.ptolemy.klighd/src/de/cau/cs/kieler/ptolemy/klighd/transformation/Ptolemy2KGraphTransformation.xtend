@@ -14,6 +14,11 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.core.kgraph.KGraphElement
+import de.cau.cs.kieler.core.kgraph.KNode
+import de.cau.cs.kieler.core.kgraph.KPort
+import de.cau.cs.kieler.kiml.util.KimlUtil
+import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
 import java.util.ArrayList
 import java.util.List
 import org.eclipse.core.runtime.CoreException
@@ -27,13 +32,10 @@ import org.ptolemy.moml.LinkType
 import org.ptolemy.moml.PortType
 import org.ptolemy.moml.PropertyType
 import org.ptolemy.moml.RelationType
-import de.cau.cs.kieler.core.kgraph.KGraphElement
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.kiml.util.KimlUtil
-import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+
+import static extension com.google.common.base.Strings.*
 
 /**
  * Transforms a Ptolemy2 model to a KGraph. This is step one of the Ptolemy model transformation
@@ -71,6 +73,8 @@ class Ptolemy2KGraphTransformation {
     @Inject extension LabelExtensions
     /** Marking elements. */
     @Inject extension MarkerExtensions
+    /** Further utility stuff. */
+    @Inject extension MiscellaneousExtensions
     /** Interface to the Ptolemy library. */
     @Inject PtolemyInterface ptolemy
     
@@ -141,6 +145,7 @@ class Ptolemy2KGraphTransformation {
                 // Mark as a state machine and then add the required relations, links, and child
                 // entities as usual
                 kNode.markAsStateMachineContainer()
+                
                 kNode.addChildEntities(ptEntity.entity)
                 kNode.addChildRelations(ptEntity.relation)
                 kNode.addChildLinks(ptEntity.link)
@@ -156,6 +161,35 @@ class Ptolemy2KGraphTransformation {
                         kNode.addChildEntities(child.entity)
                         kNode.addChildRelations(child.relation)
                         kNode.addChildLinks(child.link)
+                    }
+                }
+            }
+            
+            case ENTITY_CLASS_STATE: {
+                // A modal model state may have refinements
+                val refinement = ptEntity.findRefinement()
+                
+                if (refinement != null) {
+                    // We have a refinement; transform it (which has possibly already been done) and
+                    // copy it; then add its children to our list of children
+                    val transformedRefinement = transform(refinement)
+                    
+//                    val copier = new KGraphCopier()
+//                    val copiedRefinement = copier.copy(transformedRefinement)
+//                    copier.copyReferences()
+                    
+                    kNode.children += transformedRefinement.children
+                    
+                    // Check if the refinement is itself a state machine
+                    val refinementClass = transformedRefinement.getAnnotationValue(
+                        ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+                    
+                    if (refinementClass.equals(ENTITY_CLASS_FSM)
+                        || refinementClass.equals(ENTITY_CLASS_MODAL_MODEL)
+                        || refinementClass.equals(ENTITY_CLASS_MODEL_CONTROLLER)
+                        || refinementClass.equals(ENTITY_CLASS_STATE_REFINEMENT)) {
+                        
+                        kNode.markAsStateMachineContainer()
                     }
                 }
             }
@@ -202,7 +236,17 @@ class Ptolemy2KGraphTransformation {
             }
             
             case ENTITY_CLASS_MODAL_MODEL: {
+                // Mark as a state machine
+                kNode.markAsStateMachineContainer()
                 
+                // The actual states are found in the state machine controller
+                for (child : ptClass.entity) {
+                    if (child.name.equals(ENTITY_NAME_MODAL_CONTROLLER)) {
+                        kNode.addChildEntities(child.entity)
+                        kNode.addChildRelations(child.relation)
+                        kNode.addChildLinks(child.link)
+                    }
+                }
             }
             
             default: {
