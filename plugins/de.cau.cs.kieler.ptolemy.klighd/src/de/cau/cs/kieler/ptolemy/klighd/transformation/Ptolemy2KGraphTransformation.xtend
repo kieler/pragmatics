@@ -184,11 +184,7 @@ class Ptolemy2KGraphTransformation {
                     val refinementClass = transformedRefinement.getAnnotationValue(
                         ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
                     
-                    if (refinementClass.equals(ENTITY_CLASS_FSM)
-                        || refinementClass.equals(ENTITY_CLASS_MODAL_MODEL)
-                        || refinementClass.equals(ENTITY_CLASS_MODEL_CONTROLLER)
-                        || refinementClass.equals(ENTITY_CLASS_STATE_REFINEMENT)) {
-                        
+                    if (refinementClass.equals(ENTITY_CLASS_MODEL_CONTROLLER)) {
                         kNode.markAsStateMachineContainer()
                     }
                 }
