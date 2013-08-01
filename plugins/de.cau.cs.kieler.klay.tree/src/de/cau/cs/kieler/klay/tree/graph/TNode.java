@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -208,23 +208,10 @@ public class TNode extends TShape {
     /**
      * Set the label text of this node.
      * 
+     * @param label the new label text
      */
-    public void setLabel(String label) {
+    public void setLabel(final String label) {
         this.label = label;
-    }
-
-    /**
-     * Add a node to the list of parents, by adding an appropriate dummy edge to the graph.
-     * 
-     * @param child
-     *            the child to be added
-     */
-    public void addParent(TNode parent) {
-        TEdge newEdge = new TEdge(parent, this);
-        newEdge.setProperty(Properties.DUMMY, true);
-        graph.getEdges().add(newEdge);
-        getIncomingEdges().add(newEdge);
-        parent.getOutgoingEdges().add(newEdge);
     }
 
     /**
@@ -233,7 +220,7 @@ public class TNode extends TShape {
      * @param child
      *            the child to be added
      */
-    public void addChild(TNode child) {
+    public void addChild(final TNode child) {
         TEdge newEdge = new TEdge(this, child);
         newEdge.setProperty(Properties.DUMMY, true);
         graph.getEdges().add(newEdge);

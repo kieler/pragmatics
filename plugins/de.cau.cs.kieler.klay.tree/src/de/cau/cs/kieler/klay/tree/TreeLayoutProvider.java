@@ -44,7 +44,7 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode kgraph, IKielerProgressMonitor progressMonitor) {
+    public void doLayout(final KNode kgraph, final IKielerProgressMonitor progressMonitor) {
         // build tGraph
         IGraphImporter<KNode> graphImporter = new KGraphImporter();
         TGraph tGraph = graphImporter.importGraph(kgraph);
@@ -63,6 +63,5 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
         // apply the layout results to the original graph
         graphImporter.applyLayout(tGraph);
     }
-
 
 }

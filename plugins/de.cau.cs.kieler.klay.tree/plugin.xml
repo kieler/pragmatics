@@ -23,15 +23,14 @@
                option="de.cau.cs.kieler.separateConnComp">
          </knownOption>
          <knownOption
-               default="1.0"
+               default="1.6"
                option="de.cau.cs.kieler.aspectRatio">
          </knownOption>
          <knownOption
-               default="RIGHT"
+               default="DOWN"
                option="de.cau.cs.kieler.direction">
          </knownOption>
          <knownOption
-               default="false"
                option="de.cau.cs.kieler.debugMode">
          </knownOption>
          <knownOption

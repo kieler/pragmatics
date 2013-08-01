@@ -34,8 +34,7 @@ public abstract class TShape extends TGraphElement {
     /**
      * Creates a shape in the context of the given graph.
      * 
-     * @param graph
-     *            the graph for which the shape is created
+     * @param id the identifier
      */
     public TShape(final int id) {
         super(id);

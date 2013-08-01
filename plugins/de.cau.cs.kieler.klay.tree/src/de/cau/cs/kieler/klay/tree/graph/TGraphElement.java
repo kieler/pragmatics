@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -27,16 +27,14 @@ public abstract class TGraphElement extends MapPropertyHolder {
     private static final long serialVersionUID = 1L;
 
     /** Identifier value, may be arbitrarily used by algorithms. */
-    public int id;
+    public int id;  // SUPPRESS CHECKSTYLE VisibilityModifier
 
     /**
      * Create a graph element.
      * 
-     * @param g
-     * @param id
-     * 
+     * @param id the element identifier
      */
-    public TGraphElement(int id) {
+    public TGraphElement(final int id) {
         super();
         this.id = id;
     }

@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
- * Copyright 2010 by
+ * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -14,13 +14,11 @@
 package de.cau.cs.kieler.klay.tree.p2order;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.TreeMap;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.properties.PropertyHolderComparator;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
@@ -40,40 +38,24 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  */
 public class NodeOrderer implements ILayoutPhase {
 
-    private Comparator<TNode> comparator = new Comparator<TNode>() {
-        public int compare(TNode t1, TNode t2) {
-            if (t1.getLabel().length() < t2.getLabel().length()) {
-                return -1;
-            } else {
-                if (t1.getLabel().length() > t2.getLabel().length()) {
-                    return 1;
-                } else {
-                    return t1.getLabel().compareTo(t2.getLabel());
-                }
-            }
-        }
-    };
-
-    private final TreeMap<TNode, Integer> debug = new TreeMap<TNode, Integer>(comparator);
-
     /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
-            IntermediateProcessingConfiguration.BEFORE_PHASE_2, EnumSet.of(
-                    LayoutProcessorStrategy.ROOT_PROC, LayoutProcessorStrategy.FAN_PROC));
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION
+            = new IntermediateProcessingConfiguration(
+                    IntermediateProcessingConfiguration.BEFORE_PHASE_2,
+                    EnumSet.of(LayoutProcessorStrategy.ROOT_PROC, LayoutProcessorStrategy.FAN_PROC));
 
     /**
      * {@inheritDoc}
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final TGraph graph) {
-
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
+    public void process(final TGraph tGraph, final IKielerProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Processor arrange node", 1);
 
@@ -90,21 +72,20 @@ public class NodeOrderer implements ILayoutPhase {
         }
         // order each level
         roots.add(root);
-        orderLevel(roots, 0, progressMonitor.subTask(1.0f));
+        orderLevel(roots, progressMonitor.subTask(1.0f));
 
         progressMonitor.done();
 
     }
 
     /**
-     * Order each level by seperating the nodes into leaves and inner nodes. And then fill gaps with
+     * Order each level by separating the nodes into leaves and inner nodes. And then fill gaps with
      * corresponding leaves.
      * 
      * @param currentLevel
-     * @param level
      * @param progressMonitor
      */
-    private void orderLevel(LinkedList<TNode> currentLevel, int level,
+    private void orderLevel(final LinkedList<TNode> currentLevel,
             final IKielerProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Processor arrange level", 1);
@@ -138,7 +119,6 @@ public class NodeOrderer implements ILayoutPhase {
         if (inners.isEmpty()) {
             // leave the leaves in their order
             for (TNode tENode : leaves) {
-                debug.put(tENode, pos);
                 tENode.setProperty(Properties.POSITION, pos++);
             }
         } else {
@@ -146,12 +126,11 @@ public class NodeOrderer implements ILayoutPhase {
             // order each level of descendants of the inner nodes
             int size = inners.size();
             for (TNode tPNode : inners) {
-                debug.put(tPNode, pos);
                 tPNode.setProperty(Properties.POSITION, pos++);
 
                 // set the position of the children and set them in order
                 LinkedList<TNode> children = tPNode.getChildrenCopy();
-                orderLevel(children, ++level, progressMonitor.subTask(1 / size));
+                orderLevel(children, progressMonitor.subTask(1 / size));
 
                 // order the children by their reverse position
                 Collections.sort(children,
@@ -170,14 +149,13 @@ public class NodeOrderer implements ILayoutPhase {
                 tPNode.getOutgoingEdges().clear();
                 tPNode.getOutgoingEdges().addAll(sortedOutEdges);
 
-                // fill gaps with leaves
+                // fill gaps with leafs
                 it = leaves.listIterator(leaves.size());
                 int fillGap = tPNode.getOutgoingEdges().size();
                 notNull = true;
                 while ((0 < fillGap) && notNull && it.hasPrevious()) {
                     TNode tNode = (TNode) it.previous();
                     if ((tNode.getProperty(Properties.FAN) == 0)) {
-                        debug.put(tNode, pos);
                         tNode.setProperty(Properties.POSITION, pos++);
                         fillGap--;
                         it.remove();

@@ -42,45 +42,43 @@ public class DFSTreeifyer implements ILayoutPhase {
 
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
-            new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.AFTER_PHASE_4,LayoutProcessorStrategy.DETREEIFYING_PROC);
+            new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.AFTER_PHASE_4,
+                    LayoutProcessorStrategy.DETREEIFYING_PROC);
 
     /**
      * {@inheritDoc}
      */
-    public void process(TGraph theGraph, IKielerProgressMonitor progressMonitor) {
-
+    public void process(final TGraph tGraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("DFS Treeifying phase", 1);
 
-        this.tGraph = theGraph;
         init(tGraph);
         collectEdges(tGraph);
 
+        eliminated = null;
+        visited = null;
         progressMonitor.done();
     }
 
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(TGraph tGraph) {
-
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final TGraph tGraph) {
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
-    /** marks the nodes that have been visited during DFS */
+    /** marks the nodes that have been visited during DFS. */
     private int[] visited;
 
-    /** a list with the edges that can be removed */
+    /** a list with the edges that can be removed. */
     private List<TEdge> eliminated;
-
-    /** a TGraph */
-    private TGraph tGraph;
 
     /**
      * Initializes all previously defined structures of a TGraph with useful values.
      * 
      * @param tGraph
      */
-    private void init(TGraph tGraph) {
+    private void init(final TGraph tGraph) {
 
         int size = tGraph.getNodes().size();
         eliminated = new LinkedList<TEdge>();
@@ -100,7 +98,7 @@ public class DFSTreeifyer implements ILayoutPhase {
      * @param TGraph
      *            where to collect the edges
      */
-    private void collectEdges(TGraph tGraph) {
+    private void collectEdges(final TGraph tGraph) {
 
         // start DFS on every node in graph
         for (TNode tNode : tGraph.getNodes()) {
@@ -122,12 +120,12 @@ public class DFSTreeifyer implements ILayoutPhase {
     }
 
     /**
-     * This method performs a DFS on a given graph till all nodes of the graph have been visited
+     * This method performs a DFS on a given graph till all nodes of the graph have been visited.
      * 
      * @param node
      *            to start DFS
      */
-    private void dfs(TNode tNode) {
+    private void dfs(final TNode tNode) {
         // dfs starts on a node and marks that node as visited
         visited[tNode.id] = 1;
 

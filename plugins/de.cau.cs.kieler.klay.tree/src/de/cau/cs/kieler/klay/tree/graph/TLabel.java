@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -34,7 +34,7 @@ public class TLabel extends TShape {
      * 
      * @param text
      *            the text of the new label
-     * @param fedge
+     * @param tedge
      *            edge corresponding to this label
      */
     public TLabel(final TEdge tedge, final String text) {

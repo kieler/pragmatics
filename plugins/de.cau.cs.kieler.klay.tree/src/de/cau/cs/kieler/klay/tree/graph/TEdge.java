@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
- * Copyright 2010 by
+ * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
  * A edge for the T graph.
@@ -25,13 +24,13 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
  * @author sor
  * @author sgu
  */
-public class TEdge extends MapPropertyHolder {
+public class TEdge extends TGraphElement {
 
     /** the serial version UID. */
     private static final long serialVersionUID = 1L;
 
     /** the labels of the edge. */
-    private List<TLabel> labels = new LinkedList<TLabel>();
+    private final List<TLabel> labels = new LinkedList<TLabel>();
     /** the source node of the edge. */
     private TNode source;
     /** the target node of the edge. */
@@ -43,14 +42,14 @@ public class TEdge extends MapPropertyHolder {
     private KVectorChain bendPoints = new KVectorChain();
 
     /**
-     * Constructor for setting up a TEdge object
+     * Constructor for setting up a TEdge object.
      * 
      * @param source
      *            the source node of the edge
      * @param target
      *            the target node of the edge
      */
-    public TEdge(TNode source, TNode target) {
+    public TEdge(final TNode source, final TNode target) {
         this.source = source;
         this.target = target;
     }

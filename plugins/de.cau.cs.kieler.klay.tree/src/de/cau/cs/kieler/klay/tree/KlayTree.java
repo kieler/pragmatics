@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -34,11 +34,12 @@ import de.cau.cs.kieler.klay.tree.p4route.EdgeRouter;
  * "A Node-Positioning Algorithm for General Trees, John Q.Walker II" to layout trees. To do this it
  * uses four phases plus a pre-processing to build a corresponding data structure. The first phase
  * "treeifying" transforms the given graph into a tree if necessary. To do this, edges which destroy
- * the tree property will be removed and stored, so that they can be reinserted during a post processing. 
- * In the second phase "orderNodes" the nodes of each level are separated into leaves and inner nodes. 
- * And then whitespace in the level is filled with leaves. The third phase "NodePlacer" uses the 
- * algorithm first mentioned from John Q.Walker II to compute the actual position of the nodes. 
- * The last phase routeEdges sets the positions for the edges corresponding to the positions of the nodes.
+ * the tree property will be removed and stored, so that they can be reinserted during a post
+ * processing. In the second phase "orderNodes" the nodes of each level are separated into leaves
+ * and inner nodes. And then whitespace in the level is filled with leaves. The third phase
+ * "NodePlacer" uses the algorithm first mentioned from John Q.Walker II to compute the actual
+ * position of the nodes. The last phase routeEdges sets the positions for the edges corresponding
+ * to the positions of the nodes.
  * 
  * Each phase uses intermediate processors for small computations on the graph. The corresponding
  * processors are defined in each phase. Some are defined multiple times, but they are invoked only
@@ -64,10 +65,12 @@ public final class KlayTree {
     private ILayoutPhase edgeRouter;
 
     /** intermediate layout processor configuration. */
-    private IntermediateProcessingConfiguration intermediateProcessingConfiguration = new IntermediateProcessingConfiguration();
+    private IntermediateProcessingConfiguration intermediateProcessingConfiguration
+            = new IntermediateProcessingConfiguration();
 
     /** collection of instantiated intermediate modules. */
-    private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache = new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
+    private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache
+            = new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
 
     /** list of layout processors that compose the current algorithm. */
     private List<ILayoutProcessor> algorithm = new LinkedList<ILayoutProcessor>();
@@ -143,20 +146,20 @@ public final class KlayTree {
 
         // construct the list of processors that make up the algorithm
         algorithm.clear();
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
+        algorithm.addAll(getIntermediateProcessorList(
+                IntermediateProcessingConfiguration.BEFORE_PHASE_1));
         algorithm.add(dfsTreeifyer);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
+        algorithm.addAll(getIntermediateProcessorList(
+                IntermediateProcessingConfiguration.BEFORE_PHASE_2));
         algorithm.add(nodeOrderer);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
+        algorithm.addAll(getIntermediateProcessorList(
+                IntermediateProcessingConfiguration.BEFORE_PHASE_3));
         algorithm.add(nodePlacer);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
+        algorithm.addAll(getIntermediateProcessorList(
+                IntermediateProcessingConfiguration.BEFORE_PHASE_4));
         algorithm.add(edgeRouter);
-        algorithm
-                .addAll(getIntermediateProcessorList(IntermediateProcessingConfiguration.AFTER_PHASE_4));
+        algorithm.addAll(getIntermediateProcessorList(
+                IntermediateProcessingConfiguration.AFTER_PHASE_4));
     }
 
     /**
@@ -274,7 +277,7 @@ public final class KlayTree {
             if (monitor.isCanceled()) {
                 return;
             }
-            processor.process(graph, monitor.subTask(2));
+            processor.process(graph, monitor.subTask(1));
         }
         monitor.done();
     }

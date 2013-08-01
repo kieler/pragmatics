@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
- * Copyright 2010 by
+ * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.klay.tree.TreeUtil;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.tree.graph.TEdge;
@@ -29,7 +30,6 @@ import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.properties.OrderWeighting;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
-import de.cau.cs.kieler.klay.tree.util.FindNode;
 
 /**
  * This phase orders the nodes of each level by separating the children of nodes into leaves and
@@ -45,9 +45,10 @@ import de.cau.cs.kieler.klay.tree.util.FindNode;
 public class OrderBalance implements ILayoutPhase {
 
     /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
-            IntermediateProcessingConfiguration.BEFORE_PHASE_2, EnumSet.of(
-                    LayoutProcessorStrategy.ROOT_PROC, LayoutProcessorStrategy.FAN_PROC,
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION
+            = new IntermediateProcessingConfiguration(
+                    IntermediateProcessingConfiguration.BEFORE_PHASE_2,
+                    EnumSet.of(LayoutProcessorStrategy.ROOT_PROC, LayoutProcessorStrategy.FAN_PROC,
                     LayoutProcessorStrategy.NEIGHBORS_PROC));
 
     /**
@@ -60,15 +61,13 @@ public class OrderBalance implements ILayoutPhase {
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final TGraph graph) {
-
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
-
+    public void process(final TGraph tGraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor arrange node", 1);
 
         /** get the weighting from the userinterface */
@@ -92,7 +91,7 @@ public class OrderBalance implements ILayoutPhase {
         if (root != null) {
 
             /** start two levels above the deepest level at the leftmost node */
-            TNode lM = FindNode.getLeftMost(root.getChildren());
+            TNode lM = TreeUtil.getLeftMost(root.getChildren());
 
             /** if there are only the root and one level or less no reordering is necessary */
             if (lM != null && lM.getParent() != root) {
@@ -127,7 +126,7 @@ public class OrderBalance implements ILayoutPhase {
      * @param leftMost
      *            the leftmost node in a level
      */
-    private void orderLevel(TNode leftMost, boolean odd) {
+    private void orderLevel(final TNode leftMost, final boolean odd) {
         if (leftMost != null) {
 
             /** copy current to iterate over the copy */
@@ -205,11 +204,11 @@ public class OrderBalance implements ILayoutPhase {
     private static class SortTEdgeTargetProperty implements Comparator<TEdge> {
         private IProperty<Integer> property;
 
-        public SortTEdgeTargetProperty(IProperty<Integer> property) {
+        public SortTEdgeTargetProperty(final IProperty<Integer> property) {
             this.property = property;
         }
 
-        public int compare(TEdge t1, TEdge t2) {
+        public int compare(final TEdge t1, final TEdge t2) {
             return t2.getTarget().getProperty(property) - t1.getTarget().getProperty(property);
         }
     }

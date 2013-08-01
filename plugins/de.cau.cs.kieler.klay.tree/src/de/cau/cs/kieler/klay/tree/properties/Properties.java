@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -96,9 +96,6 @@ public final class Properties {
     /** A modifier x-coordinate. */
     public static final IProperty<Double> MODIFIER = new Property<Double>("MODIFIER", 0d);
 
-    /** The direction from the origin of a node in the nesting tree of a compound graph. */
-    public static final IProperty<Direction> DIRC = new Property<Direction>("DIRC", Direction.SOUTH);
-
     /** Upper left corner of the graph's bounding box. */
     public static final IProperty<KVector> BB_UPLEFT = new Property<KVector>("boundingBox.upLeft");
     /** Lower right corner of the graph's bounding box. */
@@ -113,7 +110,7 @@ public final class Properties {
 
     /** The aspect ratio for packing connected components. */
     public static final Property<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO, 1.0f, 1.0f);
+            LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
 
     /** Priority of nodes or edges. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
@@ -122,18 +119,7 @@ public final class Properties {
     /** Tells the node order which weighting it should use. */
     public static final IProperty<OrderWeighting> WEIGHTING = new Property<OrderWeighting>(
             "de.cau.cs.kieler.klay.tree.weighting", OrderWeighting.DESCENDANTS);
-    
-    /** If the algorithm run in debug mode how many test graph should be generated. */
-    public static final IProperty<Integer> TEST_GRAPHS = new Property<Integer>(
-            "de.cau.cs.kieler.klay.tree.testGraph", 0);
-    
-    /** If the algorithm run in debug mode how many nodes should be in each test graph. */
-    public static final IProperty<Integer> TEST_NODES = new Property<Integer>(
-            "de.cau.cs.kieler.klay.tree.testNodes", 0);
 
-    /** Label spacing property. */
-    public static final Property<Float> LABEL_SPACING = new Property<Float>(
-            LayoutOptions.LABEL_SPACING, 5.0f, 0.0f);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

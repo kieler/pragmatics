@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -136,7 +136,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
                         // set properties of the new edge
                         newEdge.copyProperties(edgeLayout);
-                        newEdge.checkProperties(Properties.LABEL_SPACING);
 
                         // update tNode accordingly
                         source.getOutgoingEdges().add(newEdge);
@@ -170,7 +169,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         }
 
         // calculate the offset from border spacing and node distribution
-        double minXPos = Integer.MAX_VALUE, minYPos = Integer.MAX_VALUE, maxXPos = Integer.MIN_VALUE, maxYPos = Integer.MIN_VALUE;
+        double minXPos = Integer.MAX_VALUE, minYPos = Integer.MAX_VALUE;
+        double maxXPos = Integer.MIN_VALUE, maxYPos = Integer.MIN_VALUE;
         for (TNode tNode : tGraph.getNodes()) {
             KVector pos = tNode.getPosition();
             KVector size = tNode.getSize();
@@ -197,14 +197,12 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         // process the edges
         for (TEdge tEdge : tGraph.getEdges()) {
             KEdge kedge = (KEdge) tEdge.getProperty(Properties.ORIGIN);
-            // TODO ASSERT origin is not null
             if (kedge != null) {
 
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                 KVectorChain bendPoints = tEdge.getBendPoints();
 
                 // add the source port and target port positions to the vector chain
-                // TODO ASSERT target and source are not null
                 if (tEdge.getSource() != null) {
                     bendPoints.addFirst(tEdge.getSource().getPosition());
                 }
@@ -226,8 +224,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         float height = (float) (maxYPos - minYPos) + 2 * borderSpacing + insets.getTop()
                 + insets.getBottom();
         KimlUtil.resizeNode(kgraph, width, height, false, false);
-        // KimlUtil.resizeNode(kgraph, width, height, false);
-        // TODO STOP THIS BUG
     }
 
 }

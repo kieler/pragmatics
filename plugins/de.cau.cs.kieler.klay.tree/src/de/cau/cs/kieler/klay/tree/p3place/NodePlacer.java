@@ -17,27 +17,35 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import com.google.common.collect.Iterables;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.klay.tree.TreeUtil;
 import de.cau.cs.kieler.klay.tree.ILayoutPhase;
 import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
-import de.cau.cs.kieler.klay.tree.util.FindNode;
 
 /**
- * The algorithm comes from "A Node-Positioning Algorithm for General Trees, John Q.Walker II" with
- * some small fixes in the actual code.
+ * The algorithm comes from
+ * <ul>
+ *   <li> John Q.Walker II, A Node-Positioning Algorithm for General Trees,
+ *     <em>Software: Practice and Experience</em> 20(7), pp. 685-705, July 1990.</li>
+ * </ul>
+ * with some small fixes in the actual code.
  * 
+ * <p>
  * This algorithm utilizes two concepts developed in previous positioning algorithms. First is the
  * concept of building subtrees as rigid units. When a node is moved, all of its descendants (if it
  * has any) are also moved--the entire subtree being thus treated as a rigid unit. A general tree is
  * positioned by building it up recursively from its leaves toward its root.
+ * </p>
  * 
+ * <p>
  * Second is the concept of using two fields for the positioning of each node. These two fields are:
- * 
- * • a preliminary x-coordinate • a modifier field.
- * 
+ * <ul>
+ *   <li> a preliminary x-coordinate
+ *   <li> a modifier field.
+ * </ul>
  * Two tree traversals are used to produce the final x-coordinate of a node. The first traversal
  * assigns the preliminary x-coordinate and modifier fields for each node; the second traversal
  * computes the final x-coordinate of each node by summing the node's preliminary x-coordinate with
@@ -46,12 +54,10 @@ import de.cau.cs.kieler.klay.tree.util.FindNode;
  * 
  * @author sor
  * @author sgu
- * @author John Q. Walker II
- * 
  */
 public class NodePlacer implements ILayoutPhase {
 
-    private double spacing = 20f;
+    private double spacing;
 
     /** Determine how to adjust all the nodes with respect to the location of the root. */
     private double xTopAdjustment = 0d;
@@ -60,7 +66,8 @@ public class NodePlacer implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(TGraph tGraph) {
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final TGraph tGraph) {
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
@@ -68,17 +75,18 @@ public class NodePlacer implements ILayoutPhase {
      * intermediate processing configuration. The neighbors processor needs to run again right
      * before the phase to get the actual order
      */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
-            null, EnumSet.of(LayoutProcessorStrategy.ROOT_PROC), EnumSet.of(
-                    LayoutProcessorStrategy.LEVEL_HEIGHT, LayoutProcessorStrategy.NEIGHBORS_PROC),
-            EnumSet.of(LayoutProcessorStrategy.NODE_POSITION_PROC));
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION
+            = new IntermediateProcessingConfiguration(null,
+                    EnumSet.of(LayoutProcessorStrategy.ROOT_PROC),
+                    EnumSet.of(LayoutProcessorStrategy.LEVEL_HEIGHT,
+                            LayoutProcessorStrategy.NEIGHBORS_PROC),
+                    EnumSet.of(LayoutProcessorStrategy.NODE_POSITION_PROC));
 
     /**
      * {@inheritDoc}
      */
-    public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
-
-        progressMonitor.begin("Processor order nodes", 1f);
+    public void process(final TGraph tGraph, final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Processor order nodes", 2);
 
         /** set the spacing according to the user inputs */
         spacing = tGraph.getProperty(Properties.SPACING);
@@ -86,16 +94,18 @@ public class NodePlacer implements ILayoutPhase {
         /** find the root node of this component */
         LinkedList<TNode> roots = new LinkedList<TNode>();
         for (TNode tNode : tGraph.getNodes()) {
-            if (tNode.getProperty(Properties.ROOT))
+            if (tNode.getProperty(Properties.ROOT)) {
                 roots.add(tNode);
+            }
         }
         TNode root = roots.getFirst();
 
         /** Do the preliminary positioning with a postorder walk. */
-        firstWalk(root, 0, progressMonitor.subTask(.5f));
+        firstWalk(root, 0, progressMonitor.subTask(1));
 
         /** Do the final positioning with a preorder walk. */
-        secondWalk(root, root.getProperty(Properties.LEVELHEIGHT) + yTopAdjustment, xTopAdjustment, progressMonitor.subTask(.5f));
+        secondWalk(root, root.getProperty(Properties.LEVELHEIGHT) + yTopAdjustment, xTopAdjustment,
+                progressMonitor.subTask(1));
 
         progressMonitor.done();
     }
@@ -112,7 +122,8 @@ public class NodePlacer implements ILayoutPhase {
      * @param progressMonitor
      *            the current progress monitor
      */
-    private void firstWalk(TNode cN, int level, final IKielerProgressMonitor progressMonitor) {
+    private void firstWalk(final TNode cN, final int level,
+            final IKielerProgressMonitor progressMonitor) {
         cN.setProperty(Properties.MODIFIER, 0d);
         TNode lS = cN.getProperty(Properties.LEFTSIBLING);
 
@@ -174,7 +185,7 @@ public class NodePlacer implements ILayoutPhase {
      * @param level
      *            the level of the root in the global tree
      */
-    private void apportion(TNode cN, int level) {
+    private void apportion(final TNode cN, final int level) {
         /** Initialize the leftmost and neighbor corresponding to the root of the subtree */
         TNode leftmost = Iterables.getFirst(cN.getChildren(), null);
         TNode neighbor = leftmost != null ? leftmost.getProperty(Properties.LEFTNEIGHBOR) : null;
@@ -213,7 +224,7 @@ public class NodePlacer implements ILayoutPhase {
                     leftSiblings++;
                     leftSibling = leftSibling.getProperty(Properties.LEFTSIBLING);
                 }
-                /** Apply portions to appropriate leftsibling subtrees. */
+                /** Apply portions to appropriate left sibling subtrees. */
                 if (leftSibling != null) {
                     double portion = moveDistance / (double) leftSiblings;
                     leftSibling = cN;
@@ -239,7 +250,7 @@ public class NodePlacer implements ILayoutPhase {
              */
             compareDepth++;
             if (leftmost.isLeaf()) {
-                leftmost = FindNode.getLeftMost(cN.getChildren(), compareDepth);
+                leftmost = TreeUtil.getLeftMost(cN.getChildren(), compareDepth);
             } else {
                 leftmost = Iterables.getFirst(leftmost.getChildren(), null);
             }
@@ -249,16 +260,16 @@ public class NodePlacer implements ILayoutPhase {
 
     /**
      * This function returns the mean width of the two passed nodes. It adds the width of the right
-     * half of lefthand node to the left half of righthand node. If all nodes are the same width,
+     * half of left hand node to the left half of right hand node. If all nodes are the same width,
      * this is a trivial calculation.
      * 
      * @param leftNode
-     *            the lefthand node
+     *            the left hand node
      * @param rightNode
-     *            the rightthand node
+     *            the right hand node
      * @return the sum of the width
      */
-    private double meanNodeWidth(TNode leftNode, TNode rightNode) {
+    private double meanNodeWidth(final TNode leftNode, final TNode rightNode) {
         double nodeWidth = 0d;
         if (leftNode != null) {
             nodeWidth += leftNode.getSize().x / 2d;
@@ -288,7 +299,7 @@ public class NodePlacer implements ILayoutPhase {
      * @param progressMonitor
      *            the current progress monitor
      */
-    private void secondWalk(TNode tNode, double yCoor, double modsum,
+    private void secondWalk(final TNode tNode, final double yCoor, final double modsum,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor place nodes - second walk", 1f);
         if (tNode != null) {
@@ -326,4 +337,5 @@ public class NodePlacer implements ILayoutPhase {
         }
         progressMonitor.done();
     }
+    
 }

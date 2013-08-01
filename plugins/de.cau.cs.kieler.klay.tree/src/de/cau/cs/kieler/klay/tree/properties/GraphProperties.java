@@ -23,21 +23,13 @@ package de.cau.cs.kieler.klay.tree.properties;
  * {@link Properties#GRAPH_PROPERTIES} property.
  * </p>
  * 
+ * TODO this is not used yet 
+ * 
  * @author sor
  * @author sgu
  */
 public enum GraphProperties {
 
-    /** The graph contains comment boxes. */
-    COMMENTS,
-    /** The graph contains dummy nodes representing external ports. */
-    EXTERNAL_PORTS,
-    /** The graph is a flattened hierarchical graph. */
-    FLAT_HIERARCHICAL,
-    /** The graph contains ports that are not free for positioning. */
-    NON_FREE_PORTS,
-    /** The graph contains ports on the northern or southern side. */
-    NORTH_SOUTH_PORTS,
     /** The graph contains self-loops. */
     SELF_LOOPS;
 

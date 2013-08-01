@@ -38,7 +38,15 @@ public class EdgeRouter implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final TGraph tGraph) {
+        return INTERMEDIATE_PROCESSING_CONFIGURATION;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void process(final TGraph tGraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Dull edge routing", 1);
 
         for (TNode tnode : tGraph.getNodes()) {
@@ -46,13 +54,6 @@ public class EdgeRouter implements ILayoutPhase {
                 tedge.getBendPoints().clear();
             }
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(TGraph tGraph) {
-        return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
 }

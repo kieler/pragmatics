@@ -1,4 +1,17 @@
-package de.cau.cs.kieler.klay.tree.util;
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2013 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+package de.cau.cs.kieler.klay.tree;
 
 import java.util.Iterator;
 
@@ -7,8 +20,19 @@ import com.google.common.collect.Iterators;
 
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 
-public class FindNode {
+/**
+ * Utility class for KLay Tree.
+ * 
+ * @author sgu
+ */
+public final class TreeUtil {
 
+    /**
+     * Hidden constructor to avoid instantiation.
+     */
+    private TreeUtil() {
+    }
+    
     /**
      * This method returns the leftmost node at the deepest level. This is implemented using a
      * postorder walk of the subtree under given level.
@@ -34,12 +58,13 @@ public class FindNode {
      *            the depth to search for
      * @return the leftmost descendant at depth levels down
      */
-    public static TNode getLeftMost(final Iterable<TNode> currentlevel, int depth) {
+    public static TNode getLeftMost(final Iterable<TNode> currentlevel, final int depth) {
         if (0 < Iterables.size(currentlevel)) {
+            int d = depth;
 
             // the leftmost descendant at depth levels down
-            if (1 < depth) {
-                depth--;
+            if (1 < d) {
+                d--;
                 // build empty iterator
                 Iterable<TNode> nextLevel = new Iterable<TNode>() {
 
@@ -52,11 +77,11 @@ public class FindNode {
                     // append the children of the current node to the next level
                     nextLevel = Iterables.concat(nextLevel, cN.getChildren());
                 }
-                return getLeftMost(nextLevel, depth);
+                return getLeftMost(nextLevel, d);
             }
 
             // the leftmost node at the deepest level
-            if (depth < 0) {
+            if (d < 0) {
                 // build empty iterator
                 Iterable<TNode> nextLevel = new Iterable<TNode>() {
 
@@ -72,7 +97,7 @@ public class FindNode {
 
                 //
                 if (0 < Iterables.size(nextLevel)) {
-                    return getLeftMost(nextLevel, depth);
+                    return getLeftMost(nextLevel, d);
                 }
             }
         }

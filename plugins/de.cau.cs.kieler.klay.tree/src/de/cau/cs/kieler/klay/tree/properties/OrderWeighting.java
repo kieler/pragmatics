@@ -25,4 +25,5 @@ public enum OrderWeighting {
     DESCENDANTS,
     /** Chooses maximal number of descendants at the same level. */
     FAN;
+    
 }

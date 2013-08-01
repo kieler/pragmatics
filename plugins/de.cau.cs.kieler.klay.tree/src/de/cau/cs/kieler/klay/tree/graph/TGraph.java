@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -76,35 +76,4 @@ public class TGraph extends MapPropertyHolder {
         return nodes;
     }
 
-    /**
-     * Add a new node to the graph.
-     * 
-     * @param tnode
-     *            the node to be added
-     * @param label
-     *            the label of the new node
-     * @param id
-     *            the id of the new node
-     * @return the new node in the graph
-     */
-    public TNode addNode(TNode tnode, String label, int id) {
-        tnode = new TNode(id, this, label);
-        nodes.add(tnode);
-        return tnode;
-    }
-
-    /**
-     * Add a new edge to the graph.
-     * 
-     * @param source
-     *            the new edges source
-     * @param target
-     *            the new edges target
-     * @return the newly added edge
-     */
-    public TEdge addEdge(TNode source, TNode target) {
-        TEdge tedge = new TEdge(source, target);
-        edges.add(tedge);
-        return tedge;
-    }
 }
