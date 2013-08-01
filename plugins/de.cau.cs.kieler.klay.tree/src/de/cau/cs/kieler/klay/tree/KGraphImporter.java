@@ -203,17 +203,11 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 KVectorChain bendPoints = tEdge.getBendPoints();
 
                 // add the source port and target port positions to the vector chain
-                if (tEdge.getSource() != null) {
-                    bendPoints.addFirst(tEdge.getSource().getPosition());
-                }
-                if (tEdge.getTarget() != null) {
-                    bendPoints.addLast(tEdge.getTarget().getPosition());
-                }
+                bendPoints.addFirst(tEdge.getSource().getPosition());
+                bendPoints.addLast(tEdge.getTarget().getPosition());
 
                 edgeLayout.getBendPoints().clear();
-                if (!bendPoints.isEmpty()) {
-                    edgeLayout.applyVectorChain(bendPoints);
-                }
+                edgeLayout.applyVectorChain(bendPoints);
             }
         }
 

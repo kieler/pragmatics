@@ -31,24 +31,25 @@ public enum LayoutProcessorStrategy {
      */
 
     // Before Phase 2
-    /** Determine the root of a given graph */
+    /** Determine the root of a given graph. */
     ROOT_PROC,
-    /** Compute the fanout of each node in a given graph */
+    /** Compute the fanout of each node in a given graph. */
     FAN_PROC,
     
     // Before Phase 2 and 3
-    /** Determine the local neighbors of each node in a given graph */
+    /** Determine the local neighbors of each node in a given graph. */
     NEIGHBORS_PROC,
 
     // Before Phase 3
-    /** Determine the height of each level in the given graph */
+    /** Determine the height of each level in the given graph. */
     LEVEL_HEIGHT,
 
     // Before Phase 4
-    /** Set the coordinates for each node in a given graph */
+    /** Set the coordinates for each node in a given graph. */
     NODE_POSITION_PROC,
     
     // After Phase 4
+    /** Reinsert edges that were removed for treeifying. */
     DETREEIFYING_PROC;
 
     /**

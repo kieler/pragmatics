@@ -28,21 +28,19 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  * 
  * @author sor
  * @author sgu
- * 
  */
 public class Untreeifyer implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
-
+    public void process(final TGraph tGraph, final IKielerProgressMonitor progressMonitor) {
         List<TEdge>  edges = tGraph.getProperty(Properties.REMOVABLE_EDGES);
 
         for (TEdge tEdge : edges) {
             tEdge.getSource().getOutgoingEdges().add(tEdge);
             tEdge.getTarget().getIncomingEdges().add(tEdge);
         }
-
     }
+    
 }

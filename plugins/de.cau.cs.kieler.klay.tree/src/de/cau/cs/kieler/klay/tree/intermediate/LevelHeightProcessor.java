@@ -32,13 +32,13 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  */
 public class LevelHeightProcessor implements ILayoutProcessor {
 
-    /** number of nodes in the graph */
+    /** number of nodes in the graph. */
     private int numberOfNodes;
 
     /**
      * {@inheritDoc}
      */
-    public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
+    public void process(final TGraph tGraph, final IKielerProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Processor determine the height for each level", 1f);
 
@@ -75,7 +75,7 @@ public class LevelHeightProcessor implements ILayoutProcessor {
      *            the current progress monitor
      */
     private void setNeighbors(final Iterable<TNode> currentLevel,
-            IKielerProgressMonitor progressMonitor) {
+            final IKielerProgressMonitor progressMonitor) {
         /** only do something in filled levels */
         if (!Iterables.isEmpty(currentLevel)) {
             /** create subtask for recursive descent */

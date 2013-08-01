@@ -31,14 +31,13 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  */
 public class NodePositionProcessor implements ILayoutProcessor {
 
-    /** number of nodes in the graph */
+    /** number of nodes in the graph. */
     private int numberOfNodes;
 
     /**
      * {@inheritDoc}
      */
-    public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
-
+    public void process(final TGraph tGraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor set coordinates", 1);
 
         /** save number of nodes for progress computation */
@@ -58,10 +57,9 @@ public class NodePositionProcessor implements ILayoutProcessor {
         }
 
         /** start with the root and level down by bsf */
-        setCoordiantes(root.getChildrenCopy(), progressMonitor.subTask(1.0f));
+        setCoordinates(root.getChildrenCopy(), progressMonitor.subTask(1.0f));
 
         progressMonitor.done();
-
     }
 
     /**
@@ -74,8 +72,8 @@ public class NodePositionProcessor implements ILayoutProcessor {
      * @param progressMonitor
      *            the current progress monitor
      */
-    private void setCoordiantes(final LinkedList<TNode> currentLevel,
-            IKielerProgressMonitor progressMonitor) {
+    private void setCoordinates(final LinkedList<TNode> currentLevel,
+            final IKielerProgressMonitor progressMonitor) {
 
         /** if the level is empty there is nothing to do */
         if (!currentLevel.isEmpty()) {
@@ -94,8 +92,8 @@ public class NodePositionProcessor implements ILayoutProcessor {
             }
 
             /** go to the next level */
-            setCoordiantes(nextLevel, progressMonitor.subTask(nextLevel.size() / numberOfNodes));
+            setCoordinates(nextLevel, progressMonitor.subTask(nextLevel.size() / numberOfNodes));
         }
-
     }
+    
 }

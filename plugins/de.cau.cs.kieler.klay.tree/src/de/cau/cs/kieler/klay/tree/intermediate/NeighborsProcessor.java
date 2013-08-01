@@ -33,14 +33,13 @@ import de.cau.cs.kieler.klay.tree.properties.Properties;
  */
 public class NeighborsProcessor implements ILayoutProcessor {
 
-    /** the number of nodes in the given graph */
+    /** the number of nodes in the given graph. */
     private int numberOfNodes;
 
     /**
      * {@inheritDoc}
      */
-    public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
-
+    public void process(final TGraph tGraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor set neighbors", 1f);
 
         /** save number of nodes for progress computation */
@@ -77,7 +76,7 @@ public class NeighborsProcessor implements ILayoutProcessor {
      *            the current progress monitor
      */
     private void setNeighbors(final Iterable<TNode> currentLevel,
-            IKielerProgressMonitor progressMonitor) {
+            final IKielerProgressMonitor progressMonitor) {
         /** only do something in filled levels */
         if (!Iterables.isEmpty(currentLevel)) {
             /** create subtask for recursive descent */

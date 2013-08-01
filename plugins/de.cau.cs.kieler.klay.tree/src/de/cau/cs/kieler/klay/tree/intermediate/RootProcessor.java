@@ -35,7 +35,7 @@ public class RootProcessor implements ILayoutProcessor {
     /**
      * {@inheritDoc}
      */
-    public void process(TGraph tGraph, IKielerProgressMonitor progressMonitor) {
+    public void process(final TGraph tGraph, final IKielerProgressMonitor progressMonitor) {
 
         /** clear list of roots if processor is reused */
         roots.clear();
@@ -53,13 +53,15 @@ public class RootProcessor implements ILayoutProcessor {
          */
         switch (roots.size()) {
         case 0:
-            // TODO assert no nodes are there
+            assert tGraph.getNodes().isEmpty();
             TNode root = new TNode(0, tGraph, "DUMMY_ROOT");
             root.setProperty(Properties.ROOT, true);
             root.setProperty(Properties.DUMMY, true);
             tGraph.getNodes().add(root);
+            break;
+            
         case 1:
-
+            // perfect, we already have only one root
             break;
 
         default:
