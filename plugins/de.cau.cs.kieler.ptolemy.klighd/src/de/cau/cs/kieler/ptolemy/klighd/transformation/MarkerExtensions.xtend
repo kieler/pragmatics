@@ -17,7 +17,6 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 
@@ -75,9 +74,15 @@ class MarkerExtensions {
      * Marks the given port as being an input port.
      * 
      * @param port the port to mark.
+     * @param mark {@code true} if the port should be marked, {@code false} if the marking should be
+     *             removed.
      */
-    def void markAsInputPort(KPort port) {
-        port.addAnnotation("_input")
+    def void markAsInputPort(KGraphElement port, boolean mark) {
+        if (mark) {
+            port.addAnnotation("_input")
+        } else {
+            port.removeAnnotation("_input")
+        }
     }
     
     /**
@@ -86,7 +91,7 @@ class MarkerExtensions {
      * @param port the port to check.
      * @return {@code true} if the port is marked as being an input port, {@code false} otherwise.
      */
-    def boolean isMarkedAsInputPort(KPort port) {
+    def boolean isMarkedAsInputPort(KGraphElement port) {
         return port.hasAnnotation("_input")
     }
     
@@ -94,9 +99,15 @@ class MarkerExtensions {
      * Marks the given port as being an output port.
      * 
      * @param port the port to mark.
+     * @param mark {@code true} if the port should be marked, {@code false} if the marking should be
+     *             removed.
      */
-    def void markAsOutputPort(KPort port) {
-        port.addAnnotation("_output")
+    def void markAsOutputPort(KGraphElement port, boolean mark) {
+        if (mark) {
+            port.addAnnotation("_output")
+        } else {
+            port.removeAnnotation("_output")
+        }
     }
     
     /**
@@ -105,7 +116,7 @@ class MarkerExtensions {
      * @param port the port to check.
      * @return {@code true} if the port is marked as being an output port, {@code false} otherwise.
      */
-    def boolean isMarkedAsOutputPort(KPort port) {
+    def boolean isMarkedAsOutputPort(KGraphElement port) {
         return port.hasAnnotation("_output")
     }
     
@@ -262,6 +273,27 @@ class MarkerExtensions {
     def boolean isMarkedAsState(KNode node) {
         val propertyValue = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
         return propertyValue.equals(ENTITY_CLASS_STATE)
+    }
+    
+    /**
+     * Marks the given node as representing a modal model port by setting its Ptolemy class accordingly.
+     * 
+     * @param node the node to be marked.
+     */
+    def void markAsModalModelPort(KNode node) {
+        node.addAnnotation(ANNOTATION_PTOLEMY_CLASS, PORT_CLASS_REFINEMENT_PORT)
+    }
+    
+    /**
+     * Checks if the given node or port is a state machine model port. These ports need to be turned
+     * into nodes that can have a special rendering, like in Ptolemy.
+     * 
+     * @param element the element to check.
+     * @return {@code true} if the element represents a modal model port.
+     */
+    def boolean isMarkedAsModalModelPort(KGraphElement element) {
+        val propertyValue = element.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+        return propertyValue.equals(PORT_CLASS_REFINEMENT_PORT)
     }
     
 }

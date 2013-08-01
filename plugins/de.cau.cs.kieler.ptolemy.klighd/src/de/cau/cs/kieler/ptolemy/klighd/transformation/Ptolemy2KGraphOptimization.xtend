@@ -289,26 +289,26 @@ class Ptolemy2KGraphOptimization {
                 // The port has an incoming edge of known direction!
                 if (unknownPort.node.children.contains(directedIncomingEdge.source)) {
                     // Connection from the inside -> the port is an output port
-                    unknownPort.markAsOutputPort()
+                    unknownPort.markAsOutputPort(true)
                 } else {
                     // Connection from the outside -> the port is an input port
-                    unknownPort.markAsInputPort()
+                    unknownPort.markAsInputPort(true)
                 }
             } else if (directedOutgoingEdge != null) {
                 // The port has an outgoing edge of known direction!
                 if (unknownPort.node.children.contains(directedIncomingEdge.target)) {
                     // Connection to the inside -> the port is an input port
-                    unknownPort.markAsInputPort()
+                    unknownPort.markAsInputPort(true)
                 } else {
                     // Connection to the outside -> the port is an output port
-                    unknownPort.markAsOutputPort()
+                    unknownPort.markAsOutputPort(true)
                 }
             } else if (isInputPortName(unknownPort.name)) {
                 // The port is named like an input port -> mark as input port
-                unknownPort.markAsInputPort()
+                unknownPort.markAsInputPort(true)
             } else if (isOutputPortName(unknownPort.name)) {
                 // The port is named like an output port -> mark as output port
-                unknownPort.markAsOutputPort()
+                unknownPort.markAsOutputPort(true)
             }
             
             // If the port's type is now known, fix incident edge directions accordingly and remove

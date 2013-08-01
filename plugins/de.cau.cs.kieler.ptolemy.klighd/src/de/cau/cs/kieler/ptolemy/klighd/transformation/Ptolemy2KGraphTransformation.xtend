@@ -173,12 +173,11 @@ class Ptolemy2KGraphTransformation {
                     // We have a refinement; transform it (which has possibly already been done) and
                     // copy it; then add its children to our list of children
                     val transformedRefinement = transform(refinement)
-                    
-//                    val copier = new KGraphCopier()
-//                    val copiedRefinement = copier.copy(transformedRefinement)
-//                    copier.copyReferences()
-                    
                     kNode.children += transformedRefinement.children
+                    while (!transformedRefinement.ports.empty) {
+                        kNode.children += transformRefinementPort(transformedRefinement.ports.get(0))
+                    }
+                    kNode.annotations += transformedRefinement.annotations
                     
                     // Check if the refinement is itself a state machine
                     val refinementClass = transformedRefinement.getAnnotationValue(
@@ -364,6 +363,7 @@ class Ptolemy2KGraphTransformation {
         
         // Add annotation identifying this port as having been created from a Ptolemy port
         kPort.markAsPtolemyElement()
+        kPort.addAnnotation(ANNOTATION_PTOLEMY_CLASS, ptPort.class_)
         
         // Add the port's properties, which might add "input" / "output" annotations
         kPort.addProperties(ptPort.property)
@@ -460,6 +460,67 @@ class Ptolemy2KGraphTransformation {
         result.node = kNode
         
         result
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Handling Ports of State Refinements
+    
+    /**
+     * Takes the given port of a state refinement and creates a node for it that the port is moved to.
+     * This is necessary since states don't have hierarchical ports, but state refinements sometimes
+     * need them. We thus display such ports as nodes with special rendering, just like in Ptolemy.
+     * 
+     * @param port the port to turn into a node.
+     * @return the node with the port attached.
+     */
+    def private KNode transformRefinementPort(KPort port) {
+        val node = KimlUtil::createInitializedNode()
+        node.ports.add(port)
+        
+        // Mark the node as being a representation of a modal model port
+        node.markAsModalModelPort()
+        
+        // Find the type of the port
+        val inputPort = port.hasAnnotation("input")
+        val outputPort = port.hasAnnotation("output")
+        val multiPort = port.hasAnnotation("multiport")
+        
+        if (inputPort && !outputPort) {
+            node.markAsInputPort(true)
+            
+            port.markAsInputPort(false)
+            port.markAsOutputPort(true)
+        } else if (!inputPort && outputPort) {
+            node.markAsOutputPort(true)
+            
+            port.markAsOutputPort(false)
+            port.markAsInputPort(true)
+        } else if (inputPort && outputPort) {
+            // TODO We could well create a second port for this case
+            node.markAsInputPort(true)
+            node.markAsOutputPort(true)
+            
+            port.markAsInputPort(true)
+            port.markAsOutputPort(true)
+        }
+        
+        if (multiPort) {
+            node.addAnnotation("multiport")
+        }
+        
+        // Find all incident edges and reroute them to the port's new node
+        for (edge : port.edges) {
+            if (edge.sourcePort == port) {
+                edge.source = node
+            }
+            
+            if (edge.targetPort == port) {
+                edge.target = node
+            }
+        }
+        
+        return node
     }
     
     
@@ -576,11 +637,11 @@ class Ptolemy2KGraphTransformation {
             if (!(port.markedAsInputPort || port.markedAsOutputPort)) {
                 // Find out whether it is an input or an output port (or even both)
                 if (port.hasAnnotation("input") || port.hasAnnotation("inputoutput")) {
-                    port.markAsInputPort()
+                    port.markAsInputPort(true)
                 }
                 
                 if (port.hasAnnotation("output") || port.hasAnnotation("inputoutput")) {
-                    port.markAsOutputPort()
+                    port.markAsOutputPort(true)
                 }
             }
         }

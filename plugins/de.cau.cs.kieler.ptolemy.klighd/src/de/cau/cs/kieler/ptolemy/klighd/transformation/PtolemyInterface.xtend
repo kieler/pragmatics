@@ -105,13 +105,13 @@ class PtolemyInterface {
                     if (ptPort.input || kPort.hasAnnotation("input")
                         || kPort.hasAnnotation("inputoutput")) {
                         
-                        kPort.markAsInputPort()
+                        kPort.markAsInputPort(true)
                     }
                     
                     if (ptPort.output || kPort.hasAnnotation("output")
                         || kPort.hasAnnotation("inputoutput")) {
                         
-                        kPort.markAsOutputPort()
+                        kPort.markAsOutputPort(true)
                     }
                     
                     // Remember if this is a multiport

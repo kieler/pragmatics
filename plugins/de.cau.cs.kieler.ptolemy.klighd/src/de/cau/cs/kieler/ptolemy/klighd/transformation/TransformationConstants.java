@@ -47,6 +47,12 @@ final class TransformationConstants {
     /** Name of an annotation that marks a port as being an IOPort instance. */
     public static final String IS_IO_PORT = "_ioPort";
     
+    /** Class of a refinement port in modal models. */
+    public static final String PORT_CLASS_MODAL_MODEL_PORT = "ptolemy.domains.modal.modal.ModalPort";
+    
+    /** Class of a refinement port in modal models. */
+    public static final String PORT_CLASS_REFINEMENT_PORT = "ptolemy.domains.modal.modal.RefinementPort";
+    
     
     // ENTITY TYPES
     

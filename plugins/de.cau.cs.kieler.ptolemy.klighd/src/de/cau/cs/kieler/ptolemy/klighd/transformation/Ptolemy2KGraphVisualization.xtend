@@ -128,16 +128,13 @@ class Ptolemy2KGraphVisualization {
             } else if (child.markedAsConstActor) {
                 // We have a const actor whose rendering is a bit special
                 child.addConstNodeRendering()
+            } else if (child.markedAsModalModelPort) {
+                // We have a modal model port
+                child.addModalModelPortRendering()
             } else {
                 // We have a regular node
                 child.addRegularNodeRendering()
             }
-            
-            // Add label rendering
-            child.addLabelRendering()
-            
-            // Add tool tip
-            child.addToolTip()
             
             // Add port rendering
             for (port : child.ports) {
@@ -151,6 +148,12 @@ class Ptolemy2KGraphVisualization {
                 edge.addEdgeRendering()
                 edge.addLabelRendering()
             }
+            
+            // Add label rendering
+            child.addLabelRendering()
+            
+            // Add tool tip
+            child.addToolTip()
         }
     }
     
@@ -306,6 +309,24 @@ class Ptolemy2KGraphVisualization {
     }
     
     /**
+     * Renders the given node as a modal model port.
+     * 
+     * @param node the node to attach the rendering information to.
+     */
+    def private void addModalModelPortRendering(KNode node) {
+        val layout = node.layout as KShapeLayout
+        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
+            NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
+        layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
+        
+        val rendering = createDirectorNodeRendering(node)
+        node.data += rendering
+        
+        // Set size
+        layout.setLayoutSize(rendering)
+    }
+    
+    /**
      * Renders the given node just like it would be rendered in Ptolemy, if possible.
      * 
      * @param node the node to attach the rendering information to.
@@ -378,27 +399,42 @@ class Ptolemy2KGraphVisualization {
             }
             case PortSide::EAST: {
                 layout.setProperty(LayoutOptions::OFFSET, 0f)
-                layout.setProperty(Properties::PORT_ANCHOR, new KVector(7, 3.5))
+                if (!port.markedAsModalModelPort) {
+                    layout.setProperty(Properties::PORT_ANCHOR, new KVector(7, 3.5))
+                }
             }
             case PortSide::WEST: {
                 layout.setProperty(LayoutOptions::OFFSET, 0f)
-                layout.setProperty(Properties::PORT_ANCHOR, new KVector(0, 3.5))
+                if (!port.markedAsModalModelPort) {
+                    layout.setProperty(Properties::PORT_ANCHOR, new KVector(0, 3.5))
+                }
             }
         }
         
-        // Add rendering
-        val rendering = createPortRendering(port)
-        port.data += rendering
-        
-        // Remove the port's label and put it into the tool tip text
-        if (port.name.length > 0) {
-            rendering.setProperty(KlighdProperties::TOOLTIP, "Port: " + port.name)
-            port.labels.clear()
+        // Add rendering if this is not a modal model port
+        var KRendering rendering = null
+        if (!port.markedAsModalModelPort) {
+            rendering = createPortRendering(port)
+            port.data += rendering
+            
+            // Add size information
+            layout.width = 8
+            layout.height = 8
         }
         
-        // Add size information
-        layout.width = 8
-        layout.height = 8
+        // Check if the port has a name
+        if (port.name.length > 0) {
+            // If this is a model port, put the name into the parent node's label; if it is not, put
+            // the name into the tooltip
+            if (port.markedAsModalModelPort) {
+                port.node.name = port.name
+            } else {
+                rendering.setProperty(KlighdProperties::TOOLTIP, "Port: " + port.name)
+            }
+        }
+        
+        // Remove the port's label
+        port.labels.clear()
     }
     
     
@@ -480,12 +516,18 @@ class Ptolemy2KGraphVisualization {
     // Tool Tips
     
     /**
-     * Generates a tool tip for the given element based on its properties.
+     * Generates a tool tip for the given element based on its properties if it has rendering
+     * information. (modal model ports don't have any)
      * 
      * @param element the element to generate the tooltip for.
      */
     def private void addToolTip(KGraphElement element) {
-        val toolTip = element.KRendering.getProperty(KlighdProperties::TOOLTIP)
+        val krendering = element.KRendering
+        if (krendering == null) {
+            return
+        }
+        
+        val toolTip = krendering.getProperty(KlighdProperties::TOOLTIP)
         val toolTipText = new StringBuffer()
         
         // If we already have a tool tip text, add that to our newly assembled text
@@ -507,7 +549,7 @@ class Ptolemy2KGraphVisualization {
         
         // If we have found something, display them as tooltip
         if (toolTipText.length > 0) {
-            element.KRendering.setProperty(KlighdProperties::TOOLTIP, toolTipText.substring(1))
+            krendering.setProperty(KlighdProperties::TOOLTIP, toolTipText.substring(1))
         }
     }
     
