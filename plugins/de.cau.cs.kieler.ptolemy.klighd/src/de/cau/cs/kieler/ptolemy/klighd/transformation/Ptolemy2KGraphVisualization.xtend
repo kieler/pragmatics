@@ -29,6 +29,7 @@ import de.cau.cs.kieler.core.krendering.extensions.ViewSynthesisShared
 import de.cau.cs.kieler.core.math.KVector
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.Direction
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
 import de.cau.cs.kieler.kiml.options.EdgeRouting
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement
@@ -42,7 +43,8 @@ import de.cau.cs.kieler.klighd.util.KlighdProperties
 import java.util.EnumSet
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
-import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
+
+import static extension com.google.common.base.Strings.*
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -483,26 +485,29 @@ class Ptolemy2KGraphVisualization {
      * @param element the element to generate the tooltip for.
      */
     def private void addToolTip(KGraphElement element) {
-        val toolTip = new StringBuffer("\n" + element.KRendering.getProperty(KlighdProperties::TOOLTIP))
-        if (toolTip.length == 1) {
-            toolTip.deleteCharAt(0)
+        val toolTip = element.KRendering.getProperty(KlighdProperties::TOOLTIP)
+        val toolTipText = new StringBuffer()
+        
+        // If we already have a tool tip text, add that to our newly assembled text
+        if (!toolTip.nullOrEmpty) {
+            toolTipText.append("\n" + toolTip)
         }
         
         // Look for properties that don't start with an underscore (these are the ones we want the
         // user to see)
         for (property : element.annotations) {
             if (!property.name.startsWith("_")) {
-                toolTip.append("\n").append(property.name)
+                toolTipText.append("\n").append(property.name)
                 
-                if (property.value != null && property.value.length() > 0) {
-                    toolTip.append(": ").append(property.value)
+                if (!property.value.nullOrEmpty) {
+                    toolTipText.append(": ").append(property.value)
                 }
             }
         }
         
         // If we have found something, display them as tooltip
-        if (toolTip.length > 0) {
-            element.KRendering.setProperty(KlighdProperties::TOOLTIP, toolTip.substring(1))
+        if (toolTipText.length > 0) {
+            element.KRendering.setProperty(KlighdProperties::TOOLTIP, toolTipText.substring(1))
         }
     }
     

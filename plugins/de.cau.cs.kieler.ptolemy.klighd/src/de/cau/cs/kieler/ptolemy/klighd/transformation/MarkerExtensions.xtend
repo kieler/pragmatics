@@ -23,6 +23,8 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
 
+import static extension com.google.common.base.Strings.*
+
 /**
  * Utility methods used to mark elements by the Ptolemy to KGraph transformation.
  * 
@@ -246,13 +248,9 @@ class MarkerExtensions {
      * @return {@code true} if the node represents a Const actor.
      */
     def boolean isMarkedAsConstActor(KNode node) {
-        val propertyValue = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS)
-        if (propertyValue == null) {
-            return false
-        } else {
-            return propertyValue.equals(ENTITY_CLASS_CONST)
-                || propertyValue.equals(ENTITY_CLASS_STRING_CONST)
-        }
+        val propertyValue = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+        return propertyValue.equals(ENTITY_CLASS_CONST)
+            || propertyValue.equals(ENTITY_CLASS_STRING_CONST)
     }
     
     /**
@@ -262,12 +260,8 @@ class MarkerExtensions {
      * @return {@code true} if the node represents a state.
      */
     def boolean isMarkedAsState(KNode node) {
-        val propertyValue = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS)
-        if (propertyValue == null) {
-            return false
-        } else {
-            return propertyValue.equals(ENTITY_CLASS_STATE)
-        }
+        val propertyValue = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+        return propertyValue.equals(ENTITY_CLASS_STATE)
     }
     
 }
