@@ -413,6 +413,8 @@ public final class TransformationManager {
                                 popupContrib.addCommand(t.getAttribute("transformationId")
                                         + "_SEPARATOR");
                             }
+                            
+                            System.out.println(t.getAttribute("transformationId"));
                             popupContrib.addCommand(t.getAttribute("transformationId"));
                         }
                         attr = t.getAttribute("popupbar");

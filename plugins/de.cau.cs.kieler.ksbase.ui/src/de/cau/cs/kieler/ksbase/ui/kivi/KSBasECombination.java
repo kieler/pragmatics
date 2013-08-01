@@ -31,8 +31,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.Transaction;
 import org.eclipse.emf.workspace.AbstractEMFOperation;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
@@ -124,7 +128,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
 
             // do xtend2 stuff
             if (transformation.getTransformationClass() != null) {
-                evokeXtend2(transformation, selectionList);
+                evokeXtend2(transformation, selectionList, editor);
 
                 // do xtend1 stuff
             } else {
@@ -191,7 +195,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
      *            the current selection
      */
     private void evokeXtend2(final KSBasETransformation transformation,
-            final List<EObject> selection) {
+            final List<EObject> selection, IEditorPart editor) {
         Method method = null;
         List<Object> params = new LinkedList<Object>();
         // find the right method to execute in the xtend2 transformation class
@@ -265,6 +269,24 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
+                } else if (editor instanceof XtextEditor) {
+                        final XtextEditor xtextEditor = (XtextEditor) editor;
+                        final Method fmethod = method;
+                        final List<Object> fparams = params;
+                        Display.getDefault().asyncExec(new Runnable() {
+                            
+                            public void run() {
+                                xtextEditor.getDocument().modify(new IUnitOfWork.Void<XtextResource>() {
+                                    public void process(XtextResource state) throws Exception {
+                                        fmethod.invoke(transformation.getTransformationClass(), fparams.toArray());
+                                    }
+                                });
+                                
+                            }
+                        });
+                        
+                        System.out.println("§§§§§§§§§§§§§§§XTEND2§§§§§§§§§§§§§§§§§§§§");
+                    
                 } else {
                     method.invoke(transformation.getTransformationClass(), params.toArray());
                 }
