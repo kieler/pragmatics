@@ -172,6 +172,9 @@ class Ptolemy2KGraphTransformation {
                 if (refinement != null) {
                     // We have a refinement; transform it (which has possibly already been done) and
                     // copy it; then add its children to our list of children
+                    // Note: this code assumes that each refinement is only used once in the model. If
+                    // that assumption turns out to be false, we need to create a copy of the
+                    // transformed refinement before adding its children.
                     val transformedRefinement = transform(refinement)
                     kNode.children += transformedRefinement.children
                     while (!transformedRefinement.ports.empty) {

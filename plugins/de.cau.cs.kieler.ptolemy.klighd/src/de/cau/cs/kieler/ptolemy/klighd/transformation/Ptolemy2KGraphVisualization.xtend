@@ -321,6 +321,9 @@ class Ptolemy2KGraphVisualization {
         
         val rendering = createModalModelPortRendering(node)
         node.data += rendering
+        
+        layout.height = 20
+        layout.width = 20
     }
     
     /**
