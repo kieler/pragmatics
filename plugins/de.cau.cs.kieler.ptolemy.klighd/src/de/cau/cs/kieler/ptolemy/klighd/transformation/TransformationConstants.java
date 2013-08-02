@@ -47,6 +47,12 @@ final class TransformationConstants {
     /** Name of an annotation that marks a port as being an IOPort instance. */
     public static final String IS_IO_PORT = "_ioPort";
     
+    /** Class of a refinement port in modal models. */
+    public static final String PORT_CLASS_MODAL_MODEL_PORT = "ptolemy.domains.modal.modal.ModalPort";
+    
+    /** Class of a refinement port in modal models. */
+    public static final String PORT_CLASS_REFINEMENT_PORT = "ptolemy.domains.modal.modal.RefinementPort";
+    
     
     // ENTITY TYPES
     
@@ -62,6 +68,15 @@ final class TransformationConstants {
     
     /** Class of an entity that is a refinement for modal model states. */
     public static final String ENTITY_CLASS_STATE_REFINEMENT = "ptolemy.domains.modal.modal.Refinement";
+    
+    /** Class of an entity that is a state machine state. */
+    public static final String ENTITY_CLASS_STATE = "ptolemy.domains.modal.kernel.State";
+    
+    /** Class of an entity that is a Const actor. */
+    public static final String ENTITY_CLASS_CONST = "ptolemy.actor.lib.Const";
+    
+    /** Class of an entity that is a String Const actor. */
+    public static final String ENTITY_CLASS_STRING_CONST = "ptolemy.actor.lib.StringConst";
     
     
     // ENTITY NAMES

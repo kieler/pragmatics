@@ -29,6 +29,7 @@ import de.cau.cs.kieler.core.krendering.extensions.ViewSynthesisShared
 import de.cau.cs.kieler.core.math.KVector
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.Direction
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
 import de.cau.cs.kieler.kiml.options.EdgeRouting
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement
@@ -42,7 +43,8 @@ import de.cau.cs.kieler.klighd.util.KlighdProperties
 import java.util.EnumSet
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
-import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
+
+import static extension com.google.common.base.Strings.*
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -103,8 +105,12 @@ class Ptolemy2KGraphVisualization {
         // Visualize child nodes
         for (child : node.children) {
             // Add child node rendering
-            if (!child.children.empty) {
-                // We have a compound node
+            if (child.markedAsState) {
+                // We have a state machine state (which may also be a compound state)
+                child.addStateNodeRendering()
+                visualizeRecursively(child)
+            } else if (!child.children.empty) {
+                // We have a compound node that is not a state
                 child.addCompoundNodeRendering()
                 visualizeRecursively(child)
             } else if (child.markedAsHypernode) {
@@ -119,22 +125,16 @@ class Ptolemy2KGraphVisualization {
             } else if (child.markedAsParameterNode) {
                 // We have a parameter node that displays model parameters
                 child.addParameterNodeRendering()
-            } else if (child.markedAsState) {
-                // We have a state machine state
-                child.addStateNodeRendering()
             } else if (child.markedAsConstActor) {
                 // We have a const actor whose rendering is a bit special
                 child.addConstNodeRendering()
+            } else if (child.markedAsModalModelPort) {
+                // We have a modal model port
+                child.addModalModelPortRendering()
             } else {
                 // We have a regular node
                 child.addRegularNodeRendering()
             }
-            
-            // Add label rendering
-            child.addLabelRendering()
-            
-            // Add tool tip
-            child.addToolTip()
             
             // Add port rendering
             for (port : child.ports) {
@@ -148,6 +148,12 @@ class Ptolemy2KGraphVisualization {
                 edge.addEdgeRendering()
                 edge.addLabelRendering()
             }
+            
+            // Add label rendering
+            child.addLabelRendering()
+            
+            // Add tool tip
+            child.addToolTip()
         }
     }
     
@@ -170,19 +176,49 @@ class Ptolemy2KGraphVisualization {
         
         node.setLayoutAlgorithm()
         
-        // Create the rendering for this node
-        val KRendering expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha)
+        // Create the rendering for the expanded version of this node
+        val expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha)
         expandedRendering.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
         expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
         node.data += expandedRendering
         
         // Add a rendering for the collapsed version of this node
-        val KRendering collapsedRendering = createRegularNodeRendering(node)
+        val collapsedRendering = createRegularNodeRendering(node)
         collapsedRendering.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
         collapsedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
         node.data += collapsedRendering
         
         layout.setLayoutSize(collapsedRendering)
+    }
+    
+    /**
+     * Renders the given node as a state machine state.
+     * 
+     * @param node the node to attach the rendering information to.
+     */
+    def private void addStateNodeRendering(KNode node) {
+        if (node.children.empty) {
+            val rendering = createStateNodeRendering(node)
+            node.data += rendering
+        } else {
+            val layout = node.layout as KShapeLayout
+            layout.setProperty(KlighdProperties::EXPAND, false)
+            layout.setProperty(LayoutOptions::SIZE_CONSTRAINT, SizeConstraint::fixed)
+            
+            node.setLayoutAlgorithm()
+            
+            // Add a rendering for the collapsed version of this node
+            val collapsedRendering = createStateNodeRendering(node)
+            collapsedRendering.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
+            collapsedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
+            node.data += collapsedRendering
+            
+            // Create the rendering for the expanded version of this node
+            val expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha)
+            expandedRendering.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
+            expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
+            node.data += expandedRendering
+        }
     }
     
     /**
@@ -255,17 +291,6 @@ class Ptolemy2KGraphVisualization {
     }
     
     /**
-     * Renders the given node as a state machine state.
-     * 
-     * @param node the node to attach the rendering information to.
-     */
-    def private void addStateNodeRendering(KNode node) {
-        // Create the rendering
-        val rendering = createStateNodeRendering(node)
-        node.data += rendering
-    }
-    
-    /**
      * Renders the given node as a Const node, with the constant displayed in it.
      * 
      * @param node the node to attach the rendering information to.
@@ -281,6 +306,24 @@ class Ptolemy2KGraphVisualization {
         val rendering = createValueDisplayingNodeRendering(node,
             node.getAnnotationValue("value") ?: "")
         node.data += rendering
+    }
+    
+    /**
+     * Renders the given node as a modal model port.
+     * 
+     * @param node the node to attach the rendering information to.
+     */
+    def private void addModalModelPortRendering(KNode node) {
+        val layout = node.layout as KShapeLayout
+        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
+            NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
+        layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
+        
+        val rendering = createModalModelPortRendering(node)
+        node.data += rendering
+        
+        layout.height = 20
+        layout.width = 20
     }
     
     /**
@@ -356,27 +399,42 @@ class Ptolemy2KGraphVisualization {
             }
             case PortSide::EAST: {
                 layout.setProperty(LayoutOptions::OFFSET, 0f)
-                layout.setProperty(Properties::PORT_ANCHOR, new KVector(7, 3.5))
+                if (!port.markedAsModalModelPort) {
+                    layout.setProperty(Properties::PORT_ANCHOR, new KVector(7, 3.5))
+                }
             }
             case PortSide::WEST: {
                 layout.setProperty(LayoutOptions::OFFSET, 0f)
-                layout.setProperty(Properties::PORT_ANCHOR, new KVector(0, 3.5))
+                if (!port.markedAsModalModelPort) {
+                    layout.setProperty(Properties::PORT_ANCHOR, new KVector(0, 3.5))
+                }
             }
         }
         
-        // Add rendering
-        val rendering = createPortRendering(port)
-        port.data += rendering
-        
-        // Remove the port's label and put it into the tool tip text
-        if (port.name.length > 0) {
-            rendering.setProperty(KlighdProperties::TOOLTIP, "Port: " + port.name)
-            port.labels.clear()
+        // Add rendering if this is not a modal model port
+        var KRendering rendering = null
+        if (!port.markedAsModalModelPort) {
+            rendering = createPortRendering(port)
+            port.data += rendering
+            
+            // Add size information
+            layout.width = 8
+            layout.height = 8
         }
         
-        // Add size information
-        layout.width = 8
-        layout.height = 8
+        // Check if the port has a name
+        if (port.name.length > 0) {
+            // If this is a model port, put the name into the parent node's label; if it is not, put
+            // the name into the tooltip
+            if (port.markedAsModalModelPort) {
+                port.node.name = port.name
+            } else {
+                rendering.setProperty(KlighdProperties::TOOLTIP, "Port: " + port.name)
+            }
+        }
+        
+        // Remove the port's label
+        port.labels.clear()
     }
     
     
@@ -458,31 +516,40 @@ class Ptolemy2KGraphVisualization {
     // Tool Tips
     
     /**
-     * Generates a tool tip for the given element based on its properties.
+     * Generates a tool tip for the given element based on its properties if it has rendering
+     * information. (modal model ports don't have any)
      * 
      * @param element the element to generate the tooltip for.
      */
     def private void addToolTip(KGraphElement element) {
-        val toolTip = new StringBuffer("\n" + element.KRendering.getProperty(KlighdProperties::TOOLTIP))
-        if (toolTip.length == 1) {
-            toolTip.deleteCharAt(0)
+        val krendering = element.KRendering
+        if (krendering == null) {
+            return
+        }
+        
+        val toolTip = krendering.getProperty(KlighdProperties::TOOLTIP)
+        val toolTipText = new StringBuffer()
+        
+        // If we already have a tool tip text, add that to our newly assembled text
+        if (!toolTip.nullOrEmpty) {
+            toolTipText.append("\n" + toolTip)
         }
         
         // Look for properties that don't start with an underscore (these are the ones we want the
         // user to see)
         for (property : element.annotations) {
             if (!property.name.startsWith("_")) {
-                toolTip.append("\n").append(property.name)
+                toolTipText.append("\n").append(property.name)
                 
-                if (property.value != null && property.value.length() > 0) {
-                    toolTip.append(": ").append(property.value)
+                if (!property.value.nullOrEmpty) {
+                    toolTipText.append(": ").append(property.value)
                 }
             }
         }
         
         // If we have found something, display them as tooltip
-        if (toolTip.length > 0) {
-            element.KRendering.setProperty(KlighdProperties::TOOLTIP, toolTip.substring(1))
+        if (toolTipText.length > 0) {
+            krendering.setProperty(KlighdProperties::TOOLTIP, toolTipText.substring(1))
         }
     }
     
