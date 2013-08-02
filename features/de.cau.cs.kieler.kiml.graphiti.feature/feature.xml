@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.kiml.graphiti.feature"
       label="KIELER Layout for Graphiti"
-      version="0.8.0.qualifier"
+      version="0.9.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       plugin="de.cau.cs.kieler.kiml.graphiti">
 
@@ -285,6 +285,13 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.klay.force"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klay.tree"
          download-size="0"
          install-size="0"
          version="0.0.0"

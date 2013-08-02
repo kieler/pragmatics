@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.klighd.examples.feature"
       label="KIELER Lightweight Diagrams Demo Examples"
-      version="0.1.0.qualifier"
+      version="0.2.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
@@ -227,7 +227,7 @@ litigation.
          id="de.cau.cs.kieler.klighd.examples"
          download-size="0"
          install-size="0"
-         version="0.2.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>

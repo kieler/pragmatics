@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.klighd.feature"
       label="KIELER Lightweight Diagrams infrastructure"
-      version="0.1.0.qualifier"
+      version="0.2.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
@@ -344,6 +344,20 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.klighd.incremental"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.core.kgraph"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klay.tree"
          download-size="0"
          install-size="0"
          version="0.0.0"
