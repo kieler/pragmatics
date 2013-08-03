@@ -45,6 +45,7 @@ import java.util.EnumSet
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
+import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -314,9 +315,12 @@ class Ptolemy2KGraphVisualization {
      * @param node the node to attach the rendering information to.
      */
     def private void addModalModelPortRendering(KNode node) {
+        // We currently disable node label placement because dot doesn't know how to do that (we use
+        // dot for modal models)
+        
         val layout = node.layout as KShapeLayout
-        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
-            NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
+//        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
+//            NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
         
         val rendering = createModalModelPortRendering(node)
@@ -503,6 +507,16 @@ class Ptolemy2KGraphVisualization {
             // Add empty text rendering
             val ktext = renderingFactory.createKText()
             label.data += ktext
+            
+            // If we have a modal model port, we need to determine a fixed placement for the label at
+            // this point
+            if (element.markedAsModalModelPort) {
+                val layout = label.layout as KShapeLayout
+                val bounds = PlacementUtil::estimateTextSize(label)
+                
+                layout.xpos = 0
+                layout.ypos = -(bounds.height + 3.0f)
+            }
             
             // Make the text of edge labels 
             if (element instanceof KEdge) {
