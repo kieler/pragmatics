@@ -215,7 +215,7 @@ litigation.
    </license>
 
    <url>
-      <update label="KIELER Nightly Builds" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"/>
+      <update label="KIELER Pragmatics 0.9 Update Site" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/release_pragmatics_0.9/"/>
    </url>
 
    <includes
