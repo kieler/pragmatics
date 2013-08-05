@@ -13,10 +13,11 @@
     <module>../../plugins</module>
     <module>../../features</module>
     <module>../de.cau.cs.kieler.pragmatics.repository</module>
-    <!-- KWebS and Papyrus are not part of the Pragmatics 0.9 release.
-    <module>../de.cau.cs.kieler.kwebs.repository</module>
+    <!-- Papyrus is not part of the Pragmatics 0.9 release.
     <module>../de.cau.cs.kieler.papyrus.repository</module>
     -->
+    <!-- KWebS is not part of the release either, but is required to build the KLay library. -->
+    <module>../de.cau.cs.kieler.kwebs.repository</module>
     
     <!-- the ptolemy rcp plugin is not part of the usual plugins pom.xml, 
 		 we have to add it here so it gets built for the actual product. -->     									
