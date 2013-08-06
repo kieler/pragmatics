@@ -35,7 +35,7 @@
       <category name="kieler-layout"/>
    </feature>
    <feature url="features/de.cau.cs.kieler.kgraph.source_0.1.0.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature.source" version="0.1.0.qualifier">
-      <category name="kieler-layout"/>
+      <category name="kieler-sources"/>
    </feature>
 
    <feature url="features/de.cau.cs.kieler.kiml.gmf_0.9.0.qualifier.jar" id="de.cau.cs.kieler.kiml.gmf.feature" version="0.9.0.qualifier">

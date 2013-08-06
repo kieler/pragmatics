@@ -6,12 +6,11 @@
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
-      This feature provides diagram synthesis examples for automatically creating class diagrams based on a given Ecore specification (or subset determined by selection) as well as for UML2 UseCase diagrams. We suggest to also install the related source feature in order to be able to import the source code into your workspace and watch it.
+      This feature provides diagram synthesis examples for automatically creating class diagrams from a given Ecore specification (or a selected subset) as well as for UML2 UseCase diagrams. We suggest to also install the related source feature in order to be able to import the source code into your workspace and read it.
    </description>
 
    <copyright>
-      Copyright 2011 by Real-Time and Embedded Systems Group, Department
-of Computer Science, Christian-Albrechts-University of Kiel
+      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Christian-Albrechts-University of Kiel
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
