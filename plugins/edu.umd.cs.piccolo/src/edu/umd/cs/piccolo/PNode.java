@@ -1318,7 +1318,7 @@ public class PNode implements Cloneable, Serializable, Printable {
      * @param oldValue The old value of the property.
      * @param newValue The new value of the property.
      */
-    protected void firePropertyChange(final int propertyCode, final String propertyName, final Object oldValue,
+    public void firePropertyChange(final int propertyCode, final String propertyName, final Object oldValue,
             final Object newValue) {
         PropertyChangeEvent event = null;
 
