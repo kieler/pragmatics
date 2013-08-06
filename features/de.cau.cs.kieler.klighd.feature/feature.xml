@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.cau.cs.kieler.klighd.feature"
-      label="KIELER Lightweight Diagrams infrastructure"
+      label="KIELER Lightweight Diagrams Infrastructure"
       version="0.2.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
@@ -10,8 +10,7 @@
    </description>
 
    <copyright>
-      Copyright 2011 by Real-Time and Embedded Systems Group, Department
-of Computer Science, Christian-Albrechts-University of Kiel
+      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Christian-Albrechts-University of Kiel
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

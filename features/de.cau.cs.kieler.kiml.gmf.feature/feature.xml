@@ -7,18 +7,11 @@
       plugin="de.cau.cs.kieler.kiml.gmf">
 
    <description url="http://rtsys.informatik.uni-kiel.de/confluence/x/jgEF">
-      The KIELER Infrastructure for Meta Layout provides automatic
-layout for GMF diagrams. It is able to manage a set of included
-layout algorithms as well as new algorithms which can be contributed
-though an extension point. Furthermore, it offers numerous ways
-to customize the layout using layout options. This feature also
-ships the GMF bridge, which allows to apply automatic layout
-to several kinds of GMF diagrams.
+      The KIELER Infrastructure for Meta Layout provides automatic layout for diagrams. It is able to manage a set of included layout algorithms as well as new algorithms which can be contributed though an extension point. Furthermore, it offers numerous ways to customize the layout using layout options. This feature also ships the GMF bridge, which allows to apply automatic layout to several kinds of GMF diagrams.
    </description>
 
    <copyright>
-      Copyright 2011 by Real-Time and Embedded Systems Group, Department
-of Computer Science, Christian-Albrechts-University of Kiel
+      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Christian-Albrechts-University of Kiel
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
@@ -228,7 +221,7 @@ litigation.
       <import plugin="org.apache.commons.logging"/>
       <import plugin="org.antlr.runtime"/>
       <import plugin="org.apache.log4j"/>
-      <import feature="com.google.guava.runtime.feature" version="8.0.0" match="greaterOrEqual"/>
+      <import feature="com.google.guava.runtime.feature" version="10.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.gef" version="3.6.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.gmf" version="1.4.0" match="greaterOrEqual"/>

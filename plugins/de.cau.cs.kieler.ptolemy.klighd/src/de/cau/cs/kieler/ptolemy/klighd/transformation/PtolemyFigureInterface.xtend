@@ -150,17 +150,13 @@ class PtolemyFigureInterface {
         try {
             val xmlParser = new XMLParser()
             
-            // Try to parse the XML
-            try {
-                svgDocument = xmlParser.parser(svgString)
-            } catch (Exception e) {
-                // The parsing failed, which might be due to missing blanks due to typos; repair that
-                // and try to parse again
-                svgString = GraphicsUtils::repairString(svgString)
-                svgDocument = xmlParser.parser(svgString)
-            }
-            
+            // Try to parse the XML (we're preemptively repairing the SVG string here; we originally did
+            // that only when a first initial parsing attempt failed, but that resulted in occasional
+            // error messages that we are unable to suppress)
+            svgString = GraphicsUtils::repairString(svgString)
+            svgDocument = xmlParser.parser(svgString)
             svgDocument = GraphicsUtils::repairSvg(svgDocument)
+            
             return svgDocument
         } catch (Exception e) {
             return null

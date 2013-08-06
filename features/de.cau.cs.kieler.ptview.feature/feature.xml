@@ -10,8 +10,7 @@
    </description>
 
    <copyright>
-      Copyright 2013 by Real-Time and Embedded Systems Group, Department
-of Computer Science, Christian-Albrechts-University of Kiel
+      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Christian-Albrechts-University of Kiel
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
@@ -220,7 +219,7 @@ litigation.
    <requires>
       <import plugin="org.antlr.runtime"/>
       <import plugin="org.apache.log4j"/>
-      <import feature="com.google.guava.runtime.feature" version="8.0.0" match="greaterOrEqual"/>
+      <import feature="com.google.guava.runtime.feature" version="10.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.xtext.sdk" version="2.3.1" match="greaterOrEqual"/>
       <import feature="org.ptolemy.feature" version="8.1.0" match="greaterOrEqual"/>
