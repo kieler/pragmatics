@@ -8,23 +8,11 @@
       arch="sparc,x86,x86_64">
 
    <description url="http://www.ogdf.net/">
-      The OGDF library provides a wide range of graph drawing algorithms
-that allow to reuse and replace particular algorithm phases by
-using a dedicated module mechanism. It includes sophisticated
-data structures that are commonly used in graph drawing, equipped
-with rich public interfaces. This feature is built with the release
-version 2012.07 (Sakura) of OGDF. It provides a program that
-can be executed as layout server with standard I/O communication.
+      The OGDF library provides a wide range of graph drawing algorithms that allow to reuse and replace particular algorithm phases by using a dedicated module mechanism. It includes sophisticated data structures that are commonly used in graph drawing, equipped with rich public interfaces. This feature is built with the release version 2012.07 (Sakura) of OGDF. It provides a program that can be executed as layout server with standard I/O communication.
    </description>
 
    <copyright>
-      The OGDF is developed and maintained as an open source project
-by the Chair of Algorithm Engineering, Faculty of Computer Science,
-Dortmund University of Technology, the Juniorprofessorship of
-Algorithm Engineering, Faculty of Mathematics and Computer Science,
-Friedrich-Schiller-University Jena, the Chair of Prof. Jünger,
-Department of Computer Science, University of Cologne, and oreas
-GmbH, Cologne.
+      The OGDF is developed and maintained as an open source project by the Chair of Algorithm Engineering, Faculty of Computer Science, Dortmund University of Technology, the Juniorprofessorship of Algorithm Engineering, Faculty of Mathematics and Computer Science, Friedrich-Schiller-University Jena, the Chair of Prof. Jünger, Department of Computer Science, University of Cologne, and oreas GmbH, Cologne.
    </copyright>
 
    <license url="http://www.gnu.org/copyleft/gpl.html">

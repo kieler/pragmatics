@@ -6,13 +6,11 @@
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
-      Textual editing of KGraphs and visualization using KLighD technology.
-This feature is all you need to start developing layout algorithms.
+      Textual editing of KGraphs and visualization using KLighD technology. This feature is all you need to start developing layout algorithms.
    </description>
 
    <copyright>
-      Copyright 2013 by Real-Time and Embedded Systems Group, Department
-of Computer Science, Christian-Albrechts-University of Kiel
+      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Christian-Albrechts-University of Kiel
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

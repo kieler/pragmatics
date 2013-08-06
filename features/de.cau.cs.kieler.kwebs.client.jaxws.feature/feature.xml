@@ -7,12 +7,11 @@
       plugin="de.cau.cs.kieler.kwebs.client.jaxws">
 
    <description url="http://rtsys.informatik.uni-kiel.de/confluence/x/nQEF">
-      This feature enables JAX-WS web service based layout in KIELER. By using this service, no local installation of layout algorithms is required, since automatic diagram layout is calculated on a remote server.
+      This feature enables JAX-WS web service based layout in KIELER. By using this service, no local installation of layout algorithms is required, since automatic diagram layouts are computed on a remote server.
    </description>
 
    <copyright>
-      Copyright 2011 by Real-Time and Embedded Systems Group, Department
-of Computer Science, Christian-Albrechts-University of Kiel
+      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Christian-Albrechts-University of Kiel
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
