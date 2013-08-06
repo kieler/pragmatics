@@ -271,7 +271,7 @@ public class KlighdPath extends PNode {
     }
 
     /**
-     * Creates an empty PSWTAdvancedPath.
+     * Creates an empty {@link KlighdPath}.
      */
     public KlighdPath() {
         strokePaint = DEFAULT_STROKE_PAINT;
@@ -753,10 +753,10 @@ public class KlighdPath extends PNode {
 
 
     /**
-     * Changes the underlying shape of this PSWTPath.
+     * Changes the underlying shape of this {@link KlighdPath}.
      * 
      * @param newShape
-     *            new associated shape of this PSWTPath
+     *            new associated shape of this {@link KlighdPath}
      */
     private void setShape(final Shape newShape) {
         origShape = newShape;
