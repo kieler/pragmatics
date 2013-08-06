@@ -14,4 +14,37 @@
     <version>0.0.1-SNAPSHOT</version>
     <relativePath>../de.cau.cs.kieler.parent/pom.xml</relativePath>
   </parent>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jboss.tools.tycho-plugins</groupId>
+        <artifactId>repository-utils</artifactId>
+        <version>0.16.0.CR1</version>
+        <executions>
+          <execution>
+            <id>generate-facade</id>
+            <phase>package</phase>
+            <goals>
+              <goal>generate-repository-facade</goal>
+            </goals>
+            <configuration>
+              <associateSites>
+                <associateSite>http://guava-osgi.googlecode.com/svn/trunk/repository/</associateSite>
+                <associateSite>http://download.eclipse.org/graphiti/updates/0.8.1</associateSite>
+                <associateSite>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy</associateSite>
+              </associateSites>
+<!--<siteTemplateFolder>${siteTemplateFolder}</siteTemplateFolder>
+<symbols>
+<update.site.name>${update.site.name}</update.site.name>
+<update.site.description>${update.site.description}</update.site.description>
+<update.site.version>${update.site.version}</update.site.version>
+<target.eclipse.version>${target.eclipse.version}</target.eclipse.version>
+</symbols>-->
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
