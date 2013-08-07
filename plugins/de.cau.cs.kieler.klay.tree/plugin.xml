@@ -35,20 +35,31 @@
                option="de.cau.cs.kieler.debugMode">
          </knownOption>
          <knownOption
-               default="DESCENDANTS"
                option="de.cau.cs.kieler.klay.tree.weighting">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.tree.treeifyOrder">
+         </knownOption>
       </layoutAlgorithm>
-            <layoutOption
-                  advanced="true"
-                  appliesTo="parents"
-                  class="de.cau.cs.kieler.klay.tree.properties.OrderWeighting"
-                  default="DESCENDANTS"
-                  description="Tells the node order which weighting it should use"
-                  id="de.cau.cs.kieler.klay.tree.weighting"
-                  name="Weighting of Nodes"
-                  type="enum">
-            </layoutOption>
+        <layoutOption
+              advanced="true"
+              appliesTo="parents"
+              class="de.cau.cs.kieler.klay.tree.properties.OrderWeighting"
+              default="DESCENDANTS"
+              description="Which weighting to use when computing a node order."
+              id="de.cau.cs.kieler.klay.tree.weighting"
+              name="Weighting of Nodes"
+              type="enum">
+        </layoutOption>
+        <layoutOption
+              appliesTo="parents"
+              class="de.cau.cs.kieler.klay.tree.properties.TreeifyingOrder"
+              default="DFS"
+              description="Which search order to use when computing a spanning tree."
+              id="de.cau.cs.kieler.klay.tree.treeifyOrder"
+              name="Search Order"
+              type="enum">
+        </layoutOption>
    </extension>
 
 </plugin>

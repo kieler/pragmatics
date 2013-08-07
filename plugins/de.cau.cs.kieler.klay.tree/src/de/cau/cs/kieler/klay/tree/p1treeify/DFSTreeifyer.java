@@ -24,15 +24,15 @@ import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
 import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
+import de.cau.cs.kieler.klay.tree.properties.TreeifyingOrder;
 
 /**
  * This phase should create a tree out of a graph that is hardly a tree.
- * 
  * It should for example look for cycles in a tree and remove that cycles. This cycle breaking is
  * done through eliminating the edge that destroys the tree property and putting that edge into a
  * list. So this phase builds up a list with removed edges, so that the KLay Tree algorithm can
  * operate on the newly constructed graph which is now a tree. The previously removed edges could be
- * reinserted during a post-processing.
+ * reinserted during a post-processing. The search order can be DFS or BFS.
  * 
  * @author sor
  * @author sgu
@@ -99,13 +99,21 @@ public class DFSTreeifyer implements ILayoutPhase {
      *            where to collect the edges
      */
     private void collectEdges(final TGraph tGraph) {
+        TreeifyingOrder treeifyingOrder = tGraph.getProperty(Properties.TREEIFY_ORDER);
 
         // start DFS on every node in graph
         for (TNode tNode : tGraph.getNodes()) {
             // if the node has not been visited yet
             if (visited[tNode.id] == 0) {
-                // call DFS on that node
-                dfs(tNode);
+                // call DFS or BFS on that node
+                switch (treeifyingOrder) {
+                case DFS:
+                    dfs(tNode);
+                    break;
+                case BFS:
+                    bfs(tNode);
+                    break;
+                }
                 // if we come back to that node again, set the node as root
                 visited[tNode.id] = 2;
             }
@@ -120,7 +128,7 @@ public class DFSTreeifyer implements ILayoutPhase {
     }
 
     /**
-     * This method performs a DFS on a given graph till all nodes of the graph have been visited.
+     * Perform a DFS on a given graph till all nodes of the graph have been visited.
      * 
      * @param node
      *            to start DFS
@@ -136,15 +144,45 @@ public class DFSTreeifyer implements ILayoutPhase {
             if (visited[target.id] == 1) {
                 // put that edge to the list that contains the edges to remove
                 eliminated.add(tEdge);
-            } else {
+            } else if (visited[target.id] == 2) {
                 // if a previous root can be visited from another node unmark the root property
-                if (visited[target.id] == 2) {
-                    visited[target.id] = 1;
-                } else {
-                    // recurse
-                    dfs(target);
-                }
+                visited[target.id] = 1;
+            } else {
+                // recurse
+                dfs(target);
             }
         }
     }
+    
+    /**
+     * Perform a BFS on a given graph till all nodes of the graph have been visited.
+     * 
+     * @param node
+     *            to start BFS
+     */
+    private void bfs(final TNode startNode) {
+        LinkedList<TNode> nodeQueue = new LinkedList<TNode>();
+        nodeQueue.add(startNode);
+        
+        do {
+            TNode node = nodeQueue.removeFirst();
+            visited[node.id] = 1;
+
+            for (TEdge tEdge : node.getOutgoingEdges()) {
+                TNode target = tEdge.getTarget();
+                // if a child has been visited
+                if (visited[target.id] == 1) {
+                    // put that edge to the list that contains the edges to remove
+                    eliminated.add(tEdge);
+                } else if (visited[target.id] == 2) {
+                    // if a previous root can be visited from another node unmark the root property
+                    visited[target.id] = 1;
+                } else {
+                    // process the node in breadth-first order
+                    nodeQueue.addLast(target);
+                }
+            }
+        } while (!nodeQueue.isEmpty());
+    }
+    
 }

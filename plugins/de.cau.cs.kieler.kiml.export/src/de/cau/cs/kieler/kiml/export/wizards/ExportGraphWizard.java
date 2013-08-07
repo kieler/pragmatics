@@ -207,8 +207,17 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
      */
     private boolean checkTargetDirectory() {
         IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-        IFolder folder = workspaceRoot.getFolder(workspaceSourcesPage.getTargetWorkspaceDirectory());
-        if (folder.exists()) {
+        IPath path = workspaceSourcesPage.getTargetWorkspaceDirectory();
+        IContainer container;
+        int segmentCount = path.segmentCount();
+        if (segmentCount == 0) {
+            return false;
+        } else if (segmentCount == 1) {
+            container = workspaceRoot.getProject(path.lastSegment());
+        } else {
+            container = workspaceRoot.getFolder(path);
+        }
+        if (container.exists()) {
             return true;
         } else {
             if (MessageDialog.openConfirm(null,
@@ -219,7 +228,6 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
                 try {
                     LinkedList<IContainer> containers = new LinkedList<IContainer>();
                     // gather all containers that do not exist
-                    IContainer container = folder;
                     do {
                         containers.addFirst(container);
                         container = container.getParent();
