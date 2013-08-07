@@ -15,6 +15,14 @@
     <relativePath>../de.cau.cs.kieler.parent/pom.xml</relativePath>
   </parent>
 
+  <!-- These are a few properties we use for the small update site index.html that is generated. -->
+  <properties>
+    <update.site.name>KIELER Pragmatics</update.site.name>
+	<update.site.description>Release</update.site.description>
+    <update.site.version>0.9.0</update.site.version>
+	<target.eclipse.version>4.2 (Juno)</target.eclipse.version>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
@@ -34,13 +42,13 @@
                 <associateSite>http://download.eclipse.org/graphiti/updates/0.8.1</associateSite>
                 <associateSite>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy</associateSite>
               </associateSites>
-<!--<siteTemplateFolder>${siteTemplateFolder}</siteTemplateFolder>
-<symbols>
-<update.site.name>${update.site.name}</update.site.name>
-<update.site.description>${update.site.description}</update.site.description>
-<update.site.version>${update.site.version}</update.site.version>
-<target.eclipse.version>${target.eclipse.version}</target.eclipse.version>
-</symbols>-->
+              <siteTemplateFolder>siteTemplate</siteTemplateFolder>
+              <symbols>
+                <update.site.name>${update.site.name}</update.site.name>
+                <update.site.description>${update.site.description}</update.site.description>
+                <update.site.version>${update.site.version}</update.site.version>
+                <target.eclipse.version>${target.eclipse.version}</target.eclipse.version>
+              </symbols>
             </configuration>
           </execution>
         </executions>
