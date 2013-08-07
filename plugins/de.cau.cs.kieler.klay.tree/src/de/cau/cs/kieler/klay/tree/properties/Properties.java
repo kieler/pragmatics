@@ -119,6 +119,10 @@ public final class Properties {
     /** Tells the node order which weighting it should use. */
     public static final IProperty<OrderWeighting> WEIGHTING = new Property<OrderWeighting>(
             "de.cau.cs.kieler.klay.tree.weighting", OrderWeighting.DESCENDANTS);
+    
+    /** Tells the treeifier which search oder it should use. */
+    public static final IProperty<TreeifyingOrder> TREEIFY_ORDER = new Property<TreeifyingOrder>(
+            "de.cau.cs.kieler.klay.tree.treeifyOrder", TreeifyingOrder.DFS);
 
 
     // /////////////////////////////////////////////////////////////////////////////
