@@ -20,7 +20,9 @@ import java.util.List;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
@@ -47,8 +49,22 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
     public void register() {
         PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
             public void run() {
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService()
-                        .addSelectionListener(SelectionTrigger.this);
+                // register with all workbench windows that are currently open
+                for (IWorkbenchWindow window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
+                    window.getSelectionService().addSelectionListener(SelectionTrigger.this);
+                }
+                // register with all workbench windows that will be open in the future
+                PlatformUI.getWorkbench().addWindowListener(new IWindowListener() {
+                    public void windowOpened(final IWorkbenchWindow window) {
+                        window.getSelectionService().addSelectionListener(SelectionTrigger.this);
+                    }
+                    public void windowClosed(final IWorkbenchWindow window) {
+                    }
+                    public void windowActivated(final IWorkbenchWindow window) {
+                    }
+                    public void windowDeactivated(final IWorkbenchWindow window) {
+                    }
+                });
             }
         });
     }
@@ -59,8 +75,9 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
     public void unregister() {
         PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
             public void run() {
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService()
-                        .removeSelectionListener(SelectionTrigger.this);
+                for (IWorkbenchWindow window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
+                    window.getSelectionService().removeSelectionListener(SelectionTrigger.this);
+                }
             }
         });
     }
