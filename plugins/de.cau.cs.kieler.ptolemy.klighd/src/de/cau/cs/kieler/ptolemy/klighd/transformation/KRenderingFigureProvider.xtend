@@ -82,17 +82,18 @@ class KRenderingFigureProvider {
      * Creates a rendering for an expanded compound node.
      * 
      * @param node the node to create the rendering information for.
+     * @param alpha the alpha value of the compound node background.
      * @return the rendering.
      */
-    def KRendering createExpandedCompoundNodeRendering(KNode node) {
+    def KRendering createExpandedCompoundNodeRendering(KNode node, int alpha) {
         // This is the code for representing expanded compound nodes as rounded rectangles with
         // progressively darker backgrounds whose color depends on whether the expanded node is
         // a regular node or whether it displays a state refinement
         val bgColor = if (node.markedAsState) {
             renderingFactory.createKColor() => [col |
-                col.red = 204
-                col.green = 255
-                col.blue = 204
+                col.red = 11
+                col.green = 188
+                col.blue = 11
             ]
         } else {
             renderingFactory.createKColor() => [col |
@@ -107,7 +108,7 @@ class KRenderingFigureProvider {
             rect.cornerWidth = 15
             rect.setLineWidth(0)
             rect.styles += renderingFactory.createKBackground() => [bg |
-                bg.alpha = 10
+                bg.alpha = alpha
                 bg.color = bgColor
             ]
         ]
@@ -116,7 +117,7 @@ class KRenderingFigureProvider {
         // with drop shadows
 //        val rendering = renderingFactory.createKRectangle() => [rect |
 //            rect.styles += renderingFactory.createKBackground() => [bg |
-//                bg.alpha = 10
+//                bg.alpha = alpha
 //                bg.color = renderingFactory.createKColor() => [col |
 //                    col.red = 16
 //                    col.green = 78
@@ -353,6 +354,113 @@ class KRenderingFigureProvider {
         ]
         
         return nodeRendering
+    }
+    
+    /**
+     * Creates a rendering for a node that represents a modal model port.
+     * 
+     * @param node the node to create the rendering information for.
+     * @return the rendering.
+     */
+    def KRendering createModalModelPortRendering(KNode node) {
+        val input = node.markedAsInputPort
+        val output = node.markedAsOutputPort
+        val multiport = node.hasAnnotation("multiport")
+        val polygon = renderingFactory.createKPolygon()
+        
+        if (multiport) {
+            polygon.setBackgroundColor(255, 255, 255)
+            
+            if (input && !output) {
+                polygon.points += createKPosition(0, 5)
+                polygon.points += createKPosition(5, 5)
+                polygon.points += createKPosition(5, 0)
+                polygon.points += createKPosition(10, 5)
+                polygon.points += createKPosition(10, 0)
+                polygon.points += createKPosition(20, 10)
+                polygon.points += createKPosition(10, 20)
+                polygon.points += createKPosition(10, 15)
+                polygon.points += createKPosition(5, 20)
+                polygon.points += createKPosition(5, 15)
+                polygon.points += createKPosition(0, 15)
+                polygon.points += createKPosition(0, 5)
+            } else if (!input && output) {
+                polygon.points += createKPosition(0, 0)
+                polygon.points += createKPosition(5, 5)
+                polygon.points += createKPosition(5, 0)
+                polygon.points += createKPosition(10, 5)
+                polygon.points += createKPosition(20, 5)
+                polygon.points += createKPosition(20, 15)
+                polygon.points += createKPosition(10, 15)
+                polygon.points += createKPosition(5, 20)
+                polygon.points += createKPosition(5, 15)
+                polygon.points += createKPosition(0, 20)
+                polygon.points += createKPosition(0, 0)
+            } else if (input && output) {
+                polygon.points += createKPosition(0, 5)
+                polygon.points += createKPosition(5, 5)
+                polygon.points += createKPosition(5, 0)
+                polygon.points += createKPosition(10, 5)
+                polygon.points += createKPosition(10, 0)
+                polygon.points += createKPosition(15, 5)
+                polygon.points += createKPosition(20, 5)
+                polygon.points += createKPosition(20, 15)
+                polygon.points += createKPosition(15, 15)
+                polygon.points += createKPosition(10, 20)
+                polygon.points += createKPosition(10, 15)
+                polygon.points += createKPosition(5, 20)
+                polygon.points += createKPosition(5, 15)
+                polygon.points += createKPosition(0, 15)
+                polygon.points += createKPosition(0, 5)
+            } else {
+                polygon.points += createKPosition(0, 5)
+                polygon.points += createKPosition(20, 5)
+                polygon.points += createKPosition(20, 15)
+                polygon.points += createKPosition(0, 15)
+                polygon.points += createKPosition(0, 5)
+            }
+        } else {
+            polygon.setBackgroundColor(0, 0, 0)
+            
+            if (input && !output) {
+                polygon.points += createKPosition(10, 0)
+                polygon.points += createKPosition(20, 10)
+                polygon.points += createKPosition(10, 20)
+                polygon.points += createKPosition(10, 15)
+                polygon.points += createKPosition(0, 15)
+                polygon.points += createKPosition(0, 5)
+                polygon.points += createKPosition(10, 5)
+                polygon.points += createKPosition(10, 0)
+            } else if (!input && output) {
+                polygon.points += createKPosition(0, 0)
+                polygon.points += createKPosition(5, 5)
+                polygon.points += createKPosition(20, 5)
+                polygon.points += createKPosition(20, 15)
+                polygon.points += createKPosition(5, 15)
+                polygon.points += createKPosition(0, 20)
+                polygon.points += createKPosition(0, 0)
+            } else if (input && output) {
+                polygon.points += createKPosition(0, 5)
+                polygon.points += createKPosition(7, 5)
+                polygon.points += createKPosition(7, 0)
+                polygon.points += createKPosition(12, 5)
+                polygon.points += createKPosition(20, 5)
+                polygon.points += createKPosition(20, 15)
+                polygon.points += createKPosition(12, 15)
+                polygon.points += createKPosition(7, 20)
+                polygon.points += createKPosition(7, 15)
+                polygon.points += createKPosition(0, 15)
+                polygon.points += createKPosition(0, 5)
+            } else {
+                polygon.points += createKPosition(0, 5)
+                polygon.points += createKPosition(20, 5)
+                polygon.points += createKPosition(20, 15)
+                polygon.points += createKPosition(0, 15)
+                polygon.points += createKPosition(0, 5)
+            }
+        }
+        
+        return polygon
     }
     
     /**

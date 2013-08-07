@@ -29,7 +29,8 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * Partitions relations from a root node into groups, of which each represents a hyperedge that connects
- * source nodes and ports to target nodes and ports.
+ * source nodes and ports to target nodes and ports. Sometimes, hyperedges can end up having only source
+ * nodes and ports and no target nodes or ports.
  * 
  * @author cds
  */
@@ -148,6 +149,7 @@ final class HyperedgeGatherer {
             // Does the second relation already belong to a hyperedge?
             if (he2 == null) {
                 he1.relations.add(relation2);
+                relationToHyperedge.put(relation2, he1);
                 
                 return he1;
             } else {
@@ -158,6 +160,7 @@ final class HyperedgeGatherer {
                 he2.targetNodes.addAll(he1.targetNodes);
                 he2.targetPorts.addAll(he1.targetPorts);
                 
+                hyperedges.remove(he1);
                 relationToHyperedge.put(relation1, he2);
                 
                 return he2;

@@ -15,14 +15,13 @@ package de.cau.cs.kieler.ptolemy.klighd
 
 import com.google.common.collect.ImmutableSet
 import com.google.inject.Inject
+import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.klighd.TransformationOption
 import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphOptimization
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformation
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphVisualization
 import org.ptolemy.moml.DocumentRoot
-
-import static de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis.*
 
 /**
  * Synthesis for turning Ptolemy models into KGraphs.
@@ -33,9 +32,11 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     
     // Our transformation options
     static val TransformationOption SHOW_COMMENTS = TransformationOption::createCheckOption(
-        "Show comments", true)
-    static val TransformationOption HIDE_RELATIONS = TransformationOption::createCheckOption(
-        "Hide relations", true)
+        "Comments", true)
+    static val TransformationOption SHOW_RELATIONS = TransformationOption::createCheckOption(
+        "Relations", false)
+    static val TransformationOption COMPOUND_NODE_ALPHA = TransformationOption::createRangeOption(
+        "Nested model darkness", new Pair(0, 255), 10)
     
     // The parts of our transformation
     @Inject Ptolemy2KGraphTransformation transformation
@@ -46,14 +47,14 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     override transform(DocumentRoot model) {
         val kgraph = transformation.transform(model)
         optimization.optimize(kgraph, SHOW_COMMENTS.optionBooleanValue,
-            HIDE_RELATIONS.optionBooleanValue)
-        visualization.visualize(kgraph)
+            !SHOW_RELATIONS.optionBooleanValue)
+        visualization.visualize(kgraph, COMPOUND_NODE_ALPHA.optionValue as Integer)
         
         return kgraph
     }
     
     override getTransformationOptions() {
-        return ImmutableSet::of(SHOW_COMMENTS, HIDE_RELATIONS)
+        return ImmutableSet::of(SHOW_COMMENTS, SHOW_RELATIONS, COMPOUND_NODE_ALPHA)
     }
     
 }

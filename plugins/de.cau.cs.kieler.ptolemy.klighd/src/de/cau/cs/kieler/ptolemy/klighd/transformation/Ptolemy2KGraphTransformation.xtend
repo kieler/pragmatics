@@ -14,6 +14,11 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.core.kgraph.KGraphElement
+import de.cau.cs.kieler.core.kgraph.KNode
+import de.cau.cs.kieler.core.kgraph.KPort
+import de.cau.cs.kieler.kiml.util.KimlUtil
+import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
 import java.util.ArrayList
 import java.util.List
 import org.eclipse.core.runtime.CoreException
@@ -27,13 +32,10 @@ import org.ptolemy.moml.LinkType
 import org.ptolemy.moml.PortType
 import org.ptolemy.moml.PropertyType
 import org.ptolemy.moml.RelationType
-import de.cau.cs.kieler.core.kgraph.KGraphElement
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.kiml.util.KimlUtil
-import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+
+import static extension com.google.common.base.Strings.*
 
 /**
  * Transforms a Ptolemy2 model to a KGraph. This is step one of the Ptolemy model transformation
@@ -71,6 +73,8 @@ class Ptolemy2KGraphTransformation {
     @Inject extension LabelExtensions
     /** Marking elements. */
     @Inject extension MarkerExtensions
+    /** Further utility stuff. */
+    @Inject extension MiscellaneousExtensions
     /** Interface to the Ptolemy library. */
     @Inject PtolemyInterface ptolemy
     
@@ -141,6 +145,7 @@ class Ptolemy2KGraphTransformation {
                 // Mark as a state machine and then add the required relations, links, and child
                 // entities as usual
                 kNode.markAsStateMachineContainer()
+                
                 kNode.addChildEntities(ptEntity.entity)
                 kNode.addChildRelations(ptEntity.relation)
                 kNode.addChildLinks(ptEntity.link)
@@ -156,6 +161,33 @@ class Ptolemy2KGraphTransformation {
                         kNode.addChildEntities(child.entity)
                         kNode.addChildRelations(child.relation)
                         kNode.addChildLinks(child.link)
+                    }
+                }
+            }
+            
+            case ENTITY_CLASS_STATE: {
+                // A modal model state may have refinements
+                val refinement = ptEntity.findRefinement()
+                
+                if (refinement != null) {
+                    // We have a refinement; transform it (which has possibly already been done) and
+                    // copy it; then add its children to our list of children
+                    // Note: this code assumes that each refinement is only used once in the model. If
+                    // that assumption turns out to be false, we need to create a copy of the
+                    // transformed refinement before adding its children.
+                    val transformedRefinement = transform(refinement)
+                    kNode.children += transformedRefinement.children
+                    while (!transformedRefinement.ports.empty) {
+                        kNode.children += transformRefinementPort(transformedRefinement.ports.get(0))
+                    }
+                    kNode.annotations += transformedRefinement.annotations
+                    
+                    // Check if the refinement is itself a state machine
+                    val refinementClass = transformedRefinement.getAnnotationValue(
+                        ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+                    
+                    if (refinementClass.equals(ENTITY_CLASS_MODEL_CONTROLLER)) {
+                        kNode.markAsStateMachineContainer()
                     }
                 }
             }
@@ -202,7 +234,17 @@ class Ptolemy2KGraphTransformation {
             }
             
             case ENTITY_CLASS_MODAL_MODEL: {
+                // Mark as a state machine
+                kNode.markAsStateMachineContainer()
                 
+                // The actual states are found in the state machine controller
+                for (child : ptClass.entity) {
+                    if (child.name.equals(ENTITY_NAME_MODAL_CONTROLLER)) {
+                        kNode.addChildEntities(child.entity)
+                        kNode.addChildRelations(child.relation)
+                        kNode.addChildLinks(child.link)
+                    }
+                }
             }
             
             default: {
@@ -324,6 +366,7 @@ class Ptolemy2KGraphTransformation {
         
         // Add annotation identifying this port as having been created from a Ptolemy port
         kPort.markAsPtolemyElement()
+        kPort.addAnnotation(ANNOTATION_PTOLEMY_CLASS, ptPort.class_)
         
         // Add the port's properties, which might add "input" / "output" annotations
         kPort.addProperties(ptPort.property)
@@ -420,6 +463,67 @@ class Ptolemy2KGraphTransformation {
         result.node = kNode
         
         result
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Handling Ports of State Refinements
+    
+    /**
+     * Takes the given port of a state refinement and creates a node for it that the port is moved to.
+     * This is necessary since states don't have hierarchical ports, but state refinements sometimes
+     * need them. We thus display such ports as nodes with special rendering, just like in Ptolemy.
+     * 
+     * @param port the port to turn into a node.
+     * @return the node with the port attached.
+     */
+    def private KNode transformRefinementPort(KPort port) {
+        val node = KimlUtil::createInitializedNode()
+        node.ports.add(port)
+        
+        // Mark the node as being a representation of a modal model port
+        node.markAsModalModelPort()
+        
+        // Find the type of the port
+        val inputPort = port.hasAnnotation("input")
+        val outputPort = port.hasAnnotation("output")
+        val multiPort = port.hasAnnotation("multiport")
+        
+        if (inputPort && !outputPort) {
+            node.markAsInputPort(true)
+            
+            port.markAsInputPort(false)
+            port.markAsOutputPort(true)
+        } else if (!inputPort && outputPort) {
+            node.markAsOutputPort(true)
+            
+            port.markAsOutputPort(false)
+            port.markAsInputPort(true)
+        } else if (inputPort && outputPort) {
+            // TODO We could well create a second port for this case
+            node.markAsInputPort(true)
+            node.markAsOutputPort(true)
+            
+            port.markAsInputPort(true)
+            port.markAsOutputPort(true)
+        }
+        
+        if (multiPort) {
+            node.addAnnotation("multiport")
+        }
+        
+        // Find all incident edges and reroute them to the port's new node
+        for (edge : port.edges) {
+            if (edge.sourcePort == port) {
+                edge.source = node
+            }
+            
+            if (edge.targetPort == port) {
+                edge.target = node
+            }
+        }
+        
+        return node
     }
     
     
@@ -536,11 +640,11 @@ class Ptolemy2KGraphTransformation {
             if (!(port.markedAsInputPort || port.markedAsOutputPort)) {
                 // Find out whether it is an input or an output port (or even both)
                 if (port.hasAnnotation("input") || port.hasAnnotation("inputoutput")) {
-                    port.markAsInputPort()
+                    port.markAsInputPort(true)
                 }
                 
                 if (port.hasAnnotation("output") || port.hasAnnotation("inputoutput")) {
-                    port.markAsOutputPort()
+                    port.markAsOutputPort(true)
                 }
             }
         }

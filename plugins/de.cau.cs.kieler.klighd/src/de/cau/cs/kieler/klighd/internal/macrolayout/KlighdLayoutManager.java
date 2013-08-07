@@ -99,7 +99,9 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
      */
     public boolean supports(final Object object) {
         // KGraph instances are supported
-        if (object instanceof KNode) {
+        //  Tests here for KGraphElement rather than KNode since this method e.g. invoked while
+        //  populating the layout view, which provides also port, edge, and label properties.
+        if (object instanceof KGraphElement) {
             return true;
         }
         // KGraph viewer are supported
@@ -134,8 +136,11 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
         } else if (adapterType.isAssignableFrom(EObject.class)) {
             
             if (object instanceof KGraphElement) {
-                return ((KGraphElement) object).getData(KLayoutData.class).getProperty(
+                Object model = ((KGraphElement) object).getData(KLayoutData.class).getProperty(
                         KlighdInternalProperties.MODEL_ELEMEMT);
+                if (adapterType.isInstance(model)) {
+                    return model;
+                }
             }
             
             ContextViewer contextViewer = null;
@@ -149,7 +154,7 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
                 ViewContext viewContext = contextViewer.getCurrentViewContext();
                 if (viewContext != null) {
                     Object model = viewContext.getInputModel();
-                    if (model instanceof EObject) {
+                    if (adapterType.isInstance(model)) {
                         return model;
                     }
                 }

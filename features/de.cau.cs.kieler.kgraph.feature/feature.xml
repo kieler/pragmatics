@@ -6,13 +6,11 @@
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
-      Textual editing of KGraphs and visualization using KLighD technology.
-This feature is all you need to start developing layout algorithms.
+      Textual editing of KGraphs and visualization using KLighD technology. This feature is all you need to start developing layout algorithms.
    </description>
 
    <copyright>
-      Copyright 2013 by Real-Time and Embedded Systems Group, Department
-of Computer Science, Christian-Albrechts-University of Kiel
+      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Christian-Albrechts-University of Kiel
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
@@ -222,7 +220,7 @@ litigation.
       <import plugin="org.apache.commons.logging"/>
       <import plugin="org.antlr.runtime"/>
       <import plugin="org.apache.log4j"/>
-      <import feature="com.google.guava.runtime.feature" version="8.0.0" match="greaterOrEqual"/>
+      <import feature="com.google.guava.runtime.feature" version="10.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.gef" version="3.6.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.gmf" version="1.4.0" match="greaterOrEqual"/>
@@ -413,6 +411,20 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.klighd.incremental"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klay.tree"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.graphdrawing.graphml"
          download-size="0"
          install-size="0"
          version="0.0.0"

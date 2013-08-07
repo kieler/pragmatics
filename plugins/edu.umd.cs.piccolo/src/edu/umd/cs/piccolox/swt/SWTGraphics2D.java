@@ -133,7 +133,7 @@ public class SWTGraphics2D extends Graphics2D {
     protected Device device;
     /** The current transform to apply to drawing operations. */
     protected AffineTransform transform = new AffineTransform();
-    private final Transform swtTransform;
+    protected final Transform swtTransform;
     /** The transparency to apply during drawing operations. */
     protected AlphaComposite transparency = null;
     /** The current font to use when drawing text. */

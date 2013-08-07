@@ -86,10 +86,10 @@ public final class CommentPostprocessor implements ILayoutProcessor {
      */
     private void process(final LNode node, final List<LNode> topBoxes,
             final List<LNode> bottomBoxes, final double spacing) {
+        
         KVector nodePos = node.getPosition();
         KVector nodeSize = node.getSize();
         LInsets margin = node.getMargin();
-        double totalWidth = nodeSize.x + margin.left + margin.right;
         
         if (topBoxes != null) {
             // determine the total width and maximal height of the top boxes
@@ -99,8 +99,9 @@ public final class CommentPostprocessor implements ILayoutProcessor {
                 boxesWidth += box.getSize().x;
                 maxHeight = Math.max(maxHeight, box.getSize().y);
             }
-            // place the boxes on top of the node
-            double x = nodePos.x - margin.left + (totalWidth - boxesWidth) / 2;
+            
+            // place the boxes on top of the node, horizontally centered around the node itself
+            double x = nodePos.x - (boxesWidth - nodeSize.x) / 2;
             double baseLine = nodePos.y - margin.top + maxHeight;
             double anchorInc = nodeSize.x / (topBoxes.size() + 1);
             double anchorX = anchorInc;
@@ -130,8 +131,8 @@ public final class CommentPostprocessor implements ILayoutProcessor {
                 boxesWidth += box.getSize().x;
                 maxHeight = Math.max(maxHeight, box.getSize().y);
             }
-            // place the boxes in the bottom of the node
-            double x = nodePos.x - margin.left + (totalWidth - boxesWidth) / 2;
+            // place the boxes in the bottom of the node, horizontally centered around the node itself
+            double x = nodePos.x - (boxesWidth - nodeSize.x) / 2;
             double baseLine = nodePos.y + nodeSize.y + margin.bottom - maxHeight;
             double anchorInc = nodeSize.x / (bottomBoxes.size() + 1);
             double anchorX = anchorInc;

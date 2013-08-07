@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.cau.cs.kieler.klighd.feature"
-      label="KIELER Lightweight Diagrams infrastructure"
-      version="0.1.0.qualifier"
+      label="KIELER Lightweight Diagrams Infrastructure"
+      version="0.2.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
@@ -10,8 +10,7 @@
    </description>
 
    <copyright>
-      Copyright 2011 by Real-Time and Embedded Systems Group, Department
-of Computer Science, Christian-Albrechts-University of Kiel
+      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Christian-Albrechts-University of Kiel
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
@@ -344,6 +343,20 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.klighd.incremental"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.core.kgraph"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klay.tree"
          download-size="0"
          install-size="0"
          version="0.0.0"

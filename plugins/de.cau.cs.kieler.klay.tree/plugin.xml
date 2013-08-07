@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutProviders">
+      <layoutAlgorithm
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.klay.tree.TreeLayoutProvider"
+            description="Tree-based algorithm of the KIELER Layouters project. Computes a spanning tree of the input graph and arranges all nodes according to the resulting parent-children hierarchy."
+            id="de.cau.cs.kieler.klay.tree"
+            name="KLay Mr. Tree"
+            preview="images/tree.png"
+            type="de.cau.cs.kieler.type.tree">
+         <knownOption
+               default="20"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               default="20"
+               option="de.cau.cs.kieler.borderSpacing">
+         </knownOption>
+         <knownOption
+               default="true"
+               option="de.cau.cs.kieler.separateConnComp">
+         </knownOption>
+         <knownOption
+               default="1.6"
+               option="de.cau.cs.kieler.aspectRatio">
+         </knownOption>
+         <knownOption
+               default="DOWN"
+               option="de.cau.cs.kieler.direction">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.debugMode">
+         </knownOption>
+         <knownOption
+               default="DESCENDANTS"
+               option="de.cau.cs.kieler.klay.tree.weighting">
+         </knownOption>
+      </layoutAlgorithm>
+            <layoutOption
+                  advanced="true"
+                  appliesTo="parents"
+                  class="de.cau.cs.kieler.klay.tree.properties.OrderWeighting"
+                  default="DESCENDANTS"
+                  description="Tells the node order which weighting it should use"
+                  id="de.cau.cs.kieler.klay.tree.weighting"
+                  name="Weighting of Nodes"
+                  type="enum">
+            </layoutOption>
+   </extension>
+
+</plugin>

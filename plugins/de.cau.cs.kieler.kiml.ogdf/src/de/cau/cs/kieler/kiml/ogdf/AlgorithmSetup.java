@@ -858,8 +858,8 @@ public final class AlgorithmSetup {
                KNode target = edge.getTarget();
                // self-loops are ignored by the server communicator
                if (source != target) {
-                   Pair<KNode, KNode> pair = Pair.create(source, target);
-                   if (edgeSet.contains(pair) || edgeSet.contains(Pair.create(target, source))) {
+                   Pair<KNode, KNode> pair = Pair.of(source, target);
+                   if (edgeSet.contains(pair) || edgeSet.contains(Pair.of(target, source))) {
                        return true;
                    }
                    edgeSet.add(pair);

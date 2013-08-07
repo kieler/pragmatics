@@ -41,14 +41,14 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.Util;
-import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
@@ -751,7 +751,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             return;
         }
         KNode parentNode = (KNode) target;
-
+        
         // determine the border spacing, which influences the offset
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);

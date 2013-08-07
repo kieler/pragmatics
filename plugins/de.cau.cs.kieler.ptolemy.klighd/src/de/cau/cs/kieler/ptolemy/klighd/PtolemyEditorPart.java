@@ -22,10 +22,6 @@ import org.ptolemy.moml.util.MomlResourceFactoryImpl;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.properties.IPropertyHolder;
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
-import de.cau.cs.kieler.klighd.LightDiagramServices;
-import de.cau.cs.kieler.klighd.incremental.UpdateStrategy;
 import de.cau.cs.kieler.klighd.views.DiagramEditorPart;
 
 /**
@@ -67,13 +63,6 @@ public class PtolemyEditorPart extends DiagramEditorPart {
         set.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
         set.getResourceFactoryRegistry().getExtensionToFactoryMap()
                 .put("xml", new MomlResourceFactoryImpl());
-    }
-
-    @Override
-    protected IPropertyHolder configureKlighdProperties() {
-        IPropertyHolder configuration = new MapPropertyHolder();
-        configuration.setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY, UpdateStrategy.ID);
-        return configuration;
     }
 
 }
