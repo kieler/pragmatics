@@ -47,8 +47,8 @@ public abstract class TShape extends TGraphElement {
     }
 
     /**
-     * Returns the element's current position. This is the coordinate of the element's upper left
-     * corner.
+     * Returns the element's current position. For nodes this is the coordinates of their center
+     * point, for other elements the coordinates of the upper left corner.
      * 
      * @return the position
      */
