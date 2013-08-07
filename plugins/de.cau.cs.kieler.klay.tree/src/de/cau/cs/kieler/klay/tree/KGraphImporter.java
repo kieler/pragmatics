@@ -202,9 +202,17 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                 KVectorChain bendPoints = tEdge.getBendPoints();
 
-                // add the source port and target port positions to the vector chain
-                bendPoints.addFirst(tEdge.getSource().getPosition());
-                bendPoints.addLast(tEdge.getTarget().getPosition());
+                // add the source port and target points to the vector chain
+                KVector sourcePoint = new KVector(tEdge.getSource().getPosition());
+                bendPoints.addFirst(sourcePoint);
+                KVector targetPoint = new KVector(tEdge.getTarget().getPosition());
+                bendPoints.addLast(targetPoint);
+                
+                // correct the source and target points
+                toNodeBorder(sourcePoint, bendPoints.get(1),
+                        tEdge.getSource().getSize());
+                toNodeBorder(targetPoint, bendPoints.get(bendPoints.size() - 2),
+                        tEdge.getTarget().getSize());
 
                 edgeLayout.getBendPoints().clear();
                 edgeLayout.applyVectorChain(bendPoints);
@@ -218,6 +226,29 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         float height = (float) (maxYPos - minYPos) + 2 * borderSpacing + insets.getTop()
                 + insets.getBottom();
         KimlUtil.resizeNode(kgraph, width, height, false, false);
+    }
+    
+    
+    /**
+     * Modify the given center position to the border of the node.
+     * 
+     * @param center the node center position (modified by this method)
+     * @param next the next point of the edge vector chain
+     * @param size the node size
+     */
+    private static void toNodeBorder(final KVector center, final KVector next, final KVector size) {
+        double wh = size.x / 2, hh = size.y / 2;
+        double absx = Math.abs(next.x - center.x), absy = Math.abs(next.y - center.y);
+        double xscale = 1, yscale = 1;
+        if (absx > wh) {
+            xscale = wh / absx;
+        }
+        if (absy > hh) {
+            yscale = hh / absy;
+        }
+        double scale = Math.min(xscale, yscale);
+        center.x += scale * (next.x - center.x);
+        center.y += scale * (next.y - center.y);
     }
 
 }
