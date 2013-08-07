@@ -284,8 +284,6 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                                 
                             }
                         });
-                        
-                        System.out.println("§§§§§§§§§§§§§§§XTEND2§§§§§§§§§§§§§§§§§§§§");
                     
                 } else {
                     method.invoke(transformation.getTransformationClass(), params.toArray());
