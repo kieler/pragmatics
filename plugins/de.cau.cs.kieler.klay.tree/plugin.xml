@@ -6,9 +6,10 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.klay.tree.TreeLayoutProvider"
-            description="Tree-based layout algorithm of the KIELER Layouters project."
+            description="Tree-based algorithm of the KIELER Layouters project. Computes a spanning tree of the input graph and arranges all nodes according to the resulting parent-children hierarchy."
             id="de.cau.cs.kieler.klay.tree"
             name="KLay Mr. Tree"
+            preview="images/tree.png"
             type="de.cau.cs.kieler.type.tree">
          <knownOption
                default="20"
