@@ -25,6 +25,9 @@
 
   <build>
     <plugins>
+
+      <!-- This plug-in generates a nice index.html for our update site and adds associate update
+           sites, which is at the time of writing not possible with Tycho alone. -->
       <plugin>
         <groupId>org.jboss.tools.tycho-plugins</groupId>
         <artifactId>repository-utils</artifactId>
