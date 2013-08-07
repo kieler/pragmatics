@@ -27,7 +27,9 @@
     <plugins>
 
       <!-- This plug-in generates a nice index.html for our update site and adds associate update
-           sites, which is at the time of writing not possible with Tycho alone. -->
+           sites, which is at the time of writing not possible with Tycho alone. For how this stuff
+           works, see the bottom two links in comment 6 on this ticket:
+           https://bugs.eclipse.org/bugs/show_bug.cgi?id=391033-->
       <plugin>
         <groupId>org.jboss.tools.tycho-plugins</groupId>
         <artifactId>repository-utils</artifactId>
