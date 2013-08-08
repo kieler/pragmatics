@@ -552,7 +552,17 @@ class Ptolemy2KGraphVisualization {
         // Look for properties that don't start with an underscore (these are the ones we want the
         // user to see)
         for (property : element.annotations) {
-            if (!property.name.startsWith("_")) {
+            /* We have a few conditions that would cause an annotation to not be shown in a comment:
+             *  1. It starts with an underscore "_"
+             *  2. The element is a comment node and the annotation holds its text.
+             */
+            val includeAnnotation =
+                !property.name.startsWith("_")
+                && !((element instanceof KNode)
+                    && (element as KNode).markedAsComment
+                    && property.name.equals(ANNOTATION_COMMENT_TEXT))
+            
+            if (includeAnnotation) {
                 toolTipText.append("\n").append(property.name)
                 
                 if (!property.value.nullOrEmpty) {
