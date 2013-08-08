@@ -249,7 +249,7 @@ class MarkerExtensions {
      * @return {@code true} if the node has a refinement.
      */
     def boolean isMarkedAsHavingRefinement(KNode node) {
-        return node.hasAnnotation(ANNOTATION_REFINEMENT_NAME)
+        return !(node.getAnnotationValue(ANNOTATION_REFINEMENT_NAME).nullOrEmpty)
     }
     
     /**
