@@ -31,6 +31,7 @@ import org.ptolemy.moml.EntityType
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
+import org.eclipse.emf.ecore.EObject
 
 /**
  * Utility methods used by the Ptolemy to KGraph transformation.
@@ -145,7 +146,7 @@ class MiscellaneousExtensions {
      * @return the entity that defines its refinement, or {@code null} if there is none or if none could
      *         be found.
      */
-    def EntityType findRefinement(EntityType ptState) {
+    def EntityType findRefinement(EObject ptState) {
         /* Let's take a short break and meditate over what exactly will be going on in this method.
          * First, everything that happens requires the container of the state to be a modal model
          * controller. At the time of writing, modal models were the only models that allowed states
@@ -170,23 +171,27 @@ class MiscellaneousExtensions {
             // We can only do something if the state's container is a modal model controller; if not,
             // we have no idea which kind of structure we are in
             val containerClass = if (ptState.eContainer instanceof EntityType) {
-                (ptState.eContainer as EntityType).class1
+                (ptState.eContainer as EntityType).class1.nullToEmpty
             } else if (ptState.eContainer instanceof ClassType) {
-                (ptState.eContainer as ClassType).^extends
+                (ptState.eContainer as ClassType).^extends.nullToEmpty
             }
             
-            if (containerClass.nullToEmpty.equals(ENTITY_CLASS_MODEL_CONTROLLER)) {
+            if (containerClass.equals(ENTITY_CLASS_MODEL_CONTROLLER)
+                || containerClass.equals(ENTITY_CLASS_FSM_MODEL_CONTROLLER)) {
+                
                 // The container's container should be the modal model entity
                 val modalModel = ptState.eContainer.eContainer
                 
                 // Check if the modal model container's type is what we'd expect
                 val modalModelClass = if (modalModel instanceof EntityType) {
-                    (modalModel as EntityType).class1
+                    (modalModel as EntityType).class1.nullToEmpty
                 } else if (modalModel instanceof ClassType) {
-                    (modalModel as ClassType).^extends
+                    (modalModel as ClassType).^extends.nullToEmpty
                 }
                 
-                if (modalModelClass.nullToEmpty.equals(ENTITY_CLASS_MODAL_MODEL)) {
+                if (modalModelClass.equals(ENTITY_CLASS_MODAL_MODEL)
+                    || modalModelClass.equals(ENTITY_CLASS_FSM_MODAL_MODEL)) {
+                        
                     // Look for entities with the given name
                     val childEntities = if (modalModel instanceof EntityType) {
                         (modalModel as EntityType).entity

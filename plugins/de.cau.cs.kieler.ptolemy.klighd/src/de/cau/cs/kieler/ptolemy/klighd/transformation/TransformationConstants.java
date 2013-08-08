@@ -50,8 +50,15 @@ final class TransformationConstants {
     /** Class of a refinement port in modal models. */
     public static final String PORT_CLASS_MODAL_MODEL_PORT = "ptolemy.domains.modal.modal.ModalPort";
     
+    /** Class of a refinement port in FSM modal models. */
+    public static final String PORT_CLASS_FSM_MODAL_MODEL_PORT = "ptolemy.domains.fsm.modal.ModalPort";
+    
     /** Class of a refinement port in modal models. */
     public static final String PORT_CLASS_REFINEMENT_PORT = "ptolemy.domains.modal.modal.RefinementPort";
+
+    /** Class of a refinement port in FSM modal models. */
+    public static final String PORT_CLASS_FSM_REFINEMENT_PORT =
+            "ptolemy.domains.fsm.modal.RefinementPort";
     
     
     // ENTITY TYPES
@@ -62,15 +69,24 @@ final class TransformationConstants {
     /** Class of an entity that houses a modal model. */
     public static final String ENTITY_CLASS_MODAL_MODEL = "ptolemy.domains.modal.modal.ModalModel";
     
+    /** Class of a further entity that houses a modal model. */
+    public static final String ENTITY_CLASS_FSM_MODAL_MODEL = "ptolemy.domains.fsm.modal.ModalModel";
+    
     /** Class of an entity that is the controller of a modal model. */
     public static final String ENTITY_CLASS_MODEL_CONTROLLER =
             "ptolemy.domains.modal.modal.ModalController";
+    
+    public static final String ENTITY_CLASS_FSM_MODEL_CONTROLLER =
+            "ptolemy.domains.fsm.modal.ModalController";
     
     /** Class of an entity that is a refinement for modal model states. */
     public static final String ENTITY_CLASS_STATE_REFINEMENT = "ptolemy.domains.modal.modal.Refinement";
     
     /** Class of an entity that is a state machine state. */
     public static final String ENTITY_CLASS_STATE = "ptolemy.domains.modal.kernel.State";
+
+    /** Class of an entity that is an FSM state machine state. */
+    public static final String ENTITY_CLASS_FSM_STATE = "ptolemy.domains.fsm.kernel.State";
     
     /** Class of an entity that is a Const actor. */
     public static final String ENTITY_CLASS_CONST = "ptolemy.actor.lib.Const";
