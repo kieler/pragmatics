@@ -626,7 +626,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         LNode southDummy = new LNode(layeredGraph);
         southDummy.setProperty(Properties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
         southDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-        northDummy.setProperty(Properties.ORIGIN, selfLoop.getTarget().getNode());
+        southDummy.setProperty(Properties.ORIGIN, selfLoop.getTarget().getNode());
         
         LPort southDummyInputPort = new LPort(layeredGraph);
         southDummyInputPort.setProperty(Properties.ORIGIN, selfLoop.getTarget());
