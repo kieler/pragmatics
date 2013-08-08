@@ -237,7 +237,14 @@ class KRenderingFigureProvider {
             rectangle.children += nameText
             
             val valueText = renderingFactory.createKText()  => [value |
-                value.text = parameter.second
+                // We shorten the text to 150 characters. This could definitely be done in a more
+                // intelligent way (with label management techniques, perhaps), but this is good enough
+                // for the moment
+                value.text = if (parameter.second.length > 150) {
+                        parameter.second.substring(0, 150) + "..."
+                    } else {
+                        parameter.second
+                    }
                 value.horizontalAlignment = H_LEFT
                 value.setFontSize(KlighdConstants::DEFAULT_FONT_SIZE - 2)
                 value.setGridPlacementData(
