@@ -230,7 +230,7 @@ class KRenderingFigureProvider {
                     0,
                     // We need to specify a minimum height to work around a grid placement bug that
                     // would cause the cell not to be high enough for the label
-                    20,
+                    25,
                     createKPosition(LEFT, 0, 0, TOP, 3, 0),
                     createKPosition(RIGHT, 5, 0, BOTTOM, 3, 0))
             ]
@@ -251,7 +251,7 @@ class KRenderingFigureProvider {
                     0,
                     // We need to specify a minimum height to work around a grid placement bug that
                     // would cause the cell not to be high enough for the label
-                    20,
+                    25,
                     createKPosition(LEFT, 5, 0, TOP, 3, 0),
                     createKPosition(RIGHT, 5, 0, BOTTOM, 3, 0))
             ]
