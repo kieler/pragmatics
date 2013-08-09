@@ -27,10 +27,10 @@ final class TransformationConstants {
     // PORT NAMES
     
     /** Possible names for input ports. Used to infer port types during the transformation. */
-    public static final String[] PORT_NAMES_INPUT = {"in", "input", "incomingPort"};
+    public static final String[] PORT_NAMES_INPUT = {"in", "input", "incomingPort", "sceneGraphIn"};
     
     /** Possible names for output ports. Used to infer port types during the transformation. */
-    public static final String[] PORT_NAMES_OUTPUT = {"out", "output", "outgoingPort"};
+    public static final String[] PORT_NAMES_OUTPUT = {"out", "output", "outgoingPort", "sceneGraphOut"};
     
     /** Regular expression for the separator character used in port names. */
     public static final String PORT_NAME_SEPARATOR_REGEX = "\\.";
