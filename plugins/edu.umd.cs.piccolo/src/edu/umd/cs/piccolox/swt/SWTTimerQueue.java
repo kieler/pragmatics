@@ -154,7 +154,7 @@ public class SWTTimerQueue implements Runnable {
         SWTTimer previousTimer = null;
         SWTTimer nextTimer = firstTimer;
 
-        while (nextTimer != null && nextTimer.getExpirationTime() > expirationTime) {
+        while (nextTimer != null && nextTimer.getExpirationTime() <= expirationTime) {
             previousTimer = nextTimer;
             nextTimer = nextTimer.getNextTimer();
         }
