@@ -140,64 +140,62 @@ class Ptolemy2KGraphTransformation {
         kNode.addChildPorts(ptEntity)
         
         // Check if we have an FSM, a modal model, or a regular node
-        switch (ptEntity.class1) {
-            case ENTITY_CLASS_FSM: {
-                // Mark as a state machine and then add the required relations, links, and child
-                // entities as usual
-                kNode.markAsStateMachineContainer()
-                
-                kNode.addChildEntities(ptEntity.entity)
-                kNode.addChildRelations(ptEntity.relation)
-                kNode.addChildLinks(ptEntity.link)
-            }
+        if (ptEntity.class1.equals(ENTITY_CLASS_FSM)) {
+            // Mark as a state machine and then add the required relations, links, and child
+            // entities as usual
+            kNode.markAsStateMachineContainer()
             
-            case ENTITY_CLASS_MODAL_MODEL: {
-                // Mark as a state machine
-                kNode.markAsStateMachineContainer()
-                
-                // The actual states are found in the state machine controller
-                for (child : ptEntity.entity) {
-                    if (child.name.equals(ENTITY_NAME_MODAL_CONTROLLER)) {
-                        kNode.addChildEntities(child.entity)
-                        kNode.addChildRelations(child.relation)
-                        kNode.addChildLinks(child.link)
-                    }
+            kNode.addChildEntities(ptEntity.entity)
+            kNode.addChildRelations(ptEntity.relation)
+            kNode.addChildLinks(ptEntity.link)
+        } else if (ptEntity.class1.equals(ENTITY_CLASS_MODAL_MODEL)
+            || ptEntity.class1.equals(ENTITY_CLASS_FSM_MODAL_MODEL)) {
+            
+            // Mark as a state machine
+            kNode.markAsStateMachineContainer()
+            
+            // The actual states are found in the state machine controller
+            for (child : ptEntity.entity) {
+                if (child.name.equals(ENTITY_NAME_MODAL_CONTROLLER)) {
+                    kNode.addChildEntities(child.entity)
+                    kNode.addChildRelations(child.relation)
+                    kNode.addChildLinks(child.link)
                 }
             }
+        } else if (ptEntity.class1.equals(ENTITY_CLASS_STATE)
+            || ptEntity.class1.equals(ENTITY_CLASS_FSM_STATE)) {
             
-            case ENTITY_CLASS_STATE: {
-                // A modal model state may have refinements
-                val refinement = ptEntity.findRefinement()
+            // A modal model state may have refinements
+            val refinement = ptEntity.findRefinement()
+            
+            if (refinement != null) {
+                // We have a refinement; transform it (which has possibly already been done) and
+                // copy it; then add its children to our list of children
+                // Note: this code assumes that each refinement is only used once in the model. If
+                // that assumption turns out to be false, we need to create a copy of the
+                // transformed refinement before adding its children.
+                val transformedRefinement = transform(refinement)
+                kNode.children += transformedRefinement.children
+                while (!transformedRefinement.ports.empty) {
+                    kNode.children += transformRefinementPort(transformedRefinement.ports.get(0))
+                }
+                kNode.annotations += transformedRefinement.annotations
                 
-                if (refinement != null) {
-                    // We have a refinement; transform it (which has possibly already been done) and
-                    // copy it; then add its children to our list of children
-                    // Note: this code assumes that each refinement is only used once in the model. If
-                    // that assumption turns out to be false, we need to create a copy of the
-                    // transformed refinement before adding its children.
-                    val transformedRefinement = transform(refinement)
-                    kNode.children += transformedRefinement.children
-                    while (!transformedRefinement.ports.empty) {
-                        kNode.children += transformRefinementPort(transformedRefinement.ports.get(0))
-                    }
-                    kNode.annotations += transformedRefinement.annotations
+                // Check if the refinement is itself a state machine
+                val refinementClass = transformedRefinement.getAnnotationValue(
+                    ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+                
+                if (refinementClass.equals(ENTITY_CLASS_MODEL_CONTROLLER)
+                    || refinementClass.equals(ENTITY_CLASS_FSM_MODEL_CONTROLLER)) {
                     
-                    // Check if the refinement is itself a state machine
-                    val refinementClass = transformedRefinement.getAnnotationValue(
-                        ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
-                    
-                    if (refinementClass.equals(ENTITY_CLASS_MODEL_CONTROLLER)) {
-                        kNode.markAsStateMachineContainer()
-                    }
+                    kNode.markAsStateMachineContainer()
                 }
             }
-            
-            default: {
-                // Add the required relations, links, and child entities
-                kNode.addChildEntities(ptEntity.entity)
-                kNode.addChildRelations(ptEntity.relation)
-                kNode.addChildLinks(ptEntity.link)
-            }
+        } else {
+            // Add the required relations, links, and child entities
+            kNode.addChildEntities(ptEntity.entity)
+            kNode.addChildRelations(ptEntity.relation)
+            kNode.addChildLinks(ptEntity.link)
         }
     }
     
@@ -223,36 +221,62 @@ class Ptolemy2KGraphTransformation {
         kNode.addChildPorts(ptClass)
         
         // Check if we have an FSM, a modal model, or a regular node
-        switch (ptClass.^extends) {
-            case ENTITY_CLASS_FSM: {
-                // Mark as a state machine and then add the required relations, links, and child
-                // entities as usual
-                kNode.markAsStateMachineContainer()
-                kNode.addChildEntities(ptClass.entity)
-                kNode.addChildRelations(ptClass.relation)
-                kNode.addChildLinks(ptClass.link)
-            }
+        if (ptClass.^extends.equals(ENTITY_CLASS_FSM)) {
+            // Mark as a state machine and then add the required relations, links, and child
+            // entities as usual
+            kNode.markAsStateMachineContainer()
             
-            case ENTITY_CLASS_MODAL_MODEL: {
-                // Mark as a state machine
-                kNode.markAsStateMachineContainer()
-                
-                // The actual states are found in the state machine controller
-                for (child : ptClass.entity) {
-                    if (child.name.equals(ENTITY_NAME_MODAL_CONTROLLER)) {
-                        kNode.addChildEntities(child.entity)
-                        kNode.addChildRelations(child.relation)
-                        kNode.addChildLinks(child.link)
-                    }
+            kNode.addChildEntities(ptClass.entity)
+            kNode.addChildRelations(ptClass.relation)
+            kNode.addChildLinks(ptClass.link)
+        } else if (ptClass.^extends.equals(ENTITY_CLASS_MODAL_MODEL)
+            || ptClass.^extends.equals(ENTITY_CLASS_FSM_MODAL_MODEL)) {
+            
+            // Mark as a state machine
+            kNode.markAsStateMachineContainer()
+            
+            // The actual states are found in the state machine controller
+            for (child : ptClass.entity) {
+                if (child.name.equals(ENTITY_NAME_MODAL_CONTROLLER)) {
+                    kNode.addChildEntities(child.entity)
+                    kNode.addChildRelations(child.relation)
+                    kNode.addChildLinks(child.link)
                 }
             }
+        } else if (ptClass.^extends.equals(ENTITY_CLASS_MODAL_MODEL)
+            || ptClass.^extends.equals(ENTITY_CLASS_FSM_MODAL_MODEL)) {
             
-            default: {
-                // Add the required relations, links, and child entities
-                kNode.addChildEntities(ptClass.entity)
-                kNode.addChildRelations(ptClass.relation)
-                kNode.addChildLinks(ptClass.link)
+            // A modal model state may have refinements
+            val refinement = ptClass.findRefinement()
+            
+            if (refinement != null) {
+                // We have a refinement; transform it (which has possibly already been done) and
+                // copy it; then add its children to our list of children
+                // Note: this code assumes that each refinement is only used once in the model. If
+                // that assumption turns out to be false, we need to create a copy of the
+                // transformed refinement before adding its children.
+                val transformedRefinement = transform(refinement)
+                kNode.children += transformedRefinement.children
+                while (!transformedRefinement.ports.empty) {
+                    kNode.children += transformRefinementPort(transformedRefinement.ports.get(0))
+                }
+                kNode.annotations += transformedRefinement.annotations
+                
+                // Check if the refinement is itself a state machine
+                val refinementClass = transformedRefinement.getAnnotationValue(
+                    ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+                
+                if (refinementClass.equals(ENTITY_CLASS_MODEL_CONTROLLER)
+                    || refinementClass.equals(ENTITY_CLASS_FSM_MODEL_CONTROLLER)) {
+                    
+                    kNode.markAsStateMachineContainer()
+                }
             }
+        } else {
+            // Add the required relations, links, and child entities
+            kNode.addChildEntities(ptClass.entity)
+            kNode.addChildRelations(ptClass.relation)
+            kNode.addChildLinks(ptClass.link)
         }
     }
     

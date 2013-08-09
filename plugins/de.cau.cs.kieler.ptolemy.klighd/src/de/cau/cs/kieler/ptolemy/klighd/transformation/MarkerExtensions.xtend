@@ -272,7 +272,7 @@ class MarkerExtensions {
      */
     def boolean isMarkedAsState(KNode node) {
         val propertyValue = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
-        return propertyValue.equals(ENTITY_CLASS_STATE)
+        return propertyValue.equals(ENTITY_CLASS_STATE) || propertyValue.equals(ENTITY_CLASS_FSM_STATE)
     }
     
     /**
@@ -294,6 +294,7 @@ class MarkerExtensions {
     def boolean isMarkedAsModalModelPort(KGraphElement element) {
         val propertyValue = element.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
         return propertyValue.equals(PORT_CLASS_REFINEMENT_PORT)
+            || propertyValue.equals(PORT_CLASS_FSM_REFINEMENT_PORT)
     }
     
 }

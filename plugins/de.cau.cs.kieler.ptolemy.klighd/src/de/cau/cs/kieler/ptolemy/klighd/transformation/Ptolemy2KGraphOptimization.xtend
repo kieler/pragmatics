@@ -220,7 +220,9 @@ class Ptolemy2KGraphOptimization {
             for (edge : port.edges) {
                 if (port.node.children.contains(edge.source)) {
                     edgesToBeReversed += edge
-                } else if (edge.sourcePort == port && port.node.parent.children.contains(edge.target)) {
+                } else if (edge.sourcePort == port && port.node.parent != null
+                    && port.node.parent.children.contains(edge.target)) {
+                    
                     edgesToBeReversed += edge
                 } else {
                     edgesToBeKept += edge
@@ -232,7 +234,9 @@ class Ptolemy2KGraphOptimization {
             for (edge : port.edges) {
                 if (port.node.children.contains(edge.target)) {
                     edgesToBeReversed += edge
-                } else if (edge.targetPort == port && port.node.parent.children.contains(edge.source)) {
+                } else if (edge.targetPort == port && port.node.parent != null
+                    && port.node.parent.children.contains(edge.source)) {
+                    
                     edgesToBeReversed += edge
                 } else {
                     edgesToBeKept += edge
