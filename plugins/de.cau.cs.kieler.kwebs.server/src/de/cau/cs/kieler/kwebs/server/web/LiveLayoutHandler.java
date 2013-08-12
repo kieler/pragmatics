@@ -46,7 +46,6 @@ public class LiveLayoutHandler implements HttpHandler {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void handle(final HttpExchange http) throws IOException {
 
         // retrieve the query parameters
