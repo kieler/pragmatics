@@ -42,7 +42,6 @@ import com.google.common.io.CharStreams;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
-import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.piccolo.svg.PiccoloSVGBrowseViewer;
 
 /**
@@ -126,8 +125,7 @@ public class KlighdningHTTPHandler extends AbstractHandler {
                     // translate and set the model
                     try {
                         KNode model =
-                                LightDiagramServices.translateModel(new ViewContext(), r
-                                        .getContents().get(0));
+                                LightDiagramServices.translateModel(r.getContents().get(0), null);
                         getViewer.setModel(model, true);
 
                         // apply the perma link infos

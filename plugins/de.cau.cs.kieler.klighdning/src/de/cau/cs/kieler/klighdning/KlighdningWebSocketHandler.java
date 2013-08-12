@@ -185,7 +185,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
     private void broadcastJson(final String json, final Broadcast broadcastType) {
         try {
-            
+
             if (broadcastType != Broadcast.OnlyThis && currentRoom != null) {
                 @SuppressWarnings("unchecked")
                 List<Connection> cons = roomConnectionMap.getValues(currentRoom);
@@ -289,7 +289,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                         layoutBroadcastSVG(Broadcast.OnlyThis);
                     }
                 });
-                
+
                 System.out.println(connection);
 
             } else if (type.equals("LEAVE")) {
@@ -338,8 +338,8 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                         // translate and set the model
                         try {
                             KNode currentModel =
-                                    LightDiagramServices.translateModel(new ViewContext(), r
-                                            .getContents().get(0));
+                                    LightDiagramServices.translateModel(r.getContents().get(0),
+                                            null);
                             viewer.setModel(currentModel, true);
                             viewer.setResourcePath(path);
                             // applyLayout();
