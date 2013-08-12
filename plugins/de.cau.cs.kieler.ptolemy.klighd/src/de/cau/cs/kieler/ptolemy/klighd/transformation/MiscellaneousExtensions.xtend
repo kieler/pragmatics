@@ -21,10 +21,17 @@ import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.krendering.KPosition
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import java.util.List
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
+import org.ptolemy.moml.ClassType
+import org.ptolemy.moml.EntityType
+
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+
+import static extension com.google.common.base.Strings.*
+import org.eclipse.emf.ecore.EObject
 
 /**
  * Utility methods used by the Ptolemy to KGraph transformation.
@@ -33,6 +40,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
  * @kieler.rating yellow 2012-07-10 KI-15 cmot, grh
  */
 class MiscellaneousExtensions {
+    /** Access to annotations. */
+    @Inject extension AnnotationExtensions
     /** We're using markers for some of this stuff. */
     @Inject extension MarkerExtensions
     
@@ -130,7 +139,76 @@ class MiscellaneousExtensions {
         }
     }
     
-    
+    /**
+     * Given a modal model state, tries to find the entity that represents its refinement, if any.
+     * 
+     * @param ptState the modal model state.
+     * @return the entity that defines its refinement, or {@code null} if there is none or if none could
+     *         be found.
+     */
+    def EntityType findRefinement(EObject ptState) {
+        /* Let's take a short break and meditate over what exactly will be going on in this method.
+         * First, everything that happens requires the container of the state to be a modal model
+         * controller. At the time of writing, modal models were the only models that allowed states
+         * to be refined. The structure in modal models is as follows:
+         * 
+         *    Entity (class "ptolemy.domains.modal.modal.ModalModel")
+         *        Entity "_Controller" (class "ptolemy.domains.modal.modal.ModalController")
+         *            State entities
+         *                Property "refinementName" (this points to the name of an entity defined under
+         *                                           the modal model entity)
+         *        Refinement entities (class usually "ptolemy.domains.modal.modal.Refinement"
+         *                                        or "ptolemy.domains.modal.modal.ModalController")
+         * 
+         * The algorithm basically checks if a refinement name is defined for the given state. If so,
+         * it looks in the modal model entity for a refinement entity of the given name and returns
+         * that. The algorithm checks along the way if the class names are what we expect them to be.
+         */
+        
+        val refinementName = ptState.getAnnotationValue(ANNOTATION_REFINEMENT_NAME)
+        
+        if (!refinementName.nullOrEmpty) {
+            // We can only do something if the state's container is a modal model controller; if not,
+            // we have no idea which kind of structure we are in
+            val containerClass = if (ptState.eContainer instanceof EntityType) {
+                (ptState.eContainer as EntityType).class1.nullToEmpty
+            } else if (ptState.eContainer instanceof ClassType) {
+                (ptState.eContainer as ClassType).^extends.nullToEmpty
+            }
+            
+            if (containerClass.equals(ENTITY_CLASS_MODEL_CONTROLLER)
+                || containerClass.equals(ENTITY_CLASS_FSM_MODEL_CONTROLLER)) {
+                
+                // The container's container should be the modal model entity
+                val modalModel = ptState.eContainer.eContainer
+                
+                // Check if the modal model container's type is what we'd expect
+                val modalModelClass = if (modalModel instanceof EntityType) {
+                    (modalModel as EntityType).class1.nullToEmpty
+                } else if (modalModel instanceof ClassType) {
+                    (modalModel as ClassType).^extends.nullToEmpty
+                }
+                
+                if (modalModelClass.equals(ENTITY_CLASS_MODAL_MODEL)
+                    || modalModelClass.equals(ENTITY_CLASS_FSM_MODAL_MODEL)) {
+                        
+                    // Look for entities with the given name
+                    val childEntities = if (modalModel instanceof EntityType) {
+                        (modalModel as EntityType).entity
+                    } else if (modalModel instanceof ClassType) {
+                        (modalModel as ClassType).entity
+                    }
+                    
+                    if (childEntities != null) {
+                        return childEntities.findFirst([child | child.name.equals(refinementName)])
+                    }
+                }
+            }
+        }
+        
+        // We couldn't find a refinement
+        return null
+    }
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////

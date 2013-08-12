@@ -27,7 +27,6 @@ import java.awt.RenderingHints
 import java.awt.geom.Rectangle2D$Double
 import java.awt.image.BufferedImage
 import java.util.List
-import org.eclipse.swt.widgets.Display
 import org.w3c.dom.Document
 import ptolemy.kernel.Entity
 import ptolemy.vergil.icon.EditorIcon
@@ -103,15 +102,14 @@ class PtolemyFigureInterface {
         graphics.drawImage(figureImage, 0, 0, null)
         graphics.dispose()
         
-        val org.eclipse.swt.graphics.Image swtImage = new org.eclipse.swt.graphics.Image(
-                Display::getCurrent(), GraphicsUtils::convertToSwt(resizedImage))
+        val swtImage = GraphicsUtils::convertToSwt(resizedImage)
         
         // Now that we have the image, create a KRendering version of it
         val kImage = renderingFactory.createKImage()
         kImage.imageObject = swtImage
         kImage.setAreaPlacementData(
             createKPosition(LEFT, 0, 0, TOP, 0, 0),
-            createKPosition(LEFT, swtImage.bounds.width, 0, TOP, swtImage.bounds.height, 0))
+            createKPosition(LEFT, swtImage.width, 0, TOP, swtImage.height, 0))
         
         return kImage
     }
@@ -152,17 +150,13 @@ class PtolemyFigureInterface {
         try {
             val xmlParser = new XMLParser()
             
-            // Try to parse the XML
-            try {
-                svgDocument = xmlParser.parser(svgString)
-            } catch (Exception e) {
-                // The parsing failed, which might be due to missing blanks due to typos; repair that
-                // and try to parse again
-                svgString = GraphicsUtils::repairString(svgString)
-                svgDocument = xmlParser.parser(svgString)
-            }
-            
+            // Try to parse the XML (we're preemptively repairing the SVG string here; we originally did
+            // that only when a first initial parsing attempt failed, but that resulted in occasional
+            // error messages that we are unable to suppress)
+            svgString = GraphicsUtils::repairString(svgString)
+            svgDocument = xmlParser.parser(svgString)
             svgDocument = GraphicsUtils::repairSvg(svgDocument)
+            
             return svgDocument
         } catch (Exception e) {
             return null

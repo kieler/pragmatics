@@ -512,12 +512,12 @@ public final class BKNodePlacer implements ILayoutPhase {
             // Determine the basic size of the block
             double maximumNodeSize = root.getMargin().top + root.getSize().y + root.getMargin().bottom;
             
-            // lowerBound determines the top (!) border of the block, since the coordinates
-            // of the canvas start with (0,0) and grow down. upperBound then determines
+            // upperBound determines the top border of the block, since the coordinates
+            // of the canvas start with (0,0) and grow down. lowerBound then determines
             // the bottom border of the block.
-            double lowerBound = root.getMargin().top;
-            double upperBound = root.getMargin().top + root.getSize().y + root.getMargin().bottom;
-            double postShift = lowerBound;
+            double upperBound = root.getMargin().top;
+            double lowerBound = root.getMargin().top + root.getSize().y + root.getMargin().bottom;
+            double postShift = upperBound;
 
             // Now, the sizes and shifts between the root node and a possible second node
             // of the block is determined, for cases where there are only one or two nodes
@@ -525,25 +525,25 @@ public final class BKNodePlacer implements ILayoutPhase {
             LNode current = root;
             LNode next = bal.getAlign().get(root);
             
-            double rootPortPos = root.getMargin().top;
-            double rootUpperBound = 0.0;
+            double rootNodePos = root.getMargin().top;
+            double rootLowerBound = 0.0;
             
             LEdge rootEdge = getEdge(current, next);
             
             if (rootEdge != null) {
                 if (bal.getHDir() == HDirection.BOTTOM) {
-                    rootPortPos = rootEdge.getTarget().getPosition().y
+                    rootNodePos = rootEdge.getTarget().getPosition().y
                             + rootEdge.getTarget().getAnchor().y + current.getMargin().top;
                 } else {
-                    rootPortPos = rootEdge.getSource().getPosition().y
+                    rootNodePos = rootEdge.getSource().getPosition().y
                             + rootEdge.getSource().getAnchor().y + current.getMargin().top;
                 }
                 
-                rootUpperBound = current.getMargin().top + current.getSize().y
-                        + current.getMargin().bottom - rootPortPos;
+                rootLowerBound = current.getMargin().top + current.getSize().y
+                        + current.getMargin().bottom - rootNodePos;
                 
-                lowerBound = rootPortPos;
-                upperBound = rootUpperBound;
+                upperBound = rootNodePos;
+                lowerBound = rootLowerBound;
             }
 
             // Now, the rest of the block is investigated and borders are updated if
@@ -567,17 +567,17 @@ public final class BKNodePlacer implements ILayoutPhase {
                     portPos = edge.getTarget().getPosition().y + edge.getTarget().getAnchor().y
                             + next.getMargin().top;
                 }
-                double currentLowerBound = portPos;
-                double currentUpperBound = next.getMargin().top +  next.getSize().y
-                        + next.getMargin().bottom - currentLowerBound;
+                double currentTopBound = portPos;
+                double currentLowerBound = next.getMargin().top +  next.getSize().y
+                        + next.getMargin().bottom - currentTopBound;
                 bal.getInnerShift().put(next, difference);
 
-                if (currentLowerBound > lowerBound) {
-                    lowerBound = currentLowerBound;
+                if (currentTopBound > upperBound) {
+                    upperBound = currentTopBound;
                 }
                 
-                if (currentUpperBound > upperBound) {
-                    upperBound = currentUpperBound;
+                if (currentLowerBound > lowerBound) {
+                    lowerBound = currentLowerBound;
                 }
 
                 current = next;
@@ -587,13 +587,13 @@ public final class BKNodePlacer implements ILayoutPhase {
             // If the block only consists of the root node, keep its measurement and
             // do not overwrite it with the default values of lower- and upperBound
             if (bal.getAlign().get(root) != root) {
-                maximumNodeSize = upperBound + lowerBound;
+                maximumNodeSize = lowerBound + upperBound;
             }
             
             // If the block's top border is higher than the root node, use this, else
             // use the root node
-            if (lowerBound > rootPortPos) {
-                postShift = lowerBound - rootPortPos;
+            if (upperBound > rootNodePos) {
+                postShift = upperBound - rootNodePos;
             }
             
             bal.getPostShift().put(root, postShift);
@@ -667,18 +667,19 @@ public final class BKNodePlacer implements ILayoutPhase {
         // Try to compact blocks by shifting them towards each other if there is space
         // between them. It's important to traverse top-bottom or bottom-top here too
         for (Layer layer : layers) {
-
             for (LNode v : layer.getNodes()) {
                 bal.getY().put(v, bal.getY().get(bal.getRoot().get(v)));
                 if (bal.getVDir() == VDirection.RIGHT) {
                     if (v.equals(bal.getRoot().get(v))
                             && bal.getShift().get(bal.getSink().get(v)) > Double.NEGATIVE_INFINITY) {
+                        
                         bal.getY().put(v,
                                 bal.getY().get(v) + bal.getShift().get(bal.getSink().get(v)));
                     }
                 } else {
                     if (v.equals(bal.getRoot().get(v))
                             && bal.getShift().get(bal.getSink().get(v)) < Double.POSITIVE_INFINITY) {
+                        
                         bal.getY().put(v,
                                 bal.getY().get(v) + bal.getShift().get(bal.getSink().get(v)));
                     }
@@ -883,7 +884,6 @@ public final class BKNodePlacer implements ILayoutPhase {
     }
 
     /**
-     * 
      * Auxiliary method for getting the size of a layer.
      * 
      * @param layeredGraph The containing layered graph
@@ -895,7 +895,6 @@ public final class BKNodePlacer implements ILayoutPhase {
     }
 
     /**
-     * 
      * Auxiliary method for getting the node on a certain position of a layer.
      * 
      * @param layeredGraph The containing layered graph
@@ -911,7 +910,6 @@ public final class BKNodePlacer implements ILayoutPhase {
     }
 
     /**
-     * 
      * Checks whether the given node is part of a long edge between the two given layers.
      * 
      * @param node Possible long edge node
@@ -1031,7 +1029,6 @@ public final class BKNodePlacer implements ILayoutPhase {
     }
     
     /**
-     * 
      * Checks whether any north-south port dummies are included in the block
      * given by the root node.
      * 
@@ -1044,7 +1041,6 @@ public final class BKNodePlacer implements ILayoutPhase {
     }
     
     /**
-     * 
      * Checks whether any regular nodes are included in the block
      * given by the root node.
      * 
@@ -1079,19 +1075,22 @@ public final class BKNodePlacer implements ILayoutPhase {
             double pos = Double.NEGATIVE_INFINITY;
             
             // We remember the previous node for debug output
-            LNode previous = new LNode(layeredGraph);
+            LNode previous = null;
             
             // Iterate through the layer's nodes
             for (LNode node : layer.getNodes()) {
                 // For the layout to be correct, both the node's top border and its bottom border must
                 // be beyond the current position in the layer
-                if (bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y > pos
-                        && bal.getY().get(node) + bal.getInnerShift().get(node) > pos) {
-                    
+                double top = bal.getY().get(node) + bal.getInnerShift().get(node) - node.getMargin().top;
+                double bottom = bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y
+                        + node.getMargin().bottom;
+                
+                if (top > pos && bottom > pos) {
                     previous = node;
                     
                     // Update the position inside the layer
-                    pos = bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y;
+                    pos = bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y
+                            + node.getMargin().bottom;
                 } else {
                     // We've found an overlap
                     layoutIsSane = false;

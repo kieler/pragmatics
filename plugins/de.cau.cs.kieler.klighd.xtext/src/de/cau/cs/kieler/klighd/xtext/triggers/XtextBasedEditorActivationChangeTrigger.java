@@ -17,6 +17,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -31,6 +35,8 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.model.IXtextModelListener;
 import org.eclipse.xtext.ui.util.ResourceUtil;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
+
+import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
@@ -131,14 +137,27 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
         partListener.unregister();
     }
 
+    private abstract class KsbaseAdapter extends AdapterImpl {
+        abstract XtextEditor getEditor();
+    }
+    
     private void attachToXtextEditor(final XtextEditor editor, final boolean opened) {
         this.currentEditor = editor;
 
         editor.getDocument().addModelListener(this);
-        editor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
+        editor.getDocument().modify(new IUnitOfWork.Void<XtextResource>() {
 
             @Override
             public void process(final XtextResource resource) throws Exception {
+                resource.eAdapters().add(new KsbaseAdapter() {
+                        private XtextEditor editor = currentEditor;
+
+                        public XtextEditor getEditor() {
+                            return editor;
+                        }
+                        
+                        
+                    });
                 if (checkAndIndicateErrors(resource)) {
                     XtextBasedEditorActivationChangeTrigger.this.trigger(new XtextModelChangeState(
                             editor, (opened ? EventType.OPENED : EventType.FOCUSED), resource));
@@ -212,8 +231,15 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
      */
     public void modelChanged(final XtextResource resource) {
         if (checkAndIndicateErrors(resource)) {
+            XtextEditor editor =this.currentEditor;
+            if (this.currentEditor == null) {
+                KsbaseAdapter adapter = Iterables.getFirst(Iterables.filter(resource.eAdapters(), KsbaseAdapter.class), null);
+                if (adapter != null) {
+                    editor = adapter.getEditor();
+                }
+            }
             // System.out.println(Calendar.getInstance().get(Calendar.MINUTE) + " TRIGGER");
-            this.trigger(new XtextModelChangeState(this.currentEditor, EventType.MODIFIED, resource));
+            this.trigger(new XtextModelChangeState(editor, EventType.MODIFIED, resource));
         }
     }
 

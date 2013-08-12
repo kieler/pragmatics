@@ -54,7 +54,7 @@
       </menuContribution -->
       <menuContribution
             allPopups="true"
-            locationURI="popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu?after=addGroup">
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
          <dynamic
                class="de.cau.cs.kieler.ksbase.ui.menus.KSBasEContributionItem"
                id="de.cau.cs.kieler.ksbase.ui.dynamic.popup">

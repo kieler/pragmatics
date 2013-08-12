@@ -220,7 +220,9 @@ class Ptolemy2KGraphOptimization {
             for (edge : port.edges) {
                 if (port.node.children.contains(edge.source)) {
                     edgesToBeReversed += edge
-                } else if (edge.sourcePort == port && port.node.parent.children.contains(edge.target)) {
+                } else if (edge.sourcePort == port && port.node.parent != null
+                    && port.node.parent.children.contains(edge.target)) {
+                    
                     edgesToBeReversed += edge
                 } else {
                     edgesToBeKept += edge
@@ -232,7 +234,9 @@ class Ptolemy2KGraphOptimization {
             for (edge : port.edges) {
                 if (port.node.children.contains(edge.target)) {
                     edgesToBeReversed += edge
-                } else if (edge.targetPort == port && port.node.parent.children.contains(edge.source)) {
+                } else if (edge.targetPort == port && port.node.parent != null
+                    && port.node.parent.children.contains(edge.source)) {
+                    
                     edgesToBeReversed += edge
                 } else {
                     edgesToBeKept += edge
@@ -289,26 +293,26 @@ class Ptolemy2KGraphOptimization {
                 // The port has an incoming edge of known direction!
                 if (unknownPort.node.children.contains(directedIncomingEdge.source)) {
                     // Connection from the inside -> the port is an output port
-                    unknownPort.markAsOutputPort()
+                    unknownPort.markAsOutputPort(true)
                 } else {
                     // Connection from the outside -> the port is an input port
-                    unknownPort.markAsInputPort()
+                    unknownPort.markAsInputPort(true)
                 }
             } else if (directedOutgoingEdge != null) {
                 // The port has an outgoing edge of known direction!
                 if (unknownPort.node.children.contains(directedIncomingEdge.target)) {
                     // Connection to the inside -> the port is an input port
-                    unknownPort.markAsInputPort()
+                    unknownPort.markAsInputPort(true)
                 } else {
                     // Connection to the outside -> the port is an output port
-                    unknownPort.markAsOutputPort()
+                    unknownPort.markAsOutputPort(true)
                 }
             } else if (isInputPortName(unknownPort.name)) {
                 // The port is named like an input port -> mark as input port
-                unknownPort.markAsInputPort()
+                unknownPort.markAsInputPort(true)
             } else if (isOutputPortName(unknownPort.name)) {
                 // The port is named like an output port -> mark as output port
-                unknownPort.markAsOutputPort()
+                unknownPort.markAsOutputPort(true)
             }
             
             // If the port's type is now known, fix incident edge directions accordingly and remove
@@ -504,70 +508,76 @@ class Ptolemy2KGraphOptimization {
                 relationAnnotations += hyperedge.relations.get(0).annotations
             }
             
-            // Remove relations and edges
-            for (relation : hyperedge.relations) {
-                root.children.remove(relation)
-                
-                // Remove edges
-                while (!relation.incomingEdges.empty) {
-                    val edge = relation.incomingEdges.get(0)
-                    edge.sourcePort = null
-                    edge.source = null
-                    edge.targetPort = null
-                    edge.target = null
-                }
-                
-                while (!relation.outgoingEdges.empty) {
-                    val edge = relation.outgoingEdges.get(0)
-                    edge.sourcePort = null
-                    edge.source = null
-                    edge.targetPort = null
-                    edge.target = null
-                }
-            }
+            // Make sure that we have both sources and targets
+            if (!(hyperedge.sourceNodes.empty && hyperedge.sourcePorts.empty)
+                && !(hyperedge.targetNodes.empty && hyperedge.targetPorts.empty)) {
             
-            // Add new edges
-            for (sourceNode : hyperedge.sourceNodes) {
-                for (targetNode : hyperedge.targetNodes) {
-                    val newEdge = KimlUtil::createInitializedEdge()
-                    newEdge.annotations += relationAnnotations
+                // Remove relations and edges
+                for (relation : hyperedge.relations) {
                     
-                    newEdge.source = sourceNode
+                    root.children.remove(relation)
                     
-                    newEdge.target = targetNode
+                    // Remove edges
+                    while (!relation.incomingEdges.empty) {
+                        val edge = relation.incomingEdges.get(0)
+                        edge.sourcePort = null
+                        edge.source = null
+                        edge.targetPort = null
+                        edge.target = null
+                    }
+                    
+                    while (!relation.outgoingEdges.empty) {
+                        val edge = relation.outgoingEdges.get(0)
+                        edge.sourcePort = null
+                        edge.source = null
+                        edge.targetPort = null
+                        edge.target = null
+                    }
                 }
                 
-                for (targetPort : hyperedge.targetPorts) {
-                    val newEdge = KimlUtil::createInitializedEdge()
-                    newEdge.annotations += relationAnnotations
+                // Add new edges
+                for (sourceNode : hyperedge.sourceNodes) {
+                    for (targetNode : hyperedge.targetNodes) {
+                        val newEdge = KimlUtil::createInitializedEdge()
+                        newEdge.annotations += relationAnnotations
+                        
+                        newEdge.source = sourceNode
+                        
+                        newEdge.target = targetNode
+                    }
                     
-                    newEdge.source = sourceNode
-                    
-                    newEdge.target = targetPort.node
-                    newEdge.targetPort = targetPort
-                }
-            }
-            
-            for (sourcePort : hyperedge.sourcePorts) {
-                for (targetNode : hyperedge.targetNodes) {
-                    val newEdge = KimlUtil::createInitializedEdge()
-                    newEdge.annotations += relationAnnotations
-                    
-                    newEdge.source = sourcePort.node
-                    newEdge.sourcePort = sourcePort
-                    
-                    newEdge.target = targetNode
+                    for (targetPort : hyperedge.targetPorts) {
+                        val newEdge = KimlUtil::createInitializedEdge()
+                        newEdge.annotations += relationAnnotations
+                        
+                        newEdge.source = sourceNode
+                        
+                        newEdge.target = targetPort.node
+                        newEdge.targetPort = targetPort
+                    }
                 }
                 
-                for (targetPort : hyperedge.targetPorts) {
-                    val newEdge = KimlUtil::createInitializedEdge()
-                    newEdge.annotations += relationAnnotations
+                for (sourcePort : hyperedge.sourcePorts) {
+                    for (targetNode : hyperedge.targetNodes) {
+                        val newEdge = KimlUtil::createInitializedEdge()
+                        newEdge.annotations += relationAnnotations
+                        
+                        newEdge.source = sourcePort.node
+                        newEdge.sourcePort = sourcePort
+                        
+                        newEdge.target = targetNode
+                    }
                     
-                    newEdge.source = sourcePort.node
-                    newEdge.sourcePort = sourcePort
-                    
-                    newEdge.target = targetPort.node
-                    newEdge.targetPort = targetPort
+                    for (targetPort : hyperedge.targetPorts) {
+                        val newEdge = KimlUtil::createInitializedEdge()
+                        newEdge.annotations += relationAnnotations
+                        
+                        newEdge.source = sourcePort.node
+                        newEdge.sourcePort = sourcePort
+                        
+                        newEdge.target = targetPort.node
+                        newEdge.targetPort = targetPort
+                    }
                 }
             }
         }

@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.kiml.options.Alignment;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -27,16 +29,21 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * Sets the width of hierarchical port dummies.
+ * Sets the width of hierarchical port dummies and sets the layer alignment of North/South port dummies
+ * to Center.
  * 
  * <p>To see why this is necessary, please refer to the processor's Wiki documentation.</p>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>A layered graph with finished node placement; node order respects
- *     in-layer constraints.</dd>
- *   <dt>Postcondition:</dt><dd>External port dummies are assigned a width.</dd>
- *   <dt>Slots:</dt><dd>Before phase 5.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>A layered graph with finished node placement; node order respects in-layer constraints.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>External port dummies are assigned a width.</dd>
+ *     <dd>Layer alignment of North/South external port dummies is set to Center.</dd> 
+ *   <dt>Slots:</dt>
+ *     <dd>Before phase 5.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>None.</dd>
  * </dl>
  * 
  * @see HierarchicalPortConstraintProcessor
@@ -89,7 +96,7 @@ public final class HierarchicalPortDummySizeProcessor implements ILayoutProcesso
     }
     
     /**
-     * Sets the widths of the given list of nodes.
+     * Sets the widths of the given list of nodes and sets their layer alignment properly.
      * 
      * @param nodes the list of nodes.
      * @param topDown {@code true} if the nodes should widen with increasing index, {@code false}
@@ -107,6 +114,7 @@ public final class HierarchicalPortDummySizeProcessor implements ILayoutProcesso
         }
         
         for (LNode node : nodes) {
+            node.setProperty(LayoutOptions.ALIGNMENT, Alignment.CENTER);
             node.getSize().x = currentWidth;
             
             // Move eastern ports to the node's right border

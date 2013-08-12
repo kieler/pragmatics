@@ -222,6 +222,7 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
 
                     Expression visibilityExpression = null;
                     // specify visibility for active editors
+                    /*
                     if (config.getActiveEditors() != null && config.getActiveEditors().length > 0) {
                         CompositeExpression or = new OrExpression();
                         visibilityExpression = or;
@@ -232,17 +233,19 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
                             or.add(with);
                         }
                     }
+                    */
                     // specify visibility for a given core expression
                     if (config.getVisibilityExpression() != null) {
                         if (visibilityExpression == null) {
                             visibilityExpression = config.getVisibilityExpression();
-                        } else {
+                        } /* else {
                             // there are some active editor specifications already
                             CompositeExpression and = new AndExpression();
                             and.add(visibilityExpression);
                             and.add(config.getVisibilityExpression());
                             visibilityExpression = and;
                         }
+                        */
                     }
                     if (visibilityExpression != null) {
                         menuService
@@ -328,6 +331,7 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
                     // specify visibility
                     Expression visibilityExpression = null;
                     // specify visibility for active editors
+                    /*
                     if (config.getActiveEditors() != null && config.getActiveEditors().length > 0) {
                         CompositeExpression or = new OrExpression();
                         visibilityExpression = or;
@@ -338,17 +342,19 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
                             or.add(with);
                         }
                     }
+                    */
                     // specify visibility for a given core expression
                     if (config.getVisibilityExpression() != null) {
                         if (visibilityExpression == null) {
                             visibilityExpression = config.getVisibilityExpression();
-                        } else {
+                        } /*else {
                             // there are some active editor specifications already
                             CompositeExpression and = new AndExpression();
                             and.add(visibilityExpression);
                             and.add(config.getVisibilityExpression());
                             visibilityExpression = and;
                         }
+                        */
                     }
                     if (visibilityExpression != null) {
                         menuService.registerVisibleWhen(item, visibilityExpression, null, null);
@@ -370,9 +376,11 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
         // variable. This must be done to show buttons also from the beginning,
         // because
         // expressions are always false in the beginning
+        /*
         if (evaluationService != null) {
             evaluationService.requestEvaluation("activeEditorId");
         }
+        */
         // return list of menu contributions in the correct order
         return buttons.toArray(new IContributionItem[buttonsHandlerMap.size()]);
     }
