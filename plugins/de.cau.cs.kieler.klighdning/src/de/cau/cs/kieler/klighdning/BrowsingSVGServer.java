@@ -21,16 +21,21 @@ import java.io.File;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketHandler;
+import org.osgi.framework.Bundle;
 
 public class BrowsingSVGServer extends Server {
 
     private static BrowsingSVGServer INSTANCE;
+
+    private static final String HTML_ROOT = "/html";
 
     public BrowsingSVGServer(final String docRoot, int port) {
 
@@ -60,11 +65,11 @@ public class BrowsingSVGServer extends Server {
         ResourceHandler rHandler = new ResourceHandler();
         rHandler.setDirectoriesListed(true);
 
-        // locate the bundle during runtime
         try {
-            // File location = new File("html/");
-            // FIXME required during local development
-            File location = new File("../pragmatics/plugins/de.cau.cs.kieler.klighdning/html/");
+            // locate the bundle during runtime
+            Bundle bundle = Platform.getBundle(KlighdningPlugin.PLUGIN_ID);
+            File bundleLocation = FileLocator.getBundleFile(bundle);
+            File location = new File(bundleLocation, HTML_ROOT);
 
             System.out.println(location.getAbsolutePath());
             rHandler.setResourceBase(location.getAbsolutePath());
