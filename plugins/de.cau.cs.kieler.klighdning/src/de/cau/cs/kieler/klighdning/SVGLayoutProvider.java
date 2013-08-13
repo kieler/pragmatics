@@ -74,10 +74,10 @@ public class SVGLayoutProvider {
 
         // insert an id for the first group element
         String res3 = svg.substring(svg.indexOf("<svg") - 1, svg.length());
-        String res4 = res3.replaceFirst("width=", "w=");
-        String res5 = res4.replaceFirst("height=", "w=");
+//        String res4 = res3.replaceFirst("width=", "w=");
+//        String res5 = res4.replaceFirst("height=", "h=");
 
-        StringBuffer sb = new StringBuffer(res5);
+        StringBuffer sb = new StringBuffer(res3);
         sb.insert(sb.indexOf("<g") + 2, " id=\"group\"");
 
         if (viewer.getSvgTransform() != null) {
