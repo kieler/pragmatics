@@ -27,16 +27,13 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jetty.util.MultiMap;
 import org.eclipse.jetty.util.ajax.JSON;
 import org.eclipse.jetty.websocket.WebSocket;
-import org.eclipse.swt.widgets.Shell;
 import org.ptolemy.moml.util.MomlResourceFactoryImpl;
 
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
-import de.cau.cs.kieler.klighd.ViewContext;
-import de.cau.cs.kieler.klighdning.svg.PiccoloSVGBrowseViewer;
+import de.cau.cs.kieler.klighdning.viewer.SVGBrowsingViewer;
 
 /**
  * @author uru
@@ -44,18 +41,18 @@ import de.cau.cs.kieler.klighdning.svg.PiccoloSVGBrowseViewer;
  */
 public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMessage {
 
-    private Shell shell;
+    // private Shell shell;
     private File docRoot;
 
     private boolean verbose = true;
 
     // FIXME remove the statics
     // room mappings
-    private static Map<String, PiccoloSVGBrowseViewer> roomViewerMap = Maps.newConcurrentMap();
+    private static Map<String, SVGBrowsingViewer> roomViewerMap = Maps.newConcurrentMap();
     private static MultiMap<String> roomConnectionMap = new MultiMap<String>();
 
     // single browsing mapping
-    private static Map<Connection, PiccoloSVGBrowseViewer> individualConnectionMap = Maps
+    private static Map<Connection, SVGBrowsingViewer> individualConnectionMap = Maps
             .newConcurrentMap();
 
     private String currentRoom = null;
@@ -68,8 +65,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
     /**
      * 
      */
-    public KlighdningWebSocketHandler(final Shell shell, final File docRoot) {
-        this.shell = shell;
+    public KlighdningWebSocketHandler(final File docRoot) {
         this.docRoot = docRoot;
     }
 
@@ -81,16 +77,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
     }
 
     private void leaveIndividualConnections() {
-        shell.getDisplay().syncExec(new Runnable() {
-
-            public void run() {
-                // remove from the individual list
-                PiccoloSVGBrowseViewer viewer = individualConnectionMap.get(connection);
-                // TODO dispose!
-                // viewer.getControl().dispose();
-                individualConnectionMap.remove(connection);
-            }
-        });
+        individualConnectionMap.remove(connection);
     }
 
     private void joinRoom(final String room) {
@@ -117,9 +104,6 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
         // if the room is empty delete the viewer as well
         if (roomConnectionMap.getValues(currentRoom) == null
                 || roomConnectionMap.getValues(currentRoom).isEmpty()) {
-            PiccoloSVGBrowseViewer viewer = roomViewerMap.get(currentRoom);
-            // TODO dispose
-            // viewer.getControl().dispose();
             roomViewerMap.remove(currentRoom);
         }
 
@@ -131,7 +115,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
         }
     }
 
-    private PiccoloSVGBrowseViewer getCurrentViewer() {
+    private SVGBrowsingViewer getCurrentViewer() {
         if (currentRoom != null) {
             return roomViewerMap.get(currentRoom);
         } else {
@@ -152,8 +136,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
     private void layoutBroadcastSVG(final Broadcast broadcastType) {
 
         // get viewer and layout
-        PiccoloSVGBrowseViewer viewer = getCurrentViewer();
-        // layout(viewer);
+        SVGBrowsingViewer viewer = getCurrentViewer();
 
         // get the new SVG
         String svg = SVGLayoutProvider.getInstance().layoutAndGetSVG(viewer);
@@ -162,7 +145,6 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
         broadcastJson(broadcastType, "type", "SVG", "data", svg);
     }
 
-    @SuppressWarnings("unused")
     private void broadcastJson(final String... pairs) {
         broadcastJson(Broadcast.All, pairs);
     }
@@ -230,15 +212,8 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
         }
     }
 
-    private PiccoloSVGBrowseViewer createViewer() {
-        final Maybe<PiccoloSVGBrowseViewer> viewer = new Maybe<PiccoloSVGBrowseViewer>();
-        shell.getDisplay().syncExec(new Runnable() {
-
-            public void run() {
-                viewer.set(new PiccoloSVGBrowseViewer(shell));
-            }
-        });
-        return viewer.get();
+    private SVGBrowsingViewer createViewer() {
+        return new SVGBrowsingViewer();
     }
 
     /**
@@ -283,12 +258,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                 joinRoom(room);
 
                 // send current svg
-                shell.getDisplay().asyncExec(new Runnable() {
-
-                    public void run() {
-                        layoutBroadcastSVG(Broadcast.OnlyThis);
-                    }
-                });
+                layoutBroadcastSVG(Broadcast.OnlyThis);
 
                 System.out.println(connection);
 
@@ -328,68 +298,51 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
                 System.out.println("Loading resource: " + r);
 
-                shell.getDisplay().asyncExec(new Runnable() {
+                SVGBrowsingViewer viewer = getCurrentViewer();
+                viewer.setSvgTransform(null);
 
-                    public void run() {
-                        PiccoloSVGBrowseViewer viewer = getCurrentViewer();
-                        viewer.getCanvas().setBounds(0, 0, 870, 600);
-                        viewer.setSvgTransform(null);
+                // translate and set the model
+                try {
+                    KNode currentModel =
+                            LightDiagramServices.translateModel(r.getContents().get(0), null);
+                    viewer.setModel(currentModel, true);
+                    viewer.setResourcePath(path);
+                    // applyLayout();
 
-                        // translate and set the model
-                        try {
-                            KNode currentModel =
-                                    LightDiagramServices.translateModel(r.getContents().get(0),
-                                            null);
-                            viewer.setModel(currentModel, true);
-                            viewer.setResourcePath(path);
-                            // applyLayout();
-
-                            layoutBroadcastSVG();
-                            broadcastPermaLink();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            // TODO pass the exception to the outside
-                            // catch any error
-                            // response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                            // try {
-                            // response.getWriter().println(
-                            // "ERROR: Unable to handle the selected model.");
-                            // } catch (IOException e1) {
-                            // e1.printStackTrace();
-                            // }
-                        }
-                    }
-                });
+                    layoutBroadcastSVG();
+                    broadcastPermaLink();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // TODO pass the exception to the outside
+                    // catch any error
+                    // response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    // try {
+                    // response.getWriter().println(
+                    // "ERROR: Unable to handle the selected model.");
+                    // } catch (IOException e1) {
+                    // e1.printStackTrace();
+                    // }
+                }
+                // }
+                // });
 
             } else if (type.equals("EXPAND")) {
                 /*
                  * EXPAND -------------------------------------------------------------------
                  */
                 final String id = (String) json.get("id");
-                shell.getDisplay().asyncExec(new Runnable() {
+                // expand and layout
+                getCurrentViewer().toggleExpansion(id);
 
-                    public void run() {
-                        // expand and layout
-                        getCurrentViewer().toggleExpansion(id);
-                        // applyLayout();
-                        // broadcastSVG();
+                layoutBroadcastSVG();
+                broadcastPermaLink();
 
-                        layoutBroadcastSVG();
-                        broadcastPermaLink();
-                    }
-                });
             } else if (type.equals("TRANSFORM")) {
                 /*
                  * TRANSLATE -------------------------------------------------------------------
                  */
                 final String transform = (String) json.get("transform");
-                shell.getDisplay().syncExec(new Runnable() {
-
-                    public void run() {
-                        // set the transform
-                        getCurrentViewer().setSvgTransform(transform);
-                    }
-                });
+                getCurrentViewer().setSvgTransform(transform);
 
                 broadcastJson(Broadcast.AllButThis, "type", "TRANSFORM", "transform", transform);
                 broadcastPermaLink();

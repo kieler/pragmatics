@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighdning.svg;
+package de.cau.cs.kieler.klighdning.legacy;
 
 import java.awt.Graphics2D;
 import java.awt.event.InputEvent;
@@ -55,6 +55,7 @@ import de.cau.cs.kieler.klighd.piccolo.viewer.INodeSelectionListener;
 import de.cau.cs.kieler.klighd.util.RenderingContextData;
 import de.cau.cs.kieler.klighd.viewers.AbstractViewer;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
+import de.cau.cs.kieler.klighdning.viewer.WrappedKNodeNode;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
@@ -70,7 +71,7 @@ import edu.umd.cs.piccolox.swt.PSWTCanvas;
  * 
  * @author mri
  */
-public class PiccoloSVGBrowseViewer extends AbstractViewer<KNode> implements INodeSelectionListener {
+public class PiccoloSVGBrowseViewer2 extends AbstractViewer<KNode> implements INodeSelectionListener {
 
     /** the canvas used for drawing. */
     private KlighdCanvas canvas;
@@ -95,7 +96,7 @@ public class PiccoloSVGBrowseViewer extends AbstractViewer<KNode> implements INo
      * @param parent
      *            the parent composite
      */
-    public PiccoloSVGBrowseViewer(final Composite parent) {
+    public PiccoloSVGBrowseViewer2(final Composite parent) {
         this(parent, SWT.NONE);
     }
 
@@ -109,7 +110,7 @@ public class PiccoloSVGBrowseViewer extends AbstractViewer<KNode> implements INo
      * @param style
      *            the style attributes
      */
-    public PiccoloSVGBrowseViewer(final Composite parent, final int style) {
+    public PiccoloSVGBrowseViewer2(final Composite parent, final int style) {
         if (parent.isDisposed()) {
             final String msg =
                     "KLighD (piccolo): A 'PiccoloViewer' has been tried to attach to a"

@@ -20,7 +20,7 @@ import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.klighd.internal.macrolayout.KlighdLayoutManager;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
-import de.cau.cs.kieler.klighdning.svg.PiccoloSVGBrowseViewer;
+import de.cau.cs.kieler.klighdning.viewer.SVGBrowsingViewer;
 
 /**
  * @author uru
@@ -49,12 +49,13 @@ public class SVGLayoutProvider {
         return instance;
     }
 
-    public void layout(final PiccoloSVGBrowseViewer viewer) {
+    public String layout(final SVGBrowsingViewer viewer) {
+        viewer.zoomToFit(0);
         // build the layout mapping
         KNode model = viewer.getModel();
         // initially the viewer might not have a model set
         if (model == null) {
-            return;
+            return "";
         }
         LayoutMapping<KGraphElement> mapping = mng.buildLayoutGraph(null, model);
         mapping.setProperty(KlighdInternalProperties.VIEWER, viewer);
@@ -64,14 +65,14 @@ public class SVGLayoutProvider {
         mng.applyLayout(mapping, true, 0);
 
         // redraw
-        viewer.globalRedraw();
+        String svg = viewer.render();
+        return processSVG(viewer, svg); 
     }
 
-    public String getSVG(final PiccoloSVGBrowseViewer viewer) {
-        String data = viewer.getGraphics().getSVG();
+    public String processSVG(final SVGBrowsingViewer viewer, final String svg) {
 
         // insert an id for the first group element
-        String res3 = data.substring(data.indexOf("<svg") - 1, data.length());
+        String res3 = svg.substring(svg.indexOf("<svg") - 1, svg.length());
         String res4 = res3.replaceFirst("width=", "w=");
         String res5 = res4.replaceFirst("height=", "w=");
 
@@ -85,8 +86,7 @@ public class SVGLayoutProvider {
         return sb.toString();
     }
 
-    public String layoutAndGetSVG(final PiccoloSVGBrowseViewer viewer) {
-        layout(viewer);
-        return getSVG(viewer);
+    public String layoutAndGetSVG(final SVGBrowsingViewer viewer) {
+        return layout(viewer);
     }
 }

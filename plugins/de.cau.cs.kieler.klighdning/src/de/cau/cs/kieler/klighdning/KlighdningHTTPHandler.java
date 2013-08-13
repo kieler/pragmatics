@@ -31,7 +31,6 @@ import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.swt.widgets.Shell;
 import org.ptolemy.moml.util.MomlResourceFactoryImpl;
 
 import com.google.common.base.Splitter;
@@ -42,7 +41,7 @@ import com.google.common.io.CharStreams;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
-import de.cau.cs.kieler.klighdning.svg.PiccoloSVGBrowseViewer;
+import de.cau.cs.kieler.klighdning.viewer.SVGBrowsingViewer;
 
 /**
  * @author uru
@@ -50,21 +49,18 @@ import de.cau.cs.kieler.klighdning.svg.PiccoloSVGBrowseViewer;
  */
 public class KlighdningHTTPHandler extends AbstractHandler {
 
-    private Shell shell;
-
     private File docRoot;
 
-    private PiccoloSVGBrowseViewer getViewer;
+    private SVGBrowsingViewer getViewer;
 
     private HtmlGenerator gen = new HtmlGenerator();
 
     /**
      * 
      */
-    public KlighdningHTTPHandler(final Shell shell, final File docRoot) {
-        this.shell = shell;
+    public KlighdningHTTPHandler(final File docRoot) {
         this.docRoot = docRoot;
-        this.getViewer = new PiccoloSVGBrowseViewer(shell);
+        this.getViewer = new SVGBrowsingViewer();
     }
 
     /**
@@ -116,45 +112,37 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             System.out.println(r);
 
             System.out.println("PRE");
-            shell.getDisplay().syncExec(new Runnable() {
+            System.out.println("INNER");
+            getViewer.getCanvas().getCamera().setBounds(0, 0, 870, 600);
 
-                public void run() {
-                    System.out.println("INNER");
-                    getViewer.getCanvas().setBounds(0, 0, 870, 600);
+            // translate and set the model
+            try {
+                KNode model = LightDiagramServices.translateModel(r.getContents().get(0), null);
+                getViewer.setModel(model, true);
 
-                    // translate and set the model
-                    try {
-                        KNode model =
-                                LightDiagramServices.translateModel(r.getContents().get(0), null);
-                        getViewer.setModel(model, true);
+                // apply the perma link infos
+                String perma = request.getParameterMap().get("perma")[0];
+                Set<String> fragments = Sets.newHashSet(Splitter.on("$").split(perma));
+                System.out.println(fragments);
+                getViewer.applyPermalink(fragments);
 
-                        // apply the perma link infos
-                        String perma = request.getParameterMap().get("perma")[0];
-                        Set<String> fragments = Sets.newHashSet(Splitter.on("$").split(perma));
-                        System.out.println(fragments);
-                        getViewer.applyPermalink(fragments);
-
-                        String[] transform = request.getParameterMap().get("transform");
-                        if (transform != null && transform.length > 0) {
-                            System.out.println(transform[0]);
-                            getViewer.setSvgTransform(transform[0]);
-                        }
-
-                        SVGLayoutProvider.getInstance().layout(getViewer);
-
-                    } catch (Exception e) {
-                        // catch any error
-                        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                        try {
-                            response.getWriter().println(
-                                    "ERROR: Unable to handle the selected model.");
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-
+                String[] transform = request.getParameterMap().get("transform");
+                if (transform != null && transform.length > 0) {
+                    System.out.println(transform[0]);
+                    getViewer.setSvgTransform(transform[0]);
                 }
-            });
+
+                SVGLayoutProvider.getInstance().layout(getViewer);
+
+            } catch (Exception e) {
+                // catch any error
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                try {
+                    response.getWriter().println("ERROR: Unable to handle the selected model.");
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
             System.out.println("AFTER");
 
             // answer the request
@@ -164,7 +152,7 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             baseRequest.setHandled(true);
 
             // pass the svg
-            String svg = SVGLayoutProvider.getInstance().getSVG(getViewer);
+            String svg = SVGLayoutProvider.getInstance().layout(getViewer);
             // response.getWriter().println(gen.permaLink(getSVG(getViewer)));
             response.getWriter().println(gen.permaLink(svg));
 

@@ -27,13 +27,12 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketHandler;
-import org.eclipse.swt.widgets.Shell;
 
 public class BrowsingSVGServer extends Server {
 
     private static BrowsingSVGServer INSTANCE;
 
-    public BrowsingSVGServer(final Shell shell, final String docRoot, int port) {
+    public BrowsingSVGServer(final String docRoot, int port) {
 
         if (INSTANCE != null) {
             throw new IllegalStateException("Only one server instance allowed.");
@@ -50,23 +49,22 @@ public class BrowsingSVGServer extends Server {
             public WebSocket doWebSocketConnect(HttpServletRequest request, String protocol) {
                 WebSocket ws = null;
                 if ("protocol.svgws".equals(protocol)) {
-                    ws = new KlighdningWebSocketHandler(shell, docRootFile);
+                    ws = new KlighdningWebSocketHandler(docRootFile);
                 }
                 return ws;
             }
         };
 
-        KlighdningHTTPHandler wcHandler = new KlighdningHTTPHandler(shell, docRootFile);
+        KlighdningHTTPHandler wcHandler = new KlighdningHTTPHandler(docRootFile);
 
         ResourceHandler rHandler = new ResourceHandler();
         rHandler.setDirectoriesListed(true);
 
         // locate the bundle during runtime
         try {
-            File location = new File("html/");
+            // File location = new File("html/");
             // FIXME required during local development
-            // File location =
-            // new File("../pragmatics/plugins/de.cau.cs.kieler.klighd.piccolo.svg/html/");
+            File location = new File("../pragmatics/plugins/de.cau.cs.kieler.klighdning/html/");
 
             System.out.println(location.getAbsolutePath());
             rHandler.setResourceBase(location.getAbsolutePath());

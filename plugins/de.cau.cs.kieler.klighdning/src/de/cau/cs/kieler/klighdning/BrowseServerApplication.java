@@ -18,7 +18,6 @@ import java.io.File;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * @author uru
@@ -26,12 +25,15 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class BrowseServerApplication implements IApplication {
 
-    // A dummy shell is required to obey to piccolo's class hierarchy.
-    private final Shell shell = new Shell();
-
     private String rootFolder = null;
 
     private int port = 8081;
+
+    /** Object to synchronize and wait on for termination request. */
+    private final Object termSync = new Object();
+
+    /** Whether the server shall terminate. */
+    private boolean termRequested = false;
 
     /**
      * {@inheritDoc}
@@ -67,19 +69,17 @@ public class BrowseServerApplication implements IApplication {
             throw new IllegalArgumentException("No -rootFolder specified.");
         }
 
-        new BrowsingSVGServer(shell, rootFolder, port);
+        new BrowsingSVGServer(rootFolder, port);
 
-        // start the shell's event loop
-        while (!shell.isDisposed()) {
-            if (!shell.getDisplay().readAndDispatch()) {
-                shell.getDisplay().sleep();
+        synchronized (termSync) {
+            while (!termRequested) {
+                try {
+                    termSync.wait();
+                } catch (InterruptedException e) {
+                    // Nothing to do, simply wait on synchronization
+                    // object again.
+                }
             }
-        }
-
-        try {
-            BrowsingSVGServer.getInstance().stop();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         return IApplication.EXIT_OK;
@@ -88,8 +88,20 @@ public class BrowseServerApplication implements IApplication {
     /**
      * {@inheritDoc}
      */
-    public void stop() {
-        shell.dispose();
+    public final void stop() {
+        shutdownServer();
+    }
+
+    /**
+     * Shuts down the server.
+     */
+    public final synchronized void shutdownServer() {
+        System.out.println("Shutting down the server.");
+        // Notify the termination sync loop
+        termRequested = true;
+        synchronized (termSync) {
+            termSync.notify();
+        }
     }
 
 }
