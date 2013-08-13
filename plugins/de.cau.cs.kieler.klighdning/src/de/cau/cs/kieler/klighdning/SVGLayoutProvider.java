@@ -19,7 +19,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.klighd.internal.macrolayout.KlighdLayoutManager;
-import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
 import de.cau.cs.kieler.klighdning.viewer.SVGBrowsingViewer;
 
 /**
@@ -50,20 +49,22 @@ public class SVGLayoutProvider {
     }
 
     public String layout(final SVGBrowsingViewer viewer) {
-        viewer.zoomToFit(0);
+                 
         // build the layout mapping
         KNode model = viewer.getModel();
         // initially the viewer might not have a model set
         if (model == null) {
             return "";
         }
-        LayoutMapping<KGraphElement> mapping = mng.buildLayoutGraph(null, model);
-        mapping.setProperty(KlighdInternalProperties.VIEWER, viewer);
+        LayoutMapping<KGraphElement> mapping = mng.buildLayoutGraph(model);
 
         // perform the layout
         DiagramLayoutEngine.INSTANCE.layout(mapping, new BasicProgressMonitor());
         mng.applyLayout(mapping, true, 0);
 
+        // zoom to fit
+        viewer.zoomToFit();
+        
         // redraw
         String svg = viewer.render();
         return processSVG(viewer, svg); 

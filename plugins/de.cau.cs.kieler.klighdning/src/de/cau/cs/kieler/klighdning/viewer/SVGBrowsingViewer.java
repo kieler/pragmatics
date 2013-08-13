@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -32,8 +30,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.svg.KlighdSVGCanvas;
-import de.cau.cs.kieler.klighd.viewers.AbstractViewer;
-import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
@@ -44,7 +40,7 @@ import edu.umd.cs.piccolo.PNode;
  * @author uru
  * 
  */
-public class SVGBrowsingViewer extends AbstractViewer<KNode> {
+public class SVGBrowsingViewer {
 
     /** the canvas used for drawing. */
     private KlighdSVGCanvas canvas;
@@ -78,9 +74,6 @@ public class SVGBrowsingViewer extends AbstractViewer<KNode> {
         return canvas.render();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void setModel(KNode model, boolean sync) {
         // prepare the camera
         PCamera camera = canvas.getCamera();
@@ -95,11 +88,9 @@ public class SVGBrowsingViewer extends AbstractViewer<KNode> {
         // create a controller for the graph
         controller = new DiagramController(model, camera.getLayer(0), sync);
         controller.initialize();
+        controller.setRecording(false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public KNode getModel() {
         if (controller != null) {
             return controller.getNode().getGraphElement();
@@ -121,11 +112,12 @@ public class SVGBrowsingViewer extends AbstractViewer<KNode> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void toggleExpansion(final KNode diagramElement) {
         controller.toggleExpansion(diagramElement);
+    }
+    
+    public void zoomToFit() {
+        controller.zoomToFit(0);    
     }
 
     /**
@@ -249,42 +241,4 @@ public class SVGBrowsingViewer extends AbstractViewer<KNode> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void setRecording(final boolean recording) {
-        controller.setRecording(recording);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setZoomToFit(final boolean zoomToFit) {
-        controller.setZoomToFit(zoomToFit);
-    }
-
-    /*
-     * ------------------------------------------- Unimplemented Methods
-     */
-
-    /**
-     * {@inheritDoc}
-     */
-    public Control getControl() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ContextViewer getContextViewer() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IContentOutlinePage getOutlinePage() {
-        return null;
-    }
 }

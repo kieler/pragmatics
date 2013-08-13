@@ -31,7 +31,6 @@ import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.ptolemy.moml.util.MomlResourceFactoryImpl;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -101,8 +100,8 @@ public class KlighdningHTTPHandler extends AbstractHandler {
 
             rs.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
             rs.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
-            rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
-                    .put("xml", new MomlResourceFactoryImpl());
+//            rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
+//                    .put("xml", new MomlResourceFactoryImpl());
 
             System.out.println(path);
             final Resource r =

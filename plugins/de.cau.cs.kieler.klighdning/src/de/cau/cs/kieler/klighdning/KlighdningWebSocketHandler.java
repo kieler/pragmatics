@@ -27,7 +27,6 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jetty.util.MultiMap;
 import org.eclipse.jetty.util.ajax.JSON;
 import org.eclipse.jetty.websocket.WebSocket;
-import org.ptolemy.moml.util.MomlResourceFactoryImpl;
 
 import com.google.common.collect.Maps;
 
@@ -289,8 +288,8 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
                 rs.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
                 rs.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
-                rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
-                        .put("xml", new MomlResourceFactoryImpl());
+//                rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
+//                        .put("xml", new MomlResourceFactoryImpl());
 
                 final Resource r =
                         rs.getResource(
