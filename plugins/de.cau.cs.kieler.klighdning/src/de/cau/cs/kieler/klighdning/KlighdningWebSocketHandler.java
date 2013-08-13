@@ -36,7 +36,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
-import de.cau.cs.kieler.klighd.piccolo.svg.PiccoloSVGBrowseViewer;
+import de.cau.cs.kieler.klighdning.svg.PiccoloSVGBrowseViewer;
 
 /**
  * @author uru

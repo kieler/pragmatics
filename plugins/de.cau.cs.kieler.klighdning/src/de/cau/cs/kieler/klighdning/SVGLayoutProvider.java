@@ -20,7 +20,7 @@ import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.klighd.internal.macrolayout.KlighdLayoutManager;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
-import de.cau.cs.kieler.klighd.piccolo.svg.PiccoloSVGBrowseViewer;
+import de.cau.cs.kieler.klighdning.svg.PiccoloSVGBrowseViewer;
 
 /**
  * @author uru
