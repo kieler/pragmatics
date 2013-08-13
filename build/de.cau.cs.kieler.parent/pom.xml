@@ -22,7 +22,8 @@
     <module>../de.cau.cs.kieler.ptolemy.rcp.repository</module>
     
     <module>../../plugins/de.cau.cs.kieler.klighd.piccolo.svg</module>
-    <module>../de.cau.cs.kieler.klighd.svg.browser.repository</module>
+    <module>../../plugins/de.cau.cs.kieler.klighdning</module>
+    <module>../de.cau.cs.kieler.klighdning.repository</module>
   </modules>
 
   <profiles>
