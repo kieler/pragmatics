@@ -276,8 +276,8 @@ public final class BKNodePlacer implements ILayoutPhase {
         // Apply calculated positions to nodes.
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                node.getPosition().y = chosenLayout.getY().get(node)
-                        + chosenLayout.getInnerShift().get(node);
+                node.getPosition().y = chosenLayout.y.get(node)
+                        + chosenLayout.innerShift.get(node);
             }
         }
 
@@ -372,20 +372,20 @@ public final class BKNodePlacer implements ILayoutPhase {
         // Initialize root and align maps
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode v : layer.getNodes()) {
-                bal.getRoot().put(v, v);
-                bal.getAlign().put(v, v);
-                bal.getInnerShift().put(v, 0.0);
+                bal.root.put(v, v);
+                bal.align.put(v, v);
+                bal.innerShift.put(v, 0.0);
                 
                 if (v.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
-                    bal.getBlockContainsNorthSouth().put(v, true);
+                    bal.blockContainsNorthSouth.put(v, true);
                 } else {
-                    bal.getBlockContainsNorthSouth().put(v, false);
+                    bal.blockContainsNorthSouth.put(v, false);
                 }
                 
                 if (v.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
-                    bal.getBlockContainsRegularNode().put(v, true);
+                    bal.blockContainsRegularNode.put(v, true);
                 } else {
-                    bal.getBlockContainsRegularNode().put(v, false);
+                    bal.blockContainsRegularNode.put(v, false);
                 }
             }
         }
@@ -394,7 +394,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         
         // If the horizontal direction is bottom, the layers are traversed from
         // right to left, thus a reverse iterator is needed
-        if (bal.getHDir() == HDirection.BOTTOM) {
+        if (bal.hdir == HDirection.BOTTOM) {
             layers = Arrays.asList(new Layer[layeredGraph.getLayers().size()]);
             
             // Create a copy of the layer list to prevent modifying the original list.
@@ -408,7 +408,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             int r = -1;
             List<LNode> nodes = layer.getNodes();
             
-            if (bal.getVDir() == VDirection.RIGHT) {
+            if (bal.vdir == VDirection.RIGHT) {
                 // If the alignment direction is RIGHT, the nodes in a layer are traversed
                 // reversely, thus we start at INT_MAX and with the reversed list of nodes.
                 r = Integer.MAX_VALUE;
@@ -424,7 +424,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             // CHECKSTYLEOFF Local Variable Names
             for (LNode v_i_k : nodes) {
                 List<LNode> neighbors = null;
-                if (bal.getHDir() == HDirection.BOTTOM) {
+                if (bal.hdir == HDirection.BOTTOM) {
                     neighbors = allLowerNeighbors(v_i_k);
                 } else {
                     neighbors = allUpperNeighbors(v_i_k);
@@ -438,26 +438,24 @@ public final class BKNodePlacer implements ILayoutPhase {
                     int low = ((int) Math.floor(((d + 1.0) / 2.0))) - 1;
                     int high = ((int) Math.ceil(((d + 1.0) / 2.0))) - 1;
 
-                    if (bal.getVDir() == VDirection.RIGHT) {
+                    if (bal.vdir == VDirection.RIGHT) {
                         // Check, whether v_i_k can be added to a block of its upper/lower neighbor(s)
                         for (int m = high; m >= low; m--) {
-                            if (bal.getAlign().get(v_i_k).equals(v_i_k)) {
+                            if (bal.align.get(v_i_k).equals(v_i_k)) {
                                 LNode u_m = neighbors.get(m);
                                 // Again, getEdge won't return null because the neighbor relationship
                                 // ensures that at least one edge exists
                                 if (!markedEdges.contains(getEdge(u_m, v_i_k)) && r > u_m.getIndex()) {
-                                    bal.getAlign().put(u_m, v_i_k);
-                                    bal.getRoot().put(v_i_k, bal.getRoot().get(u_m));
-                                    bal.getAlign().put(v_i_k, bal.getRoot().get(v_i_k));
+                                    bal.align.put(u_m, v_i_k);
+                                    bal.root.put(v_i_k, bal.root.get(u_m));
+                                    bal.align.put(v_i_k, bal.root.get(v_i_k));
                                     
-                                    if (bal.getBlockContainsNorthSouth().get(v_i_k)) {
-                                        bal.getBlockContainsNorthSouth()
-                                            .put(bal.getRoot().get(v_i_k), true);
+                                    if (bal.blockContainsNorthSouth.get(v_i_k)) {
+                                        bal.blockContainsNorthSouth.put(bal.root.get(v_i_k), true);
                                     }
                                     
-                                    if (bal.getBlockContainsRegularNode().get(v_i_k)) {
-                                        bal.getBlockContainsRegularNode()
-                                            .put(bal.getRoot().get(v_i_k), true);
+                                    if (bal.blockContainsRegularNode.get(v_i_k)) {
+                                        bal.blockContainsRegularNode.put(bal.root.get(v_i_k), true);
                                     }
                                     
                                     r = u_m.getIndex();
@@ -467,21 +465,19 @@ public final class BKNodePlacer implements ILayoutPhase {
                     } else {
                         // Check, whether vik can be added to a block of its upper/lower neighbor(s)
                         for (int m = low; m <= high; m++) {
-                            if (bal.getAlign().get(v_i_k).equals(v_i_k)) {
+                            if (bal.align.get(v_i_k).equals(v_i_k)) {
                                 LNode um = neighbors.get(m);
                                 if (!markedEdges.contains(getEdge(um, v_i_k)) && r < um.getIndex()) {
-                                    bal.getAlign().put(um, v_i_k);
-                                    bal.getRoot().put(v_i_k, bal.getRoot().get(um));
-                                    bal.getAlign().put(v_i_k, bal.getRoot().get(v_i_k));
+                                    bal.align.put(um, v_i_k);
+                                    bal.root.put(v_i_k, bal.root.get(um));
+                                    bal.align.put(v_i_k, bal.root.get(v_i_k));
                                     
-                                    if (bal.getBlockContainsNorthSouth().get(v_i_k)) {
-                                        bal.getBlockContainsNorthSouth()
-                                            .put(bal.getRoot().get(v_i_k), true);
+                                    if (bal.blockContainsNorthSouth.get(v_i_k)) {
+                                        bal.blockContainsNorthSouth.put(bal.root.get(v_i_k), true);
                                     }
                                     
-                                    if (bal.getBlockContainsRegularNode().get(v_i_k)) {
-                                        bal.getBlockContainsRegularNode()
-                                            .put(bal.getRoot().get(v_i_k), true);
+                                    if (bal.blockContainsRegularNode.get(v_i_k)) {
+                                        bal.blockContainsRegularNode.put(bal.root.get(v_i_k), true);
                                     }
                                     
                                     r = um.getIndex();
@@ -523,7 +519,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             // of the block is determined, for cases where there are only one or two nodes
             // inside a block
             LNode current = root;
-            LNode next = bal.getAlign().get(root);
+            LNode next = bal.align.get(root);
             
             double rootNodePos = root.getMargin().top;
             double rootLowerBound = 0.0;
@@ -531,7 +527,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             LEdge rootEdge = getEdge(current, next);
             
             if (rootEdge != null) {
-                if (bal.getHDir() == HDirection.BOTTOM) {
+                if (bal.hdir == HDirection.BOTTOM) {
                     rootNodePos = rootEdge.getTarget().getPosition().y
                             + rootEdge.getTarget().getAnchor().y + current.getMargin().top;
                 } else {
@@ -554,23 +550,23 @@ public final class BKNodePlacer implements ILayoutPhase {
 
                 double difference = 0.0;
                 double portPos = 0.0;
-                if (bal.getHDir() == HDirection.BOTTOM) {
+                if (bal.hdir == HDirection.BOTTOM) {
                     difference = edge.getTarget().getPosition().y + edge.getTarget().getAnchor().y
                             - edge.getSource().getPosition().y - edge.getSource().getAnchor().y
-                            + bal.getInnerShift().get(current);
+                            + bal.innerShift.get(current);
                     portPos = edge.getSource().getPosition().y + edge.getSource().getAnchor().y
                             + next.getMargin().top;
                 } else {
                     difference = edge.getSource().getPosition().y + edge.getSource().getAnchor().y
                             - edge.getTarget().getPosition().y - edge.getTarget().getAnchor().y
-                            + bal.getInnerShift().get(current);
+                            + bal.innerShift.get(current);
                     portPos = edge.getTarget().getPosition().y + edge.getTarget().getAnchor().y
                             + next.getMargin().top;
                 }
                 double currentTopBound = portPos;
                 double currentLowerBound = next.getMargin().top +  next.getSize().y
                         + next.getMargin().bottom - currentTopBound;
-                bal.getInnerShift().put(next, difference);
+                bal.innerShift.put(next, difference);
 
                 if (currentTopBound > upperBound) {
                     upperBound = currentTopBound;
@@ -581,12 +577,12 @@ public final class BKNodePlacer implements ILayoutPhase {
                 }
 
                 current = next;
-                next = bal.getAlign().get(next);
+                next = bal.align.get(next);
             }
 
             // If the block only consists of the root node, keep its measurement and
             // do not overwrite it with the default values of lower- and upperBound
-            if (bal.getAlign().get(root) != root) {
+            if (bal.align.get(root) != root) {
                 maximumNodeSize = lowerBound + upperBound;
             }
             
@@ -596,21 +592,21 @@ public final class BKNodePlacer implements ILayoutPhase {
                 postShift = upperBound - rootNodePos;
             }
             
-            bal.getPostShift().put(root, postShift);
+            bal.postShift.put(root, postShift);
             
             // Apply a general shift to all nodes of the block, which results from
             // nodes which would be placed higher than the top border of the block
-            bal.getInnerShift().put(root, bal.getInnerShift().get(root) + postShift);
+            bal.innerShift.put(root, bal.innerShift.get(root) + postShift);
             current = root;
-            next = bal.getAlign().get(root);
+            next = bal.align.get(root);
             while (next != root) {
-                bal.getInnerShift().put(next, bal.getInnerShift().get(next) + postShift);
+                bal.innerShift.put(next, bal.innerShift.get(next) + postShift);
                 current = next;
-                next = bal.getAlign().get(next);
+                next = bal.align.get(next);
             }
             
             // Note the block size of the investigated block for later use
-            bal.getBlockSize().put(root, maximumNodeSize);
+            bal.blockSize.put(root, maximumNodeSize);
         }
     }
 
@@ -628,11 +624,11 @@ public final class BKNodePlacer implements ILayoutPhase {
         // Initialize fields with basic values, partially depending on the direction
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                bal.getSink().put(node, node);
-                if (bal.getVDir() == VDirection.RIGHT) {
-                    bal.getShift().put(node, Double.NEGATIVE_INFINITY);
+                bal.sink.put(node, node);
+                if (bal.vdir == VDirection.RIGHT) {
+                    bal.shift.put(node, Double.NEGATIVE_INFINITY);
                 } else {
-                    bal.getShift().put(node, Double.POSITIVE_INFINITY);
+                    bal.shift.put(node, Double.POSITIVE_INFINITY);
                 }
             }
         }
@@ -640,7 +636,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         List<Layer> layers = layeredGraph.getLayers();
         // If the horizontal direction is bottom, the layers are traversed from
         // right to left, thus a reverse iterator is needed
-        if (bal.getHDir() == HDirection.BOTTOM) {
+        if (bal.hdir == HDirection.BOTTOM) {
             layers = Arrays.asList(new Layer[layeredGraph.getLayers().size()]);
             // Create a copy of the layer list to prevent modifying the original list.
             Collections.copy(layers, layeredGraph.getLayers());
@@ -650,7 +646,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         for (Layer layer : layers) {
             // As with layers, we need a reversed iterator for blocks for different directions
             List<LNode> nodes = layer.getNodes();
-            if (bal.getVDir() == VDirection.RIGHT) {
+            if (bal.vdir == VDirection.RIGHT) {
                 nodes = Arrays.asList(new LNode[layer.getNodes().size()]);
                 Collections.copy(nodes, layer.getNodes());
                 Collections.reverse(nodes);
@@ -658,7 +654,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             
             // Do a initial placement for all blocks
             for (LNode v : nodes) {
-                if (bal.getRoot().get(v).equals(v)) {
+                if (bal.root.get(v).equals(v)) {
                     placeBlock(v, bal);
                 }
             }
@@ -668,20 +664,20 @@ public final class BKNodePlacer implements ILayoutPhase {
         // between them. It's important to traverse top-bottom or bottom-top here too
         for (Layer layer : layers) {
             for (LNode v : layer.getNodes()) {
-                bal.getY().put(v, bal.getY().get(bal.getRoot().get(v)));
-                if (bal.getVDir() == VDirection.RIGHT) {
-                    if (v.equals(bal.getRoot().get(v))
-                            && bal.getShift().get(bal.getSink().get(v)) > Double.NEGATIVE_INFINITY) {
+                bal.y.put(v, bal.y.get(bal.root.get(v)));
+                if (bal.vdir == VDirection.RIGHT) {
+                    if (v.equals(bal.root.get(v))
+                            && bal.shift.get(bal.sink.get(v)) > Double.NEGATIVE_INFINITY) {
                         
-                        bal.getY().put(v,
-                                bal.getY().get(v) + bal.getShift().get(bal.getSink().get(v)));
+                        bal.y.put(v,
+                                bal.y.get(v) + bal.shift.get(bal.sink.get(v)));
                     }
                 } else {
-                    if (v.equals(bal.getRoot().get(v))
-                            && bal.getShift().get(bal.getSink().get(v)) < Double.POSITIVE_INFINITY) {
+                    if (v.equals(bal.root.get(v))
+                            && bal.shift.get(bal.sink.get(v)) < Double.POSITIVE_INFINITY) {
                         
-                        bal.getY().put(v,
-                                bal.getY().get(v) + bal.getShift().get(bal.getSink().get(v)));
+                        bal.y.put(v,
+                                bal.y.get(v) + bal.shift.get(bal.sink.get(v)));
                     }
                 }
             }
@@ -701,28 +697,28 @@ public final class BKNodePlacer implements ILayoutPhase {
      */
     private void placeBlock(final LNode v, final BKAlignedLayout bal) {
         // Only place block if it does not have a placement already
-        if (!bal.getY().containsKey(v)) {
-            bal.getY().put(v, 0.0);
+        if (!bal.y.containsKey(v)) {
+            bal.y.put(v, 0.0);
             LNode w = v;
             
             // Iterate through block and determine, where the block can be placed
             do {
                 // If the node is the top or bottom node of it's layer, it can be, depending
                 // on the current direction, placed safely since it is the first to be placed
-                if ((bal.getVDir() == VDirection.LEFT && w.getIndex() > 0)
-                        || (bal.getVDir() == VDirection.RIGHT && w.getIndex() < (w.getLayer()
+                if ((bal.vdir == VDirection.LEFT && w.getIndex() > 0)
+                        || (bal.vdir == VDirection.RIGHT && w.getIndex() < (w.getLayer()
                                 .getNodes().size() - 1))) {
 
                     // Get the node which is top/bottom to the node to be placed to check,
                     // whether the current node conflicts with it
                     LNode u = null;
                     LNode x = null;
-                    if (bal.getVDir() == VDirection.RIGHT) {
+                    if (bal.vdir == VDirection.RIGHT) {
                         x = w.getLayer().getNodes().get(w.getIndex() + 1);
-                        u = bal.getRoot().get(x);
+                        u = bal.root.get(x);
                     } else {
                         x = w.getLayer().getNodes().get(w.getIndex() - 1);
-                        u = bal.getRoot().get(x);
+                        u = bal.root.get(x);
                     }
 
                     // Check whether the comparison node is already placed, place it if not
@@ -731,29 +727,27 @@ public final class BKNodePlacer implements ILayoutPhase {
                     // Note that the two nodes and their blocks form a unit called class in the
                     // original algorithm. These are combinations of blocks which play a role
                     // in the final compaction
-                    if (bal.getSink().get(v).equals(v)) {
-                        bal.getSink().put(v, bal.getSink().get(u));
+                    if (bal.sink.get(v).equals(v)) {
+                        bal.sink.put(v, bal.sink.get(u));
                     }
                     
                     // If two nodes aren't member of the same class, calculate how the two classes
                     // might be compacted later on
-                    if (!bal.getSink().get(v).equals(bal.getSink().get(u))) {
+                    if (!bal.sink.get(v).equals(bal.sink.get(u))) {
                         double spacing = normalSpacing;
-                        if (bal.getVDir() == VDirection.RIGHT) {
-                            bal.getShift().put(
-                                    bal.getSink().get(u),
-                                    Math.max(bal.getShift().get(bal.getSink().get(u)), bal.getY()
-                                            .get(v)
-                                            - bal.getY().get(u)
-                                            + bal.getBlockSize().get(v)
+                        if (bal.vdir == VDirection.RIGHT) {
+                            bal.shift.put(
+                                    bal.sink.get(u),
+                                    Math.max(bal.shift.get(bal.sink.get(u)), bal.y.get(v)
+                                            - bal.y.get(u)
+                                            + bal.blockSize.get(v)
                                             + spacing));
                         } else {
-                            bal.getShift().put(
-                                    bal.getSink().get(u),
-                                    Math.min(bal.getShift().get(bal.getSink().get(u)), bal.getY()
-                                            .get(v)
-                                            - bal.getY().get(u)
-                                            - bal.getBlockSize().get(u)
+                            bal.shift.put(
+                                    bal.sink.get(u),
+                                    Math.min(bal.shift.get(bal.sink.get(u)), bal.y.get(v)
+                                            - bal.y.get(u)
+                                            - bal.blockSize.get(u)
                                             - spacing));
                         }
                     } else {
@@ -764,7 +758,7 @@ public final class BKNodePlacer implements ILayoutPhase {
                         // and special node types into account
                         double spacing = normalSpacing;
                         double wSize = w.getSize().y + w.getMargin().bottom
-                                + bal.getInnerShift().get(w);
+                                + bal.innerShift.get(w);
                         double xSize = x.getSize().y + x.getMargin().bottom;
                         
                         if (w.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
@@ -778,34 +772,34 @@ public final class BKNodePlacer implements ILayoutPhase {
                         // Check if we may use small spacing
                         if ((!(blockContainsNorthSouthDummy(bal, v) && blockContainsRegularNode(bal, u))
                           && !(blockContainsNorthSouthDummy(bal, u) && blockContainsRegularNode(bal, v))
-                          && (bal.getBlockSize().get(v) == 0.0 || bal.getBlockSize().get(u) == 0.0))) {
+                          && (bal.blockSize.get(v) == 0.0 || bal.blockSize.get(u) == 0.0))) {
                             
                             spacing = smallSpacing;
                         }
                         
                         // Determine the block's final position
-                        if (bal.getVDir() == VDirection.RIGHT) {
-                            bal.getY().put(
+                        if (bal.vdir == VDirection.RIGHT) {
+                            bal.y.put(
                                     v,
-                                    Math.min(bal.getY().get(v),
-                                             (bal.getY().get(u)
-                                                     + bal.getInnerShift().get(x)
+                                    Math.min(bal.y.get(v),
+                                             (bal.y.get(u)
+                                                     + bal.innerShift.get(x)
                                                      - x.getMargin().top)
                                               - spacing - wSize));
 
                         } else {
-                            bal.getY().put(
+                            bal.y.put(
                                     v,
-                                    Math.max(bal.getY().get(v),
-                                            (bal.getY().get(u) 
-                                                    + bal.getInnerShift().get(x)
+                                    Math.max(bal.y.get(v),
+                                            (bal.y.get(u) 
+                                                    + bal.innerShift.get(x)
                                                     + x.getMargin().top)
                                              + spacing + xSize));
                         }
                     }
                 }
                 // Get the next node in the block
-                w = bal.getAlign().get(w);
+                w = bal.align.get(w);
             } while (w != v);
         }
     }
@@ -841,7 +835,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         
         for (int i = 0; i < noOfLayouts; i++) {
             BKAlignedLayout current = layouts.get(i);
-            for (double y : current.getY().values()) {
+            for (double y : current.y.values()) {
                 if (min[i] > y) {
                     min[i] = y;
                 }
@@ -869,15 +863,15 @@ public final class BKNodePlacer implements ILayoutPhase {
 
         // Calculated y-coordinates for a balanced placement
         double[] calculatedYs = new double[noOfLayouts];
-        for (LNode node : layouts.get(0).getY().keySet()) {
+        for (LNode node : layouts.get(0).y.keySet()) {
             for (int i = 0; i < noOfLayouts; i++) {
-                calculatedYs[i] = layouts.get(i).getY().get(node) + shift[i];
+                calculatedYs[i] = layouts.get(i).y.get(node) + shift[i];
             }
             
             Arrays.sort(calculatedYs);
-            balanced.getY().put(node, (calculatedYs[1] + calculatedYs[2]) / 2.0);
-            balanced.getInnerShift().put(node,
-                    layouts.get(minWidthLayout).getInnerShift().get(node));
+            balanced.y.put(node, (calculatedYs[1] + calculatedYs[2]) / 2.0);
+            balanced.innerShift.put(node,
+                    layouts.get(minWidthLayout).innerShift.get(node));
         }
 
         return balanced;
@@ -1019,11 +1013,11 @@ public final class BKNodePlacer implements ILayoutPhase {
      */
     private HashMap<LNode, List<LNode>> getBlocks(final BKAlignedLayout bal) {
         HashMap<LNode, List<LNode>> blocks = new HashMap<LNode, List<LNode>>();
-        for (LNode key : bal.getRoot().keySet()) {
-            if (!blocks.containsKey(bal.getRoot().get(key))) {
-                blocks.put(bal.getRoot().get(key), new LinkedList<LNode>());
+        for (LNode key : bal.root.keySet()) {
+            if (!blocks.containsKey(bal.root.get(key))) {
+                blocks.put(bal.root.get(key), new LinkedList<LNode>());
             }
-            blocks.get(bal.getRoot().get(key)).add(key);
+            blocks.get(bal.root.get(key)).add(key);
         }
         return blocks;
     }
@@ -1037,7 +1031,7 @@ public final class BKNodePlacer implements ILayoutPhase {
      * @return True, if the block contains a north-south dummy, false else
      */
     private boolean blockContainsNorthSouthDummy(final BKAlignedLayout bal, final LNode root) {
-        return bal.getBlockContainsNorthSouth().get(root);
+        return bal.blockContainsRegularNode.get(root);
     }
     
     /**
@@ -1049,7 +1043,7 @@ public final class BKNodePlacer implements ILayoutPhase {
      * @return True, if the block contains a regular node, false else
      */
     private boolean blockContainsRegularNode(final BKAlignedLayout bal, final LNode root) {
-        return bal.getBlockContainsRegularNode().get(root);
+        return bal.blockContainsRegularNode.get(root);
     }
 
     /**
@@ -1062,7 +1056,7 @@ public final class BKNodePlacer implements ILayoutPhase {
      */
     private boolean checkOrderConstraint(final LGraph layeredGraph, final BKAlignedLayout bal) {
         // Check if the layout contains Y coordinate information
-        if (bal.getY().isEmpty()) {
+        if (bal.y.isEmpty()) {
             return false;
         }
         
@@ -1081,15 +1075,15 @@ public final class BKNodePlacer implements ILayoutPhase {
             for (LNode node : layer.getNodes()) {
                 // For the layout to be correct, both the node's top border and its bottom border must
                 // be beyond the current position in the layer
-                double top = bal.getY().get(node) + bal.getInnerShift().get(node) - node.getMargin().top;
-                double bottom = bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y
+                double top = bal.y.get(node) + bal.innerShift.get(node) - node.getMargin().top;
+                double bottom = bal.y.get(node) + bal.innerShift.get(node) + node.getSize().y
                         + node.getMargin().bottom;
                 
                 if (top > pos && bottom > pos) {
                     previous = node;
                     
                     // Update the position inside the layer
-                    pos = bal.getY().get(node) + bal.getInnerShift().get(node) + node.getSize().y
+                    pos = bal.y.get(node) + bal.innerShift.get(node) + node.getSize().y
                             + node.getMargin().bottom;
                 } else {
                     // We've found an overlap
@@ -1191,90 +1185,6 @@ public final class BKNodePlacer implements ILayoutPhase {
             blockContainsRegularNode = Maps.newHashMapWithExpectedSize(nodeCount);
             this.vdir = vdir;
             this.hdir = hdir;
-        }
-
-        /**
-         * @return the root
-         */
-        public HashMap<LNode, LNode> getRoot() {
-            return root;
-        }
-
-        /**
-         * @return the block size
-         */
-        public HashMap<LNode, Double> getBlockSize() {
-            return blockSize;
-        }
-
-        /**
-         * @return the align
-         */
-        public HashMap<LNode, LNode> getAlign() {
-            return align;
-        }
-
-        /**
-         * @return the inner shift
-         */
-        public HashMap<LNode, Double> getInnerShift() {
-            return innerShift;
-        }
-
-        /**
-         * @return the postShift
-         */
-        public HashMap<LNode, Double> getPostShift() {
-            return postShift;
-        }
-
-        /**
-         * @return the sink
-         */
-        public HashMap<LNode, LNode> getSink() {
-            return sink;
-        }
-
-        /**
-         * @return the shift
-         */
-        public HashMap<LNode, Double> getShift() {
-            return shift;
-        }
-
-        /**
-         * @return the y
-         */
-        public HashMap<LNode, Double> getY() {
-            return y;
-        }
-
-        /**
-         * @return the blockContainsNorthSouth
-         */
-        public HashMap<LNode, Boolean> getBlockContainsNorthSouth() {
-            return blockContainsNorthSouth;
-        }
-
-        /**
-         * @return the blockContainsRegularNode
-         */
-        public HashMap<LNode, Boolean> getBlockContainsRegularNode() {
-            return blockContainsRegularNode;
-        }
-
-        /**
-         * @return the vdir
-         */
-        public VDirection getVDir() {
-            return vdir;
-        }
-
-        /**
-         * @return the hdir
-         */
-        public HDirection getHDir() {
-            return hdir;
         }
 
         /**
