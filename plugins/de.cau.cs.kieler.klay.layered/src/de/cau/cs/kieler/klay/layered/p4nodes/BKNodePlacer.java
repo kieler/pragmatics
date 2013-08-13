@@ -503,110 +503,65 @@ public final class BKNodePlacer implements ILayoutPhase {
      */
     private void insideBlockShift(final LGraph layeredGraph, final BKAlignedLayout bal) {
         HashMap<LNode, List<LNode>> blocks = getBlocks(bal);
-
         for (LNode root : blocks.keySet()) {
-            // Determine the basic size of the block
-            double maximumNodeSize = root.getMargin().top + root.getSize().y + root.getMargin().bottom;
+            /* For each block, we place the top left corner of the root node at coordinate (0,0). We
+             * then calculate the space required above the top left corner (due to other nodes placed
+             * above and to top margins of nodes, including the root node) and the space required below
+             * the top left corner. The sum of both becomes the block size, and the y coordinate of each
+             * node relative to the block's top border becomes the inner shift of that node.
+             */
             
-            // upperBound determines the top border of the block, since the coordinates
-            // of the canvas start with (0,0) and grow down. lowerBound then determines
-            // the bottom border of the block.
-            double upperBound = root.getMargin().top;
-            double lowerBound = root.getMargin().top + root.getSize().y + root.getMargin().bottom;
-            double postShift = upperBound;
-
-            // Now, the sizes and shifts between the root node and a possible second node
-            // of the block is determined, for cases where there are only one or two nodes
-            // inside a block
+            double spaceAbove = 0.0;
+            double spaceBelow = 0.0;
+            
+            // Reserve space for the root node
+            spaceAbove = root.getMargin().top;
+            spaceBelow = root.getSize().y + root.getMargin().bottom;
+            bal.innerShift.put(root, 0.0);
+            
+            // Iterate over all other nodes of the block
             LNode current = root;
-            LNode next = bal.align.get(root);
-            
-            double rootNodePos = root.getMargin().top;
-            double rootLowerBound = 0.0;
-            
-            LEdge rootEdge = getEdge(current, next);
-            
-            if (rootEdge != null) {
-                if (bal.hdir == HDirection.BOTTOM) {
-                    rootNodePos = rootEdge.getTarget().getPosition().y
-                            + rootEdge.getTarget().getAnchor().y + current.getMargin().top;
-                } else {
-                    rootNodePos = rootEdge.getSource().getPosition().y
-                            + rootEdge.getSource().getAnchor().y + current.getMargin().top;
-                }
-                
-                rootLowerBound = current.getMargin().top + current.getSize().y
-                        + current.getMargin().bottom - rootNodePos;
-                
-                upperBound = rootNodePos;
-                lowerBound = rootLowerBound;
-            }
-
-            // Now, the rest of the block is investigated and borders are updated if
-            // they exceed the old borders due to shifting or larger node sizes
-            // This loop is not executed if the block only consists of the root node
-            while (next != root) {
+            LNode next;
+            while ((next = bal.align.get(current)) != root) {
+                // Find the edge between the current and the next node
                 LEdge edge = getEdge(current, next);
-
+                
+                // Calculate the y coordinate difference between the two nodes required to straighten
+                // the edge
                 double difference = 0.0;
-                double portPos = 0.0;
                 if (bal.hdir == HDirection.BOTTOM) {
                     difference = edge.getTarget().getPosition().y + edge.getTarget().getAnchor().y
-                            - edge.getSource().getPosition().y - edge.getSource().getAnchor().y
-                            + bal.innerShift.get(current);
-                    portPos = edge.getSource().getPosition().y + edge.getSource().getAnchor().y
-                            + next.getMargin().top;
+                            - edge.getSource().getPosition().y - edge.getSource().getAnchor().y;
                 } else {
                     difference = edge.getSource().getPosition().y + edge.getSource().getAnchor().y
-                            - edge.getTarget().getPosition().y - edge.getTarget().getAnchor().y
-                            + bal.innerShift.get(current);
-                    portPos = edge.getTarget().getPosition().y + edge.getTarget().getAnchor().y
-                            + next.getMargin().top;
-                }
-                double currentTopBound = portPos;
-                double currentLowerBound = next.getMargin().top +  next.getSize().y
-                        + next.getMargin().bottom - currentTopBound;
-                bal.innerShift.put(next, difference);
-
-                if (currentTopBound > upperBound) {
-                    upperBound = currentTopBound;
+                            - edge.getTarget().getPosition().y - edge.getTarget().getAnchor().y;
                 }
                 
-                if (currentLowerBound > lowerBound) {
-                    lowerBound = currentLowerBound;
-                }
-
+                // The current node already has an inner shift value that we need to use as the basis
+                // to calculate the next node's inner shift
+                double currentInnerShift = bal.innerShift.get(current) + difference;
+                bal.innerShift.put(next, currentInnerShift);
+                
+                // Update the space required above and below the root node's top left corner
+                spaceAbove = Math.max(spaceAbove,
+                        next.getMargin().top - currentInnerShift);
+                spaceBelow = Math.max(spaceBelow,
+                        currentInnerShift + next.getSize().y + next.getMargin().bottom);
+                                
+                // The next node is the current node in the next iteration
                 current = next;
-                next = bal.align.get(next);
-            }
-
-            // If the block only consists of the root node, keep its measurement and
-            // do not overwrite it with the default values of lower- and upperBound
-            if (bal.align.get(root) != root) {
-                maximumNodeSize = lowerBound + upperBound;
             }
             
-            // If the block's top border is higher than the root node, use this, else
-            // use the root node
-            if (upperBound > rootNodePos) {
-                postShift = upperBound - rootNodePos;
-            }
-            
-            bal.postShift.put(root, postShift);
-            
-            // Apply a general shift to all nodes of the block, which results from
-            // nodes which would be placed higher than the top border of the block
-            bal.innerShift.put(root, bal.innerShift.get(root) + postShift);
+            // Adjust each node's inner shift by the space required above the root node's top left
+            // corner (which the inner shifts are relative to at the moment)
             current = root;
-            next = bal.align.get(root);
-            while (next != root) {
-                bal.innerShift.put(next, bal.innerShift.get(next) + postShift);
-                current = next;
-                next = bal.align.get(next);
-            }
+            do {
+                bal.innerShift.put(current, bal.innerShift.get(current) + spaceAbove);
+                current = bal.align.get(current);
+            } while (current  != root);
             
-            // Note the block size of the investigated block for later use
-            bal.blockSize.put(root, maximumNodeSize);
+            // Remember the block size
+            bal.blockSize.put(root, spaceAbove + spaceBelow);
         }
     }
 
@@ -1146,8 +1101,6 @@ public final class BKNodePlacer implements ILayoutPhase {
         /** The value by which a node must be shifted to stay straight inside a block. */
         private HashMap<LNode, Double> innerShift;
         
-        private HashMap<LNode, Double> postShift;
-
         /** The root node of a class, mapped from block root nodes to class root nodes. */
         private HashMap<LNode, LNode> sink;
 
@@ -1177,7 +1130,6 @@ public final class BKNodePlacer implements ILayoutPhase {
             blockSize = Maps.newHashMapWithExpectedSize(nodeCount);
             align = Maps.newHashMapWithExpectedSize(nodeCount);
             innerShift = Maps.newHashMapWithExpectedSize(nodeCount);
-            postShift = Maps.newHashMapWithExpectedSize(nodeCount);
             sink = Maps.newHashMapWithExpectedSize(nodeCount);
             shift = Maps.newHashMapWithExpectedSize(nodeCount);
             y = Maps.newHashMapWithExpectedSize(nodeCount);
