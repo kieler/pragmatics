@@ -37,7 +37,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 import de.cau.cs.kieler.core.ui.Messages;
 import de.cau.cs.kieler.core.ui.util.ComboHistoryHandler;
@@ -399,13 +398,12 @@ public class WorkspaceResourcesPage extends ResourceTreeAndListPage {
         }
         
         // Find a new container
-        ContainerSelectionDialog dialog = new ContainerSelectionDialog(
-                getShell(),
-                currentContainer,
-                true,
-                getBrowseMessage());
+        TargetSelectionDialog dialog = new TargetSelectionDialog(getShell());
         dialog.setTitle(Messages.WorkspaceResourcesPage_containerSelectionDialog_title);
-        dialog.showClosedProjects(false);
+        dialog.setMessage(getBrowseMessage());
+        if (currentContainer != null) {
+            dialog.setInitialSelections(new Object[] {currentContainer});
+        }
         
         if (dialog.open() == Dialog.OK) {
             Object[] result = dialog.getResult();

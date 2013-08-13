@@ -38,7 +38,6 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 import de.cau.cs.kieler.core.ui.Messages;
 import de.cau.cs.kieler.core.ui.util.ComboHistoryHandler;
@@ -567,13 +566,12 @@ public class FileSystemResourcesPage extends ResourceTreeAndListPage {
         }
         
         // Find a new container
-        ContainerSelectionDialog dialog = new ContainerSelectionDialog(
-                getShell(),
-                currentContainer,
-                true,
-                Messages.FileSystemResourcesPage_containerSelectionDialog_message);
+        TargetSelectionDialog dialog = new TargetSelectionDialog(getShell());
         dialog.setTitle(Messages.FileSystemResourcesPage_containerSelectionDialog_title);
-        dialog.showClosedProjects(false);
+        dialog.setMessage(Messages.FileSystemResourcesPage_containerSelectionDialog_message);
+        if (currentContainer != null) {
+            dialog.setInitialSelections(new Object[] {currentContainer});
+        }
         
         if (dialog.open() == Dialog.OK) {
             Object[] result = dialog.getResult();
