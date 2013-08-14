@@ -43,7 +43,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
     // private Shell shell;
     private File docRoot;
 
-    private boolean verbose = true;
+    private boolean debug = false;
 
     // FIXME remove the statics
     // room mappings
@@ -57,12 +57,16 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
     private String currentRoom = null;
     private Connection connection;
 
-    static enum Broadcast {
+    /**
+     * Determines to which clients a message is broadcasted.
+     */
+    private static enum Broadcast {
         All, OnlyThis, AllButThis
     }
 
     /**
-     * 
+     * @param docRoot
+     *            the root folder containing the models.
      */
     public KlighdningWebSocketHandler(final File docRoot) {
         this.docRoot = docRoot;
@@ -96,7 +100,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
         roomConnectionMap.add(room, connection);
     }
 
-    private void leaveCurrentRoom(boolean addToIndividuals) {
+    private void leaveCurrentRoom(final boolean addToIndividuals) {
         // remove this connection from the room
         roomConnectionMap.removeValue(currentRoom, connection);
 
@@ -122,8 +126,9 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
         }
     }
 
+    @SuppressWarnings("unused")
     private void layoutBroadcastSVG() {
-        layoutBroadcastSVG(Broadcast.All);
+        layoutBroadcastSVG(Broadcast.All, false);
     }
 
     /**
@@ -132,13 +137,13 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
      * @param onlyThis
      *            whether the svg is broadcasted to all matching connections or just this one.
      */
-    private void layoutBroadcastSVG(final Broadcast broadcastType) {
+    private void layoutBroadcastSVG(final Broadcast broadcastType, final boolean zoomToFit) {
 
         // get viewer and layout
         SVGBrowsingViewer viewer = getCurrentViewer();
 
         // get the new SVG
-        String svg = SVGLayoutProvider.getInstance().layoutAndGetSVG(viewer);
+        String svg = SVGLayoutProvider.getInstance().layout(viewer, zoomToFit);
 
         // send the new svg to all corresponding connections
         broadcastJson(broadcastType, "type", "SVG", "data", svg);
@@ -191,12 +196,12 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
     private void broadcastPermaLink() {
         // add perma link
         String perma = "/resource" + getCurrentViewer().assemblePermaLink();
-        System.out.println("PERMA LINK: " + perma);
+        // System.out.println("PERMA LINK: " + perma);
 
         broadcastJson("type", "PERMALINK", "perma", perma);
     }
 
-    private void sendError(String error) {
+    private void sendError(final String error) {
         // assemble json
         Map<String, String> jsonMap = Maps.newHashMap();
         jsonMap.put("type", "ERROR");
@@ -218,22 +223,22 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
     /**
      * {@inheritDoc}
      */
-    public void onOpen(Connection connection) {
+    public void onOpen(final Connection theConnection) {
 
-        if (verbose) {
-            System.err.printf("%s#onOpen %s\n", this.getClass().getSimpleName(), connection);
+        if (debug) {
+            System.err.printf("%s#onOpen %s\n", this.getClass().getSimpleName(), theConnection);
         }
-        this.connection = connection;
+        this.connection = theConnection;
 
         // initially add to the individual list
-        individualConnectionMap.put(connection, createViewer());
+        individualConnectionMap.put(theConnection, createViewer());
     }
 
     /**
      * {@inheritDoc}
      */
-    public void onMessage(String data) {
-        if (verbose) {
+    public void onMessage(final String data) {
+        if (debug) {
             System.err.printf("%s#onMessage     %s\n", this.getClass().getSimpleName(), data);
         }
 
@@ -257,7 +262,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                 joinRoom(room);
 
                 // send current svg
-                layoutBroadcastSVG(Broadcast.OnlyThis);
+                layoutBroadcastSVG(Broadcast.OnlyThis, false);
 
                 System.out.println(connection);
 
@@ -278,24 +283,23 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
                 // MOML
                 Map<String, Boolean> parserFeatures = Maps.newHashMap();
-                parserFeatures.put("http://xml.org/sax/features/validation", //$NON-NLS-1$
-                        Boolean.FALSE);
-                parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", //$NON-NLS-1$
+                parserFeatures.put("http://xml.org/sax/features/validation", Boolean.FALSE);
+                parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
                         Boolean.FALSE);
                 parserFeatures.put(
-                        "http://apache.org/xml/features/nonvalidating/load-external-dtd", //$NON-NLS-1$
+                        "http://apache.org/xml/features/nonvalidating/load-external-dtd",
                         Boolean.FALSE);
 
                 rs.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
                 rs.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
-//                rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
-//                        .put("xml", new MomlResourceFactoryImpl());
+                // rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
+                // .put("xml", new MomlResourceFactoryImpl());
 
                 final Resource r =
                         rs.getResource(
                                 URI.createFileURI(new File(docRoot, path).getAbsolutePath()), true);
 
-                System.out.println("Loading resource: " + r);
+                System.out.println("Loading resource (WS): " + r);
 
                 SVGBrowsingViewer viewer = getCurrentViewer();
                 viewer.setSvgTransform(null);
@@ -308,8 +312,9 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                     viewer.setResourcePath(path);
                     // applyLayout();
 
-                    layoutBroadcastSVG();
+                    layoutBroadcastSVG(Broadcast.All, true);
                     broadcastPermaLink();
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     // TODO pass the exception to the outside
@@ -333,7 +338,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                 // expand and layout
                 getCurrentViewer().toggleExpansion(id);
 
-                layoutBroadcastSVG();
+                layoutBroadcastSVG(Broadcast.All, false);
                 broadcastPermaLink();
 
             } else if (type.equals("TRANSFORM")) {
@@ -356,8 +361,8 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
     /**
      * {@inheritDoc}
      */
-    public void onClose(int code, String message) {
-        if (verbose) {
+    public void onClose(final int code, final String message) {
+        if (debug) {
             System.err.printf("%s#onDisonnect %d %s\n", this.getClass().getSimpleName(), code,
                     message);
         }

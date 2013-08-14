@@ -31,18 +31,30 @@ import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketHandler;
 import org.osgi.framework.Bundle;
 
+/**
+ * The server allows to browse a model repository and render all models for which a transformation
+ * is known.
+ * 
+ * @author uru
+ */
 public class BrowsingSVGServer extends Server {
 
-    private static BrowsingSVGServer INSTANCE;
+    private static BrowsingSVGServer instance;
 
     private static final String HTML_ROOT = "/html";
 
-    public BrowsingSVGServer(final String docRoot, int port) {
+    /**
+     * @param docRoot
+     *            the root folder containing the models.
+     * @param port
+     *            the port which the server should listen to.
+     */
+    public BrowsingSVGServer(final String docRoot, final int port) {
 
-        if (INSTANCE != null) {
+        if (instance != null) {
             throw new IllegalStateException("Only one server instance allowed.");
         }
-        INSTANCE = this;
+        instance = this;
 
         final File docRootFile = new File(docRoot);
 
@@ -51,7 +63,8 @@ public class BrowsingSVGServer extends Server {
         addConnector(connector);
 
         WebSocketHandler wsHandler = new WebSocketHandler() {
-            public WebSocket doWebSocketConnect(HttpServletRequest request, String protocol) {
+            public WebSocket doWebSocketConnect(final HttpServletRequest request,
+                    final String protocol) {
                 WebSocket ws = null;
                 if ("protocol.svgws".equals(protocol)) {
                     ws = new KlighdningWebSocketHandler(docRootFile);
@@ -90,8 +103,11 @@ public class BrowsingSVGServer extends Server {
         startServer();
     }
 
+    /**
+     * @return the instance
+     */
     public static BrowsingSVGServer getInstance() {
-        return INSTANCE;
+        return instance;
     }
 
     private static void startServer() {
@@ -99,13 +115,14 @@ public class BrowsingSVGServer extends Server {
         new Thread("Jetty") {
             public void run() {
                 try {
-                    INSTANCE.start();
-                    INSTANCE.join();
+                    instance.start();
+                    instance.join();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             };
-        }.start();
+        }
+        .start();
 
     }
 }

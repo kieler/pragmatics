@@ -22,12 +22,10 @@ import de.cau.cs.kieler.klighd.internal.macrolayout.KlighdLayoutManager;
 import de.cau.cs.kieler.klighdning.viewer.SVGBrowsingViewer;
 
 /**
+ * 
  * @author uru
- * 
- * 
  */
-@SuppressWarnings("restriction")
-public class SVGLayoutProvider {
+public final class SVGLayoutProvider {
 
     // KlighD and Layout facilities
     private KlighdLayoutManager mng;
@@ -41,6 +39,9 @@ public class SVGLayoutProvider {
         mng = new KlighdLayoutManager();
     }
 
+    /**
+     * @return the instance
+     */
     public static SVGLayoutProvider getInstance() {
         if (instance == null) {
             instance = new SVGLayoutProvider();
@@ -48,8 +49,15 @@ public class SVGLayoutProvider {
         return instance;
     }
 
-    public String layout(final SVGBrowsingViewer viewer) {
-                 
+    /**
+     * @param viewer
+     *            onto which to perform the layout
+     * @param zoomToFit
+     *            whether to zoom and fit
+     * @return a rendered svg
+     */
+    public String layout(final SVGBrowsingViewer viewer, final boolean zoomToFit) {
+
         // build the layout mapping
         KNode model = viewer.getModel();
         // initially the viewer might not have a model set
@@ -63,31 +71,30 @@ public class SVGLayoutProvider {
         mng.applyLayout(mapping, true, 0);
 
         // zoom to fit
+        // TODO currently always
+        // if(zoomToFit) {
         viewer.zoomToFit();
-        
+        // }
+
         // redraw
         String svg = viewer.render();
-        return processSVG(viewer, svg); 
+        return processSVG(viewer, svg);
     }
 
-    public String processSVG(final SVGBrowsingViewer viewer, final String svg) {
+    private String processSVG(final SVGBrowsingViewer viewer, final String svg) {
+
+        // remove the xml declaration so that we can embed the svg
+        String res3 = svg.substring(svg.indexOf("<svg"), svg.length());
 
         // insert an id for the first group element
-        String res3 = svg.substring(svg.indexOf("<svg") - 1, svg.length());
-//        String res4 = res3.replaceFirst("width=", "w=");
-//        String res5 = res4.replaceFirst("height=", "h=");
-
         StringBuffer sb = new StringBuffer(res3);
         sb.insert(sb.indexOf("<g") + 2, " id=\"group\"");
 
+        // add an initial transform
         if (viewer.getSvgTransform() != null) {
             sb.insert(sb.indexOf("<g") + 2, " transform=\"" + viewer.getSvgTransform() + "\"");
         }
 
         return sb.toString();
-    }
-
-    public String layoutAndGetSVG(final SVGBrowsingViewer viewer) {
-        return layout(viewer);
     }
 }

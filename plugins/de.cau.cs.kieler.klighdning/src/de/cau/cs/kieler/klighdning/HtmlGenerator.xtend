@@ -83,7 +83,7 @@ class HtmlGenerator {
     
     
     
-    def String permaLink(String svgData) {
+    def String permaLinkPage(String svgData) {
 	'''
 	<html encoding='UTF8'>
 		<head>

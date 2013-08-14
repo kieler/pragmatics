@@ -105,25 +105,28 @@ var webSocketConnect = function() {
       // attach zoom pan functionality
       zoomPanManager = $('#viewport').zoomPan();
 
-      // attach a mousedown listener to handle expanding of hierarchical nodes
+      // attach a mousedown listener to handle expanding of hierarchical nodes     
       var expandFun = function(d) {
         // get the id
-        var text = this.textContent;
+        var hashcode = $(this).attr("data-id");
+        
         // if starts with id
-        if (text.indexOf("de.cau.cs.kieler.id:") === 0) {
-          var id = text.substring(20, text.length);
+        if (hashcode) {
           // send expand toggle command
           sendJson({
             type : 'EXPAND',
-            id : id
+            id : hashcode
           });
 
         }
       };
-      d3.select("svg").selectAll("text").on("mousedown", expandFun);
+      
+      
+      // make hierarchical elements expandable
+      $('.expandable').dblclick(expandFun);
       // for the mobile browser
-      d3.select("svg").selectAll("text").on("tap", expandFun);
-
+      $('.expandable').bind("tap", expandFun);
+      
       // translate events
       $('#group').change(function(e) {
         sendJson({
@@ -153,6 +156,7 @@ var webSocketConnect = function() {
   setTimeout(function() {
     if (connection.readyState === WebSocket.OPEN) {
       $('#messages').html("Connected to " + window.location.host + ".");
+      hideErrors();
     } else {
       $('#messages').html("Could not connect to web socket.");
       connection = null;
@@ -235,29 +239,20 @@ function loadRepository() {
       $('.file').click(function(e) {
         e.preventDefault();
         var path = $(this).attr("data-path");
-        /*
-         * $.ajax({ type : 'PUT', url : 'resource' + path, success :
-         * function(res) { // hide old errors $('#errors').hide(); }, error :
-         * function(err) { console.log("error:" + JSON.stringify(err));
-         * $('#errors').html(err.responseText); $('#errors').show(); } });
-         */
+
         connection.send(JSON.stringify({
           type : 'RESOURCE',
           path : path
         }));
 
+        // clear old diagram
+        $('#viewport').html("");
+        
         // clear the current transform
         zoomPanManager.each(function(k, m) {
           m.zpm.reset();
         });
       });
-
-      /*
-       * TODO implement load on demand for folders $('.folder').click(function() {
-       * var path = $(this).attr("data-path"); $.ajax({ type : 'GET', url :
-       * 'folder' + path, success : function(res) { console.log("Folder: " +
-       * res); } }); });
-       */
 
       // init tree
       $("#tree").tree();

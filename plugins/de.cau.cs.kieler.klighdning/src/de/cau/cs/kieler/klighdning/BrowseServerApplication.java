@@ -27,7 +27,9 @@ public class BrowseServerApplication implements IApplication {
 
     private String rootFolder = null;
 
-    private int port = 8081;
+    private static final int DEFAULT_PORT = 20443;
+
+    private int port = DEFAULT_PORT;
 
     /** Object to synchronize and wait on for termination request. */
     private final Object termSync = new Object();
@@ -38,7 +40,7 @@ public class BrowseServerApplication implements IApplication {
     /**
      * {@inheritDoc}
      */
-    public Object start(IApplicationContext context) throws Exception {
+    public Object start(final IApplicationContext context) throws Exception {
 
         // parse arguments
         String[] args = Platform.getCommandLineArgs();

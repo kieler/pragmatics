@@ -18,7 +18,7 @@ public class KlighdningPlugin implements BundleActivator {
      * 
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
-    public void start(BundleContext bundleContext) throws Exception {
+    public void start(final BundleContext bundleContext) throws Exception {
         KlighdningPlugin.context = bundleContext;
     }
 
@@ -27,7 +27,7 @@ public class KlighdningPlugin implements BundleActivator {
      * 
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
-    public void stop(BundleContext bundleContext) throws Exception {
+    public void stop(final BundleContext bundleContext) throws Exception {
         KlighdningPlugin.context = null;
     }
 

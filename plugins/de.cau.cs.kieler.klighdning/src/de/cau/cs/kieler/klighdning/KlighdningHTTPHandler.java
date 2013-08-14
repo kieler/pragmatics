@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,10 +31,8 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -44,7 +41,6 @@ import de.cau.cs.kieler.klighdning.viewer.SVGBrowsingViewer;
 
 /**
  * @author uru
- * 
  */
 public class KlighdningHTTPHandler extends AbstractHandler {
 
@@ -55,7 +51,8 @@ public class KlighdningHTTPHandler extends AbstractHandler {
     private HtmlGenerator gen = new HtmlGenerator();
 
     /**
-     * 
+     * @param docRoot
+     *            the root of the models folders
      */
     public KlighdningHTTPHandler(final File docRoot) {
         this.docRoot = docRoot;
@@ -65,17 +62,15 @@ public class KlighdningHTTPHandler extends AbstractHandler {
     /**
      * {@inheritDoc}
      */
-    public void handle(String target, final Request baseRequest, final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException, ServletException {
+    public void handle(final String target, final Request baseRequest,
+            final HttpServletRequest request, final HttpServletResponse response)
+            throws IOException, ServletException {
 
-        // System.out.println(target + " " + request);
-
-        // IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-        // System.out.println(docRoot.getPath());
-
+        // decide depending on the http target
         if (target.startsWith("/content")) {
-
-            // String html = new HtmlGenerator().toHtmlRoot(root);
+            /*----------------------------------------------------------------------------
+             *  Return the a tree view of the root folder's content
+             */
             String html = gen.toHtmlRoot(docRoot);
 
             response.setContentType("text/html;charset=utf8");
@@ -84,54 +79,47 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             response.getWriter().println(html);
 
         } else if (target.startsWith("/resource")) {
-
+            /*----------------------------------------------------------------------------
+             *  Return a specific resource as SVG this is mainly called by perma links.
+             */
             String path = target.replace("/resource", "");
 
             ResourceSet rs = new ResourceSetImpl();
 
             // MOML
             Map<String, Boolean> parserFeatures = Maps.newHashMap();
-            parserFeatures.put("http://xml.org/sax/features/validation", //$NON-NLS-1$
+            parserFeatures.put("http://xml.org/sax/features/validation", Boolean.FALSE);
+            parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
                     Boolean.FALSE);
-            parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", //$NON-NLS-1$
-                    Boolean.FALSE);
-            parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-external-dtd", //$NON-NLS-1$
+            parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-external-dtd",
                     Boolean.FALSE);
 
             rs.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
             rs.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
-//            rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
-//                    .put("xml", new MomlResourceFactoryImpl());
+            // rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
+            // .put("xml", new MomlResourceFactoryImpl());
 
-            System.out.println(path);
+            System.out.println("Loading resource: " + path);
             final Resource r =
                     rs.getResource(URI.createFileURI(new File(docRoot, path).getAbsolutePath()),
                             true);
 
-            System.out.println(r);
-
-            System.out.println("PRE");
-            System.out.println("INNER");
-            getViewer.getCanvas().getCamera().setBounds(0, 0, 870, 600);
-
-            // translate and set the model
             try {
+                // translate and set the model
                 KNode model = LightDiagramServices.translateModel(r.getContents().get(0), null);
                 getViewer.setModel(model, true);
 
-                // apply the perma link infos
+                // retrieve the perma link infos
                 String perma = request.getParameterMap().get("perma")[0];
-                Set<String> fragments = Sets.newHashSet(Splitter.on("$").split(perma));
-                System.out.println(fragments);
-                getViewer.applyPermalink(fragments);
-
-                String[] transform = request.getParameterMap().get("transform");
-                if (transform != null && transform.length > 0) {
-                    System.out.println(transform[0]);
-                    getViewer.setSvgTransform(transform[0]);
+                // transform
+                String transform = "";
+                String[] transformArr = request.getParameterMap().get("transform");
+                if (transformArr != null && transformArr.length > 0) {
+                    transform = transformArr[0];
                 }
 
-                SVGLayoutProvider.getInstance().layout(getViewer);
+                // apply perma link
+                getViewer.applyPermalink(perma, transform);
 
             } catch (Exception e) {
                 // catch any error
@@ -142,7 +130,6 @@ public class KlighdningHTTPHandler extends AbstractHandler {
                     e1.printStackTrace();
                 }
             }
-            System.out.println("AFTER");
 
             // answer the request
             response.setContentType("text/html;charset=utf8");
@@ -151,11 +138,13 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             baseRequest.setHandled(true);
 
             // pass the svg
-            String svg = SVGLayoutProvider.getInstance().layout(getViewer);
-            // response.getWriter().println(gen.permaLink(getSVG(getViewer)));
-            response.getWriter().println(gen.permaLink(svg));
+            String svg = SVGLayoutProvider.getInstance().layout(getViewer, false);
+            response.getWriter().println(gen.permaLinkPage(svg));
 
         } else if (target.startsWith("/refreshGit")) {
+            /*----------------------------------------------------------------------------
+             *  Tries to refresh the root directory if it is a git repository.
+             */
 
             // create a process that executes git pull
             // the git bin has to be within the system path
