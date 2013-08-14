@@ -10,21 +10,11 @@ class HtmlGenerator {
     
     var IWorkspaceRoot root = null;
     var File rootFile = null;
-    
-    def String toHtmlRoot(IWorkspaceRoot root) {
-        this.root = root
-        
-        val html = root.projects.map [ project |
-            toHtml(project) 
-        ].join("\n")
-         
-        "<ul id='tree'>" + html + "</ul>"
-    }
-    
+
     def String toHtmlRoot(File root) {
         this.rootFile = root 
            
-        val html = root.listFiles.map [ project |
+        val html = root.listFiles.sortBy[it.name].map [ project |
             toHtml(project) 
         ].join("\n")
         
@@ -36,7 +26,7 @@ class HtmlGenerator {
     	if(f.directory) {
     		var String html = "<li><a href='#' class='folder' data-path='"+ f.relative + "'>" + f.name + "</a>" 
            
-        html = html + "<ul>" + f.listFiles.map [ cont |
+        html = html + "<ul>" + f.listFiles.sortBy[it.name].map [ cont |
             toHtml(cont)
         ].join("\n")
         html = html + "</ul></li>";
@@ -50,32 +40,44 @@ class HtmlGenerator {
     	
     }
     
-    /**
-     * IProject is a container
-     */
-    def dispatch String toHtml(IContainer container) {
-            
-        var String html = "<li><a href='#' class='folder' data-path='"+ container.fullPath + "'>" + container.name + "</a>" 
-           
-        html = html + "<ul>" + container.members.map [ cont |
-            toHtml(cont)
-        ].join("\n")
-        html = html + "</ul></li>";
-
-        html
-    }
-    
-    def dispatch String toHtml(IFile file) {
         
-        val html = "<li><a href='#' class='file' data-path='"+ file.fullPath + "'>" + file.name + "</a></li>"
-              
-        html
-    }
+//    def String toHtmlRoot(IWorkspaceRoot root) {
+//        this.root = root
+//        
+//        val html = root.projects.map [ project |
+//            toHtml(project) 
+//        ].join("\n")
+//         
+//        "<ul id='tree'>" + html + "</ul>"
+//    }
     
-    def dispatch String toHtml(IResource r) {
-        println("tt " + r.getClass())
-    }
     
+//    /**
+//     * IProject is a container
+//     */
+//    def dispatch String toHtml(IContainer container) {
+//            
+//        var String html = "<li><a href='#' class='folder' data-path='"+ container.fullPath + "'>" + container.name + "</a>" 
+//           
+//        html = html + "<ul>" + container.members.map [ cont |
+//            toHtml(cont)
+//        ].join("\n")
+//        html = html + "</ul></li>";
+//
+//        html
+//    }
+//    
+//    def dispatch String toHtml(IFile file) {
+//        
+//        val html = "<li><a href='#' class='file' data-path='"+ file.fullPath + "'>" + file.name + "</a></li>"
+//              
+//        html
+//    }
+//    
+//    def dispatch String toHtml(IResource r) {
+//        println("tt " + r.getClass())
+//    }
+//    
     
     def String relative(File child) {
     	child.absolutePath.replace(rootFile.absolutePath, "").replace(File::separator, "/")
