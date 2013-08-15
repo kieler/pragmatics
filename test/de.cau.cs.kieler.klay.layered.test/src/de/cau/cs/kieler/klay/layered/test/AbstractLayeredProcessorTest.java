@@ -101,7 +101,7 @@ public abstract class AbstractLayeredProcessorTest extends KlayAutomatedJUnitTes
      * {@inheritDoc}
      */
     protected TestPath[] getBundleTestPath() {
-        TestPath[] testPaths = { new TestPath("random", false, false, TestPath.Type.KGRAPH) };
+        TestPath[] testPaths = { new TestPath("misc/random", false, false, TestPath.Type.KGRAPH) };
         return testPaths;
     }
 

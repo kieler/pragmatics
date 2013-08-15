@@ -88,8 +88,8 @@ public class PortListSorterTest extends AbstractLayeredProcessorTest {
      */
     protected TestPath[] getBundleTestPath() {
         TestPath[] testPaths =
-                { new TestPath("random", false, false, TestPath.Type.KGRAPH),
-                        new TestPath("random_w_ports", false, false, Type.KGRAPH) };
+                { new TestPath("misc/random", false, false, TestPath.Type.KGRAPH),
+                        new TestPath("misc/random_w_ports", false, false, Type.KGRAPH) };
         return testPaths;
     }
 
