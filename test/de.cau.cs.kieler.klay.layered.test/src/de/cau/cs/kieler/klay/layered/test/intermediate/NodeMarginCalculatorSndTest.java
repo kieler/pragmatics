@@ -58,7 +58,8 @@ public class NodeMarginCalculatorSndTest extends AbstractLayeredProcessorTest {
      * {@inheritDoc}
      */
     protected TestPath[] getBundleTestPath() {
-        TestPath[] testPaths = { new TestPath("node_margins", false, false, TestPath.Type.KGRAPH) };
+        TestPath[] testPaths =
+                { new TestPath("klay_layered/node_margins", false, false, TestPath.Type.KGRAPH) };
         return testPaths;
     }
 
