@@ -65,7 +65,7 @@ public class NorthSouthPortPostprocessorTest extends AbstractLayeredProcessorTes
      */
     protected TestPath[] getBundleTestPath() {
         TestPath[] testPaths =
-                { new TestPath("north_south_ports", false, false, TestPath.Type.KGRAPH) };
+                { new TestPath("klay_layered/north_south_ports", false, false, TestPath.Type.KGRAPH) };
         return testPaths;
     }
 

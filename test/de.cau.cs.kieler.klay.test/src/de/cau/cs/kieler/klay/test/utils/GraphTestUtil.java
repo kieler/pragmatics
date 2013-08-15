@@ -46,7 +46,7 @@ public final class GraphTestUtil {
      * {@code models} subfolder, which contains all test graphs.
      */
     private static final String SOURCE_GRAPHS_DIRECTORY =
-            "../../../models/graphs/klay_layered_tests/";
+            "../../../models/graphs/";
 
     /** the KGraph file formats to load. */
     private static final ArrayList<String> KGRAPH_FORMATS = Lists.newArrayList("kgraph", "kgx",

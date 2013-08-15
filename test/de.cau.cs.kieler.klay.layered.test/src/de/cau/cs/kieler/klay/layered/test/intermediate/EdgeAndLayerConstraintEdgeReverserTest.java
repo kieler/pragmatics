@@ -40,7 +40,7 @@ import de.cau.cs.kieler.klay.test.utils.TestPath;
  */
 public class EdgeAndLayerConstraintEdgeReverserTest extends AbstractLayeredProcessorTest {
 
-    private static final String TEST_FOLDER = "layer_constraints";
+    private static final String TEST_FOLDER = "klay_layered/layer_constraints";
 
     // CHECKSTYLEOFF javadoc
     public EdgeAndLayerConstraintEdgeReverserTest(final GraphTestObject testObject,

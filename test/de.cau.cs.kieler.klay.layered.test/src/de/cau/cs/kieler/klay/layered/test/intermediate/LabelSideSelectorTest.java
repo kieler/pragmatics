@@ -88,7 +88,7 @@ public class LabelSideSelectorTest extends AbstractLayeredProcessorTest {
      * {@inheritDoc}
      */
     protected TestPath[] getBundleTestPath() {
-        TestPath[] testPaths = { new TestPath("random", false, false, TestPath.Type.KGRAPH),
+        TestPath[] testPaths = { new TestPath("misc/random", false, false, TestPath.Type.KGRAPH),
         // TODO LabelSideSelector is not added as processor if no edges are present
         // new TestPath("label_placement", false, false, TestPath.Type.GMF)
                 };
