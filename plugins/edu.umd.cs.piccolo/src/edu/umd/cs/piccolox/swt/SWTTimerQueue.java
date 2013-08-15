@@ -133,9 +133,13 @@ public class SWTTimerQueue implements Runnable {
     private void insertTimer(final SWTTimer timer, final long expirationTime) {
         SWTTimer previousTimer = findLastTimerExpiringBefore(expirationTime);
         if (previousTimer == null) {
+            // uru: make sure the successors are remembered when inserting at the front
+            if (firstTimer != null) {
+                timer.setNextTimer(firstTimer);
+            }
             firstTimer = timer;
-        }
-        else {
+            
+        } else {
             timer.setNextTimer(previousTimer.getNextTimer());
             previousTimer.setNextTimer(timer);
         }
@@ -154,6 +158,7 @@ public class SWTTimerQueue implements Runnable {
         SWTTimer previousTimer = null;
         SWTTimer nextTimer = firstTimer;
 
+        // chsch: changed a > into a <=
         while (nextTimer != null && nextTimer.getExpirationTime() <= expirationTime) {
             previousTimer = nextTimer;
             nextTimer = nextTimer.getNextTimer();
