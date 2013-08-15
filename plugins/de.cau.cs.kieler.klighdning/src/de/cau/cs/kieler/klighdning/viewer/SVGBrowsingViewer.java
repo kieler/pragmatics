@@ -80,7 +80,7 @@ public class SVGBrowsingViewer {
      * 
      */
     public SVGBrowsingViewer() {
-        canvas = new KlighdSVGCanvas();
+        canvas = new KlighdSVGCanvas(true);
     }
 
     /**
