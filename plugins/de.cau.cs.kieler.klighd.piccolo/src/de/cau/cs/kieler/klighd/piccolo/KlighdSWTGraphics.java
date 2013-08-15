@@ -227,10 +227,10 @@ public interface KlighdSWTGraphics {
      */
     void setStrikeout(final boolean theStrikeout, final RGB color);
     
-    /*-----------------------------------------------------------------------*/
-    /* Some AffineTransform-related methods required by the PSWTAdvancedPath */
-    /* for properly applying the translation and scaling of related shape.   */
-    /*-----------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------*/
+    /* Some AffineTransform-related methods required by KlighdPath         */
+    /* for properly applying the translation and scaling of related shape. */
+    /*---------------------------------------------------------------------*/
     
     /**
      * Returns a copy of the current <code>Transform</code> in the <code>Graphics2D</code> context.<br>
