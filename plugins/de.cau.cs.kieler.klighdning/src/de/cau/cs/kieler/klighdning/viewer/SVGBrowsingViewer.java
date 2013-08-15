@@ -80,7 +80,9 @@ public class SVGBrowsingViewer {
      * 
      */
     public SVGBrowsingViewer() {
-        canvas = new KlighdSVGCanvas(true);
+        // FIXME normally we would like to render text as path, however, this is not possible due to
+        // the way we pass ids to the expandable elements
+        canvas = new KlighdSVGCanvas(false);
     }
 
     /**
