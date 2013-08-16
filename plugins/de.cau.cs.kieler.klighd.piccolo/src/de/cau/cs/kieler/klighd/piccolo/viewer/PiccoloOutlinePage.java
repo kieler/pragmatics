@@ -93,7 +93,8 @@ public class PiccoloOutlinePage implements IContentOutlinePage {
     private PropertyChangeListener propertyListener = new PropertyChangeListener() {
 
         public void propertyChange(final PropertyChangeEvent evt) {
-            if (evt.getPropertyName().equals("viewTransform")) {
+            if (evt.getPropertyName().equals(PCamera.PROPERTY_VIEW_TRANSFORM)
+                    || evt.getPropertyName().equals(PNode.PROPERTY_FULL_BOUNDS)) {
 
                 // only use the timer if we are not dragging
                 if (isDragging) {
@@ -104,7 +105,6 @@ public class PiccoloOutlinePage implements IContentOutlinePage {
                     }
                 }
             }
-
         }
     };
 
@@ -348,6 +348,22 @@ public class PiccoloOutlinePage implements IContentOutlinePage {
             isDragging = true;
             super.startDrag(event);
             last = event.getPosition();
+
+            PBounds outlineRectBounds = originalCamera.getViewBounds();
+
+            // if the user clicks outside the outline rect,
+            // center it on this point before dragging starts
+            boolean withinRect = outlineRectBounds.contains(event.getPosition());
+            if (!withinRect) {
+                // translate the camera by the delta between click
+                // and current center point of the bounds
+                Point2D center = outlineRectBounds.getCenter2D();
+                Point2D delta =
+                        new Point2D.Double(center.getX() - event.getPosition().getX(),
+                                center.getY() - event.getPosition().getY());
+                originalCamera.translateView(delta.getX(), delta.getY());
+            }
+
         }
 
         /**
