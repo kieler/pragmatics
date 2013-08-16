@@ -213,7 +213,7 @@ litigation.
    </license>
 
    <url>
-      <update label="KIELER Pragmatics 0.9 Update Site" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/release_pragmatics_0.9/"/>
+      <update label="KIELER Update Site" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/"/>
    </url>
 
    <requires>
