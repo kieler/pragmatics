@@ -13,13 +13,17 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd.transformation;
 
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.DirectColorModel;
+import java.awt.image.ImageObserver;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -33,7 +37,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ptolemy.data.expr.XMLParser;
-
+import ptolemy.vergil.icon.EditorIcon;
+import ptolemy.vergil.kernel.attributes.ImageAttribute;
 import de.cau.cs.kieler.core.krendering.KAreaPlacementData;
 import de.cau.cs.kieler.core.krendering.KBackground;
 import de.cau.cs.kieler.core.krendering.KColor;
@@ -52,6 +57,9 @@ import de.cau.cs.kieler.core.krendering.KRenderingFactory;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KXPosition;
 import de.cau.cs.kieler.core.krendering.KYPosition;
+import diva.canvas.CompositeFigure;
+import diva.canvas.Figure;
+import diva.canvas.toolbox.ImageFigure;
 
 /**
  * Contains utility methods for handling SVG output from Ptolemy and graphics-related stuff.
@@ -120,6 +128,117 @@ final class GraphicsUtils {
             return data;
         }
         return null;
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // EditorIcon Repair
+    
+    /**
+     * Tries to repair editor icons that have images in them with a scaling percentage. The scaling
+     * percentage isn't always applied by Ptolemy, which is what this method tries to repair.
+     * 
+     * @param editorIcon the editor icon to repair.
+     */
+    public static synchronized void repairEditorIcon(final EditorIcon editorIcon, final Figure figure) {
+        // We can stop immediately if the figure is not a CompositeFigure
+        if (!(figure instanceof CompositeFigure)) {
+            return;
+        }
+        CompositeFigure compFig = (CompositeFigure) figure;
+        
+        double scalingPercentage = 0.0;
+        
+        // Look for ImageAttributes
+        for (Object attr : editorIcon.attributeList()) {
+            if (attr instanceof ImageAttribute) {
+                // Retrieve the scaling percentage from the image
+                ImageAttribute imgAttr = (ImageAttribute) attr;
+                if (imgAttr.scale != null) {
+                    try {
+                        scalingPercentage = Double.parseDouble(imgAttr.scale.getExpression());
+                    } catch (NumberFormatException e) {
+                        // Simply continue to the next attribute
+                        continue;
+                    }
+                }
+            }
+        }
+        
+        // If the scaling percentage is <= 0 or >= 100, we don't do anything
+        if (scalingPercentage <= 0.0 || scalingPercentage >= 100.0) {
+            return;
+        }
+        
+        // Look for an ImageFigure in the composite figure; we might need to scale it.
+        Iterator<?> figureIterator = compFig.figures();
+        while (figureIterator.hasNext()) {
+            Object figObj = figureIterator.next();
+            
+            // We're interested in ImageFigures
+            if (figObj instanceof ImageFigure) {
+                ImageFigure imgFig = (ImageFigure) figObj;
+                
+                // Check if the figure's image is unusually large (both dimensions > 150 pixels, perhaps)
+                Image figImg = imgFig.getImage();
+                if (figImg == null) {
+                    continue;
+                }
+                
+                double width = figImg.getWidth(null);
+                double height = figImg.getHeight(null);
+                
+                if (width > 150 && height > 150) {
+                    Image scaledImage = figImg.getScaledInstance(
+                            (int) (width * scalingPercentage / 100.0), -1, Image.SCALE_SMOOTH);
+                    ImageReadynessNotifier notifier = new ImageReadynessNotifier();
+                    notifier.waitForImage(scaledImage);
+                    imgFig.setImage(scaledImage);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Helper class that waits for an image to be ready to be drawn.
+     * 
+     * @author cds
+     */
+    private static class ImageReadynessNotifier implements ImageObserver {
+        /** The monitor used for synchronization. */
+        Object monitor = new Object();
+        
+        /**
+         * Blocks until the given image is ready to be drawn.
+         * 
+         * @param image the image to wait for.
+         */
+        public void waitForImage(final Image image) {
+            // We simply wait for the notification that the image is ready
+            synchronized (monitor) {
+                Toolkit imageToolkit = Toolkit.getDefaultToolkit();
+                imageToolkit.prepareImage(image, -1, -1, this);
+                
+                try {
+                    monitor.wait();
+                } catch (InterruptedException e) {
+                    // We don't care for interrupts
+                }
+            }
+        }
+        
+        public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+            synchronized (monitor) {
+                // Notify the 
+                if ((infoflags & ImageObserver.ALLBITS) != 0) {
+                    monitor.notify();
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+        
     }
     
     

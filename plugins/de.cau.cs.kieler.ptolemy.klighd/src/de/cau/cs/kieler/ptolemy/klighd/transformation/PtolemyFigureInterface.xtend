@@ -86,6 +86,8 @@ class PtolemyFigureInterface {
      */
     def private KRendering createRenderingFromIcon(EditorIcon icon) {
         val ptFigure = icon.createBackgroundFigure()
+        GraphicsUtils::repairEditorIcon(icon, ptFigure)
+        
         val figureImage = ptFigure.toImage()
         val width = figureImage.getWidth(null)
         val height = figureImage.getHeight(null)
