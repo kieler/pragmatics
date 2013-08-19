@@ -356,7 +356,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     }
 
     /** the fixed minimal size of shapes. */
-    private static final float MIN_SIZE = 15.0f;
+    private static final float MIN_SIZE = 3.0f;
     
     /**
      * Recursively builds a layout graph by analyzing the children of the given current pictogram
@@ -443,7 +443,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         // the modification flag must initially be false
         ((KShapeLayoutImpl) nodeLayout).resetModificationFlag();
 
-        // FIXME find a way to specify the minimal size dynamically
+        // this very minimal size configuration should be corrected in subclasses
         staticConfig.setValue(LayoutOptions.MIN_WIDTH, childNode, LayoutContext.GRAPH_ELEM, MIN_SIZE);
         staticConfig.setValue(LayoutOptions.MIN_HEIGHT, childNode, LayoutContext.GRAPH_ELEM, MIN_SIZE);
 
