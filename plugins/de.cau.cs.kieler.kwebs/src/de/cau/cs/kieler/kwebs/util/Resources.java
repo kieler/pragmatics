@@ -200,6 +200,7 @@ public final class Resources {
      * @return an input stream on the resource or {@code null} if neither a matching
      *         file or a matching resource could be found
      */
+    @SuppressWarnings("resource")
     public static InputStream getFileOrPluginResourceStream(final String pluginid, 
         final String resource) {
         InputStream result = null;
