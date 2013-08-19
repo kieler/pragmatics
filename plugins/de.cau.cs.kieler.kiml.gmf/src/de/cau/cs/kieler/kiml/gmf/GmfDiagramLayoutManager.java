@@ -416,7 +416,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                             editPart = editPart.getParent();
                         }
                         if (editPart instanceof ShapeNodeEditPart
-                                && !GmfLayoutConfig.isNoLayout(editPart)) {
+                                && !GmfLayoutConfig.isNoLayout(editPart)
+                                && !selectedParts.contains(editPart)) {
                             selectedParts.add((ShapeNodeEditPart) editPart);
                         }
                     }
@@ -740,8 +741,9 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param kinsets
      *            reference parameter for insets; the insets are calculated if this has not been
      *            done before
+     * @return the created node
      */
-    private KNode createNode(final LayoutMapping<IGraphicalEditPart> mapping,
+    protected KNode createNode(final LayoutMapping<IGraphicalEditPart> mapping,
             final ShapeNodeEditPart nodeEditPart, final IGraphicalEditPart parentEditPart,
             final KNode parentKNode, final Maybe<KInsets> kinsets) {
         IFigure nodeFigure = nodeEditPart.getFigure();
@@ -802,10 +804,9 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      *            the parent node edit part
      * @param knode
      *            the corresponding layout node
-     * @param layoutConfig
-     *            a layout configuration
+     * @return the created port
      */
-    private void createPort(final LayoutMapping<IGraphicalEditPart> mapping,
+    protected KPort createPort(final LayoutMapping<IGraphicalEditPart> mapping,
             final AbstractBorderItemEditPart portEditPart, final IGraphicalEditPart nodeEditPart,
             final KNode knode) {
         KPort port = KimlUtil.createInitializedPort();
@@ -858,6 +859,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 }
             }
         }
+        return port;
     }
 
     /**
@@ -871,8 +873,9 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      *            the parent node edit part
      * @param knode
      *            the layout node for which the label is set
+     * @return the created label
      */
-    private void createNodeLabel(final LayoutMapping<IGraphicalEditPart> mapping,
+    protected KLabel createNodeLabel(final LayoutMapping<IGraphicalEditPart> mapping,
             final IGraphicalEditPart labelEditPart, final IGraphicalEditPart nodeEditPart,
             final KNode knode) {
         IFigure labelFigure = labelEditPart.getFigure();
@@ -911,7 +914,9 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             }
             // the modification flag must initially be false
             ((KShapeLayoutImpl) labelLayout).resetModificationFlag();
+            return label;
         }
+        return null;
     }
 
     /**
@@ -1096,7 +1101,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param offset
      *            the offset for coordinates
      */
-    private void processEdgeLabels(final LayoutMapping<IGraphicalEditPart> mapping,
+    protected void processEdgeLabels(final LayoutMapping<IGraphicalEditPart> mapping,
             final ConnectionEditPart connection, final KEdge edge,
             final EdgeLabelPlacement placement, final KVector offset) {
         VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
