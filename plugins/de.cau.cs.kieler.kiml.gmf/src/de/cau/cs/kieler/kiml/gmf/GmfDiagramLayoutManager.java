@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.gmf;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -124,6 +126,10 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
     /** the command stack that executes the command. */
     public static final IProperty<CommandStack> COMMAND_STACK = new Property<CommandStack>(
             "gmf.applyLayoutCommandStack");
+    
+    /** the offset to add for all coordinates. */
+    public static final IProperty<KVector> COORDINATE_OFFSET = new Property<KVector>(
+            "gmf.coordinateOffset");
     
     /** the volatile layout config for static properties such as minimal node sizes. */
     public static final IProperty<VolatileLayoutConfig> STATIC_CONFIG
@@ -297,6 +303,15 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * {@inheritDoc}
      */
     public boolean supports(final Object object) {
+        if (object instanceof Collection) {
+            Collection<?> collection = (Collection<?>) object;
+            for (Object o : collection) {
+                if (o instanceof IGraphicalEditPart) {
+                    return true;
+                }
+            }
+            return false;
+        }
         return object instanceof DiagramEditor || object instanceof IGraphicalEditPart;
     }
 
@@ -378,6 +393,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
 
         // choose the layout root edit part
         IGraphicalEditPart layoutRootPart = null;
+        List<ShapeNodeEditPart> selectedParts = null;
         if (diagramPart instanceof ShapeNodeEditPart || diagramPart instanceof DiagramEditPart) {
             layoutRootPart = (IGraphicalEditPart) diagramPart;
         } else if (diagramPart instanceof IGraphicalEditPart) {
@@ -385,18 +401,49 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             if (tgEditPart instanceof ShapeNodeEditPart) {
                 layoutRootPart = (IGraphicalEditPart) tgEditPart;
             }
+        } else if (diagramPart instanceof Collection) {
+            Collection<?> selection = (Collection<?>) diagramPart;
+            // determine the layout root part from the selection
+            for (Object object : selection) {
+                if (object instanceof IGraphicalEditPart) {
+                    if (layoutRootPart != null) {
+                        EditPart parent = commonParent(layoutRootPart, (EditPart) object);
+                        if (parent != null && !(parent instanceof RootEditPart)) {
+                            layoutRootPart = (IGraphicalEditPart) parent;
+                        }
+                    } else if (!(object instanceof ConnectionEditPart)) {
+                        layoutRootPart = (IGraphicalEditPart) object;
+                    }
+                }
+            }
+            // build a list of edit parts that shall be layouted completely
+            if (layoutRootPart != null) {
+                selectedParts = new ArrayList<ShapeNodeEditPart>(selection.size());
+                for (Object object : selection) {
+                    if (object instanceof IGraphicalEditPart) {
+                        EditPart editPart = (IGraphicalEditPart) object;
+                        while (editPart != null && editPart.getParent() != layoutRootPart) {
+                            editPart = editPart.getParent();
+                        }
+                        if (editPart instanceof ShapeNodeEditPart
+                                && !GmfLayoutConfig.isNoLayout(editPart)) {
+                            selectedParts.add((ShapeNodeEditPart) editPart);
+                        }
+                    }
+                }
+            }
         }
         if (layoutRootPart == null && diagramEditor != null) {
             layoutRootPart = diagramEditor.getDiagramEditPart();
         }
         if (layoutRootPart == null) {
-            throw new UnsupportedOperationException(
+            throw new IllegalArgumentException(
                     "Not supported by this layout manager: Workbench part " + workbenchPart
                             + ", Edit part " + diagramPart);
         }
 
         // create the mapping
-        LayoutMapping<IGraphicalEditPart> mapping = buildLayoutLayoutGraph(layoutRootPart);
+        LayoutMapping<IGraphicalEditPart> mapping = buildLayoutGraph(layoutRootPart, selectedParts);
 
         // set optional diagram editor
         if (diagramEditor != null) {
@@ -409,46 +456,108 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
 
         return mapping;
     }
+    
+    /**
+     * Determine the lowest common parent of the two edit parts.
+     * 
+     * @param editPart1 the first edit part
+     * @param editPart2 the second edit part
+     * @return the common parent, or {@code null} if there is none
+     */
+    private static EditPart commonParent(final EditPart editPart1, final EditPart editPart2) {
+        EditPart ep1 = editPart1;
+        EditPart ep2 = editPart2;
+        do {
+            if (isParent(ep1, ep2)) {
+                return ep1;
+            }
+            if (isParent(ep2, ep1)) {
+                return ep2;
+            }
+            ep1 = ep1.getParent();
+            ep2 = ep2.getParent();
+        } while (ep1 != null && ep2 != null);
+        return null;
+    }
+    
+    /**
+     * Determine whether the first edit part is a parent of or equals the second one.
+     * 
+     * @param parent the tentative parent
+     * @param child the tentative child
+     * @return true if the parent is actually a parent of the child
+     */
+    private static boolean isParent(final EditPart parent, final EditPart child) {
+        EditPart editPart = child;
+        do {
+            if (editPart == parent) {
+                return true;
+            }
+            editPart = editPart.getParent();
+        } while (editPart != null);
+        return false;
+    }
 
     /**
      * Creates the actual mapping given an edit part which functions as the root for the layout.
      * 
-     * @param layoutRootPart
-     *            the layout root edit part
+     * @param layoutRootPart the layout root edit part
+     * @param selection a selection of contained edit parts to process, or {@code null} if the whole
+     *          content shall be processed
      * @return a layout graph mapping
      */
-    protected LayoutMapping<IGraphicalEditPart> buildLayoutLayoutGraph(
-            final IGraphicalEditPart layoutRootPart) {
+    protected LayoutMapping<IGraphicalEditPart> buildLayoutGraph(
+            final IGraphicalEditPart layoutRootPart, final List<ShapeNodeEditPart> selection) {
         LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>(this);
         mapping.setProperty(CONNECTIONS, new LinkedList<ConnectionEditPart>());
         mapping.setProperty(STATIC_CONFIG, new VolatileLayoutConfig(GmfLayoutConfig.PRIORITY - 1));
-
-        // set the parent element
         mapping.setParentElement(layoutRootPart);
 
         // find the diagram edit part
         mapping.setProperty(DIAGRAM_EDIT_PART, getDiagramEditPart(layoutRootPart));
 
-        KNode topNode = KimlUtil.createInitializedNode();
-        KShapeLayout shapeLayout = topNode.getData(KShapeLayout.class);
-        Rectangle rootBounds = layoutRootPart.getFigure().getBounds();
-        if (layoutRootPart instanceof DiagramEditPart) {
-            // start with the whole diagram as root for layout
-            String labelText = ((DiagramEditPart) layoutRootPart).getDiagramView().getName();
-            if (labelText.length() > 0) {
-                KLabel label = KimlUtil.createInitializedLabel(topNode);
-                label.setText(labelText);
-            }
-        } else {
+        KNode topNode;
+        if (layoutRootPart instanceof ShapeNodeEditPart) {
             // start with a specific node as root for layout
-            shapeLayout.setPos(rootBounds.x, rootBounds.y);
+            topNode = createNode(mapping, (ShapeNodeEditPart) layoutRootPart, null, null, null);
+        } else {
+            // start with the whole diagram as root for layout
+            topNode = KimlUtil.createInitializedNode();
+            KShapeLayout shapeLayout = topNode.getData(KShapeLayout.class);
+            Rectangle rootBounds = layoutRootPart.getFigure().getBounds();
+            if (layoutRootPart instanceof DiagramEditPart) {
+                String labelText = ((DiagramEditPart) layoutRootPart).getDiagramView().getName();
+                if (labelText.length() > 0) {
+                    KLabel label = KimlUtil.createInitializedLabel(topNode);
+                    label.setText(labelText);
+                }
+            } else {
+                shapeLayout.setPos(rootBounds.x, rootBounds.y);
+            }
+            shapeLayout.setSize(rootBounds.width, rootBounds.height);
+            shapeLayout.resetModificationFlag();
+            mapping.getGraphMap().put(topNode, layoutRootPart);
         }
-        shapeLayout.setSize(rootBounds.width, rootBounds.height);
-        mapping.getGraphMap().put(topNode, layoutRootPart);
         mapping.setLayoutGraph(topNode);
 
-        // traverse the children of the layout root part
-        buildLayoutGraphRecursively(mapping, layoutRootPart, topNode, layoutRootPart);
+        if (selection != null && !selection.isEmpty()) {
+            // layout only the selected elements
+            double minx = Integer.MAX_VALUE;
+            double miny = Integer.MAX_VALUE;
+            Maybe<KInsets> kinsets = new Maybe<KInsets>();
+            for (ShapeNodeEditPart editPart : selection) {
+                KNode node = createNode(mapping, editPart, layoutRootPart, topNode, kinsets);
+                KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+                minx = Math.min(minx, nodeLayout.getXpos());
+                miny = Math.min(miny, nodeLayout.getYpos());
+                buildLayoutGraphRecursively(mapping, editPart, node, editPart);
+            }
+            mapping.setProperty(COORDINATE_OFFSET, new KVector(minx, miny));
+        } else {
+            // traverse all children of the layout root part
+            buildLayoutGraphRecursively(mapping, layoutRootPart, topNode, layoutRootPart);
+        }
+        
         // transform all connections in the selected area
         processConnections(mapping);
 
@@ -469,6 +578,12 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         }
         KShapeLayout graphLayout = mapping.getLayoutGraph().getData(KShapeLayout.class);
         applyLayoutRequest.setUpperBound(graphLayout.getWidth(), graphLayout.getHeight());
+        
+        // correct the layout by adding the offset determined from the selection
+        KVector offset = mapping.getProperty(COORDINATE_OFFSET);
+        if (offset != null) {
+            addOffset(mapping.getLayoutGraph(), offset);
+        }
 
         // check the validity of the editing domain to catch cases where it is disposed
         DiagramEditPart diagramEditPart = mapping.getProperty(DIAGRAM_EDIT_PART);
@@ -478,6 +593,27 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             Command applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
             mapping.setProperty(LAYOUT_COMMAND, applyLayoutCommand);
         }
+    }
+    
+    /**
+     * Add the given offset to all direct children of the given graph.
+     * 
+     * @param parentNode the parent node
+     * @param offset the offset to add
+     */
+    private static void addOffset(final KNode parentNode, final KVector offset) {
+        // correct the offset with the minimal computed coordinates
+        double minx = Integer.MAX_VALUE;
+        double miny = Integer.MAX_VALUE;
+        for (KNode child : parentNode.getChildren()) {
+            KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
+            minx = Math.min(minx, nodeLayout.getXpos());
+            miny = Math.min(miny, nodeLayout.getYpos());
+        }
+        
+        // add the corrected offset
+        offset.translate(-minx, -miny);
+        KimlUtil.translate(parentNode, (float) offset.x, (float) offset.y);
     }
 
     /**
@@ -587,7 +723,10 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
                 if (!GmfLayoutConfig.isNoLayout(childNodeEditPart)) {
-                    createNode(mapping, childNodeEditPart, parentEditPart, parentLayoutNode, kinsets);
+                    KNode node = createNode(mapping, childNodeEditPart, parentEditPart,
+                            parentLayoutNode, kinsets);
+                    // process the child as new current edit part
+                    buildLayoutGraphRecursively(mapping, childNodeEditPart, node, childNodeEditPart);
                 }
 
             // process a label of the current node
@@ -612,7 +751,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      *            reference parameter for insets; the insets are calculated if this has not been
      *            done before
      */
-    private void createNode(final LayoutMapping<IGraphicalEditPart> mapping,
+    private KNode createNode(final LayoutMapping<IGraphicalEditPart> mapping,
             final ShapeNodeEditPart nodeEditPart, final IGraphicalEditPart parentEditPart,
             final KNode parentKNode, final Maybe<KInsets> kinsets) {
         IFigure nodeFigure = nodeEditPart.getFigure();
@@ -641,24 +780,25 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             // ignore exception and leave the default minimal size
         }
 
-        // set insets if not yet defined
-        if (kinsets.get() == null) {
-            KInsets ki = parentKNode.getData(KShapeLayout.class).getInsets();
-            Insets insets = calcSpecificInsets(parentEditPart.getFigure(), nodeFigure);
-            ki.setLeft(insets.left);
-            ki.setTop(insets.top);
-            ki.setRight(insets.right);
-            ki.setBottom(insets.bottom);
-            kinsets.set(ki);
+        if (parentKNode != null) {
+            // set insets if not yet defined
+            if (kinsets.get() == null) {
+                KInsets ki = parentKNode.getData(KShapeLayout.class).getInsets();
+                Insets insets = calcSpecificInsets(parentEditPart.getFigure(), nodeFigure);
+                ki.setLeft(insets.left);
+                ki.setTop(insets.top);
+                ki.setRight(insets.right);
+                ki.setBottom(insets.bottom);
+                kinsets.set(ki);
+            }
+    
+            parentKNode.getChildren().add(childLayoutNode);
         }
-
-        parentKNode.getChildren().add(childLayoutNode);
         mapping.getGraphMap().put(childLayoutNode, nodeEditPart);
-        // process the child as new current edit part
-        buildLayoutGraphRecursively(mapping, nodeEditPart, childLayoutNode, nodeEditPart);
 
         // store all the connections to process them later
         addConnections(mapping, nodeEditPart);
+        return childLayoutNode;
     }
 
     /**

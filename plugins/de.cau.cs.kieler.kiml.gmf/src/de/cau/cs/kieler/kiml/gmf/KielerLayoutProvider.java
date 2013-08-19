@@ -13,18 +13,22 @@
  */
 package de.cau.cs.kieler.kiml.gmf;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.draw2d.IFigure;
 import org.eclipse.gmf.runtime.common.core.service.AbstractProvider;
 import org.eclipse.gmf.runtime.common.core.service.IOperation;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.render.editparts.AbstractImageEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.services.layout.ILayoutNode;
 import org.eclipse.gmf.runtime.diagram.ui.services.layout.ILayoutNodeOperation;
 import org.eclipse.gmf.runtime.diagram.ui.services.layout.ILayoutNodeProvider;
+import org.eclipse.gmf.runtime.notation.Node;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import com.google.common.base.Predicate;
@@ -68,26 +72,31 @@ public class KielerLayoutProvider extends AbstractProvider implements ILayoutNod
         if (!(o instanceof IGraphicalEditPart)) {
             return false;
         }
-        
-        IGraphicalEditPart gep = (IGraphicalEditPart) o;
-        boolean result = true;
-        
-        // check visibility of the child
-        IFigure figure = gep.getFigure();
-        result &= (figure != null && figure.isVisible());
+        final IGraphicalEditPart parent = (IGraphicalEditPart) o;
 
         // check the availability of children that can be arranged
         //  computing layout on the element wouldn't make sense otherwise
-        result &= Iterables.any((List<?>) gep.getChildren(), new Predicate<Object>() {
-            public boolean apply(final Object o) {
-                boolean result = o instanceof ShapeNodeEditPart;
-                result &= !(o instanceof AbstractBorderItemEditPart);
-                result &= !(o instanceof AbstractImageEditPart);
-                return result;
-            }
-        });
-
-        return result;
+        if (layoutNodes.isEmpty()) {
+            return Iterables.any((List<?>) parent.getChildren(), new Predicate<Object>() {
+                public boolean apply(final Object o) {
+                    return o instanceof ShapeNodeEditPart
+                            && !(o instanceof AbstractBorderItemEditPart)
+                            && !(o instanceof AbstractImageEditPart)
+                            && !GmfLayoutConfig.isNoLayout((ShapeNodeEditPart) o);
+                }
+            });
+        } else {
+            return Iterables.any((List<?>) layoutNodes, new Predicate<Object>() {
+                public boolean apply(final Object o) {
+                    ILayoutNode layoutNode = (ILayoutNode) o;
+                    IGraphicalEditPart editPart = findEditPart(parent, layoutNode.getNode());
+                    return editPart instanceof ShapeNodeEditPart
+                            && !(editPart instanceof AbstractBorderItemEditPart)
+                            && !(editPart instanceof AbstractImageEditPart)
+                            && !GmfLayoutConfig.isNoLayout(editPart);
+                }
+            });
+        }
     }
 
     /**
@@ -98,19 +107,58 @@ public class KielerLayoutProvider extends AbstractProvider implements ILayoutNod
             final IAdaptable layoutHint) {
         // fetch general settings from preferences
         IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
-        final boolean animation = preferenceStore.getBoolean(LayoutHandler.PREF_ANIMATION);
         final boolean zoomToFit = preferenceStore.getBoolean(LayoutHandler.PREF_ZOOM);
         final boolean progressDialog = preferenceStore.getBoolean(LayoutHandler.PREF_PROGRESS);
         
-        // return a runnable that does nothing
+        // determine the elements to process
+        final Object diagramPart;
+        if (layoutNodes.isEmpty()) {
+            diagramPart = layoutHint.getAdapter(IGraphicalEditPart.class);
+        } else {
+            List<IGraphicalEditPart> partList = new ArrayList<IGraphicalEditPart>(layoutNodes.size());
+            IGraphicalEditPart parent = (IGraphicalEditPart) layoutHint.getAdapter(
+                    IGraphicalEditPart.class);
+            if (parent != null) {
+                Iterator<?> nodeIter = layoutNodes.iterator();
+                while (nodeIter.hasNext()) {
+                    ILayoutNode layoutNode = (ILayoutNode) nodeIter.next();
+                    IGraphicalEditPart editPart = findEditPart(parent, layoutNode.getNode());
+                    if (editPart != null) {
+                        partList.add(editPart);
+                    }
+                }
+            }
+            diagramPart = partList;
+        }
+        
         return new Runnable() {
             public void run() {
-                Object editPart = layoutHint.getAdapter(IGraphicalEditPart.class);
-                if (editPart instanceof IGraphicalEditPart) {
-                    DiagramLayoutEngine.INSTANCE.layout(null, editPart, animation, progressDialog,
-                            false, zoomToFit);
-                }
+                DiagramLayoutEngine.INSTANCE.layout(null, diagramPart, false, progressDialog,
+                        false, zoomToFit);
             }
         };
     }
+    
+    /**
+     * Find an edit part with the given notation node.
+     * 
+     * @param parent the parent edit part to start the search
+     * @param notationNode a notation node
+     * @return the corresponding edit part
+     */
+    @SuppressWarnings("unchecked")
+    private static IGraphicalEditPart findEditPart(final IGraphicalEditPart parent,
+            final Node notationNode) {
+        LinkedList<IGraphicalEditPart> editPartQueue = new LinkedList<IGraphicalEditPart>();
+        editPartQueue.add(parent);
+        do {
+            IGraphicalEditPart editPart = editPartQueue.removeFirst();
+            if (notationNode.equals(editPart.getNotationView())) {
+                return editPart;
+            }
+            editPartQueue.addAll(editPart.getChildren());
+        } while (!editPartQueue.isEmpty());
+        return null;
+    }
+    
 }
