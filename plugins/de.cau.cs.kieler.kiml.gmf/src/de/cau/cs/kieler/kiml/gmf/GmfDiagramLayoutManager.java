@@ -136,68 +136,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             = new Property<VolatileLayoutConfig>("gmf.staticLayoutConfig");
     
     /**
-     * Determines the insets for a parent figure, relative to the given child.
-     * 
-     * @param parent the figure of a parent edit part
-     * @param child the figure of a child edit part
-     * @return the insets to add to the relative coordinates of the child
-     */
-    protected Insets calcSpecificInsets(final IFigure parent, final IFigure child) {
-        return calcInsets(parent, child);
-    }
-    
-    /**
-     * Determines the insets for a parent figure, relative to the given child.
-     * 
-     * @param parent the figure of a parent edit part
-     * @param child the figure of a child edit part
-     * @return the insets to add to the relative coordinates of the child
-     */
-    public static Insets calcInsets(final IFigure parent, final IFigure child) {
-        Insets result = new Insets(0);
-        IFigure currentChild = child;
-        IFigure currentParent = child.getParent();
-        Point coordsToAdd = null;
-        boolean isRelative = false;
-        // follow the chain of parents in the figure hierarchy up to the given parent figure
-        while (currentChild != parent && currentParent != null) {
-            if (currentParent.isCoordinateSystem()) {
-                // the content of the current parent is relative to that figure's position
-                isRelative = true;
-                result.add(currentParent.getInsets());
-                if (coordsToAdd != null) {
-                    // add the position of the previous parent with local coordinate system
-                    result.left += coordsToAdd.x;
-                    result.top += coordsToAdd.y;
-                }
-                coordsToAdd = currentParent.getBounds().getLocation();
-            } else if (currentParent == parent && coordsToAdd != null) {
-                // we found the top parent, and it does not have local coordinate system,
-                // so subtract the parent's coordinates from the previous parent's position
-                Point parentCoords = parent.getBounds().getLocation();
-                result.left += coordsToAdd.x - parentCoords.x;
-                result.top += coordsToAdd.y - parentCoords.y;
-            }
-            currentChild = currentParent;
-            currentParent = currentChild.getParent();
-        }
-        if (!isRelative) {
-            // there is no local coordinate system, so just subtract the coordinates
-            Rectangle parentBounds = parent.getBounds();
-            currentParent = child.getParent();
-            Rectangle containerBounds = currentParent.getBounds();
-            result.left = containerBounds.x - parentBounds.x;
-            result.top = containerBounds.y - parentBounds.y;
-        }
-        // In theory it would be better to get the bottom and right insets from the size.
-        // However, due to the inpredictability of Draw2D layout managers, this leads to
-        // bad results in many cases, so a fixed insets value is more stable.
-        result.right = result.left;
-        result.bottom = result.left;
-        return result;
-    }
-    
-    /**
      * Calculates the absolute bounds of the given figure.
      * 
      * @param figure a figure
@@ -377,6 +315,58 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      */
     public Class<?>[] getAdapterList() {
         return new Class<?>[] { IGraphicalEditPart.class };
+    }
+    
+    /**
+     * Determines the insets for a parent figure, relative to the given child.
+     * Subclasses may override this if the generic insets calculation does not work.
+     * 
+     * @param parent the figure of a parent edit part
+     * @param child the figure of a child edit part
+     * @return the insets to add to the relative coordinates of the child
+     */
+    protected Insets calcSpecificInsets(final IFigure parent, final IFigure child) {
+        Insets result = new Insets(0);
+        IFigure currentChild = child;
+        IFigure currentParent = child.getParent();
+        Point coordsToAdd = null;
+        boolean isRelative = false;
+        // follow the chain of parents in the figure hierarchy up to the given parent figure
+        while (currentChild != parent && currentParent != null) {
+            if (currentParent.isCoordinateSystem()) {
+                // the content of the current parent is relative to that figure's position
+                isRelative = true;
+                result.add(currentParent.getInsets());
+                if (coordsToAdd != null) {
+                    // add the position of the previous parent with local coordinate system
+                    result.left += coordsToAdd.x;
+                    result.top += coordsToAdd.y;
+                }
+                coordsToAdd = currentParent.getBounds().getLocation();
+            } else if (currentParent == parent && coordsToAdd != null) {
+                // we found the top parent, and it does not have local coordinate system,
+                // so subtract the parent's coordinates from the previous parent's position
+                Point parentCoords = parent.getBounds().getLocation();
+                result.left += coordsToAdd.x - parentCoords.x;
+                result.top += coordsToAdd.y - parentCoords.y;
+            }
+            currentChild = currentParent;
+            currentParent = currentChild.getParent();
+        }
+        if (!isRelative) {
+            // there is no local coordinate system, so just subtract the coordinates
+            Rectangle parentBounds = parent.getBounds();
+            currentParent = child.getParent();
+            Rectangle containerBounds = currentParent.getBounds();
+            result.left = containerBounds.x - parentBounds.x;
+            result.top = containerBounds.y - parentBounds.y;
+        }
+        // In theory it would be better to get the bottom and right insets from the size.
+        // However, due to the inpredictability of Draw2D layout managers, this leads to
+        // bad results in many cases, so a fixed insets value is more stable.
+        result.right = result.left;
+        result.bottom = result.left;
+        return result;
     }
 
     /**

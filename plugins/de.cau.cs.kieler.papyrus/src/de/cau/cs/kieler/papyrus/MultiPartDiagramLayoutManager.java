@@ -432,7 +432,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
         // set insets if not yet defined
         if (kinsets.get() == null) {
             KInsets ki = parentKNode.getData(KShapeLayout.class).getInsets();
-            Insets insets = calcInsets(parentEditPart.getFigure(), nodeFigure);
+            Insets insets = calcSpecificInsets(parentEditPart.getFigure(), nodeFigure);
             ki.setLeft(insets.left);
             ki.setTop(insets.top);
             ki.setRight(insets.right);
