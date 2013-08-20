@@ -329,6 +329,7 @@ class CommentsExtractor {
         
         if (relativeTo != null
             && relativeToElementName != null
+            && relativeToElementName.value != null
             && relativeToElementName.value.equals("entity")) {
             
             // Look for siblings of the comment node that have the correct name
