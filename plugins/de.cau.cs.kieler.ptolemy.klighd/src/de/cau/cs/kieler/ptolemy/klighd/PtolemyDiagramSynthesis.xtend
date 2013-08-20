@@ -35,6 +35,8 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         "Comments", true)
     static val TransformationOption SHOW_RELATIONS = TransformationOption::createCheckOption(
         "Relations", false)
+    static val TransformationOption FLATTEN = TransformationOption::createCheckOption(
+        "Flatten Composite Actors", false);
     static val TransformationOption COMPOUND_NODE_ALPHA = TransformationOption::createRangeOption(
         "Nested model darkness", new Pair(0, 255), 10)
     
@@ -47,14 +49,14 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     override transform(DocumentRoot model) {
         val kgraph = transformation.transform(model)
         optimization.optimize(kgraph, SHOW_COMMENTS.optionBooleanValue,
-            !SHOW_RELATIONS.optionBooleanValue)
+            !SHOW_RELATIONS.optionBooleanValue, FLATTEN.optionBooleanValue)
         visualization.visualize(kgraph, COMPOUND_NODE_ALPHA.optionValue as Integer)
         
         return kgraph
     }
     
     override getTransformationOptions() {
-        return ImmutableSet::of(SHOW_COMMENTS, SHOW_RELATIONS, COMPOUND_NODE_ALPHA)
+        return ImmutableSet::of(SHOW_COMMENTS, SHOW_RELATIONS, FLATTEN, COMPOUND_NODE_ALPHA)
     }
     
 }
