@@ -84,12 +84,12 @@ class Flattener {
             
             // Remove the old edges
             for (edge1 : incoming) {
-                for (edge2 : outgoing) {
-                    edge1.source = null
-                    edge1.sourcePort = null
-                    edge2.target = null
-                    edge2.targetPort = null
-                }
+                edge1.source = null
+                edge1.sourcePort = null
+            }
+            for (edge2 : outgoing) {
+                edge2.target = null
+                edge2.targetPort = null
             }
         }
         
@@ -106,6 +106,14 @@ class Flattener {
         
         // Remove the composite node
         child.setParent(null)
+        for (edge : child.incomingEdges) {
+            edge.source = null
+            edge.sourcePort = null
+        }
+        for (edge : child.outgoingEdges) {
+            edge.target = null
+            edge.targetPort = null
+        }
     }
     
 }
