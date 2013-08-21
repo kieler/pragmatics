@@ -33,10 +33,17 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
@@ -56,6 +63,8 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
     
     /** the 'layout before analysis' option. */
     private boolean layoutBeforeAnalysis;
+    /** the layout configurator to apply to each graph. */
+    private ILayoutConfig configurator;
     
     /**
      * {@inheritDoc}
@@ -82,6 +91,10 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
             KNode graph = (KNode) content;
             
             if (layoutBeforeAnalysis) {
+                if (configurator != null) {
+                    recursiveConf(graph, configurator);
+                }
+                
                 if (layoutEngine == null) {
                     layoutEngine = new RecursiveGraphLayoutEngine();
                 }
@@ -104,11 +117,19 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
      * Sets the option which specifies whether layout should be performed before
      * the KGraph is returned.
      * 
-     * @param layoutBeforeAnalysisOption
-     *            true if layout should be performed
+     * @param layoutBeforeAnalysisOption true if layout should be performed
      */
     public void setLayoutBeforeAnalysis(final boolean layoutBeforeAnalysisOption) {
         layoutBeforeAnalysis = layoutBeforeAnalysisOption;
+    }
+    
+    /**
+     * Sets the layout configurator to apply to each graph.
+     * 
+     * @param configuratorOption the layout configurator
+     */
+    public void setLayoutConfigurator(final ILayoutConfig configuratorOption) {
+        this.configurator = configuratorOption;
     }
     
     /**
@@ -150,6 +171,9 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
         LayoutMapping<?> mapping = layoutManager.buildLayoutGraph(null, editPart.get());
         KNode inputGraph = mapping.getLayoutGraph();
         if (layoutBeforeAnalysis) {
+            if (configurator != null) {
+                mapping.getLayoutConfigs().add(configurator);
+            }
             IStatus status = DiagramLayoutEngine.INSTANCE.layout(mapping, monitor.subTask(1));
             if (!status.isOK()) {
                 StatusManager.getManager().handle(status);
@@ -158,6 +182,57 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
         
         monitor.done();
         return inputGraph;
+    }
+    
+    /**
+     * Configure all elements contained in the given node.
+     * 
+     * @param node a node from the layout graph
+     * @param config a layout configurator
+     */
+    private void recursiveConf(final KNode node, final ILayoutConfig config) {
+        // configure the node and its label
+        configure(node, config);
+        for (KLabel label : node.getLabels()) {
+            configure(label, config);
+        }
+
+        // configure ports
+        for (KPort port : node.getPorts()) {
+            configure(port, config);
+            for (KLabel label : port.getLabels()) {
+                configure(label, config);
+            }
+        }
+
+        // configure outgoing edges
+        for (KEdge edge : node.getOutgoingEdges()) {
+            configure(edge, config);
+            for (KLabel label : edge.getLabels()) {
+                configure(label, config);
+            }
+        }
+
+        // configure child nodes
+        for (KNode child : node.getChildren()) {
+            recursiveConf(child, config);
+        }
+    }
+
+    /**
+     * Configure a graph element.
+     * 
+     * @param graphElement a graph element
+     * @param config a layout configurator
+     */
+    private void configure(final KGraphElement graphElement, final ILayoutConfig config) {
+        // create a layout context for the current graph element
+        LayoutContext context = new LayoutContext();
+        context.setProperty(LayoutContext.GRAPH_ELEM, graphElement);
+        
+        // transfer the options from the layout configuration
+        KLayoutData layoutData = graphElement.getData(KLayoutData.class);
+        config.transferValues(layoutData, context);
     }
 
 }

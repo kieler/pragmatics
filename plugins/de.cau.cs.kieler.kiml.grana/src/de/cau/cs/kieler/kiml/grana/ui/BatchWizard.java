@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
@@ -47,6 +48,8 @@ public class BatchWizard extends Wizard {
     private BatchResultFilePage resultFilePage;
     /** the analysis selection page. */
     private BatchAnalysisSelectionPage analysisSelectionPage;
+    /** the layout configuration page. */
+    private LayoutConfigurationPage layoutConfigurationPage;
 
     /** the selected files. */
     private List<IPath> selectedFiles;
@@ -56,6 +59,8 @@ public class BatchWizard extends Wizard {
     private IPath resultFile;
     /** the selected analyses. */
     private List<AnalysisData> selectedAnalyses;
+    /** the layout configurator. */
+    private ILayoutConfig layoutConfig;
 
     /**
      * Constructs a BatchWizard without initial file selection.
@@ -84,13 +89,14 @@ public class BatchWizard extends Wizard {
     public void addPages() {
         fileSelectionPage = new BatchFileSelectionPage(selection);
         resultFilePage = new BatchResultFilePage();
-        selectedAnalyses =
-                GranaUtil.getAnalysesSelection(PREFERENCE_SELECTED_ANALYSES);
-        analysisSelectionPage =
-                new BatchAnalysisSelectionPage(selectedAnalyses);
+        selectedAnalyses = GranaUtil.getAnalysesSelection(PREFERENCE_SELECTED_ANALYSES);
+        analysisSelectionPage = new BatchAnalysisSelectionPage(selectedAnalyses);
+        layoutConfigurationPage = new LayoutConfigurationPage();
+        layoutConfigurationPage.setPageComplete(true);
         addPage(fileSelectionPage);
         addPage(resultFilePage);
         addPage(analysisSelectionPage);
+        addPage(layoutConfigurationPage);
     }
 
     /**
@@ -104,6 +110,7 @@ public class BatchWizard extends Wizard {
         layoutBeforeAnalysis = fileSelectionPage.getLayoutBeforeAnalysis();
         resultFile = resultFilePage.getResultFile();
         selectedAnalyses = analysisSelectionPage.getAnalyses();
+        layoutConfig = layoutConfigurationPage.getConfig();
         GranaUtil.setAnalysesSelection(PREFERENCE_SELECTED_ANALYSES,
                 selectedAnalyses);
         return true;
@@ -144,4 +151,14 @@ public class BatchWizard extends Wizard {
     public List<AnalysisData> getAnalyses() {
         return selectedAnalyses;
     }
+    
+    /**
+     * Return the selected layout configurator.
+     * 
+     * @return the layout configurator
+     */
+    public ILayoutConfig getLayoutConfig() {
+        return layoutConfig;
+    }
+    
 }

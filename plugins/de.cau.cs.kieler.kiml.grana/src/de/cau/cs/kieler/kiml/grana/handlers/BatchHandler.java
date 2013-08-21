@@ -96,6 +96,7 @@ public class BatchHandler extends AbstractHandler {
                             for (IPath file : wizard.getSelectedFiles()) {
                                 FileKGraphProvider provider = new FileKGraphProvider();
                                 provider.setLayoutBeforeAnalysis(wizard.getLayoutBeforeAnalysis());
+                                provider.setLayoutConfigurator(wizard.getLayoutConfig());
                                 BatchJob<IPath> batchJob = new BatchJob<IPath>(file, provider);
                                 batch.appendJob(batchJob);
                             }
