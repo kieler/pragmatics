@@ -55,16 +55,23 @@ class Flattener {
      * @param child the child node
      */
     def void eliminateHierarchy(KNode parent, KNode child) {
+        // Check whether the child node has any connections to the inside;
+        // if not, we don't want to flatten it
+        if (!(child.incomingEdges.exists([e | e.source.parent == child])
+            || child.outgoingEdges.exists([e | e.target.parent == child]))) {
+            return
+        }
+        
         for (port : child.ports) {
             // Gather incoming and outgoing edges from the port
             val List<KEdge> incoming = newArrayList()
             val List<KEdge> outgoing = newArrayList()
             for (edge : port.edges) {
                 if (edge.sourcePort == port) {
-                    outgoing.add(edge)
+                    outgoing += edge
                 }
                 if (edge.targetPort == port) {
-                    incoming.add(edge)
+                    incoming += edge
                 }
             }
             
@@ -72,12 +79,13 @@ class Flattener {
             for (edge1 : incoming) {
                 for (edge2 : outgoing) {
                     if (edge1.source != child && edge2.target != child) {
-                        val newEdge = KimlUtil::createInitializedEdge();
-                        newEdge.source = edge1.source
-                        newEdge.sourcePort = edge1.sourcePort
-                        newEdge.target = edge2.target
-                        newEdge.targetPort = edge2.targetPort
-                        newEdge.getLayout().copyProperties(edge1.getLayout());
+                        KimlUtil::createInitializedEdge() => [ e |
+                            e.source = edge1.source
+                            e.sourcePort = edge1.sourcePort
+                            e.target = edge2.target
+                            e.targetPort = edge2.targetPort
+                            e.getLayout().copyProperties(edge1.getLayout())
+                        ]
                     }
                 }
             }
