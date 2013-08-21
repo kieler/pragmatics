@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.papyrus;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -125,6 +126,15 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
      */
     @Override
     public boolean supports(final Object object) {
+        if (object instanceof Collection) {
+            Collection<?> collection = (Collection<?>) object;
+            for (Object o : collection) {
+                if (o instanceof IPapyrusEditPart) {
+                    return true;
+                }
+            }
+            return false;
+        }
         return object instanceof IMultiDiagramEditor || object instanceof IPapyrusEditPart
                 || object instanceof IGraphicalEditPart;
     }
@@ -173,7 +183,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
      *            the diagramPart
      * @return a layoutGraph
      */
-    public LayoutMapping<IGraphicalEditPart> buildSequenceLayoutGraph(
+    protected LayoutMapping<IGraphicalEditPart> buildSequenceLayoutGraph(
             final IWorkbenchPart workbenchPart, final Object diagramPart) {
 
         DiagramEditor diagramEditor = null;
@@ -363,13 +373,14 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
                 if (!GmfLayoutConfig.isNoLayout(childNodeEditPart)) {
-                    createNode(mapping, childNodeEditPart, parentEditPart, parentLayoutNode,
+                    createSequenceNode(mapping, childNodeEditPart, parentEditPart, parentLayoutNode,
                             kinsets);
                 }
 
                 // process a label of the current node
             } else if (obj instanceof IGraphicalEditPart) {
-                createNodeLabel(mapping, (IGraphicalEditPart) obj, parentEditPart, parentLayoutNode);
+                createSequenceNodeLabel(mapping, (IGraphicalEditPart) obj, parentEditPart,
+                        parentLayoutNode);
             }
         }
     }
@@ -389,7 +400,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
      *            reference parameter for insets; the insets are calculated if this has not been
      *            done before
      */
-    private void createNode(final LayoutMapping<IGraphicalEditPart> mapping,
+    private void createSequenceNode(final LayoutMapping<IGraphicalEditPart> mapping,
             final ShapeNodeEditPart nodeEditPart, final IGraphicalEditPart parentEditPart,
             final KNode parentKNode, final Maybe<KInsets> kinsets) {
 
@@ -792,7 +803,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
      * @param knode
      *            the layout node for which the label is set
      */
-    private void createNodeLabel(final LayoutMapping<IGraphicalEditPart> mapping,
+    private void createSequenceNodeLabel(final LayoutMapping<IGraphicalEditPart> mapping,
             final IGraphicalEditPart labelEditPart, final IGraphicalEditPart nodeEditPart,
             final KNode knode) {
         IFigure labelFigure = labelEditPart.getFigure();
@@ -995,7 +1006,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
             }
 
             // process edge labels
-            processEdgeLabels(mapping, connection, edge, edgeLabelPlacement, offset);
+            processSequenceEdgeLabels(mapping, connection, edge, edgeLabelPlacement, offset);
         }
     }
 
@@ -1050,7 +1061,7 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
      * @param offset
      *            the offset for coordinates
      */
-    private void processEdgeLabels(final LayoutMapping<IGraphicalEditPart> mapping,
+    private void processSequenceEdgeLabels(final LayoutMapping<IGraphicalEditPart> mapping,
             final ConnectionEditPart connection, final KEdge edge,
             final EdgeLabelPlacement placement, final KVector offset) {
         VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
