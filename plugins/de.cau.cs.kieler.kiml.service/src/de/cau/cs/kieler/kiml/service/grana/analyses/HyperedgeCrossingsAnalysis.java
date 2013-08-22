@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.service.grana.analyses;
 
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -60,11 +59,11 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         progressMonitor.begin("Hyperedge crossings analysis", 1);
         
         // Collect all edge segments, merge them and count crossings
-        List<Line2D.Double> edgeSegments = collectEdgeSegments(parentNode);
+        List<Line> edgeSegments = collectEdgeSegments(parentNode);
         
         mergeEdgeSegments(edgeSegments);
         
-        int crossings = countCrossings(edgeSegments.toArray(new Line2D.Double[edgeSegments.size()]));
+        int crossings = countCrossings(edgeSegments.toArray(new Line[edgeSegments.size()]));
         
         progressMonitor.done();
         return crossings;
@@ -81,8 +80,8 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
      * @param parentNode the node.
      * @return 
      */
-    private List<Line2D.Double> collectEdgeSegments(final KNode parentNode) {
-        List<Line2D.Double> segments = new LinkedList<Line2D.Double>(); 
+    private List<Line> collectEdgeSegments(final KNode parentNode) {
+        List<Line> segments = new LinkedList<Line>(); 
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
                 AnalysisOptions.ANALYZE_HIERARCHY);
         LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
@@ -120,7 +119,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
                 while (pointIter.hasNext()) {
                     KVector p2 = pointIter.next();
                     
-                    Line2D.Double segment = new Line2D.Double(p1.x, p1.y, p2.x, p2.y);
+                    Line segment = new Line(p1.x, p1.y, p2.x, p2.y);
                     segments.add(segment);
                     
                     p1 = p2;
@@ -146,11 +145,11 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
      * @param segments the list of segments to merge. The list will usually contain less
      *                 segments than before after this method is finished.
      */
-    private void mergeEdgeSegments(final List<Line2D.Double> segments) {
+    private void mergeEdgeSegments(final List<Line> segments) {
         // Iterate over the lines in the list
-        ListIterator<Line2D.Double> iterator1 = segments.listIterator();
+        ListIterator<Line> iterator1 = segments.listIterator();
         while (iterator1.hasNext()) {
-            Line2D.Double line1 = iterator1.next();
+            Line line1 = iterator1.next();
             
             // If we have reached the end of the list, stop
             if (!iterator1.hasNext()) {
@@ -164,12 +163,13 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
             }
             
             // Go through the rest of the line segments, looking for one to merge with this segment
-            ListIterator<Line2D.Double> iterator2 = segments.listIterator(iterator1.nextIndex());
+            ListIterator<Line> iterator2 = segments.listIterator(iterator1.nextIndex());
             while (iterator2.hasNext()) {
-                Line2D.Double line2 = iterator2.next();
+                Line line2 = iterator2.next();
                 
                 // If the current segment has already been removed, continue
-                if (line2.x1 == line2.x2 && line2.y1 == line2.y2) {
+                if (Math.abs(line2.x1 - line2.x2) < TOLERANCE
+                        && Math.abs(line2.y1 - line2.y2) < TOLERANCE) {
                     continue;
                 }
                 
@@ -186,11 +186,12 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         }
         
         // Iterate over the segments again and remove the ones that are to be removed
-        ListIterator<Line2D.Double> iterator = segments.listIterator();
+        ListIterator<Line> iterator = segments.listIterator();
         while (iterator.hasNext()) {
-            Line2D.Double line = iterator.next();
+            Line line = iterator.next();
             
-            if (line.x1 == line.x2 && line.y1 == line.y2) {
+            if (Math.abs(line.x1 - line.x2) < TOLERANCE
+                    && Math.abs(line.y1 - line.y2) < TOLERANCE) {
                 iterator.remove();
             }
         }
@@ -204,45 +205,50 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
      * @param line2 the second line.
      * @return {@code true} if they can be merged, {@code false} otherwise.
      */
-    private boolean canBeMerged(final Line2D.Double line1, final Line2D.Double line2) {
+    private boolean canBeMerged(final Line line1, final Line line2) {
         // The lines have to intersect
         if (!line1.intersectsLine(line2)) {
             return false;
         }
         
-        // The lines have to be parallel, which means that the distance between line1 and
-        // both points defining line2 have to be equal
-        return Math.abs(line1.ptLineDist(line2.x1, line2.y1) - line1.ptLineDist(line2.x2, line2.y2))
-                < TOLERANCE;
+        // The lines have to be parallel
+        double s = (line2.y2 - line2.y1) * (line1.x2 - line1.x1)
+                - (line2.x2 - line2.x1) * (line1.y2 - line1.y1);
+        return Math.abs(s) < TOLERANCE;
     }
     
     /**
      * Merges the two lines by updating the first line. The second line is left untouched.
+     * The lines are assumed to be parallel.
      * 
      * @param line1 the first line, which the second line is merged into.
      * @param line2 the second line.
      */
-    private void mergeSegments(final Line2D.Double line1, final Line2D.Double line2) {
-        Point2D.Double start = new Point2D.Double(line1.x1, line1.y1);
-        Point2D.Double end = new Point2D.Double(line1.x2, line1.y2);
+    private void mergeSegments(final Line line1, final Line line2) {
+        KVector start = new KVector(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        KVector end = new KVector(Integer.MIN_VALUE, Integer.MIN_VALUE);
+        KVector[] points = new KVector[] { line1.getV1(), line1.getV2(), line2.getV1(), line2.getV2() };
         
-        // If the lines are vertical, we use the points with the lowest and highest
-        // y coordinate as the merged line's end points. Otherwise, we use the points
-        // with the lowest and highest x coordinate
-        if (Math.abs(line1.x1 - line1.x2) < TOLERANCE) {
-            // Vertical
-            start.x = line1.x1;
-            start.y = KielerMath.mind(line1.y1, line1.y2, line2.y1, line2.y2);
-            
-            end.x = line1.x1;
-            end.y = KielerMath.maxd(line1.y1, line1.y2, line2.y1, line2.y2);
+        if (Math.abs(line1.x2 - line1.x1) >= Math.abs(line1.y2 - line1.y1)) {
+            // The line is arranged horizontally
+            for (KVector p : points) {
+                if (p.x < start.x) {
+                    start = p;
+                }
+                if (p.x > end.x) {
+                    end = p;
+                }
+            }
         } else {
-            // Horizontal
-            start.x = KielerMath.mind(line1.x1, line1.x2, line2.x1, line2.x2);
-            start.y = line1.y1;
-            
-            end.x = KielerMath.maxd(line1.x1, line1.x2, line2.x1, line2.x2);
-            end.y = line1.y1;
+           // The line is arranged vertically
+            for (KVector p : points) {
+                if (p.y < start.y) {
+                    start = p;
+                }
+                if (p.y > end.y) {
+                    end = p;
+                }
+            }
         }
         
         // Set new start and end points
@@ -263,7 +269,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
      * @param segments the array of segments.
      * @return the number of segment crossings.
      */
-    private int countCrossings(final Line2D.Double[] segments) {
+    private int countCrossings(final Line[] segments) {
         int crossings = 0;
         
         for (int i = 0; i < segments.length; i++) {
@@ -287,6 +293,53 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         }
         
         return crossings;
+    }
+    
+    /**
+     * A specialized line class.
+     */
+    @SuppressWarnings("serial")
+    private static class Line extends Line2D.Double {
+        
+        /**
+         * Constructs and initializes a line from the specified coordinates.
+         * 
+         * @param x1 the X coordinate of the start point
+         * @param y1 the Y coordinate of the start point
+         * @param x2 the X coordinate of the end point
+         * @param y2 the Y coordinate of the end point
+         * @since 1.2
+         */
+        public Line(final double x1, final double y1, final double x2, final double y2) {
+            super(x1, y1, x2, y2);
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return "(" + x1 + "," + y1 + ")->(" + x2 + "," + y2 + ")";
+        }
+        
+        /**
+         * Create a vector with the first point.
+         * 
+         * @return the first point
+         */
+        public KVector getV1() {
+            return new KVector(x1, y1);
+        }
+        
+        /**
+         * Create a vector with the second point.
+         * 
+         * @return the second point
+         */
+        public KVector getV2() {
+            return new KVector(x2, y2);
+        }
+        
     }
     
 }
