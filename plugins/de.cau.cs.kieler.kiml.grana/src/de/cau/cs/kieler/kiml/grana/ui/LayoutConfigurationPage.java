@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.grana.ui;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -88,40 +89,36 @@ public class LayoutConfigurationPage extends WizardPage {
     public LayoutConfigurationPage() {
         super(PAGE_NAME);
     }
-
-    /** fixed height of the options table. */
-    private static final int OPTIONS_TABLE_HEIGHT = 300;
     
     /**
      * {@inheritDoc}
      */
     public void createControl(final Composite parent) {
         setTitle(MESSAGE_DESCRIPTION);
+        Composite parentComposite = new Composite(parent, SWT.NONE);
         
         // construct the options table
-        final Table table = new Table(parent, SWT.BORDER);
-        final TableColumn column3 = new TableColumn(table, SWT.NONE);
-        column3.setText("Option");
-        final TableColumn column4 = new TableColumn(table, SWT.NONE);
-        column4.setText("Value");
+        final Table table = new Table(parentComposite, SWT.BORDER);
+        final TableColumn column1 = new TableColumn(table, SWT.NONE);
+        column1.setText("Option");
+        final TableColumn column2 = new TableColumn(table, SWT.NONE);
+        column2.setText("Value");
         table.setHeaderVisible(true);
         final TableViewer tableViewer = new TableViewer(table);
         tableViewer.setContentProvider(ArrayContentProvider.getInstance());
         tableViewer.setLabelProvider(new OptionsLabelProvider());
-        column3.pack();
-        column4.pack();
-        GridData tableLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+        column1.pack();
+        column2.pack();
+        GridData tableLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
         table.setLayoutData(tableLayoutData);
-        table.pack();
-        tableLayoutData.heightHint = OPTIONS_TABLE_HEIGHT;
         
         // add button to add new options
-        Composite composite = new Composite(parent, SWT.NONE);
-        final Button newButton = new Button(composite, SWT.PUSH | SWT.CENTER);
+        Composite buttonComposite = new Composite(parentComposite, SWT.NONE);
+        final Button newButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
         newButton.setText("New...");
         
         // add button to edit the options
-        final Button editButton = new Button(composite, SWT.PUSH | SWT.CENTER);
+        final Button editButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
         editButton.setText("Edit...");
         editButton.setEnabled(false);
         editButton.addSelectionListener(new SelectionAdapter() {
@@ -135,17 +132,18 @@ public class LayoutConfigurationPage extends WizardPage {
         });
         
         // add button to remove an option
-        final Button removeButton = new Button(composite, SWT.PUSH | SWT.CENTER);
+        final Button removeButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
         removeButton.setText(Messages.getString("kiml.ui.22")); //$NON-NLS-1$
         removeButton.setEnabled(false);
         removeButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent event) {
                 optionEntries.remove(table.getSelectionIndex());
-                if (optionEntries.isEmpty()) {
+                tableViewer.setInput(optionEntries);
+                int index = table.getSelectionIndex();
+                if (index < 0 || index >= optionEntries.size()) {
                     editButton.setEnabled(false);
                     removeButton.setEnabled(false);
                 }
-                tableViewer.refresh();
             }
         });
         
@@ -153,7 +151,8 @@ public class LayoutConfigurationPage extends WizardPage {
         table.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent event) {
-                if (!optionEntries.isEmpty() && event.item != null) {
+                int index = table.getSelectionIndex();
+                if (index >= 0 && index < optionEntries.size()) {
                     editButton.setEnabled(true);
                     removeButton.setEnabled(true);
                 } else {
@@ -177,11 +176,12 @@ public class LayoutConfigurationPage extends WizardPage {
             public void keyPressed(final KeyEvent e) {
                 if (e.character == SWT.DEL) {
                     optionEntries.remove(table.getSelectionIndex());
-                    if (optionEntries.isEmpty()) {
+                    tableViewer.setInput(optionEntries);
+                    int index = table.getSelectionIndex();
+                    if (index < 0 || index >= optionEntries.size()) {
                         editButton.setEnabled(false);
                         removeButton.setEnabled(false);
                     }
-                    tableViewer.refresh();
                 }
             }
         });
@@ -190,30 +190,34 @@ public class LayoutConfigurationPage extends WizardPage {
                 LayoutOptionData<?> optionData = showBrowseOptionDialog();
                 if (optionData != null) {
                     // look for an existing entry with the same option
-                    boolean alreadyInTable = false;
-                    int index = 0;
-                    for (Pair<LayoutOptionData<?>, Object> entry : optionEntries) {
-                        if (optionData.equals(entry.getFirst())) {
-                            alreadyInTable = true;
+                    Pair<LayoutOptionData<?>, Object> entry = null;
+                    for (Pair<LayoutOptionData<?>, Object> oe : optionEntries) {
+                        if (optionData.equals(oe.getFirst())) {
+                            entry = oe;
                             break;
                         }
-                        index++;
                     }
-                    if (alreadyInTable) {
-                        tableViewer.setSelection(new StructuredSelection(index));
-                    } else {
+                    if (entry == null) {
                         Object value = optionData.getDefault();
                         if (value == null) {
                             value = optionData.getDefaultDefault();
+                            if (value == null) {
+                                value = optionData.parseValue("");
+                            }
                         }
-                        optionEntries.add(new Pair<LayoutOptionData<?>, Object>(optionData, value));
-                        tableViewer.refresh();
-                        tableViewer.setSelection(new StructuredSelection(optionEntries.size() - 1));
-                        column3.pack();
-                        column4.pack();
+                        if (value != null) {
+                            entry = new Pair<LayoutOptionData<?>, Object>(optionData, value);
+                            optionEntries.add(entry);
+                            tableViewer.setInput(optionEntries);
+                            column1.pack();
+                            column2.pack();
+                        }
                     }
-                    editButton.setEnabled(true);
-                    removeButton.setEnabled(true);
+                    if (entry != null) {
+                        tableViewer.setSelection(new StructuredSelection(entry));
+                        editButton.setEnabled(true);
+                        removeButton.setEnabled(true);
+                    }
                 }
             }
         });
@@ -227,11 +231,12 @@ public class LayoutConfigurationPage extends WizardPage {
         compositeLayout.verticalSpacing = LayoutConstants.getSpacing().y;
         compositeLayout.marginHeight = 0;
         compositeLayout.marginWidth = 0;
-        composite.setLayout(compositeLayout);
+        buttonComposite.setLayout(compositeLayout);
         GridData compositeLayoutData = new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1);
-        composite.setLayoutData(compositeLayoutData);
+        buttonComposite.setLayoutData(compositeLayoutData);
         
-        parent.setLayout(new GridLayout(2, false));
+        parentComposite.setLayout(new GridLayout(2, false));
+        setControl(parentComposite);
     }
     
     /**
@@ -251,33 +256,32 @@ public class LayoutConfigurationPage extends WizardPage {
      */
     private void showEditDialog(final Shell shell, final Pair<LayoutOptionData<?>, Object> entry) {
         LayoutOptionData<?> optionData = entry.getFirst();
-        if (entry.getSecond() != null) {
-            if (optionData.equals(LayoutOptions.ALGORITHM)) {
-                // show a selection dialog for a layouter hint
-                AlgorithmSelectionDialog dialog = new AlgorithmSelectionDialog(shell, null);
-                if (dialog.open() == AlgorithmSelectionDialog.OK) {
-                    String result = dialog.getSelectedHint();
-                    if (result != null) {
-                        entry.setSecond(result);
-                    }
+        if (optionData.equals(LayoutOptions.ALGORITHM)) {
+            // show a selection dialog for a layouter hint
+            AlgorithmSelectionDialog dialog = new AlgorithmSelectionDialog(shell, null);
+            if (dialog.open() == AlgorithmSelectionDialog.OK) {
+                String result = dialog.getSelectedHint();
+                if (result != null) {
+                    entry.setSecond(result);
                 }
-            } else {
-                // show an input dialog for some other option
-                String value = entry.getSecond().toString();
-                InputDialog dialog = new InputDialog(shell, "Edit Option",
-                        "Enter a new value for the layout option:", value,
-                        new LayoutOptionValidator(optionData));
-                if (dialog.open() == InputDialog.OK) {
-                    String result = dialog.getValue().trim();
-                    switch (optionData.getType()) {
-                    case REMOTE_ENUM:
-                    case ENUM:
-                    case ENUMSET:
-                    case REMOTE_ENUMSET:
-                        entry.setSecond(optionData.parseValue(result.toUpperCase()));
-                    default:
-                        entry.setSecond(optionData.parseValue(result));
-                    }
+            }
+        } else {
+            // show an input dialog for some other option
+            String value = entry.getSecond().toString();
+            InputDialog dialog = new InputDialog(shell, "Edit Option",
+                    "Enter a new value for the layout option:", value,
+                    new LayoutOptionValidator(optionData));
+            if (dialog.open() == InputDialog.OK) {
+                String result = dialog.getValue().trim();
+                switch (optionData.getType()) {
+                case REMOTE_ENUM:
+                case ENUM:
+                case ENUMSET:
+                case REMOTE_ENUMSET:
+                    entry.setSecond(optionData.parseValue(result.toUpperCase()));
+                    break;
+                default:
+                    entry.setSecond(optionData.parseValue(result));
                 }
             }
         }
@@ -302,7 +306,11 @@ public class LayoutConfigurationPage extends WizardPage {
                 inputList.add(optionData);
             }
         }
-        Collections.sort(inputList);
+        Collections.sort(inputList, new Comparator<LayoutOptionData<?>>() {
+            public int compare(final LayoutOptionData<?> lod1, final LayoutOptionData<?> lod2) {
+                return lod1.getName().compareTo(lod2.getName());
+            }
+        });
         dialog.setInput(inputList);
         if (dialog.open() == ListDialog.OK) {
             Object[] result = dialog.getResult();
@@ -317,33 +325,29 @@ public class LayoutConfigurationPage extends WizardPage {
      * Label provider for the options table.
      */
     private class OptionsLabelProvider extends LabelProvider implements ITableLabelProvider {
-        
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Image getImage(final Object element) {
-            if (element instanceof LayoutOptionData) {
-                LayoutOptionData<?> optionData = (LayoutOptionData<?>) element;
-                return getColumnImage(new Pair<LayoutOptionData<?>, Object>(optionData,
-                        optionData.getDefaultDefault()), COL_VALUE);
-            }
-            return null;
-        }
 
         /**
          * {@inheritDoc}
          */
         public Image getColumnImage(final Object element, final int columnIndex) {
+            LayoutOptionData<?> optionData = null;
+            Object value = null;
             if (element instanceof Pair && columnIndex == COL_VALUE) {
                 @SuppressWarnings("unchecked")
                 Pair<LayoutOptionData<?>, Object> entry = (Pair<LayoutOptionData<?>, Object>) element;
+                optionData = entry.getFirst();
+                value = entry.getSecond();
+            } else if (element instanceof LayoutOptionData) {
+                optionData = (LayoutOptionData<?>) element;
+                value = optionData.getDefaultDefault();
+            }
+            if (optionData != null) {
                 KimlUiPlugin.Images images = KimlUiPlugin.getDefault().getImages();
-                switch (entry.getFirst().getType()) {
+                switch (optionData.getType()) {
                 case STRING:
                     return images.getPropText();
                 case BOOLEAN:
-                    if ((Boolean) entry.getSecond()) {
+                    if (value == null || (Boolean) value) {
                         return images.getPropTrue();
                     } else {
                         return images.getPropFalse();
@@ -380,6 +384,9 @@ public class LayoutConfigurationPage extends WizardPage {
                         return entry.getSecond().toString();
                     }
                 }
+            } else if (element instanceof LayoutOptionData) {
+                LayoutOptionData<?> optionData = (LayoutOptionData<?>) element;
+                return optionData.getName();
             }
             return null;
         }

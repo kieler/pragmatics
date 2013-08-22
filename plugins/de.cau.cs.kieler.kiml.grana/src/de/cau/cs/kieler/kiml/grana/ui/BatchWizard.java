@@ -92,7 +92,6 @@ public class BatchWizard extends Wizard {
         selectedAnalyses = GranaUtil.getAnalysesSelection(PREFERENCE_SELECTED_ANALYSES);
         analysisSelectionPage = new BatchAnalysisSelectionPage(selectedAnalyses);
         layoutConfigurationPage = new LayoutConfigurationPage();
-        layoutConfigurationPage.setPageComplete(true);
         addPage(fileSelectionPage);
         addPage(resultFilePage);
         addPage(analysisSelectionPage);

@@ -62,10 +62,7 @@ public class BatchAnalysisSelectionPage extends WizardPage implements
      */
     public void createControl(final Composite parent) {
         setTitle(MESSAGE_DESCRIPTION);
-        viewer =
-                new AnalysisSelectionViewer(
-                        parent,
-                        AnalysisService.getInstance().getCategories(),
+        viewer = new AnalysisSelectionViewer(parent, AnalysisService.getInstance().getCategories(),
                         initialAnalyses);
         setControl(viewer);
         selectionChanged(getAnalyses());
