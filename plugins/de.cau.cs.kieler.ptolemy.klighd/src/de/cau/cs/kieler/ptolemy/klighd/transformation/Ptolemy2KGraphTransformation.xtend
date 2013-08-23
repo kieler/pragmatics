@@ -465,7 +465,7 @@ class Ptolemy2KGraphTransformation {
         
         // If the port is null, create it
         if (port == null) {
-            createPort(kActor, portName)
+            createPort(kActor, portName, kActor.ports.size)
         } else {
             port
         }
@@ -478,9 +478,10 @@ class Ptolemy2KGraphTransformation {
      * @param name the name of the port to create.
      * @return the created port.
      */
-    def private KPort createPort(KNode kNode, String name) {
+    def private KPort createPort(KNode kNode, String name, int index) {
         // Create a new port
         val result = KimlUtil::createInitializedPort()
+        result.layout.setProperty(LayoutOptions::PORT_INDEX, index)
         
         // Assign name and language annotation
         result.name = name
