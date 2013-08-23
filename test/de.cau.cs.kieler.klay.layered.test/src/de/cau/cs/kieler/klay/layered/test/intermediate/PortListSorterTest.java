@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -32,7 +33,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.PortListSorter;
+import de.cau.cs.kieler.klay.layered.intermediate.LongEdgeJoiner;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.BasicLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
@@ -41,7 +42,28 @@ import de.cau.cs.kieler.klay.test.utils.TestPath;
 import de.cau.cs.kieler.klay.test.utils.TestPath.Type;
 
 /**
- * Basic tests for the {@link PortListSorter}.
+ * Basic tests for the {@link de.cau.cs.kieler.klay.layered.intermediate.PortListSorter
+ * PortListSorter}.
+ * 
+ * The ports on each side are either ordered according to their {@link LayoutOptions#PORT_INDEX} or,
+ * if no index is set, depending on the position of the port. However, the indices for each side are
+ * distinct and do not necessarily have to be gapless.
+ * 
+ * E.g.
+ * 
+ * <pre>
+ *      0 1 2
+ *   |--------|0
+ *   |        |
+ *   |________|7
+ *      9  2
+ * </pre>
+ * 
+ * 
+ * The test assures that only {@link PortConstraints#FIXED_ORDER} is set to nodes, and assigns an
+ * index to all ports. The test runs until the actual port positions are set, as after the
+ * {@link PortListSorter} only the order within the nodes port list is adapted, not the actual
+ * coordinates.
  * 
  * @author uru
  */
@@ -52,7 +74,9 @@ public class PortListSorterTest extends AbstractLayeredProcessorTest {
      * FIXED_ORDER.
      */
     private ImmutableList<PortConstraints> invalidConstraints = ImmutableList.of(
-            PortConstraints.UNDEFINED, PortConstraints.FREE, PortConstraints.FIXED_SIDE);
+            PortConstraints.UNDEFINED, PortConstraints.FREE, PortConstraints.FIXED_SIDE,
+            PortConstraints.FIXED_POS); // important to include fixed pos, otherwise the PORT_INDEX
+                                        // is ignored.
 
     // CHECKSTYLEOFF javadoc
     public PortListSorterTest(final GraphTestObject testObject, final ILayoutConfigurator config) {
@@ -77,6 +101,11 @@ public class PortListSorterTest extends AbstractLayeredProcessorTest {
                         layout.setProperty(LayoutOptions.PORT_CONSTRAINTS,
                                 PortConstraints.FIXED_ORDER);
                     }
+                    int index = 0;
+                    for (KPort port : n.getPorts()) {
+                        KShapeLayout portLayout = port.getData(KShapeLayout.class);
+                        portLayout.setProperty(LayoutOptions.PORT_INDEX, index++);
+                    }
                 }
             }
         });
@@ -87,9 +116,8 @@ public class PortListSorterTest extends AbstractLayeredProcessorTest {
      * {@inheritDoc}
      */
     protected TestPath[] getBundleTestPath() {
-        TestPath[] testPaths =
-                { new TestPath("misc/random", false, false, TestPath.Type.KGRAPH),
-                        new TestPath("misc/random_w_ports", false, false, Type.KGRAPH) };
+        TestPath[] testPaths = {// new TestPath("misc/random", false, false, TestPath.Type.KGRAPH),
+                new TestPath("misc/random_w_ports", false, false, Type.KGRAPH) };
         return testPaths;
     }
 
@@ -98,7 +126,8 @@ public class PortListSorterTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(PortListSorter.class);
+        // FIXME chose the phase in which the port positions are actually decided.
+        lgraphs = layered.runLayoutTestUntil(LongEdgeJoiner.class);
     }
 
     /**
