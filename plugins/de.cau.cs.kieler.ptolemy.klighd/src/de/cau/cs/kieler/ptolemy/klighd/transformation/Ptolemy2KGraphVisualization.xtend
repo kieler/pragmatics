@@ -172,7 +172,7 @@ class Ptolemy2KGraphVisualization {
         layout.setProperty(KlighdProperties::EXPAND, false)
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
-        layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
+        layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_ORDER)
         layout.setProperty(LayoutOptions::SIZE_CONSTRAINT, SizeConstraint::fixed)
         
         node.setLayoutAlgorithm()
@@ -301,7 +301,7 @@ class Ptolemy2KGraphVisualization {
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         layout.setProperty(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE)
-        layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
+        layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_ORDER)
         
         // Create the rendering
         val rendering = createValueDisplayingNodeRendering(node,
@@ -340,7 +340,7 @@ class Ptolemy2KGraphVisualization {
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         layout.setProperty(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE)
-        layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
+        layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_ORDER)
         
         // Some kinds of nodes require special treatment
         var KRendering rendering = switch node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS) {
@@ -394,12 +394,14 @@ class Ptolemy2KGraphVisualization {
         layout.setProperty(LayoutOptions::PORT_SIDE, portSide)
         
         // Set port properties depending on the port side
+        val index = layout.getProperty(LayoutOptions::PORT_INDEX)
         switch portSide {
             case PortSide::NORTH: {
                 layout.setProperty(LayoutOptions::OFFSET, 0f)
             }
             case PortSide::SOUTH: {
                 layout.setProperty(LayoutOptions::OFFSET, 0f)
+                layout.setProperty(LayoutOptions::PORT_INDEX, -index);
             }
             case PortSide::EAST: {
                 layout.setProperty(LayoutOptions::OFFSET, 0f)
@@ -412,6 +414,7 @@ class Ptolemy2KGraphVisualization {
                 if (!port.markedAsModalModelPort) {
                     layout.setProperty(Properties::PORT_ANCHOR, new KVector(0, 3.5))
                 }
+                layout.setProperty(LayoutOptions::PORT_INDEX, -index);
             }
         }
         

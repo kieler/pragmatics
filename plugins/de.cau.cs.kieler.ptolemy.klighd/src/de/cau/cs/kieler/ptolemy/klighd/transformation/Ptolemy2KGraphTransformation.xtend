@@ -36,6 +36,7 @@ import org.ptolemy.moml.RelationType
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
+import de.cau.cs.kieler.kiml.options.LayoutOptions
 
 /**
  * Transforms a Ptolemy2 model to a KGraph. This is step one of the Ptolemy model transformation
@@ -644,7 +645,11 @@ class Ptolemy2KGraphTransformation {
             }
         
         // Merge the model port list into the implementation port list
+        var index = ports.size;
         for (modelPort : modelPorts) {
+            // Set the index (here we assume the original port order found in the MoML is preserved)
+            modelPort.layout.setProperty(LayoutOptions::PORT_INDEX, index);
+            
             // Check if a port of the same name already exists
             val existingPort = ports.findFirst(p | p.name.equals(modelPort.name))
             
@@ -655,6 +660,7 @@ class Ptolemy2KGraphTransformation {
                 // No port of that name exists, so add it
                 ports.add(modelPort)
             }
+            index = index + 1
         }
         
         // Add all of these ports to the knode and mark them as input or output port, if necessary
