@@ -353,6 +353,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             if (offset != null) {
                 newPort.setProperty(Properties.OFFSET, offset);
             }
+            newPort.setProperty(LayoutOptions.PORT_INDEX,
+                    portLayout.getProperty(LayoutOptions.PORT_INDEX));
             
             // if the port anchor property is set, use it as anchor point
             KVector anchorPos = portLayout.getProperty(Properties.PORT_ANCHOR);

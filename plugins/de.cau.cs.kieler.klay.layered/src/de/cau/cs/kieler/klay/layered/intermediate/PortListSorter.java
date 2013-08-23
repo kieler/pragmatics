@@ -62,7 +62,17 @@ public final class PortListSorter implements ILayoutProcessor {
                 return ordinalDifference;
             }
             
-            // In case of equal sides, sort by position next
+            // In case of equal sides, sort by port index property
+            Integer index1 = port1.getProperty(LayoutOptions.PORT_INDEX);
+            Integer index2 = port2.getProperty(LayoutOptions.PORT_INDEX);
+            if (index1 != null && index2 != null) {
+                int indexDifference = index1 - index2;
+                if (indexDifference != 0) {
+                    return indexDifference;
+                }
+            }
+            
+            // In case of equal index, sort by position
             switch (port1.getSide()) {
             case NORTH:
                 // Compare x coordinates

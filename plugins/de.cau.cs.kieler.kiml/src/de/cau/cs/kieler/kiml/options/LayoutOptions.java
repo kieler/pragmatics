@@ -128,12 +128,26 @@ public final class LayoutOptions {
     public static final IProperty<Float> OFFSET = new Property<Float>("de.cau.cs.kieler.offset");
     
     /**
+     * The index of a port in the fixed order of ports around its node. [programmatically set]
+     * The order is assumed as clockwise, starting with the leftmost port on the top side.
+     * This option must be set if {@link #PORT_CONSTRAINTS} is set to
+     * {@link PortConstraints#FIXED_ORDER} and no specific positions are given for the ports.
+     * Additionally, the option {@link #PORT_SIDE} must be defined in this case.
+     */
+    public static final IProperty<Integer> PORT_INDEX = new Property<Integer>(
+            "de.cau.cs.kieler.portIndex");
+    
+    /**
      * On which side of its corresponding node a port is situated. [programmatically set]
+     * This option must be set if {@link #PORT_CONSTRAINTS} is set to
+     * {@link PortConstraints#FIXED_SIDE} or {@link PortConstraints#FIXED_ORDER} and no specific
+     * positions are given for the ports.
      */
     public static final IProperty<PortSide> PORT_SIDE = new Property<PortSide>(
             "de.cau.cs.kieler.portSide", PortSide.UNDEFINED);
 
-    /** Specifies whether the given attribute is a tooltip. */
+    /** Specifies whether the given attribute is a tooltip.
+     *  FIXME is this used anywhere? and is it a layout option? consider moving or removing it. */
     public static final IProperty<String> TOOLTIP = new Property<String>(
             "de.cau.cs.kieler.tooltip", null);
     

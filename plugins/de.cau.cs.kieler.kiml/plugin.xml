@@ -430,6 +430,14 @@
            type="enum"
            variance="0">
      </layoutOption>
+     <layoutOption
+           advanced="true"
+           description="The index of a port in the clockwise fixed order around a node"
+           id="de.cau.cs.kieler.portIndex"
+           name="Port Index (programmatic)"
+           type="int"
+           variance="0">
+     </layoutOption>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.layoutInfo">
