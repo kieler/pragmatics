@@ -38,6 +38,7 @@ import ptolemy.moml.filter.BackwardCompatibility
 import ptolemy.actor.parameters.ParameterPort
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+import de.cau.cs.kieler.kiml.options.LayoutOptions
 
 /**
  * Provides an interface to the Ptolemy library to instantiate actors. This is used during the
@@ -79,16 +80,20 @@ class PtolemyInterface {
         val result = new ArrayList<KPort>()
         
         // Try to instantiate the actor (this is where an exception might be thrown which is propagated
-        // up to the caling method)
+        // up to the calling method)
         var Entity ptActor = null
         ptActor = instantiatePtolemyEntity(entity)
         
         // Add its ports
         if (ptActor != null) {
+            var index = 0
             for (port : ptActor.portList) {
                 if (port instanceof IOPort) {
                     val IOPort ptPort = port as IOPort
                     val KPort kPort = KimlUtil::createInitializedPort()
+                    
+                    // Set the index
+                    kPort.layout.setProperty(LayoutOptions::PORT_INDEX, index)
                     
                     // Set the name
                     kPort.name = ptPort.name
@@ -129,6 +134,7 @@ class PtolemyInterface {
                     // Add the created port to our result list
                     result.add(kPort)
                 }
+                index = index + 1
             }
         }
         
