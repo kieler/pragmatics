@@ -212,6 +212,9 @@
       }
 
       this._group.setAttribute('transform', this.joinMatrix());
+
+      // make sure a change event is fired on the group
+      $('#' + this.viewport).change();
     }
   };
 
