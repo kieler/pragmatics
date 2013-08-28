@@ -31,7 +31,7 @@ function initState() {
   $('#joinDiv').show();
   $('#leaveDiv').hide();
   hideErrors();
-  
+
 }
 
 /**
@@ -39,7 +39,7 @@ function initState() {
  * The manual controls for zooming.
  */
 $('#zoomIn').click(function() {
-  if(!zoomPanManager) {
+  if (!zoomPanManager) {
     return;
   }
   zoomPanManager.each(function(k, m) {
@@ -47,7 +47,7 @@ $('#zoomIn').click(function() {
   });
 });
 $('#zoomOut').click(function() {
-  if(!zoomPanManager) {
+  if (!zoomPanManager) {
     return;
   }
   zoomPanManager.each(function(k, m) {
@@ -105,11 +105,11 @@ var webSocketConnect = function() {
       // attach zoom pan functionality
       zoomPanManager = $('#viewport').zoomPan();
 
-      // attach a mousedown listener to handle expanding of hierarchical nodes     
+      // attach a mousedown listener to handle expanding of hierarchical nodes
       var expandFun = function(d) {
         // get the id
         var hashcode = $(this).attr("data-id");
-        
+
         // if starts with id
         if (hashcode) {
           // send expand toggle command
@@ -120,13 +120,12 @@ var webSocketConnect = function() {
 
         }
       };
-      
-      
+
       // make hierarchical elements expandable
       $('.expandable').dblclick(expandFun);
       // for the mobile browser
       $('.expandable').bind("tap", expandFun);
-      
+
       // translate events
       $('#group').change(function(e) {
         sendJson({
@@ -247,11 +246,13 @@ function loadRepository() {
 
         // clear old diagram
         $('#viewport').html("");
-        
+
         // clear the current transform
-        zoomPanManager.each(function(k, m) {
-          m.zpm.reset();
-        });
+        if (zoomPanManager) {
+          zoomPanManager.each(function(k, m) {
+            m.zpm.reset();
+          });
+        }
       });
 
       // init tree
@@ -277,10 +278,10 @@ $(function() {
 
   // get the initial content
   loadRepository();
-  
+
   // try to connect automatically
   webSocketConnect();
-  
+
   // register reconnect button
   $('#connect').click(webSocketConnect);
 
