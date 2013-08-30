@@ -307,7 +307,7 @@ class Ptolemy2KGraphOptimization {
                 }
             } else if (directedOutgoingEdge != null) {
                 // The port has an outgoing edge of known direction!
-                if (unknownPort.node.children.contains(directedIncomingEdge.target)) {
+                if (unknownPort.node.children.contains(directedOutgoingEdge.target)) {
                     // Connection to the inside -> the port is an input port
                     unknownPort.markAsInputPort(true)
                 } else {
@@ -400,6 +400,17 @@ class Ptolemy2KGraphOptimization {
                     undirectedEdge.markAsUndirected(false)
                     unknownEdges.remove(undirectedEdge)
                     fixedEdgeInThisIteration = true
+                } else if (fixedIncomingEdges.size > 0) {
+                    // ...the remaining edges should be outgoing
+                    for (edge : undirectedIncidentEdges) {
+                        if (edge.source != unknownRelation) {
+                            edge.reverseEdge()
+                        }
+                        
+                        edge.markAsUndirected(false)
+                        unknownEdges.remove(edge)
+                        fixedEdgeInThisIteration = true
+                    }
                 }
             }
             
