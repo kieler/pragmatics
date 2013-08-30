@@ -11,9 +11,9 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.ptolemy.klighd.transformation
+package de.cau.cs.kieler.ptolemy.klighd.transformation.extensions
 
-import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 /**
  * Utility methods for coping with ports used by the Ptolemy to KGraph transformation.

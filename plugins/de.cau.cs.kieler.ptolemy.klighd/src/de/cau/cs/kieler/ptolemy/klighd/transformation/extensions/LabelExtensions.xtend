@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.ptolemy.klighd.transformation
+package de.cau.cs.kieler.ptolemy.klighd.transformation.extensions
 
 import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement
 import de.cau.cs.kieler.kiml.util.KimlUtil

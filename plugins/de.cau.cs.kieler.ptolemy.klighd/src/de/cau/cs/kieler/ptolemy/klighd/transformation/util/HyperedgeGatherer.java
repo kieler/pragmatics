@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.ptolemy.klighd.transformation;
+package de.cau.cs.kieler.ptolemy.klighd.transformation.util;
 
 import java.util.List;
 import java.util.Map;
@@ -34,7 +34,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * 
  * @author cds
  */
-final class HyperedgeGatherer {
+public final class HyperedgeGatherer {
     
     /** Root node that contains the relations. */
     private KNode root;
@@ -189,17 +189,17 @@ final class HyperedgeGatherer {
      * 
      * @author cds
      */
-    static class Hyperedge {
+    public static class Hyperedge {
         /** Relations that belong to this hyperedge. */
-        List<KNode> relations = Lists.newLinkedList();
+        public List<KNode> relations = Lists.newLinkedList();
         /** Source nodes that directly connect to a relation in this hyperedge. */
-        Set<KNode> sourceNodes = Sets.newHashSet();
+        public Set<KNode> sourceNodes = Sets.newHashSet();
         /** Source ports that connect to a relation in this hyperedge. */
-        Set<KPort> sourcePorts = Sets.newHashSet();
+        public Set<KPort> sourcePorts = Sets.newHashSet();
         /** Target nodes that directly connect to a relation in this hyperedge. */
-        Set<KNode> targetNodes = Sets.newHashSet();
+        public Set<KNode> targetNodes = Sets.newHashSet();
         /** Target ports that connect to a relation in this hyperedge. */
-        Set<KPort> targetPorts = Sets.newHashSet();
+        public Set<KPort> targetPorts = Sets.newHashSet();
         
         
         /**

@@ -17,6 +17,7 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.util.GraphicsUtils
 import diva.canvas.CanvasUtilities
 import diva.canvas.Figure
 import diva.canvas.toolbox.ImageFigure
@@ -28,11 +29,11 @@ import java.awt.geom.Rectangle2D$Double
 import java.awt.image.BufferedImage
 import java.util.List
 import org.w3c.dom.Document
-import ptolemy.kernel.Entity
-import ptolemy.vergil.icon.EditorIcon
-import ptolemy.moml.test.TestIconLoader
-import ptolemy.kernel.util.ConfigurableAttribute
 import ptolemy.data.expr.XMLParser
+import ptolemy.kernel.Entity
+import ptolemy.kernel.util.ConfigurableAttribute
+import ptolemy.moml.test.TestIconLoader
+import ptolemy.vergil.icon.EditorIcon
 
 /**
  * Provides methods to retrieve KRenderings for the SVG graphics that specify how Ptolemy objects look.

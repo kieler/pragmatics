@@ -19,11 +19,17 @@ import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.kiml.util.KimlUtil
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.PortExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.util.HyperedgeGatherer
 import java.util.List
 import org.ptolemy.moml.PropertyType
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
-import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 /**
  * Optimizes a KGraph model freshly transformed from a Ptolemy2 model. This is step two of the Ptolemy
@@ -37,7 +43,7 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConst
  * @author haf
  * @kieler.rating yellow 2012-06-14 KI-12 cmot, grh
  */
-class Ptolemy2KGraphOptimization {
+public class Ptolemy2KGraphOptimization {
     
     /** Handling annotations. */
     @Inject extension AnnotationExtensions
