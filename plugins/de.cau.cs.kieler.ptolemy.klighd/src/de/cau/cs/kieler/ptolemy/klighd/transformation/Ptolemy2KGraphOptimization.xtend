@@ -55,8 +55,6 @@ public class Ptolemy2KGraphOptimization {
     @Inject extension MiscellaneousExtensions
     /** Handling ports. */
     @Inject extension PortExtensions
-    /** Handling comments. */
-    @Inject CommentsExtractor commentsExtractor
     /** Flattening. */
     @Inject Flattener flattener;
     
@@ -70,11 +68,15 @@ public class Ptolemy2KGraphOptimization {
      * important.</p>
      * 
      * @param kGraph the model to optimize.
-     * @param showComments {@code true} if comments should be imported.
      * @param hideRelations {@code true} if relations should be replaced by hyperedges; otherwise, we
      *                      only try and hide as many relations as possible.
+     * @param flatten {@code true} if the graph should be flattened by removing all hierarchy.
+     * @param commentsExtractor the extractor to use for extracting comments, or {@code null} if no
+     *                          comments should be extracted.
      */
-    def void optimize(KNode kGraph, boolean showComments, boolean hideRelations, boolean flatten) {
+    def void optimize(KNode kGraph, boolean hideRelations, boolean flatten,
+        CommentsExtractor commentsExtractor) {
+        
         // Infer edge directions
         inferEdgeDirections(kGraph)
         
@@ -92,8 +94,8 @@ public class Ptolemy2KGraphOptimization {
         convertAnnotationsToNodes(kGraph)
         
         // Convert comments into nodes
-        if (showComments) {
-            commentsExtractor.extractAndAttachComments(kGraph)
+        if (commentsExtractor != null) {
+            commentsExtractor.extractComments(kGraph)
         }
         
         // Flatten

@@ -21,7 +21,7 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExten
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
-import java.awt.geom.Point2D
+import java.awt.geom.Rectangle2D
 import java.util.List
 import org.eclipse.emf.ecore.util.FeatureMap
 import org.eclipse.emf.ecore.xmi.XMLResource
@@ -30,6 +30,7 @@ import org.ptolemy.moml.PropertyType
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 
 /**
  * Extracts comments from the model and turns them into special comment nodes. Also tries to find the
@@ -164,11 +165,11 @@ class CommentsExtractor {
     val double maxAttachmentDistance = 10000.0
     
     /** List of comment nodes created in the process. */
-    var List<KNode> createdCommentNodes
+    var List<KNode> createdCommentNodes = newLinkedList()
     /** List of explicit attachments from comment nodes to other nodes. */
-    var List<Pair<KNode, KNode>> explicitAttachments
+    var List<Pair<KNode, KNode>> explicitAttachments = newLinkedList()
     /** List of heuristically found attachments from comment nodes to other nodes. */
-    var List<Pair<KNode, KNode>> heuristicAttachments
+    var List<Pair<KNode, KNode>> heuristicAttachments = newLinkedList()
     
     
     /**
@@ -194,7 +195,7 @@ class CommentsExtractor {
      * 
      * @param root the root node.
      */
-    def private void extractComments(KNode root) {
+    def void extractComments(KNode root) {
         // Iterate through the node's annotations looking for comments
         for (annotation : root.annotations) {
             if ((annotation.class_ ?: "").equals(ANNOTATION_TYPE_TEXT_ATTRIBUTE)) {
@@ -287,7 +288,7 @@ class CommentsExtractor {
      * initially attached to. The attachment can have been either explicit (by the model designer) or
      * implicit, by a distance-based heuristic.
      */
-    def private void attachComments() {
+    def void attachComments() {
         // Iterate over the created comment nodes and try attaching them
         for (commentNode : createdCommentNodes) {
             // Check if the comment was explicitly attached to a node
@@ -356,14 +357,18 @@ class CommentsExtractor {
      */
     def private KNode findNearestNonCommentSibling(KNode commentNode) {
         // Find the comment node's position in the original diagram
-        val commentLocation = getPtolemyLocation(commentNode)
+        val commentBounds = getPtolemyBounds(commentNode)
+        
+        // TODO: Update the comment size
+        commentBounds.width = 10
+        commentBounds.height = 10
         
         var currentNearestDistance = maxAttachmentDistance + 1
         var KNode currentNearestSibling = null
         
         for (sibling : commentNode.parent.children) {
             if (!sibling.markedAsComment) {
-                val distance = computeDistance(commentLocation, getPtolemyLocation(sibling))
+                val distance = computeDistance(commentBounds, getPtolemyBounds(sibling))
                 
                 if (distance < currentNearestDistance && distance <= maxAttachmentDistance) {
                     currentNearestDistance = distance
@@ -376,16 +381,32 @@ class CommentsExtractor {
     }
     
     /**
-     * Compute a measure of distance between the two given locations. The current implementation simply
-     * returns the square of the euclidean distance, which is perfectly fine.
+     * Compute a measure of distance between the two shapes defined by the given bounds. If at least
+     * one of the bounds has a width or height of zero, a value bigger than the maximum attachment
+     * distance is returned. If the two shapes intersect, a distance of zero is returned.
      * 
-     * @param location1 one location.
-     * @param location2 the other location.
-     * @return a measure of distance between the two locations.
+     * <p>The current implementation simply returns the square of the euclidean distance, which is
+     * perfectly fine.</p>
+     * 
+     * @param bounds1 the first shape.
+     * @param bounds2 the second shape.
+     * @return a measure of distance between the two shapes.
      */
-    def private double computeDistance(Point2D$Double location1, Point2D$Double location2) {
-        val deltaX = location2.x - location1.x
-        val deltaY = location2.y - location1.y
+    def private double computeDistance(Rectangle2D$Double bounds1, Rectangle2D$Double bounds2) {
+        // Check if one of the shapes has zero height or width
+        if (bounds1.width == 0 || bounds1.height == 0 || bounds2.width == 0 || bounds2.height == 0) {
+            return maxAttachmentDistance + 1
+        }
+        
+        // Check if the two shapes intersect
+        if (bounds1.intersects(bounds2)) {
+            return 0
+        }
+        
+        // TODO: Compute a proper distance
+        
+        val deltaX = bounds2.x - bounds1.x
+        val deltaY = bounds2.y - bounds1.y
         
         return deltaX * deltaX + deltaY * deltaY
     }
@@ -445,17 +466,19 @@ class CommentsExtractor {
     }
     
     /**
-     * Retrieves the position of the given node in the original Ptolemy diagram, if any. This method
-     * is a create method because the positions don't change and we like Xtend to cache already
+     * Retrieves the position of the given node in the original Ptolemy diagram, if any, as well as
+     * its size as given by the node's shape layout. The shape layout's size fields are expected to
+     * have been correctly set during the visualization step of the diagram synthesis. This method
+     * is a create method because the bounds don't change and we like Xtend to cache already
      * calculated positions for us.
      * 
      * @param node the node whose location to retrieve.
-     * @return the location or some point way out if there was a problem.
+     * @return the bounds or some bounds way out if there was a problem.
      */
-    def private create location : new Point2D$Double() getPtolemyLocation(KNode node) {
+    def private create bounds : new Rectangle2D$Double() getPtolemyBounds(KNode node) {
         // Initialize point with ridiculous values
-        location.x = 2e20
-        location.y = 2e20
+        bounds.x = 2e20
+        bounds.y = 2e20
         
         // Get location annotation
         val locationAnnotation = node.getAnnotation(ANNOTATION_LOCATION)
@@ -471,8 +494,12 @@ class CommentsExtractor {
         
         if (locationArray.size == 2) {
             try {
-                location.x = Double::valueOf(locationArray.get(0))
-                location.y = Double::valueOf(locationArray.get(1))
+                bounds.x = Double::valueOf(locationArray.get(0))
+                bounds.y = Double::valueOf(locationArray.get(1))
+                
+                // Save the node's size in the bounds as well
+                bounds.width = (node.layout as KShapeLayout).width
+                bounds.height = (node.layout as KShapeLayout).height
             } catch (NumberFormatException e) {
                 
             }
